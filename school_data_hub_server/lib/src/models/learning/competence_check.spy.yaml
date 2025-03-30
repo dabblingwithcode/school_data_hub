@@ -1,0 +1,15 @@
+## competence check model
+class: CompetenceCheck
+table: competence_check
+fields:
+  publicId: String
+  achievement: String
+  comment: String
+  createdBy: String
+  createdAt: DateTime
+  valueFactor: double
+  groupCheckId: String ## in case it is a check for a group of pupils
+  groupCheckName: String
+  pupil: PupilData?, relation(name=competence_check_pupil)
+  competence: Competence?, relation(name=competence_check_competence)
+  competenceCheckFiles: List<CompetenceCheckFile>?, relation(name=competence_check_file_check)

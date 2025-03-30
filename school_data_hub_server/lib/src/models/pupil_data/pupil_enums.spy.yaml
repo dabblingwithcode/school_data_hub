@@ -1,0 +1,10 @@
+
+
+### enum for the medical preschool revision
+enum: PreSchoolRevision
+serialized: byName
+values:
+  - notAvailable
+  - ok
+  - supportAreas
+  - checkSpecialSupport

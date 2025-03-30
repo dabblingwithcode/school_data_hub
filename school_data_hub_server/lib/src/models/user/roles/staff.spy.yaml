@@ -1,0 +1,12 @@
+## Staff model
+class: Staff
+table: staff
+fields:
+  userInfo: module:auth:UserInfo?, relation
+  name: String
+  shortName: String
+  role: Role
+  userId: String
+  email: String
+  password: String
+

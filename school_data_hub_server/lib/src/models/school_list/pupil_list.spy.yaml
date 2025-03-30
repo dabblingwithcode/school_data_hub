@@ -1,0 +1,10 @@
+## pupil list model
+class: PupilList
+table: pupil_list
+fields:
+  status: bool?
+  comment: String?
+  entryBy: String?
+  schoolList: SchoolList?, relation(name=pupil_list_school_list)
+  pupil: PupilData?, relation(name=pupil_list_pupil)
+  

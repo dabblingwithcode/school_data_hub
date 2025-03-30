@@ -1,0 +1,14 @@
+## Support category status model
+class: SupportCategoryStatus
+table: support_category_status
+fields:
+  statusId: String
+  status: int
+  createdBy: String
+  createdAt: DateTime
+  comment: String
+  fileUrl: String
+  fileId: String
+  pupil: PupilData?, relation
+  supportCategory: SupportCategory?, relation
+  

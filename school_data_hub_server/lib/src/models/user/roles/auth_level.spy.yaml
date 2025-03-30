@@ -1,0 +1,7 @@
+enum: AuthLevel
+serialized: byName
+values:
+  - admin
+  - mantainer
+  - user
+  - pupil

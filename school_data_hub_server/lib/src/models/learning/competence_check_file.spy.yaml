@@ -1,0 +1,10 @@
+## competence check file model
+class: CompetenceCheckFile
+table: competence_check_file
+fields:
+  fileId: String
+  fileUrl: String
+  fileExtension: String
+  uploadedAt: DateTime
+  uploadedBy: String
+  competenceCheck: CompetenceCheck?, relation(name=competence_check_file_check)

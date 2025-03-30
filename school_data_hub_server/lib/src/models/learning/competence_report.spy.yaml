@@ -1,0 +1,13 @@
+## competence report model
+class: CompetenceReport
+table: competence_report
+fields:
+  reportId: String
+  createdBy: String
+  createdAt: DateTime
+  modifiedBy: String
+  achievement: String
+  achievedAt: DateTime
+  pupil: PupilData?, relation(name=competence_report_pupil)
+  competenceReportChecks: List<CompetenceReportCheck>?, relation(name=competence_report_check_report)
+  schoolSemester: SchoolSemester?, relation(name=competence_report_semester)

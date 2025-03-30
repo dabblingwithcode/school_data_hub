@@ -1,0 +1,13 @@
+## book model
+class: Book
+table: book
+fields:
+  isbn: int
+  title: String
+  author: String
+  description: String
+  readingLevel: String
+  imageId: String
+  imageUrl: String
+  tags: List<BookTagging>?, relation(name=book_tagging)
+  libraryBooks: List<LibraryBook>?, relation(name=library_books)

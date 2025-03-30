@@ -1,0 +1,18 @@
+### Attendance event for a student missing a class
+
+class: MissedClass
+table: missed_class
+fields:
+  missedType: int
+  unexcused: bool
+  contacted: String
+  returned: bool
+  returnedAt: DateTime
+  writtenExcuse: bool
+  minutesLate: int
+  createdBy: String
+  modifiedBy: String
+  comment: String
+  schoolday: Schoolday?, relation(name=missed_class_schoolday)
+  pupil: PupilData?, relation(name=missed_class_pupil)
+  

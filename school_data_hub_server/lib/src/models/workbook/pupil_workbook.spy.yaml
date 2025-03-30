@@ -1,0 +1,12 @@
+## Pupil workbook model
+class: PupilWorkbook
+table: pupil_workbook
+fields:
+  comment: String
+  status: String
+  createdBy: String
+  createdAt: DateTime
+  finishedAt: DateTime
+  pupil: PupilData?, relation(name=pupil_workbook_pupil, onDelete=Cascade)
+  workbook: Workbook?, relation( name=pupil_workbook_workbook, onDelete=Cascade)
+ 

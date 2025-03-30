@@ -1,0 +1,9 @@
+## Authorization model
+class: Authorization
+table: authorization
+fields:
+  publicId: String
+  authorizationName: String
+  authorizationDescription: String
+  createdBy: String
+  authorizedPupils: List<PupilAuthorization>?, relation(name=pupil_authorization_authorization)

@@ -1,0 +1,8 @@
+### enum for the support level
+enum: SupportLevel
+serialized: byName
+values:
+  - preschool
+  - one
+  - two
+  - three

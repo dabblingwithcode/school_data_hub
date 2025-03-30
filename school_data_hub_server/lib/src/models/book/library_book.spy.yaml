@@ -1,0 +1,9 @@
+## library book model
+class: LibraryBook
+table: library_book
+fields:
+  book: Book?, relation(name=library_books)
+  location: LibraryBookLocation?, relation(name=library_book_locations)
+  available: bool
+  lending: List<PupilBookLending>?, relation(name=pupil_book_lending_library_book)
+  

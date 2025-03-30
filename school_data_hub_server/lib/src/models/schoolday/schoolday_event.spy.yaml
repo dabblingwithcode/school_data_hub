@@ -1,0 +1,16 @@
+## Schoolday Event model
+class: SchooldayEvent
+table: schoolday_event
+fields:
+  eventId: String
+  eventType: String
+  eventReason: String
+  createdBy: String
+  processed: bool
+  processedBy: String
+  fileId: String
+  fileUrl: String
+  processedFileId: String
+  processedFileUrl:  String
+  schoolday: Schoolday?, relation(name=schoolday_event_schoolday)
+  pupil: PupilData?, relation(name=schoolday_event_pupil)

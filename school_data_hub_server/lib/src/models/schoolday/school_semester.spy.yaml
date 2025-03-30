@@ -1,0 +1,16 @@
+## School semester model
+class: SchoolSemester
+table: school_semester
+fields:
+
+  startDate: DateTime
+  endDate: DateTime
+  classConferenceDate: DateTime
+  supportConferenceDate: DateTime
+  isFirst: bool
+  reportConferenceDate: DateTime
+  schooldays: List<Schoolday>?, relation(name=schoolday_school_semester)
+  competenceReports: List<CompetenceReport>?, relation(name=competence_report_semester)
+  
+  
+  

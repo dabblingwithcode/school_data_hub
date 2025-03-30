@@ -1,0 +1,11 @@
+## Goal check model
+class: SupportGoalCheck
+table: support_goal_check
+fields:
+  checkId: String
+  createdBy: String
+  createdAt: DateTime
+  achieved: int
+  comment: String
+  supportGoalCheckFiles: List<SupportGoalCheckFile>?, relation
+  supportGoal: SupportGoal?, relation(onDelete=Cascade)

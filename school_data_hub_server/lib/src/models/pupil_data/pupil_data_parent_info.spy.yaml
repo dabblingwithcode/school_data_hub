@@ -1,0 +1,7 @@
+## pupil data parent info model
+class: PupilDataParentInfo
+fields:
+  parentsContact: String
+  communicationTutor1: String
+  communicationTutor2: String
+  createdBy: String

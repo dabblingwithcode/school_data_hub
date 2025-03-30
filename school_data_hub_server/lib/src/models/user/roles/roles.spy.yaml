@@ -1,0 +1,8 @@
+enum: Role
+serialized: byName
+values:
+  - technical
+  - teacher
+  - educator
+  - pupil
+

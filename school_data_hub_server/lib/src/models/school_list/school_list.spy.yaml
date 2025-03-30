@@ -1,0 +1,11 @@
+## School list model
+class: SchoolList
+table: school_list
+fields:
+  listId: String
+  name: String
+  description: String
+  createdBy: String
+  visibility: String
+  authorizedUsers: Set<String>?
+  pupilLists: List<PupilList>?, relation(name=pupil_list_school_list)
