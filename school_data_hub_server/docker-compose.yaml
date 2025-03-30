@@ -1,0 +1,44 @@
+services:
+  # Development services
+  postgres:
+    image: postgres:16.3
+    ports:
+      - "8090:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: school_data_hub
+      POSTGRES_PASSWORD: "VgcFY2F6lkZr_SkjEDr4qfyt18xzevu7"
+    volumes:
+      - school_data_hub_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:6.2.6
+    ports:
+      - "8091:6379"
+    command: redis-server --requirepass "PrVCRXnPoeOQZpk_sNrRg5SvgsS_AEvt"
+    environment:
+      - REDIS_REPLICATION_MODE=master
+
+  # Test services
+  postgres_test:
+    image: postgres:16.3
+    ports:
+      - "9090:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: school_data_hub_test
+      POSTGRES_PASSWORD: "9om6zhlNtJqBh1VsRxWygUXSGe8LDm_P"
+    volumes:
+      - school_data_hub_test_data:/var/lib/postgresql/data
+
+  redis_test:
+    image: redis:6.2.6
+    ports:
+      - "9091:6379"
+    command: redis-server --requirepass "wifcPxraCjChFMb9TfRQ6SBpoN8OBCQy"
+    environment:
+      - REDIS_REPLICATION_MODE=master
+
+volumes:
+  school_data_hub_data:
+  school_data_hub_test_data:

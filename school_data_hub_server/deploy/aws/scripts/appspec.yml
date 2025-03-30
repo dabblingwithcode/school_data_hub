@@ -1,0 +1,16 @@
+version: 0.0
+os: linux
+files:
+  - source: /vendor/
+    destination: /home/ec2-user/serverpod/upload/vendor/
+  - source: /school_data_hub_server/
+    destination: /home/ec2-user/serverpod/upload/school_data_hub_server/
+hooks:
+  BeforeInstall:
+    - location: school_data_hub_server/deploy/aws/scripts/install_dependencies
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: school_data_hub_server/deploy/aws/scripts/start_server
+      timeout: 300
+      runas: root
