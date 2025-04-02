@@ -14,15 +14,65 @@ enum SecureStorageKey {
   const SecureStorageKey(this.value);
 }
 
-class AppSecureStorage implements Storage {
+/// We are using two interfaces to interact with
+/// the same instance of [FlutterSecureStorage]
+/// [AppSecureStorage] is used for the app
+/// for storing pupil identities and environments
+/// we keep it for legacy reasons
+/// and to avoid breaking changes in the app
+///
+/// [ServerpodSecureStorage] is used for the serverpod client
+/// for storing the authentication key
+/// and implements the [Storage] interface
+/// for the [FlutterAuthenticationKeyManager]
+
+class AppSecureStorage {
+  static Future<bool> containsKey(String key) async {
+    if (await _secureStorage.containsKey(key: key)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  static Future<String?> read(String key) async {
+    final value = await _secureStorage.read(key: key);
+    return value;
+  }
+
+  static Future<void> write(String key, String value) async {
+    await _secureStorage.write(key: key, value: value);
+    return;
+  }
+
+  static Future<void> delete(String key) async {
+    await _secureStorage.delete(key: key);
+    return;
+  }
+}
+
+/// We are using two interfaces to interact with
+/// the same instance of [FlutterSecureStorage]
+/// [AppSecureStorage] is used for the app
+/// for storing pupil identities and environments
+/// we keep it for legacy reasons
+/// and to avoid breaking changes in the app
+///
+/// [ServerpodSecureStorage] is used for the serverpod client
+/// for storing the authentication key
+/// and implements the [Storage] interface
+/// for the [FlutterAuthenticationKeyManager]
+///
+class ServerpodSecureStorage implements Storage {
   // Singleton instance
-  static final AppSecureStorage _instance = AppSecureStorage._internal();
+  static final ServerpodSecureStorage _instance =
+      ServerpodSecureStorage._internal();
 
   // Private constructor
-  AppSecureStorage._internal();
+  ServerpodSecureStorage._internal();
 
   // Factory constructor to return the singleton instance
-  factory AppSecureStorage() {
+  factory ServerpodSecureStorage() {
     return _instance;
   }
 

@@ -13,3 +13,8 @@ A great starting point for learning Serverpod is our documentation site at:
 To run the project, first make sure that the server is running, then do:
 
     flutter run
+
+
+### Nice things to implement
+
+FCM push notifications: [https://github.com/serverpod/serverpod/issues/2205](https://github.com/serverpod/serverpod/issues/2205)

@@ -7,10 +7,13 @@ import 'dart:math' as math;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:school_data_hub_flutter/core/models/enums.dart';
-import 'package:school_data_hub_flutter/core/models/env.dart';
-import 'package:school_data_hub_flutter/core/models/populated_env_server_data.dart';
-import 'package:school_data_hub_flutter/core/services/notification_service.dart';
+import 'package:school_data_hub_flutter/common/models/enums.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/dependency_injection.dart';
+import 'package:school_data_hub_flutter/core/env/models/enums.dart';
+import 'package:school_data_hub_flutter/core/env/models/env.dart';
+import 'package:school_data_hub_flutter/core/models/populated_server_session_data.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/utils/logger.dart';
 import 'package:school_data_hub_flutter/utils/secure_storage.dart';
 import 'package:watch_it/watch_it.dart';
@@ -19,6 +22,10 @@ class EnvManager {
   final _dependentMangagersRegistered = ValueNotifier<bool>(false);
   ValueListenable<bool> get dependentManagersRegistered =>
       _dependentMangagersRegistered;
+
+  final _activeEnvRunMode = ValueNotifier<HubRunMode>(HubRunMode.development);
+  ValueListenable<HubRunMode> get activeEnvRunMode =>
+      _activeEnvRunMode; // di<EnvManager>()._runMode.value;
 
   Env? _activeEnv;
 
@@ -43,13 +50,15 @@ class EnvManager {
 
   PackageInfo get packageInfo => _packageInfo;
 
-  PopulatedEnvServerData _populatedEnvServerData = PopulatedEnvServerData(
-      schoolSemester: false,
-      schooldays: false,
-      competences: false,
-      supportCategories: false);
+  PopulatedServerSessionData _populatedEnvServerData =
+      PopulatedServerSessionData(
+          schoolSemester: false,
+          schooldays: false,
+          competences: false,
+          supportCategories: false);
 
-  PopulatedEnvServerData get populatedEnvServerData => _populatedEnvServerData;
+  PopulatedServerSessionData get populatedEnvServerData =>
+      _populatedEnvServerData;
 
   void setPopulatedEnvServerData(
       {bool? schoolSemester,
@@ -104,7 +113,7 @@ class EnvManager {
 
     // set the base url for the api client
 
-    // locator<ApiClient>().setBaseUrl(_activeEnv!.serverUrl);
+    // di<ApiClient>().setBaseUrl(_activeEnv!.serverUrl);
 
     _envReady.value = true;
 
@@ -112,11 +121,11 @@ class EnvManager {
   }
 
   Future<EnvsInStorage?> environmentsInStorage() async {
-    bool environmentsInStorage = await AppSecureStorage()
+    bool environmentsInStorage = await ServerpodSecureStorage()
         .containsKey(SecureStorageKey.environments.value);
 
     if (environmentsInStorage == true) {
-      final String? storedEnvironmentsAsString = await AppSecureStorage()
+      final String? storedEnvironmentsAsString = await ServerpodSecureStorage()
           .getString(SecureStorageKey.environments.value);
 
       try {
@@ -130,7 +139,8 @@ class EnvManager {
 
         log('deleting faulty environments from secure storage');
 
-        await AppSecureStorage().remove(SecureStorageKey.environments.value);
+        await ServerpodSecureStorage()
+            .remove(SecureStorageKey.environments.value);
 
         return null;
       }
@@ -144,33 +154,33 @@ class EnvManager {
     final Env env =
         Env.fromJson(json.decode(envAsString) as Map<String, dynamic>);
 
-    _environments = {..._environments, env.server: env};
+    _environments = {..._environments, env.name: env};
 
-    _defaultEnv = env.server;
+    _defaultEnv = env.name;
 
     logger.i(
-        'New Env ${env.server} stored, there are now ${_environments.length} environments stored!');
+        'New Env ${env.name} stored, there are now ${_environments.length} environments stored!');
 
     di<NotificationService>().showSnackBar(NotificationType.success,
-        'Schulschlüssel für ${env.server} gespeichert!');
+        'Schulschlüssel für ${env.name} gespeichert!');
 
-    activateEnv(envName: env.server);
+    activateEnv(envName: env.name);
 
     return;
   }
 
   deleteEnv() async {
-    final deletedEnvironment = _activeEnv!.server;
+    final deletedEnvironment = _activeEnv!.name;
 
     // delete _env.value from _envs
 
-    _environments.remove(_activeEnv!.server);
+    _environments.remove(_activeEnv!.name);
 
     // write _envs to secure storage
 
     final jsonEnvs = json.encode(_environments);
 
-    await AppSecureStorage()
+    await ServerpodSecureStorage()
         .setString(SecureStorageKey.environments.value, jsonEnvs);
 
     // if there are environments left in _envs, set the last one as value
@@ -182,11 +192,12 @@ class EnvManager {
 
       logger.i('Env $deletedEnvironment New defaultEnv: $_defaultEnv');
 
-      //  locator<ApiClient>().setBaseUrl(_activeEnv!.serverUrl);
+      //  di<ApiClient>().setBaseUrl(_activeEnv!.serverUrl);
     } else {
       // if there are no environments left, delete the environments from secure storage
 
-      await AppSecureStorage().remove(SecureStorageKey.environments.value);
+      await ServerpodSecureStorage()
+          .remove(SecureStorageKey.environments.value);
 
       _activeEnv = null;
 
@@ -200,35 +211,43 @@ class EnvManager {
     _activeEnv = _environments[envName]!;
 
     final updatedEnvsForStorage = EnvsInStorage(
-        defaultEnv: _activeEnv!.server, environmentsMap: _environments);
+        defaultEnv: _activeEnv!.name, environmentsMap: _environments);
 
     final String jsonEnvs = jsonEncode(updatedEnvsForStorage);
 
-    await AppSecureStorage()
+    await ServerpodSecureStorage()
         .setString(SecureStorageKey.environments.value, jsonEnvs);
 
     _defaultEnv = envName;
 
     _envReady.value = true;
 
-    logger.i('Activated Env: ${_activeEnv!.server}');
+    logger.i('Activated Env: ${_activeEnv!.name}');
 
-    if (_dependentMangagersRegistered.value == true) {
-      di<NotificationService>().setNewInstanceLoadingValue(true);
+    DiManager.unregisterValidEnvDependentManagers();
+    DiManager.registerValidEnvDependentManagers();
 
-      // await SessionHelper.clearInstanceSessionServerData();
+    // if (_dependentMangagersRegistered.value == true) {
+    //   di<NotificationService>().setNewInstanceLoadingValue(true);
 
-      // locator<SessionManager>().unauthenticate();
+    //   await HubSessionHelper.clearInstanceSessionServerData();
 
-      // await locator<SessionManager>().checkStoredCredentials();
+    //   di<HubSessionManager>().unauthenticate();
 
-      //await propagateNewEnv();
-    }
+    //   await di<HubSessionManager>().checkStoredCredentials();
+
+    //   propagateNewEnv();
+    // }
   }
 
-  setEnvNotReady() {
+  void setEnvNotReady() {
     _envReady.value = false;
     _activeEnv = null;
+  }
+
+  Future<void> propagateNewEnv() async {
+    // TODO: implement this if needed
+    await di<PupilIdentityManager>().getPupilIdentitiesForEnv();
   }
 
   Future<void> generateNewKeys(

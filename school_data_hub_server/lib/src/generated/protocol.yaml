@@ -1,2 +1,26 @@
+admin:
+  - createUser:
+  - deleteUser:
+  - promoteUserScope:
+  - demoteUserScope:
 example:
   - hello:
+pupil:
+  - getPupils:
+  - createPupil:
+  - updateParentInfo:
+schooldayAdmin:
+  - createSchoolSemester:
+  - updateSchoolSemester:
+  - deleteSchoolSemester:
+  - createSchoolday:
+  - createSchooldays:
+  - deleteSchoolday:
+  - updateSchoolday:
+schoolday:
+  - getSchoolSemesters:
+  - getSchooldays:
+auth:
+  - login:
+  - verifyPassword:
+  - logOut:

@@ -24,6 +24,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
   serverpod_flutter: 2.4.0
   school_data_hub_client:
     path: ../school_data_hub_client
@@ -36,9 +37,30 @@ dependencies:
   serverpod_auth_shared_flutter: 2.4.0
   watch_it: ^1.6.5
   package_info_plus: ^8.3.0
-  flutter_secure_storage: ^9.2.4
   logger: ^2.5.0
   file_picker: ^9.2.1
+  gap: ^3.0.1
+  flutter_localizations: 
+    sdk: flutter
+  flutter_secure_storage: ^8.1.0 # not using 9.2.2 because of https://github.com/mogol/flutter_secure_storage/issues/634
+  intl: ^0.19.0
+  mobile_scanner: ^6.0.7
+  carousel_slider: ^5.0.0
+  qr_flutter: ^4.1.0
+  qr_code_vision: ^0.1.2
+  image_picker: ^1.1.2
+  pasteboard: ^0.3.0
+  path_provider: ^2.1.5
+  crop_image: ^1.0.16
+  widget_zoom: ^0.0.4
+  custom_image_crop: ^0.1.1
+  flutter_cache_manager: ^3.4.1
+  top_snackbar_flutter: ^3.2.0
+  encrypt: ^5.0.3
+  json_annotation: ^4.9.0
+  collection: ^1.19.0
+  jwt_decoder: ^2.0.1
+
 
 dev_dependencies:
   flutter_lints: '>=3.0.0 <6.0.0'
@@ -50,17 +72,28 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+  generate: true
+  assets:
+    - assets/
+    # - shorebird.yaml
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
-
+dependency_overrides:
+  archive: ^3.6.1
+  get_it: ^8.0.3
+msix_config:
+  display_name: Schuldaten Hub
+  publisher_display_name: Medien-Sandkasten
+  identity_name: de.medien-sandkasten.schuldaten-hub
+  msix_version: 0.4.53.1
+  app_installer: #<-- app installer configuration
+    publish_folder_path: V:\
+  logo_path: V:\schuldaten_hub_logo.png
+  capabilities: internetClient
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

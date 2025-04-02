@@ -49,6 +49,12 @@ import 'user/roles/roles.dart' as _i37;
 import 'user/roles/staff.dart' as _i38;
 import 'workbook/pupil_workbook.dart' as _i39;
 import 'workbook/workbook.dart' as _i40;
+import 'package:school_data_hub_server/src/generated/pupil_data/pupil_data.dart'
+    as _i41;
+import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
+    as _i42;
+import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
+    as _i43;
 export 'authorization/authorization.dart';
 export 'authorization/pupil_authorization.dart';
 export 'book/book.dart';
@@ -3222,6 +3228,22 @@ class Protocol extends _i1.SerializationManagerServer {
               .toList()
           : null) as T;
     }
+    if (t == List<_i41.PupilData>) {
+      return (data as List).map((e) => deserialize<_i41.PupilData>(e)).toList()
+          as T;
+    }
+    if (t == List<_i42.Schoolday>) {
+      return (data as List).map((e) => deserialize<_i42.Schoolday>(e)).toList()
+          as T;
+    }
+    if (t == List<DateTime>) {
+      return (data as List).map((e) => deserialize<DateTime>(e)).toList() as T;
+    }
+    if (t == List<_i43.SchoolSemester>) {
+      return (data as List)
+          .map((e) => deserialize<_i43.SchoolSemester>(e))
+          .toList() as T;
+    }
     try {
       return _i3.Protocol().deserialize<T>(data, t);
     } on _i1.DeserializationTypeNotFoundException catch (_) {}
@@ -3354,6 +3376,9 @@ class Protocol extends _i1.SerializationManagerServer {
     if (className != null) {
       return 'serverpod_auth.$className';
     }
+    if (data is List<_i41.PupilData>) {
+      return 'List<PupilData>';
+    }
     return null;
   }
 
@@ -3481,6 +3506,9 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName.startsWith('serverpod_auth.')) {
       data['className'] = dataClassName.substring(15);
       return _i3.Protocol().deserializeByClassName(data);
+    }
+    if (dataClassName == 'List<PupilData>') {
+      return deserialize<List<_i41.PupilData>>(data['data']);
     }
     return super.deserializeByClassName(data);
   }

@@ -1,10 +1,10 @@
-class PopulatedEnvServerData {
+class PopulatedServerSessionData {
   final bool schoolSemester;
   final bool schooldays;
   final bool competences;
   final bool supportCategories;
 
-  PopulatedEnvServerData({
+  PopulatedServerSessionData({
     required this.schoolSemester,
     required this.schooldays,
     required this.competences,
@@ -17,7 +17,7 @@ class PopulatedEnvServerData {
     bool? competences,
     bool? supportCategories,
   }) =>
-      PopulatedEnvServerData(
+      PopulatedServerSessionData(
         schoolSemester: schoolSemester ?? this.schoolSemester,
         schooldays: schooldays ?? this.schooldays,
         competences: competences ?? this.competences,

@@ -1,9 +1,3 @@
-// import 'dart:convert';
-
-// // Env envFromJson(String str) => Env.fromJson(json.decode(str));
-
-// // String envToJson(Env data) => json.encode(data.toJson());
-
 class EnvsInStorage {
   final String defaultEnv;
   final Map<String, Env> environmentsMap;
@@ -32,27 +26,27 @@ class EnvsInStorage {
 }
 
 class Env {
-  final String server;
+  final String name;
   final String key;
   final String iv;
   final String serverUrl;
 
   Env({
-    required this.server,
+    required this.name,
     required this.key,
     required this.iv,
     required this.serverUrl,
   });
 
   factory Env.fromJson(Map<String, dynamic> json) => Env(
-        server: json["server"],
+        name: json["server"],
         key: json["key"],
         iv: json["iv"],
         serverUrl: json["server_url"],
       );
 
   Map<String, dynamic> toJson() => {
-        "server": server,
+        "server": name,
         "key": key,
         "iv": iv,
         "server_url": serverUrl,
