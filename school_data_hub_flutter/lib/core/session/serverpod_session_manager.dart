@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:school_data_hub_flutter/core/auth/hub_auth_key_manager.dart';
-import 'package:school_data_hub_flutter/utils/secure_storage.dart';
+import 'package:school_data_hub_flutter/common/utils/secure_storage.dart';
 import 'package:serverpod_auth_client/serverpod_auth_client.dart';
 import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
 

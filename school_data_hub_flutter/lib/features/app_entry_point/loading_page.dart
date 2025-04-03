@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:watch_it/watch_it.dart';
 
 class LoadingPage extends WatchingStatefulWidget {

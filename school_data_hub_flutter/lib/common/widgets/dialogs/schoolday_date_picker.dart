@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
-import 'package:school_data_hub_flutter/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 
 import 'package:watch_it/watch_it.dart';
 

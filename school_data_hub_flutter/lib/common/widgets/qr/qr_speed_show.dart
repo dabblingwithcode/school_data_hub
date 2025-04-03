@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:school_data_hub_flutter/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/theme/styles.dart';
 
 class QrCodeSpeedShow extends StatefulWidget {
   final List<Map<String, Object>> qrMaps;

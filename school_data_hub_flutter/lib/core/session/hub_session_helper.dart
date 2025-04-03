@@ -7,11 +7,11 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:school_data_hub_flutter/common/models/enums.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/utils/logger.dart';
+import 'package:school_data_hub_flutter/common/utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/models/hub_session.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
-import 'package:school_data_hub_flutter/utils/secure_storage.dart';
 import 'package:watch_it/watch_it.dart';
 
 class HubSessionHelper {
@@ -43,8 +43,11 @@ class HubSessionHelper {
 
   static void logoutAndDeleteAllData(BuildContext context) async {
     await di<PupilIdentityManager>().deleteAllPupilIdentities();
+
     await di<EnvManager>().deleteEnv();
+
     await di<ServerpodSessionManager>().signOutDevice();
+
     final cacheManager = di<DefaultCacheManager>();
 
     await cacheManager.emptyCache();

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/core/env/models/env.dart';
-import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/core/env/models/env.dart';
+import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 Future<bool?> changeEnvironmentDialog({
@@ -70,10 +71,10 @@ Future<bool?> changeEnvironmentDialog({
             padding: const EdgeInsets.all(5.0),
             child: ElevatedButton(
               style: AppStyles.successButtonStyle,
-              onPressed: () {
+              onPressed: () async {
                 Navigator.of(context).pop();
 
-                // di<SessionManager>().setSessionNotAuthenticated();
+                await di<ServerpodSessionManager>().signOutDevice();
                 di<EnvManager>().setEnvNotReady();
               }, // Add onPressed
               child: const Text(

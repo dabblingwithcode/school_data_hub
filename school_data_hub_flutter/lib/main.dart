@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
@@ -13,7 +14,6 @@ import 'package:school_data_hub_flutter/features/app_entry_point/error_page.dart
 import 'package:school_data_hub_flutter/features/app_entry_point/loading_page.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/landing_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/theme/app_colors.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:window_manager/window_manager.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/theme/styles.dart';
 
 Future<String?> longTextFieldDialog(
     {required String title,

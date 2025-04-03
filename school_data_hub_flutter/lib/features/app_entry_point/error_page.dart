@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 
 class ErrorPage extends StatelessWidget {
   final String error;

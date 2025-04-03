@@ -3,13 +3,13 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/utils/barcode_stream_scanner.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_image_picker.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
-import 'package:school_data_hub_flutter/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/theme/styles.dart';
 import 'package:watch_it/watch_it.dart';
 
 class ScanToolsPage extends WatchingWidget {
@@ -29,6 +29,7 @@ class ScanToolsPage extends WatchingWidget {
       }
     } else {
       // User canceled the picker
+      return;
     }
   }
 

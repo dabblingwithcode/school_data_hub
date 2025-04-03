@@ -1,5 +1,5 @@
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/utils/secure_storage.dart';
+import 'package:school_data_hub_flutter/common/utils/secure_storage.dart';
 import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
 
 /// Implementation of a Serverpod [AuthenticationKeyManager] specifically for

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/common/widgets/list_view_components/generic_app_bar.dart';
-import 'package:school_data_hub_flutter/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:watch_it/watch_it.dart';
 
 class BarcodeStreamScanner extends StatefulWidget {

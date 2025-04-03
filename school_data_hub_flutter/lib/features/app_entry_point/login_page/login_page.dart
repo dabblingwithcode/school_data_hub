@@ -6,15 +6,14 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/snackbars.dart';
-import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/widgets/environments_dropdown.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/landing_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/theme/styles.dart';
 import 'package:watch_it/watch_it.dart';
 
 class LoginPage extends WatchingWidget {
@@ -32,13 +31,13 @@ class LoginPage extends WatchingWidget {
     );
     final bool isAuthenticated =
         watch(di<ServerpodSessionManager>()).isSignedIn;
-    final bool envReady = watchValue((EnvManager x) => x.envIsReady);
+
     final locale = AppLocalizations.of(context)!;
-    log('# LoginPage: isAuthenticated: $isAuthenticated, envReady: $envReady');
+    log('# LoginPage: isAuthenticated: $isAuthenticated');
     final bool keyboardOn = MediaQuery.of(context).viewInsets.vertical > 0.0;
     //FocusScopeNode currentFocus = FocusScope.of(context);
 
-    return (envReady && isAuthenticated)
+    return (isAuthenticated)
         ? MainMenuBottomNavigation()
         : Scaffold(
             resizeToAvoidBottomInset: true,
@@ -98,7 +97,7 @@ class LoginPage extends WatchingWidget {
                           : const SizedBox(
                               height: 15,
                             ),
-                      if (envReady) ...<Widget>[
+                      ...<Widget>[
                         ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 380),
                           child: Padding(

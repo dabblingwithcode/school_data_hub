@@ -6,6 +6,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/models/enums.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/snackbars.dart';
@@ -14,8 +15,7 @@ import 'package:school_data_hub_flutter/features/app_main_navigation/learn_resou
 import 'package:school_data_hub_flutter/features/app_main_navigation/pupil_lists_menu_page.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/scan_tools_page.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/school_lists_page.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/settings_page_placeholder.dart';
-import 'package:school_data_hub_flutter/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/features/app_settings/settings_page/settings_page.dart';
 import 'package:watch_it/watch_it.dart';
 
 class MainMenuBottomNavManager {
