@@ -161,9 +161,11 @@ class LoginPage extends WatchingWidget {
                                 await controller.loginWithTextCredentials();
                               },
                               onLongPress: () async {
+                                final email = controller.usernameController.text
+                                    .toLowerCase();
                                 await di<Client>().admin.createUser(
                                     userName: 'userName',
-                                    email: controller.usernameController.text,
+                                    email: email,
                                     password:
                                         controller.passwordController.text);
                               },
@@ -201,48 +203,6 @@ class LoginPage extends WatchingWidget {
                                     color: Colors.white),
                               ),
                             ),
-                          ),
-                        ),
-                      ],
-                      if (envReady == false) ...<Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: Center(
-                            child: Platform.isWindows
-                                ? Text(
-                                    locale.importSchoolDataToContinue,
-                                    softWrap: true,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                    ),
-                                  )
-                                : Text(
-                                    locale.scanSchoolIdToContinue,
-                                    softWrap: true,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                        const Gap(10),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            //margin: const EdgeInsets.only(bottom: 16),
-                            child: ElevatedButton(
-                                style: AppStyles.actionButtonStyle,
-                                onPressed: () async {
-                                  controller.generateSchoolKeys(context);
-                                },
-                                child: const Text('SCHULSCHLÜSSEL ERSTELLEN',
-                                    textAlign: TextAlign.center,
-                                    style: AppStyles.buttonTextStyle)),
                           ),
                         ),
                       ],

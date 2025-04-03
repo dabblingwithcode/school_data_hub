@@ -100,6 +100,15 @@ class Endpoints extends _i1.EndpointDispatch {
             password: params['password'],
           ),
         ),
+        'createTestUser': _i1.MethodConnector(
+          name: 'createTestUser',
+          params: {},
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['admin'] as _i2.AdminEndpoint).createTestUser(session),
+        ),
         'deleteUser': _i1.MethodConnector(
           name: 'deleteUser',
           params: {

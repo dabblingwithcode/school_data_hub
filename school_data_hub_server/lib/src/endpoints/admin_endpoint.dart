@@ -1,4 +1,5 @@
 import 'package:serverpod/serverpod.dart';
+import 'package:serverpod_auth_server/module.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
 
 /// The endpoint for admin operations.
@@ -21,6 +22,25 @@ class AdminEndpoint extends Endpoint {
     if (userInfo?.id == null) {
       throw 'Failed to create user';
     }
+  }
+
+  Future<UserInfo?> createTestUser(Session session) async {
+    // Create user
+    final emailAddr = 'testmail';
+    final password = 'test';
+
+    final userInfo =
+        await auth.Emails.createUser(session, 'Test user', emailAddr, password);
+
+    if (userInfo?.id == null) {
+      throw 'Failed to create test user';
+    }
+
+    // Try logging in as user
+    await auth.UserAuthentication.signInUser(session, userInfo!.id!, 'server');
+    assert(await session.authenticated != null);
+
+    return userInfo;
   }
 
   Future<void> deleteUser(Session session, int userId) async {

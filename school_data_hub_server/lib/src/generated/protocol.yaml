@@ -1,5 +1,6 @@
 admin:
   - createUser:
+  - createTestUser:
   - deleteUser:
   - promoteUserScope:
   - demoteUserScope:
