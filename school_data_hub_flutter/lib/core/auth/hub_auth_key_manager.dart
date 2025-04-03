@@ -3,7 +3,8 @@ import 'package:school_data_hub_flutter/common/utils/secure_storage.dart';
 import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
 
 /// Implementation of a Serverpod [AuthenticationKeyManager] specifically for
-/// School Data Hub
+/// because we need to consider the environment on which the app is running
+/// and we want [ServerpodSecureStorage] for the authentication key.
 class HubAuthKeyManager extends AuthenticationKeyManager {
   String _storageKey() => 'hub_auth_key_${envName}_$runMode';
 

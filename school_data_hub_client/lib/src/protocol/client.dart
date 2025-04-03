@@ -20,7 +20,9 @@ import 'package:school_data_hub_client/src/protocol/schoolday/school_semester.da
     as _i6;
 import 'package:school_data_hub_client/src/protocol/schoolday/schoolday.dart'
     as _i7;
-import 'protocol.dart' as _i8;
+import 'package:school_data_hub_client/src/protocol/user/device_info.dart'
+    as _i8;
+import 'protocol.dart' as _i9;
 
 /// The endpoint for admin operations.
 /// This endpoint requires the user to be logged in and have admin scope.
@@ -234,6 +236,7 @@ class EndpointAuth extends _i1.EndpointRef {
   _i2.Future<_i3.AuthenticationResponse> login(
     String email,
     String password,
+    _i8.DeviceInfo deviceInfo,
   ) =>
       caller.callServerEndpoint<_i3.AuthenticationResponse>(
         'auth',
@@ -241,6 +244,7 @@ class EndpointAuth extends _i1.EndpointRef {
         {
           'email': email,
           'password': password,
+          'deviceInfo': deviceInfo,
         },
       );
 
@@ -288,7 +292,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
           host,
-          _i8.Protocol(),
+          _i9.Protocol(),
           securityContext: securityContext,
           authenticationKeyManager: authenticationKeyManager,
           streamingConnectionTimeout: streamingConnectionTimeout,

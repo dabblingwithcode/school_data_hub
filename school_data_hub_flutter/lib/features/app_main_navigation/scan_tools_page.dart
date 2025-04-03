@@ -38,7 +38,8 @@ class ScanToolsPage extends WatchingWidget {
     if (rawTextResult == null) {
       return;
     }
-    di<PupilIdentityManager>().decryptCodesAndAddIdentities([rawTextResult]);
+    di<PupilIdentityManager>()
+        .decryptAndAddOrUpdatePupilIdentities([rawTextResult]);
   }
 
   @override

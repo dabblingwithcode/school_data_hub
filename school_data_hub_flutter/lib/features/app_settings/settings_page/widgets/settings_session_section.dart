@@ -40,7 +40,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           leading: const Icon(Icons.home),
           title: const Text('Instanz:'),
           value: Text(
-            di<EnvManager>().env!.name,
+            di<EnvManager>().activeEnv!.name,
           ),
           trailing: null,
         ),
@@ -146,7 +146,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
                 message: 'Kinder-Ids für diese Instanz löschen?');
             if (confirm == true && context.mounted) {
               PupilIdentityHelper.deletePupilIdentitiesForEnv(
-                  envManager.env!.name);
+                  envManager.activeEnv!.name);
               di<NotificationService>().showSnackBar(
                   NotificationType.success, 'ID-Schlüssel gelöscht');
             }
@@ -223,7 +223,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
                     title: 'Achtung!',
                     message: 'Ausloggen und alle Daten löschen?');
                 if (confirm == true && context.mounted) {
-                  HubSessionHelper.logoutAndDeleteAllData(context);
+                  HubSessionHelper.logoutAndDeleteAllInstanceData();
                 }
                 return;
               },

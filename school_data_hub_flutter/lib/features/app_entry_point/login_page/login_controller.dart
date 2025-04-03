@@ -36,7 +36,7 @@ class LoginController extends State<Login> {
     super.initState();
     if (di<EnvManager>().envIsReady.value) {
       envs = di<EnvManager>().envs;
-      activeEnv = di<EnvManager>().env!;
+      activeEnv = di<EnvManager>().activeEnv!;
       selectedEnv = activeEnv!.name;
     } else {
       envs = {};
@@ -48,7 +48,7 @@ class LoginController extends State<Login> {
     di<EnvManager>().deleteEnv();
     setState(() {
       envs = di<EnvManager>().envs;
-      activeEnv = di<EnvManager>().env!;
+      activeEnv = di<EnvManager>().activeEnv!;
       selectedEnv = activeEnv!.name;
     });
     return;
@@ -87,7 +87,7 @@ class LoginController extends State<Login> {
       di<EnvManager>().importNewEnv(scanResponse);
       setState(() {
         envs = di<EnvManager>().envs;
-        activeEnv = di<EnvManager>().env!;
+        activeEnv = di<EnvManager>().activeEnv!;
         selectedEnv = activeEnv!.name;
       });
       return;
@@ -115,8 +115,9 @@ class LoginController extends State<Login> {
 
   Future<void> attemptLogin(
       {required String username, required String password}) async {
-    final authResponse =
-        await di<Client>().modules.auth.email.authenticate(username, password);
+    final authResponse = await di<Client>().auth.login(username, password,
+        DeviceInfo(deviceId: '1', deviceName: 'Test device'));
+
     if (authResponse.success) {
       di<NotificationService>()
           .showSnackBar(NotificationType.success, 'Erfolgreich eingeloggt!');
@@ -125,6 +126,10 @@ class LoginController extends State<Login> {
         authResponse.keyId!,
         authResponse.key!,
       );
+
+      /// Don't forget to set the flag in [EnvManager] to false
+      /// to get to the login screen.
+      di<EnvManager>().setUserAuthenticated(true);
     } else {
       di<NotificationService>().showSnackBar(NotificationType.error,
           'Login fehlgeschlagen: ${authResponse.failReason}');
@@ -139,7 +144,7 @@ class LoginController extends State<Login> {
       di<EnvManager>().importNewEnv(rawTextResult);
       setState(() {
         envs = di<EnvManager>().envs;
-        activeEnv = di<EnvManager>().env!;
+        activeEnv = di<EnvManager>().activeEnv!;
         selectedEnv = activeEnv!.name;
       });
       return;
@@ -178,7 +183,7 @@ class LoginController extends State<Login> {
       return;
     }
     await di<EnvManager>()
-        .generateNewKeys(serverName: serverName, serverUrl: serverUrl);
+        .generateNewEnvKeys(serverName: serverName, serverUrl: serverUrl);
 
     di<NotificationService>().showSnackBar(
         NotificationType.success, 'Schulschlüssel erfolgreich generiert');

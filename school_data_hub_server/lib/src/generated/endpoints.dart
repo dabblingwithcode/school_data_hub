@@ -23,7 +23,9 @@ import 'package:school_data_hub_server/src/generated/schoolday/school_semester.d
     as _i9;
 import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
     as _i10;
-import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i11;
+import 'package:school_data_hub_server/src/generated/user/device_info.dart'
+    as _i11;
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i12;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -467,6 +469,11 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<String>(),
               nullable: false,
             ),
+            'deviceInfo': _i1.ParameterDescription(
+              name: 'deviceInfo',
+              type: _i1.getType<_i11.DeviceInfo>(),
+              nullable: false,
+            ),
           },
           call: (
             _i1.Session session,
@@ -476,6 +483,7 @@ class Endpoints extends _i1.EndpointDispatch {
             session,
             params['email'],
             params['password'],
+            params['deviceInfo'],
           ),
         ),
         'verifyPassword': _i1.MethodConnector(
@@ -522,6 +530,6 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
-    modules['serverpod_auth'] = _i11.Endpoints()..initializeEndpoints(server);
+    modules['serverpod_auth'] = _i12.Endpoints()..initializeEndpoints(server);
   }
 }

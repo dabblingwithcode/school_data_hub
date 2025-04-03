@@ -4,31 +4,44 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:school_data_hub_flutter/common/models/enums.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/common/utils/logger.dart';
+import 'package:school_data_hub_flutter/common/utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/core/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/models/enums.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
 import 'package:school_data_hub_flutter/core/models/populated_server_session_data.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
-import 'package:school_data_hub_flutter/common/utils/logger.dart';
-import 'package:school_data_hub_flutter/common/utils/secure_storage.dart';
 import 'package:watch_it/watch_it.dart';
 
 class EnvManager {
   bool _dependentMangagersRegistered = false;
   bool get dependentManagersRegistered => _dependentMangagersRegistered;
 
+  /// we need to observe in [MaterialApp] if a user is authenticated
+  /// without accessing [ServerpodSessionManager], because if there is not
+  // an active env yet, it will still be unregistered.
+  /// So this is a workaround setting a flag here
+  /// that should be changed every time there is an authentication change
+  /// in the [ServerpodSessionManager].
+  final _isUserAuthenticated = ValueNotifier<bool>(false);
+  ValueListenable<bool> get isUserAuthenticated => _isUserAuthenticated;
+
+  void setUserAuthenticated(bool value) {
+    _isUserAuthenticated.value = value;
+  }
+
   final _activeEnvRunMode = ValueNotifier<HubRunMode>(HubRunMode.development);
-  ValueListenable<HubRunMode> get activeEnvRunMode =>
-      _activeEnvRunMode; // di<EnvManager>()._runMode.value;
+  ValueListenable<HubRunMode> get activeEnvRunMode => _activeEnvRunMode;
 
   Env? _activeEnv;
 
-  Env? get env => _activeEnv;
+  Env? get activeEnv => _activeEnv;
 
   Map<String, Env> _environments = {};
   Map<String, Env> get envs => _environments;
@@ -49,6 +62,10 @@ class EnvManager {
 
   PackageInfo get packageInfo => _packageInfo;
 
+  /// With [PopulatedServerSessionData] we are monitoring
+  /// if  important data for the server session is populated -
+  /// Without them, other features won't work properly.
+  /// We nag with a notification until all data is populated.
   PopulatedServerSessionData _populatedEnvServerData =
       PopulatedServerSessionData(
           schoolSemester: false,
@@ -74,7 +91,7 @@ class EnvManager {
     _populatedEnvServerData = data;
   }
 
-  bool anyPopulatedEnvServerDataIsFalse() {
+  bool isAnyImportantEnvDataNotPopulatedInServer() {
     return _populatedEnvServerData.schoolSemester == false ||
         _populatedEnvServerData.schooldays == false ||
         _populatedEnvServerData.competences == false ||
@@ -88,7 +105,7 @@ class EnvManager {
 
   void setDependentManagersRegistered(bool value) {
     _dependentMangagersRegistered = value;
-    log('message: dependentManagersRegistered: $value');
+    log('EnvManager - dependentManagersRegistered: $value');
   }
 
   Future<void> firstRun() async {
@@ -151,19 +168,17 @@ class EnvManager {
 
   // set the environment from a string
   void importNewEnv(String envAsString) async {
+    // decode the json string to an Env object
     final Env env =
         Env.fromJson(json.decode(envAsString) as Map<String, dynamic>);
 
+    // add the env to the environments map
     _environments = {..._environments, env.name: env};
 
-    _defaultEnv = env.name;
+    log('Environment ${env.name} added to environments map in memory');
 
-    logger.i(
-        'New Env ${env.name} stored, there are now ${_environments.length} environments stored!');
-
-    di<NotificationService>().showSnackBar(NotificationType.success,
-        'Schulschlüssel für ${env.name} gespeichert!');
-
+    // the modified environments map will be stored
+    // in the [activateEnv] method
     activateEnv(envName: env.name);
 
     return;
@@ -189,7 +204,7 @@ class EnvManager {
       _activeEnv = _environments.values.last;
 
       _defaultEnv = _environments.keys.last;
-      resetDependentManagers();
+      resetManagersDependentOnEnv();
       logger.i('Env $deletedEnvironment New defaultEnv: $_defaultEnv');
 
       //  di<ApiClient>().setBaseUrl(_activeEnv!.serverUrl);
@@ -210,40 +225,41 @@ class EnvManager {
   Future<void> activateEnv({required String envName}) async {
     _activeEnv = _environments[envName]!;
 
+    _defaultEnv = envName;
+
+    // The active environment changed, we need to update
+    // this information in storage
     final updatedEnvsForStorage = EnvsInStorage(
         defaultEnv: _activeEnv!.name, environmentsMap: _environments);
 
     final String jsonEnvs = jsonEncode(updatedEnvsForStorage);
 
+    // write the updated environments to secure storage
     await ServerpodSecureStorage()
         .setString(SecureStorageKey.environments.value, jsonEnvs);
 
-    _defaultEnv = envName;
-
     _envIsReady.value = true;
 
-    logger.i('Activated Env: ${_activeEnv!.name}');
+    log('Activated Env: ${_activeEnv!.name}');
+
+    logger.i(
+        'New Env $envName stored, there are now ${_environments.length} environments stored!');
+
+    di<NotificationService>().showSnackBar(
+        NotificationType.success, 'Schulschlüssel für $envName gespeichert!');
 
     // Check if there are any dependent managers registered
     // and if so, unregister them
     // and register them again with the new environment
     if (dependentManagersRegistered) {
-      await resetDependentManagers();
+      await resetManagersDependentOnEnv();
     } else {
       await DiManager.registerManagersDependingOnActiveEnv();
     }
-
-    // if (_dependentMangagersRegistered.value == true) {
-    //   di<NotificationService>().setNewInstanceLoadingValue(true);
-
-    //   await HubSessionHelper.clearInstanceSessionServerData();
-
-    //   di<HubSessionManager>().unauthenticate();
-
-    //   await di<HubSessionManager>().checkStoredCredentials();
-
-    //   propagateNewEnv();
-    // }
+    // Set the isAuthenticated flag to false
+    // because the user is not authenticated in the new environment (yet)
+    // and we need to show the login screen again
+    _isUserAuthenticated.value = false;
   }
 
   void setEnvNotReady() {
@@ -251,7 +267,7 @@ class EnvManager {
     _activeEnv = null;
   }
 
-  Future<void> resetDependentManagers() async {
+  Future<void> resetManagersDependentOnEnv() async {
     await DiManager.unregisterManagersDependingOnActiveEnv();
     await DiManager.registerManagersDependingOnActiveEnv();
   }
@@ -261,9 +277,9 @@ class EnvManager {
     await di<PupilIdentityManager>().getPupilIdentitiesForEnv();
   }
 
-  Future<void> generateNewKeys(
+  Future<void> generateNewEnvKeys(
       {required String serverUrl, required String serverName}) async {
-    String generateUtf8String(int length) {
+    String generateRandomUtf8StringOfLength(int length) {
       const chars =
           'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
       final random = math.Random.secure();
@@ -271,9 +287,9 @@ class EnvManager {
           length, (index) => chars[random.nextInt(chars.length)]).join();
     }
 
-    final key = generateUtf8String(32);
+    final key = generateRandomUtf8StringOfLength(32);
 
-    final iv = generateUtf8String(16);
+    final iv = generateRandomUtf8StringOfLength(16);
 
     final String schoolKey = jsonEncode(
         {"server": serverName, "key": key, "iv": iv, "server_url": serverUrl});
@@ -290,5 +306,34 @@ class EnvManager {
           .showSnackBar(NotificationType.error, 'Aktion abgebrochen');
     }
     return;
+  }
+
+  Future<({String deviceId, String deviceName})> getDeviceNameAndId() async {
+    final deviceInfo = DeviceInfoPlugin();
+
+    if (Platform.isWindows) {
+      final windowsInfo = await deviceInfo.windowsInfo;
+      return (
+        deviceName: windowsInfo.computerName,
+        deviceId: windowsInfo.deviceId
+      );
+    } else if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.androidInfo;
+      return (
+        deviceName: androidInfo.model,
+        deviceId: androidInfo.id,
+      );
+    } else if (Platform.isIOS) {
+      final iosInfo = await deviceInfo.iosInfo;
+      return (
+        deviceName: iosInfo.name,
+        deviceId: iosInfo.modelName,
+      );
+    } else {
+      return (
+        deviceId: 'Unknown Device',
+        deviceName: 'Unknown Device',
+      );
+    }
   }
 }

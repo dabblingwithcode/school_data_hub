@@ -88,7 +88,7 @@ class MainMenuBottomNavigation extends WatchingWidget {
         });
     callOnce((context) async {
       final envDataIncomplete =
-          di<EnvManager>().anyPopulatedEnvServerDataIsFalse();
+          di<EnvManager>().isAnyImportantEnvDataNotPopulatedInServer();
       if (envDataIncomplete) {
         final serverDataStatus = di<EnvManager>().populatedEnvServerData;
         final List<String> missingFields = [];
@@ -202,9 +202,9 @@ void showInstanceLoadingOverlay(BuildContext context) {
                   ),
                 ),
                 const Gap(15),
-                if (di<EnvManager>().env != null)
+                if (di<EnvManager>().activeEnv != null)
                   Text(
-                    di<EnvManager>().env!.name,
+                    di<EnvManager>().activeEnv!.name,
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

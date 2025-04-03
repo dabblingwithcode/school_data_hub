@@ -18,7 +18,7 @@ class DiManager {
 
   DiManager._internal();
 
-  static void registerBaseManagers() {
+  static void registerNonDependentManagers() {
     di.registerSingletonAsync<EnvManager>(() async {
       final envManager = EnvManager();
 
@@ -38,13 +38,13 @@ class DiManager {
     di.registerSingletonWithDependencies<HubAuthKeyManager>(() {
       return HubAuthKeyManager(
         runMode: di<EnvManager>().activeEnvRunMode.value.name,
-        envName: di<EnvManager>().env!.name,
+        envName: di<EnvManager>().activeEnv!.name,
       );
     }, dependsOn: [EnvManager]);
 
     di.registerSingletonWithDependencies<Client>(() {
       return Client(
-        di<EnvManager>().env!.serverUrl,
+        di<EnvManager>().activeEnv!.serverUrl,
         authenticationKeyManager: di<HubAuthKeyManager>(),
       )..connectivityMonitor = FlutterConnectivityMonitor();
     }, dependsOn: [HubAuthKeyManager]);
@@ -55,9 +55,9 @@ class DiManager {
       final sessionManager = ServerpodSessionManager(
         caller: di<Client>().modules.auth,
       );
+
       // this will initialize the session manager and load the stored user info
       // it returns a bool
-
       await sessionManager.initialize();
       return sessionManager;
     }, dependsOn: [Client]);
@@ -74,10 +74,16 @@ class DiManager {
   }
 
   static Future<void> unregisterManagersDependingOnActiveEnv() async {
+    di<ServerpodSessionManager>().dispose();
     await di.unregister<ServerpodSessionManager>();
 
     await di.unregister<HubAuthKeyManager>();
 
     await di.unregister<Client>();
+  }
+
+  static Future<void> resetManagersDependingOnActiveEnv() async {
+    await unregisterManagersDependingOnActiveEnv();
+    await registerManagersDependingOnActiveEnv();
   }
 }

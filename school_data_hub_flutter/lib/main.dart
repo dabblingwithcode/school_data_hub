@@ -8,7 +8,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/entry_point/entry_point_controller.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/error_page.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/loading_page.dart';
@@ -48,7 +47,7 @@ void main() async {
     ),
   );
 
-  DiManager.registerBaseManagers();
+  DiManager.registerNonDependentManagers();
   await di.allReady();
 
   runApp(const MyApp());
@@ -68,7 +67,9 @@ class MyApp extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool envIsReady = watchValue((EnvManager x) => x.envIsReady);
+    final bool envIsReady = watchValue((EnvManager x) => x.envIsReady);
+    final bool userIsAuthenticated =
+        watchValue((EnvManager x) => x.isUserAuthenticated);
 
     // TODO: How can we watch the connectivity monitor instead of
     // adding a listener?
@@ -105,7 +106,7 @@ class MyApp extends WatchingWidget {
                       return ErrorPage(error: snapshot.error.toString());
                     } else if (snapshot.connectionState ==
                         ConnectionState.done) {
-                      if (di<ServerpodSessionManager>().isSignedIn) {
+                      if (userIsAuthenticated) {
                         return MainMenuBottomNavigation();
                       } else {
                         return const Login();

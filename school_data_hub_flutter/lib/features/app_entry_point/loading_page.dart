@@ -59,9 +59,9 @@ class LoadingPageState extends State<LoadingPage> {
                   ),
                 ),
                 const Gap(15),
-                if (di<EnvManager>().env != null)
+                if (di<EnvManager>().activeEnv != null)
                   Text(
-                    di<EnvManager>().env!.name,
+                    di<EnvManager>().activeEnv!.name,
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

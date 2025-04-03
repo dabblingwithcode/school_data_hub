@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/entry_point/entry_point_controller.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/features/app_entry_point/entry_point/entry_point_controller.dart';
 import 'package:watch_it/watch_it.dart';
 
 class EntryPointPage extends WatchingWidget {
@@ -50,48 +50,30 @@ class EntryPointPage extends WatchingWidget {
                 const SizedBox(
                   height: 15,
                 ),
-                ...<Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Center(
-                      child: Platform.isWindows
-                          ? Text(
-                              locale.importSchoolDataToContinue,
-                              softWrap: true,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                              ),
-                            )
-                          : Text(
-                              locale.scanSchoolIdToContinue,
-                              softWrap: true,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                              ),
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Center(
+                    child: Platform.isWindows
+                        ? Text(
+                            locale.importSchoolDataToContinue,
+                            softWrap: true,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
                             ),
-                    ),
+                          )
+                        : Text(
+                            locale.scanSchoolIdToContinue,
+                            softWrap: true,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
+                          ),
                   ),
-                  const Gap(10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      //margin: const EdgeInsets.only(bottom: 16),
-                      child: ElevatedButton(
-                          style: AppStyles.actionButtonStyle,
-                          onPressed: () async {
-                            controller.generateSchoolKeys(context);
-                          },
-                          child: const Text('SCHULSCHLÜSSEL ERSTELLEN',
-                              textAlign: TextAlign.center,
-                              style: AppStyles.buttonTextStyle)),
-                    ),
-                  ),
-                ],
+                ),
                 const Gap(10),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -101,6 +83,22 @@ class EntryPointPage extends WatchingWidget {
                     child: ElevatedButton(
                         style: AppStyles.actionButtonStyle,
                         onPressed: () async {
+                          controller.generateSchoolKeys(context);
+                        },
+                        child: const Text('SCHULSCHLÜSSEL ERSTELLEN',
+                            textAlign: TextAlign.center,
+                            style: AppStyles.buttonTextStyle)),
+                  ),
+                ),
+                const Gap(10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    //margin: const EdgeInsets.only(bottom: 16),
+                    child: ElevatedButton(
+                        style: AppStyles.actionButtonStyle,
+                        onPressed: () {
                           Platform.isWindows
                               ? controller.importEnvFromTxt()
                               : controller.scanEnv(context);

@@ -98,7 +98,8 @@ class _BarcodeStreamScannerState extends State<BarcodeStreamScanner> {
                       style: AppStyles.successButtonStyle,
                       onPressed: () {
                         unawaited(di<PupilIdentityManager>()
-                            .decryptCodesAndAddIdentities(_scannedQrCodes));
+                            .decryptAndAddOrUpdatePupilIdentities(
+                                _scannedQrCodes));
 
                         //  unawaited(locator<PupilManager>().fetchAllPupils());
                         Navigator.pop(context);

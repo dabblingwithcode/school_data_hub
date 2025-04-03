@@ -1,0 +1,13 @@
+class: UserDevice
+table: user_device
+fields:
+  userInfo: module:auth:UserInfo?, relation
+  deviceId: String
+  deviceName: String
+  lastLogin: DateTime
+  isActive: bool
+  authId: int, relation(parent=serverpod_auth_key, onDelete=Cascade) 
+indexes:
+  auth_key_user_device_idx:
+    fields: authId
+    unique: true

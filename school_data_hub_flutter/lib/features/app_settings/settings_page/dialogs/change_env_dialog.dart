@@ -35,7 +35,8 @@ Future<bool?> changeEnvironmentDialog({
                               fontSize: 20, color: AppColors.interactiveColor),
                         ),
                         onPressed: () async {
-                          if (envs[index].name == di<EnvManager>().env?.name) {
+                          if (envs[index].name ==
+                              di<EnvManager>().activeEnv?.name) {
                             return;
                           }
 
@@ -53,7 +54,7 @@ Future<bool?> changeEnvironmentDialog({
                         },
                       ),
                       const Gap(10),
-                      di<EnvManager>().env?.name == envs[index].name
+                      di<EnvManager>().activeEnv?.name == envs[index].name
                           ? const Icon(
                               Icons.check,
                               color: Colors.green,

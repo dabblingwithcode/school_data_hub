@@ -3,10 +3,12 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:school_data_hub_flutter/core/auth/hub_auth_key_manager.dart';
 import 'package:school_data_hub_flutter/common/utils/secure_storage.dart';
+import 'package:school_data_hub_flutter/core/auth/hub_auth_key_manager.dart';
+import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:serverpod_auth_client/serverpod_auth_client.dart';
 import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
+import 'package:watch_it/watch_it.dart';
 
 const _prefsKey = 'hub_userinfo_key';
 const _prefsVersion = 2;
@@ -109,6 +111,10 @@ class ServerpodSessionManager with ChangeNotifier {
       await keyManager.remove();
 
       notifyListeners();
+
+      /// Don't forget to set the flag in [EnvManager] to false
+      /// to get to the login screen.
+      di<EnvManager>().setUserAuthenticated(false);
       return true;
     } catch (e) {
       return false;
@@ -143,8 +149,17 @@ class ServerpodSessionManager with ChangeNotifier {
       _signedInUser = await caller.status.getUserInfo();
       await _storeSharedPrefs();
       notifyListeners();
+      if (_signedInUser != null) {
+        /// Don't forget to set the flag in [EnvManager] to false
+        /// to get to the login screen.
+        di<EnvManager>().setUserAuthenticated(true);
+        return false;
+      }
       return true;
     } catch (e) {
+      /// Don't forget to set the flag in [EnvManager] to false
+      /// to get to the login screen.
+      di<EnvManager>().setUserAuthenticated(false);
       return false;
     }
   }

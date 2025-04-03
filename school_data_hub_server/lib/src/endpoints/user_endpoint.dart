@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart';
 
@@ -6,6 +9,7 @@ class AuthEndpoint extends Endpoint {
     Session session,
     String email,
     String password,
+    DeviceInfo deviceInfo,
   ) async {
     // Find the user by email
     UserInfo? userInfo = await Users.findUserByEmail(session, email);
@@ -23,29 +27,61 @@ class AuthEndpoint extends Endpoint {
 
     // Check if the password is correct
     // This would be your custom password verification logic
-    bool passwordCorrect =
-        await verifyPassword(session, userInfo.id!, password);
-    if (!passwordCorrect) {
+    final AuthenticationResponse authResponse =
+        await Emails.authenticate(session, email, password);
+
+    // Create an authentication token for the user
+    if (authResponse.success) {
+      await storeUserDeviceInfo(
+          session: session,
+          userInfoId: userInfo.id!,
+          authId: authResponse.keyId!,
+          deviceInfo: deviceInfo);
+    } else {
       return AuthenticationResponse(
           success: false,
           failReason: AuthenticationFailReason.invalidCredentials);
     }
 
-    // Create an authentication token for the user
-    var authKey = await UserAuthentication.signInUser(
+    // Return the authentication response
+    return authResponse;
+  }
+
+  Future<void> storeUserDeviceInfo({
+    required Session session,
+    required int userInfoId,
+    required int authId,
+    required DeviceInfo deviceInfo,
+  }) async {
+    // Find existing device
+    var existingDevice = await UserDevice.db.findFirstRow(
       session,
-      userInfo.id!,
-      'myAuth',
-      scopes: userInfo.scopes,
+      where: (t) =>
+          t.userInfoId.equals(userInfoId) &
+          t.deviceId.equals(deviceInfo.deviceId),
     );
 
-    // Return the authentication response
-    return AuthenticationResponse(
-      success: true,
-      keyId: authKey.id,
-      key: authKey.key,
-      userInfo: userInfo,
-    );
+    if (existingDevice != null) {
+      // Update existing device with new auth key
+      existingDevice.lastLogin = DateTime.now().toUtc();
+      existingDevice.isActive = true;
+      existingDevice.authId = authId;
+      await UserDevice.db.updateRow(session, existingDevice);
+    } else {
+      // Create new device entry
+      var userDevice = UserDevice(
+        userInfoId: userInfoId,
+        deviceId: deviceInfo.deviceId,
+        deviceName: deviceInfo.deviceName,
+        lastLogin: DateTime.now().toUtc(),
+        isActive: true,
+        authId: authId,
+      );
+      final newDeviceInDatabase =
+          await UserDevice.db.insertRow(session, userDevice);
+      log('New device created: ${newDeviceInDatabase.deviceId}');
+      log('User ID: ${newDeviceInDatabase.userInfoId}');
+    }
   }
 
 // Your custom password verification method

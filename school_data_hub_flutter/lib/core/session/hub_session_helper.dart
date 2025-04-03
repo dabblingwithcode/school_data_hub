@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:school_data_hub_flutter/common/models/enums.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/utils/logger.dart';
@@ -15,15 +13,15 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_man
 import 'package:watch_it/watch_it.dart';
 
 class HubSessionHelper {
-  static String tokenLifetimeLeft(String token) {
-    Duration remainingTime = JwtDecoder.getRemainingTime(token);
-    String days = remainingTime.inDays == 1 ? 'Tag' : 'Tage';
-    String hours = remainingTime.inHours == 1 ? 'Stunde' : 'Stunden';
-    String minutes = remainingTime.inMinutes == 1 ? 'Minute' : 'Minuten';
-    String timeLeft =
-        '${remainingTime.inDays} $days, ${remainingTime.inHours % 24} $hours, ${remainingTime.inMinutes % 60} $minutes';
-    return timeLeft;
-  }
+  // static String tokenLifetimeLeft(String token) {
+  //   Duration remainingTime = JwtDecoder.getRemainingTime(token);
+  //   String days = remainingTime.inDays == 1 ? 'Tag' : 'Tage';
+  //   String hours = remainingTime.inHours == 1 ? 'Stunde' : 'Stunden';
+  //   String minutes = remainingTime.inMinutes == 1 ? 'Minute' : 'Minuten';
+  //   String timeLeft =
+  //       '${remainingTime.inDays} $days, ${remainingTime.inHours % 24} $hours, ${remainingTime.inMinutes % 60} $minutes';
+  //   return timeLeft;
+  // }
 
   static Future<void> clearInstanceSessionServerData() async {
     logger.i('Clearing instance server data');
@@ -41,7 +39,7 @@ class HubSessionHelper {
     return;
   }
 
-  static void logoutAndDeleteAllData(BuildContext context) async {
+  static void logoutAndDeleteAllInstanceData() async {
     await di<PupilIdentityManager>().deleteAllPupilIdentities();
 
     await di<EnvManager>().deleteEnv();

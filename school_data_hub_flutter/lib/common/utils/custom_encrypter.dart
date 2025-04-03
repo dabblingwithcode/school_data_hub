@@ -11,10 +11,11 @@ import 'package:watch_it/watch_it.dart';
 final customEncrypter = CustomEncrypter();
 
 class CustomEncrypter {
-  final encrypter = enc.Encrypter(enc
-      .AES(enc.Key.fromUtf8(di<EnvManager>().env!.key), mode: enc.AESMode.cbc));
+  final encrypter = enc.Encrypter(enc.AES(
+      enc.Key.fromUtf8(di<EnvManager>().activeEnv!.key),
+      mode: enc.AESMode.cbc));
 
-  final iv = enc.IV.fromUtf8(di<EnvManager>().env!.iv);
+  final iv = enc.IV.fromUtf8(di<EnvManager>().activeEnv!.iv);
 
   String encryptString(String nonEncryptedString) {
     final encryptedString =

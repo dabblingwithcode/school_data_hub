@@ -10,10 +10,10 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/common/utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/utils/logger.dart';
+import 'package:school_data_hub_flutter/common/utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_identity.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
-import 'package:school_data_hub_flutter/common/utils/secure_storage.dart';
 import 'package:watch_it/watch_it.dart';
 
 class PupilIdentityManager {
@@ -51,17 +51,18 @@ class PupilIdentityManager {
   }
 
   Future<void> getPupilIdentitiesForEnv() async {
-    final defaultEnv = di<EnvManager>().defaultEnv;
+    final activeEnv = di<EnvManager>().activeEnv!;
 
     final Map<int, PupilIdentity> pupilIdentities =
         await PupilIdentityHelper.readPupilIdentitiesFromStorage(
-            envKey: defaultEnv);
+            envKey: activeEnv.name);
 
     if (pupilIdentities.isEmpty) {
       logger.w(
-          'No stored pupil identities found for ${SecureStorageKey.pupilIdentities.value}_$defaultEnv');
+          'No stored pupil identities found for ${SecureStorageKey.pupilIdentities.value}_$activeEnv');
     } else {
-      logger.i('Pupil identities loaded from secure storage');
+      logger.i(
+          '${pupilIdentities.length} Pupil identities loaded from secure storage');
     }
 
     _pupilIdentities = pupilIdentities;
@@ -71,9 +72,14 @@ class PupilIdentityManager {
     return;
   }
 
-  Future<void> decryptCodesAndAddIdentities(List<String> codes) async {
+  Future<void> decryptAndAddOrUpdatePupilIdentities(
+      List<String> encryptedCodes) async {
+    // We need the decrypted information as a string with line breaks.
+    // Since every string in the list of the argument i an encrypted code,
+    // we need to decrypt them and aggregate them to a string with line breaks
+    // in which every line will be a pupil identity.
     String decryptedString = '';
-    for (String code in codes) {
+    for (String code in encryptedCodes) {
       decryptedString += '${customEncrypter.decryptString(code)}\n';
     }
 

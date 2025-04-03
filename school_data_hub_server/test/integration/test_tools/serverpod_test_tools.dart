@@ -23,6 +23,8 @@ import 'package:school_data_hub_server/src/generated/schoolday/school_semester.d
     as _i7;
 import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
     as _i8;
+import 'package:school_data_hub_server/src/generated/user/device_info.dart'
+    as _i9;
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -766,6 +768,7 @@ class _AuthEndpoint {
     _i1.TestSessionBuilder sessionBuilder,
     String email,
     String password,
+    _i9.DeviceInfo deviceInfo,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -781,6 +784,7 @@ class _AuthEndpoint {
           parameters: _i1.testObjectToJson({
             'email': email,
             'password': password,
+            'deviceInfo': deviceInfo,
           }),
           serializationManager: _serializationManager,
         );

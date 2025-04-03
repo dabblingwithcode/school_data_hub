@@ -63,7 +63,7 @@ class EntryPointController extends State<EntryPoint> {
       return;
     }
     await di<EnvManager>()
-        .generateNewKeys(serverName: serverName, serverUrl: serverUrl);
+        .generateNewEnvKeys(serverName: serverName, serverUrl: serverUrl);
 
     di<NotificationService>().showSnackBar(
         NotificationType.success, 'Schulschlüssel erfolgreich generiert');
