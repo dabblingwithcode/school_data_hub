@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:school_data_hub_flutter/core/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/features/app_entry_point/entry_point/entry_point_controller.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/error_page.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/loading_page.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
@@ -67,9 +68,8 @@ class MyApp extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool envIsReady = watchValue((EnvManager x) => x.envReady);
-    bool isAuthenticated =
-        watchPropertyValue((ServerpodSessionManager x) => x.isSignedIn);
+    bool envIsReady = watchValue((EnvManager x) => x.envIsReady);
+
     // TODO: How can we watch the connectivity monitor instead of
     // adding a listener?
     // final isConnected =
@@ -94,17 +94,18 @@ class MyApp extends WatchingWidget {
           // !isConnected
           //     ? const NoConnectionPage()
           //     :
-          envIsReady && isAuthenticated
+          envIsReady
               ? FutureBuilder(
                   future: di.allReady(timeout: const Duration(seconds: 30)),
                   //  locator.allReady(timeout: const Duration(seconds: 30)),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
-                      debugPrint('Error: ${snapshot.error}');
+                      debugPrint(
+                          'Dependency Injection Error: ${snapshot.error}');
                       return ErrorPage(error: snapshot.error.toString());
                     } else if (snapshot.connectionState ==
                         ConnectionState.done) {
-                      if (isAuthenticated) {
+                      if (di<ServerpodSessionManager>().isSignedIn) {
                         return MainMenuBottomNavigation();
                       } else {
                         return const Login();
@@ -114,7 +115,7 @@ class MyApp extends WatchingWidget {
                     }
                   },
                 )
-              : const Login(),
+              : const EntryPoint(),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/snackbars.dart';
@@ -31,7 +32,7 @@ class LoginPage extends WatchingWidget {
     );
     final bool isAuthenticated =
         watch(di<ServerpodSessionManager>()).isSignedIn;
-    final bool envReady = watchValue((EnvManager x) => x.envReady);
+    final bool envReady = watchValue((EnvManager x) => x.envIsReady);
     final locale = AppLocalizations.of(context)!;
     log('# LoginPage: isAuthenticated: $isAuthenticated, envReady: $envReady');
     final bool keyboardOn = MediaQuery.of(context).viewInsets.vertical > 0.0;
@@ -158,6 +159,13 @@ class LoginPage extends WatchingWidget {
                               onPressed: () async {
                                 // di<EnvManager>().deleteEnv();
                                 await controller.loginWithTextCredentials();
+                              },
+                              onLongPress: () async {
+                                await di<Client>().admin.createUser(
+                                    userName: 'userName',
+                                    email: controller.usernameController.text,
+                                    password:
+                                        controller.passwordController.text);
                               },
                               child: Text(
                                 locale.logInButtonText,

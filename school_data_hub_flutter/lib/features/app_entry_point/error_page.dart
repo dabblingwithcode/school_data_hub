@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/theme/app_colors.dart';
 
@@ -48,16 +49,34 @@ class ErrorPage extends StatelessWidget {
                   ),
                 ),
                 const Gap(20),
-                Expanded(
-                    child: SingleChildScrollView(
+                Row(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
                         child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  child: Text(error,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                      )),
-                ))),
+                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                          child: Text(error,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                              )),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.copy, color: Colors.white),
+                      onPressed: () {
+                        Clipboard.setData(ClipboardData(text: error));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                'Fehlertext in die Zwischenablage kopiert!'),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ],
             ),
           ),

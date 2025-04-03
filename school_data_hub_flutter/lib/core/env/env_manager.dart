@@ -19,9 +19,8 @@ import 'package:school_data_hub_flutter/utils/secure_storage.dart';
 import 'package:watch_it/watch_it.dart';
 
 class EnvManager {
-  final _dependentMangagersRegistered = ValueNotifier<bool>(false);
-  ValueListenable<bool> get dependentManagersRegistered =>
-      _dependentMangagersRegistered;
+  bool _dependentMangagersRegistered = false;
+  bool get dependentManagersRegistered => _dependentMangagersRegistered;
 
   final _activeEnvRunMode = ValueNotifier<HubRunMode>(HubRunMode.development);
   ValueListenable<HubRunMode> get activeEnvRunMode =>
@@ -37,8 +36,8 @@ class EnvManager {
   String _defaultEnv = '';
   String get defaultEnv => _defaultEnv;
 
-  final _envReady = ValueNotifier<bool>(false);
-  ValueListenable<bool> get envReady => _envReady;
+  final _envIsReady = ValueNotifier<bool>(false);
+  ValueListenable<bool> get envIsReady => _envIsReady;
 
   PackageInfo _packageInfo = PackageInfo(
     appName: '',
@@ -88,7 +87,7 @@ class EnvManager {
   }
 
   void setDependentManagersRegistered(bool value) {
-    _dependentMangagersRegistered.value = value;
+    _dependentMangagersRegistered = value;
     log('message: dependentManagersRegistered: $value');
   }
 
@@ -99,7 +98,7 @@ class EnvManager {
     final EnvsInStorage? environmentsObject = await environmentsInStorage();
 
     if (environmentsObject == null) {
-      _envReady.value = false;
+      _envIsReady.value = false;
       return;
     }
 
@@ -115,8 +114,9 @@ class EnvManager {
 
     // di<ApiClient>().setBaseUrl(_activeEnv!.serverUrl);
 
-    _envReady.value = true;
-
+    _envIsReady.value = true;
+    await DiManager.registerManagersDependingOnActiveEnv();
+    setDependentManagersRegistered(true);
     return;
   }
 
@@ -189,7 +189,7 @@ class EnvManager {
       _activeEnv = _environments.values.last;
 
       _defaultEnv = _environments.keys.last;
-
+      resetDependentManagers();
       logger.i('Env $deletedEnvironment New defaultEnv: $_defaultEnv');
 
       //  di<ApiClient>().setBaseUrl(_activeEnv!.serverUrl);
@@ -198,12 +198,12 @@ class EnvManager {
 
       await ServerpodSecureStorage()
           .remove(SecureStorageKey.environments.value);
-
+      DiManager.unregisterManagersDependingOnActiveEnv();
       _activeEnv = null;
 
       _defaultEnv = '';
 
-      _envReady.value = false;
+      _envIsReady.value = false;
     }
   }
 
@@ -220,12 +220,18 @@ class EnvManager {
 
     _defaultEnv = envName;
 
-    _envReady.value = true;
+    _envIsReady.value = true;
 
     logger.i('Activated Env: ${_activeEnv!.name}');
 
-    DiManager.unregisterValidEnvDependentManagers();
-    DiManager.registerValidEnvDependentManagers();
+    // Check if there are any dependent managers registered
+    // and if so, unregister them
+    // and register them again with the new environment
+    if (dependentManagersRegistered) {
+      await resetDependentManagers();
+    } else {
+      await DiManager.registerManagersDependingOnActiveEnv();
+    }
 
     // if (_dependentMangagersRegistered.value == true) {
     //   di<NotificationService>().setNewInstanceLoadingValue(true);
@@ -241,8 +247,13 @@ class EnvManager {
   }
 
   void setEnvNotReady() {
-    _envReady.value = false;
+    _envIsReady.value = false;
     _activeEnv = null;
+  }
+
+  Future<void> resetDependentManagers() async {
+    await DiManager.unregisterManagersDependingOnActiveEnv();
+    await DiManager.registerManagersDependingOnActiveEnv();
   }
 
   Future<void> propagateNewEnv() async {

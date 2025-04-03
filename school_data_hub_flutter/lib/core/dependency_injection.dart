@@ -3,6 +3,7 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/core/auth/hub_auth_key_manager.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/landing_bottom_nav_bar.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -19,25 +20,23 @@ class DiManager {
     });
 
     di.registerSingleton<NotificationService>(NotificationService());
+    di.registerSingleton<MainMenuBottomNavManager>(MainMenuBottomNavManager());
   }
 
-  static void registerValidEnvDependentManagers() {
+  static Future<void> registerManagersDependingOnActiveEnv() async {
     di.registerSingletonWithDependencies<HubAuthKeyManager>(() {
       return HubAuthKeyManager(
         runMode: di<EnvManager>().activeEnvRunMode.value.name,
         envName: di<EnvManager>().env!.name,
       );
     }, dependsOn: [EnvManager]);
-    di.registerLazySingleton<Client>(() {
+    di.registerSingletonWithDependencies<Client>(() {
       return Client(
         di<EnvManager>().env!.serverUrl,
-        authenticationKeyManager: HubAuthKeyManager(
-          envName: di<EnvManager>().env!.name,
-          runMode: di<EnvManager>().activeEnvRunMode.value.name,
-        ),
+        authenticationKeyManager: di<HubAuthKeyManager>(),
       )..connectivityMonitor = FlutterConnectivityMonitor();
-    });
-    di.registerLazySingletonAsync<ServerpodSessionManager>(() async {
+    }, dependsOn: [HubAuthKeyManager]);
+    di.registerSingletonAsync<ServerpodSessionManager>(() async {
       // like described in the serverpod documentation
       // https://docs.serverpod.dev/concepts/authentication/setup#app-setup
       final sessionManager = ServerpodSessionManager(
@@ -45,18 +44,15 @@ class DiManager {
       );
       // this will initialize the session manager and load the stored user info
       // it returns a bool
-      // TODO: Is this the best place to initialize the session manager?
-      // await sessionManager.initialize();
+
+      await sessionManager.initialize();
       return sessionManager;
-    });
+    }, dependsOn: [Client]);
   }
 
-  static void unregisterValidEnvDependentManagers() {
-    di.unregister<HubAuthKeyManager>();
-    di.unregister<Client>();
-  }
-
-  static Future<void> registerDependentManagers() async {
-    // TODO: Register dependent managers here
+  static Future<void> unregisterManagersDependingOnActiveEnv() async {
+    await di.unregister<ServerpodSessionManager>();
+    await di.unregister<HubAuthKeyManager>();
+    await di.unregister<Client>();
   }
 }

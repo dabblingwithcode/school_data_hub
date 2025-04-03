@@ -11,6 +11,7 @@ import 'package:school_data_hub_flutter/common/utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
+import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/loading_page.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_page.dart';
 import 'package:watch_it/watch_it.dart';
@@ -33,7 +34,7 @@ class LoginController extends State<Login> {
   @override
   initState() {
     super.initState();
-    if (di<EnvManager>().envReady.value) {
+    if (di<EnvManager>().envIsReady.value) {
       envs = di<EnvManager>().envs;
       activeEnv = di<EnvManager>().env!;
       selectedEnv = activeEnv!.name;
@@ -114,8 +115,20 @@ class LoginController extends State<Login> {
 
   Future<void> attemptLogin(
       {required String username, required String password}) async {
-    var authResponse =
+    final authResponse =
         await di<Client>().modules.auth.email.authenticate(username, password);
+    if (authResponse.success) {
+      di<NotificationService>()
+          .showSnackBar(NotificationType.success, 'Erfolgreich eingeloggt!');
+      await di<ServerpodSessionManager>().registerSignedInUser(
+        authResponse.userInfo!,
+        authResponse.keyId!,
+        authResponse.key!,
+      );
+    } else {
+      di<NotificationService>().showSnackBar(NotificationType.error,
+          'Login fehlgeschlagen: ${authResponse.failReason}');
+    }
   }
 
   Future<void> importEnvFromTxt() async {
@@ -138,7 +151,7 @@ class LoginController extends State<Login> {
     return FutureBuilder(
       future: di.allReady(),
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.connectionState == ConnectionState.done) {
           return LoginPage(controller: this);
         } else {
           return const LoadingPage();

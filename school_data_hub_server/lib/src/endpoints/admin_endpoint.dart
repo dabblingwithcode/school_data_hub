@@ -4,16 +4,17 @@ import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
 /// The endpoint for admin operations.
 /// This endpoint requires the user to be logged in and have admin scope.
 class AdminEndpoint extends Endpoint {
-  @override
-  bool get requireLogin => true;
+  // @override
+  // bool get requireLogin => true;
 
-  @override
-  Set<Scope> get requiredScopes => {Scope.admin};
+  // @override
+  // Set<Scope> get requiredScopes => {Scope.admin};
 
   Future<void> createUser(Session session,
       {required String userName,
       required String email,
       required String password}) async {
+    print('Creating user: $userName, $email, $password');
     final userInfo =
         await auth.Emails.createUser(session, userName, email, password);
 
