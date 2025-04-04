@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_flutter/common/models/enums.dart';
 
+export 'package:school_data_hub_flutter/common/models/enums.dart';
+
 class NotificationData {
   final NotificationType type;
   final String message;

@@ -2,11 +2,13 @@
 class: Staff
 table: staff
 fields:
-  userInfo: module:auth:UserInfo?, relation
-  name: String
-  shortName: String
+  userInfo: module:auth:UserInfo?, relation(onDelete=Cascade)
   role: Role
-  userId: String
-  email: String
-  password: String
+  timeUnits: int
+  pupilsAuth: Set<int>?
+  credit: int
+  changedPassword: bool
+  passwordLastChanged: DateTime
+
+
 

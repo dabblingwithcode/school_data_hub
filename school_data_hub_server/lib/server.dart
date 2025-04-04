@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'package:school_data_hub_server/src/future_calls/database_backup_future_call.dart';
 import 'package:school_data_hub_server/src/web/routes/root.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
@@ -12,6 +11,12 @@ import 'src/generated/protocol.dart';
 // configuring Relic (Serverpod's web-server), or need custom setup work.
 
 void run(List<String> args) async {
+  // auth configuration
+  auth.AuthConfig.set(auth.AuthConfig(
+    userCanEditUserName: false,
+    userCanEditFullName: true,
+    // other config options
+  ));
   // Initialize Serverpod and connect it with your generated code.
   final pod = Serverpod(
     args,
@@ -21,7 +26,8 @@ void run(List<String> args) async {
   );
 
   // If you are using any future calls, they need to be registered here.
-  // pod.registerFutureCall(ExampleFutureCall(), 'exampleFutureCall');
+  pod.registerFutureCall(
+      DatabaseBackupFutureCall(), 'databaseBackupFutureCall');
 
   // Setup a default page at the web root.
   pod.webServer.addRoute(RouteRoot(), '/');
@@ -35,10 +41,18 @@ void run(List<String> args) async {
   // Start the server.
   await pod.start();
 
+  var session = await pod.createSession();
+  // Trigger the backup future call to run every day at 2 AM.
+  await session.serverpod.futureCallWithDelay(
+    'databaseBackupFutureCall',
+    null,
+    const Duration(seconds: 1),
+  );
+
   // We need an admin user to manage the server.
   // TODO: This is a one-time setup step. You can comment this out after the first run.
   // It will create an admin user if it doesn't exist.
-  var session = await pod.createSession();
+
   try {
     // Check if admin user exists (using email as identifier)
     final adminEmail = 'admin@test.org'; // Use your preferred admin email
@@ -62,15 +76,16 @@ void run(List<String> args) async {
         await auth.Users.updateUserScopes(
             session, adminUser.id!, {Scope.admin});
 
-        log('Admin user created successfully: ');
-        log('Email: $adminEmail');
-        log('Password: $adminPassword'); // Log the password for reference
-        log('Please change the password after the first login.');
+        session.log('Admin user created successfully: ');
+        session.log('Email: $adminEmail');
+        session
+            .log('Password: $adminPassword'); // Log the password for reference
+        session.log('Please change the password after the first login.');
       } else {
-        log('Failed to create admin user');
+        session.log('Failed to create admin user');
       }
     } else {
-      log('Admin user already exists');
+      session.log('Admin user already exists');
     }
   } finally {
     session.close();

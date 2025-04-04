@@ -18,24 +18,24 @@ abstract class Staff implements _i1.TableRow, _i1.ProtocolSerialization {
     this.id,
     required this.userInfoId,
     this.userInfo,
-    required this.name,
-    required this.shortName,
     required this.role,
-    required this.userId,
-    required this.email,
-    required this.password,
+    required this.timeUnits,
+    this.pupilsAuth,
+    required this.credit,
+    required this.changedPassword,
+    required this.passwordLastChanged,
   });
 
   factory Staff({
     int? id,
     required int userInfoId,
     _i2.UserInfo? userInfo,
-    required String name,
-    required String shortName,
     required _i3.Role role,
-    required String userId,
-    required String email,
-    required String password,
+    required int timeUnits,
+    Set<int>? pupilsAuth,
+    required int credit,
+    required bool changedPassword,
+    required DateTime passwordLastChanged,
   }) = _StaffImpl;
 
   factory Staff.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -46,12 +46,17 @@ abstract class Staff implements _i1.TableRow, _i1.ProtocolSerialization {
           ? null
           : _i2.UserInfo.fromJson(
               (jsonSerialization['userInfo'] as Map<String, dynamic>)),
-      name: jsonSerialization['name'] as String,
-      shortName: jsonSerialization['shortName'] as String,
       role: _i3.Role.fromJson((jsonSerialization['role'] as String)),
-      userId: jsonSerialization['userId'] as String,
-      email: jsonSerialization['email'] as String,
-      password: jsonSerialization['password'] as String,
+      timeUnits: jsonSerialization['timeUnits'] as int,
+      pupilsAuth: jsonSerialization['pupilsAuth'] == null
+          ? null
+          : _i1.SetJsonExtension.fromJson(
+              (jsonSerialization['pupilsAuth'] as List),
+              itemFromJson: (e) => e as int),
+      credit: jsonSerialization['credit'] as int,
+      changedPassword: jsonSerialization['changedPassword'] as bool,
+      passwordLastChanged: _i1.DateTimeJsonExtension.fromJson(
+          jsonSerialization['passwordLastChanged']),
     );
   }
 
@@ -66,17 +71,17 @@ abstract class Staff implements _i1.TableRow, _i1.ProtocolSerialization {
 
   _i2.UserInfo? userInfo;
 
-  String name;
-
-  String shortName;
-
   _i3.Role role;
 
-  String userId;
+  int timeUnits;
 
-  String email;
+  Set<int>? pupilsAuth;
 
-  String password;
+  int credit;
+
+  bool changedPassword;
+
+  DateTime passwordLastChanged;
 
   @override
   _i1.Table get table => t;
@@ -88,12 +93,12 @@ abstract class Staff implements _i1.TableRow, _i1.ProtocolSerialization {
     int? id,
     int? userInfoId,
     _i2.UserInfo? userInfo,
-    String? name,
-    String? shortName,
     _i3.Role? role,
-    String? userId,
-    String? email,
-    String? password,
+    int? timeUnits,
+    Set<int>? pupilsAuth,
+    int? credit,
+    bool? changedPassword,
+    DateTime? passwordLastChanged,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -101,12 +106,12 @@ abstract class Staff implements _i1.TableRow, _i1.ProtocolSerialization {
       if (id != null) 'id': id,
       'userInfoId': userInfoId,
       if (userInfo != null) 'userInfo': userInfo?.toJson(),
-      'name': name,
-      'shortName': shortName,
       'role': role.toJson(),
-      'userId': userId,
-      'email': email,
-      'password': password,
+      'timeUnits': timeUnits,
+      if (pupilsAuth != null) 'pupilsAuth': pupilsAuth?.toJson(),
+      'credit': credit,
+      'changedPassword': changedPassword,
+      'passwordLastChanged': passwordLastChanged.toJson(),
     };
   }
 
@@ -116,12 +121,12 @@ abstract class Staff implements _i1.TableRow, _i1.ProtocolSerialization {
       if (id != null) 'id': id,
       'userInfoId': userInfoId,
       if (userInfo != null) 'userInfo': userInfo?.toJsonForProtocol(),
-      'name': name,
-      'shortName': shortName,
       'role': role.toJson(),
-      'userId': userId,
-      'email': email,
-      'password': password,
+      'timeUnits': timeUnits,
+      if (pupilsAuth != null) 'pupilsAuth': pupilsAuth?.toJson(),
+      'credit': credit,
+      'changedPassword': changedPassword,
+      'passwordLastChanged': passwordLastChanged.toJson(),
     };
   }
 
@@ -162,22 +167,22 @@ class _StaffImpl extends Staff {
     int? id,
     required int userInfoId,
     _i2.UserInfo? userInfo,
-    required String name,
-    required String shortName,
     required _i3.Role role,
-    required String userId,
-    required String email,
-    required String password,
+    required int timeUnits,
+    Set<int>? pupilsAuth,
+    required int credit,
+    required bool changedPassword,
+    required DateTime passwordLastChanged,
   }) : super._(
           id: id,
           userInfoId: userInfoId,
           userInfo: userInfo,
-          name: name,
-          shortName: shortName,
           role: role,
-          userId: userId,
-          email: email,
-          password: password,
+          timeUnits: timeUnits,
+          pupilsAuth: pupilsAuth,
+          credit: credit,
+          changedPassword: changedPassword,
+          passwordLastChanged: passwordLastChanged,
         );
 
   /// Returns a shallow copy of this [Staff]
@@ -188,24 +193,26 @@ class _StaffImpl extends Staff {
     Object? id = _Undefined,
     int? userInfoId,
     Object? userInfo = _Undefined,
-    String? name,
-    String? shortName,
     _i3.Role? role,
-    String? userId,
-    String? email,
-    String? password,
+    int? timeUnits,
+    Object? pupilsAuth = _Undefined,
+    int? credit,
+    bool? changedPassword,
+    DateTime? passwordLastChanged,
   }) {
     return Staff(
       id: id is int? ? id : this.id,
       userInfoId: userInfoId ?? this.userInfoId,
       userInfo:
           userInfo is _i2.UserInfo? ? userInfo : this.userInfo?.copyWith(),
-      name: name ?? this.name,
-      shortName: shortName ?? this.shortName,
       role: role ?? this.role,
-      userId: userId ?? this.userId,
-      email: email ?? this.email,
-      password: password ?? this.password,
+      timeUnits: timeUnits ?? this.timeUnits,
+      pupilsAuth: pupilsAuth is Set<int>?
+          ? pupilsAuth
+          : this.pupilsAuth?.map((e0) => e0).toSet(),
+      credit: credit ?? this.credit,
+      changedPassword: changedPassword ?? this.changedPassword,
+      passwordLastChanged: passwordLastChanged ?? this.passwordLastChanged,
     );
   }
 }
@@ -216,29 +223,29 @@ class StaffTable extends _i1.Table {
       'userInfoId',
       this,
     );
-    name = _i1.ColumnString(
-      'name',
-      this,
-    );
-    shortName = _i1.ColumnString(
-      'shortName',
-      this,
-    );
     role = _i1.ColumnEnum(
       'role',
       this,
       _i1.EnumSerialization.byName,
     );
-    userId = _i1.ColumnString(
-      'userId',
+    timeUnits = _i1.ColumnInt(
+      'timeUnits',
       this,
     );
-    email = _i1.ColumnString(
-      'email',
+    pupilsAuth = _i1.ColumnSerializable(
+      'pupilsAuth',
       this,
     );
-    password = _i1.ColumnString(
-      'password',
+    credit = _i1.ColumnInt(
+      'credit',
+      this,
+    );
+    changedPassword = _i1.ColumnBool(
+      'changedPassword',
+      this,
+    );
+    passwordLastChanged = _i1.ColumnDateTime(
+      'passwordLastChanged',
       this,
     );
   }
@@ -247,17 +254,17 @@ class StaffTable extends _i1.Table {
 
   _i2.UserInfoTable? _userInfo;
 
-  late final _i1.ColumnString name;
-
-  late final _i1.ColumnString shortName;
-
   late final _i1.ColumnEnum<_i3.Role> role;
 
-  late final _i1.ColumnString userId;
+  late final _i1.ColumnInt timeUnits;
 
-  late final _i1.ColumnString email;
+  late final _i1.ColumnSerializable pupilsAuth;
 
-  late final _i1.ColumnString password;
+  late final _i1.ColumnInt credit;
+
+  late final _i1.ColumnBool changedPassword;
+
+  late final _i1.ColumnDateTime passwordLastChanged;
 
   _i2.UserInfoTable get userInfo {
     if (_userInfo != null) return _userInfo!;
@@ -276,12 +283,12 @@ class StaffTable extends _i1.Table {
   List<_i1.Column> get columns => [
         id,
         userInfoId,
-        name,
-        shortName,
         role,
-        userId,
-        email,
-        password,
+        timeUnits,
+        pupilsAuth,
+        credit,
+        changedPassword,
+        passwordLastChanged,
       ];
 
   @override

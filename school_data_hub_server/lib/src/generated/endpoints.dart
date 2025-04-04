@@ -80,6 +80,11 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<String>(),
               nullable: false,
             ),
+            'fullName': _i1.ParameterDescription(
+              name: 'fullName',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
             'email': _i1.ParameterDescription(
               name: 'email',
               type: _i1.getType<String>(),
@@ -90,6 +95,11 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<String>(),
               nullable: false,
             ),
+            'scopeNames': _i1.ParameterDescription(
+              name: 'scopeNames',
+              type: _i1.getType<List<String>>(),
+              nullable: false,
+            ),
           },
           call: (
             _i1.Session session,
@@ -98,8 +108,10 @@ class Endpoints extends _i1.EndpointDispatch {
               (endpoints['admin'] as _i2.AdminEndpoint).createUser(
             session,
             userName: params['userName'],
+            fullName: params['fullName'],
             email: params['email'],
             password: params['password'],
+            scopeNames: params['scopeNames'],
           ),
         ),
         'createTestUser': _i1.MethodConnector(

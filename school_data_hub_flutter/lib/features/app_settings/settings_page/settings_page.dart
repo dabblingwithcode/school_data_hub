@@ -5,6 +5,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/features/app_settings/settings_page/widgets/settings_admin_section.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/widgets/settings_session_section.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/widgets/settings_tools_section.dart';
 import 'package:watch_it/watch_it.dart';
@@ -35,7 +36,7 @@ class SettingsPage extends StatelessWidget {
             contentPadding: const EdgeInsets.only(top: 10),
             sections: [
               const SettingsSessionSection(),
-              // if (isAdmin == true) const SettingsAdminSection(),
+              if (isAdmin == true) const SettingsAdminSection(),
               const SettingsToolsSection(),
               SettingsSection(
                 title: const Padding(

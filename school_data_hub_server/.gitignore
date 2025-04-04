@@ -5,6 +5,9 @@
 # Conventional directory for build outputs
 build/
 
+# Database backups
+database_backups/
+
 # Directory created by dartdoc
 doc/api/
 

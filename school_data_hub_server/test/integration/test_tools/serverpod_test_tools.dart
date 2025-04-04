@@ -169,8 +169,10 @@ class _AdminEndpoint {
   _i3.Future<void> createUser(
     _i1.TestSessionBuilder sessionBuilder, {
     required String userName,
+    required String fullName,
     required String email,
     required String password,
+    required List<String> scopeNames,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -185,8 +187,10 @@ class _AdminEndpoint {
           methodName: 'createUser',
           parameters: _i1.testObjectToJson({
             'userName': userName,
+            'fullName': fullName,
             'email': email,
             'password': password,
+            'scopeNames': scopeNames,
           }),
           serializationManager: _serializationManager,
         );

@@ -35,16 +35,20 @@ class EndpointAdmin extends _i1.EndpointRef {
 
   _i2.Future<void> createUser({
     required String userName,
+    required String fullName,
     required String email,
     required String password,
+    required List<String> scopeNames,
   }) =>
       caller.callServerEndpoint<void>(
         'admin',
         'createUser',
         {
           'userName': userName,
+          'fullName': fullName,
           'email': email,
           'password': password,
+          'scopeNames': scopeNames,
         },
       );
 

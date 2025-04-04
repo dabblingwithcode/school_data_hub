@@ -48,15 +48,16 @@ import 'user/device_info.dart' as _i36;
 import 'user/roles/auth_level.dart' as _i37;
 import 'user/roles/roles.dart' as _i38;
 import 'user/roles/staff.dart' as _i39;
-import 'user/user_device.dart' as _i40;
-import 'workbook/pupil_workbook.dart' as _i41;
-import 'workbook/workbook.dart' as _i42;
+import 'user/transaction.dart' as _i40;
+import 'user/user_device.dart' as _i41;
+import 'workbook/pupil_workbook.dart' as _i42;
+import 'workbook/workbook.dart' as _i43;
 import 'package:school_data_hub_server/src/generated/pupil_data/pupil_data.dart'
-    as _i43;
-import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
     as _i44;
-import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
     as _i45;
+import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
+    as _i46;
 export 'authorization/authorization.dart';
 export 'authorization/pupil_authorization.dart';
 export 'book/book.dart';
@@ -93,6 +94,7 @@ export 'user/device_info.dart';
 export 'user/roles/auth_level.dart';
 export 'user/roles/roles.dart';
 export 'user/roles/staff.dart';
+export 'user/transaction.dart';
 export 'user/user_device.dart';
 export 'workbook/pupil_workbook.dart';
 export 'workbook/workbook.dart';
@@ -2075,40 +2077,40 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'int',
         ),
         _i2.ColumnDefinition(
-          name: 'name',
-          columnType: _i2.ColumnType.text,
-          isNullable: false,
-          dartType: 'String',
-        ),
-        _i2.ColumnDefinition(
-          name: 'shortName',
-          columnType: _i2.ColumnType.text,
-          isNullable: false,
-          dartType: 'String',
-        ),
-        _i2.ColumnDefinition(
           name: 'role',
           columnType: _i2.ColumnType.text,
           isNullable: false,
           dartType: 'protocol:Role',
         ),
         _i2.ColumnDefinition(
-          name: 'userId',
-          columnType: _i2.ColumnType.text,
+          name: 'timeUnits',
+          columnType: _i2.ColumnType.bigint,
           isNullable: false,
-          dartType: 'String',
+          dartType: 'int',
         ),
         _i2.ColumnDefinition(
-          name: 'email',
-          columnType: _i2.ColumnType.text,
-          isNullable: false,
-          dartType: 'String',
+          name: 'pupilsAuth',
+          columnType: _i2.ColumnType.json,
+          isNullable: true,
+          dartType: 'Set<int>?',
         ),
         _i2.ColumnDefinition(
-          name: 'password',
-          columnType: _i2.ColumnType.text,
+          name: 'credit',
+          columnType: _i2.ColumnType.bigint,
           isNullable: false,
-          dartType: 'String',
+          dartType: 'int',
+        ),
+        _i2.ColumnDefinition(
+          name: 'changedPassword',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+        ),
+        _i2.ColumnDefinition(
+          name: 'passwordLastChanged',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
         ),
       ],
       foreignKeys: [
@@ -2119,7 +2121,7 @@ class Protocol extends _i1.SerializationManagerServer {
           referenceTableSchema: 'public',
           referenceColumns: ['id'],
           onUpdate: _i2.ForeignKeyAction.noAction,
-          onDelete: _i2.ForeignKeyAction.noAction,
+          onDelete: _i2.ForeignKeyAction.cascade,
           matchType: null,
         )
       ],
@@ -2655,6 +2657,74 @@ class Protocol extends _i1.SerializationManagerServer {
       managed: true,
     ),
     _i2.TableDefinition(
+      name: 'transaction',
+      dartName: 'Transaction',
+      schema: 'public',
+      module: 'school_data_hub',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'transaction_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'transactionId',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'createdBy',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'reciever',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _i2.ColumnDefinition(
+          name: 'amount',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _i2.ColumnDefinition(
+          name: 'dateTime',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _i2.ColumnDefinition(
+          name: 'description',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'transaction_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            )
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        )
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
       name: 'user_device',
       dartName: 'UserDevice',
       schema: 'public',
@@ -2965,14 +3035,17 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i39.Staff) {
       return _i39.Staff.fromJson(data) as T;
     }
-    if (t == _i40.UserDevice) {
-      return _i40.UserDevice.fromJson(data) as T;
+    if (t == _i40.Transaction) {
+      return _i40.Transaction.fromJson(data) as T;
     }
-    if (t == _i41.PupilWorkbook) {
-      return _i41.PupilWorkbook.fromJson(data) as T;
+    if (t == _i41.UserDevice) {
+      return _i41.UserDevice.fromJson(data) as T;
     }
-    if (t == _i42.Workbook) {
-      return _i42.Workbook.fromJson(data) as T;
+    if (t == _i42.PupilWorkbook) {
+      return _i42.PupilWorkbook.fromJson(data) as T;
+    }
+    if (t == _i43.Workbook) {
+      return _i43.Workbook.fromJson(data) as T;
     }
     if (t == _i1.getType<_i4.Authorization?>()) {
       return (data != null ? _i4.Authorization.fromJson(data) : null) as T;
@@ -3090,14 +3163,17 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i1.getType<_i39.Staff?>()) {
       return (data != null ? _i39.Staff.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i40.UserDevice?>()) {
-      return (data != null ? _i40.UserDevice.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i40.Transaction?>()) {
+      return (data != null ? _i40.Transaction.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i41.PupilWorkbook?>()) {
-      return (data != null ? _i41.PupilWorkbook.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i41.UserDevice?>()) {
+      return (data != null ? _i41.UserDevice.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i42.Workbook?>()) {
-      return (data != null ? _i42.Workbook.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i42.PupilWorkbook?>()) {
+      return (data != null ? _i42.PupilWorkbook.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i43.Workbook?>()) {
+      return (data != null ? _i43.Workbook.fromJson(data) : null) as T;
     }
     if (t == _i1.getType<List<_i5.PupilAuthorization>?>()) {
       return (data != null
@@ -3241,9 +3317,9 @@ class Protocol extends _i1.SerializationManagerServer {
               .toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i42.Workbook>?>()) {
+    if (t == _i1.getType<List<_i43.Workbook>?>()) {
       return (data != null
-          ? (data as List).map((e) => deserialize<_i42.Workbook>(e)).toList()
+          ? (data as List).map((e) => deserialize<_i43.Workbook>(e)).toList()
           : null) as T;
     }
     if (t == _i1.getType<List<_i22.SupportGoal>?>()) {
@@ -3258,10 +3334,10 @@ class Protocol extends _i1.SerializationManagerServer {
               .toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i41.PupilWorkbook>?>()) {
+    if (t == _i1.getType<List<_i42.PupilWorkbook>?>()) {
       return (data != null
           ? (data as List)
-              .map((e) => deserialize<_i41.PupilWorkbook>(e))
+              .map((e) => deserialize<_i42.PupilWorkbook>(e))
               .toList()
           : null) as T;
     }
@@ -3339,27 +3415,35 @@ class Protocol extends _i1.SerializationManagerServer {
               .toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i41.PupilWorkbook>?>()) {
+    if (t == _i1.getType<Set<int>?>()) {
+      return (data != null
+          ? (data as List).map((e) => deserialize<int>(e)).toSet()
+          : null) as T;
+    }
+    if (t == _i1.getType<List<_i42.PupilWorkbook>?>()) {
       return (data != null
           ? (data as List)
-              .map((e) => deserialize<_i41.PupilWorkbook>(e))
+              .map((e) => deserialize<_i42.PupilWorkbook>(e))
               .toList()
           : null) as T;
     }
-    if (t == List<_i43.PupilData>) {
-      return (data as List).map((e) => deserialize<_i43.PupilData>(e)).toList()
+    if (t == List<String>) {
+      return (data as List).map((e) => deserialize<String>(e)).toList() as T;
+    }
+    if (t == List<_i44.PupilData>) {
+      return (data as List).map((e) => deserialize<_i44.PupilData>(e)).toList()
           as T;
     }
-    if (t == List<_i44.Schoolday>) {
-      return (data as List).map((e) => deserialize<_i44.Schoolday>(e)).toList()
+    if (t == List<_i45.Schoolday>) {
+      return (data as List).map((e) => deserialize<_i45.Schoolday>(e)).toList()
           as T;
     }
     if (t == List<DateTime>) {
       return (data as List).map((e) => deserialize<DateTime>(e)).toList() as T;
     }
-    if (t == List<_i45.SchoolSemester>) {
+    if (t == List<_i46.SchoolSemester>) {
       return (data as List)
-          .map((e) => deserialize<_i45.SchoolSemester>(e))
+          .map((e) => deserialize<_i46.SchoolSemester>(e))
           .toList() as T;
     }
     try {
@@ -3483,13 +3567,16 @@ class Protocol extends _i1.SerializationManagerServer {
     if (data is _i39.Staff) {
       return 'Staff';
     }
-    if (data is _i40.UserDevice) {
+    if (data is _i40.Transaction) {
+      return 'Transaction';
+    }
+    if (data is _i41.UserDevice) {
       return 'UserDevice';
     }
-    if (data is _i41.PupilWorkbook) {
+    if (data is _i42.PupilWorkbook) {
       return 'PupilWorkbook';
     }
-    if (data is _i42.Workbook) {
+    if (data is _i43.Workbook) {
       return 'Workbook';
     }
     className = _i2.Protocol().getClassNameForObject(data);
@@ -3500,7 +3587,7 @@ class Protocol extends _i1.SerializationManagerServer {
     if (className != null) {
       return 'serverpod_auth.$className';
     }
-    if (data is List<_i43.PupilData>) {
+    if (data is List<_i44.PupilData>) {
       return 'List<PupilData>';
     }
     return null;
@@ -3620,14 +3707,17 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName == 'Staff') {
       return deserialize<_i39.Staff>(data['data']);
     }
+    if (dataClassName == 'Transaction') {
+      return deserialize<_i40.Transaction>(data['data']);
+    }
     if (dataClassName == 'UserDevice') {
-      return deserialize<_i40.UserDevice>(data['data']);
+      return deserialize<_i41.UserDevice>(data['data']);
     }
     if (dataClassName == 'PupilWorkbook') {
-      return deserialize<_i41.PupilWorkbook>(data['data']);
+      return deserialize<_i42.PupilWorkbook>(data['data']);
     }
     if (dataClassName == 'Workbook') {
-      return deserialize<_i42.Workbook>(data['data']);
+      return deserialize<_i43.Workbook>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -3638,7 +3728,7 @@ class Protocol extends _i1.SerializationManagerServer {
       return _i3.Protocol().deserializeByClassName(data);
     }
     if (dataClassName == 'List<PupilData>') {
-      return deserialize<List<_i43.PupilData>>(data['data']);
+      return deserialize<List<_i44.PupilData>>(data['data']);
     }
     return super.deserializeByClassName(data);
   }
@@ -3714,12 +3804,14 @@ class Protocol extends _i1.SerializationManagerServer {
         return _i35.SchooldayEvent.t;
       case _i39.Staff:
         return _i39.Staff.t;
-      case _i40.UserDevice:
-        return _i40.UserDevice.t;
-      case _i41.PupilWorkbook:
-        return _i41.PupilWorkbook.t;
-      case _i42.Workbook:
-        return _i42.Workbook.t;
+      case _i40.Transaction:
+        return _i40.Transaction.t;
+      case _i41.UserDevice:
+        return _i41.UserDevice.t;
+      case _i42.PupilWorkbook:
+        return _i42.PupilWorkbook.t;
+      case _i43.Workbook:
+        return _i43.Workbook.t;
     }
     return null;
   }

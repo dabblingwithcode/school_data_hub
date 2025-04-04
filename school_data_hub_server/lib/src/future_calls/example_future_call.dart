@@ -15,5 +15,13 @@ class ExampleFutureCall extends FutureCall {
   @override
   Future<void> invoke(Session session, SerializableModel? object) async {
     // Do something interesting in the future here.
+    print('Running weekly task');
+
+    // Schedule the next run (one week from now)
+    await session.serverpod.futureCallWithDelay(
+      'weeklyTask',
+      null,
+      const Duration(days: 7),
+    );
   }
 }

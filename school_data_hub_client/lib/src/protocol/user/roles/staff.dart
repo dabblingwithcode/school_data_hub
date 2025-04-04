@@ -18,24 +18,24 @@ abstract class Staff implements _i1.SerializableModel {
     this.id,
     required this.userInfoId,
     this.userInfo,
-    required this.name,
-    required this.shortName,
     required this.role,
-    required this.userId,
-    required this.email,
-    required this.password,
+    required this.timeUnits,
+    this.pupilsAuth,
+    required this.credit,
+    required this.changedPassword,
+    required this.passwordLastChanged,
   });
 
   factory Staff({
     int? id,
     required int userInfoId,
     _i2.UserInfo? userInfo,
-    required String name,
-    required String shortName,
     required _i3.Role role,
-    required String userId,
-    required String email,
-    required String password,
+    required int timeUnits,
+    Set<int>? pupilsAuth,
+    required int credit,
+    required bool changedPassword,
+    required DateTime passwordLastChanged,
   }) = _StaffImpl;
 
   factory Staff.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -46,12 +46,17 @@ abstract class Staff implements _i1.SerializableModel {
           ? null
           : _i2.UserInfo.fromJson(
               (jsonSerialization['userInfo'] as Map<String, dynamic>)),
-      name: jsonSerialization['name'] as String,
-      shortName: jsonSerialization['shortName'] as String,
       role: _i3.Role.fromJson((jsonSerialization['role'] as String)),
-      userId: jsonSerialization['userId'] as String,
-      email: jsonSerialization['email'] as String,
-      password: jsonSerialization['password'] as String,
+      timeUnits: jsonSerialization['timeUnits'] as int,
+      pupilsAuth: jsonSerialization['pupilsAuth'] == null
+          ? null
+          : _i1.SetJsonExtension.fromJson(
+              (jsonSerialization['pupilsAuth'] as List),
+              itemFromJson: (e) => e as int),
+      credit: jsonSerialization['credit'] as int,
+      changedPassword: jsonSerialization['changedPassword'] as bool,
+      passwordLastChanged: _i1.DateTimeJsonExtension.fromJson(
+          jsonSerialization['passwordLastChanged']),
     );
   }
 
@@ -64,17 +69,17 @@ abstract class Staff implements _i1.SerializableModel {
 
   _i2.UserInfo? userInfo;
 
-  String name;
-
-  String shortName;
-
   _i3.Role role;
 
-  String userId;
+  int timeUnits;
 
-  String email;
+  Set<int>? pupilsAuth;
 
-  String password;
+  int credit;
+
+  bool changedPassword;
+
+  DateTime passwordLastChanged;
 
   /// Returns a shallow copy of this [Staff]
   /// with some or all fields replaced by the given arguments.
@@ -83,12 +88,12 @@ abstract class Staff implements _i1.SerializableModel {
     int? id,
     int? userInfoId,
     _i2.UserInfo? userInfo,
-    String? name,
-    String? shortName,
     _i3.Role? role,
-    String? userId,
-    String? email,
-    String? password,
+    int? timeUnits,
+    Set<int>? pupilsAuth,
+    int? credit,
+    bool? changedPassword,
+    DateTime? passwordLastChanged,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -96,12 +101,12 @@ abstract class Staff implements _i1.SerializableModel {
       if (id != null) 'id': id,
       'userInfoId': userInfoId,
       if (userInfo != null) 'userInfo': userInfo?.toJson(),
-      'name': name,
-      'shortName': shortName,
       'role': role.toJson(),
-      'userId': userId,
-      'email': email,
-      'password': password,
+      'timeUnits': timeUnits,
+      if (pupilsAuth != null) 'pupilsAuth': pupilsAuth?.toJson(),
+      'credit': credit,
+      'changedPassword': changedPassword,
+      'passwordLastChanged': passwordLastChanged.toJson(),
     };
   }
 
@@ -118,22 +123,22 @@ class _StaffImpl extends Staff {
     int? id,
     required int userInfoId,
     _i2.UserInfo? userInfo,
-    required String name,
-    required String shortName,
     required _i3.Role role,
-    required String userId,
-    required String email,
-    required String password,
+    required int timeUnits,
+    Set<int>? pupilsAuth,
+    required int credit,
+    required bool changedPassword,
+    required DateTime passwordLastChanged,
   }) : super._(
           id: id,
           userInfoId: userInfoId,
           userInfo: userInfo,
-          name: name,
-          shortName: shortName,
           role: role,
-          userId: userId,
-          email: email,
-          password: password,
+          timeUnits: timeUnits,
+          pupilsAuth: pupilsAuth,
+          credit: credit,
+          changedPassword: changedPassword,
+          passwordLastChanged: passwordLastChanged,
         );
 
   /// Returns a shallow copy of this [Staff]
@@ -144,24 +149,26 @@ class _StaffImpl extends Staff {
     Object? id = _Undefined,
     int? userInfoId,
     Object? userInfo = _Undefined,
-    String? name,
-    String? shortName,
     _i3.Role? role,
-    String? userId,
-    String? email,
-    String? password,
+    int? timeUnits,
+    Object? pupilsAuth = _Undefined,
+    int? credit,
+    bool? changedPassword,
+    DateTime? passwordLastChanged,
   }) {
     return Staff(
       id: id is int? ? id : this.id,
       userInfoId: userInfoId ?? this.userInfoId,
       userInfo:
           userInfo is _i2.UserInfo? ? userInfo : this.userInfo?.copyWith(),
-      name: name ?? this.name,
-      shortName: shortName ?? this.shortName,
       role: role ?? this.role,
-      userId: userId ?? this.userId,
-      email: email ?? this.email,
-      password: password ?? this.password,
+      timeUnits: timeUnits ?? this.timeUnits,
+      pupilsAuth: pupilsAuth is Set<int>?
+          ? pupilsAuth
+          : this.pupilsAuth?.map((e0) => e0).toSet(),
+      credit: credit ?? this.credit,
+      changedPassword: changedPassword ?? this.changedPassword,
+      passwordLastChanged: passwordLastChanged ?? this.passwordLastChanged,
     );
   }
 }

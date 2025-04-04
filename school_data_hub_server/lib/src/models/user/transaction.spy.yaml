@@ -1,0 +1,10 @@
+## Transaction model
+class: Transaction
+table: transaction
+fields:
+  transactionId: String
+  createdBy: String
+  reciever: int
+  amount: int
+  dateTime: DateTime
+  description: String?
