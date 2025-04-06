@@ -1,5 +1,5 @@
 ## Staff model
-class: Staff
+class: StaffUser
 table: staff
 fields:
   userInfo: module:auth:UserInfo?, relation(onDelete=Cascade)
@@ -7,8 +7,7 @@ fields:
   timeUnits: int
   pupilsAuth: Set<int>?
   credit: int
-  changedPassword: bool
-  passwordLastChanged: DateTime
+  userFlags: UserFlags
 
 
 

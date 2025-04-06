@@ -1,11 +1,9 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/models/enums.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
@@ -23,6 +21,7 @@ class LoginPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final log = Logger('LoginPage');
     // TODO: check if we nees another entry point for notifications here
     // There is already one in MainMenuBottomNavigation
     registerHandler(
@@ -34,7 +33,7 @@ class LoginPage extends WatchingWidget {
         watch(di<ServerpodSessionManager>()).isSignedIn;
 
     final locale = AppLocalizations.of(context)!;
-    log('# LoginPage: isAuthenticated: $isAuthenticated');
+    log.info('isAuthenticated: $isAuthenticated');
     final bool keyboardOn = MediaQuery.of(context).viewInsets.vertical > 0.0;
     //FocusScopeNode currentFocus = FocusScope.of(context);
 
@@ -164,13 +163,13 @@ class LoginPage extends WatchingWidget {
                                 // TODO: remove this in production
                                 final email = controller.usernameController.text
                                     .toLowerCase();
-                                await di<Client>().admin.createUser(
-                                    userName: 'userName',
-                                    fullName: 'fullName',
-                                    scopeNames: ['user'],
-                                    email: email,
-                                    password:
-                                        controller.passwordController.text);
+                                // await di<Client>().admin.createUser(
+                                //     userName: 'userName',
+                                //     fullName: 'fullName',
+                                //     scopeNames: ['user'],
+                                //     email: email,
+                                //     password:
+                                //         controller.passwordController.text);
                                 di<NotificationService>().showSnackBar(
                                     NotificationType.info,
                                     'User created: $email');

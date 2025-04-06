@@ -12,9 +12,10 @@
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'package:serverpod_auth_client/serverpod_auth_client.dart' as _i2;
 import '../../user/roles/roles.dart' as _i3;
+import '../../user/user_flags.dart' as _i4;
 
-abstract class Staff implements _i1.SerializableModel {
-  Staff._({
+abstract class StaffUser implements _i1.SerializableModel {
+  StaffUser._({
     this.id,
     required this.userInfoId,
     this.userInfo,
@@ -22,11 +23,10 @@ abstract class Staff implements _i1.SerializableModel {
     required this.timeUnits,
     this.pupilsAuth,
     required this.credit,
-    required this.changedPassword,
-    required this.passwordLastChanged,
+    required this.userFlags,
   });
 
-  factory Staff({
+  factory StaffUser({
     int? id,
     required int userInfoId,
     _i2.UserInfo? userInfo,
@@ -34,12 +34,11 @@ abstract class Staff implements _i1.SerializableModel {
     required int timeUnits,
     Set<int>? pupilsAuth,
     required int credit,
-    required bool changedPassword,
-    required DateTime passwordLastChanged,
-  }) = _StaffImpl;
+    required _i4.UserFlags userFlags,
+  }) = _StaffUserImpl;
 
-  factory Staff.fromJson(Map<String, dynamic> jsonSerialization) {
-    return Staff(
+  factory StaffUser.fromJson(Map<String, dynamic> jsonSerialization) {
+    return StaffUser(
       id: jsonSerialization['id'] as int?,
       userInfoId: jsonSerialization['userInfoId'] as int,
       userInfo: jsonSerialization['userInfo'] == null
@@ -54,9 +53,8 @@ abstract class Staff implements _i1.SerializableModel {
               (jsonSerialization['pupilsAuth'] as List),
               itemFromJson: (e) => e as int),
       credit: jsonSerialization['credit'] as int,
-      changedPassword: jsonSerialization['changedPassword'] as bool,
-      passwordLastChanged: _i1.DateTimeJsonExtension.fromJson(
-          jsonSerialization['passwordLastChanged']),
+      userFlags: _i4.UserFlags.fromJson(
+          (jsonSerialization['userFlags'] as Map<String, dynamic>)),
     );
   }
 
@@ -77,14 +75,12 @@ abstract class Staff implements _i1.SerializableModel {
 
   int credit;
 
-  bool changedPassword;
+  _i4.UserFlags userFlags;
 
-  DateTime passwordLastChanged;
-
-  /// Returns a shallow copy of this [Staff]
+  /// Returns a shallow copy of this [StaffUser]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
-  Staff copyWith({
+  StaffUser copyWith({
     int? id,
     int? userInfoId,
     _i2.UserInfo? userInfo,
@@ -92,8 +88,7 @@ abstract class Staff implements _i1.SerializableModel {
     int? timeUnits,
     Set<int>? pupilsAuth,
     int? credit,
-    bool? changedPassword,
-    DateTime? passwordLastChanged,
+    _i4.UserFlags? userFlags,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -105,8 +100,7 @@ abstract class Staff implements _i1.SerializableModel {
       'timeUnits': timeUnits,
       if (pupilsAuth != null) 'pupilsAuth': pupilsAuth?.toJson(),
       'credit': credit,
-      'changedPassword': changedPassword,
-      'passwordLastChanged': passwordLastChanged.toJson(),
+      'userFlags': userFlags.toJson(),
     };
   }
 
@@ -118,8 +112,8 @@ abstract class Staff implements _i1.SerializableModel {
 
 class _Undefined {}
 
-class _StaffImpl extends Staff {
-  _StaffImpl({
+class _StaffUserImpl extends StaffUser {
+  _StaffUserImpl({
     int? id,
     required int userInfoId,
     _i2.UserInfo? userInfo,
@@ -127,8 +121,7 @@ class _StaffImpl extends Staff {
     required int timeUnits,
     Set<int>? pupilsAuth,
     required int credit,
-    required bool changedPassword,
-    required DateTime passwordLastChanged,
+    required _i4.UserFlags userFlags,
   }) : super._(
           id: id,
           userInfoId: userInfoId,
@@ -137,15 +130,14 @@ class _StaffImpl extends Staff {
           timeUnits: timeUnits,
           pupilsAuth: pupilsAuth,
           credit: credit,
-          changedPassword: changedPassword,
-          passwordLastChanged: passwordLastChanged,
+          userFlags: userFlags,
         );
 
-  /// Returns a shallow copy of this [Staff]
+  /// Returns a shallow copy of this [StaffUser]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   @override
-  Staff copyWith({
+  StaffUser copyWith({
     Object? id = _Undefined,
     int? userInfoId,
     Object? userInfo = _Undefined,
@@ -153,10 +145,9 @@ class _StaffImpl extends Staff {
     int? timeUnits,
     Object? pupilsAuth = _Undefined,
     int? credit,
-    bool? changedPassword,
-    DateTime? passwordLastChanged,
+    _i4.UserFlags? userFlags,
   }) {
-    return Staff(
+    return StaffUser(
       id: id is int? ? id : this.id,
       userInfoId: userInfoId ?? this.userInfoId,
       userInfo:
@@ -167,8 +158,7 @@ class _StaffImpl extends Staff {
           ? pupilsAuth
           : this.pupilsAuth?.map((e0) => e0).toSet(),
       credit: credit ?? this.credit,
-      changedPassword: changedPassword ?? this.changedPassword,
-      passwordLastChanged: passwordLastChanged ?? this.passwordLastChanged,
+      userFlags: userFlags ?? this.userFlags.copyWith(),
     );
   }
 }

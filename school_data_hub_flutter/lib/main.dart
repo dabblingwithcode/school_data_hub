@@ -1,10 +1,13 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:school_data_hub_flutter/app_utils/logger/logrecord_formatter.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
@@ -16,15 +19,17 @@ import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/lan
 import 'package:watch_it/watch_it.dart';
 import 'package:window_manager/window_manager.dart';
 
-// Sets up a singleton client object that can be used to talk to the server from
-// anywhere in our app. The client is generated from your server code.
-// The client is set up to connect to a Serverpod running on a local server on
-// the default port. You will need to modify this to connect to staging or
-// production servers.
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // using package window_manager for windows window size
+  // Set the global logging level
+  Logger.root.level = Level.ALL;
+
+  // Add your custom colored console listener
+  Logger.root.onRecord.listen((record) {
+    final colorFormatter = ColorFormatter();
+    log(colorFormatter.format(record));
+  });
+  // using package window_manager to set a default windows window size
   if (Platform.isWindows) {
     await windowManager.ensureInitialized();
     WindowOptions windowOptions = const WindowOptions(
@@ -67,6 +72,7 @@ class MyApp extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final log = Logger('MyApp');
     final bool envIsReady = watchValue((EnvManager x) => x.envIsReady);
     final bool userIsAuthenticated =
         watchValue((EnvManager x) => x.isUserAuthenticated);
@@ -101,8 +107,8 @@ class MyApp extends WatchingWidget {
                   //  locator.allReady(timeout: const Duration(seconds: 30)),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
-                      debugPrint(
-                          'Dependency Injection Error: ${snapshot.error}');
+                      log.shout('Dependency Injection Error: ${snapshot.error}',
+                          StackTrace.current);
                       return ErrorPage(error: snapshot.error.toString());
                     } else if (snapshot.connectionState ==
                         ConnectionState.done) {

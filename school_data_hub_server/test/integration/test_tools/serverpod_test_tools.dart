@@ -14,17 +14,19 @@
 import 'package:serverpod_test/serverpod_test.dart' as _i1;
 import 'package:serverpod/serverpod.dart' as _i2;
 import 'dart:async' as _i3;
-import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i4;
+import 'package:school_data_hub_server/src/generated/user/roles/roles.dart'
+    as _i4;
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i5;
 import 'package:school_data_hub_server/src/generated/pupil_data/pupil_data.dart'
-    as _i5;
-import 'package:school_data_hub_server/src/generated/pupil_data/dto/siblings_parent_info_dto.dart'
     as _i6;
-import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
+import 'package:school_data_hub_server/src/generated/pupil_data/dto/siblings_parent_info_dto.dart'
     as _i7;
-import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
     as _i8;
-import 'package:school_data_hub_server/src/generated/user/device_info.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
     as _i9;
+import 'package:school_data_hub_server/src/generated/user/device_info.dart'
+    as _i10;
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -172,6 +174,8 @@ class _AdminEndpoint {
     required String fullName,
     required String email,
     required String password,
+    required _i4.Role role,
+    required int timeUnits,
     required List<String> scopeNames,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -190,6 +194,8 @@ class _AdminEndpoint {
             'fullName': fullName,
             'email': email,
             'password': password,
+            'role': role,
+            'timeUnits': timeUnits,
             'scopeNames': scopeNames,
           }),
           serializationManager: _serializationManager,
@@ -205,7 +211,7 @@ class _AdminEndpoint {
     });
   }
 
-  _i3.Future<_i4.UserInfo?> createTestUser(
+  _i3.Future<_i5.UserInfo?> createTestUser(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -224,7 +230,7 @@ class _AdminEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i4.UserInfo?>);
+        ) as _i3.Future<_i5.UserInfo?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -378,9 +384,9 @@ class _PupilEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Stream<List<_i5.PupilData>> getPupils(
+  _i3.Stream<List<_i6.PupilData>> getPupils(
       _i1.TestSessionBuilder sessionBuilder) {
-    var _localTestStreamManager = _i1.TestStreamManager<List<_i5.PupilData>>();
+    var _localTestStreamManager = _i1.TestStreamManager<List<_i6.PupilData>>();
     _i1.callStreamFunctionAndHandleExceptions(
       () async {
         var _localUniqueSession =
@@ -410,7 +416,7 @@ class _PupilEndpoint {
 
   _i3.Future<bool> createPupil(
     _i1.TestSessionBuilder sessionBuilder,
-    _i5.PupilData pupil,
+    _i6.PupilData pupil,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -439,7 +445,7 @@ class _PupilEndpoint {
 
   _i3.Future<void> updateParentInfo(
     _i1.TestSessionBuilder sessionBuilder,
-    _i6.SiblingsParentInfo parentInfo,
+    _i7.SiblingsParentInfo parentInfo,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -477,7 +483,7 @@ class _SchooldayAdminEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i7.SchoolSemester> createSchoolSemester(
+  _i3.Future<_i8.SchoolSemester> createSchoolSemester(
     _i1.TestSessionBuilder sessionBuilder,
     DateTime startDate,
     DateTime endDate,
@@ -510,7 +516,7 @@ class _SchooldayAdminEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i7.SchoolSemester>);
+        ) as _i3.Future<_i8.SchoolSemester>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -520,7 +526,7 @@ class _SchooldayAdminEndpoint {
 
   _i3.Future<bool> updateSchoolSemester(
     _i1.TestSessionBuilder sessionBuilder,
-    _i7.SchoolSemester schoolSemester,
+    _i8.SchoolSemester schoolSemester,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -549,7 +555,7 @@ class _SchooldayAdminEndpoint {
 
   _i3.Future<bool> deleteSchoolSemester(
     _i1.TestSessionBuilder sessionBuilder,
-    _i7.SchoolSemester semester,
+    _i8.SchoolSemester semester,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -576,7 +582,7 @@ class _SchooldayAdminEndpoint {
     });
   }
 
-  _i3.Future<_i8.Schoolday?> createSchoolday(
+  _i3.Future<_i9.Schoolday?> createSchoolday(
     _i1.TestSessionBuilder sessionBuilder,
     DateTime date,
   ) async {
@@ -597,7 +603,7 @@ class _SchooldayAdminEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i8.Schoolday?>);
+        ) as _i3.Future<_i9.Schoolday?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -605,7 +611,7 @@ class _SchooldayAdminEndpoint {
     });
   }
 
-  _i3.Future<List<_i8.Schoolday>> createSchooldays(
+  _i3.Future<List<_i9.Schoolday>> createSchooldays(
     _i1.TestSessionBuilder sessionBuilder,
     List<DateTime> dates,
   ) async {
@@ -626,7 +632,7 @@ class _SchooldayAdminEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i8.Schoolday>>);
+        ) as _i3.Future<List<_i9.Schoolday>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -665,7 +671,7 @@ class _SchooldayAdminEndpoint {
 
   _i3.Future<bool> updateSchoolday(
     _i1.TestSessionBuilder sessionBuilder,
-    _i8.Schoolday schoolday,
+    _i9.Schoolday schoolday,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -703,7 +709,7 @@ class _SchooldayEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<List<_i7.SchoolSemester>> getSchoolSemesters(
+  _i3.Future<List<_i8.SchoolSemester>> getSchoolSemesters(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -722,7 +728,7 @@ class _SchooldayEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i7.SchoolSemester>>);
+        ) as _i3.Future<List<_i8.SchoolSemester>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -730,7 +736,7 @@ class _SchooldayEndpoint {
     });
   }
 
-  _i3.Future<List<_i8.Schoolday>> getSchooldays(
+  _i3.Future<List<_i9.Schoolday>> getSchooldays(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -749,7 +755,7 @@ class _SchooldayEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i8.Schoolday>>);
+        ) as _i3.Future<List<_i9.Schoolday>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -768,11 +774,11 @@ class _AuthEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i4.AuthenticationResponse> login(
+  _i3.Future<_i5.AuthenticationResponse> login(
     _i1.TestSessionBuilder sessionBuilder,
     String email,
     String password,
-    _i9.DeviceInfo deviceInfo,
+    _i10.DeviceInfo deviceInfo,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -795,7 +801,7 @@ class _AuthEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i4.AuthenticationResponse>);
+        ) as _i3.Future<_i5.AuthenticationResponse>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

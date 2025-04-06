@@ -1,22 +1,23 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:school_data_hub_flutter/common/models/enums.dart';
+import 'package:logging/logging.dart';
+import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/common/utils/custom_encrypter.dart';
-import 'package:school_data_hub_flutter/common/utils/extensions.dart';
-import 'package:school_data_hub_flutter/common/utils/logger.dart';
-import 'package:school_data_hub_flutter/common/utils/secure_storage.dart';
+import 'package:school_data_hub_flutter/core/auth/hub_auth_key_manager.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_identity.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
 import 'package:watch_it/watch_it.dart';
 
 class PupilIdentityManager {
+  final log = Logger('PupilIdentityManager');
+
   Map<int, PupilIdentity> _pupilIdentities = {};
 
   final _groups = ValueNotifier<Set<String>>({});
@@ -58,10 +59,10 @@ class PupilIdentityManager {
             envKey: activeEnv.name);
 
     if (pupilIdentities.isEmpty) {
-      logger.w(
+      log.warning(
           'No stored pupil identities found for ${SecureStorageKey.pupilIdentities.value}_$activeEnv');
     } else {
-      logger.i(
+      log.info(
           '${pupilIdentities.length} Pupil identities loaded from secure storage');
     }
 
@@ -147,9 +148,10 @@ class PupilIdentityManager {
 
     final jsonPupilIdentities = json.encode(jsonMap);
     await AppSecureStorage.write(
-        '${SecureStorageKey.pupilIdentities.value}_$envKey',
+        '${SecureStorageKey.pupilIdentities.value}_${envKey}_${di<HubAuthKeyManager>().runMode}',
         jsonPupilIdentities);
-    log('Pupil identities written to secure storage for ${SecureStorageKey.pupilIdentities.value}_$envKey');
+    log.info(
+        'Pupil identities written to secure storage for ${SecureStorageKey.pupilIdentities.value}_$envKey');
   }
 
   Future<void> updateBackendPupilsFromSchoolPupilIdentitySource(
@@ -287,7 +289,8 @@ class PupilIdentityManager {
     return [groupLengths, sortedQrGroupLists];
   }
 
-  Future<String> deletePupilIdentities(List<int> toBeDeletedPupilIds) async {
+  Future<String> deleteOrphanPupilIdentities(
+      List<int> toBeDeletedPupilIds) async {
     List<String> toBeDeletedPupilIdentities = [];
 
     for (int id in toBeDeletedPupilIds) {
@@ -299,7 +302,8 @@ class PupilIdentityManager {
 
     writePupilIdentitiesToStorage(envKey: di<EnvManager>().defaultEnv);
 
-    log(' ${toBeDeletedPupilIds.length} SuS sind nicht mehr in der Datenbank und wurden gelöscht!');
+    log.info(
+        ' ${toBeDeletedPupilIds.length} pupils are not in the database any moreand wer deleted.');
 
     return toBeDeletedPupilIdentities.join('\n');
   }

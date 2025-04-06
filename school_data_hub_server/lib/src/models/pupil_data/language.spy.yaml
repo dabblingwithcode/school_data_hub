@@ -1,0 +1,4 @@
+class: Language
+fields:
+  languageName: String
+  totalFamilies: int

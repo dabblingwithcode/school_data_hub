@@ -1,0 +1,6 @@
+class: UserFlags
+fields:
+  confirmedTermsOfUse: bool
+  confirmedPrivacyPolicy: bool
+  changedPassword: bool
+  madeFirstSteps: bool

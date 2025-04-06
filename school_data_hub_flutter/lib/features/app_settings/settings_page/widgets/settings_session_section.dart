@@ -3,7 +3,6 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/models/enums.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
@@ -223,7 +222,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
                     title: 'Achtung!',
                     message: 'Ausloggen und alle Daten löschen?');
                 if (confirm == true && context.mounted) {
-                  HubSessionHelper.logoutAndDeleteAllInstanceData();
+                  SessionHelper.logoutAndDeleteAllInstanceData();
                 }
                 return;
               },

@@ -5,6 +5,8 @@ import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_utilites.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/core/env/utils/env_utils.dart';
+import 'package:school_data_hub_flutter/features/user/presentation/create_user_page.dart';
 import 'package:watch_it/watch_it.dart';
 
 class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
@@ -23,6 +25,14 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
         ),
       ),
       tiles: <SettingsTile>[
+        SettingsTile.navigation(
+            title: const Text('Neuen User erstellen'),
+            leading: const Icon(Icons.account_circle_rounded),
+            onPressed: (context) {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (ctx) => const CreateUserPage(),
+              ));
+            }),
         SettingsTile.navigation(
             title: const Text('User-Verwaltung'),
             leading: const Icon(Icons.account_circle_rounded),
@@ -63,7 +73,7 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
               if (serverUrl == null || serverUrl.isEmpty) {
                 return;
               }
-              di<EnvManager>().generateNewEnvKeys(
+              EnvUtils.generateNewEnvKeys(
                   serverUrl: serverUrl, serverName: serverName);
             }),
         SettingsTile.navigation(

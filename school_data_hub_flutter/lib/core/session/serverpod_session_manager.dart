@@ -3,15 +3,17 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:school_data_hub_flutter/common/utils/secure_storage.dart';
+import 'package:logging/logging.dart';
+import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/core/auth/hub_auth_key_manager.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:serverpod_auth_client/serverpod_auth_client.dart';
 import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
 import 'package:watch_it/watch_it.dart';
 
-const _prefsKey = 'hub_userinfo_key';
-const _prefsVersion = 2;
+// TODO: double check the behavior of these keys using different instances
+const _storageUserInfoKey = 'hub_userinfo_key';
+// const _prefsVersion = 2;
 
 /// The [SessionManager] keeps track of and manages the signed-in state of the
 /// user. Use the [instance] method to get access to the singleton instance.
@@ -23,6 +25,7 @@ const _prefsVersion = 2;
 /// and uses the [HubAuthKeyManager] for authentication key management.
 class ServerpodSessionManager with ChangeNotifier {
   static ServerpodSessionManager? _instance;
+  final log = Logger('ServerpodSessionManager');
 
   /// The auth module's caller.
   Caller caller;
@@ -72,7 +75,7 @@ class ServerpodSessionManager with ChangeNotifier {
     await keyManager.put(
       key,
     );
-    await _storeSharedPrefs();
+    await _handleAuthCallResultInStorage();
 
     // Update streaming connection, if it's open.
     await caller.client.updateStreamingConnectionAuthenticationKey(key);
@@ -86,6 +89,8 @@ class ServerpodSessionManager with ChangeNotifier {
   /// shared preferences. The returned bool is true if the session was
   /// initialized, or false if the server could not be reached.
   Future<bool> initialize() async {
+    log.info('Initializing session manager...');
+    log.info(' Running in mode: ${keyManager.runMode}');
     await _loadStorage();
     return refreshSession();
   }
@@ -107,13 +112,14 @@ class ServerpodSessionManager with ChangeNotifier {
       await caller.client.updateStreamingConnectionAuthenticationKey(null);
 
       _signedInUser = null;
-      await _storeSharedPrefs();
+      await _handleAuthCallResultInStorage();
       await keyManager.remove();
 
       notifyListeners();
 
       /// Don't forget to set the flag in [EnvManager] to false
       /// to get to the login screen.
+      log.info('User signed out ');
       di<EnvManager>().setUserAuthenticated(false);
       return true;
     } catch (e) {
@@ -145,16 +151,22 @@ class ServerpodSessionManager with ChangeNotifier {
   /// Verify the current sign in status with the server and update the UserInfo.
   /// Returns true if successful.
   Future<bool> refreshSession() async {
+    log.info('Refreshing session...');
     try {
       _signedInUser = await caller.status.getUserInfo();
-      await _storeSharedPrefs();
+      await _handleAuthCallResultInStorage();
+
       notifyListeners();
       if (_signedInUser != null) {
         /// Don't forget to set the flag in [EnvManager] to false
         /// to get to the login screen.
+        log.info('User was authenticated by the server');
         di<EnvManager>().setUserAuthenticated(true);
         return false;
+      } else {
+        log.warning('User was not authenticated by the server');
       }
+
       return true;
     } catch (e) {
       /// Don't forget to set the flag in [EnvManager] to false
@@ -165,25 +177,29 @@ class ServerpodSessionManager with ChangeNotifier {
   }
 
   Future<void> _loadStorage() async {
-    var version =
-        await _storage.getInt('${_prefsKey}_${keyManager.runMode}_version');
-    if (version != _prefsVersion) return;
+    var json = await _storage.getString(
+        '${keyManager.envName}_${keyManager.runMode}_$_storageUserInfoKey');
 
-    var json = await _storage.getString('${_prefsKey}_${keyManager.runMode}');
-    if (json == null) return;
+    if (json == null) {
+      log.warning('No user info found in storage');
+      return;
+    }
 
     _signedInUser = Protocol().deserialize<UserInfo>(jsonDecode(json));
 
     notifyListeners();
   }
 
-  Future<void> _storeSharedPrefs() async {
-    await _storage.setInt(
-        '${_prefsKey}_${keyManager.runMode}_version', _prefsVersion);
+  Future<void> _handleAuthCallResultInStorage() async {
     if (signedInUser == null) {
-      await _storage.remove('${_prefsKey}_${keyManager.runMode}');
+      log.warning('No signed user found');
+
+      await keyManager.remove();
     } else {
-      await _storage.setString('${_prefsKey}_${keyManager.runMode}',
+      log.info('We have a signed user - Saving userinfo to storage');
+
+      await _storage.setString(
+          '${keyManager.envName}_${keyManager.runMode}_$_storageUserInfoKey',
           SerializationManager.encode(signedInUser));
     }
   }

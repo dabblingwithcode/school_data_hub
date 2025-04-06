@@ -15,17 +15,19 @@ import '../endpoints/example_endpoint.dart' as _i3;
 import '../endpoints/pupil_endpoint.dart' as _i4;
 import '../endpoints/schoolday_endpoint.dart' as _i5;
 import '../endpoints/user_endpoint.dart' as _i6;
-import 'package:school_data_hub_server/src/generated/pupil_data/pupil_data.dart'
+import 'package:school_data_hub_server/src/generated/user/roles/roles.dart'
     as _i7;
-import 'package:school_data_hub_server/src/generated/pupil_data/dto/siblings_parent_info_dto.dart'
+import 'package:school_data_hub_server/src/generated/pupil_data/pupil_data.dart'
     as _i8;
-import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
+import 'package:school_data_hub_server/src/generated/pupil_data/dto/siblings_parent_info_dto.dart'
     as _i9;
-import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
     as _i10;
-import 'package:school_data_hub_server/src/generated/user/device_info.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
     as _i11;
-import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i12;
+import 'package:school_data_hub_server/src/generated/user/device_info.dart'
+    as _i12;
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i13;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -95,6 +97,16 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<String>(),
               nullable: false,
             ),
+            'role': _i1.ParameterDescription(
+              name: 'role',
+              type: _i1.getType<_i7.Role>(),
+              nullable: false,
+            ),
+            'timeUnits': _i1.ParameterDescription(
+              name: 'timeUnits',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
             'scopeNames': _i1.ParameterDescription(
               name: 'scopeNames',
               type: _i1.getType<List<String>>(),
@@ -111,6 +123,8 @@ class Endpoints extends _i1.EndpointDispatch {
             fullName: params['fullName'],
             email: params['email'],
             password: params['password'],
+            role: params['role'],
+            timeUnits: params['timeUnits'],
             scopeNames: params['scopeNames'],
           ),
         ),
@@ -224,7 +238,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'pupil': _i1.ParameterDescription(
               name: 'pupil',
-              type: _i1.getType<_i7.PupilData>(),
+              type: _i1.getType<_i8.PupilData>(),
               nullable: false,
             )
           },
@@ -242,7 +256,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'parentInfo': _i1.ParameterDescription(
               name: 'parentInfo',
-              type: _i1.getType<_i8.SiblingsParentInfo>(),
+              type: _i1.getType<_i9.SiblingsParentInfo>(),
               nullable: false,
             )
           },
@@ -327,7 +341,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'schoolSemester': _i1.ParameterDescription(
               name: 'schoolSemester',
-              type: _i1.getType<_i9.SchoolSemester>(),
+              type: _i1.getType<_i10.SchoolSemester>(),
               nullable: false,
             )
           },
@@ -346,7 +360,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'semester': _i1.ParameterDescription(
               name: 'semester',
-              type: _i1.getType<_i9.SchoolSemester>(),
+              type: _i1.getType<_i10.SchoolSemester>(),
               nullable: false,
             )
           },
@@ -422,7 +436,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'schoolday': _i1.ParameterDescription(
               name: 'schoolday',
-              type: _i1.getType<_i10.Schoolday>(),
+              type: _i1.getType<_i11.Schoolday>(),
               nullable: false,
             )
           },
@@ -483,7 +497,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'deviceInfo': _i1.ParameterDescription(
               name: 'deviceInfo',
-              type: _i1.getType<_i11.DeviceInfo>(),
+              type: _i1.getType<_i12.DeviceInfo>(),
               nullable: false,
             ),
           },
@@ -542,6 +556,6 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
-    modules['serverpod_auth'] = _i12.Endpoints()..initializeEndpoints(server);
+    modules['serverpod_auth'] = _i13.Endpoints()..initializeEndpoints(server);
   }
 }

@@ -5,12 +5,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/models/enums.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/common/utils/scanner.dart';
+import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
+import 'package:school_data_hub_flutter/core/env/utils/env_utils.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/loading_page.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_page.dart';
@@ -182,8 +182,8 @@ class LoginController extends State<Login> {
     if (serverUrl == null || serverUrl.isEmpty) {
       return;
     }
-    await di<EnvManager>()
-        .generateNewEnvKeys(serverName: serverName, serverUrl: serverUrl);
+    await EnvUtils.generateNewEnvKeys(
+        serverName: serverName, serverUrl: serverUrl);
 
     di<NotificationService>().showSnackBar(
         NotificationType.success, 'Schulschlüssel erfolgreich generiert');

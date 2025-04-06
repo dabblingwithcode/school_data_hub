@@ -1,0 +1,4 @@
+class: LanguageStats
+table: language_stats
+fields:
+  languages: Set<Language>?

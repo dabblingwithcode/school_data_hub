@@ -12,9 +12,10 @@
 import 'package:serverpod/serverpod.dart' as _i1;
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i2;
 import '../../user/roles/roles.dart' as _i3;
+import '../../user/user_flags.dart' as _i4;
 
-abstract class Staff implements _i1.TableRow, _i1.ProtocolSerialization {
-  Staff._({
+abstract class StaffUser implements _i1.TableRow, _i1.ProtocolSerialization {
+  StaffUser._({
     this.id,
     required this.userInfoId,
     this.userInfo,
@@ -22,11 +23,10 @@ abstract class Staff implements _i1.TableRow, _i1.ProtocolSerialization {
     required this.timeUnits,
     this.pupilsAuth,
     required this.credit,
-    required this.changedPassword,
-    required this.passwordLastChanged,
+    required this.userFlags,
   });
 
-  factory Staff({
+  factory StaffUser({
     int? id,
     required int userInfoId,
     _i2.UserInfo? userInfo,
@@ -34,12 +34,11 @@ abstract class Staff implements _i1.TableRow, _i1.ProtocolSerialization {
     required int timeUnits,
     Set<int>? pupilsAuth,
     required int credit,
-    required bool changedPassword,
-    required DateTime passwordLastChanged,
-  }) = _StaffImpl;
+    required _i4.UserFlags userFlags,
+  }) = _StaffUserImpl;
 
-  factory Staff.fromJson(Map<String, dynamic> jsonSerialization) {
-    return Staff(
+  factory StaffUser.fromJson(Map<String, dynamic> jsonSerialization) {
+    return StaffUser(
       id: jsonSerialization['id'] as int?,
       userInfoId: jsonSerialization['userInfoId'] as int,
       userInfo: jsonSerialization['userInfo'] == null
@@ -54,15 +53,14 @@ abstract class Staff implements _i1.TableRow, _i1.ProtocolSerialization {
               (jsonSerialization['pupilsAuth'] as List),
               itemFromJson: (e) => e as int),
       credit: jsonSerialization['credit'] as int,
-      changedPassword: jsonSerialization['changedPassword'] as bool,
-      passwordLastChanged: _i1.DateTimeJsonExtension.fromJson(
-          jsonSerialization['passwordLastChanged']),
+      userFlags: _i4.UserFlags.fromJson(
+          (jsonSerialization['userFlags'] as Map<String, dynamic>)),
     );
   }
 
-  static final t = StaffTable();
+  static final t = StaffUserTable();
 
-  static const db = StaffRepository._();
+  static const db = StaffUserRepository._();
 
   @override
   int? id;
@@ -79,17 +77,15 @@ abstract class Staff implements _i1.TableRow, _i1.ProtocolSerialization {
 
   int credit;
 
-  bool changedPassword;
-
-  DateTime passwordLastChanged;
+  _i4.UserFlags userFlags;
 
   @override
   _i1.Table get table => t;
 
-  /// Returns a shallow copy of this [Staff]
+  /// Returns a shallow copy of this [StaffUser]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
-  Staff copyWith({
+  StaffUser copyWith({
     int? id,
     int? userInfoId,
     _i2.UserInfo? userInfo,
@@ -97,8 +93,7 @@ abstract class Staff implements _i1.TableRow, _i1.ProtocolSerialization {
     int? timeUnits,
     Set<int>? pupilsAuth,
     int? credit,
-    bool? changedPassword,
-    DateTime? passwordLastChanged,
+    _i4.UserFlags? userFlags,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -110,8 +105,7 @@ abstract class Staff implements _i1.TableRow, _i1.ProtocolSerialization {
       'timeUnits': timeUnits,
       if (pupilsAuth != null) 'pupilsAuth': pupilsAuth?.toJson(),
       'credit': credit,
-      'changedPassword': changedPassword,
-      'passwordLastChanged': passwordLastChanged.toJson(),
+      'userFlags': userFlags.toJson(),
     };
   }
 
@@ -125,31 +119,30 @@ abstract class Staff implements _i1.TableRow, _i1.ProtocolSerialization {
       'timeUnits': timeUnits,
       if (pupilsAuth != null) 'pupilsAuth': pupilsAuth?.toJson(),
       'credit': credit,
-      'changedPassword': changedPassword,
-      'passwordLastChanged': passwordLastChanged.toJson(),
+      'userFlags': userFlags.toJsonForProtocol(),
     };
   }
 
-  static StaffInclude include({_i2.UserInfoInclude? userInfo}) {
-    return StaffInclude._(userInfo: userInfo);
+  static StaffUserInclude include({_i2.UserInfoInclude? userInfo}) {
+    return StaffUserInclude._(userInfo: userInfo);
   }
 
-  static StaffIncludeList includeList({
-    _i1.WhereExpressionBuilder<StaffTable>? where,
+  static StaffUserIncludeList includeList({
+    _i1.WhereExpressionBuilder<StaffUserTable>? where,
     int? limit,
     int? offset,
-    _i1.OrderByBuilder<StaffTable>? orderBy,
+    _i1.OrderByBuilder<StaffUserTable>? orderBy,
     bool orderDescending = false,
-    _i1.OrderByListBuilder<StaffTable>? orderByList,
-    StaffInclude? include,
+    _i1.OrderByListBuilder<StaffUserTable>? orderByList,
+    StaffUserInclude? include,
   }) {
-    return StaffIncludeList._(
+    return StaffUserIncludeList._(
       where: where,
       limit: limit,
       offset: offset,
-      orderBy: orderBy?.call(Staff.t),
+      orderBy: orderBy?.call(StaffUser.t),
       orderDescending: orderDescending,
-      orderByList: orderByList?.call(Staff.t),
+      orderByList: orderByList?.call(StaffUser.t),
       include: include,
     );
   }
@@ -162,8 +155,8 @@ abstract class Staff implements _i1.TableRow, _i1.ProtocolSerialization {
 
 class _Undefined {}
 
-class _StaffImpl extends Staff {
-  _StaffImpl({
+class _StaffUserImpl extends StaffUser {
+  _StaffUserImpl({
     int? id,
     required int userInfoId,
     _i2.UserInfo? userInfo,
@@ -171,8 +164,7 @@ class _StaffImpl extends Staff {
     required int timeUnits,
     Set<int>? pupilsAuth,
     required int credit,
-    required bool changedPassword,
-    required DateTime passwordLastChanged,
+    required _i4.UserFlags userFlags,
   }) : super._(
           id: id,
           userInfoId: userInfoId,
@@ -181,15 +173,14 @@ class _StaffImpl extends Staff {
           timeUnits: timeUnits,
           pupilsAuth: pupilsAuth,
           credit: credit,
-          changedPassword: changedPassword,
-          passwordLastChanged: passwordLastChanged,
+          userFlags: userFlags,
         );
 
-  /// Returns a shallow copy of this [Staff]
+  /// Returns a shallow copy of this [StaffUser]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   @override
-  Staff copyWith({
+  StaffUser copyWith({
     Object? id = _Undefined,
     int? userInfoId,
     Object? userInfo = _Undefined,
@@ -197,10 +188,9 @@ class _StaffImpl extends Staff {
     int? timeUnits,
     Object? pupilsAuth = _Undefined,
     int? credit,
-    bool? changedPassword,
-    DateTime? passwordLastChanged,
+    _i4.UserFlags? userFlags,
   }) {
-    return Staff(
+    return StaffUser(
       id: id is int? ? id : this.id,
       userInfoId: userInfoId ?? this.userInfoId,
       userInfo:
@@ -211,14 +201,13 @@ class _StaffImpl extends Staff {
           ? pupilsAuth
           : this.pupilsAuth?.map((e0) => e0).toSet(),
       credit: credit ?? this.credit,
-      changedPassword: changedPassword ?? this.changedPassword,
-      passwordLastChanged: passwordLastChanged ?? this.passwordLastChanged,
+      userFlags: userFlags ?? this.userFlags.copyWith(),
     );
   }
 }
 
-class StaffTable extends _i1.Table {
-  StaffTable({super.tableRelation}) : super(tableName: 'staff') {
+class StaffUserTable extends _i1.Table {
+  StaffUserTable({super.tableRelation}) : super(tableName: 'staff') {
     userInfoId = _i1.ColumnInt(
       'userInfoId',
       this,
@@ -240,12 +229,8 @@ class StaffTable extends _i1.Table {
       'credit',
       this,
     );
-    changedPassword = _i1.ColumnBool(
-      'changedPassword',
-      this,
-    );
-    passwordLastChanged = _i1.ColumnDateTime(
-      'passwordLastChanged',
+    userFlags = _i1.ColumnSerializable(
+      'userFlags',
       this,
     );
   }
@@ -262,15 +247,13 @@ class StaffTable extends _i1.Table {
 
   late final _i1.ColumnInt credit;
 
-  late final _i1.ColumnBool changedPassword;
-
-  late final _i1.ColumnDateTime passwordLastChanged;
+  late final _i1.ColumnSerializable userFlags;
 
   _i2.UserInfoTable get userInfo {
     if (_userInfo != null) return _userInfo!;
     _userInfo = _i1.createRelationTable(
       relationFieldName: 'userInfo',
-      field: Staff.t.userInfoId,
+      field: StaffUser.t.userInfoId,
       foreignField: _i2.UserInfo.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
@@ -287,8 +270,7 @@ class StaffTable extends _i1.Table {
         timeUnits,
         pupilsAuth,
         credit,
-        changedPassword,
-        passwordLastChanged,
+        userFlags,
       ];
 
   @override
@@ -300,8 +282,8 @@ class StaffTable extends _i1.Table {
   }
 }
 
-class StaffInclude extends _i1.IncludeObject {
-  StaffInclude._({_i2.UserInfoInclude? userInfo}) {
+class StaffUserInclude extends _i1.IncludeObject {
+  StaffUserInclude._({_i2.UserInfoInclude? userInfo}) {
     _userInfo = userInfo;
   }
 
@@ -311,12 +293,12 @@ class StaffInclude extends _i1.IncludeObject {
   Map<String, _i1.Include?> get includes => {'userInfo': _userInfo};
 
   @override
-  _i1.Table get table => Staff.t;
+  _i1.Table get table => StaffUser.t;
 }
 
-class StaffIncludeList extends _i1.IncludeList {
-  StaffIncludeList._({
-    _i1.WhereExpressionBuilder<StaffTable>? where,
+class StaffUserIncludeList extends _i1.IncludeList {
+  StaffUserIncludeList._({
+    _i1.WhereExpressionBuilder<StaffUserTable>? where,
     super.limit,
     super.offset,
     super.orderBy,
@@ -324,22 +306,22 @@ class StaffIncludeList extends _i1.IncludeList {
     super.orderByList,
     super.include,
   }) {
-    super.where = where?.call(Staff.t);
+    super.where = where?.call(StaffUser.t);
   }
 
   @override
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table get table => Staff.t;
+  _i1.Table get table => StaffUser.t;
 }
 
-class StaffRepository {
-  const StaffRepository._();
+class StaffUserRepository {
+  const StaffUserRepository._();
 
-  final attachRow = const StaffAttachRowRepository._();
+  final attachRow = const StaffUserAttachRowRepository._();
 
-  /// Returns a list of [Staff]s matching the given query parameters.
+  /// Returns a list of [StaffUser]s matching the given query parameters.
   ///
   /// Use [where] to specify which items to include in the return value.
   /// If none is specified, all items will be returned.
@@ -361,21 +343,21 @@ class StaffRepository {
   ///   limit: 100,
   /// );
   /// ```
-  Future<List<Staff>> find(
+  Future<List<StaffUser>> find(
     _i1.Session session, {
-    _i1.WhereExpressionBuilder<StaffTable>? where,
+    _i1.WhereExpressionBuilder<StaffUserTable>? where,
     int? limit,
     int? offset,
-    _i1.OrderByBuilder<StaffTable>? orderBy,
+    _i1.OrderByBuilder<StaffUserTable>? orderBy,
     bool orderDescending = false,
-    _i1.OrderByListBuilder<StaffTable>? orderByList,
+    _i1.OrderByListBuilder<StaffUserTable>? orderByList,
     _i1.Transaction? transaction,
-    StaffInclude? include,
+    StaffUserInclude? include,
   }) async {
-    return session.db.find<Staff>(
-      where: where?.call(Staff.t),
-      orderBy: orderBy?.call(Staff.t),
-      orderByList: orderByList?.call(Staff.t),
+    return session.db.find<StaffUser>(
+      where: where?.call(StaffUser.t),
+      orderBy: orderBy?.call(StaffUser.t),
+      orderByList: orderByList?.call(StaffUser.t),
       orderDescending: orderDescending,
       limit: limit,
       offset: offset,
@@ -384,7 +366,7 @@ class StaffRepository {
     );
   }
 
-  /// Returns the first matching [Staff] matching the given query parameters.
+  /// Returns the first matching [StaffUser] matching the given query parameters.
   ///
   /// Use [where] to specify which items to include in the return value.
   /// If none is specified, all items will be returned.
@@ -401,20 +383,20 @@ class StaffRepository {
   ///   orderBy: (t) => t.age,
   /// );
   /// ```
-  Future<Staff?> findFirstRow(
+  Future<StaffUser?> findFirstRow(
     _i1.Session session, {
-    _i1.WhereExpressionBuilder<StaffTable>? where,
+    _i1.WhereExpressionBuilder<StaffUserTable>? where,
     int? offset,
-    _i1.OrderByBuilder<StaffTable>? orderBy,
+    _i1.OrderByBuilder<StaffUserTable>? orderBy,
     bool orderDescending = false,
-    _i1.OrderByListBuilder<StaffTable>? orderByList,
+    _i1.OrderByListBuilder<StaffUserTable>? orderByList,
     _i1.Transaction? transaction,
-    StaffInclude? include,
+    StaffUserInclude? include,
   }) async {
-    return session.db.findFirstRow<Staff>(
-      where: where?.call(Staff.t),
-      orderBy: orderBy?.call(Staff.t),
-      orderByList: orderByList?.call(Staff.t),
+    return session.db.findFirstRow<StaffUser>(
+      where: where?.call(StaffUser.t),
+      orderBy: orderBy?.call(StaffUser.t),
+      orderByList: orderByList?.call(StaffUser.t),
       orderDescending: orderDescending,
       offset: offset,
       transaction: transaction,
@@ -422,119 +404,119 @@ class StaffRepository {
     );
   }
 
-  /// Finds a single [Staff] by its [id] or null if no such row exists.
-  Future<Staff?> findById(
+  /// Finds a single [StaffUser] by its [id] or null if no such row exists.
+  Future<StaffUser?> findById(
     _i1.Session session,
     int id, {
     _i1.Transaction? transaction,
-    StaffInclude? include,
+    StaffUserInclude? include,
   }) async {
-    return session.db.findById<Staff>(
+    return session.db.findById<StaffUser>(
       id,
       transaction: transaction,
       include: include,
     );
   }
 
-  /// Inserts all [Staff]s in the list and returns the inserted rows.
+  /// Inserts all [StaffUser]s in the list and returns the inserted rows.
   ///
-  /// The returned [Staff]s will have their `id` fields set.
+  /// The returned [StaffUser]s will have their `id` fields set.
   ///
   /// This is an atomic operation, meaning that if one of the rows fails to
   /// insert, none of the rows will be inserted.
-  Future<List<Staff>> insert(
+  Future<List<StaffUser>> insert(
     _i1.Session session,
-    List<Staff> rows, {
+    List<StaffUser> rows, {
     _i1.Transaction? transaction,
   }) async {
-    return session.db.insert<Staff>(
+    return session.db.insert<StaffUser>(
       rows,
       transaction: transaction,
     );
   }
 
-  /// Inserts a single [Staff] and returns the inserted row.
+  /// Inserts a single [StaffUser] and returns the inserted row.
   ///
-  /// The returned [Staff] will have its `id` field set.
-  Future<Staff> insertRow(
+  /// The returned [StaffUser] will have its `id` field set.
+  Future<StaffUser> insertRow(
     _i1.Session session,
-    Staff row, {
+    StaffUser row, {
     _i1.Transaction? transaction,
   }) async {
-    return session.db.insertRow<Staff>(
+    return session.db.insertRow<StaffUser>(
       row,
       transaction: transaction,
     );
   }
 
-  /// Updates all [Staff]s in the list and returns the updated rows. If
+  /// Updates all [StaffUser]s in the list and returns the updated rows. If
   /// [columns] is provided, only those columns will be updated. Defaults to
   /// all columns.
   /// This is an atomic operation, meaning that if one of the rows fails to
   /// update, none of the rows will be updated.
-  Future<List<Staff>> update(
+  Future<List<StaffUser>> update(
     _i1.Session session,
-    List<Staff> rows, {
-    _i1.ColumnSelections<StaffTable>? columns,
+    List<StaffUser> rows, {
+    _i1.ColumnSelections<StaffUserTable>? columns,
     _i1.Transaction? transaction,
   }) async {
-    return session.db.update<Staff>(
+    return session.db.update<StaffUser>(
       rows,
-      columns: columns?.call(Staff.t),
+      columns: columns?.call(StaffUser.t),
       transaction: transaction,
     );
   }
 
-  /// Updates a single [Staff]. The row needs to have its id set.
+  /// Updates a single [StaffUser]. The row needs to have its id set.
   /// Optionally, a list of [columns] can be provided to only update those
   /// columns. Defaults to all columns.
-  Future<Staff> updateRow(
+  Future<StaffUser> updateRow(
     _i1.Session session,
-    Staff row, {
-    _i1.ColumnSelections<StaffTable>? columns,
+    StaffUser row, {
+    _i1.ColumnSelections<StaffUserTable>? columns,
     _i1.Transaction? transaction,
   }) async {
-    return session.db.updateRow<Staff>(
+    return session.db.updateRow<StaffUser>(
       row,
-      columns: columns?.call(Staff.t),
+      columns: columns?.call(StaffUser.t),
       transaction: transaction,
     );
   }
 
-  /// Deletes all [Staff]s in the list and returns the deleted rows.
+  /// Deletes all [StaffUser]s in the list and returns the deleted rows.
   /// This is an atomic operation, meaning that if one of the rows fail to
   /// be deleted, none of the rows will be deleted.
-  Future<List<Staff>> delete(
+  Future<List<StaffUser>> delete(
     _i1.Session session,
-    List<Staff> rows, {
+    List<StaffUser> rows, {
     _i1.Transaction? transaction,
   }) async {
-    return session.db.delete<Staff>(
+    return session.db.delete<StaffUser>(
       rows,
       transaction: transaction,
     );
   }
 
-  /// Deletes a single [Staff].
-  Future<Staff> deleteRow(
+  /// Deletes a single [StaffUser].
+  Future<StaffUser> deleteRow(
     _i1.Session session,
-    Staff row, {
+    StaffUser row, {
     _i1.Transaction? transaction,
   }) async {
-    return session.db.deleteRow<Staff>(
+    return session.db.deleteRow<StaffUser>(
       row,
       transaction: transaction,
     );
   }
 
   /// Deletes all rows matching the [where] expression.
-  Future<List<Staff>> deleteWhere(
+  Future<List<StaffUser>> deleteWhere(
     _i1.Session session, {
-    required _i1.WhereExpressionBuilder<StaffTable> where,
+    required _i1.WhereExpressionBuilder<StaffUserTable> where,
     _i1.Transaction? transaction,
   }) async {
-    return session.db.deleteWhere<Staff>(
-      where: where(Staff.t),
+    return session.db.deleteWhere<StaffUser>(
+      where: where(StaffUser.t),
       transaction: transaction,
     );
   }
@@ -543,40 +525,40 @@ class StaffRepository {
   /// will return the count of all rows in the table.
   Future<int> count(
     _i1.Session session, {
-    _i1.WhereExpressionBuilder<StaffTable>? where,
+    _i1.WhereExpressionBuilder<StaffUserTable>? where,
     int? limit,
     _i1.Transaction? transaction,
   }) async {
-    return session.db.count<Staff>(
-      where: where?.call(Staff.t),
+    return session.db.count<StaffUser>(
+      where: where?.call(StaffUser.t),
       limit: limit,
       transaction: transaction,
     );
   }
 }
 
-class StaffAttachRowRepository {
-  const StaffAttachRowRepository._();
+class StaffUserAttachRowRepository {
+  const StaffUserAttachRowRepository._();
 
-  /// Creates a relation between the given [Staff] and [UserInfo]
-  /// by setting the [Staff]'s foreign key `userInfoId` to refer to the [UserInfo].
+  /// Creates a relation between the given [StaffUser] and [UserInfo]
+  /// by setting the [StaffUser]'s foreign key `userInfoId` to refer to the [UserInfo].
   Future<void> userInfo(
     _i1.Session session,
-    Staff staff,
+    StaffUser staffUser,
     _i2.UserInfo userInfo, {
     _i1.Transaction? transaction,
   }) async {
-    if (staff.id == null) {
-      throw ArgumentError.notNull('staff.id');
+    if (staffUser.id == null) {
+      throw ArgumentError.notNull('staffUser.id');
     }
     if (userInfo.id == null) {
       throw ArgumentError.notNull('userInfo.id');
     }
 
-    var $staff = staff.copyWith(userInfoId: userInfo.id);
-    await session.db.updateRow<Staff>(
-      $staff,
-      columns: [Staff.t.userInfoId],
+    var $staffUser = staffUser.copyWith(userInfoId: userInfo.id);
+    await session.db.updateRow<StaffUser>(
+      $staffUser,
+      columns: [StaffUser.t.userInfoId],
       transaction: transaction,
     );
   }

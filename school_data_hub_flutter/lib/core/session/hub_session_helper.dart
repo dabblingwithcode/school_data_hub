@@ -1,18 +1,18 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:school_data_hub_flutter/common/models/enums.dart';
+import 'package:logging/logging.dart';
+import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/common/utils/logger.dart';
-import 'package:school_data_hub_flutter/common/utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/models/hub_session.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-class HubSessionHelper {
+final _log = Logger('SessionHelper');
+
+class SessionHelper {
   // static String tokenLifetimeLeft(String token) {
   //   Duration remainingTime = JwtDecoder.getRemainingTime(token);
   //   String days = remainingTime.inDays == 1 ? 'Tag' : 'Tage';
@@ -24,7 +24,7 @@ class HubSessionHelper {
   // }
 
   static Future<void> clearInstanceSessionServerData() async {
-    logger.i('Clearing instance server data');
+    _log.info('Clearing instance server data');
     await di<DefaultCacheManager>().emptyCache();
     // di<PupilIdentityManager>().clearPupilIdentities();
     // locator<PupilsFilter>().clearFilteredPupils();
@@ -67,7 +67,7 @@ class HubSessionHelper {
       // if so, read them
       final String? storedHubSessions =
           await AppSecureStorage.read(SecureStorageKey.sessions.value);
-      log('HubSession(s) found!');
+      _log.info('HubSession(s) found!');
       // decode the stored sessions
       final Map<String, HubSession> sessions =
           (json.decode(storedHubSessions!) as Map<String, dynamic>).map(
@@ -75,14 +75,14 @@ class HubSessionHelper {
                   key, HubSession.fromJson(value as Map<String, dynamic>)));
       // check if the sessions in the secure storage are empty
       if (sessions.isEmpty) {
-        logger.w('Empty sessions found in secure storage! Deleting...');
+        _log.warning('Empty sessions found in secure storage! Deleting...');
         await AppSecureStorage.delete(SecureStorageKey.sessions.value);
         return null;
       }
 
       return sessions;
     }
-
+    _log.info('No HubSession(s) found!');
     return null;
   }
 }

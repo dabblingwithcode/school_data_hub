@@ -1,6 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/auth/hub_auth_key_manager.dart';
@@ -10,6 +9,8 @@ import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/lan
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _log = Logger('DiManager');
 
 class DiManager {
   static final DiManager _instance = DiManager._internal();
@@ -62,12 +63,18 @@ class DiManager {
       return sessionManager;
     }, dependsOn: [Client]);
 
+    _log.info('Managers dependent on ServerpodSessionManager initialized');
+
+    registerManagersDependingOnSession();
+  }
+
+  static Future<void> registerManagersDependingOnSession() async {
     di.registerSingletonAsync<PupilIdentityManager>(() async {
       final pupilIdentityManager = PupilIdentityManager();
 
       await pupilIdentityManager.init();
 
-      log('PupilIdentityManager initialized');
+      _log.info('PupilIdentityManager initialized');
 
       return pupilIdentityManager;
     }, dependsOn: [ServerpodSessionManager]);
@@ -76,14 +83,16 @@ class DiManager {
   static Future<void> unregisterManagersDependingOnActiveEnv() async {
     di<ServerpodSessionManager>().dispose();
     await di.unregister<ServerpodSessionManager>();
-
+    _log.info('ServerpodSessionManager unregistered');
     await di.unregister<HubAuthKeyManager>();
-
+    _log.info('HubAuthKeyManager unregistered');
     await di.unregister<Client>();
+    _log.info('Client unregistered');
   }
 
   static Future<void> resetManagersDependingOnActiveEnv() async {
     await unregisterManagersDependingOnActiveEnv();
     await registerManagersDependingOnActiveEnv();
+    _log.info('Managers depending on active env reset');
   }
 }

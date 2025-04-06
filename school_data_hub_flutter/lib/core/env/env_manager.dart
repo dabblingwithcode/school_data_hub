@@ -1,17 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
-import 'dart:math' as math;
 
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
+import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:school_data_hub_flutter/common/models/enums.dart';
+import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/common/utils/logger.dart';
-import 'package:school_data_hub_flutter/common/utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/core/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/models/enums.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
@@ -20,15 +14,17 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_man
 import 'package:watch_it/watch_it.dart';
 
 class EnvManager {
+  final log = Logger('EnvManager');
   bool _dependentMangagersRegistered = false;
   bool get dependentManagersRegistered => _dependentMangagersRegistered;
 
-  /// we need to observe in [MaterialApp] if a user is authenticated
+  /// TODO: is this proxy authentication flag a hack or is this acceptable?
+  /// We need to observe in [MaterialApp] if a user is authenticated
   /// without accessing [ServerpodSessionManager], because if there is not
   // an active env yet, it will still be unregistered.
   /// So this is a workaround setting a flag here
-  /// that should be changed every time there is an authentication change
-  /// in the [ServerpodSessionManager].
+  /// that should be changed by [ServerpodSessionManager] every time
+  /// it makes an authentication status change.
   final _isUserAuthenticated = ValueNotifier<bool>(false);
   ValueListenable<bool> get isUserAuthenticated => _isUserAuthenticated;
 
@@ -105,7 +101,9 @@ class EnvManager {
 
   void setDependentManagersRegistered(bool value) {
     _dependentMangagersRegistered = value;
-    log('EnvManager - dependentManagersRegistered: $value');
+    log.info(
+      'dependentManagersRegistered: $value',
+    );
   }
 
   Future<void> firstRun() async {
@@ -125,7 +123,9 @@ class EnvManager {
 
     _activeEnv = environmentsObject.environmentsMap[_defaultEnv];
 
-    log('Default Environment: $_defaultEnv');
+    log.info(
+      'Default Environment set: $_defaultEnv',
+    );
 
     // set the base url for the api client
 
@@ -151,10 +151,10 @@ class EnvManager {
 
         return environmentsInStorage;
       } catch (e) {
-        logger.f('Error reading env from secureStorage: $e',
-            stackTrace: StackTrace.current);
+        log.severe(
+            'Error reading env from secureStorage: $e', StackTrace.current);
 
-        log('deleting faulty environments from secure storage');
+        log.warning('deleting faulty environments from secure storage');
 
         await ServerpodSecureStorage()
             .remove(SecureStorageKey.environments.value);
@@ -175,7 +175,7 @@ class EnvManager {
     // add the env to the environments map
     _environments = {..._environments, env.name: env};
 
-    log('Environment ${env.name} added to environments map in memory');
+    log.info('Environment ${env.name} added to environments map in memory');
 
     // the modified environments map will be stored
     // in the [activateEnv] method
@@ -204,8 +204,8 @@ class EnvManager {
       _activeEnv = _environments.values.last;
 
       _defaultEnv = _environments.keys.last;
+      log.info('Env $deletedEnvironment New defaultEnv: $_defaultEnv');
       resetManagersDependentOnEnv();
-      logger.i('Env $deletedEnvironment New defaultEnv: $_defaultEnv');
 
       //  di<ApiClient>().setBaseUrl(_activeEnv!.serverUrl);
     } else {
@@ -240,10 +240,8 @@ class EnvManager {
 
     _envIsReady.value = true;
 
-    log('Activated Env: ${_activeEnv!.name}');
-
-    logger.i(
-        'New Env $envName stored, there are now ${_environments.length} environments stored!');
+    log.info('Activated Env: ${_activeEnv!.name}');
+    log.info('Environments in storage: ${_environments.length}');
 
     di<NotificationService>().showSnackBar(
         NotificationType.success, 'Schulschlüssel für $envName gespeichert!');
@@ -275,65 +273,5 @@ class EnvManager {
   Future<void> propagateNewEnv() async {
     // TODO: implement this if needed
     await di<PupilIdentityManager>().getPupilIdentitiesForEnv();
-  }
-
-  Future<void> generateNewEnvKeys(
-      {required String serverUrl, required String serverName}) async {
-    String generateRandomUtf8StringOfLength(int length) {
-      const chars =
-          'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      final random = math.Random.secure();
-      return List.generate(
-          length, (index) => chars[random.nextInt(chars.length)]).join();
-    }
-
-    final key = generateRandomUtf8StringOfLength(32);
-
-    final iv = generateRandomUtf8StringOfLength(16);
-
-    final String schoolKey = jsonEncode(
-        {"server": serverName, "key": key, "iv": iv, "server_url": serverUrl});
-
-    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
-
-    if (selectedDirectory != null) {
-      // Save the file in the selected directory
-      final schoolKeyFile =
-          File('$selectedDirectory/school_key_$serverName.txt');
-      await schoolKeyFile.writeAsString(schoolKey);
-    } else {
-      di<NotificationService>()
-          .showSnackBar(NotificationType.error, 'Aktion abgebrochen');
-    }
-    return;
-  }
-
-  Future<({String deviceId, String deviceName})> getDeviceNameAndId() async {
-    final deviceInfo = DeviceInfoPlugin();
-
-    if (Platform.isWindows) {
-      final windowsInfo = await deviceInfo.windowsInfo;
-      return (
-        deviceName: windowsInfo.computerName,
-        deviceId: windowsInfo.deviceId
-      );
-    } else if (Platform.isAndroid) {
-      final androidInfo = await deviceInfo.androidInfo;
-      return (
-        deviceName: androidInfo.model,
-        deviceId: androidInfo.id,
-      );
-    } else if (Platform.isIOS) {
-      final iosInfo = await deviceInfo.iosInfo;
-      return (
-        deviceName: iosInfo.name,
-        deviceId: iosInfo.modelName,
-      );
-    } else {
-      return (
-        deviceId: 'Unknown Device',
-        deviceName: 'Unknown Device',
-      );
-    }
   }
 }

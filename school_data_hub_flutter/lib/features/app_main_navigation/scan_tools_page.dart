@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/common/utils/barcode_stream_scanner.dart';
+import 'package:school_data_hub_flutter/app_utils/barcode_stream_scanner.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_image_picker.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';

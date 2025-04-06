@@ -1,0 +1,46 @@
+{
+  "actions": [
+    {
+      "type": "createTable",
+      "createTable": {
+        "name": "language_stats",
+        "dartName": "LanguageStats",
+        "module": "school_data_hub",
+        "schema": "public",
+        "columns": [
+          {
+            "name": "id",
+            "columnType": 6,
+            "isNullable": false,
+            "columnDefault": "nextval('language_stats_id_seq'::regclass)",
+            "dartType": "int?"
+          },
+          {
+            "name": "languages",
+            "columnType": 8,
+            "isNullable": true,
+            "dartType": "Set<protocol:Language>?"
+          }
+        ],
+        "foreignKeys": [],
+        "indexes": [
+          {
+            "indexName": "language_stats_pkey",
+            "elements": [
+              {
+                "type": 0,
+                "definition": "id"
+              }
+            ],
+            "type": "btree",
+            "isUnique": true,
+            "isPrimary": true
+          }
+        ],
+        "managed": true
+      }
+    }
+  ],
+  "warnings": [],
+  "migrationApiVersion": 1
+}

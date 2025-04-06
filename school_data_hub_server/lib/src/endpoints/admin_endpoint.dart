@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/module.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
@@ -12,14 +13,18 @@ class AdminEndpoint extends Endpoint {
   // @override
   // Set<Scope> get requiredScopes => {Scope.admin};
 
-  Future<void> createUser(Session session,
-      {required String userName,
-      required String fullName,
-      required String email,
-      required String password,
-      required List<String> scopeNames}) async {
+  Future<void> createUser(
+    Session session, {
+    required String userName,
+    required String fullName,
+    required String email,
+    required String password,
+    required Role role,
+    required int timeUnits,
+    required List<String> scopeNames,
+  }) async {
     session.log('Creating user: $userName, $email, $password');
-    final userInfo =
+    final UserInfo? userInfo =
         await auth.Emails.createUser(session, userName, email, password);
 
     if (userInfo?.id == null) {
@@ -28,7 +33,26 @@ class AdminEndpoint extends Endpoint {
     // We need to do some updates to the user info object
 
     userInfo!.fullName = fullName;
+
     await auth.UserInfo.db.updateRow(session, userInfo);
+
+    final newStaffUser = StaffUser(
+      userInfoId: userInfo.id!,
+      userFlags: UserFlags(
+        confirmedTermsOfUse: false,
+        confirmedPrivacyPolicy: false,
+        changedPassword: false,
+        madeFirstSteps: false,
+      ),
+      pupilsAuth: {},
+      role: role,
+      timeUnits: timeUnits,
+      credit: 50,
+    );
+
+    // Create a new StaffUser object and insert it into the database
+
+    await StaffUser.db.insertRow(session, newStaffUser);
 
     // Update scopes if provided
 

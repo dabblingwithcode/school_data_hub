@@ -15,7 +15,8 @@ enum Role implements _i1.SerializableModel {
   technical,
   teacher,
   educator,
-  pupil;
+  pupil,
+  notAssigned;
 
   static Role fromJson(String name) {
     switch (name) {
@@ -27,6 +28,8 @@ enum Role implements _i1.SerializableModel {
         return Role.educator;
       case 'pupil':
         return Role.pupil;
+      case 'notAssigned':
+        return Role.notAssigned;
       default:
         throw ArgumentError('Value "$name" cannot be converted to "Role"');
     }
