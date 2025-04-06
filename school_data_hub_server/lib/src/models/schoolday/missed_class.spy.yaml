@@ -15,4 +15,8 @@ fields:
   comment: String
   schoolday: Schoolday?, relation(name=missed_class_schoolday)
   pupil: PupilData?, relation(name=missed_class_pupil)
+indexes:
+  schoolday_pupil_data_idx:
+    fields: schooldayId, pupilId
+    unique: true
   

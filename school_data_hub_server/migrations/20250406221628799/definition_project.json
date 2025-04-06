@@ -862,6 +862,43 @@
       "managed": true
     },
     {
+      "name": "language_stats",
+      "dartName": "LanguageStats",
+      "module": "school_data_hub",
+      "schema": "public",
+      "columns": [
+        {
+          "name": "id",
+          "columnType": 6,
+          "isNullable": false,
+          "columnDefault": "nextval('language_stats_id_seq'::regclass)",
+          "dartType": "int?"
+        },
+        {
+          "name": "languages",
+          "columnType": 8,
+          "isNullable": true,
+          "dartType": "Set<protocol:Language>?"
+        }
+      ],
+      "foreignKeys": [],
+      "indexes": [
+        {
+          "indexName": "language_stats_pkey",
+          "elements": [
+            {
+              "type": 0,
+              "definition": "id"
+            }
+          ],
+          "type": "btree",
+          "isUnique": true,
+          "isPrimary": true
+        }
+      ],
+      "managed": true
+    },
+    {
       "name": "library_book",
       "dartName": "LibraryBook",
       "module": "school_data_hub",
@@ -1100,6 +1137,22 @@
           "type": "btree",
           "isUnique": true,
           "isPrimary": true
+        },
+        {
+          "indexName": "schoolday_pupil_data_idx",
+          "elements": [
+            {
+              "type": 0,
+              "definition": "schooldayId"
+            },
+            {
+              "type": 0,
+              "definition": "pupilId"
+            }
+          ],
+          "type": "btree",
+          "isUnique": true,
+          "isPrimary": false
         }
       ],
       "managed": true
@@ -2011,7 +2064,7 @@
     },
     {
       "name": "staff",
-      "dartName": "Staff",
+      "dartName": "StaffUser",
       "module": "school_data_hub",
       "schema": "public",
       "columns": [
@@ -2043,8 +2096,8 @@
         {
           "name": "pupilsAuth",
           "columnType": 8,
-          "isNullable": false,
-          "dartType": "Set<int>"
+          "isNullable": true,
+          "dartType": "Set<int>?"
         },
         {
           "name": "credit",
@@ -2053,16 +2106,10 @@
           "dartType": "int"
         },
         {
-          "name": "changedPassword",
-          "columnType": 1,
+          "name": "userFlags",
+          "columnType": 8,
           "isNullable": false,
-          "dartType": "bool"
-        },
-        {
-          "name": "passwordLastChanged",
-          "columnType": 4,
-          "isNullable": false,
-          "dartType": "DateTime"
+          "dartType": "protocol:UserFlags"
         }
       ],
       "foreignKeys": [
@@ -2914,10 +2961,6 @@
     {
       "module": "serverpod_auth",
       "version": "20240520102713718"
-    },
-    {
-      "module": "school_data_hub",
-      "version": "20250403230600233"
     }
   ],
   "migrationApiVersion": 1
