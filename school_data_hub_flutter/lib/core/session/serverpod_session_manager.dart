@@ -169,6 +169,14 @@ class ServerpodSessionManager with ChangeNotifier {
 
       return true;
     } catch (e) {
+      // Something wentwrong with the getUserInfo call
+      // so we don't have a signed user.
+      // we better delete the user info from storage and remove the key.
+      log.warning('User was not authenticated by the server: $e');
+      await keyManager.remove();
+      _signedInUser = null;
+      await _handleAuthCallResultInStorage();
+
       /// Don't forget to set the flag in [EnvManager] to false
       /// to get to the login screen.
       di<EnvManager>().setUserAuthenticated(false);

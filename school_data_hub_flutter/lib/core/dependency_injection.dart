@@ -60,6 +60,7 @@ class DiManager {
       // this will initialize the session manager and load the stored user info
       // it returns a bool
       await sessionManager.initialize();
+      _log.info('SessionManager initialized');
       return sessionManager;
     }, dependsOn: [Client]);
 
