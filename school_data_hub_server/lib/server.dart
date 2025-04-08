@@ -1,4 +1,5 @@
 import 'package:school_data_hub_server/src/future_calls/database_backup_future_call.dart';
+import 'package:school_data_hub_server/src/future_calls/increase_credit_future_call.dart';
 import 'package:school_data_hub_server/src/web/routes/root.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
@@ -28,6 +29,8 @@ void run(List<String> args) async {
   // If you are using any future calls, they need to be registered here.
   pod.registerFutureCall(
       DatabaseBackupFutureCall(), 'databaseBackupFutureCall');
+  pod.registerFutureCall(
+      IncreaseCreditFutureCall(), 'increaseCreditFutureCall');
 
   // Setup a default page at the web root.
   pod.webServer.addRoute(RouteRoot(), '/');
@@ -45,6 +48,12 @@ void run(List<String> args) async {
   // Trigger the backup future call to run every day at 2 AM.
   await session.serverpod.futureCallWithDelay(
     'databaseBackupFutureCall',
+    null,
+    const Duration(seconds: 1),
+  );
+
+  await session.serverpod.futureCallWithDelay(
+    'increaseCreditFutureCall',
     null,
     const Duration(seconds: 1),
   );

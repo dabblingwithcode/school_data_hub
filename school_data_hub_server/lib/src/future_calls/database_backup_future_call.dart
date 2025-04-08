@@ -49,8 +49,21 @@ class DatabaseBackupFutureCall extends FutureCall {
         null,
         nextBackupTime,
       ));
+      session.log(
+          'Database backup successful! Next backup scheduled at $nextBackupTime.',
+          level: LogLevel.info);
     } catch (e) {
-      session.log('Database backup failed: $e');
+      session.log('Database backup failed: $e', level: LogLevel.error);
+
+      // reschedule the backup in 1 hour
+      final nextBackupTime = DateTime.now().add(Duration(hours: 1));
+      unawaited(session.serverpod.futureCallAtTime(
+        'databaseBackupFutureCall',
+        null,
+        nextBackupTime,
+      ));
+      session.log('Next backup scheduled at $nextBackupTime.',
+          level: LogLevel.info);
     }
   }
 }
