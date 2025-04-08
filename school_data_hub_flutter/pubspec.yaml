@@ -25,7 +25,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  serverpod_flutter: 2.4.0
+  serverpod_flutter: 2.5.0
   school_data_hub_client:
     path: ../school_data_hub_client
 
@@ -34,7 +34,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.5
   window_manager: ^0.4.3
-  serverpod_auth_shared_flutter: 2.4.0
+  serverpod_auth_shared_flutter: 2.5.0
   watch_it: ^1.6.5
   package_info_plus: ^8.3.0
   file_picker: ^9.2.1
@@ -64,6 +64,8 @@ dependencies:
   flutter_launcher_icons: ^0.14.3
   logging: ^1.3.0
   ansicolor: ^2.0.3
+  table_calendar: ^3.1.3
+  calendar_date_picker2: ^2.0.0
 
 
 dev_dependencies:

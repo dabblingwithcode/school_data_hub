@@ -8,6 +8,6 @@ fields:
   pupilsAuth: Set<int>?
   credit: int
   userFlags: UserFlags
-
+  
 
 

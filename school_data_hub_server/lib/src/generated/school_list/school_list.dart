@@ -12,7 +12,8 @@
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../school_list/pupil_list.dart' as _i2;
 
-abstract class SchoolList implements _i1.TableRow, _i1.ProtocolSerialization {
+abstract class SchoolList
+    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
   SchoolList._({
     this.id,
     required this.listId,
@@ -76,7 +77,7 @@ abstract class SchoolList implements _i1.TableRow, _i1.ProtocolSerialization {
   List<_i2.PupilList>? pupilLists;
 
   @override
-  _i1.Table get table => t;
+  _i1.Table<int> get table => t;
 
   /// Returns a shallow copy of this [SchoolList]
   /// with some or all fields replaced by the given arguments.
@@ -206,7 +207,7 @@ class _SchoolListImpl extends SchoolList {
   }
 }
 
-class SchoolListTable extends _i1.Table {
+class SchoolListTable extends _i1.Table<int> {
   SchoolListTable({super.tableRelation}) : super(tableName: 'school_list') {
     listId = _i1.ColumnString(
       'listId',
@@ -312,7 +313,7 @@ class SchoolListInclude extends _i1.IncludeObject {
   Map<String, _i1.Include?> get includes => {'pupilLists': _pupilLists};
 
   @override
-  _i1.Table get table => SchoolList.t;
+  _i1.Table<int> get table => SchoolList.t;
 }
 
 class SchoolListIncludeList extends _i1.IncludeList {
@@ -332,7 +333,7 @@ class SchoolListIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table get table => SchoolList.t;
+  _i1.Table<int> get table => SchoolList.t;
 }
 
 class SchoolListRepository {

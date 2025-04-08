@@ -12,7 +12,8 @@
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../workbook/pupil_workbook.dart' as _i2;
 
-abstract class Workbook implements _i1.TableRow, _i1.ProtocolSerialization {
+abstract class Workbook
+    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
   Workbook._({
     this.id,
     required this.isbn,
@@ -23,7 +24,7 @@ abstract class Workbook implements _i1.TableRow, _i1.ProtocolSerialization {
     required this.imageId,
     required this.imageUrl,
     this.assignedPupils,
-  });
+  }) : _pupilDataWorkbooksPupilDataId = null;
 
   factory Workbook({
     int? id,
@@ -38,7 +39,7 @@ abstract class Workbook implements _i1.TableRow, _i1.ProtocolSerialization {
   }) = _WorkbookImpl;
 
   factory Workbook.fromJson(Map<String, dynamic> jsonSerialization) {
-    return Workbook(
+    return WorkbookImplicit._(
       id: jsonSerialization['id'] as int?,
       isbn: jsonSerialization['isbn'] as int,
       name: jsonSerialization['name'] as String,
@@ -50,6 +51,8 @@ abstract class Workbook implements _i1.TableRow, _i1.ProtocolSerialization {
       assignedPupils: (jsonSerialization['assignedPupils'] as List?)
           ?.map((e) => _i2.PupilWorkbook.fromJson((e as Map<String, dynamic>)))
           .toList(),
+      $_pupilDataWorkbooksPupilDataId:
+          jsonSerialization['_pupilDataWorkbooksPupilDataId'] as int?,
     );
   }
 
@@ -76,10 +79,10 @@ abstract class Workbook implements _i1.TableRow, _i1.ProtocolSerialization {
 
   List<_i2.PupilWorkbook>? assignedPupils;
 
-  int? _pupilDataWorkbooksPupilDataId;
+  final int? _pupilDataWorkbooksPupilDataId;
 
   @override
-  _i1.Table get table => t;
+  _i1.Table<int> get table => t;
 
   /// Returns a shallow copy of this [Workbook]
   /// with some or all fields replaced by the given arguments.
@@ -202,7 +205,7 @@ class _WorkbookImpl extends Workbook {
     String? imageUrl,
     Object? assignedPupils = _Undefined,
   }) {
-    return Workbook(
+    return WorkbookImplicit._(
       id: id is int? ? id : this.id,
       isbn: isbn ?? this.isbn,
       name: name ?? this.name,
@@ -214,6 +217,7 @@ class _WorkbookImpl extends Workbook {
       assignedPupils: assignedPupils is List<_i2.PupilWorkbook>?
           ? assignedPupils
           : this.assignedPupils?.map((e0) => e0.copyWith()).toList(),
+      $_pupilDataWorkbooksPupilDataId: this._pupilDataWorkbooksPupilDataId,
     );
   }
 }
@@ -229,8 +233,9 @@ class WorkbookImplicit extends _WorkbookImpl {
     required String imageId,
     required String imageUrl,
     List<_i2.PupilWorkbook>? assignedPupils,
-    this.$_pupilDataWorkbooksPupilDataId,
-  }) : super(
+    int? $_pupilDataWorkbooksPupilDataId,
+  })  : _pupilDataWorkbooksPupilDataId = $_pupilDataWorkbooksPupilDataId,
+        super(
           id: id,
           isbn: isbn,
           name: name,
@@ -260,18 +265,11 @@ class WorkbookImplicit extends _WorkbookImpl {
     );
   }
 
-  int? $_pupilDataWorkbooksPupilDataId;
-
   @override
-  Map<String, dynamic> toJson() {
-    var jsonMap = super.toJson();
-    jsonMap.addAll(
-        {'_pupilDataWorkbooksPupilDataId': $_pupilDataWorkbooksPupilDataId});
-    return jsonMap;
-  }
+  final int? _pupilDataWorkbooksPupilDataId;
 }
 
-class WorkbookTable extends _i1.Table {
+class WorkbookTable extends _i1.Table<int> {
   WorkbookTable({super.tableRelation}) : super(tableName: 'workbook') {
     isbn = _i1.ColumnInt(
       'isbn',
@@ -372,6 +370,18 @@ class WorkbookTable extends _i1.Table {
       ];
 
   @override
+  List<_i1.Column> get managedColumns => [
+        id,
+        isbn,
+        name,
+        subject,
+        level,
+        amount,
+        imageId,
+        imageUrl,
+      ];
+
+  @override
   _i1.Table? getRelationTable(String relationField) {
     if (relationField == 'assignedPupils') {
       return __assignedPupils;
@@ -391,7 +401,7 @@ class WorkbookInclude extends _i1.IncludeObject {
   Map<String, _i1.Include?> get includes => {'assignedPupils': _assignedPupils};
 
   @override
-  _i1.Table get table => Workbook.t;
+  _i1.Table<int> get table => Workbook.t;
 }
 
 class WorkbookIncludeList extends _i1.IncludeList {
@@ -411,7 +421,7 @@ class WorkbookIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table get table => Workbook.t;
+  _i1.Table<int> get table => Workbook.t;
 }
 
 class WorkbookRepository {

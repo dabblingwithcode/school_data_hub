@@ -14,7 +14,8 @@ import '../schoolday/missed_class.dart' as _i2;
 import '../schoolday/schoolday_event.dart' as _i3;
 import '../schoolday/school_semester.dart' as _i4;
 
-abstract class Schoolday implements _i1.TableRow, _i1.ProtocolSerialization {
+abstract class Schoolday
+    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
   Schoolday._({
     this.id,
     required this.schoolday,
@@ -70,7 +71,7 @@ abstract class Schoolday implements _i1.TableRow, _i1.ProtocolSerialization {
   _i4.SchoolSemester? schoolSemester;
 
   @override
-  _i1.Table get table => t;
+  _i1.Table<int> get table => t;
 
   /// Returns a shallow copy of this [Schoolday]
   /// with some or all fields replaced by the given arguments.
@@ -201,7 +202,7 @@ class _SchooldayImpl extends Schoolday {
   }
 }
 
-class SchooldayTable extends _i1.Table {
+class SchooldayTable extends _i1.Table<int> {
   SchooldayTable({super.tableRelation}) : super(tableName: 'schoolday') {
     schoolday = _i1.ColumnDateTime(
       'schoolday',
@@ -349,7 +350,7 @@ class SchooldayInclude extends _i1.IncludeObject {
       };
 
   @override
-  _i1.Table get table => Schoolday.t;
+  _i1.Table<int> get table => Schoolday.t;
 }
 
 class SchooldayIncludeList extends _i1.IncludeList {
@@ -369,7 +370,7 @@ class SchooldayIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table get table => Schoolday.t;
+  _i1.Table<int> get table => Schoolday.t;
 }
 
 class SchooldayRepository {

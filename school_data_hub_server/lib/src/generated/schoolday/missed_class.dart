@@ -13,7 +13,8 @@ import 'package:serverpod/serverpod.dart' as _i1;
 import '../schoolday/schoolday.dart' as _i2;
 import '../pupil_data/pupil_data.dart' as _i3;
 
-abstract class MissedClass implements _i1.TableRow, _i1.ProtocolSerialization {
+abstract class MissedClass
+    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
   MissedClass._({
     this.id,
     required this.missedType,
@@ -113,7 +114,7 @@ abstract class MissedClass implements _i1.TableRow, _i1.ProtocolSerialization {
   _i3.PupilData? pupil;
 
   @override
-  _i1.Table get table => t;
+  _i1.Table<int> get table => t;
 
   /// Returns a shallow copy of this [MissedClass]
   /// with some or all fields replaced by the given arguments.
@@ -292,7 +293,7 @@ class _MissedClassImpl extends MissedClass {
   }
 }
 
-class MissedClassTable extends _i1.Table {
+class MissedClassTable extends _i1.Table<int> {
   MissedClassTable({super.tableRelation}) : super(tableName: 'missed_class') {
     missedType = _i1.ColumnInt(
       'missedType',
@@ -447,7 +448,7 @@ class MissedClassInclude extends _i1.IncludeObject {
       };
 
   @override
-  _i1.Table get table => MissedClass.t;
+  _i1.Table<int> get table => MissedClass.t;
 }
 
 class MissedClassIncludeList extends _i1.IncludeList {
@@ -467,7 +468,7 @@ class MissedClassIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table get table => MissedClass.t;
+  _i1.Table<int> get table => MissedClass.t;
 }
 
 class MissedClassRepository {

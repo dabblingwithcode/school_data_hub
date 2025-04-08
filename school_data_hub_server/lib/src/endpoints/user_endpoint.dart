@@ -5,7 +5,11 @@ import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart';
 
 class AuthEndpoint extends Endpoint {
-  Future<AuthenticationResponse> login(
+  Future<
+      ({
+        AuthenticationResponse response,
+        DeviceInfo? deviceInfo,
+      })> login(
     Session session,
     String email,
     String password,
@@ -16,13 +20,19 @@ class AuthEndpoint extends Endpoint {
 
     // If user doesn't exist or is blocked, authentication fails
     if (userInfo == null) {
-      return AuthenticationResponse(
-          success: false,
-          failReason: AuthenticationFailReason.invalidCredentials);
+      return (
+        response: AuthenticationResponse(
+            success: false,
+            failReason: AuthenticationFailReason.invalidCredentials),
+        deviceInfo: null
+      );
     }
     if (userInfo.blocked) {
-      return AuthenticationResponse(
-          success: false, failReason: AuthenticationFailReason.blocked);
+      return (
+        response: AuthenticationResponse(
+            success: false, failReason: AuthenticationFailReason.blocked),
+        deviceInfo: null
+      );
     }
 
     // Check if the password is correct
@@ -38,13 +48,16 @@ class AuthEndpoint extends Endpoint {
           authId: authResponse.keyId!,
           deviceInfo: deviceInfo);
     } else {
-      return AuthenticationResponse(
-          success: false,
-          failReason: AuthenticationFailReason.invalidCredentials);
+      return (
+        response: AuthenticationResponse(
+            success: false,
+            failReason: AuthenticationFailReason.invalidCredentials),
+        deviceInfo: null
+      );
     }
 
     // Return the authentication response
-    return authResponse;
+    return (response: authResponse, deviceInfo: deviceInfo);
   }
 
   Future<void> storeUserDeviceInfo({

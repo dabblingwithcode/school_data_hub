@@ -14,7 +14,7 @@ import '../pupil_data/pupil_data.dart' as _i2;
 import '../learning_support/support_category.dart' as _i3;
 
 abstract class SupportCategoryStatus
-    implements _i1.TableRow, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
   SupportCategoryStatus._({
     this.id,
     required this.statusId,
@@ -28,7 +28,8 @@ abstract class SupportCategoryStatus
     this.pupil,
     required this.supportCategoryId,
     this.supportCategory,
-  });
+  })  : _supportCategoryCategorystatuesSupportCategoryId = null,
+        _pupilDataSupportcategorystatusesPupilDataId = null;
 
   factory SupportCategoryStatus({
     int? id,
@@ -47,7 +48,7 @@ abstract class SupportCategoryStatus
 
   factory SupportCategoryStatus.fromJson(
       Map<String, dynamic> jsonSerialization) {
-    return SupportCategoryStatus(
+    return SupportCategoryStatusImplicit._(
       id: jsonSerialization['id'] as int?,
       statusId: jsonSerialization['statusId'] as String,
       status: jsonSerialization['status'] as int,
@@ -67,6 +68,12 @@ abstract class SupportCategoryStatus
           ? null
           : _i3.SupportCategory.fromJson(
               (jsonSerialization['supportCategory'] as Map<String, dynamic>)),
+      $_supportCategoryCategorystatuesSupportCategoryId:
+          jsonSerialization['_supportCategoryCategorystatuesSupportCategoryId']
+              as int?,
+      $_pupilDataSupportcategorystatusesPupilDataId:
+          jsonSerialization['_pupilDataSupportcategorystatusesPupilDataId']
+              as int?,
     );
   }
 
@@ -99,12 +106,12 @@ abstract class SupportCategoryStatus
 
   _i3.SupportCategory? supportCategory;
 
-  int? _supportCategoryCategorystatuesSupportCategoryId;
+  final int? _supportCategoryCategorystatuesSupportCategoryId;
 
-  int? _pupilDataSupportcategorystatusesPupilDataId;
+  final int? _pupilDataSupportcategorystatusesPupilDataId;
 
   @override
-  _i1.Table get table => t;
+  _i1.Table<int> get table => t;
 
   /// Returns a shallow copy of this [SupportCategoryStatus]
   /// with some or all fields replaced by the given arguments.
@@ -251,7 +258,7 @@ class _SupportCategoryStatusImpl extends SupportCategoryStatus {
     int? supportCategoryId,
     Object? supportCategory = _Undefined,
   }) {
-    return SupportCategoryStatus(
+    return SupportCategoryStatusImplicit._(
       id: id is int? ? id : this.id,
       statusId: statusId ?? this.statusId,
       status: status ?? this.status,
@@ -266,6 +273,10 @@ class _SupportCategoryStatusImpl extends SupportCategoryStatus {
       supportCategory: supportCategory is _i3.SupportCategory?
           ? supportCategory
           : this.supportCategory?.copyWith(),
+      $_supportCategoryCategorystatuesSupportCategoryId:
+          this._supportCategoryCategorystatuesSupportCategoryId,
+      $_pupilDataSupportcategorystatusesPupilDataId:
+          this._pupilDataSupportcategorystatusesPupilDataId,
     );
   }
 }
@@ -284,9 +295,13 @@ class SupportCategoryStatusImplicit extends _SupportCategoryStatusImpl {
     _i2.PupilData? pupil,
     required int supportCategoryId,
     _i3.SupportCategory? supportCategory,
-    this.$_supportCategoryCategorystatuesSupportCategoryId,
-    this.$_pupilDataSupportcategorystatusesPupilDataId,
-  }) : super(
+    int? $_supportCategoryCategorystatuesSupportCategoryId,
+    int? $_pupilDataSupportcategorystatusesPupilDataId,
+  })  : _supportCategoryCategorystatuesSupportCategoryId =
+            $_supportCategoryCategorystatuesSupportCategoryId,
+        _pupilDataSupportcategorystatusesPupilDataId =
+            $_pupilDataSupportcategorystatusesPupilDataId,
+        super(
           id: id,
           statusId: statusId,
           status: status,
@@ -326,24 +341,14 @@ class SupportCategoryStatusImplicit extends _SupportCategoryStatusImpl {
     );
   }
 
-  int? $_supportCategoryCategorystatuesSupportCategoryId;
-
-  int? $_pupilDataSupportcategorystatusesPupilDataId;
+  @override
+  final int? _supportCategoryCategorystatuesSupportCategoryId;
 
   @override
-  Map<String, dynamic> toJson() {
-    var jsonMap = super.toJson();
-    jsonMap.addAll({
-      '_supportCategoryCategorystatuesSupportCategoryId':
-          $_supportCategoryCategorystatuesSupportCategoryId,
-      '_pupilDataSupportcategorystatusesPupilDataId':
-          $_pupilDataSupportcategorystatusesPupilDataId
-    });
-    return jsonMap;
-  }
+  final int? _pupilDataSupportcategorystatusesPupilDataId;
 }
 
-class SupportCategoryStatusTable extends _i1.Table {
+class SupportCategoryStatusTable extends _i1.Table<int> {
   SupportCategoryStatusTable({super.tableRelation})
       : super(tableName: 'support_category_status') {
     statusId = _i1.ColumnString(
@@ -461,6 +466,20 @@ class SupportCategoryStatusTable extends _i1.Table {
       ];
 
   @override
+  List<_i1.Column> get managedColumns => [
+        id,
+        statusId,
+        status,
+        createdBy,
+        createdAt,
+        comment,
+        fileUrl,
+        fileId,
+        pupilId,
+        supportCategoryId,
+      ];
+
+  @override
   _i1.Table? getRelationTable(String relationField) {
     if (relationField == 'pupil') {
       return pupil;
@@ -492,7 +511,7 @@ class SupportCategoryStatusInclude extends _i1.IncludeObject {
       };
 
   @override
-  _i1.Table get table => SupportCategoryStatus.t;
+  _i1.Table<int> get table => SupportCategoryStatus.t;
 }
 
 class SupportCategoryStatusIncludeList extends _i1.IncludeList {
@@ -512,7 +531,7 @@ class SupportCategoryStatusIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table get table => SupportCategoryStatus.t;
+  _i1.Table<int> get table => SupportCategoryStatus.t;
 }
 
 class SupportCategoryStatusRepository {

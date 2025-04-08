@@ -2,45 +2,55 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/models/enums.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class SchooldayManager {
+  final _schooldays = ValueNotifier<List<Schoolday>>([]);
   ValueNotifier<List<Schoolday>> get schooldays => _schooldays;
+
+  final _availableDates = ValueNotifier<List<DateTime>>([]);
   ValueListenable<List<DateTime>> get availableDates => _availableDates;
-  ValueListenable<DateTime> get thisDate => _thisDate;
-  ValueListenable<DateTime> get startDate => _startDate;
-  ValueListenable<DateTime> get endDate => _endDate;
+
+  final _schoolSemesters = ValueNotifier<List<SchoolSemester>>([]);
   ValueListenable<List<SchoolSemester>> get schoolSemesters => _schoolSemesters;
 
-  final _schooldays = ValueNotifier<List<Schoolday>>([]);
-  final _availableDates = ValueNotifier<List<DateTime>>([]);
   final _thisDate = ValueNotifier<DateTime>(DateTime.now());
-  final _startDate = ValueNotifier<DateTime>(DateTime.now());
-  final _endDate = ValueNotifier<DateTime>(DateTime.now());
-  final _schoolSemesters = ValueNotifier<List<SchoolSemester>>([]);
+  ValueListenable<DateTime> get thisDate => _thisDate;
 
   SchooldayManager();
 
-  // final session = di<SessionManager>().credentials.value;
+  //- DEPENDENCY INJECTIONS
+
+  final client = di<Client>();
+
+  final envManager = di<EnvManager>();
+
+  final notificationService = di<NotificationService>();
+
+  final log = Logger('SchooldayManager');
 
   Future<SchooldayManager> init() async {
+    if (envManager.isUserAuthenticated.value == false) {
+      return this;
+    }
     await getSchooldays();
-    // await getSchoolSemesters();
+    await getSchoolSemesters();
     return this;
   }
 
-  //final apiSchooldayService = SchooldayApiService();
+  //- DOMAIN FUNCTIONS
 
   void clearData() {
     _schooldays.value = [];
+
     _availableDates.value = [];
+
     _thisDate.value = DateTime.now();
-    _startDate.value = DateTime.now();
-    _endDate.value = DateTime.now();
+
     _schoolSemesters.value = [];
   }
 
@@ -52,113 +62,6 @@ class SchooldayManager {
 
     return schoolday;
   }
-
-  Future<void> getSchooldays() async {
-    final List<Schoolday> responseSchooldays =
-        await di<Client>().schoolday.getSchooldays();
-
-    if (responseSchooldays.isNotEmpty) {
-      di<NotificationService>()
-          .showSnackBar(NotificationType.success, 'Schultage geladen');
-      _schooldays.value = responseSchooldays;
-      di<EnvManager>().setPopulatedEnvServerData(schooldays: true);
-
-      setAvailableDates();
-      return;
-    }
-
-    di<NotificationService>().showSnackBar(NotificationType.warning,
-        '${responseSchooldays.length} Keine Schultage gefunden!');
-
-    return;
-  }
-
-  Future<void> postSchoolday(DateTime schoolday) async {
-    final Schoolday? newSchoolday =
-        await di<Client>().schooldayAdmin.createSchoolday(schoolday);
-    if (newSchoolday == null) {
-      di<NotificationService>().showSnackBar(
-          NotificationType.error, 'Schultag konnte nicht erstellt werden');
-      return;
-    }
-    _schooldays.value = [..._schooldays.value, newSchoolday];
-
-    di<NotificationService>().showSnackBar(
-        NotificationType.success, 'Schultag erfolgreich erstellt');
-
-    setAvailableDates();
-
-    return;
-  }
-
-  Future<void> postMultipleSchooldays({required List<DateTime> dates}) async {
-    final List<Schoolday> newSchooldays =
-        await di<Client>().schooldayAdmin.createSchooldays(dates);
-
-    _schooldays.value = [..._schooldays.value, ...newSchooldays];
-
-    di<NotificationService>().showSnackBar(
-        NotificationType.success, 'Schultage erfolgreich erstellt');
-
-    setAvailableDates();
-
-    return;
-  }
-
-  Future<void> deleteSchoolday(DateTime date) async {
-    final bool isDeleted =
-        await di<Client>().schooldayAdmin.deleteSchoolday(date);
-
-    final Schoolday? schoolday = getSchooldayByDate(date);
-    if (schoolday == null) {
-      di<NotificationService>().showSnackBar(
-          NotificationType.error, 'Schultag konnte nicht gefunden werden');
-      return;
-    }
-    if (isDeleted) {
-      _schooldays.value =
-          _schooldays.value.where((day) => day != schoolday).toList();
-
-      di<NotificationService>().showSnackBar(
-          NotificationType.success, 'Schultag erfolgreich gelöscht');
-      return;
-    }
-
-    setAvailableDates();
-
-    return;
-  }
-
-  // Future<void> getSchoolSemesters() async {
-  //   final List<SchoolSemester> responseSchoolSemesters =
-  //       await apiSchooldayService.getSchoolSemesters();
-
-  //   di<NotificationService>().showSnackBar(NotificationType.success,
-  //       '${responseSchoolSemesters.length} Schulhalbjahre geladen!');
-
-  //   _schoolSemesters.value = responseSchoolSemesters;
-
-  //   if (responseSchoolSemesters.isNotEmpty) {
-  //     di<EnvManager>().setPopulatedEnvServerData(schoolSemester: true);
-  //   }
-  //   return;
-  // }
-
-  // Future<void> postSchoolSemester(
-  //     {required DateTime startDate,
-  //     required DateTime endDate,
-  //     required bool isFirst}) async {
-  //   final SchoolSemester newSemester =
-  //       await apiSchooldayService.postSchoolSemester(
-  //           startDate: startDate, endDate: endDate, isFirst: isFirst);
-
-  //   _schoolSemesters.value = [..._schoolSemesters.value, newSemester];
-
-  //   di<NotificationService>().showSnackBar(
-  //       NotificationType.success, 'Schulhalbjahr erfolgreich erstellt');
-
-  //   return;
-  // }
 
   SchoolSemester? getCurrentSchoolSemester() {
     final SchoolSemester? currentSemester = _schoolSemesters.value
@@ -202,11 +105,129 @@ class SchooldayManager {
     _thisDate.value = date;
   }
 
-  void setStartDate(DateTime date) {
-    _startDate.value = date;
+  //- DATA FUNCTIONS (CRUD)
+
+  Future<void> postSchoolday(DateTime schoolday) async {
+    final Schoolday? newSchoolday =
+        await client.schooldayAdmin.createSchoolday(schoolday);
+    if (newSchoolday == null) {
+      notificationService.showSnackBar(
+          NotificationType.error, 'Schultag konnte nicht erstellt werden');
+      return;
+    }
+    _schooldays.value = [..._schooldays.value, newSchoolday];
+
+    notificationService.showSnackBar(
+        NotificationType.success, 'Schultag erfolgreich erstellt');
+
+    setAvailableDates();
+
+    return;
   }
 
-  void setEndDate(DateTime date) {
-    _endDate.value = date;
+  Future<void> postMultipleSchooldays({required List<DateTime> dates}) async {
+    final List<Schoolday> newSchooldays =
+        await client.schooldayAdmin.createSchooldays(dates);
+
+    _schooldays.value = [..._schooldays.value, ...newSchooldays];
+
+    notificationService.showSnackBar(
+        NotificationType.success, 'Schultage erfolgreich erstellt');
+
+    setAvailableDates();
+
+    return;
+  }
+
+  Future<void> getSchooldays() async {
+    final List<Schoolday> responseSchooldays =
+        await client.schoolday.getSchooldays();
+
+    if (responseSchooldays.isNotEmpty) {
+      notificationService.showSnackBar(
+          NotificationType.success, 'Schultage geladen');
+      _schooldays.value = responseSchooldays;
+
+      // if the schooldays flag is not set, we set it to true
+      if (envManager.populatedEnvServerData.schooldays == false) {
+        envManager.setPopulatedEnvServerData(schooldays: true);
+      }
+
+      setAvailableDates();
+
+      return;
+    }
+
+    notificationService.showSnackBar(NotificationType.warning,
+        '${responseSchooldays.length} Keine Schultage gefunden!');
+
+    return;
+  }
+
+  Future<void> deleteSchoolday(DateTime date) async {
+    final bool isDeleted = await client.schooldayAdmin.deleteSchoolday(date);
+
+    final Schoolday? schoolday = getSchooldayByDate(date);
+    if (schoolday == null) {
+      notificationService.showSnackBar(
+          NotificationType.error, 'Schultag konnte nicht gefunden werden');
+      return;
+    }
+    if (isDeleted) {
+      _schooldays.value =
+          _schooldays.value.where((day) => day != schoolday).toList();
+
+      notificationService.showSnackBar(
+          NotificationType.success, 'Schultag erfolgreich gelöscht');
+      return;
+    }
+
+    setAvailableDates();
+
+    return;
+  }
+
+  Future<void> getSchoolSemesters() async {
+    final List<SchoolSemester> responseSchoolSemesters =
+        await client.schoolday.getSchoolSemesters();
+
+    notificationService.showSnackBar(NotificationType.success,
+        '${responseSchoolSemesters.length} Schulhalbjahre geladen!');
+
+    log.info(
+      'Schulhalbjahre geladen: ${responseSchoolSemesters.length}',
+    );
+    _schoolSemesters.value = responseSchoolSemesters;
+
+    if (responseSchoolSemesters.isNotEmpty) {
+      di<EnvManager>().setPopulatedEnvServerData(schoolSemester: true);
+    }
+    return;
+  }
+
+  Future<void> postSchoolSemester(
+      {required DateTime startDate,
+      required DateTime endDate,
+      required DateTime classConferenceDate,
+      required DateTime supportConferenceDate,
+      required DateTime reportSignedDate,
+      required DateTime reportConferenceDate,
+      required bool isFirst}) async {
+    final SchoolSemester newSemester =
+        await client.schooldayAdmin.createSchoolSemester(
+      startDate,
+      endDate,
+      isFirst,
+      classConferenceDate,
+      supportConferenceDate,
+      reportSignedDate,
+    );
+
+    _schoolSemesters.value = [..._schoolSemesters.value, newSemester];
+
+    notificationService.showSnackBar(
+        NotificationType.success, 'Schulhalbjahr erfolgreich erstellt');
+
+    return;
   }
 }

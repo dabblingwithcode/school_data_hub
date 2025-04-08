@@ -11,10 +11,12 @@ import 'package:school_data_hub_flutter/app_utils/logger/logrecord_formatter.dar
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_monitor.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/entry_point/entry_point_controller.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/error_page.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/loading_page.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
+import 'package:school_data_hub_flutter/features/app_entry_point/no_connection_page.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/landing_bottom_nav_bar.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:window_manager/window_manager.dart';
@@ -33,7 +35,9 @@ void main() async {
   if (Platform.isWindows) {
     await windowManager.ensureInitialized();
     WindowOptions windowOptions = const WindowOptions(
-      size: Size(1200, 800),
+      // TODO: revert this for production
+      // size: Size(1200, 800),
+      size: Size(400, 800),
       center: true,
       backgroundColor: Colors.transparent,
       skipTaskbar: false,
@@ -52,7 +56,7 @@ void main() async {
     ),
   );
 
-  DiManager.registerNonDependentManagers();
+  DiManager.registerCoreManagers();
   await di.allReady();
 
   runApp(const MyApp());
@@ -76,11 +80,9 @@ class MyApp extends WatchingWidget {
     final bool envIsReady = watchValue((EnvManager x) => x.envIsReady);
     final bool userIsAuthenticated =
         watchValue((EnvManager x) => x.isUserAuthenticated);
+    final bool isConnected =
+        watchValue((ServerpodConnectivityMonitor x) => x.isConnected);
 
-    // TODO: How can we watch the connectivity monitor instead of
-    // adding a listener?
-    // final isConnected =
-    //     watchStream((x) => di<Client>().connectivityMonitor.);
     return MaterialApp(
       localizationsDelegates: const <LocalizationsDelegate<Object>>[
         AppLocalizations.delegate,
@@ -98,31 +100,31 @@ class MyApp extends WatchingWidget {
       home:
           // TODO: How can we watch the connectivity monitor instead of
           // adding a listener?
-          // !isConnected
-          //     ? const NoConnectionPage()
-          //     :
-          envIsReady
-              ? FutureBuilder(
-                  future: di.allReady(timeout: const Duration(seconds: 30)),
-                  //  locator.allReady(timeout: const Duration(seconds: 30)),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      log.shout('Dependency Injection Error: ${snapshot.error}',
-                          StackTrace.current);
-                      return ErrorPage(error: snapshot.error.toString());
-                    } else if (snapshot.connectionState ==
-                        ConnectionState.done) {
-                      if (userIsAuthenticated) {
-                        return MainMenuBottomNavigation();
-                      } else {
-                        return const Login();
-                      }
-                    } else {
-                      return const LoadingPage();
-                    }
-                  },
-                )
-              : const EntryPoint(),
+          !isConnected
+              ? const NoConnectionPage()
+              : envIsReady
+                  ? FutureBuilder(
+                      future: di.allReady(timeout: const Duration(seconds: 30)),
+                      //  locator.allReady(timeout: const Duration(seconds: 30)),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          log.shout(
+                              'Dependency Injection Error: ${snapshot.error}',
+                              StackTrace.current);
+                          return ErrorPage(error: snapshot.error.toString());
+                        } else if (snapshot.connectionState ==
+                            ConnectionState.done) {
+                          if (userIsAuthenticated) {
+                            return MainMenuBottomNavigation();
+                          } else {
+                            return const Login();
+                          }
+                        } else {
+                          return const LoadingPage();
+                        }
+                      },
+                    )
+                  : const EntryPoint(),
     );
   }
 }

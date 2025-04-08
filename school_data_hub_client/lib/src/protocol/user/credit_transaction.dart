@@ -11,33 +11,30 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 
-abstract class Transaction implements _i1.SerializableModel {
-  Transaction._({
+abstract class CreditTransaction implements _i1.SerializableModel {
+  CreditTransaction._({
     this.id,
-    required this.transactionId,
-    required this.createdBy,
-    required this.reciever,
+    required this.sender,
+    required this.receiver,
     required this.amount,
     required this.dateTime,
     this.description,
   });
 
-  factory Transaction({
+  factory CreditTransaction({
     int? id,
-    required String transactionId,
-    required String createdBy,
-    required int reciever,
+    required String sender,
+    required int receiver,
     required int amount,
     required DateTime dateTime,
     String? description,
-  }) = _TransactionImpl;
+  }) = _CreditTransactionImpl;
 
-  factory Transaction.fromJson(Map<String, dynamic> jsonSerialization) {
-    return Transaction(
+  factory CreditTransaction.fromJson(Map<String, dynamic> jsonSerialization) {
+    return CreditTransaction(
       id: jsonSerialization['id'] as int?,
-      transactionId: jsonSerialization['transactionId'] as String,
-      createdBy: jsonSerialization['createdBy'] as String,
-      reciever: jsonSerialization['reciever'] as int,
+      sender: jsonSerialization['sender'] as String,
+      receiver: jsonSerialization['receiver'] as int,
       amount: jsonSerialization['amount'] as int,
       dateTime:
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['dateTime']),
@@ -50,11 +47,9 @@ abstract class Transaction implements _i1.SerializableModel {
   /// the id will be null.
   int? id;
 
-  String transactionId;
+  String sender;
 
-  String createdBy;
-
-  int reciever;
+  int receiver;
 
   int amount;
 
@@ -62,14 +57,13 @@ abstract class Transaction implements _i1.SerializableModel {
 
   String? description;
 
-  /// Returns a shallow copy of this [Transaction]
+  /// Returns a shallow copy of this [CreditTransaction]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
-  Transaction copyWith({
+  CreditTransaction copyWith({
     int? id,
-    String? transactionId,
-    String? createdBy,
-    int? reciever,
+    String? sender,
+    int? receiver,
     int? amount,
     DateTime? dateTime,
     String? description,
@@ -78,9 +72,8 @@ abstract class Transaction implements _i1.SerializableModel {
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
-      'transactionId': transactionId,
-      'createdBy': createdBy,
-      'reciever': reciever,
+      'sender': sender,
+      'receiver': receiver,
       'amount': amount,
       'dateTime': dateTime.toJson(),
       if (description != null) 'description': description,
@@ -95,43 +88,39 @@ abstract class Transaction implements _i1.SerializableModel {
 
 class _Undefined {}
 
-class _TransactionImpl extends Transaction {
-  _TransactionImpl({
+class _CreditTransactionImpl extends CreditTransaction {
+  _CreditTransactionImpl({
     int? id,
-    required String transactionId,
-    required String createdBy,
-    required int reciever,
+    required String sender,
+    required int receiver,
     required int amount,
     required DateTime dateTime,
     String? description,
   }) : super._(
           id: id,
-          transactionId: transactionId,
-          createdBy: createdBy,
-          reciever: reciever,
+          sender: sender,
+          receiver: receiver,
           amount: amount,
           dateTime: dateTime,
           description: description,
         );
 
-  /// Returns a shallow copy of this [Transaction]
+  /// Returns a shallow copy of this [CreditTransaction]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   @override
-  Transaction copyWith({
+  CreditTransaction copyWith({
     Object? id = _Undefined,
-    String? transactionId,
-    String? createdBy,
-    int? reciever,
+    String? sender,
+    int? receiver,
     int? amount,
     DateTime? dateTime,
     Object? description = _Undefined,
   }) {
-    return Transaction(
+    return CreditTransaction(
       id: id is int? ? id : this.id,
-      transactionId: transactionId ?? this.transactionId,
-      createdBy: createdBy ?? this.createdBy,
-      reciever: reciever ?? this.reciever,
+      sender: sender ?? this.sender,
+      receiver: receiver ?? this.receiver,
       amount: amount ?? this.amount,
       dateTime: dateTime ?? this.dateTime,
       description: description is String? ? description : this.description,

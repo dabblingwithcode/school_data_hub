@@ -29,6 +29,20 @@ class SchooldayAdminEndpoint extends Endpoint {
     return schoolSemester;
   }
 
+  Future<List<SchoolSemester>> getAllSchoolSemesters(Session session) async {
+    final schoolSemesters = await session.db.find<SchoolSemester>();
+    return schoolSemesters;
+  }
+
+  Future<SchoolSemester?> getCurrentSchoolSemester(Session session) async {
+    final now = DateTime.now();
+    final schoolSemester = await SchoolSemester.db.findFirstRow(
+      session,
+      where: (t) => (t.startDate <= now) & (t.endDate >= now),
+    );
+    return schoolSemester;
+  }
+
   Future<bool> updateSchoolSemester(
       Session session, SchoolSemester schoolSemester) async {
     await session.db.updateRow(schoolSemester);

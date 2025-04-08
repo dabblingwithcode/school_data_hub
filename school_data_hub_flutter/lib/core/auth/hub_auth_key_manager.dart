@@ -50,7 +50,7 @@ class HubAuthKeyManager extends AuthenticationKeyManager {
   @override
   Future<void> remove() async {
     _authenticationKey = null;
-    _log.info('Removing the user info from storage: ${_storageKey()}');
+    _log.info('Removing the authKey from storage: ${_storageKey()}');
     await _storage.remove(_storageKey());
   }
 }

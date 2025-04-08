@@ -893,6 +893,76 @@
     {
       "type": "createTable",
       "createTable": {
+        "name": "credit_transaction",
+        "dartName": "CreditTransaction",
+        "module": "school_data_hub",
+        "schema": "public",
+        "columns": [
+          {
+            "name": "id",
+            "columnType": 6,
+            "isNullable": false,
+            "columnDefault": "nextval('credit_transaction_id_seq'::regclass)",
+            "dartType": "int?"
+          },
+          {
+            "name": "transactionId",
+            "columnType": 0,
+            "isNullable": false,
+            "dartType": "String"
+          },
+          {
+            "name": "createdBy",
+            "columnType": 0,
+            "isNullable": false,
+            "dartType": "String"
+          },
+          {
+            "name": "reciever",
+            "columnType": 6,
+            "isNullable": false,
+            "dartType": "int"
+          },
+          {
+            "name": "amount",
+            "columnType": 6,
+            "isNullable": false,
+            "dartType": "int"
+          },
+          {
+            "name": "dateTime",
+            "columnType": 4,
+            "isNullable": false,
+            "dartType": "DateTime"
+          },
+          {
+            "name": "description",
+            "columnType": 0,
+            "isNullable": true,
+            "dartType": "String?"
+          }
+        ],
+        "foreignKeys": [],
+        "indexes": [
+          {
+            "indexName": "credit_transaction_pkey",
+            "elements": [
+              {
+                "type": 0,
+                "definition": "id"
+              }
+            ],
+            "type": "btree",
+            "isUnique": true,
+            "isPrimary": true
+          }
+        ],
+        "managed": true
+      }
+    },
+    {
+      "type": "createTable",
+      "createTable": {
         "name": "language_stats",
         "dartName": "LanguageStats",
         "module": "school_data_hub",
@@ -2761,76 +2831,6 @@
         "indexes": [
           {
             "indexName": "support_goal_check_file_pkey",
-            "elements": [
-              {
-                "type": 0,
-                "definition": "id"
-              }
-            ],
-            "type": "btree",
-            "isUnique": true,
-            "isPrimary": true
-          }
-        ],
-        "managed": true
-      }
-    },
-    {
-      "type": "createTable",
-      "createTable": {
-        "name": "transaction",
-        "dartName": "Transaction",
-        "module": "school_data_hub",
-        "schema": "public",
-        "columns": [
-          {
-            "name": "id",
-            "columnType": 6,
-            "isNullable": false,
-            "columnDefault": "nextval('transaction_id_seq'::regclass)",
-            "dartType": "int?"
-          },
-          {
-            "name": "transactionId",
-            "columnType": 0,
-            "isNullable": false,
-            "dartType": "String"
-          },
-          {
-            "name": "createdBy",
-            "columnType": 0,
-            "isNullable": false,
-            "dartType": "String"
-          },
-          {
-            "name": "reciever",
-            "columnType": 6,
-            "isNullable": false,
-            "dartType": "int"
-          },
-          {
-            "name": "amount",
-            "columnType": 6,
-            "isNullable": false,
-            "dartType": "int"
-          },
-          {
-            "name": "dateTime",
-            "columnType": 4,
-            "isNullable": false,
-            "dartType": "DateTime"
-          },
-          {
-            "name": "description",
-            "columnType": 0,
-            "isNullable": true,
-            "dartType": "String?"
-          }
-        ],
-        "foreignKeys": [],
-        "indexes": [
-          {
-            "indexName": "transaction_pkey",
             "elements": [
               {
                 "type": 0,

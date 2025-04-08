@@ -46,21 +46,27 @@ import 'schoolday/school_semester.dart' as _i34;
 import 'schoolday/schoolday.dart' as _i35;
 import 'schoolday/schoolday_event.dart' as _i36;
 import 'stats/language_stats.dart' as _i37;
-import 'user/device_info.dart' as _i38;
-import 'user/roles/auth_level.dart' as _i39;
-import 'user/roles/roles.dart' as _i40;
-import 'user/roles/staff.dart' as _i41;
-import 'user/transaction.dart' as _i42;
+import 'user/credit_transaction.dart' as _i38;
+import 'user/device_info.dart' as _i39;
+import 'user/roles/auth_level.dart' as _i40;
+import 'user/roles/roles.dart' as _i41;
+import 'user/staff_user.dart' as _i42;
 import 'user/user_device.dart' as _i43;
 import 'user/user_flags.dart' as _i44;
 import 'workbook/pupil_workbook.dart' as _i45;
 import 'workbook/workbook.dart' as _i46;
-import 'package:school_data_hub_server/src/generated/pupil_data/pupil_data.dart'
+import 'package:school_data_hub_server/src/generated/user/staff_user.dart'
     as _i47;
-import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/missed_class.dart'
     as _i48;
-import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
+import 'package:school_data_hub_server/src/generated/pupil_data/pupil_data.dart'
     as _i49;
+import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
+    as _i50;
+import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
+    as _i51;
+import 'package:school_data_hub_server/src/generated/user/device_info.dart'
+    as _i52;
 export 'authorization/authorization.dart';
 export 'authorization/pupil_authorization.dart';
 export 'book/book.dart';
@@ -95,11 +101,11 @@ export 'schoolday/school_semester.dart';
 export 'schoolday/schoolday.dart';
 export 'schoolday/schoolday_event.dart';
 export 'stats/language_stats.dart';
+export 'user/credit_transaction.dart';
 export 'user/device_info.dart';
 export 'user/roles/auth_level.dart';
 export 'user/roles/roles.dart';
-export 'user/roles/staff.dart';
-export 'user/transaction.dart';
+export 'user/staff_user.dart';
 export 'user/user_device.dart';
 export 'user/user_flags.dart';
 export 'workbook/pupil_workbook.dart';
@@ -946,6 +952,94 @@ class Protocol extends _i1.SerializationManagerServer {
           isUnique: true,
           isPrimary: true,
         )
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
+      name: 'credit_transaction',
+      dartName: 'CreditTransaction',
+      schema: 'public',
+      module: 'school_data_hub',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'credit_transaction_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'sender',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'receiver',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _i2.ColumnDefinition(
+          name: 'amount',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _i2.ColumnDefinition(
+          name: 'dateTime',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _i2.ColumnDefinition(
+          name: 'description',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'credit_transaction_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            )
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'reciever_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'receiver',
+            )
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'sender_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'sender',
+            )
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
       ],
       managed: true,
     ),
@@ -2712,74 +2806,6 @@ class Protocol extends _i1.SerializationManagerServer {
       managed: true,
     ),
     _i2.TableDefinition(
-      name: 'transaction',
-      dartName: 'Transaction',
-      schema: 'public',
-      module: 'school_data_hub',
-      columns: [
-        _i2.ColumnDefinition(
-          name: 'id',
-          columnType: _i2.ColumnType.bigint,
-          isNullable: false,
-          dartType: 'int?',
-          columnDefault: 'nextval(\'transaction_id_seq\'::regclass)',
-        ),
-        _i2.ColumnDefinition(
-          name: 'transactionId',
-          columnType: _i2.ColumnType.text,
-          isNullable: false,
-          dartType: 'String',
-        ),
-        _i2.ColumnDefinition(
-          name: 'createdBy',
-          columnType: _i2.ColumnType.text,
-          isNullable: false,
-          dartType: 'String',
-        ),
-        _i2.ColumnDefinition(
-          name: 'reciever',
-          columnType: _i2.ColumnType.bigint,
-          isNullable: false,
-          dartType: 'int',
-        ),
-        _i2.ColumnDefinition(
-          name: 'amount',
-          columnType: _i2.ColumnType.bigint,
-          isNullable: false,
-          dartType: 'int',
-        ),
-        _i2.ColumnDefinition(
-          name: 'dateTime',
-          columnType: _i2.ColumnType.timestampWithoutTimeZone,
-          isNullable: false,
-          dartType: 'DateTime',
-        ),
-        _i2.ColumnDefinition(
-          name: 'description',
-          columnType: _i2.ColumnType.text,
-          isNullable: true,
-          dartType: 'String?',
-        ),
-      ],
-      foreignKeys: [],
-      indexes: [
-        _i2.IndexDefinition(
-          indexName: 'transaction_pkey',
-          tableSpace: null,
-          elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
-              definition: 'id',
-            )
-          ],
-          type: 'btree',
-          isUnique: true,
-          isPrimary: true,
-        )
-      ],
-      managed: true,
-    ),
-    _i2.TableDefinition(
       name: 'user_device',
       dartName: 'UserDevice',
       schema: 'public',
@@ -3084,20 +3110,20 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i37.LanguageStats) {
       return _i37.LanguageStats.fromJson(data) as T;
     }
-    if (t == _i38.DeviceInfo) {
-      return _i38.DeviceInfo.fromJson(data) as T;
+    if (t == _i38.CreditTransaction) {
+      return _i38.CreditTransaction.fromJson(data) as T;
     }
-    if (t == _i39.AuthLevel) {
-      return _i39.AuthLevel.fromJson(data) as T;
+    if (t == _i39.DeviceInfo) {
+      return _i39.DeviceInfo.fromJson(data) as T;
     }
-    if (t == _i40.Role) {
-      return _i40.Role.fromJson(data) as T;
+    if (t == _i40.AuthLevel) {
+      return _i40.AuthLevel.fromJson(data) as T;
     }
-    if (t == _i41.StaffUser) {
-      return _i41.StaffUser.fromJson(data) as T;
+    if (t == _i41.Role) {
+      return _i41.Role.fromJson(data) as T;
     }
-    if (t == _i42.Transaction) {
-      return _i42.Transaction.fromJson(data) as T;
+    if (t == _i42.StaffUser) {
+      return _i42.StaffUser.fromJson(data) as T;
     }
     if (t == _i43.UserDevice) {
       return _i43.UserDevice.fromJson(data) as T;
@@ -3221,20 +3247,20 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i1.getType<_i37.LanguageStats?>()) {
       return (data != null ? _i37.LanguageStats.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i38.DeviceInfo?>()) {
-      return (data != null ? _i38.DeviceInfo.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i38.CreditTransaction?>()) {
+      return (data != null ? _i38.CreditTransaction.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i39.AuthLevel?>()) {
-      return (data != null ? _i39.AuthLevel.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i39.DeviceInfo?>()) {
+      return (data != null ? _i39.DeviceInfo.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i40.Role?>()) {
-      return (data != null ? _i40.Role.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i40.AuthLevel?>()) {
+      return (data != null ? _i40.AuthLevel.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i41.StaffUser?>()) {
-      return (data != null ? _i41.StaffUser.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i41.Role?>()) {
+      return (data != null ? _i41.Role.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i42.Transaction?>()) {
-      return (data != null ? _i42.Transaction.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i42.StaffUser?>()) {
+      return (data != null ? _i42.StaffUser.fromJson(data) : null) as T;
     }
     if (t == _i1.getType<_i43.UserDevice?>()) {
       return (data != null ? _i43.UserDevice.fromJson(data) : null) as T;
@@ -3508,21 +3534,44 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
     }
-    if (t == List<_i47.PupilData>) {
-      return (data as List).map((e) => deserialize<_i47.PupilData>(e)).toList()
+    if (t == List<_i47.StaffUser>) {
+      return (data as List).map((e) => deserialize<_i47.StaffUser>(e)).toList()
           as T;
     }
-    if (t == List<_i48.Schoolday>) {
-      return (data as List).map((e) => deserialize<_i48.Schoolday>(e)).toList()
+    if (t == List<_i48.MissedClass>) {
+      return (data as List)
+          .map((e) => deserialize<_i48.MissedClass>(e))
+          .toList() as T;
+    }
+    if (t == List<_i49.PupilData>) {
+      return (data as List).map((e) => deserialize<_i49.PupilData>(e)).toList()
+          as T;
+    }
+    if (t == List<_i50.SchoolSemester>) {
+      return (data as List)
+          .map((e) => deserialize<_i50.SchoolSemester>(e))
+          .toList() as T;
+    }
+    if (t == List<_i51.Schoolday>) {
+      return (data as List).map((e) => deserialize<_i51.Schoolday>(e)).toList()
           as T;
     }
     if (t == List<DateTime>) {
       return (data as List).map((e) => deserialize<DateTime>(e)).toList() as T;
     }
-    if (t == List<_i49.SchoolSemester>) {
-      return (data as List)
-          .map((e) => deserialize<_i49.SchoolSemester>(e))
-          .toList() as T;
+    if (t ==
+        _i1.getType<
+            ({
+              _i52.DeviceInfo? deviceInfo,
+              _i3.AuthenticationResponse response
+            })>()) {
+      return (
+        deviceInfo: ((data as Map)['n'] as Map)['deviceInfo'] == null
+            ? null
+            : deserialize<_i52.DeviceInfo>(data['n']['deviceInfo']),
+        response:
+            deserialize<_i3.AuthenticationResponse>(data['n']['response']),
+      ) as T;
     }
     try {
       return _i3.Protocol().deserialize<T>(data, t);
@@ -3639,20 +3688,20 @@ class Protocol extends _i1.SerializationManagerServer {
     if (data is _i37.LanguageStats) {
       return 'LanguageStats';
     }
-    if (data is _i38.DeviceInfo) {
+    if (data is _i38.CreditTransaction) {
+      return 'CreditTransaction';
+    }
+    if (data is _i39.DeviceInfo) {
       return 'DeviceInfo';
     }
-    if (data is _i39.AuthLevel) {
+    if (data is _i40.AuthLevel) {
       return 'AuthLevel';
     }
-    if (data is _i40.Role) {
+    if (data is _i41.Role) {
       return 'Role';
     }
-    if (data is _i41.StaffUser) {
+    if (data is _i42.StaffUser) {
       return 'StaffUser';
-    }
-    if (data is _i42.Transaction) {
-      return 'Transaction';
     }
     if (data is _i43.UserDevice) {
       return 'UserDevice';
@@ -3674,7 +3723,7 @@ class Protocol extends _i1.SerializationManagerServer {
     if (className != null) {
       return 'serverpod_auth.$className';
     }
-    if (data is List<_i47.PupilData>) {
+    if (data is List<_i49.PupilData>) {
       return 'List<PupilData>';
     }
     return null;
@@ -3788,20 +3837,20 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName == 'LanguageStats') {
       return deserialize<_i37.LanguageStats>(data['data']);
     }
+    if (dataClassName == 'CreditTransaction') {
+      return deserialize<_i38.CreditTransaction>(data['data']);
+    }
     if (dataClassName == 'DeviceInfo') {
-      return deserialize<_i38.DeviceInfo>(data['data']);
+      return deserialize<_i39.DeviceInfo>(data['data']);
     }
     if (dataClassName == 'AuthLevel') {
-      return deserialize<_i39.AuthLevel>(data['data']);
+      return deserialize<_i40.AuthLevel>(data['data']);
     }
     if (dataClassName == 'Role') {
-      return deserialize<_i40.Role>(data['data']);
+      return deserialize<_i41.Role>(data['data']);
     }
     if (dataClassName == 'StaffUser') {
-      return deserialize<_i41.StaffUser>(data['data']);
-    }
-    if (dataClassName == 'Transaction') {
-      return deserialize<_i42.Transaction>(data['data']);
+      return deserialize<_i42.StaffUser>(data['data']);
     }
     if (dataClassName == 'UserDevice') {
       return deserialize<_i43.UserDevice>(data['data']);
@@ -3824,7 +3873,7 @@ class Protocol extends _i1.SerializationManagerServer {
       return _i3.Protocol().deserializeByClassName(data);
     }
     if (dataClassName == 'List<PupilData>') {
-      return deserialize<List<_i47.PupilData>>(data['data']);
+      return deserialize<List<_i49.PupilData>>(data['data']);
     }
     return super.deserializeByClassName(data);
   }
@@ -3900,10 +3949,10 @@ class Protocol extends _i1.SerializationManagerServer {
         return _i36.SchooldayEvent.t;
       case _i37.LanguageStats:
         return _i37.LanguageStats.t;
-      case _i41.StaffUser:
-        return _i41.StaffUser.t;
-      case _i42.Transaction:
-        return _i42.Transaction.t;
+      case _i38.CreditTransaction:
+        return _i38.CreditTransaction.t;
+      case _i42.StaffUser:
+        return _i42.StaffUser.t;
       case _i43.UserDevice:
         return _i43.UserDevice.t;
       case _i45.PupilWorkbook:
@@ -3920,4 +3969,75 @@ class Protocol extends _i1.SerializationManagerServer {
 
   @override
   String getModuleName() => 'school_data_hub';
+}
+
+/// Maps any `Record`s known to this [Protocol] to their JSON representation
+///
+/// Throws in case the record type is not known.
+///
+/// This method will return `null` (only) for `null` inputs.
+Map<String, dynamic>? mapRecordToJson(Record? record) {
+  if (record == null) {
+    return null;
+  }
+  if (record is ({
+    _i52.DeviceInfo? deviceInfo,
+    _i3.AuthenticationResponse response
+  })) {
+    return {
+      "n": {
+        "deviceInfo": record.deviceInfo,
+        "response": record.response,
+      },
+    };
+  }
+  throw Exception('Unsupported record type ${record.runtimeType}');
+}
+
+/// Maps container types (like [List], [Map], [Set]) containing [Record]s to their JSON representation.
+///
+/// It should not be called for [SerializableModel] types. These handle the "[Record] in container" mapping internally already.
+///
+/// It is only supposed to be called from generated protocol code.
+///
+/// Returns either a `List<dynamic>` (for List, Sets, and Maps with non-String keys) or a `Map<String, dynamic>` in case the input was a `Map<String, …>`.
+Object? mapRecordContainingContainerToJson(Object obj) {
+  if (obj is! Iterable && obj is! Map) {
+    throw ArgumentError.value(
+      obj,
+      'obj',
+      'The object to serialize should be of type List, Map, or Set',
+    );
+  }
+
+  dynamic mapIfNeeded(Object? obj) {
+    return switch (obj) {
+      Record record => mapRecordToJson(record),
+      Iterable iterable => mapRecordContainingContainerToJson(iterable),
+      Map map => mapRecordContainingContainerToJson(map),
+      Object? value => value,
+    };
+  }
+
+  switch (obj) {
+    case Map<String, dynamic>():
+      return {
+        for (var entry in obj.entries) entry.key: mapIfNeeded(entry.value),
+      };
+    case Map():
+      return [
+        for (var entry in obj.entries)
+          {
+            'k': mapIfNeeded(entry.key),
+            'v': mapIfNeeded(entry.value),
+          }
+      ];
+
+    case Iterable():
+      return [
+        for (var e in obj) mapIfNeeded(e),
+      ];
+  }
+
+  return obj;
 }

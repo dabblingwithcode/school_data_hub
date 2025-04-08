@@ -13,7 +13,8 @@ import 'package:serverpod/serverpod.dart' as _i1;
 import '../../book/book.dart' as _i2;
 import '../../book/book_tagging/book_tag.dart' as _i3;
 
-abstract class BookTagging implements _i1.TableRow, _i1.ProtocolSerialization {
+abstract class BookTagging
+    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
   BookTagging._({
     this.id,
     required this.bookId,
@@ -62,7 +63,7 @@ abstract class BookTagging implements _i1.TableRow, _i1.ProtocolSerialization {
   _i3.BookTag? bookTag;
 
   @override
-  _i1.Table get table => t;
+  _i1.Table<int> get table => t;
 
   /// Returns a shallow copy of this [BookTagging]
   /// with some or all fields replaced by the given arguments.
@@ -170,7 +171,7 @@ class _BookTaggingImpl extends BookTagging {
   }
 }
 
-class BookTaggingTable extends _i1.Table {
+class BookTaggingTable extends _i1.Table<int> {
   BookTaggingTable({super.tableRelation}) : super(tableName: 'book_tagging') {
     bookId = _i1.ColumnInt(
       'bookId',
@@ -255,7 +256,7 @@ class BookTaggingInclude extends _i1.IncludeObject {
       };
 
   @override
-  _i1.Table get table => BookTagging.t;
+  _i1.Table<int> get table => BookTagging.t;
 }
 
 class BookTaggingIncludeList extends _i1.IncludeList {
@@ -275,7 +276,7 @@ class BookTaggingIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table get table => BookTagging.t;
+  _i1.Table<int> get table => BookTagging.t;
 }
 
 class BookTaggingRepository {

@@ -15,7 +15,7 @@ import '../book/library_book.dart' as _i3;
 import '../book/pupil_book_lending_file.dart' as _i4;
 
 abstract class PupilBookLending
-    implements _i1.TableRow, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
   PupilBookLending._({
     this.id,
     required this.lendingId,
@@ -104,7 +104,7 @@ abstract class PupilBookLending
   List<_i4.PupilBookLendingFile>? pupilBookLendingFiles;
 
   @override
-  _i1.Table get table => t;
+  _i1.Table<int> get table => t;
 
   /// Returns a shallow copy of this [PupilBookLending]
   /// with some or all fields replaced by the given arguments.
@@ -272,7 +272,7 @@ class _PupilBookLendingImpl extends PupilBookLending {
   }
 }
 
-class PupilBookLendingTable extends _i1.Table {
+class PupilBookLendingTable extends _i1.Table<int> {
   PupilBookLendingTable({super.tableRelation})
       : super(tableName: 'pupil_book_lending') {
     lendingId = _i1.ColumnString(
@@ -443,7 +443,7 @@ class PupilBookLendingInclude extends _i1.IncludeObject {
       };
 
   @override
-  _i1.Table get table => PupilBookLending.t;
+  _i1.Table<int> get table => PupilBookLending.t;
 }
 
 class PupilBookLendingIncludeList extends _i1.IncludeList {
@@ -463,7 +463,7 @@ class PupilBookLendingIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table get table => PupilBookLending.t;
+  _i1.Table<int> get table => PupilBookLending.t;
 }
 
 class PupilBookLendingRepository {

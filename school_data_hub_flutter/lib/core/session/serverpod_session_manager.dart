@@ -152,6 +152,7 @@ class ServerpodSessionManager with ChangeNotifier {
   /// Returns true if successful.
   Future<bool> refreshSession() async {
     log.info('Refreshing session...');
+
     try {
       _signedInUser = await caller.status.getUserInfo();
       await _handleAuthCallResultInStorage();

@@ -28,7 +28,8 @@ import '../learning/competence_report_check.dart' as _i16;
 import '../school_list/pupil_list.dart' as _i17;
 
 /// Pupil class
-abstract class PupilData implements _i1.TableRow, _i1.ProtocolSerialization {
+abstract class PupilData
+    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
   PupilData._({
     this.id,
     required this.internalId,
@@ -223,7 +224,7 @@ abstract class PupilData implements _i1.TableRow, _i1.ProtocolSerialization {
   List<_i17.PupilList>? pupilLists;
 
   @override
-  _i1.Table get table => t;
+  _i1.Table<int> get table => t;
 
   /// Returns a shallow copy of this [PupilData]
   /// with some or all fields replaced by the given arguments.
@@ -587,7 +588,7 @@ class _PupilDataImpl extends PupilData {
   }
 }
 
-class PupilDataTable extends _i1.Table {
+class PupilDataTable extends _i1.Table<int> {
   PupilDataTable({super.tableRelation}) : super(tableName: 'pupil_data') {
     internalId = _i1.ColumnInt(
       'internalId',
@@ -1268,7 +1269,7 @@ class PupilDataInclude extends _i1.IncludeObject {
       };
 
   @override
-  _i1.Table get table => PupilData.t;
+  _i1.Table<int> get table => PupilData.t;
 }
 
 class PupilDataIncludeList extends _i1.IncludeList {
@@ -1288,7 +1289,7 @@ class PupilDataIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table get table => PupilData.t;
+  _i1.Table<int> get table => PupilData.t;
 }
 
 class PupilDataRepository {

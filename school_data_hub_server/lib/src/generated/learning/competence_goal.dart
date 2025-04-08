@@ -14,7 +14,7 @@ import '../pupil_data/pupil_data.dart' as _i2;
 import '../learning/competence.dart' as _i3;
 
 abstract class CompetenceGoal
-    implements _i1.TableRow, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
   CompetenceGoal._({
     this.id,
     required this.publicId,
@@ -107,7 +107,7 @@ abstract class CompetenceGoal
   _i3.Competence? competence;
 
   @override
-  _i1.Table get table => t;
+  _i1.Table<int> get table => t;
 
   /// Returns a shallow copy of this [CompetenceGoal]
   /// with some or all fields replaced by the given arguments.
@@ -275,7 +275,7 @@ class _CompetenceGoalImpl extends CompetenceGoal {
   }
 }
 
-class CompetenceGoalTable extends _i1.Table {
+class CompetenceGoalTable extends _i1.Table<int> {
   CompetenceGoalTable({super.tableRelation})
       : super(tableName: 'competence_goal') {
     publicId = _i1.ColumnString(
@@ -417,7 +417,7 @@ class CompetenceGoalInclude extends _i1.IncludeObject {
       };
 
   @override
-  _i1.Table get table => CompetenceGoal.t;
+  _i1.Table<int> get table => CompetenceGoal.t;
 }
 
 class CompetenceGoalIncludeList extends _i1.IncludeList {
@@ -437,7 +437,7 @@ class CompetenceGoalIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table get table => CompetenceGoal.t;
+  _i1.Table<int> get table => CompetenceGoal.t;
 }
 
 class CompetenceGoalRepository {

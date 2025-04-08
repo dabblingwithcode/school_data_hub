@@ -11,8 +11,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'package:serverpod_auth_client/serverpod_auth_client.dart' as _i2;
-import '../../user/roles/roles.dart' as _i3;
-import '../../user/user_flags.dart' as _i4;
+import '../user/roles/roles.dart' as _i3;
+import '../user/user_flags.dart' as _i4;
 
 abstract class StaffUser implements _i1.SerializableModel {
   StaffUser._({

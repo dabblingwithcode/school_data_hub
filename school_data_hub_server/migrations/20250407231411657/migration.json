@@ -1,0 +1,117 @@
+{
+  "actions": [
+    {
+      "type": "deleteTable",
+      "deleteTable": "credit_transaction"
+    },
+    {
+      "type": "createTable",
+      "createTable": {
+        "name": "credit_transaction",
+        "dartName": "CreditTransaction",
+        "module": "school_data_hub",
+        "schema": "public",
+        "columns": [
+          {
+            "name": "id",
+            "columnType": 6,
+            "isNullable": false,
+            "columnDefault": "nextval('credit_transaction_id_seq'::regclass)",
+            "dartType": "int?"
+          },
+          {
+            "name": "sender",
+            "columnType": 0,
+            "isNullable": false,
+            "dartType": "String"
+          },
+          {
+            "name": "receiver",
+            "columnType": 6,
+            "isNullable": false,
+            "dartType": "int"
+          },
+          {
+            "name": "amount",
+            "columnType": 6,
+            "isNullable": false,
+            "dartType": "int"
+          },
+          {
+            "name": "dateTime",
+            "columnType": 4,
+            "isNullable": false,
+            "dartType": "DateTime"
+          },
+          {
+            "name": "description",
+            "columnType": 0,
+            "isNullable": true,
+            "dartType": "String?"
+          }
+        ],
+        "foreignKeys": [],
+        "indexes": [
+          {
+            "indexName": "credit_transaction_pkey",
+            "elements": [
+              {
+                "type": 0,
+                "definition": "id"
+              }
+            ],
+            "type": "btree",
+            "isUnique": true,
+            "isPrimary": true
+          },
+          {
+            "indexName": "reciever_idx",
+            "elements": [
+              {
+                "type": 0,
+                "definition": "receiver"
+              }
+            ],
+            "type": "btree",
+            "isUnique": false,
+            "isPrimary": false
+          },
+          {
+            "indexName": "sender_idx",
+            "elements": [
+              {
+                "type": 0,
+                "definition": "sender"
+              }
+            ],
+            "type": "btree",
+            "isUnique": false,
+            "isPrimary": false
+          }
+        ],
+        "managed": true
+      }
+    }
+  ],
+  "warnings": [
+    {
+      "type": "columnDropped",
+      "message": "Column \"receiverId\" of table \"credit_transaction\" will be dropped.",
+      "table": "credit_transaction",
+      "columns": [
+        "receiverId"
+      ],
+      "destrucive": true
+    },
+    {
+      "type": "tableDropped",
+      "message": "One or more columns are added to table \"credit_transaction\" which cannot be added in a table migration. The complete table will be deleted and recreated.",
+      "table": "credit_transaction",
+      "columns": [
+        "receiver"
+      ],
+      "destrucive": true
+    }
+  ],
+  "migrationApiVersion": 1
+}

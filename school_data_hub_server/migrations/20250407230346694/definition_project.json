@@ -862,6 +862,105 @@
       "managed": true
     },
     {
+      "name": "credit_transaction",
+      "dartName": "CreditTransaction",
+      "module": "school_data_hub",
+      "schema": "public",
+      "columns": [
+        {
+          "name": "id",
+          "columnType": 6,
+          "isNullable": false,
+          "columnDefault": "nextval('credit_transaction_id_seq'::regclass)",
+          "dartType": "int?"
+        },
+        {
+          "name": "sender",
+          "columnType": 0,
+          "isNullable": false,
+          "dartType": "String"
+        },
+        {
+          "name": "receiverId",
+          "columnType": 6,
+          "isNullable": false,
+          "dartType": "int"
+        },
+        {
+          "name": "amount",
+          "columnType": 6,
+          "isNullable": false,
+          "dartType": "int"
+        },
+        {
+          "name": "dateTime",
+          "columnType": 4,
+          "isNullable": false,
+          "dartType": "DateTime"
+        },
+        {
+          "name": "description",
+          "columnType": 0,
+          "isNullable": true,
+          "dartType": "String?"
+        }
+      ],
+      "foreignKeys": [
+        {
+          "constraintName": "credit_transaction_fk_0",
+          "columns": [
+            "receiverId"
+          ],
+          "referenceTable": "pupil_data",
+          "referenceTableSchema": "public",
+          "referenceColumns": [
+            "id"
+          ],
+          "onUpdate": 3,
+          "onDelete": 0
+        }
+      ],
+      "indexes": [
+        {
+          "indexName": "credit_transaction_pkey",
+          "elements": [
+            {
+              "type": 0,
+              "definition": "id"
+            }
+          ],
+          "type": "btree",
+          "isUnique": true,
+          "isPrimary": true
+        },
+        {
+          "indexName": "reciever_idx",
+          "elements": [
+            {
+              "type": 0,
+              "definition": "receiverId"
+            }
+          ],
+          "type": "btree",
+          "isUnique": false,
+          "isPrimary": false
+        },
+        {
+          "indexName": "sender_idx",
+          "elements": [
+            {
+              "type": 0,
+              "definition": "sender"
+            }
+          ],
+          "type": "btree",
+          "isUnique": false,
+          "isPrimary": false
+        }
+      ],
+      "managed": true
+    },
+    {
       "name": "language_stats",
       "dartName": "LanguageStats",
       "module": "school_data_hub",
@@ -2687,73 +2786,6 @@
       "managed": true
     },
     {
-      "name": "transaction",
-      "dartName": "Transaction",
-      "module": "school_data_hub",
-      "schema": "public",
-      "columns": [
-        {
-          "name": "id",
-          "columnType": 6,
-          "isNullable": false,
-          "columnDefault": "nextval('transaction_id_seq'::regclass)",
-          "dartType": "int?"
-        },
-        {
-          "name": "transactionId",
-          "columnType": 0,
-          "isNullable": false,
-          "dartType": "String"
-        },
-        {
-          "name": "createdBy",
-          "columnType": 0,
-          "isNullable": false,
-          "dartType": "String"
-        },
-        {
-          "name": "reciever",
-          "columnType": 6,
-          "isNullable": false,
-          "dartType": "int"
-        },
-        {
-          "name": "amount",
-          "columnType": 6,
-          "isNullable": false,
-          "dartType": "int"
-        },
-        {
-          "name": "dateTime",
-          "columnType": 4,
-          "isNullable": false,
-          "dartType": "DateTime"
-        },
-        {
-          "name": "description",
-          "columnType": 0,
-          "isNullable": true,
-          "dartType": "String?"
-        }
-      ],
-      "foreignKeys": [],
-      "indexes": [
-        {
-          "indexName": "transaction_pkey",
-          "elements": [
-            {
-              "type": 0,
-              "definition": "id"
-            }
-          ],
-          "type": "btree",
-          "isUnique": true,
-          "isPrimary": true
-        }
-      ],
-      "managed": true
-    },
-    {
       "name": "user_device",
       "dartName": "UserDevice",
       "module": "school_data_hub",
@@ -2961,6 +2993,10 @@
     {
       "module": "serverpod_auth",
       "version": "20240520102713718"
+    },
+    {
+      "module": "school_data_hub",
+      "version": "20250407215204792"
     }
   ],
   "migrationApiVersion": 1

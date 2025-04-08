@@ -13,7 +13,7 @@ import 'package:serverpod/serverpod.dart' as _i1;
 import '../../learning_support/support_goal/support_goal_check.dart' as _i2;
 
 abstract class SupportGoalCheckFile
-    implements _i1.TableRow, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
   SupportGoalCheckFile._({
     this.id,
     required this.fileId,
@@ -22,7 +22,7 @@ abstract class SupportGoalCheckFile
     required this.fileUrl,
     required this.supportGoalCheckId,
     this.supportGoalCheck,
-  });
+  }) : _supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId = null;
 
   factory SupportGoalCheckFile({
     int? id,
@@ -36,7 +36,7 @@ abstract class SupportGoalCheckFile
 
   factory SupportGoalCheckFile.fromJson(
       Map<String, dynamic> jsonSerialization) {
-    return SupportGoalCheckFile(
+    return SupportGoalCheckFileImplicit._(
       id: jsonSerialization['id'] as int?,
       fileId: jsonSerialization['fileId'] as String,
       createdBy: jsonSerialization['createdBy'] as String,
@@ -48,6 +48,10 @@ abstract class SupportGoalCheckFile
           ? null
           : _i2.SupportGoalCheck.fromJson(
               (jsonSerialization['supportGoalCheck'] as Map<String, dynamic>)),
+      $_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId:
+          jsonSerialization[
+                  '_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId']
+              as int?,
     );
   }
 
@@ -70,10 +74,10 @@ abstract class SupportGoalCheckFile
 
   _i2.SupportGoalCheck? supportGoalCheck;
 
-  int? _supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId;
+  final int? _supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId;
 
   @override
-  _i1.Table get table => t;
+  _i1.Table<int> get table => t;
 
   /// Returns a shallow copy of this [SupportGoalCheckFile]
   /// with some or all fields replaced by the given arguments.
@@ -183,7 +187,7 @@ class _SupportGoalCheckFileImpl extends SupportGoalCheckFile {
     int? supportGoalCheckId,
     Object? supportGoalCheck = _Undefined,
   }) {
-    return SupportGoalCheckFile(
+    return SupportGoalCheckFileImplicit._(
       id: id is int? ? id : this.id,
       fileId: fileId ?? this.fileId,
       createdBy: createdBy ?? this.createdBy,
@@ -193,6 +197,8 @@ class _SupportGoalCheckFileImpl extends SupportGoalCheckFile {
       supportGoalCheck: supportGoalCheck is _i2.SupportGoalCheck?
           ? supportGoalCheck
           : this.supportGoalCheck?.copyWith(),
+      $_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId:
+          this._supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId,
     );
   }
 }
@@ -206,8 +212,10 @@ class SupportGoalCheckFileImplicit extends _SupportGoalCheckFileImpl {
     required String fileUrl,
     required int supportGoalCheckId,
     _i2.SupportGoalCheck? supportGoalCheck,
-    this.$_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId,
-  }) : super(
+    int? $_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId,
+  })  : _supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId =
+            $_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId,
+        super(
           id: id,
           fileId: fileId,
           createdBy: createdBy,
@@ -234,20 +242,11 @@ class SupportGoalCheckFileImplicit extends _SupportGoalCheckFileImpl {
     );
   }
 
-  int? $_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId;
-
   @override
-  Map<String, dynamic> toJson() {
-    var jsonMap = super.toJson();
-    jsonMap.addAll({
-      '_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId':
-          $_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId
-    });
-    return jsonMap;
-  }
+  final int? _supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId;
 }
 
-class SupportGoalCheckFileTable extends _i1.Table {
+class SupportGoalCheckFileTable extends _i1.Table<int> {
   SupportGoalCheckFileTable({super.tableRelation})
       : super(tableName: 'support_goal_check_file') {
     fileId = _i1.ColumnString(
@@ -316,6 +315,16 @@ class SupportGoalCheckFileTable extends _i1.Table {
       ];
 
   @override
+  List<_i1.Column> get managedColumns => [
+        id,
+        fileId,
+        createdBy,
+        createdAt,
+        fileUrl,
+        supportGoalCheckId,
+      ];
+
+  @override
   _i1.Table? getRelationTable(String relationField) {
     if (relationField == 'supportGoalCheck') {
       return supportGoalCheck;
@@ -337,7 +346,7 @@ class SupportGoalCheckFileInclude extends _i1.IncludeObject {
       {'supportGoalCheck': _supportGoalCheck};
 
   @override
-  _i1.Table get table => SupportGoalCheckFile.t;
+  _i1.Table<int> get table => SupportGoalCheckFile.t;
 }
 
 class SupportGoalCheckFileIncludeList extends _i1.IncludeList {
@@ -357,7 +366,7 @@ class SupportGoalCheckFileIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table get table => SupportGoalCheckFile.t;
+  _i1.Table<int> get table => SupportGoalCheckFile.t;
 }
 
 class SupportGoalCheckFileRepository {

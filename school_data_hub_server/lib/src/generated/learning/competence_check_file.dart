@@ -13,7 +13,7 @@ import 'package:serverpod/serverpod.dart' as _i1;
 import '../learning/competence_check.dart' as _i2;
 
 abstract class CompetenceCheckFile
-    implements _i1.TableRow, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
   CompetenceCheckFile._({
     this.id,
     required this.fileId,
@@ -75,7 +75,7 @@ abstract class CompetenceCheckFile
   _i2.CompetenceCheck? competenceCheck;
 
   @override
-  _i1.Table get table => t;
+  _i1.Table<int> get table => t;
 
   /// Returns a shallow copy of this [CompetenceCheckFile]
   /// with some or all fields replaced by the given arguments.
@@ -202,7 +202,7 @@ class _CompetenceCheckFileImpl extends CompetenceCheckFile {
   }
 }
 
-class CompetenceCheckFileTable extends _i1.Table {
+class CompetenceCheckFileTable extends _i1.Table<int> {
   CompetenceCheckFileTable({super.tableRelation})
       : super(tableName: 'competence_check_file') {
     fileId = _i1.ColumnString(
@@ -290,7 +290,7 @@ class CompetenceCheckFileInclude extends _i1.IncludeObject {
       {'competenceCheck': _competenceCheck};
 
   @override
-  _i1.Table get table => CompetenceCheckFile.t;
+  _i1.Table<int> get table => CompetenceCheckFile.t;
 }
 
 class CompetenceCheckFileIncludeList extends _i1.IncludeList {
@@ -310,7 +310,7 @@ class CompetenceCheckFileIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table get table => CompetenceCheckFile.t;
+  _i1.Table<int> get table => CompetenceCheckFile.t;
 }
 
 class CompetenceCheckFileRepository {

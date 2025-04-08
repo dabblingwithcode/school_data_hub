@@ -4,10 +4,11 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/auth/hub_auth_key_manager.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_monitor.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/landing_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
-import 'package:serverpod_flutter/serverpod_flutter.dart';
+import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('DiManager');
@@ -19,7 +20,7 @@ class DiManager {
 
   DiManager._internal();
 
-  static void registerNonDependentManagers() {
+  static void registerCoreManagers() {
     di.registerSingletonAsync<EnvManager>(() async {
       final envManager = EnvManager();
 
@@ -31,6 +32,10 @@ class DiManager {
     di.registerSingleton<DefaultCacheManager>(DefaultCacheManager());
 
     di.registerSingleton<NotificationService>(NotificationService());
+
+    di.registerSingleton<ServerpodConnectivityMonitor>(
+      ServerpodConnectivityMonitor(),
+    );
 
     di.registerSingleton<MainMenuBottomNavManager>(MainMenuBottomNavManager());
   }
@@ -47,7 +52,7 @@ class DiManager {
       return Client(
         di<EnvManager>().activeEnv!.serverUrl,
         authenticationKeyManager: di<HubAuthKeyManager>(),
-      )..connectivityMonitor = FlutterConnectivityMonitor();
+      )..connectivityMonitor = di<ServerpodConnectivityMonitor>();
     }, dependsOn: [HubAuthKeyManager]);
 
     di.registerSingletonAsync<ServerpodSessionManager>(() async {
@@ -78,6 +83,16 @@ class DiManager {
       _log.info('PupilIdentityManager initialized');
 
       return pupilIdentityManager;
+    }, dependsOn: [ServerpodSessionManager]);
+
+    di.registerSingletonAsync<SchooldayManager>(() async {
+      final schooldayManager = SchooldayManager();
+
+      await schooldayManager.init();
+
+      _log.info('SchooldayManager initialized');
+
+      return schooldayManager;
     }, dependsOn: [ServerpodSessionManager]);
   }
 

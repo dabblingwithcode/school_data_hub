@@ -5,8 +5,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
@@ -118,13 +118,13 @@ class LoginController extends State<Login> {
     final authResponse = await di<Client>().auth.login(username, password,
         DeviceInfo(deviceId: '1', deviceName: 'Test device'));
 
-    if (authResponse.success) {
+    if (authResponse.response.success) {
       di<NotificationService>()
           .showSnackBar(NotificationType.success, 'Erfolgreich eingeloggt!');
       await di<ServerpodSessionManager>().registerSignedInUser(
-        authResponse.userInfo!,
-        authResponse.keyId!,
-        authResponse.key!,
+        authResponse.response.userInfo!,
+        authResponse.response.keyId!,
+        authResponse.response.key!,
       );
 
       /// Don't forget to set the flag in [EnvManager] to false
@@ -132,7 +132,7 @@ class LoginController extends State<Login> {
       di<EnvManager>().setUserAuthenticated(true);
     } else {
       di<NotificationService>().showSnackBar(NotificationType.error,
-          'Login fehlgeschlagen: ${authResponse.failReason}');
+          'Login fehlgeschlagen: ${authResponse.response.failReason}');
     }
   }
 

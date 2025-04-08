@@ -11,33 +11,31 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 
-abstract class Transaction implements _i1.TableRow, _i1.ProtocolSerialization {
-  Transaction._({
+abstract class CreditTransaction
+    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+  CreditTransaction._({
     this.id,
-    required this.transactionId,
-    required this.createdBy,
-    required this.reciever,
+    required this.sender,
+    required this.receiver,
     required this.amount,
     required this.dateTime,
     this.description,
   });
 
-  factory Transaction({
+  factory CreditTransaction({
     int? id,
-    required String transactionId,
-    required String createdBy,
-    required int reciever,
+    required String sender,
+    required int receiver,
     required int amount,
     required DateTime dateTime,
     String? description,
-  }) = _TransactionImpl;
+  }) = _CreditTransactionImpl;
 
-  factory Transaction.fromJson(Map<String, dynamic> jsonSerialization) {
-    return Transaction(
+  factory CreditTransaction.fromJson(Map<String, dynamic> jsonSerialization) {
+    return CreditTransaction(
       id: jsonSerialization['id'] as int?,
-      transactionId: jsonSerialization['transactionId'] as String,
-      createdBy: jsonSerialization['createdBy'] as String,
-      reciever: jsonSerialization['reciever'] as int,
+      sender: jsonSerialization['sender'] as String,
+      receiver: jsonSerialization['receiver'] as int,
       amount: jsonSerialization['amount'] as int,
       dateTime:
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['dateTime']),
@@ -45,18 +43,16 @@ abstract class Transaction implements _i1.TableRow, _i1.ProtocolSerialization {
     );
   }
 
-  static final t = TransactionTable();
+  static final t = CreditTransactionTable();
 
-  static const db = TransactionRepository._();
+  static const db = CreditTransactionRepository._();
 
   @override
   int? id;
 
-  String transactionId;
+  String sender;
 
-  String createdBy;
-
-  int reciever;
+  int receiver;
 
   int amount;
 
@@ -65,16 +61,15 @@ abstract class Transaction implements _i1.TableRow, _i1.ProtocolSerialization {
   String? description;
 
   @override
-  _i1.Table get table => t;
+  _i1.Table<int> get table => t;
 
-  /// Returns a shallow copy of this [Transaction]
+  /// Returns a shallow copy of this [CreditTransaction]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
-  Transaction copyWith({
+  CreditTransaction copyWith({
     int? id,
-    String? transactionId,
-    String? createdBy,
-    int? reciever,
+    String? sender,
+    int? receiver,
     int? amount,
     DateTime? dateTime,
     String? description,
@@ -83,9 +78,8 @@ abstract class Transaction implements _i1.TableRow, _i1.ProtocolSerialization {
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
-      'transactionId': transactionId,
-      'createdBy': createdBy,
-      'reciever': reciever,
+      'sender': sender,
+      'receiver': receiver,
       'amount': amount,
       'dateTime': dateTime.toJson(),
       if (description != null) 'description': description,
@@ -96,35 +90,34 @@ abstract class Transaction implements _i1.TableRow, _i1.ProtocolSerialization {
   Map<String, dynamic> toJsonForProtocol() {
     return {
       if (id != null) 'id': id,
-      'transactionId': transactionId,
-      'createdBy': createdBy,
-      'reciever': reciever,
+      'sender': sender,
+      'receiver': receiver,
       'amount': amount,
       'dateTime': dateTime.toJson(),
       if (description != null) 'description': description,
     };
   }
 
-  static TransactionInclude include() {
-    return TransactionInclude._();
+  static CreditTransactionInclude include() {
+    return CreditTransactionInclude._();
   }
 
-  static TransactionIncludeList includeList({
-    _i1.WhereExpressionBuilder<TransactionTable>? where,
+  static CreditTransactionIncludeList includeList({
+    _i1.WhereExpressionBuilder<CreditTransactionTable>? where,
     int? limit,
     int? offset,
-    _i1.OrderByBuilder<TransactionTable>? orderBy,
+    _i1.OrderByBuilder<CreditTransactionTable>? orderBy,
     bool orderDescending = false,
-    _i1.OrderByListBuilder<TransactionTable>? orderByList,
-    TransactionInclude? include,
+    _i1.OrderByListBuilder<CreditTransactionTable>? orderByList,
+    CreditTransactionInclude? include,
   }) {
-    return TransactionIncludeList._(
+    return CreditTransactionIncludeList._(
       where: where,
       limit: limit,
       offset: offset,
-      orderBy: orderBy?.call(Transaction.t),
+      orderBy: orderBy?.call(CreditTransaction.t),
       orderDescending: orderDescending,
-      orderByList: orderByList?.call(Transaction.t),
+      orderByList: orderByList?.call(CreditTransaction.t),
       include: include,
     );
   }
@@ -137,43 +130,39 @@ abstract class Transaction implements _i1.TableRow, _i1.ProtocolSerialization {
 
 class _Undefined {}
 
-class _TransactionImpl extends Transaction {
-  _TransactionImpl({
+class _CreditTransactionImpl extends CreditTransaction {
+  _CreditTransactionImpl({
     int? id,
-    required String transactionId,
-    required String createdBy,
-    required int reciever,
+    required String sender,
+    required int receiver,
     required int amount,
     required DateTime dateTime,
     String? description,
   }) : super._(
           id: id,
-          transactionId: transactionId,
-          createdBy: createdBy,
-          reciever: reciever,
+          sender: sender,
+          receiver: receiver,
           amount: amount,
           dateTime: dateTime,
           description: description,
         );
 
-  /// Returns a shallow copy of this [Transaction]
+  /// Returns a shallow copy of this [CreditTransaction]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   @override
-  Transaction copyWith({
+  CreditTransaction copyWith({
     Object? id = _Undefined,
-    String? transactionId,
-    String? createdBy,
-    int? reciever,
+    String? sender,
+    int? receiver,
     int? amount,
     DateTime? dateTime,
     Object? description = _Undefined,
   }) {
-    return Transaction(
+    return CreditTransaction(
       id: id is int? ? id : this.id,
-      transactionId: transactionId ?? this.transactionId,
-      createdBy: createdBy ?? this.createdBy,
-      reciever: reciever ?? this.reciever,
+      sender: sender ?? this.sender,
+      receiver: receiver ?? this.receiver,
       amount: amount ?? this.amount,
       dateTime: dateTime ?? this.dateTime,
       description: description is String? ? description : this.description,
@@ -181,18 +170,15 @@ class _TransactionImpl extends Transaction {
   }
 }
 
-class TransactionTable extends _i1.Table {
-  TransactionTable({super.tableRelation}) : super(tableName: 'transaction') {
-    transactionId = _i1.ColumnString(
-      'transactionId',
+class CreditTransactionTable extends _i1.Table<int> {
+  CreditTransactionTable({super.tableRelation})
+      : super(tableName: 'credit_transaction') {
+    sender = _i1.ColumnString(
+      'sender',
       this,
     );
-    createdBy = _i1.ColumnString(
-      'createdBy',
-      this,
-    );
-    reciever = _i1.ColumnInt(
-      'reciever',
+    receiver = _i1.ColumnInt(
+      'receiver',
       this,
     );
     amount = _i1.ColumnInt(
@@ -209,11 +195,9 @@ class TransactionTable extends _i1.Table {
     );
   }
 
-  late final _i1.ColumnString transactionId;
+  late final _i1.ColumnString sender;
 
-  late final _i1.ColumnString createdBy;
-
-  late final _i1.ColumnInt reciever;
+  late final _i1.ColumnInt receiver;
 
   late final _i1.ColumnInt amount;
 
@@ -224,28 +208,27 @@ class TransactionTable extends _i1.Table {
   @override
   List<_i1.Column> get columns => [
         id,
-        transactionId,
-        createdBy,
-        reciever,
+        sender,
+        receiver,
         amount,
         dateTime,
         description,
       ];
 }
 
-class TransactionInclude extends _i1.IncludeObject {
-  TransactionInclude._();
+class CreditTransactionInclude extends _i1.IncludeObject {
+  CreditTransactionInclude._();
 
   @override
   Map<String, _i1.Include?> get includes => {};
 
   @override
-  _i1.Table get table => Transaction.t;
+  _i1.Table<int> get table => CreditTransaction.t;
 }
 
-class TransactionIncludeList extends _i1.IncludeList {
-  TransactionIncludeList._({
-    _i1.WhereExpressionBuilder<TransactionTable>? where,
+class CreditTransactionIncludeList extends _i1.IncludeList {
+  CreditTransactionIncludeList._({
+    _i1.WhereExpressionBuilder<CreditTransactionTable>? where,
     super.limit,
     super.offset,
     super.orderBy,
@@ -253,20 +236,20 @@ class TransactionIncludeList extends _i1.IncludeList {
     super.orderByList,
     super.include,
   }) {
-    super.where = where?.call(Transaction.t);
+    super.where = where?.call(CreditTransaction.t);
   }
 
   @override
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table get table => Transaction.t;
+  _i1.Table<int> get table => CreditTransaction.t;
 }
 
-class TransactionRepository {
-  const TransactionRepository._();
+class CreditTransactionRepository {
+  const CreditTransactionRepository._();
 
-  /// Returns a list of [Transaction]s matching the given query parameters.
+  /// Returns a list of [CreditTransaction]s matching the given query parameters.
   ///
   /// Use [where] to specify which items to include in the return value.
   /// If none is specified, all items will be returned.
@@ -288,20 +271,20 @@ class TransactionRepository {
   ///   limit: 100,
   /// );
   /// ```
-  Future<List<Transaction>> find(
+  Future<List<CreditTransaction>> find(
     _i1.Session session, {
-    _i1.WhereExpressionBuilder<TransactionTable>? where,
+    _i1.WhereExpressionBuilder<CreditTransactionTable>? where,
     int? limit,
     int? offset,
-    _i1.OrderByBuilder<TransactionTable>? orderBy,
+    _i1.OrderByBuilder<CreditTransactionTable>? orderBy,
     bool orderDescending = false,
-    _i1.OrderByListBuilder<TransactionTable>? orderByList,
+    _i1.OrderByListBuilder<CreditTransactionTable>? orderByList,
     _i1.Transaction? transaction,
   }) async {
-    return session.db.find<Transaction>(
-      where: where?.call(Transaction.t),
-      orderBy: orderBy?.call(Transaction.t),
-      orderByList: orderByList?.call(Transaction.t),
+    return session.db.find<CreditTransaction>(
+      where: where?.call(CreditTransaction.t),
+      orderBy: orderBy?.call(CreditTransaction.t),
+      orderByList: orderByList?.call(CreditTransaction.t),
       orderDescending: orderDescending,
       limit: limit,
       offset: offset,
@@ -309,7 +292,7 @@ class TransactionRepository {
     );
   }
 
-  /// Returns the first matching [Transaction] matching the given query parameters.
+  /// Returns the first matching [CreditTransaction] matching the given query parameters.
   ///
   /// Use [where] to specify which items to include in the return value.
   /// If none is specified, all items will be returned.
@@ -326,136 +309,136 @@ class TransactionRepository {
   ///   orderBy: (t) => t.age,
   /// );
   /// ```
-  Future<Transaction?> findFirstRow(
+  Future<CreditTransaction?> findFirstRow(
     _i1.Session session, {
-    _i1.WhereExpressionBuilder<TransactionTable>? where,
+    _i1.WhereExpressionBuilder<CreditTransactionTable>? where,
     int? offset,
-    _i1.OrderByBuilder<TransactionTable>? orderBy,
+    _i1.OrderByBuilder<CreditTransactionTable>? orderBy,
     bool orderDescending = false,
-    _i1.OrderByListBuilder<TransactionTable>? orderByList,
+    _i1.OrderByListBuilder<CreditTransactionTable>? orderByList,
     _i1.Transaction? transaction,
   }) async {
-    return session.db.findFirstRow<Transaction>(
-      where: where?.call(Transaction.t),
-      orderBy: orderBy?.call(Transaction.t),
-      orderByList: orderByList?.call(Transaction.t),
+    return session.db.findFirstRow<CreditTransaction>(
+      where: where?.call(CreditTransaction.t),
+      orderBy: orderBy?.call(CreditTransaction.t),
+      orderByList: orderByList?.call(CreditTransaction.t),
       orderDescending: orderDescending,
       offset: offset,
       transaction: transaction,
     );
   }
 
-  /// Finds a single [Transaction] by its [id] or null if no such row exists.
-  Future<Transaction?> findById(
+  /// Finds a single [CreditTransaction] by its [id] or null if no such row exists.
+  Future<CreditTransaction?> findById(
     _i1.Session session,
     int id, {
     _i1.Transaction? transaction,
   }) async {
-    return session.db.findById<Transaction>(
+    return session.db.findById<CreditTransaction>(
       id,
       transaction: transaction,
     );
   }
 
-  /// Inserts all [Transaction]s in the list and returns the inserted rows.
+  /// Inserts all [CreditTransaction]s in the list and returns the inserted rows.
   ///
-  /// The returned [Transaction]s will have their `id` fields set.
+  /// The returned [CreditTransaction]s will have their `id` fields set.
   ///
   /// This is an atomic operation, meaning that if one of the rows fails to
   /// insert, none of the rows will be inserted.
-  Future<List<Transaction>> insert(
+  Future<List<CreditTransaction>> insert(
     _i1.Session session,
-    List<Transaction> rows, {
+    List<CreditTransaction> rows, {
     _i1.Transaction? transaction,
   }) async {
-    return session.db.insert<Transaction>(
+    return session.db.insert<CreditTransaction>(
       rows,
       transaction: transaction,
     );
   }
 
-  /// Inserts a single [Transaction] and returns the inserted row.
+  /// Inserts a single [CreditTransaction] and returns the inserted row.
   ///
-  /// The returned [Transaction] will have its `id` field set.
-  Future<Transaction> insertRow(
+  /// The returned [CreditTransaction] will have its `id` field set.
+  Future<CreditTransaction> insertRow(
     _i1.Session session,
-    Transaction row, {
+    CreditTransaction row, {
     _i1.Transaction? transaction,
   }) async {
-    return session.db.insertRow<Transaction>(
+    return session.db.insertRow<CreditTransaction>(
       row,
       transaction: transaction,
     );
   }
 
-  /// Updates all [Transaction]s in the list and returns the updated rows. If
+  /// Updates all [CreditTransaction]s in the list and returns the updated rows. If
   /// [columns] is provided, only those columns will be updated. Defaults to
   /// all columns.
   /// This is an atomic operation, meaning that if one of the rows fails to
   /// update, none of the rows will be updated.
-  Future<List<Transaction>> update(
+  Future<List<CreditTransaction>> update(
     _i1.Session session,
-    List<Transaction> rows, {
-    _i1.ColumnSelections<TransactionTable>? columns,
+    List<CreditTransaction> rows, {
+    _i1.ColumnSelections<CreditTransactionTable>? columns,
     _i1.Transaction? transaction,
   }) async {
-    return session.db.update<Transaction>(
+    return session.db.update<CreditTransaction>(
       rows,
-      columns: columns?.call(Transaction.t),
+      columns: columns?.call(CreditTransaction.t),
       transaction: transaction,
     );
   }
 
-  /// Updates a single [Transaction]. The row needs to have its id set.
+  /// Updates a single [CreditTransaction]. The row needs to have its id set.
   /// Optionally, a list of [columns] can be provided to only update those
   /// columns. Defaults to all columns.
-  Future<Transaction> updateRow(
+  Future<CreditTransaction> updateRow(
     _i1.Session session,
-    Transaction row, {
-    _i1.ColumnSelections<TransactionTable>? columns,
+    CreditTransaction row, {
+    _i1.ColumnSelections<CreditTransactionTable>? columns,
     _i1.Transaction? transaction,
   }) async {
-    return session.db.updateRow<Transaction>(
+    return session.db.updateRow<CreditTransaction>(
       row,
-      columns: columns?.call(Transaction.t),
+      columns: columns?.call(CreditTransaction.t),
       transaction: transaction,
     );
   }
 
-  /// Deletes all [Transaction]s in the list and returns the deleted rows.
+  /// Deletes all [CreditTransaction]s in the list and returns the deleted rows.
   /// This is an atomic operation, meaning that if one of the rows fail to
   /// be deleted, none of the rows will be deleted.
-  Future<List<Transaction>> delete(
+  Future<List<CreditTransaction>> delete(
     _i1.Session session,
-    List<Transaction> rows, {
+    List<CreditTransaction> rows, {
     _i1.Transaction? transaction,
   }) async {
-    return session.db.delete<Transaction>(
+    return session.db.delete<CreditTransaction>(
       rows,
       transaction: transaction,
     );
   }
 
-  /// Deletes a single [Transaction].
-  Future<Transaction> deleteRow(
+  /// Deletes a single [CreditTransaction].
+  Future<CreditTransaction> deleteRow(
     _i1.Session session,
-    Transaction row, {
+    CreditTransaction row, {
     _i1.Transaction? transaction,
   }) async {
-    return session.db.deleteRow<Transaction>(
+    return session.db.deleteRow<CreditTransaction>(
       row,
       transaction: transaction,
     );
   }
 
   /// Deletes all rows matching the [where] expression.
-  Future<List<Transaction>> deleteWhere(
+  Future<List<CreditTransaction>> deleteWhere(
     _i1.Session session, {
-    required _i1.WhereExpressionBuilder<TransactionTable> where,
+    required _i1.WhereExpressionBuilder<CreditTransactionTable> where,
     _i1.Transaction? transaction,
   }) async {
-    return session.db.deleteWhere<Transaction>(
-      where: where(Transaction.t),
+    return session.db.deleteWhere<CreditTransaction>(
+      where: where(CreditTransaction.t),
       transaction: transaction,
     );
   }
@@ -464,12 +447,12 @@ class TransactionRepository {
   /// will return the count of all rows in the table.
   Future<int> count(
     _i1.Session session, {
-    _i1.WhereExpressionBuilder<TransactionTable>? where,
+    _i1.WhereExpressionBuilder<CreditTransactionTable>? where,
     int? limit,
     _i1.Transaction? transaction,
   }) async {
-    return session.db.count<Transaction>(
-      where: where?.call(Transaction.t),
+    return session.db.count<CreditTransaction>(
+      where: where?.call(CreditTransaction.t),
       limit: limit,
       transaction: transaction,
     );

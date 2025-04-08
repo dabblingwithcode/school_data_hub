@@ -11,10 +11,11 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i2;
-import '../../user/roles/roles.dart' as _i3;
-import '../../user/user_flags.dart' as _i4;
+import '../user/roles/roles.dart' as _i3;
+import '../user/user_flags.dart' as _i4;
 
-abstract class StaffUser implements _i1.TableRow, _i1.ProtocolSerialization {
+abstract class StaffUser
+    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
   StaffUser._({
     this.id,
     required this.userInfoId,
@@ -80,7 +81,7 @@ abstract class StaffUser implements _i1.TableRow, _i1.ProtocolSerialization {
   _i4.UserFlags userFlags;
 
   @override
-  _i1.Table get table => t;
+  _i1.Table<int> get table => t;
 
   /// Returns a shallow copy of this [StaffUser]
   /// with some or all fields replaced by the given arguments.
@@ -206,7 +207,7 @@ class _StaffUserImpl extends StaffUser {
   }
 }
 
-class StaffUserTable extends _i1.Table {
+class StaffUserTable extends _i1.Table<int> {
   StaffUserTable({super.tableRelation}) : super(tableName: 'staff') {
     userInfoId = _i1.ColumnInt(
       'userInfoId',
@@ -293,7 +294,7 @@ class StaffUserInclude extends _i1.IncludeObject {
   Map<String, _i1.Include?> get includes => {'userInfo': _userInfo};
 
   @override
-  _i1.Table get table => StaffUser.t;
+  _i1.Table<int> get table => StaffUser.t;
 }
 
 class StaffUserIncludeList extends _i1.IncludeList {
@@ -313,7 +314,7 @@ class StaffUserIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table get table => StaffUser.t;
+  _i1.Table<int> get table => StaffUser.t;
 }
 
 class StaffUserRepository {

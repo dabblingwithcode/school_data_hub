@@ -14,7 +14,8 @@ import '../../pupil_data/pupil_data.dart' as _i2;
 import '../../learning_support/support_category.dart' as _i3;
 import '../../learning_support/support_goal/support_goal_check.dart' as _i4;
 
-abstract class SupportGoal implements _i1.TableRow, _i1.ProtocolSerialization {
+abstract class SupportGoal
+    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
   SupportGoal._({
     this.id,
     required this.goalId,
@@ -29,7 +30,8 @@ abstract class SupportGoal implements _i1.TableRow, _i1.ProtocolSerialization {
     required this.supportCategoryId,
     this.supportCategory,
     this.goalChecks,
-  });
+  })  : _supportCategoryCategorygoalsSupportCategoryId = null,
+        _pupilDataSupportgoalsPupilDataId = null;
 
   factory SupportGoal({
     int? id,
@@ -48,7 +50,7 @@ abstract class SupportGoal implements _i1.TableRow, _i1.ProtocolSerialization {
   }) = _SupportGoalImpl;
 
   factory SupportGoal.fromJson(Map<String, dynamic> jsonSerialization) {
-    return SupportGoal(
+    return SupportGoalImplicit._(
       id: jsonSerialization['id'] as int?,
       goalId: jsonSerialization['goalId'] as String,
       createdBy: jsonSerialization['createdBy'] as String,
@@ -75,6 +77,11 @@ abstract class SupportGoal implements _i1.TableRow, _i1.ProtocolSerialization {
           ?.map(
               (e) => _i4.SupportGoalCheck.fromJson((e as Map<String, dynamic>)))
           .toList(),
+      $_supportCategoryCategorygoalsSupportCategoryId:
+          jsonSerialization['_supportCategoryCategorygoalsSupportCategoryId']
+              as int?,
+      $_pupilDataSupportgoalsPupilDataId:
+          jsonSerialization['_pupilDataSupportgoalsPupilDataId'] as int?,
     );
   }
 
@@ -109,12 +116,12 @@ abstract class SupportGoal implements _i1.TableRow, _i1.ProtocolSerialization {
 
   List<_i4.SupportGoalCheck>? goalChecks;
 
-  int? _supportCategoryCategorygoalsSupportCategoryId;
+  final int? _supportCategoryCategorygoalsSupportCategoryId;
 
-  int? _pupilDataSupportgoalsPupilDataId;
+  final int? _pupilDataSupportgoalsPupilDataId;
 
   @override
-  _i1.Table get table => t;
+  _i1.Table<int> get table => t;
 
   /// Returns a shallow copy of this [SupportGoal]
   /// with some or all fields replaced by the given arguments.
@@ -271,7 +278,7 @@ class _SupportGoalImpl extends SupportGoal {
     Object? supportCategory = _Undefined,
     Object? goalChecks = _Undefined,
   }) {
-    return SupportGoal(
+    return SupportGoalImplicit._(
       id: id is int? ? id : this.id,
       goalId: goalId ?? this.goalId,
       createdBy: createdBy ?? this.createdBy,
@@ -289,6 +296,10 @@ class _SupportGoalImpl extends SupportGoal {
       goalChecks: goalChecks is List<_i4.SupportGoalCheck>?
           ? goalChecks
           : this.goalChecks?.map((e0) => e0.copyWith()).toList(),
+      $_supportCategoryCategorygoalsSupportCategoryId:
+          this._supportCategoryCategorygoalsSupportCategoryId,
+      $_pupilDataSupportgoalsPupilDataId:
+          this._pupilDataSupportgoalsPupilDataId,
     );
   }
 }
@@ -308,9 +319,12 @@ class SupportGoalImplicit extends _SupportGoalImpl {
     required int supportCategoryId,
     _i3.SupportCategory? supportCategory,
     List<_i4.SupportGoalCheck>? goalChecks,
-    this.$_supportCategoryCategorygoalsSupportCategoryId,
-    this.$_pupilDataSupportgoalsPupilDataId,
-  }) : super(
+    int? $_supportCategoryCategorygoalsSupportCategoryId,
+    int? $_pupilDataSupportgoalsPupilDataId,
+  })  : _supportCategoryCategorygoalsSupportCategoryId =
+            $_supportCategoryCategorygoalsSupportCategoryId,
+        _pupilDataSupportgoalsPupilDataId = $_pupilDataSupportgoalsPupilDataId,
+        super(
           id: id,
           goalId: goalId,
           createdBy: createdBy,
@@ -351,23 +365,14 @@ class SupportGoalImplicit extends _SupportGoalImpl {
     );
   }
 
-  int? $_supportCategoryCategorygoalsSupportCategoryId;
-
-  int? $_pupilDataSupportgoalsPupilDataId;
+  @override
+  final int? _supportCategoryCategorygoalsSupportCategoryId;
 
   @override
-  Map<String, dynamic> toJson() {
-    var jsonMap = super.toJson();
-    jsonMap.addAll({
-      '_supportCategoryCategorygoalsSupportCategoryId':
-          $_supportCategoryCategorygoalsSupportCategoryId,
-      '_pupilDataSupportgoalsPupilDataId': $_pupilDataSupportgoalsPupilDataId
-    });
-    return jsonMap;
-  }
+  final int? _pupilDataSupportgoalsPupilDataId;
 }
 
-class SupportGoalTable extends _i1.Table {
+class SupportGoalTable extends _i1.Table<int> {
   SupportGoalTable({super.tableRelation})
       : super(tableName: 'support_category_goal') {
     goalId = _i1.ColumnString(
@@ -522,6 +527,20 @@ class SupportGoalTable extends _i1.Table {
       ];
 
   @override
+  List<_i1.Column> get managedColumns => [
+        id,
+        goalId,
+        createdBy,
+        createdAt,
+        achieved,
+        achievedAt,
+        description,
+        strategies,
+        pupilId,
+        supportCategoryId,
+      ];
+
+  @override
   _i1.Table? getRelationTable(String relationField) {
     if (relationField == 'pupil') {
       return pupil;
@@ -561,7 +580,7 @@ class SupportGoalInclude extends _i1.IncludeObject {
       };
 
   @override
-  _i1.Table get table => SupportGoal.t;
+  _i1.Table<int> get table => SupportGoal.t;
 }
 
 class SupportGoalIncludeList extends _i1.IncludeList {
@@ -581,7 +600,7 @@ class SupportGoalIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table get table => SupportGoal.t;
+  _i1.Table<int> get table => SupportGoal.t;
 }
 
 class SupportGoalRepository {

@@ -1,17 +1,26 @@
 admin:
   - createUser:
-  - createTestUser:
   - deleteUser:
   - promoteUserScope:
   - demoteUserScope:
+  - getAllUsers:
+  - getUserById:
 example:
   - hello:
+missedClass:
+  - createMissedClass:
+  - getAllMissedClasses:
+  - getMissedClassesOnDate:
+  - updateMissedClass:
+  - deleteMissedClass:
 pupil:
   - getPupils:
   - createPupil:
   - updateParentInfo:
 schooldayAdmin:
   - createSchoolSemester:
+  - getAllSchoolSemesters:
+  - getCurrentSchoolSemester:
   - updateSchoolSemester:
   - deleteSchoolSemester:
   - createSchoolday:
@@ -25,3 +34,5 @@ auth:
   - login:
   - verifyPassword:
   - logOut:
+user:
+  - changePassword:

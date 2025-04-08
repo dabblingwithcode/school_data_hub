@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 
 // Future calls are calls that will be invoked at a later time. An example is if
@@ -11,12 +12,24 @@ import 'package:serverpod/serverpod.dart';
 //  methods. You can optionally pass a serializable object together with the
 //  call.
 
-class ExampleFutureCall extends FutureCall {
+class IncreaseCreditFutureCall extends FutureCall {
   @override
   Future<void> invoke(Session session, SerializableModel? object) async {
     // Do something interesting in the future here.
-    print('Running weekly task');
+    final List<StaffUser> allStaff = await StaffUser.db.find(session);
+    for (var staff in allStaff) {
+      final amount = staff.timeUnits + 2;
 
+      staff.credit += amount;
+
+      final CreditTransaction transaction = CreditTransaction(
+          sender: 'Admin',
+          receiver: staff.userInfoId,
+          amount: amount,
+          dateTime: DateTime.now());
+
+      await session.db.updateRow(staff);
+    }
     // Schedule the next run (one week from now)
     await session.serverpod.futureCallWithDelay(
       'weeklyTask',

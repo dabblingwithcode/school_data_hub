@@ -13,7 +13,7 @@ class AdminEndpoint extends Endpoint {
   // @override
   // Set<Scope> get requiredScopes => {Scope.admin};
 
-  Future<void> createUser(
+  Future<StaffUser> createUser(
     Session session, {
     required String userName,
     required String fullName,
@@ -36,6 +36,15 @@ class AdminEndpoint extends Endpoint {
 
     await auth.UserInfo.db.updateRow(session, userInfo);
 
+// Update scopes if provided
+
+    // Convert string scopes to Scope objects
+    final scopes = scopeNames.map((name) => Scope(name)).toSet();
+
+    // Update user scopes
+    await auth.Users.updateUserScopes(session, userInfo.id!, scopes);
+
+    // Create a new StaffUser object and insert it into the database
     final newStaffUser = StaffUser(
       userInfoId: userInfo.id!,
       userFlags: UserFlags(
@@ -50,36 +59,9 @@ class AdminEndpoint extends Endpoint {
       credit: 50,
     );
 
-    // Create a new StaffUser object and insert it into the database
-
     await StaffUser.db.insertRow(session, newStaffUser);
 
-    // Update scopes if provided
-
-    // Convert string scopes to Scope objects
-    final scopes = scopeNames.map((name) => Scope(name)).toSet();
-
-    // Update user scopes
-    await auth.Users.updateUserScopes(session, userInfo.id!, scopes);
-  }
-
-  Future<UserInfo?> createTestUser(Session session) async {
-    // Create user
-    final emailAddr = 'testmail';
-    final password = 'test';
-
-    final userInfo =
-        await auth.Emails.createUser(session, 'Test user', emailAddr, password);
-
-    if (userInfo?.id == null) {
-      throw 'Failed to create test user';
-    }
-
-    // Try logging in as user
-    await auth.UserAuthentication.signInUser(session, userInfo!.id!, 'server');
-    assert(await session.authenticated != null);
-
-    return userInfo;
+    return newStaffUser;
   }
 
   Future<void> deleteUser(Session session, int userId) async {
@@ -124,5 +106,23 @@ class AdminEndpoint extends Endpoint {
     };
     // Remove the scope from the user
     await auth.Users.updateUserScopes(session, user.id!, userscopes);
+  }
+
+  Future<List<StaffUser>> getAllUsers(Session session) async {
+    final users = await StaffUser.db.find(
+      session,
+      include: StaffUser.include(
+        userInfo: UserInfo.include(),
+      ),
+    );
+    return users;
+  }
+
+  Future<StaffUser?> getUserById(Session session, int userId) async {
+    final user = await StaffUser.db.findFirstRow(
+      session,
+      where: (t) => t.userInfoId.equals(userId),
+    );
+    return user;
   }
 }

@@ -14,7 +14,7 @@ import '../schoolday/schoolday.dart' as _i2;
 import '../pupil_data/pupil_data.dart' as _i3;
 
 abstract class SchooldayEvent
-    implements _i1.TableRow, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
   SchooldayEvent._({
     this.id,
     required this.eventId,
@@ -113,7 +113,7 @@ abstract class SchooldayEvent
   _i3.PupilData? pupil;
 
   @override
-  _i1.Table get table => t;
+  _i1.Table<int> get table => t;
 
   /// Returns a shallow copy of this [SchooldayEvent]
   /// with some or all fields replaced by the given arguments.
@@ -292,7 +292,7 @@ class _SchooldayEventImpl extends SchooldayEvent {
   }
 }
 
-class SchooldayEventTable extends _i1.Table {
+class SchooldayEventTable extends _i1.Table<int> {
   SchooldayEventTable({super.tableRelation})
       : super(tableName: 'schoolday_event') {
     eventId = _i1.ColumnString(
@@ -448,7 +448,7 @@ class SchooldayEventInclude extends _i1.IncludeObject {
       };
 
   @override
-  _i1.Table get table => SchooldayEvent.t;
+  _i1.Table<int> get table => SchooldayEvent.t;
 }
 
 class SchooldayEventIncludeList extends _i1.IncludeList {
@@ -468,7 +468,7 @@ class SchooldayEventIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table get table => SchooldayEvent.t;
+  _i1.Table<int> get table => SchooldayEvent.t;
 }
 
 class SchooldayEventRepository {

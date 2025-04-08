@@ -136,6 +136,19 @@ CREATE TABLE "competence_report_check" (
 );
 
 --
+-- Class CreditTransaction as table credit_transaction
+--
+CREATE TABLE "credit_transaction" (
+    "id" bigserial PRIMARY KEY,
+    "transactionId" text NOT NULL,
+    "createdBy" text NOT NULL,
+    "reciever" bigint NOT NULL,
+    "amount" bigint NOT NULL,
+    "dateTime" timestamp without time zone NOT NULL,
+    "description" text
+);
+
+--
 -- Class LanguageStats as table language_stats
 --
 CREATE TABLE "language_stats" (
@@ -409,19 +422,6 @@ CREATE TABLE "support_goal_check_file" (
     "fileUrl" text NOT NULL,
     "supportGoalCheckId" bigint NOT NULL,
     "_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId" bigint
-);
-
---
--- Class Transaction as table transaction
---
-CREATE TABLE "transaction" (
-    "id" bigserial PRIMARY KEY,
-    "transactionId" text NOT NULL,
-    "createdBy" text NOT NULL,
-    "reciever" bigint NOT NULL,
-    "amount" bigint NOT NULL,
-    "dateTime" timestamp without time zone NOT NULL,
-    "description" text
 );
 
 --
@@ -1160,9 +1160,9 @@ ALTER TABLE ONLY "serverpod_query_log"
 -- MIGRATION VERSION FOR school_data_hub
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('school_data_hub', '20250406221628799', now())
+    VALUES ('school_data_hub', '20250407215204792', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20250406221628799', "timestamp" = now();
+    DO UPDATE SET "version" = '20250407215204792', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

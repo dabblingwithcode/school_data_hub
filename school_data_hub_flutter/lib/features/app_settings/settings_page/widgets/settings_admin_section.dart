@@ -6,6 +6,8 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_d
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_utilites.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/env/utils/env_utils.dart';
+import 'package:school_data_hub_flutter/features/schoolday/presentation/new_school_semester_page/new_school_semester_page.dart';
+import 'package:school_data_hub_flutter/features/schoolday/presentation/new_school_semester_page/schooldays_calendar_page/schooldays_calendar_page.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/create_user_page.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -147,11 +149,11 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
             ),
             title: const Text('Schultage-Kalender'),
             onPressed: (context) {
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(
-              //     builder: (ctx) => const SchooldaysCalendar(),
-              //   ),
-              // );
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (ctx) => const SchooldaysCalendarPage(),
+                ),
+              );
             }),
         SettingsTile.navigation(
             leading: const Icon(
@@ -159,11 +161,11 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
             ),
             title: const Text('Schulsemester hinzufügen'),
             onPressed: (context) {
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(
-              //     builder: (ctx) => const NewSchoolSemesterPage(),
-              //   ),
-              // );
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (ctx) => const NewSchoolSemesterPage(),
+                ),
+              );
             }),
         SettingsTile.navigation(
           leading: const Icon(Icons.bug_report_rounded),
