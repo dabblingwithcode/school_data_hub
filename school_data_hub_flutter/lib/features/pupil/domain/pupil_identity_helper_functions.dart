@@ -1,17 +1,17 @@
 import 'dart:convert';
 
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
-import 'package:school_data_hub_flutter/core/auth/hub_auth_key_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_identity.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
+final _pupilIdentityManager = di<PupilIdentityManager>();
+
 class PupilIdentityHelper {
   //- LOCAL STORAGE HELPERS
   static Future<Map<int, PupilIdentity>> readPupilIdentitiesFromStorage(
-      {required String envKey}) async {
-    final pupilsJson = await AppSecureStorage.read(
-        '${envKey}_${di<HubAuthKeyManager>().runMode}_${SecureStorageKey.pupilIdentities.value}');
+      {required String secureStorageKey}) async {
+    final pupilsJson = await LegacySecureStorage.read(secureStorageKey);
     if (pupilsJson == null) return {};
 
     final Map<String, dynamic> decoded = jsonDecode(pupilsJson);
@@ -19,10 +19,10 @@ class PupilIdentityHelper {
         MapEntry(int.parse(key), PupilIdentity.fromJson(value)));
   }
 
-  static Future<void> deletePupilIdentitiesForEnv(String envKey) async {
-    await AppSecureStorage.delete(
-        '_${envKey}_${di<HubAuthKeyManager>().runMode}_${SecureStorageKey.pupilIdentities.value}');
-    di<PupilIdentityManager>().clearPupilIdentities();
+  static Future<void> deletePupilIdentitiesForEnv(
+      String secureStorageKey) async {
+    await LegacySecureStorage.delete(secureStorageKey);
+    _pupilIdentityManager.clearPupilIdentities();
 
     // TODO: fix this
     // di<PupilsFilter>().clearFilteredPupils();

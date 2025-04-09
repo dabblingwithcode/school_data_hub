@@ -3,30 +3,30 @@ import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart
 
 const _secureStorage = FlutterSecureStorage();
 
-enum SecureStorageKey {
-  environments('environments'),
-  sessions('sessions'),
-  pupilIdentities('pupilIdentities'),
-  matrix('matrix'),
-  ;
+//enum SecureStorageKey {
+//   environments('environments'),
+//   pupilIdentities('pupil_identities'),
+//   matrix('matrix'),
+//   ;
 
-  final String value;
-  const SecureStorageKey(this.value);
-}
+//   final String value;
+//   const SecureStorageKey(this.value);
+// }
 
 /// We are using two interfaces to interact with
 /// the same instance of [FlutterSecureStorage]
-/// [AppSecureStorage] is used for the app
+/// [LegacySecureStorage] is used for the app
 /// for storing pupil identities and environments
-/// we keep it for legacy reasons
+/// we keep it for now for legacy reasons
 /// and to avoid breaking changes in the app
+/// until we migrate to the new [ServerpodSecureStorage] interface
 ///
 /// [ServerpodSecureStorage] is used for the serverpod client
 /// for storing the authentication key
 /// and implements the [Storage] interface
 /// for the [FlutterAuthenticationKeyManager]
 
-class AppSecureStorage {
+class LegacySecureStorage {
   static Future<bool> containsKey(String key) async {
     if (await _secureStorage.containsKey(key: key)) {
       return true;
@@ -53,7 +53,7 @@ class AppSecureStorage {
 
 /// We are using two interfaces to interact with
 /// the same instance of [FlutterSecureStorage]
-/// [AppSecureStorage] is used for the app
+/// [LegacySecureStorage] is used for the app
 /// for storing pupil identities and environments
 /// we keep it for legacy reasons
 /// and to avoid breaking changes in the app
@@ -63,7 +63,7 @@ class AppSecureStorage {
 /// and implements the [Storage] interface
 /// for the [FlutterAuthenticationKeyManager]
 ///
-class ServerpodSecureStorage implements Storage {
+class ServerpodSecureStorage extends Storage {
   // Singleton instance
   static final ServerpodSecureStorage _instance =
       ServerpodSecureStorage._internal();
@@ -79,13 +79,15 @@ class ServerpodSecureStorage implements Storage {
   /// Stores an int value with the specified key.
   @override
   Future<void> setInt(String key, int value) async {
-    return Future.value();
+    await _secureStorage.write(key: key, value: value.toString());
+    return;
   }
 
   /// Retrieves an int value with the specified key.
   @override
-  Future<int?> getInt(String key) {
-    return Future.value(null);
+  Future<int?> getInt(String key) async {
+    final value = await _secureStorage.read(key: key);
+    return value != null ? int.tryParse(value) : null;
   }
 
   /// Stores a string value with the specified key.

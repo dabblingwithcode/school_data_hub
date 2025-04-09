@@ -5,35 +5,31 @@ import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart
 
 final _log = Logger('HubAuthKeyManager');
 
-/// Implementation of a Serverpod [AuthenticationKeyManager] specifically for
+/// Implementation of a Serverpod [AuthenticationKeyManager] specifically for this app
 /// because we need to consider the environment on which the app is running
-/// and we want [ServerpodSecureStorage] for the authentication key.
+/// and we want our storage implementation [ServerpodSecureStorage] for the authentication key.
 class HubAuthKeyManager extends AuthenticationKeyManager {
-  String _storageKey() => '${envName}_${runMode}_hub_auth_key';
+  // String _storageKey() => '${envName}_${runMode}_hub_auth_key';
 
+  final String storageKeyForAuthKey;
   bool _initialized = false;
   String? _authenticationKey;
 
-  /// The run mode of the Serverpod.
-  final String runMode;
-
-  final String envName;
   final Storage _storage = ServerpodSecureStorage();
 
-  /// Creates a new authentication key manager. By default it uses the
-  /// shared preferences for storing keys.
+  /// Creates a new authentication key manager. By default it will use
+  /// secure storage for storing keys.
   HubAuthKeyManager({
-    required this.runMode,
-    required this.envName,
+    required this.storageKeyForAuthKey,
   });
 
   @override
   Future<String?> get() async {
     if (!_initialized) {
-      _authenticationKey = await _storage.getString(_storageKey());
+      _authenticationKey = await _storage.getString(storageKeyForAuthKey);
 
       _initialized = true;
-      _log.info('Initialized - got authKey from storage: $_authenticationKey');
+      _log.info('Initialized - authKey from storage is: $_authenticationKey');
     }
 
     return _authenticationKey;
@@ -43,14 +39,14 @@ class HubAuthKeyManager extends AuthenticationKeyManager {
   Future<void> put(String key) async {
     _authenticationKey = key;
 
-    await _storage.setString(_storageKey(), key);
-    _log.info('Saved the authKey with storage key: ${_storageKey()}');
+    await _storage.setString(storageKeyForAuthKey, key);
+    _log.info('Saved the authKey with storage key: $storageKeyForAuthKey');
   }
 
   @override
   Future<void> remove() async {
     _authenticationKey = null;
-    _log.info('Removing the authKey from storage: ${_storageKey()}');
-    await _storage.remove(_storageKey());
+    _log.info('Removing the authKey from storage: $storageKeyForAuthKey');
+    await _storage.remove(storageKeyForAuthKey);
   }
 }

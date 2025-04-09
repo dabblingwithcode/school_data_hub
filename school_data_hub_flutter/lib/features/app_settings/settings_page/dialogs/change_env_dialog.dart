@@ -8,13 +8,15 @@ import 'package:school_data_hub_flutter/core/env/models/env.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
+final _envManager = di<EnvManager>();
+
 Future<bool?> changeEnvironmentDialog({
   required BuildContext context,
 }) async {
   return showDialog<bool>(
     context: context,
     builder: (BuildContext context) {
-      final List<Env> envs = di<EnvManager>().envs.values.toList();
+      final List<Env> envs = _envManager.envs.values.toList();
       return AlertDialog(
         title: const Text('Instanz auswählen',
             style: TextStyle(fontWeight: FontWeight.bold)),
@@ -30,13 +32,13 @@ Future<bool?> changeEnvironmentDialog({
                     children: [
                       TextButton(
                         child: Text(
-                          envs[index].name,
+                          envs[index].serverName,
                           style: const TextStyle(
                               fontSize: 20, color: AppColors.interactiveColor),
                         ),
                         onPressed: () async {
-                          if (envs[index].name ==
-                              di<EnvManager>().activeEnv?.name) {
+                          if (envs[index].serverName ==
+                              _envManager.activeEnv?.serverName) {
                             return;
                           }
 
@@ -48,13 +50,14 @@ Future<bool?> changeEnvironmentDialog({
                           if (confirmation != true) return;
                           if (context.mounted) {
                             Navigator.of(context).pop();
-                            di<EnvManager>()
-                                .activateEnv(envName: envs[index].name);
+                            _envManager.activateEnv(
+                                envName: envs[index].serverName);
                           }
                         },
                       ),
                       const Gap(10),
-                      di<EnvManager>().activeEnv?.name == envs[index].name
+                      _envManager.activeEnv?.serverName ==
+                              envs[index].serverName
                           ? const Icon(
                               Icons.check,
                               color: Colors.green,
@@ -76,7 +79,7 @@ Future<bool?> changeEnvironmentDialog({
                 Navigator.of(context).pop();
 
                 await di<ServerpodSessionManager>().signOutDevice();
-                di<EnvManager>().setEnvNotReady();
+                _envManager.setEnvNotReady();
               }, // Add onPressed
               child: const Text(
                 "NEUE INSTANZ",

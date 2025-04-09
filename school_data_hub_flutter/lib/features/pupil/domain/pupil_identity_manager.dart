@@ -9,15 +9,18 @@ import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/core/auth/hub_auth_key_manager.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_identity.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
 import 'package:watch_it/watch_it.dart';
 
+final _envManager = di<EnvManager>();
+final _notificationService = di<NotificationService>();
+
 class PupilIdentityManager {
   final log = Logger('PupilIdentityManager');
 
+  final secureStorageKey = _envManager.storageKeyForPupilIdentities();
   Map<int, PupilIdentity> _pupilIdentities = {};
 
   final _groups = ValueNotifier<Set<String>>({});
@@ -38,7 +41,7 @@ class PupilIdentityManager {
   }
 
   Future<void> deleteAllPupilIdentities() async {
-    await AppSecureStorage.delete(SecureStorageKey.pupilIdentities.value);
+    await LegacySecureStorage.delete(secureStorageKey);
     _pupilIdentities.clear();
 
     //- TODO: fix this
@@ -52,18 +55,18 @@ class PupilIdentityManager {
   }
 
   Future<void> getPupilIdentitiesForEnv() async {
-    final activeEnv = di<EnvManager>().activeEnv!;
+    final activeEnv = _envManager.activeEnv!;
 
     final Map<int, PupilIdentity> pupilIdentities =
         await PupilIdentityHelper.readPupilIdentitiesFromStorage(
-            envKey: activeEnv.name);
+            secureStorageKey: secureStorageKey);
 
     if (pupilIdentities.isEmpty) {
       log.warning(
-          'No stored pupil identities found for ${SecureStorageKey.pupilIdentities.value}_$activeEnv');
+          'No stored pupil identities found for ${activeEnv.serverName}');
     } else {
       log.info(
-          '${pupilIdentities.length} Pupil identities loaded from secure storage');
+          '${pupilIdentities.length} Pupil identities for ${activeEnv.serverName} loaded from secure storage');
     }
 
     _pupilIdentities = pupilIdentities;
@@ -126,7 +129,7 @@ class PupilIdentityManager {
       }
     }
 
-    writePupilIdentitiesToStorage(envKey: di<EnvManager>().defaultEnv);
+    writePupilIdentitiesToStorage();
 
     // TODO: fix this
     // if (updateGroupFilters) {
@@ -141,17 +144,16 @@ class PupilIdentityManager {
     // di<MainMenuBottomNavManager>().pageViewController.value.jumpToPage(0);
   }
 
-  Future<void> writePupilIdentitiesToStorage({required String envKey}) async {
+  Future<void> writePupilIdentitiesToStorage() async {
     final Map<String, Map<String, dynamic>> jsonMap = _pupilIdentities.map(
       (key, value) => MapEntry(key.toString(), value.toJson()),
     );
 
-    final jsonPupilIdentities = json.encode(jsonMap);
-    await AppSecureStorage.write(
-        '${SecureStorageKey.pupilIdentities.value}_${envKey}_${di<HubAuthKeyManager>().runMode}',
-        jsonPupilIdentities);
+    final jsonPupilIdentitiesAsString = json.encode(jsonMap);
+    await LegacySecureStorage.write(
+        secureStorageKey, jsonPupilIdentitiesAsString);
     log.info(
-        'Pupil identities written to secure storage for ${SecureStorageKey.pupilIdentities.value}_$envKey');
+        'Pupil identities written to secure storage with key $secureStorageKey');
   }
 
   Future<void> updateBackendPupilsFromSchoolPupilIdentitySource(
@@ -203,15 +205,15 @@ class PupilIdentityManager {
       _pupilIdentities[element.id] = element;
     }
 
-    await AppSecureStorage.write(
-        '${SecureStorageKey.sessions.value}_${di<EnvManager>().defaultEnv}',
-        jsonEncode(_pupilIdentities.values.toList()));
+    await LegacySecureStorage.write(
+        secureStorageKey, jsonEncode(_pupilIdentities.values.toList()));
 
     // TODO: fix this
     // await di<PupilManager>().fetchAllPupils();
 
-    di<NotificationService>().showSnackBar(NotificationType.success,
+    _notificationService.showSnackBar(NotificationType.success,
         '${_pupilIdentities.length} Schülerdaten wurden aktualisiert!');
+
     // TODO: fix this
     // di<MainMenuBottomNavManager>().setBottomNavPage(0);
     // di<MainMenuBottomNavManager>().pageViewController.value.jumpToPage(0);
@@ -227,10 +229,23 @@ class PupilIdentityManager {
       final migrationSupportEnds = pupilIdentity.migrationSupportEnds != null
           ? pupilIdentity.migrationSupportEnds!.formatForJson()
           : '';
+      // We need
       final specialNeeds = pupilIdentity.specialNeeds ?? '';
       final family = pupilIdentity.family ?? '';
-      final String pupilbaseString =
-          '${pupilIdentity.id},${pupilIdentity.firstName},${pupilIdentity.lastName},${pupilIdentity.group},${pupilIdentity.schoolGrade},$specialNeeds,,${pupilIdentity.gender},${pupilIdentity.language},$family,${pupilIdentity.birthday.formatForJson()},$migrationSupportEnds,${pupilIdentity.pupilSince.formatForJson()},\n';
+      final String pupilbaseString = '''
+          ${pupilIdentity.id},
+          ${pupilIdentity.firstName},
+          ${pupilIdentity.lastName},
+          ${pupilIdentity.group},
+          ${pupilIdentity.schoolGrade},
+          $specialNeeds,, 
+          ${pupilIdentity.gender},
+          ${pupilIdentity.language},
+          $family,
+          ${pupilIdentity.birthday.formatForJson()},
+          $migrationSupportEnds,
+          ${pupilIdentity.pupilSince.formatForJson()},
+          \n''';
       qrString = qrString + pupilbaseString;
     }
     final encryptedString = customEncrypter.encryptString(qrString);
@@ -300,7 +315,7 @@ class PupilIdentityManager {
       _pupilIdentities.remove(id);
     }
 
-    writePupilIdentitiesToStorage(envKey: di<EnvManager>().defaultEnv);
+    writePupilIdentitiesToStorage();
 
     log.info(
         ' ${toBeDeletedPupilIds.length} pupils are not in the database any moreand wer deleted.');

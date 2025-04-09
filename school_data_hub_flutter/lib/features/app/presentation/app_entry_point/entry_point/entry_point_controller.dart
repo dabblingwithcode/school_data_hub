@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/env/utils/env_utils.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/entry_point/entry_point_page.dart';
+import 'package:school_data_hub_flutter/features/app/presentation/app_entry_point/entry_point/entry_point_page.dart';
 import 'package:watch_it/watch_it.dart';
 
 class EntryPoint extends StatefulWidget {

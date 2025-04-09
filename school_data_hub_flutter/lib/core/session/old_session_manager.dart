@@ -45,41 +45,15 @@
 //   ValueListenable<bool> get matrixPolicyManagerRegistrationStatus =>
 //       _matrixPolicyManagerRegistrationStatus;
 
-//   // Future<HubSessionManager> init() async {
-//   //   await checkStoredCredentials();
 
-//   //   log('Returning HubSessionManager instance!');
-//   //   return this;
-//   // }
 
-//   void unauthenticate() {
-//     _isAuthenticated.value = false;
-//     _credentials.value = HubSession();
-//     _isAdmin.value = false;
-//   }
 
-//   void setHubSessionNotAuthenticated() {
-//     _isAuthenticated.value = false;
-//     _credentials.value = HubSession();
-//   }
-
-//   void authenticate(HubSession session) {
-//     _credentials.value = session;
-//     _isAdmin.value = _credentials.value.isAdmin!;
-//     _isAuthenticated.value = true;
-//   }
 
 //   bool isAuthorized(String user) {
 //     return _credentials.value.username == user || _isAdmin.value;
 //   }
 
-//   void changeHubSessionCredit(int value) async {
-//     int oldCreditValue = _credentials.value.credit!;
-//     HubSession newHubSession =
-//         _credentials.value.copyWith(credit: oldCreditValue + value);
-//     _credentials.value = newHubSession;
-//     await saveHubSession(newHubSession);
-//   }
+
 
 //   Future<void> updateHubSessionData(HubSession session) async {
 //     // final HubSession updatedHubSession =

@@ -3,14 +3,17 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/app_utils/barcode_stream_scanner.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/app_utils/barcode_stream_scanner.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_image_picker.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _pupilIdentityManager = di<PupilIdentityManager>();
+final _sessionManager = di<ServerpodSessionManager>();
 
 class ScanToolsPage extends WatchingWidget {
   const ScanToolsPage({super.key});
@@ -21,10 +24,10 @@ class ScanToolsPage extends WatchingWidget {
       File file = File(result.files.single.path!);
       String rawTextResult = await file.readAsString();
       if (function == 'update_backend') {
-        di<PupilIdentityManager>()
+        _pupilIdentityManager
             .updateBackendPupilsFromSchoolPupilIdentitySource(rawTextResult);
       } else if (function == 'pupil_identities') {
-        di<PupilIdentityManager>().addOrUpdateNewPupilIdentities(
+        _pupilIdentityManager.addOrUpdateNewPupilIdentities(
             identitiesInStringLines: rawTextResult);
       }
     } else {
@@ -38,8 +41,7 @@ class ScanToolsPage extends WatchingWidget {
     if (rawTextResult == null) {
       return;
     }
-    di<PupilIdentityManager>()
-        .decryptAndAddOrUpdatePupilIdentities([rawTextResult]);
+    _pupilIdentityManager.decryptAndAddOrUpdatePupilIdentities([rawTextResult]);
   }
 
   @override
@@ -62,7 +64,7 @@ class ScanToolsPage extends WatchingWidget {
             child: Column(
               children: [
                 const Spacer(),
-                Platform.isWindows && di<ServerpodSessionManager>().isAdmin
+                Platform.isWindows && _sessionManager.isAdmin
                     ? ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(

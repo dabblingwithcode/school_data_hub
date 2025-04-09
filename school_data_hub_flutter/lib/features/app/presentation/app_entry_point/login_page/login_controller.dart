@@ -12,8 +12,8 @@ import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
 import 'package:school_data_hub_flutter/core/env/utils/env_utils.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/loading_page.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_page.dart';
+import 'package:school_data_hub_flutter/features/app/presentation/app_entry_point/loading_page.dart';
+import 'package:school_data_hub_flutter/features/app/presentation/app_entry_point/login_page/login_page.dart';
 import 'package:watch_it/watch_it.dart';
 
 class Login extends WatchingStatefulWidget {
@@ -37,7 +37,7 @@ class LoginController extends State<Login> {
     if (di<EnvManager>().envIsReady.value) {
       envs = di<EnvManager>().envs;
       activeEnv = di<EnvManager>().activeEnv!;
-      selectedEnv = activeEnv!.name;
+      selectedEnv = activeEnv!.serverName;
     } else {
       envs = {};
       activeEnv = null;
@@ -49,7 +49,7 @@ class LoginController extends State<Login> {
     setState(() {
       envs = di<EnvManager>().envs;
       activeEnv = di<EnvManager>().activeEnv!;
-      selectedEnv = activeEnv!.name;
+      selectedEnv = activeEnv!.serverName;
     });
     return;
   }
@@ -88,7 +88,7 @@ class LoginController extends State<Login> {
       setState(() {
         envs = di<EnvManager>().envs;
         activeEnv = di<EnvManager>().activeEnv!;
-        selectedEnv = activeEnv!.name;
+        selectedEnv = activeEnv!.serverName;
       });
       return;
     } else {
@@ -145,7 +145,7 @@ class LoginController extends State<Login> {
       setState(() {
         envs = di<EnvManager>().envs;
         activeEnv = di<EnvManager>().activeEnv!;
-        selectedEnv = activeEnv!.name;
+        selectedEnv = activeEnv!.serverName;
       });
       return;
     }

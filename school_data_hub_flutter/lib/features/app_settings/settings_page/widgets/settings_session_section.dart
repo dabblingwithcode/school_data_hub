@@ -8,25 +8,25 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/dialogues/change_env_dialog.dart';
+import 'package:school_data_hub_flutter/features/app/presentation/app_entry_point/login_page/login_controller.dart';
+import 'package:school_data_hub_flutter/features/app_settings/settings_page/dialogs/change_env_dialog.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _sessionManager = di<ServerpodSessionManager>();
+final _envManager = di<EnvManager>();
+final _cacheManager = di<DefaultCacheManager>();
+final _notificationService = di<NotificationService>();
 
 class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
   const SettingsSessionSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final ServerpodSessionManager sessionManager =
-        di<ServerpodSessionManager>();
-    final EnvManager envManager = di<EnvManager>();
-    final cacheManager = di<DefaultCacheManager>();
     final locale = AppLocalizations.of(context)!;
-    //final Session session = watchValue((SessionManager x) => x.credentials);
 
     //final int credit = session.credit!;
-    final String username = sessionManager.signedInUser!.userName!;
+    final String username = _sessionManager.signedInUser!.userName!;
 
     return SettingsSection(
       title: Text(
@@ -39,7 +39,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           leading: const Icon(Icons.home),
           title: const Text('Instanz:'),
           value: Text(
-            di<EnvManager>().activeEnv!.name,
+            _envManager.activeEnv!.serverName,
           ),
           trailing: null,
         ),
@@ -104,7 +104,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
             //   }
             //   await sessionManager.refreshToken(password);
             // } catch (e) {
-            //   di<NotificationService>().showSnackBar(
+            //   notificationService.showSnackBar(
             //       NotificationType.error, 'Unbekannter Fehler: $e');
             // }
           },
@@ -118,9 +118,9 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
                 title: 'Ausloggen',
                 message: 'Wirklich ausloggen?\n\nDaten bleiben erhalten!');
             if (confirm == true && context.mounted) {
-              sessionManager.signOutDevice();
+              _sessionManager.signOutDevice();
 
-              di<NotificationService>().showSnackBar(
+              _notificationService.showSnackBar(
                   NotificationType.success, 'Erfolgreich ausgeloggt!');
             }
           },
@@ -145,8 +145,8 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
                 message: 'Kinder-Ids für diese Instanz löschen?');
             if (confirm == true && context.mounted) {
               PupilIdentityHelper.deletePupilIdentitiesForEnv(
-                  envManager.activeEnv!.name);
-              di<NotificationService>().showSnackBar(
+                  _envManager.activeEnv!.serverName);
+              _notificationService.showSnackBar(
                   NotificationType.success, 'ID-Schlüssel gelöscht');
             }
             return;
@@ -166,11 +166,11 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
                 title: 'Instanz-ID-Schlüssel löschen',
                 message: 'Instanz-ID-Schlüssel löschen?');
             if (confirm == true && context.mounted) {
-              await envManager.deleteEnv();
-              di<NotificationService>().showSnackBar(
+              await _envManager.deleteEnv();
+              _notificationService.showSnackBar(
                   NotificationType.success, 'Instanz-ID-Schlüssel gelöscht');
 
-              await cacheManager.emptyCache();
+              await _cacheManager.emptyCache();
               if (context.mounted) {
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
@@ -195,10 +195,8 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
                     title: 'Bilder-Cache löschen',
                     message: 'Cached Bilder löschen?');
                 if (confirm == true && context.mounted) {
-                  final cacheManager = di<DefaultCacheManager>();
-                  await cacheManager.emptyCache();
-                  di<NotificationService>().showSnackBar(
-                      NotificationType.success,
+                  await _cacheManager.emptyCache();
+                  _notificationService.showSnackBar(NotificationType.success,
                       'der Bilder-Cache wurde gelöscht');
                 }
                 return;

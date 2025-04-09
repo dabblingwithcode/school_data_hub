@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
+import 'package:school_data_hub_flutter/features/app/presentation/app_main_navigation/widgets/main_menu_button.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:watch_it/watch_it.dart';
 

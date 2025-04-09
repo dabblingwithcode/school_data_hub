@@ -12,12 +12,12 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_monitor.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/entry_point/entry_point_controller.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/error_page.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/loading_page.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/no_connection_page.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/landing_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/features/app/presentation/app_entry_point/entry_point/entry_point_controller.dart';
+import 'package:school_data_hub_flutter/features/app/presentation/app_entry_point/error_page.dart';
+import 'package:school_data_hub_flutter/features/app/presentation/app_entry_point/loading_page.dart';
+import 'package:school_data_hub_flutter/features/app/presentation/app_entry_point/login_page/login_controller.dart';
+import 'package:school_data_hub_flutter/features/app/presentation/app_entry_point/no_connection_page.dart';
+import 'package:school_data_hub_flutter/features/app/presentation/app_main_navigation/widgets/landing_bottom_nav_bar.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -79,7 +79,7 @@ class MyApp extends WatchingWidget {
     final log = Logger('MyApp');
     final bool envIsReady = watchValue((EnvManager x) => x.envIsReady);
     final bool userIsAuthenticated =
-        watchValue((EnvManager x) => x.isUserAuthenticated);
+        watchValue((EnvManager x) => x.isAuthenticated);
     final bool isConnected =
         watchValue((ServerpodConnectivityMonitor x) => x.isConnected);
 

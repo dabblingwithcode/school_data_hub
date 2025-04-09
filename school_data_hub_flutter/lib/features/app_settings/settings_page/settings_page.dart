@@ -17,6 +17,8 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
 
+    final envManager = di<EnvManager>();
+
     final bool isAdmin = di<ServerpodSessionManager>().isAdmin;
 
     return Scaffold(
@@ -50,12 +52,11 @@ class SettingsPage extends StatelessWidget {
                   SettingsTile(
                     leading: const Icon(Icons.perm_device_info_rounded),
                     title: Text(
-                        'Versionsnummer: ${di<EnvManager>().packageInfo.version}'),
+                        'Versionsnummer: ${envManager.packageInfo.version}'),
                   ),
                   SettingsTile(
                     leading: const Icon(Icons.build_rounded),
-                    title: Text(
-                        'Build: ${di<EnvManager>().packageInfo.buildNumber}'),
+                    title: Text('Build: ${envManager.packageInfo.buildNumber}'),
                   ),
                   SettingsTile.navigation(
                     leading: const Icon(Icons.info_rounded),
@@ -70,8 +71,7 @@ class SettingsPage extends StatelessWidget {
                           ),
                         ),
                         applicationName: 'Schuldaten App',
-                        applicationVersion:
-                            di<EnvManager>().packageInfo.version,
+                        applicationVersion: envManager.packageInfo.version,
                         applicationLegalese: '© 2025 Schuldaten Hub'),
                   )
                 ],

@@ -5,6 +5,8 @@ import 'package:school_data_hub_flutter/common/widgets/qr/qr_speed_show.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
+final _pupilIdentityManager = di<PupilIdentityManager>();
+
 class SettingsToolsSection extends AbstractSettingsSection {
   const SettingsToolsSection({super.key});
 
@@ -75,9 +77,8 @@ class SettingsToolsSection extends AbstractSettingsSection {
             leading: const Icon(Icons.qr_code_rounded),
             title: const Text('Alle vorhandenen QR-Ids zeigen (autoplay)'),
             onPressed: (context) async {
-              final List<Map<String, Object>> qrData =
-                  di<PupilIdentityManager>()
-                      .generateAllPupilIdentitiesQrData(pupilsPerCode: 8);
+              final List<Map<String, Object>> qrData = _pupilIdentityManager
+                  .generateAllPupilIdentitiesQrData(pupilsPerCode: 8);
 
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (ctx) => QrCodeSpeedShow(qrMaps: qrData),
@@ -88,7 +89,7 @@ class SettingsToolsSection extends AbstractSettingsSection {
             title:
                 const Text('Alle vorhandenen QR-Ids zeigen (manuelle slides)'),
             onPressed: (context) async {
-              final qrDataMaps = di<PupilIdentityManager>()
+              final qrDataMaps = _pupilIdentityManager
                   .generateAllPupilIdentitiesQrData(pupilsPerCode: 8);
               final qrData = qrDataMaps[1] as Map<String, String>;
 

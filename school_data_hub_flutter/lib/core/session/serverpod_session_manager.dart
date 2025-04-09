@@ -11,21 +11,17 @@ import 'package:serverpod_auth_client/serverpod_auth_client.dart';
 import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
 import 'package:watch_it/watch_it.dart';
 
-// TODO: double check the behavior of these keys using different instances
-const _storageUserInfoKey = 'hub_userinfo_key';
-// const _prefsVersion = 2;
+final _log = Logger('ServerpodSessionManager');
+final _envManager = di<EnvManager>();
 
 /// The [SessionManager] keeps track of and manages the signed-in state of the
 /// user. Use the [instance] method to get access to the singleton instance.
-/// Users are typically authenticated with Google, Apple, or other methods.
-/// Please refer to the documentation to see supported methods. Session
-/// information is stored in the shared preferences of the app and persists
-/// between restarts of the app.
 /// This [ServerpodSessionManager] is specifically modified for the School Data Hub
 /// and uses the [HubAuthKeyManager] for authentication key management.
 class ServerpodSessionManager with ChangeNotifier {
   static ServerpodSessionManager? _instance;
-  final log = Logger('ServerpodSessionManager');
+
+  String get userInfoStorageKey => _envManager.storageKeyForUserInfo();
 
   /// The auth module's caller.
   Caller caller;
@@ -89,9 +85,9 @@ class ServerpodSessionManager with ChangeNotifier {
   /// shared preferences. The returned bool is true if the session was
   /// initialized, or false if the server could not be reached.
   Future<bool> initialize() async {
-    log.info('Initializing session manager...');
-    log.info(' Running in mode: ${keyManager.runMode}');
-    await _loadStorage();
+    _log.info('Initializing session manager...');
+    _log.info(' Running in mode: ${_envManager.activeEnv!.runMode.name}');
+    await _loadUserInfoFromStorage();
     return refreshSession();
   }
 
@@ -119,8 +115,8 @@ class ServerpodSessionManager with ChangeNotifier {
 
       /// Don't forget to set the flag in [EnvManager] to false
       /// to get to the login screen.
-      log.info('User signed out ');
-      di<EnvManager>().setUserAuthenticated(false);
+      _log.info('User signed out ');
+      _envManager.setUserAuthenticated(false);
       return true;
     } catch (e) {
       return false;
@@ -151,7 +147,7 @@ class ServerpodSessionManager with ChangeNotifier {
   /// Verify the current sign in status with the server and update the UserInfo.
   /// Returns true if successful.
   Future<bool> refreshSession() async {
-    log.info('Refreshing session...');
+    _log.info('Refreshing session...');
 
     try {
       _signedInUser = await caller.status.getUserInfo();
@@ -161,11 +157,11 @@ class ServerpodSessionManager with ChangeNotifier {
       if (_signedInUser != null) {
         /// Don't forget to set the flag in [EnvManager] to false
         /// to get to the login screen.
-        log.info('User was authenticated by the server');
-        di<EnvManager>().setUserAuthenticated(true);
+        _log.info('User was authenticated by the server');
+        _envManager.setUserAuthenticated(true);
         return false;
       } else {
-        log.warning('User was not authenticated by the server');
+        _log.warning('User was not authenticated by the server');
       }
 
       return true;
@@ -173,24 +169,23 @@ class ServerpodSessionManager with ChangeNotifier {
       // Something wentwrong with the getUserInfo call
       // so we don't have a signed user.
       // we better delete the user info from storage and remove the key.
-      log.warning('User was not authenticated by the server: $e');
+      _log.warning('User was not authenticated by the server: $e');
       await keyManager.remove();
       _signedInUser = null;
       await _handleAuthCallResultInStorage();
 
       /// Don't forget to set the flag in [EnvManager] to false
       /// to get to the login screen.
-      di<EnvManager>().setUserAuthenticated(false);
+      _envManager.setUserAuthenticated(false);
       return false;
     }
   }
 
-  Future<void> _loadStorage() async {
-    var json = await _storage.getString(
-        '${keyManager.envName}_${keyManager.runMode}_$_storageUserInfoKey');
+  Future<void> _loadUserInfoFromStorage() async {
+    var json = await _storage.getString(userInfoStorageKey);
 
     if (json == null) {
-      log.warning('No user info found in storage');
+      _log.warning('No user info found in storage');
       return;
     }
 
@@ -201,15 +196,15 @@ class ServerpodSessionManager with ChangeNotifier {
 
   Future<void> _handleAuthCallResultInStorage() async {
     if (signedInUser == null) {
-      log.warning('No signed user found');
+      _log.warning('No signed user found');
 
       await keyManager.remove();
     } else {
-      log.info('We have a signed user - Saving userinfo to storage');
+      _log.info(
+          'We have a signed user - Saving userinfo to storage with key: $userInfoStorageKey');
 
       await _storage.setString(
-          '${keyManager.envName}_${keyManager.runMode}_$_storageUserInfoKey',
-          SerializationManager.encode(signedInUser));
+          userInfoStorageKey, SerializationManager.encode(signedInUser));
     }
   }
 

@@ -11,6 +11,8 @@ import 'package:school_data_hub_flutter/features/schoolday/presentation/new_scho
 import 'package:school_data_hub_flutter/features/user/presentation/create_user_page.dart';
 import 'package:watch_it/watch_it.dart';
 
+final _envManager = di<EnvManager>();
+
 class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
   const SettingsAdminSection({super.key});
 
@@ -96,8 +98,7 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
             leading: const Icon(Icons.qr_code_rounded),
             title: const Text('Schulschlüssel zeigen'),
             onPressed: (context) {
-              final Map<String, dynamic> json =
-                  di<EnvManager>().activeEnv!.toJson();
+              final Map<String, dynamic> json = _envManager.activeEnv!.toJson();
 
               final String jsonString = jsonEncode(json);
 

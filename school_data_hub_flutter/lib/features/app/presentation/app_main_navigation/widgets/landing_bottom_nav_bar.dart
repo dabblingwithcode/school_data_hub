@@ -1,50 +1,24 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/models/enums.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/snackbars.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/learn_resources_menu_page.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/pupil_lists_menu_page.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/scan_tools_page.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/school_lists_page.dart';
+import 'package:school_data_hub_flutter/features/app/domain/main_menu_bottom_nav_manager.dart';
+import 'package:school_data_hub_flutter/features/app/presentation/app_main_navigation/learn_resources_menu_page.dart';
+import 'package:school_data_hub_flutter/features/app/presentation/app_main_navigation/pupil_lists_menu_page.dart';
+import 'package:school_data_hub_flutter/features/app/presentation/app_main_navigation/scan_tools_page.dart';
+import 'package:school_data_hub_flutter/features/app/presentation/app_main_navigation/school_lists_page.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/settings_page.dart';
 import 'package:watch_it/watch_it.dart';
 
-class MainMenuBottomNavManager {
-  final _bottomNavState = ValueNotifier<int>(0);
-  ValueListenable<int> get bottomNavState => _bottomNavState;
-
-  final _pageViewController = ValueNotifier<PageController>(PageController());
-  ValueListenable<PageController> get pageViewController => _pageViewController;
-
-  final _pupilProfileNavState = ValueNotifier<int>(0);
-  ValueListenable<int> get pupilProfileNavState => _pupilProfileNavState;
-
-  MainMenuBottomNavManager() {
-    _bottomNavState.value = 0;
-    _pageViewController.value = PageController();
-  }
-
-  setBottomNavPage(int index) {
-    _bottomNavState.value = index;
-  }
-
-  setPupilProfileNavPage(int index) {
-    _pupilProfileNavState.value = index;
-  }
-
-  disposePageViewController() {
-    _pageViewController.value.dispose();
-  }
-}
+final _bottomNavmanager = di<MainMenuBottomNavManager>();
+final _envManager = di<EnvManager>();
 
 class MainMenuBottomNavigation extends WatchingWidget {
   MainMenuBottomNavigation({super.key});
@@ -60,10 +34,10 @@ class MainMenuBottomNavigation extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
-    final manager = di<MainMenuBottomNavManager>();
+
     final tab = watchValue((MainMenuBottomNavManager x) => x.bottomNavState);
     final pageViewController =
-        watchValue((MainMenuBottomNavManager x) => x.pageViewController);
+        createOnce(() => PageController(initialPage: tab));
 
     // with these handlers we control the overlays of the notification service
     // this is the main entry point for the notification service
@@ -123,13 +97,13 @@ class MainMenuBottomNavigation extends WatchingWidget {
           ScanToolsPage(),
           SettingsPage(),
         ],
-        onPageChanged: (index) => manager.setBottomNavPage(index),
+        onPageChanged: (index) => _bottomNavmanager.setBottomNavPage(index),
       ),
       bottomNavigationBar: BottomNavBarLayout(
         bottomNavBar: BottomNavigationBar(
           iconSize: 28,
           onTap: (index) {
-            manager.setBottomNavPage(index);
+            _bottomNavmanager.setBottomNavPage(index);
             pageViewController.animateToPage(index,
                 duration: const Duration(milliseconds: 200),
                 curve: Curves.easeIn);
@@ -204,7 +178,7 @@ void showInstanceLoadingOverlay(BuildContext context) {
                 const Gap(15),
                 if (di<EnvManager>().activeEnv != null)
                   Text(
-                    di<EnvManager>().activeEnv!.name,
+                    di<EnvManager>().activeEnv!.serverName,
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

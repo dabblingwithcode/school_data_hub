@@ -34,7 +34,7 @@ class SchooldayManager {
   final log = Logger('SchooldayManager');
 
   Future<SchooldayManager> init() async {
-    if (envManager.isUserAuthenticated.value == false) {
+    if (envManager.isAuthenticated.value == false) {
       return this;
     }
     await getSchooldays();

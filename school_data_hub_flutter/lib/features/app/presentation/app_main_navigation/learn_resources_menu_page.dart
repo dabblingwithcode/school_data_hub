@@ -3,9 +3,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:watch_it/watch_it.dart';
 
-class LearnResourcesMenuPage extends WatchingWidget {
+class LearnResourcesMenuPage extends StatelessWidget {
   const LearnResourcesMenuPage({super.key});
 
   @override
