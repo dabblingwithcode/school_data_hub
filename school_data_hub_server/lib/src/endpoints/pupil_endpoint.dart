@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 
@@ -31,5 +33,17 @@ class PupilEndpoint extends Endpoint {
 
       await PupilData.db.updateRow(session, pupil);
     }
+  }
+
+  Future<Set<PupilData>> refreshPupilDataState(
+      Session session, File file) async {
+    // check the extension of the file
+    if (file.path.split('.').last != 'csv') {
+      throw Exception('File is not a CSV file');
+    }
+    // Implement the logic to refresh pupil data state from the file
+    // This is a placeholder implementation
+    final pupils = await PupilData.db.find(session);
+    return pupils.toSet();
   }
 }

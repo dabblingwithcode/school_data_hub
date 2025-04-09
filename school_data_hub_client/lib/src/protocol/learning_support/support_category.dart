@@ -18,7 +18,7 @@ abstract class SupportCategory implements _i1.SerializableModel {
     this.id,
     required this.name,
     required this.categoryId,
-    required this.parentCategory,
+    this.parentCategory,
     this.categoryGoals,
     this.categoryStatues,
   });
@@ -27,7 +27,7 @@ abstract class SupportCategory implements _i1.SerializableModel {
     int? id,
     required String name,
     required int categoryId,
-    required int parentCategory,
+    int? parentCategory,
     List<_i2.SupportGoal>? categoryGoals,
     List<_i3.SupportCategoryStatus>? categoryStatues,
   }) = _SupportCategoryImpl;
@@ -37,7 +37,7 @@ abstract class SupportCategory implements _i1.SerializableModel {
       id: jsonSerialization['id'] as int?,
       name: jsonSerialization['name'] as String,
       categoryId: jsonSerialization['categoryId'] as int,
-      parentCategory: jsonSerialization['parentCategory'] as int,
+      parentCategory: jsonSerialization['parentCategory'] as int?,
       categoryGoals: (jsonSerialization['categoryGoals'] as List?)
           ?.map((e) => _i2.SupportGoal.fromJson((e as Map<String, dynamic>)))
           .toList(),
@@ -57,7 +57,7 @@ abstract class SupportCategory implements _i1.SerializableModel {
 
   int categoryId;
 
-  int parentCategory;
+  int? parentCategory;
 
   List<_i2.SupportGoal>? categoryGoals;
 
@@ -80,7 +80,7 @@ abstract class SupportCategory implements _i1.SerializableModel {
       if (id != null) 'id': id,
       'name': name,
       'categoryId': categoryId,
-      'parentCategory': parentCategory,
+      if (parentCategory != null) 'parentCategory': parentCategory,
       if (categoryGoals != null)
         'categoryGoals': categoryGoals?.toJson(valueToJson: (v) => v.toJson()),
       if (categoryStatues != null)
@@ -102,7 +102,7 @@ class _SupportCategoryImpl extends SupportCategory {
     int? id,
     required String name,
     required int categoryId,
-    required int parentCategory,
+    int? parentCategory,
     List<_i2.SupportGoal>? categoryGoals,
     List<_i3.SupportCategoryStatus>? categoryStatues,
   }) : super._(
@@ -122,7 +122,7 @@ class _SupportCategoryImpl extends SupportCategory {
     Object? id = _Undefined,
     String? name,
     int? categoryId,
-    int? parentCategory,
+    Object? parentCategory = _Undefined,
     Object? categoryGoals = _Undefined,
     Object? categoryStatues = _Undefined,
   }) {
@@ -130,7 +130,8 @@ class _SupportCategoryImpl extends SupportCategory {
       id: id is int? ? id : this.id,
       name: name ?? this.name,
       categoryId: categoryId ?? this.categoryId,
-      parentCategory: parentCategory ?? this.parentCategory,
+      parentCategory:
+          parentCategory is int? ? parentCategory : this.parentCategory,
       categoryGoals: categoryGoals is List<_i2.SupportGoal>?
           ? categoryGoals
           : this.categoryGoals?.map((e0) => e0.copyWith()).toList(),

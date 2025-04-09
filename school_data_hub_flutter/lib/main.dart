@@ -105,7 +105,6 @@ class MyApp extends WatchingWidget {
               : envIsReady
                   ? FutureBuilder(
                       future: di.allReady(timeout: const Duration(seconds: 30)),
-                      //  locator.allReady(timeout: const Duration(seconds: 30)),
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
                           log.shout(

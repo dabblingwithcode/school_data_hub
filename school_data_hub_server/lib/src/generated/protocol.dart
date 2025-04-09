@@ -65,8 +65,10 @@ import 'package:school_data_hub_server/src/generated/schoolday/school_semester.d
     as _i50;
 import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
     as _i51;
-import 'package:school_data_hub_server/src/generated/user/device_info.dart'
+import 'package:school_data_hub_server/src/generated/learning_support/support_category.dart'
     as _i52;
+import 'package:school_data_hub_server/src/generated/user/device_info.dart'
+    as _i53;
 export 'authorization/authorization.dart';
 export 'authorization/pupil_authorization.dart';
 export 'book/book.dart';
@@ -2319,8 +2321,8 @@ class Protocol extends _i1.SerializationManagerServer {
         _i2.ColumnDefinition(
           name: 'parentCategory',
           columnType: _i2.ColumnType.bigint,
-          isNullable: false,
-          dartType: 'int',
+          isNullable: true,
+          dartType: 'int?',
         ),
       ],
       foreignKeys: [],
@@ -3547,6 +3549,10 @@ class Protocol extends _i1.SerializationManagerServer {
       return (data as List).map((e) => deserialize<_i49.PupilData>(e)).toList()
           as T;
     }
+    if (t == Set<_i49.PupilData>) {
+      return (data as List).map((e) => deserialize<_i49.PupilData>(e)).toSet()
+          as T;
+    }
     if (t == List<_i50.SchoolSemester>) {
       return (data as List)
           .map((e) => deserialize<_i50.SchoolSemester>(e))
@@ -3559,16 +3565,21 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == List<DateTime>) {
       return (data as List).map((e) => deserialize<DateTime>(e)).toList() as T;
     }
+    if (t == List<_i52.SupportCategory>) {
+      return (data as List)
+          .map((e) => deserialize<_i52.SupportCategory>(e))
+          .toList() as T;
+    }
     if (t ==
         _i1.getType<
             ({
-              _i52.DeviceInfo? deviceInfo,
+              _i53.DeviceInfo? deviceInfo,
               _i3.AuthenticationResponse response
             })>()) {
       return (
         deviceInfo: ((data as Map)['n'] as Map)['deviceInfo'] == null
             ? null
-            : deserialize<_i52.DeviceInfo>(data['n']['deviceInfo']),
+            : deserialize<_i53.DeviceInfo>(data['n']['deviceInfo']),
         response:
             deserialize<_i3.AuthenticationResponse>(data['n']['response']),
       ) as T;
@@ -3981,7 +3992,7 @@ Map<String, dynamic>? mapRecordToJson(Record? record) {
     return null;
   }
   if (record is ({
-    _i52.DeviceInfo? deviceInfo,
+    _i53.DeviceInfo? deviceInfo,
     _i3.AuthenticationResponse response
   })) {
     return {

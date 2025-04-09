@@ -2,10 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
-import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_utilites.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
-import 'package:school_data_hub_flutter/core/env/utils/env_utils.dart';
+import 'package:school_data_hub_flutter/features/app/domain/app_helpers.dart';
 import 'package:school_data_hub_flutter/features/schoolday/presentation/new_school_semester_page/new_school_semester_page.dart';
 import 'package:school_data_hub_flutter/features/schoolday/presentation/new_school_semester_page/schooldays_calendar_page/schooldays_calendar_page.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/create_user_page.dart';
@@ -61,24 +60,7 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
             title: const Text('Neuen Schlüssel generieren'),
             leading: const Icon(Icons.key_rounded),
             onPressed: (context) async {
-              final serverName = await shortTextfieldDialog(
-                  context: context,
-                  title: 'Servername',
-                  labelText: 'Servername',
-                  hintText: 'Geben Sie dem Server einen Namen');
-              if (serverName == null || serverName.isEmpty) {
-                return;
-              }
-              final serverUrl = await shortTextfieldDialog(
-                  context: context,
-                  title: 'Server URL',
-                  labelText: 'Server URL',
-                  hintText: 'Geben Sie die URL des Servers ein');
-              if (serverUrl == null || serverUrl.isEmpty) {
-                return;
-              }
-              EnvUtils.generateNewEnvKeys(
-                  serverUrl: serverUrl, serverName: serverName);
+              AppHelpers.generateSchoolKeys(context);
             }),
         SettingsTile.navigation(
           leading: const Icon(Icons.attach_money_rounded),

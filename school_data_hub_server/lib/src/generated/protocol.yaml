@@ -17,6 +17,7 @@ pupil:
   - getPupils:
   - createPupil:
   - updateParentInfo:
+  - refreshPupilDataState:
 schooldayAdmin:
   - createSchoolSemester:
   - getAllSchoolSemesters:
@@ -30,6 +31,12 @@ schooldayAdmin:
 schoolday:
   - getSchoolSemesters:
   - getSchooldays:
+supportCategory:
+  - getSupportCategories:
+  - importSupportCategoriesFromJsonFile:
+  - createSupportCategory:
+  - updateSupportCategory:
+  - deleteSupportCategory:
 auth:
   - login:
   - verifyPassword:

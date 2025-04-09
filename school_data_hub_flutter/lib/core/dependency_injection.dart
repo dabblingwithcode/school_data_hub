@@ -7,6 +7,7 @@ import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_monitor.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app/domain/main_menu_bottom_nav_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
 import 'package:watch_it/watch_it.dart';
@@ -68,12 +69,6 @@ class DiManager {
       return sessionManager;
     }, dependsOn: [EnvManager, Client]);
 
-    _log.info('Managers dependent on ServerpodSessionManager initialized');
-
-    registerManagersDependingOnSession();
-  }
-
-  static Future<void> registerManagersDependingOnSession() async {
     di.registerSingletonAsync<PupilIdentityManager>(() async {
       final pupilIdentityManager = PupilIdentityManager();
 
@@ -82,8 +77,24 @@ class DiManager {
       _log.info('PupilIdentityManager initialized');
 
       return pupilIdentityManager;
+    }, dependsOn: [EnvManager]);
+
+    di.registerSingletonAsync<LearningSupportManager>(() async {
+      final learningSupportManager = LearningSupportManager();
+
+      await learningSupportManager.init();
+
+      _log.info('LearningSupportmanager initialized');
+
+      return learningSupportManager;
     }, dependsOn: [ServerpodSessionManager]);
 
+    _log.info('Managers dependent on ServerpodSessionManager initialized');
+
+    registerManagersDependingOnSession();
+  }
+
+  static Future<void> registerManagersDependingOnSession() async {
     di.registerSingletonAsync<SchooldayManager>(() async {
       final schooldayManager = SchooldayManager();
 

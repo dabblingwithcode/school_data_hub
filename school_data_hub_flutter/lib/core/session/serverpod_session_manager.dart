@@ -4,10 +4,12 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/core/auth/hub_auth_key_manager.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
-import 'package:serverpod_auth_client/serverpod_auth_client.dart';
+import 'package:serverpod_auth_client/serverpod_auth_client.dart'
+    as auth_client;
 import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -21,10 +23,10 @@ final _envManager = di<EnvManager>();
 class ServerpodSessionManager with ChangeNotifier {
   static ServerpodSessionManager? _instance;
 
-  String get userInfoStorageKey => _envManager.storageKeyForUserInfo();
+  String get _userInfoStorageKey => _envManager.storageKeyForUserInfo();
 
   /// The auth module's caller.
-  Caller caller;
+  auth_client.Caller caller;
 
   /// The key manager, holding the keys of the user, if signed in.
   late HubAuthKeyManager keyManager;
@@ -48,19 +50,21 @@ class ServerpodSessionManager with ChangeNotifier {
     return _instance!;
   }
 
-  UserInfo? _signedInUser;
+  auth_client.UserInfo? _signedInUser;
+
+  StaffUser? _staffUser;
 
   bool get isAdmin =>
       _signedInUser?.scopeNames.contains('serverpod.admin') ?? false;
 
   /// Returns information about the signed in user or null if no user is
   /// currently signed in.
-  UserInfo? get signedInUser => _signedInUser;
+  auth_client.UserInfo? get signedInUser => _signedInUser;
 
   /// Registers the signed in user, updates the [keyManager], and upgrades the
   /// streaming connection if it is open.
   Future<void> registerSignedInUser(
-    UserInfo userInfo,
+    auth_client.UserInfo userInfo,
     int authenticationKeyId,
     String authenticationKey,
   ) async {
@@ -123,15 +127,6 @@ class ServerpodSessionManager with ChangeNotifier {
     }
   }
 
-  /// **[Deprecated]** Signs the user out from all connected devices.
-  /// Use `signOutDevice` for the current device or `signOutAllDevices` for all devices.
-  /// Returns true if successful.
-  @Deprecated(
-      'Use signOutDevice for the current device or signOutAllDevices for all devices. This method will be removed in future releases.')
-  Future<bool> signOut() async {
-    return _signOut(allDevices: true);
-  }
-
   /// Signs the user out from all connected devices.
   /// Returns true if successful.
   Future<bool> signOutAllDevices() async {
@@ -182,14 +177,15 @@ class ServerpodSessionManager with ChangeNotifier {
   }
 
   Future<void> _loadUserInfoFromStorage() async {
-    var json = await _storage.getString(userInfoStorageKey);
+    var json = await _storage.getString(_userInfoStorageKey);
 
     if (json == null) {
       _log.warning('No user info found in storage');
       return;
     }
 
-    _signedInUser = Protocol().deserialize<UserInfo>(jsonDecode(json));
+    _signedInUser =
+        Protocol().deserialize<auth_client.UserInfo>(jsonDecode(json));
 
     notifyListeners();
   }
@@ -201,10 +197,10 @@ class ServerpodSessionManager with ChangeNotifier {
       await keyManager.remove();
     } else {
       _log.info(
-          'We have a signed user - Saving userinfo to storage with key: $userInfoStorageKey');
+          'We have a signed user - Saving userinfo to storage with key: $_userInfoStorageKey');
 
       await _storage.setString(
-          userInfoStorageKey, SerializationManager.encode(signedInUser));
+          _userInfoStorageKey, SerializationManager.encode(signedInUser));
     }
   }
 

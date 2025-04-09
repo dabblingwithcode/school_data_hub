@@ -4,7 +4,7 @@ table: support_category
 fields:
   name: String
   categoryId: int
-  parentCategory: int
+  parentCategory: int?
   categoryGoals: List<SupportGoal>?, relation
   categoryStatues: List<SupportCategoryStatus>?, relation
 

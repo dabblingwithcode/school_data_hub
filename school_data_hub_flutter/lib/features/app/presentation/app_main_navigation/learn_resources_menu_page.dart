@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_page/controller/category_list_controller.dart';
 
 class LearnResourcesMenuPage extends StatelessWidget {
   const LearnResourcesMenuPage({super.key});
@@ -71,9 +72,9 @@ class LearnResourcesMenuPage extends StatelessWidget {
                   ),
                   child: InkWell(
                     onTap: () {
-                      // Navigator.of(context).push(MaterialPageRoute(
-                      //   builder: (ctx) => const CategoryList(),
-                      // ));
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (ctx) => const CategoryList(),
+                      ));
                     },
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

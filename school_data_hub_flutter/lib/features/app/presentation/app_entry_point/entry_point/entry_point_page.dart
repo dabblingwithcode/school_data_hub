@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/features/app/domain/app_helpers.dart';
 import 'package:school_data_hub_flutter/features/app/presentation/app_entry_point/entry_point/entry_point_controller.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -83,7 +84,7 @@ class EntryPointPage extends WatchingWidget {
                     child: ElevatedButton(
                         style: AppStyles.actionButtonStyle,
                         onPressed: () async {
-                          controller.generateSchoolKeys(context);
+                          AppHelpers.generateSchoolKeys(context);
                         },
                         child: const Text('SCHULSCHLÜSSEL ERSTELLEN',
                             textAlign: TextAlign.center,

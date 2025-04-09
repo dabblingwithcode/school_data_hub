@@ -159,21 +159,6 @@ class LoginPage extends WatchingWidget {
                                 // di<EnvManager>().deleteEnv();
                                 await controller.loginWithTextCredentials();
                               },
-                              onLongPress: () async {
-                                // TODO: remove this in production
-                                final email = controller.usernameController.text
-                                    .toLowerCase();
-                                // await di<Client>().admin.createUser(
-                                //     userName: 'userName',
-                                //     fullName: 'fullName',
-                                //     scopeNames: ['user'],
-                                //     email: email,
-                                //     password:
-                                //         controller.passwordController.text);
-                                di<NotificationService>().showSnackBar(
-                                    NotificationType.info,
-                                    'User created: $email');
-                              },
                               child: Text(
                                 locale.logInButtonText,
                                 style: const TextStyle(

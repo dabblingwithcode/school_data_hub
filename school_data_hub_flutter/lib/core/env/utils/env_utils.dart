@@ -5,13 +5,16 @@ import 'dart:math' as math;
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/env/models/enums.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _notificationService = di<NotificationService>();
 
 class EnvUtils {
   static Future<void> generateNewEnvKeys(
-      {required String serverUrl, required String serverName}) async {
+      {required String serverUrl,
+      required String serverName,
+      required HubRunMode hubRunMode}) async {
     String generateRandomUtf8StringOfLength(int length) {
       const chars =
           'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -24,8 +27,13 @@ class EnvUtils {
 
     final iv = generateRandomUtf8StringOfLength(16);
 
-    final String schoolKey = jsonEncode(
-        {"server": serverName, "key": key, "iv": iv, "server_url": serverUrl});
+    final String schoolKey = jsonEncode({
+      "server_name": serverName,
+      "run_mode": hubRunMode,
+      "key": key,
+      "iv": iv,
+      "server_url": serverUrl
+    });
 
     String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
 

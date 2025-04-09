@@ -21,14 +21,17 @@ import 'package:school_data_hub_client/src/protocol/pupil_data/pupil_data.dart'
     as _i6;
 import 'package:school_data_hub_client/src/protocol/pupil_data/dto/siblings_parent_info_dto.dart'
     as _i7;
+import 'dart:io' as _i8;
 import 'package:school_data_hub_client/src/protocol/schoolday/school_semester.dart'
-    as _i8;
-import 'package:school_data_hub_client/src/protocol/schoolday/schoolday.dart'
     as _i9;
-import 'package:school_data_hub_client/src/protocol/user/device_info.dart'
+import 'package:school_data_hub_client/src/protocol/schoolday/schoolday.dart'
     as _i10;
-import 'package:serverpod_auth_client/serverpod_auth_client.dart' as _i11;
-import 'protocol.dart' as _i12;
+import 'package:school_data_hub_client/src/protocol/learning_support/support_category.dart'
+    as _i11;
+import 'package:school_data_hub_client/src/protocol/user/device_info.dart'
+    as _i12;
+import 'package:serverpod_auth_client/serverpod_auth_client.dart' as _i13;
+import 'protocol.dart' as _i14;
 
 /// The endpoint for admin operations.
 /// This endpoint requires the user to be logged in and have admin scope.
@@ -195,6 +198,13 @@ class EndpointPupil extends _i1.EndpointRef {
         'updateParentInfo',
         {'parentInfo': parentInfo},
       );
+
+  _i2.Future<Set<_i6.PupilData>> refreshPupilDataState(_i8.File file) =>
+      caller.callServerEndpoint<Set<_i6.PupilData>>(
+        'pupil',
+        'refreshPupilDataState',
+        {'file': file},
+      );
 }
 
 /// {@category Endpoint}
@@ -204,7 +214,7 @@ class EndpointSchooldayAdmin extends _i1.EndpointRef {
   @override
   String get name => 'schooldayAdmin';
 
-  _i2.Future<_i8.SchoolSemester> createSchoolSemester(
+  _i2.Future<_i9.SchoolSemester> createSchoolSemester(
     DateTime startDate,
     DateTime endDate,
     bool isFirst,
@@ -212,7 +222,7 @@ class EndpointSchooldayAdmin extends _i1.EndpointRef {
     DateTime supportConferenceDate,
     DateTime reportSignedDate,
   ) =>
-      caller.callServerEndpoint<_i8.SchoolSemester>(
+      caller.callServerEndpoint<_i9.SchoolSemester>(
         'schooldayAdmin',
         'createSchoolSemester',
         {
@@ -225,43 +235,43 @@ class EndpointSchooldayAdmin extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<List<_i8.SchoolSemester>> getAllSchoolSemesters() =>
-      caller.callServerEndpoint<List<_i8.SchoolSemester>>(
+  _i2.Future<List<_i9.SchoolSemester>> getAllSchoolSemesters() =>
+      caller.callServerEndpoint<List<_i9.SchoolSemester>>(
         'schooldayAdmin',
         'getAllSchoolSemesters',
         {},
       );
 
-  _i2.Future<_i8.SchoolSemester?> getCurrentSchoolSemester() =>
-      caller.callServerEndpoint<_i8.SchoolSemester?>(
+  _i2.Future<_i9.SchoolSemester?> getCurrentSchoolSemester() =>
+      caller.callServerEndpoint<_i9.SchoolSemester?>(
         'schooldayAdmin',
         'getCurrentSchoolSemester',
         {},
       );
 
-  _i2.Future<bool> updateSchoolSemester(_i8.SchoolSemester schoolSemester) =>
+  _i2.Future<bool> updateSchoolSemester(_i9.SchoolSemester schoolSemester) =>
       caller.callServerEndpoint<bool>(
         'schooldayAdmin',
         'updateSchoolSemester',
         {'schoolSemester': schoolSemester},
       );
 
-  _i2.Future<bool> deleteSchoolSemester(_i8.SchoolSemester semester) =>
+  _i2.Future<bool> deleteSchoolSemester(_i9.SchoolSemester semester) =>
       caller.callServerEndpoint<bool>(
         'schooldayAdmin',
         'deleteSchoolSemester',
         {'semester': semester},
       );
 
-  _i2.Future<_i9.Schoolday?> createSchoolday(DateTime date) =>
-      caller.callServerEndpoint<_i9.Schoolday?>(
+  _i2.Future<_i10.Schoolday?> createSchoolday(DateTime date) =>
+      caller.callServerEndpoint<_i10.Schoolday?>(
         'schooldayAdmin',
         'createSchoolday',
         {'date': date},
       );
 
-  _i2.Future<List<_i9.Schoolday>> createSchooldays(List<DateTime> dates) =>
-      caller.callServerEndpoint<List<_i9.Schoolday>>(
+  _i2.Future<List<_i10.Schoolday>> createSchooldays(List<DateTime> dates) =>
+      caller.callServerEndpoint<List<_i10.Schoolday>>(
         'schooldayAdmin',
         'createSchooldays',
         {'dates': dates},
@@ -274,7 +284,7 @@ class EndpointSchooldayAdmin extends _i1.EndpointRef {
         {'date': date},
       );
 
-  _i2.Future<bool> updateSchoolday(_i9.Schoolday schoolday) =>
+  _i2.Future<bool> updateSchoolday(_i10.Schoolday schoolday) =>
       caller.callServerEndpoint<bool>(
         'schooldayAdmin',
         'updateSchoolday',
@@ -289,18 +299,62 @@ class EndpointSchoolday extends _i1.EndpointRef {
   @override
   String get name => 'schoolday';
 
-  _i2.Future<List<_i8.SchoolSemester>> getSchoolSemesters() =>
-      caller.callServerEndpoint<List<_i8.SchoolSemester>>(
+  _i2.Future<List<_i9.SchoolSemester>> getSchoolSemesters() =>
+      caller.callServerEndpoint<List<_i9.SchoolSemester>>(
         'schoolday',
         'getSchoolSemesters',
         {},
       );
 
-  _i2.Future<List<_i9.Schoolday>> getSchooldays() =>
-      caller.callServerEndpoint<List<_i9.Schoolday>>(
+  _i2.Future<List<_i10.Schoolday>> getSchooldays() =>
+      caller.callServerEndpoint<List<_i10.Schoolday>>(
         'schoolday',
         'getSchooldays',
         {},
+      );
+}
+
+/// {@category Endpoint}
+class EndpointSupportCategory extends _i1.EndpointRef {
+  EndpointSupportCategory(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'supportCategory';
+
+  _i2.Future<List<_i11.SupportCategory>> getSupportCategories() =>
+      caller.callServerEndpoint<List<_i11.SupportCategory>>(
+        'supportCategory',
+        'getSupportCategories',
+        {},
+      );
+
+  _i2.Future<List<_i11.SupportCategory>> importSupportCategoriesFromJsonFile(
+          String jsonFilePath) =>
+      caller.callServerEndpoint<List<_i11.SupportCategory>>(
+        'supportCategory',
+        'importSupportCategoriesFromJsonFile',
+        {'jsonFilePath': jsonFilePath},
+      );
+
+  _i2.Future<bool> createSupportCategory(_i11.SupportCategory category) =>
+      caller.callServerEndpoint<bool>(
+        'supportCategory',
+        'createSupportCategory',
+        {'category': category},
+      );
+
+  _i2.Future<bool> updateSupportCategory(_i11.SupportCategory category) =>
+      caller.callServerEndpoint<bool>(
+        'supportCategory',
+        'updateSupportCategory',
+        {'category': category},
+      );
+
+  _i2.Future<bool> deleteSupportCategory(_i11.SupportCategory category) =>
+      caller.callServerEndpoint<bool>(
+        'supportCategory',
+        'deleteSupportCategory',
+        {'category': category},
       );
 }
 
@@ -312,16 +366,16 @@ class EndpointAuth extends _i1.EndpointRef {
   String get name => 'auth';
 
   _i2.Future<
-          ({_i10.DeviceInfo? deviceInfo, _i11.AuthenticationResponse response})>
+          ({_i12.DeviceInfo? deviceInfo, _i13.AuthenticationResponse response})>
       login(
     String email,
     String password,
-    _i10.DeviceInfo deviceInfo,
+    _i12.DeviceInfo deviceInfo,
   ) =>
           caller.callServerEndpoint<
               ({
-                _i10.DeviceInfo? deviceInfo,
-                _i11.AuthenticationResponse response
+                _i12.DeviceInfo? deviceInfo,
+                _i13.AuthenticationResponse response
               })>(
             'auth',
             'login',
@@ -375,10 +429,10 @@ class EndpointUser extends _i1.EndpointRef {
 
 class Modules {
   Modules(Client client) {
-    auth = _i11.Caller(client);
+    auth = _i13.Caller(client);
   }
 
-  late final _i11.Caller auth;
+  late final _i13.Caller auth;
 }
 
 class Client extends _i1.ServerpodClientShared {
@@ -397,7 +451,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
           host,
-          _i12.Protocol(),
+          _i14.Protocol(),
           securityContext: securityContext,
           authenticationKeyManager: authenticationKeyManager,
           streamingConnectionTimeout: streamingConnectionTimeout,
@@ -413,6 +467,7 @@ class Client extends _i1.ServerpodClientShared {
     pupil = EndpointPupil(this);
     schooldayAdmin = EndpointSchooldayAdmin(this);
     schoolday = EndpointSchoolday(this);
+    supportCategory = EndpointSupportCategory(this);
     auth = EndpointAuth(this);
     user = EndpointUser(this);
     modules = Modules(this);
@@ -430,6 +485,8 @@ class Client extends _i1.ServerpodClientShared {
 
   late final EndpointSchoolday schoolday;
 
+  late final EndpointSupportCategory supportCategory;
+
   late final EndpointAuth auth;
 
   late final EndpointUser user;
@@ -444,6 +501,7 @@ class Client extends _i1.ServerpodClientShared {
         'pupil': pupil,
         'schooldayAdmin': schooldayAdmin,
         'schoolday': schoolday,
+        'supportCategory': supportCategory,
         'auth': auth,
         'user': user,
       };
