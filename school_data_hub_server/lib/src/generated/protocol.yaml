@@ -5,6 +5,12 @@ admin:
   - demoteUserScope:
   - getAllUsers:
   - getUserById:
+competence:
+  - importCompetencesFromJsonFile:
+  - postCompetence:
+  - getAllCompetences:
+  - updateCompetence:
+  - deleteCompetence:
 example:
   - hello:
 missedClass:

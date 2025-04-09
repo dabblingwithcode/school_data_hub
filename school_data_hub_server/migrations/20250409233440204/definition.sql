@@ -140,13 +140,16 @@ CREATE TABLE "competence_report_check" (
 --
 CREATE TABLE "credit_transaction" (
     "id" bigserial PRIMARY KEY,
-    "transactionId" text NOT NULL,
-    "createdBy" text NOT NULL,
-    "reciever" bigint NOT NULL,
+    "sender" text NOT NULL,
+    "receiver" bigint NOT NULL,
     "amount" bigint NOT NULL,
     "dateTime" timestamp without time zone NOT NULL,
     "description" text
 );
+
+-- Indexes
+CREATE INDEX "reciever_idx" ON "credit_transaction" USING btree ("receiver");
+CREATE INDEX "sender_idx" ON "credit_transaction" USING btree ("sender");
 
 --
 -- Class LanguageStats as table language_stats
@@ -358,7 +361,7 @@ CREATE TABLE "support_category" (
     "id" bigserial PRIMARY KEY,
     "name" text NOT NULL,
     "categoryId" bigint NOT NULL,
-    "parentCategory" bigint NOT NULL
+    "parentCategory" bigint
 );
 
 --
@@ -1160,9 +1163,9 @@ ALTER TABLE ONLY "serverpod_query_log"
 -- MIGRATION VERSION FOR school_data_hub
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('school_data_hub', '20250407215204792', now())
+    VALUES ('school_data_hub', '20250409233440204', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20250407215204792', "timestamp" = now();
+    DO UPDATE SET "version" = '20250409233440204', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

@@ -7,6 +7,8 @@ import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_monitor.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app/domain/main_menu_bottom_nav_manager.dart';
+import 'package:school_data_hub_flutter/features/competence/domain/competence_manager.dart';
+import 'package:school_data_hub_flutter/features/competence/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
@@ -79,21 +81,11 @@ class DiManager {
       return pupilIdentityManager;
     }, dependsOn: [EnvManager]);
 
-    di.registerSingletonAsync<LearningSupportManager>(() async {
-      final learningSupportManager = LearningSupportManager();
-
-      await learningSupportManager.init();
-
-      _log.info('LearningSupportmanager initialized');
-
-      return learningSupportManager;
-    }, dependsOn: [ServerpodSessionManager]);
-
     _log.info('Managers dependent on ServerpodSessionManager initialized');
-
-    registerManagersDependingOnSession();
   }
 
+  /// These manager are initialized after the session manager authenticates
+  /// the session. it is called in the [ServerpodSessionManager] class after the session is authenticated.
   static Future<void> registerManagersDependingOnSession() async {
     di.registerSingletonAsync<SchooldayManager>(() async {
       final schooldayManager = SchooldayManager();
@@ -103,7 +95,33 @@ class DiManager {
       _log.info('SchooldayManager initialized');
 
       return schooldayManager;
-    }, dependsOn: [ServerpodSessionManager]);
+    });
+
+    di.registerSingletonAsync<LearningSupportManager>(() async {
+      final learningSupportManager = LearningSupportManager();
+
+      await learningSupportManager.init();
+
+      _log.info('LearningSupportmanager initialized');
+
+      return learningSupportManager;
+    });
+
+    di.registerSingletonAsync<CompetenceManager>(() async {
+      final competenceManager = CompetenceManager();
+
+      await competenceManager.init();
+
+      _log.info('CompetenceManager initialized');
+
+      return competenceManager;
+    });
+
+    di.registerSingletonWithDependencies<CompetenceFilterManager>(() {
+      return CompetenceFilterManager();
+    }, dependsOn: [CompetenceManager]);
+
+    _log.info('Managers depending on ServerpodSessionManager initialized');
   }
 
   static Future<void> unregisterManagersDependingOnActiveEnv() async {

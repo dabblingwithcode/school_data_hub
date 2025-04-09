@@ -1,5 +1,6 @@
 import 'package:school_data_hub_server/src/future_calls/database_backup_future_call.dart';
 import 'package:school_data_hub_server/src/future_calls/increase_credit_future_call.dart';
+import 'package:school_data_hub_server/src/future_calls/populate_competences_future_call.dart';
 import 'package:school_data_hub_server/src/future_calls/populate_support_categories_future_call.dart';
 import 'package:school_data_hub_server/src/web/routes/root.dart';
 import 'package:serverpod/serverpod.dart';
@@ -36,6 +37,9 @@ void run(List<String> args) async {
   pod.registerFutureCall(PopulateSupportCategoriesFutureCall(),
       'populateSupportCategoriesFutureCall');
 
+  pod.registerFutureCall(
+      PopulateCompetencesFutureCall(), 'populateCompetencesFutureCall');
+
   // Setup a default page at the web root.
   pod.webServer.addRoute(RouteRoot(), '/');
   pod.webServer.addRoute(RouteRoot(), '/index.html');
@@ -57,12 +61,20 @@ void run(List<String> args) async {
     const Duration(seconds: 1),
   );
 
-  // Trigger the backup future call to run every day at 2 AM.
+  // Populate support categories
   await session.serverpod.futureCallWithDelay(
-    'databaseBackupFutureCall',
+    'populateCompetencesFutureCall',
     null,
     const Duration(seconds: 1),
   );
+
+  // TODO: uncomment in production
+  // Trigger the backup future call to run every day at 2 AM.
+  // await session.serverpod.futureCallWithDelay(
+  //   'databaseBackupFutureCall',
+  //   null,
+  //   const Duration(seconds: 1),
+  // );
 
   await session.serverpod.futureCallWithDelay(
     'increaseCreditFutureCall',

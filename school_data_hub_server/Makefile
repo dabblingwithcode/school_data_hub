@@ -8,10 +8,10 @@ run: ## run the server
 	dart run bin/main.dart --apply-migrations
 
 reset: ## reset the server
-	rm -r migrations
-	mkdir migrations
-	rm -r database_backups
-	mkdir database_backups
+	## rm -r migrations
+	## mkdir migrations
+	## rm -r database_backups
+	## mkdir database_backups
 	serverpod generate
 	serverpod create-migration
 	docker compose down --volumes --remove-orphans

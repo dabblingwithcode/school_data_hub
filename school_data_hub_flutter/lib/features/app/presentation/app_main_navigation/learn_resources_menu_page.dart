@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/features/competence/presentation/competence_list_page/competence_list_page.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_page/controller/category_list_controller.dart';
 
 class LearnResourcesMenuPage extends StatelessWidget {
@@ -35,9 +36,9 @@ class LearnResourcesMenuPage extends StatelessWidget {
                 padding: const EdgeInsets.all(4.0),
                 child: InkWell(
                   onTap: () {
-                    // Navigator.of(context).push(MaterialPageRoute(
-                    //   builder: (ctx) => const CompetenceListPage(),
-                    // ));
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) => const CompetenceListPage(),
+                    ));
                   },
                   child: Card(
                     color: AppColors.backgroundColor,

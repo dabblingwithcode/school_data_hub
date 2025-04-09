@@ -7,6 +7,7 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/core/auth/hub_auth_key_manager.dart';
+import 'package:school_data_hub_flutter/core/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:serverpod_auth_client/serverpod_auth_client.dart'
     as auth_client;
@@ -154,6 +155,7 @@ class ServerpodSessionManager with ChangeNotifier {
         /// to get to the login screen.
         _log.info('User was authenticated by the server');
         _envManager.setUserAuthenticated(true);
+        unawaited(DiManager.registerManagersDependingOnSession());
         return false;
       } else {
         _log.warning('User was not authenticated by the server');
@@ -198,7 +200,8 @@ class ServerpodSessionManager with ChangeNotifier {
     } else {
       _log.info(
           'We have a signed user - Saving userinfo to storage with key: $_userInfoStorageKey');
-
+      _log.fine('User info: ${signedInUser!.toJson()}');
+      DiManager.registerManagersDependingOnSession();
       await _storage.setString(
           _userInfoStorageKey, SerializationManager.encode(signedInUser));
     }
