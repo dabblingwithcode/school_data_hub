@@ -3,13 +3,16 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/env/utils/env_utils.dart';
 import 'package:school_data_hub_flutter/features/app/presentation/app_entry_point/entry_point/entry_point_page.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _envManager = di<EnvManager>();
+final _notificationService = di<NotificationService>();
 
 class EntryPoint extends StatefulWidget {
   const EntryPoint({super.key});
@@ -24,12 +27,12 @@ class EntryPointController extends State<EntryPoint> {
     final String? scanResponse =
         await qrScanner(context: context, overlayText: locale.scanSchoolId);
     if (scanResponse != null) {
-      di<EnvManager>().importNewEnv(scanResponse);
+      _envManager.importNewEnv(scanResponse);
 
       return;
     } else {
-      di<NotificationService>()
-          .showSnackBar(NotificationType.warning, 'Keine Daten gescannt');
+      _notificationService.showSnackBar(
+          NotificationType.warning, 'Keine Daten gescannt');
       return;
     }
   }
@@ -39,7 +42,7 @@ class EntryPointController extends State<EntryPoint> {
     if (result != null) {
       File file = File(result.files.single.path!);
       String rawTextResult = await file.readAsString();
-      di<EnvManager>().importNewEnv(rawTextResult);
+      _envManager.importNewEnv(rawTextResult);
 
       return;
     }
@@ -65,7 +68,7 @@ class EntryPointController extends State<EntryPoint> {
     await EnvUtils.generateNewEnvKeys(
         serverName: serverName, serverUrl: serverUrl);
 
-    di<NotificationService>().showSnackBar(
+    _notificationService.showSnackBar(
         NotificationType.success, 'Schulschlüssel erfolgreich generiert');
   }
 

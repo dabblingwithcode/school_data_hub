@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:encrypt/encrypt.dart' as enc;
-import 'package:cryptography_plus/cryptography_plus.dart';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -11,13 +9,14 @@ import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final customEncrypter = CustomEncrypter();
+final _envManager = di<EnvManager>();
 
 class CustomEncrypter {
   final encrypter = enc.Encrypter(enc.AES(
-      enc.Key.fromUtf8(di<EnvManager>().activeEnv!.key),
+      enc.Key.fromUtf8(_envManager.activeEnv!.key),
       mode: enc.AESMode.cbc));
 
-  final iv = enc.IV.fromUtf8(di<EnvManager>().activeEnv!.iv);
+  final iv = enc.IV.fromUtf8(_envManager.activeEnv!.iv);
 
   String encryptString(String nonEncryptedString) {
     final encryptedString =

@@ -252,6 +252,7 @@ class CreateUserPage extends WatchingWidget {
                           'Bitte Passwort überprüfen');
                       return;
                     }
+                    // TODO: refactor this and put it in a manager
                     await di<Client>().admin.createUser(
                         userName: userNameController.text,
                         fullName: fullNameController.text,

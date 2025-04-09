@@ -2,14 +2,15 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:school_data_hub_flutter/common/models/enums.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _notificationService = di<NotificationService>();
 
 Future<String?> qrScanner(
     {required BuildContext context, required String overlayText}) async {
   if (Platform.isWindows) {
-    di<NotificationService>().showSnackBar(NotificationType.error,
+    _notificationService.showSnackBar(NotificationType.error,
         'Scannen mit Windows ist zur Zeit nicht möglich.');
 
     return null;

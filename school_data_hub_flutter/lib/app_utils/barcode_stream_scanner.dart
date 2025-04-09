@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
-import 'package:school_data_hub_flutter/common/widgets/list_view_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/list_view_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _pupilIdentityManager = di<PupilIdentityManager>();
 
 class BarcodeStreamScanner extends StatefulWidget {
   const BarcodeStreamScanner({super.key});
@@ -97,7 +99,7 @@ class _BarcodeStreamScannerState extends State<BarcodeStreamScanner> {
                     child: ElevatedButton(
                       style: AppStyles.successButtonStyle,
                       onPressed: () {
-                        unawaited(di<PupilIdentityManager>()
+                        unawaited(_pupilIdentityManager
                             .decryptAndAddOrUpdatePupilIdentities(
                                 _scannedQrCodes));
 

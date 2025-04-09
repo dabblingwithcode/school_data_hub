@@ -10,6 +10,8 @@ import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_mana
 import 'package:table_calendar/table_calendar.dart';
 import 'package:watch_it/watch_it.dart';
 
+final _schooldayManager = di<SchooldayManager>();
+
 class SchooldaysCalendarPage extends WatchingStatefulWidget {
   const SchooldaysCalendarPage({super.key});
 
@@ -27,7 +29,7 @@ class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
   final kLastDay = DateTime(DateTime.now().year + 2, 8, 31);
 
   List<String> _getEventsForDay(DateTime day) {
-    final schooldays = di<SchooldayManager>().schooldays.value;
+    final schooldays = _schooldayManager.schooldays.value;
     if (schooldays.any((element) => element.schoolday == day)) {
       return ['Schule'];
     }
@@ -83,8 +85,7 @@ class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
               if (results == null) return;
               if (results.isEmpty) return;
               final schooldays = results.whereType<DateTime>().toList();
-              await di<SchooldayManager>()
-                  .postMultipleSchooldays(dates: schooldays);
+              await _schooldayManager.postMultipleSchooldays(dates: schooldays);
               setState(() {});
             },
           ),
@@ -185,7 +186,7 @@ class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
                           message:
                               'Möchtest du den Schultag ${selectedDay.formatForUser()} wirklich löschen?');
                       if (confirm == null || !confirm) return;
-                      await di<SchooldayManager>().deleteSchoolday(selectedDay);
+                      await _schooldayManager.deleteSchoolday(selectedDay);
                     },
                     onFormatChanged: (format) {
                       if (_calendarFormat != format) {

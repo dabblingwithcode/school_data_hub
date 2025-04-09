@@ -8,6 +8,14 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
+final _client = di<Client>();
+
+final _envManager = di<EnvManager>();
+
+final _notificationService = di<NotificationService>();
+
+final _log = Logger('SchooldayManager');
+
 class SchooldayManager {
   final _schooldays = ValueNotifier<List<Schoolday>>([]);
   ValueNotifier<List<Schoolday>> get schooldays => _schooldays;
@@ -23,18 +31,8 @@ class SchooldayManager {
 
   SchooldayManager();
 
-  //- DEPENDENCY INJECTIONS
-
-  final client = di<Client>();
-
-  final envManager = di<EnvManager>();
-
-  final notificationService = di<NotificationService>();
-
-  final log = Logger('SchooldayManager');
-
   Future<SchooldayManager> init() async {
-    if (envManager.isAuthenticated.value == false) {
+    if (_envManager.isAuthenticated.value == false) {
       return this;
     }
     await getSchooldays();
@@ -109,15 +107,15 @@ class SchooldayManager {
 
   Future<void> postSchoolday(DateTime schoolday) async {
     final Schoolday? newSchoolday =
-        await client.schooldayAdmin.createSchoolday(schoolday);
+        await _client.schooldayAdmin.createSchoolday(schoolday);
     if (newSchoolday == null) {
-      notificationService.showSnackBar(
+      _notificationService.showSnackBar(
           NotificationType.error, 'Schultag konnte nicht erstellt werden');
       return;
     }
     _schooldays.value = [..._schooldays.value, newSchoolday];
 
-    notificationService.showSnackBar(
+    _notificationService.showSnackBar(
         NotificationType.success, 'Schultag erfolgreich erstellt');
 
     setAvailableDates();
@@ -127,11 +125,11 @@ class SchooldayManager {
 
   Future<void> postMultipleSchooldays({required List<DateTime> dates}) async {
     final List<Schoolday> newSchooldays =
-        await client.schooldayAdmin.createSchooldays(dates);
+        await _client.schooldayAdmin.createSchooldays(dates);
 
     _schooldays.value = [..._schooldays.value, ...newSchooldays];
 
-    notificationService.showSnackBar(
+    _notificationService.showSnackBar(
         NotificationType.success, 'Schultage erfolgreich erstellt');
 
     setAvailableDates();
@@ -141,16 +139,16 @@ class SchooldayManager {
 
   Future<void> getSchooldays() async {
     final List<Schoolday> responseSchooldays =
-        await client.schoolday.getSchooldays();
+        await _client.schoolday.getSchooldays();
 
     if (responseSchooldays.isNotEmpty) {
-      notificationService.showSnackBar(
+      _notificationService.showSnackBar(
           NotificationType.success, 'Schultage geladen');
       _schooldays.value = responseSchooldays;
 
       // if the schooldays flag is not set, we set it to true
-      if (envManager.populatedEnvServerData.schooldays == false) {
-        envManager.setPopulatedEnvServerData(schooldays: true);
+      if (_envManager.populatedEnvServerData.schooldays == false) {
+        _envManager.setPopulatedEnvServerData(schooldays: true);
       }
 
       setAvailableDates();
@@ -158,18 +156,18 @@ class SchooldayManager {
       return;
     }
 
-    notificationService.showSnackBar(NotificationType.warning,
+    _notificationService.showSnackBar(NotificationType.warning,
         '${responseSchooldays.length} Keine Schultage gefunden!');
 
     return;
   }
 
   Future<void> deleteSchoolday(DateTime date) async {
-    final bool isDeleted = await client.schooldayAdmin.deleteSchoolday(date);
+    final bool isDeleted = await _client.schooldayAdmin.deleteSchoolday(date);
 
     final Schoolday? schoolday = getSchooldayByDate(date);
     if (schoolday == null) {
-      notificationService.showSnackBar(
+      _notificationService.showSnackBar(
           NotificationType.error, 'Schultag konnte nicht gefunden werden');
       return;
     }
@@ -177,7 +175,7 @@ class SchooldayManager {
       _schooldays.value =
           _schooldays.value.where((day) => day != schoolday).toList();
 
-      notificationService.showSnackBar(
+      _notificationService.showSnackBar(
           NotificationType.success, 'Schultag erfolgreich gelöscht');
       return;
     }
@@ -189,18 +187,18 @@ class SchooldayManager {
 
   Future<void> getSchoolSemesters() async {
     final List<SchoolSemester> responseSchoolSemesters =
-        await client.schoolday.getSchoolSemesters();
+        await _client.schoolday.getSchoolSemesters();
 
-    notificationService.showSnackBar(NotificationType.success,
+    _notificationService.showSnackBar(NotificationType.success,
         '${responseSchoolSemesters.length} Schulhalbjahre geladen!');
 
-    log.info(
+    _log.info(
       'Schulhalbjahre geladen: ${responseSchoolSemesters.length}',
     );
     _schoolSemesters.value = responseSchoolSemesters;
 
     if (responseSchoolSemesters.isNotEmpty) {
-      di<EnvManager>().setPopulatedEnvServerData(schoolSemester: true);
+      _envManager.setPopulatedEnvServerData(schoolSemester: true);
     }
     return;
   }
@@ -214,7 +212,7 @@ class SchooldayManager {
       required DateTime reportConferenceDate,
       required bool isFirst}) async {
     final SchoolSemester newSemester =
-        await client.schooldayAdmin.createSchoolSemester(
+        await _client.schooldayAdmin.createSchoolSemester(
       startDate,
       endDate,
       isFirst,
@@ -225,7 +223,7 @@ class SchooldayManager {
 
     _schoolSemesters.value = [..._schoolSemesters.value, newSemester];
 
-    notificationService.showSnackBar(
+    _notificationService.showSnackBar(
         NotificationType.success, 'Schulhalbjahr erfolgreich erstellt');
 
     return;

@@ -7,6 +7,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:watch_it/watch_it.dart';
 
+final _notificationService = di<NotificationService>();
+
 class EnvUtils {
   static Future<void> generateNewEnvKeys(
       {required String serverUrl, required String serverName}) async {
@@ -33,8 +35,8 @@ class EnvUtils {
           File('$selectedDirectory/school_key_$serverName.txt');
       await schoolKeyFile.writeAsString(schoolKey);
     } else {
-      di<NotificationService>()
-          .showSnackBar(NotificationType.error, 'Aktion abgebrochen');
+      _notificationService.showSnackBar(
+          NotificationType.error, 'Aktion abgebrochen');
     }
     return;
   }

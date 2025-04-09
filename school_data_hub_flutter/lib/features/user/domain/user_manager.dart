@@ -5,6 +5,16 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
+//- DEPENDENCY INJECTIONS
+
+final _log = Logger('UserManager');
+
+final _client = di<Client>();
+
+final _sessionManager = di<ServerpodSessionManager>();
+
+final _notificationService = di<NotificationService>();
+
 class UserManager {
   ValueListenable<List<StaffUser>> get users => _users;
   final _users = ValueNotifier<List<StaffUser>>([]);
@@ -14,22 +24,13 @@ class UserManager {
     return this;
   }
 
-  //- DEPENDENCY INJECTIONS
-
-  final log = Logger('UserManager');
-  final client = di<Client>();
-
-  final sessionManager = di<ServerpodSessionManager>();
-
-  final notificationService = di<NotificationService>();
-
   Future<void> fetchUsers() async {
-    if (sessionManager.isAdmin == false) {
+    if (_sessionManager.isAdmin == false) {
       return;
     }
 
     try {
-      final List<StaffUser> responseUsers = await client.admin.getAllUsers();
+      final List<StaffUser> responseUsers = await _client.admin.getAllUsers();
 
       // reorder the list alphabetically by the user's name
       responseUsers.sort(
@@ -37,7 +38,7 @@ class UserManager {
       _users.value = responseUsers;
     } catch (e) {
       // Handle the error appropriately
-      log.severe('Error fetching users: $e');
+      _log.severe('Error fetching users: $e');
       // You might want to set an error state or show a notification
     }
 
@@ -56,7 +57,7 @@ class UserManager {
       required List<String> scopeNames,
       required Role role,
       String? tutoring}) async {
-    final StaffUser user = await client.admin.createUser(
+    final StaffUser user = await _client.admin.createUser(
       userName: userName,
       fullName: fullName,
       email: email,
@@ -68,20 +69,20 @@ class UserManager {
 
     addUser(user);
 
-    notificationService.showSnackBar(
+    _notificationService.showSnackBar(
         NotificationType.success, 'User erstellt!');
     return;
   }
 
   Future<void> changePassword(String oldPassword, String newPassword) async {
-    final success = await client.user.changePassword(oldPassword, newPassword);
+    final success = await _client.user.changePassword(oldPassword, newPassword);
     if (!success) {
-      notificationService.showSnackBar(
+      _notificationService.showSnackBar(
           NotificationType.error, 'Passwort konnte nicht geändert werden!');
       return;
     }
 
-    notificationService.showSnackBar(
+    _notificationService.showSnackBar(
         NotificationType.success, 'Passwort erfolgreich geändert!');
     return;
   }
@@ -112,14 +113,14 @@ class UserManager {
   // }
 
   Future<void> blockUser(StaffUser user) async {
-    if (!sessionManager.isAdmin) {
-      notificationService.showSnackBar(
+    if (!_sessionManager.isAdmin) {
+      _notificationService.showSnackBar(
           NotificationType.error, 'Sie sind kein Admin!');
       return;
     }
-    await client.admin.deleteUser(user.userInfo!.id!);
+    await _client.admin.deleteUser(user.userInfo!.id!);
     removeUser(user);
-    notificationService.showSnackBar(
+    _notificationService.showSnackBar(
         NotificationType.success, 'User gelöscht!');
     return;
   }

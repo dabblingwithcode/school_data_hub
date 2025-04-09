@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _envManager = di<EnvManager>();
 
 class LoadingPage extends WatchingStatefulWidget {
   const LoadingPage({super.key});
@@ -59,9 +61,9 @@ class LoadingPageState extends State<LoadingPage> {
                   ),
                 ),
                 const Gap(15),
-                if (di<EnvManager>().activeEnv != null)
+                if (_envManager.activeEnv != null)
                   Text(
-                    di<EnvManager>().activeEnv!.serverName,
+                    _envManager.activeEnv!.serverName,
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

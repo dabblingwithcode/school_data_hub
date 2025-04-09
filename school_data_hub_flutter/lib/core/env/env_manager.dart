@@ -12,11 +12,11 @@ import 'package:school_data_hub_flutter/core/models/populated_server_session_dat
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-class EnvManager {
-  //- Dependency injection
-  final log = Logger('EnvManager');
-  final notificationService = di<NotificationService>();
+final _log = Logger('EnvManager');
+final _notificationService = di<NotificationService>();
+final _pupilIdentityManager = di<PupilIdentityManager>();
 
+class EnvManager {
   bool _dependentMangagersRegistered = false;
   bool get dependentManagersRegistered => _dependentMangagersRegistered;
 
@@ -25,7 +25,7 @@ class EnvManager {
   /// without accessing [ServerpodSessionManager], because if there is not
   // an active env yet, it will still be unregistered.
   /// So this is a workaround setting a flag here
-  /// ! CAUTION !
+  /// **! CAUTION !**
   /// Handle this value only with [ServerpodSessionManager] every time
   /// it makes an authentication status change.
   final _isAuthenticated = ValueNotifier<bool>(false);
@@ -134,7 +134,7 @@ class EnvManager {
     _activeEnv =
         environmentsMapWithDefaultServerEnv.environmentsMap[_defaultEnv];
 
-    log.info(
+    _log.info(
       'Default Environment set: $_defaultEnv',
     );
 
@@ -154,7 +154,7 @@ class EnvManager {
 
   void setDependentManagersRegistered(bool value) {
     _dependentMangagersRegistered = value;
-    log.info(
+    _log.info(
       'dependentManagersRegistered: $value',
     );
   }
@@ -173,10 +173,10 @@ class EnvManager {
 
         return environmentsInStorage;
       } catch (e) {
-        log.severe(
+        _log.severe(
             'Error reading env from secureStorage: $e', StackTrace.current);
 
-        log.warning('deleting faulty environments from secure storage');
+        _log.warning('deleting faulty environments from secure storage');
 
         await ServerpodSecureStorage().remove(_storageKeyForEnvironments);
 
@@ -196,7 +196,7 @@ class EnvManager {
     // add the env to the environments map
     _environments = {..._environments, env.serverName: env};
 
-    log.info(
+    _log.info(
         'Environment ${env.serverName} added to environments map in memory');
 
     // the modified environments map will be stored
@@ -224,10 +224,10 @@ class EnvManager {
 
     _envIsReady.value = true;
 
-    log.info('Activated Env: ${_activeEnv!.serverName}');
-    log.info('Environments in storage: ${_environments.length}');
+    _log.info('Activated Env: ${_activeEnv!.serverName}');
+    _log.info('Environments in storage: ${_environments.length}');
 
-    notificationService.showSnackBar(
+    _notificationService.showSnackBar(
         NotificationType.success, 'Schulschlüssel für $envName gespeichert!');
 
     // Check if there are any dependent managers registered
@@ -264,7 +264,7 @@ class EnvManager {
       _activeEnv = _environments.values.last;
 
       _defaultEnv = _environments.keys.last;
-      log.info('Env $deletedEnvironment New defaultEnv: $_defaultEnv');
+      _log.info('Env $deletedEnvironment New defaultEnv: $_defaultEnv');
       resetManagersDependentOnEnv();
     } else {
       // if there are no environments left, delete the environments from secure storage
@@ -286,6 +286,6 @@ class EnvManager {
 
   Future<void> propagateNewEnv() async {
     // TODO: implement this if needed
-    await di<PupilIdentityManager>().getPupilIdentitiesForEnv();
+    await _pupilIdentityManager.getPupilIdentitiesForEnv();
   }
 }

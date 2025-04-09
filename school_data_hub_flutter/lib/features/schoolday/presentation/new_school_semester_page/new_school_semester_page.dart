@@ -6,6 +6,8 @@ import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_mana
 import 'package:school_data_hub_flutter/features/schoolday/presentation/new_school_semester_page/widgets/date_picker_button.dart';
 import 'package:watch_it/watch_it.dart';
 
+final _schooldayManager = di<SchooldayManager>();
+
 class NewSchoolSemesterPage extends StatefulWidget {
   const NewSchoolSemesterPage({super.key});
 
@@ -199,7 +201,7 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
                 ),
               ),
               ElevatedButton(
-                  onPressed: () => di<SchooldayManager>().postSchoolSemester(
+                  onPressed: () => _schooldayManager.postSchoolSemester(
                       startDate: startDate!,
                       endDate: endDate!,
                       classConferenceDate: classConferenceDate!,

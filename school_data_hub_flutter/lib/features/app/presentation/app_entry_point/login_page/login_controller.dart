@@ -16,6 +16,9 @@ import 'package:school_data_hub_flutter/features/app/presentation/app_entry_poin
 import 'package:school_data_hub_flutter/features/app/presentation/app_entry_point/login_page/login_page.dart';
 import 'package:watch_it/watch_it.dart';
 
+final _envManager = di<EnvManager>();
+final _notificationService = di<NotificationService>();
+
 class Login extends WatchingStatefulWidget {
   const Login({super.key});
 
@@ -34,9 +37,9 @@ class LoginController extends State<Login> {
   @override
   initState() {
     super.initState();
-    if (di<EnvManager>().envIsReady.value) {
-      envs = di<EnvManager>().envs;
-      activeEnv = di<EnvManager>().activeEnv!;
+    if (_envManager.envIsReady.value) {
+      envs = _envManager.envs;
+      activeEnv = _envManager.activeEnv!;
       selectedEnv = activeEnv!.serverName;
     } else {
       envs = {};
@@ -45,10 +48,10 @@ class LoginController extends State<Login> {
   }
 
   void deleteEnv() {
-    di<EnvManager>().deleteEnv();
+    _envManager.deleteEnv();
     setState(() {
-      envs = di<EnvManager>().envs;
-      activeEnv = di<EnvManager>().activeEnv!;
+      envs = _envManager.envs;
+      activeEnv = _envManager.activeEnv!;
       selectedEnv = activeEnv!.serverName;
     });
     return;
@@ -57,7 +60,7 @@ class LoginController extends State<Login> {
   void changeEnv(String? envName) {
     setState(() {
       selectedEnv = envName!;
-      di<EnvManager>().activateEnv(envName: envName);
+      _envManager.activateEnv(envName: envName);
     });
   }
 
@@ -72,8 +75,8 @@ class LoginController extends State<Login> {
 
       attemptLogin(username: username, password: password);
     } else {
-      di<NotificationService>()
-          .showSnackBar(NotificationType.warning, locale.scanAborted);
+      _notificationService.showSnackBar(
+          NotificationType.warning, locale.scanAborted);
 
       return;
     }
@@ -84,16 +87,16 @@ class LoginController extends State<Login> {
     final String? scanResponse =
         await qrScanner(context: context, overlayText: locale.scanSchoolId);
     if (scanResponse != null) {
-      di<EnvManager>().importNewEnv(scanResponse);
+      _envManager.importNewEnv(scanResponse);
       setState(() {
-        envs = di<EnvManager>().envs;
-        activeEnv = di<EnvManager>().activeEnv!;
+        envs = _envManager.envs;
+        activeEnv = _envManager.activeEnv!;
         selectedEnv = activeEnv!.serverName;
       });
       return;
     } else {
-      di<NotificationService>()
-          .showSnackBar(NotificationType.warning, 'Keine Daten gescannt');
+      _notificationService.showSnackBar(
+          NotificationType.warning, 'Keine Daten gescannt');
       return;
     }
   }
@@ -119,8 +122,8 @@ class LoginController extends State<Login> {
         DeviceInfo(deviceId: '1', deviceName: 'Test device'));
 
     if (authResponse.response.success) {
-      di<NotificationService>()
-          .showSnackBar(NotificationType.success, 'Erfolgreich eingeloggt!');
+      _notificationService.showSnackBar(
+          NotificationType.success, 'Erfolgreich eingeloggt!');
       await di<ServerpodSessionManager>().registerSignedInUser(
         authResponse.response.userInfo!,
         authResponse.response.keyId!,
@@ -129,9 +132,9 @@ class LoginController extends State<Login> {
 
       /// Don't forget to set the flag in [EnvManager] to false
       /// to get to the login screen.
-      di<EnvManager>().setUserAuthenticated(true);
+      _envManager.setUserAuthenticated(true);
     } else {
-      di<NotificationService>().showSnackBar(NotificationType.error,
+      _notificationService.showSnackBar(NotificationType.error,
           'Login fehlgeschlagen: ${authResponse.response.failReason}');
     }
   }
@@ -141,10 +144,10 @@ class LoginController extends State<Login> {
     if (result != null) {
       File file = File(result.files.single.path!);
       String rawTextResult = await file.readAsString();
-      di<EnvManager>().importNewEnv(rawTextResult);
+      _envManager.importNewEnv(rawTextResult);
       setState(() {
-        envs = di<EnvManager>().envs;
-        activeEnv = di<EnvManager>().activeEnv!;
+        envs = _envManager.envs;
+        activeEnv = _envManager.activeEnv!;
         selectedEnv = activeEnv!.serverName;
       });
       return;
@@ -185,7 +188,7 @@ class LoginController extends State<Login> {
     await EnvUtils.generateNewEnvKeys(
         serverName: serverName, serverUrl: serverUrl);
 
-    di<NotificationService>().showSnackBar(
+    _notificationService.showSnackBar(
         NotificationType.success, 'Schulschlüssel erfolgreich generiert');
   }
 
