@@ -25,6 +25,9 @@ class ServerpodSessionManager with ChangeNotifier {
   static ServerpodSessionManager? _instance;
 
   String get _userInfoStorageKey => _envManager.storageKeyForUserInfo();
+  bool _matrixPolicyManagerRegistrationStatus = false;
+  bool get matrixPolicyManagerRegistrationStatus =>
+      _matrixPolicyManagerRegistrationStatus;
 
   /// The auth module's caller.
   auth_client.Caller caller;
@@ -223,6 +226,15 @@ class ServerpodSessionManager with ChangeNotifier {
       return false;
     } catch (e) {
       return false;
+    }
+  }
+
+  void changeMatrixPolicyManagerRegistrationStatus(bool isRegistered) {
+    if (_matrixPolicyManagerRegistrationStatus != isRegistered) {
+      _matrixPolicyManagerRegistrationStatus = isRegistered;
+      notifyListeners();
+      _log.info(
+          'MatrixPolicyManager registration status changed to $isRegistered');
     }
   }
 }

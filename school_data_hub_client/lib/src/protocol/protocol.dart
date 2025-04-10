@@ -55,21 +55,21 @@ import 'workbook/pupil_workbook.dart' as _i43;
 import 'workbook/workbook.dart' as _i44;
 import 'package:school_data_hub_client/src/protocol/user/staff_user.dart'
     as _i45;
-import 'package:school_data_hub_client/src/protocol/learning/competence.dart'
-    as _i46;
-import 'package:school_data_hub_client/src/protocol/schoolday/missed_class.dart'
-    as _i47;
-import 'package:school_data_hub_client/src/protocol/pupil_data/pupil_data.dart'
-    as _i48;
-import 'package:school_data_hub_client/src/protocol/schoolday/school_semester.dart'
-    as _i49;
-import 'package:school_data_hub_client/src/protocol/schoolday/schoolday.dart'
-    as _i50;
-import 'package:school_data_hub_client/src/protocol/learning_support/support_category.dart'
-    as _i51;
 import 'package:school_data_hub_client/src/protocol/user/device_info.dart'
+    as _i46;
+import 'package:serverpod_auth_client/serverpod_auth_client.dart' as _i47;
+import 'package:school_data_hub_client/src/protocol/learning/competence.dart'
+    as _i48;
+import 'package:school_data_hub_client/src/protocol/schoolday/missed_class.dart'
+    as _i49;
+import 'package:school_data_hub_client/src/protocol/pupil_data/pupil_data.dart'
+    as _i50;
+import 'package:school_data_hub_client/src/protocol/schoolday/school_semester.dart'
+    as _i51;
+import 'package:school_data_hub_client/src/protocol/schoolday/schoolday.dart'
     as _i52;
-import 'package:serverpod_auth_client/serverpod_auth_client.dart' as _i53;
+import 'package:school_data_hub_client/src/protocol/learning_support/support_category.dart'
+    as _i53;
 export 'authorization/authorization.dart';
 export 'authorization/pupil_authorization.dart';
 export 'book/book.dart';
@@ -658,56 +658,56 @@ class Protocol extends _i1.SerializationManager {
       return (data as List).map((e) => deserialize<_i45.StaffUser>(e)).toList()
           as T;
     }
-    if (t == List<_i46.Competence>) {
-      return (data as List).map((e) => deserialize<_i46.Competence>(e)).toList()
+    if (t ==
+        _i1.getType<
+            ({
+              _i46.DeviceInfo? deviceInfo,
+              _i47.AuthenticationResponse response
+            })>()) {
+      return (
+        deviceInfo: ((data as Map)['n'] as Map)['deviceInfo'] == null
+            ? null
+            : deserialize<_i46.DeviceInfo>(data['n']['deviceInfo']),
+        response:
+            deserialize<_i47.AuthenticationResponse>(data['n']['response']),
+      ) as T;
+    }
+    if (t == List<_i48.Competence>) {
+      return (data as List).map((e) => deserialize<_i48.Competence>(e)).toList()
           as T;
     }
-    if (t == List<_i47.MissedClass>) {
+    if (t == List<_i49.MissedClass>) {
       return (data as List)
-          .map((e) => deserialize<_i47.MissedClass>(e))
+          .map((e) => deserialize<_i49.MissedClass>(e))
           .toList() as T;
     }
-    if (t == List<_i48.PupilData>) {
-      return (data as List).map((e) => deserialize<_i48.PupilData>(e)).toList()
+    if (t == List<_i50.PupilData>) {
+      return (data as List).map((e) => deserialize<_i50.PupilData>(e)).toList()
           as T;
     }
-    if (t == Set<_i48.PupilData>) {
-      return (data as List).map((e) => deserialize<_i48.PupilData>(e)).toSet()
+    if (t == Set<_i50.PupilData>) {
+      return (data as List).map((e) => deserialize<_i50.PupilData>(e)).toSet()
           as T;
     }
-    if (t == List<_i49.SchoolSemester>) {
+    if (t == List<_i51.SchoolSemester>) {
       return (data as List)
-          .map((e) => deserialize<_i49.SchoolSemester>(e))
+          .map((e) => deserialize<_i51.SchoolSemester>(e))
           .toList() as T;
     }
-    if (t == List<_i50.Schoolday>) {
-      return (data as List).map((e) => deserialize<_i50.Schoolday>(e)).toList()
+    if (t == List<_i52.Schoolday>) {
+      return (data as List).map((e) => deserialize<_i52.Schoolday>(e)).toList()
           as T;
     }
     if (t == List<DateTime>) {
       return (data as List).map((e) => deserialize<DateTime>(e)).toList() as T;
     }
-    if (t == List<_i51.SupportCategory>) {
+    if (t == List<_i53.SupportCategory>) {
       return (data as List)
-          .map((e) => deserialize<_i51.SupportCategory>(e))
+          .map((e) => deserialize<_i53.SupportCategory>(e))
           .toList() as T;
     }
-    if (t ==
-        _i1.getType<
-            ({
-              _i52.DeviceInfo? deviceInfo,
-              _i53.AuthenticationResponse response
-            })>()) {
-      return (
-        deviceInfo: ((data as Map)['n'] as Map)['deviceInfo'] == null
-            ? null
-            : deserialize<_i52.DeviceInfo>(data['n']['deviceInfo']),
-        response:
-            deserialize<_i53.AuthenticationResponse>(data['n']['response']),
-      ) as T;
-    }
     try {
-      return _i53.Protocol().deserialize<T>(data, t);
+      return _i47.Protocol().deserialize<T>(data, t);
     } on _i1.DeserializationTypeNotFoundException catch (_) {}
     return super.deserialize<T>(data, t);
   }
@@ -845,11 +845,11 @@ class Protocol extends _i1.SerializationManager {
     if (data is _i44.Workbook) {
       return 'Workbook';
     }
-    className = _i53.Protocol().getClassNameForObject(data);
+    className = _i47.Protocol().getClassNameForObject(data);
     if (className != null) {
       return 'serverpod_auth.$className';
     }
-    if (data is List<_i48.PupilData>) {
+    if (data is List<_i50.PupilData>) {
       return 'List<PupilData>';
     }
     return null;
@@ -992,10 +992,10 @@ class Protocol extends _i1.SerializationManager {
     }
     if (dataClassName.startsWith('serverpod_auth.')) {
       data['className'] = dataClassName.substring(15);
-      return _i53.Protocol().deserializeByClassName(data);
+      return _i47.Protocol().deserializeByClassName(data);
     }
     if (dataClassName == 'List<PupilData>') {
-      return deserialize<List<_i48.PupilData>>(data['data']);
+      return deserialize<List<_i50.PupilData>>(data['data']);
     }
     return super.deserializeByClassName(data);
   }
@@ -1011,8 +1011,8 @@ Map<String, dynamic>? mapRecordToJson(Record? record) {
     return null;
   }
   if (record is ({
-    _i52.DeviceInfo? deviceInfo,
-    _i53.AuthenticationResponse response
+    _i46.DeviceInfo? deviceInfo,
+    _i47.AuthenticationResponse response
   })) {
     return {
       "n": {

@@ -174,11 +174,16 @@ class UserManager {
   //   }
   // }
 
-  // Future<void> increaseUsersCredit() async {
-
-  //   final List<StaffUser> users = await userApiService.increaseUsersCredit();
-  //   updateUsers(users);
-  //   notificationService
-  //       .showSnackBar(NotificationType.success, 'Guthaben erfolgreich erhöht!');
-  // }
+  Future<void> increaseUsersCredit() async {
+    final success = await _client.user.increaseStaffCredit();
+    // TODO: This is not implemented yet
+    //  updateUsers(users);
+    if (!success) {
+      _notificationService.showSnackBar(
+          NotificationType.error, 'Guthaben konnte nicht erhöht werden!');
+      return;
+    }
+    _notificationService.showSnackBar(
+        NotificationType.success, 'Guthaben erfolgreich erhöht!');
+  }
 }

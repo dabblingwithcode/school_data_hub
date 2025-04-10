@@ -2,23 +2,31 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_utilites.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app/domain/app_helpers.dart';
+import 'package:school_data_hub_flutter/features/matrix/presentation/set_matrix_environment_page/set_matrix_environment_controller.dart';
 import 'package:school_data_hub_flutter/features/schoolday/presentation/new_school_semester_page/new_school_semester_page.dart';
 import 'package:school_data_hub_flutter/features/schoolday/presentation/new_school_semester_page/schooldays_calendar_page/schooldays_calendar_page.dart';
+import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/create_user_page.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _envManager = di<EnvManager>();
+final _notificationService = di<NotificationService>();
+
+final _userManager = di<UserManager>();
 
 class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
   const SettingsAdminSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // final bool matrixPolicyManagerIsRegistered = watchValue(
-    //     (SessionManager x) => x.matrixPolicyManagerRegistrationStatus);
+    final bool matrixPolicyManagerIsRegistered = watchPropertyValue(
+        (ServerpodSessionManager x) => x.matrixPolicyManagerRegistrationStatus);
     return SettingsSection(
       title: const Padding(
         padding: EdgeInsets.all(8.0),
@@ -66,14 +74,14 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
           leading: const Icon(Icons.attach_money_rounded),
           title: const Text('Guthaben überweisen'),
           onPressed: (context) async {
-            // final bool? confirmed = await confirmationDialog(
-            //     context: context,
-            //     title: 'Guthaben überweisen',
-            //     message: 'Sind Sie sicher?');
-            // if (confirmed != true) {
-            //   return;
-            // }
-            // await di<UserManager>().increaseUsersCredit();
+            final bool? confirmed = await confirmationDialog(
+                context: context,
+                title: 'Guthaben überweisen',
+                message: 'Sind Sie sicher?');
+            if (confirmed != true) {
+              return;
+            }
+            await _userManager.increaseUsersCredit();
           },
         ),
         SettingsTile.navigation(
@@ -86,29 +94,29 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
 
               showQrCode(jsonString, context);
             }),
-        // SettingsTile.navigation(
-        //     leading: matrixPolicyManagerIsRegistered
-        //         ? const Icon(
-        //             Icons.check_circle_rounded,
-        //             color: Colors.green,
-        //           )
-        //         : const Icon(Icons.chat_rounded),
-        //     title: matrixPolicyManagerIsRegistered
-        //         ? const Text('Raumverwaltung initialisiert')
-        //         : const Text('Raumverwaltung initialisieren'),
-        //     onPressed: (context) async {
-        //       if (matrixPolicyManagerIsRegistered) {
-        //         di<NotificationService>().showSnackBar(NotificationType.info,
-        //             'Raumverwaltung ist bereits initialisiert');
-        //         return;
-        //       }
-        //       ;
-        //       if (context.mounted) {
-        //         // Navigator.of(context).push(MaterialPageRoute(
-        //         //   builder: (ctx) => const SetMatrixEnvironment(),
-        //         // ));
-        //       }
-        //     }),
+        SettingsTile.navigation(
+            leading: matrixPolicyManagerIsRegistered
+                ? const Icon(
+                    Icons.check_circle_rounded,
+                    color: Colors.green,
+                  )
+                : const Icon(Icons.chat_rounded),
+            title: matrixPolicyManagerIsRegistered
+                ? const Text('Raumverwaltung initialisiert')
+                : const Text('Raumverwaltung initialisieren'),
+            onPressed: (context) async {
+              if (matrixPolicyManagerIsRegistered) {
+                _notificationService.showSnackBar(NotificationType.info,
+                    'Raumverwaltung ist bereits initialisiert');
+                return;
+              }
+
+              if (context.mounted) {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (ctx) => const SetMatrixEnvironment(),
+                ));
+              }
+            }),
         SettingsTile.navigation(
             leading: const Icon(Icons.chat_rounded),
             title: const Text('Raumverwaltung löschen'),

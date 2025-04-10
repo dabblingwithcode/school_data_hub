@@ -13,6 +13,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_man
 import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('EnvManager');
+
 final _notificationService = di<NotificationService>();
 final _pupilIdentityManager = di<PupilIdentityManager>();
 
@@ -63,6 +64,9 @@ class EnvManager {
 
   String storageKeyForPupilIdentities() =>
       '${_activeEnv!.serverName}_${_activeEnv!.runMode.name}_pupil_identities';
+
+  String storageKeyForMatrixCredentials() =>
+      '${_activeEnv!.serverName}_${_activeEnv!.runMode.name}_matrix_credentials';
 
   PackageInfo _packageInfo = PackageInfo(
     appName: '',

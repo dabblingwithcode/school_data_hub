@@ -5,6 +5,10 @@ admin:
   - demoteUserScope:
   - getAllUsers:
   - getUserById:
+auth:
+  - login:
+  - verifyPassword:
+  - logOut:
 competence:
   - importCompetencesFromJsonFile:
   - postCompetence:
@@ -43,9 +47,6 @@ supportCategory:
   - createSupportCategory:
   - updateSupportCategory:
   - deleteSupportCategory:
-auth:
-  - login:
-  - verifyPassword:
-  - logOut:
 user:
   - changePassword:
+  - increaseStaffCredit:

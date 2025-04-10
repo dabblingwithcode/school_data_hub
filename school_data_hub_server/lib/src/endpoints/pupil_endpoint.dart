@@ -4,6 +4,9 @@ import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 
 class PupilEndpoint extends Endpoint {
+  @override
+  bool get requireLogin => true;
+
   Stream<List<PupilData>> getPupils(Session session) async* {
     final pupils = await PupilData.db.find(session);
     yield pupils;

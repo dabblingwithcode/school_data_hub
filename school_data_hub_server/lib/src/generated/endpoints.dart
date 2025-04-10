@@ -11,34 +11,34 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../endpoints/admin_endpoint.dart' as _i2;
-import '../endpoints/competence_endpoint.dart' as _i3;
-import '../endpoints/example_endpoint.dart' as _i4;
-import '../endpoints/missed_class_endpoint.dart' as _i5;
-import '../endpoints/pupil_endpoint.dart' as _i6;
-import '../endpoints/schoolday_endpoint.dart' as _i7;
-import '../endpoints/support_category_endpoint.dart' as _i8;
-import '../endpoints/user_endpoint.dart' as _i9;
+import '../endpoints/auth_endpoint.dart' as _i3;
+import '../endpoints/competence_endpoint.dart' as _i4;
+import '../endpoints/example_endpoint.dart' as _i5;
+import '../endpoints/missed_class_endpoint.dart' as _i6;
+import '../endpoints/pupil_endpoint.dart' as _i7;
+import '../endpoints/schoolday_endpoint.dart' as _i8;
+import '../endpoints/support_category_endpoint.dart' as _i9;
 import '../endpoints/user_endpoints.dart' as _i10;
 import 'package:school_data_hub_server/src/generated/user/roles/roles.dart'
     as _i11;
-import 'dart:io' as _i12;
-import 'package:school_data_hub_server/src/generated/learning/competence.dart'
-    as _i13;
-import 'package:school_data_hub_server/src/generated/schoolday/missed_class.dart'
-    as _i14;
-import 'package:school_data_hub_server/src/generated/pupil_data/pupil_data.dart'
-    as _i15;
-import 'package:school_data_hub_server/src/generated/pupil_data/dto/siblings_parent_info_dto.dart'
-    as _i16;
-import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
-    as _i17;
-import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
-    as _i18;
-import 'package:school_data_hub_server/src/generated/learning_support/support_category.dart'
-    as _i19;
 import 'package:school_data_hub_server/src/generated/user/device_info.dart'
+    as _i12;
+import 'package:school_data_hub_server/src/generated/protocol.dart' as _i13;
+import 'dart:io' as _i14;
+import 'package:school_data_hub_server/src/generated/learning/competence.dart'
+    as _i15;
+import 'package:school_data_hub_server/src/generated/schoolday/missed_class.dart'
+    as _i16;
+import 'package:school_data_hub_server/src/generated/pupil_data/pupil_data.dart'
+    as _i17;
+import 'package:school_data_hub_server/src/generated/pupil_data/dto/siblings_parent_info_dto.dart'
+    as _i18;
+import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
+    as _i19;
+import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
     as _i20;
-import 'package:school_data_hub_server/src/generated/protocol.dart' as _i21;
+import 'package:school_data_hub_server/src/generated/learning_support/support_category.dart'
+    as _i21;
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i22;
 
 class Endpoints extends _i1.EndpointDispatch {
@@ -51,52 +51,52 @@ class Endpoints extends _i1.EndpointDispatch {
           'admin',
           null,
         ),
-      'competence': _i3.CompetenceEndpoint()
+      'auth': _i3.AuthEndpoint()
+        ..initialize(
+          server,
+          'auth',
+          null,
+        ),
+      'competence': _i4.CompetenceEndpoint()
         ..initialize(
           server,
           'competence',
           null,
         ),
-      'example': _i4.ExampleEndpoint()
+      'example': _i5.ExampleEndpoint()
         ..initialize(
           server,
           'example',
           null,
         ),
-      'missedClass': _i5.MissedClassEndpoint()
+      'missedClass': _i6.MissedClassEndpoint()
         ..initialize(
           server,
           'missedClass',
           null,
         ),
-      'pupil': _i6.PupilEndpoint()
+      'pupil': _i7.PupilEndpoint()
         ..initialize(
           server,
           'pupil',
           null,
         ),
-      'schooldayAdmin': _i7.SchooldayAdminEndpoint()
+      'schooldayAdmin': _i8.SchooldayAdminEndpoint()
         ..initialize(
           server,
           'schooldayAdmin',
           null,
         ),
-      'schoolday': _i7.SchooldayEndpoint()
+      'schoolday': _i8.SchooldayEndpoint()
         ..initialize(
           server,
           'schoolday',
           null,
         ),
-      'supportCategory': _i8.SupportCategoryEndpoint()
+      'supportCategory': _i9.SupportCategoryEndpoint()
         ..initialize(
           server,
           'supportCategory',
-          null,
-        ),
-      'auth': _i9.AuthEndpoint()
-        ..initialize(
-          server,
-          'auth',
           null,
         ),
       'user': _i10.UserEndpoint()
@@ -259,6 +259,86 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
+    connectors['auth'] = _i1.EndpointConnector(
+      name: 'auth',
+      endpoint: endpoints['auth']!,
+      methodConnectors: {
+        'login': _i1.MethodConnector(
+          name: 'login',
+          params: {
+            'email': _i1.ParameterDescription(
+              name: 'email',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'password': _i1.ParameterDescription(
+              name: 'password',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'deviceInfo': _i1.ParameterDescription(
+              name: 'deviceInfo',
+              type: _i1.getType<_i12.DeviceInfo>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['auth'] as _i3.AuthEndpoint)
+                  .login(
+                    session,
+                    params['email'],
+                    params['password'],
+                    params['deviceInfo'],
+                  )
+                  .then((record) => _i13.mapRecordToJson(record)),
+        ),
+        'verifyPassword': _i1.MethodConnector(
+          name: 'verifyPassword',
+          params: {
+            'userId': _i1.ParameterDescription(
+              name: 'userId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'password': _i1.ParameterDescription(
+              name: 'password',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['auth'] as _i3.AuthEndpoint).verifyPassword(
+            session,
+            params['userId'],
+            params['password'],
+          ),
+        ),
+        'logOut': _i1.MethodConnector(
+          name: 'logOut',
+          params: {
+            'keyId': _i1.ParameterDescription(
+              name: 'keyId',
+              type: _i1.getType<String>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['auth'] as _i3.AuthEndpoint).logOut(
+            session,
+            params['keyId'],
+          ),
+        ),
+      },
+    );
     connectors['competence'] = _i1.EndpointConnector(
       name: 'competence',
       endpoint: endpoints['competence']!,
@@ -268,7 +348,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'jsonFile': _i1.ParameterDescription(
               name: 'jsonFile',
-              type: _i1.getType<_i12.File>(),
+              type: _i1.getType<_i14.File>(),
               nullable: false,
             )
           },
@@ -276,7 +356,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['competence'] as _i3.CompetenceEndpoint)
+              (endpoints['competence'] as _i4.CompetenceEndpoint)
                   .importCompetencesFromJsonFile(
             session,
             params['jsonFile'],
@@ -310,7 +390,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['competence'] as _i3.CompetenceEndpoint)
+              (endpoints['competence'] as _i4.CompetenceEndpoint)
                   .postCompetence(
             session,
             parentCompetence: params['parentCompetence'],
@@ -326,7 +406,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['competence'] as _i3.CompetenceEndpoint)
+              (endpoints['competence'] as _i4.CompetenceEndpoint)
                   .getAllCompetences(session),
         ),
         'updateCompetence': _i1.MethodConnector(
@@ -334,7 +414,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'competence': _i1.ParameterDescription(
               name: 'competence',
-              type: _i1.getType<_i13.Competence>(),
+              type: _i1.getType<_i15.Competence>(),
               nullable: false,
             )
           },
@@ -342,7 +422,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['competence'] as _i3.CompetenceEndpoint)
+              (endpoints['competence'] as _i4.CompetenceEndpoint)
                   .updateCompetence(
             session,
             params['competence'],
@@ -361,7 +441,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['competence'] as _i3.CompetenceEndpoint)
+              (endpoints['competence'] as _i4.CompetenceEndpoint)
                   .deleteCompetence(
             session,
             params['publicId'],
@@ -386,7 +466,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['example'] as _i4.ExampleEndpoint).hello(
+              (endpoints['example'] as _i5.ExampleEndpoint).hello(
             session,
             params['name'],
           ),
@@ -402,7 +482,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'missedClass': _i1.ParameterDescription(
               name: 'missedClass',
-              type: _i1.getType<_i14.MissedClass>(),
+              type: _i1.getType<_i16.MissedClass>(),
               nullable: false,
             )
           },
@@ -410,7 +490,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['missedClass'] as _i5.MissedClassEndpoint)
+              (endpoints['missedClass'] as _i6.MissedClassEndpoint)
                   .createMissedClass(
             session,
             params['missedClass'],
@@ -423,7 +503,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['missedClass'] as _i5.MissedClassEndpoint)
+              (endpoints['missedClass'] as _i6.MissedClassEndpoint)
                   .getAllMissedClasses(session),
         ),
         'getMissedClassesOnDate': _i1.MethodConnector(
@@ -439,7 +519,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['missedClass'] as _i5.MissedClassEndpoint)
+              (endpoints['missedClass'] as _i6.MissedClassEndpoint)
                   .getMissedClassesOnDate(
             session,
             params['schooldayDate'],
@@ -450,7 +530,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'missedClass': _i1.ParameterDescription(
               name: 'missedClass',
-              type: _i1.getType<_i14.MissedClass>(),
+              type: _i1.getType<_i16.MissedClass>(),
               nullable: false,
             )
           },
@@ -458,7 +538,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['missedClass'] as _i5.MissedClassEndpoint)
+              (endpoints['missedClass'] as _i6.MissedClassEndpoint)
                   .updateMissedClass(
             session,
             params['missedClass'],
@@ -469,7 +549,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'missedClass': _i1.ParameterDescription(
               name: 'missedClass',
-              type: _i1.getType<_i14.MissedClass>(),
+              type: _i1.getType<_i16.MissedClass>(),
               nullable: false,
             )
           },
@@ -477,7 +557,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['missedClass'] as _i5.MissedClassEndpoint)
+              (endpoints['missedClass'] as _i6.MissedClassEndpoint)
                   .deleteMissedClass(
             session,
             params['missedClass'],
@@ -494,7 +574,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'pupil': _i1.ParameterDescription(
               name: 'pupil',
-              type: _i1.getType<_i15.PupilData>(),
+              type: _i1.getType<_i17.PupilData>(),
               nullable: false,
             )
           },
@@ -502,7 +582,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['pupil'] as _i6.PupilEndpoint).createPupil(
+              (endpoints['pupil'] as _i7.PupilEndpoint).createPupil(
             session,
             params['pupil'],
           ),
@@ -512,7 +592,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'parentInfo': _i1.ParameterDescription(
               name: 'parentInfo',
-              type: _i1.getType<_i16.SiblingsParentInfo>(),
+              type: _i1.getType<_i18.SiblingsParentInfo>(),
               nullable: false,
             )
           },
@@ -520,7 +600,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['pupil'] as _i6.PupilEndpoint).updateParentInfo(
+              (endpoints['pupil'] as _i7.PupilEndpoint).updateParentInfo(
             session,
             params['parentInfo'],
           ),
@@ -530,7 +610,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'file': _i1.ParameterDescription(
               name: 'file',
-              type: _i1.getType<_i12.File>(),
+              type: _i1.getType<_i14.File>(),
               nullable: false,
             )
           },
@@ -538,7 +618,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['pupil'] as _i6.PupilEndpoint).refreshPupilDataState(
+              (endpoints['pupil'] as _i7.PupilEndpoint).refreshPupilDataState(
             session,
             params['file'],
           ),
@@ -553,7 +633,7 @@ class Endpoints extends _i1.EndpointDispatch {
             Map<String, dynamic> params,
             Map<String, Stream> streamParams,
           ) =>
-              (endpoints['pupil'] as _i6.PupilEndpoint).getPupils(session),
+              (endpoints['pupil'] as _i7.PupilEndpoint).getPupils(session),
         ),
       },
     );
@@ -599,7 +679,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['schooldayAdmin'] as _i7.SchooldayAdminEndpoint)
+              (endpoints['schooldayAdmin'] as _i8.SchooldayAdminEndpoint)
                   .createSchoolSemester(
             session,
             params['startDate'],
@@ -617,7 +697,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['schooldayAdmin'] as _i7.SchooldayAdminEndpoint)
+              (endpoints['schooldayAdmin'] as _i8.SchooldayAdminEndpoint)
                   .getAllSchoolSemesters(session),
         ),
         'getCurrentSchoolSemester': _i1.MethodConnector(
@@ -627,7 +707,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['schooldayAdmin'] as _i7.SchooldayAdminEndpoint)
+              (endpoints['schooldayAdmin'] as _i8.SchooldayAdminEndpoint)
                   .getCurrentSchoolSemester(session),
         ),
         'updateSchoolSemester': _i1.MethodConnector(
@@ -635,7 +715,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'schoolSemester': _i1.ParameterDescription(
               name: 'schoolSemester',
-              type: _i1.getType<_i17.SchoolSemester>(),
+              type: _i1.getType<_i19.SchoolSemester>(),
               nullable: false,
             )
           },
@@ -643,7 +723,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['schooldayAdmin'] as _i7.SchooldayAdminEndpoint)
+              (endpoints['schooldayAdmin'] as _i8.SchooldayAdminEndpoint)
                   .updateSchoolSemester(
             session,
             params['schoolSemester'],
@@ -654,7 +734,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'semester': _i1.ParameterDescription(
               name: 'semester',
-              type: _i1.getType<_i17.SchoolSemester>(),
+              type: _i1.getType<_i19.SchoolSemester>(),
               nullable: false,
             )
           },
@@ -662,7 +742,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['schooldayAdmin'] as _i7.SchooldayAdminEndpoint)
+              (endpoints['schooldayAdmin'] as _i8.SchooldayAdminEndpoint)
                   .deleteSchoolSemester(
             session,
             params['semester'],
@@ -681,7 +761,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['schooldayAdmin'] as _i7.SchooldayAdminEndpoint)
+              (endpoints['schooldayAdmin'] as _i8.SchooldayAdminEndpoint)
                   .createSchoolday(
             session,
             params['date'],
@@ -700,7 +780,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['schooldayAdmin'] as _i7.SchooldayAdminEndpoint)
+              (endpoints['schooldayAdmin'] as _i8.SchooldayAdminEndpoint)
                   .createSchooldays(
             session,
             params['dates'],
@@ -719,7 +799,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['schooldayAdmin'] as _i7.SchooldayAdminEndpoint)
+              (endpoints['schooldayAdmin'] as _i8.SchooldayAdminEndpoint)
                   .deleteSchoolday(
             session,
             params['date'],
@@ -730,7 +810,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'schoolday': _i1.ParameterDescription(
               name: 'schoolday',
-              type: _i1.getType<_i18.Schoolday>(),
+              type: _i1.getType<_i20.Schoolday>(),
               nullable: false,
             )
           },
@@ -738,7 +818,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['schooldayAdmin'] as _i7.SchooldayAdminEndpoint)
+              (endpoints['schooldayAdmin'] as _i8.SchooldayAdminEndpoint)
                   .updateSchoolday(
             session,
             params['schoolday'],
@@ -757,7 +837,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['schoolday'] as _i7.SchooldayEndpoint)
+              (endpoints['schoolday'] as _i8.SchooldayEndpoint)
                   .getSchoolSemesters(session),
         ),
         'getSchooldays': _i1.MethodConnector(
@@ -767,7 +847,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['schoolday'] as _i7.SchooldayEndpoint)
+              (endpoints['schoolday'] as _i8.SchooldayEndpoint)
                   .getSchooldays(session),
         ),
       },
@@ -783,7 +863,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['supportCategory'] as _i8.SupportCategoryEndpoint)
+              (endpoints['supportCategory'] as _i9.SupportCategoryEndpoint)
                   .getSupportCategories(session),
         ),
         'importSupportCategoriesFromJsonFile': _i1.MethodConnector(
@@ -799,7 +879,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['supportCategory'] as _i8.SupportCategoryEndpoint)
+              (endpoints['supportCategory'] as _i9.SupportCategoryEndpoint)
                   .importSupportCategoriesFromJsonFile(
             session,
             params['jsonFilePath'],
@@ -810,7 +890,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'category': _i1.ParameterDescription(
               name: 'category',
-              type: _i1.getType<_i19.SupportCategory>(),
+              type: _i1.getType<_i21.SupportCategory>(),
               nullable: false,
             )
           },
@@ -818,7 +898,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['supportCategory'] as _i8.SupportCategoryEndpoint)
+              (endpoints['supportCategory'] as _i9.SupportCategoryEndpoint)
                   .createSupportCategory(
             session,
             params['category'],
@@ -829,7 +909,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'category': _i1.ParameterDescription(
               name: 'category',
-              type: _i1.getType<_i19.SupportCategory>(),
+              type: _i1.getType<_i21.SupportCategory>(),
               nullable: false,
             )
           },
@@ -837,7 +917,7 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['supportCategory'] as _i8.SupportCategoryEndpoint)
+              (endpoints['supportCategory'] as _i9.SupportCategoryEndpoint)
                   .updateSupportCategory(
             session,
             params['category'],
@@ -848,7 +928,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'category': _i1.ParameterDescription(
               name: 'category',
-              type: _i1.getType<_i19.SupportCategory>(),
+              type: _i1.getType<_i21.SupportCategory>(),
               nullable: false,
             )
           },
@@ -856,90 +936,10 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['supportCategory'] as _i8.SupportCategoryEndpoint)
+              (endpoints['supportCategory'] as _i9.SupportCategoryEndpoint)
                   .deleteSupportCategory(
             session,
             params['category'],
-          ),
-        ),
-      },
-    );
-    connectors['auth'] = _i1.EndpointConnector(
-      name: 'auth',
-      endpoint: endpoints['auth']!,
-      methodConnectors: {
-        'login': _i1.MethodConnector(
-          name: 'login',
-          params: {
-            'email': _i1.ParameterDescription(
-              name: 'email',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
-            'password': _i1.ParameterDescription(
-              name: 'password',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
-            'deviceInfo': _i1.ParameterDescription(
-              name: 'deviceInfo',
-              type: _i1.getType<_i20.DeviceInfo>(),
-              nullable: false,
-            ),
-          },
-          call: (
-            _i1.Session session,
-            Map<String, dynamic> params,
-          ) async =>
-              (endpoints['auth'] as _i9.AuthEndpoint)
-                  .login(
-                    session,
-                    params['email'],
-                    params['password'],
-                    params['deviceInfo'],
-                  )
-                  .then((record) => _i21.mapRecordToJson(record)),
-        ),
-        'verifyPassword': _i1.MethodConnector(
-          name: 'verifyPassword',
-          params: {
-            'userId': _i1.ParameterDescription(
-              name: 'userId',
-              type: _i1.getType<int>(),
-              nullable: false,
-            ),
-            'password': _i1.ParameterDescription(
-              name: 'password',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
-          },
-          call: (
-            _i1.Session session,
-            Map<String, dynamic> params,
-          ) async =>
-              (endpoints['auth'] as _i9.AuthEndpoint).verifyPassword(
-            session,
-            params['userId'],
-            params['password'],
-          ),
-        ),
-        'logOut': _i1.MethodConnector(
-          name: 'logOut',
-          params: {
-            'keyId': _i1.ParameterDescription(
-              name: 'keyId',
-              type: _i1.getType<String>(),
-              nullable: false,
-            )
-          },
-          call: (
-            _i1.Session session,
-            Map<String, dynamic> params,
-          ) async =>
-              (endpoints['auth'] as _i9.AuthEndpoint).logOut(
-            session,
-            params['keyId'],
           ),
         ),
       },
@@ -971,7 +971,17 @@ class Endpoints extends _i1.EndpointDispatch {
             params['oldPassword'],
             params['newPassword'],
           ),
-        )
+        ),
+        'increaseStaffCredit': _i1.MethodConnector(
+          name: 'increaseStaffCredit',
+          params: {},
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['user'] as _i10.UserEndpoint)
+                  .increaseStaffCredit(session),
+        ),
       },
     );
     modules['serverpod_auth'] = _i22.Endpoints()..initializeEndpoints(server);
