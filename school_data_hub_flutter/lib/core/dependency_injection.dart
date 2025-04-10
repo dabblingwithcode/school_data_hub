@@ -10,6 +10,9 @@ import 'package:school_data_hub_flutter/features/app/domain/main_menu_bottom_nav
 import 'package:school_data_hub_flutter/features/competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/competence/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
+import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
+import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
 import 'package:watch_it/watch_it.dart';
@@ -46,7 +49,7 @@ class DiManager {
   static Future<void> registerManagersDependingOnActiveEnv() async {
     di.registerSingletonWithDependencies<HubAuthKeyManager>(() {
       return HubAuthKeyManager(
-        storageKeyForAuthKey: di<EnvManager>().storageKeyForAuthKey(),
+        storageKeyForAuthKey: di<EnvManager>().storageKeyForAuthKey,
       );
     }, dependsOn: [EnvManager]);
 
@@ -138,5 +141,34 @@ class DiManager {
     await unregisterManagersDependingOnActiveEnv();
     await registerManagersDependingOnActiveEnv();
     _log.info('Managers depending on active env reset');
+  }
+
+  static Future<void> registerMatrixManagers(
+      MatrixCredentials? matrixCredentials) async {
+    di.registerSingletonAsync<MatrixPolicyManager>(() async {
+      _log.info('Registering MatrixPolicyManager');
+
+      final policyManager = await MatrixPolicyManager(
+              matrixCredentials!.url,
+              matrixCredentials.policyToken,
+              matrixCredentials.matrixToken,
+              matrixCredentials.compulsoryRooms ?? [])
+          .init();
+
+      _log.info('Matrix managers initialized');
+
+      di<ServerpodSessionManager>()
+          .changeMatrixPolicyManagerRegistrationStatus(true);
+
+      return policyManager;
+    }, dependsOn: [
+      ServerpodSessionManager
+    ]); // TODO: add dependency to PupilManager
+
+    di.registerSingletonWithDependencies(() {
+      return MatrixPolicyFilterManager(di<MatrixPolicyManager>());
+    }, dependsOn: [MatrixPolicyManager]);
+    di<NotificationService>().showSnackBar(
+        NotificationType.success, 'Matrix-Räumeverwaltung initialisiert');
   }
 }

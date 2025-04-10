@@ -20,7 +20,7 @@ final _notificationService = di<NotificationService>();
 class PupilIdentityManager {
   final log = Logger('PupilIdentityManager');
 
-  final secureStorageKey = _envManager.storageKeyForPupilIdentities();
+  final secureStorageKey = _envManager.storageKeyForPupilIdentities;
   Map<int, PupilIdentity> _pupilIdentities = {};
 
   final _groups = ValueNotifier<Set<String>>({});

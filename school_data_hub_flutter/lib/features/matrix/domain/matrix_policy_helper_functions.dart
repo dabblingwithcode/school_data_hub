@@ -5,10 +5,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
@@ -18,11 +16,10 @@ import 'package:uuid/uuid.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('MatrixPolicyHelperFunctions');
-final _sessionManager = di<ServerpodSessionManager>();
+
 final _matrixPolicyManager = di<MatrixPolicyManager>();
 final _secureStorage = ServerpodSecureStorage();
 final _envManager = di<EnvManager>();
-final _notificationService = di<NotificationService>();
 
 class MatrixPolicyHelper {
   static Future<void> registerMatrixPolicyManager(
@@ -32,7 +29,7 @@ class MatrixPolicyHelper {
     // (and they are not stored in secure storage yet)
     // if they are null, we will read them from secure storage
 
-    final _secureStorageKey = _envManager.storageKeyForMatrixCredentials();
+    final _secureStorageKey = _envManager.storageKeyForMatrixCredentials;
     MatrixCredentials? storedCredentials;
     if (passedCredentials == null) {
       _log.warning(
@@ -68,30 +65,7 @@ class MatrixPolicyHelper {
     // is the passed credentials are null, we will use the stored ones
     final validCredentials = passedCredentials ?? storedCredentials;
 
-    di.registerSingletonAsync<MatrixPolicyManager>(() async {
-      _log.info('Registering MatrixPolicyManager');
-
-      final policyManager = await MatrixPolicyManager(
-              validCredentials!.url,
-              validCredentials.policyToken,
-              validCredentials.matrixToken,
-              validCredentials.compulsoryRooms ?? [])
-          .init();
-
-      _log.info('MatrixPolicyManager initialized');
-
-      _notificationService.showSnackBar(
-          NotificationType.success, 'Matrix-Räumeverwaltung initialisiert');
-      _sessionManager.changeMatrixPolicyManagerRegistrationStatus(true);
-      return policyManager;
-    }, dependsOn: [
-      ServerpodSessionManager
-    ]); // TODO: add dependency to PupilManager
-
-    di.registerSingletonWithDependencies<MatrixPolicyFilterManager>(
-      () => MatrixPolicyFilterManager(_matrixPolicyManager),
-      dependsOn: [MatrixPolicyManager],
-    );
+    await DiManager.registerMatrixManagers(validCredentials!);
 
     return;
   }

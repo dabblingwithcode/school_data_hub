@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:school_data_hub_flutter/features/app/presentation/app_main_navigation/widgets/main_menu_button.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/features/app/presentation/app_main_navigation/widgets/main_menu_button.dart';
+import 'package:school_data_hub_flutter/features/matrix/presentation/matrix_users_list_page/matrix_users_list_page.dart';
 import 'package:watch_it/watch_it.dart';
 
 class PupilListButtons extends WatchingWidget {
@@ -88,8 +89,7 @@ class PupilListButtons extends WatchingWidget {
             buttonText: locale.allDayCare),
         if (matrixSessionConfigured)
           MainMenuButton(
-              destinationPage:
-                  const Placeholder(), // const MatrixUsersListPage(),
+              destinationPage: const MatrixUsersListPage(),
               buttonIcon: const Icon(
                 Icons.chat_rounded,
                 size: 50,

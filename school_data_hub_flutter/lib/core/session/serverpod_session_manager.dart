@@ -24,7 +24,7 @@ final _envManager = di<EnvManager>();
 class ServerpodSessionManager with ChangeNotifier {
   static ServerpodSessionManager? _instance;
 
-  String get _userInfoStorageKey => _envManager.storageKeyForUserInfo();
+  String get _userInfoStorageKey => _envManager.storageKeyForUserInfo;
   bool _matrixPolicyManagerRegistrationStatus = false;
   bool get matrixPolicyManagerRegistrationStatus =>
       _matrixPolicyManagerRegistrationStatus;
@@ -158,6 +158,7 @@ class ServerpodSessionManager with ChangeNotifier {
         /// to get to the login screen.
         _log.info('User was authenticated by the server');
         _envManager.setUserAuthenticated(true);
+
         unawaited(DiManager.registerManagersDependingOnSession());
         return false;
       } else {
@@ -204,7 +205,7 @@ class ServerpodSessionManager with ChangeNotifier {
       _log.info(
           'We have a signed user - Saving userinfo to storage with key: $_userInfoStorageKey');
       _log.fine('User info: ${signedInUser!.toJson()}');
-      DiManager.registerManagersDependingOnSession();
+
       await _storage.setString(
           _userInfoStorageKey, SerializationManager.encode(signedInUser));
     }

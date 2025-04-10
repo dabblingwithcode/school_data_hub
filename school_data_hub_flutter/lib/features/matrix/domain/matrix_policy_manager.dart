@@ -33,7 +33,7 @@ class MatrixPolicyManager extends ChangeNotifier {
 
   final _secureStorage = ServerpodSecureStorage();
 
-  final _secureStorageKey = _envManager.storageKeyForMatrixCredentials();
+  final _secureStorageKey = _envManager.storageKeyForMatrixCredentials;
 
   late final String _matrixUrl;
   String get matrixUrl => _matrixUrl;

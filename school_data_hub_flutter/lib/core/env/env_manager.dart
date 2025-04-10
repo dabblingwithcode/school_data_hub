@@ -9,6 +9,7 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/core/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
 import 'package:school_data_hub_flutter/core/models/populated_server_session_data.dart';
+import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -26,7 +27,7 @@ class EnvManager {
   /// without accessing [ServerpodSessionManager], because if there is not
   // an active env yet, it will still be unregistered.
   /// So this is a workaround setting a flag here
-  /// **! CAUTION !**
+  /// **CAUTION**
   /// Handle this value only with [ServerpodSessionManager] every time
   /// it makes an authentication status change.
   final _isAuthenticated = ValueNotifier<bool>(false);
@@ -56,16 +57,16 @@ class EnvManager {
 
   final String _storageKeyForEnvironments = 'environments_key';
 
-  String storageKeyForAuthKey() =>
+  String get storageKeyForAuthKey =>
       '${_activeEnv!.serverName}_${_activeEnv!.runMode.name}_hub_auth_key';
 
-  String storageKeyForUserInfo() =>
+  String get storageKeyForUserInfo =>
       '${_activeEnv!.serverName}_${_activeEnv!.runMode.name}_hub_user_info';
 
-  String storageKeyForPupilIdentities() =>
+  String get storageKeyForPupilIdentities =>
       '${_activeEnv!.serverName}_${_activeEnv!.runMode.name}_pupil_identities';
 
-  String storageKeyForMatrixCredentials() =>
+  String get storageKeyForMatrixCredentials =>
       '${_activeEnv!.serverName}_${_activeEnv!.runMode.name}_matrix_credentials';
 
   PackageInfo _packageInfo = PackageInfo(
@@ -145,6 +146,15 @@ class EnvManager {
     _envIsReady.value = true;
     await DiManager.registerManagersDependingOnActiveEnv();
     setDependentManagersRegistered(true);
+
+    if (await ServerpodSecureStorage()
+        .containsKey(storageKeyForMatrixCredentials)) {
+      final matrixCredentialsJson = await ServerpodSecureStorage()
+          .getString(storageKeyForMatrixCredentials);
+      final matrixCredentials = MatrixCredentials.fromJson(
+          json.decode(matrixCredentialsJson!) as Map<String, dynamic>);
+      DiManager.registerMatrixManagers(matrixCredentials);
+    }
     return;
   }
 
