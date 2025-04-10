@@ -1,7 +1,11 @@
+import 'dart:io';
+
+import 'package:path/path.dart' as path;
 import 'package:school_data_hub_server/src/future_calls/database_backup_future_call.dart';
 import 'package:school_data_hub_server/src/future_calls/increase_credit_future_call.dart';
 import 'package:school_data_hub_server/src/future_calls/populate_competences_future_call.dart';
 import 'package:school_data_hub_server/src/future_calls/populate_support_categories_future_call.dart';
+import 'package:school_data_hub_server/src/utils/local_storage.dart';
 import 'package:school_data_hub_server/src/web/routes/root.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
@@ -27,6 +31,17 @@ void run(List<String> args) async {
     Endpoints(),
     authenticationHandler: auth.authenticationHandler,
   );
+
+  // Configure storage.
+  pod.addCloudStorage(LocalStorage(
+    //publicStorageUrl: publicStorageUrl,
+    storageId: LocalStorageId.public,
+    pathPrefix: path.join(Directory.current.path, '..', 'storage', 'private'),
+  ));
+  pod.addCloudStorage(LocalStorage(
+    storageId: LocalStorageId.private,
+    pathPrefix: path.join(Directory.current.path, '..', 'storage', 'public'),
+  ));
 
   // If you are using any future calls, they need to be registered here.
   pod.registerFutureCall(

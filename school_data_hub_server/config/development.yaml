@@ -12,6 +12,8 @@ apiServer:
   publicHost: localhost
   publicPort: 8080
   publicScheme: http
+  #- TODO: Take an informed decission about the request size limit.
+  maxRequestSize: 2000000
 
 # Configuration for the Insights server.
 insightsServer:
