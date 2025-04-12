@@ -1,0 +1,13 @@
+class: LessonGroup
+table: lesson_group
+fields:
+  publicId: String
+  name: String
+ 
+  color: String?
+  createdBy: String
+  createdAt: DateTime
+  modifiedBy: String
+  modifiedAt: DateTime
+  scheduledLessons: List<ScheduledLesson>?, relation(name=lesson_group_scheduled_lesson)
+  memberships: List<ScheduledLessonGroupMembership>?, relation(name=group_scheduled_lesson_memberships)

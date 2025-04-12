@@ -12,4 +12,4 @@ fields:
   groupCheckName: String
   pupil: PupilData?, relation(name=competence_check_pupil)
   competence: Competence?, relation(name=competence_check_competence)
-  competenceCheckFiles: List<CompetenceCheckFile>?, relation(name=competence_check_file_check)
+  documents: List<HubDocument>?, relation

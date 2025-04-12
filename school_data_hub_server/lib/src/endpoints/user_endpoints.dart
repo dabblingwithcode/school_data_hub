@@ -43,7 +43,7 @@ class UserEndpoint extends Endpoint {
   Future<bool> increaseStaffCredit(Session session) async {
     // TODO: this code is duplicated in the future call
     // and still does not have any checks!
-    final List<StaffUser> allStaff = await StaffUser.db.find(session);
+    final List<User> allStaff = await User.db.find(session);
     for (var staff in allStaff) {
       final amount = staff.timeUnits + 2;
 

@@ -1,0 +1,4 @@
+class: PreSchoolTest
+fields:
+  careNeedsIntensity: int?
+  preSchoolTestDocuments: List<HubDocument>?

@@ -1,0 +1,5 @@
+
+class: PickUpInfo
+fields:
+  time: String
+  modality: String

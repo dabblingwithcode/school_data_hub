@@ -1,0 +1,11 @@
+## Junction table for lessongroup and pupil
+class: ScheduledLessonGroupMembership
+table: lesson_group_pupil
+fields:
+
+  lessonGroup: LessonGroup?, relation(name=group_scheduled_lesson_memberships)
+  pupilData: PupilData?, relation(name=pupil_scheduled_lesson_group_memberships)
+indexes:
+  lesson_group_membership_index_idx:
+    fields: lessonGroupId, pupilDataId
+    unique: true

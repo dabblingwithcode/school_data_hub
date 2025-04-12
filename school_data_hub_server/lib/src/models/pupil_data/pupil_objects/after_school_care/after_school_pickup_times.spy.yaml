@@ -1,0 +1,7 @@
+class: AfterSchoolCarePickUpTimes
+fields:
+  monday: PickUpInfo?
+  tuesday: PickUpInfo?
+  wednesday: PickUpInfo?
+  thursday: PickUpInfo?
+  friday: PickUpInfo?

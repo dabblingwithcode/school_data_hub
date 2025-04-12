@@ -12,7 +12,7 @@
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import '../pupil_data/pupil_data.dart' as _i2;
 import '../learning/competence.dart' as _i3;
-import '../learning/competence_check_file.dart' as _i4;
+import '../shared/document.dart' as _i4;
 
 abstract class CompetenceCheck implements _i1.SerializableModel {
   CompetenceCheck._({
@@ -29,7 +29,7 @@ abstract class CompetenceCheck implements _i1.SerializableModel {
     this.pupil,
     required this.competenceId,
     this.competence,
-    this.competenceCheckFiles,
+    this.documents,
   });
 
   factory CompetenceCheck({
@@ -46,7 +46,7 @@ abstract class CompetenceCheck implements _i1.SerializableModel {
     _i2.PupilData? pupil,
     required int competenceId,
     _i3.Competence? competence,
-    List<_i4.CompetenceCheckFile>? competenceCheckFiles,
+    List<_i4.HubDocument>? documents,
   }) = _CompetenceCheckImpl;
 
   factory CompetenceCheck.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -71,9 +71,8 @@ abstract class CompetenceCheck implements _i1.SerializableModel {
           ? null
           : _i3.Competence.fromJson(
               (jsonSerialization['competence'] as Map<String, dynamic>)),
-      competenceCheckFiles: (jsonSerialization['competenceCheckFiles'] as List?)
-          ?.map((e) =>
-              _i4.CompetenceCheckFile.fromJson((e as Map<String, dynamic>)))
+      documents: (jsonSerialization['documents'] as List?)
+          ?.map((e) => _i4.HubDocument.fromJson((e as Map<String, dynamic>)))
           .toList(),
     );
   }
@@ -107,7 +106,7 @@ abstract class CompetenceCheck implements _i1.SerializableModel {
 
   _i3.Competence? competence;
 
-  List<_i4.CompetenceCheckFile>? competenceCheckFiles;
+  List<_i4.HubDocument>? documents;
 
   /// Returns a shallow copy of this [CompetenceCheck]
   /// with some or all fields replaced by the given arguments.
@@ -126,7 +125,7 @@ abstract class CompetenceCheck implements _i1.SerializableModel {
     _i2.PupilData? pupil,
     int? competenceId,
     _i3.Competence? competence,
-    List<_i4.CompetenceCheckFile>? competenceCheckFiles,
+    List<_i4.HubDocument>? documents,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -144,9 +143,8 @@ abstract class CompetenceCheck implements _i1.SerializableModel {
       if (pupil != null) 'pupil': pupil?.toJson(),
       'competenceId': competenceId,
       if (competence != null) 'competence': competence?.toJson(),
-      if (competenceCheckFiles != null)
-        'competenceCheckFiles':
-            competenceCheckFiles?.toJson(valueToJson: (v) => v.toJson()),
+      if (documents != null)
+        'documents': documents?.toJson(valueToJson: (v) => v.toJson()),
     };
   }
 
@@ -173,7 +171,7 @@ class _CompetenceCheckImpl extends CompetenceCheck {
     _i2.PupilData? pupil,
     required int competenceId,
     _i3.Competence? competence,
-    List<_i4.CompetenceCheckFile>? competenceCheckFiles,
+    List<_i4.HubDocument>? documents,
   }) : super._(
           id: id,
           publicId: publicId,
@@ -188,7 +186,7 @@ class _CompetenceCheckImpl extends CompetenceCheck {
           pupil: pupil,
           competenceId: competenceId,
           competence: competence,
-          competenceCheckFiles: competenceCheckFiles,
+          documents: documents,
         );
 
   /// Returns a shallow copy of this [CompetenceCheck]
@@ -209,7 +207,7 @@ class _CompetenceCheckImpl extends CompetenceCheck {
     Object? pupil = _Undefined,
     int? competenceId,
     Object? competence = _Undefined,
-    Object? competenceCheckFiles = _Undefined,
+    Object? documents = _Undefined,
   }) {
     return CompetenceCheck(
       id: id is int? ? id : this.id,
@@ -227,10 +225,9 @@ class _CompetenceCheckImpl extends CompetenceCheck {
       competence: competence is _i3.Competence?
           ? competence
           : this.competence?.copyWith(),
-      competenceCheckFiles:
-          competenceCheckFiles is List<_i4.CompetenceCheckFile>?
-              ? competenceCheckFiles
-              : this.competenceCheckFiles?.map((e0) => e0.copyWith()).toList(),
+      documents: documents is List<_i4.HubDocument>?
+          ? documents
+          : this.documents?.map((e0) => e0.copyWith()).toList(),
     );
   }
 }

@@ -13,7 +13,7 @@ class AdminEndpoint extends Endpoint {
   // @override
   // Set<Scope> get requiredScopes => {Scope.admin};
 
-  Future<StaffUser> createUser(
+  Future<User> createUser(
     Session session, {
     required String userName,
     required String fullName,
@@ -44,8 +44,8 @@ class AdminEndpoint extends Endpoint {
     // Update user scopes
     await auth.Users.updateUserScopes(session, userInfo.id!, scopes);
 
-    // Create a new StaffUser object and insert it into the database
-    final newStaffUser = StaffUser(
+    // Create a new User object and insert it into the database
+    final newUser = User(
       userInfoId: userInfo.id!,
       userFlags: UserFlags(
         confirmedTermsOfUse: false,
@@ -59,9 +59,9 @@ class AdminEndpoint extends Endpoint {
       credit: 50,
     );
 
-    await StaffUser.db.insertRow(session, newStaffUser);
+    await User.db.insertRow(session, newUser);
 
-    return newStaffUser;
+    return newUser;
   }
 
   Future<void> deleteUser(Session session, int userId) async {
@@ -108,18 +108,18 @@ class AdminEndpoint extends Endpoint {
     await auth.Users.updateUserScopes(session, user.id!, userscopes);
   }
 
-  Future<List<StaffUser>> getAllUsers(Session session) async {
-    final users = await StaffUser.db.find(
+  Future<List<User>> getAllUsers(Session session) async {
+    final users = await User.db.find(
       session,
-      include: StaffUser.include(
+      include: User.include(
         userInfo: UserInfo.include(),
       ),
     );
     return users;
   }
 
-  Future<StaffUser?> getUserById(Session session, int userId) async {
-    final user = await StaffUser.db.findFirstRow(
+  Future<User?> getUserById(Session session, int userId) async {
+    final user = await User.db.findFirstRow(
       session,
       where: (t) => t.userInfoId.equals(userId),
     );

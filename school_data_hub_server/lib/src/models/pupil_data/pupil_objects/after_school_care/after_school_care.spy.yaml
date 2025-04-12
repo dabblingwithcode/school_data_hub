@@ -1,0 +1,5 @@
+class: AfterSchoolCare
+fields:
+  pickUpTimes: AfterSchoolCarePickUpTimes?
+  afterSchoolCareInfo: String?
+  emergencyCare: bool?

@@ -1,8 +1,10 @@
-### enum for the support level
-enum: SupportLevel
-serialized: byName
-values:
-  - preschool
-  - one
-  - two
-  - three
+### support level class
+class: SupportLevel
+table: support_level
+fields:
+  level: int
+  comment: String
+  createdAt: DateTime
+  createdBy: String
+  pupilId: PupilData?, relation(name=support_level_pupil)
+ 

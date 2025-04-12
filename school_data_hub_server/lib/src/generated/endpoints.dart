@@ -605,24 +605,6 @@ class Endpoints extends _i1.EndpointDispatch {
             params['parentInfo'],
           ),
         ),
-        'refreshPupilDataState': _i1.MethodConnector(
-          name: 'refreshPupilDataState',
-          params: {
-            'file': _i1.ParameterDescription(
-              name: 'file',
-              type: _i1.getType<_i14.File>(),
-              nullable: false,
-            )
-          },
-          call: (
-            _i1.Session session,
-            Map<String, dynamic> params,
-          ) async =>
-              (endpoints['pupil'] as _i7.PupilEndpoint).refreshPupilDataState(
-            session,
-            params['file'],
-          ),
-        ),
         'getPupils': _i1.MethodStreamConnector(
           name: 'getPupils',
           params: {},

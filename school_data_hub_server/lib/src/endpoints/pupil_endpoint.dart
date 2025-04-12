@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 
@@ -27,26 +25,32 @@ class PupilEndpoint extends Endpoint {
       if (pupil == null) {
         throw Exception('Pupil not found');
       }
+      // TODO: fix this!
+      // pupil.pupilDataParentInfo = PupilDataParentInfo(
+      //     parentsContact: parentInfo.parentsContact,
+      //     communicationTutor1: parentInfo.communicationTutor1,
+      //     communicationTutor2: parentInfo.communicationTutor2,
+      //     createdBy: parentInfo.createdBy);
 
-      pupil.pupilDataParentInfo = PupilDataParentInfo(
-          parentsContact: parentInfo.parentsContact,
-          communicationTutor1: parentInfo.communicationTutor1,
-          communicationTutor2: parentInfo.communicationTutor2,
-          createdBy: parentInfo.createdBy);
-
-      await PupilData.db.updateRow(session, pupil);
+      // await PupilData.db.updateRow(session, pupil);
     }
   }
 
-  Future<Set<PupilData>> refreshPupilDataState(
-      Session session, File file) async {
-    // check the extension of the file
-    if (file.path.split('.').last != 'csv') {
-      throw Exception('File is not a CSV file');
-    }
-    // Implement the logic to refresh pupil data state from the file
-    // This is a placeholder implementation
-    final pupils = await PupilData.db.find(session);
-    return pupils.toSet();
-  }
+  // TODO: implement this method
+
+  // Future<Set<PupilData>> updateBackendPupilDataState(
+  //     Session session, File file) async {
+  //   // check the extension of the file
+  //   if (file.path.split('.').last != 'csv') {
+  //     throw Exception('File is not a CSV file');
+  //   }
+  //   for (final line in await file.readAsLines()) {
+  //     final pupil = generatePupilfromExternalAdminConsoleData(line);
+  //     await session.db.insertRow(pupil);
+  //   }
+  //   // Implement the logic to refresh pupil data state from the file
+  //   // This is a placeholder implementation
+  //   final pupils = await PupilData.db.find(session);
+  //   return pupils.toSet();
+  // }
 }

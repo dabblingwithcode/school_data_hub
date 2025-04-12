@@ -1,0 +1,5 @@
+class: PreSchoolMedical
+fields:
+  preschoolMedicalStatus: PreSchoolMedicalStatus?
+  preschoolMedicalFiles: List<HubDocument>?
+  

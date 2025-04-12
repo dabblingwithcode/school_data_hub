@@ -1,0 +1,7 @@
+class: HubDocument
+table: hub_document
+fields:
+  documentId: String
+  documentPath: String?, scope=serverOnly
+  createdBy: String
+  createdAt: DateTime

@@ -27,7 +27,6 @@ pupil:
   - getPupils:
   - createPupil:
   - updateParentInfo:
-  - refreshPupilDataState:
 schooldayAdmin:
   - createSchoolSemester:
   - getAllSchoolSemesters:

@@ -1,0 +1,7 @@
+## Model for communication skills
+class: CommunicationSkills
+fields:
+  understanding: int
+  speaking: int
+  reading: int
+  createdBy: String

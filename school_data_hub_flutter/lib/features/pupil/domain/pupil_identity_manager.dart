@@ -5,17 +5,21 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/features/app/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_identity.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _envManager = di<EnvManager>();
 final _notificationService = di<NotificationService>();
+final _mainMenuBottomNavManager = di<MainMenuBottomNavManager>();
 
 class PupilIdentityManager {
   final log = Logger('PupilIdentityManager');
@@ -192,12 +196,12 @@ class PupilIdentityManager {
 
     final textFile = File('temp.txt')
       ..writeAsStringSync(pupilListTxtFileContentForBackendUpdate);
-    // TODO: fix this
-    // final List<PupilData> updatedPupilDataRepository =
-    //     await PupilDataApiService().updateBackendPupilsDatabase(file: textFile);
-    // for (PupilData pupil in updatedPupilDataRepository) {
-    //   di<PupilManager>().updatePupilProxyWithPupilData(pupil);
-    // }
+
+    final List<PupilData> updatedPupilDataRepository =
+        await PupilDataApiService().updateBackendPupilsDatabase(file: textFile);
+    for (PupilData pupil in updatedPupilDataRepository) {
+      di<PupilManager>().updatePupilProxyWithPupilData(pupil);
+    }
     // We don't need the temp file any more, let's delete it
     textFile.delete();
 
@@ -209,14 +213,14 @@ class PupilIdentityManager {
         secureStorageKey, jsonEncode(_pupilIdentities.values.toList()));
 
     // TODO: fix this
-    // await di<PupilManager>().fetchAllPupils();
+    await di<PupilManager>().fetchAllPupils();
 
     _notificationService.showSnackBar(NotificationType.success,
         '${_pupilIdentities.length} Schülerdaten wurden aktualisiert!');
 
     // TODO: fix this
-    // di<MainMenuBottomNavManager>().setBottomNavPage(0);
-    // di<MainMenuBottomNavManager>().pageViewController.value.jumpToPage(0);
+    _mainMenuBottomNavManager.setBottomNavPage(0);
+    // _mainMenuBottomNavManager.pageViewController.value.jumpToPage(0);
     return;
   }
 

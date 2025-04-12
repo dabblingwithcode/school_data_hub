@@ -12,6 +12,7 @@
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../pupil_data/pupil_data.dart' as _i2;
 import '../learning/competence.dart' as _i3;
+import '../shared/document.dart' as _i4;
 
 abstract class CompetenceGoal
     implements _i1.TableRow<int>, _i1.ProtocolSerialization {
@@ -29,6 +30,7 @@ abstract class CompetenceGoal
     this.pupil,
     required this.competenceId,
     this.competence,
+    this.documents,
   });
 
   factory CompetenceGoal({
@@ -45,6 +47,7 @@ abstract class CompetenceGoal
     _i2.PupilData? pupil,
     required int competenceId,
     _i3.Competence? competence,
+    List<_i4.HubDocument>? documents,
   }) = _CompetenceGoalImpl;
 
   factory CompetenceGoal.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -72,6 +75,9 @@ abstract class CompetenceGoal
           ? null
           : _i3.Competence.fromJson(
               (jsonSerialization['competence'] as Map<String, dynamic>)),
+      documents: (jsonSerialization['documents'] as List?)
+          ?.map((e) => _i4.HubDocument.fromJson((e as Map<String, dynamic>)))
+          .toList(),
     );
   }
 
@@ -106,6 +112,8 @@ abstract class CompetenceGoal
 
   _i3.Competence? competence;
 
+  List<_i4.HubDocument>? documents;
+
   @override
   _i1.Table<int> get table => t;
 
@@ -126,6 +134,7 @@ abstract class CompetenceGoal
     _i2.PupilData? pupil,
     int? competenceId,
     _i3.Competence? competence,
+    List<_i4.HubDocument>? documents,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -143,6 +152,8 @@ abstract class CompetenceGoal
       if (pupil != null) 'pupil': pupil?.toJson(),
       'competenceId': competenceId,
       if (competence != null) 'competence': competence?.toJson(),
+      if (documents != null)
+        'documents': documents?.toJson(valueToJson: (v) => v.toJson()),
     };
   }
 
@@ -162,16 +173,21 @@ abstract class CompetenceGoal
       if (pupil != null) 'pupil': pupil?.toJsonForProtocol(),
       'competenceId': competenceId,
       if (competence != null) 'competence': competence?.toJsonForProtocol(),
+      if (documents != null)
+        'documents':
+            documents?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
     };
   }
 
   static CompetenceGoalInclude include({
     _i2.PupilDataInclude? pupil,
     _i3.CompetenceInclude? competence,
+    _i4.HubDocumentIncludeList? documents,
   }) {
     return CompetenceGoalInclude._(
       pupil: pupil,
       competence: competence,
+      documents: documents,
     );
   }
 
@@ -218,6 +234,7 @@ class _CompetenceGoalImpl extends CompetenceGoal {
     _i2.PupilData? pupil,
     required int competenceId,
     _i3.Competence? competence,
+    List<_i4.HubDocument>? documents,
   }) : super._(
           id: id,
           publicId: publicId,
@@ -232,6 +249,7 @@ class _CompetenceGoalImpl extends CompetenceGoal {
           pupil: pupil,
           competenceId: competenceId,
           competence: competence,
+          documents: documents,
         );
 
   /// Returns a shallow copy of this [CompetenceGoal]
@@ -252,6 +270,7 @@ class _CompetenceGoalImpl extends CompetenceGoal {
     Object? pupil = _Undefined,
     int? competenceId,
     Object? competence = _Undefined,
+    Object? documents = _Undefined,
   }) {
     return CompetenceGoal(
       id: id is int? ? id : this.id,
@@ -271,6 +290,9 @@ class _CompetenceGoalImpl extends CompetenceGoal {
       competence: competence is _i3.Competence?
           ? competence
           : this.competence?.copyWith(),
+      documents: documents is List<_i4.HubDocument>?
+          ? documents
+          : this.documents?.map((e0) => e0.copyWith()).toList(),
     );
   }
 }
@@ -344,6 +366,10 @@ class CompetenceGoalTable extends _i1.Table<int> {
 
   _i3.CompetenceTable? _competence;
 
+  _i4.HubDocumentTable? ___documents;
+
+  _i1.ManyRelation<_i4.HubDocumentTable>? _documents;
+
   _i2.PupilDataTable get pupil {
     if (_pupil != null) return _pupil!;
     _pupil = _i1.createRelationTable(
@@ -370,6 +396,37 @@ class CompetenceGoalTable extends _i1.Table<int> {
     return _competence!;
   }
 
+  _i4.HubDocumentTable get __documents {
+    if (___documents != null) return ___documents!;
+    ___documents = _i1.createRelationTable(
+      relationFieldName: '__documents',
+      field: CompetenceGoal.t.id,
+      foreignField: _i4.HubDocument.t.$_competenceGoalDocumentsCompetenceGoalId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i4.HubDocumentTable(tableRelation: foreignTableRelation),
+    );
+    return ___documents!;
+  }
+
+  _i1.ManyRelation<_i4.HubDocumentTable> get documents {
+    if (_documents != null) return _documents!;
+    var relationTable = _i1.createRelationTable(
+      relationFieldName: 'documents',
+      field: CompetenceGoal.t.id,
+      foreignField: _i4.HubDocument.t.$_competenceGoalDocumentsCompetenceGoalId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i4.HubDocumentTable(tableRelation: foreignTableRelation),
+    );
+    _documents = _i1.ManyRelation<_i4.HubDocumentTable>(
+      tableWithRelations: relationTable,
+      table: _i4.HubDocumentTable(
+          tableRelation: relationTable.tableRelation!.lastRelation),
+    );
+    return _documents!;
+  }
+
   @override
   List<_i1.Column> get columns => [
         id,
@@ -393,6 +450,9 @@ class CompetenceGoalTable extends _i1.Table<int> {
     if (relationField == 'competence') {
       return competence;
     }
+    if (relationField == 'documents') {
+      return __documents;
+    }
     return null;
   }
 }
@@ -401,19 +461,24 @@ class CompetenceGoalInclude extends _i1.IncludeObject {
   CompetenceGoalInclude._({
     _i2.PupilDataInclude? pupil,
     _i3.CompetenceInclude? competence,
+    _i4.HubDocumentIncludeList? documents,
   }) {
     _pupil = pupil;
     _competence = competence;
+    _documents = documents;
   }
 
   _i2.PupilDataInclude? _pupil;
 
   _i3.CompetenceInclude? _competence;
 
+  _i4.HubDocumentIncludeList? _documents;
+
   @override
   Map<String, _i1.Include?> get includes => {
         'pupil': _pupil,
         'competence': _competence,
+        'documents': _documents,
       };
 
   @override
@@ -443,7 +508,13 @@ class CompetenceGoalIncludeList extends _i1.IncludeList {
 class CompetenceGoalRepository {
   const CompetenceGoalRepository._();
 
+  final attach = const CompetenceGoalAttachRepository._();
+
   final attachRow = const CompetenceGoalAttachRowRepository._();
+
+  final detach = const CompetenceGoalDetachRepository._();
+
+  final detachRow = const CompetenceGoalDetachRowRepository._();
 
   /// Returns a list of [CompetenceGoal]s matching the given query parameters.
   ///
@@ -661,6 +732,38 @@ class CompetenceGoalRepository {
   }
 }
 
+class CompetenceGoalAttachRepository {
+  const CompetenceGoalAttachRepository._();
+
+  /// Creates a relation between this [CompetenceGoal] and the given [HubDocument]s
+  /// by setting each [HubDocument]'s foreign key `_competenceGoalDocumentsCompetenceGoalId` to refer to this [CompetenceGoal].
+  Future<void> documents(
+    _i1.Session session,
+    CompetenceGoal competenceGoal,
+    List<_i4.HubDocument> hubDocument, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (hubDocument.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('hubDocument.id');
+    }
+    if (competenceGoal.id == null) {
+      throw ArgumentError.notNull('competenceGoal.id');
+    }
+
+    var $hubDocument = hubDocument
+        .map((e) => _i4.HubDocumentImplicit(
+              e,
+              $_competenceGoalDocumentsCompetenceGoalId: competenceGoal.id,
+            ))
+        .toList();
+    await session.db.update<_i4.HubDocument>(
+      $hubDocument,
+      columns: [_i4.HubDocument.t.$_competenceGoalDocumentsCompetenceGoalId],
+      transaction: transaction,
+    );
+  }
+}
+
 class CompetenceGoalAttachRowRepository {
   const CompetenceGoalAttachRowRepository._();
 
@@ -706,6 +809,92 @@ class CompetenceGoalAttachRowRepository {
     await session.db.updateRow<CompetenceGoal>(
       $competenceGoal,
       columns: [CompetenceGoal.t.competenceId],
+      transaction: transaction,
+    );
+  }
+
+  /// Creates a relation between this [CompetenceGoal] and the given [HubDocument]
+  /// by setting the [HubDocument]'s foreign key `_competenceGoalDocumentsCompetenceGoalId` to refer to this [CompetenceGoal].
+  Future<void> documents(
+    _i1.Session session,
+    CompetenceGoal competenceGoal,
+    _i4.HubDocument hubDocument, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (hubDocument.id == null) {
+      throw ArgumentError.notNull('hubDocument.id');
+    }
+    if (competenceGoal.id == null) {
+      throw ArgumentError.notNull('competenceGoal.id');
+    }
+
+    var $hubDocument = _i4.HubDocumentImplicit(
+      hubDocument,
+      $_competenceGoalDocumentsCompetenceGoalId: competenceGoal.id,
+    );
+    await session.db.updateRow<_i4.HubDocument>(
+      $hubDocument,
+      columns: [_i4.HubDocument.t.$_competenceGoalDocumentsCompetenceGoalId],
+      transaction: transaction,
+    );
+  }
+}
+
+class CompetenceGoalDetachRepository {
+  const CompetenceGoalDetachRepository._();
+
+  /// Detaches the relation between this [CompetenceGoal] and the given [HubDocument]
+  /// by setting the [HubDocument]'s foreign key `_competenceGoalDocumentsCompetenceGoalId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> documents(
+    _i1.Session session,
+    List<_i4.HubDocument> hubDocument, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (hubDocument.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('hubDocument.id');
+    }
+
+    var $hubDocument = hubDocument
+        .map((e) => _i4.HubDocumentImplicit(
+              e,
+              $_competenceGoalDocumentsCompetenceGoalId: null,
+            ))
+        .toList();
+    await session.db.update<_i4.HubDocument>(
+      $hubDocument,
+      columns: [_i4.HubDocument.t.$_competenceGoalDocumentsCompetenceGoalId],
+      transaction: transaction,
+    );
+  }
+}
+
+class CompetenceGoalDetachRowRepository {
+  const CompetenceGoalDetachRowRepository._();
+
+  /// Detaches the relation between this [CompetenceGoal] and the given [HubDocument]
+  /// by setting the [HubDocument]'s foreign key `_competenceGoalDocumentsCompetenceGoalId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> documents(
+    _i1.Session session,
+    _i4.HubDocument hubDocument, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (hubDocument.id == null) {
+      throw ArgumentError.notNull('hubDocument.id');
+    }
+
+    var $hubDocument = _i4.HubDocumentImplicit(
+      hubDocument,
+      $_competenceGoalDocumentsCompetenceGoalId: null,
+    );
+    await session.db.updateRow<_i4.HubDocument>(
+      $hubDocument,
+      columns: [_i4.HubDocument.t.$_competenceGoalDocumentsCompetenceGoalId],
       transaction: transaction,
     );
   }

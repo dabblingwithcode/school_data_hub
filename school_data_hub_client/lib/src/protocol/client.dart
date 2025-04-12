@@ -44,7 +44,7 @@ class EndpointAdmin extends _i1.EndpointRef {
   @override
   String get name => 'admin';
 
-  _i2.Future<_i3.StaffUser> createUser({
+  _i2.Future<_i3.User> createUser({
     required String userName,
     required String fullName,
     required String email,
@@ -53,7 +53,7 @@ class EndpointAdmin extends _i1.EndpointRef {
     required int timeUnits,
     required List<String> scopeNames,
   }) =>
-      caller.callServerEndpoint<_i3.StaffUser>(
+      caller.callServerEndpoint<_i3.User>(
         'admin',
         'createUser',
         {
@@ -99,15 +99,15 @@ class EndpointAdmin extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<List<_i3.StaffUser>> getAllUsers() =>
-      caller.callServerEndpoint<List<_i3.StaffUser>>(
+  _i2.Future<List<_i3.User>> getAllUsers() =>
+      caller.callServerEndpoint<List<_i3.User>>(
         'admin',
         'getAllUsers',
         {},
       );
 
-  _i2.Future<_i3.StaffUser?> getUserById(int userId) =>
-      caller.callServerEndpoint<_i3.StaffUser?>(
+  _i2.Future<_i3.User?> getUserById(int userId) =>
+      caller.callServerEndpoint<_i3.User?>(
         'admin',
         'getUserById',
         {'userId': userId},
@@ -300,13 +300,6 @@ class EndpointPupil extends _i1.EndpointRef {
         'pupil',
         'updateParentInfo',
         {'parentInfo': parentInfo},
-      );
-
-  _i2.Future<Set<_i10.PupilData>> refreshPupilDataState(_i8.File file) =>
-      caller.callServerEndpoint<Set<_i10.PupilData>>(
-        'pupil',
-        'refreshPupilDataState',
-        {'file': file},
       );
 }
 
