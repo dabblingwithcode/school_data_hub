@@ -16,17 +16,20 @@ import '../../../shared/document.dart' as _i3;
 
 abstract class PreSchoolMedical implements _i1.SerializableModel {
   PreSchoolMedical._({
+    this.id,
     this.preschoolMedicalStatus,
     this.preschoolMedicalFiles,
   });
 
   factory PreSchoolMedical({
+    int? id,
     _i2.PreSchoolMedicalStatus? preschoolMedicalStatus,
     List<_i3.HubDocument>? preschoolMedicalFiles,
   }) = _PreSchoolMedicalImpl;
 
   factory PreSchoolMedical.fromJson(Map<String, dynamic> jsonSerialization) {
     return PreSchoolMedical(
+      id: jsonSerialization['id'] as int?,
       preschoolMedicalStatus:
           jsonSerialization['preschoolMedicalStatus'] == null
               ? null
@@ -39,6 +42,11 @@ abstract class PreSchoolMedical implements _i1.SerializableModel {
     );
   }
 
+  /// The database id, set if the object has been inserted into the
+  /// database or if it has been fetched from the database. Otherwise,
+  /// the id will be null.
+  int? id;
+
   _i2.PreSchoolMedicalStatus? preschoolMedicalStatus;
 
   List<_i3.HubDocument>? preschoolMedicalFiles;
@@ -47,12 +55,14 @@ abstract class PreSchoolMedical implements _i1.SerializableModel {
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   PreSchoolMedical copyWith({
+    int? id,
     _i2.PreSchoolMedicalStatus? preschoolMedicalStatus,
     List<_i3.HubDocument>? preschoolMedicalFiles,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
+      if (id != null) 'id': id,
       if (preschoolMedicalStatus != null)
         'preschoolMedicalStatus': preschoolMedicalStatus?.toJson(),
       if (preschoolMedicalFiles != null)
@@ -71,9 +81,11 @@ class _Undefined {}
 
 class _PreSchoolMedicalImpl extends PreSchoolMedical {
   _PreSchoolMedicalImpl({
+    int? id,
     _i2.PreSchoolMedicalStatus? preschoolMedicalStatus,
     List<_i3.HubDocument>? preschoolMedicalFiles,
   }) : super._(
+          id: id,
           preschoolMedicalStatus: preschoolMedicalStatus,
           preschoolMedicalFiles: preschoolMedicalFiles,
         );
@@ -83,10 +95,12 @@ class _PreSchoolMedicalImpl extends PreSchoolMedical {
   @_i1.useResult
   @override
   PreSchoolMedical copyWith({
+    Object? id = _Undefined,
     Object? preschoolMedicalStatus = _Undefined,
     Object? preschoolMedicalFiles = _Undefined,
   }) {
     return PreSchoolMedical(
+      id: id is int? ? id : this.id,
       preschoolMedicalStatus:
           preschoolMedicalStatus is _i2.PreSchoolMedicalStatus?
               ? preschoolMedicalStatus

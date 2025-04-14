@@ -91,20 +91,6 @@ class PupilProxy with ChangeNotifier {
     }
   }
 
-  // void deleteAvatarAuthId() {
-  //   final updatedPupil = _pupilData.copyWith(avatarAuthId: (value: null));
-  //   _pupilData = updatedPupil;
-  //   pupilIsDirty = true;
-  //   notifyListeners();
-  // }
-
-  // void deletePublicMediaAuthId() {
-  //   final updatedPupil = _pupilData.copyWith(publicMediaAuthId: (value: null));
-  //   _pupilData = updatedPupil;
-  //   pupilIsDirty = true;
-  //   notifyListeners();
-  // }
-
   void updatePupilIdentityFromMoreRecentSource(PupilIdentity pupilIdentity) {
     if (_pupilIdentity != pupilIdentity) {
       _pupilIdentity = pupilIdentity;
@@ -180,8 +166,12 @@ class PupilProxy with ChangeNotifier {
   DateTime? get migrationSupportEnds => _pupilIdentity.migrationSupportEnds;
   DateTime get pupilSince => _pupilIdentity.pupilSince;
 
+  // TODO: This has to be checked, uncommented and tested
+
   String? _avatarIdOverride;
   bool _avatarUpdated = false;
+
+  HubDocument? get avatar => _pupilData.avatar;
   // String? get avatarId =>
   //     _avatarUpdated ? _avatarIdOverride : _pupilData.avatarId;
   // bool get avatarAuth => _pupilData.avatarAuth;
@@ -195,18 +185,18 @@ class PupilProxy with ChangeNotifier {
   //     _pupilData.pupilDataParentInfo?.communicationTutor2;
   // String? get contact => _pupilData.contact;
   // String? get parentsContact => _pupilData.parentsContact;
-  // int get credit => _pupilData.credit;
-  // int get creditEarned => _pupilData.creditEarned;
-  // DateTime? get repeaterSince => _pupilData.repeaterSince;
-  // SupportLevel get latestSupportLevel => _pupilData.latestSupportLevel;
-  // List<SupportLevel>? get supportLevelHistory => _pupilData.supportLevelHistory;
-  // int get internalId => _pupilData.internalId;
-  // bool get ogs => _pupilData.ogs;
-  // String? get ogsInfo => _pupilData.ogsInfo;
-  // String? get pickUpTime => _pupilData.pickUpTime;
+  int get credit => _pupilData.credit;
+  int get creditEarned => _pupilData.creditEarned;
+  int? get id => _pupilData.id;
+  DateTime? get schoolyearHeldBackAt => _pupilData.schoolyearHeldBackAt;
+  SupportLevel? get latestSupportLevel => _pupilData.latestSupportLevel;
+  List<SupportLevel>? get supportLevelHistory => _pupilData.supportLevelHistory;
+  int get internalId => _pupilData.internalId;
+  AfterSchoolCare? get afterSchoolCare => _pupilData.afterSchoolCare;
+
   // PreSchoolRevision? get preschoolRevision => _pupilData.preSchoolRevision;
-  // String? get specialInformation => _pupilData.specialInformation;
-  // bool? get emergencyCare => _pupilData.emergencyCare;
+  String? get specialInformation => _pupilData.specialInformation;
+
   List<CompetenceCheck>? get competenceChecks => _pupilData.competenceChecks;
   List<SupportCategoryStatus>? get supportCategoryStatuses =>
       _pupilData.supportCategoryStatuses;

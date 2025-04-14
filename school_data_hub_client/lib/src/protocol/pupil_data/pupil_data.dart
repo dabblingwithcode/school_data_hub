@@ -17,8 +17,7 @@ import '../pupil_data/pupil_objects/communication/public_media_auth.dart'
     as _i5;
 import '../pupil_data/pupil_objects/communication/communication_skills.dart'
     as _i6;
-import '../pupil_data/pupil_objects/communication/pupil_data_tutor_info.dart'
-    as _i7;
+import '../pupil_data/pupil_objects/communication/tutor_info.dart' as _i7;
 import '../authorization/pupil_authorization.dart' as _i8;
 import '../pupil_data/pupil_objects/after_school_care/after_school_care.dart'
     as _i9;
@@ -44,20 +43,22 @@ abstract class PupilData implements _i1.SerializableModel {
     this.id,
     required this.active,
     required this.internalId,
-    required this.preSchoolMedical,
+    this.preSchoolMedicalId,
+    this.preSchoolMedical,
     this.kindergarden,
+    this.preSchoolTestId,
     this.preSchoolTest,
-    required this.avatarId,
+    this.avatarId,
     this.avatar,
-    required this.avatarAuthId,
+    this.avatarAuthId,
     this.avatarAuth,
     required this.publicMediaAuth,
-    required this.publicMediaAuthDocumentId,
+    this.publicMediaAuthDocumentId,
     this.publicMediaAuthDocument,
     this.contact,
     this.communicationPupil,
     this.specialInformation,
-    this.pupilDataTutorInfo,
+    this.tutorInfo,
     this.authorizations,
     this.afterSchoolCare,
     required this.credit,
@@ -78,7 +79,7 @@ abstract class PupilData implements _i1.SerializableModel {
     this.supportGoals,
     this.missedClasses,
     this.schooldayEvents,
-    required this.swimmer,
+    this.swimmer,
     this.pupilLists,
   });
 
@@ -86,20 +87,22 @@ abstract class PupilData implements _i1.SerializableModel {
     int? id,
     required bool active,
     required int internalId,
-    required _i2.PreSchoolMedical preSchoolMedical,
+    int? preSchoolMedicalId,
+    _i2.PreSchoolMedical? preSchoolMedical,
     String? kindergarden,
+    int? preSchoolTestId,
     _i3.PreSchoolTest? preSchoolTest,
-    required int avatarId,
+    int? avatarId,
     _i4.HubDocument? avatar,
-    required int avatarAuthId,
+    int? avatarAuthId,
     _i4.HubDocument? avatarAuth,
     required _i5.PublicMediaAuth publicMediaAuth,
-    required int publicMediaAuthDocumentId,
+    int? publicMediaAuthDocumentId,
     _i4.HubDocument? publicMediaAuthDocument,
     String? contact,
     _i6.CommunicationSkills? communicationPupil,
     String? specialInformation,
-    _i7.PupilDataTutorInfo? pupilDataTutorInfo,
+    _i7.TutorInfo? tutorInfo,
     List<_i8.PupilAuthorization>? authorizations,
     _i9.AfterSchoolCare? afterSchoolCare,
     required int credit,
@@ -120,7 +123,7 @@ abstract class PupilData implements _i1.SerializableModel {
     List<_i21.SupportGoal>? supportGoals,
     List<_i22.MissedClass>? missedClasses,
     List<_i23.SchooldayEvent>? schooldayEvents,
-    required String swimmer,
+    String? swimmer,
     List<_i24.PupilList>? pupilLists,
   }) = _PupilDataImpl;
 
@@ -129,19 +132,23 @@ abstract class PupilData implements _i1.SerializableModel {
       id: jsonSerialization['id'] as int?,
       active: jsonSerialization['active'] as bool,
       internalId: jsonSerialization['internalId'] as int,
-      preSchoolMedical: _i2.PreSchoolMedical.fromJson(
-          (jsonSerialization['preSchoolMedical'] as Map<String, dynamic>)),
+      preSchoolMedicalId: jsonSerialization['preSchoolMedicalId'] as int?,
+      preSchoolMedical: jsonSerialization['preSchoolMedical'] == null
+          ? null
+          : _i2.PreSchoolMedical.fromJson(
+              (jsonSerialization['preSchoolMedical'] as Map<String, dynamic>)),
       kindergarden: jsonSerialization['kindergarden'] as String?,
+      preSchoolTestId: jsonSerialization['preSchoolTestId'] as int?,
       preSchoolTest: jsonSerialization['preSchoolTest'] == null
           ? null
           : _i3.PreSchoolTest.fromJson(
               (jsonSerialization['preSchoolTest'] as Map<String, dynamic>)),
-      avatarId: jsonSerialization['avatarId'] as int,
+      avatarId: jsonSerialization['avatarId'] as int?,
       avatar: jsonSerialization['avatar'] == null
           ? null
           : _i4.HubDocument.fromJson(
               (jsonSerialization['avatar'] as Map<String, dynamic>)),
-      avatarAuthId: jsonSerialization['avatarAuthId'] as int,
+      avatarAuthId: jsonSerialization['avatarAuthId'] as int?,
       avatarAuth: jsonSerialization['avatarAuth'] == null
           ? null
           : _i4.HubDocument.fromJson(
@@ -149,7 +156,7 @@ abstract class PupilData implements _i1.SerializableModel {
       publicMediaAuth: _i5.PublicMediaAuth.fromJson(
           (jsonSerialization['publicMediaAuth'] as Map<String, dynamic>)),
       publicMediaAuthDocumentId:
-          jsonSerialization['publicMediaAuthDocumentId'] as int,
+          jsonSerialization['publicMediaAuthDocumentId'] as int?,
       publicMediaAuthDocument:
           jsonSerialization['publicMediaAuthDocument'] == null
               ? null
@@ -163,11 +170,10 @@ abstract class PupilData implements _i1.SerializableModel {
               (jsonSerialization['communicationPupil']
                   as Map<String, dynamic>)),
       specialInformation: jsonSerialization['specialInformation'] as String?,
-      pupilDataTutorInfo: jsonSerialization['pupilDataTutorInfo'] == null
+      tutorInfo: jsonSerialization['tutorInfo'] == null
           ? null
-          : _i7.PupilDataTutorInfo.fromJson(
-              (jsonSerialization['pupilDataTutorInfo']
-                  as Map<String, dynamic>)),
+          : _i7.TutorInfo.fromJson(
+              (jsonSerialization['tutorInfo'] as Map<String, dynamic>)),
       authorizations: (jsonSerialization['authorizations'] as List?)
           ?.map((e) =>
               _i8.PupilAuthorization.fromJson((e as Map<String, dynamic>)))
@@ -241,7 +247,7 @@ abstract class PupilData implements _i1.SerializableModel {
           ?.map(
               (e) => _i23.SchooldayEvent.fromJson((e as Map<String, dynamic>)))
           .toList(),
-      swimmer: jsonSerialization['swimmer'] as String,
+      swimmer: jsonSerialization['swimmer'] as String?,
       pupilLists: (jsonSerialization['pupilLists'] as List?)
           ?.map((e) => _i24.PupilList.fromJson((e as Map<String, dynamic>)))
           .toList(),
@@ -257,23 +263,27 @@ abstract class PupilData implements _i1.SerializableModel {
 
   int internalId;
 
-  _i2.PreSchoolMedical preSchoolMedical;
+  int? preSchoolMedicalId;
+
+  _i2.PreSchoolMedical? preSchoolMedical;
 
   String? kindergarden;
 
+  int? preSchoolTestId;
+
   _i3.PreSchoolTest? preSchoolTest;
 
-  int avatarId;
+  int? avatarId;
 
   _i4.HubDocument? avatar;
 
-  int avatarAuthId;
+  int? avatarAuthId;
 
   _i4.HubDocument? avatarAuth;
 
   _i5.PublicMediaAuth publicMediaAuth;
 
-  int publicMediaAuthDocumentId;
+  int? publicMediaAuthDocumentId;
 
   _i4.HubDocument? publicMediaAuthDocument;
 
@@ -283,7 +293,7 @@ abstract class PupilData implements _i1.SerializableModel {
 
   String? specialInformation;
 
-  _i7.PupilDataTutorInfo? pupilDataTutorInfo;
+  _i7.TutorInfo? tutorInfo;
 
   List<_i8.PupilAuthorization>? authorizations;
 
@@ -325,7 +335,7 @@ abstract class PupilData implements _i1.SerializableModel {
 
   List<_i23.SchooldayEvent>? schooldayEvents;
 
-  String swimmer;
+  String? swimmer;
 
   List<_i24.PupilList>? pupilLists;
 
@@ -336,8 +346,10 @@ abstract class PupilData implements _i1.SerializableModel {
     int? id,
     bool? active,
     int? internalId,
+    int? preSchoolMedicalId,
     _i2.PreSchoolMedical? preSchoolMedical,
     String? kindergarden,
+    int? preSchoolTestId,
     _i3.PreSchoolTest? preSchoolTest,
     int? avatarId,
     _i4.HubDocument? avatar,
@@ -349,7 +361,7 @@ abstract class PupilData implements _i1.SerializableModel {
     String? contact,
     _i6.CommunicationSkills? communicationPupil,
     String? specialInformation,
-    _i7.PupilDataTutorInfo? pupilDataTutorInfo,
+    _i7.TutorInfo? tutorInfo,
     List<_i8.PupilAuthorization>? authorizations,
     _i9.AfterSchoolCare? afterSchoolCare,
     int? credit,
@@ -379,23 +391,26 @@ abstract class PupilData implements _i1.SerializableModel {
       if (id != null) 'id': id,
       'active': active,
       'internalId': internalId,
-      'preSchoolMedical': preSchoolMedical.toJson(),
+      if (preSchoolMedicalId != null) 'preSchoolMedicalId': preSchoolMedicalId,
+      if (preSchoolMedical != null)
+        'preSchoolMedical': preSchoolMedical?.toJson(),
       if (kindergarden != null) 'kindergarden': kindergarden,
+      if (preSchoolTestId != null) 'preSchoolTestId': preSchoolTestId,
       if (preSchoolTest != null) 'preSchoolTest': preSchoolTest?.toJson(),
-      'avatarId': avatarId,
+      if (avatarId != null) 'avatarId': avatarId,
       if (avatar != null) 'avatar': avatar?.toJson(),
-      'avatarAuthId': avatarAuthId,
+      if (avatarAuthId != null) 'avatarAuthId': avatarAuthId,
       if (avatarAuth != null) 'avatarAuth': avatarAuth?.toJson(),
       'publicMediaAuth': publicMediaAuth.toJson(),
-      'publicMediaAuthDocumentId': publicMediaAuthDocumentId,
+      if (publicMediaAuthDocumentId != null)
+        'publicMediaAuthDocumentId': publicMediaAuthDocumentId,
       if (publicMediaAuthDocument != null)
         'publicMediaAuthDocument': publicMediaAuthDocument?.toJson(),
       if (contact != null) 'contact': contact,
       if (communicationPupil != null)
         'communicationPupil': communicationPupil?.toJson(),
       if (specialInformation != null) 'specialInformation': specialInformation,
-      if (pupilDataTutorInfo != null)
-        'pupilDataTutorInfo': pupilDataTutorInfo?.toJson(),
+      if (tutorInfo != null) 'tutorInfo': tutorInfo?.toJson(),
       if (authorizations != null)
         'authorizations':
             authorizations?.toJson(valueToJson: (v) => v.toJson()),
@@ -446,7 +461,7 @@ abstract class PupilData implements _i1.SerializableModel {
       if (schooldayEvents != null)
         'schooldayEvents':
             schooldayEvents?.toJson(valueToJson: (v) => v.toJson()),
-      'swimmer': swimmer,
+      if (swimmer != null) 'swimmer': swimmer,
       if (pupilLists != null)
         'pupilLists': pupilLists?.toJson(valueToJson: (v) => v.toJson()),
     };
@@ -465,20 +480,22 @@ class _PupilDataImpl extends PupilData {
     int? id,
     required bool active,
     required int internalId,
-    required _i2.PreSchoolMedical preSchoolMedical,
+    int? preSchoolMedicalId,
+    _i2.PreSchoolMedical? preSchoolMedical,
     String? kindergarden,
+    int? preSchoolTestId,
     _i3.PreSchoolTest? preSchoolTest,
-    required int avatarId,
+    int? avatarId,
     _i4.HubDocument? avatar,
-    required int avatarAuthId,
+    int? avatarAuthId,
     _i4.HubDocument? avatarAuth,
     required _i5.PublicMediaAuth publicMediaAuth,
-    required int publicMediaAuthDocumentId,
+    int? publicMediaAuthDocumentId,
     _i4.HubDocument? publicMediaAuthDocument,
     String? contact,
     _i6.CommunicationSkills? communicationPupil,
     String? specialInformation,
-    _i7.PupilDataTutorInfo? pupilDataTutorInfo,
+    _i7.TutorInfo? tutorInfo,
     List<_i8.PupilAuthorization>? authorizations,
     _i9.AfterSchoolCare? afterSchoolCare,
     required int credit,
@@ -499,14 +516,16 @@ class _PupilDataImpl extends PupilData {
     List<_i21.SupportGoal>? supportGoals,
     List<_i22.MissedClass>? missedClasses,
     List<_i23.SchooldayEvent>? schooldayEvents,
-    required String swimmer,
+    String? swimmer,
     List<_i24.PupilList>? pupilLists,
   }) : super._(
           id: id,
           active: active,
           internalId: internalId,
+          preSchoolMedicalId: preSchoolMedicalId,
           preSchoolMedical: preSchoolMedical,
           kindergarden: kindergarden,
+          preSchoolTestId: preSchoolTestId,
           preSchoolTest: preSchoolTest,
           avatarId: avatarId,
           avatar: avatar,
@@ -518,7 +537,7 @@ class _PupilDataImpl extends PupilData {
           contact: contact,
           communicationPupil: communicationPupil,
           specialInformation: specialInformation,
-          pupilDataTutorInfo: pupilDataTutorInfo,
+          tutorInfo: tutorInfo,
           authorizations: authorizations,
           afterSchoolCare: afterSchoolCare,
           credit: credit,
@@ -551,20 +570,22 @@ class _PupilDataImpl extends PupilData {
     Object? id = _Undefined,
     bool? active,
     int? internalId,
-    _i2.PreSchoolMedical? preSchoolMedical,
+    Object? preSchoolMedicalId = _Undefined,
+    Object? preSchoolMedical = _Undefined,
     Object? kindergarden = _Undefined,
+    Object? preSchoolTestId = _Undefined,
     Object? preSchoolTest = _Undefined,
-    int? avatarId,
+    Object? avatarId = _Undefined,
     Object? avatar = _Undefined,
-    int? avatarAuthId,
+    Object? avatarAuthId = _Undefined,
     Object? avatarAuth = _Undefined,
     _i5.PublicMediaAuth? publicMediaAuth,
-    int? publicMediaAuthDocumentId,
+    Object? publicMediaAuthDocumentId = _Undefined,
     Object? publicMediaAuthDocument = _Undefined,
     Object? contact = _Undefined,
     Object? communicationPupil = _Undefined,
     Object? specialInformation = _Undefined,
-    Object? pupilDataTutorInfo = _Undefined,
+    Object? tutorInfo = _Undefined,
     Object? authorizations = _Undefined,
     Object? afterSchoolCare = _Undefined,
     int? credit,
@@ -585,27 +606,35 @@ class _PupilDataImpl extends PupilData {
     Object? supportGoals = _Undefined,
     Object? missedClasses = _Undefined,
     Object? schooldayEvents = _Undefined,
-    String? swimmer,
+    Object? swimmer = _Undefined,
     Object? pupilLists = _Undefined,
   }) {
     return PupilData(
       id: id is int? ? id : this.id,
       active: active ?? this.active,
       internalId: internalId ?? this.internalId,
-      preSchoolMedical: preSchoolMedical ?? this.preSchoolMedical.copyWith(),
+      preSchoolMedicalId: preSchoolMedicalId is int?
+          ? preSchoolMedicalId
+          : this.preSchoolMedicalId,
+      preSchoolMedical: preSchoolMedical is _i2.PreSchoolMedical?
+          ? preSchoolMedical
+          : this.preSchoolMedical?.copyWith(),
       kindergarden: kindergarden is String? ? kindergarden : this.kindergarden,
+      preSchoolTestId:
+          preSchoolTestId is int? ? preSchoolTestId : this.preSchoolTestId,
       preSchoolTest: preSchoolTest is _i3.PreSchoolTest?
           ? preSchoolTest
           : this.preSchoolTest?.copyWith(),
-      avatarId: avatarId ?? this.avatarId,
+      avatarId: avatarId is int? ? avatarId : this.avatarId,
       avatar: avatar is _i4.HubDocument? ? avatar : this.avatar?.copyWith(),
-      avatarAuthId: avatarAuthId ?? this.avatarAuthId,
+      avatarAuthId: avatarAuthId is int? ? avatarAuthId : this.avatarAuthId,
       avatarAuth: avatarAuth is _i4.HubDocument?
           ? avatarAuth
           : this.avatarAuth?.copyWith(),
       publicMediaAuth: publicMediaAuth ?? this.publicMediaAuth.copyWith(),
-      publicMediaAuthDocumentId:
-          publicMediaAuthDocumentId ?? this.publicMediaAuthDocumentId,
+      publicMediaAuthDocumentId: publicMediaAuthDocumentId is int?
+          ? publicMediaAuthDocumentId
+          : this.publicMediaAuthDocumentId,
       publicMediaAuthDocument: publicMediaAuthDocument is _i4.HubDocument?
           ? publicMediaAuthDocument
           : this.publicMediaAuthDocument?.copyWith(),
@@ -616,9 +645,8 @@ class _PupilDataImpl extends PupilData {
       specialInformation: specialInformation is String?
           ? specialInformation
           : this.specialInformation,
-      pupilDataTutorInfo: pupilDataTutorInfo is _i7.PupilDataTutorInfo?
-          ? pupilDataTutorInfo
-          : this.pupilDataTutorInfo?.copyWith(),
+      tutorInfo:
+          tutorInfo is _i7.TutorInfo? ? tutorInfo : this.tutorInfo?.copyWith(),
       authorizations: authorizations is List<_i8.PupilAuthorization>?
           ? authorizations
           : this.authorizations?.map((e0) => e0.copyWith()).toList(),
@@ -678,7 +706,7 @@ class _PupilDataImpl extends PupilData {
       schooldayEvents: schooldayEvents is List<_i23.SchooldayEvent>?
           ? schooldayEvents
           : this.schooldayEvents?.map((e0) => e0.copyWith()).toList(),
-      swimmer: swimmer ?? this.swimmer,
+      swimmer: swimmer is String? ? swimmer : this.swimmer,
       pupilLists: pupilLists is List<_i24.PupilList>?
           ? pupilLists
           : this.pupilLists?.map((e0) => e0.copyWith()).toList(),

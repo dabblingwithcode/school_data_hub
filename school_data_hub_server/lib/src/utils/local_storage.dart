@@ -4,7 +4,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:path/path.dart' as path;
+import 'package:path/path.dart' as p;
 import 'package:serverpod/serverpod.dart';
 
 enum LocalStorageId {
@@ -19,25 +19,31 @@ enum LocalStorageId {
 }
 
 class LocalStorage extends DatabaseCloudStorage {
-  final String? publicStorageUrl;
+  // Static instances for each storage type
+  static final Map<LocalStorageId, LocalStorage> _instances = {};
+  //final String? publicStorageUrl;
   final String pathPrefix;
+  final storageUrl = p.join(Directory.current.path, '/storage');
 
   LocalStorage({
     required LocalStorageId storageId,
     required this.pathPrefix,
-    this.publicStorageUrl,
+    // this.publicStorageUrl,
   }) : super(storageId.storageId);
 
-  File _getFileByPath(String filePath) {
-    final fileName = path.basename(filePath);
-    final parentDirectoryPath = path.dirname(filePath);
-    final directoryPath = path.join(pathPrefix, parentDirectoryPath);
-    final directory = Directory(directoryPath);
-    if (!directory.existsSync()) {
-      directory.createSync(recursive: true);
-    }
-    return File(path.join(directoryPath, fileName));
-  }
+  File _getFileByPath(String path) => File(
+        p.join(pathPrefix, path),
+      );
+  // File _getFileByPath(String filePath) {
+  //   final fileName = p.basename(filePath);
+  //   final parentDirectoryPath = p.dirname(filePath);
+  //   final directoryPath = p.join(pathPrefix, parentDirectoryPath);
+  //   final directory = Directory(directoryPath);
+  //   if (!directory.existsSync()) {
+  //     directory.createSync(recursive: true);
+  //   }
+  //   return File(p.join(directoryPath, fileName));
+  // }
 
   @override
   Future<void> deleteFile({
@@ -71,12 +77,7 @@ class LocalStorage extends DatabaseCloudStorage {
     required Session session,
     required String path,
   }) async {
-    final prefix = publicStorageUrl;
-    if (prefix == null) {
-      session.log(
-          'Public storage URL is allowed for LocalStorage with id $storageId',
-          level: LogLevel.warning);
-    }
+    final prefix = p.join(storageUrl, '/public');
 
     final file = _getFileByPath(path);
     if (!file.existsSync()) {
@@ -87,9 +88,9 @@ class LocalStorage extends DatabaseCloudStorage {
       // );
       return null;
     }
-    if (prefix!.startsWith('http')) {
-      return Uri.parse('$prefix$path');
-    }
+    // if (prefix!.startsWith('http')) {
+    //   return Uri.parse('$prefix$path');
+    // }
     return Uri.file('$prefix$path');
   }
 

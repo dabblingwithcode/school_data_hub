@@ -4,6 +4,7 @@ import 'package:path/path.dart' as path;
 import 'package:school_data_hub_server/src/future_calls/database_backup_future_call.dart';
 import 'package:school_data_hub_server/src/future_calls/increase_credit_future_call.dart';
 import 'package:school_data_hub_server/src/future_calls/populate_competences_future_call.dart';
+import 'package:school_data_hub_server/src/future_calls/populate_pupils_future_call.dart';
 import 'package:school_data_hub_server/src/future_calls/populate_support_categories_future_call.dart';
 import 'package:school_data_hub_server/src/utils/local_storage.dart';
 import 'package:school_data_hub_server/src/web/routes/root.dart';
@@ -55,6 +56,9 @@ void run(List<String> args) async {
   pod.registerFutureCall(
       PopulateCompetencesFutureCall(), 'populateCompetencesFutureCall');
 
+  pod.registerFutureCall(
+      PopulatePupilsFutureCall(), 'populatePupilsFutureCall');
+
   // Setup a default page at the web root.
   pod.webServer.addRoute(RouteRoot(), '/');
   pod.webServer.addRoute(RouteRoot(), '/index.html');
@@ -79,6 +83,13 @@ void run(List<String> args) async {
   // Populate support categories
   await session.serverpod.futureCallWithDelay(
     'populateCompetencesFutureCall',
+    null,
+    const Duration(seconds: 1),
+  );
+
+  // Populate pupils
+  await session.serverpod.futureCallWithDelay(
+    'populatePupilsFutureCall',
     null,
     const Duration(seconds: 1),
   );

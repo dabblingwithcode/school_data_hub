@@ -14,17 +14,20 @@ import '../../../shared/document.dart' as _i2;
 
 abstract class PreSchoolTest implements _i1.SerializableModel {
   PreSchoolTest._({
+    this.id,
     this.careNeedsIntensity,
     this.preSchoolTestDocuments,
   });
 
   factory PreSchoolTest({
+    int? id,
     int? careNeedsIntensity,
     List<_i2.HubDocument>? preSchoolTestDocuments,
   }) = _PreSchoolTestImpl;
 
   factory PreSchoolTest.fromJson(Map<String, dynamic> jsonSerialization) {
     return PreSchoolTest(
+      id: jsonSerialization['id'] as int?,
       careNeedsIntensity: jsonSerialization['careNeedsIntensity'] as int?,
       preSchoolTestDocuments: (jsonSerialization['preSchoolTestDocuments']
               as List?)
@@ -32,6 +35,11 @@ abstract class PreSchoolTest implements _i1.SerializableModel {
           .toList(),
     );
   }
+
+  /// The database id, set if the object has been inserted into the
+  /// database or if it has been fetched from the database. Otherwise,
+  /// the id will be null.
+  int? id;
 
   int? careNeedsIntensity;
 
@@ -41,12 +49,14 @@ abstract class PreSchoolTest implements _i1.SerializableModel {
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   PreSchoolTest copyWith({
+    int? id,
     int? careNeedsIntensity,
     List<_i2.HubDocument>? preSchoolTestDocuments,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
+      if (id != null) 'id': id,
       if (careNeedsIntensity != null) 'careNeedsIntensity': careNeedsIntensity,
       if (preSchoolTestDocuments != null)
         'preSchoolTestDocuments':
@@ -64,9 +74,11 @@ class _Undefined {}
 
 class _PreSchoolTestImpl extends PreSchoolTest {
   _PreSchoolTestImpl({
+    int? id,
     int? careNeedsIntensity,
     List<_i2.HubDocument>? preSchoolTestDocuments,
   }) : super._(
+          id: id,
           careNeedsIntensity: careNeedsIntensity,
           preSchoolTestDocuments: preSchoolTestDocuments,
         );
@@ -76,10 +88,12 @@ class _PreSchoolTestImpl extends PreSchoolTest {
   @_i1.useResult
   @override
   PreSchoolTest copyWith({
+    Object? id = _Undefined,
     Object? careNeedsIntensity = _Undefined,
     Object? preSchoolTestDocuments = _Undefined,
   }) {
     return PreSchoolTest(
+      id: id is int? ? id : this.id,
       careNeedsIntensity: careNeedsIntensity is int?
           ? careNeedsIntensity
           : this.careNeedsIntensity,

@@ -7,6 +7,7 @@ environment:
   sdk: '>=3.3.0 <4.0.0'
 
 dependencies:
+  collection: ^1.19.1
   html: ^0.15.5+1
   serverpod: 2.5.0
   serverpod_auth_server: 2.5.0

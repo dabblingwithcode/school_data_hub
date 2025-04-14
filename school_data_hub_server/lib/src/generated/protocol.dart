@@ -43,7 +43,7 @@ import 'learning_support/support_goal/support_goal.dart' as _i31;
 import 'learning_support/support_goal/support_goal_check.dart' as _i32;
 import 'learning_support/support_goal/support_goal_check_file.dart' as _i33;
 import 'learning_support/support_level.dart' as _i34;
-import 'pupil_data/dto/siblings_parent_info_dto.dart' as _i35;
+import 'pupil_data/dto/siblings_tutor_info_dto.dart' as _i35;
 import 'pupil_data/pupil_data.dart' as _i36;
 import 'pupil_data/pupil_objects/after_school_care/after_school_care.dart'
     as _i37;
@@ -54,8 +54,7 @@ import 'pupil_data/pupil_objects/communication/communication_skills.dart'
     as _i40;
 import 'pupil_data/pupil_objects/communication/language.dart' as _i41;
 import 'pupil_data/pupil_objects/communication/public_media_auth.dart' as _i42;
-import 'pupil_data/pupil_objects/communication/pupil_data_tutor_info.dart'
-    as _i43;
+import 'pupil_data/pupil_objects/communication/tutor_info.dart' as _i43;
 import 'pupil_data/pupil_objects/preschool/kindergarden_info.dart' as _i44;
 import 'pupil_data/pupil_objects/preschool/pre_school_medical.dart' as _i45;
 import 'pupil_data/pupil_objects/preschool/pre_school_medical_status.dart'
@@ -79,13 +78,13 @@ import 'workbook/pupil_workbook.dart' as _i62;
 import 'workbook/workbook.dart' as _i63;
 import 'package:school_data_hub_server/src/generated/user/staff_user.dart'
     as _i64;
-import 'package:school_data_hub_server/src/generated/user/device_info.dart'
-    as _i65;
-import 'package:school_data_hub_server/src/generated/learning/competence.dart'
-    as _i66;
-import 'package:school_data_hub_server/src/generated/schoolday/missed_class.dart'
-    as _i67;
 import 'package:school_data_hub_server/src/generated/pupil_data/pupil_data.dart'
+    as _i65;
+import 'package:school_data_hub_server/src/generated/user/device_info.dart'
+    as _i66;
+import 'package:school_data_hub_server/src/generated/learning/competence.dart'
+    as _i67;
+import 'package:school_data_hub_server/src/generated/schoolday/missed_class.dart'
     as _i68;
 import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
     as _i69;
@@ -124,7 +123,7 @@ export 'learning_support/support_goal/support_goal.dart';
 export 'learning_support/support_goal/support_goal_check.dart';
 export 'learning_support/support_goal/support_goal_check_file.dart';
 export 'learning_support/support_level.dart';
-export 'pupil_data/dto/siblings_parent_info_dto.dart';
+export 'pupil_data/dto/siblings_tutor_info_dto.dart';
 export 'pupil_data/pupil_data.dart';
 export 'pupil_data/pupil_objects/after_school_care/after_school_care.dart';
 export 'pupil_data/pupil_objects/after_school_care/after_school_pickup_times.dart';
@@ -132,7 +131,7 @@ export 'pupil_data/pupil_objects/after_school_care/pick_up_info.dart';
 export 'pupil_data/pupil_objects/communication/communication_skills.dart';
 export 'pupil_data/pupil_objects/communication/language.dart';
 export 'pupil_data/pupil_objects/communication/public_media_auth.dart';
-export 'pupil_data/pupil_objects/communication/pupil_data_tutor_info.dart';
+export 'pupil_data/pupil_objects/communication/tutor_info.dart';
 export 'pupil_data/pupil_objects/preschool/kindergarden_info.dart';
 export 'pupil_data/pupil_objects/preschool/pre_school_medical.dart';
 export 'pupil_data/pupil_objects/preschool/pre_school_medical_status.dart';
@@ -1073,6 +1072,18 @@ class Protocol extends _i1.SerializationManagerServer {
           isNullable: true,
           dartType: 'int?',
         ),
+        _i2.ColumnDefinition(
+          name: '_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: true,
+          dartType: 'int?',
+        ),
+        _i2.ColumnDefinition(
+          name: '_preSchoolTestPreschooltestdocumentsPreSchoolTestId',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: true,
+          dartType: 'int?',
+        ),
       ],
       foreignKeys: [
         _i2.ForeignKeyDefinition(
@@ -1089,6 +1100,26 @@ class Protocol extends _i1.SerializationManagerServer {
           constraintName: 'hub_document_fk_1',
           columns: ['_competenceGoalDocumentsCompetenceGoalId'],
           referenceTable: 'competence_goal',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _i2.ForeignKeyAction.noAction,
+          onDelete: _i2.ForeignKeyAction.noAction,
+          matchType: null,
+        ),
+        _i2.ForeignKeyDefinition(
+          constraintName: 'hub_document_fk_2',
+          columns: ['_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId'],
+          referenceTable: 'pre_school_medical',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _i2.ForeignKeyAction.noAction,
+          onDelete: _i2.ForeignKeyAction.noAction,
+          matchType: null,
+        ),
+        _i2.ForeignKeyDefinition(
+          constraintName: 'hub_document_fk_3',
+          columns: ['_preSchoolTestPreschooltestdocumentsPreSchoolTestId'],
+          referenceTable: 'pre_school_test',
           referenceTableSchema: 'public',
           referenceColumns: ['id'],
           onUpdate: _i2.ForeignKeyAction.noAction,
@@ -1753,6 +1784,82 @@ class Protocol extends _i1.SerializationManagerServer {
       managed: true,
     ),
     _i2.TableDefinition(
+      name: 'pre_school_medical',
+      dartName: 'PreSchoolMedical',
+      schema: 'public',
+      module: 'school_data_hub',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'pre_school_medical_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'preschoolMedicalStatus',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'protocol:PreSchoolMedicalStatus?',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'pre_school_medical_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            )
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        )
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
+      name: 'pre_school_test',
+      dartName: 'PreSchoolTest',
+      schema: 'public',
+      module: 'school_data_hub',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'pre_school_test_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'careNeedsIntensity',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: true,
+          dartType: 'int?',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'pre_school_test_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            )
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        )
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
       name: 'pupil_authorization',
       dartName: 'PupilAuthorization',
       schema: 'public',
@@ -2054,10 +2161,10 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'int',
         ),
         _i2.ColumnDefinition(
-          name: 'preSchoolMedical',
-          columnType: _i2.ColumnType.json,
-          isNullable: false,
-          dartType: 'protocol:PreSchoolMedical',
+          name: 'preSchoolMedicalId',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: true,
+          dartType: 'int?',
         ),
         _i2.ColumnDefinition(
           name: 'kindergarden',
@@ -2066,22 +2173,22 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'String?',
         ),
         _i2.ColumnDefinition(
-          name: 'preSchoolTest',
-          columnType: _i2.ColumnType.json,
+          name: 'preSchoolTestId',
+          columnType: _i2.ColumnType.bigint,
           isNullable: true,
-          dartType: 'protocol:PreSchoolTest?',
+          dartType: 'int?',
         ),
         _i2.ColumnDefinition(
           name: 'avatarId',
           columnType: _i2.ColumnType.bigint,
-          isNullable: false,
-          dartType: 'int',
+          isNullable: true,
+          dartType: 'int?',
         ),
         _i2.ColumnDefinition(
           name: 'avatarAuthId',
           columnType: _i2.ColumnType.bigint,
-          isNullable: false,
-          dartType: 'int',
+          isNullable: true,
+          dartType: 'int?',
         ),
         _i2.ColumnDefinition(
           name: 'publicMediaAuth',
@@ -2092,8 +2199,8 @@ class Protocol extends _i1.SerializationManagerServer {
         _i2.ColumnDefinition(
           name: 'publicMediaAuthDocumentId',
           columnType: _i2.ColumnType.bigint,
-          isNullable: false,
-          dartType: 'int',
+          isNullable: true,
+          dartType: 'int?',
         ),
         _i2.ColumnDefinition(
           name: 'contact',
@@ -2114,10 +2221,10 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'String?',
         ),
         _i2.ColumnDefinition(
-          name: 'pupilDataTutorInfo',
+          name: 'tutorInfo',
           columnType: _i2.ColumnType.json,
           isNullable: true,
-          dartType: 'protocol:PupilDataTutorInfo?',
+          dartType: 'protocol:TutorInfo?',
         ),
         _i2.ColumnDefinition(
           name: 'afterSchoolCare',
@@ -2152,13 +2259,33 @@ class Protocol extends _i1.SerializationManagerServer {
         _i2.ColumnDefinition(
           name: 'swimmer',
           columnType: _i2.ColumnType.text,
-          isNullable: false,
-          dartType: 'String',
+          isNullable: true,
+          dartType: 'String?',
         ),
       ],
       foreignKeys: [
         _i2.ForeignKeyDefinition(
           constraintName: 'pupil_data_fk_0',
+          columns: ['preSchoolMedicalId'],
+          referenceTable: 'pre_school_medical',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _i2.ForeignKeyAction.noAction,
+          onDelete: _i2.ForeignKeyAction.noAction,
+          matchType: null,
+        ),
+        _i2.ForeignKeyDefinition(
+          constraintName: 'pupil_data_fk_1',
+          columns: ['preSchoolTestId'],
+          referenceTable: 'pre_school_test',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _i2.ForeignKeyAction.noAction,
+          onDelete: _i2.ForeignKeyAction.noAction,
+          matchType: null,
+        ),
+        _i2.ForeignKeyDefinition(
+          constraintName: 'pupil_data_fk_2',
           columns: ['avatarId'],
           referenceTable: 'hub_document',
           referenceTableSchema: 'public',
@@ -2168,7 +2295,7 @@ class Protocol extends _i1.SerializationManagerServer {
           matchType: null,
         ),
         _i2.ForeignKeyDefinition(
-          constraintName: 'pupil_data_fk_1',
+          constraintName: 'pupil_data_fk_3',
           columns: ['avatarAuthId'],
           referenceTable: 'hub_document',
           referenceTableSchema: 'public',
@@ -2178,7 +2305,7 @@ class Protocol extends _i1.SerializationManagerServer {
           matchType: null,
         ),
         _i2.ForeignKeyDefinition(
-          constraintName: 'pupil_data_fk_2',
+          constraintName: 'pupil_data_fk_4',
           columns: ['publicMediaAuthDocumentId'],
           referenceTable: 'hub_document',
           referenceTableSchema: 'public',
@@ -4016,8 +4143,8 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i34.SupportLevel) {
       return _i34.SupportLevel.fromJson(data) as T;
     }
-    if (t == _i35.SiblingsParentInfo) {
-      return _i35.SiblingsParentInfo.fromJson(data) as T;
+    if (t == _i35.SiblingsTutorInfo) {
+      return _i35.SiblingsTutorInfo.fromJson(data) as T;
     }
     if (t == _i36.PupilData) {
       return _i36.PupilData.fromJson(data) as T;
@@ -4040,8 +4167,8 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i42.PublicMediaAuth) {
       return _i42.PublicMediaAuth.fromJson(data) as T;
     }
-    if (t == _i43.PupilDataTutorInfo) {
-      return _i43.PupilDataTutorInfo.fromJson(data) as T;
+    if (t == _i43.TutorInfo) {
+      return _i43.TutorInfo.fromJson(data) as T;
     }
     if (t == _i44.KindergardenInfo) {
       return _i44.KindergardenInfo.fromJson(data) as T;
@@ -4203,9 +4330,8 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i1.getType<_i34.SupportLevel?>()) {
       return (data != null ? _i34.SupportLevel.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i35.SiblingsParentInfo?>()) {
-      return (data != null ? _i35.SiblingsParentInfo.fromJson(data) : null)
-          as T;
+    if (t == _i1.getType<_i35.SiblingsTutorInfo?>()) {
+      return (data != null ? _i35.SiblingsTutorInfo.fromJson(data) : null) as T;
     }
     if (t == _i1.getType<_i36.PupilData?>()) {
       return (data != null ? _i36.PupilData.fromJson(data) : null) as T;
@@ -4231,9 +4357,8 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i1.getType<_i42.PublicMediaAuth?>()) {
       return (data != null ? _i42.PublicMediaAuth.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i43.PupilDataTutorInfo?>()) {
-      return (data != null ? _i43.PupilDataTutorInfo.fromJson(data) : null)
-          as T;
+    if (t == _i1.getType<_i43.TutorInfo?>()) {
+      return (data != null ? _i43.TutorInfo.fromJson(data) : null) as T;
     }
     if (t == _i1.getType<_i44.KindergardenInfo?>()) {
       return (data != null ? _i44.KindergardenInfo.fromJson(data) : null) as T;
@@ -4467,8 +4592,8 @@ class Protocol extends _i1.SerializationManagerServer {
               .toList()
           : null) as T;
     }
-    if (t == List<int>) {
-      return (data as List).map((e) => deserialize<int>(e)).toList() as T;
+    if (t == Set<int>) {
+      return (data as List).map((e) => deserialize<int>(e)).toSet() as T;
     }
     if (t == _i1.getType<List<_i5.PupilAuthorization>?>()) {
       return (data != null
@@ -4643,32 +4768,39 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == List<_i64.User>) {
       return (data as List).map((e) => deserialize<_i64.User>(e)).toList() as T;
     }
+    if (t == Set<_i65.PupilData>) {
+      return (data as List).map((e) => deserialize<_i65.PupilData>(e)).toSet()
+          as T;
+    }
     if (t ==
         _i1.getType<
             ({
-              _i65.DeviceInfo? deviceInfo,
+              _i66.DeviceInfo? deviceInfo,
               _i3.AuthenticationResponse response
             })>()) {
       return (
         deviceInfo: ((data as Map)['n'] as Map)['deviceInfo'] == null
             ? null
-            : deserialize<_i65.DeviceInfo>(data['n']['deviceInfo']),
+            : deserialize<_i66.DeviceInfo>(data['n']['deviceInfo']),
         response:
             deserialize<_i3.AuthenticationResponse>(data['n']['response']),
       ) as T;
     }
-    if (t == List<_i66.Competence>) {
-      return (data as List).map((e) => deserialize<_i66.Competence>(e)).toList()
+    if (t == List<_i67.Competence>) {
+      return (data as List).map((e) => deserialize<_i67.Competence>(e)).toList()
           as T;
     }
-    if (t == List<_i67.MissedClass>) {
+    if (t == List<_i68.MissedClass>) {
       return (data as List)
-          .map((e) => deserialize<_i67.MissedClass>(e))
+          .map((e) => deserialize<_i68.MissedClass>(e))
           .toList() as T;
     }
-    if (t == List<_i68.PupilData>) {
-      return (data as List).map((e) => deserialize<_i68.PupilData>(e)).toList()
+    if (t == List<_i65.PupilData>) {
+      return (data as List).map((e) => deserialize<_i65.PupilData>(e)).toList()
           as T;
+    }
+    if (t == Set<int>) {
+      return (data as List).map((e) => deserialize<int>(e)).toSet() as T;
     }
     if (t == List<_i69.SchoolSemester>) {
       return (data as List)
@@ -4801,8 +4933,8 @@ class Protocol extends _i1.SerializationManagerServer {
     if (data is _i34.SupportLevel) {
       return 'SupportLevel';
     }
-    if (data is _i35.SiblingsParentInfo) {
-      return 'SiblingsParentInfo';
+    if (data is _i35.SiblingsTutorInfo) {
+      return 'SiblingsTutorInfo';
     }
     if (data is _i36.PupilData) {
       return 'PupilData';
@@ -4825,8 +4957,8 @@ class Protocol extends _i1.SerializationManagerServer {
     if (data is _i42.PublicMediaAuth) {
       return 'PublicMediaAuth';
     }
-    if (data is _i43.PupilDataTutorInfo) {
-      return 'PupilDataTutorInfo';
+    if (data is _i43.TutorInfo) {
+      return 'TutorInfo';
     }
     if (data is _i44.KindergardenInfo) {
       return 'KindergardenInfo';
@@ -4896,7 +5028,7 @@ class Protocol extends _i1.SerializationManagerServer {
     if (className != null) {
       return 'serverpod_auth.$className';
     }
-    if (data is List<_i68.PupilData>) {
+    if (data is List<_i65.PupilData>) {
       return 'List<PupilData>';
     }
     return null;
@@ -5001,8 +5133,8 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName == 'SupportLevel') {
       return deserialize<_i34.SupportLevel>(data['data']);
     }
-    if (dataClassName == 'SiblingsParentInfo') {
-      return deserialize<_i35.SiblingsParentInfo>(data['data']);
+    if (dataClassName == 'SiblingsTutorInfo') {
+      return deserialize<_i35.SiblingsTutorInfo>(data['data']);
     }
     if (dataClassName == 'PupilData') {
       return deserialize<_i36.PupilData>(data['data']);
@@ -5025,8 +5157,8 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName == 'PublicMediaAuth') {
       return deserialize<_i42.PublicMediaAuth>(data['data']);
     }
-    if (dataClassName == 'PupilDataTutorInfo') {
-      return deserialize<_i43.PupilDataTutorInfo>(data['data']);
+    if (dataClassName == 'TutorInfo') {
+      return deserialize<_i43.TutorInfo>(data['data']);
     }
     if (dataClassName == 'KindergardenInfo') {
       return deserialize<_i44.KindergardenInfo>(data['data']);
@@ -5097,7 +5229,7 @@ class Protocol extends _i1.SerializationManagerServer {
       return _i3.Protocol().deserializeByClassName(data);
     }
     if (dataClassName == 'List<PupilData>') {
-      return deserialize<List<_i68.PupilData>>(data['data']);
+      return deserialize<List<_i65.PupilData>>(data['data']);
     }
     return super.deserializeByClassName(data);
   }
@@ -5177,6 +5309,10 @@ class Protocol extends _i1.SerializationManagerServer {
         return _i34.SupportLevel.t;
       case _i36.PupilData:
         return _i36.PupilData.t;
+      case _i45.PreSchoolMedical:
+        return _i45.PreSchoolMedical.t;
+      case _i47.PreSchoolTest:
+        return _i47.PreSchoolTest.t;
       case _i48.PupilList:
         return _i48.PupilList.t;
       case _i49.SchoolList:
@@ -5225,7 +5361,7 @@ Map<String, dynamic>? mapRecordToJson(Record? record) {
     return null;
   }
   if (record is ({
-    _i65.DeviceInfo? deviceInfo,
+    _i66.DeviceInfo? deviceInfo,
     _i3.AuthenticationResponse response
   })) {
     return {

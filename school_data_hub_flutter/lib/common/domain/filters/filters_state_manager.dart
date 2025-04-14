@@ -1,6 +1,5 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:watch_it/watch_it.dart';
 
 enum FilterState {
   pupil,
@@ -77,14 +76,14 @@ class FiltersStateManagerImplementation implements FiltersStateManager {
 
   @override
   void resetFilters() {
-    di<AttendancePupilFilterManager>().resetFilters();
-    di<PupilsFilter>().resetFilters();
-    di<PupilFilterManager>().resetFilters();
-    di<SchooldayEventFilterManager>().resetFilters();
-    di<SchoolListFilterManager>().resetFilters();
-    di<AuthorizationFilterManager>().resetFilters();
-    di<PupilAuthorizationFilterManager>().resetFilters();
-    di<LearningSupportFilterManager>().resetFilters();
+    // di<AttendancePupilFilterManager>().resetFilters();
+    // di<PupilsFilter>().resetFilters();
+    // di<PupilFilterManager>().resetFilters();
+    // di<SchooldayEventFilterManager>().resetFilters();
+    // di<SchoolListFilterManager>().resetFilters();
+    // di<AuthorizationFilterManager>().resetFilters();
+    // di<PupilAuthorizationFilterManager>().resetFilters();
+    // di<LearningSupportFilterManager>().resetFilters();
 
     _filterStates.value = {..._initialFilterGlobalValues};
     _filtersActive.value = false;

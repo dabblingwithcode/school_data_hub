@@ -24,7 +24,3 @@ Map<String, dynamic> _$MatrixUserToJson(MatrixUser instance) =>
       'displayName': instance.displayName,
       'joinedRoomIds': instance.joinedRoomIds,
     };
-
-getRoomIds(List<MatrixRoom> rooms) {
-  return rooms.map((room) => room.id).toList();
-}

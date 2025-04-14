@@ -964,6 +964,18 @@
             "columnType": 6,
             "isNullable": true,
             "dartType": "int?"
+          },
+          {
+            "name": "_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId",
+            "columnType": 6,
+            "isNullable": true,
+            "dartType": "int?"
+          },
+          {
+            "name": "_preSchoolTestPreschooltestdocumentsPreSchoolTestId",
+            "columnType": 6,
+            "isNullable": true,
+            "dartType": "int?"
           }
         ],
         "foreignKeys": [
@@ -986,6 +998,32 @@
               "_competenceGoalDocumentsCompetenceGoalId"
             ],
             "referenceTable": "competence_goal",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          },
+          {
+            "constraintName": "hub_document_fk_2",
+            "columns": [
+              "_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId"
+            ],
+            "referenceTable": "pre_school_medical",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          },
+          {
+            "constraintName": "hub_document_fk_3",
+            "columns": [
+              "_preSchoolTestPreschooltestdocumentsPreSchoolTestId"
+            ],
+            "referenceTable": "pre_school_test",
             "referenceTableSchema": "public",
             "referenceColumns": [
               "id"
@@ -1071,12 +1109,135 @@
             "columnType": 0,
             "isNullable": false,
             "dartType": "String"
+          },
+          {
+            "name": "subjectId",
+            "columnType": 6,
+            "isNullable": false,
+            "dartType": "int"
           }
         ],
-        "foreignKeys": [],
+        "foreignKeys": [
+          {
+            "constraintName": "lesson_fk_0",
+            "columns": [
+              "subjectId"
+            ],
+            "referenceTable": "lesson_subject",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          }
+        ],
         "indexes": [
           {
             "indexName": "lesson_pkey",
+            "elements": [
+              {
+                "type": 0,
+                "definition": "id"
+              }
+            ],
+            "type": "btree",
+            "isUnique": true,
+            "isPrimary": true
+          }
+        ],
+        "managed": true
+      }
+    },
+    {
+      "type": "createTable",
+      "createTable": {
+        "name": "lesson_attendance",
+        "dartName": "LessonAttendance",
+        "module": "school_data_hub",
+        "schema": "public",
+        "columns": [
+          {
+            "name": "id",
+            "columnType": 6,
+            "isNullable": false,
+            "columnDefault": "nextval('lesson_attendance_id_seq'::regclass)",
+            "dartType": "int?"
+          },
+          {
+            "name": "lessonId",
+            "columnType": 6,
+            "isNullable": false,
+            "dartType": "int"
+          },
+          {
+            "name": "pupilId",
+            "columnType": 6,
+            "isNullable": false,
+            "dartType": "int"
+          },
+          {
+            "name": "comment",
+            "columnType": 0,
+            "isNullable": true,
+            "dartType": "String?"
+          },
+          {
+            "name": "createdBy",
+            "columnType": 0,
+            "isNullable": false,
+            "dartType": "String"
+          },
+          {
+            "name": "createdAt",
+            "columnType": 4,
+            "isNullable": false,
+            "dartType": "DateTime"
+          },
+          {
+            "name": "modifiedBy",
+            "columnType": 0,
+            "isNullable": false,
+            "dartType": "String"
+          },
+          {
+            "name": "modifiedAt",
+            "columnType": 4,
+            "isNullable": false,
+            "dartType": "DateTime"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "constraintName": "lesson_attendance_fk_0",
+            "columns": [
+              "lessonId"
+            ],
+            "referenceTable": "lesson",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          },
+          {
+            "constraintName": "lesson_attendance_fk_1",
+            "columns": [
+              "pupilId"
+            ],
+            "referenceTable": "pupil_data",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          }
+        ],
+        "indexes": [
+          {
+            "indexName": "lesson_attendance_pkey",
             "elements": [
               {
                 "type": 0,
@@ -1251,6 +1412,52 @@
             "type": "btree",
             "isUnique": true,
             "isPrimary": false
+          }
+        ],
+        "managed": true
+      }
+    },
+    {
+      "type": "createTable",
+      "createTable": {
+        "name": "lesson_subject",
+        "dartName": "LessonSubject",
+        "module": "school_data_hub",
+        "schema": "public",
+        "columns": [
+          {
+            "name": "id",
+            "columnType": 6,
+            "isNullable": false,
+            "columnDefault": "nextval('lesson_subject_id_seq'::regclass)",
+            "dartType": "int?"
+          },
+          {
+            "name": "name",
+            "columnType": 0,
+            "isNullable": false,
+            "dartType": "String"
+          },
+          {
+            "name": "description",
+            "columnType": 0,
+            "isNullable": true,
+            "dartType": "String?"
+          }
+        ],
+        "foreignKeys": [],
+        "indexes": [
+          {
+            "indexName": "lesson_subject_pkey",
+            "elements": [
+              {
+                "type": 0,
+                "definition": "id"
+              }
+            ],
+            "type": "btree",
+            "isUnique": true,
+            "isPrimary": true
           }
         ],
         "managed": true
@@ -1519,6 +1726,86 @@
             "type": "btree",
             "isUnique": true,
             "isPrimary": false
+          }
+        ],
+        "managed": true
+      }
+    },
+    {
+      "type": "createTable",
+      "createTable": {
+        "name": "pre_school_medical",
+        "dartName": "PreSchoolMedical",
+        "module": "school_data_hub",
+        "schema": "public",
+        "columns": [
+          {
+            "name": "id",
+            "columnType": 6,
+            "isNullable": false,
+            "columnDefault": "nextval('pre_school_medical_id_seq'::regclass)",
+            "dartType": "int?"
+          },
+          {
+            "name": "preschoolMedicalStatus",
+            "columnType": 0,
+            "isNullable": true,
+            "dartType": "protocol:PreSchoolMedicalStatus?"
+          }
+        ],
+        "foreignKeys": [],
+        "indexes": [
+          {
+            "indexName": "pre_school_medical_pkey",
+            "elements": [
+              {
+                "type": 0,
+                "definition": "id"
+              }
+            ],
+            "type": "btree",
+            "isUnique": true,
+            "isPrimary": true
+          }
+        ],
+        "managed": true
+      }
+    },
+    {
+      "type": "createTable",
+      "createTable": {
+        "name": "pre_school_test",
+        "dartName": "PreSchoolTest",
+        "module": "school_data_hub",
+        "schema": "public",
+        "columns": [
+          {
+            "name": "id",
+            "columnType": 6,
+            "isNullable": false,
+            "columnDefault": "nextval('pre_school_test_id_seq'::regclass)",
+            "dartType": "int?"
+          },
+          {
+            "name": "careNeedsIntensity",
+            "columnType": 6,
+            "isNullable": true,
+            "dartType": "int?"
+          }
+        ],
+        "foreignKeys": [],
+        "indexes": [
+          {
+            "indexName": "pre_school_test_pkey",
+            "elements": [
+              {
+                "type": 0,
+                "definition": "id"
+              }
+            ],
+            "type": "btree",
+            "isUnique": true,
+            "isPrimary": true
           }
         ],
         "managed": true
@@ -1848,10 +2135,10 @@
             "dartType": "int"
           },
           {
-            "name": "preSchoolMedical",
-            "columnType": 8,
-            "isNullable": false,
-            "dartType": "protocol:PreSchoolMedical"
+            "name": "preSchoolMedicalId",
+            "columnType": 6,
+            "isNullable": true,
+            "dartType": "int?"
           },
           {
             "name": "kindergarden",
@@ -1860,22 +2147,22 @@
             "dartType": "String?"
           },
           {
-            "name": "preSchoolTest",
-            "columnType": 8,
+            "name": "preSchoolTestId",
+            "columnType": 6,
             "isNullable": true,
-            "dartType": "protocol:PreSchoolTest?"
+            "dartType": "int?"
           },
           {
             "name": "avatarId",
             "columnType": 6,
-            "isNullable": false,
-            "dartType": "int"
+            "isNullable": true,
+            "dartType": "int?"
           },
           {
             "name": "avatarAuthId",
             "columnType": 6,
-            "isNullable": false,
-            "dartType": "int"
+            "isNullable": true,
+            "dartType": "int?"
           },
           {
             "name": "publicMediaAuth",
@@ -1886,8 +2173,8 @@
           {
             "name": "publicMediaAuthDocumentId",
             "columnType": 6,
-            "isNullable": false,
-            "dartType": "int"
+            "isNullable": true,
+            "dartType": "int?"
           },
           {
             "name": "contact",
@@ -1908,10 +2195,10 @@
             "dartType": "String?"
           },
           {
-            "name": "pupilDataTutorInfo",
+            "name": "tutorInfo",
             "columnType": 8,
             "isNullable": true,
-            "dartType": "protocol:PupilDataTutorInfo?"
+            "dartType": "protocol:TutorInfo?"
           },
           {
             "name": "afterSchoolCare",
@@ -1946,13 +2233,39 @@
           {
             "name": "swimmer",
             "columnType": 0,
-            "isNullable": false,
-            "dartType": "String"
+            "isNullable": true,
+            "dartType": "String?"
           }
         ],
         "foreignKeys": [
           {
             "constraintName": "pupil_data_fk_0",
+            "columns": [
+              "preSchoolMedicalId"
+            ],
+            "referenceTable": "pre_school_medical",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          },
+          {
+            "constraintName": "pupil_data_fk_1",
+            "columns": [
+              "preSchoolTestId"
+            ],
+            "referenceTable": "pre_school_test",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          },
+          {
+            "constraintName": "pupil_data_fk_2",
             "columns": [
               "avatarId"
             ],
@@ -1965,7 +2278,7 @@
             "onDelete": 3
           },
           {
-            "constraintName": "pupil_data_fk_1",
+            "constraintName": "pupil_data_fk_3",
             "columns": [
               "avatarAuthId"
             ],
@@ -1978,7 +2291,7 @@
             "onDelete": 3
           },
           {
-            "constraintName": "pupil_data_fk_2",
+            "constraintName": "pupil_data_fk_4",
             "columns": [
               "publicMediaAuthDocumentId"
             ],
@@ -2356,6 +2669,12 @@
             "columnType": 4,
             "isNullable": false,
             "dartType": "DateTime"
+          },
+          {
+            "name": "recordtest",
+            "columnType": 8,
+            "isNullable": true,
+            "dartType": "( {int testint, String testString})?"
           },
           {
             "name": "_roomScheduledlessonsRoomId",

@@ -9,28 +9,27 @@
 // ignore_for_file: use_super_parameters
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:serverpod/serverpod.dart' as _i1;
+import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import '../../../pupil_data/pupil_objects/communication/communication_skills.dart'
     as _i2;
 
-abstract class PupilDataTutorInfo
-    implements _i1.SerializableModel, _i1.ProtocolSerialization {
-  PupilDataTutorInfo._({
+abstract class TutorInfo implements _i1.SerializableModel {
+  TutorInfo._({
     this.parentsContact,
     this.communicationTutor1,
     this.communicationTutor2,
     required this.createdBy,
   });
 
-  factory PupilDataTutorInfo({
+  factory TutorInfo({
     String? parentsContact,
     _i2.CommunicationSkills? communicationTutor1,
     _i2.CommunicationSkills? communicationTutor2,
     required String createdBy,
-  }) = _PupilDataTutorInfoImpl;
+  }) = _TutorInfoImpl;
 
-  factory PupilDataTutorInfo.fromJson(Map<String, dynamic> jsonSerialization) {
-    return PupilDataTutorInfo(
+  factory TutorInfo.fromJson(Map<String, dynamic> jsonSerialization) {
+    return TutorInfo(
       parentsContact: jsonSerialization['parentsContact'] as String?,
       communicationTutor1: jsonSerialization['communicationTutor1'] == null
           ? null
@@ -54,10 +53,10 @@ abstract class PupilDataTutorInfo
 
   String createdBy;
 
-  /// Returns a shallow copy of this [PupilDataTutorInfo]
+  /// Returns a shallow copy of this [TutorInfo]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
-  PupilDataTutorInfo copyWith({
+  TutorInfo copyWith({
     String? parentsContact,
     _i2.CommunicationSkills? communicationTutor1,
     _i2.CommunicationSkills? communicationTutor2,
@@ -76,18 +75,6 @@ abstract class PupilDataTutorInfo
   }
 
   @override
-  Map<String, dynamic> toJsonForProtocol() {
-    return {
-      if (parentsContact != null) 'parentsContact': parentsContact,
-      if (communicationTutor1 != null)
-        'communicationTutor1': communicationTutor1?.toJsonForProtocol(),
-      if (communicationTutor2 != null)
-        'communicationTutor2': communicationTutor2?.toJsonForProtocol(),
-      'createdBy': createdBy,
-    };
-  }
-
-  @override
   String toString() {
     return _i1.SerializationManager.encode(this);
   }
@@ -95,8 +82,8 @@ abstract class PupilDataTutorInfo
 
 class _Undefined {}
 
-class _PupilDataTutorInfoImpl extends PupilDataTutorInfo {
-  _PupilDataTutorInfoImpl({
+class _TutorInfoImpl extends TutorInfo {
+  _TutorInfoImpl({
     String? parentsContact,
     _i2.CommunicationSkills? communicationTutor1,
     _i2.CommunicationSkills? communicationTutor2,
@@ -108,17 +95,17 @@ class _PupilDataTutorInfoImpl extends PupilDataTutorInfo {
           createdBy: createdBy,
         );
 
-  /// Returns a shallow copy of this [PupilDataTutorInfo]
+  /// Returns a shallow copy of this [TutorInfo]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   @override
-  PupilDataTutorInfo copyWith({
+  TutorInfo copyWith({
     Object? parentsContact = _Undefined,
     Object? communicationTutor1 = _Undefined,
     Object? communicationTutor2 = _Undefined,
     String? createdBy,
   }) {
-    return PupilDataTutorInfo(
+    return TutorInfo(
       parentsContact:
           parentsContact is String? ? parentsContact : this.parentsContact,
       communicationTutor1: communicationTutor1 is _i2.CommunicationSkills?

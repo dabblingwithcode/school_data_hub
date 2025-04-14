@@ -14,6 +14,7 @@ import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_po
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -124,6 +125,15 @@ class DiManager {
       return CompetenceFilterManager();
     }, dependsOn: [CompetenceManager]);
 
+    di.registerSingletonAsync<PupilManager>(() async {
+      final pupilManager = PupilManager();
+
+      await pupilManager.init();
+
+      _log.info('PupilManager initialized');
+
+      return pupilManager;
+    }, dependsOn: [ServerpodSessionManager]);
     _log.info('Managers depending on ServerpodSessionManager initialized');
   }
 

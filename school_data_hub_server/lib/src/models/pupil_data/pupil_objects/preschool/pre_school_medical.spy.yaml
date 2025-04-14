@@ -1,5 +1,6 @@
 class: PreSchoolMedical
+table: pre_school_medical
 fields:
   preschoolMedicalStatus: PreSchoolMedicalStatus?
-  preschoolMedicalFiles: List<HubDocument>?
+  preschoolMedicalFiles: List<HubDocument>?, relation(optional)
   

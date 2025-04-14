@@ -1,4 +1,5 @@
 class: PreSchoolTest
+table: pre_school_test
 fields:
   careNeedsIntensity: int?
-  preSchoolTestDocuments: List<HubDocument>?
+  preSchoolTestDocuments: List<HubDocument>?, relation

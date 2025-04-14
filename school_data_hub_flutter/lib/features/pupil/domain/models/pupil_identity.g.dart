@@ -22,6 +22,12 @@ PupilIdentity _$PupilIdentityFromJson(Map<String, dynamic> json) =>
       migrationSupportEnds: json['migrationSupportEnds'] == null
           ? null
           : DateTime.parse(json['migrationSupportEnds'] as String),
+      afterSchoolCare: json['afterSchoolCare'] as bool?,
+      leavingDate: json['leavingDate'] == null
+          ? null
+          : DateTime.parse(json['leavingDate'] as String),
+      religion: (json['religion'] as num?)?.toInt(),
+      religionLessons: json['religionLessons'] as bool?,
     );
 
 Map<String, dynamic> _$PupilIdentityToJson(PupilIdentity instance) =>
@@ -38,4 +44,8 @@ Map<String, dynamic> _$PupilIdentityToJson(PupilIdentity instance) =>
       'birthday': instance.birthday.toIso8601String(),
       'migrationSupportEnds': instance.migrationSupportEnds?.toIso8601String(),
       'pupilSince': instance.pupilSince.toIso8601String(),
+      'afterSchoolCare': instance.afterSchoolCare,
+      'leavingDate': instance.leavingDate?.toIso8601String(),
+      'religion': instance.religion,
+      'religionLessons': instance.religionLessons,
     };

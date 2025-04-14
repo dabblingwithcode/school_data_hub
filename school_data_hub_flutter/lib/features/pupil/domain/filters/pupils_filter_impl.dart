@@ -204,11 +204,11 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
       // OGS filters
 
       if (di<PupilFilterManager>().pupilFilterState.value[PupilFilter.ogs]! &&
-              !pupil.ogs ||
+              pupil.afterSchoolCare == null ||
           di<PupilFilterManager>()
                   .pupilFilterState
                   .value[PupilFilter.notOgs]! &&
-              pupil.ogs) {
+              pupil.afterSchoolCare != null) {
         filtersOn = true;
         continue;
       }

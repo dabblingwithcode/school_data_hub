@@ -17,8 +17,7 @@ import '../pupil_data/pupil_objects/communication/public_media_auth.dart'
     as _i5;
 import '../pupil_data/pupil_objects/communication/communication_skills.dart'
     as _i6;
-import '../pupil_data/pupil_objects/communication/pupil_data_tutor_info.dart'
-    as _i7;
+import '../pupil_data/pupil_objects/communication/tutor_info.dart' as _i7;
 import '../authorization/pupil_authorization.dart' as _i8;
 import '../pupil_data/pupil_objects/after_school_care/after_school_care.dart'
     as _i9;
@@ -45,20 +44,22 @@ abstract class PupilData
     this.id,
     required this.active,
     required this.internalId,
-    required this.preSchoolMedical,
+    this.preSchoolMedicalId,
+    this.preSchoolMedical,
     this.kindergarden,
+    this.preSchoolTestId,
     this.preSchoolTest,
-    required this.avatarId,
+    this.avatarId,
     this.avatar,
-    required this.avatarAuthId,
+    this.avatarAuthId,
     this.avatarAuth,
     required this.publicMediaAuth,
-    required this.publicMediaAuthDocumentId,
+    this.publicMediaAuthDocumentId,
     this.publicMediaAuthDocument,
     this.contact,
     this.communicationPupil,
     this.specialInformation,
-    this.pupilDataTutorInfo,
+    this.tutorInfo,
     this.authorizations,
     this.afterSchoolCare,
     required this.credit,
@@ -79,7 +80,7 @@ abstract class PupilData
     this.supportGoals,
     this.missedClasses,
     this.schooldayEvents,
-    required this.swimmer,
+    this.swimmer,
     this.pupilLists,
   });
 
@@ -87,20 +88,22 @@ abstract class PupilData
     int? id,
     required bool active,
     required int internalId,
-    required _i2.PreSchoolMedical preSchoolMedical,
+    int? preSchoolMedicalId,
+    _i2.PreSchoolMedical? preSchoolMedical,
     String? kindergarden,
+    int? preSchoolTestId,
     _i3.PreSchoolTest? preSchoolTest,
-    required int avatarId,
+    int? avatarId,
     _i4.HubDocument? avatar,
-    required int avatarAuthId,
+    int? avatarAuthId,
     _i4.HubDocument? avatarAuth,
     required _i5.PublicMediaAuth publicMediaAuth,
-    required int publicMediaAuthDocumentId,
+    int? publicMediaAuthDocumentId,
     _i4.HubDocument? publicMediaAuthDocument,
     String? contact,
     _i6.CommunicationSkills? communicationPupil,
     String? specialInformation,
-    _i7.PupilDataTutorInfo? pupilDataTutorInfo,
+    _i7.TutorInfo? tutorInfo,
     List<_i8.PupilAuthorization>? authorizations,
     _i9.AfterSchoolCare? afterSchoolCare,
     required int credit,
@@ -121,7 +124,7 @@ abstract class PupilData
     List<_i21.SupportGoal>? supportGoals,
     List<_i22.MissedClass>? missedClasses,
     List<_i23.SchooldayEvent>? schooldayEvents,
-    required String swimmer,
+    String? swimmer,
     List<_i24.PupilList>? pupilLists,
   }) = _PupilDataImpl;
 
@@ -130,19 +133,23 @@ abstract class PupilData
       id: jsonSerialization['id'] as int?,
       active: jsonSerialization['active'] as bool,
       internalId: jsonSerialization['internalId'] as int,
-      preSchoolMedical: _i2.PreSchoolMedical.fromJson(
-          (jsonSerialization['preSchoolMedical'] as Map<String, dynamic>)),
+      preSchoolMedicalId: jsonSerialization['preSchoolMedicalId'] as int?,
+      preSchoolMedical: jsonSerialization['preSchoolMedical'] == null
+          ? null
+          : _i2.PreSchoolMedical.fromJson(
+              (jsonSerialization['preSchoolMedical'] as Map<String, dynamic>)),
       kindergarden: jsonSerialization['kindergarden'] as String?,
+      preSchoolTestId: jsonSerialization['preSchoolTestId'] as int?,
       preSchoolTest: jsonSerialization['preSchoolTest'] == null
           ? null
           : _i3.PreSchoolTest.fromJson(
               (jsonSerialization['preSchoolTest'] as Map<String, dynamic>)),
-      avatarId: jsonSerialization['avatarId'] as int,
+      avatarId: jsonSerialization['avatarId'] as int?,
       avatar: jsonSerialization['avatar'] == null
           ? null
           : _i4.HubDocument.fromJson(
               (jsonSerialization['avatar'] as Map<String, dynamic>)),
-      avatarAuthId: jsonSerialization['avatarAuthId'] as int,
+      avatarAuthId: jsonSerialization['avatarAuthId'] as int?,
       avatarAuth: jsonSerialization['avatarAuth'] == null
           ? null
           : _i4.HubDocument.fromJson(
@@ -150,7 +157,7 @@ abstract class PupilData
       publicMediaAuth: _i5.PublicMediaAuth.fromJson(
           (jsonSerialization['publicMediaAuth'] as Map<String, dynamic>)),
       publicMediaAuthDocumentId:
-          jsonSerialization['publicMediaAuthDocumentId'] as int,
+          jsonSerialization['publicMediaAuthDocumentId'] as int?,
       publicMediaAuthDocument:
           jsonSerialization['publicMediaAuthDocument'] == null
               ? null
@@ -164,11 +171,10 @@ abstract class PupilData
               (jsonSerialization['communicationPupil']
                   as Map<String, dynamic>)),
       specialInformation: jsonSerialization['specialInformation'] as String?,
-      pupilDataTutorInfo: jsonSerialization['pupilDataTutorInfo'] == null
+      tutorInfo: jsonSerialization['tutorInfo'] == null
           ? null
-          : _i7.PupilDataTutorInfo.fromJson(
-              (jsonSerialization['pupilDataTutorInfo']
-                  as Map<String, dynamic>)),
+          : _i7.TutorInfo.fromJson(
+              (jsonSerialization['tutorInfo'] as Map<String, dynamic>)),
       authorizations: (jsonSerialization['authorizations'] as List?)
           ?.map((e) =>
               _i8.PupilAuthorization.fromJson((e as Map<String, dynamic>)))
@@ -242,7 +248,7 @@ abstract class PupilData
           ?.map(
               (e) => _i23.SchooldayEvent.fromJson((e as Map<String, dynamic>)))
           .toList(),
-      swimmer: jsonSerialization['swimmer'] as String,
+      swimmer: jsonSerialization['swimmer'] as String?,
       pupilLists: (jsonSerialization['pupilLists'] as List?)
           ?.map((e) => _i24.PupilList.fromJson((e as Map<String, dynamic>)))
           .toList(),
@@ -260,23 +266,27 @@ abstract class PupilData
 
   int internalId;
 
-  _i2.PreSchoolMedical preSchoolMedical;
+  int? preSchoolMedicalId;
+
+  _i2.PreSchoolMedical? preSchoolMedical;
 
   String? kindergarden;
 
+  int? preSchoolTestId;
+
   _i3.PreSchoolTest? preSchoolTest;
 
-  int avatarId;
+  int? avatarId;
 
   _i4.HubDocument? avatar;
 
-  int avatarAuthId;
+  int? avatarAuthId;
 
   _i4.HubDocument? avatarAuth;
 
   _i5.PublicMediaAuth publicMediaAuth;
 
-  int publicMediaAuthDocumentId;
+  int? publicMediaAuthDocumentId;
 
   _i4.HubDocument? publicMediaAuthDocument;
 
@@ -286,7 +296,7 @@ abstract class PupilData
 
   String? specialInformation;
 
-  _i7.PupilDataTutorInfo? pupilDataTutorInfo;
+  _i7.TutorInfo? tutorInfo;
 
   List<_i8.PupilAuthorization>? authorizations;
 
@@ -328,7 +338,7 @@ abstract class PupilData
 
   List<_i23.SchooldayEvent>? schooldayEvents;
 
-  String swimmer;
+  String? swimmer;
 
   List<_i24.PupilList>? pupilLists;
 
@@ -342,8 +352,10 @@ abstract class PupilData
     int? id,
     bool? active,
     int? internalId,
+    int? preSchoolMedicalId,
     _i2.PreSchoolMedical? preSchoolMedical,
     String? kindergarden,
+    int? preSchoolTestId,
     _i3.PreSchoolTest? preSchoolTest,
     int? avatarId,
     _i4.HubDocument? avatar,
@@ -355,7 +367,7 @@ abstract class PupilData
     String? contact,
     _i6.CommunicationSkills? communicationPupil,
     String? specialInformation,
-    _i7.PupilDataTutorInfo? pupilDataTutorInfo,
+    _i7.TutorInfo? tutorInfo,
     List<_i8.PupilAuthorization>? authorizations,
     _i9.AfterSchoolCare? afterSchoolCare,
     int? credit,
@@ -385,23 +397,26 @@ abstract class PupilData
       if (id != null) 'id': id,
       'active': active,
       'internalId': internalId,
-      'preSchoolMedical': preSchoolMedical.toJson(),
+      if (preSchoolMedicalId != null) 'preSchoolMedicalId': preSchoolMedicalId,
+      if (preSchoolMedical != null)
+        'preSchoolMedical': preSchoolMedical?.toJson(),
       if (kindergarden != null) 'kindergarden': kindergarden,
+      if (preSchoolTestId != null) 'preSchoolTestId': preSchoolTestId,
       if (preSchoolTest != null) 'preSchoolTest': preSchoolTest?.toJson(),
-      'avatarId': avatarId,
+      if (avatarId != null) 'avatarId': avatarId,
       if (avatar != null) 'avatar': avatar?.toJson(),
-      'avatarAuthId': avatarAuthId,
+      if (avatarAuthId != null) 'avatarAuthId': avatarAuthId,
       if (avatarAuth != null) 'avatarAuth': avatarAuth?.toJson(),
       'publicMediaAuth': publicMediaAuth.toJson(),
-      'publicMediaAuthDocumentId': publicMediaAuthDocumentId,
+      if (publicMediaAuthDocumentId != null)
+        'publicMediaAuthDocumentId': publicMediaAuthDocumentId,
       if (publicMediaAuthDocument != null)
         'publicMediaAuthDocument': publicMediaAuthDocument?.toJson(),
       if (contact != null) 'contact': contact,
       if (communicationPupil != null)
         'communicationPupil': communicationPupil?.toJson(),
       if (specialInformation != null) 'specialInformation': specialInformation,
-      if (pupilDataTutorInfo != null)
-        'pupilDataTutorInfo': pupilDataTutorInfo?.toJson(),
+      if (tutorInfo != null) 'tutorInfo': tutorInfo?.toJson(),
       if (authorizations != null)
         'authorizations':
             authorizations?.toJson(valueToJson: (v) => v.toJson()),
@@ -452,7 +467,7 @@ abstract class PupilData
       if (schooldayEvents != null)
         'schooldayEvents':
             schooldayEvents?.toJson(valueToJson: (v) => v.toJson()),
-      'swimmer': swimmer,
+      if (swimmer != null) 'swimmer': swimmer,
       if (pupilLists != null)
         'pupilLists': pupilLists?.toJson(valueToJson: (v) => v.toJson()),
     };
@@ -464,24 +479,27 @@ abstract class PupilData
       if (id != null) 'id': id,
       'active': active,
       'internalId': internalId,
-      'preSchoolMedical': preSchoolMedical.toJsonForProtocol(),
+      if (preSchoolMedicalId != null) 'preSchoolMedicalId': preSchoolMedicalId,
+      if (preSchoolMedical != null)
+        'preSchoolMedical': preSchoolMedical?.toJsonForProtocol(),
       if (kindergarden != null) 'kindergarden': kindergarden,
+      if (preSchoolTestId != null) 'preSchoolTestId': preSchoolTestId,
       if (preSchoolTest != null)
         'preSchoolTest': preSchoolTest?.toJsonForProtocol(),
-      'avatarId': avatarId,
+      if (avatarId != null) 'avatarId': avatarId,
       if (avatar != null) 'avatar': avatar?.toJsonForProtocol(),
-      'avatarAuthId': avatarAuthId,
+      if (avatarAuthId != null) 'avatarAuthId': avatarAuthId,
       if (avatarAuth != null) 'avatarAuth': avatarAuth?.toJsonForProtocol(),
       'publicMediaAuth': publicMediaAuth.toJsonForProtocol(),
-      'publicMediaAuthDocumentId': publicMediaAuthDocumentId,
+      if (publicMediaAuthDocumentId != null)
+        'publicMediaAuthDocumentId': publicMediaAuthDocumentId,
       if (publicMediaAuthDocument != null)
         'publicMediaAuthDocument': publicMediaAuthDocument?.toJsonForProtocol(),
       if (contact != null) 'contact': contact,
       if (communicationPupil != null)
         'communicationPupil': communicationPupil?.toJsonForProtocol(),
       if (specialInformation != null) 'specialInformation': specialInformation,
-      if (pupilDataTutorInfo != null)
-        'pupilDataTutorInfo': pupilDataTutorInfo?.toJsonForProtocol(),
+      if (tutorInfo != null) 'tutorInfo': tutorInfo?.toJsonForProtocol(),
       if (authorizations != null)
         'authorizations':
             authorizations?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
@@ -535,7 +553,7 @@ abstract class PupilData
       if (schooldayEvents != null)
         'schooldayEvents':
             schooldayEvents?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
-      'swimmer': swimmer,
+      if (swimmer != null) 'swimmer': swimmer,
       if (pupilLists != null)
         'pupilLists':
             pupilLists?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
@@ -543,6 +561,8 @@ abstract class PupilData
   }
 
   static PupilDataInclude include({
+    _i2.PreSchoolMedicalInclude? preSchoolMedical,
+    _i3.PreSchoolTestInclude? preSchoolTest,
     _i4.HubDocumentInclude? avatar,
     _i4.HubDocumentInclude? avatarAuth,
     _i4.HubDocumentInclude? publicMediaAuthDocument,
@@ -564,6 +584,8 @@ abstract class PupilData
     _i24.PupilListIncludeList? pupilLists,
   }) {
     return PupilDataInclude._(
+      preSchoolMedical: preSchoolMedical,
+      preSchoolTest: preSchoolTest,
       avatar: avatar,
       avatarAuth: avatarAuth,
       publicMediaAuthDocument: publicMediaAuthDocument,
@@ -619,20 +641,22 @@ class _PupilDataImpl extends PupilData {
     int? id,
     required bool active,
     required int internalId,
-    required _i2.PreSchoolMedical preSchoolMedical,
+    int? preSchoolMedicalId,
+    _i2.PreSchoolMedical? preSchoolMedical,
     String? kindergarden,
+    int? preSchoolTestId,
     _i3.PreSchoolTest? preSchoolTest,
-    required int avatarId,
+    int? avatarId,
     _i4.HubDocument? avatar,
-    required int avatarAuthId,
+    int? avatarAuthId,
     _i4.HubDocument? avatarAuth,
     required _i5.PublicMediaAuth publicMediaAuth,
-    required int publicMediaAuthDocumentId,
+    int? publicMediaAuthDocumentId,
     _i4.HubDocument? publicMediaAuthDocument,
     String? contact,
     _i6.CommunicationSkills? communicationPupil,
     String? specialInformation,
-    _i7.PupilDataTutorInfo? pupilDataTutorInfo,
+    _i7.TutorInfo? tutorInfo,
     List<_i8.PupilAuthorization>? authorizations,
     _i9.AfterSchoolCare? afterSchoolCare,
     required int credit,
@@ -653,14 +677,16 @@ class _PupilDataImpl extends PupilData {
     List<_i21.SupportGoal>? supportGoals,
     List<_i22.MissedClass>? missedClasses,
     List<_i23.SchooldayEvent>? schooldayEvents,
-    required String swimmer,
+    String? swimmer,
     List<_i24.PupilList>? pupilLists,
   }) : super._(
           id: id,
           active: active,
           internalId: internalId,
+          preSchoolMedicalId: preSchoolMedicalId,
           preSchoolMedical: preSchoolMedical,
           kindergarden: kindergarden,
+          preSchoolTestId: preSchoolTestId,
           preSchoolTest: preSchoolTest,
           avatarId: avatarId,
           avatar: avatar,
@@ -672,7 +698,7 @@ class _PupilDataImpl extends PupilData {
           contact: contact,
           communicationPupil: communicationPupil,
           specialInformation: specialInformation,
-          pupilDataTutorInfo: pupilDataTutorInfo,
+          tutorInfo: tutorInfo,
           authorizations: authorizations,
           afterSchoolCare: afterSchoolCare,
           credit: credit,
@@ -705,20 +731,22 @@ class _PupilDataImpl extends PupilData {
     Object? id = _Undefined,
     bool? active,
     int? internalId,
-    _i2.PreSchoolMedical? preSchoolMedical,
+    Object? preSchoolMedicalId = _Undefined,
+    Object? preSchoolMedical = _Undefined,
     Object? kindergarden = _Undefined,
+    Object? preSchoolTestId = _Undefined,
     Object? preSchoolTest = _Undefined,
-    int? avatarId,
+    Object? avatarId = _Undefined,
     Object? avatar = _Undefined,
-    int? avatarAuthId,
+    Object? avatarAuthId = _Undefined,
     Object? avatarAuth = _Undefined,
     _i5.PublicMediaAuth? publicMediaAuth,
-    int? publicMediaAuthDocumentId,
+    Object? publicMediaAuthDocumentId = _Undefined,
     Object? publicMediaAuthDocument = _Undefined,
     Object? contact = _Undefined,
     Object? communicationPupil = _Undefined,
     Object? specialInformation = _Undefined,
-    Object? pupilDataTutorInfo = _Undefined,
+    Object? tutorInfo = _Undefined,
     Object? authorizations = _Undefined,
     Object? afterSchoolCare = _Undefined,
     int? credit,
@@ -739,27 +767,35 @@ class _PupilDataImpl extends PupilData {
     Object? supportGoals = _Undefined,
     Object? missedClasses = _Undefined,
     Object? schooldayEvents = _Undefined,
-    String? swimmer,
+    Object? swimmer = _Undefined,
     Object? pupilLists = _Undefined,
   }) {
     return PupilData(
       id: id is int? ? id : this.id,
       active: active ?? this.active,
       internalId: internalId ?? this.internalId,
-      preSchoolMedical: preSchoolMedical ?? this.preSchoolMedical.copyWith(),
+      preSchoolMedicalId: preSchoolMedicalId is int?
+          ? preSchoolMedicalId
+          : this.preSchoolMedicalId,
+      preSchoolMedical: preSchoolMedical is _i2.PreSchoolMedical?
+          ? preSchoolMedical
+          : this.preSchoolMedical?.copyWith(),
       kindergarden: kindergarden is String? ? kindergarden : this.kindergarden,
+      preSchoolTestId:
+          preSchoolTestId is int? ? preSchoolTestId : this.preSchoolTestId,
       preSchoolTest: preSchoolTest is _i3.PreSchoolTest?
           ? preSchoolTest
           : this.preSchoolTest?.copyWith(),
-      avatarId: avatarId ?? this.avatarId,
+      avatarId: avatarId is int? ? avatarId : this.avatarId,
       avatar: avatar is _i4.HubDocument? ? avatar : this.avatar?.copyWith(),
-      avatarAuthId: avatarAuthId ?? this.avatarAuthId,
+      avatarAuthId: avatarAuthId is int? ? avatarAuthId : this.avatarAuthId,
       avatarAuth: avatarAuth is _i4.HubDocument?
           ? avatarAuth
           : this.avatarAuth?.copyWith(),
       publicMediaAuth: publicMediaAuth ?? this.publicMediaAuth.copyWith(),
-      publicMediaAuthDocumentId:
-          publicMediaAuthDocumentId ?? this.publicMediaAuthDocumentId,
+      publicMediaAuthDocumentId: publicMediaAuthDocumentId is int?
+          ? publicMediaAuthDocumentId
+          : this.publicMediaAuthDocumentId,
       publicMediaAuthDocument: publicMediaAuthDocument is _i4.HubDocument?
           ? publicMediaAuthDocument
           : this.publicMediaAuthDocument?.copyWith(),
@@ -770,9 +806,8 @@ class _PupilDataImpl extends PupilData {
       specialInformation: specialInformation is String?
           ? specialInformation
           : this.specialInformation,
-      pupilDataTutorInfo: pupilDataTutorInfo is _i7.PupilDataTutorInfo?
-          ? pupilDataTutorInfo
-          : this.pupilDataTutorInfo?.copyWith(),
+      tutorInfo:
+          tutorInfo is _i7.TutorInfo? ? tutorInfo : this.tutorInfo?.copyWith(),
       authorizations: authorizations is List<_i8.PupilAuthorization>?
           ? authorizations
           : this.authorizations?.map((e0) => e0.copyWith()).toList(),
@@ -832,7 +867,7 @@ class _PupilDataImpl extends PupilData {
       schooldayEvents: schooldayEvents is List<_i23.SchooldayEvent>?
           ? schooldayEvents
           : this.schooldayEvents?.map((e0) => e0.copyWith()).toList(),
-      swimmer: swimmer ?? this.swimmer,
+      swimmer: swimmer is String? ? swimmer : this.swimmer,
       pupilLists: pupilLists is List<_i24.PupilList>?
           ? pupilLists
           : this.pupilLists?.map((e0) => e0.copyWith()).toList(),
@@ -850,16 +885,16 @@ class PupilDataTable extends _i1.Table<int> {
       'internalId',
       this,
     );
-    preSchoolMedical = _i1.ColumnSerializable(
-      'preSchoolMedical',
+    preSchoolMedicalId = _i1.ColumnInt(
+      'preSchoolMedicalId',
       this,
     );
     kindergarden = _i1.ColumnString(
       'kindergarden',
       this,
     );
-    preSchoolTest = _i1.ColumnSerializable(
-      'preSchoolTest',
+    preSchoolTestId = _i1.ColumnInt(
+      'preSchoolTestId',
       this,
     );
     avatarId = _i1.ColumnInt(
@@ -890,8 +925,8 @@ class PupilDataTable extends _i1.Table<int> {
       'specialInformation',
       this,
     );
-    pupilDataTutorInfo = _i1.ColumnSerializable(
-      'pupilDataTutorInfo',
+    tutorInfo = _i1.ColumnSerializable(
+      'tutorInfo',
       this,
     );
     afterSchoolCare = _i1.ColumnSerializable(
@@ -924,11 +959,15 @@ class PupilDataTable extends _i1.Table<int> {
 
   late final _i1.ColumnInt internalId;
 
-  late final _i1.ColumnSerializable preSchoolMedical;
+  late final _i1.ColumnInt preSchoolMedicalId;
+
+  _i2.PreSchoolMedicalTable? _preSchoolMedical;
 
   late final _i1.ColumnString kindergarden;
 
-  late final _i1.ColumnSerializable preSchoolTest;
+  late final _i1.ColumnInt preSchoolTestId;
+
+  _i3.PreSchoolTestTable? _preSchoolTest;
 
   late final _i1.ColumnInt avatarId;
 
@@ -950,7 +989,7 @@ class PupilDataTable extends _i1.Table<int> {
 
   late final _i1.ColumnString specialInformation;
 
-  late final _i1.ColumnSerializable pupilDataTutorInfo;
+  late final _i1.ColumnSerializable tutorInfo;
 
   _i8.PupilAuthorizationTable? ___authorizations;
 
@@ -1028,6 +1067,32 @@ class PupilDataTable extends _i1.Table<int> {
   _i24.PupilListTable? ___pupilLists;
 
   _i1.ManyRelation<_i24.PupilListTable>? _pupilLists;
+
+  _i2.PreSchoolMedicalTable get preSchoolMedical {
+    if (_preSchoolMedical != null) return _preSchoolMedical!;
+    _preSchoolMedical = _i1.createRelationTable(
+      relationFieldName: 'preSchoolMedical',
+      field: PupilData.t.preSchoolMedicalId,
+      foreignField: _i2.PreSchoolMedical.t.id,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i2.PreSchoolMedicalTable(tableRelation: foreignTableRelation),
+    );
+    return _preSchoolMedical!;
+  }
+
+  _i3.PreSchoolTestTable get preSchoolTest {
+    if (_preSchoolTest != null) return _preSchoolTest!;
+    _preSchoolTest = _i1.createRelationTable(
+      relationFieldName: 'preSchoolTest',
+      field: PupilData.t.preSchoolTestId,
+      foreignField: _i3.PreSchoolTest.t.id,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i3.PreSchoolTestTable(tableRelation: foreignTableRelation),
+    );
+    return _preSchoolTest!;
+  }
 
   _i4.HubDocumentTable get avatar {
     if (_avatar != null) return _avatar!;
@@ -1579,9 +1644,9 @@ class PupilDataTable extends _i1.Table<int> {
         id,
         active,
         internalId,
-        preSchoolMedical,
+        preSchoolMedicalId,
         kindergarden,
-        preSchoolTest,
+        preSchoolTestId,
         avatarId,
         avatarAuthId,
         publicMediaAuth,
@@ -1589,7 +1654,7 @@ class PupilDataTable extends _i1.Table<int> {
         contact,
         communicationPupil,
         specialInformation,
-        pupilDataTutorInfo,
+        tutorInfo,
         afterSchoolCare,
         credit,
         creditEarned,
@@ -1600,6 +1665,12 @@ class PupilDataTable extends _i1.Table<int> {
 
   @override
   _i1.Table? getRelationTable(String relationField) {
+    if (relationField == 'preSchoolMedical') {
+      return preSchoolMedical;
+    }
+    if (relationField == 'preSchoolTest') {
+      return preSchoolTest;
+    }
     if (relationField == 'avatar') {
       return avatar;
     }
@@ -1663,6 +1734,8 @@ class PupilDataTable extends _i1.Table<int> {
 
 class PupilDataInclude extends _i1.IncludeObject {
   PupilDataInclude._({
+    _i2.PreSchoolMedicalInclude? preSchoolMedical,
+    _i3.PreSchoolTestInclude? preSchoolTest,
     _i4.HubDocumentInclude? avatar,
     _i4.HubDocumentInclude? avatarAuth,
     _i4.HubDocumentInclude? publicMediaAuthDocument,
@@ -1683,6 +1756,8 @@ class PupilDataInclude extends _i1.IncludeObject {
     _i23.SchooldayEventIncludeList? schooldayEvents,
     _i24.PupilListIncludeList? pupilLists,
   }) {
+    _preSchoolMedical = preSchoolMedical;
+    _preSchoolTest = preSchoolTest;
     _avatar = avatar;
     _avatarAuth = avatarAuth;
     _publicMediaAuthDocument = publicMediaAuthDocument;
@@ -1703,6 +1778,10 @@ class PupilDataInclude extends _i1.IncludeObject {
     _schooldayEvents = schooldayEvents;
     _pupilLists = pupilLists;
   }
+
+  _i2.PreSchoolMedicalInclude? _preSchoolMedical;
+
+  _i3.PreSchoolTestInclude? _preSchoolTest;
 
   _i4.HubDocumentInclude? _avatar;
 
@@ -1744,6 +1823,8 @@ class PupilDataInclude extends _i1.IncludeObject {
 
   @override
   Map<String, _i1.Include?> get includes => {
+        'preSchoolMedical': _preSchoolMedical,
+        'preSchoolTest': _preSchoolTest,
         'avatar': _avatar,
         'avatarAuth': _avatarAuth,
         'publicMediaAuthDocument': _publicMediaAuthDocument,
@@ -2427,6 +2508,53 @@ class PupilDataAttachRepository {
 class PupilDataAttachRowRepository {
   const PupilDataAttachRowRepository._();
 
+  /// Creates a relation between the given [PupilData] and [PreSchoolMedical]
+  /// by setting the [PupilData]'s foreign key `preSchoolMedicalId` to refer to the [PreSchoolMedical].
+  Future<void> preSchoolMedical(
+    _i1.Session session,
+    PupilData pupilData,
+    _i2.PreSchoolMedical preSchoolMedical, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupilData.id == null) {
+      throw ArgumentError.notNull('pupilData.id');
+    }
+    if (preSchoolMedical.id == null) {
+      throw ArgumentError.notNull('preSchoolMedical.id');
+    }
+
+    var $pupilData =
+        pupilData.copyWith(preSchoolMedicalId: preSchoolMedical.id);
+    await session.db.updateRow<PupilData>(
+      $pupilData,
+      columns: [PupilData.t.preSchoolMedicalId],
+      transaction: transaction,
+    );
+  }
+
+  /// Creates a relation between the given [PupilData] and [PreSchoolTest]
+  /// by setting the [PupilData]'s foreign key `preSchoolTestId` to refer to the [PreSchoolTest].
+  Future<void> preSchoolTest(
+    _i1.Session session,
+    PupilData pupilData,
+    _i3.PreSchoolTest preSchoolTest, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupilData.id == null) {
+      throw ArgumentError.notNull('pupilData.id');
+    }
+    if (preSchoolTest.id == null) {
+      throw ArgumentError.notNull('preSchoolTest.id');
+    }
+
+    var $pupilData = pupilData.copyWith(preSchoolTestId: preSchoolTest.id);
+    await session.db.updateRow<PupilData>(
+      $pupilData,
+      columns: [PupilData.t.preSchoolTestId],
+      transaction: transaction,
+    );
+  }
+
   /// Creates a relation between the given [PupilData] and [HubDocument]
   /// by setting the [PupilData]'s foreign key `avatarId` to refer to the [HubDocument].
   Future<void> avatar(
@@ -3066,6 +3194,116 @@ class PupilDataDetachRepository {
 
 class PupilDataDetachRowRepository {
   const PupilDataDetachRowRepository._();
+
+  /// Detaches the relation between this [PupilData] and the [PreSchoolMedical] set in `preSchoolMedical`
+  /// by setting the [PupilData]'s foreign key `preSchoolMedicalId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> preSchoolMedical(
+    _i1.Session session,
+    PupilData pupildata, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupildata.id == null) {
+      throw ArgumentError.notNull('pupildata.id');
+    }
+
+    var $pupildata = pupildata.copyWith(preSchoolMedicalId: null);
+    await session.db.updateRow<PupilData>(
+      $pupildata,
+      columns: [PupilData.t.preSchoolMedicalId],
+      transaction: transaction,
+    );
+  }
+
+  /// Detaches the relation between this [PupilData] and the [PreSchoolTest] set in `preSchoolTest`
+  /// by setting the [PupilData]'s foreign key `preSchoolTestId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> preSchoolTest(
+    _i1.Session session,
+    PupilData pupildata, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupildata.id == null) {
+      throw ArgumentError.notNull('pupildata.id');
+    }
+
+    var $pupildata = pupildata.copyWith(preSchoolTestId: null);
+    await session.db.updateRow<PupilData>(
+      $pupildata,
+      columns: [PupilData.t.preSchoolTestId],
+      transaction: transaction,
+    );
+  }
+
+  /// Detaches the relation between this [PupilData] and the [HubDocument] set in `avatar`
+  /// by setting the [PupilData]'s foreign key `avatarId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> avatar(
+    _i1.Session session,
+    PupilData pupildata, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupildata.id == null) {
+      throw ArgumentError.notNull('pupildata.id');
+    }
+
+    var $pupildata = pupildata.copyWith(avatarId: null);
+    await session.db.updateRow<PupilData>(
+      $pupildata,
+      columns: [PupilData.t.avatarId],
+      transaction: transaction,
+    );
+  }
+
+  /// Detaches the relation between this [PupilData] and the [HubDocument] set in `avatarAuth`
+  /// by setting the [PupilData]'s foreign key `avatarAuthId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> avatarAuth(
+    _i1.Session session,
+    PupilData pupildata, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupildata.id == null) {
+      throw ArgumentError.notNull('pupildata.id');
+    }
+
+    var $pupildata = pupildata.copyWith(avatarAuthId: null);
+    await session.db.updateRow<PupilData>(
+      $pupildata,
+      columns: [PupilData.t.avatarAuthId],
+      transaction: transaction,
+    );
+  }
+
+  /// Detaches the relation between this [PupilData] and the [HubDocument] set in `publicMediaAuthDocument`
+  /// by setting the [PupilData]'s foreign key `publicMediaAuthDocumentId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> publicMediaAuthDocument(
+    _i1.Session session,
+    PupilData pupildata, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupildata.id == null) {
+      throw ArgumentError.notNull('pupildata.id');
+    }
+
+    var $pupildata = pupildata.copyWith(publicMediaAuthDocumentId: null);
+    await session.db.updateRow<PupilData>(
+      $pupildata,
+      columns: [PupilData.t.publicMediaAuthDocumentId],
+      transaction: transaction,
+    );
+  }
 
   /// Detaches the relation between this [PupilData] and the given [CreditTransaction]
   /// by setting the [CreditTransaction]'s foreign key `_pupilDataCredittransactionsPupilDataId` to `null`.

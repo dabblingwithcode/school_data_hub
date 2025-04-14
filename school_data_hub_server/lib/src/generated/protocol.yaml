@@ -5,6 +5,7 @@ admin:
   - demoteUserScope:
   - getAllUsers:
   - getUserById:
+  - updateBackendPupilDataState:
 auth:
   - login:
   - verifyPassword:
@@ -17,6 +18,9 @@ competence:
   - deleteCompetence:
 example:
   - hello:
+files:
+  - getUploadDescription:
+  - verifyUpload:
 missedClass:
   - createMissedClass:
   - getAllMissedClasses:
@@ -24,9 +28,20 @@ missedClass:
   - updateMissedClass:
   - deleteMissedClass:
 pupil:
-  - getPupils:
+  - fetchPupilsAsStream:
+  - fetchPupils:
+  - fetchPupilsById:
   - createPupil:
-  - updateParentInfo:
+  - updateSiblingsTutorInfo:
+  - updatePupilProperty:
+  - updatePupilAvatar:
+  - updatePupilAvatarAuth:
+  - updatePupilWithPublicMediaAuth:
+  - deleteAvatar:
+  - deleteAvatarAuth:
+  - resetPublicMediaAuth:
+  - updateSupportLevel:
+  - deleteSupportLevelHistoryItem:
 schooldayAdmin:
   - createSchoolSemester:
   - getAllSchoolSemesters:

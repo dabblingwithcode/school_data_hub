@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:collection/collection.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
+import 'package:school_data_hub_server/src/utils/generate_pupil_from_admin_console_data.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/module.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
@@ -124,5 +128,69 @@ class AdminEndpoint extends Endpoint {
       where: (t) => t.userInfoId.equals(userId),
     );
     return user;
+  }
+
+  Future<Set<PupilData>> updateBackendPupilDataState(
+      Session session, File file) async {
+    // check the extension of the file
+    if (file.path.split('.').last != 'txt') {
+      throw Exception('File is not a txt file');
+    }
+    // get all active pupils from the database and create a list
+    final activePupils =
+        await PupilData.db.find(session, where: (t) => t.active.equals(true));
+
+    // we monitor the pupils that we haven't processed yet
+    final List<PupilData> unprocessedPupilsList = activePupils.toList();
+
+    for (final line in await file.readAsLines()) {
+      // Check if the pupil is already in the database
+      final PupilData? existingPupil = unprocessedPupilsList.firstWhereOrNull(
+        (pupil) => pupil.internalId == int.parse(line.split(',')[0]),
+      );
+
+      if (existingPupil != null) {
+        // If the pupil exists, we process it updating just the after care status
+        // This is the second string of the line
+        if (line.split(',')[1] == 'OFFGANZ' || line.split(',')[1] == 'true') {
+          // we just check if the after achool care is set
+          // if it is already set we leave it alone
+          // if not, we set the after school care as an empty object
+          // the user will have to fill it later
+          if (existingPupil.afterSchoolCare == null) {
+            existingPupil.afterSchoolCare = AfterSchoolCare();
+
+            await session.db.updateRow(existingPupil);
+          } else {
+            // the after school care is already set, we leave it alone
+          }
+          // the pupil is processed
+          // we remove it from the unprocessed list
+          unprocessedPupilsList.remove(existingPupil);
+        } else {
+          // there is no entry for after School care
+          // if the existing pupil has an after school care entry, we remove it
+          if (existingPupil.afterSchoolCare != null) {
+            existingPupil.afterSchoolCare = null;
+            await session.db.updateRow(existingPupil);
+          }
+        }
+        // we have processed the pupil, let's remove it from the unprocessed list
+        unprocessedPupilsList.remove(existingPupil);
+      } else {
+        // If the pupil doesn't exist, we create a new one
+        final pupil = generatePupilfromExternalAdminConsoleData(line);
+        await session.db.insertRow(pupil);
+      }
+      // if there are unprocessed pupils, they are not active in the school data system
+      // we set them to inactive
+      for (final pupil in unprocessedPupilsList) {
+        pupil.active = false;
+        await session.db.updateRow(pupil);
+      }
+    }
+    // we return the updated set of pupils that are active in the school data system
+    final pupils = await PupilData.db.find(session);
+    return pupils.toSet();
   }
 }

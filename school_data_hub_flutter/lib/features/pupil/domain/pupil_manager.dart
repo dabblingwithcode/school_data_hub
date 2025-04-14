@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/features/pupil/data/pupil_data_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter_impl.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -35,12 +35,12 @@ class PupilManager extends ChangeNotifier {
     return;
   }
 
-  PupilProxy? getPupilById(int id) {
-    if (!_pupils.containsKey(id)) {
-      _log.severe('Pupil $id not found', StackTrace.current);
+  PupilProxy? getPupilByInternalId(int internalId) {
+    if (!_pupils.containsKey(internalId)) {
+      _log.severe('Pupil $internalId not found', StackTrace.current);
       return null;
     }
-    return _pupils[id];
+    return _pupils[internalId];
   }
 
   List<PupilProxy> pupilsFromPupilIds(List<int> pupilIds) {
@@ -70,8 +70,9 @@ class PupilManager extends ChangeNotifier {
 
     Map<int, PupilProxy> allPupils = Map<int, PupilProxy>.of(_pupils);
 
+    // Filter by family value of the pupil
     allPupils.removeWhere((key, value) => value.family != pupil.family);
-
+    // Remove the pupil itself from the list of siblings
     allPupils.remove(pupil.internalId);
     final pupilSiblings = allPupils.values.toList();
     return pupilSiblings;
@@ -108,29 +109,6 @@ class PupilManager extends ChangeNotifier {
       return;
     }
     await fetchPupilsByInternalId(pupilsToFetch);
-  }
-
-  Future<void> cleanPupilsAvatarIds() async {
-    final pupilsToFetch = _pupilIdentityManager.availablePupilIds;
-    if (pupilsToFetch.isEmpty) {
-      return;
-    }
-    for (int pupilId in pupilsToFetch) {
-      final PupilProxy? pupil = getPupilById(pupilId);
-
-      if (pupil != null) {
-        if (pupil.avatarId != null) {
-          final cleanedAvatarId = pupil.avatarId!
-              .replaceFirst('./media_upload/avtr/', '')
-              .replaceFirst('.jpg', '');
-          final PupilData pupilData =
-              await pupilDataApiService.updatePupilProperty(
-                  id: pupilId, property: 'avatar_id', value: cleanedAvatarId);
-          pupil.updatePupil(pupilData);
-          _pupils[pupilId]!.updatePupil(pupilData);
-        }
-      }
-    }
   }
 
   Future<void> init() async {
@@ -269,22 +247,12 @@ class PupilManager extends ChangeNotifier {
 
     final encryptedFile = await customEncrypter.encryptFile(imageFile);
 
-    // Now we prepare the form data for the request.
-
-    String fileName = encryptedFile.path.split('/').last;
-    var formData = FormData.fromMap({
-      'file': await MultipartFile.fromFile(
-        encryptedFile.path,
-        filename: fileName,
-      ),
-    });
-
     // send the Api request
 
     final PupilData pupilUpdate =
         await pupilDataApiService.updatePupilWithAvatar(
-      id: pupilProxy.internalId,
-      formData: formData,
+      pupilId: pupilProxy.internalId,
+      file: encryptedFile,
     );
 
     // update the pupil in the repository
@@ -293,176 +261,176 @@ class PupilManager extends ChangeNotifier {
 
     // Delete the outdated encrypted file.
 
-    final cacheKey = pupilProxy.avatarId;
+    final cacheKey = pupilProxy.avatar!.documentId;
 
     _cacheManager.removeFile(cacheKey.toString());
   }
 
-  Future<void> postAvatarAuthImage(
-    File imageFile,
-    PupilProxy pupilProxy,
-  ) async {
-    // first we encrypt the file
+  // Future<void> postAvatarAuthImage(
+  //   File imageFile,
+  //   PupilProxy pupilProxy,
+  // ) async {
+  //   // first we encrypt the file
 
-    final encryptedFile = await customEncrypter.encryptFile(imageFile);
+  //   final encryptedFile = await customEncrypter.encryptFile(imageFile);
 
-    // Now we prepare the form data for the request.
+  //   // Now we prepare the form data for the request.
 
-    String fileName = encryptedFile.path.split('/').last;
-    var formData = FormData.fromMap({
-      'file': await MultipartFile.fromFile(
-        encryptedFile.path,
-        filename: fileName,
-      ),
-    });
+  //   String fileName = encryptedFile.path.split('/').last;
+  //   var formData = FormData.fromMap({
+  //     'file': await MultipartFile.fromFile(
+  //       encryptedFile.path,
+  //       filename: fileName,
+  //     ),
+  //   });
 
-    // send the Api request
+  //   // send the Api request
 
-    final PupilData pupilUpdate =
-        await pupilDataApiService.updatePupilWithAvatarAuth(
-      id: pupilProxy.internalId,
-      formData: formData,
-    );
+  //   final PupilData pupilUpdate =
+  //       await pupilDataApiService.updatePupilWithAvatarAuth(
+  //     id: pupilProxy.internalId,
+  //     formData: formData,
+  //   );
 
-    // update the pupil in the repository
-    updatePupilProxyWithPupilData(pupilUpdate);
-    //  pupilProxy.updatePupil(pupilUpdate);
+  //   // update the pupil in the repository
+  //   updatePupilProxyWithPupilData(pupilUpdate);
+  //   //  pupilProxy.updatePupil(pupilUpdate);
 
-    // Delete the outdated encrypted file.
+  //   // Delete the outdated encrypted file.
 
-    final cacheKey = pupilProxy.avatarId;
+  //   final cacheKey = pupilProxy.avatarId;
 
-    _cacheManager.removeFile(cacheKey.toString());
-  }
+  //   _cacheManager.removeFile(cacheKey.toString());
+  // }
 
-  Future<void> postPublicMediaAuthImage(
-    File imageFile,
-    PupilProxy pupilProxy,
-  ) async {
-    // first we encrypt the file
+//   Future<void> postPublicMediaAuthImage(
+//     File imageFile,
+//     PupilProxy pupilProxy,
+//   ) async {
+//     // first we encrypt the file
 
-    final encryptedFile = await customEncrypter.encryptFile(imageFile);
+//     final encryptedFile = await customEncrypter.encryptFile(imageFile);
 
-    // Now we prepare the form data for the request.
+//     // Now we prepare the form data for the request.
 
-    String fileName = encryptedFile.path.split('/').last;
-    var formData = FormData.fromMap({
-      'file': await MultipartFile.fromFile(
-        encryptedFile.path,
-        filename: fileName,
-      ),
-    });
+//     String fileName = encryptedFile.path.split('/').last;
+//     var formData = FormData.fromMap({
+//       'file': await MultipartFile.fromFile(
+//         encryptedFile.path,
+//         filename: fileName,
+//       ),
+//     });
 
-    // send the Api request
+//     // send the Api request
 
-    final PupilData pupilUpdate =
-        await pupilDataApiService.updatePupilWithPublicMediaAuth(
-      id: pupilProxy.internalId,
-      formData: formData,
-    );
+//     final PupilData pupilUpdate =
+//         await pupilDataApiService.updatePupilWithPublicMediaAuth(
+//       id: pupilProxy.internalId,
+//       formData: formData,
+//     );
 
-    // update the pupil in the repository
-    updatePupilProxyWithPupilData(pupilUpdate);
-    //  pupilProxy.updatePupil(pupilUpdate);
+//     // update the pupil in the repository
+//     updatePupilProxyWithPupilData(pupilUpdate);
+//     //  pupilProxy.updatePupil(pupilUpdate);
 
-    // Delete the outdated encrypted file.
+//     // Delete the outdated encrypted file.
 
-    final cacheKey = pupilProxy.avatarId;
+//     final cacheKey = pupilProxy.avatar!.documentId;
 
-    _cacheManager.removeFile(cacheKey.toString());
-  }
+//     _cacheManager.removeFile(cacheKey.toString());
+//   }
 
-  Future<void> deleteAvatarImage(int pupilId, String cacheKey) async {
-    // send the Api request
-    await pupilDataApiService.deletePupilAvatar(
-      internalId: pupilId,
-    );
+//   Future<void> deleteAvatarImage(int pupilId, String cacheKey) async {
+//     // send the Api request
+//     await pupilDataApiService.deletePupilAvatar(
+//       internalId: pupilId,
+//     );
 
-    // Delete the outdated encrypted file in the cache.
+//     // Delete the outdated encrypted file in the cache.
 
-    await _cacheManager.removeFile(cacheKey);
+//     await _cacheManager.removeFile(cacheKey);
 
-    // and update the repository
-    _pupils[pupilId]!.clearAvatar();
-  }
+//     // and update the repository
+//     _pupils[pupilId]!.clearAvatar();
+//   }
 
-  Future<void> deleteAvatarAuthImage(int pupilId, String cacheKey) async {
-    // send the Api request
-    await pupilDataApiService.deletePupilAvatarAuth(
-      internalId: pupilId,
-    );
+//   Future<void> deleteAvatarAuthImage(int pupilId, String cacheKey) async {
+//     // send the Api request
+//     await pupilDataApiService.deletePupilAvatarAuth(
+//       internalId: pupilId,
+//     );
 
-    // Delete the outdated encrypted file in the cache.
+//     // Delete the outdated encrypted file in the cache.
 
-    await _cacheManager.removeFile(cacheKey);
-final ScheduledLesson scheduledLesson = ScheduledLesson(recordtest: (testString: "l", testint: 2))
-    // and update the repository
-    _pupils[pupilId]!.deleteAvatarAuthId();
-  }
+//     await _cacheManager.removeFile(cacheKey);
+// final ScheduledLesson scheduledLesson = ScheduledLesson(recordtest: (testString: "l", testint: 2))
+//     // and update the repository
+//     _pupils[pupilId]!.deleteAvatarAuthId();
+//   }
 
-  Future<void> deletePublicMediaAuthImage(int pupilId, String cacheKey) async {
-    // send the Api request
-    await pupilDataApiService.deletePupilPublicMediaAuthImage(
-      internalId: pupilId,
-    );
+//   Future<void> deletePublicMediaAuthImage(int pupilId, String cacheKey) async {
+//     // send the Api request
+//     await pupilDataApiService.deletePupilPublicMediaAuthImage(
+//       internalId: pupilId,
+//     );
 
-    // Delete the outdated encrypted file in the cache.
+//     // Delete the outdated encrypted file in the cache.
 
-    await _cacheManager.removeFile(cacheKey);
+//     await _cacheManager.removeFile(cacheKey);
 
-    // and update the repository
-    _pupils[pupilId]!.deletePublicMediaAuthId();
-  }
+//     // and update the repository
+//     _pupils[pupilId]!.deletePublicMediaAuthId();
+//   }
 
-  Future<void> patchOnePupilProperty(
-      {required int pupilId,
-      required String jsonKey,
-      required dynamic value}) async {
-    // if the value is relevant to siblings, check for siblings first and handle them if true
+  // Future<void> patchOnePupilProperty(
+  //     {required int pupilId,
+  //     required String jsonKey,
+  //     required dynamic value}) async {
+  //   // if the value is relevant to siblings, check for siblings first and handle them if true
 
-    if (jsonKey == 'communication_tutor1' ||
-        jsonKey == 'communication_tutor2' ||
-        jsonKey == 'parents_contact' ||
-        jsonKey == 'emergency_care') {
-      final PupilProxy pupil = getPupilById(pupilId)!;
-      if (pupil.family != null) {
-        // we have a sibling
-        // create list with ids of all pupils with the same family value
+  //   if (jsonKey == 'communication_tutor1' ||
+  //       jsonKey == 'communication_tutor2' ||
+  //       jsonKey == 'parents_contact' ||
+  //       jsonKey == 'emergency_care') {
+  //     final PupilProxy pupil = getPupilByInternalId(pupilId)!;
+  //     if (pupil.family != null) {
+  //       // we have a sibling
+  //       // create list with ids of all pupils with the same family value
 
-        final List<int> pupilIdsWithSameFamily = _pupils.values
-            .where((p) => p.family == pupil.family)
-            .map((p) => p.internalId)
-            .toList();
+  //       final List<int> pupilIdsWithSameFamily = _pupils.values
+  //           .where((p) => p.family == pupil.family)
+  //           .map((p) => p.internalId)
+  //           .toList();
 
-        // call the endpoint to update the siblings
+  //       // call the endpoint to update the siblings
 
-        final List<PupilData> siblingsUpdate =
-            await pupilDataApiService.updateSiblingsProperty(
-                siblingsPupilIds: pupilIdsWithSameFamily,
-                property: jsonKey,
-                value: value);
+  //       final List<PupilData> siblingsUpdate =
+  //           await pupilDataApiService.updateSiblingsProperty(
+  //               siblingsPupilIds: pupilIdsWithSameFamily,
+  //               property: jsonKey,
+  //               value: value);
 
-        // now update the siblings with the new data
+  //       // now update the siblings with the new data
 
-        for (PupilData sibling in siblingsUpdate) {
-          _pupils[sibling.internalId]!.updatePupil(sibling);
-        }
+  //       for (PupilData sibling in siblingsUpdate) {
+  //         _pupils[sibling.internalId]!.updatePupil(sibling);
+  //       }
 
-        _notificationService.showSnackBar(
-            NotificationType.success, 'Geschwister erfolgreich gepatcht!');
-      }
-    }
+  //       _notificationService.showSnackBar(
+  //           NotificationType.success, 'Geschwister erfolgreich gepatcht!');
+  //     }
+  //   }
 
-    // The pupil is no sibling. Make the api call for the single pupil
+  //   // The pupil is no sibling. Make the api call for the single pupil
 
-    final PupilData pupilUpdate = await pupilDataApiService.updatePupilProperty(
-        id: pupilId, property: jsonKey, value: value);
+  //   final PupilData pupilUpdate = await pupilDataApiService.updatePupilProperty(
+  //       id: pupilId, property: jsonKey, value: value);
 
-    // now update the pupil in the repository
+  //   // now update the pupil in the repository
 
-    _pupils[pupilId]!.updatePupil(pupilUpdate);
-    notifyListeners();
-  }
+  //   _pupils[pupilId]!.updatePupil(pupilUpdate);
+  //   notifyListeners();
+  // }
 
   Future<void> patchPupilWithNewSupportLevel(
       {required int pupilId,
@@ -470,9 +438,11 @@ final ScheduledLesson scheduledLesson = ScheduledLesson(recordtest: (testString:
       required DateTime createdAt,
       required String createdBy,
       required String comment}) async {
+    final pupilIdId = getPupilByInternalId(pupilId)!.id!;
+
     final PupilData updatedPupil = await pupilDataApiService.updateSupportLevel(
-      internalId: pupilId,
-      newSupportLevel: level,
+      pupilIdId: pupilIdId,
+      supportLevelValue: level,
       createdAt: createdAt,
       createdBy: createdBy,
       comment: comment,
@@ -486,7 +456,7 @@ final ScheduledLesson scheduledLesson = ScheduledLesson(recordtest: (testString:
     final PupilData updatedPupil =
         await pupilDataApiService.deleteSupportLevelHistoryItem(
       internalId: pupilId,
-      supportLevelId: supportLevelId,
+      supportLevelId: int.parse(supportLevelId),
     );
 
     _pupils[pupilId]!.updatePupil(updatedPupil);
@@ -497,56 +467,56 @@ final ScheduledLesson scheduledLesson = ScheduledLesson(recordtest: (testString:
     return PupilsFilterImplementation(this);
   }
 
-  Future<void> borrowBook(
-      {required int pupilId, required String bookId}) async {
-    final pupilBookApiService = PupilBookApiService();
-    final PupilData updatedPupil = await pupilBookApiService
-        .postNewPupilWorkbook(pupilId: pupilId, bookId: bookId);
+  // Future<void> borrowBook(
+  //     {required int pupilId, required String bookId}) async {
+  //   final pupilBookApiService = PupilBookApiService();
+  //   final PupilData updatedPupil = await pupilBookApiService
+  //       .postNewPupilWorkbook(pupilId: pupilId, bookId: bookId);
 
-    _pupils[pupilId]!.updatePupil(updatedPupil);
+  //   _pupils[pupilId]!.updatePupil(updatedPupil);
 
-    return;
-  }
+  //   return;
+  // }
 
-  Future<void> deletePupilBook({required String lendingId}) async {
-    final pupilBookRepository = PupilBookApiService();
-    final pupil = await pupilBookRepository.deletePupilBook(lendingId);
+  // Future<void> deletePupilBook({required String lendingId}) async {
+  //   final pupilBookRepository = PupilBookApiService();
+  //   final pupil = await pupilBookRepository.deletePupilBook(lendingId);
 
-    _pupils[pupil.internalId]!.updatePupil(pupil);
+  //   _pupils[pupil.internalId]!.updatePupil(pupil);
 
-    return;
-  }
+  //   return;
+  // }
 
-  Future<void> returnBook({required String lendingId}) async {
-    final returnedAt = DateTime.now();
-    final receivedBy = locator<SessionManager>().credentials.value.username;
-    final pupil = await PupilBookApiService().patchPupilBook(
-        returnedAt: returnedAt, receivedBy: receivedBy, lendingId: lendingId);
+  // Future<void> returnBook({required String lendingId}) async {
+  //   final returnedAt = DateTime.now();
+  //   final receivedBy = locator<SessionManager>().credentials.value.username;
+  //   final pupil = await PupilBookApiService().patchPupilBook(
+  //       returnedAt: returnedAt, receivedBy: receivedBy, lendingId: lendingId);
 
-    _pupils[pupil.internalId]!.updatePupil(pupil);
+  //   _pupils[pupil.internalId]!.updatePupil(pupil);
 
-    return;
-  }
+  //   return;
+  // }
 
-  Future<void> patchPupilBook(
-      {required String lendingId,
-      DateTime? lentAt,
-      String? lentBy,
-      String? comment,
-      int? rating,
-      DateTime? returnedAt,
-      String? receivedBy}) async {
-    final pupil = await PupilBookApiService().patchPupilBook(
-        lendingId: lendingId,
-        lentAt: lentAt,
-        lentBy: lentBy,
-        state: comment,
-        rating: rating,
-        returnedAt: returnedAt,
-        receivedBy: receivedBy);
+  // Future<void> patchPupilBook(
+  //     {required String lendingId,
+  //     DateTime? lentAt,
+  //     String? lentBy,
+  //     String? comment,
+  //     int? rating,
+  //     DateTime? returnedAt,
+  //     String? receivedBy}) async {
+  //   final pupil = await PupilBookApiService().patchPupilBook(
+  //       lendingId: lendingId,
+  //       lentAt: lentAt,
+  //       lentBy: lentBy,
+  //       state: comment,
+  //       rating: rating,
+  //       returnedAt: returnedAt,
+  //       receivedBy: receivedBy);
 
-    _pupils[pupil.internalId]!.updatePupil(pupil);
+  //   _pupils[pupil.internalId]!.updatePupil(pupil);
 
-    return;
-  }
+  //   return;
+  // }
 }

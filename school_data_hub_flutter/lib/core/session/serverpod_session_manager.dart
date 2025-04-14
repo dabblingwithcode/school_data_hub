@@ -56,7 +56,7 @@ class ServerpodSessionManager with ChangeNotifier {
 
   auth_client.UserInfo? _signedInUser;
 
-  StaffUser? _staffUser;
+  User? _staffUser;
 
   bool get isAdmin =>
       _signedInUser?.scopeNames.contains('serverpod.admin') ?? false;

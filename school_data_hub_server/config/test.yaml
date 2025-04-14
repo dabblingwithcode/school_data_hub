@@ -13,6 +13,7 @@ apiServer:
   publicHost: localhost
   publicPort: 0
   publicScheme: http
+  maxRequestSize: 10485760 # 10 MB in bytes
 
 # Configuration for the Insights test server.
 insightsServer:
