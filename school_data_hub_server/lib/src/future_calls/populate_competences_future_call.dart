@@ -30,7 +30,7 @@ class PopulateCompetencesFutureCall extends FutureCall {
       await endpoint.importCompetencesFromJsonFile(session, file);
 
       // TODO: remove this test data after testing
-
+      // TODO this should be unawaited, or not?
       final pupilsFile =
           File('../test_data/schuldaten_hub_fake_schild_export_2024-02-02.txt');
       final result = await callEndpointMethod(

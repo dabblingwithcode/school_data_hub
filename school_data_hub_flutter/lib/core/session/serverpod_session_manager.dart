@@ -16,6 +16,7 @@ import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('ServerpodSessionManager');
 final _envManager = di<EnvManager>();
+final _client = di<Client>();
 
 /// The [SessionManager] keeps track of and manages the signed-in state of the
 /// user. Use the [instance] method to get access to the singleton instance.
@@ -37,6 +38,9 @@ class ServerpodSessionManager with ChangeNotifier {
 
   final Storage _storage;
 
+  User? _user;
+  User? get user => _user;
+
   /// Creates a new session manager.
   ServerpodSessionManager({
     required this.caller,
@@ -56,8 +60,6 @@ class ServerpodSessionManager with ChangeNotifier {
 
   auth_client.UserInfo? _signedInUser;
 
-  User? _staffUser;
-
   bool get isAdmin =>
       _signedInUser?.scopeNames.contains('serverpod.admin') ?? false;
 
@@ -75,6 +77,8 @@ class ServerpodSessionManager with ChangeNotifier {
     _signedInUser = userInfo;
     var key = '$authenticationKeyId:$authenticationKey';
 
+    // We can start now the managers dependent on authentication
+    DiManager.registerManagersDependingOnSession();
     // Store in key manager.
     await keyManager.put(
       key,
@@ -156,10 +160,13 @@ class ServerpodSessionManager with ChangeNotifier {
       if (_signedInUser != null) {
         /// Don't forget to set the flag in [EnvManager] to false
         /// to get to the login screen.
-        _log.info('User was authenticated by the server');
-        _envManager.setUserAuthenticated(true);
-
-        unawaited(DiManager.registerManagersDependingOnSession());
+        _log.info(
+            'User was authenticated by the server.\n Registering managers depending on authentication...');
+        // We can start now the managers dependent on authentication
+        DiManager.registerManagersDependingOnSession();
+        _user = await _client.user.getCurrentUser();
+        notifyListeners();
+        _log.info('User fetched: ${_user?.toJson()}');
         return false;
       } else {
         _log.warning('User was not authenticated by the server');

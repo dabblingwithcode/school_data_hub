@@ -554,6 +554,24 @@ class Endpoints extends _i1.EndpointDispatch {
             params['path'],
           ),
         ),
+        'getImage': _i1.MethodConnector(
+          name: 'getImage',
+          params: {
+            'documentId': _i1.ParameterDescription(
+              name: 'documentId',
+              type: _i1.getType<String>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['files'] as _i6.FilesEndpoint).getImage(
+            session,
+            params['documentId'],
+          ),
+        ),
       },
     );
     connectors['missedClass'] = _i1.EndpointConnector(
@@ -1241,6 +1259,15 @@ class Endpoints extends _i1.EndpointDispatch {
       name: 'user',
       endpoint: endpoints['user']!,
       methodConnectors: {
+        'getCurrentUser': _i1.MethodConnector(
+          name: 'getCurrentUser',
+          params: {},
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['user'] as _i11.UserEndpoint).getCurrentUser(session),
+        ),
         'changePassword': _i1.MethodConnector(
           name: 'changePassword',
           params: {

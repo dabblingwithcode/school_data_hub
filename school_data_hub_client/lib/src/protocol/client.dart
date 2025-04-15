@@ -23,11 +23,11 @@ import 'package:school_data_hub_client/src/protocol/user/device_info.dart'
 import 'package:serverpod_auth_client/serverpod_auth_client.dart' as _i8;
 import 'package:school_data_hub_client/src/protocol/learning/competence.dart'
     as _i9;
+import 'dart:typed_data' as _i10;
 import 'package:school_data_hub_client/src/protocol/schoolday/missed_class.dart'
-    as _i10;
-import 'package:school_data_hub_client/src/protocol/pupil_data/dto/siblings_tutor_info_dto.dart'
     as _i11;
-import 'dart:typed_data' as _i12;
+import 'package:school_data_hub_client/src/protocol/pupil_data/dto/siblings_tutor_info_dto.dart'
+    as _i12;
 import 'package:school_data_hub_client/src/protocol/learning_support/support_level.dart'
     as _i13;
 import 'package:school_data_hub_client/src/protocol/schoolday/school_semester.dart'
@@ -271,6 +271,13 @@ class EndpointFiles extends _i1.EndpointRef {
           'path': path,
         },
       );
+
+  _i2.Future<_i10.ByteData?> getImage(String documentId) =>
+      caller.callServerEndpoint<_i10.ByteData?>(
+        'files',
+        'getImage',
+        {'documentId': documentId},
+      );
 }
 
 /// {@category Endpoint}
@@ -280,36 +287,36 @@ class EndpointMissedClass extends _i1.EndpointRef {
   @override
   String get name => 'missedClass';
 
-  _i2.Future<bool> createMissedClass(_i10.MissedClass missedClass) =>
+  _i2.Future<bool> createMissedClass(_i11.MissedClass missedClass) =>
       caller.callServerEndpoint<bool>(
         'missedClass',
         'createMissedClass',
         {'missedClass': missedClass},
       );
 
-  _i2.Future<List<_i10.MissedClass>> getAllMissedClasses() =>
-      caller.callServerEndpoint<List<_i10.MissedClass>>(
+  _i2.Future<List<_i11.MissedClass>> getAllMissedClasses() =>
+      caller.callServerEndpoint<List<_i11.MissedClass>>(
         'missedClass',
         'getAllMissedClasses',
         {},
       );
 
-  _i2.Future<_i10.MissedClass?> getMissedClassesOnDate(
+  _i2.Future<_i11.MissedClass?> getMissedClassesOnDate(
           DateTime schooldayDate) =>
-      caller.callServerEndpoint<_i10.MissedClass?>(
+      caller.callServerEndpoint<_i11.MissedClass?>(
         'missedClass',
         'getMissedClassesOnDate',
         {'schooldayDate': schooldayDate},
       );
 
-  _i2.Future<bool> updateMissedClass(_i10.MissedClass missedClass) =>
+  _i2.Future<bool> updateMissedClass(_i11.MissedClass missedClass) =>
       caller.callServerEndpoint<bool>(
         'missedClass',
         'updateMissedClass',
         {'missedClass': missedClass},
       );
 
-  _i2.Future<bool> deleteMissedClass(_i10.MissedClass missedClass) =>
+  _i2.Future<bool> deleteMissedClass(_i11.MissedClass missedClass) =>
       caller.callServerEndpoint<bool>(
         'missedClass',
         'deleteMissedClass',
@@ -355,7 +362,7 @@ class EndpointPupil extends _i1.EndpointRef {
       );
 
   _i2.Future<List<_i5.PupilData>> updateSiblingsTutorInfo(
-          _i11.SiblingsTutorInfo siblingsTutorInfo) =>
+          _i12.SiblingsTutorInfo siblingsTutorInfo) =>
       caller.callServerEndpoint<List<_i5.PupilData>>(
         'pupil',
         'updateSiblingsTutorInfo',
@@ -379,7 +386,7 @@ class EndpointPupil extends _i1.EndpointRef {
 
   _i2.Future<_i5.PupilData> updatePupilAvatar(
     int internalId,
-    _i12.ByteData avatarByteData,
+    _i10.ByteData avatarByteData,
   ) =>
       caller.callServerEndpoint<_i5.PupilData>(
         'pupil',
@@ -392,7 +399,7 @@ class EndpointPupil extends _i1.EndpointRef {
 
   _i2.Future<_i5.PupilData> updatePupilAvatarAuth(
     int internalId,
-    _i12.ByteData avatarAuthBytes,
+    _i10.ByteData avatarAuthBytes,
   ) =>
       caller.callServerEndpoint<_i5.PupilData>(
         'pupil',
@@ -405,7 +412,7 @@ class EndpointPupil extends _i1.EndpointRef {
 
   _i2.Future<_i5.PupilData> updatePupilWithPublicMediaAuth(
     int internalId,
-    _i12.ByteData publicMediaAuthFBytes,
+    _i10.ByteData publicMediaAuthFBytes,
   ) =>
       caller.callServerEndpoint<_i5.PupilData>(
         'pupil',
@@ -616,6 +623,13 @@ class EndpointUser extends _i1.EndpointRef {
 
   @override
   String get name => 'user';
+
+  _i2.Future<_i3.User?> getCurrentUser() =>
+      caller.callServerEndpoint<_i3.User?>(
+        'user',
+        'getCurrentUser',
+        {},
+      );
 
   _i2.Future<bool> changePassword(
     String oldPassword,

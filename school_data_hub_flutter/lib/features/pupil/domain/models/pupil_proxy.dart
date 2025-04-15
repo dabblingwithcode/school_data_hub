@@ -174,7 +174,7 @@ class PupilProxy with ChangeNotifier {
   HubDocument? get avatar => _pupilData.avatar;
   // String? get avatarId =>
   //     _avatarUpdated ? _avatarIdOverride : _pupilData.avatarId;
-  // bool get avatarAuth => _pupilData.avatarAuth;
+  HubDocument? get avatarAuth => _pupilData.avatarAuth;
   // String? get avatarAuthId => _pupilData.avatarAuthId;
   // PublicMediaAuth get publicMediaAuth => _pupilData.publicMediaAuth;
   // String? get publicMediaAuthId => _pupilData.publicMediaAuthId;
