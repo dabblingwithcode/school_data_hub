@@ -3,6 +3,7 @@ import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_carousel_with_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_speed_show.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/birthdays_page.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _pupilIdentityManager = di<PupilIdentityManager>();
@@ -44,11 +45,11 @@ class SettingsToolsSection extends AbstractSettingsSection {
               return;
             }
             if (context.mounted) {
-              // Navigator.of(context).push(MaterialPageRoute(
-              //   builder: (ctx) => BirthdaysView(
-              //     selectedDate: selectedDate,
-              //   ),
-              // ));
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (ctx) => BirthdaysView(
+                  selectedDate: selectedDate,
+                ),
+              ));
             }
           },
         ),
