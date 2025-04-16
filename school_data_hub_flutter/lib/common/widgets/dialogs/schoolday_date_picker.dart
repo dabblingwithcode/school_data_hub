@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
 import 'package:watch_it/watch_it.dart';
@@ -10,7 +11,7 @@ Future<DateTime?> selectSchooldayDate(
   List<DateTime> availableDates = _schooldayManager.availableDates.value;
 
   bool isSelectableSchoolday(DateTime day) {
-    final validDate = availableDates.contains(day);
+    final validDate = availableDates.any((date) => date.isSameDate(day));
     return validDate;
   }
 

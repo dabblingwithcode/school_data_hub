@@ -133,8 +133,9 @@ class AdminEndpoint extends Endpoint {
   Future<Set<PupilData>> updateBackendPupilDataState(
       Session session, File file) async {
     // check the extension of the file
-    if (file.path.split('.').last != 'txt') {
-      throw Exception('File is not a txt file');
+    final extension = file.path.split('.').last;
+    if (extension != 'txt' && extension != 'csv') {
+      throw Exception('File is not a compatible format!');
     }
     // get all active pupils from the database and create a list
     final activePupils =
@@ -142,7 +143,7 @@ class AdminEndpoint extends Endpoint {
 
     // we monitor the pupils that we haven't processed yet
     final List<PupilData> unprocessedPupilsList = activePupils.toList();
-
+    session.log('Unprocessed pupils: $unprocessedPupilsList');
     for (final line in await file.readAsLines()) {
       // Check if the pupil is already in the database
       final PupilData? existingPupil = unprocessedPupilsList.firstWhereOrNull(

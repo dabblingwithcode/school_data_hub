@@ -5,35 +5,45 @@ class MissedClassEndpoint extends Endpoint {
   @override
   bool get requireLogin => true;
 
-  Future<bool> createMissedClass(
+  Future<MissedClass> postMissedClass(
       Session session, MissedClass missedClass) async {
-    await session.db.insertRow(missedClass);
-    return true;
+    final createdMissedClass = await session.db.insertRow(missedClass);
+    return createdMissedClass;
   }
 
-  Future<List<MissedClass>> getAllMissedClasses(Session session) async {
-    final missedClasses = await session.db.find<MissedClass>();
-    return missedClasses;
+  Future<List<MissedClass>> postMissedClasses(
+      Session session, List<MissedClass> missedClasses) async {
+    final createdMissedClasses = await session.db.insert(missedClasses);
+    return createdMissedClasses;
   }
 
-  Future<MissedClass?> getMissedClassesOnDate(
-      Session session, DateTime schooldayDate) async {
-    final missedClass = await MissedClass.db.findFirstRow(
+  Future<List<MissedClass>> fetchAllMissedClasses(Session session) {
+    return MissedClass.db.find(session);
+  }
+
+  Future<List<MissedClass>> fetchMissedClassesOnASchoolday(
+      Session session, DateTime schoolday) {
+    return MissedClass.db.find(
       session,
-      where: (t) => t.schoolday.schoolday.equals(schooldayDate),
+      where: (t) => t.schoolday.schoolday.equals(schoolday),
     );
-    return missedClass;
-  }
-
-  Future<bool> updateMissedClass(
-      Session session, MissedClass missedClass) async {
-    await session.db.updateRow(missedClass);
-    return true;
   }
 
   Future<bool> deleteMissedClass(
-      Session session, MissedClass missedClass) async {
-    await session.db.deleteRow<MissedClass>(missedClass);
+      Session session, int internalId, DateTime schooldayDate) async {
+    var missedClassToDelete = await MissedClass.db.findFirstRow(
+      session,
+      where: (t) =>
+          t.pupil.internalId.equals(internalId) &
+          t.schoolday.schoolday.equals(schooldayDate),
+    );
+    await MissedClass.db.deleteRow(session, missedClassToDelete!);
     return true;
+  }
+
+  Future<MissedClass> updateMissedClass(
+      Session session, MissedClass missedClass) async {
+    final updatedMissedClass = await session.db.updateRow(missedClass);
+    return updatedMissedClass;
   }
 }

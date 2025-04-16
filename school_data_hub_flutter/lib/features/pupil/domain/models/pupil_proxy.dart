@@ -187,7 +187,7 @@ class PupilProxy with ChangeNotifier {
   // String? get parentsContact => _pupilData.parentsContact;
   int get credit => _pupilData.credit;
   int get creditEarned => _pupilData.creditEarned;
-  int? get id => _pupilData.id;
+  int get pupilId => _pupilData.id!;
   DateTime? get schoolyearHeldBackAt => _pupilData.schoolyearHeldBackAt;
   SupportLevel? get latestSupportLevel => _pupilData.latestSupportLevel;
   List<SupportLevel>? get supportLevelHistory => _pupilData.supportLevelHistory;

@@ -80,11 +80,11 @@ import 'package:school_data_hub_server/src/generated/user/staff_user.dart'
     as _i64;
 import 'package:school_data_hub_server/src/generated/pupil_data/pupil_data.dart'
     as _i65;
-import 'package:school_data_hub_server/src/generated/user/device_info.dart'
-    as _i66;
-import 'package:school_data_hub_server/src/generated/learning/competence.dart'
-    as _i67;
 import 'package:school_data_hub_server/src/generated/schoolday/missed_class.dart'
+    as _i66;
+import 'package:school_data_hub_server/src/generated/user/device_info.dart'
+    as _i67;
+import 'package:school_data_hub_server/src/generated/learning/competence.dart'
     as _i68;
 import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
     as _i69;
@@ -1656,9 +1656,9 @@ class Protocol extends _i1.SerializationManagerServer {
         ),
         _i2.ColumnDefinition(
           name: 'missedType',
-          columnType: _i2.ColumnType.bigint,
+          columnType: _i2.ColumnType.text,
           isNullable: false,
-          dartType: 'int',
+          dartType: 'String',
         ),
         _i2.ColumnDefinition(
           name: 'unexcused',
@@ -1681,8 +1681,8 @@ class Protocol extends _i1.SerializationManagerServer {
         _i2.ColumnDefinition(
           name: 'returnedAt',
           columnType: _i2.ColumnType.timestampWithoutTimeZone,
-          isNullable: false,
-          dartType: 'DateTime',
+          isNullable: true,
+          dartType: 'DateTime?',
         ),
         _i2.ColumnDefinition(
           name: 'writtenExcuse',
@@ -1693,8 +1693,8 @@ class Protocol extends _i1.SerializationManagerServer {
         _i2.ColumnDefinition(
           name: 'minutesLate',
           columnType: _i2.ColumnType.bigint,
-          isNullable: false,
-          dartType: 'int',
+          isNullable: true,
+          dartType: 'int?',
         ),
         _i2.ColumnDefinition(
           name: 'createdBy',
@@ -1705,14 +1705,14 @@ class Protocol extends _i1.SerializationManagerServer {
         _i2.ColumnDefinition(
           name: 'modifiedBy',
           columnType: _i2.ColumnType.text,
-          isNullable: false,
-          dartType: 'String',
+          isNullable: true,
+          dartType: 'String?',
         ),
         _i2.ColumnDefinition(
           name: 'comment',
           columnType: _i2.ColumnType.text,
-          isNullable: false,
-          dartType: 'String',
+          isNullable: true,
+          dartType: 'String?',
         ),
         _i2.ColumnDefinition(
           name: 'schooldayId',
@@ -4772,28 +4772,28 @@ class Protocol extends _i1.SerializationManagerServer {
       return (data as List).map((e) => deserialize<_i65.PupilData>(e)).toSet()
           as T;
     }
+    if (t == List<_i66.MissedClass>) {
+      return (data as List)
+          .map((e) => deserialize<_i66.MissedClass>(e))
+          .toList() as T;
+    }
     if (t ==
         _i1.getType<
             ({
-              _i66.DeviceInfo? deviceInfo,
+              _i67.DeviceInfo? deviceInfo,
               _i3.AuthenticationResponse response
             })>()) {
       return (
         deviceInfo: ((data as Map)['n'] as Map)['deviceInfo'] == null
             ? null
-            : deserialize<_i66.DeviceInfo>(data['n']['deviceInfo']),
+            : deserialize<_i67.DeviceInfo>(data['n']['deviceInfo']),
         response:
             deserialize<_i3.AuthenticationResponse>(data['n']['response']),
       ) as T;
     }
-    if (t == List<_i67.Competence>) {
-      return (data as List).map((e) => deserialize<_i67.Competence>(e)).toList()
+    if (t == List<_i68.Competence>) {
+      return (data as List).map((e) => deserialize<_i68.Competence>(e)).toList()
           as T;
-    }
-    if (t == List<_i68.MissedClass>) {
-      return (data as List)
-          .map((e) => deserialize<_i68.MissedClass>(e))
-          .toList() as T;
     }
     if (t == List<_i65.PupilData>) {
       return (data as List).map((e) => deserialize<_i65.PupilData>(e)).toList()
@@ -5361,7 +5361,7 @@ Map<String, dynamic>? mapRecordToJson(Record? record) {
     return null;
   }
   if (record is ({
-    _i66.DeviceInfo? deviceInfo,
+    _i67.DeviceInfo? deviceInfo,
     _i3.AuthenticationResponse response
   })) {
     return {

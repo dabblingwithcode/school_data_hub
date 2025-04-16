@@ -21,12 +21,12 @@ abstract class MissedClass
     required this.unexcused,
     required this.contacted,
     required this.returned,
-    required this.returnedAt,
+    this.returnedAt,
     required this.writtenExcuse,
-    required this.minutesLate,
+    this.minutesLate,
     required this.createdBy,
-    required this.modifiedBy,
-    required this.comment,
+    this.modifiedBy,
+    this.comment,
     required this.schooldayId,
     this.schoolday,
     required this.pupilId,
@@ -35,16 +35,16 @@ abstract class MissedClass
 
   factory MissedClass({
     int? id,
-    required int missedType,
+    required String missedType,
     required bool unexcused,
     required String contacted,
     required bool returned,
-    required DateTime returnedAt,
+    DateTime? returnedAt,
     required bool writtenExcuse,
-    required int minutesLate,
+    int? minutesLate,
     required String createdBy,
-    required String modifiedBy,
-    required String comment,
+    String? modifiedBy,
+    String? comment,
     required int schooldayId,
     _i2.Schoolday? schoolday,
     required int pupilId,
@@ -54,17 +54,18 @@ abstract class MissedClass
   factory MissedClass.fromJson(Map<String, dynamic> jsonSerialization) {
     return MissedClass(
       id: jsonSerialization['id'] as int?,
-      missedType: jsonSerialization['missedType'] as int,
+      missedType: jsonSerialization['missedType'] as String,
       unexcused: jsonSerialization['unexcused'] as bool,
       contacted: jsonSerialization['contacted'] as String,
       returned: jsonSerialization['returned'] as bool,
-      returnedAt:
-          _i1.DateTimeJsonExtension.fromJson(jsonSerialization['returnedAt']),
+      returnedAt: jsonSerialization['returnedAt'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['returnedAt']),
       writtenExcuse: jsonSerialization['writtenExcuse'] as bool,
-      minutesLate: jsonSerialization['minutesLate'] as int,
+      minutesLate: jsonSerialization['minutesLate'] as int?,
       createdBy: jsonSerialization['createdBy'] as String,
-      modifiedBy: jsonSerialization['modifiedBy'] as String,
-      comment: jsonSerialization['comment'] as String,
+      modifiedBy: jsonSerialization['modifiedBy'] as String?,
+      comment: jsonSerialization['comment'] as String?,
       schooldayId: jsonSerialization['schooldayId'] as int,
       schoolday: jsonSerialization['schoolday'] == null
           ? null
@@ -85,7 +86,7 @@ abstract class MissedClass
   @override
   int? id;
 
-  int missedType;
+  String missedType;
 
   bool unexcused;
 
@@ -93,17 +94,17 @@ abstract class MissedClass
 
   bool returned;
 
-  DateTime returnedAt;
+  DateTime? returnedAt;
 
   bool writtenExcuse;
 
-  int minutesLate;
+  int? minutesLate;
 
   String createdBy;
 
-  String modifiedBy;
+  String? modifiedBy;
 
-  String comment;
+  String? comment;
 
   int schooldayId;
 
@@ -121,7 +122,7 @@ abstract class MissedClass
   @_i1.useResult
   MissedClass copyWith({
     int? id,
-    int? missedType,
+    String? missedType,
     bool? unexcused,
     String? contacted,
     bool? returned,
@@ -144,12 +145,12 @@ abstract class MissedClass
       'unexcused': unexcused,
       'contacted': contacted,
       'returned': returned,
-      'returnedAt': returnedAt.toJson(),
+      if (returnedAt != null) 'returnedAt': returnedAt?.toJson(),
       'writtenExcuse': writtenExcuse,
-      'minutesLate': minutesLate,
+      if (minutesLate != null) 'minutesLate': minutesLate,
       'createdBy': createdBy,
-      'modifiedBy': modifiedBy,
-      'comment': comment,
+      if (modifiedBy != null) 'modifiedBy': modifiedBy,
+      if (comment != null) 'comment': comment,
       'schooldayId': schooldayId,
       if (schoolday != null) 'schoolday': schoolday?.toJson(),
       'pupilId': pupilId,
@@ -165,12 +166,12 @@ abstract class MissedClass
       'unexcused': unexcused,
       'contacted': contacted,
       'returned': returned,
-      'returnedAt': returnedAt.toJson(),
+      if (returnedAt != null) 'returnedAt': returnedAt?.toJson(),
       'writtenExcuse': writtenExcuse,
-      'minutesLate': minutesLate,
+      if (minutesLate != null) 'minutesLate': minutesLate,
       'createdBy': createdBy,
-      'modifiedBy': modifiedBy,
-      'comment': comment,
+      if (modifiedBy != null) 'modifiedBy': modifiedBy,
+      if (comment != null) 'comment': comment,
       'schooldayId': schooldayId,
       if (schoolday != null) 'schoolday': schoolday?.toJsonForProtocol(),
       'pupilId': pupilId,
@@ -219,16 +220,16 @@ class _Undefined {}
 class _MissedClassImpl extends MissedClass {
   _MissedClassImpl({
     int? id,
-    required int missedType,
+    required String missedType,
     required bool unexcused,
     required String contacted,
     required bool returned,
-    required DateTime returnedAt,
+    DateTime? returnedAt,
     required bool writtenExcuse,
-    required int minutesLate,
+    int? minutesLate,
     required String createdBy,
-    required String modifiedBy,
-    required String comment,
+    String? modifiedBy,
+    String? comment,
     required int schooldayId,
     _i2.Schoolday? schoolday,
     required int pupilId,
@@ -257,16 +258,16 @@ class _MissedClassImpl extends MissedClass {
   @override
   MissedClass copyWith({
     Object? id = _Undefined,
-    int? missedType,
+    String? missedType,
     bool? unexcused,
     String? contacted,
     bool? returned,
-    DateTime? returnedAt,
+    Object? returnedAt = _Undefined,
     bool? writtenExcuse,
-    int? minutesLate,
+    Object? minutesLate = _Undefined,
     String? createdBy,
-    String? modifiedBy,
-    String? comment,
+    Object? modifiedBy = _Undefined,
+    Object? comment = _Undefined,
     int? schooldayId,
     Object? schoolday = _Undefined,
     int? pupilId,
@@ -278,12 +279,12 @@ class _MissedClassImpl extends MissedClass {
       unexcused: unexcused ?? this.unexcused,
       contacted: contacted ?? this.contacted,
       returned: returned ?? this.returned,
-      returnedAt: returnedAt ?? this.returnedAt,
+      returnedAt: returnedAt is DateTime? ? returnedAt : this.returnedAt,
       writtenExcuse: writtenExcuse ?? this.writtenExcuse,
-      minutesLate: minutesLate ?? this.minutesLate,
+      minutesLate: minutesLate is int? ? minutesLate : this.minutesLate,
       createdBy: createdBy ?? this.createdBy,
-      modifiedBy: modifiedBy ?? this.modifiedBy,
-      comment: comment ?? this.comment,
+      modifiedBy: modifiedBy is String? ? modifiedBy : this.modifiedBy,
+      comment: comment is String? ? comment : this.comment,
       schooldayId: schooldayId ?? this.schooldayId,
       schoolday:
           schoolday is _i2.Schoolday? ? schoolday : this.schoolday?.copyWith(),
@@ -295,7 +296,7 @@ class _MissedClassImpl extends MissedClass {
 
 class MissedClassTable extends _i1.Table<int> {
   MissedClassTable({super.tableRelation}) : super(tableName: 'missed_class') {
-    missedType = _i1.ColumnInt(
+    missedType = _i1.ColumnString(
       'missedType',
       this,
     );
@@ -345,7 +346,7 @@ class MissedClassTable extends _i1.Table<int> {
     );
   }
 
-  late final _i1.ColumnInt missedType;
+  late final _i1.ColumnString missedType;
 
   late final _i1.ColumnBool unexcused;
 

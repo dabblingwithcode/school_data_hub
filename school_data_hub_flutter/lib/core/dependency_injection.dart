@@ -8,6 +8,8 @@ import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_monitor.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app/domain/main_menu_bottom_nav_manager.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/attendance_manager.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/filters/attendance_pupil_filter.dart';
 import 'package:school_data_hub_flutter/features/competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/competence/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
@@ -138,16 +140,27 @@ class DiManager {
 
       return pupilManager;
     }, dependsOn: [ServerpodSessionManager]);
+
     di.registerSingletonWithDependencies<PupilFilterManager>(
         () => PupilFilterManager(),
         dependsOn: [PupilManager]);
+
     di.registerSingletonWithDependencies<PupilsFilter>(
         () => PupilsFilterImplementation(
               di<PupilManager>(),
             ),
         dependsOn: [PupilManager, PupilFilterManager]);
+
     di.registerSingleton<FiltersStateManager>(
         FiltersStateManagerImplementation());
+
+    di.registerSingletonWithDependencies<AttendanceManager>(
+        () => AttendanceManager(),
+        dependsOn: [SchooldayManager, PupilsFilter]);
+
+    di.registerSingletonWithDependencies<AttendancePupilFilterManager>(
+        () => AttendancePupilFilterManager(),
+        dependsOn: [AttendanceManager]);
     _log.info('Managers depending on authenticated session initialized');
   }
 

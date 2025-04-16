@@ -83,6 +83,7 @@ class ServerpodSessionManager with ChangeNotifier {
     await keyManager.put(
       key,
     );
+    //_envManager.setUserAuthenticated(true);
     await _handleAuthCallResultInStorage();
 
     // Update streaming connection, if it's open.
@@ -160,6 +161,8 @@ class ServerpodSessionManager with ChangeNotifier {
       if (_signedInUser != null) {
         /// Don't forget to set the flag in [EnvManager] to false
         /// to get to the login screen.
+        _envManager.setUserAuthenticated(true);
+
         _log.info(
             'User was authenticated by the server.\n Registering managers depending on authentication...');
         // We can start now the managers dependent on authentication

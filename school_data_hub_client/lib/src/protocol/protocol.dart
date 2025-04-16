@@ -78,12 +78,12 @@ import 'package:school_data_hub_client/src/protocol/user/staff_user.dart'
     as _i62;
 import 'package:school_data_hub_client/src/protocol/pupil_data/pupil_data.dart'
     as _i63;
-import 'package:school_data_hub_client/src/protocol/user/device_info.dart'
-    as _i64;
-import 'package:serverpod_auth_client/serverpod_auth_client.dart' as _i65;
-import 'package:school_data_hub_client/src/protocol/learning/competence.dart'
-    as _i66;
 import 'package:school_data_hub_client/src/protocol/schoolday/missed_class.dart'
+    as _i64;
+import 'package:school_data_hub_client/src/protocol/user/device_info.dart'
+    as _i65;
+import 'package:serverpod_auth_client/serverpod_auth_client.dart' as _i66;
+import 'package:school_data_hub_client/src/protocol/learning/competence.dart'
     as _i67;
 import 'package:school_data_hub_client/src/protocol/schoolday/school_semester.dart'
     as _i68;
@@ -888,28 +888,28 @@ class Protocol extends _i1.SerializationManager {
       return (data as List).map((e) => deserialize<_i63.PupilData>(e)).toSet()
           as T;
     }
+    if (t == List<_i64.MissedClass>) {
+      return (data as List)
+          .map((e) => deserialize<_i64.MissedClass>(e))
+          .toList() as T;
+    }
     if (t ==
         _i1.getType<
             ({
-              _i64.DeviceInfo? deviceInfo,
-              _i65.AuthenticationResponse response
+              _i65.DeviceInfo? deviceInfo,
+              _i66.AuthenticationResponse response
             })>()) {
       return (
         deviceInfo: ((data as Map)['n'] as Map)['deviceInfo'] == null
             ? null
-            : deserialize<_i64.DeviceInfo>(data['n']['deviceInfo']),
+            : deserialize<_i65.DeviceInfo>(data['n']['deviceInfo']),
         response:
-            deserialize<_i65.AuthenticationResponse>(data['n']['response']),
+            deserialize<_i66.AuthenticationResponse>(data['n']['response']),
       ) as T;
     }
-    if (t == List<_i66.Competence>) {
-      return (data as List).map((e) => deserialize<_i66.Competence>(e)).toList()
+    if (t == List<_i67.Competence>) {
+      return (data as List).map((e) => deserialize<_i67.Competence>(e)).toList()
           as T;
-    }
-    if (t == List<_i67.MissedClass>) {
-      return (data as List)
-          .map((e) => deserialize<_i67.MissedClass>(e))
-          .toList() as T;
     }
     if (t == List<_i63.PupilData>) {
       return (data as List).map((e) => deserialize<_i63.PupilData>(e)).toList()
@@ -944,7 +944,7 @@ class Protocol extends _i1.SerializationManager {
             ) as T;
     }
     try {
-      return _i65.Protocol().deserialize<T>(data, t);
+      return _i66.Protocol().deserialize<T>(data, t);
     } on _i1.DeserializationTypeNotFoundException catch (_) {}
     return super.deserialize<T>(data, t);
   }
@@ -1133,7 +1133,7 @@ class Protocol extends _i1.SerializationManager {
     if (data is _i61.Workbook) {
       return 'Workbook';
     }
-    className = _i65.Protocol().getClassNameForObject(data);
+    className = _i66.Protocol().getClassNameForObject(data);
     if (className != null) {
       return 'serverpod_auth.$className';
     }
@@ -1331,7 +1331,7 @@ class Protocol extends _i1.SerializationManager {
     }
     if (dataClassName.startsWith('serverpod_auth.')) {
       data['className'] = dataClassName.substring(15);
-      return _i65.Protocol().deserializeByClassName(data);
+      return _i66.Protocol().deserializeByClassName(data);
     }
     if (dataClassName == 'List<PupilData>') {
       return deserialize<List<_i63.PupilData>>(data['data']);
@@ -1350,8 +1350,8 @@ Map<String, dynamic>? mapRecordToJson(Record? record) {
     return null;
   }
   if (record is ({
-    _i64.DeviceInfo? deviceInfo,
-    _i65.AuthenticationResponse response
+    _i65.DeviceInfo? deviceInfo,
+    _i66.AuthenticationResponse response
   })) {
     return {
       "n": {

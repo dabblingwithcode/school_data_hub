@@ -6,6 +6,11 @@ admin:
   - getAllUsers:
   - getUserById:
   - updateBackendPupilDataState:
+attendance:
+  - fetchMissedClassesOnASchoolday:
+  - fetchMissedClasses:
+  - createMissedClass:
+  - deleteMissedClass:
 auth:
   - login:
   - verifyPassword:
@@ -23,11 +28,12 @@ files:
   - verifyUpload:
   - getImage:
 missedClass:
-  - createMissedClass:
-  - getAllMissedClasses:
-  - getMissedClassesOnDate:
-  - updateMissedClass:
+  - postMissedClass:
+  - postMissedClasses:
+  - fetchAllMissedClasses:
+  - fetchMissedClassesOnASchoolday:
   - deleteMissedClass:
+  - updateMissedClass:
 pupil:
   - fetchPupilsAsStream:
   - fetchPupils:

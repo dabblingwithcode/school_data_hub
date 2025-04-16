@@ -438,7 +438,7 @@ class PupilManager extends ChangeNotifier {
       required DateTime createdAt,
       required String createdBy,
       required String comment}) async {
-    final pupilIdId = getPupilByInternalId(pupilId)!.id!;
+    final pupilIdId = getPupilByInternalId(pupilId)!.pupilId!;
 
     final PupilData updatedPupil = await pupilDataApiService.updateSupportLevel(
       pupilIdId: pupilIdId,

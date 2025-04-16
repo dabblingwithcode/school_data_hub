@@ -8,7 +8,7 @@ run: ## run the server
 	dart run bin/main.dart --apply-migrations
 
 reset: ## reset the server
-	# rm -r migrations
+	# rmdir migrations /s /q
 	# mkdir migrations
 	# rm -r database_backups
 	# mkdir database_backups

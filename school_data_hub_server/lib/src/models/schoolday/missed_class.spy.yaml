@@ -3,16 +3,16 @@
 class: MissedClass
 table: missed_class
 fields:
-  missedType: int
+  missedType: String
   unexcused: bool
   contacted: String
   returned: bool
-  returnedAt: DateTime
+  returnedAt: DateTime?
   writtenExcuse: bool
-  minutesLate: int
+  minutesLate: int?
   createdBy: String
-  modifiedBy: String
-  comment: String
+  modifiedBy: String?
+  comment: String?
   schoolday: Schoolday?, relation(name=missed_class_schoolday)
   pupil: PupilData?, relation(name=missed_class_pupil)
 indexes:

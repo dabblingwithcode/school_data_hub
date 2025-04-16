@@ -4,6 +4,11 @@ import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 
 class FilesEndpoint extends Endpoint {
+  @override
+  bool get requireLogin => true;
+
+  /// [getUploadDescription]
+  /// as described in https://docs.serverpod.dev/concepts/file-uploads#client-side-code
   Future<String?> getUploadDescription(
       Session session, String storageId, String path) async {
     return await session.storage.createDirectFileUploadDescription(
@@ -12,6 +17,8 @@ class FilesEndpoint extends Endpoint {
     );
   }
 
+  /// [verifyUpload]
+  /// as described in https://docs.serverpod.dev/concepts/file-uploads#client-side-code
   Future<bool> verifyUpload(
       Session session, String storageId, String path) async {
     return await session.storage.verifyDirectFileUpload(
@@ -20,6 +27,7 @@ class FilesEndpoint extends Endpoint {
     );
   }
 
+  /// As described in https://docs.serverpod.dev/concepts/file-uploads#client-side-code
   Future<ByteData?> getImage(Session session, String documentId) async {
     final HubDocument? document = await HubDocument.db
         .findFirstRow(session, where: (t) => t.documentId.equals(documentId));

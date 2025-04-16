@@ -3,9 +3,7 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:school_data_hub_server/src/future_calls/database_backup_future_call.dart';
 import 'package:school_data_hub_server/src/future_calls/increase_credit_future_call.dart';
-import 'package:school_data_hub_server/src/future_calls/populate_competences_future_call.dart';
-import 'package:school_data_hub_server/src/future_calls/populate_pupils_future_call.dart';
-import 'package:school_data_hub_server/src/future_calls/populate_support_categories_future_call.dart';
+import 'package:school_data_hub_server/src/future_calls/populate_test_environment_future_call.dart';
 import 'package:school_data_hub_server/src/utils/local_storage.dart';
 import 'package:school_data_hub_server/src/web/routes/root.dart';
 import 'package:serverpod/serverpod.dart';
@@ -50,14 +48,8 @@ void run(List<String> args) async {
   pod.registerFutureCall(
       IncreaseCreditFutureCall(), 'increaseCreditFutureCall');
 
-  pod.registerFutureCall(PopulateSupportCategoriesFutureCall(),
-      'populateSupportCategoriesFutureCall');
-
   pod.registerFutureCall(
-      PopulateCompetencesFutureCall(), 'populateCompetencesFutureCall');
-
-  pod.registerFutureCall(
-      PopulatePupilsFutureCall(), 'populatePupilsFutureCall');
+      PopulateTestEnvironmentFutureCall(), 'populateTestEnvironmentFutureCall');
 
   // Setup a default page at the web root.
   pod.webServer.addRoute(RouteRoot(), '/');
@@ -75,21 +67,7 @@ void run(List<String> args) async {
 
   // Populate support categories
   await session.serverpod.futureCallWithDelay(
-    'populateSupportCategoriesFutureCall',
-    null,
-    const Duration(seconds: 1),
-  );
-
-  // Populate support categories
-  await session.serverpod.futureCallWithDelay(
-    'populateCompetencesFutureCall',
-    null,
-    const Duration(seconds: 1),
-  );
-
-  // Populate pupils
-  await session.serverpod.futureCallWithDelay(
-    'populatePupilsFutureCall',
+    'populateTestEnvironmentFutureCall',
     null,
     const Duration(seconds: 1),
   );

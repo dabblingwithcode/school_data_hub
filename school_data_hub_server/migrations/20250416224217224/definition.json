@@ -1541,9 +1541,9 @@
         },
         {
           "name": "missedType",
-          "columnType": 6,
+          "columnType": 0,
           "isNullable": false,
-          "dartType": "int"
+          "dartType": "String"
         },
         {
           "name": "unexcused",
@@ -1566,8 +1566,8 @@
         {
           "name": "returnedAt",
           "columnType": 4,
-          "isNullable": false,
-          "dartType": "DateTime"
+          "isNullable": true,
+          "dartType": "DateTime?"
         },
         {
           "name": "writtenExcuse",
@@ -1578,8 +1578,8 @@
         {
           "name": "minutesLate",
           "columnType": 6,
-          "isNullable": false,
-          "dartType": "int"
+          "isNullable": true,
+          "dartType": "int?"
         },
         {
           "name": "createdBy",
@@ -1590,14 +1590,14 @@
         {
           "name": "modifiedBy",
           "columnType": 0,
-          "isNullable": false,
-          "dartType": "String"
+          "isNullable": true,
+          "dartType": "String?"
         },
         {
           "name": "comment",
           "columnType": 0,
-          "isNullable": false,
-          "dartType": "String"
+          "isNullable": true,
+          "dartType": "String?"
         },
         {
           "name": "schooldayId",
@@ -5704,7 +5704,7 @@
   "installedModules": [
     {
       "module": "school_data_hub",
-      "version": "20250414214043413"
+      "version": "20250416224217224"
     },
     {
       "module": "serverpod",

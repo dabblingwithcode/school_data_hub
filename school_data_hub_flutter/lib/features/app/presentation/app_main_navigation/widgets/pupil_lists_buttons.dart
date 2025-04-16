@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/app/presentation/app_main_navigation/widgets/main_menu_button.dart';
+import 'package:school_data_hub_flutter/features/attendance/presentation/attendance_page/attendance_list_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/matrix_users_list_page/matrix_users_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/credit/credit_list_page/credit_list_page.dart';
 import 'package:watch_it/watch_it.dart';
@@ -36,7 +37,7 @@ class PupilListButtons extends WatchingWidget {
             ),
             buttonText: locale.missedClasses),
         MainMenuButton(
-            destinationPage: const Placeholder(), // const AttendanceListPage(),
+            destinationPage: const AttendanceListPage(),
             buttonIcon: const Icon(
               Icons.event_available_rounded,
               size: 50,
