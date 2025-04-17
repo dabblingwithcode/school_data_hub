@@ -193,11 +193,12 @@ class PupilDataApiService {
 
   Future<PupilData> updatePupilWithAvatarAuth({
     required int id,
-    required ByteData file,
+    required ByteData byteData,
   }) async {
     try {
       _notificationService.apiRunning(true);
-      final updatedPupil = await _client.pupil.updatePupilAvatarAuth(id, file);
+      final updatedPupil =
+          await _client.pupil.updatePupilAvatarAuth(id, byteData);
       _notificationService.apiRunning(false);
       return updatedPupil;
     } catch (e) {

@@ -263,20 +263,6 @@ class EndpointCompetence extends _i1.EndpointRef {
 }
 
 /// {@category Endpoint}
-class EndpointExample extends _i1.EndpointRef {
-  EndpointExample(_i1.EndpointCaller caller) : super(caller);
-
-  @override
-  String get name => 'example';
-
-  _i2.Future<String> hello(String name) => caller.callServerEndpoint<String>(
-        'example',
-        'hello',
-        {'name': name},
-      );
-}
-
-/// {@category Endpoint}
 class EndpointFiles extends _i1.EndpointRef {
   EndpointFiles(_i1.EndpointCaller caller) : super(caller);
 
@@ -745,7 +731,6 @@ class Client extends _i1.ServerpodClientShared {
     attendance = EndpointAttendance(this);
     auth = EndpointAuth(this);
     competence = EndpointCompetence(this);
-    example = EndpointExample(this);
     files = EndpointFiles(this);
     missedClass = EndpointMissedClass(this);
     pupil = EndpointPupil(this);
@@ -763,8 +748,6 @@ class Client extends _i1.ServerpodClientShared {
   late final EndpointAuth auth;
 
   late final EndpointCompetence competence;
-
-  late final EndpointExample example;
 
   late final EndpointFiles files;
 
@@ -788,7 +771,6 @@ class Client extends _i1.ServerpodClientShared {
         'attendance': attendance,
         'auth': auth,
         'competence': competence,
-        'example': example,
         'files': files,
         'missedClass': missedClass,
         'pupil': pupil,

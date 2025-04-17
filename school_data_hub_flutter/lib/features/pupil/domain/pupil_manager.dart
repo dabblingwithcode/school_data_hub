@@ -266,42 +266,36 @@ class PupilManager extends ChangeNotifier {
     _cacheManager.removeFile(cacheKey.toString());
   }
 
-  // Future<void> postAvatarAuthImage(
-  //   File imageFile,
-  //   PupilProxy pupilProxy,
-  // ) async {
-  //   // first we encrypt the file
+  Future<void> postAvatarAuthImage(
+    File imageFile,
+    PupilProxy pupilProxy,
+  ) async {
+    // first we encrypt the file
 
-  //   final encryptedFile = await customEncrypter.encryptFile(imageFile);
+    final encryptedFile = await customEncrypter.encryptFile(imageFile);
 
-  //   // Now we prepare the form data for the request.
+    // Now we prepare the form data for the request.
 
-  //   String fileName = encryptedFile.path.split('/').last;
-  //   var formData = FormData.fromMap({
-  //     'file': await MultipartFile.fromFile(
-  //       encryptedFile.path,
-  //       filename: fileName,
-  //     ),
-  //   });
+    // send the Api request
 
-  //   // send the Api request
+    final PupilData pupilUpdate =
+        await pupilDataApiService.updatePupilWithAvatarAuth(
+      id: pupilProxy.internalId,
+      byteData: await encryptedFile
+          .readAsBytes()
+          .then((bytes) => ByteData.view(bytes.buffer)),
+    );
 
-  //   final PupilData pupilUpdate =
-  //       await pupilDataApiService.updatePupilWithAvatarAuth(
-  //     id: pupilProxy.internalId,
-  //     formData: formData,
-  //   );
+    // update the pupil in the repository
+    updatePupilProxyWithPupilData(pupilUpdate);
+    //  pupilProxy.updatePupil(pupilUpdate);
 
-  //   // update the pupil in the repository
-  //   updatePupilProxyWithPupilData(pupilUpdate);
-  //   //  pupilProxy.updatePupil(pupilUpdate);
+    // Delete the outdated encrypted file.
 
-  //   // Delete the outdated encrypted file.
+    final cacheKey = pupilProxy.avatar!.documentId;
 
-  //   final cacheKey = pupilProxy.avatarId;
-
-  //   _cacheManager.removeFile(cacheKey.toString());
-  // }
+    _cacheManager.removeFile(cacheKey.toString());
+  }
 
 //   Future<void> postPublicMediaAuthImage(
 //     File imageFile,
@@ -433,12 +427,12 @@ class PupilManager extends ChangeNotifier {
   // }
 
   Future<void> patchPupilWithNewSupportLevel(
-      {required int pupilId,
+      {required int internalId,
       required int level,
       required DateTime createdAt,
       required String createdBy,
       required String comment}) async {
-    final pupilIdId = getPupilByInternalId(pupilId)!.pupilId!;
+    final pupilIdId = getPupilByInternalId(internalId)!.pupilId;
 
     final PupilData updatedPupil = await pupilDataApiService.updateSupportLevel(
       pupilIdId: pupilIdId,
@@ -448,7 +442,7 @@ class PupilManager extends ChangeNotifier {
       comment: comment,
     );
 
-    _pupils[pupilId]!.updatePupil(updatedPupil);
+    _pupils[internalId]!.updatePupil(updatedPupil);
   }
 
   Future<void> deleteSupportLevelHistoryItem(

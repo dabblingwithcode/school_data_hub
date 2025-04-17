@@ -1,6 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/foundation.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_enums.dart';
@@ -15,6 +14,8 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_man
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
+final _log = Logger('PupilsFilterImplementation');
+
 class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
   PupilsFilterImplementation(
     PupilManager pupilsManager,
@@ -22,7 +23,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
     //  PupilSortMode? sortMode,
     // }
   ) : _pupilsManager = pupilsManager {
-    log('PupilsFilterImplementation created');
+    _log.info('PupilsFilterImplementation created');
     // We need to populate the group filters with the available groups
     final availableGroups = di<PupilIdentityManager>().groups.value;
     populateGroupFilters(availableGroups.toList());

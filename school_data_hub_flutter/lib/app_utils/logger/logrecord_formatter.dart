@@ -115,7 +115,7 @@ class ColorFormatter extends LogRecordFormatter {
 
   _AnsiCombination? _colorForLevel(Level level) {
     if (level <= Level.FINE) {
-      return _AnsiCombination.combine([ansi.styleDim, ansi.lightGray]);
+      return _AnsiCombination.combine([ansi.lightGreen]);
     }
     if (level <= Level.INFO) {
       return _AnsiCombination.combine([ansi.lightBlue]);

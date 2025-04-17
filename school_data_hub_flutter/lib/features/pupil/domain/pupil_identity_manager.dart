@@ -71,7 +71,7 @@ class PupilIdentityManager {
           'No stored pupil identities found for ${activeEnv.serverName}');
     } else {
       log.info(
-          '${pupilIdentities.length} Pupil identities for ${activeEnv.serverName} loaded from secure storage');
+          '${pupilIdentities.length} Pupil identities for [${activeEnv.serverName}] loaded from secure storage');
     }
 
     _pupilIdentities = pupilIdentities;

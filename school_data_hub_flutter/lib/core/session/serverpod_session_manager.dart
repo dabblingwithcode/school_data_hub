@@ -164,7 +164,7 @@ class ServerpodSessionManager with ChangeNotifier {
         _envManager.setUserAuthenticated(true);
 
         _log.info(
-            'User was authenticated by the server.\n Registering managers depending on authentication...');
+            'User was authenticated by the server.Registering managers depending on authentication...');
         // We can start now the managers dependent on authentication
         DiManager.registerManagersDependingOnSession();
         _user = await _client.user.getCurrentUser();

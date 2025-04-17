@@ -92,7 +92,7 @@ void run(List<String> args) async {
 
   try {
     // Check if admin user exists (using email as identifier)
-    final adminEmail = 'admin@test.org'; // Use your preferred admin email
+    final adminEmail = 'admin';
     var adminUser = await auth.Users.findUserByEmail(session, adminEmail);
 
     if (adminUser == null) {
@@ -100,7 +100,7 @@ void run(List<String> args) async {
       // For email authentication, you need to create a user with email/password
       final adminPassword = 'admin'; // Set a secure password in production
 
-      // Create the user
+      // Create the userinfo
       adminUser = await auth.Emails.createUser(
         session,
         'Admin User', // User name
@@ -112,6 +112,17 @@ void run(List<String> args) async {
         // Grant admin scope to the user
         await auth.Users.updateUserScopes(
             session, adminUser.id!, {Scope.admin});
+        final User adminuser = User(
+            userInfoId: adminUser.id!,
+            role: Role.technical,
+            timeUnits: 28,
+            credit: 50,
+            userFlags: UserFlags(
+                confirmedTermsOfUse: false,
+                confirmedPrivacyPolicy: false,
+                changedPassword: false,
+                madeFirstSteps: false));
+        await session.db.insertRow(adminuser);
 
         session.log('Admin user created successfully: ');
         session.log('Email: $adminEmail');

@@ -21,8 +21,6 @@ competence:
   - getAllCompetences:
   - updateCompetence:
   - deleteCompetence:
-example:
-  - hello:
 files:
   - getUploadDescription:
   - verifyUpload:
