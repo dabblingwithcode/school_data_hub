@@ -8,14 +8,14 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupi
 import 'package:watch_it/watch_it.dart';
 import 'package:widget_zoom/widget_zoom.dart';
 
-class AvatarData {
-  final String? avatarId;
-  final int internalId;
-  final double size;
+// class AvatarData {
+//   final String? avatarId;
+//   final int internalId;
+//   final double size;
 
-  AvatarData(
-      {required this.avatarId, required this.internalId, required this.size});
-}
+//   AvatarData(
+//       {required this.avatarId, required this.internalId, required this.size});
+// }
 
 class AvatarImage extends WatchingWidget {
   final PupilProxy pupil;

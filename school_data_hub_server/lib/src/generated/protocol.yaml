@@ -36,9 +36,8 @@ pupil:
   - fetchPupilsAsStream:
   - fetchPupils:
   - fetchPupilsById:
-  - createPupil:
   - updateSiblingsTutorInfo:
-  - updatePupilProperty:
+  - updatePupil:
   - updatePupilAvatar:
   - updatePupilAvatarAuth:
   - updatePupilWithPublicMediaAuth:

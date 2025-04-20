@@ -30,9 +30,9 @@ import 'package:school_data_hub_server/src/generated/user/device_info.dart'
 import 'package:school_data_hub_server/src/generated/protocol.dart' as _i16;
 import 'package:school_data_hub_server/src/generated/learning/competence.dart'
     as _i17;
-import 'package:school_data_hub_server/src/generated/pupil_data/pupil_data.dart'
-    as _i18;
 import 'package:school_data_hub_server/src/generated/pupil_data/dto/siblings_tutor_info_dto.dart'
+    as _i18;
+import 'package:school_data_hub_server/src/generated/pupil_data/pupil_data.dart'
     as _i19;
 import 'dart:typed_data' as _i20;
 import 'package:school_data_hub_server/src/generated/learning_support/support_level.dart'
@@ -771,30 +771,12 @@ class Endpoints extends _i1.EndpointDispatch {
             params['internalIds'],
           ),
         ),
-        'createPupil': _i1.MethodConnector(
-          name: 'createPupil',
-          params: {
-            'pupil': _i1.ParameterDescription(
-              name: 'pupil',
-              type: _i1.getType<_i18.PupilData>(),
-              nullable: false,
-            )
-          },
-          call: (
-            _i1.Session session,
-            Map<String, dynamic> params,
-          ) async =>
-              (endpoints['pupil'] as _i8.PupilEndpoint).createPupil(
-            session,
-            params['pupil'],
-          ),
-        ),
         'updateSiblingsTutorInfo': _i1.MethodConnector(
           name: 'updateSiblingsTutorInfo',
           params: {
             'siblingsTutorInfo': _i1.ParameterDescription(
               name: 'siblingsTutorInfo',
-              type: _i1.getType<_i19.SiblingsTutorInfo>(),
+              type: _i1.getType<_i18.SiblingsTutorInfo>(),
               nullable: false,
             )
           },
@@ -807,47 +789,35 @@ class Endpoints extends _i1.EndpointDispatch {
             params['siblingsTutorInfo'],
           ),
         ),
-        'updatePupilProperty': _i1.MethodConnector(
-          name: 'updatePupilProperty',
+        'updatePupil': _i1.MethodConnector(
+          name: 'updatePupil',
           params: {
-            'internalId': _i1.ParameterDescription(
-              name: 'internalId',
-              type: _i1.getType<int>(),
+            'pupil': _i1.ParameterDescription(
+              name: 'pupil',
+              type: _i1.getType<_i19.PupilData>(),
               nullable: false,
-            ),
-            'property': _i1.ParameterDescription(
-              name: 'property',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
-            'value': _i1.ParameterDescription(
-              name: 'value',
-              type: _i1.getType<dynamic>(),
-              nullable: false,
-            ),
+            )
           },
           call: (
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['pupil'] as _i8.PupilEndpoint).updatePupilProperty(
+              (endpoints['pupil'] as _i8.PupilEndpoint).updatePupil(
             session,
-            params['internalId'],
-            params['property'],
-            params['value'],
+            params['pupil'],
           ),
         ),
         'updatePupilAvatar': _i1.MethodConnector(
           name: 'updatePupilAvatar',
           params: {
-            'internalId': _i1.ParameterDescription(
-              name: 'internalId',
+            'pupilId': _i1.ParameterDescription(
+              name: 'pupilId',
               type: _i1.getType<int>(),
               nullable: false,
             ),
-            'avatarByteData': _i1.ParameterDescription(
-              name: 'avatarByteData',
-              type: _i1.getType<_i20.ByteData>(),
+            'path': _i1.ParameterDescription(
+              name: 'path',
+              type: _i1.getType<String>(),
               nullable: false,
             ),
           },
@@ -857,21 +827,26 @@ class Endpoints extends _i1.EndpointDispatch {
           ) async =>
               (endpoints['pupil'] as _i8.PupilEndpoint).updatePupilAvatar(
             session,
-            params['internalId'],
-            params['avatarByteData'],
+            params['pupilId'],
+            params['path'],
           ),
         ),
         'updatePupilAvatarAuth': _i1.MethodConnector(
           name: 'updatePupilAvatarAuth',
           params: {
-            'internalId': _i1.ParameterDescription(
-              name: 'internalId',
+            'pupilId': _i1.ParameterDescription(
+              name: 'pupilId',
               type: _i1.getType<int>(),
               nullable: false,
             ),
             'avatarAuthBytes': _i1.ParameterDescription(
               name: 'avatarAuthBytes',
               type: _i1.getType<_i20.ByteData>(),
+              nullable: false,
+            ),
+            'path': _i1.ParameterDescription(
+              name: 'path',
+              type: _i1.getType<String>(),
               nullable: false,
             ),
           },
@@ -881,21 +856,27 @@ class Endpoints extends _i1.EndpointDispatch {
           ) async =>
               (endpoints['pupil'] as _i8.PupilEndpoint).updatePupilAvatarAuth(
             session,
-            params['internalId'],
+            params['pupilId'],
             params['avatarAuthBytes'],
+            params['path'],
           ),
         ),
         'updatePupilWithPublicMediaAuth': _i1.MethodConnector(
           name: 'updatePupilWithPublicMediaAuth',
           params: {
-            'internalId': _i1.ParameterDescription(
-              name: 'internalId',
+            'pupilId': _i1.ParameterDescription(
+              name: 'pupilId',
               type: _i1.getType<int>(),
               nullable: false,
             ),
             'publicMediaAuthFBytes': _i1.ParameterDescription(
               name: 'publicMediaAuthFBytes',
               type: _i1.getType<_i20.ByteData>(),
+              nullable: false,
+            ),
+            'path': _i1.ParameterDescription(
+              name: 'path',
+              type: _i1.getType<String>(),
               nullable: false,
             ),
           },
@@ -906,8 +887,9 @@ class Endpoints extends _i1.EndpointDispatch {
               (endpoints['pupil'] as _i8.PupilEndpoint)
                   .updatePupilWithPublicMediaAuth(
             session,
-            params['internalId'],
+            params['pupilId'],
             params['publicMediaAuthFBytes'],
+            params['path'],
           ),
         ),
         'deleteAvatar': _i1.MethodConnector(

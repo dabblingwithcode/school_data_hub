@@ -43,7 +43,7 @@ class FilesEndpoint extends Endpoint {
       return null;
     }
     return await session.storage.retrieveFile(
-      storageId: 'public',
+      storageId: 'private',
       path: path,
     );
   }

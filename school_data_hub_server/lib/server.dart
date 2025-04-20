@@ -1,6 +1,4 @@
-import 'dart:io';
-
-import 'package:path/path.dart' as path;
+import 'package:path/path.dart' as p;
 import 'package:school_data_hub_server/src/future_calls/database_backup_future_call.dart';
 import 'package:school_data_hub_server/src/future_calls/increase_credit_future_call.dart';
 import 'package:school_data_hub_server/src/future_calls/populate_test_environment_future_call.dart';
@@ -19,6 +17,7 @@ import 'src/generated/protocol.dart';
 void run(List<String> args) async {
   // auth configuration
   auth.AuthConfig.set(auth.AuthConfig(
+    enableUserImages: false,
     userCanEditUserName: false,
     userCanEditFullName: true,
     // other config options
@@ -32,14 +31,15 @@ void run(List<String> args) async {
   );
 
   // Configure storage.
+  // we use p.join to avoid issues with different OS path separators
   pod.addCloudStorage(LocalStorage(
     //publicStorageUrl: publicStorageUrl,
-    storageId: LocalStorageId.public,
-    pathPrefix: path.join(Directory.current.path, '..', 'storage', 'private'),
+    storageId: 'private',
+    pathPrefix: p.join('storage', 'private').toString(),
   ));
   pod.addCloudStorage(LocalStorage(
-    storageId: LocalStorageId.private,
-    pathPrefix: path.join(Directory.current.path, '..', 'storage', 'public'),
+    storageId: 'public',
+    pathPrefix: p.join('storage', 'public').toString(),
   ));
 
   // If you are using any future calls, they need to be registered here.
@@ -103,7 +103,7 @@ void run(List<String> args) async {
       // Create the userinfo
       adminUser = await auth.Emails.createUser(
         session,
-        'Admin User', // User name
+        'ADM', // User name
         adminEmail,
         adminPassword,
       );

@@ -247,55 +247,57 @@ class PupilManager extends ChangeNotifier {
 
     final encryptedFile = await customEncrypter.encryptFile(imageFile);
 
+    // if the pupil already has an avatar, we need to get the old documentId
+    // and delete the old avatar from the cache
+    if (pupilProxy.avatar != null) {
+      final cacheKey = pupilProxy.avatar!.documentId;
+      _cacheManager.removeFile(cacheKey.toString());
+      pupilProxy.clearAvatar();
+    }
+
     // send the Api request
 
     final PupilData pupilUpdate =
         await pupilDataApiService.updatePupilWithAvatar(
-      pupilId: pupilProxy.internalId,
+      pupilId: pupilProxy.pupilId,
       file: encryptedFile,
     );
 
     // update the pupil in the repository
     updatePupilProxyWithPupilData(pupilUpdate);
     //  pupilProxy.updatePupil(pupilUpdate);
-
-    // Delete the outdated encrypted file.
-
-    final cacheKey = pupilProxy.avatar!.documentId;
-
-    _cacheManager.removeFile(cacheKey.toString());
   }
 
-  Future<void> postAvatarAuthImage(
-    File imageFile,
-    PupilProxy pupilProxy,
-  ) async {
-    // first we encrypt the file
+  // Future<void> postAvatarAuthImage(
+  //   File imageFile,
+  //   PupilProxy pupilProxy,
+  // ) async {
+  //   // first we encrypt the file
 
-    final encryptedFile = await customEncrypter.encryptFile(imageFile);
+  //   final encryptedFile = await customEncrypter.encryptFile(imageFile);
 
-    // Now we prepare the form data for the request.
+  //   // Now we prepare the form data for the request.
 
-    // send the Api request
+  //   // send the Api request
 
-    final PupilData pupilUpdate =
-        await pupilDataApiService.updatePupilWithAvatarAuth(
-      id: pupilProxy.internalId,
-      byteData: await encryptedFile
-          .readAsBytes()
-          .then((bytes) => ByteData.view(bytes.buffer)),
-    );
+  //   final PupilData pupilUpdate =
+  //       await pupilDataApiService.updatePupilWithAvatarAuth(
+  //     pupilId: pupilProxy.internalId,
+  //     file: await encryptedFile
+  //         .readAsBytes()
+  //         .then((bytes) => ByteData.view(bytes.buffer)),
+  //   );
 
-    // update the pupil in the repository
-    updatePupilProxyWithPupilData(pupilUpdate);
-    //  pupilProxy.updatePupil(pupilUpdate);
+  //   // update the pupil in the repository
+  //   updatePupilProxyWithPupilData(pupilUpdate);
+  //   //  pupilProxy.updatePupil(pupilUpdate);
 
-    // Delete the outdated encrypted file.
+  //   // Delete the outdated encrypted file.
 
-    final cacheKey = pupilProxy.avatar!.documentId;
+  //   final cacheKey = pupilProxy.avatar!.documentId;
 
-    _cacheManager.removeFile(cacheKey.toString());
-  }
+  //   _cacheManager.removeFile(cacheKey.toString());
+  // }
 
 //   Future<void> postPublicMediaAuthImage(
 //     File imageFile,
@@ -376,55 +378,56 @@ class PupilManager extends ChangeNotifier {
 //     _pupils[pupilId]!.deletePublicMediaAuthId();
 //   }
 
-  // Future<void> patchOnePupilProperty(
-  //     {required int pupilId,
-  //     required String jsonKey,
-  //     required dynamic value}) async {
-  //   // if the value is relevant to siblings, check for siblings first and handle them if true
+  Future<void> updateNonParentInfoProperty(
+      {required int pupilId,
+      required String jsonKey,
+      required dynamic value}) async {
+    // if the value is relevant to siblings, check for siblings first and handle them if true
 
-  //   if (jsonKey == 'communication_tutor1' ||
-  //       jsonKey == 'communication_tutor2' ||
-  //       jsonKey == 'parents_contact' ||
-  //       jsonKey == 'emergency_care') {
-  //     final PupilProxy pupil = getPupilByInternalId(pupilId)!;
-  //     if (pupil.family != null) {
-  //       // we have a sibling
-  //       // create list with ids of all pupils with the same family value
+    // if (jsonKey == 'communication_tutor1' ||
+    //     jsonKey == 'communication_tutor2' ||
+    //     jsonKey == 'parents_contact' ||
+    //     jsonKey == 'emergency_care') {
+    //   final PupilProxy pupil = getPupilByInternalId(pupilId)!;
+    //   if (pupil.family != null) {
+    //     // we have a sibling
+    //     // create list with ids of all pupils with the same family value
 
-  //       final List<int> pupilIdsWithSameFamily = _pupils.values
-  //           .where((p) => p.family == pupil.family)
-  //           .map((p) => p.internalId)
-  //           .toList();
+    //     final List<int> pupilIdsWithSameFamily = _pupils.values
+    //         .where((p) => p.family == pupil.family)
+    //         .map((p) => p.internalId)
+    //         .toList();
 
-  //       // call the endpoint to update the siblings
+    //     // call the endpoint to update the siblings
 
-  //       final List<PupilData> siblingsUpdate =
-  //           await pupilDataApiService.updateSiblingsProperty(
-  //               siblingsPupilIds: pupilIdsWithSameFamily,
-  //               property: jsonKey,
-  //               value: value);
+    //     final List<PupilData> siblingsUpdate =
+    //         await pupilDataApiService.updateSiblingsProperty(
+    //             siblingsPupilIds: pupilIdsWithSameFamily,
+    //             property: jsonKey,
+    //             value: value);
 
-  //       // now update the siblings with the new data
+    //     // now update the siblings with the new data
 
-  //       for (PupilData sibling in siblingsUpdate) {
-  //         _pupils[sibling.internalId]!.updatePupil(sibling);
-  //       }
+    //     for (PupilData sibling in siblingsUpdate) {
+    //       _pupils[sibling.internalId]!.updatePupil(sibling);
+    //     }
 
-  //       _notificationService.showSnackBar(
-  //           NotificationType.success, 'Geschwister erfolgreich gepatcht!');
-  //     }
-  //   }
+    //     _notificationService.showSnackBar(
+    //         NotificationType.success, 'Geschwister erfolgreich gepatcht!');
+    //   }
+    // }
 
-  //   // The pupil is no sibling. Make the api call for the single pupil
+    // The pupil is no sibling. Make the api call for the single pupil
 
-  //   final PupilData pupilUpdate = await pupilDataApiService.updatePupilProperty(
-  //       id: pupilId, property: jsonKey, value: value);
+    // final PupilData pupilUpdate =
+    //     await pupilDataApiService.updateNonParentInfoPupilProperty(
+    //         id: pupilId, property: jsonKey, value: value);
 
-  //   // now update the pupil in the repository
+    // // now update the pupil in the repository
 
-  //   _pupils[pupilId]!.updatePupil(pupilUpdate);
-  //   notifyListeners();
-  // }
+    // _pupils[pupilId]!.updatePupil(pupilUpdate);
+    notifyListeners();
+  }
 
   Future<void> patchPupilWithNewSupportLevel(
       {required int internalId,

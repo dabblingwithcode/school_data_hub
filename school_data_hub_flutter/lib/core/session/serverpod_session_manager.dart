@@ -41,6 +41,14 @@ class ServerpodSessionManager with ChangeNotifier {
   User? _user;
   User? get user => _user;
 
+  void changeUserCredit(int credit) {
+    if (_user != null) {
+      final newCredit = _user!.credit + credit;
+      _user!.credit = newCredit;
+      notifyListeners();
+    }
+  }
+
   /// Creates a new session manager.
   ServerpodSessionManager({
     required this.caller,
@@ -77,8 +85,6 @@ class ServerpodSessionManager with ChangeNotifier {
     _signedInUser = userInfo;
     var key = '$authenticationKeyId:$authenticationKey';
 
-    // We can start now the managers dependent on authentication
-    DiManager.registerManagersDependingOnSession();
     // Store in key manager.
     await keyManager.put(
       key,
@@ -101,6 +107,7 @@ class ServerpodSessionManager with ChangeNotifier {
     _log.info('Initializing session manager...');
     _log.info(' Running in mode: ${_envManager.activeEnv!.runMode.name}');
     await _loadUserInfoFromStorage();
+
     return refreshSession();
   }
 
@@ -164,15 +171,14 @@ class ServerpodSessionManager with ChangeNotifier {
         _envManager.setUserAuthenticated(true);
 
         _log.info(
-            'User was authenticated by the server.Registering managers depending on authentication...');
-        // We can start now the managers dependent on authentication
-        DiManager.registerManagersDependingOnSession();
+            'User was authenticated by the server. Registering managers depending on authentication...');
+
         _user = await _client.user.getCurrentUser();
         notifyListeners();
-        _log.info('User fetched: ${_user?.toJson()}');
+        _log.info('User fetched refreshing session: ${_user?.toJson()}');
         return false;
       } else {
-        _log.warning('User was not authenticated by the server');
+        _log.warning('No signed user available - nothing to refresh');
       }
 
       return true;
@@ -218,6 +224,13 @@ class ServerpodSessionManager with ChangeNotifier {
 
       await _storage.setString(
           _userInfoStorageKey, SerializationManager.encode(signedInUser));
+      // We can start now the managers dependent on authentication
+      _user = await _client.user.getCurrentUser();
+
+      notifyListeners();
+      _log.fine(
+          'User fetched in _handleAuthCallResultInStorage: ${_user?.toJson()}');
+      await DiManager.registerManagersDependingOnSession();
     }
   }
 

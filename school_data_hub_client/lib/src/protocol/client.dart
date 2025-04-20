@@ -396,13 +396,6 @@ class EndpointPupil extends _i1.EndpointRef {
         {'internalIds': internalIds},
       );
 
-  _i2.Future<bool> createPupil(_i5.PupilData pupil) =>
-      caller.callServerEndpoint<bool>(
-        'pupil',
-        'createPupil',
-        {'pupil': pupil},
-      );
-
   _i2.Future<List<_i5.PupilData>> updateSiblingsTutorInfo(
           _i12.SiblingsTutorInfo siblingsTutorInfo) =>
       caller.callServerEndpoint<List<_i5.PupilData>>(
@@ -411,57 +404,53 @@ class EndpointPupil extends _i1.EndpointRef {
         {'siblingsTutorInfo': siblingsTutorInfo},
       );
 
-  _i2.Future<_i5.PupilData> updatePupilProperty(
-    int internalId,
-    String property,
-    dynamic value,
-  ) =>
+  _i2.Future<_i5.PupilData> updatePupil(_i5.PupilData pupil) =>
       caller.callServerEndpoint<_i5.PupilData>(
         'pupil',
-        'updatePupilProperty',
-        {
-          'internalId': internalId,
-          'property': property,
-          'value': value,
-        },
+        'updatePupil',
+        {'pupil': pupil},
       );
 
   _i2.Future<_i5.PupilData> updatePupilAvatar(
-    int internalId,
-    _i11.ByteData avatarByteData,
+    int pupilId,
+    String path,
   ) =>
       caller.callServerEndpoint<_i5.PupilData>(
         'pupil',
         'updatePupilAvatar',
         {
-          'internalId': internalId,
-          'avatarByteData': avatarByteData,
+          'pupilId': pupilId,
+          'path': path,
         },
       );
 
   _i2.Future<_i5.PupilData> updatePupilAvatarAuth(
-    int internalId,
+    int pupilId,
     _i11.ByteData avatarAuthBytes,
+    String path,
   ) =>
       caller.callServerEndpoint<_i5.PupilData>(
         'pupil',
         'updatePupilAvatarAuth',
         {
-          'internalId': internalId,
+          'pupilId': pupilId,
           'avatarAuthBytes': avatarAuthBytes,
+          'path': path,
         },
       );
 
   _i2.Future<_i5.PupilData> updatePupilWithPublicMediaAuth(
-    int internalId,
+    int pupilId,
     _i11.ByteData publicMediaAuthFBytes,
+    String path,
   ) =>
       caller.callServerEndpoint<_i5.PupilData>(
         'pupil',
         'updatePupilWithPublicMediaAuth',
         {
-          'internalId': internalId,
+          'pupilId': pupilId,
           'publicMediaAuthFBytes': publicMediaAuthFBytes,
+          'path': path,
         },
       );
 

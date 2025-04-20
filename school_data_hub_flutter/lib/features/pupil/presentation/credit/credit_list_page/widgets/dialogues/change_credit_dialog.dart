@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
@@ -133,16 +134,16 @@ Future<void> changeCreditDialog(BuildContext context, PupilProxy pupil) async {
               ElevatedButton(
                 style: AppStyles.successButtonStyle,
                 onPressed: () {
-                  // if (credit != 0) {
-                  //   di<PupilManager>().patchOnePupilProperty(
-                  //       pupilId: pupil.internalId,
-                  //       jsonKey: 'credit',
-                  //       value: credit);
+                  if (credit != 0) {
+                    di<PupilManager>().updateNonParentInfoProperty(
+                        pupilId: pupil.internalId,
+                        jsonKey: 'credit',
+                        value: credit);
 
-                  //   di<SessionManager>().changeSessionCredit(credit);
+                    di<ServerpodSessionManager>().changeUserCredit(credit);
 
-                  //   Navigator.of(context).pop();
-                  // }
+                    Navigator.of(context).pop();
+                  }
                 },
                 child: const Text(
                   "SENDEN",

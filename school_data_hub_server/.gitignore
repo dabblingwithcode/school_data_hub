@@ -8,6 +8,9 @@ build/
 # Database backups
 database_backups/
 
+# Storage
+storage/
+
 # Directory created by dartdoc
 doc/api/
 

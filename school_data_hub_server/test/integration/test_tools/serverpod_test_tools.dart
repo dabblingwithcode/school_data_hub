@@ -1227,35 +1227,6 @@ class _PupilEndpoint {
     });
   }
 
-  _i3.Future<bool> createPupil(
-    _i1.TestSessionBuilder sessionBuilder,
-    _i6.PupilData pupil,
-  ) async {
-    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
-      var _localUniqueSession =
-          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'pupil',
-        method: 'createPupil',
-      );
-      try {
-        var _localCallContext = await _endpointDispatch.getMethodCallContext(
-          createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'pupil',
-          methodName: 'createPupil',
-          parameters: _i1.testObjectToJson({'pupil': pupil}),
-          serializationManager: _serializationManager,
-        );
-        var _localReturnValue = await (_localCallContext.method.call(
-          _localUniqueSession,
-          _localCallContext.arguments,
-        ) as _i3.Future<bool>);
-        return _localReturnValue;
-      } finally {
-        await _localUniqueSession.close();
-      }
-    });
-  }
-
   _i3.Future<List<_i6.PupilData>> updateSiblingsTutorInfo(
     _i1.TestSessionBuilder sessionBuilder,
     _i14.SiblingsTutorInfo siblingsTutorInfo,
@@ -1286,28 +1257,22 @@ class _PupilEndpoint {
     });
   }
 
-  _i3.Future<_i6.PupilData> updatePupilProperty(
+  _i3.Future<_i6.PupilData> updatePupil(
     _i1.TestSessionBuilder sessionBuilder,
-    int internalId,
-    String property,
-    dynamic value,
+    _i6.PupilData pupil,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
         endpoint: 'pupil',
-        method: 'updatePupilProperty',
+        method: 'updatePupil',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'pupil',
-          methodName: 'updatePupilProperty',
-          parameters: _i1.testObjectToJson({
-            'internalId': internalId,
-            'property': property,
-            'value': value,
-          }),
+          methodName: 'updatePupil',
+          parameters: _i1.testObjectToJson({'pupil': pupil}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
@@ -1323,8 +1288,8 @@ class _PupilEndpoint {
 
   _i3.Future<_i6.PupilData> updatePupilAvatar(
     _i1.TestSessionBuilder sessionBuilder,
-    int internalId,
-    _i13.ByteData avatarByteData,
+    int pupilId,
+    String path,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1338,8 +1303,8 @@ class _PupilEndpoint {
           endpointPath: 'pupil',
           methodName: 'updatePupilAvatar',
           parameters: _i1.testObjectToJson({
-            'internalId': internalId,
-            'avatarByteData': avatarByteData,
+            'pupilId': pupilId,
+            'path': path,
           }),
           serializationManager: _serializationManager,
         );
@@ -1356,8 +1321,9 @@ class _PupilEndpoint {
 
   _i3.Future<_i6.PupilData> updatePupilAvatarAuth(
     _i1.TestSessionBuilder sessionBuilder,
-    int internalId,
+    int pupilId,
     _i13.ByteData avatarAuthBytes,
+    String path,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1371,8 +1337,9 @@ class _PupilEndpoint {
           endpointPath: 'pupil',
           methodName: 'updatePupilAvatarAuth',
           parameters: _i1.testObjectToJson({
-            'internalId': internalId,
+            'pupilId': pupilId,
             'avatarAuthBytes': avatarAuthBytes,
+            'path': path,
           }),
           serializationManager: _serializationManager,
         );
@@ -1389,8 +1356,9 @@ class _PupilEndpoint {
 
   _i3.Future<_i6.PupilData> updatePupilWithPublicMediaAuth(
     _i1.TestSessionBuilder sessionBuilder,
-    int internalId,
+    int pupilId,
     _i13.ByteData publicMediaAuthFBytes,
+    String path,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1404,8 +1372,9 @@ class _PupilEndpoint {
           endpointPath: 'pupil',
           methodName: 'updatePupilWithPublicMediaAuth',
           parameters: _i1.testObjectToJson({
-            'internalId': internalId,
+            'pupilId': pupilId,
             'publicMediaAuthFBytes': publicMediaAuthFBytes,
+            'path': path,
           }),
           serializationManager: _serializationManager,
         );
