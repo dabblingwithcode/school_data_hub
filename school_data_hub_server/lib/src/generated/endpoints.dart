@@ -815,8 +815,8 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<int>(),
               nullable: false,
             ),
-            'path': _i1.ParameterDescription(
-              name: 'path',
+            'filePath': _i1.ParameterDescription(
+              name: 'filePath',
               type: _i1.getType<String>(),
               nullable: false,
             ),
@@ -828,7 +828,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (endpoints['pupil'] as _i8.PupilEndpoint).updatePupilAvatar(
             session,
             params['pupilId'],
-            params['path'],
+            params['filePath'],
           ),
         ),
         'updatePupilAvatarAuth': _i1.MethodConnector(

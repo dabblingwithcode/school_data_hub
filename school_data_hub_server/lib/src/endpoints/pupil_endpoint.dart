@@ -68,10 +68,10 @@ class PupilEndpoint extends Endpoint {
   }
 
   Future<PupilData> updatePupilAvatar(
-      Session session, int pupilId, String path) async {
+      Session session, int pupilId, String filePath) async {
     final createdBy = await getUserName(session);
     final hubDocument = await HubDocumentHelper.createHubDocumentObject(
-        session: session, createdBy: createdBy!, path: path);
+        session: session, createdBy: createdBy!, path: filePath);
 
     // Save the document to the database
     final hubDocumentInDatabase =
@@ -80,24 +80,24 @@ class PupilEndpoint extends Endpoint {
     final pupil = await PupilData.db.findById(
       session,
       pupilId,
+      include: PupilData.include(
+        avatar: HubDocument.include(),
+      ),
     );
     if (pupil == null) {
       throw Exception('Pupil not found');
     }
-    _log.info('Pupil found: ${pupil.toJson()}');
+
     // if the pupil has an avatar, delete it
     if (pupil.avatar != null) {
-      _log.info('Deleting old avatar document: ${pupil.avatar!.documentId}');
+      _log.warning('Deleting old avatar document: ${pupil.avatar!.documentId}');
       // delete the old avatar document from the storage
-      final success = await HubDocumentHelper.deleteHubDocument(
-        session: session,
-        documentId: pupil.avatar!.documentId,
-      );
-      // TODO: Handle exception gracefully here
-      if (!success) {
-        throw Exception('Failed to delete old avatar document');
-      }
+      session.storage
+          .deleteFile(storageId: 'private', path: pupil.avatar!.documentPath!);
+      await PupilData.db.detachRow.avatar(session, pupil);
+
       await HubDocument.db.deleteRow(session, pupil.avatar!);
+      // TODO: Consider exceptions and handle them gracefully here
     }
     // update the pupil with the new avatar
     _log.info(
@@ -109,7 +109,7 @@ class PupilEndpoint extends Endpoint {
           avatar: HubDocument.include(),
         ));
 
-    _log.info('Updated pupil : ${updatedPupil!.toJson()}');
+    _log.fine('Updated pupil : ${updatedPupil!.toJson()}');
     return updatedPupil;
   }
 

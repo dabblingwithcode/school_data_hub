@@ -43,9 +43,6 @@ class HubDocumentHelper {
       path: hubDocument.documentPath!,
     );
 
-    // Delete the HubDocument from the database
-    await HubDocument.db.deleteRow(session, hubDocument);
-
     return true; // Document deleted successfully
   }
 

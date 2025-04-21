@@ -1289,7 +1289,7 @@ class _PupilEndpoint {
   _i3.Future<_i6.PupilData> updatePupilAvatar(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
-    String path,
+    String filePath,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1304,7 +1304,7 @@ class _PupilEndpoint {
           methodName: 'updatePupilAvatar',
           parameters: _i1.testObjectToJson({
             'pupilId': pupilId,
-            'path': path,
+            'filePath': filePath,
           }),
           serializationManager: _serializationManager,
         );

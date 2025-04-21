@@ -413,14 +413,14 @@ class EndpointPupil extends _i1.EndpointRef {
 
   _i2.Future<_i5.PupilData> updatePupilAvatar(
     int pupilId,
-    String path,
+    String filePath,
   ) =>
       caller.callServerEndpoint<_i5.PupilData>(
         'pupil',
         'updatePupilAvatar',
         {
           'pupilId': pupilId,
-          'path': path,
+          'filePath': filePath,
         },
       );
 
