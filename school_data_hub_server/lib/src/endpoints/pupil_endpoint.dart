@@ -1,9 +1,12 @@
 import 'dart:typed_data';
 
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/utils/get_user_name.dart';
 import 'package:school_data_hub_server/src/utils/hub_document_helper.dart';
 import 'package:serverpod/serverpod.dart';
+
+final _log = Logger('PupilEndpoint');
 
 class PupilEndpoint extends Endpoint {
   @override
@@ -29,10 +32,11 @@ class PupilEndpoint extends Endpoint {
 
   Future<List<PupilData>> fetchPupilsById(
       Session session, Set<int> internalIds) async {
-    final pupils = await PupilData.db.find(
-      session,
-      where: (t) => t.internalId.inSet(internalIds),
-    );
+    final pupils = await PupilData.db.find(session,
+        where: (t) => t.internalId.inSet(internalIds),
+        include: PupilData.include(
+          avatar: HubDocument.include(),
+        ));
 
     return pupils;
   }
@@ -66,18 +70,25 @@ class PupilEndpoint extends Endpoint {
   Future<PupilData> updatePupilAvatar(
       Session session, int pupilId, String path) async {
     final createdBy = await getUserName(session);
-    final hubDocument = await HubDocumentHelper.createHubDocument(
+    final hubDocument = await HubDocumentHelper.createHubDocumentObject(
         session: session, createdBy: createdBy!, path: path);
+
+    // Save the document to the database
+    final hubDocumentInDatabase =
+        await HubDocument.db.insertRow(session, hubDocument);
     // find the pupil by id
-    final pupil = await PupilData.db.findFirstRow(
+    final pupil = await PupilData.db.findById(
       session,
-      where: (t) => t.id.equals(pupilId),
+      pupilId,
     );
     if (pupil == null) {
       throw Exception('Pupil not found');
     }
+    _log.info('Pupil found: ${pupil.toJson()}');
     // if the pupil has an avatar, delete it
     if (pupil.avatar != null) {
+      _log.info('Deleting old avatar document: ${pupil.avatar!.documentId}');
+      // delete the old avatar document from the storage
       final success = await HubDocumentHelper.deleteHubDocument(
         session: session,
         documentId: pupil.avatar!.documentId,
@@ -89,16 +100,23 @@ class PupilEndpoint extends Endpoint {
       await HubDocument.db.deleteRow(session, pupil.avatar!);
     }
     // update the pupil with the new avatar
+    _log.info(
+        'Updating pupil avatar: id: [${hubDocumentInDatabase.id}]documentID [${hubDocumentInDatabase.documentId}]');
+    // pupil.avatar = hubDocument;
+    await PupilData.db.attachRow.avatar(session, pupil, hubDocumentInDatabase);
+    final updatedPupil = await PupilData.db.findById(session, pupil.id!,
+        include: PupilData.include(
+          avatar: HubDocument.include(),
+        ));
 
-    pupil.avatar = hubDocument;
-    final updatedPupil = await PupilData.db.updateRow(session, pupil);
+    _log.info('Updated pupil : ${updatedPupil!.toJson()}');
     return updatedPupil;
   }
 
   Future<PupilData> updatePupilAvatarAuth(Session session, int pupilId,
       ByteData avatarAuthBytes, String path) async {
     final createdBy = await getUserName(session);
-    final hubDocument = await HubDocumentHelper.createHubDocument(
+    final hubDocument = await HubDocumentHelper.createHubDocumentObject(
       session: session,
       createdBy: createdBy!,
       path: path,
@@ -133,7 +151,7 @@ class PupilEndpoint extends Endpoint {
       ByteData publicMediaAuthFBytes, String path) async {
     final createdBy = await getUserName(session);
 
-    final hubDocument = await HubDocumentHelper.createHubDocument(
+    final hubDocument = await HubDocumentHelper.createHubDocumentObject(
         session: session, createdBy: createdBy!, path: path);
 
     final pupil = await PupilData.db.findFirstRow(

@@ -1,8 +1,12 @@
+import 'dart:developer';
+
+import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:school_data_hub_server/src/future_calls/database_backup_future_call.dart';
 import 'package:school_data_hub_server/src/future_calls/increase_credit_future_call.dart';
 import 'package:school_data_hub_server/src/future_calls/populate_test_environment_future_call.dart';
 import 'package:school_data_hub_server/src/utils/local_storage.dart';
+import 'package:school_data_hub_server/src/utils/logger/logrecord_formatter.dart';
 import 'package:school_data_hub_server/src/web/routes/root.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
@@ -15,6 +19,14 @@ import 'src/generated/protocol.dart';
 // configuring Relic (Serverpod's web-server), or need custom setup work.
 
 void run(List<String> args) async {
+  // Set the global logging level
+  Logger.root.level = Level.ALL;
+
+  // Add your custom colored console listener
+  Logger.root.onRecord.listen((record) {
+    final colorFormatter = ColorFormatter();
+    log(colorFormatter.format(record));
+  });
   // auth configuration
   auth.AuthConfig.set(auth.AuthConfig(
     enableUserImages: false,

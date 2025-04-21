@@ -1,10 +1,10 @@
 // code copyrhight by the author(s)
 // from https://github.com/serverpod/serverpod/issues/3081
 
-import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:serverpod/serverpod.dart';
 
@@ -19,12 +19,13 @@ enum LocalStorageId {
   );
 }
 
+final _log = Logger('LocalStorage');
+
 class LocalStorage extends DatabaseCloudStorage {
   // Static instances for each storage type
   // static final Map<String, LocalStorage> _instances = {};
   //final String? publicStorageUrl;
   final String pathPrefix;
-  //final storageUrl = '${Directory.current}/storage';
 
   LocalStorage({
     required String storageId,
@@ -69,8 +70,14 @@ class LocalStorage extends DatabaseCloudStorage {
     required Session session,
     required String path,
   }) async {
-    log('Checking if file exists at $path');
+    _log.info('Checking if file exists at $path');
+
     final file = _getFileByPath(path);
+    if (!file.existsSync()) {
+      _log.warning('File not found: $path');
+    } else {
+      _log.info('File exists: $path');
+    }
     return file.existsSync();
   }
 
