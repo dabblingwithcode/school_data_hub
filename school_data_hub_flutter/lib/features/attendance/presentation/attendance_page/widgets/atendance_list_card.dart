@@ -18,18 +18,22 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:watch_it/watch_it.dart';
 
+final _attendanceManager = di<AttendanceManager>();
+
 class AttendanceCard extends WatchingWidget {
-  final PupilProxy passedPupil;
+  final PupilProxy pupil;
   final DateTime thisDate;
-  const AttendanceCard(this.passedPupil, this.thisDate, {super.key});
+  const AttendanceCard(this.pupil, this.thisDate, {super.key});
   @override
   Widget build(BuildContext context) {
-    PupilProxy pupil = watch(passedPupil);
+    final missedClasses = watchValue(
+      (AttendanceManager x) => x.missedClasses,
+    );
+//final missedClass = _attendanceManager.getPupilMissedClassOnDate(pupilId, date)
 
-    final attendanceManager = di<AttendanceManager>();
     DateTime thisDate = this.thisDate;
     AttendanceValues attendanceInfo =
-        AttendanceHelper.setAttendanceValues(passedPupil.internalId, thisDate);
+        AttendanceHelper.setAttendanceValues(pupil.pupilId, thisDate);
 
     //- TODO: This widget is a mess, should be refactored!
 
@@ -122,14 +126,17 @@ class AttendanceCard extends WatchingWidget {
                                       if (newValue == MissedType.isLate) {
                                         final int minutesLate =
                                             await minutesLateDialog(context);
-                                        attendanceManager.changeLateTypeValue(
+                                        _attendanceManager.updateLateTypeValue(
                                             pupil.pupilId,
                                             newValue!,
                                             thisDate,
                                             minutesLate);
                                       } else {
-                                        attendanceManager.changeMissedTypeValue(
-                                            pupil.pupilId, newValue!, thisDate);
+                                        _attendanceManager
+                                            .updateMissedTypeValue(
+                                                pupil.pupilId,
+                                                newValue!,
+                                                thisDate);
                                       }
                                     },
                                   ),
@@ -140,7 +147,7 @@ class AttendanceCard extends WatchingWidget {
                                   activeColor: AppColors.excusedCheckColor,
                                   value: attendanceInfo.unexcusedValue,
                                   onChanged: (bool? newvalue) {
-                                    attendanceManager.changeExcusedValue(
+                                    _attendanceManager.updateExcusedValue(
                                         pupil.pupilId, thisDate, newvalue!);
                                   },
                                 ),
@@ -175,9 +182,9 @@ class AttendanceCard extends WatchingWidget {
                                                       false) {
                                                 return;
                                               }
-                                              attendanceManager
-                                                  .changeContactedValue(
-                                                      pupil.internalId,
+                                              _attendanceManager
+                                                  .updateContactedValue(
+                                                      pupil.pupilId,
                                                       newValue!,
                                                       thisDate);
                                             }),
@@ -205,15 +212,15 @@ class AttendanceCard extends WatchingWidget {
                                       if (returnedTime == null) {
                                         return;
                                       }
-                                      attendanceManager.changeReturnedValue(
-                                          pupil.internalId,
+                                      _attendanceManager.updateReturnedValue(
+                                          pupil.pupilId,
                                           newValue!,
                                           thisDate,
                                           returnedTime);
                                       return;
                                     }
-                                    attendanceManager.changeReturnedValue(
-                                        pupil.internalId,
+                                    _attendanceManager.updateReturnedValue(
+                                        pupil.pupilId,
                                         newValue!,
                                         thisDate,
                                         null);
@@ -328,8 +335,8 @@ class AttendanceCard extends WatchingWidget {
                               commentValue == attendanceInfo.commentValue) {
                             return;
                           }
-                          attendanceManager.changeCommentValue(
-                            pupil.internalId,
+                          _attendanceManager.updateCommentValue(
+                            pupil.pupilId,
                             commentValue,
                             thisDate,
                           );
@@ -465,15 +472,16 @@ class AttendanceCard extends WatchingWidget {
                                         if (newValue == MissedType.isLate) {
                                           final int minutesLate =
                                               await minutesLateDialog(context);
-                                          attendanceManager.changeLateTypeValue(
-                                              pupil.internalId,
-                                              newValue!,
-                                              thisDate,
-                                              minutesLate);
+                                          _attendanceManager
+                                              .updateLateTypeValue(
+                                                  pupil.pupilId,
+                                                  newValue!,
+                                                  thisDate,
+                                                  minutesLate);
                                         } else {
-                                          attendanceManager
-                                              .changeMissedTypeValue(
-                                                  pupil.internalId,
+                                          _attendanceManager
+                                              .updateMissedTypeValue(
+                                                  pupil.pupilId,
                                                   newValue!,
                                                   thisDate);
                                         }
@@ -509,10 +517,8 @@ class AttendanceCard extends WatchingWidget {
                                     activeColor: AppColors.excusedCheckColor,
                                     value: attendanceInfo.unexcusedValue,
                                     onChanged: (bool? newvalue) {
-                                      attendanceManager.changeExcusedValue(
-                                          pupil.internalId,
-                                          thisDate,
-                                          newvalue!);
+                                      _attendanceManager.updateExcusedValue(
+                                          pupil.pupilId, thisDate, newvalue!);
                                     },
                                   ),
                                   const Gap(8),
@@ -567,9 +573,9 @@ class AttendanceCard extends WatchingWidget {
                                                       false) {
                                                 return;
                                               }
-                                              attendanceManager
-                                                  .changeContactedValue(
-                                                      pupil.internalId,
+                                              _attendanceManager
+                                                  .updateContactedValue(
+                                                      pupil.pupilId,
                                                       newValue!,
                                                       thisDate);
                                             }),
@@ -623,15 +629,16 @@ class AttendanceCard extends WatchingWidget {
                                           if (returnedTime == null) {
                                             return;
                                           }
-                                          attendanceManager.changeReturnedValue(
-                                              pupil.internalId,
-                                              newValue!,
-                                              thisDate,
-                                              returnedTime);
+                                          _attendanceManager
+                                              .updateReturnedValue(
+                                                  pupil.pupilId,
+                                                  newValue!,
+                                                  thisDate,
+                                                  returnedTime);
                                           return;
                                         }
-                                        attendanceManager.changeReturnedValue(
-                                            pupil.internalId,
+                                        _attendanceManager.updateReturnedValue(
+                                            pupil.pupilId,
                                             newValue!,
                                             thisDate,
                                             null);
@@ -686,8 +693,8 @@ class AttendanceCard extends WatchingWidget {
                           return;
                         }
 
-                        attendanceManager.changeCommentValue(
-                          pupil.internalId,
+                        _attendanceManager.updateCommentValue(
+                          pupil.pupilId,
                           commentValue ?? '',
                           thisDate,
                         );

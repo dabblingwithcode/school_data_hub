@@ -97,6 +97,7 @@ class DiManager {
   /// These managers are initialized after the session manager authenticates
   /// the session. it is called in the [ServerpodSessionManager] class after the session is authenticated.
   static Future<void> registerManagersDependingOnSession() async {
+    _log.info('Registering managers depending on session');
     di.registerSingletonAsync<SchooldayManager>(() async {
       final schooldayManager = SchooldayManager();
 

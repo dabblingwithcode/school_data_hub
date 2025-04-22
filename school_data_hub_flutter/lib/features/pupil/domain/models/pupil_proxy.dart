@@ -81,8 +81,6 @@ class PupilProxy with ChangeNotifier {
     notifyListeners();
   }
 
-  //- TODO - remove this method
-
   void updatePupilIdentity(PupilIdentity pupilIdentity) {
     if (_pupilIdentity != pupilIdentity) {
       _pupilIdentity = pupilIdentity;
@@ -91,51 +89,36 @@ class PupilProxy with ChangeNotifier {
     }
   }
 
-  void updatePupilIdentityFromMoreRecentSource(PupilIdentity pupilIdentity) {
-    if (_pupilIdentity != pupilIdentity) {
-      _pupilIdentity = pupilIdentity;
-      pupilIsDirty = true;
-      notifyListeners();
-    }
-  }
+  // void updateFromMissedClassesOnASchoolday(
+  //     List<MissedClass> allMissedClassesThisDay) {
+  //   pupilIsDirty = false;
 
-  void clearAvatar() {
-    _avatarIdOverride = null;
-    _avatarUpdated = true;
-    pupilIsDirty = true;
-    notifyListeners();
-  }
+  //   if (allMissedClassesThisDay
+  //       .any((missedClass) => missedClass.pupilId == _pupilData.internalId)) {
+  //     final missedClass = allMissedClassesThisDay.firstWhere(
+  //         (missedClass) => missedClass.pupilId == _pupilData.internalId);
+  //     // if the missed class is not already in the missed classes
+  //     // or if the missed class is different from the one in the missed classes
+  //     // write it
+  //     if (!_missedClasses.containsKey(missedClass.schoolday!.schoolday) ||
+  //         !(_missedClasses[missedClass.schoolday!.schoolday] == missedClass)) {
+  //       _missedClasses[missedClass.schoolday!.schoolday] = missedClass;
+  //       pupilIsDirty = true;
+  //     }
+  //   } else {
+  //     // there is no missed class for this pupil on this date
+  //     // if there is a missed class for this date in the pupil's missed classes in memory
+  //     // remove it
+  //     if (_missedClasses.containsKey(_schooldayManager.thisDate.value)) {
+  //       _missedClasses.remove(di<SchooldayManager>().thisDate.value);
+  //       pupilIsDirty = true;
+  //     }
+  //   }
 
-  void updateFromMissedClassesOnASchoolday(
-      List<MissedClass> allMissedClassesThisDay) {
-    pupilIsDirty = false;
-
-    if (allMissedClassesThisDay
-        .any((missedClass) => missedClass.pupilId == _pupilData.internalId)) {
-      final missedClass = allMissedClassesThisDay.firstWhere(
-          (missedClass) => missedClass.pupilId == _pupilData.internalId);
-      // if the missed class is not already in the missed classes
-      // or if the missed class is different from the one in the missed classes
-      // write it
-      if (!_missedClasses.containsKey(missedClass.schoolday!.schoolday) ||
-          !(_missedClasses[missedClass.schoolday!.schoolday] == missedClass)) {
-        _missedClasses[missedClass.schoolday!.schoolday] = missedClass;
-        pupilIsDirty = true;
-      }
-    } else {
-      // there is no missed class for this pupil on this date
-      // if there is a missed class for this date in the pupil's missed classes in memory
-      // remove it
-      if (_missedClasses.containsKey(_schooldayManager.thisDate.value)) {
-        _missedClasses.remove(di<SchooldayManager>().thisDate.value);
-        pupilIsDirty = true;
-      }
-    }
-
-    if (pupilIsDirty) {
-      notifyListeners();
-    }
-  }
+  //   if (pupilIsDirty) {
+  //     notifyListeners();
+  //   }
+  // }
 
   String get firstName => _pupilIdentity.firstName;
   String get lastName => _pupilIdentity.lastName;
@@ -176,7 +159,7 @@ class PupilProxy with ChangeNotifier {
   //     _avatarUpdated ? _avatarIdOverride : _pupilData.avatarId;
   HubDocument? get avatarAuth => _pupilData.avatarAuth;
   // String? get avatarAuthId => _pupilData.avatarAuthId;
-  // PublicMediaAuth get publicMediaAuth => _pupilData.publicMediaAuth;
+  PublicMediaAuth get publicMediaAuth => _pupilData.publicMediaAuth;
   // String? get publicMediaAuthId => _pupilData.publicMediaAuthId;
   // String? get communicationPupil => _pupilData.communicationPupil;
   // String? get communicationTutor1 =>

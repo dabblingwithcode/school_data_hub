@@ -7,19 +7,21 @@ class AttendanceEndpoint extends Endpoint {
 
   Future<List<MissedClass>> fetchMissedClassesOnASchoolday(
       Session session, DateTime schoolday) {
-    return MissedClass.db.find(
-      session,
-      where: (t) => t.schoolday.schoolday.equals(schoolday),
-    );
+    return MissedClass.db.find(session,
+        where: (t) => t.schoolday.schoolday.equals(schoolday),
+        include: MissedClass.include(schoolday: Schoolday.include()));
   }
 
   Future<List<MissedClass>> fetchMissedClasses(Session session) {
-    return MissedClass.db.find(session);
+    return MissedClass.db.find(session,
+        include: MissedClass.include(schoolday: Schoolday.include()));
   }
 
   Future<bool> createMissedClass(
       Session session, MissedClass missedClass) async {
-    await session.db.insertRow(missedClass);
+    await session.db.insertRow(
+      missedClass,
+    );
     return true;
   }
 

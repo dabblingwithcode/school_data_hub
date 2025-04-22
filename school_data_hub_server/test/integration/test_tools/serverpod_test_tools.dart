@@ -1070,7 +1070,7 @@ class _MissedClassEndpoint {
 
   _i3.Future<bool> deleteMissedClass(
     _i1.TestSessionBuilder sessionBuilder,
-    int internalId,
+    int pupilId,
     DateTime schooldayDate,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -1085,7 +1085,7 @@ class _MissedClassEndpoint {
           endpointPath: 'missedClass',
           methodName: 'deleteMissedClass',
           parameters: _i1.testObjectToJson({
-            'internalId': internalId,
+            'pupilId': pupilId,
             'schooldayDate': schooldayDate,
           }),
           serializationManager: _serializationManager,

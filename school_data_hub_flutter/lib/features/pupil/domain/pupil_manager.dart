@@ -186,58 +186,58 @@ class PupilManager extends ChangeNotifier {
     }
   }
 
-  void updatePupilsFromMissedClassesOnASchoolday(
-      List<MissedClass> allMissedClasses) {
-    // Track the IDs of pupils who had missed classes before the update
-    // We need this to find out whose missed classes have been deleted
-    final Set<int> pupilsWithMissedClassesBeforeUpdate = _pupils.values
-        .where((pupil) =>
-            pupil.missedClasses!.isNotEmpty &&
-            pupil.missedClasses!.any((missedClass) =>
-                missedClass.schoolday == _schooldayManager.thisDate.value))
-        .map((pupil) => pupil.internalId)
-        .toSet();
+  // void updatePupilsFromMissedClassesOnASchoolday(
+  //     List<MissedClass> allMissedClasses) {
+  //   // Track the IDs of pupils who had missed classes before the update
+  //   // We need this to find out whose missed classes have been deleted
+  //   final Set<int> pupilsWithMissedClassesBeforeUpdate = _pupils.values
+  //       .where((pupil) =>
+  //           pupil.missedClasses!.isNotEmpty &&
+  //           pupil.missedClasses!.any((missedClass) =>
+  //               missedClass.schoolday == _schooldayManager.thisDate.value))
+  //       .map((pupil) => pupil.internalId)
+  //       .toSet();
 
-    if (allMissedClasses.isEmpty) {
-      for (int pupilId in pupilsWithMissedClassesBeforeUpdate) {
-        final pupil = _pupils[pupilId];
-        if (pupil != null) {
-          pupil.updateFromMissedClassesOnASchoolday([]);
-        }
-      }
-      notifyListeners();
-      return;
-    }
+  //   if (allMissedClasses.isEmpty) {
+  //     for (int pupilId in pupilsWithMissedClassesBeforeUpdate) {
+  //       final pupil = _pupils[pupilId];
+  //       if (pupil != null) {
+  //         pupil.updateFromMissedClassesOnASchoolday([]);
+  //       }
+  //     }
+  //     notifyListeners();
+  //     return;
+  //   }
 
-    for (MissedClass missedClass in allMissedClasses) {
-      final missedPupil = _pupils[missedClass.pupilId];
+  //   for (MissedClass missedClass in allMissedClasses) {
+  //     final missedPupil = _pupils[missedClass.pupilId];
 
-      if (missedPupil == null) {
-        _log.severe(
-            'Pupil ${missedClass.pupilId} not found', StackTrace.current);
+  //     if (missedPupil == null) {
+  //       _log.severe(
+  //           'Pupil ${missedClass.pupilId} not found', StackTrace.current);
 
-        continue;
-      }
+  //       continue;
+  //     }
 
-      missedPupil.updateFromMissedClassesOnASchoolday(allMissedClasses);
-    }
-    // Identify pupils whose missed classes are no longer present
-    final Set<int> pupilsWithMissedClassesAfterUpdate = allMissedClasses
-        .map((missedClass) => missedClass.pupil!.internalId)
-        .toSet();
+  //     missedPupil.updateFromMissedClassesOnASchoolday(allMissedClasses);
+  //   }
+  //   // Identify pupils whose missed classes are no longer present
+  //   final Set<int> pupilsWithMissedClassesAfterUpdate = allMissedClasses
+  //       .map((missedClass) => missedClass.pupil!.internalId)
+  //       .toSet();
 
-    final Set<int> pupilsWithDeletedMissedClasses =
-        pupilsWithMissedClassesBeforeUpdate
-            .difference(pupilsWithMissedClassesAfterUpdate);
+  //   final Set<int> pupilsWithDeletedMissedClasses =
+  //       pupilsWithMissedClassesBeforeUpdate
+  //           .difference(pupilsWithMissedClassesAfterUpdate);
 
-    for (int pupilId in pupilsWithDeletedMissedClasses) {
-      final pupil = _pupils[pupilId];
-      if (pupil != null) {
-        pupil.updateFromMissedClassesOnASchoolday(allMissedClasses);
-      }
-    }
-    notifyListeners();
-  }
+  //   for (int pupilId in pupilsWithDeletedMissedClasses) {
+  //     final pupil = _pupils[pupilId];
+  //     if (pupil != null) {
+  //       pupil.updateFromMissedClassesOnASchoolday(allMissedClasses);
+  //     }
+  //   }
+  //   notifyListeners();
+  // }
 
   Future<void> postAvatarImage(
     File imageFile,
@@ -252,7 +252,6 @@ class PupilManager extends ChangeNotifier {
     if (pupilProxy.avatar != null) {
       final cacheKey = pupilProxy.avatar!.documentId;
       _cacheManager.removeFile(cacheKey.toString());
-      pupilProxy.clearAvatar();
     }
 
     // send the Api request

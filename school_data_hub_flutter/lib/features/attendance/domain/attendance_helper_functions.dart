@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_picker.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/models/attendance_values.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -11,20 +12,21 @@ import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_mana
 import 'package:watch_it/watch_it.dart';
 
 final _schooldayManager = di<SchooldayManager>();
+final _attendanceManager = di<AttendanceManager>();
 final _pupilManager = di<PupilManager>();
 
 //- lookup functions
 class AttendanceHelper {
-  static int? getMissedClassIndex(PupilProxy pupil, DateTime date) {
-    final int? foundMissedClassIndex = pupil.missedClasses?.indexWhere(
-        (datematch) => (datematch.schoolday!.schoolday.isSameDate(date)));
+  // static int? getMissedClassIndex(PupilProxy pupil, DateTime date) {
+  //   final int? foundMissedClassIndex = pupil.missedClasses?.indexWhere(
+  //       (datematch) => (datematch.schoolday!.schoolday.isSameDate(date)));
 
-    if (foundMissedClassIndex == null) {
-      return null;
-    }
+  //   if (foundMissedClassIndex == null) {
+  //     return null;
+  //   }
 
-    return foundMissedClassIndex;
-  }
+  //   return foundMissedClassIndex;
+  // }
 
 //- overview sums functions
 
@@ -265,11 +267,10 @@ class AttendanceHelper {
 
     ContactedType contactedType;
 
-    final PupilProxy pupil = _pupilManager.getPupilByInternalId(pupilId)!;
+    final missedClass =
+        _attendanceManager.getPupilMissedClassOnDate(pupilId, date);
 
-    final int? missedClass = getMissedClassIndex(pupil, date);
-
-    if (missedClass == -1 || missedClass == null) {
+    if (missedClass == null) {
       return AttendanceValues(
         missedTypeValue: MissedType.notSet,
         contactedTypeValue: ContactedType.notSet,
@@ -280,29 +281,29 @@ class AttendanceHelper {
         commentValue: null,
       );
     } else {
-      final dropdownvalue = pupil.missedClasses![missedClass].missedType;
+      final dropdownvalue = missedClass.missedType;
       missedType =
           MissedType.values.firstWhere((e) => e.value == dropdownvalue);
     }
 
-    final contactedValue = pupil.missedClasses![missedClass].contacted;
+    final contactedValue = missedClass.contacted;
     contactedType = ContactedType.values
             .firstWhereOrNull((e) => e.value == contactedValue) ??
         ContactedType.notSet;
 
-    String createdOrModifiedBy = pupil.missedClasses![missedClass].modifiedBy ??
-        pupil.missedClasses![missedClass].createdBy;
+    String createdOrModifiedBy =
+        missedClass.modifiedBy ?? missedClass.createdBy;
 
-    final bool excused = pupil.missedClasses![missedClass].unexcused;
-    final bool returned = pupil.missedClasses![missedClass].returned!;
-    final DateTime? returnedTime = pupil.missedClasses![missedClass].returnedAt;
-    final String? comment = pupil.missedClasses![missedClass].comment;
+    final bool unexcused = missedClass.unexcused;
+    final bool returned = missedClass.returned;
+    final DateTime? returnedTime = missedClass.returnedAt;
+    final String? comment = missedClass.comment;
 
     return AttendanceValues(
       missedTypeValue: missedType,
       contactedTypeValue: contactedType,
       createdOrModifiedByValue: createdOrModifiedBy,
-      unexcusedValue: excused,
+      unexcusedValue: unexcused,
       returnedValue: returned,
       returnedTimeValue: returnedTime,
       commentValue: comment,

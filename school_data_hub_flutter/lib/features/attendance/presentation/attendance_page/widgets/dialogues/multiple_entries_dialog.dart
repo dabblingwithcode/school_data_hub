@@ -206,11 +206,8 @@ Future<void> createMissedClassList(
                   style: AppStyles.successButtonStyle,
                   onPressed: () {
                     if (_missedDatesformKey.currentState!.validate()) {
-                      _attendanceManager.createManyMissedClasses(
-                          pupil.internalId,
-                          startDate,
-                          endDate,
-                          dialogdropdownValue);
+                      _attendanceManager.postManyMissedClasses(pupil.internalId,
+                          startDate, endDate, dialogdropdownValue);
                       _missedDatesformKey.currentState!.reset();
                       Navigator.of(context).pop();
                     }

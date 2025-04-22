@@ -32,9 +32,9 @@ class SchooldayManager {
   SchooldayManager();
 
   Future<SchooldayManager> init() async {
-    if (_envManager.isAuthenticated.value == false) {
-      return this;
-    }
+    // if (_envManager.isAuthenticated.value == false) {
+    //   return this;
+    // }
     await getSchooldays();
     await getSchoolSemesters();
     return this;

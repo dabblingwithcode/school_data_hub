@@ -117,6 +117,7 @@ class AttendanceApiService {
   //- patch a missed class -//
 
   Future<MissedClass> updateMissedClass({
+    required int missedClassId,
     required int pupilId,
     required DateTime date,
     MissedType? missedType,
@@ -128,9 +129,9 @@ class AttendanceApiService {
     ContactedType? contactedType,
     String? comment,
   }) async {
-    _notificationService.apiRunning(true);
     final schoolday = _schooldayManager.getSchooldayByDate(date);
     final MissedClass missedClassToUpdate = MissedClass(
+      id: missedClassId,
       missedType: missedType?.value ?? '0',
       unexcused: excused ?? false,
       contacted: contactedType?.value ?? '0',
@@ -159,13 +160,13 @@ class AttendanceApiService {
 
   //- delete missed class -//
 
-  Future<bool> deleteMissedClass(int internalId, DateTime date) async {
+  Future<bool> deleteMissedClass(int pupilId, DateTime date) async {
     _notificationService.apiRunning(true);
 
     try {
       _notificationService.apiRunning(true);
       final response = await _client.missedClass.deleteMissedClass(
-        internalId,
+        pupilId,
         date,
       );
       _notificationService.apiRunning(false);

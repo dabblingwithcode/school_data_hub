@@ -8,7 +8,16 @@ class MissedClassEndpoint extends Endpoint {
   Future<MissedClass> postMissedClass(
       Session session, MissedClass missedClass) async {
     final createdMissedClass = await session.db.insertRow(missedClass);
-    return createdMissedClass;
+    // Fetch the object again with the relation included
+    final missedClassWithRelation = await MissedClass.db.findById(
+      session,
+      createdMissedClass.id!,
+      include: MissedClass.include(
+        schoolday: Schoolday.include(),
+      ),
+    );
+
+    return missedClassWithRelation ?? createdMissedClass;
   }
 
   Future<List<MissedClass>> postMissedClasses(
@@ -18,7 +27,12 @@ class MissedClassEndpoint extends Endpoint {
   }
 
   Future<List<MissedClass>> fetchAllMissedClasses(Session session) {
-    return MissedClass.db.find(session);
+    return MissedClass.db.find(
+      session,
+      include: MissedClass.include(
+        schoolday: Schoolday.include(),
+      ),
+    );
   }
 
   Future<List<MissedClass>> fetchMissedClassesOnASchoolday(
@@ -26,15 +40,18 @@ class MissedClassEndpoint extends Endpoint {
     return MissedClass.db.find(
       session,
       where: (t) => t.schoolday.schoolday.equals(schoolday),
+      include: MissedClass.include(
+        schoolday: Schoolday.include(),
+      ),
     );
   }
 
   Future<bool> deleteMissedClass(
-      Session session, int internalId, DateTime schooldayDate) async {
+      Session session, int pupilId, DateTime schooldayDate) async {
     var missedClassToDelete = await MissedClass.db.findFirstRow(
       session,
       where: (t) =>
-          t.pupil.internalId.equals(internalId) &
+          t.pupilId.equals(pupilId) &
           t.schoolday.schoolday.equals(schooldayDate),
     );
     await MissedClass.db.deleteRow(session, missedClassToDelete!);
@@ -44,6 +61,15 @@ class MissedClassEndpoint extends Endpoint {
   Future<MissedClass> updateMissedClass(
       Session session, MissedClass missedClass) async {
     final updatedMissedClass = await session.db.updateRow(missedClass);
-    return updatedMissedClass;
+    // Fetch the object again with the relation included
+    final missedClassWithRelation = await MissedClass.db.findById(
+      session,
+      updatedMissedClass.id!,
+      include: MissedClass.include(
+        schoolday: Schoolday.include(),
+      ),
+    );
+
+    return missedClassWithRelation ?? updatedMissedClass;
   }
 }
