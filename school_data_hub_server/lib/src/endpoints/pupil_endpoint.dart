@@ -69,13 +69,9 @@ class PupilEndpoint extends Endpoint {
 
   Future<PupilData> updatePupilAvatar(
       Session session, int pupilId, String filePath) async {
+    // find the createdBy user
     final createdBy = await getUserName(session);
-    final hubDocument = await HubDocumentHelper.createHubDocumentObject(
-        session: session, createdBy: createdBy!, path: filePath);
 
-    // Save the document to the database
-    final hubDocumentInDatabase =
-        await HubDocument.db.insertRow(session, hubDocument);
     // find the pupil by id
     final pupil = await PupilData.db.findById(
       session,
@@ -88,22 +84,45 @@ class PupilEndpoint extends Endpoint {
       throw Exception('Pupil not found');
     }
 
-    // if the pupil has an avatar, delete it
-    if (pupil.avatar != null) {
-      _log.warning('Deleting old avatar document: ${pupil.avatar!.documentId}');
-      // delete the old avatar document from the storage
-      session.storage
-          .deleteFile(storageId: 'private', path: pupil.avatar!.documentPath!);
-      await PupilData.db.detachRow.avatar(session, pupil);
+    // Create a HubDocument with the file path
+    final documentId = Uuid().v4();
+    final hubDocument = HubDocument(
+      documentId: documentId,
+      documentPath: filePath,
+      createdBy: createdBy!,
+      createdAt: DateTime.now(),
+    );
 
-      await HubDocument.db.deleteRow(session, pupil.avatar!);
-      // TODO: Consider exceptions and handle them gracefully here
-    }
-    // update the pupil with the new avatar
-    _log.info(
-        'Updating pupil avatar: id: [${hubDocumentInDatabase.id}]documentID [${hubDocumentInDatabase.documentId}]');
-    // pupil.avatar = hubDocument;
-    await PupilData.db.attachRow.avatar(session, pupil, hubDocumentInDatabase);
+    // Let's create a transaction for the database operations
+    // This is important to ensure that all operations are atomic
+    await session.db.transaction((transaction) async {
+      // Save the hub document object to the database
+      final hubDocumentInDatabase = await HubDocument.db
+          .insertRow(session, hubDocument, transaction: transaction);
+
+      // if the pupil has an avatar, delete it
+      if (pupil.avatar != null) {
+        _log.warning(
+            'Deleting old avatar document: ${pupil.avatar!.documentId}');
+        // delete the old avatar file from the storage
+        session.storage.deleteFile(
+            storageId: 'private', path: pupil.avatar!.documentPath!);
+        // detach the old avatar from the pupil
+        await PupilData.db.detachRow
+            .avatar(session, pupil, transaction: transaction);
+        // delete the old avatar document from the database
+        await HubDocument.db
+            .deleteRow(session, pupil.avatar!, transaction: transaction);
+        // TODO: Consider exceptions and handle them gracefully here
+      }
+      // update the pupil with the new avatar
+      _log.info(
+          'Updating pupil avatar: id: [${hubDocumentInDatabase.id}] documentID [${hubDocumentInDatabase.documentId}]');
+      // pupil.avatar = hubDocument;
+      await PupilData.db.attachRow.avatar(session, pupil, hubDocumentInDatabase,
+          transaction: transaction);
+    });
+
     final updatedPupil = await PupilData.db.findById(session, pupil.id!,
         include: PupilData.include(
           avatar: HubDocument.include(),
@@ -184,16 +203,20 @@ class PupilEndpoint extends Endpoint {
     final pupil = await PupilData.db.findFirstRow(
       session,
       where: (t) => t.internalId.equals(internalId),
+      include: PupilData.include(
+        avatar: HubDocument.include(),
+      ),
     );
     if (pupil == null) {
       throw Exception('Pupil not found');
     }
-    session.storage
+    await session.storage
         .deleteFile(storageId: 'private', path: pupil.avatar!.documentPath!);
+    await PupilData.db.detachRow.avatar(session, pupil);
 
+    await HubDocument.db.deleteRow(session, pupil.avatar!);
     pupil.avatar = null;
-    final updatedPupil = await PupilData.db.updateRow(session, pupil);
-    return updatedPupil;
+    return pupil;
   }
 
   Future<PupilData> deleteAvatarAuth(Session session, int internalId) async {

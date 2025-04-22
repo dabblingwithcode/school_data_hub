@@ -23,7 +23,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  serverpod_flutter: 2.5.0
+  serverpod_flutter: 2.5.1
   school_data_hub_client:
     path: ../school_data_hub_client
 

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/cached_image_or_download_inage.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_set_avatar.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:widget_zoom/widget_zoom.dart';
@@ -118,8 +120,13 @@ class AvatarWithBadges extends WatchingWidget {
                     PopupMenuItem(
                       child: const Text('Foto löschen'),
                       onTap: () async {
-                        // await di<PupilManager>().deleteAvatarImage(
-                        //     pupil.internalId, pupil.internalId.toString());
+                        final confirm = await confirmationDialog(
+                            context: context,
+                            title: 'Foto löschen',
+                            message: 'Möchten Sie wirklich das Foto löschen?');
+                        if (confirm != true) return;
+                        await di<PupilManager>().deleteAvatarImage(
+                            pupil.internalId, pupil.internalId.toString());
                       },
                     ),
                 ],

@@ -336,19 +336,20 @@ class PupilManager extends ChangeNotifier {
 //     _cacheManager.removeFile(cacheKey.toString());
 //   }
 
-//   Future<void> deleteAvatarImage(int pupilId, String cacheKey) async {
-//     // send the Api request
-//     await pupilDataApiService.deletePupilAvatar(
-//       internalId: pupilId,
-//     );
+  Future<void> deleteAvatarImage(int pupilId, String cacheKey) async {
+    // send the Api request
+    final pupilUpdate = await pupilDataApiService.deletePupilAvatar(
+      internalId: pupilId,
+    );
 
-//     // Delete the outdated encrypted file in the cache.
+    // Delete the outdated encrypted file in the cache.
 
-//     await _cacheManager.removeFile(cacheKey);
+    await _cacheManager.removeFile(cacheKey);
 
-//     // and update the repository
-//     _pupils[pupilId]!.clearAvatar();
-//   }
+    // and update the repository
+    updatePupilProxyWithPupilData(pupilUpdate);
+    // _pupils[pupilId]!.clearAvatar();
+  }
 
 //   Future<void> deleteAvatarAuthImage(int pupilId, String cacheKey) async {
 //     // send the Api request
