@@ -5,6 +5,17 @@ class MissedClassEndpoint extends Endpoint {
   @override
   bool get requireLogin => true;
 
+  Stream<MissedClassDto> streamMyModels(Session session) async* {
+    // Create a stream from the server's message central
+    var stream =
+        session.messages.createStream<MissedClassDto>('missed_class_stream');
+
+    // Relay messages from the stream to the client
+    await for (var missedClassDto in stream) {
+      yield missedClassDto;
+    }
+  }
+
   Future<MissedClass> postMissedClass(
       Session session, MissedClass missedClass) async {
     final createdMissedClass = await session.db.insertRow(missedClass);
@@ -16,8 +27,16 @@ class MissedClassEndpoint extends Endpoint {
         schoolday: Schoolday.include(),
       ),
     );
-
-    return missedClassWithRelation ?? createdMissedClass;
+    final newMissedClassDto = MissedClassDto(
+      missedClass: missedClassWithRelation!,
+      operation: 'add',
+    );
+    // Send the new missed class to the stream
+    session.messages.postMessage(
+      'missed_class_stream',
+      newMissedClassDto,
+    );
+    return missedClassWithRelation;
   }
 
   Future<List<MissedClass>> postMissedClasses(
@@ -53,8 +72,20 @@ class MissedClassEndpoint extends Endpoint {
       where: (t) =>
           t.pupilId.equals(pupilId) &
           t.schoolday.schoolday.equals(schooldayDate),
+      include: MissedClass.include(
+        schoolday: Schoolday.include(),
+      ),
     );
     await MissedClass.db.deleteRow(session, missedClassToDelete!);
+    final deletedMissedClassDto = MissedClassDto(
+      missedClass: missedClassToDelete,
+      operation: 'delete',
+    );
+    // Send the deleted missed class to the stream
+    session.messages.postMessage(
+      'missed_class_stream',
+      deletedMissedClassDto,
+    );
     return true;
   }
 
@@ -70,6 +101,16 @@ class MissedClassEndpoint extends Endpoint {
       ),
     );
 
-    return missedClassWithRelation ?? updatedMissedClass;
+    final updatedMissedClassDto = MissedClassDto(
+      missedClass: missedClassWithRelation!,
+      operation: 'update',
+    );
+    // Send the updated missed class to the stream
+    session.messages.postMessage(
+      'missed_class_stream',
+      updatedMissedClassDto,
+    );
+
+    return missedClassWithRelation;
   }
 }

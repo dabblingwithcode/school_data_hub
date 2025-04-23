@@ -67,11 +67,11 @@ class AttendanceManager {
 
   void _updateMissedClassesInCollections(List<MissedClass> missedClasses) {
     for (final missedClass in missedClasses) {
-      _updateMissedClassInCollections(missedClass);
+      updateMissedClassInCollections(missedClass);
     }
   }
 
-  void _updateMissedClassInCollections(MissedClass responseMissedClass) {
+  void updateMissedClassInCollections(MissedClass responseMissedClass) {
     final date = responseMissedClass.schoolday!.schoolday;
 
     final pupilId = responseMissedClass.pupilId;
@@ -121,7 +121,7 @@ class AttendanceManager {
     }
   }
 
-  void _removeMissedClassFromCollections(int pupilId, DateTime date) {
+  void removeMissedClassFromCollections(int pupilId, DateTime date) {
     // 1. Remove from the main list
     final index = _missedClasses.value.indexWhere((element) =>
         element.schoolday!.schoolday == date && element.pupilId == pupilId);
@@ -190,7 +190,7 @@ class AttendanceManager {
             date: date,
             excused: newValue);
 
-    _updateMissedClassInCollections(responseMissedClass);
+    updateMissedClassInCollections(responseMissedClass);
 
     return;
   }
@@ -202,7 +202,7 @@ class AttendanceManager {
     );
 
     if (response == true) {
-      _removeMissedClassFromCollections(pupilId, date);
+      removeMissedClassFromCollections(pupilId, date);
       _notificationService.showSnackBar(
           NotificationType.success, 'Fehlzeit erfolgreich gelöscht!');
     } else {
@@ -236,7 +236,7 @@ class AttendanceManager {
         returned: true,
         returnedAt: time,
       );
-      _updateMissedClassInCollections(missedClass);
+      updateMissedClassInCollections(missedClass);
       _notificationService.showSnackBar(
           NotificationType.success, 'Eintrag erfolgreich!');
 
@@ -254,7 +254,7 @@ class AttendanceManager {
         date,
       );
       if (success == true) {
-        _removeMissedClassFromCollections(pupilId, date);
+        removeMissedClassFromCollections(pupilId, date);
         _notificationService.showSnackBar(
             NotificationType.success, 'Eintrag erfolgreich gelöscht!');
       } else {
@@ -276,7 +276,7 @@ class AttendanceManager {
         returnedAt: time,
       );
 
-      _updateMissedClassInCollections(updatedMissedClass);
+      updateMissedClassInCollections(updatedMissedClass);
 
       return;
     } else {
@@ -288,7 +288,7 @@ class AttendanceManager {
         date: date,
         returnedAt: null,
       );
-      _updateMissedClassInCollections(updatedMissedClass);
+      updateMissedClassInCollections(updatedMissedClass);
 
       return;
     }
@@ -314,7 +314,7 @@ class AttendanceManager {
         returnedAt: null,
         writtenExcuse: null,
       );
-      _updateMissedClassInCollections(updatedMissedClass);
+      updateMissedClassInCollections(updatedMissedClass);
 
       return;
     }
@@ -330,7 +330,7 @@ class AttendanceManager {
       minutesLate: minutesLate,
     );
 
-    _updateMissedClassInCollections(updatedMissedClass);
+    updateMissedClassInCollections(updatedMissedClass);
 
     return;
   }
@@ -350,7 +350,7 @@ class AttendanceManager {
       date: date,
       comment: comment,
     );
-    _updateMissedClassInCollections(updatedMissedClass);
+    updateMissedClassInCollections(updatedMissedClass);
 
     _notificationService.showSnackBar(
         NotificationType.success, 'Eintrag erfolgreich!');
@@ -394,7 +394,7 @@ class AttendanceManager {
     final List<MissedClass> responseMissedClasses = await _attendanceApiService
         .postMissedClassList(missedClasses: missedClasses);
     for (final MissedClass responseMissedClass in responseMissedClasses) {
-      _updateMissedClassInCollections(responseMissedClass);
+      updateMissedClassInCollections(responseMissedClass);
     }
     _notificationService.showSnackBar(
         NotificationType.success, 'Einträge erfolgreich!');
@@ -427,7 +427,7 @@ class AttendanceManager {
         missedType: missedType,
         date: date,
       );
-      _updateMissedClassInCollections(updatedMissedClass);
+      updateMissedClassInCollections(updatedMissedClass);
 
       _notificationService.showSnackBar(
           NotificationType.success, 'Eintrag erfolgreich!');
@@ -444,7 +444,7 @@ class AttendanceManager {
       date: date,
       minutesLate: null,
     );
-    _updateMissedClassInCollections(updatedMissedClass);
+    updateMissedClassInCollections(updatedMissedClass);
 
     _notificationService.showSnackBar(
         NotificationType.success, 'Eintrag erfolgreich!');
@@ -467,7 +467,7 @@ class AttendanceManager {
       date: date,
     );
 
-    _updateMissedClassInCollections(updatedMissedClass);
+    updateMissedClassInCollections(updatedMissedClass);
     _notificationService.showSnackBar(
         NotificationType.success, 'Eintrag erfolgreich!');
 

@@ -26,6 +26,7 @@ files:
   - verifyUpload:
   - getImage:
 missedClass:
+  - streamMyModels:
   - postMissedClass:
   - postMissedClasses:
   - fetchAllMissedClasses:

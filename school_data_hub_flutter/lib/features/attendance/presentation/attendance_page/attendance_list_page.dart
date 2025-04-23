@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:logging/logging.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/list_view_components/generic_sliver_list.dart';
@@ -19,41 +21,46 @@ import 'package:watch_it/watch_it.dart';
 
 final _attendanceManager = di<AttendanceManager>();
 
+final _client = di<Client>();
+
+final _log = Logger('AttendanceListPage');
+
 final _attendancePupilFilterManager = di<AttendancePupilFilterManager>();
 
 final _schooldayManager = di<SchooldayManager>();
 
-class AttendanceListPage extends WatchingStatefulWidget {
+class AttendanceListPage extends WatchingWidget {
   const AttendanceListPage({super.key});
   @override
-  State<AttendanceListPage> createState() => _AttendanceListPageState();
-}
-
-class _AttendanceListPageState extends State<AttendanceListPage> {
-  late Timer _timer;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _attendanceManager
-        .fetchMissedClassesOnASchoolday(di<SchooldayManager>().thisDate.value);
-
-    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
-      _attendanceManager
-          .fetchMissedClassesOnASchoolday(_schooldayManager.thisDate.value);
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer.cancel();
-
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    createOnce<StreamSubscription<MissedClassDto>>(() {
+      return _client.missedClass.streamMyModels().listen((event) {
+        switch (event.operation) {
+          case 'add':
+            _log.info('add missedClass ${event.missedClass}');
+            _attendanceManager
+                .updateMissedClassInCollections(event.missedClass);
+            break;
+          case 'update':
+            _log.info('update missedClass ${event.missedClass}');
+            _attendanceManager
+                .updateMissedClassInCollections(event.missedClass);
+            break;
+          case 'delete':
+            _log.info('delete missedClass ${event.missedClass}');
+            _attendanceManager.removeMissedClassFromCollections(
+                event.missedClass.pupilId,
+                event.missedClass.schoolday!.schoolday);
+            break;
+        }
+      }, onError: (error) {
+        throw Exception('Error in missedClass stream: $error');
+      }, onDone: () {
+        // Handle stream completion if needed
+      });
+    }, dispose: (value) {
+      value.cancel();
+    });
     DateTime thisDate = watchValue((SchooldayManager x) => x.thisDate);
 
     List<PupilProxy> pupils = watchValue((PupilsFilter x) => x.filteredPupils)

@@ -738,6 +738,19 @@ class Endpoints extends _i1.EndpointDispatch {
             params['missedClass'],
           ),
         ),
+        'streamMyModels': _i1.MethodStreamConnector(
+          name: 'streamMyModels',
+          params: {},
+          streamParams: {},
+          returnType: _i1.MethodStreamReturnType.streamType,
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+            Map<String, Stream> streamParams,
+          ) =>
+              (endpoints['missedClass'] as _i7.MissedClassEndpoint)
+                  .streamMyModels(session),
+        ),
       },
     );
     connectors['pupil'] = _i1.EndpointConnector(
