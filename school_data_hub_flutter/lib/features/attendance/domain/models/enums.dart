@@ -1,12 +1,12 @@
-enum MissedType {
-  isLate('late'),
-  isMissed('missed'),
-  goneHome('home'),
-  notSet('none');
+// enum MissedType {
+//   isLate('late'),
+//   isMissed('missed'),
+//   goneHome('home'),
+//   notSet('none');
 
-  final String value;
-  const MissedType(this.value);
-}
+//   final String value;
+//   const MissedType(this.value);
+// }
 
 enum ContactedType {
   notSet('0'),

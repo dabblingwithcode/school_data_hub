@@ -33,6 +33,11 @@ class AttendanceListPage extends WatchingWidget {
   const AttendanceListPage({super.key});
   @override
   Widget build(BuildContext context) {
+    callOnce((context) {
+      _attendanceManager.fetchMissedClassesOnASchoolday(
+        _schooldayManager.thisDate.value,
+      );
+    });
     createOnce<StreamSubscription<MissedClassDto>>(() {
       return _client.missedClass.streamMyModels().listen((event) {
         switch (event.operation) {

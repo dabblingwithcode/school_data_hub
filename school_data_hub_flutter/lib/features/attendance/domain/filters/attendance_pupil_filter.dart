@@ -64,7 +64,7 @@ class AttendancePupilFilterManager {
 
     if ((attendanceActiveFilters[AttendancePupilFilter.present]! &&
         !(attendanceEventThisDate == null ||
-            attendanceEventThisDate.missedType == MissedType.isLate.value))) {
+            attendanceEventThisDate.missedType == MissedType.late))) {
       isMatched = false;
     }
 
@@ -72,7 +72,7 @@ class AttendancePupilFilterManager {
 
     if (attendanceActiveFilters[AttendancePupilFilter.notPresent]! &&
         !(attendanceEventThisDate != null &&
-            attendanceEventThisDate.missedType != MissedType.isLate.value)) {
+            attendanceEventThisDate.missedType != MissedType.late)) {
       isMatched = false;
     }
 
@@ -81,7 +81,7 @@ class AttendancePupilFilterManager {
     if (attendanceActiveFilters[AttendancePupilFilter.unexcused]! &&
         !(attendanceEventThisDate != null &&
             attendanceEventThisDate.unexcused == true &&
-            attendanceEventThisDate.missedType == MissedType.isMissed.value)) {
+            attendanceEventThisDate.missedType == MissedType.missed)) {
       isMatched = false;
     }
 

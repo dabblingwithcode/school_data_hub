@@ -10,8 +10,9 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import '../schoolday/schoolday.dart' as _i2;
-import '../pupil_data/pupil_data.dart' as _i3;
+import '../../schoolday/missed_class/missed_type.dart' as _i2;
+import '../../schoolday/schoolday.dart' as _i3;
+import '../../pupil_data/pupil_data.dart' as _i4;
 
 abstract class MissedClass
     implements _i1.TableRow<int>, _i1.ProtocolSerialization {
@@ -35,7 +36,7 @@ abstract class MissedClass
 
   factory MissedClass({
     int? id,
-    required String missedType,
+    required _i2.MissedType missedType,
     required bool unexcused,
     required String contacted,
     required bool returned,
@@ -46,15 +47,16 @@ abstract class MissedClass
     String? modifiedBy,
     String? comment,
     required int schooldayId,
-    _i2.Schoolday? schoolday,
+    _i3.Schoolday? schoolday,
     required int pupilId,
-    _i3.PupilData? pupil,
+    _i4.PupilData? pupil,
   }) = _MissedClassImpl;
 
   factory MissedClass.fromJson(Map<String, dynamic> jsonSerialization) {
     return MissedClass(
       id: jsonSerialization['id'] as int?,
-      missedType: jsonSerialization['missedType'] as String,
+      missedType:
+          _i2.MissedType.fromJson((jsonSerialization['missedType'] as String)),
       unexcused: jsonSerialization['unexcused'] as bool,
       contacted: jsonSerialization['contacted'] as String,
       returned: jsonSerialization['returned'] as bool,
@@ -69,12 +71,12 @@ abstract class MissedClass
       schooldayId: jsonSerialization['schooldayId'] as int,
       schoolday: jsonSerialization['schoolday'] == null
           ? null
-          : _i2.Schoolday.fromJson(
+          : _i3.Schoolday.fromJson(
               (jsonSerialization['schoolday'] as Map<String, dynamic>)),
       pupilId: jsonSerialization['pupilId'] as int,
       pupil: jsonSerialization['pupil'] == null
           ? null
-          : _i3.PupilData.fromJson(
+          : _i4.PupilData.fromJson(
               (jsonSerialization['pupil'] as Map<String, dynamic>)),
     );
   }
@@ -86,7 +88,7 @@ abstract class MissedClass
   @override
   int? id;
 
-  String missedType;
+  _i2.MissedType missedType;
 
   bool unexcused;
 
@@ -108,11 +110,11 @@ abstract class MissedClass
 
   int schooldayId;
 
-  _i2.Schoolday? schoolday;
+  _i3.Schoolday? schoolday;
 
   int pupilId;
 
-  _i3.PupilData? pupil;
+  _i4.PupilData? pupil;
 
   @override
   _i1.Table<int> get table => t;
@@ -122,7 +124,7 @@ abstract class MissedClass
   @_i1.useResult
   MissedClass copyWith({
     int? id,
-    String? missedType,
+    _i2.MissedType? missedType,
     bool? unexcused,
     String? contacted,
     bool? returned,
@@ -133,15 +135,15 @@ abstract class MissedClass
     String? modifiedBy,
     String? comment,
     int? schooldayId,
-    _i2.Schoolday? schoolday,
+    _i3.Schoolday? schoolday,
     int? pupilId,
-    _i3.PupilData? pupil,
+    _i4.PupilData? pupil,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
-      'missedType': missedType,
+      'missedType': missedType.toJson(),
       'unexcused': unexcused,
       'contacted': contacted,
       'returned': returned,
@@ -162,7 +164,7 @@ abstract class MissedClass
   Map<String, dynamic> toJsonForProtocol() {
     return {
       if (id != null) 'id': id,
-      'missedType': missedType,
+      'missedType': missedType.toJson(),
       'unexcused': unexcused,
       'contacted': contacted,
       'returned': returned,
@@ -180,8 +182,8 @@ abstract class MissedClass
   }
 
   static MissedClassInclude include({
-    _i2.SchooldayInclude? schoolday,
-    _i3.PupilDataInclude? pupil,
+    _i3.SchooldayInclude? schoolday,
+    _i4.PupilDataInclude? pupil,
   }) {
     return MissedClassInclude._(
       schoolday: schoolday,
@@ -220,7 +222,7 @@ class _Undefined {}
 class _MissedClassImpl extends MissedClass {
   _MissedClassImpl({
     int? id,
-    required String missedType,
+    required _i2.MissedType missedType,
     required bool unexcused,
     required String contacted,
     required bool returned,
@@ -231,9 +233,9 @@ class _MissedClassImpl extends MissedClass {
     String? modifiedBy,
     String? comment,
     required int schooldayId,
-    _i2.Schoolday? schoolday,
+    _i3.Schoolday? schoolday,
     required int pupilId,
-    _i3.PupilData? pupil,
+    _i4.PupilData? pupil,
   }) : super._(
           id: id,
           missedType: missedType,
@@ -258,7 +260,7 @@ class _MissedClassImpl extends MissedClass {
   @override
   MissedClass copyWith({
     Object? id = _Undefined,
-    String? missedType,
+    _i2.MissedType? missedType,
     bool? unexcused,
     String? contacted,
     bool? returned,
@@ -287,18 +289,19 @@ class _MissedClassImpl extends MissedClass {
       comment: comment is String? ? comment : this.comment,
       schooldayId: schooldayId ?? this.schooldayId,
       schoolday:
-          schoolday is _i2.Schoolday? ? schoolday : this.schoolday?.copyWith(),
+          schoolday is _i3.Schoolday? ? schoolday : this.schoolday?.copyWith(),
       pupilId: pupilId ?? this.pupilId,
-      pupil: pupil is _i3.PupilData? ? pupil : this.pupil?.copyWith(),
+      pupil: pupil is _i4.PupilData? ? pupil : this.pupil?.copyWith(),
     );
   }
 }
 
 class MissedClassTable extends _i1.Table<int> {
   MissedClassTable({super.tableRelation}) : super(tableName: 'missed_class') {
-    missedType = _i1.ColumnString(
+    missedType = _i1.ColumnEnum(
       'missedType',
       this,
+      _i1.EnumSerialization.byName,
     );
     unexcused = _i1.ColumnBool(
       'unexcused',
@@ -346,7 +349,7 @@ class MissedClassTable extends _i1.Table<int> {
     );
   }
 
-  late final _i1.ColumnString missedType;
+  late final _i1.ColumnEnum<_i2.MissedType> missedType;
 
   late final _i1.ColumnBool unexcused;
 
@@ -368,34 +371,34 @@ class MissedClassTable extends _i1.Table<int> {
 
   late final _i1.ColumnInt schooldayId;
 
-  _i2.SchooldayTable? _schoolday;
+  _i3.SchooldayTable? _schoolday;
 
   late final _i1.ColumnInt pupilId;
 
-  _i3.PupilDataTable? _pupil;
+  _i4.PupilDataTable? _pupil;
 
-  _i2.SchooldayTable get schoolday {
+  _i3.SchooldayTable get schoolday {
     if (_schoolday != null) return _schoolday!;
     _schoolday = _i1.createRelationTable(
       relationFieldName: 'schoolday',
       field: MissedClass.t.schooldayId,
-      foreignField: _i2.Schoolday.t.id,
+      foreignField: _i3.Schoolday.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.SchooldayTable(tableRelation: foreignTableRelation),
+          _i3.SchooldayTable(tableRelation: foreignTableRelation),
     );
     return _schoolday!;
   }
 
-  _i3.PupilDataTable get pupil {
+  _i4.PupilDataTable get pupil {
     if (_pupil != null) return _pupil!;
     _pupil = _i1.createRelationTable(
       relationFieldName: 'pupil',
       field: MissedClass.t.pupilId,
-      foreignField: _i3.PupilData.t.id,
+      foreignField: _i4.PupilData.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i3.PupilDataTable(tableRelation: foreignTableRelation),
+          _i4.PupilDataTable(tableRelation: foreignTableRelation),
     );
     return _pupil!;
   }
@@ -431,16 +434,16 @@ class MissedClassTable extends _i1.Table<int> {
 
 class MissedClassInclude extends _i1.IncludeObject {
   MissedClassInclude._({
-    _i2.SchooldayInclude? schoolday,
-    _i3.PupilDataInclude? pupil,
+    _i3.SchooldayInclude? schoolday,
+    _i4.PupilDataInclude? pupil,
   }) {
     _schoolday = schoolday;
     _pupil = pupil;
   }
 
-  _i2.SchooldayInclude? _schoolday;
+  _i3.SchooldayInclude? _schoolday;
 
-  _i3.PupilDataInclude? _pupil;
+  _i4.PupilDataInclude? _pupil;
 
   @override
   Map<String, _i1.Include?> get includes => {
@@ -701,7 +704,7 @@ class MissedClassAttachRowRepository {
   Future<void> schoolday(
     _i1.Session session,
     MissedClass missedClass,
-    _i2.Schoolday schoolday, {
+    _i3.Schoolday schoolday, {
     _i1.Transaction? transaction,
   }) async {
     if (missedClass.id == null) {
@@ -724,7 +727,7 @@ class MissedClassAttachRowRepository {
   Future<void> pupil(
     _i1.Session session,
     MissedClass missedClass,
-    _i3.PupilData pupil, {
+    _i4.PupilData pupil, {
     _i1.Transaction? transaction,
   }) async {
     if (missedClass.id == null) {

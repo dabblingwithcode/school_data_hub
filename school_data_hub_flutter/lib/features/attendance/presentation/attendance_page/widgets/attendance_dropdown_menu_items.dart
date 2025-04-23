@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/models/enums.dart';
 
@@ -24,7 +25,7 @@ List<DropdownMenuItem<MissedType>> missedTypeMenuItems = [
         ),
       )),
   DropdownMenuItem(
-      value: MissedType.isLate,
+      value: MissedType.late,
       child: Container(
         width: 30.0,
         height: 30.0,
@@ -43,7 +44,7 @@ List<DropdownMenuItem<MissedType>> missedTypeMenuItems = [
         ),
       )),
   DropdownMenuItem(
-      value: MissedType.isMissed,
+      value: MissedType.missed,
       child: Container(
         width: 30.0,
         height: 30.0,

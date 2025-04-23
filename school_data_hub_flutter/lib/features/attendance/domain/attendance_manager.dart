@@ -175,20 +175,19 @@ class AttendanceManager {
     return;
   }
 
-  Future<void> updateExcusedValue(
+  Future<void> updateUnexcusedValue(
       int pupilId, DateTime date, bool newValue) async {
     final missedClass = getPupilMissedClassOnDate(pupilId, date);
 
     if (missedClass == null) {
       return;
     }
-
-    final MissedClass responseMissedClass =
-        await _attendanceApiService.updateMissedClass(
-            missedClassId: missedClass.id!,
-            pupilId: pupilId,
-            date: date,
-            excused: newValue);
+    final missedClassToUpdate = missedClass.copyWith(
+      unexcused: newValue,
+      modifiedBy: _sessionManager.signedInUser!.userName!,
+    );
+    final MissedClass responseMissedClass = await _attendanceApiService
+        .updateMissedClass(missedClassToUpdate: missedClassToUpdate);
 
     updateMissedClassInCollections(responseMissedClass);
 
@@ -214,8 +213,8 @@ class AttendanceManager {
     return;
   }
 
-  Future<void> updateReturnedValue(
-      int pupilId, bool newValue, DateTime date, String? time) async {
+  Future<void> updateReturnedValue(int pupilId, bool newValue, DateTime date,
+      DateTime? returnedDateTime) async {
     final missedClass = getPupilMissedClassOnDate(pupilId, date);
 
     // pupils gone home during class for whatever reason
@@ -234,7 +233,7 @@ class AttendanceManager {
         unexcused: false,
         contactedType: ContactedType.notSet,
         returned: true,
-        returnedAt: time,
+        returnedAt: returnedDateTime,
       );
       updateMissedClassInCollections(missedClass);
       _notificationService.showSnackBar(
@@ -247,8 +246,7 @@ class AttendanceManager {
     // The only way to delete a missed class with 'none' and 'returned' entries
     // is if we uncheck 'return' - let's check that
 
-    if (newValue == false &&
-        missedClass.missedType == MissedType.notSet.value) {
+    if (newValue == false && missedClass.missedType == MissedType.notSet) {
       final success = await _attendanceApiService.deleteMissedClass(
         pupilId,
         date,
@@ -267,27 +265,25 @@ class AttendanceManager {
     //- Case patch an existing missed class entry
 
     if (newValue == true) {
-      final MissedClass updatedMissedClass =
-          await _attendanceApiService.updateMissedClass(
-        missedClassId: missedClass.id!,
-        pupilId: pupilId,
+      final missedClassToUpdate = missedClass.copyWith(
         returned: newValue,
-        date: date,
-        returnedAt: time,
+        returnedAt: returnedDateTime,
+        modifiedBy: _sessionManager.signedInUser!.userName!,
       );
+      final MissedClass updatedMissedClass = await _attendanceApiService
+          .updateMissedClass(missedClassToUpdate: missedClassToUpdate);
 
       updateMissedClassInCollections(updatedMissedClass);
 
       return;
     } else {
-      final MissedClass updatedMissedClass =
-          await _attendanceApiService.updateMissedClass(
-        missedClassId: missedClass.id!,
-        pupilId: pupilId,
+      final missedClassToUpdate = missedClass.copyWith(
         returned: newValue,
-        date: date,
         returnedAt: null,
+        modifiedBy: _sessionManager.signedInUser!.userName!,
       );
+      final MissedClass updatedMissedClass = await _attendanceApiService
+          .updateMissedClass(missedClassToUpdate: missedClassToUpdate);
       updateMissedClassInCollections(updatedMissedClass);
 
       return;
@@ -320,15 +316,13 @@ class AttendanceManager {
     }
 
     // The missed class exists already - patching it
-
-    final MissedClass updatedMissedClass =
-        await _attendanceApiService.updateMissedClass(
-      missedClassId: missedClass.id!,
-      pupilId: pupilId,
+    final missedClassToUpdate = missedClass.copyWith(
       missedType: dropdownValue,
-      date: date,
       minutesLate: minutesLate,
+      modifiedBy: _sessionManager.signedInUser!.userName!,
     );
+    final MissedClass updatedMissedClass = await _attendanceApiService
+        .updateMissedClass(missedClassToUpdate: missedClassToUpdate);
 
     updateMissedClassInCollections(updatedMissedClass);
 
@@ -342,14 +336,12 @@ class AttendanceManager {
     if (missedClass == null) {
       return;
     }
-
-    final MissedClass updatedMissedClass =
-        await _attendanceApiService.updateMissedClass(
-      missedClassId: missedClass.id!,
-      pupilId: pupilId,
-      date: date,
+    final missedClassToUpdate = missedClass.copyWith(
       comment: comment,
+      modifiedBy: _sessionManager.signedInUser!.userName!,
     );
+    final MissedClass updatedMissedClass = await _attendanceApiService
+        .updateMissedClass(missedClassToUpdate: missedClassToUpdate);
     updateMissedClassInCollections(updatedMissedClass);
 
     _notificationService.showSnackBar(
@@ -436,13 +428,14 @@ class AttendanceManager {
     }
     // The missed class exists already - patching it
     // we make sure that incidentally stored minutes_late values are deleted
+    final missedClassToUpdate = missedClass.copyWith(
+      missedType: missedType,
+      minutesLate: null,
+      modifiedBy: _sessionManager.signedInUser!.userName!,
+    );
     final MissedClass updatedMissedClass =
         await _attendanceApiService.updateMissedClass(
-      missedClassId: missedClass.id!,
-      pupilId: pupilId,
-      missedType: missedType,
-      date: date,
-      minutesLate: null,
+      missedClassToUpdate: missedClassToUpdate,
     );
     updateMissedClassInCollections(updatedMissedClass);
 
@@ -459,12 +452,13 @@ class AttendanceManager {
       return;
     }
     // The missed class exists already - patching it
+    final missedClassToUpdate = missedClass.copyWith(
+      contacted: contactedType.value,
+      modifiedBy: _sessionManager.signedInUser!.userName!,
+    );
     final MissedClass updatedMissedClass =
         await _attendanceApiService.updateMissedClass(
-      missedClassId: missedClass.id!,
-      pupilId: pupilId,
-      contactedType: contactedType,
-      date: date,
+      missedClassToUpdate: missedClassToUpdate,
     );
 
     updateMissedClassInCollections(updatedMissedClass);

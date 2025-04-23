@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
@@ -123,7 +124,7 @@ class AttendanceCard extends WatchingWidget {
                                           newValue) {
                                         return;
                                       }
-                                      if (newValue == MissedType.isLate) {
+                                      if (newValue == MissedType.late) {
                                         final int minutesLate =
                                             await minutesLateDialog(context);
                                         _attendanceManager.updateLateTypeValue(
@@ -147,13 +148,13 @@ class AttendanceCard extends WatchingWidget {
                                   activeColor: AppColors.excusedCheckColor,
                                   value: attendanceInfo.unexcusedValue,
                                   onChanged: (bool? newvalue) {
-                                    _attendanceManager.updateExcusedValue(
+                                    _attendanceManager.updateUnexcusedValue(
                                         pupil.pupilId, thisDate, newvalue!);
                                   },
                                 ),
                                 const Gap(4),
                                 (attendanceInfo.missedTypeValue ==
-                                                MissedType.isMissed &&
+                                                MissedType.missed &&
                                             attendanceInfo.unexcusedValue ==
                                                 true) ||
                                         attendanceInfo.contactedTypeValue !=
@@ -202,21 +203,28 @@ class AttendanceCard extends WatchingWidget {
                                   value: attendanceInfo.returnedValue,
                                   onChanged: (bool? newValue) async {
                                     if (attendanceInfo.missedTypeValue ==
-                                        MissedType.isMissed) {
+                                        MissedType.missed) {
                                       return;
                                     }
                                     if (newValue == true) {
-                                      final String? returnedTime =
+                                      final TimeOfDay? returnedTime =
                                           await returnedDayTime(context);
 
                                       if (returnedTime == null) {
                                         return;
                                       }
+                                      final returnedDateTime = DateTime(
+                                        thisDate.year,
+                                        thisDate.month,
+                                        thisDate.day,
+                                        returnedTime.hour,
+                                        returnedTime.minute,
+                                      );
                                       _attendanceManager.updateReturnedValue(
                                           pupil.pupilId,
                                           newValue!,
                                           thisDate,
-                                          returnedTime);
+                                          returnedDateTime);
                                       return;
                                     }
                                     _attendanceManager.updateReturnedValue(
@@ -460,7 +468,7 @@ class AttendanceCard extends WatchingWidget {
                                             newValue) {
                                           return;
                                         }
-                                        if (newValue == MissedType.isMissed &&
+                                        if (newValue == MissedType.missed &&
                                             attendanceInfo.returnedValue ==
                                                 true) {
                                           di<NotificationService>().showSnackBar(
@@ -469,7 +477,7 @@ class AttendanceCard extends WatchingWidget {
 
                                           return;
                                         }
-                                        if (newValue == MissedType.isLate) {
+                                        if (newValue == MissedType.late) {
                                           final int minutesLate =
                                               await minutesLateDialog(context);
                                           _attendanceManager
@@ -517,7 +525,7 @@ class AttendanceCard extends WatchingWidget {
                                     activeColor: AppColors.excusedCheckColor,
                                     value: attendanceInfo.unexcusedValue,
                                     onChanged: (bool? newvalue) {
-                                      _attendanceManager.updateExcusedValue(
+                                      _attendanceManager.updateUnexcusedValue(
                                           pupil.pupilId, thisDate, newvalue!);
                                     },
                                   ),
@@ -544,7 +552,7 @@ class AttendanceCard extends WatchingWidget {
                               const Gap(5),
                               Column(children: [
                                 (attendanceInfo.missedTypeValue ==
-                                                MissedType.isMissed &&
+                                                MissedType.missed &&
                                             attendanceInfo.unexcusedValue ==
                                                 true) ||
                                         attendanceInfo.contactedTypeValue !=
@@ -617,24 +625,31 @@ class AttendanceCard extends WatchingWidget {
                                       onChanged: (bool? newValue) async {
                                         if (newValue == true) {
                                           if (attendanceInfo.missedTypeValue ==
-                                              MissedType.isMissed) {
+                                              MissedType.missed) {
                                             di<NotificationService>().showSnackBar(
                                                 NotificationType.error,
                                                 'Ein fehlendes Kind kann nicht abgeholt werden!');
                                             return;
                                           }
-                                          final String? returnedTime =
+                                          final TimeOfDay? returnedTime =
                                               await returnedDayTime(context);
 
                                           if (returnedTime == null) {
                                             return;
                                           }
+                                          final returnedDateTime = DateTime(
+                                            thisDate.year,
+                                            thisDate.month,
+                                            thisDate.day,
+                                            returnedTime.hour,
+                                            returnedTime.minute,
+                                          );
                                           _attendanceManager
                                               .updateReturnedValue(
                                                   pupil.pupilId,
                                                   newValue!,
                                                   thisDate,
-                                                  returnedTime);
+                                                  returnedDateTime);
                                           return;
                                         }
                                         _attendanceManager.updateReturnedValue(

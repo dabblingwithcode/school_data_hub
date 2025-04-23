@@ -9,10 +9,11 @@
 // ignore_for_file: use_super_parameters
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import '../schoolday/missed_class.dart' as _i2;
+import 'package:serverpod/serverpod.dart' as _i1;
+import '../../schoolday/missed_class/missed_class.dart' as _i2;
 
-abstract class MissedClassDto implements _i1.SerializableModel {
+abstract class MissedClassDto
+    implements _i1.SerializableModel, _i1.ProtocolSerialization {
   MissedClassDto._({
     required this.missedClass,
     required this.operation,
@@ -46,6 +47,14 @@ abstract class MissedClassDto implements _i1.SerializableModel {
   Map<String, dynamic> toJson() {
     return {
       'missedClass': missedClass.toJson(),
+      'operation': operation,
+    };
+  }
+
+  @override
+  Map<String, dynamic> toJsonForProtocol() {
+    return {
+      'missedClass': missedClass.toJsonForProtocol(),
       'operation': operation,
     };
   }

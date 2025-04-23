@@ -10,8 +10,9 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import '../schoolday/schoolday.dart' as _i2;
-import '../pupil_data/pupil_data.dart' as _i3;
+import '../../schoolday/missed_class/missed_type.dart' as _i2;
+import '../../schoolday/schoolday.dart' as _i3;
+import '../../pupil_data/pupil_data.dart' as _i4;
 
 abstract class MissedClass implements _i1.SerializableModel {
   MissedClass._({
@@ -34,7 +35,7 @@ abstract class MissedClass implements _i1.SerializableModel {
 
   factory MissedClass({
     int? id,
-    required String missedType,
+    required _i2.MissedType missedType,
     required bool unexcused,
     required String contacted,
     required bool returned,
@@ -45,15 +46,16 @@ abstract class MissedClass implements _i1.SerializableModel {
     String? modifiedBy,
     String? comment,
     required int schooldayId,
-    _i2.Schoolday? schoolday,
+    _i3.Schoolday? schoolday,
     required int pupilId,
-    _i3.PupilData? pupil,
+    _i4.PupilData? pupil,
   }) = _MissedClassImpl;
 
   factory MissedClass.fromJson(Map<String, dynamic> jsonSerialization) {
     return MissedClass(
       id: jsonSerialization['id'] as int?,
-      missedType: jsonSerialization['missedType'] as String,
+      missedType:
+          _i2.MissedType.fromJson((jsonSerialization['missedType'] as String)),
       unexcused: jsonSerialization['unexcused'] as bool,
       contacted: jsonSerialization['contacted'] as String,
       returned: jsonSerialization['returned'] as bool,
@@ -68,12 +70,12 @@ abstract class MissedClass implements _i1.SerializableModel {
       schooldayId: jsonSerialization['schooldayId'] as int,
       schoolday: jsonSerialization['schoolday'] == null
           ? null
-          : _i2.Schoolday.fromJson(
+          : _i3.Schoolday.fromJson(
               (jsonSerialization['schoolday'] as Map<String, dynamic>)),
       pupilId: jsonSerialization['pupilId'] as int,
       pupil: jsonSerialization['pupil'] == null
           ? null
-          : _i3.PupilData.fromJson(
+          : _i4.PupilData.fromJson(
               (jsonSerialization['pupil'] as Map<String, dynamic>)),
     );
   }
@@ -83,7 +85,7 @@ abstract class MissedClass implements _i1.SerializableModel {
   /// the id will be null.
   int? id;
 
-  String missedType;
+  _i2.MissedType missedType;
 
   bool unexcused;
 
@@ -105,18 +107,18 @@ abstract class MissedClass implements _i1.SerializableModel {
 
   int schooldayId;
 
-  _i2.Schoolday? schoolday;
+  _i3.Schoolday? schoolday;
 
   int pupilId;
 
-  _i3.PupilData? pupil;
+  _i4.PupilData? pupil;
 
   /// Returns a shallow copy of this [MissedClass]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   MissedClass copyWith({
     int? id,
-    String? missedType,
+    _i2.MissedType? missedType,
     bool? unexcused,
     String? contacted,
     bool? returned,
@@ -127,15 +129,15 @@ abstract class MissedClass implements _i1.SerializableModel {
     String? modifiedBy,
     String? comment,
     int? schooldayId,
-    _i2.Schoolday? schoolday,
+    _i3.Schoolday? schoolday,
     int? pupilId,
-    _i3.PupilData? pupil,
+    _i4.PupilData? pupil,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
-      'missedType': missedType,
+      'missedType': missedType.toJson(),
       'unexcused': unexcused,
       'contacted': contacted,
       'returned': returned,
@@ -163,7 +165,7 @@ class _Undefined {}
 class _MissedClassImpl extends MissedClass {
   _MissedClassImpl({
     int? id,
-    required String missedType,
+    required _i2.MissedType missedType,
     required bool unexcused,
     required String contacted,
     required bool returned,
@@ -174,9 +176,9 @@ class _MissedClassImpl extends MissedClass {
     String? modifiedBy,
     String? comment,
     required int schooldayId,
-    _i2.Schoolday? schoolday,
+    _i3.Schoolday? schoolday,
     required int pupilId,
-    _i3.PupilData? pupil,
+    _i4.PupilData? pupil,
   }) : super._(
           id: id,
           missedType: missedType,
@@ -201,7 +203,7 @@ class _MissedClassImpl extends MissedClass {
   @override
   MissedClass copyWith({
     Object? id = _Undefined,
-    String? missedType,
+    _i2.MissedType? missedType,
     bool? unexcused,
     String? contacted,
     bool? returned,
@@ -230,9 +232,9 @@ class _MissedClassImpl extends MissedClass {
       comment: comment is String? ? comment : this.comment,
       schooldayId: schooldayId ?? this.schooldayId,
       schoolday:
-          schoolday is _i2.Schoolday? ? schoolday : this.schoolday?.copyWith(),
+          schoolday is _i3.Schoolday? ? schoolday : this.schoolday?.copyWith(),
       pupilId: pupilId ?? this.pupilId,
-      pupil: pupil is _i3.PupilData? ? pupil : this.pupil?.copyWith(),
+      pupil: pupil is _i4.PupilData? ? pupil : this.pupil?.copyWith(),
     );
   }
 }

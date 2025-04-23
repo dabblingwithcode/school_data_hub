@@ -18,7 +18,7 @@ import 'package:school_data_hub_client/src/protocol/user/roles/roles.dart'
 import 'package:school_data_hub_client/src/protocol/pupil_data/pupil_data.dart'
     as _i5;
 import 'dart:io' as _i6;
-import 'package:school_data_hub_client/src/protocol/schoolday/missed_class.dart'
+import 'package:school_data_hub_client/src/protocol/schoolday/missed_class/missed_class.dart'
     as _i7;
 import 'package:school_data_hub_client/src/protocol/user/device_info.dart'
     as _i8;
@@ -26,7 +26,7 @@ import 'package:serverpod_auth_client/serverpod_auth_client.dart' as _i9;
 import 'package:school_data_hub_client/src/protocol/learning/competence.dart'
     as _i10;
 import 'dart:typed_data' as _i11;
-import 'package:school_data_hub_client/src/protocol/schoolday/missed_class_dto.dart'
+import 'package:school_data_hub_client/src/protocol/schoolday/missed_class/missed_class_dto.dart'
     as _i12;
 import 'package:school_data_hub_client/src/protocol/pupil_data/dto/siblings_tutor_info_dto.dart'
     as _i13;

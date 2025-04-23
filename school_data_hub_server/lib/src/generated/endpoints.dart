@@ -23,7 +23,7 @@ import '../endpoints/user_endpoints.dart' as _i11;
 import 'package:school_data_hub_server/src/generated/user/roles/roles.dart'
     as _i12;
 import 'dart:io' as _i13;
-import 'package:school_data_hub_server/src/generated/schoolday/missed_class.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/missed_class/missed_class.dart'
     as _i14;
 import 'package:school_data_hub_server/src/generated/user/device_info.dart'
     as _i15;

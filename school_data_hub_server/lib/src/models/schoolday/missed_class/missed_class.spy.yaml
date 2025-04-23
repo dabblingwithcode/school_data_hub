@@ -3,7 +3,7 @@
 class: MissedClass
 table: missed_class
 fields:
-  missedType: String
+  missedType: MissedType
   unexcused: bool
   contacted: String
   returned: bool

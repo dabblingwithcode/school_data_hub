@@ -61,12 +61,12 @@ class AttendanceApiService {
     bool? writtenExcuse,
     bool? unexcused,
     bool? returned,
-    String? returnedAt,
+    DateTime? returnedAt,
     ContactedType? contactedType,
   }) async {
     final missedSchoolday = _schooldayManager.getSchooldayByDate(date);
     final MissedClass missedClass = MissedClass(
-        missedType: missedType.value,
+        missedType: missedType,
         unexcused: unexcused ?? false,
         contacted: contactedType?.value ?? '0',
         returned: returned ?? false,
@@ -117,30 +117,8 @@ class AttendanceApiService {
   //- patch a missed class -//
 
   Future<MissedClass> updateMissedClass({
-    required int missedClassId,
-    required int pupilId,
-    required DateTime date,
-    MissedType? missedType,
-    int? minutesLate,
-    bool? writtenExcuse,
-    bool? excused,
-    bool? returned,
-    String? returnedAt,
-    ContactedType? contactedType,
-    String? comment,
+    required MissedClass missedClassToUpdate,
   }) async {
-    final schoolday = _schooldayManager.getSchooldayByDate(date);
-    final MissedClass missedClassToUpdate = MissedClass(
-      id: missedClassId,
-      missedType: missedType?.value ?? '0',
-      unexcused: excused ?? false,
-      contacted: contactedType?.value ?? '0',
-      returned: returned ?? false,
-      writtenExcuse: writtenExcuse ?? false,
-      createdBy: _session.signedInUser!.userName!,
-      pupilId: pupilId,
-      schooldayId: schoolday!.id!,
-    );
     try {
       _notificationService.apiRunning(true);
       final missedClass = await _client.missedClass.updateMissedClass(

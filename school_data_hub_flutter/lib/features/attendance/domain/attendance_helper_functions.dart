@@ -39,8 +39,8 @@ class AttendanceHelper {
       if (pupil.missedClasses!.isNotEmpty) {
         missedGlobalSum += pupil.missedClasses!
             .where((element) =>
-                element.missedType == MissedType.isMissed.value ||
-                element.missedType == MissedType.goneHome.value ||
+                element.missedType == MissedType.missed ||
+                element.missedType == MissedType.home ||
                 element.returned == true)
             .length;
       }
@@ -110,7 +110,7 @@ class AttendanceHelper {
       for (PupilProxy pupil in filteredPupils) {
         if (pupil.missedClasses!.any((missedClass) =>
             missedClass.schoolday!.schoolday == thisDate &&
-            (missedClass.missedType == MissedType.isMissed.value ||
+            (missedClass.missedType == MissedType.missed ||
                 missedClass.missedType == 'home' ||
                 missedClass.returned == true))) {
           missedPupils.add(pupil);
@@ -128,7 +128,7 @@ class AttendanceHelper {
     for (PupilProxy pupil in filteredPupils) {
       if (pupil.missedClasses!.any((missedClass) =>
           missedClass.schoolday!.schoolday == thisDate &&
-          missedClass.missedType == MissedType.isMissed.value &&
+          missedClass.missedType == MissedType.missed &&
           missedClass.unexcused == true)) {
         unexcusedPupils.add(pupil);
       }
@@ -282,8 +282,7 @@ class AttendanceHelper {
       );
     } else {
       final dropdownvalue = missedClass.missedType;
-      missedType =
-          MissedType.values.firstWhere((e) => e.value == dropdownvalue);
+      missedType = MissedType.values.firstWhere((e) => e == dropdownvalue);
     }
 
     final contactedValue = missedClass.contacted;
@@ -340,7 +339,7 @@ class AttendanceHelper {
     final List<MissedClass> missedClassesThisSemester = missedClasses
         .where((missedClass) =>
             isMissedClassinSemester(missedClass, currentSemester) &&
-            missedClass.missedType == MissedType.isMissed.value)
+            missedClass.missedType == MissedType.missed)
         .toList();
     final List<MissedClass> unexcusedMissedClassesThisSemester =
         missedClassesThisSemester
@@ -382,7 +381,7 @@ class AttendanceHelper {
           final List<MissedClass> missedClassesLastSemester = missedClasses
               .where((missedClass) =>
                   isMissedClassinSemester(missedClass, lastSemester) &&
-                  missedClass.missedType == MissedType.isMissed.value)
+                  missedClass.missedType == MissedType.missed)
               .toList();
           final List<MissedClass> unexcusedMissedClassesLastSemester =
               missedClassesLastSemester

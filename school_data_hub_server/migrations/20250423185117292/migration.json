@@ -1601,7 +1601,7 @@
             "name": "missedType",
             "columnType": 0,
             "isNullable": false,
-            "dartType": "String"
+            "dartType": "protocol:MissedType"
           },
           {
             "name": "unexcused",
