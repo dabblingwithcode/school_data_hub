@@ -6,39 +6,22 @@ import 'package:school_data_hub_server/src/utils/get_user_name.dart';
 import 'package:school_data_hub_server/src/utils/hub_document_helper.dart';
 import 'package:serverpod/serverpod.dart';
 
-final _log = Logger('PupilEndpoint');
+final _log = Logger('PupilUpdateEndpoint');
 
-class PupilEndpoint extends Endpoint {
+class PupilUpdateEndpoint extends Endpoint {
   @override
   bool get requireLogin => true;
 
-  //- We create pupils only through the admin endpoint api
-  // Future<bool> createPupil(Session session, PupilData pupil) async {
-  //   await session.db.insertRow(pupil);
-  //   return true;
-  // }
-
-  Stream<List<PupilData>> fetchPupilsAsStream(Session session) async* {
-    final pupils = await PupilData.db.find(session);
-
-    yield pupils;
-  }
-
-  Future<List<PupilData>> fetchPupils(Session session) async {
-    final pupils = await PupilData.db.find(session);
-
-    return pupils;
-  }
-
-  Future<List<PupilData>> fetchPupilsById(
-      Session session, Set<int> internalIds) async {
-    final pupils = await PupilData.db.find(session,
-        where: (t) => t.internalId.inSet(internalIds),
-        include: PupilData.include(
-          avatar: HubDocument.include(),
-        ));
-
-    return pupils;
+  Future<PupilData> updateTutorInfo(
+      Session session, int pupilId, TutorInfo tutorInfo) async {
+    final pupil = await PupilData.db.findById(session, pupilId);
+    if (pupil == null) {
+      throw Exception('Pupil not found');
+    }
+    pupil.tutorInfo = tutorInfo;
+    // Update the pupil in the database
+    final updatedPupil = await PupilData.db.updateRow(session, pupil);
+    return updatedPupil;
   }
 
   Future<List<PupilData>> updateSiblingsTutorInfo(
@@ -132,6 +115,75 @@ class PupilEndpoint extends Endpoint {
     return updatedPupil;
   }
 
+  Future<PupilData> updateStringProperty(
+      Session session, int pupilId, String property, String value) async {
+    final pupil = await PupilData.db.findById(session, pupilId);
+    if (pupil == null) {
+      throw Exception('Pupil not found');
+    }
+    switch (property) {
+      case 'kindergarden':
+        pupil.kindergarden = value;
+        break;
+      case 'contact':
+        pupil.contact = value;
+        break;
+      case 'specialInformation':
+        pupil.specialInformation = value;
+        break;
+      case 'swimmer':
+        pupil.swimmer = value;
+        break;
+      default:
+        throw Exception('Invalid property name');
+    }
+    await session.db.updateRow(pupil);
+    // Fetch the object again with the relation included
+    final updatedPupil = await PupilData.db.findById(
+      session,
+      pupil.id!,
+    );
+    return updatedPupil!;
+  }
+
+  Future<PupilData> updateCredit(
+      Session session, int pupilId, int value, String? description) async {
+    final pupil = await PupilData.db.findById(session, pupilId);
+    if (pupil == null) {
+      throw Exception('Pupil not found');
+    }
+    final userName = await getUserName(session);
+    final creditTransactionToAdd = CreditTransaction(
+      sender: userName!,
+      receiver: pupil.id!,
+      amount: value,
+      dateTime: DateTime.now(),
+      description: description,
+    );
+    // Save the credit transaction to the database
+    final creditTransaction =
+        await CreditTransaction.db.insertRow(session, creditTransactionToAdd);
+    // Update the pupil's credit balance
+    PupilData.db.attachRow
+        .creditTransactions(session, pupil, creditTransaction);
+
+    pupil.credit += value;
+    if (value > 0) {
+      pupil.creditEarned += value;
+    }
+    // Update the pupil in the database
+    await PupilData.db.updateRow(session, pupil);
+    // Fetch the object again with the relation included
+    final updatedPupil = await PupilData.db.findById(
+      session,
+      pupil.id!,
+      include: PupilData.include(
+        creditTransactions: CreditTransaction.includeList(),
+      ),
+    );
+    return updatedPupil!;
+  }
+
   Future<PupilData> updatePupilAvatarAuth(Session session, int pupilId,
       ByteData avatarAuthBytes, String path) async {
     final createdBy = await getUserName(session);
@@ -199,66 +251,6 @@ class PupilEndpoint extends Endpoint {
     return updatedPupil;
   }
 
-  Future<PupilData> deleteAvatar(Session session, int internalId) async {
-    final pupil = await PupilData.db.findFirstRow(
-      session,
-      where: (t) => t.internalId.equals(internalId),
-      include: PupilData.include(
-        avatar: HubDocument.include(),
-      ),
-    );
-    if (pupil == null) {
-      throw Exception('Pupil not found');
-    }
-    await session.storage
-        .deleteFile(storageId: 'private', path: pupil.avatar!.documentPath!);
-    await PupilData.db.detachRow.avatar(session, pupil);
-
-    await HubDocument.db.deleteRow(session, pupil.avatar!);
-    pupil.avatar = null;
-    return pupil;
-  }
-
-  Future<PupilData> deleteAvatarAuth(Session session, int internalId) async {
-    final pupil = await PupilData.db.findFirstRow(
-      session,
-      where: (t) => t.internalId.equals(internalId),
-    );
-    if (pupil == null) {
-      throw Exception('Pupil not found');
-    }
-    session.storage.deleteFile(
-        storageId: 'private', path: pupil.avatarAuth!.documentPath!);
-    pupil.avatarAuth = null;
-    final updatedPupil = await PupilData.db.updateRow(session, pupil);
-    return updatedPupil;
-  }
-
-  Future<PupilData> resetPublicMediaAuth(
-      Session session, int internalId) async {
-    final pupil = await PupilData.db.findFirstRow(
-      session,
-      where: (t) => t.internalId.equals(internalId),
-    );
-    if (pupil == null) {
-      throw Exception('Pupil not found');
-    }
-    session.storage.deleteFile(
-        storageId: 'private',
-        path: pupil.publicMediaAuthDocument!.documentPath!);
-    pupil.publicMediaAuth = PublicMediaAuth(
-        groupPicturesOnWebsite: false,
-        groupPicturesInPress: false,
-        portraitPicturesOnWebsite: false,
-        portraitPicturesInPress: false,
-        nameOnWebsite: false,
-        nameInPress: false,
-        videoOnWebsite: false,
-        videoInPress: false);
-    final updatedPupil = await PupilData.db.updateRow(session, pupil);
-    return updatedPupil;
-  }
-
   Future<PupilData> updateSupportLevel(
       Session session, SupportLevel supportLevel) async {
     final pupil =
@@ -271,24 +263,6 @@ class PupilEndpoint extends Endpoint {
     pupil.supportLevelHistory ??= <SupportLevel>[];
     pupil.supportLevelHistory!.add(supportLevel);
     final updatedPupil = await PupilData.db.updateRow(session, pupil);
-    return updatedPupil;
-  }
-
-  Future<PupilData> deleteSupportLevelHistoryItem(
-      Session session, int internalId, int supportLevelId) async {
-    final pupil = await PupilData.db.findFirstRow(
-      session,
-      where: (t) => t.internalId.equals(internalId),
-    );
-    if (pupil == null) {
-      throw Exception('Pupil not found');
-    }
-    pupil.supportLevelHistory!
-        .removeWhere((element) => element.id == supportLevelId);
-    pupil.latestSupportLevel = pupil.supportLevelHistory!.last;
-
-    final updatedPupil = await PupilData.db.updateRow(session, pupil);
-
     return updatedPupil;
   }
 }

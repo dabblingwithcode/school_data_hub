@@ -37,16 +37,20 @@ pupil:
   - fetchPupilsAsStream:
   - fetchPupils:
   - fetchPupilsById:
-  - updateSiblingsTutorInfo:
-  - updatePupil:
-  - updatePupilAvatar:
-  - updatePupilAvatarAuth:
-  - updatePupilWithPublicMediaAuth:
   - deleteAvatar:
   - deleteAvatarAuth:
   - resetPublicMediaAuth:
-  - updateSupportLevel:
   - deleteSupportLevelHistoryItem:
+pupilUpdate:
+  - updateTutorInfo:
+  - updateSiblingsTutorInfo:
+  - updatePupil:
+  - updatePupilAvatar:
+  - updateStringProperty:
+  - updateCredit:
+  - updatePupilAvatarAuth:
+  - updatePupilWithPublicMediaAuth:
+  - updateSupportLevel:
 schooldayAdmin:
   - createSchoolSemester:
   - getAllSchoolSemesters:

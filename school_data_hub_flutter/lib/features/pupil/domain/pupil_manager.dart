@@ -20,46 +20,52 @@ final _notificationService = di<NotificationService>();
 final _cacheManager = di<DefaultCacheManager>();
 final _pupilIdentityManager = di<PupilIdentityManager>();
 final _schooldayManager = di<SchooldayManager>();
+final _pupilDataApiService = PupilDataApiService();
 
 class PupilManager extends ChangeNotifier {
-  final _pupils = <int, PupilProxy>{};
+  final _pupilsInternalIdMap = <int, PupilProxy>{};
 
-  List<PupilProxy> get allPupils => _pupils.values.toList();
+  List<PupilProxy> get allPupils => _pupilsInternalIdMap.values.toList();
 
   PupilManager();
+
+  Future<void> init() async {
+    await fetchAllPupils();
+  }
 
   //- HELPER METHODS
 
   void clearData() {
-    _pupils.clear();
+    _pupilsInternalIdMap.clear();
     return;
   }
 
   PupilProxy? getPupilByInternalId(int internalId) {
-    if (!_pupils.containsKey(internalId)) {
+    if (!_pupilsInternalIdMap.containsKey(internalId)) {
       _log.severe('Pupil $internalId not found', StackTrace.current);
       return null;
     }
-    return _pupils[internalId];
+    return _pupilsInternalIdMap[internalId];
   }
 
-  List<PupilProxy> pupilsFromPupilIds(List<int> pupilIds) {
-    List<PupilProxy> pupilsfromPupilIds = [];
+  List<PupilProxy> pupilsFromInternalIds(List<int> internalIds) {
+    List<PupilProxy> pupilsfromInternalIds = [];
 
-    for (int pupilId in pupilIds) {
-      pupilsfromPupilIds.add(_pupils[pupilId]!);
+    for (int internalId in internalIds) {
+      pupilsfromInternalIds.add(_pupilsInternalIdMap[internalId]!);
     }
 
-    return pupilsfromPupilIds;
+    return pupilsfromInternalIds;
   }
 
-  List<int> pupilIdsFromPupils(List<PupilProxy> pupils) {
+  List<int> internalIdsFromPupils(List<PupilProxy> pupils) {
     return pupils.map((pupil) => pupil.internalId).toList();
   }
 
-  List<PupilProxy> pupilsNotListed(List<int> pupilIds) {
-    Map<int, PupilProxy> allPupils = Map<int, PupilProxy>.of(_pupils);
-    allPupils.removeWhere((key, value) => pupilIds.contains(key));
+  List<PupilProxy> pupilsNotListed(List<int> internalIds) {
+    Map<int, PupilProxy> allPupils =
+        Map<int, PupilProxy>.of(_pupilsInternalIdMap);
+    allPupils.removeWhere((key, value) => internalIds.contains(key));
     return allPupils.values.toList();
   }
 
@@ -68,7 +74,8 @@ class PupilManager extends ChangeNotifier {
       return [];
     }
 
-    Map<int, PupilProxy> allPupils = Map<int, PupilProxy>.of(_pupils);
+    Map<int, PupilProxy> allPupils =
+        Map<int, PupilProxy>.of(_pupilsInternalIdMap);
 
     // Filter by family value of the pupil
     allPupils.removeWhere((key, value) => value.family != pupil.family);
@@ -79,7 +86,8 @@ class PupilManager extends ChangeNotifier {
   }
 
   List<PupilProxy> pupilsWithBirthdaySinceDate(DateTime date) {
-    Map<int, PupilProxy> allPupils = Map<int, PupilProxy>.of(_pupils);
+    Map<int, PupilProxy> allPupils =
+        Map<int, PupilProxy>.of(_pupilsInternalIdMap);
     final DateTime now = DateTime.now();
     allPupils.removeWhere((key, pupil) {
       final birthdayThisYear =
@@ -99,7 +107,7 @@ class PupilManager extends ChangeNotifier {
     return pupilsWithBirthdaySinceDate;
   }
 
-  final pupilDataApiService = PupilDataApiService();
+  //- API CALLS
 
   //- Fetch all available pupils from the backend
 
@@ -111,22 +119,18 @@ class PupilManager extends ChangeNotifier {
     await fetchPupilsByInternalId(pupilsToFetch);
   }
 
-  Future<void> init() async {
-    await fetchAllPupils();
-  }
-
   Future<void> updatePupilList(List<PupilProxy> pupils) async {
     await fetchPupilsByInternalId(pupils.map((e) => e.internalId).toList());
   }
 
-  //- Fetch pupils with the given ids from the backend
+  //- Fetch pupils with the given internal ids
 
   Future<void> fetchPupilsByInternalId(List<int> internalPupilIds) async {
     _notificationService.showSnackBar(
         NotificationType.info, 'Lade Schülerdaten vom Server. Bitte warten...');
 
     // fetch the pupils from the backend
-    final fetchedPupils = await pupilDataApiService.fetchListOfPupils(
+    final fetchedPupils = await _pupilDataApiService.fetchListOfPupils(
         internalPupilIds: internalPupilIds);
 
     // check if we did not get a pupil response for some ids
@@ -139,7 +143,7 @@ class PupilManager extends ChangeNotifier {
     // now we match the pupils from the response with their personal data
 
     for (PupilData fetchedPupil in fetchedPupils) {
-      final proxyInRepository = _pupils[fetchedPupil.internalId];
+      final proxyInRepository = _pupilsInternalIdMap[fetchedPupil.internalId];
       if (proxyInRepository != null) {
         proxyInRepository.updatePupil(fetchedPupil);
       } else {
@@ -149,15 +153,15 @@ class PupilManager extends ChangeNotifier {
         final pupilIdentity =
             _pupilIdentityManager.getPupilIdentity(fetchedPupil.internalId);
 
-        _pupils[fetchedPupil.internalId] =
+        _pupilsInternalIdMap[fetchedPupil.internalId] =
             PupilProxy(pupilData: fetchedPupil, pupilIdentity: pupilIdentity);
       }
     }
 
     // remove the outdated pupil identities that
     // did not get a response from the backend
-    // because this means they are outdated
-    // and we do not need them anymore
+    // because this means the pupil is not in the database anymore
+    // and we need to delete the personal data from the device
 
     if (outdatedPupilIdentitiesIds.isNotEmpty) {
       final deletedPupilIdentities = await _pupilIdentityManager
@@ -172,7 +176,7 @@ class PupilManager extends ChangeNotifier {
   }
 
   void updatePupilProxyWithPupilData(PupilData pupilData) {
-    final proxy = _pupils[pupilData.internalId];
+    final proxy = _pupilsInternalIdMap[pupilData.internalId];
     if (proxy != null) {
       proxy.updatePupil(pupilData);
       //- TODO: Is this true: No need to call notifyListeners here, because the proxy will notify the listeners itself
@@ -185,59 +189,6 @@ class PupilManager extends ChangeNotifier {
       updatePupilProxyWithPupilData(pupil);
     }
   }
-
-  // void updatePupilsFromMissedClassesOnASchoolday(
-  //     List<MissedClass> allMissedClasses) {
-  //   // Track the IDs of pupils who had missed classes before the update
-  //   // We need this to find out whose missed classes have been deleted
-  //   final Set<int> pupilsWithMissedClassesBeforeUpdate = _pupils.values
-  //       .where((pupil) =>
-  //           pupil.missedClasses!.isNotEmpty &&
-  //           pupil.missedClasses!.any((missedClass) =>
-  //               missedClass.schoolday == _schooldayManager.thisDate.value))
-  //       .map((pupil) => pupil.internalId)
-  //       .toSet();
-
-  //   if (allMissedClasses.isEmpty) {
-  //     for (int pupilId in pupilsWithMissedClassesBeforeUpdate) {
-  //       final pupil = _pupils[pupilId];
-  //       if (pupil != null) {
-  //         pupil.updateFromMissedClassesOnASchoolday([]);
-  //       }
-  //     }
-  //     notifyListeners();
-  //     return;
-  //   }
-
-  //   for (MissedClass missedClass in allMissedClasses) {
-  //     final missedPupil = _pupils[missedClass.pupilId];
-
-  //     if (missedPupil == null) {
-  //       _log.severe(
-  //           'Pupil ${missedClass.pupilId} not found', StackTrace.current);
-
-  //       continue;
-  //     }
-
-  //     missedPupil.updateFromMissedClassesOnASchoolday(allMissedClasses);
-  //   }
-  //   // Identify pupils whose missed classes are no longer present
-  //   final Set<int> pupilsWithMissedClassesAfterUpdate = allMissedClasses
-  //       .map((missedClass) => missedClass.pupil!.internalId)
-  //       .toSet();
-
-  //   final Set<int> pupilsWithDeletedMissedClasses =
-  //       pupilsWithMissedClassesBeforeUpdate
-  //           .difference(pupilsWithMissedClassesAfterUpdate);
-
-  //   for (int pupilId in pupilsWithDeletedMissedClasses) {
-  //     final pupil = _pupils[pupilId];
-  //     if (pupil != null) {
-  //       pupil.updateFromMissedClassesOnASchoolday(allMissedClasses);
-  //     }
-  //   }
-  //   notifyListeners();
-  // }
 
   Future<void> postAvatarImage(
     File imageFile,
@@ -257,7 +208,7 @@ class PupilManager extends ChangeNotifier {
     // send the Api request
 
     final PupilData pupilUpdate =
-        await pupilDataApiService.updatePupilWithAvatar(
+        await _pupilDataApiService.updatePupilWithAvatar(
       pupilId: pupilProxy.pupilId,
       file: encryptedFile,
     );
@@ -265,6 +216,17 @@ class PupilManager extends ChangeNotifier {
     // update the pupil in the repository
     updatePupilProxyWithPupilData(pupilUpdate);
     //  pupilProxy.updatePupil(pupilUpdate);
+  }
+
+  Future<void> updateCredit({required int pupilId, required int credit}) async {
+    // send the Api request
+    final PupilData pupilUpdate = await _pupilDataApiService.updateCredit(
+      pupilId: pupilId,
+      credit: credit,
+    );
+
+    // update the pupil in the repository
+    updatePupilProxyWithPupilData(pupilUpdate);
   }
 
   // Future<void> postAvatarAuthImage(
@@ -337,7 +299,7 @@ class PupilManager extends ChangeNotifier {
 
   Future<void> deleteAvatarImage(int pupilId, String cacheKey) async {
     // send the Api request
-    final pupilUpdate = await pupilDataApiService.deletePupilAvatar(
+    final pupilUpdate = await _pupilDataApiService.deletePupilAvatar(
       internalId: pupilId,
     );
 
@@ -378,9 +340,46 @@ class PupilManager extends ChangeNotifier {
 //     _pupils[pupilId]!.deletePublicMediaAuthId();
 //   }
 
-  Future<void> updateNonParentInfoProperty(
+  Future<void> updateTutorInfo(
+      {required int internalId, required TutorInfo tutorInfo}) async {
+    // check if the pupil is a sibling and handle them if true
+    final pupilSiblings = siblings(getPupilByInternalId(internalId)!);
+    if (pupilSiblings.isNotEmpty) {
+      // create list with ids of all pupils with the same family value
+      final List<int> siblingIds =
+          pupilSiblings.map((p) => p.internalId).toList();
+
+      // call the endpoint to update the siblings
+
+      final List<PupilData> siblingsUpdate = await _pupilDataApiService
+          .updateSiblingsTutorInfo(
+              tutorInfo: tutorInfo,
+              siblingsInternalIds: [...siblingIds, internalId]);
+
+      // now update the siblings with the new data
+
+      for (PupilData sibling in siblingsUpdate) {
+        _pupilsInternalIdMap[sibling.internalId]!.updatePupil(sibling);
+      }
+
+      _notificationService.showSnackBar(
+          NotificationType.success, 'Geschwister erfolgreich aktualisiert!');
+
+      return;
+    }
+    // send the Api request
+    final pupilToUpdate = getPupilByInternalId(internalId)!;
+
+    final PupilData pupilUpdate = await _pupilDataApiService.updateTutorInfo(
+        pupilId: pupilToUpdate.pupilId, tutorInfo: tutorInfo);
+
+    // update the pupil in the repository
+    updatePupilProxyWithPupilData(pupilUpdate);
+  }
+
+  Future<void> updateNonTutorInfoProperty(
       {required int pupilId,
-      required String jsonKey,
+      required String property,
       required dynamic value}) async {
     // if the value is relevant to siblings, check for siblings first and handle them if true
 
@@ -437,7 +436,8 @@ class PupilManager extends ChangeNotifier {
       required String comment}) async {
     final pupilIdId = getPupilByInternalId(internalId)!.pupilId;
 
-    final PupilData updatedPupil = await pupilDataApiService.updateSupportLevel(
+    final PupilData updatedPupil =
+        await _pupilDataApiService.updateSupportLevel(
       pupilIdId: pupilIdId,
       supportLevelValue: level,
       createdAt: createdAt,
@@ -445,18 +445,18 @@ class PupilManager extends ChangeNotifier {
       comment: comment,
     );
 
-    _pupils[internalId]!.updatePupil(updatedPupil);
+    _pupilsInternalIdMap[internalId]!.updatePupil(updatedPupil);
   }
 
   Future<void> deleteSupportLevelHistoryItem(
       {required int pupilId, required String supportLevelId}) async {
     final PupilData updatedPupil =
-        await pupilDataApiService.deleteSupportLevelHistoryItem(
+        await _pupilDataApiService.deleteSupportLevelHistoryItem(
       internalId: pupilId,
       supportLevelId: int.parse(supportLevelId),
     );
 
-    _pupils[pupilId]!.updatePupil(updatedPupil);
+    _pupilsInternalIdMap[pupilId]!.updatePupil(updatedPupil);
   }
 
   PupilsFilter getPupilFilter() {

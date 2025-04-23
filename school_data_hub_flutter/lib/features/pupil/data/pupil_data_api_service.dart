@@ -73,7 +73,30 @@ class PupilDataApiService {
     }
   }
 
-  //- update pupil property
+  // - update credit
+  Future<PupilData> updateCredit({
+    required int pupilId,
+    required int credit,
+    String? comment,
+  }) async {
+    try {
+      _notificationService.apiRunning(true);
+      final updatedPupil =
+          await _client.pupilUpdate.updateCredit(pupilId, credit, comment);
+      _notificationService.apiRunning(false);
+      return updatedPupil;
+    } catch (e) {
+      _notificationService.apiRunning(false);
+
+      _log.severe('Error while updating pupil', e, StackTrace.current);
+
+      _notificationService.showSnackBar(NotificationType.error,
+          'Die Schüler konnten nicht aktualisiert werden: ${e.toString()}');
+
+      throw Exception('Failed to update pupil, $e');
+    }
+  }
+  // //- update pupil property
 
   // Future<PupilData> updateNonParentInfoPupilProperty({
   //   required int id,
@@ -98,21 +121,45 @@ class PupilDataApiService {
   //   }
   // }
 
-  //- patch siblings
+  // - update tutor info
+
+  Future<PupilData> updateTutorInfo({
+    required int pupilId,
+    required TutorInfo tutorInfo,
+  }) async {
+    try {
+      _notificationService.apiRunning(true);
+      final updatedPupil =
+          await _client.pupilUpdate.updateTutorInfo(pupilId, tutorInfo);
+      _notificationService.apiRunning(false);
+
+      return updatedPupil;
+    } catch (e) {
+      _notificationService.apiRunning(false);
+
+      _log.severe('Error while updating pupil', e, StackTrace.current);
+
+      _notificationService.showSnackBar(NotificationType.error,
+          'Die Schüler konnten nicht aktualisiert werden: ${e.toString()}');
+
+      throw Exception('Failed to update pupil, $e');
+    }
+  }
+  //- update siblings tutor info
 
   Future<List<PupilData>> updateSiblingsTutorInfo({
-    required List<int> siblingsPupilIds,
+    required List<int> siblingsInternalIds,
     required TutorInfo tutorInfo,
   }) async {
     final siblingsTutorInfo = SiblingsTutorInfo(
-      siblingsInternalIds: siblingsPupilIds.toSet(),
+      siblingsInternalIds: siblingsInternalIds.toSet(),
       tutorInfo: tutorInfo,
     );
 
     try {
       _notificationService.apiRunning(true);
       final updatedSiblings =
-          await _client.pupil.updateSiblingsTutorInfo(siblingsTutorInfo);
+          await _client.pupilUpdate.updateSiblingsTutorInfo(siblingsTutorInfo);
       _notificationService.apiRunning(false);
 
       return updatedSiblings;
@@ -156,7 +203,7 @@ class PupilDataApiService {
       if (success) {
         try {
           final updatedPupil =
-              await _client.pupil.updatePupilAvatar(pupilId, path);
+              await _client.pupilUpdate.updatePupilAvatar(pupilId, path);
           _notificationService.apiRunning(false);
 
           return updatedPupil;
@@ -215,7 +262,7 @@ class PupilDataApiService {
           _notificationService.apiRunning(true);
 
           final updatedPupil =
-              await _client.pupil.updatePupilAvatar(pupilId, path);
+              await _client.pupilUpdate.updatePupilAvatar(pupilId, path);
           _notificationService.apiRunning(false);
 
           return updatedPupil;
@@ -336,7 +383,8 @@ class PupilDataApiService {
 
     try {
       _notificationService.apiRunning(true);
-      final updatedPupil = await _client.pupil.updateSupportLevel(supportLevel);
+      final updatedPupil =
+          await _client.pupilUpdate.updateSupportLevel(supportLevel);
       _notificationService.apiRunning(false);
       return updatedPupil;
     } catch (e) {

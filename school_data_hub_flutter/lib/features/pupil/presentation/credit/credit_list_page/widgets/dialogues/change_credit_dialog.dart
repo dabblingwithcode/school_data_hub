@@ -135,10 +135,8 @@ Future<void> changeCreditDialog(BuildContext context, PupilProxy pupil) async {
                 style: AppStyles.successButtonStyle,
                 onPressed: () {
                   if (credit != 0) {
-                    di<PupilManager>().updateNonParentInfoProperty(
-                        pupilId: pupil.internalId,
-                        jsonKey: 'credit',
-                        value: credit);
+                    di<PupilManager>()
+                        .updateCredit(pupilId: pupil.pupilId, credit: credit);
 
                     di<ServerpodSessionManager>().changeUserCredit(credit);
 
