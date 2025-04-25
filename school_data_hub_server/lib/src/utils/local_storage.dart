@@ -4,7 +4,8 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:path/path.dart' as path;
+import 'package:logging/logging.dart';
+import 'package:path/path.dart' as p;
 import 'package:serverpod/serverpod.dart';
 
 enum LocalStorageId {
@@ -18,26 +19,34 @@ enum LocalStorageId {
   );
 }
 
+final _log = Logger('LocalStorage');
+
 class LocalStorage extends DatabaseCloudStorage {
-  final String? publicStorageUrl;
+  // Static instances for each storage type
+  // static final Map<String, LocalStorage> _instances = {};
+  //final String? publicStorageUrl;
   final String pathPrefix;
 
   LocalStorage({
-    required LocalStorageId storageId,
+    required String storageId,
     required this.pathPrefix,
-    this.publicStorageUrl,
-  }) : super(storageId.storageId);
+    // this.publicStorageUrl,
+  }) : super(storageId);
 
-  File _getFileByPath(String filePath) {
-    final fileName = path.basename(filePath);
-    final parentDirectoryPath = path.dirname(filePath);
-    final directoryPath = path.join(pathPrefix, parentDirectoryPath);
-    final directory = Directory(directoryPath);
-    if (!directory.existsSync()) {
-      directory.createSync(recursive: true);
-    }
-    return File(path.join(directoryPath, fileName));
-  }
+  // We sanitize the path for different platforms
+  File _getFileByPath(String path) => File(p.join(pathPrefix, path));
+
+  // File _getFileByPath(String filePath) {
+  //   final fileName = p.basename(filePath);
+  //   final parentDirectoryPath = p.dirname(filePath);
+  //   final directoryPath = p.join(pathPrefix, parentDirectoryPath);
+  //   // final directory = Directory(directoryPath);
+  //   // if (!directory.existsSync()) {
+  //   //   directory.createSync(recursive: true);
+  //   // }
+  //   log('Getting file: ${p.join(directoryPath, fileName)}');
+  //   return File(p.join(directoryPath, fileName));
+  // }
 
   @override
   Future<void> deleteFile({
@@ -61,8 +70,14 @@ class LocalStorage extends DatabaseCloudStorage {
     required Session session,
     required String path,
   }) async {
-    print('Checking if file exists at $path');
+    _log.info('Checking if file exists at $path');
+
     final file = _getFileByPath(path);
+    if (!file.existsSync()) {
+      _log.warning('File not found: $path');
+    } else {
+      _log.info('File exists: $path');
+    }
     return file.existsSync();
   }
 
@@ -71,12 +86,7 @@ class LocalStorage extends DatabaseCloudStorage {
     required Session session,
     required String path,
   }) async {
-    final prefix = publicStorageUrl;
-    if (prefix == null) {
-      session.log(
-          'Public storage URL is allowed for LocalStorage with id $storageId',
-          level: LogLevel.warning);
-    }
+    //  final prefix = '$storageUrl/public';
 
     final file = _getFileByPath(path);
     if (!file.existsSync()) {
@@ -87,10 +97,11 @@ class LocalStorage extends DatabaseCloudStorage {
       // );
       return null;
     }
-    if (prefix!.startsWith('http')) {
-      return Uri.parse('$prefix$path');
-    }
-    return Uri.file('$prefix$path');
+    // if (prefix!.startsWith('http')) {
+    //   return Uri.parse('$prefix$path');
+    // }
+    return Uri.file(path);
+    //  return Uri.file('$prefix$path');
   }
 
   @override

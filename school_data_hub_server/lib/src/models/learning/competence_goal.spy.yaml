@@ -12,3 +12,4 @@ fields:
   achievedAt: DateTime
   pupil: PupilData?, relation(name=competence_goal_pupil)
   competence: Competence?, relation(name=competence_goal_competence)
+  documents: List<HubDocument>?, relation

@@ -12,7 +12,7 @@
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../pupil_data/pupil_data.dart' as _i2;
 import '../learning/competence.dart' as _i3;
-import '../learning/competence_check_file.dart' as _i4;
+import '../shared/document.dart' as _i4;
 
 abstract class CompetenceCheck
     implements _i1.TableRow<int>, _i1.ProtocolSerialization {
@@ -30,7 +30,7 @@ abstract class CompetenceCheck
     this.pupil,
     required this.competenceId,
     this.competence,
-    this.competenceCheckFiles,
+    this.documents,
   });
 
   factory CompetenceCheck({
@@ -47,7 +47,7 @@ abstract class CompetenceCheck
     _i2.PupilData? pupil,
     required int competenceId,
     _i3.Competence? competence,
-    List<_i4.CompetenceCheckFile>? competenceCheckFiles,
+    List<_i4.HubDocument>? documents,
   }) = _CompetenceCheckImpl;
 
   factory CompetenceCheck.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -72,9 +72,8 @@ abstract class CompetenceCheck
           ? null
           : _i3.Competence.fromJson(
               (jsonSerialization['competence'] as Map<String, dynamic>)),
-      competenceCheckFiles: (jsonSerialization['competenceCheckFiles'] as List?)
-          ?.map((e) =>
-              _i4.CompetenceCheckFile.fromJson((e as Map<String, dynamic>)))
+      documents: (jsonSerialization['documents'] as List?)
+          ?.map((e) => _i4.HubDocument.fromJson((e as Map<String, dynamic>)))
           .toList(),
     );
   }
@@ -110,7 +109,7 @@ abstract class CompetenceCheck
 
   _i3.Competence? competence;
 
-  List<_i4.CompetenceCheckFile>? competenceCheckFiles;
+  List<_i4.HubDocument>? documents;
 
   @override
   _i1.Table<int> get table => t;
@@ -132,7 +131,7 @@ abstract class CompetenceCheck
     _i2.PupilData? pupil,
     int? competenceId,
     _i3.Competence? competence,
-    List<_i4.CompetenceCheckFile>? competenceCheckFiles,
+    List<_i4.HubDocument>? documents,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -150,9 +149,8 @@ abstract class CompetenceCheck
       if (pupil != null) 'pupil': pupil?.toJson(),
       'competenceId': competenceId,
       if (competence != null) 'competence': competence?.toJson(),
-      if (competenceCheckFiles != null)
-        'competenceCheckFiles':
-            competenceCheckFiles?.toJson(valueToJson: (v) => v.toJson()),
+      if (documents != null)
+        'documents': documents?.toJson(valueToJson: (v) => v.toJson()),
     };
   }
 
@@ -172,21 +170,21 @@ abstract class CompetenceCheck
       if (pupil != null) 'pupil': pupil?.toJsonForProtocol(),
       'competenceId': competenceId,
       if (competence != null) 'competence': competence?.toJsonForProtocol(),
-      if (competenceCheckFiles != null)
-        'competenceCheckFiles': competenceCheckFiles?.toJson(
-            valueToJson: (v) => v.toJsonForProtocol()),
+      if (documents != null)
+        'documents':
+            documents?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
     };
   }
 
   static CompetenceCheckInclude include({
     _i2.PupilDataInclude? pupil,
     _i3.CompetenceInclude? competence,
-    _i4.CompetenceCheckFileIncludeList? competenceCheckFiles,
+    _i4.HubDocumentIncludeList? documents,
   }) {
     return CompetenceCheckInclude._(
       pupil: pupil,
       competence: competence,
-      competenceCheckFiles: competenceCheckFiles,
+      documents: documents,
     );
   }
 
@@ -233,7 +231,7 @@ class _CompetenceCheckImpl extends CompetenceCheck {
     _i2.PupilData? pupil,
     required int competenceId,
     _i3.Competence? competence,
-    List<_i4.CompetenceCheckFile>? competenceCheckFiles,
+    List<_i4.HubDocument>? documents,
   }) : super._(
           id: id,
           publicId: publicId,
@@ -248,7 +246,7 @@ class _CompetenceCheckImpl extends CompetenceCheck {
           pupil: pupil,
           competenceId: competenceId,
           competence: competence,
-          competenceCheckFiles: competenceCheckFiles,
+          documents: documents,
         );
 
   /// Returns a shallow copy of this [CompetenceCheck]
@@ -269,7 +267,7 @@ class _CompetenceCheckImpl extends CompetenceCheck {
     Object? pupil = _Undefined,
     int? competenceId,
     Object? competence = _Undefined,
-    Object? competenceCheckFiles = _Undefined,
+    Object? documents = _Undefined,
   }) {
     return CompetenceCheck(
       id: id is int? ? id : this.id,
@@ -287,10 +285,9 @@ class _CompetenceCheckImpl extends CompetenceCheck {
       competence: competence is _i3.Competence?
           ? competence
           : this.competence?.copyWith(),
-      competenceCheckFiles:
-          competenceCheckFiles is List<_i4.CompetenceCheckFile>?
-              ? competenceCheckFiles
-              : this.competenceCheckFiles?.map((e0) => e0.copyWith()).toList(),
+      documents: documents is List<_i4.HubDocument>?
+          ? documents
+          : this.documents?.map((e0) => e0.copyWith()).toList(),
     );
   }
 }
@@ -364,9 +361,9 @@ class CompetenceCheckTable extends _i1.Table<int> {
 
   _i3.CompetenceTable? _competence;
 
-  _i4.CompetenceCheckFileTable? ___competenceCheckFiles;
+  _i4.HubDocumentTable? ___documents;
 
-  _i1.ManyRelation<_i4.CompetenceCheckFileTable>? _competenceCheckFiles;
+  _i1.ManyRelation<_i4.HubDocumentTable>? _documents;
 
   _i2.PupilDataTable get pupil {
     if (_pupil != null) return _pupil!;
@@ -394,35 +391,37 @@ class CompetenceCheckTable extends _i1.Table<int> {
     return _competence!;
   }
 
-  _i4.CompetenceCheckFileTable get __competenceCheckFiles {
-    if (___competenceCheckFiles != null) return ___competenceCheckFiles!;
-    ___competenceCheckFiles = _i1.createRelationTable(
-      relationFieldName: '__competenceCheckFiles',
+  _i4.HubDocumentTable get __documents {
+    if (___documents != null) return ___documents!;
+    ___documents = _i1.createRelationTable(
+      relationFieldName: '__documents',
       field: CompetenceCheck.t.id,
-      foreignField: _i4.CompetenceCheckFile.t.competenceCheckId,
+      foreignField:
+          _i4.HubDocument.t.$_competenceCheckDocumentsCompetenceCheckId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i4.CompetenceCheckFileTable(tableRelation: foreignTableRelation),
+          _i4.HubDocumentTable(tableRelation: foreignTableRelation),
     );
-    return ___competenceCheckFiles!;
+    return ___documents!;
   }
 
-  _i1.ManyRelation<_i4.CompetenceCheckFileTable> get competenceCheckFiles {
-    if (_competenceCheckFiles != null) return _competenceCheckFiles!;
+  _i1.ManyRelation<_i4.HubDocumentTable> get documents {
+    if (_documents != null) return _documents!;
     var relationTable = _i1.createRelationTable(
-      relationFieldName: 'competenceCheckFiles',
+      relationFieldName: 'documents',
       field: CompetenceCheck.t.id,
-      foreignField: _i4.CompetenceCheckFile.t.competenceCheckId,
+      foreignField:
+          _i4.HubDocument.t.$_competenceCheckDocumentsCompetenceCheckId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i4.CompetenceCheckFileTable(tableRelation: foreignTableRelation),
+          _i4.HubDocumentTable(tableRelation: foreignTableRelation),
     );
-    _competenceCheckFiles = _i1.ManyRelation<_i4.CompetenceCheckFileTable>(
+    _documents = _i1.ManyRelation<_i4.HubDocumentTable>(
       tableWithRelations: relationTable,
-      table: _i4.CompetenceCheckFileTable(
+      table: _i4.HubDocumentTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
-    return _competenceCheckFiles!;
+    return _documents!;
   }
 
   @override
@@ -448,8 +447,8 @@ class CompetenceCheckTable extends _i1.Table<int> {
     if (relationField == 'competence') {
       return competence;
     }
-    if (relationField == 'competenceCheckFiles') {
-      return __competenceCheckFiles;
+    if (relationField == 'documents') {
+      return __documents;
     }
     return null;
   }
@@ -459,24 +458,24 @@ class CompetenceCheckInclude extends _i1.IncludeObject {
   CompetenceCheckInclude._({
     _i2.PupilDataInclude? pupil,
     _i3.CompetenceInclude? competence,
-    _i4.CompetenceCheckFileIncludeList? competenceCheckFiles,
+    _i4.HubDocumentIncludeList? documents,
   }) {
     _pupil = pupil;
     _competence = competence;
-    _competenceCheckFiles = competenceCheckFiles;
+    _documents = documents;
   }
 
   _i2.PupilDataInclude? _pupil;
 
   _i3.CompetenceInclude? _competence;
 
-  _i4.CompetenceCheckFileIncludeList? _competenceCheckFiles;
+  _i4.HubDocumentIncludeList? _documents;
 
   @override
   Map<String, _i1.Include?> get includes => {
         'pupil': _pupil,
         'competence': _competence,
-        'competenceCheckFiles': _competenceCheckFiles,
+        'documents': _documents,
       };
 
   @override
@@ -733,27 +732,30 @@ class CompetenceCheckRepository {
 class CompetenceCheckAttachRepository {
   const CompetenceCheckAttachRepository._();
 
-  /// Creates a relation between this [CompetenceCheck] and the given [CompetenceCheckFile]s
-  /// by setting each [CompetenceCheckFile]'s foreign key `competenceCheckId` to refer to this [CompetenceCheck].
-  Future<void> competenceCheckFiles(
+  /// Creates a relation between this [CompetenceCheck] and the given [HubDocument]s
+  /// by setting each [HubDocument]'s foreign key `_competenceCheckDocumentsCompetenceCheckId` to refer to this [CompetenceCheck].
+  Future<void> documents(
     _i1.Session session,
     CompetenceCheck competenceCheck,
-    List<_i4.CompetenceCheckFile> competenceCheckFile, {
+    List<_i4.HubDocument> hubDocument, {
     _i1.Transaction? transaction,
   }) async {
-    if (competenceCheckFile.any((e) => e.id == null)) {
-      throw ArgumentError.notNull('competenceCheckFile.id');
+    if (hubDocument.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('hubDocument.id');
     }
     if (competenceCheck.id == null) {
       throw ArgumentError.notNull('competenceCheck.id');
     }
 
-    var $competenceCheckFile = competenceCheckFile
-        .map((e) => e.copyWith(competenceCheckId: competenceCheck.id))
+    var $hubDocument = hubDocument
+        .map((e) => _i4.HubDocumentImplicit(
+              e,
+              $_competenceCheckDocumentsCompetenceCheckId: competenceCheck.id,
+            ))
         .toList();
-    await session.db.update<_i4.CompetenceCheckFile>(
-      $competenceCheckFile,
-      columns: [_i4.CompetenceCheckFile.t.competenceCheckId],
+    await session.db.update<_i4.HubDocument>(
+      $hubDocument,
+      columns: [_i4.HubDocument.t.$_competenceCheckDocumentsCompetenceCheckId],
       transaction: transaction,
     );
   }
@@ -809,26 +811,28 @@ class CompetenceCheckAttachRowRepository {
     );
   }
 
-  /// Creates a relation between this [CompetenceCheck] and the given [CompetenceCheckFile]
-  /// by setting the [CompetenceCheckFile]'s foreign key `competenceCheckId` to refer to this [CompetenceCheck].
-  Future<void> competenceCheckFiles(
+  /// Creates a relation between this [CompetenceCheck] and the given [HubDocument]
+  /// by setting the [HubDocument]'s foreign key `_competenceCheckDocumentsCompetenceCheckId` to refer to this [CompetenceCheck].
+  Future<void> documents(
     _i1.Session session,
     CompetenceCheck competenceCheck,
-    _i4.CompetenceCheckFile competenceCheckFile, {
+    _i4.HubDocument hubDocument, {
     _i1.Transaction? transaction,
   }) async {
-    if (competenceCheckFile.id == null) {
-      throw ArgumentError.notNull('competenceCheckFile.id');
+    if (hubDocument.id == null) {
+      throw ArgumentError.notNull('hubDocument.id');
     }
     if (competenceCheck.id == null) {
       throw ArgumentError.notNull('competenceCheck.id');
     }
 
-    var $competenceCheckFile =
-        competenceCheckFile.copyWith(competenceCheckId: competenceCheck.id);
-    await session.db.updateRow<_i4.CompetenceCheckFile>(
-      $competenceCheckFile,
-      columns: [_i4.CompetenceCheckFile.t.competenceCheckId],
+    var $hubDocument = _i4.HubDocumentImplicit(
+      hubDocument,
+      $_competenceCheckDocumentsCompetenceCheckId: competenceCheck.id,
+    );
+    await session.db.updateRow<_i4.HubDocument>(
+      $hubDocument,
+      columns: [_i4.HubDocument.t.$_competenceCheckDocumentsCompetenceCheckId],
       transaction: transaction,
     );
   }
@@ -837,26 +841,29 @@ class CompetenceCheckAttachRowRepository {
 class CompetenceCheckDetachRepository {
   const CompetenceCheckDetachRepository._();
 
-  /// Detaches the relation between this [CompetenceCheck] and the given [CompetenceCheckFile]
-  /// by setting the [CompetenceCheckFile]'s foreign key `competenceCheckId` to `null`.
+  /// Detaches the relation between this [CompetenceCheck] and the given [HubDocument]
+  /// by setting the [HubDocument]'s foreign key `_competenceCheckDocumentsCompetenceCheckId` to `null`.
   ///
   /// This removes the association between the two models without deleting
   /// the related record.
-  Future<void> competenceCheckFiles(
+  Future<void> documents(
     _i1.Session session,
-    List<_i4.CompetenceCheckFile> competenceCheckFile, {
+    List<_i4.HubDocument> hubDocument, {
     _i1.Transaction? transaction,
   }) async {
-    if (competenceCheckFile.any((e) => e.id == null)) {
-      throw ArgumentError.notNull('competenceCheckFile.id');
+    if (hubDocument.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('hubDocument.id');
     }
 
-    var $competenceCheckFile = competenceCheckFile
-        .map((e) => e.copyWith(competenceCheckId: null))
+    var $hubDocument = hubDocument
+        .map((e) => _i4.HubDocumentImplicit(
+              e,
+              $_competenceCheckDocumentsCompetenceCheckId: null,
+            ))
         .toList();
-    await session.db.update<_i4.CompetenceCheckFile>(
-      $competenceCheckFile,
-      columns: [_i4.CompetenceCheckFile.t.competenceCheckId],
+    await session.db.update<_i4.HubDocument>(
+      $hubDocument,
+      columns: [_i4.HubDocument.t.$_competenceCheckDocumentsCompetenceCheckId],
       transaction: transaction,
     );
   }
@@ -865,25 +872,27 @@ class CompetenceCheckDetachRepository {
 class CompetenceCheckDetachRowRepository {
   const CompetenceCheckDetachRowRepository._();
 
-  /// Detaches the relation between this [CompetenceCheck] and the given [CompetenceCheckFile]
-  /// by setting the [CompetenceCheckFile]'s foreign key `competenceCheckId` to `null`.
+  /// Detaches the relation between this [CompetenceCheck] and the given [HubDocument]
+  /// by setting the [HubDocument]'s foreign key `_competenceCheckDocumentsCompetenceCheckId` to `null`.
   ///
   /// This removes the association between the two models without deleting
   /// the related record.
-  Future<void> competenceCheckFiles(
+  Future<void> documents(
     _i1.Session session,
-    _i4.CompetenceCheckFile competenceCheckFile, {
+    _i4.HubDocument hubDocument, {
     _i1.Transaction? transaction,
   }) async {
-    if (competenceCheckFile.id == null) {
-      throw ArgumentError.notNull('competenceCheckFile.id');
+    if (hubDocument.id == null) {
+      throw ArgumentError.notNull('hubDocument.id');
     }
 
-    var $competenceCheckFile =
-        competenceCheckFile.copyWith(competenceCheckId: null);
-    await session.db.updateRow<_i4.CompetenceCheckFile>(
-      $competenceCheckFile,
-      columns: [_i4.CompetenceCheckFile.t.competenceCheckId],
+    var $hubDocument = _i4.HubDocumentImplicit(
+      hubDocument,
+      $_competenceCheckDocumentsCompetenceCheckId: null,
+    );
+    await session.db.updateRow<_i4.HubDocument>(
+      $hubDocument,
+      columns: [_i4.HubDocument.t.$_competenceCheckDocumentsCompetenceCheckId],
       transaction: transaction,
     );
   }

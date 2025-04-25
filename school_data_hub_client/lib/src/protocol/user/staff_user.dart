@@ -14,8 +14,8 @@ import 'package:serverpod_auth_client/serverpod_auth_client.dart' as _i2;
 import '../user/roles/roles.dart' as _i3;
 import '../user/user_flags.dart' as _i4;
 
-abstract class StaffUser implements _i1.SerializableModel {
-  StaffUser._({
+abstract class User implements _i1.SerializableModel {
+  User._({
     this.id,
     required this.userInfoId,
     this.userInfo,
@@ -26,7 +26,7 @@ abstract class StaffUser implements _i1.SerializableModel {
     required this.userFlags,
   });
 
-  factory StaffUser({
+  factory User({
     int? id,
     required int userInfoId,
     _i2.UserInfo? userInfo,
@@ -35,10 +35,10 @@ abstract class StaffUser implements _i1.SerializableModel {
     Set<int>? pupilsAuth,
     required int credit,
     required _i4.UserFlags userFlags,
-  }) = _StaffUserImpl;
+  }) = _UserImpl;
 
-  factory StaffUser.fromJson(Map<String, dynamic> jsonSerialization) {
-    return StaffUser(
+  factory User.fromJson(Map<String, dynamic> jsonSerialization) {
+    return User(
       id: jsonSerialization['id'] as int?,
       userInfoId: jsonSerialization['userInfoId'] as int,
       userInfo: jsonSerialization['userInfo'] == null
@@ -77,10 +77,10 @@ abstract class StaffUser implements _i1.SerializableModel {
 
   _i4.UserFlags userFlags;
 
-  /// Returns a shallow copy of this [StaffUser]
+  /// Returns a shallow copy of this [User]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
-  StaffUser copyWith({
+  User copyWith({
     int? id,
     int? userInfoId,
     _i2.UserInfo? userInfo,
@@ -112,8 +112,8 @@ abstract class StaffUser implements _i1.SerializableModel {
 
 class _Undefined {}
 
-class _StaffUserImpl extends StaffUser {
-  _StaffUserImpl({
+class _UserImpl extends User {
+  _UserImpl({
     int? id,
     required int userInfoId,
     _i2.UserInfo? userInfo,
@@ -133,11 +133,11 @@ class _StaffUserImpl extends StaffUser {
           userFlags: userFlags,
         );
 
-  /// Returns a shallow copy of this [StaffUser]
+  /// Returns a shallow copy of this [User]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   @override
-  StaffUser copyWith({
+  User copyWith({
     Object? id = _Undefined,
     int? userInfoId,
     Object? userInfo = _Undefined,
@@ -147,7 +147,7 @@ class _StaffUserImpl extends StaffUser {
     int? credit,
     _i4.UserFlags? userFlags,
   }) {
-    return StaffUser(
+    return User(
       id: id is int? ? id : this.id,
       userInfoId: userInfoId ?? this.userInfoId,
       userInfo:

@@ -1,0 +1,8 @@
+enum: Weekday
+serialized: byName
+values:
+  - monday
+  - tuesday
+  - wednesday
+  - thursday
+  - friday

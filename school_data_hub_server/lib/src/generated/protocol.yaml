@@ -5,6 +5,12 @@ admin:
   - demoteUserScope:
   - getAllUsers:
   - getUserById:
+  - updateBackendPupilDataState:
+attendance:
+  - fetchMissedClassesOnASchoolday:
+  - fetchMissedClasses:
+  - createMissedClass:
+  - deleteMissedClass:
 auth:
   - login:
   - verifyPassword:
@@ -15,19 +21,36 @@ competence:
   - getAllCompetences:
   - updateCompetence:
   - deleteCompetence:
-example:
-  - hello:
+files:
+  - getUploadDescription:
+  - verifyUpload:
+  - getImage:
 missedClass:
-  - createMissedClass:
-  - getAllMissedClasses:
-  - getMissedClassesOnDate:
-  - updateMissedClass:
+  - streamMyModels:
+  - postMissedClass:
+  - postMissedClasses:
+  - fetchAllMissedClasses:
+  - fetchMissedClassesOnASchoolday:
   - deleteMissedClass:
+  - updateMissedClass:
 pupil:
-  - getPupils:
-  - createPupil:
-  - updateParentInfo:
-  - refreshPupilDataState:
+  - fetchPupilsAsStream:
+  - fetchPupils:
+  - fetchPupilsById:
+  - deleteAvatar:
+  - deleteAvatarAuth:
+  - resetPublicMediaAuth:
+  - deleteSupportLevelHistoryItem:
+pupilUpdate:
+  - updateTutorInfo:
+  - updateSiblingsTutorInfo:
+  - updatePupil:
+  - updatePupilAvatar:
+  - updateStringProperty:
+  - updateCredit:
+  - updatePupilAvatarAuth:
+  - updatePupilWithPublicMediaAuth:
+  - updateSupportLevel:
 schooldayAdmin:
   - createSchoolSemester:
   - getAllSchoolSemesters:
@@ -48,5 +71,6 @@ supportCategory:
   - updateSupportCategory:
   - deleteSupportCategory:
 user:
+  - getCurrentUser:
   - changePassword:
   - increaseStaffCredit:

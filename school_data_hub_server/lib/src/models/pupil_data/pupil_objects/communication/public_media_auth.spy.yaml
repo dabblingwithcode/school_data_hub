@@ -1,0 +1,12 @@
+## public media auth
+
+class: PublicMediaAuth
+fields:
+  groupPicturesOnWebsite: bool
+  groupPicturesInPress: bool
+  portraitPicturesOnWebsite: bool
+  portraitPicturesInPress: bool
+  nameOnWebsite: bool
+  nameInPress: bool
+  videoOnWebsite: bool
+  videoInPress: bool

@@ -1,11 +1,12 @@
-import 'dart:io';
+import 'dart:developer';
 
-import 'package:path/path.dart' as path;
+import 'package:logging/logging.dart';
+import 'package:path/path.dart' as p;
 import 'package:school_data_hub_server/src/future_calls/database_backup_future_call.dart';
 import 'package:school_data_hub_server/src/future_calls/increase_credit_future_call.dart';
-import 'package:school_data_hub_server/src/future_calls/populate_competences_future_call.dart';
-import 'package:school_data_hub_server/src/future_calls/populate_support_categories_future_call.dart';
+import 'package:school_data_hub_server/src/future_calls/populate_test_environment_future_call.dart';
 import 'package:school_data_hub_server/src/utils/local_storage.dart';
+import 'package:school_data_hub_server/src/utils/logger/logrecord_formatter.dart';
 import 'package:school_data_hub_server/src/web/routes/root.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
@@ -18,8 +19,17 @@ import 'src/generated/protocol.dart';
 // configuring Relic (Serverpod's web-server), or need custom setup work.
 
 void run(List<String> args) async {
+  // Set the global logging level
+  Logger.root.level = Level.ALL;
+
+  // Add your custom colored console listener
+  Logger.root.onRecord.listen((record) {
+    final colorFormatter = ColorFormatter();
+    log(colorFormatter.format(record));
+  });
   // auth configuration
   auth.AuthConfig.set(auth.AuthConfig(
+    enableUserImages: false,
     userCanEditUserName: false,
     userCanEditFullName: true,
     // other config options
@@ -33,14 +43,15 @@ void run(List<String> args) async {
   );
 
   // Configure storage.
+  // we use p.join to avoid issues with different OS path separators
   pod.addCloudStorage(LocalStorage(
     //publicStorageUrl: publicStorageUrl,
-    storageId: LocalStorageId.public,
-    pathPrefix: path.join(Directory.current.path, '..', 'storage', 'private'),
+    storageId: 'private',
+    pathPrefix: p.join('storage', 'private').toString(),
   ));
   pod.addCloudStorage(LocalStorage(
-    storageId: LocalStorageId.private,
-    pathPrefix: path.join(Directory.current.path, '..', 'storage', 'public'),
+    storageId: 'public',
+    pathPrefix: p.join('storage', 'public').toString(),
   ));
 
   // If you are using any future calls, they need to be registered here.
@@ -49,11 +60,8 @@ void run(List<String> args) async {
   pod.registerFutureCall(
       IncreaseCreditFutureCall(), 'increaseCreditFutureCall');
 
-  pod.registerFutureCall(PopulateSupportCategoriesFutureCall(),
-      'populateSupportCategoriesFutureCall');
-
   pod.registerFutureCall(
-      PopulateCompetencesFutureCall(), 'populateCompetencesFutureCall');
+      PopulateTestEnvironmentFutureCall(), 'populateTestEnvironmentFutureCall');
 
   // Setup a default page at the web root.
   pod.webServer.addRoute(RouteRoot(), '/');
@@ -71,14 +79,7 @@ void run(List<String> args) async {
 
   // Populate support categories
   await session.serverpod.futureCallWithDelay(
-    'populateSupportCategoriesFutureCall',
-    null,
-    const Duration(seconds: 1),
-  );
-
-  // Populate support categories
-  await session.serverpod.futureCallWithDelay(
-    'populateCompetencesFutureCall',
+    'populateTestEnvironmentFutureCall',
     null,
     const Duration(seconds: 1),
   );
@@ -103,7 +104,7 @@ void run(List<String> args) async {
 
   try {
     // Check if admin user exists (using email as identifier)
-    final adminEmail = 'admin@test.org'; // Use your preferred admin email
+    final adminEmail = 'admin';
     var adminUser = await auth.Users.findUserByEmail(session, adminEmail);
 
     if (adminUser == null) {
@@ -111,10 +112,10 @@ void run(List<String> args) async {
       // For email authentication, you need to create a user with email/password
       final adminPassword = 'admin'; // Set a secure password in production
 
-      // Create the user
+      // Create the userinfo
       adminUser = await auth.Emails.createUser(
         session,
-        'Admin User', // User name
+        'ADM', // User name
         adminEmail,
         adminPassword,
       );
@@ -123,6 +124,17 @@ void run(List<String> args) async {
         // Grant admin scope to the user
         await auth.Users.updateUserScopes(
             session, adminUser.id!, {Scope.admin});
+        final User adminuser = User(
+            userInfoId: adminUser.id!,
+            role: Role.technical,
+            timeUnits: 28,
+            credit: 50,
+            userFlags: UserFlags(
+                confirmedTermsOfUse: false,
+                confirmedPrivacyPolicy: false,
+                changedPassword: false,
+                madeFirstSteps: false));
+        await session.db.insertRow(adminuser);
 
         session.log('Admin user created successfully: ');
         session.log('Email: $adminEmail');

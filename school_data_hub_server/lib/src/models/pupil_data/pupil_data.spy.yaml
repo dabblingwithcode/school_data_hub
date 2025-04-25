@@ -6,30 +6,57 @@
 class: PupilData
 table: pupil_data
 fields:
+  active: bool
   internalId: int
+  ## preschool related
+  preSchoolMedical: PreSchoolMedical?, relation(optional)
+  kindergarden: String?
+  preSchoolTest: PreSchoolTest?, relation(optional)
+  ## avatar related
+  avatar: HubDocument?, relation(optional)
+  avatarAuth: HubDocument?, relation(optional)
+  ## public media related
+  publicMediaAuth: PublicMediaAuth
+  publicMediaAuthDocument: HubDocument?, relation(optional)
+  ## communication and tutor related
   contact: String?
-
+  communicationPupil: CommunicationSkills?
+  specialInformation: String?
+  ## - Beware: This object is used in siblings parent info
+  tutorInfo: TutorInfo?
+  authorizations: List<PupilAuthorization>?, relation(name=pupil_authorization_pupil)
+  ## after school care related
+  afterSchoolCare: AfterSchoolCare?
+  ## rewards related
   credit: int
   creditEarned: int
-  ogs: bool
-  pickUpTime: String?
-  ogsInfo: String?
-  latestSupportLevel: SupportLevel
-  repeater: DateTime
-  swimmer: String
-  communicationPupil: String
-  pupilDataParentInfo: PupilDataParentInfo?
-  preSchoolRevision: PreSchoolRevision
-  authorizations: List<PupilAuthorization>?, relation(name=pupil_authorization_pupil)
-  missedClasses: List<MissedClass>?, relation(name=missed_class_pupil)
-  schooldayEvents: List<SchooldayEvent>?, relation(name=schoolday_event_pupil)
-  workbooks: List<Workbook>?, relation
-  supportGoals: List<SupportGoal>?, relation
-  supportCategoryStatuses: List<SupportCategoryStatus>?, relation
-  pupilWorkbooks: List<PupilWorkbook>?, relation(name=pupil_workbook_pupil)
-  pupilBookLendings: List<PupilBookLending>?, relation(name=pupil_book_lending_pupil)
+  creditTransactions: List<CreditTransaction>?, relation(optional)
+  ## learning related
+  lessonGroupMemberships: List<ScheduledLessonGroupMembership>?, relation(name=pupil_scheduled_lesson_group_memberships)
+  lessonsAttended: List<LessonAttendance>?, relation(name=lesson_attendance_pupils)
   competenceGoals: List<CompetenceGoal>?, relation(name=competence_goal_pupil)
   competenceChecks: List<CompetenceCheck>?, relation(name=competence_check_pupil)
   competenceReports: List<CompetenceReport>?, relation(name=competence_report_pupil)
   competenceReportChecks: List<CompetenceReportCheck>?, relation(name=competence_report_check_pupil)
+  pupilWorkbooks: List<PupilWorkbook>?, relation(name=pupil_workbook_pupil)
+  pupilBookLendings: List<PupilBookLending>?, relation(name=pupil_book_lending_pupil)
+  schoolyearHeldBackAt: DateTime?
+  ## learning support related
+  latestSupportLevel: SupportLevel?
+  supportLevelHistory: List<SupportLevel>?, relation(name=support_level_pupil)
+  supportCategoryStatuses: List<SupportCategoryStatus>?, relation
+  supportGoals: List<SupportGoal>?, relation
+  ## schoolday related
+  missedClasses: List<MissedClass>?, relation(name=missed_class_pupil)
+  schooldayEvents: List<SchooldayEvent>?, relation(name=schoolday_event_pupil)
+  ## miscellaneous  
+  swimmer: String?
   pupilLists: List<PupilList>?, relation(name=pupil_list_pupil)
+indexes:
+  pupil_data_active_idx:
+    fields: active, internalId
+  pupil_data_internal_id_idx:
+    fields: internalId
+    unique: true
+    
+  

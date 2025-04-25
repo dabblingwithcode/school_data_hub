@@ -16,6 +16,7 @@ import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('ServerpodSessionManager');
 final _envManager = di<EnvManager>();
+final _client = di<Client>();
 
 /// The [SessionManager] keeps track of and manages the signed-in state of the
 /// user. Use the [instance] method to get access to the singleton instance.
@@ -37,6 +38,17 @@ class ServerpodSessionManager with ChangeNotifier {
 
   final Storage _storage;
 
+  User? _user;
+  User? get user => _user;
+
+  void changeUserCredit(int credit) {
+    if (_user != null) {
+      final newCredit = _user!.credit + credit;
+      _user!.credit = newCredit;
+      notifyListeners();
+    }
+  }
+
   /// Creates a new session manager.
   ServerpodSessionManager({
     required this.caller,
@@ -55,8 +67,6 @@ class ServerpodSessionManager with ChangeNotifier {
   }
 
   auth_client.UserInfo? _signedInUser;
-
-  StaffUser? _staffUser;
 
   bool get isAdmin =>
       _signedInUser?.scopeNames.contains('serverpod.admin') ?? false;
@@ -79,6 +89,7 @@ class ServerpodSessionManager with ChangeNotifier {
     await keyManager.put(
       key,
     );
+    //_envManager.setUserAuthenticated(true);
     await _handleAuthCallResultInStorage();
 
     // Update streaming connection, if it's open.
@@ -96,6 +107,7 @@ class ServerpodSessionManager with ChangeNotifier {
     _log.info('Initializing session manager...');
     _log.info(' Running in mode: ${_envManager.activeEnv!.runMode.name}');
     await _loadUserInfoFromStorage();
+
     return refreshSession();
   }
 
@@ -156,13 +168,17 @@ class ServerpodSessionManager with ChangeNotifier {
       if (_signedInUser != null) {
         /// Don't forget to set the flag in [EnvManager] to false
         /// to get to the login screen.
-        _log.info('User was authenticated by the server');
         _envManager.setUserAuthenticated(true);
 
-        unawaited(DiManager.registerManagersDependingOnSession());
+        _log.info(
+            'User was authenticated by the server. Registering managers depending on authentication...');
+
+        _user = await _client.user.getCurrentUser();
+        notifyListeners();
+        _log.info('User fetched refreshing session: ${_user?.toJson()}');
         return false;
       } else {
-        _log.warning('User was not authenticated by the server');
+        _log.warning('No signed user available - nothing to refresh');
       }
 
       return true;
@@ -208,6 +224,13 @@ class ServerpodSessionManager with ChangeNotifier {
 
       await _storage.setString(
           _userInfoStorageKey, SerializationManager.encode(signedInUser));
+      // We can start now the managers dependent on authentication
+      _user = await _client.user.getCurrentUser();
+
+      notifyListeners();
+      _log.fine(
+          'User fetched in _handleAuthCallResultInStorage: ${_user?.toJson()}');
+      await DiManager.registerManagersDependingOnSession();
     }
   }
 

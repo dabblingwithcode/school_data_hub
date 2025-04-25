@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 extension DateOnlyCompare on DateTime {
@@ -29,6 +30,12 @@ extension DateOnlyCompare on DateTime {
   String formatForJson() {
     final DateFormat dateFormat = DateFormat("yyyy-MM-dd");
     return dateFormat.format(this).toString();
+  }
+
+  String asWeekdayName(BuildContext context) {
+    final locale = Localizations.localeOf(context).toString();
+    final DateFormat dateFormat = DateFormat("EEEE", locale);
+    return dateFormat.format(this);
   }
 }
 

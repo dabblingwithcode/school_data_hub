@@ -1,19 +1,26 @@
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/auth/hub_auth_key_manager.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_monitor.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app/domain/main_menu_bottom_nav_manager.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/attendance_manager.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/filters/attendance_pupil_filter.dart';
 import 'package:school_data_hub_flutter/features/competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/competence/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter_impl.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -84,12 +91,13 @@ class DiManager {
       return pupilIdentityManager;
     }, dependsOn: [EnvManager]);
 
-    _log.info('Managers dependent on ServerpodSessionManager initialized');
+    _log.info('Managers dependent on active environment initialized');
   }
 
-  /// These manager are initialized after the session manager authenticates
+  /// These managers are initialized after the session manager authenticates
   /// the session. it is called in the [ServerpodSessionManager] class after the session is authenticated.
   static Future<void> registerManagersDependingOnSession() async {
+    _log.info('Registering managers depending on session');
     di.registerSingletonAsync<SchooldayManager>(() async {
       final schooldayManager = SchooldayManager();
 
@@ -124,7 +132,37 @@ class DiManager {
       return CompetenceFilterManager();
     }, dependsOn: [CompetenceManager]);
 
-    _log.info('Managers depending on ServerpodSessionManager initialized');
+    di.registerSingletonAsync<PupilManager>(() async {
+      final pupilManager = PupilManager();
+
+      await pupilManager.init();
+
+      _log.info('PupilManager initialized');
+
+      return pupilManager;
+    }, dependsOn: [ServerpodSessionManager]);
+
+    di.registerSingletonWithDependencies<PupilFilterManager>(
+        () => PupilFilterManager(),
+        dependsOn: [PupilManager]);
+
+    di.registerSingletonWithDependencies<PupilsFilter>(
+        () => PupilsFilterImplementation(
+              di<PupilManager>(),
+            ),
+        dependsOn: [PupilManager, PupilFilterManager]);
+
+    di.registerSingleton<FiltersStateManager>(
+        FiltersStateManagerImplementation());
+
+    di.registerSingletonWithDependencies<AttendanceManager>(
+        () => AttendanceManager(),
+        dependsOn: [SchooldayManager, PupilsFilter]);
+
+    di.registerSingletonWithDependencies<AttendancePupilFilterManager>(
+        () => AttendancePupilFilterManager(),
+        dependsOn: [AttendanceManager]);
+    _log.info('Managers depending on authenticated session initialized');
   }
 
   static Future<void> unregisterManagersDependingOnActiveEnv() async {

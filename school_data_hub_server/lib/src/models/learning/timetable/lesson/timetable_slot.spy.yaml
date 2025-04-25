@@ -1,0 +1,6 @@
+class: TimetableSlot
+table: timetable_slot
+fields:
+  day: Weekday?
+  startTime: String?
+  endTime: String?

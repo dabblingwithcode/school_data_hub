@@ -16,8 +16,8 @@ final _sessionManager = di<ServerpodSessionManager>();
 final _notificationService = di<NotificationService>();
 
 class UserManager {
-  ValueListenable<List<StaffUser>> get users => _users;
-  final _users = ValueNotifier<List<StaffUser>>([]);
+  ValueListenable<List<User>> get users => _users;
+  final _users = ValueNotifier<List<User>>([]);
 
   UserManager();
   Future<UserManager> init() async {
@@ -30,7 +30,7 @@ class UserManager {
     }
 
     try {
-      final List<StaffUser> responseUsers = await _client.admin.getAllUsers();
+      final List<User> responseUsers = await _client.admin.getAllUsers();
 
       // reorder the list alphabetically by the user's name
       responseUsers.sort(
@@ -57,7 +57,7 @@ class UserManager {
       required List<String> scopeNames,
       required Role role,
       String? tutoring}) async {
-    final StaffUser user = await _client.admin.createUser(
+    final User user = await _client.admin.createUser(
       userName: userName,
       fullName: fullName,
       email: email,
@@ -88,7 +88,7 @@ class UserManager {
   }
 
   // Future<void> updateUserProperties({
-  //   required StaffUser user,
+  //   required User user,
   //   bool? admin,
   //   String? contact,
   //   int? credit,
@@ -97,7 +97,7 @@ class UserManager {
   //   int? timeUnits,
   //   String? tutoring,
   // }) async {
-  //   final StaffUser updatedUser = await userApiService.patchUser(
+  //   final User updatedUser = await userApiService.patchUser(
   //       publicId: user.publicId,
   //       admin: admin,
   //       contact: contact,
@@ -112,7 +112,7 @@ class UserManager {
   //   return;
   // }
 
-  Future<void> blockUser(StaffUser user) async {
+  Future<void> blockUser(User user) async {
     if (!_sessionManager.isAdmin) {
       _notificationService.showSnackBar(
           NotificationType.error, 'Sie sind kein Admin!');
@@ -125,12 +125,12 @@ class UserManager {
     return;
   }
 
-  void setUsers(List<StaffUser> users) {
+  void setUsers(List<User> users) {
     _users.value = users;
   }
 
-  void addUser(StaffUser user) {
-    final List<StaffUser> users = List.from(_users.value);
+  void addUser(User user) {
+    final List<User> users = List.from(_users.value);
     users.add(user);
 
     users
@@ -138,12 +138,12 @@ class UserManager {
     _users.value = users;
   }
 
-  void removeUser(StaffUser user) {
+  void removeUser(User user) {
     _users.value =
         _users.value.where((element) => element.id != user.id).toList();
   }
 
-  // void updateUser(StaffUser user) {
+  // void updateUser(User user) {
   //   _users.value = _users.value
   //       .map((e) => e.publicId == user.publicId ? user : e)
   //       .toList();
@@ -153,20 +153,20 @@ class UserManager {
     _users.value = [];
   }
 
-  void removeUsers(List<StaffUser> users) {
+  void removeUsers(List<User> users) {
     _users.value =
         _users.value.where((element) => !users.contains(element)).toList();
   }
 
-  void addUsers(List<StaffUser> users) {
+  void addUsers(List<User> users) {
     _users.value = [..._users.value, ...users];
   }
 
-  void updateUsers(List<StaffUser> users) {
+  void updateUsers(List<User> users) {
     _users.value = users;
   }
 
-  // void addOrUpdateUser(StaffUser user) {
+  // void addOrUpdateUser(User user) {
   //   if (_users.value.any((element) => element.publicId == user.publicId)) {
   //     updateUser(user);
   //   } else {

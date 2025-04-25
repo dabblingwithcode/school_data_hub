@@ -20,7 +20,7 @@ abstract class CreditTransaction
     required this.amount,
     required this.dateTime,
     this.description,
-  });
+  }) : _pupilDataCredittransactionsPupilDataId = null;
 
   factory CreditTransaction({
     int? id,
@@ -32,7 +32,7 @@ abstract class CreditTransaction
   }) = _CreditTransactionImpl;
 
   factory CreditTransaction.fromJson(Map<String, dynamic> jsonSerialization) {
-    return CreditTransaction(
+    return CreditTransactionImplicit._(
       id: jsonSerialization['id'] as int?,
       sender: jsonSerialization['sender'] as String,
       receiver: jsonSerialization['receiver'] as int,
@@ -40,6 +40,8 @@ abstract class CreditTransaction
       dateTime:
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['dateTime']),
       description: jsonSerialization['description'] as String?,
+      $_pupilDataCredittransactionsPupilDataId:
+          jsonSerialization['_pupilDataCredittransactionsPupilDataId'] as int?,
     );
   }
 
@@ -59,6 +61,8 @@ abstract class CreditTransaction
   DateTime dateTime;
 
   String? description;
+
+  final int? _pupilDataCredittransactionsPupilDataId;
 
   @override
   _i1.Table<int> get table => t;
@@ -83,6 +87,9 @@ abstract class CreditTransaction
       'amount': amount,
       'dateTime': dateTime.toJson(),
       if (description != null) 'description': description,
+      if (_pupilDataCredittransactionsPupilDataId != null)
+        '_pupilDataCredittransactionsPupilDataId':
+            _pupilDataCredittransactionsPupilDataId,
     };
   }
 
@@ -159,15 +166,57 @@ class _CreditTransactionImpl extends CreditTransaction {
     DateTime? dateTime,
     Object? description = _Undefined,
   }) {
-    return CreditTransaction(
+    return CreditTransactionImplicit._(
       id: id is int? ? id : this.id,
       sender: sender ?? this.sender,
       receiver: receiver ?? this.receiver,
       amount: amount ?? this.amount,
       dateTime: dateTime ?? this.dateTime,
       description: description is String? ? description : this.description,
+      $_pupilDataCredittransactionsPupilDataId:
+          this._pupilDataCredittransactionsPupilDataId,
     );
   }
+}
+
+class CreditTransactionImplicit extends _CreditTransactionImpl {
+  CreditTransactionImplicit._({
+    int? id,
+    required String sender,
+    required int receiver,
+    required int amount,
+    required DateTime dateTime,
+    String? description,
+    int? $_pupilDataCredittransactionsPupilDataId,
+  })  : _pupilDataCredittransactionsPupilDataId =
+            $_pupilDataCredittransactionsPupilDataId,
+        super(
+          id: id,
+          sender: sender,
+          receiver: receiver,
+          amount: amount,
+          dateTime: dateTime,
+          description: description,
+        );
+
+  factory CreditTransactionImplicit(
+    CreditTransaction creditTransaction, {
+    int? $_pupilDataCredittransactionsPupilDataId,
+  }) {
+    return CreditTransactionImplicit._(
+      id: creditTransaction.id,
+      sender: creditTransaction.sender,
+      receiver: creditTransaction.receiver,
+      amount: creditTransaction.amount,
+      dateTime: creditTransaction.dateTime,
+      description: creditTransaction.description,
+      $_pupilDataCredittransactionsPupilDataId:
+          $_pupilDataCredittransactionsPupilDataId,
+    );
+  }
+
+  @override
+  final int? _pupilDataCredittransactionsPupilDataId;
 }
 
 class CreditTransactionTable extends _i1.Table<int> {
@@ -193,6 +242,10 @@ class CreditTransactionTable extends _i1.Table<int> {
       'description',
       this,
     );
+    $_pupilDataCredittransactionsPupilDataId = _i1.ColumnInt(
+      '_pupilDataCredittransactionsPupilDataId',
+      this,
+    );
   }
 
   late final _i1.ColumnString sender;
@@ -205,8 +258,21 @@ class CreditTransactionTable extends _i1.Table<int> {
 
   late final _i1.ColumnString description;
 
+  late final _i1.ColumnInt $_pupilDataCredittransactionsPupilDataId;
+
   @override
   List<_i1.Column> get columns => [
+        id,
+        sender,
+        receiver,
+        amount,
+        dateTime,
+        description,
+        $_pupilDataCredittransactionsPupilDataId,
+      ];
+
+  @override
+  List<_i1.Column> get managedColumns => [
         id,
         sender,
         receiver,

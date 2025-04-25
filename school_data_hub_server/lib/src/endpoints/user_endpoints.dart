@@ -6,6 +6,26 @@ class UserEndpoint extends Endpoint {
   @override
   bool get requireLogin => true;
 
+  Future<User?> getCurrentUser(Session session) async {
+    // Get the authenticated user's ID
+    var userId = (await session.authenticated)?.userId;
+    if (userId == null) {
+      return null;
+    }
+
+    // Find the UserInfo
+    var userInfo = await Users.findUserByUserId(session, userId);
+    if (userInfo == null) {
+      return null;
+    }
+
+    // Find your custom User object that references this UserInfo
+    return await User.db.findFirstRow(
+      session,
+      where: (t) => t.userInfoId.equals(userInfo.id),
+    );
+  }
+
   Future<bool> changePassword(
       Session session, String oldPassword, String newPassword) async {
     // Get the authenticated user
@@ -43,7 +63,7 @@ class UserEndpoint extends Endpoint {
   Future<bool> increaseStaffCredit(Session session) async {
     // TODO: this code is duplicated in the future call
     // and still does not have any checks!
-    final List<StaffUser> allStaff = await StaffUser.db.find(session);
+    final List<User> allStaff = await User.db.find(session);
     for (var staff in allStaff) {
       final amount = staff.timeUnits + 2;
 

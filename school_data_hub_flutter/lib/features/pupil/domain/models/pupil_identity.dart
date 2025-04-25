@@ -30,6 +30,14 @@ class PupilIdentity {
   final DateTime? migrationSupportEnds;
   @JsonKey(name: "pupilSince")
   final DateTime pupilSince;
+  @JsonKey(name: "afterSchoolCare")
+  final bool? afterSchoolCare;
+  @JsonKey(name: "leavingDate")
+  final DateTime? leavingDate;
+  @JsonKey(name: "religion")
+  final int? religion;
+  @JsonKey(name: "religionLessons")
+  final bool? religionLessons;
 
   factory PupilIdentity.fromJson(Map<String, dynamic> json) =>
       _$PupilIdentityFromJson(json);
@@ -47,7 +55,11 @@ class PupilIdentity {
     required this.family,
     required this.birthday,
     required this.pupilSince,
-    required this.specialNeeds,
+    this.specialNeeds,
     required this.migrationSupportEnds,
+    required this.afterSchoolCare,
+    this.leavingDate,
+    this.religion,
+    this.religionLessons,
   });
 }

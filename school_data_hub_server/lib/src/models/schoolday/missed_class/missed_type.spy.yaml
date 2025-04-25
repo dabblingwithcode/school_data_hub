@@ -1,0 +1,7 @@
+enum: MissedType
+serialized: byName
+values:
+  - notSet
+  - late
+  - missed
+  - home

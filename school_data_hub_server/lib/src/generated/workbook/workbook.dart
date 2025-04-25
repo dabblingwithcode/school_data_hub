@@ -24,7 +24,7 @@ abstract class Workbook
     required this.imageId,
     required this.imageUrl,
     this.assignedPupils,
-  }) : _pupilDataWorkbooksPupilDataId = null;
+  });
 
   factory Workbook({
     int? id,
@@ -39,7 +39,7 @@ abstract class Workbook
   }) = _WorkbookImpl;
 
   factory Workbook.fromJson(Map<String, dynamic> jsonSerialization) {
-    return WorkbookImplicit._(
+    return Workbook(
       id: jsonSerialization['id'] as int?,
       isbn: jsonSerialization['isbn'] as int,
       name: jsonSerialization['name'] as String,
@@ -51,8 +51,6 @@ abstract class Workbook
       assignedPupils: (jsonSerialization['assignedPupils'] as List?)
           ?.map((e) => _i2.PupilWorkbook.fromJson((e as Map<String, dynamic>)))
           .toList(),
-      $_pupilDataWorkbooksPupilDataId:
-          jsonSerialization['_pupilDataWorkbooksPupilDataId'] as int?,
     );
   }
 
@@ -78,8 +76,6 @@ abstract class Workbook
   String imageUrl;
 
   List<_i2.PupilWorkbook>? assignedPupils;
-
-  final int? _pupilDataWorkbooksPupilDataId;
 
   @override
   _i1.Table<int> get table => t;
@@ -112,8 +108,6 @@ abstract class Workbook
       if (assignedPupils != null)
         'assignedPupils':
             assignedPupils?.toJson(valueToJson: (v) => v.toJson()),
-      if (_pupilDataWorkbooksPupilDataId != null)
-        '_pupilDataWorkbooksPupilDataId': _pupilDataWorkbooksPupilDataId,
     };
   }
 
@@ -205,7 +199,7 @@ class _WorkbookImpl extends Workbook {
     String? imageUrl,
     Object? assignedPupils = _Undefined,
   }) {
-    return WorkbookImplicit._(
+    return Workbook(
       id: id is int? ? id : this.id,
       isbn: isbn ?? this.isbn,
       name: name ?? this.name,
@@ -217,56 +211,8 @@ class _WorkbookImpl extends Workbook {
       assignedPupils: assignedPupils is List<_i2.PupilWorkbook>?
           ? assignedPupils
           : this.assignedPupils?.map((e0) => e0.copyWith()).toList(),
-      $_pupilDataWorkbooksPupilDataId: this._pupilDataWorkbooksPupilDataId,
     );
   }
-}
-
-class WorkbookImplicit extends _WorkbookImpl {
-  WorkbookImplicit._({
-    int? id,
-    required int isbn,
-    required String name,
-    required String subject,
-    required String level,
-    required int amount,
-    required String imageId,
-    required String imageUrl,
-    List<_i2.PupilWorkbook>? assignedPupils,
-    int? $_pupilDataWorkbooksPupilDataId,
-  })  : _pupilDataWorkbooksPupilDataId = $_pupilDataWorkbooksPupilDataId,
-        super(
-          id: id,
-          isbn: isbn,
-          name: name,
-          subject: subject,
-          level: level,
-          amount: amount,
-          imageId: imageId,
-          imageUrl: imageUrl,
-          assignedPupils: assignedPupils,
-        );
-
-  factory WorkbookImplicit(
-    Workbook workbook, {
-    int? $_pupilDataWorkbooksPupilDataId,
-  }) {
-    return WorkbookImplicit._(
-      id: workbook.id,
-      isbn: workbook.isbn,
-      name: workbook.name,
-      subject: workbook.subject,
-      level: workbook.level,
-      amount: workbook.amount,
-      imageId: workbook.imageId,
-      imageUrl: workbook.imageUrl,
-      assignedPupils: workbook.assignedPupils,
-      $_pupilDataWorkbooksPupilDataId: $_pupilDataWorkbooksPupilDataId,
-    );
-  }
-
-  @override
-  final int? _pupilDataWorkbooksPupilDataId;
 }
 
 class WorkbookTable extends _i1.Table<int> {
@@ -299,10 +245,6 @@ class WorkbookTable extends _i1.Table<int> {
       'imageUrl',
       this,
     );
-    $_pupilDataWorkbooksPupilDataId = _i1.ColumnInt(
-      '_pupilDataWorkbooksPupilDataId',
-      this,
-    );
   }
 
   late final _i1.ColumnInt isbn;
@@ -322,8 +264,6 @@ class WorkbookTable extends _i1.Table<int> {
   _i2.PupilWorkbookTable? ___assignedPupils;
 
   _i1.ManyRelation<_i2.PupilWorkbookTable>? _assignedPupils;
-
-  late final _i1.ColumnInt $_pupilDataWorkbooksPupilDataId;
 
   _i2.PupilWorkbookTable get __assignedPupils {
     if (___assignedPupils != null) return ___assignedPupils!;
@@ -358,19 +298,6 @@ class WorkbookTable extends _i1.Table<int> {
 
   @override
   List<_i1.Column> get columns => [
-        id,
-        isbn,
-        name,
-        subject,
-        level,
-        amount,
-        imageId,
-        imageUrl,
-        $_pupilDataWorkbooksPupilDataId,
-      ];
-
-  @override
-  List<_i1.Column> get managedColumns => [
         id,
         isbn,
         name,

@@ -1,0 +1,6 @@
+class: Room
+table: room
+fields:
+  roomCode: String
+  roomName: String
+  scheduledLessons: List<ScheduledLesson>?, relation

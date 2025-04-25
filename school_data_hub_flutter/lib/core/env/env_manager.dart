@@ -37,6 +37,7 @@ class EnvManager {
   ///
   /// This method should only be called from [ServerpodSessionManager]
   void setUserAuthenticated(bool value) {
+    _log.info('setUserAuthenticated: $value');
     _isAuthenticated.value = value;
   }
 

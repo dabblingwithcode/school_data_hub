@@ -1,6 +1,6 @@
 ## Staff model
-class: StaffUser
-table: staff
+class: User
+table: user
 fields:
   userInfo: module:auth:UserInfo?, relation(onDelete=Cascade)
   role: Role
@@ -8,6 +8,10 @@ fields:
   pupilsAuth: Set<int>?
   credit: int
   userFlags: UserFlags
+indexes:
+  user_info_id_unique_idx:
+    fields: userInfoId
+    unique: true
   
 
 

@@ -1,9 +1,0 @@
-## siblings parent info model
-## we need this object for the endpoint to be able to update the parent info for all siblings
-class: SiblingsParentInfo
-fields:
-  parentsContact: String
-  communicationTutor1: String
-  communicationTutor2: String
-  createdBy: String
-  siblingsInternalIds: List<int>

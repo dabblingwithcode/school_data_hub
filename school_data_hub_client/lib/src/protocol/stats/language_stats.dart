@@ -10,7 +10,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import '../pupil_data/language.dart' as _i2;
+import '../pupil_data/pupil_objects/communication/language.dart' as _i2;
 
 abstract class LanguageStats implements _i1.SerializableModel {
   LanguageStats._({

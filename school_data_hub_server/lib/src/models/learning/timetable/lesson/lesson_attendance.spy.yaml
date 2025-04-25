@@ -1,0 +1,11 @@
+## junction table for pupils and lessons (many-to-many)
+class: LessonAttendance
+table: lesson_attendance
+fields:
+  lesson: Lesson?, relation(name=lesson_attendance_lessons)
+  pupil: PupilData?, relation(name=lesson_attendance_pupils)
+  comment: String?
+  createdBy: String
+  createdAt: DateTime
+  modifiedBy: String
+  modifiedAt: DateTime

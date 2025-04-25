@@ -58,6 +58,8 @@ class PupilIdentityHelper {
           ? null
           : DateTime.tryParse(pupilIdentityStringItems[11])!,
       pupilSince: DateTime.tryParse(pupilIdentityStringItems[12])!,
+      // TODO: check this
+      afterSchoolCare: null,
     );
     return newPupilIdentity;
   }

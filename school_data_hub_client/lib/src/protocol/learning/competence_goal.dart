@@ -12,6 +12,7 @@
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import '../pupil_data/pupil_data.dart' as _i2;
 import '../learning/competence.dart' as _i3;
+import '../shared/document.dart' as _i4;
 
 abstract class CompetenceGoal implements _i1.SerializableModel {
   CompetenceGoal._({
@@ -28,6 +29,7 @@ abstract class CompetenceGoal implements _i1.SerializableModel {
     this.pupil,
     required this.competenceId,
     this.competence,
+    this.documents,
   });
 
   factory CompetenceGoal({
@@ -44,6 +46,7 @@ abstract class CompetenceGoal implements _i1.SerializableModel {
     _i2.PupilData? pupil,
     required int competenceId,
     _i3.Competence? competence,
+    List<_i4.HubDocument>? documents,
   }) = _CompetenceGoalImpl;
 
   factory CompetenceGoal.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -71,6 +74,9 @@ abstract class CompetenceGoal implements _i1.SerializableModel {
           ? null
           : _i3.Competence.fromJson(
               (jsonSerialization['competence'] as Map<String, dynamic>)),
+      documents: (jsonSerialization['documents'] as List?)
+          ?.map((e) => _i4.HubDocument.fromJson((e as Map<String, dynamic>)))
+          .toList(),
     );
   }
 
@@ -103,6 +109,8 @@ abstract class CompetenceGoal implements _i1.SerializableModel {
 
   _i3.Competence? competence;
 
+  List<_i4.HubDocument>? documents;
+
   /// Returns a shallow copy of this [CompetenceGoal]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
@@ -120,6 +128,7 @@ abstract class CompetenceGoal implements _i1.SerializableModel {
     _i2.PupilData? pupil,
     int? competenceId,
     _i3.Competence? competence,
+    List<_i4.HubDocument>? documents,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -137,6 +146,8 @@ abstract class CompetenceGoal implements _i1.SerializableModel {
       if (pupil != null) 'pupil': pupil?.toJson(),
       'competenceId': competenceId,
       if (competence != null) 'competence': competence?.toJson(),
+      if (documents != null)
+        'documents': documents?.toJson(valueToJson: (v) => v.toJson()),
     };
   }
 
@@ -163,6 +174,7 @@ class _CompetenceGoalImpl extends CompetenceGoal {
     _i2.PupilData? pupil,
     required int competenceId,
     _i3.Competence? competence,
+    List<_i4.HubDocument>? documents,
   }) : super._(
           id: id,
           publicId: publicId,
@@ -177,6 +189,7 @@ class _CompetenceGoalImpl extends CompetenceGoal {
           pupil: pupil,
           competenceId: competenceId,
           competence: competence,
+          documents: documents,
         );
 
   /// Returns a shallow copy of this [CompetenceGoal]
@@ -197,6 +210,7 @@ class _CompetenceGoalImpl extends CompetenceGoal {
     Object? pupil = _Undefined,
     int? competenceId,
     Object? competence = _Undefined,
+    Object? documents = _Undefined,
   }) {
     return CompetenceGoal(
       id: id is int? ? id : this.id,
@@ -216,6 +230,9 @@ class _CompetenceGoalImpl extends CompetenceGoal {
       competence: competence is _i3.Competence?
           ? competence
           : this.competence?.copyWith(),
+      documents: documents is List<_i4.HubDocument>?
+          ? documents
+          : this.documents?.map((e0) => e0.copyWith()).toList(),
     );
   }
 }

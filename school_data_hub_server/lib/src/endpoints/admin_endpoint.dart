@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:collection/collection.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
+import 'package:school_data_hub_server/src/utils/generate_pupil_from_admin_console_data.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/module.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
@@ -13,7 +17,7 @@ class AdminEndpoint extends Endpoint {
   // @override
   // Set<Scope> get requiredScopes => {Scope.admin};
 
-  Future<StaffUser> createUser(
+  Future<User> createUser(
     Session session, {
     required String userName,
     required String fullName,
@@ -44,8 +48,8 @@ class AdminEndpoint extends Endpoint {
     // Update user scopes
     await auth.Users.updateUserScopes(session, userInfo.id!, scopes);
 
-    // Create a new StaffUser object and insert it into the database
-    final newStaffUser = StaffUser(
+    // Create a new User object and insert it into the database
+    final newUser = User(
       userInfoId: userInfo.id!,
       userFlags: UserFlags(
         confirmedTermsOfUse: false,
@@ -59,9 +63,9 @@ class AdminEndpoint extends Endpoint {
       credit: 50,
     );
 
-    await StaffUser.db.insertRow(session, newStaffUser);
+    await User.db.insertRow(session, newUser);
 
-    return newStaffUser;
+    return newUser;
   }
 
   Future<void> deleteUser(Session session, int userId) async {
@@ -108,21 +112,86 @@ class AdminEndpoint extends Endpoint {
     await auth.Users.updateUserScopes(session, user.id!, userscopes);
   }
 
-  Future<List<StaffUser>> getAllUsers(Session session) async {
-    final users = await StaffUser.db.find(
+  Future<List<User>> getAllUsers(Session session) async {
+    final users = await User.db.find(
       session,
-      include: StaffUser.include(
+      include: User.include(
         userInfo: UserInfo.include(),
       ),
     );
     return users;
   }
 
-  Future<StaffUser?> getUserById(Session session, int userId) async {
-    final user = await StaffUser.db.findFirstRow(
+  Future<User?> getUserById(Session session, int userId) async {
+    final user = await User.db.findFirstRow(
       session,
       where: (t) => t.userInfoId.equals(userId),
     );
     return user;
+  }
+
+  Future<Set<PupilData>> updateBackendPupilDataState(
+      Session session, File file) async {
+    // check the extension of the file
+    final extension = file.path.split('.').last;
+    if (extension != 'txt' && extension != 'csv') {
+      throw Exception('File is not a compatible format!');
+    }
+    // get all active pupils from the database and create a list
+    final activePupils =
+        await PupilData.db.find(session, where: (t) => t.active.equals(true));
+
+    // we monitor the pupils that we haven't processed yet
+    final List<PupilData> unprocessedPupilsList = activePupils.toList();
+    session.log('Unprocessed pupils: $unprocessedPupilsList');
+    for (final line in await file.readAsLines()) {
+      // Check if the pupil is already in the database
+      final PupilData? existingPupil = unprocessedPupilsList.firstWhereOrNull(
+        (pupil) => pupil.internalId == int.parse(line.split(',')[0]),
+      );
+
+      if (existingPupil != null) {
+        // If the pupil exists, we process it updating just the after care status
+        // This is the second string of the line
+        if (line.split(',')[1] == 'OFFGANZ' || line.split(',')[1] == 'true') {
+          // we just check if the after achool care is set
+          // if it is already set we leave it alone
+          // if not, we set the after school care as an empty object
+          // the user will have to fill it later
+          if (existingPupil.afterSchoolCare == null) {
+            existingPupil.afterSchoolCare = AfterSchoolCare();
+
+            await session.db.updateRow(existingPupil);
+          } else {
+            // the after school care is already set, we leave it alone
+          }
+          // the pupil is processed
+          // we remove it from the unprocessed list
+          unprocessedPupilsList.remove(existingPupil);
+        } else {
+          // there is no entry for after School care
+          // if the existing pupil has an after school care entry, we remove it
+          if (existingPupil.afterSchoolCare != null) {
+            existingPupil.afterSchoolCare = null;
+            await session.db.updateRow(existingPupil);
+          }
+        }
+        // we have processed the pupil, let's remove it from the unprocessed list
+        unprocessedPupilsList.remove(existingPupil);
+      } else {
+        // If the pupil doesn't exist, we create a new one
+        final pupil = generatePupilfromExternalAdminConsoleData(line);
+        await session.db.insertRow(pupil);
+      }
+      // if there are unprocessed pupils, they are not active in the school data system
+      // we set them to inactive
+      for (final pupil in unprocessedPupilsList) {
+        pupil.active = false;
+        await session.db.updateRow(pupil);
+      }
+    }
+    // we return the updated set of pupils that are active in the school data system
+    final pupils = await PupilData.db.find(session);
+    return pupils.toSet();
   }
 }
