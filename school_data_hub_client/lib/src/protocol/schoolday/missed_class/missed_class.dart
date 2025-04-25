@@ -11,8 +11,9 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import '../../schoolday/missed_class/missed_type.dart' as _i2;
-import '../../schoolday/schoolday.dart' as _i3;
-import '../../pupil_data/pupil_data.dart' as _i4;
+import '../../schoolday/missed_class/contacted_type.dart' as _i3;
+import '../../schoolday/schoolday.dart' as _i4;
+import '../../pupil_data/pupil_data.dart' as _i5;
 
 abstract class MissedClass implements _i1.SerializableModel {
   MissedClass._({
@@ -37,7 +38,7 @@ abstract class MissedClass implements _i1.SerializableModel {
     int? id,
     required _i2.MissedType missedType,
     required bool unexcused,
-    required String contacted,
+    required _i3.ContactedType contacted,
     required bool returned,
     DateTime? returnedAt,
     required bool writtenExcuse,
@@ -46,9 +47,9 @@ abstract class MissedClass implements _i1.SerializableModel {
     String? modifiedBy,
     String? comment,
     required int schooldayId,
-    _i3.Schoolday? schoolday,
+    _i4.Schoolday? schoolday,
     required int pupilId,
-    _i4.PupilData? pupil,
+    _i5.PupilData? pupil,
   }) = _MissedClassImpl;
 
   factory MissedClass.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -57,7 +58,8 @@ abstract class MissedClass implements _i1.SerializableModel {
       missedType:
           _i2.MissedType.fromJson((jsonSerialization['missedType'] as String)),
       unexcused: jsonSerialization['unexcused'] as bool,
-      contacted: jsonSerialization['contacted'] as String,
+      contacted: _i3.ContactedType.fromJson(
+          (jsonSerialization['contacted'] as String)),
       returned: jsonSerialization['returned'] as bool,
       returnedAt: jsonSerialization['returnedAt'] == null
           ? null
@@ -70,12 +72,12 @@ abstract class MissedClass implements _i1.SerializableModel {
       schooldayId: jsonSerialization['schooldayId'] as int,
       schoolday: jsonSerialization['schoolday'] == null
           ? null
-          : _i3.Schoolday.fromJson(
+          : _i4.Schoolday.fromJson(
               (jsonSerialization['schoolday'] as Map<String, dynamic>)),
       pupilId: jsonSerialization['pupilId'] as int,
       pupil: jsonSerialization['pupil'] == null
           ? null
-          : _i4.PupilData.fromJson(
+          : _i5.PupilData.fromJson(
               (jsonSerialization['pupil'] as Map<String, dynamic>)),
     );
   }
@@ -89,7 +91,7 @@ abstract class MissedClass implements _i1.SerializableModel {
 
   bool unexcused;
 
-  String contacted;
+  _i3.ContactedType contacted;
 
   bool returned;
 
@@ -107,11 +109,11 @@ abstract class MissedClass implements _i1.SerializableModel {
 
   int schooldayId;
 
-  _i3.Schoolday? schoolday;
+  _i4.Schoolday? schoolday;
 
   int pupilId;
 
-  _i4.PupilData? pupil;
+  _i5.PupilData? pupil;
 
   /// Returns a shallow copy of this [MissedClass]
   /// with some or all fields replaced by the given arguments.
@@ -120,7 +122,7 @@ abstract class MissedClass implements _i1.SerializableModel {
     int? id,
     _i2.MissedType? missedType,
     bool? unexcused,
-    String? contacted,
+    _i3.ContactedType? contacted,
     bool? returned,
     DateTime? returnedAt,
     bool? writtenExcuse,
@@ -129,9 +131,9 @@ abstract class MissedClass implements _i1.SerializableModel {
     String? modifiedBy,
     String? comment,
     int? schooldayId,
-    _i3.Schoolday? schoolday,
+    _i4.Schoolday? schoolday,
     int? pupilId,
-    _i4.PupilData? pupil,
+    _i5.PupilData? pupil,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -139,7 +141,7 @@ abstract class MissedClass implements _i1.SerializableModel {
       if (id != null) 'id': id,
       'missedType': missedType.toJson(),
       'unexcused': unexcused,
-      'contacted': contacted,
+      'contacted': contacted.toJson(),
       'returned': returned,
       if (returnedAt != null) 'returnedAt': returnedAt?.toJson(),
       'writtenExcuse': writtenExcuse,
@@ -167,7 +169,7 @@ class _MissedClassImpl extends MissedClass {
     int? id,
     required _i2.MissedType missedType,
     required bool unexcused,
-    required String contacted,
+    required _i3.ContactedType contacted,
     required bool returned,
     DateTime? returnedAt,
     required bool writtenExcuse,
@@ -176,9 +178,9 @@ class _MissedClassImpl extends MissedClass {
     String? modifiedBy,
     String? comment,
     required int schooldayId,
-    _i3.Schoolday? schoolday,
+    _i4.Schoolday? schoolday,
     required int pupilId,
-    _i4.PupilData? pupil,
+    _i5.PupilData? pupil,
   }) : super._(
           id: id,
           missedType: missedType,
@@ -205,7 +207,7 @@ class _MissedClassImpl extends MissedClass {
     Object? id = _Undefined,
     _i2.MissedType? missedType,
     bool? unexcused,
-    String? contacted,
+    _i3.ContactedType? contacted,
     bool? returned,
     Object? returnedAt = _Undefined,
     bool? writtenExcuse,
@@ -232,9 +234,9 @@ class _MissedClassImpl extends MissedClass {
       comment: comment is String? ? comment : this.comment,
       schooldayId: schooldayId ?? this.schooldayId,
       schoolday:
-          schoolday is _i3.Schoolday? ? schoolday : this.schoolday?.copyWith(),
+          schoolday is _i4.Schoolday? ? schoolday : this.schoolday?.copyWith(),
       pupilId: pupilId ?? this.pupilId,
-      pupil: pupil is _i4.PupilData? ? pupil : this.pupil?.copyWith(),
+      pupil: pupil is _i5.PupilData? ? pupil : this.pupil?.copyWith(),
     );
   }
 }

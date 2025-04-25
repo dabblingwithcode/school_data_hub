@@ -711,9 +711,9 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<int>(),
               nullable: false,
             ),
-            'schooldayDate': _i1.ParameterDescription(
-              name: 'schooldayDate',
-              type: _i1.getType<DateTime>(),
+            'schooldayId': _i1.ParameterDescription(
+              name: 'schooldayId',
+              type: _i1.getType<int>(),
               nullable: false,
             ),
           },
@@ -725,7 +725,7 @@ class Endpoints extends _i1.EndpointDispatch {
                   .deleteMissedClass(
             session,
             params['pupilId'],
-            params['schooldayDate'],
+            params['schooldayId'],
           ),
         ),
         'updateMissedClass': _i1.MethodConnector(

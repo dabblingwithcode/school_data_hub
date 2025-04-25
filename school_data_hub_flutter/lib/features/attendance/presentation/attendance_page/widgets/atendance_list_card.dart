@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
@@ -10,7 +12,6 @@ import 'package:school_data_hub_flutter/features/app/domain/main_menu_bottom_nav
 import 'package:school_data_hub_flutter/features/attendance/domain/attendance_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/models/attendance_values.dart';
-import 'package:school_data_hub_flutter/features/attendance/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/attendance_page/widgets/attendance_dropdown_menu_items.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/attendance_page/widgets/dialogues/late_in_minutes_dialog.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/attendance_page/widgets/dialogues/multiple_entries_dialog.dart';
@@ -20,21 +21,31 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avat
 import 'package:watch_it/watch_it.dart';
 
 final _attendanceManager = di<AttendanceManager>();
+final _notificationService = di<NotificationService>();
 
 class AttendanceCard extends WatchingWidget {
   final PupilProxy pupil;
   final DateTime thisDate;
+
   const AttendanceCard(this.pupil, this.thisDate, {super.key});
+
   @override
   Widget build(BuildContext context) {
-    final missedClasses = watchValue(
-      (AttendanceManager x) => x.missedClasses,
-    );
-//final missedClass = _attendanceManager.getPupilMissedClassOnDate(pupilId, date)
+    final FocusNode _dropdownFocusNode = FocusNode();
+    final missedClassesList =
+        _attendanceManager.getPupilMissedClassesList(pupil.pupilId);
 
-    DateTime thisDate = this.thisDate;
+    final MissedClass? missedClass =
+        watch(missedClassesList).missedClasses.firstWhereOrNull(
+              (element) =>
+                  element.schoolday?.schoolday.formatForJson() ==
+                  thisDate.formatForJson(),
+            );
+    if (missedClass != null) {
+      //debugger();
+    }
     AttendanceValues attendanceInfo =
-        AttendanceHelper.setAttendanceValues(pupil.pupilId, thisDate);
+        AttendanceHelper.getAttendanceValues(missedClass);
 
     //- TODO: This widget is a mess, should be refactored!
 
@@ -145,7 +156,7 @@ class AttendanceCard extends WatchingWidget {
                                 const Gap(8),
                                 Checkbox(
                                   checkColor: Colors.white,
-                                  activeColor: AppColors.excusedCheckColor,
+                                  activeColor: AppColors.unexcusedCheckColor,
                                   value: attendanceInfo.unexcusedValue,
                                   onChanged: (bool? newvalue) {
                                     _attendanceManager.updateUnexcusedValue(
@@ -260,7 +271,7 @@ class AttendanceCard extends WatchingWidget {
                                     width: 25.0,
                                     height: 25.0,
                                     decoration: const BoxDecoration(
-                                      color: AppColors.excusedCheckColor,
+                                      color: AppColors.unexcusedCheckColor,
                                       shape: BoxShape.circle,
                                     ),
                                     child: const Center(
@@ -452,18 +463,17 @@ class AttendanceCard extends WatchingWidget {
                                   const Gap(2),
                                   DropdownButtonHideUnderline(
                                     child: DropdownButton<MissedType>(
+                                      focusColor: Colors.transparent,
                                       icon: const Visibility(
                                           visible: false,
                                           child: Icon(Icons.arrow_downward)),
                                       onTap: () {
-                                        FocusManager.instance.primaryFocus!
-                                            .unfocus();
+                                        _dropdownFocusNode.unfocus();
                                       },
                                       value: attendanceInfo.missedTypeValue,
                                       items: missedTypeMenuItems,
                                       onChanged: (newValue) async {
-                                        FocusManager.instance.primaryFocus!
-                                            .unfocus();
+                                        _dropdownFocusNode.unfocus();
                                         if (attendanceInfo.missedTypeValue ==
                                             newValue) {
                                           return;
@@ -471,7 +481,7 @@ class AttendanceCard extends WatchingWidget {
                                         if (newValue == MissedType.missed &&
                                             attendanceInfo.returnedValue ==
                                                 true) {
-                                          di<NotificationService>().showSnackBar(
+                                          _notificationService.showSnackBar(
                                               NotificationType.error,
                                               'Ein Kind, das abgeholt wurde, gilt nicht als fehlend für den Tag!');
 
@@ -522,7 +532,7 @@ class AttendanceCard extends WatchingWidget {
                                   const Gap(10),
                                   Checkbox(
                                     checkColor: Colors.white,
-                                    activeColor: AppColors.excusedCheckColor,
+                                    activeColor: AppColors.unexcusedCheckColor,
                                     value: attendanceInfo.unexcusedValue,
                                     onChanged: (bool? newvalue) {
                                       _attendanceManager.updateUnexcusedValue(
@@ -534,7 +544,7 @@ class AttendanceCard extends WatchingWidget {
                                     width: 20.0,
                                     height: 20.0,
                                     decoration: const BoxDecoration(
-                                      color: AppColors.excusedCheckColor,
+                                      color: AppColors.unexcusedCheckColor,
                                       shape: BoxShape.circle,
                                     ),
                                     child: const Center(
@@ -626,7 +636,7 @@ class AttendanceCard extends WatchingWidget {
                                         if (newValue == true) {
                                           if (attendanceInfo.missedTypeValue ==
                                               MissedType.missed) {
-                                            di<NotificationService>().showSnackBar(
+                                            _notificationService.showSnackBar(
                                                 NotificationType.error,
                                                 'Ein fehlendes Kind kann nicht abgeholt werden!');
                                             return;

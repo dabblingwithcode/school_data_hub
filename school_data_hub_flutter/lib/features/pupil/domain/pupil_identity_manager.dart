@@ -113,7 +113,7 @@ class PupilIdentityManager {
         List<String> pupilIdentityValues = data.split(',');
         final newPupilIdentity =
             PupilIdentityHelper.pupilIdentityFromString(pupilIdentityValues);
-
+        // TODO: DonÄt forgert to create the attendance map entry for the new pupil
         // TODO: fix this
         // if (!PupilProxy.groupFilters.any((filter) =>
         //         (filter as GroupFilter).name == newPupilIdentity.group) ==

@@ -27,17 +27,10 @@ final _log = Logger('AttendanceListPage');
 
 final _attendancePupilFilterManager = di<AttendancePupilFilterManager>();
 
-final _schooldayManager = di<SchooldayManager>();
-
 class AttendanceListPage extends WatchingWidget {
   const AttendanceListPage({super.key});
   @override
   Widget build(BuildContext context) {
-    callOnce((context) {
-      _attendanceManager.fetchMissedClassesOnASchoolday(
-        _schooldayManager.thisDate.value,
-      );
-    });
     createOnce<StreamSubscription<MissedClassDto>>(() {
       return _client.missedClass.streamMyModels().listen((event) {
         switch (event.operation) {
@@ -67,7 +60,9 @@ class AttendanceListPage extends WatchingWidget {
       value.cancel();
     });
     DateTime thisDate = watchValue((SchooldayManager x) => x.thisDate);
-
+    _attendanceManager.fetchMissedClassesOnASchoolday(
+      thisDate,
+    );
     List<PupilProxy> pupils = watchValue((PupilsFilter x) => x.filteredPupils)
         .where((x) =>
             _attendancePupilFilterManager.isMatchedByAttendanceFilters(x))
@@ -118,8 +113,9 @@ class AttendanceListPage extends WatchingWidget {
                       pupils: pupils,
                     )),
                 GenericSliverListWithEmptyListCheck(
-                    items: pupils,
-                    itemBuilder: (_, pupil) => AttendanceCard(pupil, thisDate)),
+                  items: pupils,
+                  itemBuilder: (_, pupil) => AttendanceCard(pupil, thisDate),
+                ),
               ],
             ),
           ),

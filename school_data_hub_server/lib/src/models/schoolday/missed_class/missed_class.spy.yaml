@@ -5,7 +5,7 @@ table: missed_class
 fields:
   missedType: MissedType
   unexcused: bool
-  contacted: String
+  contacted: ContactedType
   returned: bool
   returnedAt: DateTime?
   writtenExcuse: bool

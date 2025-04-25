@@ -11,8 +11,9 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../../schoolday/missed_class/missed_type.dart' as _i2;
-import '../../schoolday/schoolday.dart' as _i3;
-import '../../pupil_data/pupil_data.dart' as _i4;
+import '../../schoolday/missed_class/contacted_type.dart' as _i3;
+import '../../schoolday/schoolday.dart' as _i4;
+import '../../pupil_data/pupil_data.dart' as _i5;
 
 abstract class MissedClass
     implements _i1.TableRow<int>, _i1.ProtocolSerialization {
@@ -38,7 +39,7 @@ abstract class MissedClass
     int? id,
     required _i2.MissedType missedType,
     required bool unexcused,
-    required String contacted,
+    required _i3.ContactedType contacted,
     required bool returned,
     DateTime? returnedAt,
     required bool writtenExcuse,
@@ -47,9 +48,9 @@ abstract class MissedClass
     String? modifiedBy,
     String? comment,
     required int schooldayId,
-    _i3.Schoolday? schoolday,
+    _i4.Schoolday? schoolday,
     required int pupilId,
-    _i4.PupilData? pupil,
+    _i5.PupilData? pupil,
   }) = _MissedClassImpl;
 
   factory MissedClass.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -58,7 +59,8 @@ abstract class MissedClass
       missedType:
           _i2.MissedType.fromJson((jsonSerialization['missedType'] as String)),
       unexcused: jsonSerialization['unexcused'] as bool,
-      contacted: jsonSerialization['contacted'] as String,
+      contacted: _i3.ContactedType.fromJson(
+          (jsonSerialization['contacted'] as String)),
       returned: jsonSerialization['returned'] as bool,
       returnedAt: jsonSerialization['returnedAt'] == null
           ? null
@@ -71,12 +73,12 @@ abstract class MissedClass
       schooldayId: jsonSerialization['schooldayId'] as int,
       schoolday: jsonSerialization['schoolday'] == null
           ? null
-          : _i3.Schoolday.fromJson(
+          : _i4.Schoolday.fromJson(
               (jsonSerialization['schoolday'] as Map<String, dynamic>)),
       pupilId: jsonSerialization['pupilId'] as int,
       pupil: jsonSerialization['pupil'] == null
           ? null
-          : _i4.PupilData.fromJson(
+          : _i5.PupilData.fromJson(
               (jsonSerialization['pupil'] as Map<String, dynamic>)),
     );
   }
@@ -92,7 +94,7 @@ abstract class MissedClass
 
   bool unexcused;
 
-  String contacted;
+  _i3.ContactedType contacted;
 
   bool returned;
 
@@ -110,11 +112,11 @@ abstract class MissedClass
 
   int schooldayId;
 
-  _i3.Schoolday? schoolday;
+  _i4.Schoolday? schoolday;
 
   int pupilId;
 
-  _i4.PupilData? pupil;
+  _i5.PupilData? pupil;
 
   @override
   _i1.Table<int> get table => t;
@@ -126,7 +128,7 @@ abstract class MissedClass
     int? id,
     _i2.MissedType? missedType,
     bool? unexcused,
-    String? contacted,
+    _i3.ContactedType? contacted,
     bool? returned,
     DateTime? returnedAt,
     bool? writtenExcuse,
@@ -135,9 +137,9 @@ abstract class MissedClass
     String? modifiedBy,
     String? comment,
     int? schooldayId,
-    _i3.Schoolday? schoolday,
+    _i4.Schoolday? schoolday,
     int? pupilId,
-    _i4.PupilData? pupil,
+    _i5.PupilData? pupil,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -145,7 +147,7 @@ abstract class MissedClass
       if (id != null) 'id': id,
       'missedType': missedType.toJson(),
       'unexcused': unexcused,
-      'contacted': contacted,
+      'contacted': contacted.toJson(),
       'returned': returned,
       if (returnedAt != null) 'returnedAt': returnedAt?.toJson(),
       'writtenExcuse': writtenExcuse,
@@ -166,7 +168,7 @@ abstract class MissedClass
       if (id != null) 'id': id,
       'missedType': missedType.toJson(),
       'unexcused': unexcused,
-      'contacted': contacted,
+      'contacted': contacted.toJson(),
       'returned': returned,
       if (returnedAt != null) 'returnedAt': returnedAt?.toJson(),
       'writtenExcuse': writtenExcuse,
@@ -182,8 +184,8 @@ abstract class MissedClass
   }
 
   static MissedClassInclude include({
-    _i3.SchooldayInclude? schoolday,
-    _i4.PupilDataInclude? pupil,
+    _i4.SchooldayInclude? schoolday,
+    _i5.PupilDataInclude? pupil,
   }) {
     return MissedClassInclude._(
       schoolday: schoolday,
@@ -224,7 +226,7 @@ class _MissedClassImpl extends MissedClass {
     int? id,
     required _i2.MissedType missedType,
     required bool unexcused,
-    required String contacted,
+    required _i3.ContactedType contacted,
     required bool returned,
     DateTime? returnedAt,
     required bool writtenExcuse,
@@ -233,9 +235,9 @@ class _MissedClassImpl extends MissedClass {
     String? modifiedBy,
     String? comment,
     required int schooldayId,
-    _i3.Schoolday? schoolday,
+    _i4.Schoolday? schoolday,
     required int pupilId,
-    _i4.PupilData? pupil,
+    _i5.PupilData? pupil,
   }) : super._(
           id: id,
           missedType: missedType,
@@ -262,7 +264,7 @@ class _MissedClassImpl extends MissedClass {
     Object? id = _Undefined,
     _i2.MissedType? missedType,
     bool? unexcused,
-    String? contacted,
+    _i3.ContactedType? contacted,
     bool? returned,
     Object? returnedAt = _Undefined,
     bool? writtenExcuse,
@@ -289,9 +291,9 @@ class _MissedClassImpl extends MissedClass {
       comment: comment is String? ? comment : this.comment,
       schooldayId: schooldayId ?? this.schooldayId,
       schoolday:
-          schoolday is _i3.Schoolday? ? schoolday : this.schoolday?.copyWith(),
+          schoolday is _i4.Schoolday? ? schoolday : this.schoolday?.copyWith(),
       pupilId: pupilId ?? this.pupilId,
-      pupil: pupil is _i4.PupilData? ? pupil : this.pupil?.copyWith(),
+      pupil: pupil is _i5.PupilData? ? pupil : this.pupil?.copyWith(),
     );
   }
 }
@@ -307,9 +309,10 @@ class MissedClassTable extends _i1.Table<int> {
       'unexcused',
       this,
     );
-    contacted = _i1.ColumnString(
+    contacted = _i1.ColumnEnum(
       'contacted',
       this,
+      _i1.EnumSerialization.byName,
     );
     returned = _i1.ColumnBool(
       'returned',
@@ -353,7 +356,7 @@ class MissedClassTable extends _i1.Table<int> {
 
   late final _i1.ColumnBool unexcused;
 
-  late final _i1.ColumnString contacted;
+  late final _i1.ColumnEnum<_i3.ContactedType> contacted;
 
   late final _i1.ColumnBool returned;
 
@@ -371,34 +374,34 @@ class MissedClassTable extends _i1.Table<int> {
 
   late final _i1.ColumnInt schooldayId;
 
-  _i3.SchooldayTable? _schoolday;
+  _i4.SchooldayTable? _schoolday;
 
   late final _i1.ColumnInt pupilId;
 
-  _i4.PupilDataTable? _pupil;
+  _i5.PupilDataTable? _pupil;
 
-  _i3.SchooldayTable get schoolday {
+  _i4.SchooldayTable get schoolday {
     if (_schoolday != null) return _schoolday!;
     _schoolday = _i1.createRelationTable(
       relationFieldName: 'schoolday',
       field: MissedClass.t.schooldayId,
-      foreignField: _i3.Schoolday.t.id,
+      foreignField: _i4.Schoolday.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i3.SchooldayTable(tableRelation: foreignTableRelation),
+          _i4.SchooldayTable(tableRelation: foreignTableRelation),
     );
     return _schoolday!;
   }
 
-  _i4.PupilDataTable get pupil {
+  _i5.PupilDataTable get pupil {
     if (_pupil != null) return _pupil!;
     _pupil = _i1.createRelationTable(
       relationFieldName: 'pupil',
       field: MissedClass.t.pupilId,
-      foreignField: _i4.PupilData.t.id,
+      foreignField: _i5.PupilData.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i4.PupilDataTable(tableRelation: foreignTableRelation),
+          _i5.PupilDataTable(tableRelation: foreignTableRelation),
     );
     return _pupil!;
   }
@@ -434,16 +437,16 @@ class MissedClassTable extends _i1.Table<int> {
 
 class MissedClassInclude extends _i1.IncludeObject {
   MissedClassInclude._({
-    _i3.SchooldayInclude? schoolday,
-    _i4.PupilDataInclude? pupil,
+    _i4.SchooldayInclude? schoolday,
+    _i5.PupilDataInclude? pupil,
   }) {
     _schoolday = schoolday;
     _pupil = pupil;
   }
 
-  _i3.SchooldayInclude? _schoolday;
+  _i4.SchooldayInclude? _schoolday;
 
-  _i4.PupilDataInclude? _pupil;
+  _i5.PupilDataInclude? _pupil;
 
   @override
   Map<String, _i1.Include?> get includes => {
@@ -704,7 +707,7 @@ class MissedClassAttachRowRepository {
   Future<void> schoolday(
     _i1.Session session,
     MissedClass missedClass,
-    _i3.Schoolday schoolday, {
+    _i4.Schoolday schoolday, {
     _i1.Transaction? transaction,
   }) async {
     if (missedClass.id == null) {
@@ -727,7 +730,7 @@ class MissedClassAttachRowRepository {
   Future<void> pupil(
     _i1.Session session,
     MissedClass missedClass,
-    _i4.PupilData pupil, {
+    _i5.PupilData pupil, {
     _i1.Transaction? transaction,
   }) async {
     if (missedClass.id == null) {

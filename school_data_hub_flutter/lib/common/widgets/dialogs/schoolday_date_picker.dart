@@ -15,9 +15,6 @@ Future<DateTime?> selectSchooldayDate(
     return validDate;
   }
 
-  if (!availableDates.contains(thisDate)) {
-    thisDate = availableDates.last;
-  }
   final DateTime? pickedDate = await showDatePicker(
     context: context,
     initialDate: thisDate,

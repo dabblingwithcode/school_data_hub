@@ -94,7 +94,7 @@ Widget excusedBadge(excused) {
         width: 25.0,
         height: 25.0,
         decoration: const BoxDecoration(
-          color: AppColors.excusedCheckColor,
+          color: AppColors.unexcusedCheckColor,
           shape: BoxShape.circle,
         ),
         child: const Center(

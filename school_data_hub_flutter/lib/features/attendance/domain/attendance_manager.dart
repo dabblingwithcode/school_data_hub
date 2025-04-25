@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/attendance/data/attendance_api_service.dart';
-import 'package:school_data_hub_flutter/features/attendance/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/models/attendance_values.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
@@ -28,7 +28,11 @@ class AttendanceManager {
   ValueListenable<List<MissedClass>> get missedClasses => _missedClasses;
   final ValueNotifier<List<MissedClass>> _missedClasses = ValueNotifier([]);
 
-  final Map<int, List<MissedClass>> _pupilMissedClassesMap = {};
+  // PupilMissedClassesList is a list of missed classes for a pupil
+  // with a change notifier
+  // it is used to update the UI when a missed class is added or removed
+
+  final Map<int, PupilMissedClassesProxy> _pupilMissedClassesMap = {};
 
   final Map<DateTime, List<MissedClass>> _schooldayMissedClassesMap = {};
 
@@ -37,6 +41,10 @@ class AttendanceManager {
   }
 
   Future init() async {
+    final pupilIds = _pupilManager.allPupils.map((e) => e.pupilId).toList();
+    for (final pupilId in pupilIds) {
+      _pupilMissedClassesMap[pupilId] = PupilMissedClassesProxy();
+    }
     // await fetchMissedClassesOnASchoolday(schooldayManager.thisDate.value);
     fetchAllPupilMissedClasses();
     return;
@@ -45,24 +53,20 @@ class AttendanceManager {
   //- Getters
 
   MissedClass? getPupilMissedClassOnDate(int pupilId, DateTime date) {
-    return _schooldayMissedClassesMap[date]
-        ?.firstWhereOrNull((element) => element.pupilId == pupilId);
+    return _pupilMissedClassesMap[pupilId]!.missedClasses.firstWhereOrNull(
+        (element) =>
+            element.schoolday!.schoolday.formatForJson() ==
+            date.formatForJson());
   }
 
-  List<MissedClass> getPupilMissedClasses(int pupilId) {
-    return _pupilMissedClassesMap[pupilId] ?? [];
+  PupilMissedClassesProxy getPupilMissedClassesList(int pupilId) {
+    return _pupilMissedClassesMap[pupilId]!;
   }
 
-  List<MissedClass> getSchooldayMissedClasses(DateTime date) {
+  List<MissedClass> getMissedClassesOnASchoolday(DateTime date) {
     return _schooldayMissedClassesMap[date] ?? [];
   }
 
-  // List<MissedClass> getMissedClassesOnADay(DateTime date) {
-  //   return _missedClasses.value
-  //       .where(
-  //           (missedClass) => missedClass.schoolday!.schoolday.isSameDate(date))
-  //       .toList();
-  // }
   // - Handle collections -
 
   void _updateMissedClassesInCollections(List<MissedClass> missedClasses) {
@@ -89,19 +93,10 @@ class AttendanceManager {
     }
 
     // 2. Update pupil map
-    if (_pupilMissedClassesMap.containsKey(pupilId)) {
-      final missedClassList = _pupilMissedClassesMap[pupilId]!;
-      final missedClassIndex = missedClassList
-          .indexWhere((element) => element.schoolday!.schoolday == date);
 
-      if (missedClassIndex != -1) {
-        missedClassList.removeAt(missedClassIndex);
-        missedClassList.add(responseMissedClass);
-        _pupilMissedClassesMap[pupilId] = missedClassList;
-      }
-    } else {
-      _pupilMissedClassesMap[pupilId] = [responseMissedClass];
-    }
+    final missedClassList = _pupilMissedClassesMap[pupilId]!;
+
+    missedClassList.updateMissedClass(responseMissedClass);
 
     // 3. Update schoolday map
     final schooldayMissedClassList = _schooldayMissedClassesMap[date];
@@ -134,16 +129,10 @@ class AttendanceManager {
       _missedClasses.value = updatedMissedClasses;
     }
     // 2. Remove from pupil map
-    if (_pupilMissedClassesMap.containsKey(pupilId)) {
-      final missedClassList = _pupilMissedClassesMap[pupilId]!;
-      final missedClassIndex = missedClassList
-          .indexWhere((element) => element.schoolday!.schoolday == date);
 
-      if (missedClassIndex != -1) {
-        missedClassList.removeAt(missedClassIndex);
-        _pupilMissedClassesMap[pupilId] = missedClassList;
-      }
-    }
+    final missedClassList = _pupilMissedClassesMap[pupilId]!;
+    missedClassList.removeMissedClass(pupilId, date);
+
     // 3. Remove from schoolday map
     final schooldayMissedClassList = _schooldayMissedClassesMap[date];
     if (schooldayMissedClassList != null) {
@@ -163,13 +152,14 @@ class AttendanceManager {
     final fetchedMissedClasses =
         await _attendanceApiService.fetchAllMissedClasses();
 
-    _missedClasses.value = fetchedMissedClasses;
+    _updateMissedClassesInCollections(fetchedMissedClasses);
   }
 
   Future<void> fetchMissedClassesOnASchoolday(DateTime schoolday) async {
+    _log.info('fetchMissedClassesOnASchoolday $schoolday');
     final List<MissedClass> missedClasses =
         await _attendanceApiService.fetchMissedClassesOnASchoolday(schoolday);
-    _missedClasses.value = [..._missedClasses.value, ...missedClasses];
+
     _updateMissedClassesInCollections(missedClasses);
 
     return;
@@ -197,7 +187,7 @@ class AttendanceManager {
   Future<void> deleteMissedClass(int pupilId, DateTime date) async {
     final response = await _attendanceApiService.deleteMissedClass(
       pupilId,
-      date,
+      _schooldayManager.getSchooldayByDate(date)!.id!,
     );
 
     if (response == true) {
@@ -249,7 +239,7 @@ class AttendanceManager {
     if (newValue == false && missedClass.missedType == MissedType.notSet) {
       final success = await _attendanceApiService.deleteMissedClass(
         pupilId,
-        date,
+        _schooldayManager.getSchooldayByDate(date)!.id!,
       );
       if (success == true) {
         removeMissedClassFromCollections(pupilId, date);
@@ -372,7 +362,7 @@ class AttendanceManager {
           schoolday: schoolday,
           missedType: missedType,
           unexcused: false,
-          contacted: '0',
+          contacted: ContactedType.notSet,
           returned: false,
           returnedAt: null,
           minutesLate: null,
@@ -453,7 +443,7 @@ class AttendanceManager {
     }
     // The missed class exists already - patching it
     final missedClassToUpdate = missedClass.copyWith(
-      contacted: contactedType.value,
+      contacted: contactedType,
       modifiedBy: _sessionManager.signedInUser!.userName!,
     );
     final MissedClass updatedMissedClass =

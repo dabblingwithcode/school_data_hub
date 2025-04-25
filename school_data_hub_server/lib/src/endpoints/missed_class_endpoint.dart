@@ -55,23 +55,23 @@ class MissedClassEndpoint extends Endpoint {
   }
 
   Future<List<MissedClass>> fetchMissedClassesOnASchoolday(
-      Session session, DateTime schoolday) {
-    return MissedClass.db.find(
+      Session session, DateTime schoolday) async {
+    final missedClasses = await MissedClass.db.find(
       session,
       where: (t) => t.schoolday.schoolday.equals(schoolday),
       include: MissedClass.include(
         schoolday: Schoolday.include(),
       ),
     );
+    return missedClasses;
   }
 
   Future<bool> deleteMissedClass(
-      Session session, int pupilId, DateTime schooldayDate) async {
+      Session session, int pupilId, int schooldayId) async {
     var missedClassToDelete = await MissedClass.db.findFirstRow(
       session,
       where: (t) =>
-          t.pupilId.equals(pupilId) &
-          t.schoolday.schoolday.equals(schooldayDate),
+          t.pupilId.equals(pupilId) & t.schooldayId.equals(schooldayId),
       include: MissedClass.include(
         schoolday: Schoolday.include(),
       ),

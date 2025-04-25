@@ -5,7 +5,6 @@ import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_picker.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/models/attendance_values.dart';
-import 'package:school_data_hub_flutter/features/attendance/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
@@ -262,13 +261,10 @@ class AttendanceHelper {
 
 // use one function instead all the set value functions
 // to avoid unnecessary lookups
-  static AttendanceValues setAttendanceValues(int pupilId, DateTime date) {
+  static AttendanceValues getAttendanceValues(MissedClass? missedClass) {
     MissedType missedType;
 
     ContactedType contactedType;
-
-    final missedClass =
-        _attendanceManager.getPupilMissedClassOnDate(pupilId, date);
 
     if (missedClass == null) {
       return AttendanceValues(
@@ -281,14 +277,11 @@ class AttendanceHelper {
         commentValue: null,
       );
     } else {
-      final dropdownvalue = missedClass.missedType;
-      missedType = MissedType.values.firstWhere((e) => e == dropdownvalue);
+      missedType = missedClass.missedType;
+      //  missedType = MissedType.values.firstWhere((e) => e == dropdownvalue);
     }
 
-    final contactedValue = missedClass.contacted;
-    contactedType = ContactedType.values
-            .firstWhereOrNull((e) => e.value == contactedValue) ??
-        ContactedType.notSet;
+    contactedType = missedClass.contacted;
 
     String createdOrModifiedBy =
         missedClass.modifiedBy ?? missedClass.createdBy;
@@ -414,8 +407,11 @@ class AttendanceHelper {
   static Future<void> setThisDate(
       BuildContext context, DateTime thisDate) async {
     final DateTime? newDate = await selectSchooldayDate(context, thisDate);
-    if (newDate != null) {
-      _schooldayManager.setThisDate(newDate);
+
+    if (newDate == null) {
+      return;
     }
+
+    _schooldayManager.setThisDate(newDate);
   }
 }

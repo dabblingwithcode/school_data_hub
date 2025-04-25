@@ -8,15 +8,15 @@
 //   const MissedType(this.value);
 // }
 
-enum ContactedType {
-  notSet('0'),
-  contacted('1'),
-  calledBack('2'),
-  notReached('3');
+// enum ContactedType {
+//   notSet('0'),
+//   contacted('1'),
+//   calledBack('2'),
+//   notReached('3');
 
-  final String value;
-  const ContactedType(this.value);
-}
+//   final String value;
+//   const ContactedType(this.value);
+// }
 
 enum AttendancePupilFilter {
   late,

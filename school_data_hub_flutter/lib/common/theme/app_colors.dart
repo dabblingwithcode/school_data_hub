@@ -31,7 +31,7 @@ class AppColors {
   static const homeColor = Colors.lightBlue;
 
 // excused checkbox
-  static const excusedCheckColor = Color.fromRGBO(239, 108, 0, 1);
+  static const unexcusedCheckColor = Color.fromRGBO(239, 108, 0, 1);
 
 // contacted dropdown
   static const contactedQuestionColor = Color.fromRGBO(238, 238, 238, 1);

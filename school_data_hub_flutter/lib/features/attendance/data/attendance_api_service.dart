@@ -2,7 +2,6 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
-import 'package:school_data_hub_flutter/features/attendance/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -68,7 +67,7 @@ class AttendanceApiService {
     final MissedClass missedClass = MissedClass(
         missedType: missedType,
         unexcused: unexcused ?? false,
-        contacted: contactedType?.value ?? '0',
+        contacted: contactedType ?? ContactedType.notSet,
         returned: returned ?? false,
         writtenExcuse: writtenExcuse ?? false,
         createdBy: _session.signedInUser!.userName!,
@@ -138,14 +137,14 @@ class AttendanceApiService {
 
   //- delete missed class -//
 
-  Future<bool> deleteMissedClass(int pupilId, DateTime date) async {
+  Future<bool> deleteMissedClass(int pupilId, int schooldayId) async {
     _notificationService.apiRunning(true);
 
     try {
       _notificationService.apiRunning(true);
       final response = await _client.missedClass.deleteMissedClass(
         pupilId,
-        date,
+        schooldayId,
       );
       _notificationService.apiRunning(false);
       return response;

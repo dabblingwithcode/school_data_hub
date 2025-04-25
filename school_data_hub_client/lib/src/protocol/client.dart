@@ -360,14 +360,14 @@ class EndpointMissedClass extends _i1.EndpointRef {
 
   _i2.Future<bool> deleteMissedClass(
     int pupilId,
-    DateTime schooldayDate,
+    int schooldayId,
   ) =>
       caller.callServerEndpoint<bool>(
         'missedClass',
         'deleteMissedClass',
         {
           'pupilId': pupilId,
-          'schooldayDate': schooldayDate,
+          'schooldayId': schooldayId,
         },
       );
 
