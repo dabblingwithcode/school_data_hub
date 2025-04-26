@@ -48,7 +48,12 @@ class _SchooldayEventListCardState extends State<SchooldayEventPupilListCard> {
         .schooldayEvents;
     schooldayEvents =
         _schooldayEventFilterManager.filteredSchooldayEvents(unfilteredEvents);
-
+    if (_schooldayEventFilterManager.schooldayEventsFilterState.value.values
+        .any((x) => x == true)) {
+      if (schooldayEvents.isEmpty) {
+        return const SizedBox.shrink();
+      }
+    }
     return Card(
         color: Colors.white,
         surfaceTintColor: Colors.white,

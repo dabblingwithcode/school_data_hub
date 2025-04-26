@@ -76,8 +76,8 @@ class SchooldayEventApiService {
     // processing user and processed date are set to null
 
     if (processed == false) {
-      processedBy = null;
-      processedAt = null;
+      processedBy = (value: null);
+      processedAt = (value: null);
     }
     final schooldayEventToUpdate = schooldayEvent.copyWith(
       createdBy: createdBy ?? schooldayEvent.createdBy,

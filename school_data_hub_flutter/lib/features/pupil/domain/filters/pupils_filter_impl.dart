@@ -205,6 +205,20 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
         }
       }
 
+      // if (di<FiltersStateManager>()
+      //     .getFilterState(FilterState.schooldayEvent)) {
+      //   final ids = di<SchooldayEventFilterManager>()
+      //       .pupilIdsWithFilteredSchooldayEvents
+      //       .value;
+      //   if (!di<SchooldayEventFilterManager>()
+      //       .pupilIdsWithFilteredSchooldayEvents
+      //       .value
+      //       .contains(pupil.pupilId)) {
+      //     filtersOn = true;
+      //     continue;
+      //   }
+      // }
+
       // OGS filters
 
       if (di<PupilFilterManager>().pupilFilterState.value[PupilFilter.ogs]! &&

@@ -148,6 +148,11 @@ class DiManager {
         () => PupilFilterManager(),
         dependsOn: [PupilManager]);
 
+    di.registerSingletonWithDependencies<SchooldayEventFilterManager>(() {
+      _log.info('SchooldayEventFilterManager initializing');
+      return SchooldayEventFilterManager();
+    }, dependsOn: [PupilManager, PupilFilterManager]);
+
     di.registerSingletonWithDependencies<PupilsFilter>(
         () => PupilsFilterImplementation(
               di<PupilManager>(),
@@ -169,11 +174,6 @@ class DiManager {
     di.registerSingletonWithDependencies<SchooldayEventManager>(
         () => SchooldayEventManager(),
         dependsOn: [SchooldayManager, PupilsFilter]);
-
-    di.registerSingletonWithDependencies<SchooldayEventFilterManager>(() {
-      _log.info('SchooldayEventFilterManager initializing');
-      return SchooldayEventFilterManager();
-    }, dependsOn: [PupilManager, PupilFilterManager]);
   }
 
   static Future<void> unregisterManagersDependingOnActiveEnv() async {

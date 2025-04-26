@@ -44,9 +44,11 @@ class SchooldayEventEndpoint extends Endpoint {
   Future<SchooldayEvent> updateSchooldayEvent(
       Session session, SchooldayEvent schooldayEvent) async {
     await session.db.updateRow(schooldayEvent);
-    final updatedSchooldayEvent = await SchooldayEvent.db.findById(
-        session, schooldayEvent.id!,
-        include: SchooldayEvent.include());
+    final updatedSchooldayEvent =
+        await SchooldayEvent.db.findById(session, schooldayEvent.id!,
+            include: SchooldayEvent.include(
+              schoolday: Schoolday.include(),
+            ));
     return updatedSchooldayEvent!;
   }
 
