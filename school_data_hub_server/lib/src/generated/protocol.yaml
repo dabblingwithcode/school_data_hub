@@ -64,6 +64,11 @@ schooldayAdmin:
 schoolday:
   - getSchoolSemesters:
   - getSchooldays:
+schooldayEvent:
+  - fetchSchooldayEvents:
+  - createSchooldayEvent:
+  - updateSchooldayEvent:
+  - deleteSchooldayEvent:
 supportCategory:
   - getSupportCategories:
   - importSupportCategoriesFromJsonFile:

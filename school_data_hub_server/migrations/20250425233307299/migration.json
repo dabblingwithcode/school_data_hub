@@ -2992,13 +2992,13 @@
             "name": "eventType",
             "columnType": 0,
             "isNullable": false,
-            "dartType": "String"
+            "dartType": "protocol:SchooldayEventType"
           },
           {
             "name": "eventReason",
             "columnType": 0,
             "isNullable": false,
-            "dartType": "String"
+            "dartType": "protocol:SchooldayEventReason"
           },
           {
             "name": "createdBy",
@@ -3015,32 +3015,26 @@
           {
             "name": "processedBy",
             "columnType": 0,
-            "isNullable": false,
-            "dartType": "String"
+            "isNullable": true,
+            "dartType": "String?"
+          },
+          {
+            "name": "processedAt",
+            "columnType": 4,
+            "isNullable": true,
+            "dartType": "DateTime?"
           },
           {
             "name": "fileId",
-            "columnType": 0,
-            "isNullable": false,
-            "dartType": "String"
-          },
-          {
-            "name": "fileUrl",
-            "columnType": 0,
-            "isNullable": false,
-            "dartType": "String"
+            "columnType": 6,
+            "isNullable": true,
+            "dartType": "int?"
           },
           {
             "name": "processedFileId",
-            "columnType": 0,
-            "isNullable": false,
-            "dartType": "String"
-          },
-          {
-            "name": "processedFileUrl",
-            "columnType": 0,
-            "isNullable": false,
-            "dartType": "String"
+            "columnType": 6,
+            "isNullable": true,
+            "dartType": "int?"
           },
           {
             "name": "schooldayId",
@@ -3059,6 +3053,32 @@
           {
             "constraintName": "schoolday_event_fk_0",
             "columns": [
+              "fileId"
+            ],
+            "referenceTable": "hub_document",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          },
+          {
+            "constraintName": "schoolday_event_fk_1",
+            "columns": [
+              "processedFileId"
+            ],
+            "referenceTable": "hub_document",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          },
+          {
+            "constraintName": "schoolday_event_fk_2",
+            "columns": [
               "schooldayId"
             ],
             "referenceTable": "schoolday",
@@ -3070,7 +3090,7 @@
             "onDelete": 3
           },
           {
-            "constraintName": "schoolday_event_fk_1",
+            "constraintName": "schoolday_event_fk_3",
             "columns": [
               "pupilId"
             ],

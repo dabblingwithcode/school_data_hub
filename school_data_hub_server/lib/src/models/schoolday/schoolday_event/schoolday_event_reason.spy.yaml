@@ -1,0 +1,15 @@
+enum: SchooldayEventReason
+serialized: byName
+values:
+  - violenceAgainstPupils
+  - violenceAgainstTeachers
+  - violenceAgainstThings
+  - insultOthers
+  - dangerousBehaviour
+  - annoyOthers
+  - ignoreInstructions
+  - disturbLesson
+  - other
+  - learningDevelopmentInfo
+  - learningSupportInfo
+  - admonitionInfo

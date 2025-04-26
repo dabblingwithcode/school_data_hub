@@ -10,8 +10,11 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import '../schoolday/schoolday.dart' as _i2;
-import '../pupil_data/pupil_data.dart' as _i3;
+import '../../schoolday/schoolday_event/schoolday_event_type.dart' as _i2;
+import '../../schoolday/schoolday_event/schoolday_event_reason.dart' as _i3;
+import '../../shared/document.dart' as _i4;
+import '../../schoolday/schoolday.dart' as _i5;
+import '../../pupil_data/pupil_data.dart' as _i6;
 
 abstract class SchooldayEvent implements _i1.SerializableModel {
   SchooldayEvent._({
@@ -21,11 +24,12 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
     required this.eventReason,
     required this.createdBy,
     required this.processed,
-    required this.processedBy,
-    required this.fileId,
-    required this.fileUrl,
-    required this.processedFileId,
-    required this.processedFileUrl,
+    this.processedBy,
+    this.processedAt,
+    this.fileId,
+    this.file,
+    this.processedFileId,
+    this.processedFile,
     required this.schooldayId,
     this.schoolday,
     required this.pupilId,
@@ -35,43 +39,56 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
   factory SchooldayEvent({
     int? id,
     required String eventId,
-    required String eventType,
-    required String eventReason,
+    required _i2.SchooldayEventType eventType,
+    required _i3.SchooldayEventReason eventReason,
     required String createdBy,
     required bool processed,
-    required String processedBy,
-    required String fileId,
-    required String fileUrl,
-    required String processedFileId,
-    required String processedFileUrl,
+    String? processedBy,
+    DateTime? processedAt,
+    int? fileId,
+    _i4.HubDocument? file,
+    int? processedFileId,
+    _i4.HubDocument? processedFile,
     required int schooldayId,
-    _i2.Schoolday? schoolday,
+    _i5.Schoolday? schoolday,
     required int pupilId,
-    _i3.PupilData? pupil,
+    _i6.PupilData? pupil,
   }) = _SchooldayEventImpl;
 
   factory SchooldayEvent.fromJson(Map<String, dynamic> jsonSerialization) {
     return SchooldayEvent(
       id: jsonSerialization['id'] as int?,
       eventId: jsonSerialization['eventId'] as String,
-      eventType: jsonSerialization['eventType'] as String,
-      eventReason: jsonSerialization['eventReason'] as String,
+      eventType: _i2.SchooldayEventType.fromJson(
+          (jsonSerialization['eventType'] as String)),
+      eventReason: _i3.SchooldayEventReason.fromJson(
+          (jsonSerialization['eventReason'] as String)),
       createdBy: jsonSerialization['createdBy'] as String,
       processed: jsonSerialization['processed'] as bool,
-      processedBy: jsonSerialization['processedBy'] as String,
-      fileId: jsonSerialization['fileId'] as String,
-      fileUrl: jsonSerialization['fileUrl'] as String,
-      processedFileId: jsonSerialization['processedFileId'] as String,
-      processedFileUrl: jsonSerialization['processedFileUrl'] as String,
+      processedBy: jsonSerialization['processedBy'] as String?,
+      processedAt: jsonSerialization['processedAt'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(
+              jsonSerialization['processedAt']),
+      fileId: jsonSerialization['fileId'] as int?,
+      file: jsonSerialization['file'] == null
+          ? null
+          : _i4.HubDocument.fromJson(
+              (jsonSerialization['file'] as Map<String, dynamic>)),
+      processedFileId: jsonSerialization['processedFileId'] as int?,
+      processedFile: jsonSerialization['processedFile'] == null
+          ? null
+          : _i4.HubDocument.fromJson(
+              (jsonSerialization['processedFile'] as Map<String, dynamic>)),
       schooldayId: jsonSerialization['schooldayId'] as int,
       schoolday: jsonSerialization['schoolday'] == null
           ? null
-          : _i2.Schoolday.fromJson(
+          : _i5.Schoolday.fromJson(
               (jsonSerialization['schoolday'] as Map<String, dynamic>)),
       pupilId: jsonSerialization['pupilId'] as int,
       pupil: jsonSerialization['pupil'] == null
           ? null
-          : _i3.PupilData.fromJson(
+          : _i6.PupilData.fromJson(
               (jsonSerialization['pupil'] as Map<String, dynamic>)),
     );
   }
@@ -83,31 +100,33 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
 
   String eventId;
 
-  String eventType;
+  _i2.SchooldayEventType eventType;
 
-  String eventReason;
+  _i3.SchooldayEventReason eventReason;
 
   String createdBy;
 
   bool processed;
 
-  String processedBy;
+  String? processedBy;
 
-  String fileId;
+  DateTime? processedAt;
 
-  String fileUrl;
+  int? fileId;
 
-  String processedFileId;
+  _i4.HubDocument? file;
 
-  String processedFileUrl;
+  int? processedFileId;
+
+  _i4.HubDocument? processedFile;
 
   int schooldayId;
 
-  _i2.Schoolday? schoolday;
+  _i5.Schoolday? schoolday;
 
   int pupilId;
 
-  _i3.PupilData? pupil;
+  _i6.PupilData? pupil;
 
   /// Returns a shallow copy of this [SchooldayEvent]
   /// with some or all fields replaced by the given arguments.
@@ -115,34 +134,36 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
   SchooldayEvent copyWith({
     int? id,
     String? eventId,
-    String? eventType,
-    String? eventReason,
+    _i2.SchooldayEventType? eventType,
+    _i3.SchooldayEventReason? eventReason,
     String? createdBy,
     bool? processed,
     String? processedBy,
-    String? fileId,
-    String? fileUrl,
-    String? processedFileId,
-    String? processedFileUrl,
+    DateTime? processedAt,
+    int? fileId,
+    _i4.HubDocument? file,
+    int? processedFileId,
+    _i4.HubDocument? processedFile,
     int? schooldayId,
-    _i2.Schoolday? schoolday,
+    _i5.Schoolday? schoolday,
     int? pupilId,
-    _i3.PupilData? pupil,
+    _i6.PupilData? pupil,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
       'eventId': eventId,
-      'eventType': eventType,
-      'eventReason': eventReason,
+      'eventType': eventType.toJson(),
+      'eventReason': eventReason.toJson(),
       'createdBy': createdBy,
       'processed': processed,
-      'processedBy': processedBy,
-      'fileId': fileId,
-      'fileUrl': fileUrl,
-      'processedFileId': processedFileId,
-      'processedFileUrl': processedFileUrl,
+      if (processedBy != null) 'processedBy': processedBy,
+      if (processedAt != null) 'processedAt': processedAt?.toJson(),
+      if (fileId != null) 'fileId': fileId,
+      if (file != null) 'file': file?.toJson(),
+      if (processedFileId != null) 'processedFileId': processedFileId,
+      if (processedFile != null) 'processedFile': processedFile?.toJson(),
       'schooldayId': schooldayId,
       if (schoolday != null) 'schoolday': schoolday?.toJson(),
       'pupilId': pupilId,
@@ -162,19 +183,20 @@ class _SchooldayEventImpl extends SchooldayEvent {
   _SchooldayEventImpl({
     int? id,
     required String eventId,
-    required String eventType,
-    required String eventReason,
+    required _i2.SchooldayEventType eventType,
+    required _i3.SchooldayEventReason eventReason,
     required String createdBy,
     required bool processed,
-    required String processedBy,
-    required String fileId,
-    required String fileUrl,
-    required String processedFileId,
-    required String processedFileUrl,
+    String? processedBy,
+    DateTime? processedAt,
+    int? fileId,
+    _i4.HubDocument? file,
+    int? processedFileId,
+    _i4.HubDocument? processedFile,
     required int schooldayId,
-    _i2.Schoolday? schoolday,
+    _i5.Schoolday? schoolday,
     required int pupilId,
-    _i3.PupilData? pupil,
+    _i6.PupilData? pupil,
   }) : super._(
           id: id,
           eventId: eventId,
@@ -183,10 +205,11 @@ class _SchooldayEventImpl extends SchooldayEvent {
           createdBy: createdBy,
           processed: processed,
           processedBy: processedBy,
+          processedAt: processedAt,
           fileId: fileId,
-          fileUrl: fileUrl,
+          file: file,
           processedFileId: processedFileId,
-          processedFileUrl: processedFileUrl,
+          processedFile: processedFile,
           schooldayId: schooldayId,
           schoolday: schoolday,
           pupilId: pupilId,
@@ -200,15 +223,16 @@ class _SchooldayEventImpl extends SchooldayEvent {
   SchooldayEvent copyWith({
     Object? id = _Undefined,
     String? eventId,
-    String? eventType,
-    String? eventReason,
+    _i2.SchooldayEventType? eventType,
+    _i3.SchooldayEventReason? eventReason,
     String? createdBy,
     bool? processed,
-    String? processedBy,
-    String? fileId,
-    String? fileUrl,
-    String? processedFileId,
-    String? processedFileUrl,
+    Object? processedBy = _Undefined,
+    Object? processedAt = _Undefined,
+    Object? fileId = _Undefined,
+    Object? file = _Undefined,
+    Object? processedFileId = _Undefined,
+    Object? processedFile = _Undefined,
     int? schooldayId,
     Object? schoolday = _Undefined,
     int? pupilId,
@@ -221,16 +245,20 @@ class _SchooldayEventImpl extends SchooldayEvent {
       eventReason: eventReason ?? this.eventReason,
       createdBy: createdBy ?? this.createdBy,
       processed: processed ?? this.processed,
-      processedBy: processedBy ?? this.processedBy,
-      fileId: fileId ?? this.fileId,
-      fileUrl: fileUrl ?? this.fileUrl,
-      processedFileId: processedFileId ?? this.processedFileId,
-      processedFileUrl: processedFileUrl ?? this.processedFileUrl,
+      processedBy: processedBy is String? ? processedBy : this.processedBy,
+      processedAt: processedAt is DateTime? ? processedAt : this.processedAt,
+      fileId: fileId is int? ? fileId : this.fileId,
+      file: file is _i4.HubDocument? ? file : this.file?.copyWith(),
+      processedFileId:
+          processedFileId is int? ? processedFileId : this.processedFileId,
+      processedFile: processedFile is _i4.HubDocument?
+          ? processedFile
+          : this.processedFile?.copyWith(),
       schooldayId: schooldayId ?? this.schooldayId,
       schoolday:
-          schoolday is _i2.Schoolday? ? schoolday : this.schoolday?.copyWith(),
+          schoolday is _i5.Schoolday? ? schoolday : this.schoolday?.copyWith(),
       pupilId: pupilId ?? this.pupilId,
-      pupil: pupil is _i3.PupilData? ? pupil : this.pupil?.copyWith(),
+      pupil: pupil is _i6.PupilData? ? pupil : this.pupil?.copyWith(),
     );
   }
 }

@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "../../school_data_hub_client"
+		},
+		{
+			"path": "../../test_data"
 		}
 	],
 	"settings": {}

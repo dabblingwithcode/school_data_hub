@@ -26,7 +26,9 @@ class ServerpodSessionManager with ChangeNotifier {
   static ServerpodSessionManager? _instance;
 
   String get _userInfoStorageKey => _envManager.storageKeyForUserInfo;
+
   bool _matrixPolicyManagerRegistrationStatus = false;
+
   bool get matrixPolicyManagerRegistrationStatus =>
       _matrixPolicyManagerRegistrationStatus;
 
@@ -39,6 +41,7 @@ class ServerpodSessionManager with ChangeNotifier {
   final Storage _storage;
 
   User? _user;
+
   User? get user => _user;
 
   void changeUserCredit(int credit) {
@@ -89,6 +92,7 @@ class ServerpodSessionManager with ChangeNotifier {
     await keyManager.put(
       key,
     );
+
     //_envManager.setUserAuthenticated(true);
     await _handleAuthCallResultInStorage();
 
@@ -105,7 +109,9 @@ class ServerpodSessionManager with ChangeNotifier {
   /// initialized, or false if the server could not be reached.
   Future<bool> initialize() async {
     _log.info('Initializing session manager...');
+
     _log.info(' Running in mode: ${_envManager.activeEnv!.runMode.name}');
+
     await _loadUserInfoFromStorage();
 
     return refreshSession();
@@ -128,7 +134,9 @@ class ServerpodSessionManager with ChangeNotifier {
       await caller.client.updateStreamingConnectionAuthenticationKey(null);
 
       _signedInUser = null;
+
       await _handleAuthCallResultInStorage();
+
       await keyManager.remove();
 
       notifyListeners();
@@ -136,7 +144,9 @@ class ServerpodSessionManager with ChangeNotifier {
       /// Don't forget to set the flag in [EnvManager] to false
       /// to get to the login screen.
       _log.info('User signed out ');
+
       _envManager.setUserAuthenticated(false);
+
       return true;
     } catch (e) {
       return false;
@@ -162,6 +172,7 @@ class ServerpodSessionManager with ChangeNotifier {
 
     try {
       _signedInUser = await caller.status.getUserInfo();
+
       await _handleAuthCallResultInStorage();
 
       notifyListeners();
@@ -174,8 +185,11 @@ class ServerpodSessionManager with ChangeNotifier {
             'User was authenticated by the server. Registering managers depending on authentication...');
 
         _user = await _client.user.getCurrentUser();
+
         notifyListeners();
+
         _log.info('User fetched refreshing session: ${_user?.toJson()}');
+
         return false;
       } else {
         _log.warning('No signed user available - nothing to refresh');
@@ -187,13 +201,17 @@ class ServerpodSessionManager with ChangeNotifier {
       // so we don't have a signed user.
       // we better delete the user info from storage and remove the key.
       _log.warning('User was not authenticated by the server: $e');
+
       await keyManager.remove();
+
       _signedInUser = null;
+
       await _handleAuthCallResultInStorage();
 
       /// Don't forget to set the flag in [EnvManager] to false
       /// to get to the login screen.
       _envManager.setUserAuthenticated(false);
+
       return false;
     }
   }
@@ -203,6 +221,7 @@ class ServerpodSessionManager with ChangeNotifier {
 
     if (json == null) {
       _log.warning('No user info found in storage');
+
       return;
     }
 
@@ -220,10 +239,12 @@ class ServerpodSessionManager with ChangeNotifier {
     } else {
       _log.info(
           'We have a signed user - Saving userinfo to storage with key: $_userInfoStorageKey');
+
       _log.fine('User info: ${signedInUser!.toJson()}');
 
       await _storage.setString(
           _userInfoStorageKey, SerializationManager.encode(signedInUser));
+
       // We can start now the managers dependent on authentication
       _user = await _client.user.getCurrentUser();
 
@@ -241,12 +262,15 @@ class ServerpodSessionManager with ChangeNotifier {
 
     try {
       var success = await caller.user.setUserImage(image);
+
       if (success) {
         _signedInUser = await caller.status.getUserInfo();
 
         notifyListeners();
+
         return true;
       }
+
       return false;
     } catch (e) {
       return false;
@@ -256,7 +280,9 @@ class ServerpodSessionManager with ChangeNotifier {
   void changeMatrixPolicyManagerRegistrationStatus(bool isRegistered) {
     if (_matrixPolicyManagerRegistrationStatus != isRegistered) {
       _matrixPolicyManagerRegistrationStatus = isRegistered;
+
       notifyListeners();
+
       _log.info(
           'MatrixPolicyManager registration status changed to $isRegistered');
     }

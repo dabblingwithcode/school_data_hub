@@ -448,11 +448,10 @@ CREATE TABLE "schoolday_event" (
     "eventReason" text NOT NULL,
     "createdBy" text NOT NULL,
     "processed" boolean NOT NULL,
-    "processedBy" text NOT NULL,
-    "fileId" text NOT NULL,
-    "fileUrl" text NOT NULL,
-    "processedFileId" text NOT NULL,
-    "processedFileUrl" text NOT NULL,
+    "processedBy" text,
+    "processedAt" timestamp without time zone,
+    "fileId" bigint,
+    "processedFileId" bigint,
     "schooldayId" bigint NOT NULL,
     "pupilId" bigint NOT NULL
 );
@@ -1285,12 +1284,24 @@ ALTER TABLE ONLY "schoolday"
 --
 ALTER TABLE ONLY "schoolday_event"
     ADD CONSTRAINT "schoolday_event_fk_0"
+    FOREIGN KEY("fileId")
+    REFERENCES "hub_document"("id")
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+ALTER TABLE ONLY "schoolday_event"
+    ADD CONSTRAINT "schoolday_event_fk_1"
+    FOREIGN KEY("processedFileId")
+    REFERENCES "hub_document"("id")
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+ALTER TABLE ONLY "schoolday_event"
+    ADD CONSTRAINT "schoolday_event_fk_2"
     FOREIGN KEY("schooldayId")
     REFERENCES "schoolday"("id")
     ON DELETE NO ACTION
     ON UPDATE NO ACTION;
 ALTER TABLE ONLY "schoolday_event"
-    ADD CONSTRAINT "schoolday_event_fk_1"
+    ADD CONSTRAINT "schoolday_event_fk_3"
     FOREIGN KEY("pupilId")
     REFERENCES "pupil_data"("id")
     ON DELETE NO ACTION
@@ -1455,9 +1466,9 @@ ALTER TABLE ONLY "serverpod_query_log"
 -- MIGRATION VERSION FOR school_data_hub
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('school_data_hub', '20250424191451567', now())
+    VALUES ('school_data_hub', '20250425233307299', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20250424191451567', "timestamp" = now();
+    DO UPDATE SET "version" = '20250425233307299', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

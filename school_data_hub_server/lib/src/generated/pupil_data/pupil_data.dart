@@ -34,7 +34,7 @@ import '../learning_support/support_level.dart' as _i19;
 import '../learning_support/support_category_status.dart' as _i20;
 import '../learning_support/support_goal/support_goal.dart' as _i21;
 import '../schoolday/missed_class/missed_class.dart' as _i22;
-import '../schoolday/schoolday_event.dart' as _i23;
+import '../schoolday/schoolday_event/schoolday_event.dart' as _i23;
 import '../school_list/pupil_list.dart' as _i24;
 
 /// Pupil class

@@ -1,0 +1,9 @@
+enum: SchooldayEventType
+serialized: byName
+values:
+  - notSet
+  - parentsMeeting
+  - admonition
+  - afternoonCareAdmonition
+  - admonitionAndBanned
+  - otherEvent

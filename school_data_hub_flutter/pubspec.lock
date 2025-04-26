@@ -1133,7 +1133,7 @@ packages:
     source: hosted
     version: "0.2.0"
   serverpod_auth_client:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: serverpod_auth_client
       sha256: "25c017454e4bad67780dcaa13d4ced323530c3082813dafda73118e54fad6fb3"
