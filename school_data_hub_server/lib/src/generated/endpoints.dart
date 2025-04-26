@@ -47,13 +47,11 @@ import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
     as _i26;
 import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event_type.dart'
     as _i27;
-import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event_reason.dart'
-    as _i28;
 import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event.dart'
-    as _i29;
+    as _i28;
 import 'package:school_data_hub_server/src/generated/learning_support/support_category.dart'
-    as _i30;
-import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i31;
+    as _i29;
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i30;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -1385,7 +1383,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'reason': _i1.ParameterDescription(
               name: 'reason',
-              type: _i1.getType<_i28.SchooldayEventReason>(),
+              type: _i1.getType<String>(),
               nullable: false,
             ),
             'createdBy': _i1.ParameterDescription(
@@ -1413,7 +1411,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'schooldayEvent': _i1.ParameterDescription(
               name: 'schooldayEvent',
-              type: _i1.getType<_i29.SchooldayEvent>(),
+              type: _i1.getType<_i28.SchooldayEvent>(),
               nullable: false,
             )
           },
@@ -1486,7 +1484,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'category': _i1.ParameterDescription(
               name: 'category',
-              type: _i1.getType<_i30.SupportCategory>(),
+              type: _i1.getType<_i29.SupportCategory>(),
               nullable: false,
             )
           },
@@ -1505,7 +1503,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'category': _i1.ParameterDescription(
               name: 'category',
-              type: _i1.getType<_i30.SupportCategory>(),
+              type: _i1.getType<_i29.SupportCategory>(),
               nullable: false,
             )
           },
@@ -1524,7 +1522,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'category': _i1.ParameterDescription(
               name: 'category',
-              type: _i1.getType<_i30.SupportCategory>(),
+              type: _i1.getType<_i29.SupportCategory>(),
               nullable: false,
             )
           },
@@ -1589,6 +1587,6 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
-    modules['serverpod_auth'] = _i31.Endpoints()..initializeEndpoints(server);
+    modules['serverpod_auth'] = _i30.Endpoints()..initializeEndpoints(server);
   }
 }

@@ -1,26 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:schuldaten_hub/common/theme/app_colors.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 
 class SchooldayEventTypeIcon extends StatelessWidget {
-  final String category;
-  const SchooldayEventTypeIcon({required this.category, super.key});
+  final SchooldayEventType type;
+  const SchooldayEventTypeIcon({required this.type, super.key});
 
   @override
   Widget build(BuildContext context) {
-    switch (category) {
-      case 'Eg':
+    switch (type) {
+      case SchooldayEventType.parentsMeeting:
         return const Row(
           children: [
             Text('👪️'),
           ],
         );
-      case 'rk':
+      case SchooldayEventType.admonition:
         return const Icon(
           Icons.sim_card_alert_rounded,
           color: Colors.red,
         );
-      case 'rkogs':
+      case SchooldayEventType.afternoonCareAdmonition:
         return const Row(mainAxisSize: MainAxisSize.min, children: [
           Icon(
             Icons.sim_card_alert_rounded,
@@ -33,12 +34,12 @@ class SchooldayEventTypeIcon extends StatelessWidget {
                   color: Colors.black,
                   fontWeight: FontWeight.bold)),
         ]);
-      case 'other':
+      case SchooldayEventType.otherEvent:
         return const Icon(Icons.assignment_rounded,
             color: AppColors.backgroundColor);
-      case 'choose':
+      case SchooldayEventType.notSet:
         return Image.asset('assets/choose.png');
-      case 'rkabh':
+      case SchooldayEventType.admonitionAndBanned:
         return const Row(mainAxisSize: MainAxisSize.min, children: [
           Icon(
             Icons.sim_card_alert_rounded,

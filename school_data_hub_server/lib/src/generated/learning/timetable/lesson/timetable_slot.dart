@@ -13,7 +13,7 @@ import 'package:serverpod/serverpod.dart' as _i1;
 import '../../../learning/timetable/lesson/weekday_enum.dart' as _i2;
 
 abstract class TimetableSlot
-    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   TimetableSlot._({
     this.id,
     this.day,
@@ -53,7 +53,7 @@ abstract class TimetableSlot
   String? endTime;
 
   @override
-  _i1.Table<int> get table => t;
+  _i1.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [TimetableSlot]
   /// with some or all fields replaced by the given arguments.
@@ -148,7 +148,7 @@ class _TimetableSlotImpl extends TimetableSlot {
   }
 }
 
-class TimetableSlotTable extends _i1.Table<int> {
+class TimetableSlotTable extends _i1.Table<int?> {
   TimetableSlotTable({super.tableRelation})
       : super(tableName: 'timetable_slot') {
     day = _i1.ColumnEnum(
@@ -188,7 +188,7 @@ class TimetableSlotInclude extends _i1.IncludeObject {
   Map<String, _i1.Include?> get includes => {};
 
   @override
-  _i1.Table<int> get table => TimetableSlot.t;
+  _i1.Table<int?> get table => TimetableSlot.t;
 }
 
 class TimetableSlotIncludeList extends _i1.IncludeList {
@@ -208,7 +208,7 @@ class TimetableSlotIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int> get table => TimetableSlot.t;
+  _i1.Table<int?> get table => TimetableSlot.t;
 }
 
 class TimetableSlotRepository {

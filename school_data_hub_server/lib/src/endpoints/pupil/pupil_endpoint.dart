@@ -1,12 +1,5 @@
-import 'dart:typed_data';
-
-import 'package:logging/logging.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
-import 'package:school_data_hub_server/src/utils/get_user_name.dart';
-import 'package:school_data_hub_server/src/utils/hub_document_helper.dart';
 import 'package:serverpod/serverpod.dart';
-
-final _log = Logger('PupilEndpoint');
 
 class PupilEndpoint extends Endpoint {
   @override

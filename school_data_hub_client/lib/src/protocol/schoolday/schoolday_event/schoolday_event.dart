@@ -11,10 +11,9 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import '../../schoolday/schoolday_event/schoolday_event_type.dart' as _i2;
-import '../../schoolday/schoolday_event/schoolday_event_reason.dart' as _i3;
-import '../../shared/document.dart' as _i4;
-import '../../schoolday/schoolday.dart' as _i5;
-import '../../pupil_data/pupil_data.dart' as _i6;
+import '../../shared/document.dart' as _i3;
+import '../../schoolday/schoolday.dart' as _i4;
+import '../../pupil_data/pupil_data.dart' as _i5;
 
 abstract class SchooldayEvent implements _i1.SerializableModel {
   SchooldayEvent._({
@@ -40,19 +39,19 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
     int? id,
     required String eventId,
     required _i2.SchooldayEventType eventType,
-    required _i3.SchooldayEventReason eventReason,
+    required String eventReason,
     required String createdBy,
     required bool processed,
     String? processedBy,
     DateTime? processedAt,
     int? fileId,
-    _i4.HubDocument? file,
+    _i3.HubDocument? file,
     int? processedFileId,
-    _i4.HubDocument? processedFile,
+    _i3.HubDocument? processedFile,
     required int schooldayId,
-    _i5.Schoolday? schoolday,
+    _i4.Schoolday? schoolday,
     required int pupilId,
-    _i6.PupilData? pupil,
+    _i5.PupilData? pupil,
   }) = _SchooldayEventImpl;
 
   factory SchooldayEvent.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -61,8 +60,7 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
       eventId: jsonSerialization['eventId'] as String,
       eventType: _i2.SchooldayEventType.fromJson(
           (jsonSerialization['eventType'] as String)),
-      eventReason: _i3.SchooldayEventReason.fromJson(
-          (jsonSerialization['eventReason'] as String)),
+      eventReason: jsonSerialization['eventReason'] as String,
       createdBy: jsonSerialization['createdBy'] as String,
       processed: jsonSerialization['processed'] as bool,
       processedBy: jsonSerialization['processedBy'] as String?,
@@ -73,22 +71,22 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
       fileId: jsonSerialization['fileId'] as int?,
       file: jsonSerialization['file'] == null
           ? null
-          : _i4.HubDocument.fromJson(
+          : _i3.HubDocument.fromJson(
               (jsonSerialization['file'] as Map<String, dynamic>)),
       processedFileId: jsonSerialization['processedFileId'] as int?,
       processedFile: jsonSerialization['processedFile'] == null
           ? null
-          : _i4.HubDocument.fromJson(
+          : _i3.HubDocument.fromJson(
               (jsonSerialization['processedFile'] as Map<String, dynamic>)),
       schooldayId: jsonSerialization['schooldayId'] as int,
       schoolday: jsonSerialization['schoolday'] == null
           ? null
-          : _i5.Schoolday.fromJson(
+          : _i4.Schoolday.fromJson(
               (jsonSerialization['schoolday'] as Map<String, dynamic>)),
       pupilId: jsonSerialization['pupilId'] as int,
       pupil: jsonSerialization['pupil'] == null
           ? null
-          : _i6.PupilData.fromJson(
+          : _i5.PupilData.fromJson(
               (jsonSerialization['pupil'] as Map<String, dynamic>)),
     );
   }
@@ -102,7 +100,7 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
 
   _i2.SchooldayEventType eventType;
 
-  _i3.SchooldayEventReason eventReason;
+  String eventReason;
 
   String createdBy;
 
@@ -114,19 +112,19 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
 
   int? fileId;
 
-  _i4.HubDocument? file;
+  _i3.HubDocument? file;
 
   int? processedFileId;
 
-  _i4.HubDocument? processedFile;
+  _i3.HubDocument? processedFile;
 
   int schooldayId;
 
-  _i5.Schoolday? schoolday;
+  _i4.Schoolday? schoolday;
 
   int pupilId;
 
-  _i6.PupilData? pupil;
+  _i5.PupilData? pupil;
 
   /// Returns a shallow copy of this [SchooldayEvent]
   /// with some or all fields replaced by the given arguments.
@@ -135,19 +133,19 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
     int? id,
     String? eventId,
     _i2.SchooldayEventType? eventType,
-    _i3.SchooldayEventReason? eventReason,
+    String? eventReason,
     String? createdBy,
     bool? processed,
     String? processedBy,
     DateTime? processedAt,
     int? fileId,
-    _i4.HubDocument? file,
+    _i3.HubDocument? file,
     int? processedFileId,
-    _i4.HubDocument? processedFile,
+    _i3.HubDocument? processedFile,
     int? schooldayId,
-    _i5.Schoolday? schoolday,
+    _i4.Schoolday? schoolday,
     int? pupilId,
-    _i6.PupilData? pupil,
+    _i5.PupilData? pupil,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -155,7 +153,7 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
       if (id != null) 'id': id,
       'eventId': eventId,
       'eventType': eventType.toJson(),
-      'eventReason': eventReason.toJson(),
+      'eventReason': eventReason,
       'createdBy': createdBy,
       'processed': processed,
       if (processedBy != null) 'processedBy': processedBy,
@@ -184,19 +182,19 @@ class _SchooldayEventImpl extends SchooldayEvent {
     int? id,
     required String eventId,
     required _i2.SchooldayEventType eventType,
-    required _i3.SchooldayEventReason eventReason,
+    required String eventReason,
     required String createdBy,
     required bool processed,
     String? processedBy,
     DateTime? processedAt,
     int? fileId,
-    _i4.HubDocument? file,
+    _i3.HubDocument? file,
     int? processedFileId,
-    _i4.HubDocument? processedFile,
+    _i3.HubDocument? processedFile,
     required int schooldayId,
-    _i5.Schoolday? schoolday,
+    _i4.Schoolday? schoolday,
     required int pupilId,
-    _i6.PupilData? pupil,
+    _i5.PupilData? pupil,
   }) : super._(
           id: id,
           eventId: eventId,
@@ -224,7 +222,7 @@ class _SchooldayEventImpl extends SchooldayEvent {
     Object? id = _Undefined,
     String? eventId,
     _i2.SchooldayEventType? eventType,
-    _i3.SchooldayEventReason? eventReason,
+    String? eventReason,
     String? createdBy,
     bool? processed,
     Object? processedBy = _Undefined,
@@ -248,17 +246,17 @@ class _SchooldayEventImpl extends SchooldayEvent {
       processedBy: processedBy is String? ? processedBy : this.processedBy,
       processedAt: processedAt is DateTime? ? processedAt : this.processedAt,
       fileId: fileId is int? ? fileId : this.fileId,
-      file: file is _i4.HubDocument? ? file : this.file?.copyWith(),
+      file: file is _i3.HubDocument? ? file : this.file?.copyWith(),
       processedFileId:
           processedFileId is int? ? processedFileId : this.processedFileId,
-      processedFile: processedFile is _i4.HubDocument?
+      processedFile: processedFile is _i3.HubDocument?
           ? processedFile
           : this.processedFile?.copyWith(),
       schooldayId: schooldayId ?? this.schooldayId,
       schoolday:
-          schoolday is _i5.Schoolday? ? schoolday : this.schoolday?.copyWith(),
+          schoolday is _i4.Schoolday? ? schoolday : this.schoolday?.copyWith(),
       pupilId: pupilId ?? this.pupilId,
-      pupil: pupil is _i6.PupilData? ? pupil : this.pupil?.copyWith(),
+      pupil: pupil is _i5.PupilData? ? pupil : this.pupil?.copyWith(),
     );
   }
 }

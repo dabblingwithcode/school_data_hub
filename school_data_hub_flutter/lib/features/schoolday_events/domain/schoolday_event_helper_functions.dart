@@ -4,12 +4,15 @@ import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.d
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/models/schoolday_event_enums.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _pupilsFilter = di<PupilsFilter>();
 
 final _schooldayEventFilterManager = di<SchooldayEventFilterManager>();
 final _serverpodSessionManager = di<ServerpodSessionManager>();
+final _schooldayEventManager = di<SchooldayEventManager>();
 
 class SchooldayEventsCounts {
   final int totalSchooldayEvents;
@@ -32,7 +35,9 @@ class SchoolDayEventHelper {
     int pupilsWithEvents = 0;
     for (PupilProxy pupil in pupils) {
       if (_schooldayEventFilterManager
-          .filteredSchooldayEvents(pupil)
+          .filteredSchooldayEvents(_schooldayEventManager
+              .getPupilSchooldayEventsProxy(pupil.pupilId)
+              .schooldayEvents)
           .isNotEmpty) {
         pupilsWithEvents++;
       }
@@ -41,7 +46,11 @@ class SchoolDayEventHelper {
   }
 
   static int schooldayEventSum(PupilProxy pupil) {
-    return _schooldayEventFilterManager.filteredSchooldayEvents(pupil).length;
+    return _schooldayEventFilterManager
+        .filteredSchooldayEvents(_schooldayEventManager
+            .getPupilSchooldayEventsProxy(pupil.pupilId)
+            .schooldayEvents)
+        .length;
   }
 
   static bool isAuthorizedToChangeStatus(SchooldayEvent schooldayEvent) {
@@ -54,8 +63,10 @@ class SchoolDayEventHelper {
   }
 
   static DateTime getPupilLastSchooldayEventDate(PupilProxy pupil) {
-    final List<SchooldayEvent> schooldayEvents =
-        _schooldayEventFilterManager.filteredSchooldayEvents(pupil);
+    final List<SchooldayEvent> schooldayEvents = _schooldayEventFilterManager
+        .filteredSchooldayEvents(_schooldayEventManager
+            .getPupilSchooldayEventsProxy(pupil.pupilId)
+            .schooldayEvents);
     if (schooldayEvents.isEmpty) {
       // if schoolday events is empty, we return a mock date
       return DateTime(2017, 9, 7, 17);
@@ -73,8 +84,11 @@ class SchoolDayEventHelper {
   }
 
   static bool pupilIsAdmonishedToday(PupilProxy pupil) {
-    if (pupil.schooldayEvents!.isEmpty) return false;
-    if (pupil.schooldayEvents!.any((element) =>
+    final pupilSchooldayEvents = _schooldayEventManager
+        .getPupilSchooldayEventsProxy(pupil.pupilId)
+        .schooldayEvents;
+    if (pupilSchooldayEvents.isEmpty) return false;
+    if (pupilSchooldayEvents.any((element) =>
         element.schoolday!.schoolday.isSameDate(DateTime.now()) &&
         (element.eventType == SchooldayEventType.admonition ||
             element.eventType == SchooldayEventType.afternoonCareAdmonition ||
@@ -93,8 +107,10 @@ class SchoolDayEventHelper {
     int parentsMeetingSchooldayEvents = 0;
 
     for (PupilProxy pupil in pupils) {
-      final pupilSchooldayEvents =
-          locator<SchooldayEventFilterManager>().filteredSchooldayEvents(pupil);
+      final pupilSchooldayEvents = _schooldayEventFilterManager
+          .filteredSchooldayEvents(_schooldayEventManager
+              .getPupilSchooldayEventsProxy(pupil.pupilId)
+              .schooldayEvents);
 
       totalSchooldayEvents = totalSchooldayEvents + pupilSchooldayEvents.length;
       teachingSchooldayEvents = teachingSchooldayEvents +
@@ -151,17 +167,17 @@ class SchoolDayEventHelper {
 
 //- TODO: this should use  SchooldavEventType enum
 
-  static String getSchooldayEventTypeText(String value) {
+  static String getSchooldayEventTypeText(SchooldayEventType value) {
     switch (value) {
-      case 'choose':
+      case SchooldayEventType.notSet:
         return 'bitte wählen';
-      case 'rk':
+      case SchooldayEventType.admonition:
         return '';
-      case 'rkogs':
+      case SchooldayEventType.afternoonCareAdmonition:
         return 'OGS';
-      case 'other':
+      case SchooldayEventType.otherEvent:
         return 'Sonstiges';
-      case 'Eg':
+      case SchooldayEventType.parentsMeeting:
         return 'Elterngespräch';
       default:
         return '';
@@ -174,7 +190,7 @@ class SchoolDayEventHelper {
     bool firstItem = true;
     String schooldayEventReasonText = '';
 
-    if (value.contains(SchooldayEventReason.violenceAgainstPupils)) {
+    if (value.contains(SchooldayEventReason.violenceAgainstPupils.value)) {
       schooldayEventReasonText =
           '${schooldayEventReasonText}Gewalt gegen Menschen';
       firstItem = false;

@@ -8,11 +8,14 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 
+// ignore_for_file: unnecessary_null_comparison
+
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../../book/book_tagging/book_tagging.dart' as _i2;
 
-abstract class BookTag implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+abstract class BookTag
+    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   BookTag._({
     this.id,
     required this.name,
@@ -47,7 +50,7 @@ abstract class BookTag implements _i1.TableRow<int>, _i1.ProtocolSerialization {
   List<_i2.BookTagging>? books;
 
   @override
-  _i1.Table<int> get table => t;
+  _i1.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [BookTag]
   /// with some or all fields replaced by the given arguments.
@@ -138,7 +141,7 @@ class _BookTagImpl extends BookTag {
   }
 }
 
-class BookTagTable extends _i1.Table<int> {
+class BookTagTable extends _i1.Table<int?> {
   BookTagTable({super.tableRelation}) : super(tableName: 'book_tag') {
     name = _i1.ColumnString(
       'name',
@@ -209,7 +212,7 @@ class BookTagInclude extends _i1.IncludeObject {
   Map<String, _i1.Include?> get includes => {'books': _books};
 
   @override
-  _i1.Table<int> get table => BookTag.t;
+  _i1.Table<int?> get table => BookTag.t;
 }
 
 class BookTagIncludeList extends _i1.IncludeList {
@@ -229,7 +232,7 @@ class BookTagIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int> get table => BookTag.t;
+  _i1.Table<int?> get table => BookTag.t;
 }
 
 class BookTagRepository {

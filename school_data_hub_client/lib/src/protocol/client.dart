@@ -42,11 +42,9 @@ import 'package:school_data_hub_client/src/protocol/schoolday/schoolday_event/sc
     as _i18;
 import 'package:school_data_hub_client/src/protocol/schoolday/schoolday_event/schoolday_event_type.dart'
     as _i19;
-import 'package:school_data_hub_client/src/protocol/schoolday/schoolday_event/schoolday_event_reason.dart'
-    as _i20;
 import 'package:school_data_hub_client/src/protocol/learning_support/support_category.dart'
-    as _i21;
-import 'protocol.dart' as _i22;
+    as _i20;
+import 'protocol.dart' as _i21;
 
 /// The endpoint for admin operations.
 /// This endpoint requires the user to be logged in and have admin scope.
@@ -692,7 +690,7 @@ class EndpointSchooldayEvent extends _i1.EndpointRef {
     required int pupilId,
     required int schooldayId,
     required _i19.SchooldayEventType type,
-    required _i20.SchooldayEventReason reason,
+    required String reason,
     required String createdBy,
   }) =>
       caller.callServerEndpoint<_i18.SchooldayEvent>(
@@ -730,36 +728,36 @@ class EndpointSupportCategory extends _i1.EndpointRef {
   @override
   String get name => 'supportCategory';
 
-  _i2.Future<List<_i21.SupportCategory>> getSupportCategories() =>
-      caller.callServerEndpoint<List<_i21.SupportCategory>>(
+  _i2.Future<List<_i20.SupportCategory>> getSupportCategories() =>
+      caller.callServerEndpoint<List<_i20.SupportCategory>>(
         'supportCategory',
         'getSupportCategories',
         {},
       );
 
-  _i2.Future<List<_i21.SupportCategory>> importSupportCategoriesFromJsonFile(
+  _i2.Future<List<_i20.SupportCategory>> importSupportCategoriesFromJsonFile(
           String jsonFilePath) =>
-      caller.callServerEndpoint<List<_i21.SupportCategory>>(
+      caller.callServerEndpoint<List<_i20.SupportCategory>>(
         'supportCategory',
         'importSupportCategoriesFromJsonFile',
         {'jsonFilePath': jsonFilePath},
       );
 
-  _i2.Future<bool> createSupportCategory(_i21.SupportCategory category) =>
+  _i2.Future<bool> createSupportCategory(_i20.SupportCategory category) =>
       caller.callServerEndpoint<bool>(
         'supportCategory',
         'createSupportCategory',
         {'category': category},
       );
 
-  _i2.Future<bool> updateSupportCategory(_i21.SupportCategory category) =>
+  _i2.Future<bool> updateSupportCategory(_i20.SupportCategory category) =>
       caller.callServerEndpoint<bool>(
         'supportCategory',
         'updateSupportCategory',
         {'category': category},
       );
 
-  _i2.Future<bool> deleteSupportCategory(_i21.SupportCategory category) =>
+  _i2.Future<bool> deleteSupportCategory(_i20.SupportCategory category) =>
       caller.callServerEndpoint<bool>(
         'supportCategory',
         'deleteSupportCategory',
@@ -825,7 +823,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
           host,
-          _i22.Protocol(),
+          _i21.Protocol(),
           securityContext: securityContext,
           authenticationKeyManager: authenticationKeyManager,
           streamingConnectionTimeout: streamingConnectionTimeout,

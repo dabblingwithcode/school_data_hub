@@ -1,4 +1,5 @@
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/domain/models/nullable_records.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:watch_it/watch_it.dart';
@@ -11,7 +12,7 @@ class SchooldayEventApiService {
   //- post schooldayEvent
 
   Future<SchooldayEvent> postSchooldayEvent(int pupilId, int schooldayId,
-      SchooldayEventType type, SchooldayEventReason reason) async {
+      SchooldayEventType type, String reason) async {
     final userName = _sessionManager.user!.userInfo!.userName!;
     _notificationService.apiRunning(true);
     try {
@@ -56,19 +57,19 @@ class SchooldayEventApiService {
       {required SchooldayEvent schooldayEvent,
       String? createdBy,
       SchooldayEventType? type,
-      SchooldayEventReason? reason,
+      String? reason,
       bool? processed,
       //String? file,
-      String? processedBy,
-      DateTime? processedAt,
+      NullableStringRecord? processedBy,
+      NullableDateTimeRecord? processedAt,
       int? schooldayId}) async {
     // if the schooldayEvent is patched as processed,
     // processing user and processed date are automatically added
 
     if (processed == true && processedBy == null && processedAt == null) {
-      processedBy = _sessionManager.user!.userInfo!.userName!;
+      processedBy = (value: _sessionManager.user!.userInfo!.userName!);
 
-      processedAt = DateTime.now();
+      processedAt = (value: DateTime.now());
     }
 
     // if the schooldayEvent is patched as not processed,
@@ -84,8 +85,10 @@ class SchooldayEventApiService {
       eventReason: reason ?? schooldayEvent.eventReason,
       schooldayId: schooldayId ?? schooldayEvent.schooldayId,
       processed: processed ?? schooldayEvent.processed,
-      processedBy: processedBy ?? schooldayEvent.processedBy,
-      processedAt: processedAt ?? schooldayEvent.processedAt,
+      processedBy:
+          processedBy != null ? processedBy.value : schooldayEvent.processedBy,
+      processedAt:
+          processedAt != null ? processedAt.value : schooldayEvent.processedAt,
     );
 
     try {

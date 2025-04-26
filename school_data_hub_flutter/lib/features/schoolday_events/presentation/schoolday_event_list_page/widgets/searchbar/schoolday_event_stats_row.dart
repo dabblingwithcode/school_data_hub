@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:schuldaten_hub/common/services/locator.dart';
-import 'package:schuldaten_hub/common/theme/app_colors.dart';
-import 'package:schuldaten_hub/features/pupil/domain/pupil_manager.dart';
-import 'package:schuldaten_hub/features/schoolday_events/domain/schoolday_event_helper_functions.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_helper_functions.dart';
+import 'package:watch_it/watch_it.dart';
+
+final _pupilManager = di<PupilManager>();
 
 class SchooldayEventStats extends StatelessWidget {
   final int pupilsWithEventsCount;
@@ -23,7 +25,7 @@ class SchooldayEventStats extends StatelessWidget {
         ),
         const Gap(5),
         Text(
-          '${pupilsWithEventsCount.toString()}/${locator<PupilManager>().allPupils.length}',
+          '${pupilsWithEventsCount.toString()}/${_pupilManager.allPupils.length}',
           style: const TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,

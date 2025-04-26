@@ -12,7 +12,7 @@
 import 'package:serverpod/serverpod.dart' as _i1;
 
 abstract class HubDocument
-    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   HubDocument._({
     this.id,
     required this.documentId,
@@ -78,7 +78,7 @@ abstract class HubDocument
   final int? _preSchoolTestPreschooltestdocumentsPreSchoolTestId;
 
   @override
-  _i1.Table<int> get table => t;
+  _i1.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [HubDocument]
   /// with some or all fields replaced by the given arguments.
@@ -263,7 +263,7 @@ class HubDocumentImplicit extends _HubDocumentImpl {
   final int? _preSchoolTestPreschooltestdocumentsPreSchoolTestId;
 }
 
-class HubDocumentTable extends _i1.Table<int> {
+class HubDocumentTable extends _i1.Table<int?> {
   HubDocumentTable({super.tableRelation}) : super(tableName: 'hub_document') {
     documentId = _i1.ColumnString(
       'documentId',
@@ -346,7 +346,7 @@ class HubDocumentInclude extends _i1.IncludeObject {
   Map<String, _i1.Include?> get includes => {};
 
   @override
-  _i1.Table<int> get table => HubDocument.t;
+  _i1.Table<int?> get table => HubDocument.t;
 }
 
 class HubDocumentIncludeList extends _i1.IncludeList {
@@ -366,7 +366,7 @@ class HubDocumentIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int> get table => HubDocument.t;
+  _i1.Table<int?> get table => HubDocument.t;
 }
 
 class HubDocumentRepository {

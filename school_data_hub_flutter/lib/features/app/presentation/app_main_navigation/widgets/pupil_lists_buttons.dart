@@ -5,6 +5,7 @@ import 'package:school_data_hub_flutter/features/app/presentation/app_main_navig
 import 'package:school_data_hub_flutter/features/attendance/presentation/attendance_page/attendance_list_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/matrix_users_list_page/matrix_users_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/credit/credit_list_page/credit_list_page.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/presentation/schoolday_event_list_page/schoolday_event_list_page.dart';
 import 'package:watch_it/watch_it.dart';
 
 class PupilListButtons extends WatchingWidget {
@@ -20,7 +21,7 @@ class PupilListButtons extends WatchingWidget {
       alignment: WrapAlignment.center,
       children: [
         MainMenuButton(
-            destinationPage: const Placeholder(), // SchooldayEventListPage(),
+            destinationPage: const SchooldayEventListPage(),
             buttonIcon: const Icon(
               Icons.warning_rounded,
               size: 50,

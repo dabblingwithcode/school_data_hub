@@ -46,10 +46,8 @@ import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/s
     as _i20;
 import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event_type.dart'
     as _i21;
-import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event_reason.dart'
-    as _i22;
 import 'package:school_data_hub_server/src/generated/learning_support/support_category.dart'
-    as _i23;
+    as _i22;
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -2092,7 +2090,7 @@ class _SchooldayEventEndpoint {
     required int pupilId,
     required int schooldayId,
     required _i21.SchooldayEventType type,
-    required _i22.SchooldayEventReason reason,
+    required String reason,
     required String createdBy,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -2196,7 +2194,7 @@ class _SupportCategoryEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<List<_i23.SupportCategory>> getSupportCategories(
+  _i3.Future<List<_i22.SupportCategory>> getSupportCategories(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -2215,7 +2213,7 @@ class _SupportCategoryEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i23.SupportCategory>>);
+        ) as _i3.Future<List<_i22.SupportCategory>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -2223,7 +2221,7 @@ class _SupportCategoryEndpoint {
     });
   }
 
-  _i3.Future<List<_i23.SupportCategory>> importSupportCategoriesFromJsonFile(
+  _i3.Future<List<_i22.SupportCategory>> importSupportCategoriesFromJsonFile(
     _i1.TestSessionBuilder sessionBuilder,
     String jsonFilePath,
   ) async {
@@ -2244,7 +2242,7 @@ class _SupportCategoryEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i23.SupportCategory>>);
+        ) as _i3.Future<List<_i22.SupportCategory>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -2254,7 +2252,7 @@ class _SupportCategoryEndpoint {
 
   _i3.Future<bool> createSupportCategory(
     _i1.TestSessionBuilder sessionBuilder,
-    _i23.SupportCategory category,
+    _i22.SupportCategory category,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -2283,7 +2281,7 @@ class _SupportCategoryEndpoint {
 
   _i3.Future<bool> updateSupportCategory(
     _i1.TestSessionBuilder sessionBuilder,
-    _i23.SupportCategory category,
+    _i22.SupportCategory category,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -2312,7 +2310,7 @@ class _SupportCategoryEndpoint {
 
   _i3.Future<bool> deleteSupportCategory(
     _i1.TestSessionBuilder sessionBuilder,
-    _i23.SupportCategory category,
+    _i22.SupportCategory category,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =

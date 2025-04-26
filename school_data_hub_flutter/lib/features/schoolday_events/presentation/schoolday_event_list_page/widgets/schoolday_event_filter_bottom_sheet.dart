@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:schuldaten_hub/common/domain/models/enums.dart';
-import 'package:schuldaten_hub/common/services/locator.dart';
-import 'package:schuldaten_hub/common/theme/styles.dart';
-import 'package:schuldaten_hub/common/widgets/themed_filter_chip.dart';
-import 'package:schuldaten_hub/features/pupil/domain/filters/pupils_filter.dart';
-import 'package:schuldaten_hub/features/pupil/presentation/widgets/common_pupil_filters.dart';
-import 'package:schuldaten_hub/features/schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
-import 'package:schuldaten_hub/features/schoolday_events/domain/models/schoolday_event_enums.dart';
+import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/models/schoolday_event_enums.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _schooldayEventFilterManager = di<SchooldayEventFilterManager>();
+
+final _pupilsFilter = di<PupilsFilter>();
 
 class SchooldayEventFilterBottomSheet extends WatchingWidget {
   const SchooldayEventFilterBottomSheet({super.key});
@@ -57,7 +60,6 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
     bool valueAdmonitionInfo =
         activeSchooldayEventFilters[SchooldayEventFilter.admonitionInfo]!;
 
-    final schooldayEventFilterLocator = locator<SchooldayEventFilterManager>();
     return Padding(
       padding: const EdgeInsets.only(left: 15.0, right: 15, top: 5),
       child: Center(
@@ -89,7 +91,7 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                           label: '7 Tage',
                           selected: valueLastSevenDays,
                           onSelected: (val) {
-                            schooldayEventFilterLocator.setFilter(
+                            _schooldayEventFilterManager.setFilter(
                                 schooldayEventFilters: [
                                   (
                                     filter: SchooldayEventFilter.sevenDays,
@@ -102,7 +104,7 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                           label: 'nicht bearbeitet',
                           selected: valueProcessed,
                           onSelected: (val) {
-                            schooldayEventFilterLocator.setFilter(
+                            _schooldayEventFilterManager.setFilter(
                                 schooldayEventFilters: [
                                   (
                                     filter: SchooldayEventFilter.processed,
@@ -115,7 +117,7 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                           label: '🟥',
                           selected: valueRedCard,
                           onSelected: (val) {
-                            schooldayEventFilterLocator.setFilter(
+                            _schooldayEventFilterManager.setFilter(
                                 schooldayEventFilters: [
                                   (
                                     filter: SchooldayEventFilter.admonition,
@@ -128,7 +130,7 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                           label: '🟥 OGS',
                           selected: valueRedCardOgs,
                           onSelected: (val) {
-                            schooldayEventFilterLocator.setFilter(
+                            _schooldayEventFilterManager.setFilter(
                                 schooldayEventFilters: [
                                   (
                                     filter: SchooldayEventFilter
@@ -142,7 +144,7 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                           label: '🟥🏠',
                           selected: valueRedCardSentHome,
                           onSelected: (val) {
-                            schooldayEventFilterLocator
+                            _schooldayEventFilterManager
                                 .setFilter(schooldayEventFilters: [
                               (
                                 filter:
@@ -156,7 +158,7 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                           label: '👪️',
                           selected: valueParentsMeeting,
                           onSelected: (val) {
-                            schooldayEventFilterLocator.setFilter(
+                            _schooldayEventFilterManager.setFilter(
                               schooldayEventFilters: [
                                 (
                                   filter: SchooldayEventFilter.parentsMeeting,
@@ -170,7 +172,7 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                           label: '📝',
                           selected: valueOtherEvents,
                           onSelected: (val) {
-                            schooldayEventFilterLocator.setFilter(
+                            _schooldayEventFilterManager.setFilter(
                                 schooldayEventFilters: [
                                   (
                                     filter: SchooldayEventFilter.otherEvent,
@@ -200,7 +202,7 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                             label: '🤜🤕',
                             selected: valueViolenceAgainstPupils,
                             onSelected: (val) {
-                              schooldayEventFilterLocator.setFilter(
+                              _schooldayEventFilterManager.setFilter(
                                   schooldayEventFilters: [
                                     (
                                       filter: SchooldayEventFilter
@@ -214,7 +216,7 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                             label: '🤜🎓️',
                             selected: valueViolenceAgainstAdults,
                             onSelected: (val) {
-                              schooldayEventFilterLocator.setFilter(
+                              _schooldayEventFilterManager.setFilter(
                                   schooldayEventFilters: [
                                     (
                                       filter: SchooldayEventFilter
@@ -228,7 +230,7 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                             label: '🤜🏠',
                             selected: valueViolenceAgainstThings,
                             onSelected: (val) {
-                              schooldayEventFilterLocator.setFilter(
+                              _schooldayEventFilterManager.setFilter(
                                   schooldayEventFilters: [
                                     (
                                       filter: SchooldayEventFilter
@@ -242,7 +244,7 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                             label: '🤬💔',
                             selected: valueInsultOthers,
                             onSelected: (val) {
-                              schooldayEventFilterLocator.setFilter(
+                              _schooldayEventFilterManager.setFilter(
                                   schooldayEventFilters: [
                                     (
                                       filter: SchooldayEventFilter.insultOthers,
@@ -255,7 +257,7 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                             label: '😈😖',
                             selected: valueAnnoy,
                             onSelected: (val) {
-                              schooldayEventFilterLocator
+                              _schooldayEventFilterManager
                                   .setFilter(schooldayEventFilters: [
                                 (filter: SchooldayEventFilter.annoy, value: val)
                               ]);
@@ -265,7 +267,7 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                             label: '🚨😱',
                             selected: valueDangerousBehaviour,
                             onSelected: (val) {
-                              schooldayEventFilterLocator
+                              _schooldayEventFilterManager
                                   .setFilter(schooldayEventFilters: [
                                 (
                                   filter:
@@ -279,7 +281,7 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                             label: '🛑🎓️',
                             selected: valueDisturbLesson,
                             onSelected: (val) {
-                              schooldayEventFilterLocator
+                              _schooldayEventFilterManager
                                   .setFilter(schooldayEventFilters: [
                                 (
                                   filter: SchooldayEventFilter.disturbLesson,
@@ -292,7 +294,7 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                             label: '🎓️🙉',
                             selected: valueIgnoreInstructions,
                             onSelected: (val) {
-                              schooldayEventFilterLocator
+                              _schooldayEventFilterManager
                                   .setFilter(schooldayEventFilters: [
                                 (
                                   filter:
@@ -306,7 +308,7 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                             label: '💡🧠',
                             selected: valueLearningDevelopmentInfo,
                             onSelected: (val) {
-                              schooldayEventFilterLocator.setFilter(
+                              _schooldayEventFilterManager.setFilter(
                                   schooldayEventFilters: [
                                     (
                                       filter: SchooldayEventFilter
@@ -320,7 +322,7 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                             label: '🛟🧠',
                             selected: valueLearningSupportInfo,
                             onSelected: (val) {
-                              schooldayEventFilterLocator
+                              _schooldayEventFilterManager
                                   .setFilter(schooldayEventFilters: [
                                 (
                                   filter:
@@ -334,7 +336,7 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                             label: '⚠️ℹ️',
                             selected: valueAdmonitionInfo,
                             onSelected: (val) {
-                              schooldayEventFilterLocator
+                              _schooldayEventFilterManager
                                   .setFilter(schooldayEventFilters: [
                                 (
                                   filter: SchooldayEventFilter.admonitionInfo,
@@ -347,7 +349,7 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                             label: '📝',
                             selected: valueOtherReasons,
                             onSelected: (val) {
-                              schooldayEventFilterLocator
+                              _schooldayEventFilterManager
                                   .setFilter(schooldayEventFilters: [
                                 (filter: SchooldayEventFilter.other, value: val)
                               ]);
@@ -373,8 +375,7 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                           label: 'A-Z',
                           selected: sortMode == PupilSortMode.sortByName,
                           onSelected: (val) {
-                            locator<PupilsFilter>()
-                                .setSortMode(PupilSortMode.sortByName);
+                            _pupilsFilter.setSortMode(PupilSortMode.sortByName);
                           },
                         ),
                         ThemedFilterChip(
@@ -382,7 +383,7 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                           selected:
                               sortMode == PupilSortMode.sortBySchooldayEvents,
                           onSelected: (val) {
-                            locator<PupilsFilter>().setSortMode(
+                            _pupilsFilter.setSortMode(
                                 PupilSortMode.sortBySchooldayEvents);
                           },
                         ),
@@ -391,7 +392,7 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                           selected: sortMode ==
                               PupilSortMode.sortByLastSchooldayEvent,
                           onSelected: (val) {
-                            locator<PupilsFilter>().setSortMode(
+                            _pupilsFilter.setSortMode(
                                 PupilSortMode.sortByLastSchooldayEvent);
                           },
                         ),

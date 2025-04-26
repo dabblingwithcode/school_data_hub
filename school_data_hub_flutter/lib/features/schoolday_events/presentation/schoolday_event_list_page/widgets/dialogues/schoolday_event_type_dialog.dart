@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:schuldaten_hub/common/services/locator.dart';
-import 'package:schuldaten_hub/features/schoolday_events/domain/models/schoolday_event_enums.dart';
-import 'package:schuldaten_hub/features/schoolday_events/domain/schoolday_event_manager.dart';
-import 'package:schuldaten_hub/features/schoolday_events/domain/schoolday_event_providers.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_manager.dart';
+import 'package:watch_it/watch_it.dart';
 
-class SchooldayEventTypeDialog extends HookConsumerWidget {
+final _schooldayEventManager = di<SchooldayEventManager>();
+
+class SchooldayEventTypeDialog extends WatchingWidget {
   // Change HookWidget to HookConsumerWidget
-  final String schooldayEventId;
+  final SchooldayEvent schooldayEvent;
 
   const SchooldayEventTypeDialog({
     super.key,
-    required this.schooldayEventId,
+    required this.schooldayEvent,
   });
 
   String _getDropdownItemText(SchooldayEventType reason) {
@@ -32,12 +32,9 @@ class SchooldayEventTypeDialog extends HookConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    ref.invalidate(dropdownProvider); // Invalidate the provider
-    final selectedEventType =
-        ref.watch(dropdownProvider); // Access state using ref.watch
-    final notifier =
-        ref.read(dropdownProvider.notifier); // Access notifier with ref.read
+  Widget build(BuildContext context) {
+    final selectedEventType = createOnce(
+        () => ValueNotifier<SchooldayEventType>(SchooldayEventType.notSet));
 
     return AlertDialog(
       title: const Text('Select Event Type'),
@@ -45,14 +42,14 @@ class SchooldayEventTypeDialog extends HookConsumerWidget {
         isDense: true,
         underline: Container(),
         style: const TextStyle(fontSize: 20),
-        value: selectedEventType,
+        value: selectedEventType.value,
         onChanged: (SchooldayEventType? newValue) {
-          notifier.selectEventType(newValue);
+          selectedEventType.value = newValue!;
           if (newValue == SchooldayEventType.notSet) return;
           Navigator.of(context).pop();
-          locator<SchooldayEventManager>().patchSchooldayEvent(
-            schooldayEventId: schooldayEventId,
-            schoolEventType: newValue!.value,
+          _schooldayEventManager.updateSchooldayEvent(
+            eventToUpdate: schooldayEvent,
+            schoolEventType: newValue,
           );
         },
         items:

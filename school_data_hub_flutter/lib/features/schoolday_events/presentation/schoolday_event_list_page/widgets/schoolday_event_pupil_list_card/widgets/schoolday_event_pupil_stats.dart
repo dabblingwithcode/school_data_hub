@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:schuldaten_hub/common/services/locator.dart';
-import 'package:schuldaten_hub/common/theme/app_colors.dart';
-import 'package:schuldaten_hub/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:schuldaten_hub/features/schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
-import 'package:schuldaten_hub/features/schoolday_events/domain/models/schoolday_event_enums.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _schooldayEventFilterManager = di<SchooldayEventFilterManager>();
+final _schooldayEventManager = di<SchooldayEventManager>();
 
 class SchooldayEventPupilStats extends WatchingWidget {
   final PupilProxy pupil;
@@ -15,28 +18,27 @@ class SchooldayEventPupilStats extends WatchingWidget {
   Widget build(BuildContext context) {
     Color admonitionsColor = AppColors.backgroundColor;
     Color afternoonAdmonitionsColor = AppColors.backgroundColor;
+    final unfilteredEvents = watch(
+            _schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId))
+        .schooldayEvents;
     final schooldavEvents =
-        locator<SchooldayEventFilterManager>().filteredSchooldayEvents(pupil);
+        _schooldayEventFilterManager.filteredSchooldayEvents(unfilteredEvents);
     final admonitions = schooldavEvents
         .where((element) =>
-            element.schooldayEventType == SchooldayEventType.admonition.value ||
-            element.schooldayEventType ==
-                SchooldayEventType.admonitionAndBanned.value)
+            element.eventType == SchooldayEventType.admonition ||
+            element.eventType == SchooldayEventType.admonitionAndBanned)
         .toList();
     final afternoonCareAdmonitions = schooldavEvents
         .where((element) =>
-            element.schooldayEventType ==
-            SchooldayEventType.afternoonCareAdmonition.value)
+            element.eventType == SchooldayEventType.afternoonCareAdmonition)
         .toList();
     final parentsMeeting = schooldavEvents
-        .where((element) =>
-            element.schooldayEventType ==
-            SchooldayEventType.parentsMeeting.value)
+        .where(
+            (element) => element.eventType == SchooldayEventType.parentsMeeting)
         .toList();
 
     final otherEvents = schooldavEvents
-        .where((element) =>
-            element.schooldayEventType == SchooldayEventType.otherEvent.value)
+        .where((element) => element.eventType == SchooldayEventType.otherEvent)
         .toList();
     if (admonitions.isNotEmpty) {
       if (admonitions.any((adm) => adm.processed == false)) {

@@ -2,28 +2,30 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:provider/provider.dart';
-import 'package:schuldaten_hub/common/domain/env_manager.dart';
-import 'package:schuldaten_hub/common/domain/models/enums.dart';
-import 'package:schuldaten_hub/common/domain/session_helper_functions.dart';
-import 'package:schuldaten_hub/common/domain/session_manager.dart';
-import 'package:schuldaten_hub/common/services/locator.dart';
-import 'package:schuldaten_hub/common/services/notification_service.dart';
-import 'package:schuldaten_hub/common/theme/app_colors.dart';
-import 'package:schuldaten_hub/common/utils/extensions.dart';
-import 'package:schuldaten_hub/common/widgets/dialogs/schoolday_date_picker.dart';
-import 'package:schuldaten_hub/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:schuldaten_hub/common/widgets/dialogs/short_textfield_dialog.dart';
-import 'package:schuldaten_hub/common/widgets/document_image.dart';
-import 'package:schuldaten_hub/common/widgets/upload_image.dart';
-import 'package:schuldaten_hub/features/schoolday_events/data/schoolday_event_api_service.dart';
-import 'package:schuldaten_hub/features/schoolday_events/domain/models/schoolday_event.dart';
-import 'package:schuldaten_hub/features/schoolday_events/domain/schoolday_event_manager.dart';
-import 'package:schuldaten_hub/features/schoolday_events/presentation/schoolday_event_list_page/widgets/dialogues/schoolday_event_type_dialog.dart';
-import 'package:schuldaten_hub/features/schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_reason_chips.dart';
-import 'package:schuldaten_hub/features/schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_type_icon.dart';
-import 'package:schuldaten_hub/features/schooldays/domain/schoolday_manager.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_picker.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
+import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_manager.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/presentation/schoolday_event_list_page/widgets/dialogues/schoolday_event_type_dialog.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_reason_chips.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_type_icon.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _serverpodSessionManager = di<ServerpodSessionManager>();
+
+final _schooldayEventManager = di<SchooldayEventManager>();
+
+final _schooldayManager = di<SchooldayManager>();
+
+final _notificationService = di<NotificationService>();
 
 class PupilSchooldayEventCard extends WatchingWidget {
   final SchooldayEvent schooldayEvent;
@@ -32,6 +34,8 @@ class PupilSchooldayEventCard extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final isAuthorized = SessionHelper.isAuthorized(schooldayEvent.createdBy);
+    final isAdmin = _serverpodSessionManager.isAdmin;
+
     return Card(
       color: !schooldayEvent.processed
           ? AppColors.notProcessedColor
@@ -75,21 +79,21 @@ class PupilSchooldayEventCard extends WatchingWidget {
                                         DateTime? date =
                                             await selectSchooldayDate(
                                                 context,
-                                                locator<SchooldayManager>()
-                                                    .thisDate
-                                                    .value);
-                                        if (date == null) return;
-                                        await locator<SchooldayEventManager>()
-                                            .patchSchooldayEvent(
-                                                schooldayEventId: schooldayEvent
-                                                    .schooldayEventId,
-                                                schoolEventDay: date);
-                                        locator<NotificationService>().showSnackBar(
+                                                _schooldayManager
+                                                    .thisDate.value);
+
+                                        await _schooldayEventManager
+                                            .updateSchooldayEvent(
+                                          eventToUpdate: schooldayEvent,
+                                          processed: true,
+                                          processedAt: (value: date),
+                                        );
+                                        _notificationService.showSnackBar(
                                             NotificationType.success,
                                             'Ereignis als bearbeitet markiert!');
                                       },
                                       child: Text(
-                                        schooldayEvent.schooldayEventDate
+                                        schooldayEvent.schoolday!.schoolday
                                             .formatForUser(),
                                         style: const TextStyle(
                                           color: AppColors.interactiveColor,
@@ -99,7 +103,7 @@ class PupilSchooldayEventCard extends WatchingWidget {
                                       ),
                                     )
                                   : Text(
-                                      schooldayEvent.schooldayEventDate
+                                      schooldayEvent.schoolday!.schoolday
                                           .formatForUser(),
                                       style: const TextStyle(
                                         color: Colors.black,
@@ -112,7 +116,7 @@ class PupilSchooldayEventCard extends WatchingWidget {
                                 onLongPress: () {
                                   if (!SessionHelper.isAuthorized(
                                       schooldayEvent.createdBy)) {
-                                    locator<NotificationService>().showSnackBar(
+                                    _notificationService.showSnackBar(
                                         NotificationType.error,
                                         'Nicht berechtigt!');
                                     return;
@@ -122,15 +126,13 @@ class PupilSchooldayEventCard extends WatchingWidget {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return SchooldayEventTypeDialog(
-                                        schooldayEventId:
-                                            schooldayEvent.schooldayEventId,
+                                        schooldayEvent: schooldayEvent,
                                       );
                                     },
                                   );
                                 },
                                 child: SchooldayEventTypeIcon(
-                                    category:
-                                        schooldayEvent.schooldayEventType),
+                                    type: schooldayEvent.eventType),
                               )
                             ],
                           ),
@@ -142,7 +144,7 @@ class PupilSchooldayEventCard extends WatchingWidget {
                           spacing: 5,
                           children: [
                             ...schooldayEventReasonChips(
-                                schooldayEvent.schooldayEventReason),
+                                schooldayEvent.eventReason),
                           ],
                         ),
                         const Gap(10),
@@ -152,7 +154,7 @@ class PupilSchooldayEventCard extends WatchingWidget {
                                 style: TextStyle(fontSize: 16)),
                             const Gap(5),
                             // only admin can change the admonishing user
-                            locator<SessionManager>().isAdmin.value
+                            isAdmin
                                 ? InkWell(
                                     onTap: () async {
                                       final String? createdBy =
@@ -163,12 +165,11 @@ class PupilSchooldayEventCard extends WatchingWidget {
                                               hintText: 'Kürzel eingeben',
                                               obscureText: false);
                                       if (createdBy != null) {
-                                        await locator<SchooldayEventManager>()
-                                            .patchSchooldayEvent(
-                                          schooldayEventId:
-                                              schooldayEvent.schooldayEventId,
+                                        await _schooldayEventManager
+                                            .updateSchooldayEvent(
+                                          eventToUpdate: schooldayEvent,
                                           createdBy: createdBy,
-                                          processed: null,
+                                          processed: false,
                                         );
                                       }
                                     },
@@ -203,11 +204,11 @@ class PupilSchooldayEventCard extends WatchingWidget {
                           onTap: () async {
                             final File? file = await uploadImageFile(context);
                             if (file == null) return;
-                            await locator<SchooldayEventManager>()
-                                .patchSchooldayEventWithFile(file,
-                                    schooldayEvent.schooldayEventId, true);
-                            locator<NotificationService>().showSnackBar(
-                                NotificationType.success, 'Vorfall geändert!');
+                            // await _schooldayEventManager
+                            //     .patchSchooldayEventWithFile(file,
+                            //         schooldayEvent.schooldayEventId, true);
+                            // locator<NotificationService>().showSnackBar(
+                            //     NotificationType.success, 'Vorfall geändert!');
                           },
                           onLongPress: () async {
                             bool? confirm = await confirmationDialog(
@@ -217,35 +218,36 @@ class PupilSchooldayEventCard extends WatchingWidget {
                             if (confirm != true) {
                               return;
                             }
-                            await locator<SchooldayEventManager>()
-                                .deleteSchooldayEventFile(
-                                    schooldayEvent.schooldayEventId,
-                                    schooldayEvent.processedFileId!,
-                                    true);
-                            locator<NotificationService>().showSnackBar(
+                            // await _schooldayEventManager
+                            //     .deleteSchooldayEventFile(
+                            //         schooldayEvent.schooldayEventId,
+                            //         schooldayEvent.processedFileId!,
+                            //         true);
+                            _notificationService.showSnackBar(
                                 NotificationType.success, 'Dokument gelöscht!');
                           },
-                          child: schooldayEvent.processedFileId != null
-                              ? Provider<DocumentImageData>.value(
-                                  updateShouldNotify: (oldValue, newValue) =>
-                                      oldValue.documentUrl !=
-                                      newValue.documentUrl,
-                                  value: DocumentImageData(
-                                      documentTag:
-                                          '${schooldayEvent.processedFileId}',
-                                      documentUrl:
-                                          '${locator<EnvManager>().env!.serverUrl}${SchooldayEventApiService().getSchooldayEventProcessedFileUrl(schooldayEvent.schooldayEventId)}',
-                                      size: 70),
-                                  child: const DocumentImage(),
-                                )
-                              : SizedBox(
-                                  height: 70,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(5),
-                                    child: Image.asset(
-                                        'assets/document_camera.png'),
-                                  ),
-                                ),
+                          child:
+                              // schooldayEvent.processedFileId != null
+                              //     ? Provider<DocumentImageData>.value(
+                              //         updateShouldNotify: (oldValue, newValue) =>
+                              //             oldValue.documentUrl !=
+                              //             newValue.documentUrl,
+                              //         value: DocumentImageData(
+                              //             documentTag:
+                              //                 '${schooldayEvent.processedFileId}',
+                              //             documentUrl:
+                              //                 '${locator<EnvManager>().env!.serverUrl}${SchooldayEventApiService().getSchooldayEventProcessedFileUrl(schooldayEvent.schooldayEventId)}',
+                              //             size: 70),
+                              //         child: const DocumentImage(),
+                              //       )
+                              //     :
+                              SizedBox(
+                            height: 70,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(5),
+                              child: Image.asset('assets/document_camera.png'),
+                            ),
+                          ),
                         )
                       ],
                     ),
@@ -256,19 +258,19 @@ class PupilSchooldayEventCard extends WatchingWidget {
                     children: [
                       InkWell(
                         onTap: () async {
-                          final File? file = await uploadImageFile(context);
-                          if (file == null) return;
-                          await locator<SchooldayEventManager>()
-                              .patchSchooldayEventWithFile(
-                                  file, schooldayEvent.schooldayEventId, false);
-                          locator<NotificationService>().showSnackBar(
-                            NotificationType.success,
-                            'Ereignis gespeichert!',
-                          );
+                          // final File? file = await uploadImageFile(context);
+                          // if (file == null) return;
+                          // await _schooldayEventManager
+                          //     .patchSchooldayEventWithFile(
+                          //         file, schooldayEvent.schooldayEventId, false);
+                          // _notificationService.showSnackBar(
+                          //   NotificationType.success,
+                          //   'Ereignis gespeichert!',
+                          // );
                         },
                         onLongPress: () async {
                           if (schooldayEvent.fileId == null) {
-                            locator<NotificationService>().showSnackBar(
+                            _notificationService.showSnackBar(
                                 NotificationType.warning,
                                 'Kein Dokument vorhanden!');
                             return;
@@ -280,34 +282,35 @@ class PupilSchooldayEventCard extends WatchingWidget {
                           if (confirm == null || confirm == false) {
                             return;
                           }
-                          await locator<SchooldayEventManager>()
-                              .deleteSchooldayEventFile(
-                                  schooldayEvent.schooldayEventId,
-                                  schooldayEvent.fileId!,
-                                  false);
-                          locator<NotificationService>().showSnackBar(
+                          // await _schooldayEventManager.deleteSchooldayEventFile(
+                          //     schooldayEvent.schooldayEventId,
+                          //     schooldayEvent.fileId!,
+                          //     false);
+                          _notificationService.showSnackBar(
                               NotificationType.success, 'Dokument gelöscht!');
                         },
-                        child: schooldayEvent.fileId != null
-                            ? Provider<DocumentImageData>.value(
-                                updateShouldNotify: (oldValue, newValue) =>
-                                    oldValue.documentUrl !=
-                                    newValue.documentUrl,
-                                value: DocumentImageData(
-                                    documentTag: '${schooldayEvent.fileId}',
-                                    documentUrl:
-                                        '${locator<EnvManager>().env!.serverUrl}${SchooldayEventApiService().getSchooldayEventFileUrl(schooldayEvent.schooldayEventId)}',
-                                    size: 70),
-                                child: const DocumentImage(),
-                              )
-                            : SizedBox(
-                                height: 70,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(5),
-                                  child:
-                                      Image.asset('assets/document_camera.png'),
-                                ),
-                              ),
+                        child:
+
+                            // schooldayEvent.fileId != null
+                            //     ? Provider<DocumentImageData>.value(
+                            //         updateShouldNotify: (oldValue, newValue) =>
+                            //             oldValue.documentUrl !=
+                            //             newValue.documentUrl,
+                            //         value: DocumentImageData(
+                            //             documentTag: '${schooldayEvent.fileId}',
+                            //             documentUrl:
+                            //                 '${locator<EnvManager>().env!.serverUrl}${SchooldayEventApiService().getSchooldayEventFileUrl(schooldayEvent.schooldayEventId)}',
+                            //             size: 70),
+                            //         child: const DocumentImage(),
+                            //       )
+                            //     :
+                            SizedBox(
+                          height: 70,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(5),
+                            child: Image.asset('assets/document_camera.png'),
+                          ),
+                        ),
                       )
                     ],
                   )
@@ -329,12 +332,10 @@ class PupilSchooldayEventCard extends WatchingWidget {
                                   message:
                                       'Ereignis als bearbeitet markieren?');
                               if (confirm! == false) return;
-                              await locator<SchooldayEventManager>()
-                                  .patchSchooldayEvent(
-                                      schooldayEventId:
-                                          schooldayEvent.schooldayEventId,
-                                      processed: true);
-                              locator<NotificationService>().showSnackBar(
+                              await _schooldayEventManager.updateSchooldayEvent(
+                                  eventToUpdate: schooldayEvent,
+                                  processed: true);
+                              _notificationService.showSnackBar(
                                   NotificationType.success,
                                   'Ereignis als bearbeitet markiert!');
                             },
@@ -345,12 +346,10 @@ class PupilSchooldayEventCard extends WatchingWidget {
                                   message:
                                       'Ereignis als unbearbeitet markieren?');
                               if (confirm! == false) return;
-                              await locator<SchooldayEventManager>()
-                                  .patchSchooldayEvent(
-                                schooldayEventId:
-                                    schooldayEvent.schooldayEventId,
+                              await _schooldayEventManager.updateSchooldayEvent(
+                                eventToUpdate: schooldayEvent,
                                 processed: false,
-                                processedBy: 'none',
+                                processedBy: (value: null),
                               );
                             },
                             child: Text(
@@ -363,7 +362,7 @@ class PupilSchooldayEventCard extends WatchingWidget {
                           ),
                           const Gap(10),
                           if (schooldayEvent.processedBy != null)
-                            locator<SessionManager>().isAdmin.value
+                            isAdmin
                                 ? InkWell(
                                     onTap: () async {
                                       final String? processingUser =
@@ -374,11 +373,10 @@ class PupilSchooldayEventCard extends WatchingWidget {
                                               hintText: 'Kürzel eingeben',
                                               obscureText: false);
                                       if (processingUser != null) {
-                                        await locator<SchooldayEventManager>()
-                                            .patchSchooldayEvent(
-                                          schooldayEventId:
-                                              schooldayEvent.schooldayEventId,
-                                          processedBy: processingUser,
+                                        await _schooldayEventManager
+                                            .updateSchooldayEvent(
+                                          eventToUpdate: schooldayEvent,
+                                          processedBy: (value: processingUser),
                                         );
                                       }
                                     },
@@ -398,7 +396,7 @@ class PupilSchooldayEventCard extends WatchingWidget {
                                   ),
                           if (schooldayEvent.processedAt != null) const Gap(10),
                           if (schooldayEvent.processedAt != null)
-                            locator<SessionManager>().isAdmin.value
+                            _serverpodSessionManager.isAdmin
                                 ? InkWell(
                                     onTap: () async {
                                       final DateTime? newDate =
@@ -406,11 +404,10 @@ class PupilSchooldayEventCard extends WatchingWidget {
                                               context, DateTime.now());
 
                                       if (newDate != null) {
-                                        await locator<SchooldayEventManager>()
-                                            .patchSchooldayEvent(
-                                                schooldayEventId: schooldayEvent
-                                                    .schooldayEventId,
-                                                processedAt: newDate);
+                                        await _schooldayEventManager
+                                            .updateSchooldayEvent(
+                                                eventToUpdate: schooldayEvent,
+                                                processedAt: (value: newDate));
                                       }
                                     },
                                     child: Text(

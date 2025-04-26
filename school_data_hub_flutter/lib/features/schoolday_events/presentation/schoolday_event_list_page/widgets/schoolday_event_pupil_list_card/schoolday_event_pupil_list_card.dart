@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:schuldaten_hub/common/services/locator.dart';
-import 'package:schuldaten_hub/common/theme/app_colors.dart';
-import 'package:schuldaten_hub/common/utils/extensions.dart';
-import 'package:schuldaten_hub/common/widgets/avatar.dart';
-import 'package:schuldaten_hub/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
-import 'package:schuldaten_hub/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
-import 'package:schuldaten_hub/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
-import 'package:schuldaten_hub/features/main_menu/widgets/landing_bottom_nav_bar.dart';
-import 'package:schuldaten_hub/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:schuldaten_hub/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
-import 'package:schuldaten_hub/features/schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
-import 'package:schuldaten_hub/features/schoolday_events/domain/models/schoolday_event.dart';
-import 'package:schuldaten_hub/features/schoolday_events/domain/schoolday_event_helper_functions.dart';
-import 'package:schuldaten_hub/features/schoolday_events/presentation/schoolday_event_list_page/widgets/pupil_schoolday_event_content_list.dart';
-import 'package:schuldaten_hub/features/schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_pupil_list_card/schoolday_event_pupil_stats.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
+import 'package:school_data_hub_flutter/features/app/domain/main_menu_bottom_nav_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_manager.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/presentation/schoolday_event_list_page/widgets/pupil_schoolday_event_content_list.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_pupil_list_card/widgets/schoolday_event_pupil_stats.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _schooldayEventFilterManager = di<SchooldayEventFilterManager>();
+
+final _schooldayEventManager = di<SchooldayEventManager>();
+
+final _mainMenuBottomNavManager = di<MainMenuBottomNavManager>();
 
 class SchooldayEventPupilListCard extends WatchingStatefulWidget {
   final PupilProxy passedPupil;
@@ -37,10 +42,12 @@ class _SchooldayEventListCardState extends State<SchooldayEventPupilListCard> {
 
   @override
   Widget build(BuildContext context) {
-    PupilProxy pupil = watch(widget.passedPupil);
-
+    final PupilProxy pupil = widget.passedPupil;
+    final unfilteredEvents = watch(
+            _schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId))
+        .schooldayEvents;
     schooldayEvents =
-        locator<SchooldayEventFilterManager>().filteredSchooldayEvents(pupil);
+        _schooldayEventFilterManager.filteredSchooldayEvents(unfilteredEvents);
 
     return Card(
         color: Colors.white,
@@ -64,13 +71,13 @@ class _SchooldayEventListCardState extends State<SchooldayEventPupilListCard> {
                               scrollDirection: Axis.horizontal,
                               child: InkWell(
                                 onTap: () {
-                                  locator<MainMenuBottomNavManager>()
+                                  _mainMenuBottomNavManager
                                       .setPupilProfileNavPage(4);
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (ctx) => PupilProfilePage(
-                                      pupil: pupil,
-                                    ),
-                                  ));
+                                  // Navigator.of(context).push(MaterialPageRoute(
+                                  //   builder: (ctx) => PupilProfilePage(
+                                  //     pupil: pupil,
+                                  //   ),
+                                  // ));
                                 },
                                 child: Text(
                                   pupil.firstName,
@@ -91,11 +98,11 @@ class _SchooldayEventListCardState extends State<SchooldayEventPupilListCard> {
                               scrollDirection: Axis.horizontal,
                               child: InkWell(
                                 onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (ctx) => PupilProfilePage(
-                                      pupil: pupil,
-                                    ),
-                                  ));
+                                  // Navigator.of(context).push(MaterialPageRoute(
+                                  //   builder: (ctx) => PupilProfilePage(
+                                  //     pupil: pupil,
+                                  //   ),
+                                  // ));
                                 },
                                 child: Row(
                                   children: [

@@ -8,12 +8,14 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 
+// ignore_for_file: unnecessary_null_comparison
+
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../../book/library_book.dart' as _i2;
 
 abstract class LibraryBookLocation
-    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   LibraryBookLocation._({
     this.id,
     required this.location,
@@ -48,7 +50,7 @@ abstract class LibraryBookLocation
   List<_i2.LibraryBook>? libraryBooks;
 
   @override
-  _i1.Table<int> get table => t;
+  _i1.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [LibraryBookLocation]
   /// with some or all fields replaced by the given arguments.
@@ -142,7 +144,7 @@ class _LibraryBookLocationImpl extends LibraryBookLocation {
   }
 }
 
-class LibraryBookLocationTable extends _i1.Table<int> {
+class LibraryBookLocationTable extends _i1.Table<int?> {
   LibraryBookLocationTable({super.tableRelation})
       : super(tableName: 'library_book_location') {
     location = _i1.ColumnString(
@@ -214,7 +216,7 @@ class LibraryBookLocationInclude extends _i1.IncludeObject {
   Map<String, _i1.Include?> get includes => {'libraryBooks': _libraryBooks};
 
   @override
-  _i1.Table<int> get table => LibraryBookLocation.t;
+  _i1.Table<int?> get table => LibraryBookLocation.t;
 }
 
 class LibraryBookLocationIncludeList extends _i1.IncludeList {
@@ -234,7 +236,7 @@ class LibraryBookLocationIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int> get table => LibraryBookLocation.t;
+  _i1.Table<int?> get table => LibraryBookLocation.t;
 }
 
 class LibraryBookLocationRepository {

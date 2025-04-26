@@ -8,6 +8,8 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 
+// ignore_for_file: unnecessary_null_comparison
+
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../schoolday/missed_class/missed_class.dart' as _i2;
@@ -15,7 +17,7 @@ import '../schoolday/schoolday_event/schoolday_event.dart' as _i3;
 import '../schoolday/school_semester.dart' as _i4;
 
 abstract class Schoolday
-    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   Schoolday._({
     this.id,
     required this.schoolday,
@@ -71,7 +73,7 @@ abstract class Schoolday
   _i4.SchoolSemester? schoolSemester;
 
   @override
-  _i1.Table<int> get table => t;
+  _i1.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [Schoolday]
   /// with some or all fields replaced by the given arguments.
@@ -202,7 +204,7 @@ class _SchooldayImpl extends Schoolday {
   }
 }
 
-class SchooldayTable extends _i1.Table<int> {
+class SchooldayTable extends _i1.Table<int?> {
   SchooldayTable({super.tableRelation}) : super(tableName: 'schoolday') {
     schoolday = _i1.ColumnDateTime(
       'schoolday',
@@ -350,7 +352,7 @@ class SchooldayInclude extends _i1.IncludeObject {
       };
 
   @override
-  _i1.Table<int> get table => Schoolday.t;
+  _i1.Table<int?> get table => Schoolday.t;
 }
 
 class SchooldayIncludeList extends _i1.IncludeList {
@@ -370,7 +372,7 @@ class SchooldayIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int> get table => Schoolday.t;
+  _i1.Table<int?> get table => Schoolday.t;
 }
 
 class SchooldayRepository {

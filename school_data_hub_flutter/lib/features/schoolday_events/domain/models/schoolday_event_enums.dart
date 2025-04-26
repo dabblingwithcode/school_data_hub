@@ -10,23 +10,23 @@
 //   const SchooldayEventType(this.value);
 // }
 
-// enum SchooldayEventReason {
-//   violenceAgainstPupils('gm'),
-//   violenceAgainstTeachers('gl'),
-//   violenceAgainstThings('gs'),
-//   insultOthers('ab'),
-//   dangerousBehaviour('gv'),
-//   annoyOthers('äa'),
-//   ignoreInstructions('il'),
-//   disturbLesson('us'),
-//   other('ss'),
-//   learningDevelopmentInfo('le'),
-//   learningSupportInfo('fi'),
-//   admonitionInfo('ki');
+enum SchooldayEventReason {
+  violenceAgainstPupils('gm'),
+  violenceAgainstTeachers('gl'),
+  violenceAgainstThings('gs'),
+  insultOthers('ab'),
+  dangerousBehaviour('gv'),
+  annoyOthers('äa'),
+  ignoreInstructions('il'),
+  disturbLesson('us'),
+  other('ss'),
+  learningDevelopmentInfo('le'),
+  learningSupportInfo('fi'),
+  admonitionInfo('ki');
 
-//   final String value;
-//   const SchooldayEventReason(this.value);
-// }
+  final String value;
+  const SchooldayEventReason(this.value);
+}
 
 enum SchooldayEventFilter {
   sevenDays,

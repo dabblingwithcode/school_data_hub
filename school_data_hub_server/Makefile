@@ -8,8 +8,8 @@ docker: ## run docker container
 	
 
 reset: ## reset the server
-	# rmdir migrations /s /q
-	# mkdir migrations
+	cmd /c rmdir /Q /S migrations
+	mkdir migrations
 	# rm -r database_backups
 	# mkdir database_backups
 	serverpod generate

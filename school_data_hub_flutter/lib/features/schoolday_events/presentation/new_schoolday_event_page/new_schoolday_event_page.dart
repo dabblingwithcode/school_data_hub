@@ -9,6 +9,7 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_picker.dart';
 import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/models/schoolday_event_enums.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/presentation/new_schoolday_event_page/widgets/schoolday_event_filter_chip.dart';
 import 'package:watch_it/watch_it.dart';
@@ -68,39 +69,50 @@ class NewSchooldayEventPageState extends State<NewSchooldayEventPage> {
       schooldayEventReason
           .add(SchooldayEventReason.violenceAgainstPupils.value);
     }
+
     if (violenceAgainstTeacher == true) {
       schooldayEventReason
           .add(SchooldayEventReason.violenceAgainstTeachers.value);
     }
+
     if (violenceAgainstThings == true) {
       schooldayEventReason
           .add(SchooldayEventReason.violenceAgainstThings.value);
     }
+
     if (imminentDanger == true) {
       schooldayEventReason.add(SchooldayEventReason.dangerousBehaviour.value);
     }
+
     if (insultOthers == true) {
       schooldayEventReason.add(SchooldayEventReason.insultOthers.value);
     }
+
     if (annoyOthers == true) {
       schooldayEventReason.add(SchooldayEventReason.annoyOthers.value);
     }
+
     if (ignoreTeacherInstructions == true) {
       schooldayEventReason.add(SchooldayEventReason.ignoreInstructions.value);
     }
+
     if (disturbLesson == true) {
       schooldayEventReason.add(SchooldayEventReason.disturbLesson.value);
     }
+
     if (learningDevelopmentInfo == true) {
       schooldayEventReason
           .add(SchooldayEventReason.learningDevelopmentInfo.value);
     }
+
     if (learningSupportInfo == true) {
       schooldayEventReason.add(SchooldayEventReason.learningSupportInfo.value);
     }
+
     if (admonitionInfo == true) {
       schooldayEventReason.add(SchooldayEventReason.admonitionInfo.value);
     }
+
     if (other == true) {
       schooldayEventReason.add(SchooldayEventReason.other.value);
     }
@@ -108,8 +120,13 @@ class NewSchooldayEventPageState extends State<NewSchooldayEventPage> {
     for (final reason in schooldayEventReason) {
       schooldayEventReasons = '$schooldayEventReasons$reason*';
     }
-    await _schooldayEventManager.postSchooldayEvent(widget.pupilId, thisDate,
-        schooldayEventTypeDropdown, schooldayEventReasons);
+
+    final Schoolday? schoolday = _schooldayManager.getSchooldayByDate(thisDate);
+
+    // TODO: This is very optimistic. We should check if the schoolday is null and handle it properly.
+
+    await _schooldayEventManager.postSchooldayEvent(widget.pupilId,
+        schoolday!.id!, schooldayEventTypeDropdown, schooldayEventReasons);
   }
 
   @override

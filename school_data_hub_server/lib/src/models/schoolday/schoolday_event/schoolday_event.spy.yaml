@@ -4,7 +4,7 @@ table: schoolday_event
 fields:
   eventId: String
   eventType: SchooldayEventType
-  eventReason: List<SchooldayEventReason>
+  eventReason: String
   createdBy: String
   processed: bool
   processedBy: String?

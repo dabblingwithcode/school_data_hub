@@ -6,14 +6,17 @@ class SchooldayEventEndpoint extends Endpoint {
   bool get requireLogin => true;
 
   Future<List<SchooldayEvent>> fetchSchooldayEvents(Session session) async {
-    return SchooldayEvent.db.find(session);
+    return SchooldayEvent.db.find(session,
+        include: SchooldayEvent.include(
+          schoolday: Schoolday.include(),
+        ));
   }
 
   Future<SchooldayEvent> createSchooldayEvent(Session session,
       {required int pupilId,
       required int schooldayId,
       required SchooldayEventType type,
-      required SchooldayEventReason reason,
+      required String reason,
       required String createdBy}) async {
     final eventId = Uuid().v4();
 
@@ -26,8 +29,16 @@ class SchooldayEventEndpoint extends Endpoint {
       createdBy: createdBy,
       processed: false,
     );
+
     final eventInDatabase = await session.db.insertRow(schooldayEvent);
-    return eventInDatabase;
+    final eventWithSchoolday = await SchooldayEvent.db.findById(
+      session,
+      eventInDatabase.id!,
+      include: SchooldayEvent.include(
+        schoolday: Schoolday.include(),
+      ),
+    );
+    return eventWithSchoolday!;
   }
 
   Future<SchooldayEvent> updateSchooldayEvent(

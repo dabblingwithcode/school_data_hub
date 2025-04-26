@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/domain/models/nullable_records.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
-import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/data/schoolday_event_api_service.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/domain/models/pupil_schoolday_events_proxy.dart';
 import 'package:watch_it/watch_it.dart';
@@ -13,10 +13,6 @@ final _log = Logger('SchooldayEventManager');
 final _notificationService = di<NotificationService>();
 
 final _pupilManager = di<PupilManager>();
-
-final _schooldayManager = di<SchooldayManager>();
-
-final _client = di<Client>();
 
 final _schooldayEventApiService = SchooldayEventApiService();
 
@@ -97,7 +93,7 @@ class SchooldayEventManager {
     int pupilId,
     int schooldayId,
     SchooldayEventType type,
-    SchooldayEventReason reason,
+    String reason,
   ) async {
     final SchooldayEvent schooldayEvent = await _schooldayEventApiService
         .postSchooldayEvent(pupilId, schooldayId, type, reason);
@@ -109,16 +105,31 @@ class SchooldayEventManager {
     return;
   }
 
-  //- patch admonition
+  //- get schoolday events
+
+  Future<void> fetchSchooldayEvents() async {
+    try {
+      final List<SchooldayEvent> events =
+          await _schooldayEventApiService.fetchSchooldayEvents();
+
+      _schooldayEvents.value = events;
+      updateSchooldayEventsInCollections(events);
+    } catch (e) {
+      _notificationService.showSnackBar(
+          NotificationType.error, 'Fehler beim Laden der Einträge: $e');
+    }
+  }
+
+  //- update schoolday event
 
   Future<void> updateSchooldayEvent({
     required SchooldayEvent eventToUpdate,
     String? createdBy,
-    SchooldayEventReason? reason,
+    String? reason,
     SchooldayEventType? schoolEventType,
     bool? processed,
-    String? processedBy,
-    DateTime? processedAt,
+    NullableStringRecord? processedBy,
+    NullableDateTimeRecord? processedAt,
     int? schooldayId,
   }) async {
     final SchooldayEvent schooldayEvent =

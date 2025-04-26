@@ -8,16 +8,17 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 
+// ignore_for_file: unnecessary_null_comparison
+
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../../schoolday/schoolday_event/schoolday_event_type.dart' as _i2;
-import '../../schoolday/schoolday_event/schoolday_event_reason.dart' as _i3;
-import '../../shared/document.dart' as _i4;
-import '../../schoolday/schoolday.dart' as _i5;
-import '../../pupil_data/pupil_data.dart' as _i6;
+import '../../shared/document.dart' as _i3;
+import '../../schoolday/schoolday.dart' as _i4;
+import '../../pupil_data/pupil_data.dart' as _i5;
 
 abstract class SchooldayEvent
-    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   SchooldayEvent._({
     this.id,
     required this.eventId,
@@ -41,19 +42,19 @@ abstract class SchooldayEvent
     int? id,
     required String eventId,
     required _i2.SchooldayEventType eventType,
-    required _i3.SchooldayEventReason eventReason,
+    required String eventReason,
     required String createdBy,
     required bool processed,
     String? processedBy,
     DateTime? processedAt,
     int? fileId,
-    _i4.HubDocument? file,
+    _i3.HubDocument? file,
     int? processedFileId,
-    _i4.HubDocument? processedFile,
+    _i3.HubDocument? processedFile,
     required int schooldayId,
-    _i5.Schoolday? schoolday,
+    _i4.Schoolday? schoolday,
     required int pupilId,
-    _i6.PupilData? pupil,
+    _i5.PupilData? pupil,
   }) = _SchooldayEventImpl;
 
   factory SchooldayEvent.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -62,8 +63,7 @@ abstract class SchooldayEvent
       eventId: jsonSerialization['eventId'] as String,
       eventType: _i2.SchooldayEventType.fromJson(
           (jsonSerialization['eventType'] as String)),
-      eventReason: _i3.SchooldayEventReason.fromJson(
-          (jsonSerialization['eventReason'] as String)),
+      eventReason: jsonSerialization['eventReason'] as String,
       createdBy: jsonSerialization['createdBy'] as String,
       processed: jsonSerialization['processed'] as bool,
       processedBy: jsonSerialization['processedBy'] as String?,
@@ -74,22 +74,22 @@ abstract class SchooldayEvent
       fileId: jsonSerialization['fileId'] as int?,
       file: jsonSerialization['file'] == null
           ? null
-          : _i4.HubDocument.fromJson(
+          : _i3.HubDocument.fromJson(
               (jsonSerialization['file'] as Map<String, dynamic>)),
       processedFileId: jsonSerialization['processedFileId'] as int?,
       processedFile: jsonSerialization['processedFile'] == null
           ? null
-          : _i4.HubDocument.fromJson(
+          : _i3.HubDocument.fromJson(
               (jsonSerialization['processedFile'] as Map<String, dynamic>)),
       schooldayId: jsonSerialization['schooldayId'] as int,
       schoolday: jsonSerialization['schoolday'] == null
           ? null
-          : _i5.Schoolday.fromJson(
+          : _i4.Schoolday.fromJson(
               (jsonSerialization['schoolday'] as Map<String, dynamic>)),
       pupilId: jsonSerialization['pupilId'] as int,
       pupil: jsonSerialization['pupil'] == null
           ? null
-          : _i6.PupilData.fromJson(
+          : _i5.PupilData.fromJson(
               (jsonSerialization['pupil'] as Map<String, dynamic>)),
     );
   }
@@ -105,7 +105,7 @@ abstract class SchooldayEvent
 
   _i2.SchooldayEventType eventType;
 
-  _i3.SchooldayEventReason eventReason;
+  String eventReason;
 
   String createdBy;
 
@@ -117,22 +117,22 @@ abstract class SchooldayEvent
 
   int? fileId;
 
-  _i4.HubDocument? file;
+  _i3.HubDocument? file;
 
   int? processedFileId;
 
-  _i4.HubDocument? processedFile;
+  _i3.HubDocument? processedFile;
 
   int schooldayId;
 
-  _i5.Schoolday? schoolday;
+  _i4.Schoolday? schoolday;
 
   int pupilId;
 
-  _i6.PupilData? pupil;
+  _i5.PupilData? pupil;
 
   @override
-  _i1.Table<int> get table => t;
+  _i1.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [SchooldayEvent]
   /// with some or all fields replaced by the given arguments.
@@ -141,19 +141,19 @@ abstract class SchooldayEvent
     int? id,
     String? eventId,
     _i2.SchooldayEventType? eventType,
-    _i3.SchooldayEventReason? eventReason,
+    String? eventReason,
     String? createdBy,
     bool? processed,
     String? processedBy,
     DateTime? processedAt,
     int? fileId,
-    _i4.HubDocument? file,
+    _i3.HubDocument? file,
     int? processedFileId,
-    _i4.HubDocument? processedFile,
+    _i3.HubDocument? processedFile,
     int? schooldayId,
-    _i5.Schoolday? schoolday,
+    _i4.Schoolday? schoolday,
     int? pupilId,
-    _i6.PupilData? pupil,
+    _i5.PupilData? pupil,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -161,7 +161,7 @@ abstract class SchooldayEvent
       if (id != null) 'id': id,
       'eventId': eventId,
       'eventType': eventType.toJson(),
-      'eventReason': eventReason.toJson(),
+      'eventReason': eventReason,
       'createdBy': createdBy,
       'processed': processed,
       if (processedBy != null) 'processedBy': processedBy,
@@ -183,7 +183,7 @@ abstract class SchooldayEvent
       if (id != null) 'id': id,
       'eventId': eventId,
       'eventType': eventType.toJson(),
-      'eventReason': eventReason.toJson(),
+      'eventReason': eventReason,
       'createdBy': createdBy,
       'processed': processed,
       if (processedBy != null) 'processedBy': processedBy,
@@ -201,10 +201,10 @@ abstract class SchooldayEvent
   }
 
   static SchooldayEventInclude include({
-    _i4.HubDocumentInclude? file,
-    _i4.HubDocumentInclude? processedFile,
-    _i5.SchooldayInclude? schoolday,
-    _i6.PupilDataInclude? pupil,
+    _i3.HubDocumentInclude? file,
+    _i3.HubDocumentInclude? processedFile,
+    _i4.SchooldayInclude? schoolday,
+    _i5.PupilDataInclude? pupil,
   }) {
     return SchooldayEventInclude._(
       file: file,
@@ -247,19 +247,19 @@ class _SchooldayEventImpl extends SchooldayEvent {
     int? id,
     required String eventId,
     required _i2.SchooldayEventType eventType,
-    required _i3.SchooldayEventReason eventReason,
+    required String eventReason,
     required String createdBy,
     required bool processed,
     String? processedBy,
     DateTime? processedAt,
     int? fileId,
-    _i4.HubDocument? file,
+    _i3.HubDocument? file,
     int? processedFileId,
-    _i4.HubDocument? processedFile,
+    _i3.HubDocument? processedFile,
     required int schooldayId,
-    _i5.Schoolday? schoolday,
+    _i4.Schoolday? schoolday,
     required int pupilId,
-    _i6.PupilData? pupil,
+    _i5.PupilData? pupil,
   }) : super._(
           id: id,
           eventId: eventId,
@@ -287,7 +287,7 @@ class _SchooldayEventImpl extends SchooldayEvent {
     Object? id = _Undefined,
     String? eventId,
     _i2.SchooldayEventType? eventType,
-    _i3.SchooldayEventReason? eventReason,
+    String? eventReason,
     String? createdBy,
     bool? processed,
     Object? processedBy = _Undefined,
@@ -311,22 +311,22 @@ class _SchooldayEventImpl extends SchooldayEvent {
       processedBy: processedBy is String? ? processedBy : this.processedBy,
       processedAt: processedAt is DateTime? ? processedAt : this.processedAt,
       fileId: fileId is int? ? fileId : this.fileId,
-      file: file is _i4.HubDocument? ? file : this.file?.copyWith(),
+      file: file is _i3.HubDocument? ? file : this.file?.copyWith(),
       processedFileId:
           processedFileId is int? ? processedFileId : this.processedFileId,
-      processedFile: processedFile is _i4.HubDocument?
+      processedFile: processedFile is _i3.HubDocument?
           ? processedFile
           : this.processedFile?.copyWith(),
       schooldayId: schooldayId ?? this.schooldayId,
       schoolday:
-          schoolday is _i5.Schoolday? ? schoolday : this.schoolday?.copyWith(),
+          schoolday is _i4.Schoolday? ? schoolday : this.schoolday?.copyWith(),
       pupilId: pupilId ?? this.pupilId,
-      pupil: pupil is _i6.PupilData? ? pupil : this.pupil?.copyWith(),
+      pupil: pupil is _i5.PupilData? ? pupil : this.pupil?.copyWith(),
     );
   }
 }
 
-class SchooldayEventTable extends _i1.Table<int> {
+class SchooldayEventTable extends _i1.Table<int?> {
   SchooldayEventTable({super.tableRelation})
       : super(tableName: 'schoolday_event') {
     eventId = _i1.ColumnString(
@@ -338,10 +338,9 @@ class SchooldayEventTable extends _i1.Table<int> {
       this,
       _i1.EnumSerialization.byName,
     );
-    eventReason = _i1.ColumnEnum(
+    eventReason = _i1.ColumnString(
       'eventReason',
       this,
-      _i1.EnumSerialization.byName,
     );
     createdBy = _i1.ColumnString(
       'createdBy',
@@ -381,7 +380,7 @@ class SchooldayEventTable extends _i1.Table<int> {
 
   late final _i1.ColumnEnum<_i2.SchooldayEventType> eventType;
 
-  late final _i1.ColumnEnum<_i3.SchooldayEventReason> eventReason;
+  late final _i1.ColumnString eventReason;
 
   late final _i1.ColumnString createdBy;
 
@@ -393,68 +392,68 @@ class SchooldayEventTable extends _i1.Table<int> {
 
   late final _i1.ColumnInt fileId;
 
-  _i4.HubDocumentTable? _file;
+  _i3.HubDocumentTable? _file;
 
   late final _i1.ColumnInt processedFileId;
 
-  _i4.HubDocumentTable? _processedFile;
+  _i3.HubDocumentTable? _processedFile;
 
   late final _i1.ColumnInt schooldayId;
 
-  _i5.SchooldayTable? _schoolday;
+  _i4.SchooldayTable? _schoolday;
 
   late final _i1.ColumnInt pupilId;
 
-  _i6.PupilDataTable? _pupil;
+  _i5.PupilDataTable? _pupil;
 
-  _i4.HubDocumentTable get file {
+  _i3.HubDocumentTable get file {
     if (_file != null) return _file!;
     _file = _i1.createRelationTable(
       relationFieldName: 'file',
       field: SchooldayEvent.t.fileId,
-      foreignField: _i4.HubDocument.t.id,
+      foreignField: _i3.HubDocument.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i4.HubDocumentTable(tableRelation: foreignTableRelation),
+          _i3.HubDocumentTable(tableRelation: foreignTableRelation),
     );
     return _file!;
   }
 
-  _i4.HubDocumentTable get processedFile {
+  _i3.HubDocumentTable get processedFile {
     if (_processedFile != null) return _processedFile!;
     _processedFile = _i1.createRelationTable(
       relationFieldName: 'processedFile',
       field: SchooldayEvent.t.processedFileId,
-      foreignField: _i4.HubDocument.t.id,
+      foreignField: _i3.HubDocument.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i4.HubDocumentTable(tableRelation: foreignTableRelation),
+          _i3.HubDocumentTable(tableRelation: foreignTableRelation),
     );
     return _processedFile!;
   }
 
-  _i5.SchooldayTable get schoolday {
+  _i4.SchooldayTable get schoolday {
     if (_schoolday != null) return _schoolday!;
     _schoolday = _i1.createRelationTable(
       relationFieldName: 'schoolday',
       field: SchooldayEvent.t.schooldayId,
-      foreignField: _i5.Schoolday.t.id,
+      foreignField: _i4.Schoolday.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i5.SchooldayTable(tableRelation: foreignTableRelation),
+          _i4.SchooldayTable(tableRelation: foreignTableRelation),
     );
     return _schoolday!;
   }
 
-  _i6.PupilDataTable get pupil {
+  _i5.PupilDataTable get pupil {
     if (_pupil != null) return _pupil!;
     _pupil = _i1.createRelationTable(
       relationFieldName: 'pupil',
       field: SchooldayEvent.t.pupilId,
-      foreignField: _i6.PupilData.t.id,
+      foreignField: _i5.PupilData.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i6.PupilDataTable(tableRelation: foreignTableRelation),
+          _i5.PupilDataTable(tableRelation: foreignTableRelation),
     );
     return _pupil!;
   }
@@ -495,10 +494,10 @@ class SchooldayEventTable extends _i1.Table<int> {
 
 class SchooldayEventInclude extends _i1.IncludeObject {
   SchooldayEventInclude._({
-    _i4.HubDocumentInclude? file,
-    _i4.HubDocumentInclude? processedFile,
-    _i5.SchooldayInclude? schoolday,
-    _i6.PupilDataInclude? pupil,
+    _i3.HubDocumentInclude? file,
+    _i3.HubDocumentInclude? processedFile,
+    _i4.SchooldayInclude? schoolday,
+    _i5.PupilDataInclude? pupil,
   }) {
     _file = file;
     _processedFile = processedFile;
@@ -506,13 +505,13 @@ class SchooldayEventInclude extends _i1.IncludeObject {
     _pupil = pupil;
   }
 
-  _i4.HubDocumentInclude? _file;
+  _i3.HubDocumentInclude? _file;
 
-  _i4.HubDocumentInclude? _processedFile;
+  _i3.HubDocumentInclude? _processedFile;
 
-  _i5.SchooldayInclude? _schoolday;
+  _i4.SchooldayInclude? _schoolday;
 
-  _i6.PupilDataInclude? _pupil;
+  _i5.PupilDataInclude? _pupil;
 
   @override
   Map<String, _i1.Include?> get includes => {
@@ -523,7 +522,7 @@ class SchooldayEventInclude extends _i1.IncludeObject {
       };
 
   @override
-  _i1.Table<int> get table => SchooldayEvent.t;
+  _i1.Table<int?> get table => SchooldayEvent.t;
 }
 
 class SchooldayEventIncludeList extends _i1.IncludeList {
@@ -543,7 +542,7 @@ class SchooldayEventIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int> get table => SchooldayEvent.t;
+  _i1.Table<int?> get table => SchooldayEvent.t;
 }
 
 class SchooldayEventRepository {
@@ -777,7 +776,7 @@ class SchooldayEventAttachRowRepository {
   Future<void> file(
     _i1.Session session,
     SchooldayEvent schooldayEvent,
-    _i4.HubDocument file, {
+    _i3.HubDocument file, {
     _i1.Transaction? transaction,
   }) async {
     if (schooldayEvent.id == null) {
@@ -800,7 +799,7 @@ class SchooldayEventAttachRowRepository {
   Future<void> processedFile(
     _i1.Session session,
     SchooldayEvent schooldayEvent,
-    _i4.HubDocument processedFile, {
+    _i3.HubDocument processedFile, {
     _i1.Transaction? transaction,
   }) async {
     if (schooldayEvent.id == null) {
@@ -824,7 +823,7 @@ class SchooldayEventAttachRowRepository {
   Future<void> schoolday(
     _i1.Session session,
     SchooldayEvent schooldayEvent,
-    _i5.Schoolday schoolday, {
+    _i4.Schoolday schoolday, {
     _i1.Transaction? transaction,
   }) async {
     if (schooldayEvent.id == null) {
@@ -847,7 +846,7 @@ class SchooldayEventAttachRowRepository {
   Future<void> pupil(
     _i1.Session session,
     SchooldayEvent schooldayEvent,
-    _i6.PupilData pupil, {
+    _i5.PupilData pupil, {
     _i1.Transaction? transaction,
   }) async {
     if (schooldayEvent.id == null) {

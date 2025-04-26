@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:schuldaten_hub/common/domain/models/enums.dart';
-import 'package:schuldaten_hub/common/services/locator.dart';
-import 'package:schuldaten_hub/common/services/notification_service.dart';
-import 'package:schuldaten_hub/common/theme/styles.dart';
-import 'package:schuldaten_hub/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:schuldaten_hub/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:schuldaten_hub/features/schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
-import 'package:schuldaten_hub/features/schoolday_events/domain/models/schoolday_event.dart';
-import 'package:schuldaten_hub/features/schoolday_events/domain/schoolday_event_manager.dart';
-import 'package:schuldaten_hub/features/schoolday_events/presentation/new_schoolday_event_page/new_schoolday_event_page.dart';
-import 'package:schuldaten_hub/features/schoolday_events/presentation/schoolday_event_list_page/widgets/pupil_schoolday_event_card.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_manager.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/presentation/new_schoolday_event_page/new_schoolday_event_page.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/presentation/schoolday_event_list_page/widgets/pupil_schoolday_event_card.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _schooldayEventFilterManager = di<SchooldayEventFilterManager>();
+
+final _schooldayEventManager = di<SchooldayEventManager>();
+
+final _notificationService = di<NotificationService>();
 
 class SchooldayEventsContentList extends WatchingWidget {
   final PupilProxy pupil;
@@ -18,9 +22,12 @@ class SchooldayEventsContentList extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pupil = watch(this.pupil);
+    final pupil = this.pupil;
+    final unfilteredEvents = watch(
+            _schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId))
+        .schooldayEvents;
     final List<SchooldayEvent> filteredSchooldayEvents =
-        locator<SchooldayEventFilterManager>().filteredSchooldayEvents(pupil);
+        _schooldayEventFilterManager.filteredSchooldayEvents(unfilteredEvents);
     return Column(children: [
       Padding(
         padding: const EdgeInsets.only(top: 10.0),
@@ -33,7 +40,7 @@ class SchooldayEventsContentList extends WatchingWidget {
             onPressed: () async {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (ctx) => NewSchooldayEventPage(
-                  pupilId: pupil.internalId,
+                  pupilId: pupil.pupilId,
                 ),
               ));
             },
@@ -61,8 +68,7 @@ class SchooldayEventsContentList extends WatchingWidget {
               },
               onLongPress: () async {
                 if (filteredSchooldayEvents[index].processed) {
-                  locator<NotificationService>().showSnackBar(
-                      NotificationType.error,
+                  _notificationService.showSnackBar(NotificationType.error,
                       'Ereignis wurde bereits bearbeitet!');
 
                   return;
@@ -72,9 +78,9 @@ class SchooldayEventsContentList extends WatchingWidget {
                     title: 'Ereignis löschen',
                     message: 'Das Ereignis löschen?');
                 if (confirm! == false) return;
-                await locator<SchooldayEventManager>().deleteSchooldayEvent(
-                    filteredSchooldayEvents[index].schooldayEventId);
-                locator<NotificationService>().showSnackBar(
+                await _schooldayEventManager
+                    .deleteSchooldayEvent(filteredSchooldayEvents[index].id!);
+                _notificationService.showSnackBar(
                     NotificationType.success, 'Das Ereignis wurde gelöscht!');
               },
               child: PupilSchooldayEventCard(

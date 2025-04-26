@@ -2998,7 +2998,7 @@
             "name": "eventReason",
             "columnType": 0,
             "isNullable": false,
-            "dartType": "protocol:SchooldayEventReason"
+            "dartType": "String"
           },
           {
             "name": "createdBy",

@@ -13,7 +13,7 @@ import 'package:serverpod/serverpod.dart' as _i1;
 import '../pupil_data/pupil_objects/communication/language.dart' as _i2;
 
 abstract class LanguageStats
-    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   LanguageStats._({
     this.id,
     this.languages,
@@ -46,7 +46,7 @@ abstract class LanguageStats
   Set<_i2.Language>? languages;
 
   @override
-  _i1.Table<int> get table => t;
+  _i1.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [LanguageStats]
   /// with some or all fields replaced by the given arguments.
@@ -132,7 +132,7 @@ class _LanguageStatsImpl extends LanguageStats {
   }
 }
 
-class LanguageStatsTable extends _i1.Table<int> {
+class LanguageStatsTable extends _i1.Table<int?> {
   LanguageStatsTable({super.tableRelation})
       : super(tableName: 'language_stats') {
     languages = _i1.ColumnSerializable(
@@ -157,7 +157,7 @@ class LanguageStatsInclude extends _i1.IncludeObject {
   Map<String, _i1.Include?> get includes => {};
 
   @override
-  _i1.Table<int> get table => LanguageStats.t;
+  _i1.Table<int?> get table => LanguageStats.t;
 }
 
 class LanguageStatsIncludeList extends _i1.IncludeList {
@@ -177,7 +177,7 @@ class LanguageStatsIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int> get table => LanguageStats.t;
+  _i1.Table<int?> get table => LanguageStats.t;
 }
 
 class LanguageStatsRepository {
