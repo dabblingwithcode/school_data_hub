@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/app/presentation/app_main_navigation/widgets/main_menu_button.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/attendance_page/attendance_list_page.dart';
+import 'package:school_data_hub_flutter/features/attendance/presentation/missed_classes_pupil_list_page/missed_classes_pupil_list_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/matrix_users_list_page/matrix_users_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/credit/credit_list_page/credit_list_page.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/presentation/schoolday_event_list_page/schoolday_event_list_page.dart';
@@ -29,8 +30,7 @@ class PupilListButtons extends WatchingWidget {
             ),
             buttonText: locale.schooldayEvents),
         MainMenuButton(
-            destinationPage:
-                const Placeholder(), // const MissedClassesPupilListPage(),
+            destinationPage: const MissedClassesPupilListPage(),
             buttonIcon: const Icon(
               Icons.calendar_month_rounded,
               size: 50,
