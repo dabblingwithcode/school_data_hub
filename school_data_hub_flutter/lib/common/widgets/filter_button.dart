@@ -4,6 +4,7 @@ import 'package:watch_it/watch_it.dart';
 
 class FilterButton extends WatchingWidget {
   final bool isSearchBar;
+
   final Function showBottomSheetFunction;
   const FilterButton(
       {required this.isSearchBar,
@@ -16,7 +17,7 @@ class FilterButton extends WatchingWidget {
         watchValue((FiltersStateManager x) => x.filtersActive);
 
     return InkWell(
-      onTap: () => showBottomSheetFunction(),
+      onTap: () => showBottomSheetFunction,
       onLongPress: () {
         di<FiltersStateManager>().resetFilters();
       },

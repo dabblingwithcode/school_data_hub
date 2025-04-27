@@ -225,10 +225,14 @@ CREATE TABLE "lesson_subject" (
 --
 CREATE TABLE "library_book" (
     "id" bigserial PRIMARY KEY,
+    "libraryId" text NOT NULL,
     "bookId" bigint NOT NULL,
     "locationId" bigint NOT NULL,
     "available" boolean NOT NULL
 );
+
+-- Indexes
+CREATE UNIQUE INDEX "library_id_unique_idx" ON "library_book" USING btree ("libraryId");
 
 --
 -- Class LibraryBookLocation as table library_book_location
@@ -1466,9 +1470,9 @@ ALTER TABLE ONLY "serverpod_query_log"
 -- MIGRATION VERSION FOR school_data_hub
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('school_data_hub', '20250427002421238', now())
+    VALUES ('school_data_hub', '20250427144713552', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20250427002421238', "timestamp" = now();
+    DO UPDATE SET "version" = '20250427144713552', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

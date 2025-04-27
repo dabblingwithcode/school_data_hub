@@ -3,6 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
+import 'package:school_data_hub_flutter/common/widgets/list_view_components/show_generic_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/credit/credit_list_page/widgets/credit_filter_bottom_sheet.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -38,7 +39,8 @@ class CreditListPageBottomNavBar extends WatchingWidget {
                 ),
                 const Gap(30),
                 InkWell(
-                  onTap: () => showCreditFilterBottomSheet(context),
+                  onTap: () => showGenericBottomSheet(
+                      context, const CreditFilterBottomSheet()),
                   onLongPress: () {
                     di<FiltersStateManager>().resetFilters();
                   },

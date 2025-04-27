@@ -1427,6 +1427,12 @@
           "dartType": "int?"
         },
         {
+          "name": "libraryId",
+          "columnType": 0,
+          "isNullable": false,
+          "dartType": "String"
+        },
+        {
           "name": "bookId",
           "columnType": 6,
           "isNullable": false,
@@ -1485,6 +1491,18 @@
           "type": "btree",
           "isUnique": true,
           "isPrimary": true
+        },
+        {
+          "indexName": "library_id_unique_idx",
+          "elements": [
+            {
+              "type": 0,
+              "definition": "libraryId"
+            }
+          ],
+          "type": "btree",
+          "isUnique": true,
+          "isPrimary": false
         }
       ],
       "managed": true
@@ -5724,7 +5742,7 @@
   "installedModules": [
     {
       "module": "school_data_hub",
-      "version": "20250427002421238"
+      "version": "20250427144713552"
     },
     {
       "module": "serverpod",

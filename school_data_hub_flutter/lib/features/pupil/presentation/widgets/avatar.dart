@@ -20,8 +20,11 @@ class AvatarImage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO Thomas: How do I watch just pupil.avatar?
     final avatar = watch(pupil).avatar;
+
+    // TODO Thomas: How do I watch just pupil.avatarAuth?
+// final avatar =
+//         watchPropertyValue<PupilProxy, HubDocument?>((pupil) => pupil.avatar);
 
     final bool avatarAuth = (pupil.avatarAuth != null);
     return SizedBox(

@@ -1556,6 +1556,12 @@ class Protocol extends _i1.SerializationManagerServer {
           columnDefault: 'nextval(\'library_book_id_seq\'::regclass)',
         ),
         _i2.ColumnDefinition(
+          name: 'libraryId',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
           name: 'bookId',
           columnType: _i2.ColumnType.bigint,
           isNullable: false,
@@ -1609,7 +1615,20 @@ class Protocol extends _i1.SerializationManagerServer {
           type: 'btree',
           isUnique: true,
           isPrimary: true,
-        )
+        ),
+        _i2.IndexDefinition(
+          indexName: 'library_id_unique_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'libraryId',
+            )
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
       ],
       managed: true,
     ),
