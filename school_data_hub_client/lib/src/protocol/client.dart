@@ -719,6 +719,23 @@ class EndpointSchooldayEvent extends _i1.EndpointRef {
         'deleteSchooldayEvent',
         {'schooldayEventId': schooldayEventId},
       );
+
+  _i2.Future<_i18.SchooldayEvent> updateSchooldayEventFile(
+    int schooldayEventId,
+    String filePath,
+    String createdBy,
+    bool isprocessed,
+  ) =>
+      caller.callServerEndpoint<_i18.SchooldayEvent>(
+        'schooldayEvent',
+        'updateSchooldayEventFile',
+        {
+          'schooldayEventId': schooldayEventId,
+          'filePath': filePath,
+          'createdBy': createdBy,
+          'isprocessed': isprocessed,
+        },
+      );
 }
 
 /// {@category Endpoint}

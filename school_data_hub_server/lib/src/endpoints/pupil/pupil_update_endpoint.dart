@@ -53,6 +53,7 @@ class PupilUpdateEndpoint extends Endpoint {
   Future<PupilData> updatePupilAvatar(
       Session session, int pupilId, String filePath) async {
     // find the createdBy user
+    // TODO: Send username as a parameter to the endpoint
     final createdBy = await getUserName(session);
 
     // find the pupil by id

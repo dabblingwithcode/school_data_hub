@@ -51,7 +51,9 @@ class PupilEndpoint extends Endpoint {
 
     await HubDocument.db.deleteRow(session, pupil.avatar!);
     pupil.avatar = null;
-    return pupil;
+    final updatedPupil = await PupilData.db.updateRow(session, pupil);
+
+    return updatedPupil;
   }
 
   Future<PupilData> deleteAvatarAuth(Session session, int internalId) async {

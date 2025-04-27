@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/domain/models/nullable_records.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
@@ -34,6 +37,7 @@ class SchooldayEventManager {
     for (var pupilId in pupilIds) {
       _pupilSchooldayEventsMap[pupilId] = PupilSchooldayEventsProxy();
     }
+    fetchSchooldayEvents();
     _log.info('SchooldayEventManager initialized');
   }
 
@@ -151,18 +155,23 @@ class SchooldayEventManager {
     return;
   }
 
-  // Future<void> patchSchooldayEventWithFile(
-  //     File imageFile, String schooldayEventId, bool isProcessed) async {
-  //   final PupilData responsePupil = await _apiSchooldayEventService
-  //       .patchSchooldayEventWithFile(imageFile, schooldayEventId, isProcessed);
+  Future<void> updateSchooldayEventFile(
+      {required File imageFile,
+      required int schooldayEventId,
+      required bool isProcessed}) async {
+    final encryptedFile = await customEncrypter.encryptFile(imageFile);
+    final SchooldayEvent responseEvent =
+        await _schooldayEventApiService.updateSchooldayEventFile(
+            schooldayEventId: schooldayEventId,
+            file: encryptedFile,
+            isProcessed: isProcessed);
+    updateSchooldayEventInCollections(responseEvent);
 
-  //   pupilManager.updatePupilProxyWithPupilData(responsePupil);
+    _notificationService.showSnackBar(
+        NotificationType.success, 'Datei erfolgreich hochgeladen!');
 
-  //   _notificationService.showSnackBar(
-  //       NotificationType.success, 'Datei erfolgreich hochgeladen!');
-
-  //   return;
-  // }
+    return;
+  }
 
   // Future<void> deleteSchooldayEventFile(
   //     String schooldayEventId, String cacheKey, bool isProcessed) async {

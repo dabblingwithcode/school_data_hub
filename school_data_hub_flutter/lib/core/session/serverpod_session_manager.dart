@@ -44,6 +44,8 @@ class ServerpodSessionManager with ChangeNotifier {
 
   User? get user => _user;
 
+  String? get userName => _user?.userInfo?.userName;
+
   void changeUserCredit(int credit) {
     if (_user != null) {
       final newCredit = _user!.credit + credit;

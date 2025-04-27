@@ -9,6 +9,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_picker.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/document_image%20copy.dart';
 import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
@@ -27,7 +28,7 @@ final _schooldayManager = di<SchooldayManager>();
 
 final _notificationService = di<NotificationService>();
 
-class PupilSchooldayEventCard extends WatchingWidget {
+class PupilSchooldayEventCard extends StatelessWidget {
   final SchooldayEvent schooldayEvent;
   const PupilSchooldayEventCard({required this.schooldayEvent, super.key});
 
@@ -204,11 +205,11 @@ class PupilSchooldayEventCard extends WatchingWidget {
                           onTap: () async {
                             final File? file = await uploadImageFile(context);
                             if (file == null) return;
-                            // await _schooldayEventManager
-                            //     .patchSchooldayEventWithFile(file,
-                            //         schooldayEvent.schooldayEventId, true);
-                            // locator<NotificationService>().showSnackBar(
-                            //     NotificationType.success, 'Vorfall geändert!');
+                            await _schooldayEventManager
+                                .updateSchooldayEventFile(
+                                    imageFile: file,
+                                    schooldayEventId: schooldayEvent.id!,
+                                    isProcessed: true);
                           },
                           onLongPress: () async {
                             bool? confirm = await confirmationDialog(
@@ -226,28 +227,19 @@ class PupilSchooldayEventCard extends WatchingWidget {
                             _notificationService.showSnackBar(
                                 NotificationType.success, 'Dokument gelöscht!');
                           },
-                          child:
-                              // schooldayEvent.processedFileId != null
-                              //     ? Provider<DocumentImageData>.value(
-                              //         updateShouldNotify: (oldValue, newValue) =>
-                              //             oldValue.documentUrl !=
-                              //             newValue.documentUrl,
-                              //         value: DocumentImageData(
-                              //             documentTag:
-                              //                 '${schooldayEvent.processedFileId}',
-                              //             documentUrl:
-                              //                 '${locator<EnvManager>().env!.serverUrl}${SchooldayEventApiService().getSchooldayEventProcessedFileUrl(schooldayEvent.schooldayEventId)}',
-                              //             size: 70),
-                              //         child: const DocumentImage(),
-                              //       )
-                              //     :
-                              SizedBox(
-                            height: 70,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(5),
-                              child: Image.asset('assets/document_camera.png'),
-                            ),
-                          ),
+                          child: schooldayEvent.processedFileId != null
+                              ? DocumentImage(
+                                  documentId:
+                                      schooldayEvent.processedFile!.documentId,
+                                  size: 70)
+                              : SizedBox(
+                                  height: 70,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(5),
+                                    child: Image.asset(
+                                        'assets/document_camera.png'),
+                                  ),
+                                ),
                         )
                       ],
                     ),
@@ -258,59 +250,41 @@ class PupilSchooldayEventCard extends WatchingWidget {
                     children: [
                       InkWell(
                         onTap: () async {
-                          // final File? file = await uploadImageFile(context);
-                          // if (file == null) return;
-                          // await _schooldayEventManager
-                          //     .patchSchooldayEventWithFile(
-                          //         file, schooldayEvent.schooldayEventId, false);
-                          // _notificationService.showSnackBar(
-                          //   NotificationType.success,
-                          //   'Ereignis gespeichert!',
-                          // );
+                          final File? file = await uploadImageFile(context);
+                          if (file == null) return;
+                          await _schooldayEventManager.updateSchooldayEventFile(
+                              imageFile: file,
+                              schooldayEventId: schooldayEvent.id!,
+                              isProcessed: false);
                         },
                         onLongPress: () async {
-                          if (schooldayEvent.fileId == null) {
-                            _notificationService.showSnackBar(
-                                NotificationType.warning,
-                                'Kein Dokument vorhanden!');
-                            return;
-                          }
                           bool? confirm = await confirmationDialog(
                               context: context,
                               title: 'Dokument löschen',
                               message: 'Dokument löschen?');
-                          if (confirm == null || confirm == false) {
+                          if (confirm != true) {
                             return;
                           }
-                          // await _schooldayEventManager.deleteSchooldayEventFile(
-                          //     schooldayEvent.schooldayEventId,
-                          //     schooldayEvent.fileId!,
-                          //     false);
+                          // await _schooldayEventManager
+                          //     .deleteSchooldayEventFile(
+                          //         schooldayEvent.schooldayEventId,
+                          //         schooldayEvent.processedFileId!,
+                          //         true);
                           _notificationService.showSnackBar(
                               NotificationType.success, 'Dokument gelöscht!');
                         },
-                        child:
-
-                            // schooldayEvent.fileId != null
-                            //     ? Provider<DocumentImageData>.value(
-                            //         updateShouldNotify: (oldValue, newValue) =>
-                            //             oldValue.documentUrl !=
-                            //             newValue.documentUrl,
-                            //         value: DocumentImageData(
-                            //             documentTag: '${schooldayEvent.fileId}',
-                            //             documentUrl:
-                            //                 '${locator<EnvManager>().env!.serverUrl}${SchooldayEventApiService().getSchooldayEventFileUrl(schooldayEvent.schooldayEventId)}',
-                            //             size: 70),
-                            //         child: const DocumentImage(),
-                            //       )
-                            //     :
-                            SizedBox(
-                          height: 70,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(5),
-                            child: Image.asset('assets/document_camera.png'),
-                          ),
-                        ),
+                        child: schooldayEvent.fileId != null
+                            ? DocumentImage(
+                                documentId: schooldayEvent.file!.documentId,
+                                size: 70)
+                            : SizedBox(
+                                height: 70,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(5),
+                                  child:
+                                      Image.asset('assets/document_camera.png'),
+                                ),
+                              ),
                       )
                     ],
                   )

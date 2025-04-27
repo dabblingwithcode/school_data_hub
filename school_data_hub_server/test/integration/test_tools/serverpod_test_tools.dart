@@ -2182,6 +2182,43 @@ class _SchooldayEventEndpoint {
       }
     });
   }
+
+  _i3.Future<_i20.SchooldayEvent> updateSchooldayEventFile(
+    _i1.TestSessionBuilder sessionBuilder,
+    int schooldayEventId,
+    String filePath,
+    String createdBy,
+    bool isprocessed,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'schooldayEvent',
+        method: 'updateSchooldayEventFile',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'schooldayEvent',
+          methodName: 'updateSchooldayEventFile',
+          parameters: _i1.testObjectToJson({
+            'schooldayEventId': schooldayEventId,
+            'filePath': filePath,
+            'createdBy': createdBy,
+            'isprocessed': isprocessed,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i20.SchooldayEvent>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
 }
 
 class _SupportCategoryEndpoint {
