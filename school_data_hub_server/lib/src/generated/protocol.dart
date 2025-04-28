@@ -3021,13 +3021,13 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'DateTime?',
         ),
         _i2.ColumnDefinition(
-          name: 'fileId',
+          name: 'documentId',
           columnType: _i2.ColumnType.bigint,
           isNullable: true,
           dartType: 'int?',
         ),
         _i2.ColumnDefinition(
-          name: 'processedFileId',
+          name: 'processedDocumentId',
           columnType: _i2.ColumnType.bigint,
           isNullable: true,
           dartType: 'int?',
@@ -3048,7 +3048,7 @@ class Protocol extends _i1.SerializationManagerServer {
       foreignKeys: [
         _i2.ForeignKeyDefinition(
           constraintName: 'schoolday_event_fk_0',
-          columns: ['fileId'],
+          columns: ['documentId'],
           referenceTable: 'hub_document',
           referenceTableSchema: 'public',
           referenceColumns: ['id'],
@@ -3058,7 +3058,7 @@ class Protocol extends _i1.SerializationManagerServer {
         ),
         _i2.ForeignKeyDefinition(
           constraintName: 'schoolday_event_fk_1',
-          columns: ['processedFileId'],
+          columns: ['processedDocumentId'],
           referenceTable: 'hub_document',
           referenceTableSchema: 'public',
           referenceColumns: ['id'],

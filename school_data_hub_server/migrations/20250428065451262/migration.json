@@ -3043,13 +3043,13 @@
             "dartType": "DateTime?"
           },
           {
-            "name": "fileId",
+            "name": "documentId",
             "columnType": 6,
             "isNullable": true,
             "dartType": "int?"
           },
           {
-            "name": "processedFileId",
+            "name": "processedDocumentId",
             "columnType": 6,
             "isNullable": true,
             "dartType": "int?"
@@ -3071,7 +3071,7 @@
           {
             "constraintName": "schoolday_event_fk_0",
             "columns": [
-              "fileId"
+              "documentId"
             ],
             "referenceTable": "hub_document",
             "referenceTableSchema": "public",
@@ -3084,7 +3084,7 @@
           {
             "constraintName": "schoolday_event_fk_1",
             "columns": [
-              "processedFileId"
+              "processedDocumentId"
             ],
             "referenceTable": "hub_document",
             "referenceTableSchema": "public",

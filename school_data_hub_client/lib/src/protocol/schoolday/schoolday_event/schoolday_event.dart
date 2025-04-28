@@ -25,10 +25,10 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
     required this.processed,
     this.processedBy,
     this.processedAt,
-    this.fileId,
-    this.file,
-    this.processedFileId,
-    this.processedFile,
+    this.documentId,
+    this.document,
+    this.processedDocumentId,
+    this.processedDocument,
     required this.schooldayId,
     this.schoolday,
     required this.pupilId,
@@ -44,10 +44,10 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
     required bool processed,
     String? processedBy,
     DateTime? processedAt,
-    int? fileId,
-    _i3.HubDocument? file,
-    int? processedFileId,
-    _i3.HubDocument? processedFile,
+    int? documentId,
+    _i3.HubDocument? document,
+    int? processedDocumentId,
+    _i3.HubDocument? processedDocument,
     required int schooldayId,
     _i4.Schoolday? schoolday,
     required int pupilId,
@@ -68,16 +68,16 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
           ? null
           : _i1.DateTimeJsonExtension.fromJson(
               jsonSerialization['processedAt']),
-      fileId: jsonSerialization['fileId'] as int?,
-      file: jsonSerialization['file'] == null
+      documentId: jsonSerialization['documentId'] as int?,
+      document: jsonSerialization['document'] == null
           ? null
           : _i3.HubDocument.fromJson(
-              (jsonSerialization['file'] as Map<String, dynamic>)),
-      processedFileId: jsonSerialization['processedFileId'] as int?,
-      processedFile: jsonSerialization['processedFile'] == null
+              (jsonSerialization['document'] as Map<String, dynamic>)),
+      processedDocumentId: jsonSerialization['processedDocumentId'] as int?,
+      processedDocument: jsonSerialization['processedDocument'] == null
           ? null
           : _i3.HubDocument.fromJson(
-              (jsonSerialization['processedFile'] as Map<String, dynamic>)),
+              (jsonSerialization['processedDocument'] as Map<String, dynamic>)),
       schooldayId: jsonSerialization['schooldayId'] as int,
       schoolday: jsonSerialization['schoolday'] == null
           ? null
@@ -110,13 +110,13 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
 
   DateTime? processedAt;
 
-  int? fileId;
+  int? documentId;
 
-  _i3.HubDocument? file;
+  _i3.HubDocument? document;
 
-  int? processedFileId;
+  int? processedDocumentId;
 
-  _i3.HubDocument? processedFile;
+  _i3.HubDocument? processedDocument;
 
   int schooldayId;
 
@@ -138,10 +138,10 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
     bool? processed,
     String? processedBy,
     DateTime? processedAt,
-    int? fileId,
-    _i3.HubDocument? file,
-    int? processedFileId,
-    _i3.HubDocument? processedFile,
+    int? documentId,
+    _i3.HubDocument? document,
+    int? processedDocumentId,
+    _i3.HubDocument? processedDocument,
     int? schooldayId,
     _i4.Schoolday? schoolday,
     int? pupilId,
@@ -158,10 +158,12 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
       'processed': processed,
       if (processedBy != null) 'processedBy': processedBy,
       if (processedAt != null) 'processedAt': processedAt?.toJson(),
-      if (fileId != null) 'fileId': fileId,
-      if (file != null) 'file': file?.toJson(),
-      if (processedFileId != null) 'processedFileId': processedFileId,
-      if (processedFile != null) 'processedFile': processedFile?.toJson(),
+      if (documentId != null) 'documentId': documentId,
+      if (document != null) 'document': document?.toJson(),
+      if (processedDocumentId != null)
+        'processedDocumentId': processedDocumentId,
+      if (processedDocument != null)
+        'processedDocument': processedDocument?.toJson(),
       'schooldayId': schooldayId,
       if (schoolday != null) 'schoolday': schoolday?.toJson(),
       'pupilId': pupilId,
@@ -187,10 +189,10 @@ class _SchooldayEventImpl extends SchooldayEvent {
     required bool processed,
     String? processedBy,
     DateTime? processedAt,
-    int? fileId,
-    _i3.HubDocument? file,
-    int? processedFileId,
-    _i3.HubDocument? processedFile,
+    int? documentId,
+    _i3.HubDocument? document,
+    int? processedDocumentId,
+    _i3.HubDocument? processedDocument,
     required int schooldayId,
     _i4.Schoolday? schoolday,
     required int pupilId,
@@ -204,10 +206,10 @@ class _SchooldayEventImpl extends SchooldayEvent {
           processed: processed,
           processedBy: processedBy,
           processedAt: processedAt,
-          fileId: fileId,
-          file: file,
-          processedFileId: processedFileId,
-          processedFile: processedFile,
+          documentId: documentId,
+          document: document,
+          processedDocumentId: processedDocumentId,
+          processedDocument: processedDocument,
           schooldayId: schooldayId,
           schoolday: schoolday,
           pupilId: pupilId,
@@ -227,10 +229,10 @@ class _SchooldayEventImpl extends SchooldayEvent {
     bool? processed,
     Object? processedBy = _Undefined,
     Object? processedAt = _Undefined,
-    Object? fileId = _Undefined,
-    Object? file = _Undefined,
-    Object? processedFileId = _Undefined,
-    Object? processedFile = _Undefined,
+    Object? documentId = _Undefined,
+    Object? document = _Undefined,
+    Object? processedDocumentId = _Undefined,
+    Object? processedDocument = _Undefined,
     int? schooldayId,
     Object? schoolday = _Undefined,
     int? pupilId,
@@ -245,13 +247,15 @@ class _SchooldayEventImpl extends SchooldayEvent {
       processed: processed ?? this.processed,
       processedBy: processedBy is String? ? processedBy : this.processedBy,
       processedAt: processedAt is DateTime? ? processedAt : this.processedAt,
-      fileId: fileId is int? ? fileId : this.fileId,
-      file: file is _i3.HubDocument? ? file : this.file?.copyWith(),
-      processedFileId:
-          processedFileId is int? ? processedFileId : this.processedFileId,
-      processedFile: processedFile is _i3.HubDocument?
-          ? processedFile
-          : this.processedFile?.copyWith(),
+      documentId: documentId is int? ? documentId : this.documentId,
+      document:
+          document is _i3.HubDocument? ? document : this.document?.copyWith(),
+      processedDocumentId: processedDocumentId is int?
+          ? processedDocumentId
+          : this.processedDocumentId,
+      processedDocument: processedDocument is _i3.HubDocument?
+          ? processedDocument
+          : this.processedDocument?.copyWith(),
       schooldayId: schooldayId ?? this.schooldayId,
       schoolday:
           schoolday is _i4.Schoolday? ? schoolday : this.schoolday?.copyWith(),

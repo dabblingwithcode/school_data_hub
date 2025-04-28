@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
@@ -10,6 +11,8 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart
 import 'package:school_data_hub_flutter/features/schoolday_events/data/schoolday_event_api_service.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/domain/models/pupil_schoolday_events_proxy.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _cacheManager = di<DefaultCacheManager>();
 
 final _log = Logger('SchooldayEventManager');
 
@@ -136,6 +139,10 @@ class SchooldayEventManager {
     NullableDateTimeRecord? processedAt,
     int? schooldayId,
   }) async {
+    String? cacheKey;
+    if (processed == false && eventToUpdate.processedDocumentId != null) {
+      cacheKey = eventToUpdate.processedDocument!.documentId;
+    }
     final SchooldayEvent schooldayEvent =
         await _schooldayEventApiService.updateSchooldayEvent(
             schooldayEvent: eventToUpdate,
@@ -148,7 +155,9 @@ class SchooldayEventManager {
             type: schoolEventType);
 
     updateSchooldayEventInCollections(schooldayEvent);
-
+    if (cacheKey != null) {
+      await _cacheManager.removeFile(cacheKey);
+    }
     _notificationService.showSnackBar(
         NotificationType.success, 'Eintrag erfolgreich geändert!');
 
@@ -173,18 +182,18 @@ class SchooldayEventManager {
     return;
   }
 
-  // Future<void> deleteSchooldayEventFile(
-  //     String schooldayEventId, String cacheKey, bool isProcessed) async {
-  //   final PupilData responsePupil = await _apiSchooldayEventService
-  //       .deleteSchooldayEventFile(schooldayEventId, cacheKey, isProcessed);
+  Future<void> deleteSchooldayEventFile(
+      int schooldayEventId, String cacheKey, bool isProcessed) async {
+    final SchooldayEvent schooldayEvent = await _schooldayEventApiService
+        .deleteSchooldayEventFile(schooldayEventId, isProcessed);
+    await _cacheManager.removeFile(cacheKey);
+    updateSchooldayEventInCollections(schooldayEvent);
 
-  //   pupilManager.updatePupilProxyWithPupilData(responsePupil);
+    _notificationService.showSnackBar(
+        NotificationType.success, 'Datei erfolgreich gelöscht!');
 
-  //   _notificationService.showSnackBar(
-  //       NotificationType.success, 'Datei erfolgreich gelöscht!');
-
-  //   return;
-  // }
+    return;
+  }
 
   Future<void> deleteSchooldayEvent(int schooldayEventId) async {
     try {

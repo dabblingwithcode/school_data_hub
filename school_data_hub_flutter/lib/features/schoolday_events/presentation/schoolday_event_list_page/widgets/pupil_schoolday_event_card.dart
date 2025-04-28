@@ -212,6 +212,12 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                     isProcessed: true);
                           },
                           onLongPress: () async {
+                            if (schooldayEvent.processedDocumentId == null) {
+                              _notificationService.showSnackBar(
+                                  NotificationType.error,
+                                  'Kein Dokument vorhanden!');
+                              return;
+                            }
                             bool? confirm = await confirmationDialog(
                                 context: context,
                                 title: 'Dokument löschen',
@@ -219,18 +225,19 @@ class PupilSchooldayEventCard extends StatelessWidget {
                             if (confirm != true) {
                               return;
                             }
-                            // await _schooldayEventManager
-                            //     .deleteSchooldayEventFile(
-                            //         schooldayEvent.schooldayEventId,
-                            //         schooldayEvent.processedFileId!,
-                            //         true);
+                            await _schooldayEventManager
+                                .deleteSchooldayEventFile(
+                                    schooldayEvent.id!,
+                                    schooldayEvent
+                                        .processedDocument!.documentId,
+                                    true);
                             _notificationService.showSnackBar(
                                 NotificationType.success, 'Dokument gelöscht!');
                           },
-                          child: schooldayEvent.processedFileId != null
+                          child: schooldayEvent.processedDocumentId != null
                               ? DocumentImage(
-                                  documentId:
-                                      schooldayEvent.processedFile!.documentId,
+                                  documentId: schooldayEvent
+                                      .processedDocument!.documentId,
                                   size: 70)
                               : SizedBox(
                                   height: 70,
@@ -258,6 +265,12 @@ class PupilSchooldayEventCard extends StatelessWidget {
                               isProcessed: false);
                         },
                         onLongPress: () async {
+                          if (schooldayEvent.documentId == null) {
+                            _notificationService.showSnackBar(
+                                NotificationType.error,
+                                'Kein Dokument vorhanden!');
+                            return;
+                          }
                           bool? confirm = await confirmationDialog(
                               context: context,
                               title: 'Dokument löschen',
@@ -265,17 +278,16 @@ class PupilSchooldayEventCard extends StatelessWidget {
                           if (confirm != true) {
                             return;
                           }
-                          // await _schooldayEventManager
-                          //     .deleteSchooldayEventFile(
-                          //         schooldayEvent.schooldayEventId,
-                          //         schooldayEvent.processedFileId!,
-                          //         true);
+                          await _schooldayEventManager.deleteSchooldayEventFile(
+                              schooldayEvent.id!,
+                              schooldayEvent.document!.documentId,
+                              false);
                           _notificationService.showSnackBar(
                               NotificationType.success, 'Dokument gelöscht!');
                         },
-                        child: schooldayEvent.fileId != null
+                        child: schooldayEvent.document != null
                             ? DocumentImage(
-                                documentId: schooldayEvent.file!.documentId,
+                                documentId: schooldayEvent.document!.documentId,
                                 size: 70)
                             : SizedBox(
                                 height: 70,

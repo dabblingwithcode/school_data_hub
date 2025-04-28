@@ -70,6 +70,7 @@ schooldayEvent:
   - updateSchooldayEvent:
   - deleteSchooldayEvent:
   - updateSchooldayEventFile:
+  - deleteSchooldayEventFile:
 supportCategory:
   - getSupportCategories:
   - importSupportCategoriesFromJsonFile:

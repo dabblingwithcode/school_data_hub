@@ -68,6 +68,7 @@ class SchooldayEventApiService {
       NullableStringRecord? processedBy,
       NullableDateTimeRecord? processedAt,
       int? schooldayId}) async {
+    bool changedProcessedToFalse = false;
     // if the schooldayEvent is patched as processed,
     // processing user and processed date are automatically added
 
@@ -83,6 +84,7 @@ class SchooldayEventApiService {
     if (processed == false) {
       processedBy = (value: null);
       processedAt = (value: null);
+      changedProcessedToFalse = true;
     }
     final schooldayEventToUpdate = schooldayEvent.copyWith(
       createdBy: createdBy ?? schooldayEvent.createdBy,
@@ -99,7 +101,8 @@ class SchooldayEventApiService {
     try {
       _notificationService.apiRunning(true);
       final updatedSchooldayEvent = await _client.schooldayEvent
-          .updateSchooldayEvent(schooldayEventToUpdate);
+          .updateSchooldayEvent(
+              schooldayEventToUpdate, changedProcessedToFalse);
       _notificationService.apiRunning(false);
       return updatedSchooldayEvent;
     } catch (e) {
@@ -169,52 +172,6 @@ class SchooldayEventApiService {
     }
     throw Exception('Failed to upload file, $uploadDescription');
   }
-  // Future<PupilData> patchSchooldayEventWithFile(
-  //     File imageFile, String schooldayEventId, bool isProcessed) async {
-  //   locator<NotificationService>().apiRunning(true);
-
-  //   String endpoint;
-
-  //   final encryptedFile = await customEncrypter.encryptFile(imageFile);
-
-  //   String fileName = encryptedFile.path.split('/').last;
-
-  //   var formData = FormData.fromMap({
-  //     'file': await MultipartFile.fromFile(
-  //       encryptedFile.path,
-  //       filename: fileName,
-  //     ),
-  //   });
-
-  //   // choose endpoint depending on isProcessed
-  //   if (isProcessed) {
-  //     endpoint = _patchSchooldayEventProcessedFileUrl(schooldayEventId);
-  //   } else {
-  //     endpoint = _patchSchooldayEventFileUrl(schooldayEventId);
-  //   }
-
-  //   final Response response = await _client.patch(
-  //     '${_baseUrl()}$endpoint',
-  //     data: formData,
-  //     options: _client.hubOptions,
-  //   );
-
-  //   if (response.statusCode != 200) {
-  //     locator<NotificationService>().showSnackBar(
-  //         NotificationType.warning, 'Fehler beim Hochladen des Bildes!');
-
-  //     locator<NotificationService>().apiRunning(false);
-
-  //     throw ApiException(
-  //         'Failed to upload schooldayEvent file', response.statusCode);
-  //   }
-
-  //   final PupilData responsePupil = PupilData.fromJson(response.data);
-
-  //   locator<NotificationService>().apiRunning(false);
-
-  //   return responsePupil;
-  // }
 
   //- delete schooldayEvent
 
@@ -234,41 +191,16 @@ class SchooldayEventApiService {
 //- delete schooldayEvent file
 //- depending on isProcessed, there are two possible endpoints for the file deletion
 
-  // Future<PupilData> deleteSchooldayEventFile(
-  //     String schooldayEventId, String cacheKey, bool isProcessed) async {
-  //   locator<NotificationService>().apiRunning(true);
-
-  //   // choose endpoint depending on isProcessed
-  //   String endpoint;
-  //   if (isProcessed) {
-  //     endpoint = _deleteSchooldayEventProcessedFileUrl(schooldayEventId);
-  //   } else {
-  //     endpoint = _deleteSchooldayEventFileUrl(schooldayEventId);
-  //   }
-
-  //   final Response response = await _client.delete(
-  //     '${_baseUrl()}$endpoint',
-  //     options: _client.hubOptions,
-  //   );
-
-  //   if (response.statusCode != 200) {
-  //     locator<NotificationService>().showSnackBar(
-  //         NotificationType.warning, 'Fehler beim Löschen der Datei!');
-
-  //     locator<NotificationService>().apiRunning(false);
-
-  //     throw ApiException(
-  //         'Failed to delete schooldayEvent', response.statusCode);
-  //   }
-
-  //   final PupilData responsePupil = PupilData.fromJson(response.data);
-
-  //   // Delete the file from the cache
-  //   final cacheManager = locator<DefaultCacheManager>();
-  //   await cacheManager.removeFile(cacheKey);
-
-  //   _notificationService.apiRunning(false);
-
-  //   return responsePupil;
-  // }
+  Future<SchooldayEvent> deleteSchooldayEventFile(
+      int schooldayEventId, bool isProcessed) async {
+    try {
+      final schooldayEvent = await _client.schooldayEvent
+          .deleteSchooldayEventFile(schooldayEventId, isProcessed);
+      return schooldayEvent;
+    } catch (e) {
+      _notificationService.showSnackBar(
+          NotificationType.error, 'Fehler beim Löschen der Datei!: $e');
+      rethrow;
+    }
+  }
 }

@@ -12,8 +12,8 @@ class SchooldayEventEndpoint extends Endpoint {
     return SchooldayEvent.db.find(session,
         include: SchooldayEvent.include(
           schoolday: Schoolday.include(),
-          file: HubDocument.include(),
-          processedFile: HubDocument.include(),
+          document: HubDocument.include(),
+          processedDocument: HubDocument.include(),
         ));
   }
 
@@ -41,22 +41,43 @@ class SchooldayEventEndpoint extends Endpoint {
       eventInDatabase.id!,
       include: SchooldayEvent.include(
         schoolday: Schoolday.include(),
-        file: HubDocument.include(),
-        processedFile: HubDocument.include(),
+        document: HubDocument.include(),
+        processedDocument: HubDocument.include(),
       ),
     );
     return eventWithSchoolday!;
   }
 
-  Future<SchooldayEvent> updateSchooldayEvent(
-      Session session, SchooldayEvent schooldayEvent) async {
+  Future<SchooldayEvent> updateSchooldayEvent(Session session,
+      SchooldayEvent schooldayEvent, bool changedProcessedToFalse) async {
+    // If processed is false We need to detach and delete the processed document if it exists
+    if (changedProcessedToFalse) {
+      if (schooldayEvent.processedDocumentId != null) {
+        final file = await HubDocument.db
+            .findById(session, schooldayEvent.processedDocumentId!);
+        // Delete the file if it exists
+
+        if (file != null) {
+          final filePath = file.documentPath!;
+          await SchooldayEvent.db.detachRow
+              .processedDocument(session, schooldayEvent);
+          schooldayEvent.processedDocumentId = null;
+          // delete the file with the file path from storage
+          await session.storage
+              .deleteFile(storageId: 'private', path: filePath);
+
+          await session.db.deleteRow(file);
+        }
+      }
+    }
+
     await session.db.updateRow(schooldayEvent);
     final updatedSchooldayEvent =
         await SchooldayEvent.db.findById(session, schooldayEvent.id!,
             include: SchooldayEvent.include(
               schoolday: Schoolday.include(),
-              file: HubDocument.include(),
-              processedFile: HubDocument.include(),
+              document: HubDocument.include(),
+              processedDocument: HubDocument.include(),
             ));
     return updatedSchooldayEvent!;
   }
@@ -70,22 +91,22 @@ class SchooldayEventEndpoint extends Endpoint {
     if (schooldayEvent == null) {
       throw Exception('Schoolday event not found');
     }
-    if (schooldayEvent.fileId != null) {
+    if (schooldayEvent.documentId != null) {
       final file =
-          await HubDocument.db.findById(session, schooldayEvent.fileId!);
+          await HubDocument.db.findById(session, schooldayEvent.documentId!);
       // Delete the file if it exists
 
       if (file != null) {
         // delete the file with the file path from storage
         await session.storage
             .deleteFile(storageId: 'private', path: file.documentPath!);
-        await SchooldayEvent.db.detachRow.file(session, schooldayEvent);
+        await SchooldayEvent.db.detachRow.document(session, schooldayEvent);
         await session.db.deleteRow(file);
       }
     }
-    if (schooldayEvent.processedFileId != null) {
+    if (schooldayEvent.processedDocumentId != null) {
       final hubDocument = await HubDocument.db
-          .findById(session, schooldayEvent.processedFileId!);
+          .findById(session, schooldayEvent.processedDocumentId!);
       // Delete the file if it exists
 
       if (hubDocument != null) {
@@ -93,7 +114,7 @@ class SchooldayEventEndpoint extends Endpoint {
         await session.storage
             .deleteFile(storageId: 'private', path: hubDocument.documentPath!);
         await SchooldayEvent.db.detachRow
-            .processedFile(session, schooldayEvent);
+            .processedDocument(session, schooldayEvent);
         await session.db.deleteRow(hubDocument);
       }
     }
@@ -112,7 +133,7 @@ class SchooldayEventEndpoint extends Endpoint {
       session,
       schooldayEventId,
       include: SchooldayEvent.include(
-        file: HubDocument.include(),
+        document: HubDocument.include(),
       ),
     );
     if (schooldayEvent == null) {
@@ -138,53 +159,54 @@ class SchooldayEventEndpoint extends Endpoint {
         case true:
           // attach the processed file to the event
           // if the pupil had a processed file, delete it
-          if (schooldayEvent.processedFile != null) {
+          if (schooldayEvent.processedDocument != null) {
             _log.warning(
-                'Deleting old schoolday event processed file: ${schooldayEvent.processedFile!.documentId}');
+                'Deleting old schoolday event processed document: ${schooldayEvent.processedDocument!.documentId}');
             // delete the old processed file from the storage
             session.storage.deleteFile(
                 storageId: 'private',
-                path: schooldayEvent.processedFile!.documentPath!);
+                path: schooldayEvent.processedDocument!.documentPath!);
             // detach the old file from the schoolday event
-            await SchooldayEvent.db.detachRow.processedFile(
+            await SchooldayEvent.db.detachRow.processedDocument(
                 session, schooldayEvent,
                 transaction: transaction);
             // delete the old hub document from the database
             await HubDocument.db.deleteRow(
-                session, schooldayEvent.processedFile!,
+                session, schooldayEvent.processedDocument!,
                 transaction: transaction);
             // TODO: Consider exceptions and handle them gracefully here
           }
           // update the schoolday event with the new file
           _log.info(
-              'Updating schoolday event file: id: [${hubDocumentInDatabase.id}] documentID [${hubDocumentInDatabase.documentId}]');
+              'Updating schoolday event document: id: [${hubDocumentInDatabase.id}] documentID [${hubDocumentInDatabase.documentId}]');
           // pupil.avatar = hubDocument;
-          await SchooldayEvent.db.attachRow.processedFile(
+          await SchooldayEvent.db.attachRow.processedDocument(
               session, schooldayEvent, hubDocumentInDatabase,
               transaction: transaction);
           break;
         case false:
           // attach the file to the event
           // if the pupil had a file, delete it
-          if (schooldayEvent.file != null) {
+          if (schooldayEvent.document != null) {
             _log.warning(
-                'Deleting old schoolday event file: ${schooldayEvent.file!.documentId}');
+                'Deleting old schoolday event document: ${schooldayEvent.document!.documentId}');
             // delete the old file from the storage
             session.storage.deleteFile(
-                storageId: 'private', path: schooldayEvent.file!.documentPath!);
+                storageId: 'private',
+                path: schooldayEvent.document!.documentPath!);
             // detach the old file from the schoolday event
             await SchooldayEvent.db.detachRow
-                .file(session, schooldayEvent, transaction: transaction);
+                .document(session, schooldayEvent, transaction: transaction);
             // delete the old hub document from the database
-            await HubDocument.db.deleteRow(session, schooldayEvent.file!,
+            await HubDocument.db.deleteRow(session, schooldayEvent.document!,
                 transaction: transaction);
             // TODO: Consider exceptions and handle them gracefully here
           }
           // update the schoolday event with the new file
           _log.info(
-              'Updating schoolday event file: id: [${hubDocumentInDatabase.id}] documentID [${hubDocumentInDatabase.documentId}]');
+              'Updating schoolday event document: id: [${hubDocumentInDatabase.id}] documentID [${hubDocumentInDatabase.documentId}]');
           // pupil.avatar = hubDocument;
-          await SchooldayEvent.db.attachRow.file(
+          await SchooldayEvent.db.attachRow.document(
               session, schooldayEvent, hubDocumentInDatabase,
               transaction: transaction);
           break;
@@ -194,12 +216,76 @@ class SchooldayEventEndpoint extends Endpoint {
     final updatedEvent =
         await SchooldayEvent.db.findById(session, schooldayEvent.id!,
             include: SchooldayEvent.include(
-              file: HubDocument.include(),
-              processedFile: HubDocument.include(),
+              document: HubDocument.include(),
+              processedDocument: HubDocument.include(),
               schoolday: Schoolday.include(),
             ));
 
     _log.fine('Updated event : ${updatedEvent!.toJson()}');
     return updatedEvent;
+  }
+
+  Future<SchooldayEvent> deleteSchooldayEventFile(
+      Session session, int schooldayEventId, bool isProcessed) async {
+    await session.db.transaction((transaction) async {
+      final schooldayEvent = await SchooldayEvent.db.findById(
+        session,
+        schooldayEventId,
+        include: SchooldayEvent.include(
+          document: HubDocument.include(),
+          processedDocument: HubDocument.include(),
+        ),
+        transaction: transaction,
+      );
+
+      if (schooldayEvent == null) {
+        throw Exception('Schoolday event not found');
+      }
+
+      switch (isProcessed) {
+        case true:
+          final filePath = schooldayEvent.processedDocument!.documentPath!;
+          if (schooldayEvent.processedDocumentId != null) {
+            await SchooldayEvent.db.detachRow.processedDocument(
+                session, schooldayEvent,
+                transaction: transaction);
+
+            await HubDocument.db.deleteRow(
+                session, schooldayEvent.processedDocument!,
+                transaction: transaction);
+            schooldayEvent.processedDocumentId = null;
+            await session.storage
+                .deleteFile(storageId: 'private', path: filePath);
+          }
+          break;
+        case false:
+          final filePath = schooldayEvent.document!.documentPath!;
+          if (schooldayEvent.documentId != null) {
+            await SchooldayEvent.db.detachRow
+                .document(session, schooldayEvent, transaction: transaction);
+            await HubDocument.db.deleteRow(session, schooldayEvent.document!,
+                transaction: transaction);
+            schooldayEvent.documentId = null;
+            await session.storage
+                .deleteFile(storageId: 'private', path: filePath);
+          }
+      }
+
+      await SchooldayEvent.db
+          .updateRow(session, schooldayEvent, transaction: transaction);
+    });
+    final updatedSchooldayEvent = await SchooldayEvent.db.findById(
+      session,
+      schooldayEventId,
+      include: SchooldayEvent.include(
+        document: HubDocument.include(),
+        processedDocument: HubDocument.include(),
+        schoolday: Schoolday.include(),
+      ),
+    );
+    if (updatedSchooldayEvent == null) {
+      throw Exception('Schoolday event not found');
+    }
+    return updatedSchooldayEvent;
   }
 }

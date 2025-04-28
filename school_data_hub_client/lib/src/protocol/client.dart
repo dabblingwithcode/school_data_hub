@@ -706,11 +706,16 @@ class EndpointSchooldayEvent extends _i1.EndpointRef {
       );
 
   _i2.Future<_i18.SchooldayEvent> updateSchooldayEvent(
-          _i18.SchooldayEvent schooldayEvent) =>
+    _i18.SchooldayEvent schooldayEvent,
+    bool changedProcessedToFalse,
+  ) =>
       caller.callServerEndpoint<_i18.SchooldayEvent>(
         'schooldayEvent',
         'updateSchooldayEvent',
-        {'schooldayEvent': schooldayEvent},
+        {
+          'schooldayEvent': schooldayEvent,
+          'changedProcessedToFalse': changedProcessedToFalse,
+        },
       );
 
   _i2.Future<bool> deleteSchooldayEvent(int schooldayEventId) =>
@@ -734,6 +739,19 @@ class EndpointSchooldayEvent extends _i1.EndpointRef {
           'filePath': filePath,
           'createdBy': createdBy,
           'isprocessed': isprocessed,
+        },
+      );
+
+  _i2.Future<_i18.SchooldayEvent> deleteSchooldayEventFile(
+    int schooldayEventId,
+    bool isProcessed,
+  ) =>
+      caller.callServerEndpoint<_i18.SchooldayEvent>(
+        'schooldayEvent',
+        'deleteSchooldayEventFile',
+        {
+          'schooldayEventId': schooldayEventId,
+          'isProcessed': isProcessed,
         },
       );
 }

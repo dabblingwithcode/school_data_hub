@@ -1413,7 +1413,12 @@ class Endpoints extends _i1.EndpointDispatch {
               name: 'schooldayEvent',
               type: _i1.getType<_i28.SchooldayEvent>(),
               nullable: false,
-            )
+            ),
+            'changedProcessedToFalse': _i1.ParameterDescription(
+              name: 'changedProcessedToFalse',
+              type: _i1.getType<bool>(),
+              nullable: false,
+            ),
           },
           call: (
             _i1.Session session,
@@ -1423,6 +1428,7 @@ class Endpoints extends _i1.EndpointDispatch {
                   .updateSchooldayEvent(
             session,
             params['schooldayEvent'],
+            params['changedProcessedToFalse'],
           ),
         ),
         'deleteSchooldayEvent': _i1.MethodConnector(
@@ -1479,6 +1485,31 @@ class Endpoints extends _i1.EndpointDispatch {
             params['filePath'],
             params['createdBy'],
             params['isprocessed'],
+          ),
+        ),
+        'deleteSchooldayEventFile': _i1.MethodConnector(
+          name: 'deleteSchooldayEventFile',
+          params: {
+            'schooldayEventId': _i1.ParameterDescription(
+              name: 'schooldayEventId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'isProcessed': _i1.ParameterDescription(
+              name: 'isProcessed',
+              type: _i1.getType<bool>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['schooldayEvent'] as _i11.SchooldayEventEndpoint)
+                  .deleteSchooldayEventFile(
+            session,
+            params['schooldayEventId'],
+            params['isProcessed'],
           ),
         ),
       },
