@@ -42,7 +42,7 @@ void _onPop(bool didPop, dynamic result) {
       filterState: FilterState.pupil, value: false);
 
   _filterStateManager.resetFilters();
-  // You can add more logic here if needed
+  _filterStateManager.markFiltersActive(false);
 }
 
 class SpecialInfoListPage extends WatchingWidget {

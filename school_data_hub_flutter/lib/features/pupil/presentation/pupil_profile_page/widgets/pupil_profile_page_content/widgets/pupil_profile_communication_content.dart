@@ -122,9 +122,12 @@ class PupilCommunicationContent extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           const Gap(10),
-                          InkWell(
-                            child: CommunicationValues(
-                                communicationSkills: pupil.communicationPupil!),
+                          Center(
+                            child: InkWell(
+                              child: CommunicationValues(
+                                  communicationSkills:
+                                      pupil.communicationPupil!),
+                            ),
                           )
                         ],
                       ),

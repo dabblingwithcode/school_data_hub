@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
 
 class GenericFilterBottomSheet extends StatelessWidget {
   final List<Widget> children;
@@ -10,7 +11,7 @@ class GenericFilterBottomSheet extends StatelessWidget {
       padding: const EdgeInsets.only(left: 20.0, right: 20, top: 8),
       child: Column(
         children: [
-          // const FilterHeading(),
+          const FilterHeading(),
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,

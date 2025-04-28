@@ -117,16 +117,22 @@ class MissedClassCard extends StatelessWidget {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
 
-                  // TO-DO: check why no modifiedBy values are stored
-                  if (missedClass.modifiedBy != null)
+                  // TODO: check why no modifiedBy values are stored
+                ],
+              ),
+              if (missedClass.modifiedBy != null) ...[
+                const Gap(5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
                     const Text('zuletzt geändert von: '),
-                  if (missedClass.modifiedBy != null)
                     Text(
                       missedClass.modifiedBy!,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                ],
-              )
+                  ],
+                ),
+              ]
             ],
           ),
         ),

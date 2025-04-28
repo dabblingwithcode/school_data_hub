@@ -13,49 +13,54 @@ class CommunicationValues extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Icon(Icons.hearing),
-            const Gap(10),
-            Text(
-              PupilHelper.communicationPredicate(
-                  communicationSkills?.understanding),
-              style: const TextStyle(
-                  fontSize: 16, color: AppColors.interactiveColor),
-            ),
-          ],
-        ),
-        const Gap(10),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Icon(Icons.chat_bubble_outline_rounded),
-            const Gap(10),
-            Text(
-              PupilHelper.communicationPredicate(communicationSkills?.speaking),
-              style: const TextStyle(
-                  fontSize: 16, color: AppColors.interactiveColor),
-            ),
-          ],
-        ),
-        const Gap(5),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Icon(Icons.book),
-            const Gap(10),
-            Text(
-              PupilHelper.communicationPredicate(communicationSkills?.reading),
-              style: const TextStyle(
-                  fontSize: 16, color: AppColors.interactiveColor),
-            ),
-          ],
-        ),
-        const Gap(5),
-      ],
+    return Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Icon(Icons.hearing),
+              const Gap(10),
+              Text(
+                PupilHelper.communicationPredicate(
+                    communicationSkills?.understanding),
+                style: const TextStyle(
+                    fontSize: 16, color: AppColors.interactiveColor),
+              ),
+            ],
+          ),
+          const Gap(10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Icon(Icons.chat_bubble_outline_rounded),
+              const Gap(10),
+              Text(
+                PupilHelper.communicationPredicate(
+                    communicationSkills?.speaking),
+                style: const TextStyle(
+                    fontSize: 16, color: AppColors.interactiveColor),
+              ),
+            ],
+          ),
+          const Gap(5),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Icon(Icons.book),
+              const Gap(10),
+              Text(
+                PupilHelper.communicationPredicate(
+                    communicationSkills?.reading),
+                style: const TextStyle(
+                    fontSize: 16, color: AppColors.interactiveColor),
+              ),
+            ],
+          ),
+          const Gap(5),
+        ],
+      ),
     );
   }
 }
