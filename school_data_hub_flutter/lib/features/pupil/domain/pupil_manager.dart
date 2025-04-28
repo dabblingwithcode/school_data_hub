@@ -377,10 +377,23 @@ class PupilManager extends ChangeNotifier {
     updatePupilProxyWithPupilData(pupilUpdate);
   }
 
-  Future<void> updateNonTutorInfoProperty(
+  Future<void> updateStringProperty(
       {required int pupilId,
       required String property,
-      required dynamic value}) async {
+      required String? value}) async {
+    try {
+      final PupilData pupilData =
+          await _pupilDataApiService.updateStringProperty(
+        pupilId: pupilId,
+        property: property,
+        value: value,
+      );
+      updatePupilProxyWithPupilData(pupilData);
+    } catch (e) {
+      _log.severe('Error updating string property: $e');
+      _notificationService.showSnackBar(
+          NotificationType.error, 'Fehler beim Aktualisieren der Daten!');
+    }
     // if the value is relevant to siblings, check for siblings first and handle them if true
 
     // if (jsonKey == 'communication_tutor1' ||

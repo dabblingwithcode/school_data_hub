@@ -499,7 +499,7 @@ class EndpointPupilUpdate extends _i1.EndpointRef {
   _i2.Future<_i5.PupilData> updateStringProperty(
     int pupilId,
     String property,
-    String value,
+    String? value,
   ) =>
       caller.callServerEndpoint<_i5.PupilData>(
         'pupilUpdate',

@@ -16,9 +16,9 @@ final _schooldayEventManager = di<SchooldayEventManager>();
 
 final _notificationService = di<NotificationService>();
 
-class SchooldayEventsContentList extends WatchingWidget {
+class PupilSchooldayEventsList extends WatchingWidget {
   final PupilProxy pupil;
-  const SchooldayEventsContentList({super.key, required this.pupil});
+  const PupilSchooldayEventsList({super.key, required this.pupil});
 
   @override
   Widget build(BuildContext context) {

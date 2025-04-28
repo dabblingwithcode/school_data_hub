@@ -1537,7 +1537,7 @@ class _PupilUpdateEndpoint {
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
     String property,
-    String value,
+    String? value,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =

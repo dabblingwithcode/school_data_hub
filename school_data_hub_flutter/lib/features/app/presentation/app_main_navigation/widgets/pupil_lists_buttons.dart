@@ -6,10 +6,10 @@ import 'package:school_data_hub_flutter/features/attendance/presentation/attenda
 import 'package:school_data_hub_flutter/features/attendance/presentation/missed_classes_pupil_list_page/missed_classes_pupil_list_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/matrix_users_list_page/matrix_users_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/credit/credit_list_page/credit_list_page.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/special_info_page/special_info_list_page.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/presentation/schoolday_event_list_page/schoolday_event_list_page.dart';
-import 'package:watch_it/watch_it.dart';
 
-class PupilListButtons extends WatchingWidget {
+class PupilListButtons extends StatelessWidget {
   final double screenWidth;
   const PupilListButtons({required this.screenWidth, super.key});
 
@@ -72,8 +72,7 @@ class PupilListButtons extends WatchingWidget {
             ),
             buttonText: locale.supportLists),
         MainMenuButton(
-            destinationPage:
-                const Placeholder(), // const SpecialInfoListPage(),
+            destinationPage: const SpecialInfoListPage(),
             buttonIcon: const Icon(
               Icons.emergency_rounded,
               size: 50,

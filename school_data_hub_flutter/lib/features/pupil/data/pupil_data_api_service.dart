@@ -98,6 +98,27 @@ class PupilDataApiService {
   }
   // //- update pupil property
 
+  Future<PupilData> updateStringProperty(
+      {required int pupilId,
+      required String property,
+      required String? value}) async {
+    try {
+      _notificationService.apiRunning(true);
+      final updatedPupil = await _client.pupilUpdate
+          .updateStringProperty(pupilId, property, value);
+      _notificationService.apiRunning(false);
+      return updatedPupil;
+    } catch (e) {
+      _notificationService.apiRunning(false);
+
+      _log.severe('Error while updating pupil property', e, StackTrace.current);
+
+      _notificationService.showSnackBar(NotificationType.error,
+          'Die Schüler konnten nicht aktualisiert werden: ${e.toString()}');
+
+      throw Exception('Failed to update pupil property, $e');
+    }
+  }
   // Future<PupilData> updateNonParentInfoPupilProperty({
   //   required int id,
   //   required String property,

@@ -117,7 +117,7 @@ class PupilUpdateEndpoint extends Endpoint {
   }
 
   Future<PupilData> updateStringProperty(
-      Session session, int pupilId, String property, String value) async {
+      Session session, int pupilId, String property, String? value) async {
     final pupil = await PupilData.db.findById(session, pupilId);
     if (pupil == null) {
       throw Exception('Pupil not found');

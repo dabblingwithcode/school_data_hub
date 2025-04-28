@@ -21,9 +21,10 @@ class SchooldayEventListSearchBar extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final pupils = watchValue((PupilsFilter x) => x.filteredPupils);
+
     // we need to watch the schoolday events to refresh the counts for the stats
-    final schooldayEvents =
-        watchValue((SchooldayEventManager x) => x.schooldayEvents);
+    watchValue((SchooldayEventManager x) => x.schooldayEvents);
+
     final filtersActive =
         watchValue((FiltersStateManager x) => x.filtersActive);
 

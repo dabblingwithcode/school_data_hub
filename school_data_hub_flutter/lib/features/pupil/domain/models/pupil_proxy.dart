@@ -166,7 +166,7 @@ class PupilProxy with ChangeNotifier {
   //     _pupilData.pupilDataParentInfo?.communicationTutor1;
   // String? get communicationTutor2 =>
   //     _pupilData.pupilDataParentInfo?.communicationTutor2;
-  // String? get contact => _pupilData.contact;
+  String? get contact => _pupilData.contact;
   // String? get parentsContact => _pupilData.parentsContact;
   int get credit => _pupilData.credit;
   int get creditEarned => _pupilData.creditEarned;
