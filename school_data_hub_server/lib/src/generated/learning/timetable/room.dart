@@ -8,11 +8,13 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 
+// ignore_for_file: unnecessary_null_comparison
+
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../../learning/timetable/lesson/scheduled_lesson.dart' as _i2;
 
-abstract class Room implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+abstract class Room implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   Room._({
     this.id,
     required this.roomCode,
@@ -53,7 +55,7 @@ abstract class Room implements _i1.TableRow<int>, _i1.ProtocolSerialization {
   List<_i2.ScheduledLesson>? scheduledLessons;
 
   @override
-  _i1.Table<int> get table => t;
+  _i1.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [Room]
   /// with some or all fields replaced by the given arguments.
@@ -155,7 +157,7 @@ class _RoomImpl extends Room {
   }
 }
 
-class RoomTable extends _i1.Table<int> {
+class RoomTable extends _i1.Table<int?> {
   RoomTable({super.tableRelation}) : super(tableName: 'room') {
     roomCode = _i1.ColumnString(
       'roomCode',
@@ -234,7 +236,7 @@ class RoomInclude extends _i1.IncludeObject {
       {'scheduledLessons': _scheduledLessons};
 
   @override
-  _i1.Table<int> get table => Room.t;
+  _i1.Table<int?> get table => Room.t;
 }
 
 class RoomIncludeList extends _i1.IncludeList {
@@ -254,7 +256,7 @@ class RoomIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int> get table => Room.t;
+  _i1.Table<int?> get table => Room.t;
 }
 
 class RoomRepository {

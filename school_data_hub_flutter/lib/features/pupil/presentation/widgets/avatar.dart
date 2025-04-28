@@ -3,21 +3,14 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/cached_image_or_download_inage.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/attendance_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_set_avatar.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_helper_functions.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:widget_zoom/widget_zoom.dart';
-
-// class AvatarData {
-//   final String? avatarId;
-//   final int internalId;
-//   final double size;
-
-//   AvatarData(
-//       {required this.avatarId, required this.internalId, required this.size});
-// }
 
 class AvatarImage extends WatchingWidget {
   final PupilProxy pupil;
@@ -28,6 +21,10 @@ class AvatarImage extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final avatar = watch(pupil).avatar;
+
+    // TODO Thomas: How do I watch just pupil.avatarAuth?
+// final avatar =
+//         watchPropertyValue<PupilProxy, HubDocument?>((pupil) => pupil.avatar);
 
     final bool avatarAuth = (pupil.avatarAuth != null);
     return SizedBox(
@@ -98,7 +95,7 @@ class AvatarWithBadges extends WatchingWidget {
         children: [
           GestureDetector(
             onLongPressStart: (details) {
-              if (pupil.avatarAuth == false) {
+              if (pupil.avatarAuth == null) {
                 informationDialog(context, 'Einwilligung nicht vorhanden',
                     'Bitte zuerst die Einwilligung einholen und in der App dokumentieren (im Kindprofil unter "Infos"). ');
                 return;
@@ -146,12 +143,12 @@ class AvatarWithBadges extends WatchingWidget {
             child: Container(
               width: 30.0,
               height: 30.0,
-              // decoration: BoxDecoration(
-              //   color: AttendanceHelper.pupilIsMissedToday(pupil)
-              //       ? AppColors.warningButtonColor
-              //       : AppColors.groupColor,
-              //   shape: BoxShape.circle,
-              // ),
+              decoration: BoxDecoration(
+                color: AttendanceHelper.pupilIsMissedToday(pupil)
+                    ? AppColors.warningButtonColor
+                    : AppColors.groupColor,
+                shape: BoxShape.circle,
+              ),
               child: Center(
                 child: Text(
                   pupil.group,
@@ -170,12 +167,12 @@ class AvatarWithBadges extends WatchingWidget {
             child: Container(
               width: 30.0,
               height: 30.0,
-              // decoration: BoxDecoration(
-              //   color: SchoolDayEventHelper.pupilIsAdmonishedToday(pupil)
-              //       ? Colors.red
-              //       : AppColors.schoolyearColor,
-              //   shape: BoxShape.circle,
-              // ),
+              decoration: BoxDecoration(
+                color: SchoolDayEventHelper.pupilIsAdmonishedToday(pupil)
+                    ? Colors.red
+                    : AppColors.schoolyearColor,
+                shape: BoxShape.circle,
+              ),
               child: Center(
                 child: Text(
                   pupil.schoolyear,

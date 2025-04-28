@@ -107,17 +107,3 @@ class CreditFilterBottomSheet extends WatchingWidget {
     );
   }
 }
-
-showCreditFilterBottomSheet(BuildContext context) {
-  return showModalBottomSheet(
-    constraints: const BoxConstraints(maxWidth: 800),
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(20.0),
-        topRight: Radius.circular(20.0),
-      ),
-    ),
-    context: context,
-    builder: (_) => const CreditFilterBottomSheet(),
-  );
-}

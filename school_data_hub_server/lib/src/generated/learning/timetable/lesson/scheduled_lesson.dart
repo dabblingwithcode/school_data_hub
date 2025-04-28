@@ -8,6 +8,8 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 
+// ignore_for_file: unnecessary_null_comparison
+
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../../../learning/timetable/lesson/subject.dart' as _i2;
@@ -17,7 +19,7 @@ import '../../../learning/timetable/lesson/lesson_group.dart' as _i5;
 import 'package:school_data_hub_server/src/generated/protocol.dart' as _i6;
 
 abstract class ScheduledLesson
-    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   ScheduledLesson._({
     this.id,
     required this.active,
@@ -141,7 +143,7 @@ abstract class ScheduledLesson
   final int? _roomScheduledlessonsRoomId;
 
   @override
-  _i1.Table<int> get table => t;
+  _i1.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [ScheduledLesson]
   /// with some or all fields replaced by the given arguments.
@@ -422,7 +424,7 @@ class ScheduledLessonImplicit extends _ScheduledLessonImpl {
   final int? _roomScheduledlessonsRoomId;
 }
 
-class ScheduledLessonTable extends _i1.Table<int> {
+class ScheduledLessonTable extends _i1.Table<int?> {
   ScheduledLessonTable({super.tableRelation})
       : super(tableName: 'scheduled_lesson') {
     active = _i1.ColumnBool(
@@ -648,7 +650,7 @@ class ScheduledLessonInclude extends _i1.IncludeObject {
       };
 
   @override
-  _i1.Table<int> get table => ScheduledLesson.t;
+  _i1.Table<int?> get table => ScheduledLesson.t;
 }
 
 class ScheduledLessonIncludeList extends _i1.IncludeList {
@@ -668,7 +670,7 @@ class ScheduledLessonIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int> get table => ScheduledLesson.t;
+  _i1.Table<int?> get table => ScheduledLesson.t;
 }
 
 class ScheduledLessonRepository {

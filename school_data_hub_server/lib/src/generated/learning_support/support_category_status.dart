@@ -8,13 +8,15 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 
+// ignore_for_file: unnecessary_null_comparison
+
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../pupil_data/pupil_data.dart' as _i2;
 import '../learning_support/support_category.dart' as _i3;
 
 abstract class SupportCategoryStatus
-    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   SupportCategoryStatus._({
     this.id,
     required this.statusId,
@@ -111,7 +113,7 @@ abstract class SupportCategoryStatus
   final int? _pupilDataSupportcategorystatusesPupilDataId;
 
   @override
-  _i1.Table<int> get table => t;
+  _i1.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [SupportCategoryStatus]
   /// with some or all fields replaced by the given arguments.
@@ -348,7 +350,7 @@ class SupportCategoryStatusImplicit extends _SupportCategoryStatusImpl {
   final int? _pupilDataSupportcategorystatusesPupilDataId;
 }
 
-class SupportCategoryStatusTable extends _i1.Table<int> {
+class SupportCategoryStatusTable extends _i1.Table<int?> {
   SupportCategoryStatusTable({super.tableRelation})
       : super(tableName: 'support_category_status') {
     statusId = _i1.ColumnString(
@@ -511,7 +513,7 @@ class SupportCategoryStatusInclude extends _i1.IncludeObject {
       };
 
   @override
-  _i1.Table<int> get table => SupportCategoryStatus.t;
+  _i1.Table<int?> get table => SupportCategoryStatus.t;
 }
 
 class SupportCategoryStatusIncludeList extends _i1.IncludeList {
@@ -531,7 +533,7 @@ class SupportCategoryStatusIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int> get table => SupportCategoryStatus.t;
+  _i1.Table<int?> get table => SupportCategoryStatus.t;
 }
 
 class SupportCategoryStatusRepository {

@@ -3,14 +3,13 @@ class: SchooldayEvent
 table: schoolday_event
 fields:
   eventId: String
-  eventType: String
+  eventType: SchooldayEventType
   eventReason: String
   createdBy: String
   processed: bool
-  processedBy: String
-  fileId: String
-  fileUrl: String
-  processedFileId: String
-  processedFileUrl:  String
+  processedBy: String?
+  processedAt: DateTime?
+  document: HubDocument?, relation(optional)
+  processedDocument: HubDocument?, relation(optional)
   schoolday: Schoolday?, relation(name=schoolday_event_schoolday)
   pupil: PupilData?, relation(name=schoolday_event_pupil)

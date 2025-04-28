@@ -8,8 +8,12 @@ docker: ## run docker container
 	
 
 reset: ## reset the server
-	# rmdir migrations /s /q
-	# mkdir migrations
+	cmd /c rmdir /Q /S migrations
+	cmd /c mkdir migrations
+	cmd /c rmdir /Q /S storage\private
+	cmd /c mkdir storage\private
+	cmd /c mkdir storage\private\avatar
+	cmd /c mkdir storage\private\event
 	# rm -r database_backups
 	# mkdir database_backups
 	serverpod generate

@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/filter_button.dart';
+import 'package:school_data_hub_flutter/common/widgets/list_view_components/show_generic_bottom_sheet.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/credit/credit_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/credit/credit_list_page/widgets/credit_filter_bottom_sheet.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_search_text_field.dart';
 import 'package:watch_it/watch_it.dart';
 
 class CreditListSearchBar extends WatchingWidget {
@@ -84,16 +90,18 @@ class CreditListSearchBar extends WatchingWidget {
             padding: const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
             child: Row(
               children: [
-                // Expanded(
-                //   child: PupilSearchTextField(
-                //       searchType: SearchType.pupil,
-                //       hintText: 'Schüler/in suchen',
-                //       refreshFunction: locator<PupilsFilter>().refreshs),
-                // ),
-                // const Gap(5),
-                // const FilterButton(
-                //     isSearchBar: true,
-                //     showBottomSheetFunction: showCreditFilterBottomSheet),
+                Expanded(
+                  child: PupilSearchTextField(
+                      searchType: SearchType.pupil,
+                      hintText: 'Schüler/in suchen',
+                      refreshFunction: di<PupilsFilter>().refreshs),
+                ),
+                const Gap(5),
+                FilterButton(
+                  isSearchBar: true,
+                  showBottomSheetFunction: () => showGenericBottomSheet(
+                      context, const CreditFilterBottomSheet()),
+                ),
               ],
             ),
           ),

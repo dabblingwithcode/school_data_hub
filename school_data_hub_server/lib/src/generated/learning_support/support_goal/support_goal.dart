@@ -8,6 +8,8 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 
+// ignore_for_file: unnecessary_null_comparison
+
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../../pupil_data/pupil_data.dart' as _i2;
@@ -15,7 +17,7 @@ import '../../learning_support/support_category.dart' as _i3;
 import '../../learning_support/support_goal/support_goal_check.dart' as _i4;
 
 abstract class SupportGoal
-    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   SupportGoal._({
     this.id,
     required this.goalId,
@@ -121,7 +123,7 @@ abstract class SupportGoal
   final int? _pupilDataSupportgoalsPupilDataId;
 
   @override
-  _i1.Table<int> get table => t;
+  _i1.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [SupportGoal]
   /// with some or all fields replaced by the given arguments.
@@ -372,7 +374,7 @@ class SupportGoalImplicit extends _SupportGoalImpl {
   final int? _pupilDataSupportgoalsPupilDataId;
 }
 
-class SupportGoalTable extends _i1.Table<int> {
+class SupportGoalTable extends _i1.Table<int?> {
   SupportGoalTable({super.tableRelation})
       : super(tableName: 'support_category_goal') {
     goalId = _i1.ColumnString(
@@ -580,7 +582,7 @@ class SupportGoalInclude extends _i1.IncludeObject {
       };
 
   @override
-  _i1.Table<int> get table => SupportGoal.t;
+  _i1.Table<int?> get table => SupportGoal.t;
 }
 
 class SupportGoalIncludeList extends _i1.IncludeList {
@@ -600,7 +602,7 @@ class SupportGoalIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int> get table => SupportGoal.t;
+  _i1.Table<int?> get table => SupportGoal.t;
 }
 
 class SupportGoalRepository {

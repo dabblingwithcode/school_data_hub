@@ -1479,6 +1479,12 @@
             "dartType": "int?"
           },
           {
+            "name": "libraryId",
+            "columnType": 0,
+            "isNullable": false,
+            "dartType": "String"
+          },
+          {
             "name": "bookId",
             "columnType": 6,
             "isNullable": false,
@@ -1537,6 +1543,18 @@
             "type": "btree",
             "isUnique": true,
             "isPrimary": true
+          },
+          {
+            "indexName": "library_id_unique_idx",
+            "elements": [
+              {
+                "type": 0,
+                "definition": "libraryId"
+              }
+            ],
+            "type": "btree",
+            "isUnique": true,
+            "isPrimary": false
           }
         ],
         "managed": true
@@ -2992,7 +3010,7 @@
             "name": "eventType",
             "columnType": 0,
             "isNullable": false,
-            "dartType": "String"
+            "dartType": "protocol:SchooldayEventType"
           },
           {
             "name": "eventReason",
@@ -3015,32 +3033,26 @@
           {
             "name": "processedBy",
             "columnType": 0,
-            "isNullable": false,
-            "dartType": "String"
+            "isNullable": true,
+            "dartType": "String?"
           },
           {
-            "name": "fileId",
-            "columnType": 0,
-            "isNullable": false,
-            "dartType": "String"
+            "name": "processedAt",
+            "columnType": 4,
+            "isNullable": true,
+            "dartType": "DateTime?"
           },
           {
-            "name": "fileUrl",
-            "columnType": 0,
-            "isNullable": false,
-            "dartType": "String"
+            "name": "documentId",
+            "columnType": 6,
+            "isNullable": true,
+            "dartType": "int?"
           },
           {
-            "name": "processedFileId",
-            "columnType": 0,
-            "isNullable": false,
-            "dartType": "String"
-          },
-          {
-            "name": "processedFileUrl",
-            "columnType": 0,
-            "isNullable": false,
-            "dartType": "String"
+            "name": "processedDocumentId",
+            "columnType": 6,
+            "isNullable": true,
+            "dartType": "int?"
           },
           {
             "name": "schooldayId",
@@ -3059,6 +3071,32 @@
           {
             "constraintName": "schoolday_event_fk_0",
             "columns": [
+              "documentId"
+            ],
+            "referenceTable": "hub_document",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          },
+          {
+            "constraintName": "schoolday_event_fk_1",
+            "columns": [
+              "processedDocumentId"
+            ],
+            "referenceTable": "hub_document",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          },
+          {
+            "constraintName": "schoolday_event_fk_2",
+            "columns": [
               "schooldayId"
             ],
             "referenceTable": "schoolday",
@@ -3070,7 +3108,7 @@
             "onDelete": 3
           },
           {
-            "constraintName": "schoolday_event_fk_1",
+            "constraintName": "schoolday_event_fk_3",
             "columns": [
               "pupilId"
             ],

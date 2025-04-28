@@ -38,9 +38,13 @@ import 'package:school_data_hub_client/src/protocol/schoolday/school_semester.da
     as _i16;
 import 'package:school_data_hub_client/src/protocol/schoolday/schoolday.dart'
     as _i17;
-import 'package:school_data_hub_client/src/protocol/learning_support/support_category.dart'
+import 'package:school_data_hub_client/src/protocol/schoolday/schoolday_event/schoolday_event.dart'
     as _i18;
-import 'protocol.dart' as _i19;
+import 'package:school_data_hub_client/src/protocol/schoolday/schoolday_event/schoolday_event_type.dart'
+    as _i19;
+import 'package:school_data_hub_client/src/protocol/learning_support/support_category.dart'
+    as _i20;
+import 'protocol.dart' as _i21;
 
 /// The endpoint for admin operations.
 /// This endpoint requires the user to be logged in and have admin scope.
@@ -669,42 +673,126 @@ class EndpointSchoolday extends _i1.EndpointRef {
 }
 
 /// {@category Endpoint}
+class EndpointSchooldayEvent extends _i1.EndpointRef {
+  EndpointSchooldayEvent(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'schooldayEvent';
+
+  _i2.Future<List<_i18.SchooldayEvent>> fetchSchooldayEvents() =>
+      caller.callServerEndpoint<List<_i18.SchooldayEvent>>(
+        'schooldayEvent',
+        'fetchSchooldayEvents',
+        {},
+      );
+
+  _i2.Future<_i18.SchooldayEvent> createSchooldayEvent({
+    required int pupilId,
+    required int schooldayId,
+    required _i19.SchooldayEventType type,
+    required String reason,
+    required String createdBy,
+  }) =>
+      caller.callServerEndpoint<_i18.SchooldayEvent>(
+        'schooldayEvent',
+        'createSchooldayEvent',
+        {
+          'pupilId': pupilId,
+          'schooldayId': schooldayId,
+          'type': type,
+          'reason': reason,
+          'createdBy': createdBy,
+        },
+      );
+
+  _i2.Future<_i18.SchooldayEvent> updateSchooldayEvent(
+    _i18.SchooldayEvent schooldayEvent,
+    bool changedProcessedToFalse,
+  ) =>
+      caller.callServerEndpoint<_i18.SchooldayEvent>(
+        'schooldayEvent',
+        'updateSchooldayEvent',
+        {
+          'schooldayEvent': schooldayEvent,
+          'changedProcessedToFalse': changedProcessedToFalse,
+        },
+      );
+
+  _i2.Future<bool> deleteSchooldayEvent(int schooldayEventId) =>
+      caller.callServerEndpoint<bool>(
+        'schooldayEvent',
+        'deleteSchooldayEvent',
+        {'schooldayEventId': schooldayEventId},
+      );
+
+  _i2.Future<_i18.SchooldayEvent> updateSchooldayEventFile(
+    int schooldayEventId,
+    String filePath,
+    String createdBy,
+    bool isprocessed,
+  ) =>
+      caller.callServerEndpoint<_i18.SchooldayEvent>(
+        'schooldayEvent',
+        'updateSchooldayEventFile',
+        {
+          'schooldayEventId': schooldayEventId,
+          'filePath': filePath,
+          'createdBy': createdBy,
+          'isprocessed': isprocessed,
+        },
+      );
+
+  _i2.Future<_i18.SchooldayEvent> deleteSchooldayEventFile(
+    int schooldayEventId,
+    bool isProcessed,
+  ) =>
+      caller.callServerEndpoint<_i18.SchooldayEvent>(
+        'schooldayEvent',
+        'deleteSchooldayEventFile',
+        {
+          'schooldayEventId': schooldayEventId,
+          'isProcessed': isProcessed,
+        },
+      );
+}
+
+/// {@category Endpoint}
 class EndpointSupportCategory extends _i1.EndpointRef {
   EndpointSupportCategory(_i1.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'supportCategory';
 
-  _i2.Future<List<_i18.SupportCategory>> getSupportCategories() =>
-      caller.callServerEndpoint<List<_i18.SupportCategory>>(
+  _i2.Future<List<_i20.SupportCategory>> getSupportCategories() =>
+      caller.callServerEndpoint<List<_i20.SupportCategory>>(
         'supportCategory',
         'getSupportCategories',
         {},
       );
 
-  _i2.Future<List<_i18.SupportCategory>> importSupportCategoriesFromJsonFile(
+  _i2.Future<List<_i20.SupportCategory>> importSupportCategoriesFromJsonFile(
           String jsonFilePath) =>
-      caller.callServerEndpoint<List<_i18.SupportCategory>>(
+      caller.callServerEndpoint<List<_i20.SupportCategory>>(
         'supportCategory',
         'importSupportCategoriesFromJsonFile',
         {'jsonFilePath': jsonFilePath},
       );
 
-  _i2.Future<bool> createSupportCategory(_i18.SupportCategory category) =>
+  _i2.Future<bool> createSupportCategory(_i20.SupportCategory category) =>
       caller.callServerEndpoint<bool>(
         'supportCategory',
         'createSupportCategory',
         {'category': category},
       );
 
-  _i2.Future<bool> updateSupportCategory(_i18.SupportCategory category) =>
+  _i2.Future<bool> updateSupportCategory(_i20.SupportCategory category) =>
       caller.callServerEndpoint<bool>(
         'supportCategory',
         'updateSupportCategory',
         {'category': category},
       );
 
-  _i2.Future<bool> deleteSupportCategory(_i18.SupportCategory category) =>
+  _i2.Future<bool> deleteSupportCategory(_i20.SupportCategory category) =>
       caller.callServerEndpoint<bool>(
         'supportCategory',
         'deleteSupportCategory',
@@ -770,7 +858,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
           host,
-          _i19.Protocol(),
+          _i21.Protocol(),
           securityContext: securityContext,
           authenticationKeyManager: authenticationKeyManager,
           streamingConnectionTimeout: streamingConnectionTimeout,
@@ -790,6 +878,7 @@ class Client extends _i1.ServerpodClientShared {
     pupilUpdate = EndpointPupilUpdate(this);
     schooldayAdmin = EndpointSchooldayAdmin(this);
     schoolday = EndpointSchoolday(this);
+    schooldayEvent = EndpointSchooldayEvent(this);
     supportCategory = EndpointSupportCategory(this);
     user = EndpointUser(this);
     modules = Modules(this);
@@ -815,6 +904,8 @@ class Client extends _i1.ServerpodClientShared {
 
   late final EndpointSchoolday schoolday;
 
+  late final EndpointSchooldayEvent schooldayEvent;
+
   late final EndpointSupportCategory supportCategory;
 
   late final EndpointUser user;
@@ -833,6 +924,7 @@ class Client extends _i1.ServerpodClientShared {
         'pupilUpdate': pupilUpdate,
         'schooldayAdmin': schooldayAdmin,
         'schoolday': schoolday,
+        'schooldayEvent': schooldayEvent,
         'supportCategory': supportCategory,
         'user': user,
       };

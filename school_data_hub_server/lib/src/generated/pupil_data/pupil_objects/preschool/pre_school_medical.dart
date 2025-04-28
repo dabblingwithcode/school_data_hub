@@ -8,6 +8,8 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 
+// ignore_for_file: unnecessary_null_comparison
+
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../../../pupil_data/pupil_objects/preschool/pre_school_medical_status.dart'
@@ -15,7 +17,7 @@ import '../../../pupil_data/pupil_objects/preschool/pre_school_medical_status.da
 import '../../../shared/document.dart' as _i3;
 
 abstract class PreSchoolMedical
-    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   PreSchoolMedical._({
     this.id,
     this.preschoolMedicalStatus,
@@ -55,7 +57,7 @@ abstract class PreSchoolMedical
   List<_i3.HubDocument>? preschoolMedicalFiles;
 
   @override
-  _i1.Table<int> get table => t;
+  _i1.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [PreSchoolMedical]
   /// with some or all fields replaced by the given arguments.
@@ -156,7 +158,7 @@ class _PreSchoolMedicalImpl extends PreSchoolMedical {
   }
 }
 
-class PreSchoolMedicalTable extends _i1.Table<int> {
+class PreSchoolMedicalTable extends _i1.Table<int?> {
   PreSchoolMedicalTable({super.tableRelation})
       : super(tableName: 'pre_school_medical') {
     preschoolMedicalStatus = _i1.ColumnEnum(
@@ -233,7 +235,7 @@ class PreSchoolMedicalInclude extends _i1.IncludeObject {
       {'preschoolMedicalFiles': _preschoolMedicalFiles};
 
   @override
-  _i1.Table<int> get table => PreSchoolMedical.t;
+  _i1.Table<int?> get table => PreSchoolMedical.t;
 }
 
 class PreSchoolMedicalIncludeList extends _i1.IncludeList {
@@ -253,7 +255,7 @@ class PreSchoolMedicalIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int> get table => PreSchoolMedical.t;
+  _i1.Table<int?> get table => PreSchoolMedical.t;
 }
 
 class PreSchoolMedicalRepository {

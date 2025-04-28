@@ -8,13 +8,15 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 
+// ignore_for_file: unnecessary_null_comparison
+
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../pupil_data/pupil_data.dart' as _i2;
 
 /// support level class
 abstract class SupportLevel
-    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   SupportLevel._({
     this.id,
     required this.level,
@@ -71,7 +73,7 @@ abstract class SupportLevel
   _i2.PupilData? pupilId;
 
   @override
-  _i1.Table<int> get table => t;
+  _i1.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [SupportLevel]
   /// with some or all fields replaced by the given arguments.
@@ -187,7 +189,7 @@ class _SupportLevelImpl extends SupportLevel {
   }
 }
 
-class SupportLevelTable extends _i1.Table<int> {
+class SupportLevelTable extends _i1.Table<int?> {
   SupportLevelTable({super.tableRelation}) : super(tableName: 'support_level') {
     level = _i1.ColumnInt(
       'level',
@@ -266,7 +268,7 @@ class SupportLevelInclude extends _i1.IncludeObject {
   Map<String, _i1.Include?> get includes => {'pupilId': _pupilId};
 
   @override
-  _i1.Table<int> get table => SupportLevel.t;
+  _i1.Table<int?> get table => SupportLevel.t;
 }
 
 class SupportLevelIncludeList extends _i1.IncludeList {
@@ -286,7 +288,7 @@ class SupportLevelIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int> get table => SupportLevel.t;
+  _i1.Table<int?> get table => SupportLevel.t;
 }
 
 class SupportLevelRepository {

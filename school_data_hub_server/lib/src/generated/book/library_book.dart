@@ -8,6 +8,8 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 
+// ignore_for_file: unnecessary_null_comparison
+
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../book/book.dart' as _i2;
@@ -15,9 +17,10 @@ import '../book/location/library_book_location.dart' as _i3;
 import '../book/pupil_book_lending.dart' as _i4;
 
 abstract class LibraryBook
-    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   LibraryBook._({
     this.id,
+    required this.libraryId,
     required this.bookId,
     this.book,
     required this.locationId,
@@ -28,6 +31,7 @@ abstract class LibraryBook
 
   factory LibraryBook({
     int? id,
+    required String libraryId,
     required int bookId,
     _i2.Book? book,
     required int locationId,
@@ -39,6 +43,7 @@ abstract class LibraryBook
   factory LibraryBook.fromJson(Map<String, dynamic> jsonSerialization) {
     return LibraryBook(
       id: jsonSerialization['id'] as int?,
+      libraryId: jsonSerialization['libraryId'] as String,
       bookId: jsonSerialization['bookId'] as int,
       book: jsonSerialization['book'] == null
           ? null
@@ -64,6 +69,8 @@ abstract class LibraryBook
   @override
   int? id;
 
+  String libraryId;
+
   int bookId;
 
   _i2.Book? book;
@@ -77,13 +84,14 @@ abstract class LibraryBook
   List<_i4.PupilBookLending>? lending;
 
   @override
-  _i1.Table<int> get table => t;
+  _i1.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [LibraryBook]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   LibraryBook copyWith({
     int? id,
+    String? libraryId,
     int? bookId,
     _i2.Book? book,
     int? locationId,
@@ -95,6 +103,7 @@ abstract class LibraryBook
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
+      'libraryId': libraryId,
       'bookId': bookId,
       if (book != null) 'book': book?.toJson(),
       'locationId': locationId,
@@ -109,6 +118,7 @@ abstract class LibraryBook
   Map<String, dynamic> toJsonForProtocol() {
     return {
       if (id != null) 'id': id,
+      'libraryId': libraryId,
       'bookId': bookId,
       if (book != null) 'book': book?.toJsonForProtocol(),
       'locationId': locationId,
@@ -162,6 +172,7 @@ class _Undefined {}
 class _LibraryBookImpl extends LibraryBook {
   _LibraryBookImpl({
     int? id,
+    required String libraryId,
     required int bookId,
     _i2.Book? book,
     required int locationId,
@@ -170,6 +181,7 @@ class _LibraryBookImpl extends LibraryBook {
     List<_i4.PupilBookLending>? lending,
   }) : super._(
           id: id,
+          libraryId: libraryId,
           bookId: bookId,
           book: book,
           locationId: locationId,
@@ -184,6 +196,7 @@ class _LibraryBookImpl extends LibraryBook {
   @override
   LibraryBook copyWith({
     Object? id = _Undefined,
+    String? libraryId,
     int? bookId,
     Object? book = _Undefined,
     int? locationId,
@@ -193,6 +206,7 @@ class _LibraryBookImpl extends LibraryBook {
   }) {
     return LibraryBook(
       id: id is int? ? id : this.id,
+      libraryId: libraryId ?? this.libraryId,
       bookId: bookId ?? this.bookId,
       book: book is _i2.Book? ? book : this.book?.copyWith(),
       locationId: locationId ?? this.locationId,
@@ -207,8 +221,12 @@ class _LibraryBookImpl extends LibraryBook {
   }
 }
 
-class LibraryBookTable extends _i1.Table<int> {
+class LibraryBookTable extends _i1.Table<int?> {
   LibraryBookTable({super.tableRelation}) : super(tableName: 'library_book') {
+    libraryId = _i1.ColumnString(
+      'libraryId',
+      this,
+    );
     bookId = _i1.ColumnInt(
       'bookId',
       this,
@@ -222,6 +240,8 @@ class LibraryBookTable extends _i1.Table<int> {
       this,
     );
   }
+
+  late final _i1.ColumnString libraryId;
 
   late final _i1.ColumnInt bookId;
 
@@ -297,6 +317,7 @@ class LibraryBookTable extends _i1.Table<int> {
   @override
   List<_i1.Column> get columns => [
         id,
+        libraryId,
         bookId,
         locationId,
         available,
@@ -342,7 +363,7 @@ class LibraryBookInclude extends _i1.IncludeObject {
       };
 
   @override
-  _i1.Table<int> get table => LibraryBook.t;
+  _i1.Table<int?> get table => LibraryBook.t;
 }
 
 class LibraryBookIncludeList extends _i1.IncludeList {
@@ -362,7 +383,7 @@ class LibraryBookIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int> get table => LibraryBook.t;
+  _i1.Table<int?> get table => LibraryBook.t;
 }
 
 class LibraryBookRepository {

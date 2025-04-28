@@ -17,6 +17,7 @@ import '../book/pupil_book_lending.dart' as _i4;
 abstract class LibraryBook implements _i1.SerializableModel {
   LibraryBook._({
     this.id,
+    required this.libraryId,
     required this.bookId,
     this.book,
     required this.locationId,
@@ -27,6 +28,7 @@ abstract class LibraryBook implements _i1.SerializableModel {
 
   factory LibraryBook({
     int? id,
+    required String libraryId,
     required int bookId,
     _i2.Book? book,
     required int locationId,
@@ -38,6 +40,7 @@ abstract class LibraryBook implements _i1.SerializableModel {
   factory LibraryBook.fromJson(Map<String, dynamic> jsonSerialization) {
     return LibraryBook(
       id: jsonSerialization['id'] as int?,
+      libraryId: jsonSerialization['libraryId'] as String,
       bookId: jsonSerialization['bookId'] as int,
       book: jsonSerialization['book'] == null
           ? null
@@ -61,6 +64,8 @@ abstract class LibraryBook implements _i1.SerializableModel {
   /// the id will be null.
   int? id;
 
+  String libraryId;
+
   int bookId;
 
   _i2.Book? book;
@@ -78,6 +83,7 @@ abstract class LibraryBook implements _i1.SerializableModel {
   @_i1.useResult
   LibraryBook copyWith({
     int? id,
+    String? libraryId,
     int? bookId,
     _i2.Book? book,
     int? locationId,
@@ -89,6 +95,7 @@ abstract class LibraryBook implements _i1.SerializableModel {
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
+      'libraryId': libraryId,
       'bookId': bookId,
       if (book != null) 'book': book?.toJson(),
       'locationId': locationId,
@@ -110,6 +117,7 @@ class _Undefined {}
 class _LibraryBookImpl extends LibraryBook {
   _LibraryBookImpl({
     int? id,
+    required String libraryId,
     required int bookId,
     _i2.Book? book,
     required int locationId,
@@ -118,6 +126,7 @@ class _LibraryBookImpl extends LibraryBook {
     List<_i4.PupilBookLending>? lending,
   }) : super._(
           id: id,
+          libraryId: libraryId,
           bookId: bookId,
           book: book,
           locationId: locationId,
@@ -132,6 +141,7 @@ class _LibraryBookImpl extends LibraryBook {
   @override
   LibraryBook copyWith({
     Object? id = _Undefined,
+    String? libraryId,
     int? bookId,
     Object? book = _Undefined,
     int? locationId,
@@ -141,6 +151,7 @@ class _LibraryBookImpl extends LibraryBook {
   }) {
     return LibraryBook(
       id: id is int? ? id : this.id,
+      libraryId: libraryId ?? this.libraryId,
       bookId: bookId ?? this.bookId,
       book: book is _i2.Book? ? book : this.book?.copyWith(),
       locationId: locationId ?? this.locationId,

@@ -1,5 +1,10 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/filters/attendance_pupil_filter.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
+import 'package:watch_it/watch_it.dart';
 
 enum FilterState {
   pupil,
@@ -76,10 +81,10 @@ class FiltersStateManagerImplementation implements FiltersStateManager {
 
   @override
   void resetFilters() {
-    // di<AttendancePupilFilterManager>().resetFilters();
-    // di<PupilsFilter>().resetFilters();
-    // di<PupilFilterManager>().resetFilters();
-    // di<SchooldayEventFilterManager>().resetFilters();
+    di<AttendancePupilFilterManager>().resetFilters();
+    di<PupilsFilter>().resetFilters();
+    di<PupilFilterManager>().resetFilters();
+    di<SchooldayEventFilterManager>().resetFilters();
     // di<SchoolListFilterManager>().resetFilters();
     // di<AuthorizationFilterManager>().resetFilters();
     // di<PupilAuthorizationFilterManager>().resetFilters();

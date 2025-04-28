@@ -8,12 +8,14 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 
+// ignore_for_file: unnecessary_null_comparison
+
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../workbook/pupil_workbook.dart' as _i2;
 
 abstract class Workbook
-    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   Workbook._({
     this.id,
     required this.isbn,
@@ -78,7 +80,7 @@ abstract class Workbook
   List<_i2.PupilWorkbook>? assignedPupils;
 
   @override
-  _i1.Table<int> get table => t;
+  _i1.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [Workbook]
   /// with some or all fields replaced by the given arguments.
@@ -215,7 +217,7 @@ class _WorkbookImpl extends Workbook {
   }
 }
 
-class WorkbookTable extends _i1.Table<int> {
+class WorkbookTable extends _i1.Table<int?> {
   WorkbookTable({super.tableRelation}) : super(tableName: 'workbook') {
     isbn = _i1.ColumnInt(
       'isbn',
@@ -328,7 +330,7 @@ class WorkbookInclude extends _i1.IncludeObject {
   Map<String, _i1.Include?> get includes => {'assignedPupils': _assignedPupils};
 
   @override
-  _i1.Table<int> get table => Workbook.t;
+  _i1.Table<int?> get table => Workbook.t;
 }
 
 class WorkbookIncludeList extends _i1.IncludeList {
@@ -348,7 +350,7 @@ class WorkbookIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int> get table => Workbook.t;
+  _i1.Table<int?> get table => Workbook.t;
 }
 
 class WorkbookRepository {

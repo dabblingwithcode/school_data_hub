@@ -8,13 +8,15 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 
+// ignore_for_file: unnecessary_null_comparison
+
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../learning_support/support_goal/support_goal.dart' as _i2;
 import '../learning_support/support_category_status.dart' as _i3;
 
 abstract class SupportCategory
-    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   SupportCategory._({
     this.id,
     required this.name,
@@ -67,7 +69,7 @@ abstract class SupportCategory
   List<_i3.SupportCategoryStatus>? categoryStatues;
 
   @override
-  _i1.Table<int> get table => t;
+  _i1.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [SupportCategory]
   /// with some or all fields replaced by the given arguments.
@@ -194,7 +196,7 @@ class _SupportCategoryImpl extends SupportCategory {
   }
 }
 
-class SupportCategoryTable extends _i1.Table<int> {
+class SupportCategoryTable extends _i1.Table<int?> {
   SupportCategoryTable({super.tableRelation})
       : super(tableName: 'support_category') {
     name = _i1.ColumnString(
@@ -331,7 +333,7 @@ class SupportCategoryInclude extends _i1.IncludeObject {
       };
 
   @override
-  _i1.Table<int> get table => SupportCategory.t;
+  _i1.Table<int?> get table => SupportCategory.t;
 }
 
 class SupportCategoryIncludeList extends _i1.IncludeList {
@@ -351,7 +353,7 @@ class SupportCategoryIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int> get table => SupportCategory.t;
+  _i1.Table<int?> get table => SupportCategory.t;
 }
 
 class SupportCategoryRepository {

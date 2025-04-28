@@ -22,6 +22,8 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_fil
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('DiManager');
@@ -146,6 +148,11 @@ class DiManager {
         () => PupilFilterManager(),
         dependsOn: [PupilManager]);
 
+    di.registerSingletonWithDependencies<SchooldayEventFilterManager>(() {
+      _log.info('SchooldayEventFilterManager initializing');
+      return SchooldayEventFilterManager();
+    }, dependsOn: [PupilManager, PupilFilterManager]);
+
     di.registerSingletonWithDependencies<PupilsFilter>(
         () => PupilsFilterImplementation(
               di<PupilManager>(),
@@ -163,6 +170,10 @@ class DiManager {
         () => AttendancePupilFilterManager(),
         dependsOn: [AttendanceManager]);
     _log.info('Managers depending on authenticated session initialized');
+
+    di.registerSingletonWithDependencies<SchooldayEventManager>(
+        () => SchooldayEventManager(),
+        dependsOn: [SchooldayManager, PupilsFilter]);
   }
 
   static Future<void> unregisterManagersDependingOnActiveEnv() async {

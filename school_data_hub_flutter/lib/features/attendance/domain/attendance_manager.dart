@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/attendance/data/attendance_api_service.dart';
-import 'package:school_data_hub_flutter/features/attendance/domain/models/attendance_values.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/models/pupil_missed_classes_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
@@ -25,12 +25,13 @@ final _log = Logger('AttendanceManager');
 final _attendanceApiService = AttendanceApiService();
 
 class AttendanceManager {
-  ValueListenable<List<MissedClass>> get missedClasses => _missedClasses;
   final ValueNotifier<List<MissedClass>> _missedClasses = ValueNotifier([]);
+
+  ValueListenable<List<MissedClass>> get missedClasses => _missedClasses;
 
   // PupilMissedClassesList is a list of missed classes for a pupil
   // with a change notifier
-  // it is used to update the UI when a missed class is added or removed
+  // it is used to observe the missed classes of a pupil in the UI
 
   final Map<int, PupilMissedClassesProxy> _pupilMissedClassesMap = {};
 
@@ -40,7 +41,9 @@ class AttendanceManager {
     init();
   }
 
-  Future init() async {
+  Future<void> init() async {
+    // we must have a proxy object for every pupil because we need to
+    // watch them in the UI unconditionally (even if there are no entries)
     final pupilIds = _pupilManager.allPupils.map((e) => e.pupilId).toList();
     for (final pupilId in pupilIds) {
       _pupilMissedClassesMap[pupilId] = PupilMissedClassesProxy();

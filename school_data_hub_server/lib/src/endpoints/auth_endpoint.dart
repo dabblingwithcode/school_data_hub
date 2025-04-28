@@ -100,6 +100,7 @@ class AuthEndpoint extends Endpoint {
 // Your custom password verification method
   Future<bool> verifyPassword(
       Session session, int userId, String password) async {
+    // TODO: Implement this
     // Implement your password verification logic here
     // For example, retrieve the stored password hash and compare it
     // with the hash of the provided password

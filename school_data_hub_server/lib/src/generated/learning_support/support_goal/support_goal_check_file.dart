@@ -8,12 +8,14 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 
+// ignore_for_file: unnecessary_null_comparison
+
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../../learning_support/support_goal/support_goal_check.dart' as _i2;
 
 abstract class SupportGoalCheckFile
-    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   SupportGoalCheckFile._({
     this.id,
     required this.fileId,
@@ -77,7 +79,7 @@ abstract class SupportGoalCheckFile
   final int? _supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId;
 
   @override
-  _i1.Table<int> get table => t;
+  _i1.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [SupportGoalCheckFile]
   /// with some or all fields replaced by the given arguments.
@@ -246,7 +248,7 @@ class SupportGoalCheckFileImplicit extends _SupportGoalCheckFileImpl {
   final int? _supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId;
 }
 
-class SupportGoalCheckFileTable extends _i1.Table<int> {
+class SupportGoalCheckFileTable extends _i1.Table<int?> {
   SupportGoalCheckFileTable({super.tableRelation})
       : super(tableName: 'support_goal_check_file') {
     fileId = _i1.ColumnString(
@@ -346,7 +348,7 @@ class SupportGoalCheckFileInclude extends _i1.IncludeObject {
       {'supportGoalCheck': _supportGoalCheck};
 
   @override
-  _i1.Table<int> get table => SupportGoalCheckFile.t;
+  _i1.Table<int?> get table => SupportGoalCheckFile.t;
 }
 
 class SupportGoalCheckFileIncludeList extends _i1.IncludeList {
@@ -366,7 +368,7 @@ class SupportGoalCheckFileIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int> get table => SupportGoalCheckFile.t;
+  _i1.Table<int?> get table => SupportGoalCheckFile.t;
 }
 
 class SupportGoalCheckFileRepository {

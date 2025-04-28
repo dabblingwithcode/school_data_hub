@@ -8,12 +8,14 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 
+// ignore_for_file: unnecessary_null_comparison
+
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../../../learning/timetable/lesson/lesson.dart' as _i2;
 
 abstract class LessonSubject
-    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   LessonSubject._({
     this.id,
     required this.name,
@@ -53,7 +55,7 @@ abstract class LessonSubject
   List<_i2.Lesson>? lessons;
 
   @override
-  _i1.Table<int> get table => t;
+  _i1.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [LessonSubject]
   /// with some or all fields replaced by the given arguments.
@@ -152,7 +154,7 @@ class _LessonSubjectImpl extends LessonSubject {
   }
 }
 
-class LessonSubjectTable extends _i1.Table<int> {
+class LessonSubjectTable extends _i1.Table<int?> {
   LessonSubjectTable({super.tableRelation})
       : super(tableName: 'lesson_subject') {
     name = _i1.ColumnString(
@@ -231,7 +233,7 @@ class LessonSubjectInclude extends _i1.IncludeObject {
   Map<String, _i1.Include?> get includes => {'lessons': _lessons};
 
   @override
-  _i1.Table<int> get table => LessonSubject.t;
+  _i1.Table<int?> get table => LessonSubject.t;
 }
 
 class LessonSubjectIncludeList extends _i1.IncludeList {
@@ -251,7 +253,7 @@ class LessonSubjectIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int> get table => LessonSubject.t;
+  _i1.Table<int?> get table => LessonSubject.t;
 }
 
 class LessonSubjectRepository {

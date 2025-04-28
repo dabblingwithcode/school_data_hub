@@ -23,6 +23,9 @@ class UserEndpoint extends Endpoint {
     return await User.db.findFirstRow(
       session,
       where: (t) => t.userInfoId.equals(userInfo.id),
+      include: User.include(
+        userInfo: UserInfo.include(),
+      ),
     );
   }
 

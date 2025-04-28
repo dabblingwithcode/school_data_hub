@@ -8,6 +8,8 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 
+// ignore_for_file: unnecessary_null_comparison
+
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../pupil_data/pupil_objects/preschool/pre_school_medical.dart' as _i2;
@@ -34,12 +36,12 @@ import '../learning_support/support_level.dart' as _i19;
 import '../learning_support/support_category_status.dart' as _i20;
 import '../learning_support/support_goal/support_goal.dart' as _i21;
 import '../schoolday/missed_class/missed_class.dart' as _i22;
-import '../schoolday/schoolday_event.dart' as _i23;
+import '../schoolday/schoolday_event/schoolday_event.dart' as _i23;
 import '../school_list/pupil_list.dart' as _i24;
 
 /// Pupil class
 abstract class PupilData
-    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   PupilData._({
     this.id,
     required this.active,
@@ -343,7 +345,7 @@ abstract class PupilData
   List<_i24.PupilList>? pupilLists;
 
   @override
-  _i1.Table<int> get table => t;
+  _i1.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [PupilData]
   /// with some or all fields replaced by the given arguments.
@@ -875,7 +877,7 @@ class _PupilDataImpl extends PupilData {
   }
 }
 
-class PupilDataTable extends _i1.Table<int> {
+class PupilDataTable extends _i1.Table<int?> {
   PupilDataTable({super.tableRelation}) : super(tableName: 'pupil_data') {
     active = _i1.ColumnBool(
       'active',
@@ -1847,7 +1849,7 @@ class PupilDataInclude extends _i1.IncludeObject {
       };
 
   @override
-  _i1.Table<int> get table => PupilData.t;
+  _i1.Table<int?> get table => PupilData.t;
 }
 
 class PupilDataIncludeList extends _i1.IncludeList {
@@ -1867,7 +1869,7 @@ class PupilDataIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int> get table => PupilData.t;
+  _i1.Table<int?> get table => PupilData.t;
 }
 
 class PupilDataRepository {

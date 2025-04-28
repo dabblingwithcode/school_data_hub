@@ -8,13 +8,15 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 
+// ignore_for_file: unnecessary_null_comparison
+
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../school_list/school_list.dart' as _i2;
 import '../pupil_data/pupil_data.dart' as _i3;
 
 abstract class PupilList
-    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   PupilList._({
     this.id,
     this.status,
@@ -78,7 +80,7 @@ abstract class PupilList
   _i3.PupilData? pupil;
 
   @override
-  _i1.Table<int> get table => t;
+  _i1.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [PupilList]
   /// with some or all fields replaced by the given arguments.
@@ -209,7 +211,7 @@ class _PupilListImpl extends PupilList {
   }
 }
 
-class PupilListTable extends _i1.Table<int> {
+class PupilListTable extends _i1.Table<int?> {
   PupilListTable({super.tableRelation}) : super(tableName: 'pupil_list') {
     status = _i1.ColumnBool(
       'status',
@@ -315,7 +317,7 @@ class PupilListInclude extends _i1.IncludeObject {
       };
 
   @override
-  _i1.Table<int> get table => PupilList.t;
+  _i1.Table<int?> get table => PupilList.t;
 }
 
 class PupilListIncludeList extends _i1.IncludeList {
@@ -335,7 +337,7 @@ class PupilListIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int> get table => PupilList.t;
+  _i1.Table<int?> get table => PupilList.t;
 }
 
 class PupilListRepository {

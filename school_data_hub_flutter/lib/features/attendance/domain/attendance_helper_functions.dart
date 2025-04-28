@@ -302,13 +302,13 @@ class AttendanceHelper {
     );
   }
 
-  bool isMissedClassinSemester(
+  static bool isMissedClassinSemester(
       MissedClass missedClass, SchoolSemester schoolSemester) {
     return missedClass.schoolday!.schoolday.isAfter(schoolSemester.startDate) &&
         missedClass.schoolday!.schoolday.isBefore(schoolSemester.endDate);
   }
 
-  List<int> missedHoursforSemesterOrSchoolyear(PupilProxy pupil) {
+  static List<int> missedHoursforSemesterOrSchoolyear(PupilProxy pupil) {
     // The law in NRW Germany requires that absences are counted in hours
     // The function returns absence hours and unexcused hours for the current semester
     // (for grades 3 and 4)

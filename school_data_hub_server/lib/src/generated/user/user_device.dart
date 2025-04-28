@@ -8,12 +8,14 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 
+// ignore_for_file: unnecessary_null_comparison
+
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i2;
 
 abstract class UserDevice
-    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   UserDevice._({
     this.id,
     required this.userInfoId,
@@ -75,7 +77,7 @@ abstract class UserDevice
   int authId;
 
   @override
-  _i1.Table<int> get table => t;
+  _i1.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [UserDevice]
   /// with some or all fields replaced by the given arguments.
@@ -199,7 +201,7 @@ class _UserDeviceImpl extends UserDevice {
   }
 }
 
-class UserDeviceTable extends _i1.Table<int> {
+class UserDeviceTable extends _i1.Table<int?> {
   UserDeviceTable({super.tableRelation}) : super(tableName: 'user_device') {
     userInfoId = _i1.ColumnInt(
       'userInfoId',
@@ -285,7 +287,7 @@ class UserDeviceInclude extends _i1.IncludeObject {
   Map<String, _i1.Include?> get includes => {'userInfo': _userInfo};
 
   @override
-  _i1.Table<int> get table => UserDevice.t;
+  _i1.Table<int?> get table => UserDevice.t;
 }
 
 class UserDeviceIncludeList extends _i1.IncludeList {
@@ -305,7 +307,7 @@ class UserDeviceIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int> get table => UserDevice.t;
+  _i1.Table<int?> get table => UserDevice.t;
 }
 
 class UserDeviceRepository {

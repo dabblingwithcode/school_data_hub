@@ -12,7 +12,7 @@
 import 'package:serverpod/serverpod.dart' as _i1;
 
 abstract class CreditTransaction
-    implements _i1.TableRow<int>, _i1.ProtocolSerialization {
+    implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   CreditTransaction._({
     this.id,
     required this.sender,
@@ -65,7 +65,7 @@ abstract class CreditTransaction
   final int? _pupilDataCredittransactionsPupilDataId;
 
   @override
-  _i1.Table<int> get table => t;
+  _i1.Table<int?> get table => t;
 
   /// Returns a shallow copy of this [CreditTransaction]
   /// with some or all fields replaced by the given arguments.
@@ -219,7 +219,7 @@ class CreditTransactionImplicit extends _CreditTransactionImpl {
   final int? _pupilDataCredittransactionsPupilDataId;
 }
 
-class CreditTransactionTable extends _i1.Table<int> {
+class CreditTransactionTable extends _i1.Table<int?> {
   CreditTransactionTable({super.tableRelation})
       : super(tableName: 'credit_transaction') {
     sender = _i1.ColumnString(
@@ -289,7 +289,7 @@ class CreditTransactionInclude extends _i1.IncludeObject {
   Map<String, _i1.Include?> get includes => {};
 
   @override
-  _i1.Table<int> get table => CreditTransaction.t;
+  _i1.Table<int?> get table => CreditTransaction.t;
 }
 
 class CreditTransactionIncludeList extends _i1.IncludeList {
@@ -309,7 +309,7 @@ class CreditTransactionIncludeList extends _i1.IncludeList {
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int> get table => CreditTransaction.t;
+  _i1.Table<int?> get table => CreditTransaction.t;
 }
 
 class CreditTransactionRepository {
