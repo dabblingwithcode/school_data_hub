@@ -6,6 +6,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_search_text_field.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/presentation/schoolday_event_list_page/widgets/searchbar/schoolday_event_stats_row.dart';
 import 'package:watch_it/watch_it.dart';
@@ -20,6 +21,9 @@ class SchooldayEventListSearchBar extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final pupils = watchValue((PupilsFilter x) => x.filteredPupils);
+    // we need to watch the schoolday events to refresh the counts for the stats
+    final schooldayEvents =
+        watchValue((SchooldayEventManager x) => x.schooldayEvents);
     final filtersActive =
         watchValue((FiltersStateManager x) => x.filtersActive);
 
