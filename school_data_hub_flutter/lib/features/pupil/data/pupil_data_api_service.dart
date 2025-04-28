@@ -73,6 +73,31 @@ class PupilDataApiService {
     }
   }
 
+  //- update communication skills
+  Future<PupilData> updateCommunicationSkills({
+    required int pupilId,
+    required CommunicationSkills? communicationSkills,
+  }) async {
+    try {
+      _notificationService.apiRunning(true);
+      final updatedPupil = await _client.pupilUpdate.updateCommunicationSkills(
+        pupilId: pupilId,
+        communicationSkills: communicationSkills,
+      );
+      _notificationService.apiRunning(false);
+      return updatedPupil;
+    } catch (e) {
+      _notificationService.apiRunning(false);
+
+      _log.severe('Error while updating pupil', e, StackTrace.current);
+
+      _notificationService.showSnackBar(NotificationType.error,
+          'Die Schüler konnten nicht aktualisiert werden: ${e.toString()}');
+
+      throw Exception('Failed to update pupil, $e');
+    }
+  }
+
   // - update credit
   Future<PupilData> updateCredit({
     required int pupilId,
@@ -96,7 +121,7 @@ class PupilDataApiService {
       throw Exception('Failed to update pupil, $e');
     }
   }
-  // //- update pupil property
+  // //- update pupil one of the pupil properties being a string
 
   Future<PupilData> updateStringProperty(
       {required int pupilId,
@@ -119,28 +144,6 @@ class PupilDataApiService {
       throw Exception('Failed to update pupil property, $e');
     }
   }
-  // Future<PupilData> updateNonParentInfoPupilProperty({
-  //   required int id,
-  //   required String property,
-  //   required dynamic value,
-  // }) async {
-  //   try {
-  //     _notificationService.apiRunning(true);
-  //     final updatedPupil =
-  //         await _client.pupil.updatePupilProperty(id, property, value);
-  //     _notificationService.apiRunning(false);
-  //     return updatedPupil;
-  //   } catch (e) {
-  //     _notificationService.apiRunning(false);
-
-  //     _log.severe('Error while updating pupil property', e, StackTrace.current);
-
-  //     _notificationService.showSnackBar(NotificationType.error,
-  //         'Die Schüler konnten nicht aktualisiert werden: ${e.toString()}');
-
-  //     throw Exception('Failed to update pupil property, $e');
-  //   }
-  // }
 
   // - update tutor info
 

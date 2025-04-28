@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/features/attendance/domain/models/enums.dart';
 
 // items for the missedType dropdown
 List<DropdownMenuItem<MissedType>> missedTypeMenuItems = [

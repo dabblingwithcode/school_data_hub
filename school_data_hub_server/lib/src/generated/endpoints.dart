@@ -32,26 +32,28 @@ import 'package:school_data_hub_server/src/generated/user/device_info.dart'
 import 'package:school_data_hub_server/src/generated/protocol.dart' as _i18;
 import 'package:school_data_hub_server/src/generated/learning/competence.dart'
     as _i19;
-import 'package:school_data_hub_server/src/generated/pupil_data/pupil_objects/communication/tutor_info.dart'
-    as _i20;
-import 'package:school_data_hub_server/src/generated/pupil_data/dto/siblings_tutor_info_dto.dart'
-    as _i21;
 import 'package:school_data_hub_server/src/generated/pupil_data/pupil_data.dart'
+    as _i20;
+import 'package:school_data_hub_server/src/generated/pupil_data/pupil_objects/communication/communication_skills.dart'
+    as _i21;
+import 'package:school_data_hub_server/src/generated/pupil_data/pupil_objects/communication/tutor_info.dart'
     as _i22;
-import 'dart:typed_data' as _i23;
+import 'package:school_data_hub_server/src/generated/pupil_data/dto/siblings_tutor_info_dto.dart'
+    as _i23;
+import 'dart:typed_data' as _i24;
 import 'package:school_data_hub_server/src/generated/learning_support/support_level.dart'
-    as _i24;
-import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
     as _i25;
-import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
     as _i26;
-import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event_type.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
     as _i27;
-import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event_type.dart'
     as _i28;
-import 'package:school_data_hub_server/src/generated/learning_support/support_category.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event.dart'
     as _i29;
-import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i30;
+import 'package:school_data_hub_server/src/generated/learning_support/support_category.dart'
+    as _i30;
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i31;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -902,6 +904,49 @@ class Endpoints extends _i1.EndpointDispatch {
       name: 'pupilUpdate',
       endpoint: endpoints['pupilUpdate']!,
       methodConnectors: {
+        'updatePupil': _i1.MethodConnector(
+          name: 'updatePupil',
+          params: {
+            'pupil': _i1.ParameterDescription(
+              name: 'pupil',
+              type: _i1.getType<_i20.PupilData>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['pupilUpdate'] as _i9.PupilUpdateEndpoint).updatePupil(
+            session,
+            params['pupil'],
+          ),
+        ),
+        'updateCommunicationSkills': _i1.MethodConnector(
+          name: 'updateCommunicationSkills',
+          params: {
+            'pupilId': _i1.ParameterDescription(
+              name: 'pupilId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'communicationSkills': _i1.ParameterDescription(
+              name: 'communicationSkills',
+              type: _i1.getType<_i21.CommunicationSkills?>(),
+              nullable: true,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['pupilUpdate'] as _i9.PupilUpdateEndpoint)
+                  .updateCommunicationSkills(
+            session,
+            pupilId: params['pupilId'],
+            communicationSkills: params['communicationSkills'],
+          ),
+        ),
         'updateTutorInfo': _i1.MethodConnector(
           name: 'updateTutorInfo',
           params: {
@@ -912,7 +957,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'tutorInfo': _i1.ParameterDescription(
               name: 'tutorInfo',
-              type: _i1.getType<_i20.TutorInfo>(),
+              type: _i1.getType<_i22.TutorInfo>(),
               nullable: false,
             ),
           },
@@ -932,7 +977,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'siblingsTutorInfo': _i1.ParameterDescription(
               name: 'siblingsTutorInfo',
-              type: _i1.getType<_i21.SiblingsTutorInfo>(),
+              type: _i1.getType<_i23.SiblingsTutorInfo>(),
               nullable: false,
             )
           },
@@ -944,24 +989,6 @@ class Endpoints extends _i1.EndpointDispatch {
                   .updateSiblingsTutorInfo(
             session,
             params['siblingsTutorInfo'],
-          ),
-        ),
-        'updatePupil': _i1.MethodConnector(
-          name: 'updatePupil',
-          params: {
-            'pupil': _i1.ParameterDescription(
-              name: 'pupil',
-              type: _i1.getType<_i22.PupilData>(),
-              nullable: false,
-            )
-          },
-          call: (
-            _i1.Session session,
-            Map<String, dynamic> params,
-          ) async =>
-              (endpoints['pupilUpdate'] as _i9.PupilUpdateEndpoint).updatePupil(
-            session,
-            params['pupil'],
           ),
         ),
         'updatePupilAvatar': _i1.MethodConnector(
@@ -1061,7 +1088,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'avatarAuthBytes': _i1.ParameterDescription(
               name: 'avatarAuthBytes',
-              type: _i1.getType<_i23.ByteData>(),
+              type: _i1.getType<_i24.ByteData>(),
               nullable: false,
             ),
             'path': _i1.ParameterDescription(
@@ -1092,7 +1119,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'publicMediaAuthFBytes': _i1.ParameterDescription(
               name: 'publicMediaAuthFBytes',
-              type: _i1.getType<_i23.ByteData>(),
+              type: _i1.getType<_i24.ByteData>(),
               nullable: false,
             ),
             'path': _i1.ParameterDescription(
@@ -1118,7 +1145,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'supportLevel': _i1.ParameterDescription(
               name: 'supportLevel',
-              type: _i1.getType<_i24.SupportLevel>(),
+              type: _i1.getType<_i25.SupportLevel>(),
               nullable: false,
             )
           },
@@ -1212,7 +1239,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'schoolSemester': _i1.ParameterDescription(
               name: 'schoolSemester',
-              type: _i1.getType<_i25.SchoolSemester>(),
+              type: _i1.getType<_i26.SchoolSemester>(),
               nullable: false,
             )
           },
@@ -1231,7 +1258,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'semester': _i1.ParameterDescription(
               name: 'semester',
-              type: _i1.getType<_i25.SchoolSemester>(),
+              type: _i1.getType<_i26.SchoolSemester>(),
               nullable: false,
             )
           },
@@ -1307,7 +1334,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'schoolday': _i1.ParameterDescription(
               name: 'schoolday',
-              type: _i1.getType<_i26.Schoolday>(),
+              type: _i1.getType<_i27.Schoolday>(),
               nullable: false,
             )
           },
@@ -1378,7 +1405,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'type': _i1.ParameterDescription(
               name: 'type',
-              type: _i1.getType<_i27.SchooldayEventType>(),
+              type: _i1.getType<_i28.SchooldayEventType>(),
               nullable: false,
             ),
             'reason': _i1.ParameterDescription(
@@ -1411,7 +1438,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'schooldayEvent': _i1.ParameterDescription(
               name: 'schooldayEvent',
-              type: _i1.getType<_i28.SchooldayEvent>(),
+              type: _i1.getType<_i29.SchooldayEvent>(),
               nullable: false,
             ),
             'changedProcessedToFalse': _i1.ParameterDescription(
@@ -1552,7 +1579,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'category': _i1.ParameterDescription(
               name: 'category',
-              type: _i1.getType<_i29.SupportCategory>(),
+              type: _i1.getType<_i30.SupportCategory>(),
               nullable: false,
             )
           },
@@ -1571,7 +1598,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'category': _i1.ParameterDescription(
               name: 'category',
-              type: _i1.getType<_i29.SupportCategory>(),
+              type: _i1.getType<_i30.SupportCategory>(),
               nullable: false,
             )
           },
@@ -1590,7 +1617,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'category': _i1.ParameterDescription(
               name: 'category',
-              type: _i1.getType<_i29.SupportCategory>(),
+              type: _i1.getType<_i30.SupportCategory>(),
               nullable: false,
             )
           },
@@ -1655,6 +1682,6 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
-    modules['serverpod_auth'] = _i30.Endpoints()..initializeEndpoints(server);
+    modules['serverpod_auth'] = _i31.Endpoints()..initializeEndpoints(server);
   }
 }

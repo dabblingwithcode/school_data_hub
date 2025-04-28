@@ -377,6 +377,23 @@ class PupilManager extends ChangeNotifier {
     updatePupilProxyWithPupilData(pupilUpdate);
   }
 
+  Future<void> updatePupilCommunicationSkills(
+      {required int pupilId,
+      required CommunicationSkills communicationSkills}) async {
+    try {
+      final PupilData pupilData =
+          await _pupilDataApiService.updateCommunicationSkills(
+        pupilId: pupilId,
+        communicationSkills: communicationSkills,
+      );
+      updatePupilProxyWithPupilData(pupilData);
+    } catch (e) {
+      _log.severe('Error updating communication skills: $e');
+      _notificationService.showSnackBar(
+          NotificationType.error, 'Fehler beim Aktualisieren der Daten!');
+    }
+  }
+
   Future<void> updateStringProperty(
       {required int pupilId,
       required String property,
@@ -439,6 +456,22 @@ class PupilManager extends ChangeNotifier {
 
     // _pupils[pupilId]!.updatePupil(pupilUpdate);
     notifyListeners();
+  }
+
+  Future<void> updateCommunicationSkills(
+      {required int pupilId, required CommunicationSkills? skills}) async {
+    try {
+      final PupilData pupilData =
+          await _pupilDataApiService.updateCommunicationSkills(
+        pupilId: pupilId,
+        communicationSkills: skills,
+      );
+      updatePupilProxyWithPupilData(pupilData);
+    } catch (e) {
+      _log.severe('Error updating communication skills: $e');
+      _notificationService.showSnackBar(
+          NotificationType.error, 'Fehler beim Aktualisieren der Daten!');
+    }
   }
 
   Future<void> patchPupilWithNewSupportLevel(

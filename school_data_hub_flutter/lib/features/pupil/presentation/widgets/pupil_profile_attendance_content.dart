@@ -4,12 +4,16 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/paddings.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/attendance_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/missed_classes_pupil_list_page/missed_classes_pupil_list_page.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/widgets/attendance_stats_pupil.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/widgets/missed_class_card.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:watch_it/watch_it.dart';
 
-class PupilAttendanceContent extends StatelessWidget {
+final _attendanceManager = di<AttendanceManager>();
+
+class PupilAttendanceContent extends WatchingWidget {
   final PupilProxy pupil;
   const PupilAttendanceContent({required this.pupil, super.key});
 
@@ -17,7 +21,10 @@ class PupilAttendanceContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<int> missedHoursForActualReport =
         AttendanceHelper.missedHoursforSemesterOrSchoolyear(pupil);
-    List<MissedClass> missedClasses = pupil.missedClasses!;
+    List<MissedClass> missedClasses =
+        watch(_attendanceManager.getPupilMissedClassesList(pupil.pupilId))
+            .missedClasses;
+
     // sort by missedDay
     missedClasses.sort(
         (b, a) => a.schoolday!.schoolday.compareTo(b.schoolday!.schoolday));
@@ -104,23 +111,23 @@ class PupilAttendanceContent extends StatelessWidget {
   }
 }
 
-List<Widget> pupilAttendanceContentList(PupilProxy pupil, context) {
-  List<MissedClass> missedClasses = List.from(pupil.missedClasses!);
-  // sort by missedDay
-  missedClasses
-      .sort((b, a) => a.schoolday!.schoolday.compareTo(b.schoolday!.schoolday));
-  return [
-    ListView.builder(
-      padding: const EdgeInsets.only(top: 5, bottom: 15),
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: missedClasses.length,
-      itemBuilder: (BuildContext context, int index) {
-        // pupil.pupilMissedClasses.sort(
-        //     (a, b) => a.missedDay.compareTo(b.missedDay));
+// List<Widget> pupilAttendanceContentList(PupilProxy pupil, context) {
+//   List<MissedClass> missedClasses = List.from(pupil.missedClasses!);
+//   // sort by missedDay
+//   missedClasses
+//       .sort((b, a) => a.schoolday!.schoolday.compareTo(b.schoolday!.schoolday));
+//   return [
+//     ListView.builder(
+//       padding: const EdgeInsets.only(top: 5, bottom: 15),
+//       shrinkWrap: true,
+//       physics: const NeverScrollableScrollPhysics(),
+//       itemCount: missedClasses.length,
+//       itemBuilder: (BuildContext context, int index) {
+//         // pupil.pupilMissedClasses.sort(
+//         //     (a, b) => a.missedDay.compareTo(b.missedDay));
 
-        return MissedClassCard(pupil: pupil, missedClass: missedClasses[index]);
-      },
-    ),
-  ];
-}
+//         return MissedClassCard(pupil: pupil, missedClass: missedClasses[index]);
+//       },
+//     ),
+//   ];
+// }

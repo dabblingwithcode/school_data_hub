@@ -17,6 +17,7 @@ import 'package:school_data_hub_flutter/features/attendance/presentation/attenda
 import 'package:school_data_hub_flutter/features/attendance/presentation/attendance_page/widgets/dialogues/multiple_entries_dialog.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/attendance_page/widgets/dialogues/returned_time_picker.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -71,11 +72,11 @@ class AttendanceCard extends WatchingWidget {
                     child: GestureDetector(
                       onLongPress: () => createMissedClassList(context, pupil),
                       onTap: () {
-                        // Navigator.of(context).push(MaterialPageRoute(
-                        //   builder: (ctx) => PupilProfilePage(
-                        //     pupil: pupil,
-                        //   ),
-                        // ));
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (ctx) => PupilProfilePage(
+                            pupil: pupil,
+                          ),
+                        ));
                       },
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -90,12 +91,12 @@ class AttendanceCard extends WatchingWidget {
                                       onTap: () {
                                         di<MainMenuBottomNavManager>()
                                             .setPupilProfileNavPage(3);
-                                        // Navigator.of(context)
-                                        //     .pushReplacement(MaterialPageRoute(
-                                        //   builder: (ctx) => PupilProfilePage(
-                                        //     pupil: pupil,
-                                        //   ),
-                                        // ));
+                                        Navigator.of(context)
+                                            .pushReplacement(MaterialPageRoute(
+                                          builder: (ctx) => PupilProfilePage(
+                                            pupil: pupil,
+                                          ),
+                                        ));
                                       },
                                       child: Text(
                                         '${pupil.firstName} ${pupil.lastName}',
@@ -395,11 +396,11 @@ class AttendanceCard extends WatchingWidget {
                   child: GestureDetector(
                     onLongPress: () => createMissedClassList(context, pupil),
                     onTap: () {
-                      // Navigator.of(context).push(MaterialPageRoute(
-                      //   builder: (ctx) => PupilProfilePage(
-                      //     pupil: pupil,
-                      //   ),
-                      // ));
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (ctx) => PupilProfilePage(
+                          pupil: pupil,
+                        ),
+                      ));
                     },
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -414,12 +415,12 @@ class AttendanceCard extends WatchingWidget {
                                     onTap: () {
                                       di<MainMenuBottomNavManager>()
                                           .setPupilProfileNavPage(3);
-                                      // Navigator.of(context)
-                                      //     .pushReplacement(MaterialPageRoute(
-                                      //   builder: (ctx) => PupilProfilePage(
-                                      //     pupil: pupil,
-                                      //   ),
-                                      // ));
+                                      Navigator.of(context)
+                                          .pushReplacement(MaterialPageRoute(
+                                        builder: (ctx) => PupilProfilePage(
+                                          pupil: pupil,
+                                        ),
+                                      ));
                                     },
                                     child: Row(
                                       children: [

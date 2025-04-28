@@ -3,8 +3,8 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 
 class LanguageDialogDropdown extends StatelessWidget {
-  final String value;
-  final ValueChanged<String?> onChanged;
+  final int value;
+  final ValueChanged<int?> onChanged;
   final String label;
   final IconData icon;
 
@@ -40,14 +40,14 @@ class LanguageDialogDropdown extends StatelessWidget {
           Row(
             children: [
               DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
+                child: DropdownButton<int>(
                   onTap: () {
                     FocusManager.instance.primaryFocus?.unfocus();
                   },
                   value: value,
                   items: const [
                     DropdownMenuItem(
-                      value: '0',
+                      value: 0,
                       child: Center(
                         child: Text(
                           "nicht",
@@ -61,7 +61,7 @@ class LanguageDialogDropdown extends StatelessWidget {
                       ),
                     ),
                     DropdownMenuItem(
-                      value: '1',
+                      value: 1,
                       child: Center(
                         child: Text(
                           "einfache Anliegen",
@@ -75,7 +75,7 @@ class LanguageDialogDropdown extends StatelessWidget {
                       ),
                     ),
                     DropdownMenuItem(
-                      value: '2',
+                      value: 2,
                       child: Center(
                         child: Text(
                           "komplexere Informationen",
@@ -89,7 +89,7 @@ class LanguageDialogDropdown extends StatelessWidget {
                       ),
                     ),
                     DropdownMenuItem(
-                      value: '3',
+                      value: 3,
                       child: Center(
                         child: Text(
                           "ohne Probleme",
@@ -103,7 +103,7 @@ class LanguageDialogDropdown extends StatelessWidget {
                       ),
                     ),
                     DropdownMenuItem(
-                      value: '4',
+                      value: 4,
                       child: Center(
                         child: Text(
                           "unbekannt",

@@ -13,7 +13,9 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/features/app/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/data/pupil_data_api_service.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_selector_filters.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_identity.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
@@ -115,11 +117,11 @@ class PupilIdentityManager {
             PupilIdentityHelper.pupilIdentityFromString(pupilIdentityValues);
         // TODO: DonÄt forgert to create the attendance map entry for the new pupil
         // TODO: fix this
-        // if (!PupilProxy.groupFilters.any((filter) =>
-        //         (filter as GroupFilter).name == newPupilIdentity.group) ==
-        //     false) {
-        //   updateGroupFilters = true;
-        // }
+        if (!PupilProxy.groupFilters.any((filter) =>
+                (filter as GroupFilter).name == newPupilIdentity.group) ==
+            false) {
+          updateGroupFilters = true;
+        }
         //- add the new pupil to the pupilIdentities map
         _pupilIdentities[newPupilIdentity.id] = newPupilIdentity;
 

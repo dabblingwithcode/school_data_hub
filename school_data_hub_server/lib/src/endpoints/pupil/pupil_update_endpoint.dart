@@ -8,9 +8,40 @@ import 'package:serverpod/serverpod.dart';
 
 final _log = Logger('PupilUpdateEndpoint');
 
+final PupilDataInclude _pupilDataInclude = PupilData.include(
+  avatar: HubDocument.include(),
+  creditTransactions: CreditTransaction.includeList(),
+  supportLevelHistory: SupportLevel.includeList(),
+);
+
 class PupilUpdateEndpoint extends Endpoint {
   @override
   bool get requireLogin => true;
+
+  Future<PupilData> updatePupil(Session session, PupilData pupil) async {
+    final updatedPupil = await PupilData.db.updateRow(session, pupil);
+    return updatedPupil;
+  }
+
+  Future<PupilData> updateCommunicationSkills(Session session,
+      {required int pupilId,
+      required CommunicationSkills? communicationSkills}) async {
+    final pupil = await PupilData.db.findById(session, pupilId);
+    if (pupil == null) {
+      throw Exception('Pupil not found');
+    }
+    pupil.communicationPupil = communicationSkills;
+
+    // Update the pupil in the database
+    await PupilData.db.updateRow(session, pupil);
+    // Fetch the object again with the relation included
+    final updatedPupilWithRelation = await PupilData.db.findById(
+      session,
+      pupil.id!,
+      include: _pupilDataInclude,
+    );
+    return updatedPupilWithRelation!;
+  }
 
   Future<PupilData> updateTutorInfo(
       Session session, int pupilId, TutorInfo tutorInfo) async {
@@ -43,11 +74,6 @@ class PupilUpdateEndpoint extends Endpoint {
     final writtenSiblings = await PupilData.db.update(session, updatedSiblings);
 
     return writtenSiblings;
-  }
-
-  Future<PupilData> updatePupil(Session session, PupilData pupil) async {
-    final updatedPupil = await PupilData.db.updateRow(session, pupil);
-    return updatedPupil;
   }
 
   Future<PupilData> updatePupilAvatar(

@@ -25,11 +25,13 @@ class PupilEndpoint extends Endpoint {
 
   Future<List<PupilData>> fetchPupilsById(
       Session session, Set<int> internalIds) async {
-    final pupils = await PupilData.db.find(session,
-        where: (t) => t.internalId.inSet(internalIds),
-        include: PupilData.include(
-          avatar: HubDocument.include(),
-        ));
+    final pupils = await PupilData.db.find(
+      session,
+      where: (t) => t.internalId.inSet(internalIds),
+      include: PupilData.include(
+        avatar: HubDocument.include(),
+      ),
+    );
 
     return pupils;
   }

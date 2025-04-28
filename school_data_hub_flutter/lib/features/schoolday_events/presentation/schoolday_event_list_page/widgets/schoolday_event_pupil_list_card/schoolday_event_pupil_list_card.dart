@@ -8,6 +8,7 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/features/app/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_helper_functions.dart';
@@ -78,11 +79,11 @@ class _SchooldayEventListCardState extends State<SchooldayEventPupilListCard> {
                                 onTap: () {
                                   _mainMenuBottomNavManager
                                       .setPupilProfileNavPage(4);
-                                  // Navigator.of(context).push(MaterialPageRoute(
-                                  //   builder: (ctx) => PupilProfilePage(
-                                  //     pupil: pupil,
-                                  //   ),
-                                  // ));
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (ctx) => PupilProfilePage(
+                                      pupil: pupil,
+                                    ),
+                                  ));
                                 },
                                 child: Text(
                                   pupil.firstName,

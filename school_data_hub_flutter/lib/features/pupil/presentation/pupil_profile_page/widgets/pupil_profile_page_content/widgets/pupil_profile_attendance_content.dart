@@ -21,7 +21,9 @@ class PupilAttendanceContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<int> missedHoursForActualReport =
         AttendanceHelper.missedHoursforSemesterOrSchoolyear(pupil);
-    List<MissedClass> missedClasses = pupil.missedClasses!;
+    List<MissedClass> missedClasses = _attendanceManager
+        .getPupilMissedClassesList(pupil.pupilId)
+        .missedClasses;
     // sort by missedDay
     missedClasses.sort(
         (b, a) => a.schoolday!.schoolday.compareTo(b.schoolday!.schoolday));

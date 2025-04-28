@@ -39,19 +39,19 @@ class PupilHelper {
     }
   }
 
-  static String communicationPredicate(String? value) {
+  static String communicationPredicate(int? value) {
     switch (value) {
       case null:
         return 'keine Angabe';
-      case '0':
+      case 0:
         return 'nicht';
-      case '1':
+      case 1:
         return "einfache Anliegen";
-      case '2':
+      case 2:
         return "komplexere Informationen";
-      case '3':
+      case 3:
         return "ohne Probleme";
-      case '4':
+      case 4:
         return "unbekannt";
       default:
         return "Falscher Wert im Server";

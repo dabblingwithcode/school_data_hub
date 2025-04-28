@@ -42,9 +42,10 @@ pupil:
   - resetPublicMediaAuth:
   - deleteSupportLevelHistoryItem:
 pupilUpdate:
+  - updatePupil:
+  - updateCommunicationSkills:
   - updateTutorInfo:
   - updateSiblingsTutorInfo:
-  - updatePupil:
   - updatePupilAvatar:
   - updateStringProperty:
   - updateCredit:

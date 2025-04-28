@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/paddings.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_user_helpers.dart';
@@ -21,6 +23,10 @@ import 'package:watch_it/watch_it.dart';
 final _pupilManager = di<PupilManager>();
 
 final _matrixPolicyManager = di<MatrixPolicyManager>();
+
+final _notificationService = di<NotificationService>();
+
+final _serverpodSessionManager = di<ServerpodSessionManager>();
 
 class PupilInfosContent extends StatelessWidget {
   final PupilProxy pupil;
@@ -348,66 +354,67 @@ class PupilInfosContent extends StatelessWidget {
                   Icons.done,
                   color: Colors.green,
                 ),
-                // SizedBox(
-                //   width: 25,
-                //   height: 25,
-                //   child: Checkbox(
-                //     activeColor: Colors.green,
-                //     value: pupil.avatarAuth,
-                //     onChanged: (newValue) async {
-                //       // await _pupilManager.patchOnePupilProperty(
-                //       //     pupilId: pupil.internalId,
-                //       //     jsonKey: 'avatar_auth',
-                //       //     value: newValue);
-                //     },
-                //   ),
-                // ),
+                SizedBox(
+                  width: 25,
+                  height: 25,
+                  child: Checkbox(
+                    activeColor: Colors.green,
+                    value: (pupil.avatarAuth != null) ? true : false,
+                    onChanged: (newValue) async {
+                      // await _pupilManager.patchOnePupilProperty(
+                      //     pupilId: pupil.internalId,
+                      //     jsonKey: 'avatar_auth',
+                      //     value: newValue);
+                    },
+                  ),
+                ),
                 const Spacer(),
-                // InkWell(
-                //   onTap: () async {
-                //     // final File? file = await uploadImageFile(context);
-                //     // if (file == null) return;
-                //     // await _pupilManager.postAvatarAuthImage(
-                //     //   file,
-                //     //   pupil,
-                //     // );
-                //   },
-                //   onLongPress: () async {
-                //     if (locator<SessionManager>().isAdmin.value != true) return;
-                //     if (pupil.avatarAuthId == null) return;
-                //     final bool? result = await confirmationDialog(
-                //         context: context,
-                //         title: 'Dokument löschen',
-                //         message:
-                //             'Dokument für die Einwilligung von ${pupil.firstName} ${pupil.lastName} löschen?');
-                //     if (result != true) return;
-                //     await _pupilManager.deleteAvatarAuthImage(
-                //       pupil.internalId,
-                //       pupil.avatarAuthId!,
-                //     );
-                //     locator<NotificationService>().showSnackBar(
-                //         NotificationType.success,
-                //         'Die Einwilligung wurde geändert!');
-                //   },
-                //   child: pupil.avatarAuthId != null
-                //       ? Provider<DocumentImageData>.value(
-                //           updateShouldNotify: (oldValue, newValue) =>
-                //               oldValue.documentUrl != newValue.documentUrl,
-                //           value: DocumentImageData(
-                //               documentTag: pupil.avatarAuthId!,
-                //               documentUrl:
-                //                   '${locator<EnvManager>().env!.serverUrl}/pupils/${pupil.internalId}/avatar_auth',
-                //               size: 70),
-                //           child: const DocumentImage(),
-                //         )
-                //       : SizedBox(
-                //           height: 70,
-                //           child: ClipRRect(
-                //             borderRadius: BorderRadius.circular(5),
-                //             child: Image.asset('assets/document_camera.png'),
-                //           ),
-                //         ),
-                // ),
+                InkWell(
+                  onTap: () async {
+                    // final File? file = await uploadImageFile(context);
+                    // if (file == null) return;
+                    // await _pupilManager.postAvatarAuthImage(
+                    //   file,
+                    //   pupil,
+                    // );
+                  },
+                  onLongPress: () async {
+                    if (_serverpodSessionManager.isAdmin != true) return;
+                    if (pupil.avatarAuth != null) return;
+                    final bool? result = await confirmationDialog(
+                        context: context,
+                        title: 'Dokument löschen',
+                        message:
+                            'Dokument für die Einwilligung von ${pupil.firstName} ${pupil.lastName} löschen?');
+                    if (result != true) return;
+                    // await _pupilManager.deleteAvatarAuthImage(
+                    //   pupil.internalId,
+                    //   pupil.avatarAuthId!,
+                    // );
+                    _notificationService.showSnackBar(NotificationType.success,
+                        'Die Einwilligung wurde geändert!');
+                  },
+                  child:
+                      // pupil.avatarAuthId != null
+                      //     ? Provider<DocumentImageData>.value(
+                      //         updateShouldNotify: (oldValue, newValue) =>
+                      //             oldValue.documentUrl != newValue.documentUrl,
+                      //         value: DocumentImageData(
+                      //             documentTag: pupil.avatarAuthId!,
+                      //             documentUrl:
+                      //                 '${locator<EnvManager>().env!.serverUrl}/pupils/${pupil.internalId}/avatar_auth',
+                      //             size: 70),
+                      //         child: const DocumentImage(),
+                      //       )
+                      //     :
+                      SizedBox(
+                    height: 70,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(5),
+                      child: Image.asset('assets/document_camera.png'),
+                    ),
+                  ),
+                ),
                 const Gap(10),
               ],
             ),

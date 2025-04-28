@@ -172,7 +172,7 @@ class _AttendanceRankingListCardState extends State<AttendanceRankingListCard> {
           CustomExpansionTileContent(
               title: null,
               tileController: _tileController,
-              widgetList: pupilAttendanceContentList(pupil, context)),
+              widgetList: [PupilAttendanceContent(pupil: pupil)]),
         ],
       ),
     );

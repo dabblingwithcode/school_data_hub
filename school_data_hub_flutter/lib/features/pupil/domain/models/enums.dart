@@ -1,3 +1,5 @@
+enum CommunicationSubject { pupil, tutor1, tutor2 }
+
 enum PupilSortMode {
   sortByName,
   sortByMissedExcused,

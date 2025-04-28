@@ -149,49 +149,78 @@ class PupilProxy with ChangeNotifier {
   DateTime? get migrationSupportEnds => _pupilIdentity.migrationSupportEnds;
   DateTime get pupilSince => _pupilIdentity.pupilSince;
 
-  // TODO: This has to be checked, uncommented and tested
+  //- PUPIL DATA GETTERS
 
-  String? _avatarIdOverride;
-  bool _avatarUpdated = false;
+  int get pupilId => _pupilData.id!;
+  bool get active => _pupilData.active;
+  int get internalId => _pupilData.internalId;
+
+  // preschool related
+  PreSchoolMedical? get preSchoolMedical => _pupilData.preSchoolMedical;
+  String? get kindergarden => _pupilData.kindergarden;
+  PreSchoolTest? get preSchoolTest => _pupilData.preSchoolTest;
+
+  // avatar related
 
   HubDocument? get avatar => _pupilData.avatar;
-  // String? get avatarId =>
-  //     _avatarUpdated ? _avatarIdOverride : _pupilData.avatarId;
+  int? get avatarId => _pupilData.avatarId;
   HubDocument? get avatarAuth => _pupilData.avatarAuth;
-  // String? get avatarAuthId => _pupilData.avatarAuthId;
-  PublicMediaAuth get publicMediaAuth => _pupilData.publicMediaAuth;
-  // String? get publicMediaAuthId => _pupilData.publicMediaAuthId;
-  // String? get communicationPupil => _pupilData.communicationPupil;
-  // String? get communicationTutor1 =>
-  //     _pupilData.pupilDataParentInfo?.communicationTutor1;
-  // String? get communicationTutor2 =>
-  //     _pupilData.pupilDataParentInfo?.communicationTutor2;
-  String? get contact => _pupilData.contact;
-  // String? get parentsContact => _pupilData.parentsContact;
-  int get credit => _pupilData.credit;
-  int get creditEarned => _pupilData.creditEarned;
-  int get pupilId => _pupilData.id!;
-  DateTime? get schoolyearHeldBackAt => _pupilData.schoolyearHeldBackAt;
-  SupportLevel? get latestSupportLevel => _pupilData.latestSupportLevel;
-  List<SupportLevel>? get supportLevelHistory => _pupilData.supportLevelHistory;
-  int get internalId => _pupilData.internalId;
-  AfterSchoolCare? get afterSchoolCare => _pupilData.afterSchoolCare;
+  int? get avatarAuthId => _pupilData.avatarAuthId;
 
-  // PreSchoolRevision? get preschoolRevision => _pupilData.preSchoolRevision;
+  // public media related
+  PublicMediaAuth get publicMediaAuth => _pupilData.publicMediaAuth;
+  HubDocument? get publicMediaAuthDocument =>
+      _pupilData.publicMediaAuthDocument;
+  int? get publicMediaAuthDocumentId => _pupilData.publicMediaAuthDocumentId;
+
+  // Communication and tutor related
+  String? get contact => _pupilData.contact;
+
+  CommunicationSkills? get communicationPupil => _pupilData.communicationPupil;
+
   String? get specialInformation => _pupilData.specialInformation;
 
-  List<CompetenceCheck>? get competenceChecks => _pupilData.competenceChecks;
-  List<SupportCategoryStatus>? get supportCategoryStatuses =>
-      _pupilData.supportCategoryStatuses;
-  List<SchooldayEvent>? get schooldayEvents => _pupilData.schooldayEvents;
-  List<PupilBookLending>? get pupilBooks => _pupilData.pupilBookLendings;
-  List<SupportGoal>? get supportGoals => _pupilData.supportGoals;
+  TutorInfo? get tutorInfo => _pupilData.tutorInfo;
 
-  List<MissedClass>? get missedClasses => _missedClasses.values.toList();
-  Map<DateTime, MissedClass> _missedClasses = {};
+  List<PupilAuthorization>? get authorizations => _pupilData.authorizations;
 
-  List<PupilWorkbook>? get pupilWorkbooks => _pupilData.pupilWorkbooks;
+// after school care related
+
+  AfterSchoolCare? get afterSchoolCare => _pupilData.afterSchoolCare;
+
+  // rewards related
+
+  int get credit => _pupilData.credit;
+
+  int get creditEarned => _pupilData.creditEarned;
+
   List<CreditTransaction>? get creditTransactions =>
       _pupilData.creditTransactions;
+
+  // learning related
+
+  DateTime? get schoolyearHeldBackAt => _pupilData.schoolyearHeldBackAt;
+
+  List<CompetenceCheck>? get competenceChecks => _pupilData.competenceChecks;
+
   List<CompetenceGoal>? get competenceGoals => _pupilData.competenceGoals;
+
+  List<PupilWorkbook>? get pupilWorkbooks => _pupilData.pupilWorkbooks;
+
+  List<PupilBookLending>? get pupilBooks => _pupilData.pupilBookLendings;
+
+  // learning support related
+
+  SupportLevel? get latestSupportLevel => _pupilData.latestSupportLevel;
+
+  List<SupportLevel>? get supportLevelHistory => _pupilData.supportLevelHistory;
+
+  List<SupportCategoryStatus>? get supportCategoryStatuses =>
+      _pupilData.supportCategoryStatuses;
+
+  List<SupportGoal>? get supportGoals => _pupilData.supportGoals;
+
+// schoolday related
+
+  List<SchooldayEvent>? get schooldayEvents => _pupilData.schooldayEvents;
 }
