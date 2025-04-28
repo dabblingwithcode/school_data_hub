@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions.dart';
@@ -7,6 +9,8 @@ import 'package:school_data_hub_flutter/common/theme/paddings.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/document_image%20copy.dart';
+import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
@@ -371,12 +375,9 @@ class PupilInfosContent extends StatelessWidget {
                 const Spacer(),
                 InkWell(
                   onTap: () async {
-                    // final File? file = await uploadImageFile(context);
-                    // if (file == null) return;
-                    // await _pupilManager.postAvatarAuthImage(
-                    //   file,
-                    //   pupil,
-                    // );
+                    final File? file = await uploadImageFile(context);
+                    if (file == null) return;
+                    await _pupilManager.updatePupilWithAvatarAuth(file, pupil);
                   },
                   onLongPress: () async {
                     if (_serverpodSessionManager.isAdmin != true) return;
@@ -394,26 +395,18 @@ class PupilInfosContent extends StatelessWidget {
                     _notificationService.showSnackBar(NotificationType.success,
                         'Die Einwilligung wurde geändert!');
                   },
-                  child:
-                      // pupil.avatarAuthId != null
-                      //     ? Provider<DocumentImageData>.value(
-                      //         updateShouldNotify: (oldValue, newValue) =>
-                      //             oldValue.documentUrl != newValue.documentUrl,
-                      //         value: DocumentImageData(
-                      //             documentTag: pupil.avatarAuthId!,
-                      //             documentUrl:
-                      //                 '${locator<EnvManager>().env!.serverUrl}/pupils/${pupil.internalId}/avatar_auth',
-                      //             size: 70),
-                      //         child: const DocumentImage(),
-                      //       )
-                      //     :
-                      SizedBox(
-                    height: 70,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(5),
-                      child: Image.asset('assets/document_camera.png'),
-                    ),
-                  ),
+                  child: pupil.avatarAuthId != null
+                      ? DocumentImage(
+                          documentId: pupil.avatarAuth!.documentId,
+                          size: 70,
+                        )
+                      : SizedBox(
+                          height: 70,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(5),
+                            child: Image.asset('assets/document_camera.png'),
+                          ),
+                        ),
                 ),
                 const Gap(10),
               ],

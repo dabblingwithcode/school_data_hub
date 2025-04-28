@@ -312,6 +312,25 @@ class PupilManager extends ChangeNotifier {
     // _pupils[pupilId]!.clearAvatar();
   }
 
+  Future<void> updatePupilWithAvatarAuth(
+    File imageFile,
+    PupilProxy pupil,
+  ) async {
+    // first we encrypt the file
+
+    final encryptedFile = await customEncrypter.encryptFile(imageFile);
+
+    // send the Api request
+
+    final PupilData pupilUpdate =
+        await _pupilDataApiService.updatePupilWithAvatarAuth(
+      pupilId: pupil.pupilId,
+      file: encryptedFile,
+    );
+
+    // update the pupil in the repository
+    updatePupilProxyWithPupilData(pupilUpdate);
+  }
 //   Future<void> deleteAvatarAuthImage(int pupilId, String cacheKey) async {
 //     // send the Api request
 //     await pupilDataApiService.deletePupilAvatarAuth(

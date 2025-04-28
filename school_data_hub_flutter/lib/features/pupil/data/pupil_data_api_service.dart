@@ -4,10 +4,12 @@ import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/services/api/api_settings.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _notificationService = di<NotificationService>();
+final _serverpodSessionManager = di<ServerpodSessionManager>();
 final _client = di<Client>();
 final _log = Logger('PupilDataApiService');
 
@@ -263,7 +265,7 @@ class PupilDataApiService {
     required File file,
   }) async {
     final path =
-        p.join('avatar_auth', '${DateTime.now().millisecondsSinceEpoch}.jpg');
+        p.join('documents', '${DateTime.now().millisecondsSinceEpoch}.jpg');
     final uploadDescription =
         await _client.files.getUploadDescription('private', path);
     if (uploadDescription != null) {
@@ -285,8 +287,8 @@ class PupilDataApiService {
         try {
           _notificationService.apiRunning(true);
 
-          final updatedPupil =
-              await _client.pupilUpdate.updatePupilAvatar(pupilId, path);
+          final updatedPupil = await _client.pupilUpdate.updatePupilAvatarAuth(
+              pupilId, path, _serverpodSessionManager.userName!);
           _notificationService.apiRunning(false);
 
           return updatedPupil;

@@ -511,6 +511,21 @@ class EndpointPupilUpdate extends _i1.EndpointRef {
         },
       );
 
+  _i2.Future<_i5.PupilData> updatePupilAvatarAuth(
+    int pupilId,
+    String filePath,
+    String createdBy,
+  ) =>
+      caller.callServerEndpoint<_i5.PupilData>(
+        'pupilUpdate',
+        'updatePupilAvatarAuth',
+        {
+          'pupilId': pupilId,
+          'filePath': filePath,
+          'createdBy': createdBy,
+        },
+      );
+
   _i2.Future<_i5.PupilData> updateStringProperty(
     int pupilId,
     String property,
@@ -538,21 +553,6 @@ class EndpointPupilUpdate extends _i1.EndpointRef {
           'pupilId': pupilId,
           'value': value,
           'description': description,
-        },
-      );
-
-  _i2.Future<_i5.PupilData> updatePupilAvatarAuth(
-    int pupilId,
-    _i11.ByteData avatarAuthBytes,
-    String path,
-  ) =>
-      caller.callServerEndpoint<_i5.PupilData>(
-        'pupilUpdate',
-        'updatePupilAvatarAuth',
-        {
-          'pupilId': pupilId,
-          'avatarAuthBytes': avatarAuthBytes,
-          'path': path,
         },
       );
 

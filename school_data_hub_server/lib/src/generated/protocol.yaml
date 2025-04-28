@@ -47,9 +47,9 @@ pupilUpdate:
   - updateTutorInfo:
   - updateSiblingsTutorInfo:
   - updatePupilAvatar:
+  - updatePupilAvatarAuth:
   - updateStringProperty:
   - updateCredit:
-  - updatePupilAvatarAuth:
   - updatePupilWithPublicMediaAuth:
   - updateSupportLevel:
 schooldayAdmin:

@@ -93,7 +93,7 @@ class PupilAttendanceContent extends WatchingWidget {
           ),
           const Gap(10),
           ListView.builder(
-            padding: const EdgeInsets.only(top: 5, bottom: 15),
+            padding: const EdgeInsets.only(top: 5, bottom: 5),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: missedClasses.length,

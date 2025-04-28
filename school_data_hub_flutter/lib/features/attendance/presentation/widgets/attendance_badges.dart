@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 
 Widget contactedBadge(contacted) {
@@ -133,7 +134,7 @@ Widget excusedBadge(excused) {
 }
 
 Widget missedTypeBadge(missedtype) {
-  if (missedtype == 'missed') {
+  if (missedtype == MissedType.missed) {
     return Padding(
       padding: const EdgeInsets.all(2.0),
       child: Container(
@@ -154,7 +155,7 @@ Widget missedTypeBadge(missedtype) {
         ),
       ),
     );
-  } else if (missedtype == 'late') {
+  } else if (missedtype == MissedType.late) {
     return Padding(
       padding: const EdgeInsets.all(2.0),
       child: Container(
@@ -175,7 +176,7 @@ Widget missedTypeBadge(missedtype) {
         ),
       ),
     );
-  } else if (missedtype == 'none') {
+  } else if (missedtype == MissedType.notSet) {
     return Padding(
       padding: const EdgeInsets.all(2.0),
       child: Container(

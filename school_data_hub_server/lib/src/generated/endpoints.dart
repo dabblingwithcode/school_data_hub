@@ -1016,6 +1016,37 @@ class Endpoints extends _i1.EndpointDispatch {
             params['filePath'],
           ),
         ),
+        'updatePupilAvatarAuth': _i1.MethodConnector(
+          name: 'updatePupilAvatarAuth',
+          params: {
+            'pupilId': _i1.ParameterDescription(
+              name: 'pupilId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'filePath': _i1.ParameterDescription(
+              name: 'filePath',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'createdBy': _i1.ParameterDescription(
+              name: 'createdBy',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['pupilUpdate'] as _i9.PupilUpdateEndpoint)
+                  .updatePupilAvatarAuth(
+            session,
+            params['pupilId'],
+            params['filePath'],
+            params['createdBy'],
+          ),
+        ),
         'updateStringProperty': _i1.MethodConnector(
           name: 'updateStringProperty',
           params: {
@@ -1076,37 +1107,6 @@ class Endpoints extends _i1.EndpointDispatch {
             params['pupilId'],
             params['value'],
             params['description'],
-          ),
-        ),
-        'updatePupilAvatarAuth': _i1.MethodConnector(
-          name: 'updatePupilAvatarAuth',
-          params: {
-            'pupilId': _i1.ParameterDescription(
-              name: 'pupilId',
-              type: _i1.getType<int>(),
-              nullable: false,
-            ),
-            'avatarAuthBytes': _i1.ParameterDescription(
-              name: 'avatarAuthBytes',
-              type: _i1.getType<_i24.ByteData>(),
-              nullable: false,
-            ),
-            'path': _i1.ParameterDescription(
-              name: 'path',
-              type: _i1.getType<String>(),
-              nullable: false,
-            ),
-          },
-          call: (
-            _i1.Session session,
-            Map<String, dynamic> params,
-          ) async =>
-              (endpoints['pupilUpdate'] as _i9.PupilUpdateEndpoint)
-                  .updatePupilAvatarAuth(
-            session,
-            params['pupilId'],
-            params['avatarAuthBytes'],
-            params['path'],
           ),
         ),
         'updatePupilWithPublicMediaAuth': _i1.MethodConnector(

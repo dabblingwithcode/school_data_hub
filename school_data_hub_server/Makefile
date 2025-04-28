@@ -13,6 +13,7 @@ reset: ## reset the server
 	cmd /c rmdir /Q /S storage\private
 	cmd /c mkdir storage\private
 	cmd /c mkdir storage\private\avatar
+	cmd /c mkdir storage\private\documents
 	cmd /c mkdir storage\private\event
 	# rm -r database_backups
 	# mkdir database_backups

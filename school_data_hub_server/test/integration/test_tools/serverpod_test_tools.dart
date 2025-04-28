@@ -1568,6 +1568,41 @@ class _PupilUpdateEndpoint {
     });
   }
 
+  _i3.Future<_i6.PupilData> updatePupilAvatarAuth(
+    _i1.TestSessionBuilder sessionBuilder,
+    int pupilId,
+    String filePath,
+    String createdBy,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'pupilUpdate',
+        method: 'updatePupilAvatarAuth',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'pupilUpdate',
+          methodName: 'updatePupilAvatarAuth',
+          parameters: _i1.testObjectToJson({
+            'pupilId': pupilId,
+            'filePath': filePath,
+            'createdBy': createdBy,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i6.PupilData>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
   _i3.Future<_i6.PupilData> updateStringProperty(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
@@ -1624,41 +1659,6 @@ class _PupilUpdateEndpoint {
             'pupilId': pupilId,
             'value': value,
             'description': description,
-          }),
-          serializationManager: _serializationManager,
-        );
-        var _localReturnValue = await (_localCallContext.method.call(
-          _localUniqueSession,
-          _localCallContext.arguments,
-        ) as _i3.Future<_i6.PupilData>);
-        return _localReturnValue;
-      } finally {
-        await _localUniqueSession.close();
-      }
-    });
-  }
-
-  _i3.Future<_i6.PupilData> updatePupilAvatarAuth(
-    _i1.TestSessionBuilder sessionBuilder,
-    int pupilId,
-    _i13.ByteData avatarAuthBytes,
-    String path,
-  ) async {
-    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
-      var _localUniqueSession =
-          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'pupilUpdate',
-        method: 'updatePupilAvatarAuth',
-      );
-      try {
-        var _localCallContext = await _endpointDispatch.getMethodCallContext(
-          createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'pupilUpdate',
-          methodName: 'updatePupilAvatarAuth',
-          parameters: _i1.testObjectToJson({
-            'pupilId': pupilId,
-            'avatarAuthBytes': avatarAuthBytes,
-            'path': path,
           }),
           serializationManager: _serializationManager,
         );
