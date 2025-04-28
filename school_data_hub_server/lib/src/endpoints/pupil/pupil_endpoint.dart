@@ -1,4 +1,5 @@
 import 'package:school_data_hub_server/src/generated/protocol.dart';
+import 'package:school_data_hub_server/src/utils/schemas/pupil_schemas.dart';
 import 'package:serverpod/serverpod.dart';
 
 class PupilEndpoint extends Endpoint {
@@ -18,7 +19,8 @@ class PupilEndpoint extends Endpoint {
   }
 
   Future<List<PupilData>> fetchPupils(Session session) async {
-    final pupils = await PupilData.db.find(session);
+    final pupils =
+        await PupilData.db.find(session, include: PupilSchemas.allInclude);
 
     return pupils;
   }
@@ -28,9 +30,7 @@ class PupilEndpoint extends Endpoint {
     final pupils = await PupilData.db.find(
       session,
       where: (t) => t.internalId.inSet(internalIds),
-      include: PupilData.include(
-        avatar: HubDocument.include(),
-      ),
+      include: PupilSchemas.allInclude,
     );
 
     return pupils;
@@ -40,9 +40,7 @@ class PupilEndpoint extends Endpoint {
     final pupil = await PupilData.db.findFirstRow(
       session,
       where: (t) => t.internalId.equals(internalId),
-      include: PupilData.include(
-        avatar: HubDocument.include(),
-      ),
+      include: PupilSchemas.allInclude,
     );
     if (pupil == null) {
       throw Exception('Pupil not found');
@@ -54,8 +52,13 @@ class PupilEndpoint extends Endpoint {
     await HubDocument.db.deleteRow(session, pupil.avatar!);
     pupil.avatar = null;
     final updatedPupil = await PupilData.db.updateRow(session, pupil);
-
-    return updatedPupil;
+    // get the updated pupil with the avatar removed
+    final updatedPupilWithAvatar = await PupilData.db.findFirstRow(
+      session,
+      where: (t) => t.internalId.equals(internalId),
+      include: PupilSchemas.allInclude,
+    );
+    return updatedPupilWithAvatar!;
   }
 
   Future<PupilData> deleteAvatarAuth(Session session, int internalId) async {

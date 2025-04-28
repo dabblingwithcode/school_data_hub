@@ -4,15 +4,10 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/utils/get_user_name.dart';
 import 'package:school_data_hub_server/src/utils/hub_document_helper.dart';
+import 'package:school_data_hub_server/src/utils/schemas/pupil_schemas.dart';
 import 'package:serverpod/serverpod.dart';
 
 final _log = Logger('PupilUpdateEndpoint');
-
-final PupilDataInclude _pupilDataInclude = PupilData.include(
-  avatar: HubDocument.include(),
-  creditTransactions: CreditTransaction.includeList(),
-  supportLevelHistory: SupportLevel.includeList(),
-);
 
 class PupilUpdateEndpoint extends Endpoint {
   @override
@@ -38,7 +33,7 @@ class PupilUpdateEndpoint extends Endpoint {
     final updatedPupilWithRelation = await PupilData.db.findById(
       session,
       pupil.id!,
-      include: _pupilDataInclude,
+      include: PupilSchemas.allInclude,
     );
     return updatedPupilWithRelation!;
   }
@@ -51,8 +46,15 @@ class PupilUpdateEndpoint extends Endpoint {
     }
     pupil.tutorInfo = tutorInfo;
     // Update the pupil in the database
-    final updatedPupil = await PupilData.db.updateRow(session, pupil);
-    return updatedPupil;
+    await PupilData.db.updateRow(session, pupil);
+    // Fetch the object again with the relation included
+    final updatedPupilWithRelation = await PupilData.db.findById(
+      session,
+      pupil.id!,
+      include: PupilSchemas.allInclude,
+    );
+
+    return updatedPupilWithRelation!;
   }
 
   Future<List<PupilData>> updateSiblingsTutorInfo(
@@ -71,9 +73,14 @@ class PupilUpdateEndpoint extends Endpoint {
 
       // await PupilData.db.updateRow(session, pupil);
     }
-    final writtenSiblings = await PupilData.db.update(session, updatedSiblings);
-
-    return writtenSiblings;
+    await PupilData.db.update(session, updatedSiblings);
+    // Fetch the object again with the relation included
+    final updatedSiblingsWithRelation = await PupilData.db.find(
+      session,
+      where: (t) => t.internalId.inSet(siblingsTutorInfo.siblingsInternalIds),
+      include: PupilSchemas.allInclude,
+    );
+    return updatedSiblingsWithRelation;
   }
 
   Future<PupilData> updatePupilAvatar(
@@ -133,10 +140,8 @@ class PupilUpdateEndpoint extends Endpoint {
           transaction: transaction);
     });
 
-    final updatedPupil = await PupilData.db.findById(session, pupil.id!,
-        include: PupilData.include(
-          avatar: HubDocument.include(),
-        ));
+    final updatedPupil = await PupilData.db
+        .findById(session, pupil.id!, include: PupilSchemas.allInclude);
 
     _log.fine('Updated pupil : ${updatedPupil!.toJson()}');
     return updatedPupil;
@@ -148,9 +153,7 @@ class PupilUpdateEndpoint extends Endpoint {
     final pupil = await PupilData.db.findById(
       session,
       pupilId,
-      include: PupilData.include(
-        avatarAuth: HubDocument.include(),
-      ),
+      include: PupilSchemas.allInclude,
     );
     if (pupil == null) {
       throw Exception('Pupil not found');
@@ -196,11 +199,8 @@ class PupilUpdateEndpoint extends Endpoint {
           transaction: transaction);
     });
 
-    final updatedPupil = await PupilData.db.findById(session, pupil.id!,
-        include: PupilData.include(
-          avatar: HubDocument.include(),
-          avatarAuth: HubDocument.include(),
-        ));
+    final updatedPupil = await PupilData.db
+        .findById(session, pupil.id!, include: PupilSchemas.allInclude);
 
     _log.fine('Updated pupil : ${updatedPupil!.toJson()}');
     return updatedPupil;
@@ -233,6 +233,7 @@ class PupilUpdateEndpoint extends Endpoint {
     final updatedPupil = await PupilData.db.findById(
       session,
       pupil.id!,
+      include: PupilSchemas.allInclude,
     );
     return updatedPupil!;
   }
@@ -268,9 +269,7 @@ class PupilUpdateEndpoint extends Endpoint {
     final updatedPupil = await PupilData.db.findById(
       session,
       pupil.id!,
-      include: PupilData.include(
-        creditTransactions: CreditTransaction.includeList(),
-      ),
+      include: PupilSchemas.allInclude,
     );
     return updatedPupil!;
   }
@@ -304,8 +303,14 @@ class PupilUpdateEndpoint extends Endpoint {
     // update the pupil with the new avatar
     HubDocument.db.updateRow(session, hubDocument);
     pupil.publicMediaAuthDocument = hubDocument;
-    final updatedPupil = await PupilData.db.updateRow(session, pupil);
-    return updatedPupil;
+    await PupilData.db.updateRow(session, pupil);
+    // Fetch the object again with the relation included
+    final updatedPupilWithRelation = await PupilData.db.findById(
+      session,
+      pupil.id!,
+      include: PupilSchemas.allInclude,
+    );
+    return updatedPupilWithRelation!;
   }
 
   Future<PupilData> updateSupportLevel(
