@@ -23,9 +23,6 @@ final _pupilIdentityManager = di<PupilIdentityManager>();
 final _pupilDataApiService = PupilDataApiService();
 
 class PupilManager extends ChangeNotifier {
-  @Deprecated('Use _pupilsPupilId instead')
-  final _pupilsInternalIdMap = <int, PupilProxy>{};
-
   final _pupilsPupilIdMap = <int, PupilProxy>{};
 
   List<PupilProxy> get allPupils => _pupilsPupilIdMap.values.toList();
@@ -56,7 +53,7 @@ class PupilManager extends ChangeNotifier {
     List<PupilProxy> pupilsfromInternalIds = [];
 
     for (int internalId in internalIds) {
-      pupilsfromInternalIds.add(_pupilsInternalIdMap[internalId]!);
+      pupilsfromInternalIds.add(_pupilsPupilIdMap[internalId]!);
     }
 
     return pupilsfromInternalIds;
@@ -182,7 +179,7 @@ class PupilManager extends ChangeNotifier {
     // now we match the pupils from the response with their personal data
 
     for (PupilData fetchedPupil in fetchedPupils) {
-      final proxyInRepository = _pupilsInternalIdMap[fetchedPupil.internalId];
+      final proxyInRepository = _pupilsPupilIdMap[fetchedPupil.internalId];
       if (proxyInRepository != null) {
         proxyInRepository.updatePupil(fetchedPupil);
       } else {
@@ -192,7 +189,7 @@ class PupilManager extends ChangeNotifier {
         final pupilIdentity =
             _pupilIdentityManager.getPupilIdentity(fetchedPupil.internalId);
 
-        _pupilsInternalIdMap[fetchedPupil.internalId] =
+        _pupilsPupilIdMap[fetchedPupil.internalId] =
             PupilProxy(pupilData: fetchedPupil, pupilIdentity: pupilIdentity);
       }
     }
@@ -215,7 +212,7 @@ class PupilManager extends ChangeNotifier {
   }
 
   void updatePupilProxyWithPupilData(PupilData pupilData) {
-    final proxy = _pupilsInternalIdMap[pupilData.internalId];
+    final proxy = _pupilsPupilIdMap[pupilData.internalId];
     if (proxy != null) {
       proxy.updatePupil(pupilData);
       //- TODO: Is this true: No need to call notifyListeners here, because the proxy will notify the listeners itself
@@ -381,7 +378,7 @@ class PupilManager extends ChangeNotifier {
       // now update the siblings with the new data
 
       for (PupilData sibling in siblingsUpdate) {
-        _pupilsInternalIdMap[sibling.internalId]!.updatePupil(sibling);
+        _pupilsPupilIdMap[sibling.internalId]!.updatePupil(sibling);
       }
 
       _notificationService.showSnackBar(
@@ -481,7 +478,7 @@ class PupilManager extends ChangeNotifier {
       comment: comment,
     );
 
-    _pupilsInternalIdMap[internalId]!.updatePupil(updatedPupil);
+    _pupilsPupilIdMap[internalId]!.updatePupil(updatedPupil);
   }
 
   Future<void> deleteSupportLevelHistoryItem(
@@ -492,7 +489,7 @@ class PupilManager extends ChangeNotifier {
       supportLevelId: int.parse(supportLevelId),
     );
 
-    _pupilsInternalIdMap[pupilId]!.updatePupil(updatedPupil);
+    _pupilsPupilIdMap[pupilId]!.updatePupil(updatedPupil);
   }
 
   // Future<void> borrowBook(

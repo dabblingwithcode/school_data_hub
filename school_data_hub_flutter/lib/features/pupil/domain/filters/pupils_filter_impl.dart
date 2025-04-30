@@ -94,7 +94,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
 
     _filteredPupils.value = _pupilsManager.allPupils;
     _filteredPupilIds.value =
-        _pupilsManager.allPupils.map((e) => e.internalId).toList();
+        _pupilsManager.allPupils.map((e) => e.pupilId).toList();
 
     sortPupils();
     di<FiltersStateManager>()
@@ -139,7 +139,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
     if (!allPupilFilters.any((x) => x.isActive == true) &&
         specificFiltersOn == false) {
       _filteredPupils.value = allPupils;
-      _filteredPupilIds.value = allPupils.map((e) => e.internalId).toList();
+      _filteredPupilIds.value = allPupils.map((e) => e.pupilId).toList();
 
       sortPupils();
       return;
@@ -261,8 +261,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
     }
 
     _filteredPupils.value = thisFilteredPupils;
-    _filteredPupilIds.value =
-        thisFilteredPupils.map((e) => e.internalId).toList();
+    _filteredPupilIds.value = thisFilteredPupils.map((e) => e.pupilId).toList();
     if (filtersOn) {
       //- TODO: Do we need this if we already use FiltersStateManager?
       di<FiltersStateManager>()
@@ -332,8 +331,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
             .compareTo(AttendanceHelper.goneHomeSum(a)));
     }
     _filteredPupils.value = thisFilteredPupils;
-    _filteredPupilIds.value =
-        thisFilteredPupils.map((e) => e.internalId).toList();
+    _filteredPupilIds.value = thisFilteredPupils.map((e) => e.pupilId).toList();
     notifyListeners();
   }
 
