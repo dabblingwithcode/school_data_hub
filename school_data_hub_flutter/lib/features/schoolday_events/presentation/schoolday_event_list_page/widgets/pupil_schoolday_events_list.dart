@@ -27,7 +27,8 @@ class PupilSchooldayEventsList extends WatchingWidget {
             _schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId))
         .schooldayEvents;
     final List<SchooldayEvent> filteredSchooldayEvents =
-        _schooldayEventFilterManager.filteredSchooldayEvents(unfilteredEvents);
+        _schooldayEventFilterManager
+            .filteredSchooldayEvents(unfilteredEvents.values.toList());
     return Column(children: [
       Padding(
         padding: const EdgeInsets.only(top: 10.0),

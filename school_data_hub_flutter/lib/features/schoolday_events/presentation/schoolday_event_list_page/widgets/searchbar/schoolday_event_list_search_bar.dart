@@ -23,7 +23,7 @@ class SchooldayEventListSearchBar extends WatchingWidget {
     final pupils = watchValue((PupilsFilter x) => x.filteredPupils);
 
     // we need to watch the schoolday events to refresh the counts for the stats
-    watchValue((SchooldayEventManager x) => x.schooldayEvents);
+    watchPropertyValue((SchooldayEventManager m) => m.schooldayEvents);
 
     final filtersActive =
         watchValue((FiltersStateManager x) => x.filtersActive);

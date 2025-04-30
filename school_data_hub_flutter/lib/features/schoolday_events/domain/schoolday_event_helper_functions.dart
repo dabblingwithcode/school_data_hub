@@ -37,7 +37,9 @@ class SchoolDayEventHelper {
       if (_schooldayEventFilterManager
           .filteredSchooldayEvents(_schooldayEventManager
               .getPupilSchooldayEventsProxy(pupil.pupilId)
-              .schooldayEvents)
+              .schooldayEvents
+              .values
+              .toList())
           .isNotEmpty) {
         pupilsWithEvents++;
       }
@@ -49,7 +51,9 @@ class SchoolDayEventHelper {
     return _schooldayEventFilterManager
         .filteredSchooldayEvents(_schooldayEventManager
             .getPupilSchooldayEventsProxy(pupil.pupilId)
-            .schooldayEvents)
+            .schooldayEvents
+            .values
+            .toList())
         .length;
   }
 
@@ -66,8 +70,11 @@ class SchoolDayEventHelper {
     final List<SchooldayEvent> schooldayEvents = _schooldayEventFilterManager
         .filteredSchooldayEvents(_schooldayEventManager
             .getPupilSchooldayEventsProxy(pupil.pupilId)
-            .schooldayEvents);
+            .schooldayEvents
+            .values
+            .toList());
     if (schooldayEvents.isEmpty) {
+      // TODO: Watch out - why did we use this date?
       // if schoolday events is empty, we return a mock date
       return DateTime(2017, 9, 7, 17);
     }
@@ -88,7 +95,7 @@ class SchoolDayEventHelper {
         .getPupilSchooldayEventsProxy(pupil.pupilId)
         .schooldayEvents;
     if (pupilSchooldayEvents.isEmpty) return false;
-    if (pupilSchooldayEvents.any((element) =>
+    if (pupilSchooldayEvents.values.any((element) =>
         element.schoolday!.schoolday.isSameDate(DateTime.now()) &&
         (element.eventType == SchooldayEventType.admonition ||
             element.eventType == SchooldayEventType.afternoonCareAdmonition ||
@@ -110,7 +117,9 @@ class SchoolDayEventHelper {
       final pupilSchooldayEvents = _schooldayEventFilterManager
           .filteredSchooldayEvents(_schooldayEventManager
               .getPupilSchooldayEventsProxy(pupil.pupilId)
-              .schooldayEvents);
+              .schooldayEvents
+              .values
+              .toList());
 
       totalSchooldayEvents = totalSchooldayEvents + pupilSchooldayEvents.length;
       teachingSchooldayEvents = teachingSchooldayEvents +

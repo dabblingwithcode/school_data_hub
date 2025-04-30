@@ -47,8 +47,8 @@ class _SchooldayEventListCardState extends State<SchooldayEventPupilListCard> {
     final unfilteredEvents = watch(
             _schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId))
         .schooldayEvents;
-    schooldayEvents =
-        _schooldayEventFilterManager.filteredSchooldayEvents(unfilteredEvents);
+    schooldayEvents = _schooldayEventFilterManager
+        .filteredSchooldayEvents(unfilteredEvents.values.toList());
     if (_schooldayEventFilterManager.schooldayEventsFilterState.value.values
         .any((x) => x == true)) {
       if (schooldayEvents.isEmpty) {

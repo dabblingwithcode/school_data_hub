@@ -29,7 +29,7 @@ class SchoolListPupilCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final PupilProxy pupil = _pupilManager.getPupilByInternalId(internalId)!;
+    final PupilProxy pupil = _pupilManager.getPupilByPupilId(internalId)!;
 
     final thisSchoolList = watchValue((SchoolListManager x) => x.schoolLists)
         .firstWhere((element) => element.listId == originList.listId);

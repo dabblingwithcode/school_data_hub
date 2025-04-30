@@ -24,8 +24,8 @@ class SelectPupilListCard extends WatchingWidget {
     final PupilProxy pupil = passedPupil;
 
     return GestureDetector(
-      onLongPress: () => onCardPress(pupil.internalId),
-      onTap: () => isSelectMode ? onCardPress(pupil.internalId) : {},
+      onLongPress: () => onCardPress(pupil.pupilId),
+      onTap: () => isSelectMode ? onCardPress(pupil.pupilId) : {},
       child: Card(
           color: isSelected ? AppColors.selectedCardColor : Colors.white,
           child: Row(

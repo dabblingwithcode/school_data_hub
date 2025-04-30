@@ -81,7 +81,7 @@ class _SelectPupilsListPageState extends State<SelectPupilsListPage> {
       if (isSelectAllMode) {
         isSelectMode = true;
         selectedPupilIds =
-            selectablePupils.map((pupil) => pupil.internalId).toList();
+            selectablePupils.map((pupil) => pupil.pupilId).toList();
       } else {
         isSelectMode = false;
         selectedPupilIds.clear();
@@ -130,8 +130,7 @@ class _SelectPupilsListPageState extends State<SelectPupilsListPage> {
                     items: selectablePupils,
                     itemBuilder: (_, pupil) => SelectPupilListCard(
                           isSelectMode: isSelectMode,
-                          isSelected:
-                              selectedPupilIds.contains(pupil.internalId),
+                          isSelected: selectedPupilIds.contains(pupil.pupilId),
                           passedPupil: pupil,
                           onCardPress: onCardPress,
                         )),

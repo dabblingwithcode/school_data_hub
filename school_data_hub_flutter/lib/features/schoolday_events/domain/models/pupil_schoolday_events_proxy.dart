@@ -2,31 +2,28 @@ import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 
 class PupilSchooldayEventsProxy with ChangeNotifier {
-  List<SchooldayEvent> schooldayEvents = [];
+  Map<int, SchooldayEvent> schooldayEvents = {};
 
-  void setSchooldayEvents(List<SchooldayEvent> value) {
-    if (schooldayEvents == value) return;
-    schooldayEvents = value;
-    notifyListeners();
-  }
+  void setSchooldayEvents(List<SchooldayEvent> events) {
+    schooldayEvents.clear();
 
-  void updateSchooldayEvent(SchooldayEvent value) {
-    int index = schooldayEvents.indexWhere((element) => element.id == value.id);
-    if (index != -1) {
-      schooldayEvents[index] = value;
-    } else {
-      schooldayEvents.add(value);
+    for (var event in events) {
+      schooldayEvents[event.id!] = event;
     }
     notifyListeners();
   }
 
-  void addSchooldayEvent(SchooldayEvent value) {
-    schooldayEvents.add(value);
+  void updateSchooldayEvent(SchooldayEvent event) {
+    schooldayEvents[event.id!] = event;
+
     notifyListeners();
   }
 
   void removeSchooldayEvent(SchooldayEvent event) {
-    schooldayEvents.removeWhere((element) => element.id! == event.id!);
+    if (schooldayEvents[event.id!] == null) return;
+
+    schooldayEvents.remove(event.id!);
+
     notifyListeners();
   }
 

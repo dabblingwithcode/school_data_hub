@@ -22,10 +22,9 @@ final _pupilManager = di<PupilManager>();
 
 final _schooldayEventApiService = SchooldayEventApiService();
 
-class SchooldayEventManager {
-  final ValueNotifier<List<SchooldayEvent>> _schooldayEvents =
-      ValueNotifier([]);
-  ValueListenable<List<SchooldayEvent>> get schooldayEvents => _schooldayEvents;
+class SchooldayEventManager with ChangeNotifier {
+  final List<SchooldayEvent> _schooldayEvents = [];
+  List<SchooldayEvent> get schooldayEvents => _schooldayEvents;
 
   final Map<int, PupilSchooldayEventsProxy> _pupilSchooldayEventsMap = {};
 
@@ -52,44 +51,47 @@ class SchooldayEventManager {
 
   //- Handle collections
 
-  void updateSchooldayEventInCollections(SchooldayEvent event) {
+  void updateSchooldayEventCollections(SchooldayEvent event) {
     _log.info('updateSchooldayEventInCollections: $event');
     final pupilId = event.pupilId;
 
-    // 1. Update the event in the main list
-    int index =
-        _schooldayEvents.value.indexWhere((element) => element.id == event.id);
-    if (index != -1) {
-      final newList = List<SchooldayEvent>.from(_schooldayEvents.value);
-      newList[index] = event;
-      _schooldayEvents.value = newList;
-    } else {
-      _schooldayEvents.value = [..._schooldayEvents.value, event];
-    }
-    // 2. Update pupil map
+    // 1. Update pupil map
     _pupilSchooldayEventsMap[pupilId]!.updateSchooldayEvent(event);
+
+    // 2. Update the event in the main list
+    int index =
+        _schooldayEvents.indexWhere((element) => element.id == event.id);
+    if (index != -1) {
+      _schooldayEvents[index] = event;
+      notifyListeners();
+    } else {
+      _schooldayEvents.add(event);
+      notifyListeners();
+    }
   }
 
-  void updateSchooldayEventsInCollections(List<SchooldayEvent> events) {
+  void updateSchooldayEventsBatchInCollections(List<SchooldayEvent> events) {
     _log.info('updateSchooldayEventsInCollections: $events');
     for (var event in events) {
-      updateSchooldayEventInCollections(event);
+      updateSchooldayEventCollections(event);
     }
   }
 
   void removeSchooldayEventFromCollections(SchooldayEvent event) {
     _log.info('removeSchooldayEventFromCollections: $event');
+
     final pupilId = event.pupilId;
-    // 1. Remove the event from the main list
-    int index =
-        _schooldayEvents.value.indexWhere((element) => element.id == event.id);
-    if (index != -1) {
-      final newList = List<SchooldayEvent>.from(_schooldayEvents.value);
-      newList.removeAt(index);
-      _schooldayEvents.value = newList;
-    }
-    // 2. Remove pupil map
+
+    // 1. Remove pupil map
     _pupilSchooldayEventsMap[pupilId]!.removeSchooldayEvent(event);
+
+    // 2. Remove the event from the main list
+    int index =
+        _schooldayEvents.indexWhere((element) => element.id == event.id);
+    if (index != -1) {
+      _schooldayEvents.removeAt(index);
+      notifyListeners();
+    }
   }
 
 //- CRUD operantions
@@ -105,7 +107,7 @@ class SchooldayEventManager {
     final SchooldayEvent schooldayEvent = await _schooldayEventApiService
         .postSchooldayEvent(pupilId, schooldayId, type, reason);
 
-    updateSchooldayEventInCollections(schooldayEvent);
+    updateSchooldayEventCollections(schooldayEvent);
     _notificationService.showSnackBar(
         NotificationType.success, 'Eintrag erfolgreich!');
 
@@ -119,8 +121,7 @@ class SchooldayEventManager {
       final List<SchooldayEvent> events =
           await _schooldayEventApiService.fetchSchooldayEvents();
 
-      _schooldayEvents.value = events;
-      updateSchooldayEventsInCollections(events);
+      updateSchooldayEventsBatchInCollections(events);
     } catch (e) {
       _notificationService.showSnackBar(
           NotificationType.error, 'Fehler beim Laden der Einträge: $e');
@@ -154,7 +155,7 @@ class SchooldayEventManager {
             schooldayId: schooldayId,
             type: schoolEventType);
 
-    updateSchooldayEventInCollections(schooldayEvent);
+    updateSchooldayEventCollections(schooldayEvent);
     if (cacheKey != null) {
       await _cacheManager.removeFile(cacheKey);
     }
@@ -174,7 +175,7 @@ class SchooldayEventManager {
             schooldayEventId: schooldayEventId,
             file: encryptedFile,
             isProcessed: isProcessed);
-    updateSchooldayEventInCollections(responseEvent);
+    updateSchooldayEventCollections(responseEvent);
 
     _notificationService.showSnackBar(
         NotificationType.success, 'Datei erfolgreich hochgeladen!');
@@ -187,7 +188,7 @@ class SchooldayEventManager {
     final SchooldayEvent schooldayEvent = await _schooldayEventApiService
         .deleteSchooldayEventFile(schooldayEventId, isProcessed);
     await _cacheManager.removeFile(cacheKey);
-    updateSchooldayEventInCollections(schooldayEvent);
+    updateSchooldayEventCollections(schooldayEvent);
 
     _notificationService.showSnackBar(
         NotificationType.success, 'Datei erfolgreich gelöscht!');
@@ -203,7 +204,7 @@ class SchooldayEventManager {
 
       _notificationService.apiRunning(false);
 
-      final eventToDelete = _schooldayEvents.value
+      final eventToDelete = _schooldayEvents
           .firstWhere((element) => element.id == schooldayEventId);
 
       removeSchooldayEventFromCollections(eventToDelete);

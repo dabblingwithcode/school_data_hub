@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:logging/logging.dart';
@@ -12,20 +13,22 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_fil
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter_impl.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
-import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('PupilManager');
 final _notificationService = di<NotificationService>();
 final _cacheManager = di<DefaultCacheManager>();
 final _pupilIdentityManager = di<PupilIdentityManager>();
-final _schooldayManager = di<SchooldayManager>();
+
 final _pupilDataApiService = PupilDataApiService();
 
 class PupilManager extends ChangeNotifier {
+  @Deprecated('Use _pupilsPupilId instead')
   final _pupilsInternalIdMap = <int, PupilProxy>{};
 
-  List<PupilProxy> get allPupils => _pupilsInternalIdMap.values.toList();
+  final _pupilsPupilIdMap = <int, PupilProxy>{};
+
+  List<PupilProxy> get allPupils => _pupilsPupilIdMap.values.toList();
 
   PupilManager();
 
@@ -36,18 +39,19 @@ class PupilManager extends ChangeNotifier {
   //- HELPER METHODS
 
   void clearData() {
-    _pupilsInternalIdMap.clear();
+    _pupilsPupilIdMap.clear();
     return;
   }
 
-  PupilProxy? getPupilByInternalId(int internalId) {
-    if (!_pupilsInternalIdMap.containsKey(internalId)) {
-      _log.severe('Pupil $internalId not found', StackTrace.current);
+  PupilProxy? getPupilByPupilId(int pupilId) {
+    if (!_pupilsPupilIdMap.containsKey(pupilId)) {
+      _log.severe('Pupil $pupilId not found', StackTrace.current);
       return null;
     }
-    return _pupilsInternalIdMap[internalId];
+    return _pupilsPupilIdMap[pupilId];
   }
 
+  @Deprecated('Use pupilsFromPupilIds instead')
   List<PupilProxy> pupilsFromInternalIds(List<int> internalIds) {
     List<PupilProxy> pupilsfromInternalIds = [];
 
@@ -58,15 +62,34 @@ class PupilManager extends ChangeNotifier {
     return pupilsfromInternalIds;
   }
 
+  List<PupilProxy> pupilsFromPupilIds(List<int> pupilIds) {
+    List<PupilProxy> pupilsfromPupilIds = [];
+
+    for (int pupilId in pupilIds) {
+      final PupilProxy? pupil = _pupilsPupilIdMap.values
+          .firstWhereOrNull((pupil) => pupil.pupilId == pupilId);
+      if (pupil != null) {
+        pupilsfromPupilIds.add(pupil);
+      }
+    }
+
+    return pupilsfromPupilIds;
+  }
+
+  @Deprecated('Use pupilIdsFromPupils instead')
   List<int> internalIdsFromPupils(List<PupilProxy> pupils) {
     return pupils.map((pupil) => pupil.internalId).toList();
   }
 
-  List<PupilProxy> pupilsNotListed(List<int> internalIds) {
-    Map<int, PupilProxy> allPupils =
-        Map<int, PupilProxy>.of(_pupilsInternalIdMap);
-    allPupils.removeWhere((key, value) => internalIds.contains(key));
-    return allPupils.values.toList();
+  List<int> pupilIdsFromPupils(List<PupilProxy> pupils) {
+    return pupils.map((pupil) => pupil.pupilId).toList();
+  }
+
+  List<PupilProxy> pupilsNotListed(List<int> pupilIds) {
+    Map<int, PupilProxy> allPupilsMap =
+        Map<int, PupilProxy>.of(_pupilsPupilIdMap);
+    allPupilsMap.removeWhere((key, value) => pupilIds.contains(key));
+    return allPupilsMap.values.toList();
   }
 
   List<PupilProxy> siblings(PupilProxy pupil) {
@@ -74,41 +97,50 @@ class PupilManager extends ChangeNotifier {
       return [];
     }
 
-    Map<int, PupilProxy> allPupils =
-        Map<int, PupilProxy>.of(_pupilsInternalIdMap);
+    Map<int, PupilProxy> allPupilsMap =
+        Map<int, PupilProxy>.of(_pupilsPupilIdMap);
 
     // Filter by family value of the pupil
-    allPupils.removeWhere((key, value) => value.family != pupil.family);
+    allPupilsMap.removeWhere((key, value) => value.family != pupil.family);
+
     // Remove the pupil itself from the list of siblings
-    allPupils.remove(pupil.internalId);
-    final pupilSiblings = allPupils.values.toList();
+    allPupilsMap.remove(pupil.internalId);
+
+    final pupilSiblings = allPupilsMap.values.toList();
+
     return pupilSiblings;
   }
 
   List<PupilProxy> pupilsWithBirthdaySinceDate(DateTime date) {
-    Map<int, PupilProxy> allPupils =
-        Map<int, PupilProxy>.of(_pupilsInternalIdMap);
+    Map<int, PupilProxy> allPupils = Map<int, PupilProxy>.of(_pupilsPupilIdMap);
+
     final DateTime now = DateTime.now();
+
     allPupils.removeWhere((key, pupil) {
       final birthdayThisYear =
           DateTime(now.year, pupil.birthday.month, pupil.birthday.day);
+
       // Ensure the birthday this year is not before the specified date and not after today.
       return !(birthdayThisYear.isAtSameMomentAs(date) ||
           (birthdayThisYear.isAfter(date) && birthdayThisYear.isBefore(now)));
     });
+
     final pupilsWithBirthdaySinceDate = allPupils.values.toList();
+
     pupilsWithBirthdaySinceDate.sort((b, a) {
       final birthdayA =
           DateTime(DateTime.now().year, a.birthday.month, a.birthday.day);
+
       final birthdayB =
           DateTime(DateTime.now().year, b.birthday.month, b.birthday.day);
+
       return birthdayA.compareTo(birthdayB);
     });
+
     return pupilsWithBirthdaySinceDate;
   }
 
-  // TODO: Do we need this?
-
+  /// **TODO:** Do we need this?
   PupilsFilter getPupilFilter() {
     //return PupilsFilterImplementation(this, sortMode: sortMode);
     return PupilsFilterImplementation(this);
@@ -333,7 +365,7 @@ class PupilManager extends ChangeNotifier {
   Future<void> updateTutorInfo(
       {required int internalId, required TutorInfo tutorInfo}) async {
     // check if the pupil is a sibling and handle them if true
-    final pupilSiblings = siblings(getPupilByInternalId(internalId)!);
+    final pupilSiblings = siblings(getPupilByPupilId(internalId)!);
     if (pupilSiblings.isNotEmpty) {
       // create list with ids of all pupils with the same family value
       final List<int> siblingIds =
@@ -358,7 +390,7 @@ class PupilManager extends ChangeNotifier {
       return;
     }
     // send the Api request
-    final pupilToUpdate = getPupilByInternalId(internalId)!;
+    final pupilToUpdate = getPupilByPupilId(internalId)!;
 
     final PupilData pupilUpdate = await _pupilDataApiService.updateTutorInfo(
         pupilId: pupilToUpdate.pupilId, tutorInfo: tutorInfo);
@@ -438,7 +470,7 @@ class PupilManager extends ChangeNotifier {
       required DateTime createdAt,
       required String createdBy,
       required String comment}) async {
-    final pupilIdId = getPupilByInternalId(internalId)!.pupilId;
+    final pupilIdId = getPupilByPupilId(internalId)!.pupilId;
 
     final PupilData updatedPupil =
         await _pupilDataApiService.updateSupportLevel(

@@ -33,21 +33,32 @@ class SchoolListEndpoint extends Endpoint {
       createdBy: createdBy,
       public: public,
     );
-    final schoolListInDatabase = await session.db.insertRow(schoolList);
-    // Create PupilList objects from the pupil IDs
-    List<PupilList> pupilLists = pupilIds
-        .map((pupilId) => PupilList(
-              pupilId: pupilId,
-              schoolListId: schoolListInDatabase.id!,
-            ))
-        .toList();
+    // use a transaction
+    // to ensure that all operations are atomic
+    // and rollback if any operation fails
+    var schoolListInDatabase =
+        await session.db.transaction((transaction) async {
+      final schoolListInDatabase =
+          await session.db.insertRow(schoolList, transaction: transaction);
+      // Create PupilList objects from the pupil IDs
+      List<PupilList> pupilLists = pupilIds
+          .map((pupilId) => PupilList(
+                pupilId: pupilId,
+                schoolListId: schoolListInDatabase.id!,
+              ))
+          .toList();
 
-    // Bulk insert the PupilList objects
-    var createdPupilLists = await PupilList.db.insert(session, pupilLists);
-    // Attach all the PupilLists to the SchoolList
-    await SchoolList.db.attach
-        .pupilLists(session, schoolListInDatabase, createdPupilLists);
-    // recall the schoollist with the pupil lists
+      // Bulk insert the PupilList objects
+      var createdPupilLists = await PupilList.db
+          .insert(session, pupilLists, transaction: transaction);
+      // Attach all the PupilLists to the SchoolList
+      await SchoolList.db.attach.pupilLists(
+          session, schoolListInDatabase, createdPupilLists,
+          transaction: transaction);
+      // recall the schoollist with the pupil lists
+      return schoolListInDatabase;
+    });
+
     final schoolListWithPupilLists = await SchoolList.db.findFirstRow(
       session,
       where: (t) => t.id.equals(schoolListInDatabase.id!),
