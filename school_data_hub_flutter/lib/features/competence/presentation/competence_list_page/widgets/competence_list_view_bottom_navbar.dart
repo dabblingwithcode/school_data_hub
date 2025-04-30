@@ -3,7 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
-import 'package:school_data_hub_flutter/common/widgets/list_view_components/generic_filter_bottom_sheet.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/competence/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/competence/presentation/competence_list_page/widgets/competence_filters_widget.dart';
 import 'package:watch_it/watch_it.dart';

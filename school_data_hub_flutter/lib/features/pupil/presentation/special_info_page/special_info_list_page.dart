@@ -3,8 +3,8 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/common/widgets/list_view_components/generic_sliver_list.dart';
-import 'package:school_data_hub_flutter/common/widgets/list_view_components/generic_sliver_search_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
@@ -14,8 +14,6 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/special_info
 import 'package:watch_it/watch_it.dart';
 
 final _filterStateManager = di<FiltersStateManager>();
-
-final _pupilsFilter = di<PupilsFilter>();
 
 final _pupilManager = di<PupilManager>();
 
@@ -38,11 +36,7 @@ List<PupilProxy> specialInfoFilter(List<PupilProxy> pupils) {
 }
 
 void _onPop(bool didPop, dynamic result) {
-  _filterStateManager.setFilterState(
-      filterState: FilterState.pupil, value: false);
-
   _filterStateManager.resetFilters();
-  _filterStateManager.markFiltersActive(false);
 }
 
 class SpecialInfoListPage extends WatchingWidget {
@@ -53,6 +47,9 @@ class SpecialInfoListPage extends WatchingWidget {
     List<PupilProxy> filteredPupils =
         watchValue((PupilsFilter x) => x.filteredPupils);
     List<PupilProxy> pupils = specialInfoFilter(filteredPupils);
+    onDispose(() {
+      _filterStateManager.resetFilters();
+    });
     return PopScope(
       onPopInvokedWithResult: (didPop, result) => _onPop(didPop, result),
       child: Scaffold(

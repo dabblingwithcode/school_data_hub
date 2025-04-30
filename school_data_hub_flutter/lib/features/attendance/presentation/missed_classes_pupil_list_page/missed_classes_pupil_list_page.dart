@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/list_view_components/generic_app_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/list_view_components/generic_sliver_list.dart';
-import 'package:school_data_hub_flutter/common/widgets/list_view_components/generic_sliver_search_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/missed_classes_pupil_list_page/widgets/missed_classes_pupil_list_card.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/missed_classes_pupil_list_page/widgets/missed_classes_pupil_list_page_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/missed_classes_pupil_list_page/widgets/missed_classes_pupil_list_searchbar.dart';

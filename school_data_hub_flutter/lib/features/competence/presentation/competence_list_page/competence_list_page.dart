@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/widgets/list_view_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/competence/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/competence/presentation/competence_list_page/widgets/competence_list_view_bottom_navbar.dart';

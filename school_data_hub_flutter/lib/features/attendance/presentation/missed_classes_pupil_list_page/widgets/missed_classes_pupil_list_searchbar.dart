@@ -4,7 +4,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/filter_button.dart';
-import 'package:school_data_hub_flutter/common/widgets/list_view_components/generic_filter_bottom_sheet.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/attendance_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/missed_classes_pupil_list_page/widgets/missed_classes_filters.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/widgets/attendance_badges.dart';

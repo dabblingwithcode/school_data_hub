@@ -8,6 +8,7 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/snackbars.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
@@ -27,8 +28,11 @@ class LoginPage extends WatchingWidget {
     registerHandler(
       select: (NotificationService x) => x.notification,
       handler: (context, value, cancel) =>
-          snackbar(context, value.type, value.message),
+          value.type == NotificationType.infoDialog
+              ? informationDialog(context, 'Info', value.message)
+              : snackbar(context, value.type, value.message),
     );
+
     final bool isAuthenticated =
         watch(di<ServerpodSessionManager>()).isSignedIn;
 

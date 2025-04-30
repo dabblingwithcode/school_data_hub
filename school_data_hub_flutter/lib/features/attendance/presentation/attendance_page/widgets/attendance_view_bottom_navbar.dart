@@ -4,7 +4,7 @@ import 'package:school_data_hub_flutter/common/domain/filters/filters_state_mana
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_picker.dart';
-import 'package:school_data_hub_flutter/common/widgets/list_view_components/generic_filter_bottom_sheet.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/attendance_page/widgets/attendance_filters.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/widgets/missed_classes_badges_info_dialog.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';

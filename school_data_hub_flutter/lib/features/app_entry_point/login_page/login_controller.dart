@@ -15,6 +15,7 @@ import 'package:school_data_hub_flutter/features/app_entry_point/login_page/logi
 import 'package:watch_it/watch_it.dart';
 
 final _envManager = di<EnvManager>();
+final _client = di<Client>();
 final _notificationService = di<NotificationService>();
 
 class Login extends WatchingStatefulWidget {
@@ -116,24 +117,31 @@ class LoginController extends State<Login> {
 
   Future<void> attemptLogin(
       {required String username, required String password}) async {
-    final authResponse = await di<Client>().auth.login(username, password,
-        DeviceInfo(deviceId: '1', deviceName: 'Test device'));
+    try {
+      final authResponse = await _client.auth.login(username, password,
+          DeviceInfo(deviceId: '1', deviceName: 'Test device'));
+      if (authResponse.response.success) {
+        _notificationService.showSnackBar(
+            NotificationType.success, 'Erfolgreich eingeloggt!');
+        await di<ServerpodSessionManager>().registerSignedInUser(
+          authResponse.response.userInfo!,
+          authResponse.response.keyId!,
+          authResponse.response.key!,
+        );
 
-    if (authResponse.response.success) {
-      _notificationService.showSnackBar(
-          NotificationType.success, 'Erfolgreich eingeloggt!');
-      await di<ServerpodSessionManager>().registerSignedInUser(
-        authResponse.response.userInfo!,
-        authResponse.response.keyId!,
-        authResponse.response.key!,
-      );
+        /// Don't forget to set the flag in [EnvManager] to false
+        /// to get to the login screen.
+        _envManager.setUserAuthenticated(true);
+        return;
+      } else {
+        _notificationService.showInformationDialog(
+            'Login fehlgeschlagen: ${authResponse.response.failReason}');
 
-      /// Don't forget to set the flag in [EnvManager] to false
-      /// to get to the login screen.
-      _envManager.setUserAuthenticated(true);
-    } else {
-      _notificationService.showSnackBar(NotificationType.error,
-          'Login fehlgeschlagen: ${authResponse.response.failReason}');
+        return;
+      }
+    } catch (e) {
+      _notificationService.showInformationDialog('Fehler beim Einloggen: $e');
+      return;
     }
   }
 
