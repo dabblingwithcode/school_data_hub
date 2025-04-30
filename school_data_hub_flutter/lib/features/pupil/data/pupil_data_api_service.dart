@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/services/api/api_settings.dart';
@@ -108,8 +109,8 @@ class PupilDataApiService {
   }) async {
     try {
       _notificationService.apiRunning(true);
-      final updatedPupil =
-          await _client.pupilUpdate.updateCredit(pupilId, credit, comment);
+      final updatedPupil = await _client.pupilUpdate.updateCredit(
+          pupilId, credit, comment, _serverpodSessionManager.userName!);
       _notificationService.apiRunning(false);
       return updatedPupil;
     } catch (e) {
@@ -208,9 +209,9 @@ class PupilDataApiService {
     required File file,
   }) async {
     final documentId = Uuid().v4();
-    final path = p.join('avatar', '$documentId.jpg');
+    final path = p.join(ServerStorageFolder.avatars.name, '$documentId.jpg');
     final uploadDescription =
-        await _client.files.getUploadDescription('private', path);
+        await _client.files.getUploadDescription(StorageId.private.name, path);
     if (uploadDescription != null) {
       // Create an uploader
       final uploader = FileUploader(uploadDescription);
@@ -228,8 +229,8 @@ class PupilDataApiService {
 
       if (success) {
         try {
-          final updatedPupil =
-              await _client.pupilUpdate.updatePupilAvatar(pupilId, path);
+          final updatedPupil = await _client.pupilUpdate.updatePupilAvatar(
+              pupilId, path, _serverpodSessionManager.userName!);
           _notificationService.apiRunning(false);
 
           return updatedPupil;
@@ -264,10 +265,13 @@ class PupilDataApiService {
     required int pupilId,
     required File file,
   }) async {
-    final path =
-        p.join('documents', '${DateTime.now().millisecondsSinceEpoch}.jpg');
+    final documentId = Uuid().v4();
+    final path = p.join(
+      ServerStorageFolder.documents.name,
+      '$documentId.jpg',
+    );
     final uploadDescription =
-        await _client.files.getUploadDescription('private', path);
+        await _client.files.getUploadDescription(StorageId.private.name, path);
     if (uploadDescription != null) {
       // Create an uploader
       final uploader = FileUploader(uploadDescription);
@@ -319,25 +323,33 @@ class PupilDataApiService {
 
 //- update pupil public media auth image
 
-  // Future<PupilData> updatePupilWithPublicMediaAuth({
-  //   required int id,
-  //   required ByteData formData,
-  // }) async {
-  //   try {
-  //     _notificationService.apiRunning(true);
-  //     final updatedPupil =
-  //         _client.pupil.updatePupilWithPublicMediaAuth(id, formData);
-  //     _notificationService.apiRunning(false);
-  //     return updatedPupil;
-  //   } catch (e) {
-  //     _notificationService.apiRunning(false);
-  //     _log.severe('Error while updating pupil public media auth', e,
-  //         StackTrace.current);
-  //     _notificationService.showSnackBar(NotificationType.error,
-  //         'Die Einwilligung für öffentliche Medien konnte nicht aktualisiert werden: ${e.toString()}');
-  //     throw Exception('Failed to update pupil public media auth, $e');
-  //   }
-  // }
+  Future<PupilData> updatePupilPublicMediaAuth({
+    required int pupilId,
+    required File file,
+  }) async {
+    final uploadResult =
+        await FileUploadService.uploadFile(file, ServerStorageFolder.auths);
+    if (!uploadResult.success) {
+      throw Exception('Failed to upload file, ${uploadResult.path}');
+    }
+    try {
+      _notificationService.apiRunning(true);
+      final updatedPupil = _client.pupilUpdate.updatePupilPublicMediaAuth(
+        pupilId,
+        uploadResult.path!,
+        _serverpodSessionManager.userName!,
+      );
+      _notificationService.apiRunning(false);
+      return updatedPupil;
+    } catch (e) {
+      _notificationService.apiRunning(false);
+      _log.severe('Error while updating pupil public media auth', e,
+          StackTrace.current);
+      _notificationService.showSnackBar(NotificationType.error,
+          'Die Einwilligung für öffentliche Medien konnte nicht aktualisiert werden: ${e.toString()}');
+      throw Exception('Failed to update pupil public media auth, $e');
+    }
+  }
 
 //- delete pupil avatar
 
@@ -375,10 +387,11 @@ class PupilDataApiService {
 
 //- delete pupil public media auth
 
-  Future<PupilData> resetPublicMediaAuth({required int internalId}) async {
+  Future<PupilData> resetPublicMediaAuth({required int pupilId}) async {
     try {
       _notificationService.apiRunning(true);
-      final updatedPupil = _client.pupil.resetPublicMediaAuth(internalId);
+      final updatedPupil = _client.pupil
+          .resetPublicMediaAuth(pupilId, _serverpodSessionManager.userName!);
       _notificationService.apiRunning(false);
       return updatedPupil;
     } catch (e) {

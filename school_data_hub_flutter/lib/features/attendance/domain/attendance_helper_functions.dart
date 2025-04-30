@@ -165,7 +165,7 @@ class AttendanceHelper {
   static int pupilListMissedclassSum(List<PupilProxy> filteredPupils) {
     int pupilsListmissedclassSum = 0;
     for (PupilProxy pupil in filteredPupils) {
-      pupilsListmissedclassSum += missedclassSum(pupil);
+      pupilsListmissedclassSum += missedclassExcusedSum(pupil);
     }
     return pupilsListmissedclassSum;
   }
@@ -203,7 +203,7 @@ class AttendanceHelper {
   }
 //- of a single pupil
 
-  static int missedclassSum(PupilProxy pupil) {
+  static int missedclassExcusedSum(PupilProxy pupil) {
     // count the number of missed classes - avoid null when missedClasses is empty
     int missedclassCount = 0;
     final missedClasses = _attendanceManager
@@ -212,7 +212,8 @@ class AttendanceHelper {
     if (missedClasses.isNotEmpty) {
       missedclassCount = missedClasses
           .where((element) =>
-              element.missedType == 'missed' && element.unexcused == false)
+              element.missedType == MissedType.missed &&
+              element.unexcused == false)
           .length;
     }
     return missedclassCount;
@@ -227,7 +228,8 @@ class AttendanceHelper {
     if (missedClasses.isNotEmpty) {
       missedclassCount = missedClasses
           .where((element) =>
-              element.missedType == 'missed' && element.unexcused == true)
+              element.missedType == MissedType.missed &&
+              element.unexcused == true)
           .length;
     }
     return missedclassCount;
@@ -239,8 +241,9 @@ class AttendanceHelper {
         .getPupilMissedClassesList(pupil.pupilId)
         .missedClasses;
     if (missedClasses.isNotEmpty) {
-      lateCount =
-          missedClasses.where((element) => element.missedType == 'late').length;
+      lateCount = missedClasses
+          .where((element) => element.missedType == MissedType.late)
+          .length;
     }
     return lateCount;
   }
@@ -253,7 +256,8 @@ class AttendanceHelper {
     if (missedClasses.isNotEmpty) {
       missedClassUnexcusedCount = missedClasses
           .where((element) =>
-              element.missedType == 'late' && element.unexcused == true)
+              element.missedType == MissedType.late &&
+              element.unexcused == true)
           .length;
     }
     return missedClassUnexcusedCount;
@@ -263,8 +267,9 @@ class AttendanceHelper {
     final missedClasses = _attendanceManager
         .getPupilMissedClassesList(pupil.pupilId)
         .missedClasses;
-    int contactedCount =
-        missedClasses.where((element) => element.contacted != '0').length;
+    int contactedCount = missedClasses
+        .where((element) => element.contacted != ContactedType.notSet)
+        .length;
 
     return contactedCount;
   }
@@ -351,6 +356,7 @@ class AttendanceHelper {
   }
 
   static List<int> missedHoursforSemesterOrSchoolyear(PupilProxy pupil) {
+    // TODO: This is somehow broken, check again!
     // The law in NRW Germany requires that absences are counted in hours
     // The function returns absence hours and unexcused hours for the current semester
     // (for grades 3 and 4)

@@ -122,7 +122,7 @@ class SchooldayEventApiService {
     required bool isProcessed,
   }) async {
     final documentId = Uuid().v4();
-    final path = p.join('event', '$documentId.jpg');
+    final path = p.join(ServerStorageFolder.events.name, '$documentId.jpg');
     final uploadDescription =
         await _client.files.getUploadDescription('private', path);
     if (uploadDescription != null) {

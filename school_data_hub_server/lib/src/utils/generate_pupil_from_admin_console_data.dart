@@ -35,6 +35,8 @@ final _publicMediaAuth = PublicMediaAuth(
     nameOnWebsite: false,
     nameInPress: false,
     videoOnWebsite: false,
-    videoInPress: false);
+    videoInPress: false,
+    createdBy: 'SYS',
+    createdAt: DateTime.now());
 
 final _afterSchoolCare = AfterSchoolCare();

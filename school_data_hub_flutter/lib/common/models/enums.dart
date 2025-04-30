@@ -5,3 +5,12 @@ enum NotificationType {
   info,
   infoDialog,
 }
+
+enum ServerStorageFolder {
+  avatars,
+  documents,
+  events,
+  auths,
+}
+
+enum StorageId { public, private }

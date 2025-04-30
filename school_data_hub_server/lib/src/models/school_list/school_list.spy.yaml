@@ -3,9 +3,10 @@ class: SchoolList
 table: school_list
 fields:
   listId: String
+  archived: bool
   name: String
   description: String
   createdBy: String
-  visibility: String
-  authorizedUsers: Set<String>?
+  public: bool
+  authorizedUsers: String?
   pupilLists: List<PupilList>?, relation(name=pupil_list_school_list)

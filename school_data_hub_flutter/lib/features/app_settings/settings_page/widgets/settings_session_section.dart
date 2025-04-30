@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
-import 'package:school_data_hub_flutter/features/app/presentation/app_entry_point/login_page/login_controller.dart';
+import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/dialogs/change_env_dialog.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
 import 'package:watch_it/watch_it.dart';

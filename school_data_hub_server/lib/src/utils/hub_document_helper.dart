@@ -5,11 +5,11 @@ import 'package:serverpod/serverpod.dart';
 final _log = Logger('HubDocumentHelper');
 
 class HubDocumentHelper {
-  static Future<HubDocument> createHubDocumentObject({
+  static HubDocument createHubDocumentObject({
     required Session session,
     required String createdBy,
     required String path,
-  }) async {
+  }) {
     final documentId = Uuid().v4();
 
     // Create a HubDocument with the file path
@@ -23,9 +23,10 @@ class HubDocumentHelper {
     return document;
   }
 
-  static Future<bool> deleteHubDocument({
+  static Future<bool> deleteHubDocumentAndFile({
     required Session session,
     required String documentId,
+    Transaction? transaction,
   }) async {
     // Find the HubDocument in the database
     final hubDocument = await HubDocument.db.findFirstRow(
@@ -42,6 +43,8 @@ class HubDocumentHelper {
       storageId: 'private',
       path: hubDocument.documentPath!,
     );
+    await HubDocument.db
+        .deleteRow(session, hubDocument, transaction: transaction);
 
     return true; // Document deleted successfully
   }

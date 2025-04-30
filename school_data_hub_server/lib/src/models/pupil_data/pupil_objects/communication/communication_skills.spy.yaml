@@ -5,3 +5,4 @@ fields:
   speaking: int
   reading: int
   createdBy: String
+  createdAt: DateTime

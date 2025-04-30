@@ -19,10 +19,11 @@ abstract class SchoolList
   SchoolList._({
     this.id,
     required this.listId,
+    required this.archived,
     required this.name,
     required this.description,
     required this.createdBy,
-    required this.visibility,
+    required this.public,
     this.authorizedUsers,
     this.pupilLists,
   });
@@ -30,11 +31,12 @@ abstract class SchoolList
   factory SchoolList({
     int? id,
     required String listId,
+    required bool archived,
     required String name,
     required String description,
     required String createdBy,
-    required String visibility,
-    Set<String>? authorizedUsers,
+    required bool public,
+    String? authorizedUsers,
     List<_i2.PupilList>? pupilLists,
   }) = _SchoolListImpl;
 
@@ -42,15 +44,12 @@ abstract class SchoolList
     return SchoolList(
       id: jsonSerialization['id'] as int?,
       listId: jsonSerialization['listId'] as String,
+      archived: jsonSerialization['archived'] as bool,
       name: jsonSerialization['name'] as String,
       description: jsonSerialization['description'] as String,
       createdBy: jsonSerialization['createdBy'] as String,
-      visibility: jsonSerialization['visibility'] as String,
-      authorizedUsers: jsonSerialization['authorizedUsers'] == null
-          ? null
-          : _i1.SetJsonExtension.fromJson(
-              (jsonSerialization['authorizedUsers'] as List),
-              itemFromJson: (e) => e as String),
+      public: jsonSerialization['public'] as bool,
+      authorizedUsers: jsonSerialization['authorizedUsers'] as String?,
       pupilLists: (jsonSerialization['pupilLists'] as List?)
           ?.map((e) => _i2.PupilList.fromJson((e as Map<String, dynamic>)))
           .toList(),
@@ -66,15 +65,17 @@ abstract class SchoolList
 
   String listId;
 
+  bool archived;
+
   String name;
 
   String description;
 
   String createdBy;
 
-  String visibility;
+  bool public;
 
-  Set<String>? authorizedUsers;
+  String? authorizedUsers;
 
   List<_i2.PupilList>? pupilLists;
 
@@ -87,11 +88,12 @@ abstract class SchoolList
   SchoolList copyWith({
     int? id,
     String? listId,
+    bool? archived,
     String? name,
     String? description,
     String? createdBy,
-    String? visibility,
-    Set<String>? authorizedUsers,
+    bool? public,
+    String? authorizedUsers,
     List<_i2.PupilList>? pupilLists,
   });
   @override
@@ -99,11 +101,12 @@ abstract class SchoolList
     return {
       if (id != null) 'id': id,
       'listId': listId,
+      'archived': archived,
       'name': name,
       'description': description,
       'createdBy': createdBy,
-      'visibility': visibility,
-      if (authorizedUsers != null) 'authorizedUsers': authorizedUsers?.toJson(),
+      'public': public,
+      if (authorizedUsers != null) 'authorizedUsers': authorizedUsers,
       if (pupilLists != null)
         'pupilLists': pupilLists?.toJson(valueToJson: (v) => v.toJson()),
     };
@@ -114,11 +117,12 @@ abstract class SchoolList
     return {
       if (id != null) 'id': id,
       'listId': listId,
+      'archived': archived,
       'name': name,
       'description': description,
       'createdBy': createdBy,
-      'visibility': visibility,
-      if (authorizedUsers != null) 'authorizedUsers': authorizedUsers?.toJson(),
+      'public': public,
+      if (authorizedUsers != null) 'authorizedUsers': authorizedUsers,
       if (pupilLists != null)
         'pupilLists':
             pupilLists?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
@@ -161,19 +165,21 @@ class _SchoolListImpl extends SchoolList {
   _SchoolListImpl({
     int? id,
     required String listId,
+    required bool archived,
     required String name,
     required String description,
     required String createdBy,
-    required String visibility,
-    Set<String>? authorizedUsers,
+    required bool public,
+    String? authorizedUsers,
     List<_i2.PupilList>? pupilLists,
   }) : super._(
           id: id,
           listId: listId,
+          archived: archived,
           name: name,
           description: description,
           createdBy: createdBy,
-          visibility: visibility,
+          public: public,
           authorizedUsers: authorizedUsers,
           pupilLists: pupilLists,
         );
@@ -185,23 +191,24 @@ class _SchoolListImpl extends SchoolList {
   SchoolList copyWith({
     Object? id = _Undefined,
     String? listId,
+    bool? archived,
     String? name,
     String? description,
     String? createdBy,
-    String? visibility,
+    bool? public,
     Object? authorizedUsers = _Undefined,
     Object? pupilLists = _Undefined,
   }) {
     return SchoolList(
       id: id is int? ? id : this.id,
       listId: listId ?? this.listId,
+      archived: archived ?? this.archived,
       name: name ?? this.name,
       description: description ?? this.description,
       createdBy: createdBy ?? this.createdBy,
-      visibility: visibility ?? this.visibility,
-      authorizedUsers: authorizedUsers is Set<String>?
-          ? authorizedUsers
-          : this.authorizedUsers?.map((e0) => e0).toSet(),
+      public: public ?? this.public,
+      authorizedUsers:
+          authorizedUsers is String? ? authorizedUsers : this.authorizedUsers,
       pupilLists: pupilLists is List<_i2.PupilList>?
           ? pupilLists
           : this.pupilLists?.map((e0) => e0.copyWith()).toList(),
@@ -213,6 +220,10 @@ class SchoolListTable extends _i1.Table<int?> {
   SchoolListTable({super.tableRelation}) : super(tableName: 'school_list') {
     listId = _i1.ColumnString(
       'listId',
+      this,
+    );
+    archived = _i1.ColumnBool(
+      'archived',
       this,
     );
     name = _i1.ColumnString(
@@ -227,11 +238,11 @@ class SchoolListTable extends _i1.Table<int?> {
       'createdBy',
       this,
     );
-    visibility = _i1.ColumnString(
-      'visibility',
+    public = _i1.ColumnBool(
+      'public',
       this,
     );
-    authorizedUsers = _i1.ColumnSerializable(
+    authorizedUsers = _i1.ColumnString(
       'authorizedUsers',
       this,
     );
@@ -239,15 +250,17 @@ class SchoolListTable extends _i1.Table<int?> {
 
   late final _i1.ColumnString listId;
 
+  late final _i1.ColumnBool archived;
+
   late final _i1.ColumnString name;
 
   late final _i1.ColumnString description;
 
   late final _i1.ColumnString createdBy;
 
-  late final _i1.ColumnString visibility;
+  late final _i1.ColumnBool public;
 
-  late final _i1.ColumnSerializable authorizedUsers;
+  late final _i1.ColumnString authorizedUsers;
 
   _i2.PupilListTable? ___pupilLists;
 
@@ -288,10 +301,11 @@ class SchoolListTable extends _i1.Table<int?> {
   List<_i1.Column> get columns => [
         id,
         listId,
+        archived,
         name,
         description,
         createdBy,
-        visibility,
+        public,
         authorizedUsers,
       ];
 

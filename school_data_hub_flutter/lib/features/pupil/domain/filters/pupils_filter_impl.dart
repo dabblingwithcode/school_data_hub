@@ -315,8 +315,9 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
                 .compareTo(AttendanceHelper.missedclassUnexcusedSum(a)));
 
       case PupilSortMode.sortByMissedExcused:
-        thisFilteredPupils.sort((a, b) => AttendanceHelper.missedclassSum(b)
-            .compareTo(AttendanceHelper.missedclassSum(a)));
+        thisFilteredPupils.sort((a, b) =>
+            AttendanceHelper.missedclassExcusedSum(b)
+                .compareTo(AttendanceHelper.missedclassExcusedSum(a)));
 
       case PupilSortMode.sortByLate:
         thisFilteredPupils.sort((a, b) => AttendanceHelper.lateUnexcusedSum(b)

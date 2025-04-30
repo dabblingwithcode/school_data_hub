@@ -98,12 +98,15 @@ class PupilCommunicationContent extends StatelessWidget {
             onTap: () =>
                 languageDialog(context, pupil, CommunicationSubject.pupil),
             onLongPress: () => _pupilManager.updatePupilCommunicationSkills(
-                pupilId: pupil.pupilId,
-                communicationSkills: CommunicationSkills(
-                    understanding: 0,
-                    speaking: 0,
-                    reading: 0,
-                    createdBy: _serverpodSessionManager.userName!)),
+              pupilId: pupil.pupilId,
+              communicationSkills: CommunicationSkills(
+                understanding: 0,
+                speaking: 0,
+                reading: 0,
+                createdBy: _serverpodSessionManager.userName!,
+                createdAt: DateTime.now(),
+              ),
+            ),
             child: pupil.communicationPupil == null
                 ? const Text(
                     'kein Eintrag',

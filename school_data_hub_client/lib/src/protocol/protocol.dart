@@ -89,14 +89,16 @@ import 'package:school_data_hub_client/src/protocol/user/device_info.dart'
 import 'package:serverpod_auth_client/serverpod_auth_client.dart' as _i70;
 import 'package:school_data_hub_client/src/protocol/learning/competence.dart'
     as _i71;
-import 'package:school_data_hub_client/src/protocol/schoolday/school_semester.dart'
+import 'package:school_data_hub_client/src/protocol/school_list/school_list.dart'
     as _i72;
-import 'package:school_data_hub_client/src/protocol/schoolday/schoolday.dart'
+import 'package:school_data_hub_client/src/protocol/schoolday/school_semester.dart'
     as _i73;
-import 'package:school_data_hub_client/src/protocol/schoolday/schoolday_event/schoolday_event.dart'
+import 'package:school_data_hub_client/src/protocol/schoolday/schoolday.dart'
     as _i74;
-import 'package:school_data_hub_client/src/protocol/learning_support/support_category.dart'
+import 'package:school_data_hub_client/src/protocol/schoolday/schoolday_event/schoolday_event.dart'
     as _i75;
+import 'package:school_data_hub_client/src/protocol/learning_support/support_category.dart'
+    as _i76;
 export 'authorization/authorization.dart';
 export 'authorization/pupil_authorization.dart';
 export 'book/book.dart';
@@ -862,11 +864,6 @@ class Protocol extends _i1.SerializationManager {
           ? (data as List).map((e) => deserialize<_i56.HubDocument>(e)).toList()
           : null) as T;
     }
-    if (t == _i1.getType<Set<String>?>()) {
-      return (data != null
-          ? (data as List).map((e) => deserialize<String>(e)).toSet()
-          : null) as T;
-    }
     if (t == _i1.getType<List<_i46.PupilList>?>()) {
       return (data != null
           ? (data as List).map((e) => deserialize<_i46.PupilList>(e)).toList()
@@ -953,26 +950,42 @@ class Protocol extends _i1.SerializationManager {
     if (t == Set<int>) {
       return (data as List).map((e) => deserialize<int>(e)).toSet() as T;
     }
-    if (t == List<_i72.SchoolSemester>) {
+    if (t == List<_i72.SchoolList>) {
+      return (data as List).map((e) => deserialize<_i72.SchoolList>(e)).toList()
+          as T;
+    }
+    if (t == List<int>) {
+      return (data as List).map((e) => deserialize<int>(e)).toList() as T;
+    }
+    if (t == _i1.getType<({String operation, List<int> pupilIds})?>()) {
+      return (data == null)
+          ? null as T
+          : (
+              operation:
+                  deserialize<String>(((data as Map)['n'] as Map)['operation']),
+              pupilIds: deserialize<List<int>>(data['n']['pupilIds']),
+            ) as T;
+    }
+    if (t == List<_i73.SchoolSemester>) {
       return (data as List)
-          .map((e) => deserialize<_i72.SchoolSemester>(e))
+          .map((e) => deserialize<_i73.SchoolSemester>(e))
           .toList() as T;
     }
-    if (t == List<_i73.Schoolday>) {
-      return (data as List).map((e) => deserialize<_i73.Schoolday>(e)).toList()
+    if (t == List<_i74.Schoolday>) {
+      return (data as List).map((e) => deserialize<_i74.Schoolday>(e)).toList()
           as T;
     }
     if (t == List<DateTime>) {
       return (data as List).map((e) => deserialize<DateTime>(e)).toList() as T;
     }
-    if (t == List<_i74.SchooldayEvent>) {
+    if (t == List<_i75.SchooldayEvent>) {
       return (data as List)
-          .map((e) => deserialize<_i74.SchooldayEvent>(e))
+          .map((e) => deserialize<_i75.SchooldayEvent>(e))
           .toList() as T;
     }
-    if (t == List<_i75.SupportCategory>) {
+    if (t == List<_i76.SupportCategory>) {
       return (data as List)
-          .map((e) => deserialize<_i75.SupportCategory>(e))
+          .map((e) => deserialize<_i76.SupportCategory>(e))
           .toList() as T;
     }
     if (t == _i1.getType<({int testint, String testString})?>()) {
@@ -1421,6 +1434,14 @@ Map<String, dynamic>? mapRecordToJson(Record? record) {
       "n": {
         "deviceInfo": record.deviceInfo,
         "response": record.response,
+      },
+    };
+  }
+  if (record is ({String operation, List<int> pupilIds})) {
+    return {
+      "n": {
+        "operation": record.operation,
+        "pupilIds": record.pupilIds,
       },
     };
   }

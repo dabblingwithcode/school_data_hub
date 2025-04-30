@@ -50,8 +50,12 @@ pupilUpdate:
   - updatePupilAvatarAuth:
   - updateStringProperty:
   - updateCredit:
-  - updatePupilWithPublicMediaAuth:
+  - updatePupilPublicMediaAuth:
   - updateSupportLevel:
+schoolList:
+  - fetchSchoolLists:
+  - postSchoolList:
+  - updateSchoolList:
 schooldayAdmin:
   - createSchoolSemester:
   - getAllSchoolSemesters:

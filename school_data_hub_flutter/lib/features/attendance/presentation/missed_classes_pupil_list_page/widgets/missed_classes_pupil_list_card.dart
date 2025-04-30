@@ -4,10 +4,11 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
-import 'package:school_data_hub_flutter/features/app/domain/main_menu_bottom_nav_manager.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/attendance_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/widgets/attendance_stats_pupil.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_profile_attendance_content.dart';
 import 'package:watch_it/watch_it.dart';
@@ -67,12 +68,12 @@ class _AttendanceRankingListCardState extends State<AttendanceRankingListCard> {
                                   onTap: () {
                                     di<MainMenuBottomNavManager>()
                                         .setPupilProfileNavPage(3);
-                                    // Navigator.of(context)
-                                    //     .push(MaterialPageRoute(
-                                    //   builder: (ctx) => PupilProfilePage(
-                                    //     pupil: pupil,
-                                    //   ),
-                                    // ));
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (ctx) => PupilProfilePage(
+                                        pupil: pupil,
+                                      ),
+                                    ));
                                   },
                                   child: Row(
                                     children: [

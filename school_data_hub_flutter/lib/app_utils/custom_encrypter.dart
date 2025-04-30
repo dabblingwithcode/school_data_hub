@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:encrypt/encrypt.dart' as enc;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:watch_it/watch_it.dart';
@@ -36,7 +37,8 @@ class CustomEncrypter {
     final Directory tempDir = await getTemporaryDirectory();
     final Uri uri = Uri.parse(file.path);
     final String extension = uri.pathSegments.last.split('.').last;
-    final File tempFile = File('${tempDir.path}/encrypted_file.$extension');
+    final File tempFile =
+        File(p.join(tempDir.path, 'encrypted_file.$extension'));
     await tempFile.writeAsBytes(encrypted.bytes);
     return tempFile;
   }

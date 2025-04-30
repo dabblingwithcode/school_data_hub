@@ -22,6 +22,8 @@ abstract class PublicMediaAuth
     required this.nameInPress,
     required this.videoOnWebsite,
     required this.videoInPress,
+    required this.createdBy,
+    required this.createdAt,
   });
 
   factory PublicMediaAuth({
@@ -33,6 +35,8 @@ abstract class PublicMediaAuth
     required bool nameInPress,
     required bool videoOnWebsite,
     required bool videoInPress,
+    required String createdBy,
+    required DateTime createdAt,
   }) = _PublicMediaAuthImpl;
 
   factory PublicMediaAuth.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -48,6 +52,9 @@ abstract class PublicMediaAuth
       nameInPress: jsonSerialization['nameInPress'] as bool,
       videoOnWebsite: jsonSerialization['videoOnWebsite'] as bool,
       videoInPress: jsonSerialization['videoInPress'] as bool,
+      createdBy: jsonSerialization['createdBy'] as String,
+      createdAt:
+          _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
     );
   }
 
@@ -67,6 +74,10 @@ abstract class PublicMediaAuth
 
   bool videoInPress;
 
+  String createdBy;
+
+  DateTime createdAt;
+
   /// Returns a shallow copy of this [PublicMediaAuth]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
@@ -79,6 +90,8 @@ abstract class PublicMediaAuth
     bool? nameInPress,
     bool? videoOnWebsite,
     bool? videoInPress,
+    String? createdBy,
+    DateTime? createdAt,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -91,6 +104,8 @@ abstract class PublicMediaAuth
       'nameInPress': nameInPress,
       'videoOnWebsite': videoOnWebsite,
       'videoInPress': videoInPress,
+      'createdBy': createdBy,
+      'createdAt': createdAt.toJson(),
     };
   }
 
@@ -105,6 +120,8 @@ abstract class PublicMediaAuth
       'nameInPress': nameInPress,
       'videoOnWebsite': videoOnWebsite,
       'videoInPress': videoInPress,
+      'createdBy': createdBy,
+      'createdAt': createdAt.toJson(),
     };
   }
 
@@ -124,6 +141,8 @@ class _PublicMediaAuthImpl extends PublicMediaAuth {
     required bool nameInPress,
     required bool videoOnWebsite,
     required bool videoInPress,
+    required String createdBy,
+    required DateTime createdAt,
   }) : super._(
           groupPicturesOnWebsite: groupPicturesOnWebsite,
           groupPicturesInPress: groupPicturesInPress,
@@ -133,6 +152,8 @@ class _PublicMediaAuthImpl extends PublicMediaAuth {
           nameInPress: nameInPress,
           videoOnWebsite: videoOnWebsite,
           videoInPress: videoInPress,
+          createdBy: createdBy,
+          createdAt: createdAt,
         );
 
   /// Returns a shallow copy of this [PublicMediaAuth]
@@ -148,6 +169,8 @@ class _PublicMediaAuthImpl extends PublicMediaAuth {
     bool? nameInPress,
     bool? videoOnWebsite,
     bool? videoInPress,
+    String? createdBy,
+    DateTime? createdAt,
   }) {
     return PublicMediaAuth(
       groupPicturesOnWebsite:
@@ -161,6 +184,8 @@ class _PublicMediaAuthImpl extends PublicMediaAuth {
       nameInPress: nameInPress ?? this.nameInPress,
       videoOnWebsite: videoOnWebsite ?? this.videoOnWebsite,
       videoInPress: videoInPress ?? this.videoInPress,
+      createdBy: createdBy ?? this.createdBy,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 }

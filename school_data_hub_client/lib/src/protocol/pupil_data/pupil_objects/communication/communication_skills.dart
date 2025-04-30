@@ -17,6 +17,7 @@ abstract class CommunicationSkills implements _i1.SerializableModel {
     required this.speaking,
     required this.reading,
     required this.createdBy,
+    required this.createdAt,
   });
 
   factory CommunicationSkills({
@@ -24,6 +25,7 @@ abstract class CommunicationSkills implements _i1.SerializableModel {
     required int speaking,
     required int reading,
     required String createdBy,
+    required DateTime createdAt,
   }) = _CommunicationSkillsImpl;
 
   factory CommunicationSkills.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -32,6 +34,8 @@ abstract class CommunicationSkills implements _i1.SerializableModel {
       speaking: jsonSerialization['speaking'] as int,
       reading: jsonSerialization['reading'] as int,
       createdBy: jsonSerialization['createdBy'] as String,
+      createdAt:
+          _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
     );
   }
 
@@ -43,6 +47,8 @@ abstract class CommunicationSkills implements _i1.SerializableModel {
 
   String createdBy;
 
+  DateTime createdAt;
+
   /// Returns a shallow copy of this [CommunicationSkills]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
@@ -51,6 +57,7 @@ abstract class CommunicationSkills implements _i1.SerializableModel {
     int? speaking,
     int? reading,
     String? createdBy,
+    DateTime? createdAt,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -59,6 +66,7 @@ abstract class CommunicationSkills implements _i1.SerializableModel {
       'speaking': speaking,
       'reading': reading,
       'createdBy': createdBy,
+      'createdAt': createdAt.toJson(),
     };
   }
 
@@ -74,11 +82,13 @@ class _CommunicationSkillsImpl extends CommunicationSkills {
     required int speaking,
     required int reading,
     required String createdBy,
+    required DateTime createdAt,
   }) : super._(
           understanding: understanding,
           speaking: speaking,
           reading: reading,
           createdBy: createdBy,
+          createdAt: createdAt,
         );
 
   /// Returns a shallow copy of this [CommunicationSkills]
@@ -90,12 +100,14 @@ class _CommunicationSkillsImpl extends CommunicationSkills {
     int? speaking,
     int? reading,
     String? createdBy,
+    DateTime? createdAt,
   }) {
     return CommunicationSkills(
       understanding: understanding ?? this.understanding,
       speaking: speaking ?? this.speaking,
       reading: reading ?? this.reading,
       createdBy: createdBy ?? this.createdBy,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 }

@@ -2,3 +2,5 @@ type: server
 
 client_package_path: ../school_data_hub_client
 server_test_tools_path: test/integration/test_tools
+experimentalFeatures:
+  changeIdType: true

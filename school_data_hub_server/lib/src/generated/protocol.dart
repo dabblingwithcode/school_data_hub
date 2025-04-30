@@ -90,14 +90,16 @@ import 'package:school_data_hub_server/src/generated/user/device_info.dart'
     as _i71;
 import 'package:school_data_hub_server/src/generated/learning/competence.dart'
     as _i72;
-import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
+import 'package:school_data_hub_server/src/generated/school_list/school_list.dart'
     as _i73;
-import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
     as _i74;
-import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
     as _i75;
-import 'package:school_data_hub_server/src/generated/learning_support/support_category.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event.dart'
     as _i76;
+import 'package:school_data_hub_server/src/generated/learning_support/support_category.dart'
+    as _i77;
 export 'authorization/authorization.dart';
 export 'authorization/pupil_authorization.dart';
 export 'book/book.dart';
@@ -2794,6 +2796,12 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'String',
         ),
         _i2.ColumnDefinition(
+          name: 'archived',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+        ),
+        _i2.ColumnDefinition(
           name: 'name',
           columnType: _i2.ColumnType.text,
           isNullable: false,
@@ -2812,16 +2820,16 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'String',
         ),
         _i2.ColumnDefinition(
-          name: 'visibility',
-          columnType: _i2.ColumnType.text,
+          name: 'public',
+          columnType: _i2.ColumnType.boolean,
           isNullable: false,
-          dartType: 'String',
+          dartType: 'bool',
         ),
         _i2.ColumnDefinition(
           name: 'authorizedUsers',
-          columnType: _i2.ColumnType.json,
+          columnType: _i2.ColumnType.text,
           isNullable: true,
-          dartType: 'Set<String>?',
+          dartType: 'String?',
         ),
       ],
       foreignKeys: [],
@@ -4779,11 +4787,6 @@ class Protocol extends _i1.SerializationManagerServer {
           ? (data as List).map((e) => deserialize<_i58.HubDocument>(e)).toList()
           : null) as T;
     }
-    if (t == _i1.getType<Set<String>?>()) {
-      return (data != null
-          ? (data as List).map((e) => deserialize<String>(e)).toSet()
-          : null) as T;
-    }
     if (t == _i1.getType<List<_i48.PupilList>?>()) {
       return (data != null
           ? (data as List).map((e) => deserialize<_i48.PupilList>(e)).toList()
@@ -4870,26 +4873,42 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == Set<int>) {
       return (data as List).map((e) => deserialize<int>(e)).toSet() as T;
     }
-    if (t == List<_i73.SchoolSemester>) {
+    if (t == List<_i73.SchoolList>) {
+      return (data as List).map((e) => deserialize<_i73.SchoolList>(e)).toList()
+          as T;
+    }
+    if (t == List<int>) {
+      return (data as List).map((e) => deserialize<int>(e)).toList() as T;
+    }
+    if (t == _i1.getType<({String operation, List<int> pupilIds})?>()) {
+      return (data == null)
+          ? null as T
+          : (
+              operation:
+                  deserialize<String>(((data as Map)['n'] as Map)['operation']),
+              pupilIds: deserialize<List<int>>(data['n']['pupilIds']),
+            ) as T;
+    }
+    if (t == List<_i74.SchoolSemester>) {
       return (data as List)
-          .map((e) => deserialize<_i73.SchoolSemester>(e))
+          .map((e) => deserialize<_i74.SchoolSemester>(e))
           .toList() as T;
     }
-    if (t == List<_i74.Schoolday>) {
-      return (data as List).map((e) => deserialize<_i74.Schoolday>(e)).toList()
+    if (t == List<_i75.Schoolday>) {
+      return (data as List).map((e) => deserialize<_i75.Schoolday>(e)).toList()
           as T;
     }
     if (t == List<DateTime>) {
       return (data as List).map((e) => deserialize<DateTime>(e)).toList() as T;
     }
-    if (t == List<_i75.SchooldayEvent>) {
+    if (t == List<_i76.SchooldayEvent>) {
       return (data as List)
-          .map((e) => deserialize<_i75.SchooldayEvent>(e))
+          .map((e) => deserialize<_i76.SchooldayEvent>(e))
           .toList() as T;
     }
-    if (t == List<_i76.SupportCategory>) {
+    if (t == List<_i77.SupportCategory>) {
       return (data as List)
-          .map((e) => deserialize<_i76.SupportCategory>(e))
+          .map((e) => deserialize<_i77.SupportCategory>(e))
           .toList() as T;
     }
     if (t == _i1.getType<({int testint, String testString})?>()) {
@@ -5465,6 +5484,14 @@ Map<String, dynamic>? mapRecordToJson(Record? record) {
       "n": {
         "deviceInfo": record.deviceInfo,
         "response": record.response,
+      },
+    };
+  }
+  if (record is ({String operation, List<int> pupilIds})) {
+    return {
+      "n": {
+        "operation": record.operation,
+        "pupilIds": record.pupilIds,
       },
     };
   }

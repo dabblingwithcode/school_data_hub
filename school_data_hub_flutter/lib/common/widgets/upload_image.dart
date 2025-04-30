@@ -5,9 +5,10 @@ import 'package:crop_image/crop_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
-Future<File?> uploadImageFile(context) async {
+Future<File?> createImageFile(context) async {
   XFile? image = await ImagePicker().pickImage(
       source: Platform.isWindows ? ImageSource.gallery : ImageSource.camera,
       preferredCameraDevice:
@@ -170,7 +171,7 @@ class _CropAvatarState extends State<CropAvatarView> {
 
   static Future<File> imageToFile({required ByteData bytes}) async {
     String tempPath = (await getTemporaryDirectory()).path;
-    File file = File('$tempPath/temporaryProfile.jpeg');
+    File file = File(p.join(tempPath, 'temporaryProfile.jpeg'));
     await file.writeAsBytes(
         bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
     return file;

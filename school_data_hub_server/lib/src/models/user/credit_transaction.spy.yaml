@@ -1,14 +1,14 @@
-## Transaction model
+  ### Sender of the transaction will either be a staff member
+  ### or the system itself
+  ### Receiver could be a pupil or a staff member
+  ### That is why there are no relationships defined here
+  ### In case of a pupil, it will be the internalId
+  ### In case of a staff member, it will be the userInfoId
+  ### We create indexes for both fields to speed up the queries
 class: CreditTransaction
 table: credit_transaction
 fields:
-  ## Sender of the transaction will either be a staff member
-  ## or the system itself
-  ## Receiver could be a pupil or a staff member
-  ## That is why there are no relationships defined here
-  ## In case of a pupil, it will be the internalId
-  ## In case of a staff member, it will be the userInfoId
-  ## We create indexes for both fields to speed up the queries
+
   sender: String
   receiver: int, 
   amount: int
