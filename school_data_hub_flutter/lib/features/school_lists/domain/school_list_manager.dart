@@ -6,6 +6,8 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/data/school_list_api_service.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/filters/school_list_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/school_lists/domain/models/pupil_list_entry_proxy.dart';
+import 'package:school_data_hub_flutter/features/school_lists/domain/models/school_list_pupil_entries_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _notificationService = di<NotificationService>();
@@ -19,31 +21,21 @@ final _pupilManager = di<PupilManager>();
 final _log = Logger('SchoolListManager');
 
 class SchoolListManager with ChangeNotifier {
-// We keep the school lists in a map for fast access
-// the pupil lists are kept in a separate map
-//-When created, copyWith with pupilEntries = null to avoid redundance!
-  final Map<int, SchoolList> _schoolListMap = {};
+  final Map<int, SchoolList> _schoolListMap =
+      {}; //-When created, copyWith with pupilEntries = null to avoid redundance!
   Map<int, SchoolList> get schoolListMap => _schoolListMap;
 
   List<SchoolList> get schoolLists => _schoolListMap.values.toList();
 
-// We keep two maps of pupil lists for fast access
-// one with the pupilId as key and the other with the schoolListId as key
+  final Map<int, SchoolListPupilEntriesProxy> _schoolListIdPupilEntriesMap = {};
 
-  final Map<int, List<PupilListEntry>> _schoolListIdPupilEntriesMap = {};
-  Map<int, List<PupilListEntry>> get schoolListIdPupilEntriesMap =>
+  Map<int, SchoolListPupilEntriesProxy> get schoolListIdPupilEntriesMap =>
       _schoolListIdPupilEntriesMap;
-
-  final Map<int, List<PupilListEntry>> _pupilIdSchoolListPupilEntriesMap = {};
-  Map<int, List<PupilListEntry>> get pupilIdSchoolListPupilEntriesMap =>
-      _pupilIdSchoolListPupilEntriesMap;
-
   SchoolListManager();
 
   void clearData() {
     _schoolListMap.clear();
     _schoolListIdPupilEntriesMap.clear();
-    _pupilIdSchoolListPupilEntriesMap.clear();
   }
 
   Future<SchoolListManager> init() async {
@@ -53,49 +45,62 @@ class SchoolListManager with ChangeNotifier {
 
   //- Getters
 
+  SchoolListPupilEntriesProxy getPupilEntriesProxyFromSchoolList(int listId) {
+    if (!_schoolListIdPupilEntriesMap.containsKey(listId)) {
+      return SchoolListPupilEntriesProxy();
+    }
+    return _schoolListIdPupilEntriesMap[listId]!;
+  }
+
   SchoolList getSchoolListById(int listId) {
     return _schoolListMap[listId]!;
   }
 
-  List<PupilListEntry> getSchoolListsEntriesFromPupil(int pupilId) {
-    if (!_pupilIdSchoolListPupilEntriesMap.containsKey(pupilId)) {
-      return [];
-    }
-    return _pupilIdSchoolListPupilEntriesMap[pupilId]!;
+  List<PupilListEntryProxy> getSchoolListsEntryProxyFromPupil(int pupilId) {
+    final entries = _schoolListIdPupilEntriesMap.values
+        .expand((element) => element.pupilEntries.values)
+        .where((element) => element.pupilEntry.pupilId == pupilId)
+        .toList();
+    return entries;
   }
 
-  PupilListEntry? getPupilSchoolListEntry(
+  PupilListEntryProxy? getPupilSchoolListEntryProxy(
       {required int pupilId, required int listId}) {
-    return _schoolListIdPupilEntriesMap[pupilId]!
-        .where((element) => element.schoolListId == listId)
-        .first;
+    if (!_schoolListIdPupilEntriesMap.containsKey(listId)) {
+      return null;
+    }
+    final pupilEntries = _schoolListIdPupilEntriesMap[listId]!.pupilEntries;
+    if (pupilEntries.isEmpty) {
+      return null;
+    }
+    return pupilEntries.values
+        .firstWhere((element) => element.pupilEntry.pupilId == pupilId);
   }
 
   List<PupilProxy> getPupilsinSchoolList(int listId) {
-    if (!_schoolListMap.containsKey(listId)) {
+    if (!_schoolListIdPupilEntriesMap.containsKey(listId)) {
       return [];
     }
-    final pupilEntries = _schoolListIdPupilEntriesMap[listId];
-    if (pupilEntries == null || pupilEntries.isEmpty) {
+    final pupilEntries = _schoolListIdPupilEntriesMap[listId]!.pupilEntries;
+    if (pupilEntries.isEmpty) {
       return [];
     }
-
-    final List<int> pupilIdsInList =
-        pupilEntries.map((e) => e.pupilId).toList();
+    final pupilIdsInList =
+        pupilEntries.values.map((e) => e.pupilEntry.pupilId).toSet().toList();
 
     return _pupilManager.pupilsFromPupilIds(pupilIdsInList);
   }
 
   // TODO: Are we using this function anywhere?
-  //- If not, remove it
-  List<PupilProxy> pupilsPresentInSchoolList(
-      int listId, List<PupilProxy> pupils) {
-    List<PupilProxy> pupilsInList = getPupilsinSchoolList(listId);
-    return pupils
-        .where((pupil) => pupilsInList
-            .any((element) => element.internalId == pupil.internalId))
-        .toList();
-  }
+  // //- If not, remove it
+  // List<PupilProxy> pupilsPresentInSchoolList(
+  //     int listId, List<PupilProxy> pupils) {
+  //   List<PupilProxy> pupilsInList = getPupilsinSchoolList(listId);
+  //   return pupils
+  //       .where((pupil) => pupilsInList
+  //           .any((element) => element.internalId == pupil.internalId))
+  //       .toList();
+  // }
 
   //- Update collections
 
@@ -107,58 +112,24 @@ class SchoolListManager with ChangeNotifier {
     // setting pupilEntries to null to avoid redundancy
     _schoolListMap[schoolList.id!] = schoolList.copyWith(pupilEntries: null);
 
-    // Next, we update both pupil entries maps
-    // with the fresh pupil entries from the school list
-
-    // We use the school list id as key for the first map
-    _schoolListIdPupilEntriesMap[schoolList.id!] = pupilEntries;
-
-    // and the pupil id as key for the second map
-
-    // First, clean up any stale entries for this school list from _pupilIdSchoolListPupilEntriesMap
-    // in case an entry was deleted
-    // Find all pupils that have an entry for this school list
-    List<int> pupilsToCleanup = [];
-    _pupilIdSchoolListPupilEntriesMap.forEach((pupilId, lists) {
-      if (lists.any((element) => element.schoolListId == schoolList.id!)) {
-        pupilsToCleanup.add(pupilId);
-      }
-    });
-
-    // Now remove all entries related to this school list from each pupil's list
-    for (final pupilId in pupilsToCleanup) {
-      if (_pupilIdSchoolListPupilEntriesMap.containsKey(pupilId)) {
-        _pupilIdSchoolListPupilEntriesMap[pupilId] =
-            _pupilIdSchoolListPupilEntriesMap[pupilId]!
-                .where((element) => element.schoolListId != schoolList.id!)
-                .toList();
-      }
+    // Next, we update the pupil entries map
+    if (_schoolListIdPupilEntriesMap.containsKey(schoolList.id!)) {
+      _schoolListIdPupilEntriesMap[schoolList.id!]!
+          .setPupilEntries(pupilEntries);
+      _log.fine(
+          'Updated pupil entries map for school list number ${schoolList.id!}');
+    } else {
+      _schoolListIdPupilEntriesMap[schoolList.id!] =
+          SchoolListPupilEntriesProxy();
+      _schoolListIdPupilEntriesMap[schoolList.id!]!
+          .setPupilEntries(pupilEntries);
+      _log.fine(
+          'Created new pupil entries map for school list number ${schoolList.id!}');
     }
 
-    for (final pupilList in pupilEntries) {
-      final pupilEntriesInMap =
-          _pupilIdSchoolListPupilEntriesMap[pupilList.pupilId];
-      if (pupilEntriesInMap == null) {
-        _pupilIdSchoolListPupilEntriesMap[pupilList.pupilId] = [pupilList];
-        continue;
-      }
-      // if the pupil list is already in the pupil lists we update it
-
-      if (pupilEntriesInMap.isNotEmpty) {
-        final index = pupilEntriesInMap
-            .indexWhere((element) => element.schoolListId == schoolList.id!);
-        if (index != -1) {
-          pupilEntriesInMap[index] = pupilList;
-        } else {
-          pupilEntriesInMap.add(pupilList);
-        }
-      } else {
-        pupilEntriesInMap.add(pupilList);
-      }
-
-      _pupilIdSchoolListPupilEntriesMap[pupilList.pupilId] = pupilEntriesInMap;
-    }
     notifyListeners();
+    _log.fine(
+        'Finished updating School list number ${schoolList.id!} with ${pupilEntries.length} pupil entries');
   }
 
   //- API calls
@@ -197,7 +168,8 @@ class SchoolListManager with ChangeNotifier {
             description: description,
             public: public,
             updateMembers: operation);
-
+    _log.fine(
+        'Fetched school list number ${updatedSchoolList.id!} with ${updatedSchoolList.pupilEntries!.length} pupil entries');
     _updateCollectionsFromSchoolList(updatedSchoolList);
     _schoolListFilterManager
         .updateFilteredSchoolLists(_schoolListMap.values.toList());
@@ -208,6 +180,45 @@ class SchoolListManager with ChangeNotifier {
     return;
   }
 
+  Future<void> updatePupilListEntry({
+    required PupilListEntry entry,
+    ({bool? value})? status,
+    ({String? value})? comment,
+  }) async {
+    final entryToUpdate = entry.copyWith(
+      status: status?.value != null ? status!.value : entry.status,
+      comment: comment?.value != null ? comment!.value : entry.comment,
+    );
+
+    final PupilListEntry updatedEntry =
+        await _apiSchoolListService.updatePupilEntry(entry: entryToUpdate);
+    _schoolListIdPupilEntriesMap[updatedEntry.schoolListId]!
+        .updatePupilEntry(updatedEntry);
+    _notificationService.showSnackBar(
+        NotificationType.success, 'Eintrag erfolgreich aktualisiert');
+
+    return;
+  }
+
+  Future<void> deleteSchoolList(int listId) async {
+    try {
+      final success = await _apiSchoolListService.deleteSchoolList(listId);
+      if (success) {
+        _schoolListMap.remove(listId);
+        _schoolListIdPupilEntriesMap.remove(listId);
+        _notificationService.showSnackBar(
+            NotificationType.success, 'Schulliste erfolgreich gelöscht');
+      } else {
+        _notificationService.showSnackBar(
+            NotificationType.error, 'Fehler beim Löschen der Schulliste');
+      }
+    } catch (e) {
+      _log.severe('Error deleting school list: $e');
+      _notificationService.showSnackBar(
+          NotificationType.error, 'Fehler beim Löschen der Schulliste: $e');
+    }
+    notifyListeners();
+  }
 // Future<void> deleteSchoolList(String listId) async {
 //   final List<SchoolList> updatedSchoolLists =
 //       await _apiSchoolListService.deleteSchoolList(listId);

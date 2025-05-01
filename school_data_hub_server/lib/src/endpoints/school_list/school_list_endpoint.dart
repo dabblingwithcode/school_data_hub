@@ -123,7 +123,17 @@ class SchoolListEndpoint extends Endpoint {
         }
       }
     }
-    return await SchoolList.db.updateRow(session, schoolList);
+    await SchoolList.db.updateRow(session, schoolList);
+    // Fetch the updated SchoolList with PupilListEntry relations
+    final updatedSchoolList = await SchoolList.db.findFirstRow(
+      session,
+      where: (t) => t.id.equals(schoolList.id!),
+      include: SchoolList.include(pupilEntries: PupilListEntry.includeList()),
+    );
+    if (updatedSchoolList == null) {
+      throw Exception('Failed to update SchoolList');
+    }
+    return updatedSchoolList;
   }
 
   Future<bool> deleteSchoolList(Session session, int listId) async {
@@ -135,5 +145,10 @@ class SchoolListEndpoint extends Endpoint {
     // Delete the SchoolList itself
     await SchoolList.db.deleteRow(session, schoolList);
     return true;
+  }
+
+  Future<PupilListEntry> updatePupilListEntry(
+      Session session, PupilListEntry entry) async {
+    return await session.db.updateRow(entry);
   }
 }

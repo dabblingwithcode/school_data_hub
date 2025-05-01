@@ -57,6 +57,7 @@ schoolList:
   - postSchoolList:
   - updateSchoolList:
   - deleteSchoolList:
+  - updatePupilListEntry:
 schooldayAdmin:
   - createSchoolSemester:
   - getAllSchoolSemesters:

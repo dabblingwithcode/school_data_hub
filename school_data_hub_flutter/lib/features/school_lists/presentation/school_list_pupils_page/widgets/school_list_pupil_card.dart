@@ -33,10 +33,10 @@ class SchoolListPupilCard extends WatchingWidget {
   Widget build(BuildContext context) {
     final PupilProxy pupil = _pupilManager.getPupilByPupilId(pupilId)!;
 
-    final PupilListEntry pupilEntry = watchPropertyValue(
-            (SchoolListManager x) =>
-                x.pupilIdSchoolListPupilEntriesMap[pupilId])!
-        .firstWhere((element) => element.pupilId == pupil.pupilId);
+    final PupilListEntry pupilEntry = watch(
+            _schoolListManager.getPupilSchoolListEntryProxy(
+                pupilId: pupilId, listId: originListId)!)
+        .pupilEntry;
 
     return Card(
       color: Colors.white,
@@ -120,13 +120,8 @@ class SchoolListPupilCard extends WatchingWidget {
                         if (listComment == null) {
                           return;
                         }
-                        // TODO: UNCOMMENT THIS
-                        // await _schoolListManager.patchPupilList(
-                        //   pupil.internalId,
-                        //   originList.listId,
-                        //   null,
-                        //   listComment == '' ? null : listComment,
-                        //);
+                        await _schoolListManager.updatePupilListEntry(
+                            entry: pupilEntry, comment: (value: listComment));
                       },
                       child: Text(
                           pupilEntry.comment != null && pupilEntry.comment != ''
@@ -165,13 +160,8 @@ class SchoolListPupilCard extends WatchingWidget {
                             ? false
                             : true,
                         onChanged: (value) async {
-                          // TODO: UNCOMMENT THIS
-                          // await _schoolListManager.patchPupilList(
-                          //   pupil.internalId,
-                          //   originList.listId,
-                          //   false,
-                          //   null,
-                          // );
+                          await _schoolListManager.updatePupilListEntry(
+                              entry: pupilEntry, status: (value: false));
                         },
                       ),
                     ),
@@ -195,13 +185,8 @@ class SchoolListPupilCard extends WatchingWidget {
                             ? false
                             : true,
                         onChanged: (value) async {
-                          // TODO: UNCOMMENT THIS
-                          // await _schoolListManager.patchPupilList(
-                          //   pupil.internalId,
-                          //   originList.listId,
-                          //   true,
-                          //   null,
-                          // );
+                          await _schoolListManager.updatePupilListEntry(
+                              entry: pupilEntry, status: (value: true));
                         },
                       ),
                     ),

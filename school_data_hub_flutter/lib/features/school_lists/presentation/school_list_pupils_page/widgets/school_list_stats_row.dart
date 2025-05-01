@@ -3,9 +3,14 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/school_lists/domain/models/school_list_pupil_entries_proxy.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
+import 'package:watch_it/watch_it.dart';
 
-class SchoolListStatsRow extends StatelessWidget {
+final _schoolListManager = di<SchoolListManager>();
+
+class SchoolListStatsRow extends WatchingWidget {
   final SchoolList schoolList;
   final List<PupilProxy> pupils;
   const SchoolListStatsRow({
@@ -16,7 +21,10 @@ class SchoolListStatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, int> stats = SchoolListHelper.schoolListStats(
+    watch<SchoolListPupilEntriesProxy>(
+        _schoolListManager.schoolListIdPupilEntriesMap[schoolList.id!]!);
+    final Map<String, int> stats =
+        SchoolListHelper.schoolListStatsForGivenPupils(
       schoolList,
       pupils,
     );

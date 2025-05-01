@@ -26,15 +26,17 @@ class SchoolListPupilsPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pupilListsInSchoolList = watchPropertyValue((SchoolListManager x) =>
-        x.schoolListIdPupilEntriesMap)[schoolList.id!]!;
+    final pupilListEntries = watch(_schoolListManager
+            .getPupilEntriesProxyFromSchoolList(schoolList.id!))
+        .pupilEntries
+        .values;
 
     final List<PupilProxy> filteredPupils =
         watchValue((PupilsFilter x) => x.filteredPupils);
 
     List<PupilProxy> pupilsInList = filteredPupils
-        .where((pupil) => pupilListsInSchoolList
-            .any((pupilList) => pupilList.pupilId == pupil.pupilId))
+        .where((pupil) => pupilListEntries
+            .any((pupilList) => pupilList.pupilEntry.pupilId == pupil.pupilId))
         .toList();
 
     return Scaffold(

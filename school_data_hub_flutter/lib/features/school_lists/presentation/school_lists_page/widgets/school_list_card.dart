@@ -48,9 +48,7 @@ class SchoolListCard extends WatchingWidget {
                   title: 'Liste löschen',
                   message: 'Liste "${schoolList.name}" wirklich löschen?');
               if (result == true) {
-                // TODO: UNCOMMENT THIS
-                // await _schoolListManager
-                //     .deleteSchoolList(schoolList.listId);
+                await _schoolListManager.deleteSchoolList(schoolList.id!);
                 if (context.mounted) {
                   informationDialog(
                       context, 'Liste gelöscht', 'Die Liste wurde gelöscht!');
@@ -118,9 +116,8 @@ class SchoolListCard extends WatchingWidget {
                                     child: SchoolListStatsRow(
                                         schoolList: schoolList,
                                         pupils: _schoolListManager
-                                            .pupilsPresentInSchoolList(
+                                            .getPupilsinSchoolList(
                                           schoolList.id!,
-                                          _pupilManager.allPupils,
                                         )),
                                   ),
                                 ),

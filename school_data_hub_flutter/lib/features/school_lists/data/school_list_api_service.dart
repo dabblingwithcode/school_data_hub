@@ -88,146 +88,35 @@ class SchoolListApiService {
 
 //   //- delete school list
 
-//   String _deleteSchoolListUrl(String listId) {
-//     return '/school_lists/$listId';
-//   }
+  Future<bool> deleteSchoolList(int listId) async {
+    _notificationService.apiRunning(true);
 
-//   Future<List<SchoolList>> deleteSchoolList(String listId) async {
-//     _notificationService.apiRunning(true);
-
-//     final Response response = await _client.delete(
-//       '${_baseUrl()}${_deleteSchoolListUrl(listId)}',
-//       options: _client.hubOptions,
-//     );
-//     _notificationService.apiRunning(false);
-
-//     if (response.statusCode != 200) {
-//       _notificationService.showSnackBar(
-//           NotificationType.error, 'Fehler beim Löschen der Schulliste');
-
-//       throw ApiException('Failed to delete school list', response.statusCode);
-//     }
-//     final List<SchoolList> schoolLists =
-//         (response.data as List).map((e) => SchoolList.fromJson(e)).toList();
-
-//     return schoolLists;
-//   }
-
-//   //- PUPIL LISTS -//
-
-//   //- POST
-
-//   String _addPupilsToSchoolList(String listId) {
-//     return '/school_lists/$listId/pupils';
-//   }
-
-//   Future<SchoolList> addPupilsToSchoolList(
-//       {required String listId, required List<int> pupilIds}) async {
-//     final data = jsonEncode({"pupils": pupilIds});
-
-//     _notificationService.apiRunning(true);
-
-//     final response = await _client.post(
-//       '${_baseUrl()}${_addPupilsToSchoolList(listId)}',
-//       data: data,
-//       options: _client.hubOptions,
-//     );
-
-//     _notificationService.apiRunning(false);
-
-//     if (response.statusCode != 200) {
-//       _notificationService.showSnackBar(
-//           NotificationType.error, 'Fehler beim Hinzufügen zur Schulliste');
-
-//       throw ApiException('Failed to delete school list', response.statusCode);
-//     }
-//     final SchoolList updatedSchoolList = SchoolList.fromJson(response.data);
-
-//     return updatedSchoolList;
-//   }
+    try {
+      final response = await _client.schoolList.deleteSchoolList(listId);
+      _notificationService.apiRunning(false);
+      return response;
+    } catch (e) {
+      _notificationService.apiRunning(false);
+      _log.severe('Error deleting school list: $e');
+      throw Exception('Fehler beim Löschen der Schulliste: $e');
+    }
+  }
 
 //   //- update pupil list property
 
-//   String _patchPupilSchoolList(int pupilId, String listId) {
-//     return '/pupil_lists/$pupilId/$listId';
-//   }
+  Future<PupilListEntry> updatePupilEntry({
+    required PupilListEntry entry,
+  }) async {
+    try {
+      _notificationService.apiRunning(true);
 
-//   Future<SchoolList> patchSchoolListPupil({
-//     required int pupilId,
-//     required String listId,
-//     bool? value,
-//     String? comment,
-//   }) async {
-//     String data;
-
-//     if (value != null) {
-//       data = jsonEncode({
-//         "pupil_list_status": value,
-//         "pupil_list_entry_by":
-//             locator<SessionManager>().credentials.value.username
-//       });
-//     } else {
-//       data = jsonEncode({
-//         "pupil_list_comment": comment,
-//         "pupil_list_entry_by":
-//             locator<SessionManager>().credentials.value.username
-//       });
-//     }
-//     _notificationService.apiRunning(true);
-//     final response = await _client.patch(
-//       '${_baseUrl()}${_patchPupilSchoolList(pupilId, listId)}',
-//       data: data,
-//       options: _client.hubOptions,
-//     );
-
-//     _notificationService.apiRunning(false);
-
-//     if (response.statusCode != 200) {
-//       _notificationService.showSnackBar(
-//           NotificationType.error, 'Fehler beim Aktualisieren der Schulliste');
-
-//       throw ApiException('Failed to patch school list', response.statusCode);
-//     }
-
-//     final SchoolList updatedSchoolList = SchoolList.fromJson(response.data);
-
-//     return updatedSchoolList;
-//   }
-
-//   //-DELETE
-//   String _deletePupilsFromSchoolList(String listId) {
-//     return '/pupil_lists/$listId/delete_pupils';
-//   }
-
-//   Future<SchoolList> deletePupilsFromSchoolList({
-//     required List<int> pupilIds,
-//     required String listId,
-//   }) async {
-//     final data = jsonEncode({"pupils": pupilIds});
-
-//     _notificationService.apiRunning(true);
-
-//     final response = await _client.post(
-//       '${_baseUrl()}${_deletePupilsFromSchoolList(listId)}',
-//       data: data,
-//       options: _client.hubOptions,
-//     );
-
-//     _notificationService.apiRunning(false);
-
-//     if (response.statusCode != 200) {
-//       _notificationService.showSnackBar(
-//           NotificationType.error, 'Fehler beim Löschen von der Schulliste');
-
-//       throw ApiException(
-//           'Failed to delete pupils from school list', response.statusCode);
-//     }
-
-//     final SchoolList updatedSchoolList = SchoolList.fromJson(response.data);
-
-//     return updatedSchoolList;
-//   }
-
-//   //- this endpoint is not used in the app
-//   static const getSchoolListWithPupils = '/school_lists/all';
+      final updatedEntry = await _client.schoolList.updatePupilListEntry(entry);
+      _notificationService.apiRunning(false);
+      return updatedEntry;
+    } catch (e) {
+      _notificationService.apiRunning(false);
+      _log.severe('Error updating pupil list entry: $e');
+      throw Exception('Fehler beim Aktualisieren des Eintrags: $e');
+    }
+  }
 }
