@@ -89,12 +89,6 @@ class SchoolListPupilCard extends WatchingWidget {
                               operation: SchoolListMemberOperation.remove,
                               pupilIds: [pupil.pupilId]
                             ));
-                        await _schoolListManager.updateSchoolListProperty(
-                            listId: originListId,
-                            operation: (
-                              pupilIds: [pupil.pupilId],
-                              operation: SchoolListMemberOperation.remove
-                            ));
 
                         if (context.mounted) {
                           informationDialog(context, 'Kind aus Liste gelöscht',
