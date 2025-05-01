@@ -7,8 +7,8 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialo
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
-import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupils_page/school_list_pupils_page.dart';
-import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupils_page/widgets/school_list_stats_row.dart';
+import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_page/school_list_pupil_entries_page.dart';
+import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_stats_row.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _schoolListManager = di<SchoolListManager>();
@@ -32,7 +32,7 @@ class SchoolListCard extends WatchingWidget {
           child: InkWell(
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (ctx) => SchoolListPupilsPage(
+                builder: (ctx) => SchoolListPupilEntriesPage(
                   schoolList,
                 ),
               ));

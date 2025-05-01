@@ -17,7 +17,7 @@ class FilterButton extends WatchingWidget {
         watchValue((FiltersStateManager x) => x.filtersActive);
 
     return InkWell(
-      onTap: () => showBottomSheetFunction,
+      onTap: () => showBottomSheetFunction(),
       onLongPress: () {
         di<FiltersStateManager>().resetFilters();
       },

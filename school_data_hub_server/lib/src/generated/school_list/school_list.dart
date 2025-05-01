@@ -12,7 +12,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import '../school_list/pupil_list.dart' as _i2;
+import '../school_list/pupil_entry.dart' as _i2;
 
 abstract class SchoolList
     implements _i1.TableRow<int?>, _i1.ProtocolSerialization {

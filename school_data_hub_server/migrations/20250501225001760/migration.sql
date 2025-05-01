@@ -355,7 +355,7 @@ CREATE UNIQUE INDEX "pupil_data_internal_id_idx" ON "pupil_data" USING btree ("i
 --
 -- ACTION CREATE TABLE
 --
-CREATE TABLE "pupil_list" (
+CREATE TABLE "pupil_list_entry" (
     "id" bigserial PRIMARY KEY,
     "status" boolean,
     "comment" text,
@@ -1211,14 +1211,14 @@ ALTER TABLE ONLY "pupil_data"
 --
 -- ACTION CREATE FOREIGN KEY
 --
-ALTER TABLE ONLY "pupil_list"
-    ADD CONSTRAINT "pupil_list_fk_0"
+ALTER TABLE ONLY "pupil_list_entry"
+    ADD CONSTRAINT "pupil_list_entry_fk_0"
     FOREIGN KEY("schoolListId")
     REFERENCES "school_list"("id")
     ON DELETE CASCADE
     ON UPDATE NO ACTION;
-ALTER TABLE ONLY "pupil_list"
-    ADD CONSTRAINT "pupil_list_fk_1"
+ALTER TABLE ONLY "pupil_list_entry"
+    ADD CONSTRAINT "pupil_list_entry_fk_1"
     FOREIGN KEY("pupilId")
     REFERENCES "pupil_data"("id")
     ON DELETE CASCADE
@@ -1471,9 +1471,9 @@ ALTER TABLE ONLY "serverpod_query_log"
 -- MIGRATION VERSION FOR school_data_hub
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('school_data_hub', '20250501061234799', now())
+    VALUES ('school_data_hub', '20250501225001760', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20250501061234799', "timestamp" = now();
+    DO UPDATE SET "version" = '20250501225001760', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

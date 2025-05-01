@@ -212,7 +212,8 @@ class _PupilListEntryImpl extends PupilListEntry {
 }
 
 class PupilListEntryTable extends _i1.Table<int?> {
-  PupilListEntryTable({super.tableRelation}) : super(tableName: 'pupil_list') {
+  PupilListEntryTable({super.tableRelation})
+      : super(tableName: 'pupil_list_entry') {
     status = _i1.ColumnBool(
       'status',
       this,

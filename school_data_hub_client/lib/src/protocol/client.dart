@@ -38,10 +38,10 @@ import 'package:school_data_hub_client/src/protocol/learning_support/support_lev
     as _i16;
 import 'package:school_data_hub_client/src/protocol/school_list/school_list.dart'
     as _i17;
-import 'package:school_data_hub_client/src/protocol/school_list/school_list_member_operatioin.dart'
+import 'package:school_data_hub_client/src/protocol/shared/member_operation.dart'
     as _i18;
 import 'package:school_data_hub_client/src/protocol/protocol.dart' as _i19;
-import 'package:school_data_hub_client/src/protocol/school_list/pupil_list.dart'
+import 'package:school_data_hub_client/src/protocol/school_list/pupil_entry.dart'
     as _i20;
 import 'package:school_data_hub_client/src/protocol/schoolday/school_semester.dart'
     as _i21;
@@ -635,10 +635,7 @@ class EndpointSchoolList extends _i1.EndpointRef {
     String? name,
     String? description,
     bool? public,
-    ({
-      _i18.SchoolListMemberOperation operation,
-      List<int> pupilIds
-    })? updateMembers,
+    ({_i18.MemberOperation operation, List<int> pupilIds})? updateMembers,
   ) =>
       caller.callServerEndpoint<_i17.SchoolList>(
         'schoolList',

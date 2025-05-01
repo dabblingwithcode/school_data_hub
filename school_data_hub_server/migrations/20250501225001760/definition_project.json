@@ -2291,7 +2291,7 @@
       "managed": true
     },
     {
-      "name": "pupil_list",
+      "name": "pupil_list_entry",
       "dartName": "PupilListEntry",
       "module": "school_data_hub",
       "schema": "public",
@@ -2300,7 +2300,7 @@
           "name": "id",
           "columnType": 6,
           "isNullable": false,
-          "columnDefault": "nextval('pupil_list_id_seq'::regclass)",
+          "columnDefault": "nextval('pupil_list_entry_id_seq'::regclass)",
           "dartType": "int?"
         },
         {
@@ -2336,7 +2336,7 @@
       ],
       "foreignKeys": [
         {
-          "constraintName": "pupil_list_fk_0",
+          "constraintName": "pupil_list_entry_fk_0",
           "columns": [
             "schoolListId"
           ],
@@ -2349,7 +2349,7 @@
           "onDelete": 4
         },
         {
-          "constraintName": "pupil_list_fk_1",
+          "constraintName": "pupil_list_entry_fk_1",
           "columns": [
             "pupilId"
           ],
@@ -2364,7 +2364,7 @@
       ],
       "indexes": [
         {
-          "indexName": "pupil_list_pkey",
+          "indexName": "pupil_list_entry_pkey",
           "elements": [
             {
               "type": 0,

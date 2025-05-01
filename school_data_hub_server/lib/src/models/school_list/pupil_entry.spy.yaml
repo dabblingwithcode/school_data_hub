@@ -1,6 +1,6 @@
 ## pupil list model
 class: PupilListEntry
-table: pupil_list
+table: pupil_list_entry
 fields:
   status: bool?
   comment: String?

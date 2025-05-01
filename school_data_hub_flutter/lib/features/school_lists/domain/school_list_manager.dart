@@ -157,10 +157,7 @@ class SchoolListManager with ChangeNotifier {
       String? name,
       String? description,
       bool? public,
-      ({
-        List<int> pupilIds,
-        SchoolListMemberOperation operation
-      })? operation}) async {
+      ({List<int> pupilIds, MemberOperation operation})? operation}) async {
     final SchoolList updatedSchoolList =
         await _apiSchoolListService.updateSchoolListProperty(
             listId: listId,

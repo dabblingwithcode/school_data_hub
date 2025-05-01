@@ -60,10 +60,7 @@ class SchoolListApiService {
       String? name,
       String? description,
       bool? public,
-      ({
-        List<int> pupilIds,
-        SchoolListMemberOperation operation
-      })? updateMembers}) async {
+      ({List<int> pupilIds, MemberOperation operation})? updateMembers}) async {
     assert(
         name != null ||
             description != null ||

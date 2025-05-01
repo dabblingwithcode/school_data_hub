@@ -22,12 +22,12 @@ final _serverpodSessionManager = di<ServerpodSessionManager>();
 final _notificationService = di<NotificationService>();
 final _schoolListManager = di<SchoolListManager>();
 
-class SchoolListPupilCard extends WatchingWidget {
+class SchoolListPupilEntryCard extends WatchingWidget {
   final int pupilId;
 
   final int originListId;
 
-  const SchoolListPupilCard(this.pupilId, this.originListId, {super.key});
+  const SchoolListPupilEntryCard(this.pupilId, this.originListId, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +86,7 @@ class SchoolListPupilCard extends WatchingWidget {
                         await _schoolListManager.updateSchoolListProperty(
                             listId: originListId,
                             operation: (
-                              operation: SchoolListMemberOperation.remove,
+                              operation: MemberOperation.remove,
                               pupilIds: [pupil.pupilId]
                             ));
 

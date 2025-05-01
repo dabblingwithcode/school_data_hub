@@ -8,8 +8,8 @@ import 'package:watch_it/watch_it.dart';
 
 final _pupilFilterManager = di<PupilFilterManager>();
 
-class SchoolListPupilFiltersWidget extends WatchingWidget {
-  const SchoolListPupilFiltersWidget({super.key});
+class SchoolListPupilEntriesFiltersWidget extends WatchingWidget {
+  const SchoolListPupilEntriesFiltersWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

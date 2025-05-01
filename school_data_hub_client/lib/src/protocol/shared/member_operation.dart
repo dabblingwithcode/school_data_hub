@@ -11,19 +11,19 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 
-enum SchoolListMemberOperation implements _i1.SerializableModel {
+enum MemberOperation implements _i1.SerializableModel {
   add,
   remove;
 
-  static SchoolListMemberOperation fromJson(String name) {
+  static MemberOperation fromJson(String name) {
     switch (name) {
       case 'add':
-        return SchoolListMemberOperation.add;
+        return MemberOperation.add;
       case 'remove':
-        return SchoolListMemberOperation.remove;
+        return MemberOperation.remove;
       default:
         throw ArgumentError(
-            'Value "$name" cannot be converted to "SchoolListMemberOperation"');
+            'Value "$name" cannot be converted to "MemberOperation"');
     }
   }
 

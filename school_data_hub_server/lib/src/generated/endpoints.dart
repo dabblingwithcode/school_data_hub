@@ -43,9 +43,9 @@ import 'package:school_data_hub_server/src/generated/pupil_data/dto/siblings_tut
     as _i24;
 import 'package:school_data_hub_server/src/generated/learning_support/support_level.dart'
     as _i25;
-import 'package:school_data_hub_server/src/generated/school_list/school_list_member_operatioin.dart'
+import 'package:school_data_hub_server/src/generated/shared/member_operation.dart'
     as _i26;
-import 'package:school_data_hub_server/src/generated/school_list/pupil_list.dart'
+import 'package:school_data_hub_server/src/generated/school_list/pupil_entry.dart'
     as _i27;
 import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
     as _i28;
@@ -1281,10 +1281,7 @@ class Endpoints extends _i1.EndpointDispatch {
             'updateMembers': _i1.ParameterDescription(
               name: 'updateMembers',
               type: _i1.getType<
-                  ({
-                    _i26.SchoolListMemberOperation operation,
-                    List<int> pupilIds
-                  })?>(),
+                  ({_i26.MemberOperation operation, List<int> pupilIds})?>(),
               nullable: true,
             ),
           },

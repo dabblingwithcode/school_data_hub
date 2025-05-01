@@ -10,17 +10,17 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_search_text_field.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_helper_functions.dart';
-import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupils_page/widgets/school_list_pupil_filters_widget.dart';
-import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupils_page/widgets/school_list_stats_row.dart';
+import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_pupil_entries_filters_widget.dart';
+import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_stats_row.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _pupilsFilter = di<PupilsFilter>();
 
-class SchoolListPupilsPageSearchBar extends WatchingWidget {
+class SchoolListPupilEntriesPageSearchBar extends WatchingWidget {
   final SchoolList schoolList;
   final List<PupilProxy> pupilsInList;
 
-  const SchoolListPupilsPageSearchBar(
+  const SchoolListPupilEntriesPageSearchBar(
       {required this.pupilsInList, required this.schoolList, super.key});
 
   @override
@@ -95,12 +95,12 @@ class SchoolListPupilsPageSearchBar extends WatchingWidget {
                         refreshFunction: _pupilsFilter.refreshs)),
                 const Gap(5),
                 FilterButton(
-                    isSearchBar: false,
+                    isSearchBar: true,
                     showBottomSheetFunction: () => showGenericFilterBottomSheet(
                           context: context,
                           filterList: [
                             const CommonPupilFiltersWidget(),
-                            const SchoolListPupilFiltersWidget(),
+                            const SchoolListPupilEntriesFiltersWidget(),
                           ],
                         )),
               ],

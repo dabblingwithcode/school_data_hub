@@ -9,34 +9,40 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/school_lists/domain/filters/school_list_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
-import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupils_page/widgets/school_list_pupil_card.dart';
-import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupils_page/widgets/school_list_pupils_bottom_navbar.dart';
-import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupils_page/widgets/school_list_pupils_searchbar.dart';
+import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_pupil_entries_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_pupil_entries_searchbar.dart';
+import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_pupil_entry_card.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _schoolListManager = di<SchoolListManager>();
+final _schoolListFilterManager = di<SchoolListFilterManager>();
 
 final _pupilManager = di<PupilManager>();
 
-class SchoolListPupilsPage extends WatchingWidget {
+class SchoolListPupilEntriesPage extends WatchingWidget {
   final SchoolList schoolList;
 
-  const SchoolListPupilsPage(this.schoolList, {super.key});
+  const SchoolListPupilEntriesPage(this.schoolList, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    final pupilListEntries = watch(_schoolListManager
+    final unfilteredPupilListEntries = watch(_schoolListManager
             .getPupilEntriesProxyFromSchoolList(schoolList.id!))
         .pupilEntries
-        .values;
+        .values
+        .map((e) => e.pupilEntry)
+        .toList();
 
+    final pupilListEntries = _schoolListFilterManager
+        .addPupilEntryFiltersToFilteredPupils(unfilteredPupilListEntries);
     final List<PupilProxy> filteredPupils =
         watchValue((PupilsFilter x) => x.filteredPupils);
 
     List<PupilProxy> pupilsInList = filteredPupils
         .where((pupil) => pupilListEntries
-            .any((pupilList) => pupilList.pupilEntry.pupilId == pupil.pupilId))
+            .any((pupilList) => pupilList.pupilId == pupil.pupilId))
         .toList();
 
     return Scaffold(
@@ -54,7 +60,7 @@ class SchoolListPupilsPage extends WatchingWidget {
                   const SliverGap(10),
                   GenericSliverSearchAppBar(
                     height: 135,
-                    title: SchoolListPupilsPageSearchBar(
+                    title: SchoolListPupilEntriesPageSearchBar(
                       pupilsInList: pupilsInList,
                       schoolList: schoolList,
                     ),
@@ -74,7 +80,7 @@ class SchoolListPupilsPage extends WatchingWidget {
                       : SliverList(
                           delegate: SliverChildBuilderDelegate(
                             (BuildContext context, int index) {
-                              return SchoolListPupilCard(
+                              return SchoolListPupilEntryCard(
                                   pupilsInList[index].pupilId, schoolList.id!);
                             },
                             childCount: pupilsInList.length,
@@ -86,7 +92,7 @@ class SchoolListPupilsPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: SchoolListPupilsPageBottomNavBar(
+      bottomNavigationBar: SchoolListPupilEntriesBottomNavBar(
           listId: schoolList.id!,
           pupilsInList: _pupilManager.pupilIdsFromPupils(pupilsInList)),
     );

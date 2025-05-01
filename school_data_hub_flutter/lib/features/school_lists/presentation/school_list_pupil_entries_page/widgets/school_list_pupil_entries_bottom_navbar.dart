@@ -11,18 +11,18 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart
 import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
-import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupils_page/widgets/school_list_pupil_filters_widget.dart';
+import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_pupil_entries_filters_widget.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _schoolListManager = di<SchoolListManager>();
 final _serverpodSessionManager = di<ServerpodSessionManager>();
 final _pupilManager = di<PupilManager>();
 
-class SchoolListPupilsPageBottomNavBar extends StatelessWidget {
+class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
   final int listId;
 
   final List<int> pupilsInList;
-  const SchoolListPupilsPageBottomNavBar(
+  const SchoolListPupilEntriesBottomNavBar(
       {required this.listId, required this.pupilsInList, super.key});
 
   @override
@@ -95,21 +95,24 @@ class SchoolListPupilsPageBottomNavBar extends StatelessWidget {
                     listId: listId,
                     operation: (
                       pupilIds: selectedPupilIds,
-                      operation: SchoolListMemberOperation.add
+                      operation: MemberOperation.add
                     ),
                   );
                 },
               ),
               const Gap(AppPaddings.bottomNavBarButtonGap),
               FilterButton(
-                  isSearchBar: false,
-                  showBottomSheetFunction: () => showGenericFilterBottomSheet(
-                        context: context,
-                        filterList: [
-                          const CommonPupilFiltersWidget(),
-                          const SchoolListPupilFiltersWidget(),
-                        ],
-                      )),
+                isSearchBar: false,
+                showBottomSheetFunction: () {
+                  return showGenericFilterBottomSheet(
+                    context: context,
+                    filterList: [
+                      const CommonPupilFiltersWidget(),
+                      const SchoolListPupilEntriesFiltersWidget(),
+                    ],
+                  );
+                },
+              ),
               const Gap(15)
             ],
           ),

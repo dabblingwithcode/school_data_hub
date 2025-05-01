@@ -1,4 +1,4 @@
-enum: SchoolListMemberOperation
+enum: MemberOperation
 serialized: byName
 values:
   - add

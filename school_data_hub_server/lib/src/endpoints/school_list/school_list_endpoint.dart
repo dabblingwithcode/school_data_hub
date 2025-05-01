@@ -74,10 +74,7 @@ class SchoolListEndpoint extends Endpoint {
       String? name,
       String? description,
       bool? public,
-      ({
-        List<int> pupilIds,
-        SchoolListMemberOperation operation
-      })? updateMembers) async {
+      ({List<int> pupilIds, MemberOperation operation})? updateMembers) async {
     final schoolList = await SchoolList.db.findById(session, listId,
         include:
             SchoolList.include(pupilEntries: PupilListEntry.includeList()));
@@ -94,7 +91,7 @@ class SchoolListEndpoint extends Endpoint {
       schoolList.public = public;
     }
     if (updateMembers != null) {
-      if (updateMembers.operation == SchoolListMemberOperation.add) {
+      if (updateMembers.operation == MemberOperation.add) {
         // Add new pupils to the list
         List<PupilListEntry> pupilEntries = updateMembers.pupilIds
             .map((pupilId) => PupilListEntry(
@@ -106,7 +103,7 @@ class SchoolListEndpoint extends Endpoint {
             await PupilListEntry.db.insert(session, pupilEntries);
         await SchoolList.db.attach
             .pupilEntries(session, schoolList, createdPupilListEntrys);
-      } else if (updateMembers.operation == SchoolListMemberOperation.remove) {
+      } else if (updateMembers.operation == MemberOperation.remove) {
         // Remove pupils from the list
         for (var pupilId in updateMembers.pupilIds) {
           final pupilEntry = await PupilListEntry.db.findFirstRow(
