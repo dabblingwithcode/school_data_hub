@@ -42,7 +42,7 @@ setAvatar({required BuildContext context, required PupilProxy pupil}) async {
     context,
     MaterialPageRoute(builder: (context) => CropAvatarView(image: image!)),
   );
-  di<PupilManager>().postAvatarImage(imageFile, pupil);
+  di<PupilManager>().updateAvatarImage(imageFile, pupil);
 }
 
 class CropAvatarView extends StatefulWidget {

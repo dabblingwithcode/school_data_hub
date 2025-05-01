@@ -16,40 +16,39 @@ abstract class SchoolList implements _i1.SerializableModel {
   SchoolList._({
     this.id,
     required this.listId,
+    required this.archived,
     required this.name,
     required this.description,
     required this.createdBy,
-    required this.visibility,
+    required this.public,
     this.authorizedUsers,
-    this.pupilLists,
+    this.pupilEntries,
   });
 
   factory SchoolList({
     int? id,
     required String listId,
+    required bool archived,
     required String name,
     required String description,
     required String createdBy,
-    required String visibility,
-    Set<String>? authorizedUsers,
-    List<_i2.PupilList>? pupilLists,
+    required bool public,
+    String? authorizedUsers,
+    List<_i2.PupilListEntry>? pupilEntries,
   }) = _SchoolListImpl;
 
   factory SchoolList.fromJson(Map<String, dynamic> jsonSerialization) {
     return SchoolList(
       id: jsonSerialization['id'] as int?,
       listId: jsonSerialization['listId'] as String,
+      archived: jsonSerialization['archived'] as bool,
       name: jsonSerialization['name'] as String,
       description: jsonSerialization['description'] as String,
       createdBy: jsonSerialization['createdBy'] as String,
-      visibility: jsonSerialization['visibility'] as String,
-      authorizedUsers: jsonSerialization['authorizedUsers'] == null
-          ? null
-          : _i1.SetJsonExtension.fromJson(
-              (jsonSerialization['authorizedUsers'] as List),
-              itemFromJson: (e) => e as String),
-      pupilLists: (jsonSerialization['pupilLists'] as List?)
-          ?.map((e) => _i2.PupilList.fromJson((e as Map<String, dynamic>)))
+      public: jsonSerialization['public'] as bool,
+      authorizedUsers: jsonSerialization['authorizedUsers'] as String?,
+      pupilEntries: (jsonSerialization['pupilEntries'] as List?)
+          ?.map((e) => _i2.PupilListEntry.fromJson((e as Map<String, dynamic>)))
           .toList(),
     );
   }
@@ -61,17 +60,19 @@ abstract class SchoolList implements _i1.SerializableModel {
 
   String listId;
 
+  bool archived;
+
   String name;
 
   String description;
 
   String createdBy;
 
-  String visibility;
+  bool public;
 
-  Set<String>? authorizedUsers;
+  String? authorizedUsers;
 
-  List<_i2.PupilList>? pupilLists;
+  List<_i2.PupilListEntry>? pupilEntries;
 
   /// Returns a shallow copy of this [SchoolList]
   /// with some or all fields replaced by the given arguments.
@@ -79,25 +80,27 @@ abstract class SchoolList implements _i1.SerializableModel {
   SchoolList copyWith({
     int? id,
     String? listId,
+    bool? archived,
     String? name,
     String? description,
     String? createdBy,
-    String? visibility,
-    Set<String>? authorizedUsers,
-    List<_i2.PupilList>? pupilLists,
+    bool? public,
+    String? authorizedUsers,
+    List<_i2.PupilListEntry>? pupilEntries,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
       'listId': listId,
+      'archived': archived,
       'name': name,
       'description': description,
       'createdBy': createdBy,
-      'visibility': visibility,
-      if (authorizedUsers != null) 'authorizedUsers': authorizedUsers?.toJson(),
-      if (pupilLists != null)
-        'pupilLists': pupilLists?.toJson(valueToJson: (v) => v.toJson()),
+      'public': public,
+      if (authorizedUsers != null) 'authorizedUsers': authorizedUsers,
+      if (pupilEntries != null)
+        'pupilEntries': pupilEntries?.toJson(valueToJson: (v) => v.toJson()),
     };
   }
 
@@ -113,21 +116,23 @@ class _SchoolListImpl extends SchoolList {
   _SchoolListImpl({
     int? id,
     required String listId,
+    required bool archived,
     required String name,
     required String description,
     required String createdBy,
-    required String visibility,
-    Set<String>? authorizedUsers,
-    List<_i2.PupilList>? pupilLists,
+    required bool public,
+    String? authorizedUsers,
+    List<_i2.PupilListEntry>? pupilEntries,
   }) : super._(
           id: id,
           listId: listId,
+          archived: archived,
           name: name,
           description: description,
           createdBy: createdBy,
-          visibility: visibility,
+          public: public,
           authorizedUsers: authorizedUsers,
-          pupilLists: pupilLists,
+          pupilEntries: pupilEntries,
         );
 
   /// Returns a shallow copy of this [SchoolList]
@@ -137,26 +142,27 @@ class _SchoolListImpl extends SchoolList {
   SchoolList copyWith({
     Object? id = _Undefined,
     String? listId,
+    bool? archived,
     String? name,
     String? description,
     String? createdBy,
-    String? visibility,
+    bool? public,
     Object? authorizedUsers = _Undefined,
-    Object? pupilLists = _Undefined,
+    Object? pupilEntries = _Undefined,
   }) {
     return SchoolList(
       id: id is int? ? id : this.id,
       listId: listId ?? this.listId,
+      archived: archived ?? this.archived,
       name: name ?? this.name,
       description: description ?? this.description,
       createdBy: createdBy ?? this.createdBy,
-      visibility: visibility ?? this.visibility,
-      authorizedUsers: authorizedUsers is Set<String>?
-          ? authorizedUsers
-          : this.authorizedUsers?.map((e0) => e0).toSet(),
-      pupilLists: pupilLists is List<_i2.PupilList>?
-          ? pupilLists
-          : this.pupilLists?.map((e0) => e0.copyWith()).toList(),
+      public: public ?? this.public,
+      authorizedUsers:
+          authorizedUsers is String? ? authorizedUsers : this.authorizedUsers,
+      pupilEntries: pupilEntries is List<_i2.PupilListEntry>?
+          ? pupilEntries
+          : this.pupilEntries?.map((e0) => e0.copyWith()).toList(),
     );
   }
 }

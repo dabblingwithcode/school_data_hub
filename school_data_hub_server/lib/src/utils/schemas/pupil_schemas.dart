@@ -4,6 +4,7 @@ class PupilSchemas {
   static PupilDataInclude allInclude = PupilData.include(
     avatar: HubDocument.include(),
     avatarAuth: HubDocument.include(),
+    publicMediaAuthDocument: HubDocument.include(),
     creditTransactions: CreditTransaction.includeList(),
     supportLevelHistory: SupportLevel.includeList(),
   );

@@ -83,7 +83,7 @@ abstract class PupilData
     this.missedClasses,
     this.schooldayEvents,
     this.swimmer,
-    this.pupilLists,
+    this.pupilListEntries,
   });
 
   factory PupilData({
@@ -127,7 +127,7 @@ abstract class PupilData
     List<_i22.MissedClass>? missedClasses,
     List<_i23.SchooldayEvent>? schooldayEvents,
     String? swimmer,
-    List<_i24.PupilList>? pupilLists,
+    List<_i24.PupilListEntry>? pupilListEntries,
   }) = _PupilDataImpl;
 
   factory PupilData.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -251,8 +251,9 @@ abstract class PupilData
               (e) => _i23.SchooldayEvent.fromJson((e as Map<String, dynamic>)))
           .toList(),
       swimmer: jsonSerialization['swimmer'] as String?,
-      pupilLists: (jsonSerialization['pupilLists'] as List?)
-          ?.map((e) => _i24.PupilList.fromJson((e as Map<String, dynamic>)))
+      pupilListEntries: (jsonSerialization['pupilListEntries'] as List?)
+          ?.map(
+              (e) => _i24.PupilListEntry.fromJson((e as Map<String, dynamic>)))
           .toList(),
     );
   }
@@ -342,7 +343,7 @@ abstract class PupilData
 
   String? swimmer;
 
-  List<_i24.PupilList>? pupilLists;
+  List<_i24.PupilListEntry>? pupilListEntries;
 
   @override
   _i1.Table<int?> get table => t;
@@ -391,7 +392,7 @@ abstract class PupilData
     List<_i22.MissedClass>? missedClasses,
     List<_i23.SchooldayEvent>? schooldayEvents,
     String? swimmer,
-    List<_i24.PupilList>? pupilLists,
+    List<_i24.PupilListEntry>? pupilListEntries,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -470,8 +471,9 @@ abstract class PupilData
         'schooldayEvents':
             schooldayEvents?.toJson(valueToJson: (v) => v.toJson()),
       if (swimmer != null) 'swimmer': swimmer,
-      if (pupilLists != null)
-        'pupilLists': pupilLists?.toJson(valueToJson: (v) => v.toJson()),
+      if (pupilListEntries != null)
+        'pupilListEntries':
+            pupilListEntries?.toJson(valueToJson: (v) => v.toJson()),
     };
   }
 
@@ -556,9 +558,9 @@ abstract class PupilData
         'schooldayEvents':
             schooldayEvents?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
       if (swimmer != null) 'swimmer': swimmer,
-      if (pupilLists != null)
-        'pupilLists':
-            pupilLists?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
+      if (pupilListEntries != null)
+        'pupilListEntries':
+            pupilListEntries?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
     };
   }
 
@@ -583,7 +585,7 @@ abstract class PupilData
     _i21.SupportGoalIncludeList? supportGoals,
     _i22.MissedClassIncludeList? missedClasses,
     _i23.SchooldayEventIncludeList? schooldayEvents,
-    _i24.PupilListIncludeList? pupilLists,
+    _i24.PupilListEntryIncludeList? pupilListEntries,
   }) {
     return PupilDataInclude._(
       preSchoolMedical: preSchoolMedical,
@@ -606,7 +608,7 @@ abstract class PupilData
       supportGoals: supportGoals,
       missedClasses: missedClasses,
       schooldayEvents: schooldayEvents,
-      pupilLists: pupilLists,
+      pupilListEntries: pupilListEntries,
     );
   }
 
@@ -680,7 +682,7 @@ class _PupilDataImpl extends PupilData {
     List<_i22.MissedClass>? missedClasses,
     List<_i23.SchooldayEvent>? schooldayEvents,
     String? swimmer,
-    List<_i24.PupilList>? pupilLists,
+    List<_i24.PupilListEntry>? pupilListEntries,
   }) : super._(
           id: id,
           active: active,
@@ -722,7 +724,7 @@ class _PupilDataImpl extends PupilData {
           missedClasses: missedClasses,
           schooldayEvents: schooldayEvents,
           swimmer: swimmer,
-          pupilLists: pupilLists,
+          pupilListEntries: pupilListEntries,
         );
 
   /// Returns a shallow copy of this [PupilData]
@@ -770,7 +772,7 @@ class _PupilDataImpl extends PupilData {
     Object? missedClasses = _Undefined,
     Object? schooldayEvents = _Undefined,
     Object? swimmer = _Undefined,
-    Object? pupilLists = _Undefined,
+    Object? pupilListEntries = _Undefined,
   }) {
     return PupilData(
       id: id is int? ? id : this.id,
@@ -870,9 +872,9 @@ class _PupilDataImpl extends PupilData {
           ? schooldayEvents
           : this.schooldayEvents?.map((e0) => e0.copyWith()).toList(),
       swimmer: swimmer is String? ? swimmer : this.swimmer,
-      pupilLists: pupilLists is List<_i24.PupilList>?
-          ? pupilLists
-          : this.pupilLists?.map((e0) => e0.copyWith()).toList(),
+      pupilListEntries: pupilListEntries is List<_i24.PupilListEntry>?
+          ? pupilListEntries
+          : this.pupilListEntries?.map((e0) => e0.copyWith()).toList(),
     );
   }
 }
@@ -1066,9 +1068,9 @@ class PupilDataTable extends _i1.Table<int?> {
 
   late final _i1.ColumnString swimmer;
 
-  _i24.PupilListTable? ___pupilLists;
+  _i24.PupilListEntryTable? ___pupilListEntries;
 
-  _i1.ManyRelation<_i24.PupilListTable>? _pupilLists;
+  _i1.ManyRelation<_i24.PupilListEntryTable>? _pupilListEntries;
 
   _i2.PreSchoolMedicalTable get preSchoolMedical {
     if (_preSchoolMedical != null) return _preSchoolMedical!;
@@ -1333,17 +1335,17 @@ class PupilDataTable extends _i1.Table<int?> {
     return ___schooldayEvents!;
   }
 
-  _i24.PupilListTable get __pupilLists {
-    if (___pupilLists != null) return ___pupilLists!;
-    ___pupilLists = _i1.createRelationTable(
-      relationFieldName: '__pupilLists',
+  _i24.PupilListEntryTable get __pupilListEntries {
+    if (___pupilListEntries != null) return ___pupilListEntries!;
+    ___pupilListEntries = _i1.createRelationTable(
+      relationFieldName: '__pupilListEntries',
       field: PupilData.t.id,
-      foreignField: _i24.PupilList.t.pupilId,
+      foreignField: _i24.PupilListEntry.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i24.PupilListTable(tableRelation: foreignTableRelation),
+          _i24.PupilListEntryTable(tableRelation: foreignTableRelation),
     );
-    return ___pupilLists!;
+    return ___pupilListEntries!;
   }
 
   _i1.ManyRelation<_i8.PupilAuthorizationTable> get authorizations {
@@ -1623,22 +1625,22 @@ class PupilDataTable extends _i1.Table<int?> {
     return _schooldayEvents!;
   }
 
-  _i1.ManyRelation<_i24.PupilListTable> get pupilLists {
-    if (_pupilLists != null) return _pupilLists!;
+  _i1.ManyRelation<_i24.PupilListEntryTable> get pupilListEntries {
+    if (_pupilListEntries != null) return _pupilListEntries!;
     var relationTable = _i1.createRelationTable(
-      relationFieldName: 'pupilLists',
+      relationFieldName: 'pupilListEntries',
       field: PupilData.t.id,
-      foreignField: _i24.PupilList.t.pupilId,
+      foreignField: _i24.PupilListEntry.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i24.PupilListTable(tableRelation: foreignTableRelation),
+          _i24.PupilListEntryTable(tableRelation: foreignTableRelation),
     );
-    _pupilLists = _i1.ManyRelation<_i24.PupilListTable>(
+    _pupilListEntries = _i1.ManyRelation<_i24.PupilListEntryTable>(
       tableWithRelations: relationTable,
-      table: _i24.PupilListTable(
+      table: _i24.PupilListEntryTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
-    return _pupilLists!;
+    return _pupilListEntries!;
   }
 
   @override
@@ -1727,8 +1729,8 @@ class PupilDataTable extends _i1.Table<int?> {
     if (relationField == 'schooldayEvents') {
       return __schooldayEvents;
     }
-    if (relationField == 'pupilLists') {
-      return __pupilLists;
+    if (relationField == 'pupilListEntries') {
+      return __pupilListEntries;
     }
     return null;
   }
@@ -1756,7 +1758,7 @@ class PupilDataInclude extends _i1.IncludeObject {
     _i21.SupportGoalIncludeList? supportGoals,
     _i22.MissedClassIncludeList? missedClasses,
     _i23.SchooldayEventIncludeList? schooldayEvents,
-    _i24.PupilListIncludeList? pupilLists,
+    _i24.PupilListEntryIncludeList? pupilListEntries,
   }) {
     _preSchoolMedical = preSchoolMedical;
     _preSchoolTest = preSchoolTest;
@@ -1778,7 +1780,7 @@ class PupilDataInclude extends _i1.IncludeObject {
     _supportGoals = supportGoals;
     _missedClasses = missedClasses;
     _schooldayEvents = schooldayEvents;
-    _pupilLists = pupilLists;
+    _pupilListEntries = pupilListEntries;
   }
 
   _i2.PreSchoolMedicalInclude? _preSchoolMedical;
@@ -1821,7 +1823,7 @@ class PupilDataInclude extends _i1.IncludeObject {
 
   _i23.SchooldayEventIncludeList? _schooldayEvents;
 
-  _i24.PupilListIncludeList? _pupilLists;
+  _i24.PupilListEntryIncludeList? _pupilListEntries;
 
   @override
   Map<String, _i1.Include?> get includes => {
@@ -1845,7 +1847,7 @@ class PupilDataInclude extends _i1.IncludeObject {
         'supportGoals': _supportGoals,
         'missedClasses': _missedClasses,
         'schooldayEvents': _schooldayEvents,
-        'pupilLists': _pupilLists,
+        'pupilListEntries': _pupilListEntries,
       };
 
   @override
@@ -2482,26 +2484,26 @@ class PupilDataAttachRepository {
     );
   }
 
-  /// Creates a relation between this [PupilData] and the given [PupilList]s
-  /// by setting each [PupilList]'s foreign key `pupilId` to refer to this [PupilData].
-  Future<void> pupilLists(
+  /// Creates a relation between this [PupilData] and the given [PupilListEntry]s
+  /// by setting each [PupilListEntry]'s foreign key `pupilId` to refer to this [PupilData].
+  Future<void> pupilListEntries(
     _i1.Session session,
     PupilData pupilData,
-    List<_i24.PupilList> pupilList, {
+    List<_i24.PupilListEntry> pupilListEntry, {
     _i1.Transaction? transaction,
   }) async {
-    if (pupilList.any((e) => e.id == null)) {
-      throw ArgumentError.notNull('pupilList.id');
+    if (pupilListEntry.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('pupilListEntry.id');
     }
     if (pupilData.id == null) {
       throw ArgumentError.notNull('pupilData.id');
     }
 
-    var $pupilList =
-        pupilList.map((e) => e.copyWith(pupilId: pupilData.id)).toList();
-    await session.db.update<_i24.PupilList>(
-      $pupilList,
-      columns: [_i24.PupilList.t.pupilId],
+    var $pupilListEntry =
+        pupilListEntry.map((e) => e.copyWith(pupilId: pupilData.id)).toList();
+    await session.db.update<_i24.PupilListEntry>(
+      $pupilListEntry,
+      columns: [_i24.PupilListEntry.t.pupilId],
       transaction: transaction,
     );
   }
@@ -2989,25 +2991,25 @@ class PupilDataAttachRowRepository {
     );
   }
 
-  /// Creates a relation between this [PupilData] and the given [PupilList]
-  /// by setting the [PupilList]'s foreign key `pupilId` to refer to this [PupilData].
-  Future<void> pupilLists(
+  /// Creates a relation between this [PupilData] and the given [PupilListEntry]
+  /// by setting the [PupilListEntry]'s foreign key `pupilId` to refer to this [PupilData].
+  Future<void> pupilListEntries(
     _i1.Session session,
     PupilData pupilData,
-    _i24.PupilList pupilList, {
+    _i24.PupilListEntry pupilListEntry, {
     _i1.Transaction? transaction,
   }) async {
-    if (pupilList.id == null) {
-      throw ArgumentError.notNull('pupilList.id');
+    if (pupilListEntry.id == null) {
+      throw ArgumentError.notNull('pupilListEntry.id');
     }
     if (pupilData.id == null) {
       throw ArgumentError.notNull('pupilData.id');
     }
 
-    var $pupilList = pupilList.copyWith(pupilId: pupilData.id);
-    await session.db.updateRow<_i24.PupilList>(
-      $pupilList,
-      columns: [_i24.PupilList.t.pupilId],
+    var $pupilListEntry = pupilListEntry.copyWith(pupilId: pupilData.id);
+    await session.db.updateRow<_i24.PupilListEntry>(
+      $pupilListEntry,
+      columns: [_i24.PupilListEntry.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3171,24 +3173,25 @@ class PupilDataDetachRepository {
     );
   }
 
-  /// Detaches the relation between this [PupilData] and the given [PupilList]
-  /// by setting the [PupilList]'s foreign key `pupilId` to `null`.
+  /// Detaches the relation between this [PupilData] and the given [PupilListEntry]
+  /// by setting the [PupilListEntry]'s foreign key `pupilId` to `null`.
   ///
   /// This removes the association between the two models without deleting
   /// the related record.
-  Future<void> pupilLists(
+  Future<void> pupilListEntries(
     _i1.Session session,
-    List<_i24.PupilList> pupilList, {
+    List<_i24.PupilListEntry> pupilListEntry, {
     _i1.Transaction? transaction,
   }) async {
-    if (pupilList.any((e) => e.id == null)) {
-      throw ArgumentError.notNull('pupilList.id');
+    if (pupilListEntry.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('pupilListEntry.id');
     }
 
-    var $pupilList = pupilList.map((e) => e.copyWith(pupilId: null)).toList();
-    await session.db.update<_i24.PupilList>(
-      $pupilList,
-      columns: [_i24.PupilList.t.pupilId],
+    var $pupilListEntry =
+        pupilListEntry.map((e) => e.copyWith(pupilId: null)).toList();
+    await session.db.update<_i24.PupilListEntry>(
+      $pupilListEntry,
+      columns: [_i24.PupilListEntry.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3453,24 +3456,24 @@ class PupilDataDetachRowRepository {
     );
   }
 
-  /// Detaches the relation between this [PupilData] and the given [PupilList]
-  /// by setting the [PupilList]'s foreign key `pupilId` to `null`.
+  /// Detaches the relation between this [PupilData] and the given [PupilListEntry]
+  /// by setting the [PupilListEntry]'s foreign key `pupilId` to `null`.
   ///
   /// This removes the association between the two models without deleting
   /// the related record.
-  Future<void> pupilLists(
+  Future<void> pupilListEntries(
     _i1.Session session,
-    _i24.PupilList pupilList, {
+    _i24.PupilListEntry pupilListEntry, {
     _i1.Transaction? transaction,
   }) async {
-    if (pupilList.id == null) {
-      throw ArgumentError.notNull('pupilList.id');
+    if (pupilListEntry.id == null) {
+      throw ArgumentError.notNull('pupilListEntry.id');
     }
 
-    var $pupilList = pupilList.copyWith(pupilId: null);
-    await session.db.updateRow<_i24.PupilList>(
-      $pupilList,
-      columns: [_i24.PupilList.t.pupilId],
+    var $pupilListEntry = pupilListEntry.copyWith(pupilId: null);
+    await session.db.updateRow<_i24.PupilListEntry>(
+      $pupilListEntry,
+      columns: [_i24.PupilListEntry.t.pupilId],
       transaction: transaction,
     );
   }

@@ -1,4 +1,5 @@
 import 'package:school_data_hub_server/src/generated/protocol.dart';
+import 'package:school_data_hub_server/src/utils/hub_document_helper.dart';
 import 'package:school_data_hub_server/src/utils/schemas/pupil_schemas.dart';
 import 'package:serverpod/serverpod.dart';
 
@@ -51,7 +52,7 @@ class PupilEndpoint extends Endpoint {
 
     await HubDocument.db.deleteRow(session, pupil.avatar!);
     pupil.avatar = null;
-    final updatedPupil = await PupilData.db.updateRow(session, pupil);
+    await PupilData.db.updateRow(session, pupil);
     // get the updated pupil with the avatar removed
     final updatedPupilWithAvatar = await PupilData.db.findFirstRow(
       session,
@@ -77,28 +78,50 @@ class PupilEndpoint extends Endpoint {
   }
 
   Future<PupilData> resetPublicMediaAuth(
-      Session session, int internalId) async {
+      Session session, int pupilId, String createdBy) async {
     final pupil = await PupilData.db.findFirstRow(
       session,
-      where: (t) => t.internalId.equals(internalId),
+      where: (t) => t.id.equals(pupilId),
+      include: PupilData.include(
+        publicMediaAuthDocument: HubDocument.include(),
+      ),
     );
     if (pupil == null) {
       throw Exception('Pupil not found');
     }
-    session.storage.deleteFile(
-        storageId: 'private',
-        path: pupil.publicMediaAuthDocument!.documentPath!);
-    pupil.publicMediaAuth = PublicMediaAuth(
-        groupPicturesOnWebsite: false,
-        groupPicturesInPress: false,
-        portraitPicturesOnWebsite: false,
-        portraitPicturesInPress: false,
-        nameOnWebsite: false,
-        nameInPress: false,
-        videoOnWebsite: false,
-        videoInPress: false);
-    final updatedPupil = await PupilData.db.updateRow(session, pupil);
-    return updatedPupil;
+    final publicMediaAuthReset = PublicMediaAuth(
+      groupPicturesOnWebsite: false,
+      groupPicturesInPress: false,
+      portraitPicturesOnWebsite: false,
+      portraitPicturesInPress: false,
+      nameOnWebsite: false,
+      nameInPress: false,
+      videoOnWebsite: false,
+      videoInPress: false,
+      createdAt: DateTime.now(),
+      createdBy: createdBy,
+    );
+
+    if (pupil.publicMediaAuthDocument != null) {
+      final documentId = pupil.publicMediaAuthDocument!.documentId;
+      await session.db.transaction((transaction) async {
+        await PupilData.db.detachRow
+            .publicMediaAuthDocument(session, pupil, transaction: transaction);
+
+        await HubDocumentHelper.deleteHubDocumentAndFile(
+            session: session, documentId: documentId, transaction: transaction);
+        pupil.publicMediaAuthDocument = null;
+        pupil.publicMediaAuth = publicMediaAuthReset;
+
+        await PupilData.db.updateRow(session, pupil, transaction: transaction);
+      });
+    } else {
+      pupil.publicMediaAuth = publicMediaAuthReset;
+      await PupilData.db.updateRow(session, pupil);
+    }
+    final updatedPupil = await PupilData.db
+        .findById(session, pupilId, include: PupilSchemas.allInclude);
+    return updatedPupil!;
   }
 
   Future<PupilData> deleteSupportLevelHistoryItem(

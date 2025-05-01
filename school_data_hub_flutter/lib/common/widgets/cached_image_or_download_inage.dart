@@ -36,16 +36,17 @@ Future<Image> cachedImageOrDownloadImage(
         .showSnackBar(NotificationType.error, 'Fehler beim Laden des Bildes');
     return Image.asset('assets/dummy-profile-pic.png');
   }
-
-  final encryptedBytes = byteData.buffer.asUint8List();
-
-  // Cache the encrypted bytes
-  await cacheManager.putFile(documentId, encryptedBytes);
-  // Decrypt the bytes before returning
+  Uint8List imageBytes = byteData.buffer.asUint8List();
+  // Cache the image for future use
+  await cacheManager.putFile(documentId, imageBytes);
+  if (!decrypt) {
+    return Image.memory(imageBytes);
+  }
+  // The image is encrypted - decrypt the bytes before returning
   //- TODO: Check this isolate use
   //- This is because isolate performance is horrible in debug mode
   final decryptedBytes = (kReleaseMode || kProfileMode)
-      ? await compute(customEncrypter.decryptTheseBytes, encryptedBytes)
-      : customEncrypter.decryptTheseBytes(encryptedBytes);
+      ? await compute(customEncrypter.decryptTheseBytes, imageBytes)
+      : customEncrypter.decryptTheseBytes(imageBytes);
   return Image.memory(decryptedBytes);
 }

@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_picker.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/document_image%20copy.dart';
+import 'package:school_data_hub_flutter/common/widgets/document_image.dart';
 import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
@@ -203,7 +203,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                       children: [
                         InkWell(
                           onTap: () async {
-                            final File? file = await uploadImageFile(context);
+                            final File? file = await createImageFile(context);
                             if (file == null) return;
                             await _schooldayEventManager
                                 .updateSchooldayEventFile(
@@ -257,7 +257,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: () async {
-                          final File? file = await uploadImageFile(context);
+                          final File? file = await createImageFile(context);
                           if (file == null) return;
                           await _schooldayEventManager.updateSchooldayEventFile(
                               imageFile: file,

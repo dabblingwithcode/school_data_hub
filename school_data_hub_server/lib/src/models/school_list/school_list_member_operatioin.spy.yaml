@@ -1,0 +1,5 @@
+enum: SchoolListMemberOperation
+serialized: byName
+values:
+  - add
+  - remove

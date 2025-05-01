@@ -11,7 +11,7 @@ Widget attendanceStats(PupilProxy pupil) {
       excusedBadge(false),
       const Gap(3),
       Text(
-        AttendanceHelper.missedclassSum(pupil).toString(),
+        AttendanceHelper.missedclassExcusedSum(pupil).toString(),
         style: const TextStyle(
           color: Colors.black,
           fontWeight: FontWeight.bold,

@@ -10,3 +10,5 @@ fields:
   nameInPress: bool
   videoOnWebsite: bool
   videoInPress: bool
+  createdBy: String
+  createdAt: DateTime

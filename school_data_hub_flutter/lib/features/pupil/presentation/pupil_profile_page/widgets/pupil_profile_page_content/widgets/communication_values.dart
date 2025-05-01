@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_helper_functions.dart';
 
@@ -58,6 +59,16 @@ class CommunicationValues extends StatelessWidget {
               ),
             ],
           ),
+          const Gap(5),
+          if (communicationSkills != null)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                    'Erstellt von ${communicationSkills!.createdBy} am ${communicationSkills!.createdAt.formatForUser()}',
+                    style: const TextStyle(fontSize: 12.0, color: Colors.grey)),
+              ],
+            ),
           const Gap(5),
         ],
       ),

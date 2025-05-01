@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/core/auth/hub_auth_key_manager.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_monitor.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
-import 'package:school_data_hub_flutter/features/app/domain/main_menu_bottom_nav_manager.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/filters/attendance_pupil_filter.dart';
 import 'package:school_data_hub_flutter/features/competence/domain/competence_manager.dart';
@@ -21,6 +21,8 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_fil
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter_impl.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/school_lists/domain/filters/school_list_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_manager.dart';
@@ -165,6 +167,18 @@ class DiManager {
     di.registerSingletonWithDependencies<AttendanceManager>(
         () => AttendanceManager(),
         dependsOn: [SchooldayManager, PupilsFilter]);
+
+    di.registerSingletonWithDependencies<SchoolListFilterManager>(
+        () => SchoolListFilterManager(),
+        dependsOn: [PupilsFilter]);
+
+    di.registerSingletonAsync<SchoolListManager>(() async {
+      _log.info('Registering SchoolListManager');
+      final schoolListManager = SchoolListManager();
+      await schoolListManager.init();
+      _log.info('SchoolListManager initialized');
+      return schoolListManager;
+    }, dependsOn: [SchoolListFilterManager, ServerpodSessionManager]);
 
     di.registerSingletonWithDependencies<AttendancePupilFilterManager>(
         () => AttendancePupilFilterManager(),

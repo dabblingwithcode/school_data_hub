@@ -19,40 +19,39 @@ abstract class SchoolList
   SchoolList._({
     this.id,
     required this.listId,
+    required this.archived,
     required this.name,
     required this.description,
     required this.createdBy,
-    required this.visibility,
+    required this.public,
     this.authorizedUsers,
-    this.pupilLists,
+    this.pupilEntries,
   });
 
   factory SchoolList({
     int? id,
     required String listId,
+    required bool archived,
     required String name,
     required String description,
     required String createdBy,
-    required String visibility,
-    Set<String>? authorizedUsers,
-    List<_i2.PupilList>? pupilLists,
+    required bool public,
+    String? authorizedUsers,
+    List<_i2.PupilListEntry>? pupilEntries,
   }) = _SchoolListImpl;
 
   factory SchoolList.fromJson(Map<String, dynamic> jsonSerialization) {
     return SchoolList(
       id: jsonSerialization['id'] as int?,
       listId: jsonSerialization['listId'] as String,
+      archived: jsonSerialization['archived'] as bool,
       name: jsonSerialization['name'] as String,
       description: jsonSerialization['description'] as String,
       createdBy: jsonSerialization['createdBy'] as String,
-      visibility: jsonSerialization['visibility'] as String,
-      authorizedUsers: jsonSerialization['authorizedUsers'] == null
-          ? null
-          : _i1.SetJsonExtension.fromJson(
-              (jsonSerialization['authorizedUsers'] as List),
-              itemFromJson: (e) => e as String),
-      pupilLists: (jsonSerialization['pupilLists'] as List?)
-          ?.map((e) => _i2.PupilList.fromJson((e as Map<String, dynamic>)))
+      public: jsonSerialization['public'] as bool,
+      authorizedUsers: jsonSerialization['authorizedUsers'] as String?,
+      pupilEntries: (jsonSerialization['pupilEntries'] as List?)
+          ?.map((e) => _i2.PupilListEntry.fromJson((e as Map<String, dynamic>)))
           .toList(),
     );
   }
@@ -66,17 +65,19 @@ abstract class SchoolList
 
   String listId;
 
+  bool archived;
+
   String name;
 
   String description;
 
   String createdBy;
 
-  String visibility;
+  bool public;
 
-  Set<String>? authorizedUsers;
+  String? authorizedUsers;
 
-  List<_i2.PupilList>? pupilLists;
+  List<_i2.PupilListEntry>? pupilEntries;
 
   @override
   _i1.Table<int?> get table => t;
@@ -87,25 +88,27 @@ abstract class SchoolList
   SchoolList copyWith({
     int? id,
     String? listId,
+    bool? archived,
     String? name,
     String? description,
     String? createdBy,
-    String? visibility,
-    Set<String>? authorizedUsers,
-    List<_i2.PupilList>? pupilLists,
+    bool? public,
+    String? authorizedUsers,
+    List<_i2.PupilListEntry>? pupilEntries,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
       'listId': listId,
+      'archived': archived,
       'name': name,
       'description': description,
       'createdBy': createdBy,
-      'visibility': visibility,
-      if (authorizedUsers != null) 'authorizedUsers': authorizedUsers?.toJson(),
-      if (pupilLists != null)
-        'pupilLists': pupilLists?.toJson(valueToJson: (v) => v.toJson()),
+      'public': public,
+      if (authorizedUsers != null) 'authorizedUsers': authorizedUsers,
+      if (pupilEntries != null)
+        'pupilEntries': pupilEntries?.toJson(valueToJson: (v) => v.toJson()),
     };
   }
 
@@ -114,19 +117,21 @@ abstract class SchoolList
     return {
       if (id != null) 'id': id,
       'listId': listId,
+      'archived': archived,
       'name': name,
       'description': description,
       'createdBy': createdBy,
-      'visibility': visibility,
-      if (authorizedUsers != null) 'authorizedUsers': authorizedUsers?.toJson(),
-      if (pupilLists != null)
-        'pupilLists':
-            pupilLists?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
+      'public': public,
+      if (authorizedUsers != null) 'authorizedUsers': authorizedUsers,
+      if (pupilEntries != null)
+        'pupilEntries':
+            pupilEntries?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
     };
   }
 
-  static SchoolListInclude include({_i2.PupilListIncludeList? pupilLists}) {
-    return SchoolListInclude._(pupilLists: pupilLists);
+  static SchoolListInclude include(
+      {_i2.PupilListEntryIncludeList? pupilEntries}) {
+    return SchoolListInclude._(pupilEntries: pupilEntries);
   }
 
   static SchoolListIncludeList includeList({
@@ -161,21 +166,23 @@ class _SchoolListImpl extends SchoolList {
   _SchoolListImpl({
     int? id,
     required String listId,
+    required bool archived,
     required String name,
     required String description,
     required String createdBy,
-    required String visibility,
-    Set<String>? authorizedUsers,
-    List<_i2.PupilList>? pupilLists,
+    required bool public,
+    String? authorizedUsers,
+    List<_i2.PupilListEntry>? pupilEntries,
   }) : super._(
           id: id,
           listId: listId,
+          archived: archived,
           name: name,
           description: description,
           createdBy: createdBy,
-          visibility: visibility,
+          public: public,
           authorizedUsers: authorizedUsers,
-          pupilLists: pupilLists,
+          pupilEntries: pupilEntries,
         );
 
   /// Returns a shallow copy of this [SchoolList]
@@ -185,26 +192,27 @@ class _SchoolListImpl extends SchoolList {
   SchoolList copyWith({
     Object? id = _Undefined,
     String? listId,
+    bool? archived,
     String? name,
     String? description,
     String? createdBy,
-    String? visibility,
+    bool? public,
     Object? authorizedUsers = _Undefined,
-    Object? pupilLists = _Undefined,
+    Object? pupilEntries = _Undefined,
   }) {
     return SchoolList(
       id: id is int? ? id : this.id,
       listId: listId ?? this.listId,
+      archived: archived ?? this.archived,
       name: name ?? this.name,
       description: description ?? this.description,
       createdBy: createdBy ?? this.createdBy,
-      visibility: visibility ?? this.visibility,
-      authorizedUsers: authorizedUsers is Set<String>?
-          ? authorizedUsers
-          : this.authorizedUsers?.map((e0) => e0).toSet(),
-      pupilLists: pupilLists is List<_i2.PupilList>?
-          ? pupilLists
-          : this.pupilLists?.map((e0) => e0.copyWith()).toList(),
+      public: public ?? this.public,
+      authorizedUsers:
+          authorizedUsers is String? ? authorizedUsers : this.authorizedUsers,
+      pupilEntries: pupilEntries is List<_i2.PupilListEntry>?
+          ? pupilEntries
+          : this.pupilEntries?.map((e0) => e0.copyWith()).toList(),
     );
   }
 }
@@ -213,6 +221,10 @@ class SchoolListTable extends _i1.Table<int?> {
   SchoolListTable({super.tableRelation}) : super(tableName: 'school_list') {
     listId = _i1.ColumnString(
       'listId',
+      this,
+    );
+    archived = _i1.ColumnBool(
+      'archived',
       this,
     );
     name = _i1.ColumnString(
@@ -227,11 +239,11 @@ class SchoolListTable extends _i1.Table<int?> {
       'createdBy',
       this,
     );
-    visibility = _i1.ColumnString(
-      'visibility',
+    public = _i1.ColumnBool(
+      'public',
       this,
     );
-    authorizedUsers = _i1.ColumnSerializable(
+    authorizedUsers = _i1.ColumnString(
       'authorizedUsers',
       this,
     );
@@ -239,80 +251,83 @@ class SchoolListTable extends _i1.Table<int?> {
 
   late final _i1.ColumnString listId;
 
+  late final _i1.ColumnBool archived;
+
   late final _i1.ColumnString name;
 
   late final _i1.ColumnString description;
 
   late final _i1.ColumnString createdBy;
 
-  late final _i1.ColumnString visibility;
+  late final _i1.ColumnBool public;
 
-  late final _i1.ColumnSerializable authorizedUsers;
+  late final _i1.ColumnString authorizedUsers;
 
-  _i2.PupilListTable? ___pupilLists;
+  _i2.PupilListEntryTable? ___pupilEntries;
 
-  _i1.ManyRelation<_i2.PupilListTable>? _pupilLists;
+  _i1.ManyRelation<_i2.PupilListEntryTable>? _pupilEntries;
 
-  _i2.PupilListTable get __pupilLists {
-    if (___pupilLists != null) return ___pupilLists!;
-    ___pupilLists = _i1.createRelationTable(
-      relationFieldName: '__pupilLists',
+  _i2.PupilListEntryTable get __pupilEntries {
+    if (___pupilEntries != null) return ___pupilEntries!;
+    ___pupilEntries = _i1.createRelationTable(
+      relationFieldName: '__pupilEntries',
       field: SchoolList.t.id,
-      foreignField: _i2.PupilList.t.schoolListId,
+      foreignField: _i2.PupilListEntry.t.schoolListId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.PupilListTable(tableRelation: foreignTableRelation),
+          _i2.PupilListEntryTable(tableRelation: foreignTableRelation),
     );
-    return ___pupilLists!;
+    return ___pupilEntries!;
   }
 
-  _i1.ManyRelation<_i2.PupilListTable> get pupilLists {
-    if (_pupilLists != null) return _pupilLists!;
+  _i1.ManyRelation<_i2.PupilListEntryTable> get pupilEntries {
+    if (_pupilEntries != null) return _pupilEntries!;
     var relationTable = _i1.createRelationTable(
-      relationFieldName: 'pupilLists',
+      relationFieldName: 'pupilEntries',
       field: SchoolList.t.id,
-      foreignField: _i2.PupilList.t.schoolListId,
+      foreignField: _i2.PupilListEntry.t.schoolListId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.PupilListTable(tableRelation: foreignTableRelation),
+          _i2.PupilListEntryTable(tableRelation: foreignTableRelation),
     );
-    _pupilLists = _i1.ManyRelation<_i2.PupilListTable>(
+    _pupilEntries = _i1.ManyRelation<_i2.PupilListEntryTable>(
       tableWithRelations: relationTable,
-      table: _i2.PupilListTable(
+      table: _i2.PupilListEntryTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
-    return _pupilLists!;
+    return _pupilEntries!;
   }
 
   @override
   List<_i1.Column> get columns => [
         id,
         listId,
+        archived,
         name,
         description,
         createdBy,
-        visibility,
+        public,
         authorizedUsers,
       ];
 
   @override
   _i1.Table? getRelationTable(String relationField) {
-    if (relationField == 'pupilLists') {
-      return __pupilLists;
+    if (relationField == 'pupilEntries') {
+      return __pupilEntries;
     }
     return null;
   }
 }
 
 class SchoolListInclude extends _i1.IncludeObject {
-  SchoolListInclude._({_i2.PupilListIncludeList? pupilLists}) {
-    _pupilLists = pupilLists;
+  SchoolListInclude._({_i2.PupilListEntryIncludeList? pupilEntries}) {
+    _pupilEntries = pupilEntries;
   }
 
-  _i2.PupilListIncludeList? _pupilLists;
+  _i2.PupilListEntryIncludeList? _pupilEntries;
 
   @override
-  Map<String, _i1.Include?> get includes => {'pupilLists': _pupilLists};
+  Map<String, _i1.Include?> get includes => {'pupilEntries': _pupilEntries};
 
   @override
   _i1.Table<int?> get table => SchoolList.t;
@@ -564,26 +579,27 @@ class SchoolListRepository {
 class SchoolListAttachRepository {
   const SchoolListAttachRepository._();
 
-  /// Creates a relation between this [SchoolList] and the given [PupilList]s
-  /// by setting each [PupilList]'s foreign key `schoolListId` to refer to this [SchoolList].
-  Future<void> pupilLists(
+  /// Creates a relation between this [SchoolList] and the given [PupilListEntry]s
+  /// by setting each [PupilListEntry]'s foreign key `schoolListId` to refer to this [SchoolList].
+  Future<void> pupilEntries(
     _i1.Session session,
     SchoolList schoolList,
-    List<_i2.PupilList> pupilList, {
+    List<_i2.PupilListEntry> pupilListEntry, {
     _i1.Transaction? transaction,
   }) async {
-    if (pupilList.any((e) => e.id == null)) {
-      throw ArgumentError.notNull('pupilList.id');
+    if (pupilListEntry.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('pupilListEntry.id');
     }
     if (schoolList.id == null) {
       throw ArgumentError.notNull('schoolList.id');
     }
 
-    var $pupilList =
-        pupilList.map((e) => e.copyWith(schoolListId: schoolList.id)).toList();
-    await session.db.update<_i2.PupilList>(
-      $pupilList,
-      columns: [_i2.PupilList.t.schoolListId],
+    var $pupilListEntry = pupilListEntry
+        .map((e) => e.copyWith(schoolListId: schoolList.id))
+        .toList();
+    await session.db.update<_i2.PupilListEntry>(
+      $pupilListEntry,
+      columns: [_i2.PupilListEntry.t.schoolListId],
       transaction: transaction,
     );
   }
@@ -592,25 +608,25 @@ class SchoolListAttachRepository {
 class SchoolListAttachRowRepository {
   const SchoolListAttachRowRepository._();
 
-  /// Creates a relation between this [SchoolList] and the given [PupilList]
-  /// by setting the [PupilList]'s foreign key `schoolListId` to refer to this [SchoolList].
-  Future<void> pupilLists(
+  /// Creates a relation between this [SchoolList] and the given [PupilListEntry]
+  /// by setting the [PupilListEntry]'s foreign key `schoolListId` to refer to this [SchoolList].
+  Future<void> pupilEntries(
     _i1.Session session,
     SchoolList schoolList,
-    _i2.PupilList pupilList, {
+    _i2.PupilListEntry pupilListEntry, {
     _i1.Transaction? transaction,
   }) async {
-    if (pupilList.id == null) {
-      throw ArgumentError.notNull('pupilList.id');
+    if (pupilListEntry.id == null) {
+      throw ArgumentError.notNull('pupilListEntry.id');
     }
     if (schoolList.id == null) {
       throw ArgumentError.notNull('schoolList.id');
     }
 
-    var $pupilList = pupilList.copyWith(schoolListId: schoolList.id);
-    await session.db.updateRow<_i2.PupilList>(
-      $pupilList,
-      columns: [_i2.PupilList.t.schoolListId],
+    var $pupilListEntry = pupilListEntry.copyWith(schoolListId: schoolList.id);
+    await session.db.updateRow<_i2.PupilListEntry>(
+      $pupilListEntry,
+      columns: [_i2.PupilListEntry.t.schoolListId],
       transaction: transaction,
     );
   }

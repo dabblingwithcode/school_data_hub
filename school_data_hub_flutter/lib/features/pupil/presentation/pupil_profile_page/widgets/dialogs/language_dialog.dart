@@ -109,6 +109,7 @@ Future<void> languageDialog(BuildContext context, PupilProxy pupil,
                       speaking: dropdownSpeakValue,
                       reading: dropdownReadValue,
                       createdBy: _serverpodSessionManager.userName!,
+                      createdAt: DateTime.now(),
                     );
                     switch (subject) {
                       case CommunicationSubject.pupil:

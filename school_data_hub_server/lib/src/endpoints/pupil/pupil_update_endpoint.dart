@@ -1,8 +1,5 @@
-import 'dart:typed_data';
-
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
-import 'package:school_data_hub_server/src/utils/get_user_name.dart';
 import 'package:school_data_hub_server/src/utils/hub_document_helper.dart';
 import 'package:school_data_hub_server/src/utils/schemas/pupil_schemas.dart';
 import 'package:serverpod/serverpod.dart';
@@ -84,10 +81,8 @@ class PupilUpdateEndpoint extends Endpoint {
   }
 
   Future<PupilData> updatePupilAvatar(
-      Session session, int pupilId, String filePath) async {
+      Session session, int pupilId, String filePath, String createdBy) async {
     // find the createdBy user
-    // TODO: Send username as a parameter to the endpoint
-    final createdBy = await getUserName(session);
 
     // find the pupil by id
     final pupil = await PupilData.db.findById(
@@ -160,13 +155,8 @@ class PupilUpdateEndpoint extends Endpoint {
     }
 
     // Create a HubDocument with the file path
-    final documentId = Uuid().v4();
-    final hubDocument = HubDocument(
-      documentId: documentId,
-      documentPath: filePath,
-      createdBy: createdBy,
-      createdAt: DateTime.now(),
-    );
+    final hubDocument = HubDocumentHelper.createHubDocumentObject(
+        session: session, createdBy: createdBy, path: filePath);
 
     // Let's create a transaction for the database operations
     // This is important to ensure that all operations are atomic
@@ -238,15 +228,15 @@ class PupilUpdateEndpoint extends Endpoint {
     return updatedPupil!;
   }
 
-  Future<PupilData> updateCredit(
-      Session session, int pupilId, int value, String? description) async {
+  Future<PupilData> updateCredit(Session session, int pupilId, int value,
+      String? description, String sender) async {
     final pupil = await PupilData.db.findById(session, pupilId);
     if (pupil == null) {
       throw Exception('Pupil not found');
     }
-    final userName = await getUserName(session);
+
     final creditTransactionToAdd = CreditTransaction(
-      sender: userName!,
+      sender: sender,
       receiver: pupil.id!,
       amount: value,
       dateTime: DateTime.now(),
@@ -274,13 +264,8 @@ class PupilUpdateEndpoint extends Endpoint {
     return updatedPupil!;
   }
 
-  Future<PupilData> updatePupilWithPublicMediaAuth(Session session, int pupilId,
-      ByteData publicMediaAuthFBytes, String path) async {
-    final createdBy = await getUserName(session);
-
-    final hubDocument = await HubDocumentHelper.createHubDocumentObject(
-        session: session, createdBy: createdBy!, path: path);
-
+  Future<PupilData> updatePupilPublicMediaAuth(
+      Session session, int pupilId, String filePath, String createdBy) async {
     final pupil = await PupilData.db.findFirstRow(
       session,
       where: (t) => t.id.equals(pupilId),
@@ -288,29 +273,42 @@ class PupilUpdateEndpoint extends Endpoint {
     if (pupil == null) {
       throw Exception('Pupil not found');
     }
-    // if the pupil has an public media auth document, delete it
-    if (pupil.publicMediaAuthDocument != null) {
-      final success = await HubDocumentHelper.deleteHubDocument(
-        session: session,
-        documentId: pupil.publicMediaAuthDocument!.documentId,
-      );
-      // TODO: Handle exception gracefully here
-      if (!success) {
-        throw Exception('Failed to delete old avatar document');
+
+    final hubDocument = HubDocumentHelper.createHubDocumentObject(
+        session: session, createdBy: createdBy, path: filePath);
+
+    await session.db.transaction((transaction) async {
+      // Save the hub document object to the database
+      final hubDocumentInDatabase = await HubDocument.db
+          .insertRow(session, hubDocument, transaction: transaction);
+
+      // if the pupil has an avatar, delete it
+      if (pupil.publicMediaAuthDocument != null) {
+        _log.warning(
+            'Deleting old public media auth document: ${pupil.avatar!.documentId}');
+        // delete the old avatar auth file from the storage
+        session.storage.deleteFile(
+            storageId: 'private',
+            path: pupil.publicMediaAuthDocument!.documentPath!);
+        // detach the old avatar from the pupil
+        await PupilData.db.detachRow
+            .publicMediaAuthDocument(session, pupil, transaction: transaction);
+        // delete the old avatar document from the database
+        await HubDocument.db.deleteRow(session, pupil.publicMediaAuthDocument!,
+            transaction: transaction);
+        // TODO: Consider exceptions and handle them gracefully here
       }
-      HubDocument.db.deleteRow(session, pupil.publicMediaAuthDocument!);
-    }
-    // update the pupil with the new avatar
-    HubDocument.db.updateRow(session, hubDocument);
-    pupil.publicMediaAuthDocument = hubDocument;
-    await PupilData.db.updateRow(session, pupil);
-    // Fetch the object again with the relation included
-    final updatedPupilWithRelation = await PupilData.db.findById(
-      session,
-      pupil.id!,
-      include: PupilSchemas.allInclude,
-    );
-    return updatedPupilWithRelation!;
+      // update the pupil with the new avatar
+      _log.info(
+          'Updating pupil public media auth: id: [${hubDocumentInDatabase.id}] documentID [${hubDocumentInDatabase.documentId}]');
+      await PupilData.db.attachRow.publicMediaAuthDocument(
+          session, pupil, hubDocumentInDatabase,
+          transaction: transaction);
+    });
+    final updatedPupil = await PupilData.db
+        .findById(session, pupil.id!, include: PupilSchemas.allInclude);
+    _log.fine('Updated pupil : ${updatedPupil!.toJson()}');
+    return updatedPupil;
   }
 
   Future<PupilData> updateSupportLevel(

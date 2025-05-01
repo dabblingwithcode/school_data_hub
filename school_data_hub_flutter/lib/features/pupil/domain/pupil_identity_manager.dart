@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
-import 'package:school_data_hub_flutter/features/app/domain/main_menu_bottom_nav_manager.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/data/pupil_data_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_selector_filters.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_identity.dart';
@@ -35,11 +35,12 @@ class PupilIdentityManager {
 
   List<int> get availablePupilIds => _pupilIdentities.keys.toList();
 
-  PupilIdentity getPupilIdentity(int pupilId) {
-    if (_pupilIdentities.containsKey(pupilId) == false) {
-      throw StateError('Pupil with id $pupilId not found in pupil identities!');
+  PupilIdentity getPupilIdentity(int internalId) {
+    if (_pupilIdentities.containsKey(internalId) == false) {
+      throw StateError(
+          'Pupil with id $internalId not found in pupil identities!');
     }
-    return _pupilIdentities[pupilId]!;
+    return _pupilIdentities[internalId]!;
   }
 
   Future<PupilIdentityManager> init() async {

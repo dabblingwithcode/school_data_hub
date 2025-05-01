@@ -8,7 +8,7 @@ import 'package:printing/printing.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/list_view_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
 
 final _log = Logger('MatrixCredentialsPrinter');

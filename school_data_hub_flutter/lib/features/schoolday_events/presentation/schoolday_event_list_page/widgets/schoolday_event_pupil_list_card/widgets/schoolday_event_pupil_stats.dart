@@ -21,8 +21,8 @@ class SchooldayEventPupilStats extends WatchingWidget {
     final unfilteredEvents = watch(
             _schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId))
         .schooldayEvents;
-    final schooldavEvents =
-        _schooldayEventFilterManager.filteredSchooldayEvents(unfilteredEvents);
+    final schooldavEvents = _schooldayEventFilterManager
+        .filteredSchooldayEvents(unfilteredEvents.values.toList());
     final admonitions = schooldavEvents
         .where((element) =>
             element.eventType == SchooldayEventType.admonition ||
