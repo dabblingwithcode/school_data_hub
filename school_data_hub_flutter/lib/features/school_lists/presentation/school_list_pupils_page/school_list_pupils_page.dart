@@ -9,7 +9,6 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
-import 'package:school_data_hub_flutter/features/school_lists/domain/filters/school_list_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupils_page/widgets/school_list_pupil_card.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupils_page/widgets/school_list_pupils_bottom_navbar.dart';
@@ -17,7 +16,7 @@ import 'package:school_data_hub_flutter/features/school_lists/presentation/schoo
 import 'package:watch_it/watch_it.dart';
 
 final _schoolListManager = di<SchoolListManager>();
-final _schoolListFilterManager = di<SchoolListFilterManager>();
+
 final _pupilManager = di<PupilManager>();
 
 class SchoolListPupilsPage extends WatchingWidget {
@@ -27,18 +26,15 @@ class SchoolListPupilsPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final thisSchoolList = watchValue((SchoolListManager x) => x.schoolLists)
-        .firstWhere((element) => element.listId == schoolList.listId);
+    final pupilListsInSchoolList = watchPropertyValue((SchoolListManager x) =>
+        x.schoolListIdPupilEntriesMap)[schoolList.id!]!;
 
     final List<PupilProxy> filteredPupils =
         watchValue((PupilsFilter x) => x.filteredPupils);
 
-    final List<PupilList> pupilLists = _schoolListFilterManager
-        .addPupilListFiltersToFilteredPupils(thisSchoolList.pupilLists!);
-
     List<PupilProxy> pupilsInList = filteredPupils
-        .where((pupil) =>
-            pupilLists.any((pupilList) => pupilList.pupilId == pupil.pupilId))
+        .where((pupil) => pupilListsInSchoolList
+            .any((pupilList) => pupilList.pupilId == pupil.pupilId))
         .toList();
 
     return Scaffold(
@@ -77,7 +73,7 @@ class SchoolListPupilsPage extends WatchingWidget {
                           delegate: SliverChildBuilderDelegate(
                             (BuildContext context, int index) {
                               return SchoolListPupilCard(
-                                  pupilsInList[index].internalId, schoolList);
+                                  pupilsInList[index].pupilId, schoolList.id!);
                             },
                             childCount: pupilsInList.length,
                           ),
@@ -89,8 +85,8 @@ class SchoolListPupilsPage extends WatchingWidget {
         ),
       ),
       bottomNavigationBar: SchoolListPupilsPageBottomNavBar(
-          listId: schoolList.listId,
-          pupilsInList: _pupilManager.internalIdsFromPupils(pupilsInList)),
+          listId: schoolList.id!,
+          pupilsInList: _pupilManager.pupilIdsFromPupils(pupilsInList)),
     );
   }
 }

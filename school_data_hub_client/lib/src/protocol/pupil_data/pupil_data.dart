@@ -80,7 +80,7 @@ abstract class PupilData implements _i1.SerializableModel {
     this.missedClasses,
     this.schooldayEvents,
     this.swimmer,
-    this.pupilLists,
+    this.pupilListEntries,
   });
 
   factory PupilData({
@@ -124,7 +124,7 @@ abstract class PupilData implements _i1.SerializableModel {
     List<_i22.MissedClass>? missedClasses,
     List<_i23.SchooldayEvent>? schooldayEvents,
     String? swimmer,
-    List<_i24.PupilList>? pupilLists,
+    List<_i24.PupilListEntry>? pupilListEntries,
   }) = _PupilDataImpl;
 
   factory PupilData.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -248,8 +248,9 @@ abstract class PupilData implements _i1.SerializableModel {
               (e) => _i23.SchooldayEvent.fromJson((e as Map<String, dynamic>)))
           .toList(),
       swimmer: jsonSerialization['swimmer'] as String?,
-      pupilLists: (jsonSerialization['pupilLists'] as List?)
-          ?.map((e) => _i24.PupilList.fromJson((e as Map<String, dynamic>)))
+      pupilListEntries: (jsonSerialization['pupilListEntries'] as List?)
+          ?.map(
+              (e) => _i24.PupilListEntry.fromJson((e as Map<String, dynamic>)))
           .toList(),
     );
   }
@@ -337,7 +338,7 @@ abstract class PupilData implements _i1.SerializableModel {
 
   String? swimmer;
 
-  List<_i24.PupilList>? pupilLists;
+  List<_i24.PupilListEntry>? pupilListEntries;
 
   /// Returns a shallow copy of this [PupilData]
   /// with some or all fields replaced by the given arguments.
@@ -383,7 +384,7 @@ abstract class PupilData implements _i1.SerializableModel {
     List<_i22.MissedClass>? missedClasses,
     List<_i23.SchooldayEvent>? schooldayEvents,
     String? swimmer,
-    List<_i24.PupilList>? pupilLists,
+    List<_i24.PupilListEntry>? pupilListEntries,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -462,8 +463,9 @@ abstract class PupilData implements _i1.SerializableModel {
         'schooldayEvents':
             schooldayEvents?.toJson(valueToJson: (v) => v.toJson()),
       if (swimmer != null) 'swimmer': swimmer,
-      if (pupilLists != null)
-        'pupilLists': pupilLists?.toJson(valueToJson: (v) => v.toJson()),
+      if (pupilListEntries != null)
+        'pupilListEntries':
+            pupilListEntries?.toJson(valueToJson: (v) => v.toJson()),
     };
   }
 
@@ -517,7 +519,7 @@ class _PupilDataImpl extends PupilData {
     List<_i22.MissedClass>? missedClasses,
     List<_i23.SchooldayEvent>? schooldayEvents,
     String? swimmer,
-    List<_i24.PupilList>? pupilLists,
+    List<_i24.PupilListEntry>? pupilListEntries,
   }) : super._(
           id: id,
           active: active,
@@ -559,7 +561,7 @@ class _PupilDataImpl extends PupilData {
           missedClasses: missedClasses,
           schooldayEvents: schooldayEvents,
           swimmer: swimmer,
-          pupilLists: pupilLists,
+          pupilListEntries: pupilListEntries,
         );
 
   /// Returns a shallow copy of this [PupilData]
@@ -607,7 +609,7 @@ class _PupilDataImpl extends PupilData {
     Object? missedClasses = _Undefined,
     Object? schooldayEvents = _Undefined,
     Object? swimmer = _Undefined,
-    Object? pupilLists = _Undefined,
+    Object? pupilListEntries = _Undefined,
   }) {
     return PupilData(
       id: id is int? ? id : this.id,
@@ -707,9 +709,9 @@ class _PupilDataImpl extends PupilData {
           ? schooldayEvents
           : this.schooldayEvents?.map((e0) => e0.copyWith()).toList(),
       swimmer: swimmer is String? ? swimmer : this.swimmer,
-      pupilLists: pupilLists is List<_i24.PupilList>?
-          ? pupilLists
-          : this.pupilLists?.map((e0) => e0.copyWith()).toList(),
+      pupilListEntries: pupilListEntries is List<_i24.PupilListEntry>?
+          ? pupilListEntries
+          : this.pupilListEntries?.map((e0) => e0.copyWith()).toList(),
     );
   }
 }

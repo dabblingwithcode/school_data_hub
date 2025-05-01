@@ -6,16 +6,15 @@ import 'package:watch_it/watch_it.dart';
 final _schoolListManager = di<SchoolListManager>();
 
 class SchoolListHelper {
-  static String listOwner(String listId) {
-    final SchoolList schoolList = _schoolListManager.schoolLists.value
-        .firstWhere((element) => element.listId == listId);
+  static String listOwner(int listId) {
+    final SchoolList schoolList = _schoolListManager.getSchoolListById(listId);
     return schoolList.createdBy;
   }
 
   static String listOwners(SchoolList schoolList) {
     String owners = '';
     if (schoolList.public == true) {
-      return 'HER';
+      return 'ADM';
     }
     if (schoolList.public == false) {
       return '';
@@ -40,17 +39,21 @@ class SchoolListHelper {
     int countNo = 0;
     int countNull = 0;
     int countComment = 0;
-    for (PupilProxy pupil in pupilsInList) {
-      for (PupilList pupilList in schoolList.pupilLists!) {
-        if (pupilList.pupilId == pupil.internalId) {
-          pupilList.status == true
-              ? countYes++
-              : pupilList.status == false
-                  ? countNo++
-                  : countNull++;
-          pupilList.comment != null && pupilList.comment!.isNotEmpty
-              ? countComment++
-              : countComment;
+    final pupilEntries =
+        _schoolListManager.schoolListIdPupilEntriesMap[schoolList.id!];
+    if (pupilEntries != null) {
+      for (PupilProxy pupil in pupilsInList) {
+        for (PupilListEntry pupilEntry in pupilEntries) {
+          if (pupilEntry.pupilId == pupil.pupilId) {
+            pupilEntry.status == true
+                ? countYes++
+                : pupilEntry.status == false
+                    ? countNo++
+                    : countNull++;
+            pupilEntry.comment != null && pupilEntry.comment!.isNotEmpty
+                ? countComment++
+                : countComment;
+          }
         }
       }
     }

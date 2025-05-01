@@ -4,6 +4,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
@@ -19,22 +20,22 @@ final _pupilManager = di<PupilManager>();
 final _mainMenuBottomNavManager = di<MainMenuBottomNavManager>();
 final _serverpodSessionManager = di<ServerpodSessionManager>();
 final _notificationService = di<NotificationService>();
+final _schoolListManager = di<SchoolListManager>();
 
 class SchoolListPupilCard extends WatchingWidget {
-  final int internalId;
+  final int pupilId;
 
-  final SchoolList originList;
+  final int originListId;
 
-  const SchoolListPupilCard(this.internalId, this.originList, {super.key});
+  const SchoolListPupilCard(this.pupilId, this.originListId, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    final PupilProxy pupil = _pupilManager.getPupilByPupilId(internalId)!;
+    final PupilProxy pupil = _pupilManager.getPupilByPupilId(pupilId)!;
 
-    final thisSchoolList = watchValue((SchoolListManager x) => x.schoolLists)
-        .firstWhere((element) => element.listId == originList.listId);
-
-    final PupilList pupilList = thisSchoolList.pupilLists!
+    final PupilListEntry pupilEntry = watchPropertyValue(
+            (SchoolListManager x) =>
+                x.pupilIdSchoolListPupilEntriesMap[pupilId])!
         .firstWhere((element) => element.pupilId == pupil.pupilId);
 
     return Card(
@@ -65,7 +66,7 @@ class SchoolListPupilCard extends WatchingWidget {
                       onLongPress: () async {
                         if (!_serverpodSessionManager.isAdmin) {
                           if (SchoolListHelper.listOwner(
-                                  pupilList.schoolList!.listId) !=
+                                  pupilEntry.schoolListId) !=
                               _serverpodSessionManager.userName) {
                             _notificationService.showSnackBar(
                                 NotificationType.error,
@@ -82,14 +83,23 @@ class SchoolListPupilCard extends WatchingWidget {
                         if (confirm != true) {
                           return;
                         }
-                        // TODO: UNCOMMENT THIS
-                        // await _schoolListManager
-                        //     .deletePupilsFromSchoolList(
-                        //         [pupil.internalId], originList.listId);
-                        // if (context.mounted) {
-                        //   informationDialog(context, 'Kind aus Liste gelöscht',
-                        //       'Das Kind wurde gelöscht!');
-                        // }
+                        await _schoolListManager.updateSchoolListProperty(
+                            listId: originListId,
+                            operation: (
+                              operation: SchoolListMemberOperation.remove,
+                              pupilIds: [pupil.pupilId]
+                            ));
+                        await _schoolListManager.updateSchoolListProperty(
+                            listId: originListId,
+                            operation: (
+                              pupilIds: [pupil.pupilId],
+                              operation: SchoolListMemberOperation.remove
+                            ));
+
+                        if (context.mounted) {
+                          informationDialog(context, 'Kind aus Liste gelöscht',
+                              'Das Kind wurde gelöscht!');
+                        }
                       },
                       child: Text(
                         '${pupil.firstName} ${pupil.lastName}',
@@ -105,7 +115,7 @@ class SchoolListPupilCard extends WatchingWidget {
                         final listComment = await longTextFieldDialog(
                             title: 'Kommentar ändern',
                             labelText: 'Kommentar',
-                            textinField: pupilList.comment ?? '',
+                            textinField: pupilEntry.comment ?? '',
                             parentContext: context);
                         if (listComment == null) {
                           return;
@@ -119,8 +129,8 @@ class SchoolListPupilCard extends WatchingWidget {
                         //);
                       },
                       child: Text(
-                          pupilList.comment != null && pupilList.comment != ''
-                              ? pupilList.comment!
+                          pupilEntry.comment != null && pupilEntry.comment != ''
+                              ? pupilEntry.comment!
                               : 'kein Kommentar',
                           textAlign: TextAlign.left,
                           style: const TextStyle(
@@ -150,8 +160,8 @@ class SchoolListPupilCard extends WatchingWidget {
                       height: 25,
                       child: Checkbox(
                         activeColor: Colors.red,
-                        value: (pupilList.status == null ||
-                                pupilList.status == true)
+                        value: (pupilEntry.status == null ||
+                                pupilEntry.status == true)
                             ? false
                             : true,
                         onChanged: (value) async {
@@ -180,8 +190,8 @@ class SchoolListPupilCard extends WatchingWidget {
                       height: 25,
                       child: Checkbox(
                         activeColor: Colors.green,
-                        value: (pupilList.status != true ||
-                                pupilList.status == null)
+                        value: (pupilEntry.status != true ||
+                                pupilEntry.status == null)
                             ? false
                             : true,
                         onChanged: (value) async {
@@ -198,11 +208,11 @@ class SchoolListPupilCard extends WatchingWidget {
                   ],
                 ),
                 const Gap(10),
-                if (pupilList.entryBy != null)
+                if (pupilEntry.entryBy != null)
                   Row(
                     children: [
                       Text(
-                        pupilList.entryBy!,
+                        pupilEntry.entryBy!,
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16),
                       ),

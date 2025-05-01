@@ -52,9 +52,9 @@ class PupilDataApiService {
   //- fetch list of pupils
 
   Future<List<PupilData>> fetchListOfPupils({
-    required List<int> internalPupilIds,
+    required List<int> pupilInternalIds,
   }) async {
-    final pupilIdsSet = internalPupilIds.toSet();
+    final pupilIdsSet = pupilInternalIds.toSet();
 
     try {
       _notificationService.apiRunning(true);

@@ -35,11 +35,12 @@ class PupilIdentityManager {
 
   List<int> get availablePupilIds => _pupilIdentities.keys.toList();
 
-  PupilIdentity getPupilIdentity(int pupilId) {
-    if (_pupilIdentities.containsKey(pupilId) == false) {
-      throw StateError('Pupil with id $pupilId not found in pupil identities!');
+  PupilIdentity getPupilIdentity(int internalId) {
+    if (_pupilIdentities.containsKey(internalId) == false) {
+      throw StateError(
+          'Pupil with id $internalId not found in pupil identities!');
     }
-    return _pupilIdentities[pupilId]!;
+    return _pupilIdentities[internalId]!;
   }
 
   Future<PupilIdentityManager> init() async {

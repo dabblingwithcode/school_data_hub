@@ -25,7 +25,7 @@ abstract class SchoolList
     required this.createdBy,
     required this.public,
     this.authorizedUsers,
-    this.pupilLists,
+    this.pupilEntries,
   });
 
   factory SchoolList({
@@ -37,7 +37,7 @@ abstract class SchoolList
     required String createdBy,
     required bool public,
     String? authorizedUsers,
-    List<_i2.PupilList>? pupilLists,
+    List<_i2.PupilListEntry>? pupilEntries,
   }) = _SchoolListImpl;
 
   factory SchoolList.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -50,8 +50,8 @@ abstract class SchoolList
       createdBy: jsonSerialization['createdBy'] as String,
       public: jsonSerialization['public'] as bool,
       authorizedUsers: jsonSerialization['authorizedUsers'] as String?,
-      pupilLists: (jsonSerialization['pupilLists'] as List?)
-          ?.map((e) => _i2.PupilList.fromJson((e as Map<String, dynamic>)))
+      pupilEntries: (jsonSerialization['pupilEntries'] as List?)
+          ?.map((e) => _i2.PupilListEntry.fromJson((e as Map<String, dynamic>)))
           .toList(),
     );
   }
@@ -77,7 +77,7 @@ abstract class SchoolList
 
   String? authorizedUsers;
 
-  List<_i2.PupilList>? pupilLists;
+  List<_i2.PupilListEntry>? pupilEntries;
 
   @override
   _i1.Table<int?> get table => t;
@@ -94,7 +94,7 @@ abstract class SchoolList
     String? createdBy,
     bool? public,
     String? authorizedUsers,
-    List<_i2.PupilList>? pupilLists,
+    List<_i2.PupilListEntry>? pupilEntries,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -107,8 +107,8 @@ abstract class SchoolList
       'createdBy': createdBy,
       'public': public,
       if (authorizedUsers != null) 'authorizedUsers': authorizedUsers,
-      if (pupilLists != null)
-        'pupilLists': pupilLists?.toJson(valueToJson: (v) => v.toJson()),
+      if (pupilEntries != null)
+        'pupilEntries': pupilEntries?.toJson(valueToJson: (v) => v.toJson()),
     };
   }
 
@@ -123,14 +123,15 @@ abstract class SchoolList
       'createdBy': createdBy,
       'public': public,
       if (authorizedUsers != null) 'authorizedUsers': authorizedUsers,
-      if (pupilLists != null)
-        'pupilLists':
-            pupilLists?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
+      if (pupilEntries != null)
+        'pupilEntries':
+            pupilEntries?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
     };
   }
 
-  static SchoolListInclude include({_i2.PupilListIncludeList? pupilLists}) {
-    return SchoolListInclude._(pupilLists: pupilLists);
+  static SchoolListInclude include(
+      {_i2.PupilListEntryIncludeList? pupilEntries}) {
+    return SchoolListInclude._(pupilEntries: pupilEntries);
   }
 
   static SchoolListIncludeList includeList({
@@ -171,7 +172,7 @@ class _SchoolListImpl extends SchoolList {
     required String createdBy,
     required bool public,
     String? authorizedUsers,
-    List<_i2.PupilList>? pupilLists,
+    List<_i2.PupilListEntry>? pupilEntries,
   }) : super._(
           id: id,
           listId: listId,
@@ -181,7 +182,7 @@ class _SchoolListImpl extends SchoolList {
           createdBy: createdBy,
           public: public,
           authorizedUsers: authorizedUsers,
-          pupilLists: pupilLists,
+          pupilEntries: pupilEntries,
         );
 
   /// Returns a shallow copy of this [SchoolList]
@@ -197,7 +198,7 @@ class _SchoolListImpl extends SchoolList {
     String? createdBy,
     bool? public,
     Object? authorizedUsers = _Undefined,
-    Object? pupilLists = _Undefined,
+    Object? pupilEntries = _Undefined,
   }) {
     return SchoolList(
       id: id is int? ? id : this.id,
@@ -209,9 +210,9 @@ class _SchoolListImpl extends SchoolList {
       public: public ?? this.public,
       authorizedUsers:
           authorizedUsers is String? ? authorizedUsers : this.authorizedUsers,
-      pupilLists: pupilLists is List<_i2.PupilList>?
-          ? pupilLists
-          : this.pupilLists?.map((e0) => e0.copyWith()).toList(),
+      pupilEntries: pupilEntries is List<_i2.PupilListEntry>?
+          ? pupilEntries
+          : this.pupilEntries?.map((e0) => e0.copyWith()).toList(),
     );
   }
 }
@@ -262,39 +263,39 @@ class SchoolListTable extends _i1.Table<int?> {
 
   late final _i1.ColumnString authorizedUsers;
 
-  _i2.PupilListTable? ___pupilLists;
+  _i2.PupilListEntryTable? ___pupilEntries;
 
-  _i1.ManyRelation<_i2.PupilListTable>? _pupilLists;
+  _i1.ManyRelation<_i2.PupilListEntryTable>? _pupilEntries;
 
-  _i2.PupilListTable get __pupilLists {
-    if (___pupilLists != null) return ___pupilLists!;
-    ___pupilLists = _i1.createRelationTable(
-      relationFieldName: '__pupilLists',
+  _i2.PupilListEntryTable get __pupilEntries {
+    if (___pupilEntries != null) return ___pupilEntries!;
+    ___pupilEntries = _i1.createRelationTable(
+      relationFieldName: '__pupilEntries',
       field: SchoolList.t.id,
-      foreignField: _i2.PupilList.t.schoolListId,
+      foreignField: _i2.PupilListEntry.t.schoolListId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.PupilListTable(tableRelation: foreignTableRelation),
+          _i2.PupilListEntryTable(tableRelation: foreignTableRelation),
     );
-    return ___pupilLists!;
+    return ___pupilEntries!;
   }
 
-  _i1.ManyRelation<_i2.PupilListTable> get pupilLists {
-    if (_pupilLists != null) return _pupilLists!;
+  _i1.ManyRelation<_i2.PupilListEntryTable> get pupilEntries {
+    if (_pupilEntries != null) return _pupilEntries!;
     var relationTable = _i1.createRelationTable(
-      relationFieldName: 'pupilLists',
+      relationFieldName: 'pupilEntries',
       field: SchoolList.t.id,
-      foreignField: _i2.PupilList.t.schoolListId,
+      foreignField: _i2.PupilListEntry.t.schoolListId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.PupilListTable(tableRelation: foreignTableRelation),
+          _i2.PupilListEntryTable(tableRelation: foreignTableRelation),
     );
-    _pupilLists = _i1.ManyRelation<_i2.PupilListTable>(
+    _pupilEntries = _i1.ManyRelation<_i2.PupilListEntryTable>(
       tableWithRelations: relationTable,
-      table: _i2.PupilListTable(
+      table: _i2.PupilListEntryTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
-    return _pupilLists!;
+    return _pupilEntries!;
   }
 
   @override
@@ -311,22 +312,22 @@ class SchoolListTable extends _i1.Table<int?> {
 
   @override
   _i1.Table? getRelationTable(String relationField) {
-    if (relationField == 'pupilLists') {
-      return __pupilLists;
+    if (relationField == 'pupilEntries') {
+      return __pupilEntries;
     }
     return null;
   }
 }
 
 class SchoolListInclude extends _i1.IncludeObject {
-  SchoolListInclude._({_i2.PupilListIncludeList? pupilLists}) {
-    _pupilLists = pupilLists;
+  SchoolListInclude._({_i2.PupilListEntryIncludeList? pupilEntries}) {
+    _pupilEntries = pupilEntries;
   }
 
-  _i2.PupilListIncludeList? _pupilLists;
+  _i2.PupilListEntryIncludeList? _pupilEntries;
 
   @override
-  Map<String, _i1.Include?> get includes => {'pupilLists': _pupilLists};
+  Map<String, _i1.Include?> get includes => {'pupilEntries': _pupilEntries};
 
   @override
   _i1.Table<int?> get table => SchoolList.t;
@@ -578,26 +579,27 @@ class SchoolListRepository {
 class SchoolListAttachRepository {
   const SchoolListAttachRepository._();
 
-  /// Creates a relation between this [SchoolList] and the given [PupilList]s
-  /// by setting each [PupilList]'s foreign key `schoolListId` to refer to this [SchoolList].
-  Future<void> pupilLists(
+  /// Creates a relation between this [SchoolList] and the given [PupilListEntry]s
+  /// by setting each [PupilListEntry]'s foreign key `schoolListId` to refer to this [SchoolList].
+  Future<void> pupilEntries(
     _i1.Session session,
     SchoolList schoolList,
-    List<_i2.PupilList> pupilList, {
+    List<_i2.PupilListEntry> pupilListEntry, {
     _i1.Transaction? transaction,
   }) async {
-    if (pupilList.any((e) => e.id == null)) {
-      throw ArgumentError.notNull('pupilList.id');
+    if (pupilListEntry.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('pupilListEntry.id');
     }
     if (schoolList.id == null) {
       throw ArgumentError.notNull('schoolList.id');
     }
 
-    var $pupilList =
-        pupilList.map((e) => e.copyWith(schoolListId: schoolList.id)).toList();
-    await session.db.update<_i2.PupilList>(
-      $pupilList,
-      columns: [_i2.PupilList.t.schoolListId],
+    var $pupilListEntry = pupilListEntry
+        .map((e) => e.copyWith(schoolListId: schoolList.id))
+        .toList();
+    await session.db.update<_i2.PupilListEntry>(
+      $pupilListEntry,
+      columns: [_i2.PupilListEntry.t.schoolListId],
       transaction: transaction,
     );
   }
@@ -606,25 +608,25 @@ class SchoolListAttachRepository {
 class SchoolListAttachRowRepository {
   const SchoolListAttachRowRepository._();
 
-  /// Creates a relation between this [SchoolList] and the given [PupilList]
-  /// by setting the [PupilList]'s foreign key `schoolListId` to refer to this [SchoolList].
-  Future<void> pupilLists(
+  /// Creates a relation between this [SchoolList] and the given [PupilListEntry]
+  /// by setting the [PupilListEntry]'s foreign key `schoolListId` to refer to this [SchoolList].
+  Future<void> pupilEntries(
     _i1.Session session,
     SchoolList schoolList,
-    _i2.PupilList pupilList, {
+    _i2.PupilListEntry pupilListEntry, {
     _i1.Transaction? transaction,
   }) async {
-    if (pupilList.id == null) {
-      throw ArgumentError.notNull('pupilList.id');
+    if (pupilListEntry.id == null) {
+      throw ArgumentError.notNull('pupilListEntry.id');
     }
     if (schoolList.id == null) {
       throw ArgumentError.notNull('schoolList.id');
     }
 
-    var $pupilList = pupilList.copyWith(schoolListId: schoolList.id);
-    await session.db.updateRow<_i2.PupilList>(
-      $pupilList,
-      columns: [_i2.PupilList.t.schoolListId],
+    var $pupilListEntry = pupilListEntry.copyWith(schoolListId: schoolList.id);
+    await session.db.updateRow<_i2.PupilListEntry>(
+      $pupilListEntry,
+      columns: [_i2.PupilListEntry.t.schoolListId],
       transaction: transaction,
     );
   }

@@ -9,4 +9,4 @@ fields:
   createdBy: String
   public: bool
   authorizedUsers: String?
-  pupilLists: List<PupilList>?, relation(name=pupil_list_school_list)
+  pupilEntries: List<PupilListEntry>?, relation(name=pupil_list_entry_school_list)

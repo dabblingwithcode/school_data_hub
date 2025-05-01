@@ -53,20 +53,17 @@ class SchoolListApiService {
     }
   }
 
-  static const postSchoolList = '/school_lists/all';
-
-  //- patch school list
-
-  String _patchSchoolListUrl(String listId) {
-    return '/school_lists/$listId/patch';
-  }
+  //- update school list
 
   Future<SchoolList> updateSchoolListProperty(
-      {required String listId,
+      {required int listId,
       String? name,
       String? description,
       bool? public,
-      ({List<int> pupilIds, String operation})? updateMembers}) async {
+      ({
+        List<int> pupilIds,
+        SchoolListMemberOperation operation
+      })? updateMembers}) async {
     assert(
         name != null ||
             description != null ||

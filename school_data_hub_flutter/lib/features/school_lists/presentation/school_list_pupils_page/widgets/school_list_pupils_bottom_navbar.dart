@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/paddings.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
@@ -18,7 +19,7 @@ final _serverpodSessionManager = di<ServerpodSessionManager>();
 final _pupilManager = di<PupilManager>();
 
 class SchoolListPupilsPageBottomNavBar extends StatelessWidget {
-  final String listId;
+  final int listId;
 
   final List<int> pupilsInList;
   const SchoolListPupilsPageBottomNavBar(
@@ -89,13 +90,14 @@ class SchoolListPupilsPageBottomNavBar extends StatelessWidget {
                                     .pupilsNotListed(pupilsInList)),
                           )) ??
                           [];
-                  // TODO: UNCOMMENT THIS
-                  // if (selectedPupilIds.isNotEmpty) {
-                  //   _schoolListManager.addPupilsToSchoolList(
-                  //     listId,
-                  //     selectedPupilIds,
-                  //   );
-                  // }
+                  if (selectedPupilIds.isEmpty) return;
+                  _schoolListManager.updateSchoolListProperty(
+                    listId: listId,
+                    operation: (
+                      pupilIds: selectedPupilIds,
+                      operation: SchoolListMemberOperation.add
+                    ),
+                  );
                 },
               ),
               const Gap(AppPaddings.bottomNavBarButtonGap),

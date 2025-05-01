@@ -1,10 +1,10 @@
 ## pupil list model
-class: PupilList
+class: PupilListEntry
 table: pupil_list
 fields:
   status: bool?
   comment: String?
   entryBy: String?
-  schoolList: SchoolList?, relation(name=pupil_list_school_list)
-  pupil: PupilData?, relation(name=pupil_list_pupil)
+  schoolList: SchoolList?, relation(name=pupil_list_entry_school_list, onDelete=Cascade)
+  pupil: PupilData?, relation(name=pupil_list_entry_pupil, onDelete=Cascade)
   

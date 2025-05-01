@@ -13,8 +13,8 @@ import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import '../school_list/school_list.dart' as _i2;
 import '../pupil_data/pupil_data.dart' as _i3;
 
-abstract class PupilList implements _i1.SerializableModel {
-  PupilList._({
+abstract class PupilListEntry implements _i1.SerializableModel {
+  PupilListEntry._({
     this.id,
     this.status,
     this.comment,
@@ -25,7 +25,7 @@ abstract class PupilList implements _i1.SerializableModel {
     this.pupil,
   });
 
-  factory PupilList({
+  factory PupilListEntry({
     int? id,
     bool? status,
     String? comment,
@@ -34,10 +34,10 @@ abstract class PupilList implements _i1.SerializableModel {
     _i2.SchoolList? schoolList,
     required int pupilId,
     _i3.PupilData? pupil,
-  }) = _PupilListImpl;
+  }) = _PupilListEntryImpl;
 
-  factory PupilList.fromJson(Map<String, dynamic> jsonSerialization) {
-    return PupilList(
+  factory PupilListEntry.fromJson(Map<String, dynamic> jsonSerialization) {
+    return PupilListEntry(
       id: jsonSerialization['id'] as int?,
       status: jsonSerialization['status'] as bool?,
       comment: jsonSerialization['comment'] as String?,
@@ -74,10 +74,10 @@ abstract class PupilList implements _i1.SerializableModel {
 
   _i3.PupilData? pupil;
 
-  /// Returns a shallow copy of this [PupilList]
+  /// Returns a shallow copy of this [PupilListEntry]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
-  PupilList copyWith({
+  PupilListEntry copyWith({
     int? id,
     bool? status,
     String? comment,
@@ -109,8 +109,8 @@ abstract class PupilList implements _i1.SerializableModel {
 
 class _Undefined {}
 
-class _PupilListImpl extends PupilList {
-  _PupilListImpl({
+class _PupilListEntryImpl extends PupilListEntry {
+  _PupilListEntryImpl({
     int? id,
     bool? status,
     String? comment,
@@ -130,11 +130,11 @@ class _PupilListImpl extends PupilList {
           pupil: pupil,
         );
 
-  /// Returns a shallow copy of this [PupilList]
+  /// Returns a shallow copy of this [PupilListEntry]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   @override
-  PupilList copyWith({
+  PupilListEntry copyWith({
     Object? id = _Undefined,
     Object? status = _Undefined,
     Object? comment = _Undefined,
@@ -144,7 +144,7 @@ class _PupilListImpl extends PupilList {
     int? pupilId,
     Object? pupil = _Undefined,
   }) {
-    return PupilList(
+    return PupilListEntry(
       id: id is int? ? id : this.id,
       status: status is bool? ? status : this.status,
       comment: comment is String? ? comment : this.comment,

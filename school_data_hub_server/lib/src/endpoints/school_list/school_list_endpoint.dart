@@ -13,7 +13,8 @@ class SchoolListEndpoint extends Endpoint {
             (t.public.equals(true) |
                 t.createdBy.equals(userName) |
                 t.authorizedUsers.ilike('%$userName%')),
-        include: SchoolList.include(pupilLists: PupilList.includeList()));
+        include:
+            SchoolList.include(pupilEntries: PupilListEntry.includeList()));
     return schoolList;
   }
 
@@ -40,43 +41,46 @@ class SchoolListEndpoint extends Endpoint {
         await session.db.transaction((transaction) async {
       final schoolListInDatabase =
           await session.db.insertRow(schoolList, transaction: transaction);
-      // Create PupilList objects from the pupil IDs
-      List<PupilList> pupilLists = pupilIds
-          .map((pupilId) => PupilList(
+      // Create PupilListEntry objects from the pupil IDs
+      List<PupilListEntry> pupilEntries = pupilIds
+          .map((pupilId) => PupilListEntry(
                 pupilId: pupilId,
                 schoolListId: schoolListInDatabase.id!,
               ))
           .toList();
 
-      // Bulk insert the PupilList objects
-      var createdPupilLists = await PupilList.db
-          .insert(session, pupilLists, transaction: transaction);
-      // Attach all the PupilLists to the SchoolList
-      await SchoolList.db.attach.pupilLists(
-          session, schoolListInDatabase, createdPupilLists,
+      // Bulk insert the PupilListEntry objects
+      var createdPupilListEntrys = await PupilListEntry.db
+          .insert(session, pupilEntries, transaction: transaction);
+      // Attach all the PupilListEntrys to the SchoolList
+      await SchoolList.db.attach.pupilEntries(
+          session, schoolListInDatabase, createdPupilListEntrys,
           transaction: transaction);
       // recall the schoollist with the pupil lists
       return schoolListInDatabase;
     });
 
-    final schoolListWithPupilLists = await SchoolList.db.findFirstRow(
+    final schoolListWithPupilEntries = await SchoolList.db.findFirstRow(
       session,
       where: (t) => t.id.equals(schoolListInDatabase.id!),
-      include: SchoolList.include(pupilLists: PupilList.includeList()),
+      include: SchoolList.include(pupilEntries: PupilListEntry.includeList()),
     );
-    return schoolListWithPupilLists!;
+    return schoolListWithPupilEntries!;
   }
 
   Future<SchoolList> updateSchoolList(
       Session session,
-      String schoolListId,
+      int listId,
       String? name,
       String? description,
       bool? public,
-      ({List<int> pupilIds, String operation})? updateMembers) async {
-    final schoolList = await SchoolList.db.findFirstRow(session,
-        where: (t) => t.listId.equals(schoolListId),
-        include: SchoolList.include(pupilLists: PupilList.includeList()));
+      ({
+        List<int> pupilIds,
+        SchoolListMemberOperation operation
+      })? updateMembers) async {
+    final schoolList = await SchoolList.db.findById(session, listId,
+        include:
+            SchoolList.include(pupilEntries: PupilListEntry.includeList()));
     if (schoolList == null) {
       throw Exception('SchoolList not found');
     }
@@ -90,34 +94,46 @@ class SchoolListEndpoint extends Endpoint {
       schoolList.public = public;
     }
     if (updateMembers != null) {
-      if (updateMembers.operation == 'add') {
+      if (updateMembers.operation == SchoolListMemberOperation.add) {
         // Add new pupils to the list
-        List<PupilList> pupilLists = updateMembers.pupilIds
-            .map((pupilId) => PupilList(
+        List<PupilListEntry> pupilEntries = updateMembers.pupilIds
+            .map((pupilId) => PupilListEntry(
                   pupilId: pupilId,
                   schoolListId: schoolList.id!,
                 ))
             .toList();
-        var createdPupilLists = await PupilList.db.insert(session, pupilLists);
+        var createdPupilListEntrys =
+            await PupilListEntry.db.insert(session, pupilEntries);
         await SchoolList.db.attach
-            .pupilLists(session, schoolList, createdPupilLists);
-      } else if (updateMembers.operation == 'remove') {
+            .pupilEntries(session, schoolList, createdPupilListEntrys);
+      } else if (updateMembers.operation == SchoolListMemberOperation.remove) {
         // Remove pupils from the list
         for (var pupilId in updateMembers.pupilIds) {
-          final pupilList = await PupilList.db.findFirstRow(
+          final pupilEntry = await PupilListEntry.db.findFirstRow(
             session,
             where: (t) =>
                 t.pupilId.equals(pupilId) &
                 t.schoolListId.equals(schoolList.id!),
           );
-          if (pupilList != null) {
-            // Detach the PupilList from the SchoolList
+          if (pupilEntry != null) {
+            // Detach the PupilListEntry from the SchoolList
 
-            await PupilList.db.deleteRow(session, pupilList);
+            await PupilListEntry.db.deleteRow(session, pupilEntry);
           }
         }
       }
     }
     return await SchoolList.db.updateRow(session, schoolList);
+  }
+
+  Future<bool> deleteSchoolList(Session session, int listId) async {
+    final schoolList = await SchoolList.db.findById(session, listId);
+    if (schoolList == null) {
+      throw Exception('SchoolList not found');
+    }
+
+    // Delete the SchoolList itself
+    await SchoolList.db.deleteRow(session, schoolList);
+    return true;
   }
 }

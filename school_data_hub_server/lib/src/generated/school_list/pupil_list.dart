@@ -15,9 +15,9 @@ import 'package:serverpod/serverpod.dart' as _i1;
 import '../school_list/school_list.dart' as _i2;
 import '../pupil_data/pupil_data.dart' as _i3;
 
-abstract class PupilList
+abstract class PupilListEntry
     implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
-  PupilList._({
+  PupilListEntry._({
     this.id,
     this.status,
     this.comment,
@@ -28,7 +28,7 @@ abstract class PupilList
     this.pupil,
   });
 
-  factory PupilList({
+  factory PupilListEntry({
     int? id,
     bool? status,
     String? comment,
@@ -37,10 +37,10 @@ abstract class PupilList
     _i2.SchoolList? schoolList,
     required int pupilId,
     _i3.PupilData? pupil,
-  }) = _PupilListImpl;
+  }) = _PupilListEntryImpl;
 
-  factory PupilList.fromJson(Map<String, dynamic> jsonSerialization) {
-    return PupilList(
+  factory PupilListEntry.fromJson(Map<String, dynamic> jsonSerialization) {
+    return PupilListEntry(
       id: jsonSerialization['id'] as int?,
       status: jsonSerialization['status'] as bool?,
       comment: jsonSerialization['comment'] as String?,
@@ -58,9 +58,9 @@ abstract class PupilList
     );
   }
 
-  static final t = PupilListTable();
+  static final t = PupilListEntryTable();
 
-  static const db = PupilListRepository._();
+  static const db = PupilListEntryRepository._();
 
   @override
   int? id;
@@ -82,10 +82,10 @@ abstract class PupilList
   @override
   _i1.Table<int?> get table => t;
 
-  /// Returns a shallow copy of this [PupilList]
+  /// Returns a shallow copy of this [PupilListEntry]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
-  PupilList copyWith({
+  PupilListEntry copyWith({
     int? id,
     bool? status,
     String? comment,
@@ -123,32 +123,32 @@ abstract class PupilList
     };
   }
 
-  static PupilListInclude include({
+  static PupilListEntryInclude include({
     _i2.SchoolListInclude? schoolList,
     _i3.PupilDataInclude? pupil,
   }) {
-    return PupilListInclude._(
+    return PupilListEntryInclude._(
       schoolList: schoolList,
       pupil: pupil,
     );
   }
 
-  static PupilListIncludeList includeList({
-    _i1.WhereExpressionBuilder<PupilListTable>? where,
+  static PupilListEntryIncludeList includeList({
+    _i1.WhereExpressionBuilder<PupilListEntryTable>? where,
     int? limit,
     int? offset,
-    _i1.OrderByBuilder<PupilListTable>? orderBy,
+    _i1.OrderByBuilder<PupilListEntryTable>? orderBy,
     bool orderDescending = false,
-    _i1.OrderByListBuilder<PupilListTable>? orderByList,
-    PupilListInclude? include,
+    _i1.OrderByListBuilder<PupilListEntryTable>? orderByList,
+    PupilListEntryInclude? include,
   }) {
-    return PupilListIncludeList._(
+    return PupilListEntryIncludeList._(
       where: where,
       limit: limit,
       offset: offset,
-      orderBy: orderBy?.call(PupilList.t),
+      orderBy: orderBy?.call(PupilListEntry.t),
       orderDescending: orderDescending,
-      orderByList: orderByList?.call(PupilList.t),
+      orderByList: orderByList?.call(PupilListEntry.t),
       include: include,
     );
   }
@@ -161,8 +161,8 @@ abstract class PupilList
 
 class _Undefined {}
 
-class _PupilListImpl extends PupilList {
-  _PupilListImpl({
+class _PupilListEntryImpl extends PupilListEntry {
+  _PupilListEntryImpl({
     int? id,
     bool? status,
     String? comment,
@@ -182,11 +182,11 @@ class _PupilListImpl extends PupilList {
           pupil: pupil,
         );
 
-  /// Returns a shallow copy of this [PupilList]
+  /// Returns a shallow copy of this [PupilListEntry]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   @override
-  PupilList copyWith({
+  PupilListEntry copyWith({
     Object? id = _Undefined,
     Object? status = _Undefined,
     Object? comment = _Undefined,
@@ -196,7 +196,7 @@ class _PupilListImpl extends PupilList {
     int? pupilId,
     Object? pupil = _Undefined,
   }) {
-    return PupilList(
+    return PupilListEntry(
       id: id is int? ? id : this.id,
       status: status is bool? ? status : this.status,
       comment: comment is String? ? comment : this.comment,
@@ -211,8 +211,8 @@ class _PupilListImpl extends PupilList {
   }
 }
 
-class PupilListTable extends _i1.Table<int?> {
-  PupilListTable({super.tableRelation}) : super(tableName: 'pupil_list') {
+class PupilListEntryTable extends _i1.Table<int?> {
+  PupilListEntryTable({super.tableRelation}) : super(tableName: 'pupil_list') {
     status = _i1.ColumnBool(
       'status',
       this,
@@ -253,7 +253,7 @@ class PupilListTable extends _i1.Table<int?> {
     if (_schoolList != null) return _schoolList!;
     _schoolList = _i1.createRelationTable(
       relationFieldName: 'schoolList',
-      field: PupilList.t.schoolListId,
+      field: PupilListEntry.t.schoolListId,
       foreignField: _i2.SchoolList.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
@@ -266,7 +266,7 @@ class PupilListTable extends _i1.Table<int?> {
     if (_pupil != null) return _pupil!;
     _pupil = _i1.createRelationTable(
       relationFieldName: 'pupil',
-      field: PupilList.t.pupilId,
+      field: PupilListEntry.t.pupilId,
       foreignField: _i3.PupilData.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
@@ -297,8 +297,8 @@ class PupilListTable extends _i1.Table<int?> {
   }
 }
 
-class PupilListInclude extends _i1.IncludeObject {
-  PupilListInclude._({
+class PupilListEntryInclude extends _i1.IncludeObject {
+  PupilListEntryInclude._({
     _i2.SchoolListInclude? schoolList,
     _i3.PupilDataInclude? pupil,
   }) {
@@ -317,12 +317,12 @@ class PupilListInclude extends _i1.IncludeObject {
       };
 
   @override
-  _i1.Table<int?> get table => PupilList.t;
+  _i1.Table<int?> get table => PupilListEntry.t;
 }
 
-class PupilListIncludeList extends _i1.IncludeList {
-  PupilListIncludeList._({
-    _i1.WhereExpressionBuilder<PupilListTable>? where,
+class PupilListEntryIncludeList extends _i1.IncludeList {
+  PupilListEntryIncludeList._({
+    _i1.WhereExpressionBuilder<PupilListEntryTable>? where,
     super.limit,
     super.offset,
     super.orderBy,
@@ -330,22 +330,22 @@ class PupilListIncludeList extends _i1.IncludeList {
     super.orderByList,
     super.include,
   }) {
-    super.where = where?.call(PupilList.t);
+    super.where = where?.call(PupilListEntry.t);
   }
 
   @override
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int?> get table => PupilList.t;
+  _i1.Table<int?> get table => PupilListEntry.t;
 }
 
-class PupilListRepository {
-  const PupilListRepository._();
+class PupilListEntryRepository {
+  const PupilListEntryRepository._();
 
-  final attachRow = const PupilListAttachRowRepository._();
+  final attachRow = const PupilListEntryAttachRowRepository._();
 
-  /// Returns a list of [PupilList]s matching the given query parameters.
+  /// Returns a list of [PupilListEntry]s matching the given query parameters.
   ///
   /// Use [where] to specify which items to include in the return value.
   /// If none is specified, all items will be returned.
@@ -367,21 +367,21 @@ class PupilListRepository {
   ///   limit: 100,
   /// );
   /// ```
-  Future<List<PupilList>> find(
+  Future<List<PupilListEntry>> find(
     _i1.Session session, {
-    _i1.WhereExpressionBuilder<PupilListTable>? where,
+    _i1.WhereExpressionBuilder<PupilListEntryTable>? where,
     int? limit,
     int? offset,
-    _i1.OrderByBuilder<PupilListTable>? orderBy,
+    _i1.OrderByBuilder<PupilListEntryTable>? orderBy,
     bool orderDescending = false,
-    _i1.OrderByListBuilder<PupilListTable>? orderByList,
+    _i1.OrderByListBuilder<PupilListEntryTable>? orderByList,
     _i1.Transaction? transaction,
-    PupilListInclude? include,
+    PupilListEntryInclude? include,
   }) async {
-    return session.db.find<PupilList>(
-      where: where?.call(PupilList.t),
-      orderBy: orderBy?.call(PupilList.t),
-      orderByList: orderByList?.call(PupilList.t),
+    return session.db.find<PupilListEntry>(
+      where: where?.call(PupilListEntry.t),
+      orderBy: orderBy?.call(PupilListEntry.t),
+      orderByList: orderByList?.call(PupilListEntry.t),
       orderDescending: orderDescending,
       limit: limit,
       offset: offset,
@@ -390,7 +390,7 @@ class PupilListRepository {
     );
   }
 
-  /// Returns the first matching [PupilList] matching the given query parameters.
+  /// Returns the first matching [PupilListEntry] matching the given query parameters.
   ///
   /// Use [where] to specify which items to include in the return value.
   /// If none is specified, all items will be returned.
@@ -407,20 +407,20 @@ class PupilListRepository {
   ///   orderBy: (t) => t.age,
   /// );
   /// ```
-  Future<PupilList?> findFirstRow(
+  Future<PupilListEntry?> findFirstRow(
     _i1.Session session, {
-    _i1.WhereExpressionBuilder<PupilListTable>? where,
+    _i1.WhereExpressionBuilder<PupilListEntryTable>? where,
     int? offset,
-    _i1.OrderByBuilder<PupilListTable>? orderBy,
+    _i1.OrderByBuilder<PupilListEntryTable>? orderBy,
     bool orderDescending = false,
-    _i1.OrderByListBuilder<PupilListTable>? orderByList,
+    _i1.OrderByListBuilder<PupilListEntryTable>? orderByList,
     _i1.Transaction? transaction,
-    PupilListInclude? include,
+    PupilListEntryInclude? include,
   }) async {
-    return session.db.findFirstRow<PupilList>(
-      where: where?.call(PupilList.t),
-      orderBy: orderBy?.call(PupilList.t),
-      orderByList: orderByList?.call(PupilList.t),
+    return session.db.findFirstRow<PupilListEntry>(
+      where: where?.call(PupilListEntry.t),
+      orderBy: orderBy?.call(PupilListEntry.t),
+      orderByList: orderByList?.call(PupilListEntry.t),
       orderDescending: orderDescending,
       offset: offset,
       transaction: transaction,
@@ -428,119 +428,119 @@ class PupilListRepository {
     );
   }
 
-  /// Finds a single [PupilList] by its [id] or null if no such row exists.
-  Future<PupilList?> findById(
+  /// Finds a single [PupilListEntry] by its [id] or null if no such row exists.
+  Future<PupilListEntry?> findById(
     _i1.Session session,
     int id, {
     _i1.Transaction? transaction,
-    PupilListInclude? include,
+    PupilListEntryInclude? include,
   }) async {
-    return session.db.findById<PupilList>(
+    return session.db.findById<PupilListEntry>(
       id,
       transaction: transaction,
       include: include,
     );
   }
 
-  /// Inserts all [PupilList]s in the list and returns the inserted rows.
+  /// Inserts all [PupilListEntry]s in the list and returns the inserted rows.
   ///
-  /// The returned [PupilList]s will have their `id` fields set.
+  /// The returned [PupilListEntry]s will have their `id` fields set.
   ///
   /// This is an atomic operation, meaning that if one of the rows fails to
   /// insert, none of the rows will be inserted.
-  Future<List<PupilList>> insert(
+  Future<List<PupilListEntry>> insert(
     _i1.Session session,
-    List<PupilList> rows, {
+    List<PupilListEntry> rows, {
     _i1.Transaction? transaction,
   }) async {
-    return session.db.insert<PupilList>(
+    return session.db.insert<PupilListEntry>(
       rows,
       transaction: transaction,
     );
   }
 
-  /// Inserts a single [PupilList] and returns the inserted row.
+  /// Inserts a single [PupilListEntry] and returns the inserted row.
   ///
-  /// The returned [PupilList] will have its `id` field set.
-  Future<PupilList> insertRow(
+  /// The returned [PupilListEntry] will have its `id` field set.
+  Future<PupilListEntry> insertRow(
     _i1.Session session,
-    PupilList row, {
+    PupilListEntry row, {
     _i1.Transaction? transaction,
   }) async {
-    return session.db.insertRow<PupilList>(
+    return session.db.insertRow<PupilListEntry>(
       row,
       transaction: transaction,
     );
   }
 
-  /// Updates all [PupilList]s in the list and returns the updated rows. If
+  /// Updates all [PupilListEntry]s in the list and returns the updated rows. If
   /// [columns] is provided, only those columns will be updated. Defaults to
   /// all columns.
   /// This is an atomic operation, meaning that if one of the rows fails to
   /// update, none of the rows will be updated.
-  Future<List<PupilList>> update(
+  Future<List<PupilListEntry>> update(
     _i1.Session session,
-    List<PupilList> rows, {
-    _i1.ColumnSelections<PupilListTable>? columns,
+    List<PupilListEntry> rows, {
+    _i1.ColumnSelections<PupilListEntryTable>? columns,
     _i1.Transaction? transaction,
   }) async {
-    return session.db.update<PupilList>(
+    return session.db.update<PupilListEntry>(
       rows,
-      columns: columns?.call(PupilList.t),
+      columns: columns?.call(PupilListEntry.t),
       transaction: transaction,
     );
   }
 
-  /// Updates a single [PupilList]. The row needs to have its id set.
+  /// Updates a single [PupilListEntry]. The row needs to have its id set.
   /// Optionally, a list of [columns] can be provided to only update those
   /// columns. Defaults to all columns.
-  Future<PupilList> updateRow(
+  Future<PupilListEntry> updateRow(
     _i1.Session session,
-    PupilList row, {
-    _i1.ColumnSelections<PupilListTable>? columns,
+    PupilListEntry row, {
+    _i1.ColumnSelections<PupilListEntryTable>? columns,
     _i1.Transaction? transaction,
   }) async {
-    return session.db.updateRow<PupilList>(
+    return session.db.updateRow<PupilListEntry>(
       row,
-      columns: columns?.call(PupilList.t),
+      columns: columns?.call(PupilListEntry.t),
       transaction: transaction,
     );
   }
 
-  /// Deletes all [PupilList]s in the list and returns the deleted rows.
+  /// Deletes all [PupilListEntry]s in the list and returns the deleted rows.
   /// This is an atomic operation, meaning that if one of the rows fail to
   /// be deleted, none of the rows will be deleted.
-  Future<List<PupilList>> delete(
+  Future<List<PupilListEntry>> delete(
     _i1.Session session,
-    List<PupilList> rows, {
+    List<PupilListEntry> rows, {
     _i1.Transaction? transaction,
   }) async {
-    return session.db.delete<PupilList>(
+    return session.db.delete<PupilListEntry>(
       rows,
       transaction: transaction,
     );
   }
 
-  /// Deletes a single [PupilList].
-  Future<PupilList> deleteRow(
+  /// Deletes a single [PupilListEntry].
+  Future<PupilListEntry> deleteRow(
     _i1.Session session,
-    PupilList row, {
+    PupilListEntry row, {
     _i1.Transaction? transaction,
   }) async {
-    return session.db.deleteRow<PupilList>(
+    return session.db.deleteRow<PupilListEntry>(
       row,
       transaction: transaction,
     );
   }
 
   /// Deletes all rows matching the [where] expression.
-  Future<List<PupilList>> deleteWhere(
+  Future<List<PupilListEntry>> deleteWhere(
     _i1.Session session, {
-    required _i1.WhereExpressionBuilder<PupilListTable> where,
+    required _i1.WhereExpressionBuilder<PupilListEntryTable> where,
     _i1.Transaction? transaction,
   }) async {
-    return session.db.deleteWhere<PupilList>(
-      where: where(PupilList.t),
+    return session.db.deleteWhere<PupilListEntry>(
+      where: where(PupilListEntry.t),
       transaction: transaction,
     );
   }
@@ -549,63 +549,63 @@ class PupilListRepository {
   /// will return the count of all rows in the table.
   Future<int> count(
     _i1.Session session, {
-    _i1.WhereExpressionBuilder<PupilListTable>? where,
+    _i1.WhereExpressionBuilder<PupilListEntryTable>? where,
     int? limit,
     _i1.Transaction? transaction,
   }) async {
-    return session.db.count<PupilList>(
-      where: where?.call(PupilList.t),
+    return session.db.count<PupilListEntry>(
+      where: where?.call(PupilListEntry.t),
       limit: limit,
       transaction: transaction,
     );
   }
 }
 
-class PupilListAttachRowRepository {
-  const PupilListAttachRowRepository._();
+class PupilListEntryAttachRowRepository {
+  const PupilListEntryAttachRowRepository._();
 
-  /// Creates a relation between the given [PupilList] and [SchoolList]
-  /// by setting the [PupilList]'s foreign key `schoolListId` to refer to the [SchoolList].
+  /// Creates a relation between the given [PupilListEntry] and [SchoolList]
+  /// by setting the [PupilListEntry]'s foreign key `schoolListId` to refer to the [SchoolList].
   Future<void> schoolList(
     _i1.Session session,
-    PupilList pupilList,
+    PupilListEntry pupilListEntry,
     _i2.SchoolList schoolList, {
     _i1.Transaction? transaction,
   }) async {
-    if (pupilList.id == null) {
-      throw ArgumentError.notNull('pupilList.id');
+    if (pupilListEntry.id == null) {
+      throw ArgumentError.notNull('pupilListEntry.id');
     }
     if (schoolList.id == null) {
       throw ArgumentError.notNull('schoolList.id');
     }
 
-    var $pupilList = pupilList.copyWith(schoolListId: schoolList.id);
-    await session.db.updateRow<PupilList>(
-      $pupilList,
-      columns: [PupilList.t.schoolListId],
+    var $pupilListEntry = pupilListEntry.copyWith(schoolListId: schoolList.id);
+    await session.db.updateRow<PupilListEntry>(
+      $pupilListEntry,
+      columns: [PupilListEntry.t.schoolListId],
       transaction: transaction,
     );
   }
 
-  /// Creates a relation between the given [PupilList] and [PupilData]
-  /// by setting the [PupilList]'s foreign key `pupilId` to refer to the [PupilData].
+  /// Creates a relation between the given [PupilListEntry] and [PupilData]
+  /// by setting the [PupilListEntry]'s foreign key `pupilId` to refer to the [PupilData].
   Future<void> pupil(
     _i1.Session session,
-    PupilList pupilList,
+    PupilListEntry pupilListEntry,
     _i3.PupilData pupil, {
     _i1.Transaction? transaction,
   }) async {
-    if (pupilList.id == null) {
-      throw ArgumentError.notNull('pupilList.id');
+    if (pupilListEntry.id == null) {
+      throw ArgumentError.notNull('pupilListEntry.id');
     }
     if (pupil.id == null) {
       throw ArgumentError.notNull('pupil.id');
     }
 
-    var $pupilList = pupilList.copyWith(pupilId: pupil.id);
-    await session.db.updateRow<PupilList>(
-      $pupilList,
-      columns: [PupilList.t.pupilId],
+    var $pupilListEntry = pupilListEntry.copyWith(pupilId: pupil.id);
+    await session.db.updateRow<PupilListEntry>(
+      $pupilListEntry,
+      columns: [PupilListEntry.t.pupilId],
       transaction: transaction,
     );
   }

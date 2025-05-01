@@ -20,8 +20,10 @@ class SchoolListsPage extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     bool filtersOn = watchValue((SchoolListFilterManager x) => x.filterState);
-
     List<SchoolList> schoolLists =
+        watchPropertyValue((SchoolListManager x) => x.schoolLists);
+    _schoolListFilterManager.updateFilteredSchoolLists(schoolLists);
+    List<SchoolList> filteredSchoolLists =
         watchValue((SchoolListFilterManager x) => x.filteredSchoolLists);
     // List<SchoolList> visibleSchoolLists = schoolLists
     //     .where((element) =>
@@ -68,7 +70,7 @@ class SchoolListsPage extends WatchingWidget {
                       ),
                       const Gap(10),
                       Text(
-                        schoolLists.length.toString(),
+                        filteredSchoolLists.length.toString(),
                         style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -108,7 +110,7 @@ class SchoolListsPage extends WatchingWidget {
                     ],
                   ),
                 ),
-                schoolLists.isEmpty
+                filteredSchoolLists.isEmpty
                     ? const Center(
                         child: Padding(
                           padding: EdgeInsets.all(8.0),
@@ -120,10 +122,10 @@ class SchoolListsPage extends WatchingWidget {
                       )
                     : Expanded(
                         child: ListView.builder(
-                          itemCount: schoolLists.length,
+                          itemCount: filteredSchoolLists.length,
                           itemBuilder: (BuildContext context, int index) {
                             return SchoolListCard(
-                                schoolList: schoolLists[index]);
+                                schoolList: filteredSchoolLists[index]);
                           },
                         ),
                       ),

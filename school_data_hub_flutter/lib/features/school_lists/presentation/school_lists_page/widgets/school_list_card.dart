@@ -21,8 +21,9 @@ class SchoolListCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final schoolList = watchValue((SchoolListManager x) => x.schoolLists)
-        .firstWhere((element) => element.listId == this.schoolList.listId);
+    final schoolList =
+        watchPropertyValue((SchoolListManager x) => x.schoolLists)
+            .firstWhere((element) => element.listId == this.schoolList.listId);
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Card(
@@ -114,10 +115,11 @@ class SchoolListCard extends WatchingWidget {
                                   scrollDirection: Axis.horizontal,
                                   child: Padding(
                                     padding: const EdgeInsets.only(right: 10.0),
-                                    child: schoolListStatsRow(
-                                        schoolList,
-                                        _schoolListManager.pupilsInSchoolList(
-                                          schoolList.listId,
+                                    child: SchoolListStatsRow(
+                                        schoolList: schoolList,
+                                        pupils: _schoolListManager
+                                            .pupilsPresentInSchoolList(
+                                          schoolList.id!,
                                           _pupilManager.allPupils,
                                         )),
                                   ),

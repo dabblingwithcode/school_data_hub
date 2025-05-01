@@ -54,7 +54,8 @@ class SchoolListPupilsPageSearchBar extends WatchingWidget {
                     const Gap(10),
                     Row(
                       children: [
-                        schoolListStatsRow(schoolList, pupilsInList),
+                        SchoolListStatsRow(
+                            schoolList: schoolList, pupils: pupilsInList),
                         const Gap(10),
                         schoolList.public != true
                             ? Text(

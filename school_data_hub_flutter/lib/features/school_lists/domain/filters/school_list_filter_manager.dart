@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
@@ -12,7 +11,6 @@ final _schoolListManager = di<SchoolListManager>();
 final _log = Logger('SchoolListFilterManager');
 final _filtersStateManager = di<FiltersStateManager>();
 final _pupilFilterManager = di<PupilFilterManager>();
-final _notificationService = di<NotificationService>();
 
 class SchoolListFilterManager {
   final _filteredSchoolLists = ValueNotifier<List<SchoolList>>([]);
@@ -30,55 +28,55 @@ class SchoolListFilterManager {
 
   void resetFilters() {
     _filterState.value = false;
-    _filteredSchoolLists.value = _schoolListManager.schoolLists.value;
+    _filteredSchoolLists.value = _schoolListManager.schoolLists;
     _filtersStateManager.setFilterState(
         filterState: FilterState.schoolList, value: false);
   }
 
   void onSearchEnter(String text) {
     if (text.isEmpty) {
-      _filteredSchoolLists.value = _schoolListManager.schoolLists.value;
+      _filteredSchoolLists.value = _schoolListManager.schoolLists;
       return;
     }
     _filterState.value = true;
     _filtersStateManager.setFilterState(
         filterState: FilterState.schoolList, value: true);
     String lowerCaseText = text.toLowerCase();
-    _filteredSchoolLists.value = _schoolListManager.schoolLists.value
+    _filteredSchoolLists.value = _schoolListManager.schoolLists
         .where((element) => element.name.toLowerCase().contains(lowerCaseText))
         .toList();
   }
 
-  List<PupilList> addPupilListFiltersToFilteredPupils(
-      List<PupilList> pupilLists) {
-    List<PupilList> filteredPupilLists = [];
+  List<PupilListEntry> addPupilEntryFiltersToFilteredPupils(
+      List<PupilListEntry> pupilEntries) {
+    List<PupilListEntry> filteredPupilEntries = [];
     bool filterIsOn = false;
-    for (PupilList pupilList in pupilLists) {
+    for (PupilListEntry pupilEntry in pupilEntries) {
       if (_pupilFilterManager
               .pupilFilterState.value[PupilFilter.schoolListYesResponse]! &&
-          pupilList.status != true) {
+          pupilEntry.status != true) {
         filterIsOn = true;
         continue;
       }
       if (_pupilFilterManager
               .pupilFilterState.value[PupilFilter.schoolListNoResponse]! &&
-          pupilList.status != false) {
+          pupilEntry.status != false) {
         filterIsOn = true;
         continue;
       }
       if (_pupilFilterManager
               .pupilFilterState.value[PupilFilter.schoolListNullResponse]! &&
-          pupilList.status != null) {
+          pupilEntry.status != null) {
         filterIsOn = true;
         continue;
       }
       if (_pupilFilterManager
               .pupilFilterState.value[PupilFilter.schoolListCommentResponse]! &&
-          pupilList.comment == null) {
+          pupilEntry.comment == null) {
         filterIsOn = true;
         continue;
       }
-      filteredPupilLists.add(pupilList);
+      filteredPupilEntries.add(pupilEntry);
     }
     //- TODO: Implement filterState, FlutterError (setState() or markNeedsBuild() called during build.
     // if (filterIsOn) {
@@ -87,6 +85,6 @@ class SchoolListFilterManager {
     //   _filterState.value = false;
     // }
 
-    return filteredPupilLists;
+    return filteredPupilEntries;
   }
 }

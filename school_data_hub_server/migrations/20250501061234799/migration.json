@@ -2371,7 +2371,7 @@
       "type": "createTable",
       "createTable": {
         "name": "pupil_list",
-        "dartName": "PupilList",
+        "dartName": "PupilListEntry",
         "module": "school_data_hub",
         "schema": "public",
         "columns": [
@@ -2425,7 +2425,7 @@
               "id"
             ],
             "onUpdate": 3,
-            "onDelete": 3
+            "onDelete": 4
           },
           {
             "constraintName": "pupil_list_fk_1",
@@ -2438,7 +2438,7 @@
               "id"
             ],
             "onUpdate": 3,
-            "onDelete": 3
+            "onDelete": 4
           }
         ],
         "indexes": [

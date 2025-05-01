@@ -40,7 +40,7 @@ class NewSchoolListPageState extends State<NewSchoolListPage> {
   @override
   Widget build(BuildContext context) {
     List<PupilProxy> pupilsFromIds =
-        _pupilManager.pupilsFromInternalIds(pupilIds.toList());
+        _pupilManager.pupilsFromPupilIds(pupilIds.toList());
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
