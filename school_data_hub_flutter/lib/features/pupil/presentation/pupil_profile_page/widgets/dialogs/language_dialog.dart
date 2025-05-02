@@ -32,9 +32,9 @@ Future<void> languageDialog(BuildContext context, PupilProxy pupil,
   return await showDialog(
       context: context,
       builder: (context) {
-        int dropdownUnderstandValue = languageValue?.understanding ?? 0;
-        int dropdownSpeakValue = languageValue?.speaking ?? 0;
-        int dropdownReadValue = languageValue?.reading ?? 0;
+        int dropdownUnderstandValue = languageValue?.understanding ?? 4;
+        int dropdownSpeakValue = languageValue?.speaking ?? 4;
+        int dropdownReadValue = languageValue?.reading ?? 4;
 
         return StatefulBuilder(builder: (context, setState) {
           return AlertDialog(
@@ -126,7 +126,7 @@ Future<void> languageDialog(BuildContext context, PupilProxy pupil,
                                 createdBy: _serverpodSessionManager.userName!,
                               );
                         _pupilManager.updateTutorInfo(
-                            internalId: pupil.internalId, tutorInfo: tutorInfo);
+                            pupilId: pupil.pupilId, tutorInfo: tutorInfo);
                         break;
                       case CommunicationSubject.tutor2:
                         final tutorInfo = pupil.tutorInfo != null
@@ -138,14 +138,10 @@ Future<void> languageDialog(BuildContext context, PupilProxy pupil,
                                 createdBy: _serverpodSessionManager.userName!,
                               );
                         _pupilManager.updateTutorInfo(
-                            internalId: pupil.internalId, tutorInfo: tutorInfo);
+                            pupilId: pupil.pupilId, tutorInfo: tutorInfo);
                         break;
                     }
-                    // _pupilManager.updateTutorInfo(internalId: pupil.internalId, tutorInfo: tutorInfo)
-                    // patchOnePupilProperty(
-                    //     pupilId: pupil.internalId,
-                    //     jsonKey: type,
-                    //     value: communicationValue);
+
                     Navigator.of(context).pop();
                   },
                 ),

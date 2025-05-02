@@ -91,17 +91,6 @@ class SchoolListManager with ChangeNotifier {
     return _pupilManager.pupilsFromPupilIds(pupilIdsInList);
   }
 
-  // TODO: Are we using this function anywhere?
-  // //- If not, remove it
-  // List<PupilProxy> pupilsPresentInSchoolList(
-  //     int listId, List<PupilProxy> pupils) {
-  //   List<PupilProxy> pupilsInList = getPupilsinSchoolList(listId);
-  //   return pupils
-  //       .where((pupil) => pupilsInList
-  //           .any((element) => element.internalId == pupil.internalId))
-  //       .toList();
-  // }
-
   //- Update collections
 
   void _updateCollectionsFromSchoolList(SchoolList schoolList) {

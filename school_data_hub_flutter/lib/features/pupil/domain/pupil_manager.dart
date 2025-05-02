@@ -359,25 +359,23 @@ class PupilManager extends ChangeNotifier {
   /// TODO: We need to use pupilId here instead of internalId
   /// like everywhere else in the code
   Future<void> updateTutorInfo(
-      {required int internalId, required TutorInfo tutorInfo}) async {
+      {required int pupilId, required TutorInfo? tutorInfo}) async {
     // check if the pupil is a sibling and handle them if true
-    final pupilSiblings = siblings(getPupilByPupilId(internalId)!);
+    final pupilSiblings = siblings(getPupilByPupilId(pupilId)!);
     if (pupilSiblings.isNotEmpty) {
       // create list with ids of all pupils with the same family value
-      final List<int> siblingIds =
-          pupilSiblings.map((p) => p.internalId).toList();
+      final List<int> siblingIds = pupilSiblings.map((p) => p.pupilId).toList();
 
       // call the endpoint to update the siblings
 
       final List<PupilData> siblingsUpdate = await _pupilDataApiService
           .updateSiblingsTutorInfo(
-              tutorInfo: tutorInfo,
-              siblingsInternalIds: [...siblingIds, internalId]);
+              tutorInfo: tutorInfo, siblingsIds: [...siblingIds, pupilId]);
 
       // now update the siblings with the new data
 
       for (PupilData sibling in siblingsUpdate) {
-        _pupilIdPupilsMap[sibling.internalId]!.updatePupil(sibling);
+        updatePupilProxyWithPupilData(sibling);
       }
 
       _notificationService.showSnackBar(
@@ -386,7 +384,7 @@ class PupilManager extends ChangeNotifier {
       return;
     }
     // send the Api request
-    final pupilToUpdate = getPupilByPupilId(internalId)!;
+    final pupilToUpdate = getPupilByPupilId(pupilId)!;
 
     final PupilData pupilUpdate = await _pupilDataApiService.updateTutorInfo(
         pupilId: pupilToUpdate.pupilId, tutorInfo: tutorInfo);
@@ -397,7 +395,7 @@ class PupilManager extends ChangeNotifier {
 
   Future<void> updatePupilCommunicationSkills(
       {required int pupilId,
-      required CommunicationSkills communicationSkills}) async {
+      required CommunicationSkills? communicationSkills}) async {
     try {
       final PupilData pupilData =
           await _pupilDataApiService.updateCommunicationSkills(

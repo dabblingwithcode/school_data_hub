@@ -973,8 +973,8 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'tutorInfo': _i1.ParameterDescription(
               name: 'tutorInfo',
-              type: _i1.getType<_i23.TutorInfo>(),
-              nullable: false,
+              type: _i1.getType<_i23.TutorInfo?>(),
+              nullable: true,
             ),
           },
           call: (

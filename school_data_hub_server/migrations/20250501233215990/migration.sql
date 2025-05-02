@@ -1471,9 +1471,9 @@ ALTER TABLE ONLY "serverpod_query_log"
 -- MIGRATION VERSION FOR school_data_hub
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('school_data_hub', '20250501225001760', now())
+    VALUES ('school_data_hub', '20250501233215990', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20250501225001760', "timestamp" = now();
+    DO UPDATE SET "version" = '20250501233215990', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

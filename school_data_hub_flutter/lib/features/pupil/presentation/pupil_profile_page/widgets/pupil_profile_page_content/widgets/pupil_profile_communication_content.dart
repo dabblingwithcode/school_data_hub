@@ -4,6 +4,8 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/paddings.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -15,12 +17,13 @@ import 'package:watch_it/watch_it.dart';
 final _pupilManager = di<PupilManager>();
 final _serverpodSessionManager = di<ServerpodSessionManager>();
 
-class PupilCommunicationContent extends StatelessWidget {
+class PupilCommunicationContent extends WatchingWidget {
   final PupilProxy pupil;
   const PupilCommunicationContent({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final observedPupil = watch(pupil);
     return Card(
       color: AppColors.pupilProfileCardColor,
       shape: RoundedRectangleBorder(
@@ -52,7 +55,7 @@ class PupilCommunicationContent extends StatelessWidget {
             children: [
               const Text('Familiensprache:', style: TextStyle(fontSize: 18.0)),
               const Gap(10),
-              Text(pupil.language,
+              Text(observedPupil.language,
                   style: const TextStyle(
                       fontSize: 18.0, fontWeight: FontWeight.bold))
             ],
@@ -63,8 +66,8 @@ class PupilCommunicationContent extends StatelessWidget {
               const Text('Erstförderung:', style: TextStyle(fontSize: 18.0)),
               const Gap(10),
               Text(
-                  pupil.migrationSupportEnds != null
-                      ? 'bis : ${pupil.migrationSupportEnds!.formatForUser()}'
+                  observedPupil.migrationSupportEnds != null
+                      ? 'bis : ${observedPupil.migrationSupportEnds!.formatForUser()}'
                       : 'keine',
                   style: const TextStyle(
                       fontSize: 18.0, fontWeight: FontWeight.bold)),
@@ -95,19 +98,25 @@ class PupilCommunicationContent extends StatelessWidget {
           ),
           const Gap(10),
           InkWell(
-            onTap: () =>
-                languageDialog(context, pupil, CommunicationSubject.pupil),
-            onLongPress: () => _pupilManager.updatePupilCommunicationSkills(
-              pupilId: pupil.pupilId,
-              communicationSkills: CommunicationSkills(
-                understanding: 0,
-                speaking: 0,
-                reading: 0,
-                createdBy: _serverpodSessionManager.userName!,
-                createdAt: DateTime.now(),
-              ),
-            ),
-            child: pupil.communicationPupil == null
+            onTap: () => languageDialog(
+                context, observedPupil, CommunicationSubject.pupil),
+            onLongPress: () async {
+              if (_serverpodSessionManager.isAdmin == false) {
+                informationDialog(context, 'Keine Berechtigung',
+                    'Diese Aktion ist nur für Admins verfügbar.');
+                return;
+              }
+              await confirmationDialog(
+                  context: context,
+                  title: 'Eintrag zurücksetzen',
+                  message: 'Eintrag zurücksetzen?');
+
+              _pupilManager.updatePupilCommunicationSkills(
+                pupilId: observedPupil.pupilId,
+                communicationSkills: null,
+              );
+            },
+            child: observedPupil.communicationPupil == null
                 ? const Text(
                     'kein Eintrag',
                     style: TextStyle(
@@ -129,7 +138,7 @@ class PupilCommunicationContent extends StatelessWidget {
                             child: InkWell(
                               child: CommunicationValues(
                                   communicationSkills:
-                                      pupil.communicationPupil!),
+                                      observedPupil.communicationPupil!),
                             ),
                           )
                         ],
@@ -149,14 +158,28 @@ class PupilCommunicationContent extends StatelessWidget {
           ),
           const Gap(10),
           InkWell(
-            onTap: () =>
-                languageDialog(context, pupil, CommunicationSubject.tutor1),
-            onLongPress: () => _pupilManager.updateTutorInfo(
-                internalId: pupil.internalId,
-                tutorInfo: pupil.tutorInfo != null
-                    ? pupil.tutorInfo!.copyWith(communicationTutor1: null)
-                    : TutorInfo(createdBy: _serverpodSessionManager.userName!)),
-            child: pupil.tutorInfo == null
+            onTap: () => languageDialog(
+                context, observedPupil, CommunicationSubject.tutor1),
+            onLongPress: () async {
+              final isAdmin = _serverpodSessionManager.isAdmin;
+              if (!isAdmin) {
+                informationDialog(context, 'Keine Berechtigung',
+                    'Diese Aktion ist nur für Admins verfügbar.');
+                return;
+              }
+              final success = await confirmationDialog(
+                  context: context,
+                  title: 'Eintrag zurücksetzen',
+                  message: 'Eintrag zurücksetzen?');
+              if (success == false) {
+                return;
+              }
+              _pupilManager.updateTutorInfo(
+                  pupilId: observedPupil.pupilId,
+                  tutorInfo: observedPupil.tutorInfo
+                      ?.copyWith(communicationTutor1: null));
+            },
+            child: observedPupil.tutorInfo == null
                 ? const Text(
                     'kein Eintrag',
                     style: TextStyle(
@@ -176,8 +199,8 @@ class PupilCommunicationContent extends StatelessWidget {
                           const Gap(10),
                           InkWell(
                             child: CommunicationValues(
-                                communicationSkills:
-                                    pupil.tutorInfo!.communicationTutor1),
+                                communicationSkills: observedPupil
+                                    .tutorInfo!.communicationTutor1),
                           )
                         ],
                       ),
@@ -196,14 +219,15 @@ class PupilCommunicationContent extends StatelessWidget {
           ),
           const Gap(10),
           InkWell(
-            onTap: () =>
-                languageDialog(context, pupil, CommunicationSubject.tutor2),
+            onTap: () => languageDialog(
+                context, observedPupil, CommunicationSubject.tutor2),
             onLongPress: () => _pupilManager.updateTutorInfo(
-                internalId: pupil.internalId,
-                tutorInfo: pupil.tutorInfo != null
-                    ? pupil.tutorInfo!.copyWith(communicationTutor2: null)
+                pupilId: observedPupil.pupilId,
+                tutorInfo: observedPupil.tutorInfo != null
+                    ? observedPupil.tutorInfo!
+                        .copyWith(communicationTutor2: null)
                     : TutorInfo(createdBy: _serverpodSessionManager.userName!)),
-            child: pupil.tutorInfo == null
+            child: observedPupil.tutorInfo == null
                 ? const Text(
                     'kein Eintrag',
                     style: TextStyle(
@@ -223,8 +247,8 @@ class PupilCommunicationContent extends StatelessWidget {
                           const Gap(10),
                           InkWell(
                             child: CommunicationValues(
-                                communicationSkills:
-                                    pupil.tutorInfo!.communicationTutor2),
+                                communicationSkills: observedPupil
+                                    .tutorInfo!.communicationTutor2),
                           )
                         ],
                       ),

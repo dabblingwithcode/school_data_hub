@@ -36,7 +36,7 @@ class PupilUpdateEndpoint extends Endpoint {
   }
 
   Future<PupilData> updateTutorInfo(
-      Session session, int pupilId, TutorInfo tutorInfo) async {
+      Session session, int pupilId, TutorInfo? tutorInfo) async {
     final pupil = await PupilData.db.findById(session, pupilId);
     if (pupil == null) {
       throw Exception('Pupil not found');
@@ -57,10 +57,10 @@ class PupilUpdateEndpoint extends Endpoint {
   Future<List<PupilData>> updateSiblingsTutorInfo(
       Session session, SiblingsTutorInfo siblingsTutorInfo) async {
     final List<PupilData> updatedSiblings = [];
-    for (final internalId in siblingsTutorInfo.siblingsInternalIds) {
-      final pupil = await PupilData.db.findFirstRow(
+    for (final pupilId in siblingsTutorInfo.siblingsIds) {
+      final pupil = await PupilData.db.findById(
         session,
-        where: (t) => t.internalId.equals(internalId),
+        pupilId,
       );
       if (pupil == null) {
         throw Exception('Pupil not found');
@@ -74,7 +74,7 @@ class PupilUpdateEndpoint extends Endpoint {
     // Fetch the object again with the relation included
     final updatedSiblingsWithRelation = await PupilData.db.find(
       session,
-      where: (t) => t.internalId.inSet(siblingsTutorInfo.siblingsInternalIds),
+      where: (t) => t.id.inSet(siblingsTutorInfo.siblingsIds),
       include: PupilSchemas.allInclude,
     );
     return updatedSiblingsWithRelation;
@@ -101,7 +101,7 @@ class PupilUpdateEndpoint extends Endpoint {
     final hubDocument = HubDocument(
       documentId: documentId,
       documentPath: filePath,
-      createdBy: createdBy!,
+      createdBy: createdBy,
       createdAt: DateTime.now(),
     );
 

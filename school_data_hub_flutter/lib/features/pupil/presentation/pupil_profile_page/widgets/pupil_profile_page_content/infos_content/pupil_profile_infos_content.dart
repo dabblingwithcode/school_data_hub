@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/paddings.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
@@ -26,8 +25,6 @@ import 'package:watch_it/watch_it.dart';
 final _pupilManager = di<PupilManager>();
 
 final _matrixPolicyManager = di<MatrixPolicyManager>();
-
-final _notificationService = di<NotificationService>();
 
 final _serverpodSessionManager = di<ServerpodSessionManager>();
 
@@ -261,7 +258,7 @@ class PupilInfosContent extends StatelessWidget {
                         context: context);
                     if (parentsContact == null) return;
                     await _pupilManager.updateTutorInfo(
-                      internalId: pupil.internalId,
+                      pupilId: pupil.pupilId,
                       tutorInfo: pupil.tutorInfo != null
                           ? pupil.tutorInfo!
                               .copyWith(parentsContact: parentsContact)

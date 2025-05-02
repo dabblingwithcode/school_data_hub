@@ -152,7 +152,7 @@ class PupilDataApiService {
 
   Future<PupilData> updateTutorInfo({
     required int pupilId,
-    required TutorInfo tutorInfo,
+    required TutorInfo? tutorInfo,
   }) async {
     try {
       _notificationService.apiRunning(true);
@@ -175,11 +175,11 @@ class PupilDataApiService {
   //- update siblings tutor info
 
   Future<List<PupilData>> updateSiblingsTutorInfo({
-    required List<int> siblingsInternalIds,
-    required TutorInfo tutorInfo,
+    required List<int> siblingsIds,
+    required TutorInfo? tutorInfo,
   }) async {
     final siblingsTutorInfo = SiblingsTutorInfo(
-      siblingsInternalIds: siblingsInternalIds.toSet(),
+      siblingsIds: siblingsIds.toSet(),
       tutorInfo: tutorInfo,
     );
 

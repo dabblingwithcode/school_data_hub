@@ -14,41 +14,43 @@ import '../../pupil_data/pupil_objects/communication/tutor_info.dart' as _i2;
 
 abstract class SiblingsTutorInfo implements _i1.SerializableModel {
   SiblingsTutorInfo._({
-    required this.tutorInfo,
-    required this.siblingsInternalIds,
+    this.tutorInfo,
+    required this.siblingsIds,
   });
 
   factory SiblingsTutorInfo({
-    required _i2.TutorInfo tutorInfo,
-    required Set<int> siblingsInternalIds,
+    _i2.TutorInfo? tutorInfo,
+    required Set<int> siblingsIds,
   }) = _SiblingsTutorInfoImpl;
 
   factory SiblingsTutorInfo.fromJson(Map<String, dynamic> jsonSerialization) {
     return SiblingsTutorInfo(
-      tutorInfo: _i2.TutorInfo.fromJson(
-          (jsonSerialization['tutorInfo'] as Map<String, dynamic>)),
-      siblingsInternalIds: _i1.SetJsonExtension.fromJson(
-          (jsonSerialization['siblingsInternalIds'] as List),
+      tutorInfo: jsonSerialization['tutorInfo'] == null
+          ? null
+          : _i2.TutorInfo.fromJson(
+              (jsonSerialization['tutorInfo'] as Map<String, dynamic>)),
+      siblingsIds: _i1.SetJsonExtension.fromJson(
+          (jsonSerialization['siblingsIds'] as List),
           itemFromJson: (e) => e as int)!,
     );
   }
 
-  _i2.TutorInfo tutorInfo;
+  _i2.TutorInfo? tutorInfo;
 
-  Set<int> siblingsInternalIds;
+  Set<int> siblingsIds;
 
   /// Returns a shallow copy of this [SiblingsTutorInfo]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   SiblingsTutorInfo copyWith({
     _i2.TutorInfo? tutorInfo,
-    Set<int>? siblingsInternalIds,
+    Set<int>? siblingsIds,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
-      'tutorInfo': tutorInfo.toJson(),
-      'siblingsInternalIds': siblingsInternalIds.toJson(),
+      if (tutorInfo != null) 'tutorInfo': tutorInfo?.toJson(),
+      'siblingsIds': siblingsIds.toJson(),
     };
   }
 
@@ -58,13 +60,15 @@ abstract class SiblingsTutorInfo implements _i1.SerializableModel {
   }
 }
 
+class _Undefined {}
+
 class _SiblingsTutorInfoImpl extends SiblingsTutorInfo {
   _SiblingsTutorInfoImpl({
-    required _i2.TutorInfo tutorInfo,
-    required Set<int> siblingsInternalIds,
+    _i2.TutorInfo? tutorInfo,
+    required Set<int> siblingsIds,
   }) : super._(
           tutorInfo: tutorInfo,
-          siblingsInternalIds: siblingsInternalIds,
+          siblingsIds: siblingsIds,
         );
 
   /// Returns a shallow copy of this [SiblingsTutorInfo]
@@ -72,13 +76,13 @@ class _SiblingsTutorInfoImpl extends SiblingsTutorInfo {
   @_i1.useResult
   @override
   SiblingsTutorInfo copyWith({
-    _i2.TutorInfo? tutorInfo,
-    Set<int>? siblingsInternalIds,
+    Object? tutorInfo = _Undefined,
+    Set<int>? siblingsIds,
   }) {
     return SiblingsTutorInfo(
-      tutorInfo: tutorInfo ?? this.tutorInfo.copyWith(),
-      siblingsInternalIds: siblingsInternalIds ??
-          this.siblingsInternalIds.map((e0) => e0).toSet(),
+      tutorInfo:
+          tutorInfo is _i2.TutorInfo? ? tutorInfo : this.tutorInfo?.copyWith(),
+      siblingsIds: siblingsIds ?? this.siblingsIds.map((e0) => e0).toSet(),
     );
   }
 }
