@@ -1,30 +1,31 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:schuldaten_hub/common/domain/models/enums.dart';
-import 'package:schuldaten_hub/common/services/api/api_settings.dart';
-import 'package:schuldaten_hub/common/services/locator.dart';
-import 'package:schuldaten_hub/common/services/notification_service.dart';
-import 'package:schuldaten_hub/features/authorizations/domain/models/authorization.dart';
-import 'package:schuldaten_hub/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/features/authorizations/data/authorization_api_service.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:watch_it/watch_it.dart';
+
+final _notificationService = di<NotificationService>();
+final _authorizationApiService = AuthorizationApiService();
+final _serverpodSessionManager = di<ServerpodSessionManager>();
 
 class AuthorizationManager {
   ValueListenable<List<Authorization>> get authorizations => _authorizations;
 
   final _authorizations = ValueNotifier<List<Authorization>>([]);
-  Map<String, Authorization> _authorizationsMap = {};
+  Map<int, Authorization> _authorizationsMap = {};
 
   AuthorizationManager();
 
   Future<AuthorizationManager> init() async {
-    notificationService.showSnackBar(
+    _notificationService.showSnackBar(
         NotificationType.success, 'Einwilligungen werden geladen');
     await fetchAuthorizations();
     return this;
   }
-
-  final notificationService = locator<NotificationService>();
-  final authorizationApiService = AuthorizationApiService();
 
   void clearData() {
     _authorizations.value = [];
@@ -32,15 +33,14 @@ class AuthorizationManager {
   }
 
   Future<void> fetchAuthorizations() async {
-    final authorizations = await authorizationApiService.fetchAuthorizations();
+    final authorizations = await _authorizationApiService.fetchAuthorizations();
 
-    notificationService.showSnackBar(NotificationType.success,
+    _notificationService.showSnackBar(NotificationType.success,
         '${authorizations.length} Einwilligungen geladen');
 
     _authorizations.value = authorizations;
     _authorizationsMap = {
-      for (var authorization in authorizations)
-        authorization.authorizationId: authorization
+      for (var authorization in authorizations) authorization.id!: authorization
     };
     return;
   }
@@ -50,22 +50,23 @@ class AuthorizationManager {
     String description,
     List<int> pupilIds,
   ) async {
-    final Authorization authorization = await authorizationApiService
-        .postAuthorizationWithPupils(name, description, pupilIds);
+    final createdBy = _serverpodSessionManager.userName;
+    final Authorization authorization = await _authorizationApiService
+        .postAuthorizationWithPupils(name, description, createdBy!, pupilIds);
 
-    _authorizationsMap[authorization.authorizationId] = authorization;
+    _authorizationsMap[authorization.id!] = authorization;
     _authorizations.value = _authorizationsMap.values.toList();
 
-    notificationService.showSnackBar(
+    _notificationService.showSnackBar(
         NotificationType.success, 'Einwilligung erstellt');
 
     return;
   }
 
-  Future<void> deleteAuthorization(String authId) async {
-    final confirm = await authorizationApiService.deleteAuthorization(authId);
+  Future<void> deleteAuthorization(int authId) async {
+    final confirm = await _authorizationApiService.deleteAuthorization(authId);
     if (!confirm) {
-      notificationService.showSnackBar(
+      _notificationService.showSnackBar(
           NotificationType.error, 'Einwilligung konnte nicht gelöscht werden');
       return;
     }
@@ -73,64 +74,64 @@ class AuthorizationManager {
 
     _authorizations.value = _authorizationsMap.values.toList();
 
-    notificationService.showSnackBar(
+    _notificationService.showSnackBar(
         NotificationType.success, 'Einwilligung gelöscht');
 
     return;
   }
 
   Future<void> postPupilAuthorization(int pupilId, String authId) async {
-    final Authorization authorization =
-        await authorizationApiService.postPupilAuthorization(pupilId, authId);
-    _authorizationsMap[authorization.authorizationId] = authorization;
-    _authorizations.value = _authorizationsMap.values.toList();
+    // final Authorization authorization =
+    //     await _authorizationApiService.postPupilAuthorization(pupilId, authId);
+    // _authorizationsMap[authorization.authorizationId] = authorization;
+    // _authorizations.value = _authorizationsMap.values.toList();
 
-    notificationService.showSnackBar(
-        NotificationType.success, 'Einwilligung erstellt');
+    // _notificationService.showSnackBar(
+    //     NotificationType.success, 'Einwilligung erstellt');
     return;
   }
 
   // Add pupils to an existing authorization
   Future<void> postPupilAuthorizations(
     List<int> pupilIds,
-    String authId,
+    int authId,
   ) async {
-    final Authorization authorization =
-        await authorizationApiService.postPupilAuthorizations(pupilIds, authId);
+    // final Authorization authorization = await _authorizationApiService
+    //     .postPupilAuthorizations(pupilIds, authId);
 
-    _authorizationsMap[authorization.authorizationId] = authorization;
-    _authorizations.value = _authorizationsMap.values.toList();
+    // _authorizationsMap[authorization.authorizationId] = authorization;
+    // _authorizations.value = _authorizationsMap.values.toList();
 
-    notificationService.showSnackBar(
-        NotificationType.success, 'Einwilligungen erstellt');
+    // _notificationService.showSnackBar(
+    //     NotificationType.success, 'Einwilligungen erstellt');
     return;
   }
 
   Future<void> deletePupilAuthorization(
     int pupilId,
-    String authId,
+    int authId,
   ) async {
-    final Authorization authorization =
-        await authorizationApiService.deletePupilAuthorization(pupilId, authId);
+    // final Authorization authorization = await _authorizationApiService
+    //     .deletePupilAuthorization(pupilId, authId);
 
-    _authorizationsMap[authorization.authorizationId] = authorization;
-    _authorizations.value = _authorizationsMap.values.toList();
+    // _authorizationsMap[authorization.authorizationId] = authorization;
+    // _authorizations.value = _authorizationsMap.values.toList();
 
-    notificationService.showSnackBar(
-        NotificationType.success, 'Einwilligung gelöscht');
+    // _notificationService.showSnackBar(
+    //     NotificationType.success, 'Einwilligung gelöscht');
     return;
   }
 
   Future<void> updatePupilAuthorizationProperty(
-      int pupilId, String listId, bool? value, String? comment) async {
-    final Authorization authorization = await authorizationApiService
-        .updatePupilAuthorizationProperty(pupilId, listId, value, comment);
+      int pupilId, int listId, bool? value, String? comment) async {
+    // final Authorization authorization = await _authorizationApiService
+    //     .updatePupilAuthorizationProperty(pupilId, listId, value, comment);
 
-    _authorizationsMap[authorization.authorizationId] = authorization;
-    _authorizations.value = _authorizationsMap.values.toList();
+    // _authorizationsMap[authorization.authorizationId] = authorization;
+    // _authorizations.value = _authorizationsMap.values.toList();
 
-    notificationService.showSnackBar(
-        NotificationType.success, 'Einwilligung geändert');
+    // _notificationService.showSnackBar(
+    //     NotificationType.success, 'Einwilligung geändert');
 
     return;
   }
@@ -140,14 +141,14 @@ class AuthorizationManager {
     int pupilId,
     String authId,
   ) async {
-    final Authorization authorization = await authorizationApiService
-        .postAuthorizationFile(file, pupilId, authId);
+    // final Authorization authorization = await _authorizationApiService
+    //     .postAuthorizationFile(file, pupilId, authId);
 
-    _authorizationsMap[authorization.authorizationId] = authorization;
-    _authorizations.value = _authorizationsMap.values.toList();
+    // _authorizationsMap[authorization.authorizationId] = authorization;
+    // _authorizations.value = _authorizationsMap.values.toList();
 
-    notificationService.showSnackBar(
-        NotificationType.success, 'Datei hochgeladen');
+    // _notificationService.showSnackBar(
+    //     NotificationType.success, 'Datei hochgeladen');
 
     return;
   }
@@ -157,25 +158,24 @@ class AuthorizationManager {
     String authId,
     String cacheKey,
   ) async {
-    final Authorization responsePupil = await authorizationApiService
-        .deleteAuthorizationFile(pupilId, authId, cacheKey);
+    // final Authorization responsePupil = await _authorizationApiService
+    //     .deleteAuthorizationFile(pupilId, authId, cacheKey);
 
-    _authorizationsMap[responsePupil.authorizationId] = responsePupil;
-    _authorizations.value = _authorizationsMap.values.toList();
+    // _authorizationsMap[responsePupil.authorizationId] = responsePupil;
+    // _authorizations.value = _authorizationsMap.values.toList();
 
-    notificationService.showSnackBar(
-        NotificationType.success, 'Einwilligungsdatei gelöscht');
+    // _notificationService.showSnackBar(
+    //     NotificationType.success, 'Einwilligungsdatei gelöscht');
 
     return;
   }
 
   //- diese Funktion hat keinen API-Call
   Authorization getAuthorization(
-    String authId,
+    int authId,
   ) {
-    final Authorization authorizations = _authorizations.value
-        .where((element) => element.authorizationId == authId)
-        .first;
+    final Authorization authorizations =
+        _authorizations.value.where((element) => element.id == authId).first;
 
     return authorizations;
   }
@@ -208,13 +208,13 @@ class AuthorizationManager {
 
   //- diese Funktion hat keinen API-Call
   List<PupilProxy> getListedPupilsInAuthorization(
-    String authorizationId,
+    int authorizationId,
     List<PupilProxy> filteredPupils,
   ) {
     final Authorization authorization = _authorizationsMap[authorizationId]!;
     final List<PupilProxy> listedPupils = filteredPupils
-        .where((pupil) => authorization.authorizedPupils.any((authorization) =>
-            authorization.originAuthorization == authorizationId))
+        .where((pupil) => authorization.authorizedPupils!.any((authorization) =>
+            authorization.authorizationId == authorizationId))
         .toList();
 
     return listedPupils;

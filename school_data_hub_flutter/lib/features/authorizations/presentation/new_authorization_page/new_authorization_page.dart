@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:provider/provider.dart';
-import 'package:schuldaten_hub/common/services/locator.dart';
-import 'package:schuldaten_hub/common/theme/app_colors.dart';
-import 'package:schuldaten_hub/common/theme/styles.dart';
-import 'package:schuldaten_hub/common/widgets/avatar.dart';
-import 'package:schuldaten_hub/features/authorizations/domain/authorization_manager.dart';
-import 'package:schuldaten_hub/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:schuldaten_hub/features/pupil/domain/pupil_manager.dart';
-import 'package:schuldaten_hub/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
-import 'package:schuldaten_hub/features/pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
+import 'package:watch_it/watch_it.dart';
+
+final _pupilManager = di<PupilManager>();
+final _authorizationManager = di<AuthorizationManager>();
 
 class NewAuthorizationPage extends StatefulWidget {
   const NewAuthorizationPage({super.key});
@@ -29,14 +31,14 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
     String text1 = authorizationNameController.text;
     String text2 = authorizationDescriptionController.text;
 
-    await locator<AuthorizationManager>()
-        .postAuthorizationWithPupils(text1, text2, pupilIds.toList());
+    await _authorizationManager.postAuthorizationWithPupils(
+        text1, text2, pupilIds.toList());
   }
 
   @override
   Widget build(BuildContext context) {
     List<PupilProxy> pupilsFromIds =
-        locator<PupilManager>().pupilsFromPupilIds(pupilIds.toList());
+        _pupilManager.pupilsFromPupilIds(pupilIds.toList());
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -153,15 +155,9 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
                                             padding: const EdgeInsets.all(8.0),
                                             child: Row(
                                               children: [
-                                                Provider.value(
-                                                  value: AvatarData(
-                                                      avatarId:
-                                                          listedPupil.avatarId,
-                                                      internalId: listedPupil
-                                                          .internalId,
-                                                      size: 50),
-                                                  child: const AvatarImage(),
-                                                ),
+                                                AvatarWithBadges(
+                                                    pupil: listedPupil,
+                                                    size: 50),
                                                 const Gap(10),
                                                 Column(
                                                   mainAxisAlignment:
@@ -235,7 +231,7 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
                     final List<int> selectedPupilIds =
                         await Navigator.of(context).push(MaterialPageRoute(
                               builder: (ctx) => SelectPupilsListPage(
-                                  selectablePupils: locator<PupilManager>()
+                                  selectablePupils: _pupilManager
                                       .pupilsNotListed(pupilIds.toList())),
                             )) ??
                             [];

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:schuldaten_hub/common/services/locator.dart';
-import 'package:schuldaten_hub/common/theme/styles.dart';
-import 'package:schuldaten_hub/common/widgets/themed_filter_chip.dart';
-import 'package:schuldaten_hub/features/pupil/domain/filters/pupil_filter_enums.dart';
-import 'package:schuldaten_hub/features/pupil/domain/filters/pupil_filter_manager.dart';
-import 'package:schuldaten_hub/features/pupil/presentation/widgets/common_pupil_filters.dart';
+import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_enums.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _pupilFilterManager = di<PupilFilterManager>();
 
 class AuthorizationPupilsFilterBottomSheet extends WatchingWidget {
   const AuthorizationPupilsFilterBottomSheet({super.key});
@@ -21,7 +22,7 @@ class AuthorizationPupilsFilterBottomSheet extends WatchingWidget {
     bool valueCommentResponse =
         activeFilters[PupilFilter.authorizationComment]!;
     bool valueFileResponse = activeFilters[PupilFilter.authorizationNoFile]!;
-    final filterLocator = locator<PupilFilterManager>();
+
     return Padding(
       padding: const EdgeInsets.only(left: 20.0, right: 20, top: 8),
       child: Column(
@@ -52,7 +53,8 @@ class AuthorizationPupilsFilterBottomSheet extends WatchingWidget {
                         selected: valueYesResponse,
                         onSelected: (val) {
                           if (val) {
-                            filterLocator.setPupilFilter(pupilFilterRecords: [
+                            _pupilFilterManager
+                                .setPupilFilter(pupilFilterRecords: [
                               (
                                 filter: PupilFilter.authorizationPositive,
                                 value: true
@@ -68,12 +70,13 @@ class AuthorizationPupilsFilterBottomSheet extends WatchingWidget {
                             ]);
                             return;
                           }
-                          filterLocator.setPupilFilter(pupilFilterRecords: [
-                            (
-                              filter: PupilFilter.authorizationPositive,
-                              value: val
-                            )
-                          ]);
+                          _pupilFilterManager.setPupilFilter(
+                              pupilFilterRecords: [
+                                (
+                                  filter: PupilFilter.authorizationPositive,
+                                  value: val
+                                )
+                              ]);
                         },
                       ),
                       ThemedFilterChip(
@@ -81,7 +84,7 @@ class AuthorizationPupilsFilterBottomSheet extends WatchingWidget {
                           selected: valueNoResponse,
                           onSelected: (val) {
                             if (val) {
-                              filterLocator.setPupilFilter(
+                              _pupilFilterManager.setPupilFilter(
                                 pupilFilterRecords: [
                                   (
                                     filter: PupilFilter.authorizationNegative,
@@ -99,7 +102,7 @@ class AuthorizationPupilsFilterBottomSheet extends WatchingWidget {
                               );
                               return;
                             }
-                            filterLocator.setPupilFilter(
+                            _pupilFilterManager.setPupilFilter(
                               pupilFilterRecords: [
                                 (
                                   filter: PupilFilter.authorizationNegative,
@@ -113,7 +116,7 @@ class AuthorizationPupilsFilterBottomSheet extends WatchingWidget {
                         selected: valueNullResponse,
                         onSelected: (val) {
                           if (val) {
-                            filterLocator.setPupilFilter(
+                            _pupilFilterManager.setPupilFilter(
                               pupilFilterRecords: [
                                 (
                                   filter: PupilFilter.authorizationNoValue,
@@ -132,7 +135,7 @@ class AuthorizationPupilsFilterBottomSheet extends WatchingWidget {
                             return;
                           }
 
-                          filterLocator.setPupilFilter(
+                          _pupilFilterManager.setPupilFilter(
                             pupilFilterRecords: [
                               (
                                 filter: PupilFilter.authorizationNoValue,
@@ -146,7 +149,7 @@ class AuthorizationPupilsFilterBottomSheet extends WatchingWidget {
                         label: 'Kommentar',
                         selected: valueCommentResponse,
                         onSelected: (val) {
-                          filterLocator.setPupilFilter(
+                          _pupilFilterManager.setPupilFilter(
                             pupilFilterRecords: [
                               (
                                 filter: PupilFilter.authorizationComment,
@@ -161,7 +164,7 @@ class AuthorizationPupilsFilterBottomSheet extends WatchingWidget {
                         label: 'Kein Bild',
                         selected: valueFileResponse,
                         onSelected: (val) {
-                          filterLocator.setPupilFilter(
+                          _pupilFilterManager.setPupilFilter(
                             pupilFilterRecords: [
                               (
                                 filter: PupilFilter.authorizationNoFile,

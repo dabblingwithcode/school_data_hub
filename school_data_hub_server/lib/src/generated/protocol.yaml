@@ -15,6 +15,12 @@ auth:
   - login:
   - verifyPassword:
   - logOut:
+authorization:
+  - fetchAuthorizations:
+  - fetchAuthorizationById:
+  - postAuthorizationWithPupils:
+  - updateAuthorization:
+  - deleteAuthorization:
 competence:
   - importCompetencesFromJsonFile:
   - postCompetence:

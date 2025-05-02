@@ -1,23 +1,13 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:provider/provider.dart';
-import 'package:schuldaten_hub/common/domain/env_manager.dart';
-import 'package:schuldaten_hub/common/domain/models/enums.dart';
-import 'package:schuldaten_hub/common/services/api/api_settings.dart';
-import 'package:schuldaten_hub/common/services/locator.dart';
-import 'package:schuldaten_hub/common/services/notification_service.dart';
-import 'package:schuldaten_hub/common/theme/app_colors.dart';
-import 'package:schuldaten_hub/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:schuldaten_hub/common/widgets/dialogs/long_textfield_dialog.dart';
-import 'package:schuldaten_hub/common/widgets/document_image.dart';
-import 'package:schuldaten_hub/common/widgets/upload_image.dart';
-import 'package:schuldaten_hub/features/authorizations/domain/authorization_manager.dart';
-import 'package:schuldaten_hub/features/authorizations/domain/models/authorization.dart';
-import 'package:schuldaten_hub/features/authorizations/domain/models/pupil_authorization.dart';
-import 'package:schuldaten_hub/features/authorizations/presentation/authorization_pupils_page/authorization_pupils_page.dart';
-import 'package:schuldaten_hub/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
+import 'package:school_data_hub_flutter/features/authorizations/presentation/authorization_pupils_page/authorization_pupils_page.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
 class PupilAuthorizationsContentList extends WatchingWidget {
@@ -30,7 +20,7 @@ class PupilAuthorizationsContentList extends WatchingWidget {
         watchValue((AuthorizationManager x) => x.authorizations);
     List<PupilAuthorization> pupilAuthorizations = [];
     for (final authorization in authorizations) {
-      for (final pupilAuthorization in authorization.authorizedPupils) {
+      for (final pupilAuthorization in authorization.authorizedPupils!) {
         if (pupilAuthorization.pupilId == pupil.internalId) {
           pupilAuthorizations.add(pupilAuthorization);
         }
@@ -42,8 +32,8 @@ class PupilAuthorizationsContentList extends WatchingWidget {
       physics: const NeverScrollableScrollPhysics(),
       itemCount: pupilAuthorizations.length,
       itemBuilder: (BuildContext context, int index) {
-        final Authorization authorization = locator<AuthorizationManager>()
-            .getAuthorization(pupilAuthorizations[index].originAuthorization);
+        final Authorization authorization = di<AuthorizationManager>()
+            .getAuthorization(pupilAuthorizations[index].authorizationId);
         final PupilAuthorization pupilAuthorization =
             pupilAuthorizations[index];
         return GestureDetector(
@@ -81,7 +71,7 @@ class PupilAuthorizationsContentList extends WatchingWidget {
                                           child: SingleChildScrollView(
                                             scrollDirection: Axis.horizontal,
                                             child: Text(
-                                              authorization.authorizationName,
+                                              authorization.name,
                                               style: const TextStyle(
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.bold,
@@ -96,8 +86,7 @@ class PupilAuthorizationsContentList extends WatchingWidget {
                                     Row(children: [
                                       Flexible(
                                         child: Text(
-                                          authorization
-                                              .authorizationDescription,
+                                          authorization.description,
                                           style: const TextStyle(fontSize: 15),
                                         ),
                                       ),
@@ -111,17 +100,17 @@ class PupilAuthorizationsContentList extends WatchingWidget {
                                 children: [
                                   InkWell(
                                     onTap: () async {
-                                      final File? file =
-                                          await uploadImageFile(context);
-                                      if (file == null) return;
-                                      await locator<AuthorizationManager>()
-                                          .postAuthorizationFile(
-                                              file,
-                                              pupil.internalId,
-                                              authorization.authorizationId);
-                                      locator<NotificationService>().showSnackBar(
-                                          NotificationType.success,
-                                          'Die Einwilligung wurde geändert!');
+                                      // final File? file =
+                                      //     await uploadImageFile(context);
+                                      // if (file == null) return;
+                                      // await di<AuthorizationManager>()
+                                      //     .postAuthorizationFile(
+                                      //         file,
+                                      //         pupil.internalId,
+                                      //         authorization.authorizationId);
+                                      // di<NotificationService>().showSnackBar(
+                                      //     NotificationType.success,
+                                      //     'Die Einwilligung wurde geändert!');
                                     },
                                     onLongPress: (pupilAuthorization.fileId ==
                                             null)
@@ -136,41 +125,40 @@ class PupilAuthorizationsContentList extends WatchingWidget {
                                                     message:
                                                         'Dokument für die Einwilligung von ${pupil.firstName} ${pupil.lastName} löschen?');
                                             if (result != true) return;
-                                            await locator<
-                                                    AuthorizationManager>()
-                                                .deleteAuthorizationFile(
-                                              pupil.internalId,
-                                              authorization.authorizationId,
-                                              pupilAuthorization.fileId!,
-                                            );
-                                            locator<NotificationService>()
-                                                .showSnackBar(
-                                                    NotificationType.success,
-                                                    'Die Einwilligung wurde geändert!');
+                                            // await di<AuthorizationManager>()
+                                            //     .deleteAuthorizationFile(
+                                            //   pupil.internalId,
+                                            //   authorization.authorizationId,
+                                            //   pupilAuthorization.fileId!,
+                                            // );
+                                            di<NotificationService>().showSnackBar(
+                                                NotificationType.success,
+                                                'Die Einwilligung wurde geändert!');
                                           },
-                                    child: pupilAuthorization.fileId != null
-                                        ? Provider<DocumentImageData>.value(
-                                            updateShouldNotify:
-                                                (oldValue, newValue) =>
-                                                    oldValue.documentUrl !=
-                                                    newValue.documentUrl,
-                                            value: DocumentImageData(
-                                                documentTag:
-                                                    pupilAuthorization.fileId!,
-                                                documentUrl:
-                                                    '${locator<EnvManager>().env!.serverUrl}${AuthorizationApiService().getPupilAuthorizationFile(pupil.internalId, authorization.authorizationId)}',
-                                                size: 70),
-                                            child: const DocumentImage(),
-                                          )
-                                        : SizedBox(
-                                            height: 70,
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              child: Image.asset(
-                                                  'assets/document_camera.png'),
-                                            ),
-                                          ),
+                                    child:
+                                        // pupilAuthorization.fileId != null
+                                        //     ? Provider<DocumentImageData>.value(
+                                        //         updateShouldNotify:
+                                        //             (oldValue, newValue) =>
+                                        //                 oldValue.documentUrl !=
+                                        //                 newValue.documentUrl,
+                                        //         value: DocumentImageData(
+                                        //             documentTag:
+                                        //                 pupilAuthorization.fileId!,
+                                        //             documentUrl:
+                                        //                 '${di<EnvManager>().env!.serverUrl}${AuthorizationApiService().getPupilAuthorizationFile(pupil.internalId, authorization.authorizationId)}',
+                                        //             size: 70),
+                                        //         child: const DocumentImage(),
+                                        //       )
+                                        //     :
+                                        SizedBox(
+                                      height: 70,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(5),
+                                        child: Image.asset(
+                                            'assets/document_camera.png'),
+                                      ),
+                                    ),
                                   )
                                 ],
                               ),
@@ -208,13 +196,13 @@ class PupilAuthorizationsContentList extends WatchingWidget {
                                         ? false
                                         : true,
                                     onChanged: (value) async {
-                                      await locator<AuthorizationManager>()
-                                          .updatePupilAuthorizationProperty(
-                                              pupil.internalId,
-                                              pupilAuthorizations[index]
-                                                  .originAuthorization,
-                                              false,
-                                              null);
+                                      // await di<AuthorizationManager>()
+                                      //     .updatePupilAuthorizationProperty(
+                                      //         pupil.internalId,
+                                      //         pupilAuthorizations[index]
+                                      //             .originAuthorization,
+                                      //         false,
+                                      //         null);
                                     },
                                   ),
                                 ),
@@ -230,13 +218,13 @@ class PupilAuthorizationsContentList extends WatchingWidget {
                                     activeColor: Colors.green,
                                     value: pupilAuthorization.status ?? false,
                                     onChanged: (value) async {
-                                      await locator<AuthorizationManager>()
-                                          .updatePupilAuthorizationProperty(
-                                              pupil.internalId,
-                                              pupilAuthorizations[index]
-                                                  .originAuthorization,
-                                              value,
-                                              null);
+                                      // await di<AuthorizationManager>()
+                                      //     .updatePupilAuthorizationProperty(
+                                      //         pupil.internalId,
+                                      //         pupilAuthorizations[index]
+                                      //             .originAuthorization,
+                                      //         value,
+                                      //         null);
                                     },
                                   ),
                                 ),
@@ -256,13 +244,13 @@ class PupilAuthorizationsContentList extends WatchingWidget {
                                   if (comment == null) {
                                     return;
                                   }
-                                  await locator<AuthorizationManager>()
-                                      .updatePupilAuthorizationProperty(
-                                          pupil.internalId,
-                                          pupilAuthorization
-                                              .originAuthorization,
-                                          null,
-                                          comment);
+                                  // await di<AuthorizationManager>()
+                                  //     .updatePupilAuthorizationProperty(
+                                  //         pupil.internalId,
+                                  //         pupilAuthorization
+                                  //             .originAuthorization,
+                                  //         null,
+                                  //         comment);
                                 },
                                 child: Text(
                                   pupilAuthorization.comment ??

@@ -1,11 +1,11 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:schuldaten_hub/common/domain/filters/filters_state_manager.dart';
-import 'package:schuldaten_hub/common/services/locator.dart';
-import 'package:schuldaten_hub/features/authorizations/domain/models/pupil_authorization.dart';
-import 'package:schuldaten_hub/features/pupil/domain/filters/pupil_filter_enums.dart';
-import 'package:schuldaten_hub/features/pupil/domain/filters/pupil_filter_manager.dart';
-import 'package:schuldaten_hub/features/pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_enums.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
+import 'package:watch_it/watch_it.dart';
 
 typedef AuthorizationFilterRecord = ({
   AuthorizationFilter authorizationFilter,
@@ -38,7 +38,7 @@ typedef AuthorizationFilterRecord = ({
 //   }
 // }
 
-final activeFilters = locator<PupilFilterManager>();
+final activeFilters = di<PupilFilterManager>();
 
 // bool addAuthorizationFiltersToPupil(
 //   PupilProxy pupil,
@@ -150,7 +150,7 @@ class PupilAuthorizationFilterManager {
     _pupilAuthorizationFilterState.value = {
       ...initialPupilAuthorizationFilterValues
     };
-    locator<FiltersStateManager>()
+    di<FiltersStateManager>()
         .setFilterState(filterState: FilterState.pupil, value: false);
   }
 
@@ -167,11 +167,11 @@ class PupilAuthorizationFilterManager {
         .equals(_pupilAuthorizationFilterState.value,
             initialPupilAuthorizationFilterValues);
 
-    locator<FiltersStateManager>().setFilterState(
+    di<FiltersStateManager>().setFilterState(
         filterState: FilterState.pupil,
         value: !authorizationFilterStateEqualsInitialValues);
 
-    locator<PupilsFilter>().refreshs();
+    di<PupilsFilter>().refreshs();
   }
 
   List<PupilAuthorization> applyAuthorizationFiltersToPupilAuthorizations(
@@ -214,7 +214,7 @@ class PupilAuthorizationFilterManager {
       filteredPupilAuthorizations.add(pupilAuthorization);
     }
     if (filterIsOn) {
-      locator<FiltersStateManager>()
+      di<FiltersStateManager>()
           .setFilterState(filterState: FilterState.pupil, value: true);
     }
 

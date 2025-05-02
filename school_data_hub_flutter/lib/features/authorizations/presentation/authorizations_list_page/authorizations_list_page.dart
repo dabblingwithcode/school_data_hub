@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:schuldaten_hub/common/domain/filters/filters_state_manager.dart';
-import 'package:schuldaten_hub/common/domain/models/enums.dart';
-import 'package:schuldaten_hub/common/services/locator.dart';
-import 'package:schuldaten_hub/common/theme/app_colors.dart';
-import 'package:schuldaten_hub/common/theme/styles.dart';
-import 'package:schuldaten_hub/features/authorizations/domain/authorization_manager.dart';
-import 'package:schuldaten_hub/features/authorizations/domain/filters/authorization_filter_manager.dart';
-import 'package:schuldaten_hub/features/authorizations/domain/models/authorization.dart';
-import 'package:schuldaten_hub/features/authorizations/presentation/authorizations_list_page/widgets/authorization_card.dart';
-import 'package:schuldaten_hub/features/authorizations/presentation/authorizations_list_page/widgets/authorization_list_bottom_navbar.dart';
-import 'package:schuldaten_hub/features/authorizations/presentation/authorizations_list_page/widgets/authorization_list_search_text_field.dart';
-import 'package:schuldaten_hub/features/pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
+import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
+import 'package:school_data_hub_flutter/features/authorizations/domain/filters/authorization_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/authorizations/presentation/authorizations_list_page/widgets/authorization_card.dart';
+import 'package:school_data_hub_flutter/features/authorizations/presentation/authorizations_list_page/widgets/authorization_list_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/features/authorizations/presentation/authorizations_list_page/widgets/authorization_list_search_text_field.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _authorizationManager = di<AuthorizationManager>();
+final _pupilsFilter = di<PupilsFilter>();
 
 class AuthorizationsListPage extends WatchingWidget {
   const AuthorizationsListPage({super.key});
@@ -45,8 +47,7 @@ class AuthorizationsListPage extends WatchingWidget {
         ),
       ),
       body: RefreshIndicator(
-        onRefresh: () async =>
-            locator<AuthorizationManager>().fetchAuthorizations(),
+        onRefresh: () async => _authorizationManager.fetchAuthorizations(),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 800),
@@ -83,15 +84,14 @@ class AuthorizationsListPage extends WatchingWidget {
                         child: AuthorizationListSearchTextField(
                             searchType: SearchType.authorization,
                             hintText: 'Liste suchen',
-                            refreshFunction: locator<AuthorizationManager>()
-                                .fetchAuthorizations),
+                            refreshFunction:
+                                _authorizationManager.fetchAuthorizations),
                       ),
                       //---------------------------------
                       InkWell(
                         onTap: () {},
 
-                        onLongPress: () =>
-                            locator<PupilsFilter>().resetFilters(),
+                        onLongPress: () => _pupilsFilter.resetFilters(),
                         // onPressed: () => showBottomSheetFilters(context),
                         child: Padding(
                           padding: const EdgeInsets.all(10.0),

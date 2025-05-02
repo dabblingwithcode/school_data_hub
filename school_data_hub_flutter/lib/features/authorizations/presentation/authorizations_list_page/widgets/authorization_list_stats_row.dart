@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:schuldaten_hub/common/theme/app_colors.dart';
-import 'package:schuldaten_hub/features/authorizations/domain/models/authorization.dart';
-import 'package:schuldaten_hub/features/authorizations/domain/authorization_helper_functions.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_helper_functions.dart';
 
 Widget authorizationStatsRow(Authorization authorization) {
   final Map<String, int> stats = AuthorizationHelper.authorizationStats(

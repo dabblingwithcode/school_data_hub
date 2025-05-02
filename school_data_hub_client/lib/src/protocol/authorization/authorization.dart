@@ -15,18 +15,16 @@ import '../authorization/pupil_authorization.dart' as _i2;
 abstract class Authorization implements _i1.SerializableModel {
   Authorization._({
     this.id,
-    required this.publicId,
-    required this.authorizationName,
-    required this.authorizationDescription,
+    required this.name,
+    required this.description,
     required this.createdBy,
     this.authorizedPupils,
   });
 
   factory Authorization({
     int? id,
-    required String publicId,
-    required String authorizationName,
-    required String authorizationDescription,
+    required String name,
+    required String description,
     required String createdBy,
     List<_i2.PupilAuthorization>? authorizedPupils,
   }) = _AuthorizationImpl;
@@ -34,10 +32,8 @@ abstract class Authorization implements _i1.SerializableModel {
   factory Authorization.fromJson(Map<String, dynamic> jsonSerialization) {
     return Authorization(
       id: jsonSerialization['id'] as int?,
-      publicId: jsonSerialization['publicId'] as String,
-      authorizationName: jsonSerialization['authorizationName'] as String,
-      authorizationDescription:
-          jsonSerialization['authorizationDescription'] as String,
+      name: jsonSerialization['name'] as String,
+      description: jsonSerialization['description'] as String,
       createdBy: jsonSerialization['createdBy'] as String,
       authorizedPupils: (jsonSerialization['authorizedPupils'] as List?)
           ?.map((e) =>
@@ -51,11 +47,9 @@ abstract class Authorization implements _i1.SerializableModel {
   /// the id will be null.
   int? id;
 
-  String publicId;
+  String name;
 
-  String authorizationName;
-
-  String authorizationDescription;
+  String description;
 
   String createdBy;
 
@@ -66,9 +60,8 @@ abstract class Authorization implements _i1.SerializableModel {
   @_i1.useResult
   Authorization copyWith({
     int? id,
-    String? publicId,
-    String? authorizationName,
-    String? authorizationDescription,
+    String? name,
+    String? description,
     String? createdBy,
     List<_i2.PupilAuthorization>? authorizedPupils,
   });
@@ -76,9 +69,8 @@ abstract class Authorization implements _i1.SerializableModel {
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
-      'publicId': publicId,
-      'authorizationName': authorizationName,
-      'authorizationDescription': authorizationDescription,
+      'name': name,
+      'description': description,
       'createdBy': createdBy,
       if (authorizedPupils != null)
         'authorizedPupils':
@@ -97,16 +89,14 @@ class _Undefined {}
 class _AuthorizationImpl extends Authorization {
   _AuthorizationImpl({
     int? id,
-    required String publicId,
-    required String authorizationName,
-    required String authorizationDescription,
+    required String name,
+    required String description,
     required String createdBy,
     List<_i2.PupilAuthorization>? authorizedPupils,
   }) : super._(
           id: id,
-          publicId: publicId,
-          authorizationName: authorizationName,
-          authorizationDescription: authorizationDescription,
+          name: name,
+          description: description,
           createdBy: createdBy,
           authorizedPupils: authorizedPupils,
         );
@@ -117,18 +107,15 @@ class _AuthorizationImpl extends Authorization {
   @override
   Authorization copyWith({
     Object? id = _Undefined,
-    String? publicId,
-    String? authorizationName,
-    String? authorizationDescription,
+    String? name,
+    String? description,
     String? createdBy,
     Object? authorizedPupils = _Undefined,
   }) {
     return Authorization(
       id: id is int? ? id : this.id,
-      publicId: publicId ?? this.publicId,
-      authorizationName: authorizationName ?? this.authorizationName,
-      authorizationDescription:
-          authorizationDescription ?? this.authorizationDescription,
+      name: name ?? this.name,
+      description: description ?? this.description,
       createdBy: createdBy ?? this.createdBy,
       authorizedPupils: authorizedPupils is List<_i2.PupilAuthorization>?
           ? authorizedPupils

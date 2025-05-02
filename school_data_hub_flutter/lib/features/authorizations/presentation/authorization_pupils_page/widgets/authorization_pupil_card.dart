@@ -1,45 +1,33 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:provider/provider.dart';
-import 'package:schuldaten_hub/common/domain/models/enums.dart';
-import 'package:schuldaten_hub/common/services/api/api_settings.dart';
-import 'package:schuldaten_hub/common/services/locator.dart';
-import 'package:schuldaten_hub/common/services/notification_service.dart';
-import 'package:schuldaten_hub/common/theme/app_colors.dart';
-import 'package:schuldaten_hub/common/widgets/avatar.dart';
-import 'package:schuldaten_hub/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:schuldaten_hub/common/widgets/dialogs/long_textfield_dialog.dart';
-import 'package:schuldaten_hub/common/widgets/document_image.dart';
-import 'package:schuldaten_hub/common/widgets/upload_image.dart';
-import 'package:schuldaten_hub/features/authorizations/domain/authorization_manager.dart';
-import 'package:schuldaten_hub/features/authorizations/domain/models/authorization.dart';
-import 'package:schuldaten_hub/features/authorizations/domain/models/pupil_authorization.dart';
-import 'package:schuldaten_hub/features/main_menu/widgets/landing_bottom_nav_bar.dart';
-import 'package:schuldaten_hub/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:schuldaten_hub/features/pupil/domain/pupil_manager.dart';
-import 'package:schuldaten_hub/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
+import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:watch_it/watch_it.dart';
 
+final _pupilManager = di<PupilManager>();
+
 class AuthorizationPupilCard extends StatelessWidget with WatchItMixin {
-  final int internalId;
+  final int pupilId;
   final Authorization authorization;
-  AuthorizationPupilCard(this.internalId, this.authorization, {super.key});
+  AuthorizationPupilCard(this.pupilId, this.authorization, {super.key});
   @override
   Widget build(BuildContext context) {
-    final authorizationLocator = locator<AuthorizationManager>();
+    final authorizationLocator = di<AuthorizationManager>();
 
-    final PupilProxy pupil =
-        watch(locator<PupilManager>().getPupilById(internalId)!);
+    final PupilProxy pupil = watch(_pupilManager.getPupilByPupilId(pupilId)!);
     final thisAuthorization =
         watchValue((AuthorizationManager x) => x.authorizations).firstWhere(
-            (authorization) =>
-                authorization.authorizationId ==
-                this.authorization.authorizationId);
+            (authorization) => authorization.id == this.authorization.id);
     final PupilAuthorization pupilAuthorization = thisAuthorization
-        .authorizedPupils
-        .firstWhere((element) => element.pupilId == internalId);
+        .authorizedPupils!
+        .firstWhere((element) => element.pupilId == pupilId);
 
     return Card(
       color: Colors.white,
@@ -62,7 +50,7 @@ class AuthorizationPupilCard extends StatelessWidget with WatchItMixin {
                       children: [
                         InkWell(
                           onTap: () {
-                            locator<MainMenuBottomNavManager>()
+                            di<MainMenuBottomNavManager>()
                                 .setPupilProfileNavPage(7);
                             Navigator.of(context).push(MaterialPageRoute(
                               builder: (ctx) => PupilProfilePage(
@@ -77,9 +65,9 @@ class AuthorizationPupilCard extends StatelessWidget with WatchItMixin {
                                 message:
                                     'Die Einwilligung von ${pupil.firstName} löschen?');
                             if (confirmation == true) {
-                              locator<AuthorizationManager>()
-                                  .deletePupilAuthorization(pupil.internalId,
-                                      authorization.authorizationId);
+                              di<AuthorizationManager>()
+                                  .deletePupilAuthorization(
+                                      pupil.internalId, authorization.id!);
                             }
                             return;
                           },
@@ -127,7 +115,7 @@ class AuthorizationPupilCard extends StatelessWidget with WatchItMixin {
                                   await authorizationLocator
                                       .updatePupilAuthorizationProperty(
                                     pupil.internalId,
-                                    authorization.authorizationId,
+                                    authorization.id!,
                                     false,
                                     null,
                                   );
@@ -152,7 +140,7 @@ class AuthorizationPupilCard extends StatelessWidget with WatchItMixin {
                                   await authorizationLocator
                                       .updatePupilAuthorizationProperty(
                                     pupil.internalId,
-                                    authorization.authorizationId,
+                                    authorization.id!,
                                     true,
                                     null,
                                   );
@@ -178,56 +166,59 @@ class AuthorizationPupilCard extends StatelessWidget with WatchItMixin {
                     const Gap(15),
                     InkWell(
                       onTap: () async {
-                        final File? file = await uploadImageFile(context);
-                        if (file == null) return;
-                        await locator<AuthorizationManager>()
-                            .postAuthorizationFile(file, pupil.internalId,
-                                authorization.authorizationId);
-                        locator<NotificationService>().showSnackBar(
-                            NotificationType.success,
-                            'Dem Nachweis wurde ein Dokument hinzugefügt!');
+                        // final File? file = await uploadImageFile(context);
+                        // if (file == null) return;
+                        // await di<AuthorizationManager>().postAuthorizationFile(
+                        //     file,
+                        //     pupil.internalId,
+                        //     authorization.authorizationId);
+                        // di<NotificationService>().showSnackBar(
+                        //     NotificationType.success,
+                        //     'Dem Nachweis wurde ein Dokument hinzugefügt!');
                       },
                       onLongPress: (pupilAuthorization.fileId == null)
                           ? () {}
                           : () async {
-                              if (pupilAuthorization.fileId == null) return;
-                              final bool? result = await confirmationDialog(
-                                  context: context,
-                                  title: 'Dokument löschen',
-                                  message:
-                                      'Dokument für die Einwilligung von ${pupil.firstName} ${pupil.lastName} löschen?');
-                              if (result != true) return;
-                              await locator<AuthorizationManager>()
-                                  .deleteAuthorizationFile(
-                                pupil.internalId,
-                                authorization.authorizationId,
-                                pupilAuthorization.fileId!,
-                              );
-                              locator<NotificationService>().showSnackBar(
-                                  NotificationType.success,
-                                  'Die Einwilligung wurde geändert!');
+                              // if (pupilAuthorization.fileId == null) return;
+                              // final bool? result = await confirmationDialog(
+                              //     context: context,
+                              //     title: 'Dokument löschen',
+                              //     message:
+                              //         'Dokument für die Einwilligung von ${pupil.firstName} ${pupil.lastName} löschen?');
+                              // if (result != true) return;
+                              // await di<AuthorizationManager>()
+                              //     .deleteAuthorizationFile(
+                              //   pupil.internalId,
+                              //   authorization.authorizationId,
+                              //   pupilAuthorization.fileId!,
+                              // );
+                              // di<NotificationService>().showSnackBar(
+                              //     NotificationType.success,
+                              //     'Die Einwilligung wurde geändert!');
                             },
-                      child: pupilAuthorization.fileId != null
-                          ? Provider<DocumentImageData>.value(
-                              updateShouldNotify: (oldValue, newValue) =>
-                                  oldValue.documentTag != newValue.documentTag,
-                              value: DocumentImageData(
-                                  documentTag: pupilAuthorization.fileId!,
-                                  documentUrl: AuthorizationApiService()
-                                      .getPupilAuthorizationFile(
-                                          pupil.internalId,
-                                          authorization.authorizationId),
-                                  size: 70),
-                              child: const DocumentImage(),
-                            )
-                          : SizedBox(
-                              height: 70,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(5),
-                                child:
-                                    Image.asset('assets/document_camera.png'),
-                              ),
-                            ),
+                      child:
+
+                          // pupilAuthorization.fileId != null
+                          //     ? Provider<DocumentImageData>.value(
+                          //         updateShouldNotify: (oldValue, newValue) =>
+                          //             oldValue.documentTag != newValue.documentTag,
+                          //         value: DocumentImageData(
+                          //             documentTag: pupilAuthorization.fileId!,
+                          //             documentUrl: AuthorizationApiService()
+                          //                 .getPupilAuthorizationFile(
+                          //                     pupil.internalId,
+                          //                     authorization.authorizationId),
+                          //             size: 70),
+                          //         child: const DocumentImage(),
+                          //       )
+                          //     :
+                          SizedBox(
+                        height: 70,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: Image.asset('assets/document_camera.png'),
+                        ),
+                      ),
                     )
                   ],
                 ),
@@ -250,23 +241,23 @@ class AuthorizationPupilCard extends StatelessWidget with WatchItMixin {
                 Expanded(
                   child: InkWell(
                     onTap: () async {
-                      final String? authorizationComment =
-                          await longTextFieldDialog(
-                              title: 'Kommentar ändern',
-                              labelText: 'Kommentar',
-                              textinField: pupilAuthorization.comment,
-                              parentContext: context);
-                      if (authorizationComment == null) return;
-                      if (authorizationComment == '') {}
-                      await locator<AuthorizationManager>()
-                          .updatePupilAuthorizationProperty(
-                        pupil.internalId,
-                        authorization.authorizationId,
-                        null,
-                        authorizationComment == ''
-                            ? null
-                            : authorizationComment,
-                      );
+                      // final String? authorizationComment =
+                      //     await longTextFieldDialog(
+                      //         title: 'Kommentar ändern',
+                      //         labelText: 'Kommentar',
+                      //         textinField: pupilAuthorization.comment,
+                      //         parentContext: context);
+                      // if (authorizationComment == null) return;
+                      // if (authorizationComment == '') {}
+                      // await di<AuthorizationManager>()
+                      //     .updatePupilAuthorizationProperty(
+                      //   pupil.internalId,
+                      //   authorization.authorizationId,
+                      //   null,
+                      //   authorizationComment == ''
+                      //       ? null
+                      //       : authorizationComment,
+                      // );
                     },
                     child: Text(
                       pupilAuthorization.comment != null

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:schuldaten_hub/common/domain/filters/filters_state_manager.dart';
-import 'package:schuldaten_hub/common/domain/models/enums.dart';
-import 'package:schuldaten_hub/common/services/locator.dart';
-import 'package:schuldaten_hub/features/authorizations/domain/filters/authorization_filter_manager.dart';
+import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
+import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/features/authorizations/domain/filters/authorization_filter_manager.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _authorizationFilterManager = di<AuthorizationFilterManager>();
+final _filtersStateManager = di<FiltersStateManager>();
 
 class AuthorizationListSearchTextField extends WatchingStatefulWidget {
   final SearchType searchType;
@@ -22,8 +24,7 @@ class AuthorizationListSearchTextField extends WatchingStatefulWidget {
 
 class _AuthorizationListSearchTextFieldState
     extends State<AuthorizationListSearchTextField> {
-  final schoolListFilter =
-      locator<AuthorizationFilterManager>().filteredAuthorizations;
+  final schoolListFilter = _authorizationFilterManager.filteredAuthorizations;
 
   //final searchManager = locator<SearchManager>();
   FocusNode focusNode = FocusNode();
@@ -38,8 +39,7 @@ class _AuthorizationListSearchTextFieldState
       focusNode: focusNode,
       controller: textEditingController,
       textInputAction: TextInputAction.search,
-      onChanged: (value) =>
-          locator<AuthorizationFilterManager>().onSearchText(value),
+      onChanged: (value) => _authorizationFilterManager.onSearchText(value),
       decoration: InputDecoration(
         fillColor: const Color.fromARGB(255, 255, 255, 255),
         filled: true,
@@ -57,7 +57,7 @@ class _AuthorizationListSearchTextFieldState
                   Icons.close_outlined,
                 ),
                 onPressed: () {
-                  locator<FiltersStateManager>().resetFilters();
+                  _filtersStateManager.resetFilters();
 
                   textEditingController.clear();
                 },

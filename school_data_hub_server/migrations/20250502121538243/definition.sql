@@ -5,9 +5,8 @@ BEGIN;
 --
 CREATE TABLE "authorization" (
     "id" bigserial PRIMARY KEY,
-    "publicId" text NOT NULL,
-    "authorizationName" text NOT NULL,
-    "authorizationDescription" text NOT NULL,
+    "name" text NOT NULL,
+    "description" text NOT NULL,
     "createdBy" text NOT NULL
 );
 
@@ -288,8 +287,7 @@ CREATE TABLE "pupil_authorization" (
     "status" boolean,
     "comment" text,
     "createdBy" text,
-    "fileId" text,
-    "fileUrl" text,
+    "fileId" bigint,
     "authorizationId" bigint NOT NULL,
     "pupilId" bigint NOT NULL
 );
@@ -1137,12 +1135,18 @@ ALTER TABLE ONLY "missed_class"
 --
 ALTER TABLE ONLY "pupil_authorization"
     ADD CONSTRAINT "pupil_authorization_fk_0"
+    FOREIGN KEY("fileId")
+    REFERENCES "hub_document"("id")
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+ALTER TABLE ONLY "pupil_authorization"
+    ADD CONSTRAINT "pupil_authorization_fk_1"
     FOREIGN KEY("authorizationId")
     REFERENCES "authorization"("id")
     ON DELETE NO ACTION
     ON UPDATE NO ACTION;
 ALTER TABLE ONLY "pupil_authorization"
-    ADD CONSTRAINT "pupil_authorization_fk_1"
+    ADD CONSTRAINT "pupil_authorization_fk_2"
     FOREIGN KEY("pupilId")
     REFERENCES "pupil_data"("id")
     ON DELETE NO ACTION
@@ -1471,9 +1475,9 @@ ALTER TABLE ONLY "serverpod_query_log"
 -- MIGRATION VERSION FOR school_data_hub
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('school_data_hub', '20250501233215990', now())
+    VALUES ('school_data_hub', '20250502121538243', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20250501233215990', "timestamp" = now();
+    DO UPDATE SET "version" = '20250502121538243', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

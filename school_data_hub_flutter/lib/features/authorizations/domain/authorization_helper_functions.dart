@@ -1,5 +1,4 @@
-import 'package:schuldaten_hub/features/authorizations/domain/models/authorization.dart';
-import 'package:schuldaten_hub/features/authorizations/domain/models/pupil_authorization.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 
 class AuthorizationHelper {
   static Map<String, int> authorizationStats(Authorization authorization) {
@@ -8,7 +7,7 @@ class AuthorizationHelper {
     int countNull = 0;
     int countComment = 0;
     for (PupilAuthorization pupilAuthorization
-        in authorization.authorizedPupils) {
+        in authorization.authorizedPupils!) {
       pupilAuthorization.status == true
           ? countYes++
           : pupilAuthorization.status == false

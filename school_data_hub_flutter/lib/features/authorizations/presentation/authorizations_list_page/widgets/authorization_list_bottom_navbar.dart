@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:schuldaten_hub/common/domain/session_manager.dart';
-import 'package:schuldaten_hub/common/services/locator.dart';
-import 'package:schuldaten_hub/common/theme/app_colors.dart';
-import 'package:schuldaten_hub/common/theme/paddings.dart';
-import 'package:schuldaten_hub/common/widgets/bottom_nav_bar_layouts.dart';
-import 'package:schuldaten_hub/features/authorizations/presentation/new_authorization_page/new_authorization_page.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/theme/paddings.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
+import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/features/authorizations/presentation/new_authorization_page/new_authorization_page.dart';
+import 'package:watch_it/watch_it.dart';
+
+final _serverpodSessionManager = di<ServerpodSessionManager>();
 
 class AuthorizationListBottomNavBar extends StatelessWidget {
   const AuthorizationListBottomNavBar({super.key});
@@ -33,7 +35,7 @@ class AuthorizationListBottomNavBar extends StatelessWidget {
                   Navigator.pop(context);
                 },
               ),
-              if (locator<SessionManager>().isAdmin.value == true) ...[
+              if (_serverpodSessionManager.isAdmin == true) ...[
                 const Gap(AppPaddings.bottomNavBarButtonGap),
                 IconButton(
                   tooltip: 'Neue Liste',

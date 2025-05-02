@@ -88,20 +88,22 @@ import 'package:school_data_hub_server/src/generated/schoolday/missed_class/miss
     as _i70;
 import 'package:school_data_hub_server/src/generated/user/device_info.dart'
     as _i71;
-import 'package:school_data_hub_server/src/generated/learning/competence.dart'
+import 'package:school_data_hub_server/src/generated/authorization/authorization.dart'
     as _i72;
-import 'package:school_data_hub_server/src/generated/school_list/school_list.dart'
-    as _i73;
 import 'package:school_data_hub_server/src/generated/shared/member_operation.dart'
+    as _i73;
+import 'package:school_data_hub_server/src/generated/learning/competence.dart'
     as _i74;
-import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
+import 'package:school_data_hub_server/src/generated/school_list/school_list.dart'
     as _i75;
-import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
     as _i76;
-import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
     as _i77;
-import 'package:school_data_hub_server/src/generated/learning_support/support_category.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event.dart'
     as _i78;
+import 'package:school_data_hub_server/src/generated/learning_support/support_category.dart'
+    as _i79;
 export 'authorization/authorization.dart';
 export 'authorization/pupil_authorization.dart';
 export 'book/book.dart';
@@ -189,19 +191,13 @@ class Protocol extends _i1.SerializationManagerServer {
           columnDefault: 'nextval(\'authorization_id_seq\'::regclass)',
         ),
         _i2.ColumnDefinition(
-          name: 'publicId',
+          name: 'name',
           columnType: _i2.ColumnType.text,
           isNullable: false,
           dartType: 'String',
         ),
         _i2.ColumnDefinition(
-          name: 'authorizationName',
-          columnType: _i2.ColumnType.text,
-          isNullable: false,
-          dartType: 'String',
-        ),
-        _i2.ColumnDefinition(
-          name: 'authorizationDescription',
+          name: 'description',
           columnType: _i2.ColumnType.text,
           isNullable: false,
           dartType: 'String',
@@ -1925,15 +1921,9 @@ class Protocol extends _i1.SerializationManagerServer {
         ),
         _i2.ColumnDefinition(
           name: 'fileId',
-          columnType: _i2.ColumnType.text,
+          columnType: _i2.ColumnType.bigint,
           isNullable: true,
-          dartType: 'String?',
-        ),
-        _i2.ColumnDefinition(
-          name: 'fileUrl',
-          columnType: _i2.ColumnType.text,
-          isNullable: true,
-          dartType: 'String?',
+          dartType: 'int?',
         ),
         _i2.ColumnDefinition(
           name: 'authorizationId',
@@ -1951,6 +1941,16 @@ class Protocol extends _i1.SerializationManagerServer {
       foreignKeys: [
         _i2.ForeignKeyDefinition(
           constraintName: 'pupil_authorization_fk_0',
+          columns: ['fileId'],
+          referenceTable: 'hub_document',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _i2.ForeignKeyAction.noAction,
+          onDelete: _i2.ForeignKeyAction.noAction,
+          matchType: null,
+        ),
+        _i2.ForeignKeyDefinition(
+          constraintName: 'pupil_authorization_fk_1',
           columns: ['authorizationId'],
           referenceTable: 'authorization',
           referenceTableSchema: 'public',
@@ -1960,7 +1960,7 @@ class Protocol extends _i1.SerializationManagerServer {
           matchType: null,
         ),
         _i2.ForeignKeyDefinition(
-          constraintName: 'pupil_authorization_fk_1',
+          constraintName: 'pupil_authorization_fk_2',
           columns: ['pupilId'],
           referenceTable: 'pupil_data',
           referenceTableSchema: 'public',
@@ -4868,8 +4868,27 @@ class Protocol extends _i1.SerializationManagerServer {
             deserialize<_i3.AuthenticationResponse>(data['n']['response']),
       ) as T;
     }
-    if (t == List<_i72.Competence>) {
-      return (data as List).map((e) => deserialize<_i72.Competence>(e)).toList()
+    if (t == List<_i72.Authorization>) {
+      return (data as List)
+          .map((e) => deserialize<_i72.Authorization>(e))
+          .toList() as T;
+    }
+    if (t == List<int>) {
+      return (data as List).map((e) => deserialize<int>(e)).toList() as T;
+    }
+    if (t ==
+        _i1.getType<
+            ({_i73.MemberOperation operation, List<int> pupilIds})?>()) {
+      return (data == null)
+          ? null as T
+          : (
+              operation: deserialize<_i73.MemberOperation>(
+                  ((data as Map)['n'] as Map)['operation']),
+              pupilIds: deserialize<List<int>>(data['n']['pupilIds']),
+            ) as T;
+    }
+    if (t == List<_i74.Competence>) {
+      return (data as List).map((e) => deserialize<_i74.Competence>(e)).toList()
           as T;
     }
     if (t == List<_i69.PupilData>) {
@@ -4879,44 +4898,30 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == Set<int>) {
       return (data as List).map((e) => deserialize<int>(e)).toSet() as T;
     }
-    if (t == List<_i73.SchoolList>) {
-      return (data as List).map((e) => deserialize<_i73.SchoolList>(e)).toList()
+    if (t == List<_i75.SchoolList>) {
+      return (data as List).map((e) => deserialize<_i75.SchoolList>(e)).toList()
           as T;
     }
-    if (t == List<int>) {
-      return (data as List).map((e) => deserialize<int>(e)).toList() as T;
-    }
-    if (t ==
-        _i1.getType<
-            ({_i74.MemberOperation operation, List<int> pupilIds})?>()) {
-      return (data == null)
-          ? null as T
-          : (
-              operation: deserialize<_i74.MemberOperation>(
-                  ((data as Map)['n'] as Map)['operation']),
-              pupilIds: deserialize<List<int>>(data['n']['pupilIds']),
-            ) as T;
-    }
-    if (t == List<_i75.SchoolSemester>) {
+    if (t == List<_i76.SchoolSemester>) {
       return (data as List)
-          .map((e) => deserialize<_i75.SchoolSemester>(e))
+          .map((e) => deserialize<_i76.SchoolSemester>(e))
           .toList() as T;
     }
-    if (t == List<_i76.Schoolday>) {
-      return (data as List).map((e) => deserialize<_i76.Schoolday>(e)).toList()
+    if (t == List<_i77.Schoolday>) {
+      return (data as List).map((e) => deserialize<_i77.Schoolday>(e)).toList()
           as T;
     }
     if (t == List<DateTime>) {
       return (data as List).map((e) => deserialize<DateTime>(e)).toList() as T;
     }
-    if (t == List<_i77.SchooldayEvent>) {
+    if (t == List<_i78.SchooldayEvent>) {
       return (data as List)
-          .map((e) => deserialize<_i77.SchooldayEvent>(e))
+          .map((e) => deserialize<_i78.SchooldayEvent>(e))
           .toList() as T;
     }
-    if (t == List<_i78.SupportCategory>) {
+    if (t == List<_i79.SupportCategory>) {
       return (data as List)
-          .map((e) => deserialize<_i78.SupportCategory>(e))
+          .map((e) => deserialize<_i79.SupportCategory>(e))
           .toList() as T;
     }
     if (t == _i1.getType<({int testint, String testString})?>()) {
@@ -5495,7 +5500,7 @@ Map<String, dynamic>? mapRecordToJson(Record? record) {
       },
     };
   }
-  if (record is ({_i74.MemberOperation operation, List<int> pupilIds})) {
+  if (record is ({_i73.MemberOperation operation, List<int> pupilIds})) {
     return {
       "n": {
         "operation": record.operation,

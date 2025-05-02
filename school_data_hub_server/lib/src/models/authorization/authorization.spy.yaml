@@ -2,8 +2,7 @@
 class: Authorization
 table: authorization
 fields:
-  publicId: String
-  authorizationName: String
-  authorizationDescription: String
+  name: String
+  description: String
   createdBy: String
   authorizedPupils: List<PupilAuthorization>?, relation(name=pupil_authorization_authorization)

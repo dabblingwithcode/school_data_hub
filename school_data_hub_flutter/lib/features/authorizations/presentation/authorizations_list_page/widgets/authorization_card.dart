@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:schuldaten_hub/common/services/locator.dart';
-import 'package:schuldaten_hub/common/theme/app_colors.dart';
-import 'package:schuldaten_hub/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:schuldaten_hub/features/authorizations/domain/authorization_manager.dart';
-import 'package:schuldaten_hub/features/authorizations/domain/models/authorization.dart';
-import 'package:schuldaten_hub/features/authorizations/presentation/authorization_pupils_page/authorization_pupils_page.dart';
-import 'package:schuldaten_hub/features/authorizations/presentation/authorizations_list_page/widgets/authorization_list_stats_row.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
+import 'package:school_data_hub_flutter/features/authorizations/presentation/authorization_pupils_page/authorization_pupils_page.dart';
+import 'package:school_data_hub_flutter/features/authorizations/presentation/authorizations_list_page/widgets/authorization_list_stats_row.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _authorizationManager = di<AuthorizationManager>();
 
 class AuthorizationCard extends WatchingWidget {
   final Authorization authorization;
@@ -36,8 +37,7 @@ class AuthorizationCard extends WatchingWidget {
             if (confirm != true) {
               return;
             }
-            locator<AuthorizationManager>()
-                .deleteAuthorization(authorization.authorizationId);
+            di<AuthorizationManager>().deleteAuthorization(authorization.id!);
           },
           child: Row(
             children: [
@@ -45,7 +45,7 @@ class AuthorizationCard extends WatchingWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    authorization.authorizationName,
+                    authorization.name,
                     style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -55,7 +55,7 @@ class AuthorizationCard extends WatchingWidget {
                   SizedBox(
                     width: 250,
                     child: Text(
-                      authorization.authorizationDescription,
+                      authorization.description,
                       maxLines: 2,
                       overflow: TextOverflow.fade,
                       style: const TextStyle(

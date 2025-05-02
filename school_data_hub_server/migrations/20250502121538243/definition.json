@@ -15,19 +15,13 @@
           "dartType": "int?"
         },
         {
-          "name": "publicId",
+          "name": "name",
           "columnType": 0,
           "isNullable": false,
           "dartType": "String"
         },
         {
-          "name": "authorizationName",
-          "columnType": 0,
-          "isNullable": false,
-          "dartType": "String"
-        },
-        {
-          "name": "authorizationDescription",
+          "name": "description",
           "columnType": 0,
           "isNullable": false,
           "dartType": "String"
@@ -1797,15 +1791,9 @@
         },
         {
           "name": "fileId",
-          "columnType": 0,
+          "columnType": 6,
           "isNullable": true,
-          "dartType": "String?"
-        },
-        {
-          "name": "fileUrl",
-          "columnType": 0,
-          "isNullable": true,
-          "dartType": "String?"
+          "dartType": "int?"
         },
         {
           "name": "authorizationId",
@@ -1824,6 +1812,19 @@
         {
           "constraintName": "pupil_authorization_fk_0",
           "columns": [
+            "fileId"
+          ],
+          "referenceTable": "hub_document",
+          "referenceTableSchema": "public",
+          "referenceColumns": [
+            "id"
+          ],
+          "onUpdate": 3,
+          "onDelete": 3
+        },
+        {
+          "constraintName": "pupil_authorization_fk_1",
+          "columns": [
             "authorizationId"
           ],
           "referenceTable": "authorization",
@@ -1835,7 +1836,7 @@
           "onDelete": 3
         },
         {
-          "constraintName": "pupil_authorization_fk_1",
+          "constraintName": "pupil_authorization_fk_2",
           "columns": [
             "pupilId"
           ],
@@ -5748,7 +5749,7 @@
   "installedModules": [
     {
       "module": "school_data_hub",
-      "version": "20250501233215990"
+      "version": "20250502121538243"
     },
     {
       "module": "serverpod",
