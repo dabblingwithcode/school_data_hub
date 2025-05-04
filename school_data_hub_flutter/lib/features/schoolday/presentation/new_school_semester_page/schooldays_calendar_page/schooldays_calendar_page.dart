@@ -84,8 +84,9 @@ class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
               );
               if (results == null) return;
               if (results.isEmpty) return;
-              final schooldays = results.whereType<DateTime>().toList();
-              await _schooldayManager.postMultipleSchooldays(dates: schooldays);
+              final newSchooldayDates = results.whereType<DateTime>().toList();
+              await _schooldayManager.postMultipleSchooldays(
+                  dates: newSchooldayDates);
               setState(() {});
             },
           ),

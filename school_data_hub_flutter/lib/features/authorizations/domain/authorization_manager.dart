@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/data/authorization_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -12,10 +14,11 @@ final _notificationService = di<NotificationService>();
 final _authorizationApiService = AuthorizationApiService();
 final _serverpodSessionManager = di<ServerpodSessionManager>();
 
-class AuthorizationManager {
+class AuthorizationManager with ChangeNotifier {
   ValueListenable<List<Authorization>> get authorizations => _authorizations;
 
   final _authorizations = ValueNotifier<List<Authorization>>([]);
+
   Map<int, Authorization> _authorizationsMap = {};
 
   AuthorizationManager();
@@ -32,16 +35,37 @@ class AuthorizationManager {
     _authorizationsMap = {};
   }
 
+  void _updateAuthsInCollections(List<Authorization> authorizations) {
+    for (var authorization in authorizations) {
+      _authorizationsMap[authorization.id!] = authorization;
+    }
+    _authorizations.value = _authorizationsMap.values.toList();
+  }
+
+  void _updatePupilAuthInCollections(PupilAuthorization pupilAuth) {
+    final authId = pupilAuth.authorizationId;
+    final authorization = _authorizationsMap[authId]!;
+    final List<PupilAuthorization> pupilAuths =
+        List.from(authorization.authorizedPupils!);
+    final index = pupilAuths
+        .indexWhere((element) => element.pupilId == pupilAuth.pupilId);
+    if (index != -1) {
+      pupilAuths[index] = pupilAuth;
+    } else {
+      pupilAuths.add(pupilAuth);
+    }
+    _authorizationsMap[authId] =
+        authorization.copyWith(authorizedPupils: pupilAuths);
+    _authorizations.value = _authorizationsMap.values.toList();
+  }
+
   Future<void> fetchAuthorizations() async {
     final authorizations = await _authorizationApiService.fetchAuthorizations();
 
+    _updateAuthsInCollections(authorizations);
     _notificationService.showSnackBar(NotificationType.success,
         '${authorizations.length} Einwilligungen geladen');
 
-    _authorizations.value = authorizations;
-    _authorizationsMap = {
-      for (var authorization in authorizations) authorization.id!: authorization
-    };
     return;
   }
 
@@ -63,6 +87,25 @@ class AuthorizationManager {
     return;
   }
 
+  Future<void> updateAuthorization(
+      {required int authId,
+      String? name,
+      String? description,
+      ({
+        MemberOperation operation,
+        List<int> pupilIds
+      })? membersToUpdate}) async {
+    final updatedAuth = await ClientHelper.apiCall(
+        call: () => _authorizationApiService.updateAuthorization(
+            authId, name, description, membersToUpdate));
+
+    _updateAuthsInCollections([updatedAuth]);
+    _notificationService.showSnackBar(
+        NotificationType.success, 'Einwilligung geändert');
+
+    return;
+  }
+
   Future<void> deleteAuthorization(int authId) async {
     final confirm = await _authorizationApiService.deleteAuthorization(authId);
     if (!confirm) {
@@ -80,75 +123,35 @@ class AuthorizationManager {
     return;
   }
 
-  Future<void> postPupilAuthorization(int pupilId, String authId) async {
-    // final Authorization authorization =
-    //     await _authorizationApiService.postPupilAuthorization(pupilId, authId);
-    // _authorizationsMap[authorization.authorizationId] = authorization;
-    // _authorizations.value = _authorizationsMap.values.toList();
+  Future<void> updatePupilAuthorization(
+      int pupilId, int listId, bool? status, String? comment) async {
+    final pupilAuth = _authorizationsMap[listId]!
+        .authorizedPupils!
+        .where((element) => element.pupilId == pupilId)
+        .first;
+    final pupilAuthUpdate = pupilAuth.copyWith(
+      status: status ?? pupilAuth.status,
+      comment: comment ?? pupilAuth.comment,
+    );
+    final updatedPupilAuth = await _authorizationApiService
+        .updatePupilAuthorization(pupilAuthUpdate);
+    _updatePupilAuthInCollections(updatedPupilAuth);
 
-    // _notificationService.showSnackBar(
-    //     NotificationType.success, 'Einwilligung erstellt');
-    return;
-  }
-
-  // Add pupils to an existing authorization
-  Future<void> postPupilAuthorizations(
-    List<int> pupilIds,
-    int authId,
-  ) async {
-    // final Authorization authorization = await _authorizationApiService
-    //     .postPupilAuthorizations(pupilIds, authId);
-
-    // _authorizationsMap[authorization.authorizationId] = authorization;
-    // _authorizations.value = _authorizationsMap.values.toList();
-
-    // _notificationService.showSnackBar(
-    //     NotificationType.success, 'Einwilligungen erstellt');
-    return;
-  }
-
-  Future<void> deletePupilAuthorization(
-    int pupilId,
-    int authId,
-  ) async {
-    // final Authorization authorization = await _authorizationApiService
-    //     .deletePupilAuthorization(pupilId, authId);
-
-    // _authorizationsMap[authorization.authorizationId] = authorization;
-    // _authorizations.value = _authorizationsMap.values.toList();
-
-    // _notificationService.showSnackBar(
-    //     NotificationType.success, 'Einwilligung gelöscht');
-    return;
-  }
-
-  Future<void> updatePupilAuthorizationProperty(
-      int pupilId, int listId, bool? value, String? comment) async {
-    // final Authorization authorization = await _authorizationApiService
-    //     .updatePupilAuthorizationProperty(pupilId, listId, value, comment);
-
-    // _authorizationsMap[authorization.authorizationId] = authorization;
-    // _authorizations.value = _authorizationsMap.values.toList();
-
-    // _notificationService.showSnackBar(
-    //     NotificationType.success, 'Einwilligung geändert');
+    _notificationService.showSnackBar(
+        NotificationType.success, 'Einwilligung geändert');
 
     return;
   }
 
-  Future<void> postAuthorizationFile(
+  Future<void> addFileToPupilAuthorization(
     File file,
-    int pupilId,
-    String authId,
+    int pupilAuthId,
   ) async {
-    // final Authorization authorization = await _authorizationApiService
-    //     .postAuthorizationFile(file, pupilId, authId);
-
-    // _authorizationsMap[authorization.authorizationId] = authorization;
-    // _authorizations.value = _authorizationsMap.values.toList();
-
-    // _notificationService.showSnackBar(
-    //     NotificationType.success, 'Datei hochgeladen');
+    final encryptedFile = await customEncrypter.encryptFile(file);
+    final createdBy = _serverpodSessionManager.userName;
+    final pupilAuth = await _authorizationApiService
+        .addFileToPupilAuthorization(pupilAuthId, encryptedFile, createdBy!);
+    _updatePupilAuthInCollections(pupilAuth);
 
     return;
   }

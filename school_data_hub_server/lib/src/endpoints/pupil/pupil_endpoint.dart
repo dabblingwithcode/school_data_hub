@@ -37,45 +37,80 @@ class PupilEndpoint extends Endpoint {
     return pupils;
   }
 
-  Future<PupilData> deleteAvatar(Session session, int internalId) async {
-    final pupil = await PupilData.db.findFirstRow(
+  Future<PupilData> deletePupilDocument(
+      Session session, int pupilId, PupilDocumentType documentType) async {
+    final pupil = await PupilData.db.findById(
       session,
-      where: (t) => t.internalId.equals(internalId),
+      pupilId,
       include: PupilSchemas.allInclude,
     );
     if (pupil == null) {
       throw Exception('Pupil not found');
     }
-    await session.storage
-        .deleteFile(storageId: 'private', path: pupil.avatar!.documentPath!);
-    await PupilData.db.detachRow.avatar(session, pupil);
+    String path;
 
-    await HubDocument.db.deleteRow(session, pupil.avatar!);
-    pupil.avatar = null;
-    await PupilData.db.updateRow(session, pupil);
-    // get the updated pupil with the avatar removed
-    final updatedPupilWithAvatar = await PupilData.db.findFirstRow(
+    switch (documentType) {
+      case PupilDocumentType.avatar:
+        path = pupil.avatar!.documentPath!;
+
+        await PupilData.db.detachRow.avatar(session, pupil);
+
+        await HubDocument.db.deleteRow(session, pupil.avatar!);
+        break;
+      case PupilDocumentType.avatarAuth:
+        path = pupil.avatarAuth!.documentPath!;
+
+        await PupilData.db.detachRow.avatarAuth(session, pupil);
+        await HubDocument.db.deleteRow(session, pupil.avatarAuth!);
+        // if the avatar auth is revoked, we need to delete the avatar as well
+        if (pupil.avatar != null) {
+          await PupilData.db.detachRow.avatar(session, pupil);
+          await HubDocument.db.deleteRow(session, pupil.avatar!);
+        }
+        await session.storage.deleteFile(
+          storageId: 'private',
+          path: pupil.avatar!.documentPath!,
+        );
+        //await PupilData.db.updateRow(session, pupil);
+        break;
+      case PupilDocumentType.publicMediaAuth:
+        path = pupil.publicMediaAuthDocument!.documentPath!;
+
+        await PupilData.db.detachRow.publicMediaAuthDocument(session, pupil);
+        await HubDocument.db.deleteRow(session, pupil.publicMediaAuthDocument!);
+        //await PupilData.db.updateRow(session, pupil);
+        break;
+    }
+
+    // First update the pupil record to remove the relationship
+
+    // Then delete the file and document
+    await session.storage.deleteFile(storageId: 'private', path: path);
+    // await HubDocument.db.deleteRow(session, documentToDelete!);
+
+    // Get the updated pupil
+    final updatedPupil = await PupilData.db.findById(
       session,
-      where: (t) => t.internalId.equals(internalId),
+      pupilId,
       include: PupilSchemas.allInclude,
     );
-    return updatedPupilWithAvatar!;
+    return updatedPupil!;
   }
 
-  Future<PupilData> deleteAvatarAuth(Session session, int internalId) async {
-    final pupil = await PupilData.db.findFirstRow(
-      session,
-      where: (t) => t.internalId.equals(internalId),
-    );
-    if (pupil == null) {
-      throw Exception('Pupil not found');
-    }
-    session.storage.deleteFile(
-        storageId: 'private', path: pupil.avatarAuth!.documentPath!);
-    pupil.avatarAuth = null;
-    final updatedPupil = await PupilData.db.updateRow(session, pupil);
-    return updatedPupil;
-  }
+  // Future<PupilData> deleteAvatarAuth(Session session, int internalId) async {
+  //   final pupil = await PupilData.db.findFirstRow(
+  //     session,
+  //     where: (t) => t.internalId.equals(internalId),
+  //   );
+  //   if (pupil == null) {
+  //     throw Exception('Pupil not found');
+  //   }
+  //   session.storage.deleteFile(
+  //       storageId: 'private', path: pupil.avatarAuth!.documentPath!);
+  //   pupil.avatarAuth = null;
+  //   final updatedPupil = await PupilData.db.updateRow(session, pupil);
+  //   return updatedPupil;
+  // }
 
   Future<PupilData> resetPublicMediaAuth(
       Session session, int pupilId, String createdBy) async {
@@ -112,8 +147,6 @@ class PupilEndpoint extends Endpoint {
             session: session, documentId: documentId, transaction: transaction);
         pupil.publicMediaAuthDocument = null;
         pupil.publicMediaAuth = publicMediaAuthReset;
-
-        await PupilData.db.updateRow(session, pupil, transaction: transaction);
       });
     } else {
       pupil.publicMediaAuth = publicMediaAuthReset;

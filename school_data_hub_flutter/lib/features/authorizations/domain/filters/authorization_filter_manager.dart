@@ -16,9 +16,28 @@ class AuthorizationFilterManager {
   ValueListenable<bool> get filterState => _filterState;
   final _filterState = ValueNotifier<bool>(false);
 
+  String _currentSearchText = '';
+  void dispose() {
+    _authorizationManager.authorizations
+        .removeListener(_onAuthorizationsChanged);
+  }
+
   AuthorizationFilterManager init() {
+    _authorizationManager.authorizations.addListener(_onAuthorizationsChanged);
+
     resetFilters();
     return this;
+  }
+
+  void _onAuthorizationsChanged() {
+    // If we have an active filter, reapply it to the new data
+    if (_filterState.value && _currentSearchText.isNotEmpty) {
+      _applySearchFilter(_currentSearchText);
+    } else {
+      // Otherwise, just update with the new full list
+      _filteredAuthorizations.value =
+          _authorizationManager.authorizations.value;
+    }
   }
 
   resetFilters() {
@@ -29,6 +48,7 @@ class AuthorizationFilterManager {
   }
 
   onSearchText(String text) {
+    _currentSearchText = text;
     if (text.isEmpty) {
       _filteredAuthorizations.value =
           di<AuthorizationManager>().authorizations.value;
@@ -36,10 +56,12 @@ class AuthorizationFilterManager {
       return;
     }
     _filterState.value = true;
+    _applySearchFilter(text);
+  }
+
+  void _applySearchFilter(String text) {
     String lowerCaseText = text.toLowerCase();
-    _filteredAuthorizations.value = di<AuthorizationManager>()
-        .authorizations
-        .value
+    _filteredAuthorizations.value = _authorizationManager.authorizations.value
         .where((element) => element.name.toLowerCase().contains(lowerCaseText))
         .toList();
   }

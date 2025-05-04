@@ -12,25 +12,16 @@ import 'package:watch_it/watch_it.dart';
 
 final _mainMenuBottomNavManager = di<MainMenuBottomNavManager>();
 
-class CreditListCard extends WatchingStatefulWidget {
-  final PupilProxy passedPupil;
-  const CreditListCard(this.passedPupil, {super.key});
-
-  @override
-  State<CreditListCard> createState() => _CreditListCardState();
-}
-
-class _CreditListCardState extends State<CreditListCard> {
-  late CustomExpansionTileController _tileController;
-  @override
-  void initState() {
-    super.initState();
-    _tileController = CustomExpansionTileController();
-  }
+class CreditListCard extends WatchingWidget {
+  final PupilProxy pupil;
+  const CreditListCard(this.pupil, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    PupilProxy pupil = watch<PupilProxy>(widget.passedPupil);
+    final tileController = createOnce(() => CustomExpansionTileController());
+    final creditEarned =
+        watchPropertyValue((m) => m.creditEarned, target: pupil);
+    final credit = watchPropertyValue((m) => m.credit, target: pupil);
 
     return Card(
       color: Colors.white,
@@ -112,7 +103,7 @@ class _CreditListCardState extends State<CreditListCard> {
                                 const Text('bisjetzt verdient:'),
                                 const Gap(10),
                                 Text(
-                                  pupil.creditEarned.toString(),
+                                  creditEarned.toString(),
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 18,
@@ -130,9 +121,9 @@ class _CreditListCardState extends State<CreditListCard> {
               const Gap(20),
               InkWell(
                 onTap: () {
-                  _tileController.isExpanded
-                      ? _tileController.collapse()
-                      : _tileController.expand();
+                  tileController.isExpanded
+                      ? tileController.collapse()
+                      : tileController.expand();
                 },
                 child: Column(
                   children: [
@@ -140,7 +131,7 @@ class _CreditListCardState extends State<CreditListCard> {
                     const Text('Credit'),
                     Center(
                       child: Text(
-                        pupil.credit.toString(),
+                        credit.toString(),
                         style: const TextStyle(
                           fontSize: 23,
                           fontWeight: FontWeight.bold,
@@ -156,7 +147,7 @@ class _CreditListCardState extends State<CreditListCard> {
           ),
           CustomExpansionTileContent(
               title: null,
-              tileController: _tileController,
+              tileController: tileController,
               widgetList: [CreditTransactions(pupil: pupil)])
         ],
       ),

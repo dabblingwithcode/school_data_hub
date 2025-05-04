@@ -156,7 +156,9 @@ class DiManager {
     di.registerSingletonWithDependencies<AuthorizationFilterManager>(() {
       final authorizationFilterManager = AuthorizationFilterManager();
       return authorizationFilterManager.init();
-    }, dependsOn: [AuthorizationManager]);
+    },
+        dispose: (instance) => instance.dispose(),
+        dependsOn: [AuthorizationManager]);
 
     di.registerSingletonAsync<PupilManager>(() async {
       final pupilManager = PupilManager();

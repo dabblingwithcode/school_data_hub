@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
@@ -42,7 +43,8 @@ setAvatar({required BuildContext context, required PupilProxy pupil}) async {
     context,
     MaterialPageRoute(builder: (context) => CropAvatarView(image: image!)),
   );
-  di<PupilManager>().updateAvatarImage(imageFile, pupil);
+  di<PupilManager>()
+      .updatePupilDocument(imageFile, pupil, PupilDocumentType.avatar);
 }
 
 class CropAvatarView extends StatefulWidget {

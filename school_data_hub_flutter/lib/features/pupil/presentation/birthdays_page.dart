@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:watch_it/watch_it.dart';
 
-class BirthdaysView extends WatchingWidget {
+class BirthdaysView extends StatelessWidget {
   final DateTime selectedDate;
   const BirthdaysView({required this.selectedDate, super.key});
 

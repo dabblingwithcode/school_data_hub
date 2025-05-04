@@ -5,7 +5,7 @@ import 'package:watch_it/watch_it.dart';
 
 final _mainMenuBottomNavManager = di<MainMenuBottomNavManager>();
 
-enum ProfileNavigation {
+enum ProfileNavigationState {
   info(0),
   language(1),
   credit(2),
@@ -19,7 +19,7 @@ enum ProfileNavigation {
   ;
 
   final int value;
-  const ProfileNavigation(this.value);
+  const ProfileNavigationState(this.value);
 }
 
 class PupilProfileNavigation extends WatchingStatefulWidget {
@@ -78,12 +78,15 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                           ),
                         ),
                         backgroundColor: navigationBackgroundColor(
-                            ProfileNavigation.info.value),
+                            ProfileNavigationState.info.value),
                       ),
                       onPressed: () {
-                        if (pupilProfileNavState == 0) return;
+                        if (pupilProfileNavState ==
+                            ProfileNavigationState.info.value) {
+                          return;
+                        }
                         _mainMenuBottomNavManager.setPupilProfileNavPage(
-                            ProfileNavigation.info.value);
+                            ProfileNavigationState.info.value);
                       },
                       child: Icon(
                         Icons.info_rounded,
@@ -105,12 +108,15 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                                 color: AppColors.backgroundColor, width: 2.0),
                             borderRadius: BorderRadius.zero),
                         backgroundColor: navigationBackgroundColor(
-                            ProfileNavigation.language.value),
+                            ProfileNavigationState.language.value),
                       ),
                       onPressed: () {
-                        if (pupilProfileNavState == 1) return;
+                        if (pupilProfileNavState ==
+                            ProfileNavigationState.language.value) {
+                          return;
+                        }
                         _mainMenuBottomNavManager.setPupilProfileNavPage(
-                            ProfileNavigation.language.value);
+                            ProfileNavigationState.language.value);
                       },
                       child: Icon(
                         Icons.language_rounded,
@@ -132,12 +138,15 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                                 color: AppColors.backgroundColor, width: 2.0),
                             borderRadius: BorderRadius.zero),
                         backgroundColor: navigationBackgroundColor(
-                            ProfileNavigation.credit.value),
+                            ProfileNavigationState.credit.value),
                       ),
                       onPressed: () {
-                        if (pupilProfileNavState == 2) return;
+                        if (pupilProfileNavState ==
+                            ProfileNavigationState.credit.value) {
+                          return;
+                        }
                         _mainMenuBottomNavManager.setPupilProfileNavPage(
-                            ProfileNavigation.credit.value);
+                            ProfileNavigationState.credit.value);
                       },
                       child: Icon(
                         Icons.attach_money_rounded,
@@ -159,12 +168,15 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                                 color: AppColors.backgroundColor, width: 2.0),
                             borderRadius: BorderRadius.zero),
                         backgroundColor: navigationBackgroundColor(
-                            ProfileNavigation.attendance.value),
+                            ProfileNavigationState.attendance.value),
                       ),
                       onPressed: () {
-                        if (pupilProfileNavState == 3) return;
+                        if (pupilProfileNavState ==
+                            ProfileNavigationState.attendance.value) {
+                          return;
+                        }
                         _mainMenuBottomNavManager.setPupilProfileNavPage(
-                            ProfileNavigation.attendance.value);
+                            ProfileNavigationState.attendance.value);
                       },
                       child: Icon(
                         Icons.calendar_month_rounded,
@@ -190,12 +202,15 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                           ),
                         ),
                         backgroundColor: navigationBackgroundColor(
-                            ProfileNavigation.schooldayEvent.value),
+                            ProfileNavigationState.schooldayEvent.value),
                       ),
                       onPressed: () {
-                        if (pupilProfileNavState == 4) return;
+                        if (pupilProfileNavState ==
+                            ProfileNavigationState.schooldayEvent.value) {
+                          return;
+                        }
                         _mainMenuBottomNavManager.setPupilProfileNavPage(
-                            ProfileNavigation.schooldayEvent.value);
+                            ProfileNavigationState.schooldayEvent.value);
                       },
                       child: Icon(
                         Icons.warning_rounded,
@@ -222,12 +237,15 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                         shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero),
                         backgroundColor: navigationBackgroundColor(
-                            ProfileNavigation.ogs.value),
+                            ProfileNavigationState.ogs.value),
                       ),
                       onPressed: () {
-                        if (pupilProfileNavState == 5) return;
+                        if (pupilProfileNavState ==
+                            ProfileNavigationState.ogs.value) {
+                          return;
+                        }
                         _mainMenuBottomNavManager.setPupilProfileNavPage(
-                            ProfileNavigation.ogs.value);
+                            ProfileNavigationState.ogs.value);
                       },
                       child: Text(
                         'OGS',
@@ -250,11 +268,14 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                           shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.zero),
                           backgroundColor: navigationBackgroundColor(
-                              ProfileNavigation.lists.value)),
+                              ProfileNavigationState.lists.value)),
                       onPressed: () {
-                        if (pupilProfileNavState == 6) return;
+                        if (pupilProfileNavState ==
+                            ProfileNavigationState.lists.value) {
+                          return;
+                        }
                         _mainMenuBottomNavManager.setPupilProfileNavPage(
-                            ProfileNavigation.lists.value);
+                            ProfileNavigationState.lists.value);
                       },
                       child: Icon(
                         Icons.rule,
@@ -274,11 +295,14 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                           shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.zero),
                           backgroundColor: navigationBackgroundColor(
-                              ProfileNavigation.authorization.value)),
+                              ProfileNavigationState.authorization.value)),
                       onPressed: () {
-                        if (pupilProfileNavState == 7) return;
+                        if (pupilProfileNavState ==
+                            ProfileNavigationState.authorization.value) {
+                          return;
+                        }
                         _mainMenuBottomNavManager.setPupilProfileNavPage(
-                            ProfileNavigation.authorization.value);
+                            ProfileNavigationState.authorization.value);
                       },
                       child: Icon(
                         Icons.fact_check_rounded,
@@ -298,11 +322,14 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                           shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.zero),
                           backgroundColor: navigationBackgroundColor(
-                              ProfileNavigation.learningSupport.value)),
+                              ProfileNavigationState.learningSupport.value)),
                       onPressed: () {
-                        if (pupilProfileNavState == 8) return;
+                        if (pupilProfileNavState ==
+                            ProfileNavigationState.learningSupport.value) {
+                          return;
+                        }
                         _mainMenuBottomNavManager.setPupilProfileNavPage(
-                            ProfileNavigation.learningSupport.value);
+                            ProfileNavigationState.learningSupport.value);
                       },
                       child: Icon(
                         Icons.support_rounded,
@@ -322,11 +349,14 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                           shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.zero),
                           backgroundColor: navigationBackgroundColor(
-                              ProfileNavigation.learning.value)),
+                              ProfileNavigationState.learning.value)),
                       onPressed: () {
-                        if (pupilProfileNavState == 9) return;
+                        if (pupilProfileNavState ==
+                            ProfileNavigationState.learning.value) {
+                          return;
+                        }
                         _mainMenuBottomNavManager.setPupilProfileNavPage(
-                            ProfileNavigation.learning.value);
+                            ProfileNavigationState.learning.value);
                       },
                       child: Icon(
                         Icons.lightbulb,

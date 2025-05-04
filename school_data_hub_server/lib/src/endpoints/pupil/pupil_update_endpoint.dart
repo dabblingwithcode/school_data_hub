@@ -80,8 +80,8 @@ class PupilUpdateEndpoint extends Endpoint {
     return updatedSiblingsWithRelation;
   }
 
-  Future<PupilData> updatePupilAvatar(
-      Session session, int pupilId, String filePath, String createdBy) async {
+  Future<PupilData> updatePupilDocument(Session session, int pupilId,
+      String filePath, String createdBy, PupilDocumentType documentType) async {
     // find the createdBy user
 
     // find the pupil by id
@@ -97,65 +97,7 @@ class PupilUpdateEndpoint extends Endpoint {
     }
 
     // Create a HubDocument with the file path
-    final documentId = Uuid().v4();
-    final hubDocument = HubDocument(
-      documentId: documentId,
-      documentPath: filePath,
-      createdBy: createdBy,
-      createdAt: DateTime.now(),
-    );
-
-    // Let's create a transaction for the database operations
-    // This is important to ensure that all operations are atomic
-    await session.db.transaction((transaction) async {
-      // Save the hub document object to the database
-      final hubDocumentInDatabase = await HubDocument.db
-          .insertRow(session, hubDocument, transaction: transaction);
-
-      // if the pupil has an avatar, delete it
-      if (pupil.avatar != null) {
-        _log.warning(
-            'Deleting old avatar document: ${pupil.avatar!.documentId}');
-        // delete the old avatar file from the storage
-        session.storage.deleteFile(
-            storageId: 'private', path: pupil.avatar!.documentPath!);
-        // detach the old avatar from the pupil
-        await PupilData.db.detachRow
-            .avatar(session, pupil, transaction: transaction);
-        // delete the old avatar document from the database
-        await HubDocument.db
-            .deleteRow(session, pupil.avatar!, transaction: transaction);
-        // TODO: Consider exceptions and handle them gracefully here
-      }
-      // update the pupil with the new avatar
-      _log.info(
-          'Updating pupil avatar: id: [${hubDocumentInDatabase.id}] documentID [${hubDocumentInDatabase.documentId}]');
-      // pupil.avatar = hubDocument;
-      await PupilData.db.attachRow.avatar(session, pupil, hubDocumentInDatabase,
-          transaction: transaction);
-    });
-
-    final updatedPupil = await PupilData.db
-        .findById(session, pupil.id!, include: PupilSchemas.allInclude);
-
-    _log.fine('Updated pupil : ${updatedPupil!.toJson()}');
-    return updatedPupil;
-  }
-
-  Future<PupilData> updatePupilAvatarAuth(
-      Session session, int pupilId, String filePath, String createdBy) async {
-    // find the pupil by id
-    final pupil = await PupilData.db.findById(
-      session,
-      pupilId,
-      include: PupilSchemas.allInclude,
-    );
-    if (pupil == null) {
-      throw Exception('Pupil not found');
-    }
-
-    // Create a HubDocument with the file path
-    final hubDocument = HubDocumentHelper.createHubDocumentObject(
+    final newHubDocument = HubDocumentHelper.createHubDocumentObject(
         session: session, createdBy: createdBy, path: filePath);
 
     // Let's create a transaction for the database operations
@@ -163,30 +105,110 @@ class PupilUpdateEndpoint extends Endpoint {
     await session.db.transaction((transaction) async {
       // Save the hub document object to the database
       final hubDocumentInDatabase = await HubDocument.db
-          .insertRow(session, hubDocument, transaction: transaction);
+          .insertRow(session, newHubDocument, transaction: transaction);
 
-      // if the pupil has an avatar, delete it
-      if (pupil.avatarAuth != null) {
-        _log.warning(
-            'Deleting old avatar auth document: ${pupil.avatar!.documentId}');
-        // delete the old avatar auth file from the storage
-        session.storage.deleteFile(
-            storageId: 'private', path: pupil.avatarAuth!.documentPath!);
-        // detach the old avatar from the pupil
-        await PupilData.db.detachRow
-            .avatarAuth(session, pupil, transaction: transaction);
-        // delete the old avatar document from the database
-        await HubDocument.db
-            .deleteRow(session, pupil.avatarAuth!, transaction: transaction);
-        // TODO: Consider exceptions and handle them gracefully here
+      switch (documentType) {
+        case PupilDocumentType.avatar:
+          _log.info(
+              'Updating pupil avatar: id: [${hubDocumentInDatabase.id}] documentID [${hubDocumentInDatabase.documentId}]');
+
+          // if the pupil has an avatar, delete it
+
+          if (pupil.avatar != null) {
+            _log.warning(
+                'Deleting old avatar document: ${pupil.avatar!.documentId}');
+
+            // delete the old avatar file from the storage
+            session.storage.deleteFile(
+                storageId: 'private', path: pupil.avatar!.documentPath!);
+
+            // detach the old avatar from the pupil
+            await PupilData.db.detachRow
+                .avatar(session, pupil, transaction: transaction);
+
+            // delete the old avatar document from the database
+            await HubDocument.db
+                .deleteRow(session, pupil.avatar!, transaction: transaction);
+
+            // TODO: Consider exceptions and handle them
+          }
+
+          // update the pupil with the new avatar
+
+          await PupilData.db.attachRow.avatar(
+              session, pupil, hubDocumentInDatabase,
+              transaction: transaction);
+          break;
+
+        case PupilDocumentType.avatarAuth:
+          _log.info(
+              'Updating pupil avatarAuth: id: [${hubDocumentInDatabase.id}] documentID [${hubDocumentInDatabase.documentId}]');
+
+          // if the pupil has an avatar auth, delete it
+
+          if (pupil.avatarAuth != null) {
+            _log.warning(
+                'Deleting old avatar auth document: ${pupil.avatar!.documentId}');
+
+            // delete the old avatar file from the storage
+            session.storage.deleteFile(
+                storageId: 'private', path: pupil.avatarAuth!.documentPath!);
+
+            // detach the old avatar auth from the pupil
+            await PupilData.db.detachRow
+                .avatarAuth(session, pupil, transaction: transaction);
+
+            // delete the old avatar auth document from the database
+            await HubDocument.db.deleteRow(session, pupil.avatarAuth!,
+                transaction: transaction);
+
+            // TODO: Consider exceptions and handle them
+          }
+
+          // update the pupil with the new avatar
+
+          await PupilData.db.attachRow.avatarAuth(
+              session, pupil, hubDocumentInDatabase,
+              transaction: transaction);
+
+          break;
+
+        case PupilDocumentType.publicMediaAuth:
+          _log.info(
+              'Updating pupil public media auth: id: [${hubDocumentInDatabase.id}] documentID [${hubDocumentInDatabase.documentId}]');
+
+          // if the pupil has a public media auth, delete it
+          if (pupil.publicMediaAuthDocument != null) {
+            _log.warning(
+                'Deleting old public media auth document: ${pupil.publicMediaAuthDocument!.documentId}');
+
+            // delete the old public media auth document file from the storage
+            session.storage.deleteFile(
+                storageId: 'private',
+                path: pupil.publicMediaAuthDocument!.documentPath!);
+
+            // detach the old public media auth document from the pupil
+            await PupilData.db.detachRow.publicMediaAuthDocument(session, pupil,
+                transaction: transaction);
+
+            // delete the old avatar document from the database
+            await HubDocument.db.deleteRow(
+                session, pupil.publicMediaAuthDocument!,
+                transaction: transaction);
+
+            // TODO: Consider exceptions and handle them
+          }
+
+          // update the pupil with the new publi media a
+          _log.info(
+              'Updating pupil public media auth with id: [${hubDocumentInDatabase.id}] documentID [${hubDocumentInDatabase.documentId}]');
+
+          await PupilData.db.attachRow.publicMediaAuthDocument(
+              session, pupil, hubDocumentInDatabase,
+              transaction: transaction);
+
+          break;
       }
-      // update the pupil with the new avatar
-      _log.info(
-          'Updating pupil avatar auth: id: [${hubDocumentInDatabase.id}] documentID [${hubDocumentInDatabase.documentId}]');
-      // pupil.avatar = hubDocument;
-      await PupilData.db.attachRow.avatarAuth(
-          session, pupil, hubDocumentInDatabase,
-          transaction: transaction);
     });
 
     final updatedPupil = await PupilData.db
@@ -264,51 +286,22 @@ class PupilUpdateEndpoint extends Endpoint {
     return updatedPupil!;
   }
 
-  Future<PupilData> updatePupilPublicMediaAuth(
-      Session session, int pupilId, String filePath, String createdBy) async {
-    final pupil = await PupilData.db.findFirstRow(
-      session,
-      where: (t) => t.id.equals(pupilId),
-    );
+  Future<PupilData> updatePublicMediaAuth(
+      Session session, int pupilId, PublicMediaAuth publicMediaAuth) async {
+    final pupil = await PupilData.db.findById(session, pupilId);
+
     if (pupil == null) {
       throw Exception('Pupil not found');
     }
-
-    final hubDocument = HubDocumentHelper.createHubDocumentObject(
-        session: session, createdBy: createdBy, path: filePath);
-
-    await session.db.transaction((transaction) async {
-      // Save the hub document object to the database
-      final hubDocumentInDatabase = await HubDocument.db
-          .insertRow(session, hubDocument, transaction: transaction);
-
-      // if the pupil has an avatar, delete it
-      if (pupil.publicMediaAuthDocument != null) {
-        _log.warning(
-            'Deleting old public media auth document: ${pupil.avatar!.documentId}');
-        // delete the old avatar auth file from the storage
-        session.storage.deleteFile(
-            storageId: 'private',
-            path: pupil.publicMediaAuthDocument!.documentPath!);
-        // detach the old avatar from the pupil
-        await PupilData.db.detachRow
-            .publicMediaAuthDocument(session, pupil, transaction: transaction);
-        // delete the old avatar document from the database
-        await HubDocument.db.deleteRow(session, pupil.publicMediaAuthDocument!,
-            transaction: transaction);
-        // TODO: Consider exceptions and handle them gracefully here
-      }
-      // update the pupil with the new avatar
-      _log.info(
-          'Updating pupil public media auth: id: [${hubDocumentInDatabase.id}] documentID [${hubDocumentInDatabase.documentId}]');
-      await PupilData.db.attachRow.publicMediaAuthDocument(
-          session, pupil, hubDocumentInDatabase,
-          transaction: transaction);
-    });
-    final updatedPupil = await PupilData.db
-        .findById(session, pupil.id!, include: PupilSchemas.allInclude);
-    _log.fine('Updated pupil : ${updatedPupil!.toJson()}');
-    return updatedPupil;
+    pupil.publicMediaAuth = publicMediaAuth;
+    final updatedPupil = await PupilData.db.updateRow(session, pupil);
+    // Fetch the object again with the relation included
+    final updatedPupilWithRelation = await PupilData.db.findById(
+      session,
+      pupil.id!,
+      include: PupilSchemas.allInclude,
+    );
+    return updatedPupilWithRelation!;
   }
 
   Future<PupilData> updateSupportLevel(
@@ -323,6 +316,12 @@ class PupilUpdateEndpoint extends Endpoint {
     pupil.supportLevelHistory ??= <SupportLevel>[];
     pupil.supportLevelHistory!.add(supportLevel);
     final updatedPupil = await PupilData.db.updateRow(session, pupil);
-    return updatedPupil;
+    // Fetch the object again with the relation included
+    final updatedPupilWithRelation = await PupilData.db.findById(
+      session,
+      pupil.id!,
+      include: PupilSchemas.allInclude,
+    );
+    return updatedPupilWithRelation!;
   }
 }

@@ -69,8 +69,12 @@ class AuthorizationPupilsBottomNavBar extends WatchingWidget {
                         return;
                       }
                       if (selectedPupilIds.isNotEmpty) {
-                        _authorizationManager.postPupilAuthorizations(
-                            selectedPupilIds, authorization.id!);
+                        _authorizationManager.updateAuthorization(
+                            authId: authorization.id!,
+                            membersToUpdate: (
+                              operation: MemberOperation.add,
+                              pupilIds: selectedPupilIds
+                            ));
                       }
                     })
               ],
@@ -135,8 +139,12 @@ BottomAppBar authorizationPupilsBottomNavBar(
                       return;
                     }
                     if (selectedPupilIds.isNotEmpty) {
-                      di<AuthorizationManager>().postPupilAuthorizations(
-                          selectedPupilIds, authorization.id!);
+                      _authorizationManager.updateAuthorization(
+                          authId: authorization.id!,
+                          membersToUpdate: (
+                            operation: MemberOperation.add,
+                            pupilIds: selectedPupilIds
+                          ));
                     }
                   })
               : const SizedBox.shrink(),

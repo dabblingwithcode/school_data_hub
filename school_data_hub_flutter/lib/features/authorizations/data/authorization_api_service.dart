@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:watch_it/watch_it.dart';
@@ -20,20 +23,30 @@ class AuthorizationApiService {
   //- post authorization with a list of pupils as members
 
   Future<Authorization> postAuthorizationWithPupils(String name,
-      String description, String createdNy, List<int> pupilIds) async {
-    _notificationService.apiRunning(true);
-    try {
-      _notificationService.apiRunning(true);
-      final authorization = await _client.authorization
-          .postAuthorizationWithPupils(name, description, createdNy, pupilIds);
-      _notificationService.apiRunning(false);
-      return authorization;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-      throw Exception('Failed to post authorization: $e');
-    }
+      String description, String createdBy, List<int> pupilIds) async {
+    final auth = ClientHelper.apiCall(
+        call: () => _client.authorization.postAuthorizationWithPupils(
+            name, description, createdBy, pupilIds));
+    return auth;
   }
 
+//- update authorization
+
+  Future<Authorization> updateAuthorization(
+      int authId,
+      String? name,
+      String? description,
+      ({
+        MemberOperation operation,
+        List<int> pupilIds
+      })? membersToUpdate) async {
+    final updatedAuth = ClientHelper.apiCall(
+      call: () => _client.authorization
+          .updateAuthorization(authId, name, description, membersToUpdate),
+      errorMessage: 'Einwilligung konnte nicht geändert werden',
+    );
+    return updatedAuth;
+  }
   //- delete authorization
 
   Future<bool> deleteAuthorization(int authId) async {
@@ -46,134 +59,34 @@ class AuthorizationApiService {
 
 //   //-PUPIL AUTHORIZATIONS -------------------------------------------
 
-//   //- add pupil to authorization
+  //- update pupil authorization
 
-//   Future<Authorization> postPupilAuthorization(
-//       int pupilId, String authId) async {
-//     _notificationService.apiRunning(true);
+  Future<PupilAuthorization> updatePupilAuthorization(
+      PupilAuthorization pupilauth) {
+    return ClientHelper.apiCall(
+      call: () =>
+          _client.pupilAuthorization.updatePupilAuthorization(pupilauth),
+      errorMessage: 'Einwilligung konnte nicht geändert werden',
+    );
+  }
 
-//     final data = jsonEncode({"comment": null, "file_id": null, "status": null});
-
-//     final response = await _client.post(
-//       _postPupilAuthorizationUrl(pupilId, authId),
-//       data: data,
-//       options: _client.hubOptions,
-//     );
-
-//     _notificationService.apiRunning(false);
-
-//     if (response.statusCode != 200) {
-//       _notificationService.showSnackBar(
-//           NotificationType.error, 'Error: ${response.data}');
-
-//       throw ApiException(
-//           'Failed to post pupil authorization', response.statusCode);
-//     }
-
-//     return Authorization.fromJson(response.data);
-//   }
-
-//   //- post pupil authorizations for a list of pupils as members of an authorization
-
-//   Future<Authorization> postPupilAuthorizations(
-//       List<int> pupilIds, String authId) async {
-//     _notificationService.apiRunning(true);
-
-//     final data = jsonEncode({"pupils": pupilIds});
-
-//     final response = await _client.post(
-//       _postPupilAuthorizationsUrl(authId),
-//       data: data,
-//       options: _client.hubOptions,
-//     );
-//     _notificationService.apiRunning(false);
-//     if (response.statusCode != 200) {
-//       _notificationService.showSnackBar(NotificationType.error,
-//           'Es konnten keine Einwilligungen erstellt werden');
-
-//       _notificationService.apiRunning(false);
-
-//       throw ApiException(
-//           'Failed to post pupil authorizations', response.statusCode);
-//     }
-//     final Authorization authorization = Authorization.fromJson(response.data);
-
-//     return authorization;
-//   }
-
-//   //- delete pupil authorization
-
-//   String _deletePupilAuthorizationUrl(int pupilId, String authorizationId) {
-//     return '${_baseUrl()}/pupil_authorizations/$pupilId/$authorizationId';
-//   }
-
-//   Future<Authorization> deletePupilAuthorization(
-//       int pupilId, String authId) async {
-//     _notificationService.apiRunning(true);
-
-//     final response = await _client.delete(
-//       _deletePupilAuthorizationUrl(pupilId, authId),
-//       options: _client.hubOptions,
-//     );
-//     _notificationService.apiRunning(false);
-
-//     if (response.statusCode != 200) {
-//       _notificationService.showSnackBar(NotificationType.error,
-//           'Die Einwilligung konnte nicht gelöscht werden');
-
-//       _notificationService.apiRunning(false);
-
-//       throw ApiException(
-//           'Failed to delete pupil authorization', response.statusCode);
-//     }
-
-//     final authorization = Authorization.fromJson(response.data);
-
-//     return authorization;
-//   }
-
-//   //- patch pupil authorization
-
-//   String _patchPupilAuthorizationUrl(int pupilId, String authorizationId) {
-//     return '${_baseUrl()}/pupil_authorizations/$pupilId/$authorizationId';
-//   }
-
-//   Future<Authorization> updatePupilAuthorizationProperty(
-//       int pupilId, String listId, bool? value, String? comment) async {
-//     _notificationService.apiRunning(true);
-
-//     String data = '';
-//     if (value == null) {
-//       data = jsonEncode({"comment": comment});
-//     } else if (comment == null) {
-//       data = jsonEncode({"status": value});
-//     } else {
-//       data = jsonEncode({"comment": comment, "status": value});
-//     }
-
-//     final response = await _client.patch(
-//       _patchPupilAuthorizationUrl(pupilId, listId),
-//       data: data,
-//       options: _client.hubOptions,
-//     );
-
-//     _notificationService.apiRunning(false);
-
-//     if (response.statusCode != 200) {
-//       _notificationService.showSnackBar(
-//           NotificationType.error, 'Einwilligung konnte nicht geändert werden');
-
-//       _notificationService.apiRunning(false);
-
-//       throw ApiException(
-//           'Failed to patch pupil authorization', response.statusCode);
-//     }
-
-//     final authorization = Authorization.fromJson(response.data);
-
-//     return authorization;
-//   }
-
+  Future<PupilAuthorization> addFileToPupilAuthorization(
+    int pupilAuthId,
+    File file,
+    String createdBy,
+  ) async {
+    final path =
+        await ClientFileUpload.uploadFile(file, ServerStorageFolder.documents);
+    final result = ClientHelper.apiCall(
+      call: () => _client.pupilAuthorization.addFileToPupilAuthorization(
+        pupilAuthId,
+        path.path!,
+        createdBy,
+      ),
+      errorMessage: 'Einwilligung konnte nicht geändert werden',
+    );
+    return result;
+  }
 //   // - patch pupil authorization with file
 //   String _patchPupilAuthorizationWithFileUrl(
 //       int pupilId, String authorizationId) {

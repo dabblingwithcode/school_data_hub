@@ -41,7 +41,7 @@ class AuthorizationPupilsPage extends WatchingWidget {
 
     List<PupilProxy> pupilsInList = filteredPupils
         .where((pupil) => pupilAuthorizations
-            .any((pupilAuth) => pupilAuth.pupilId == pupil.internalId))
+            .any((pupilAuth) => pupilAuth.pupilId == pupil.pupilId))
         .toList();
 
     return Scaffold(
@@ -94,8 +94,7 @@ class AuthorizationPupilsPage extends WatchingWidget {
                             (BuildContext context, int index) {
                               // Your list view items go here
                               return AuthorizationPupilCard(
-                                  pupilsInList[index].internalId,
-                                  authorization);
+                                  pupilsInList[index].pupilId, authorization);
                             },
                             childCount: pupilsInList
                                 .length, // Adjust this based on your data

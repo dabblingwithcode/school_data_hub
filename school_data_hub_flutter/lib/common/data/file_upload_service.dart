@@ -10,10 +10,10 @@ final _client = di<Client>();
 final _notificationService = di<NotificationService>();
 final _log = Logger('FileUploadService');
 
-class FileUploadService {
-  FileUploadService.__internal();
-  static final _instance = FileUploadService.__internal();
-  factory FileUploadService() => _instance;
+class ClientFileUpload {
+  ClientFileUpload.__internal();
+  static final _instance = ClientFileUpload.__internal();
+  factory ClientFileUpload() => _instance;
 
   // TODO: consider exceptions here
   static Future<({String? path, bool success})> uploadFile(

@@ -11,137 +11,57 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'dart:async' as _i2;
-import 'package:school_data_hub_client/src/protocol/user/staff_user.dart'
-    as _i3;
-import 'package:school_data_hub_client/src/protocol/user/roles/roles.dart'
-    as _i4;
-import 'package:school_data_hub_client/src/protocol/pupil_data/pupil_data.dart'
-    as _i5;
-import 'dart:io' as _i6;
 import 'package:school_data_hub_client/src/protocol/schoolday/missed_class/missed_class.dart'
-    as _i7;
-import 'package:school_data_hub_client/src/protocol/user/device_info.dart'
-    as _i8;
-import 'package:serverpod_auth_client/serverpod_auth_client.dart' as _i9;
+    as _i3;
 import 'package:school_data_hub_client/src/protocol/authorization/authorization.dart'
-    as _i10;
+    as _i4;
 import 'package:school_data_hub_client/src/protocol/shared/member_operation.dart'
-    as _i11;
-import 'package:school_data_hub_client/src/protocol/protocol.dart' as _i12;
+    as _i5;
+import 'package:school_data_hub_client/src/protocol/protocol.dart' as _i6;
+import 'package:school_data_hub_client/src/protocol/authorization/pupil_authorization.dart'
+    as _i7;
 import 'package:school_data_hub_client/src/protocol/learning/competence.dart'
-    as _i13;
-import 'dart:typed_data' as _i14;
+    as _i8;
+import 'dart:io' as _i9;
+import 'dart:typed_data' as _i10;
 import 'package:school_data_hub_client/src/protocol/schoolday/missed_class/missed_class_dto.dart'
-    as _i15;
+    as _i11;
+import 'package:school_data_hub_client/src/protocol/pupil_data/pupil_data.dart'
+    as _i12;
+import 'package:school_data_hub_client/src/protocol/pupil_data/dto/pupil_document_type.dart'
+    as _i13;
 import 'package:school_data_hub_client/src/protocol/pupil_data/pupil_objects/communication/communication_skills.dart'
-    as _i16;
+    as _i14;
 import 'package:school_data_hub_client/src/protocol/pupil_data/pupil_objects/communication/tutor_info.dart'
-    as _i17;
+    as _i15;
 import 'package:school_data_hub_client/src/protocol/pupil_data/dto/siblings_tutor_info_dto.dart'
-    as _i18;
+    as _i16;
+import 'package:school_data_hub_client/src/protocol/pupil_data/pupil_objects/communication/public_media_auth.dart'
+    as _i17;
 import 'package:school_data_hub_client/src/protocol/learning_support/support_level.dart'
-    as _i19;
+    as _i18;
 import 'package:school_data_hub_client/src/protocol/school_list/school_list.dart'
-    as _i20;
+    as _i19;
 import 'package:school_data_hub_client/src/protocol/school_list/pupil_entry.dart'
-    as _i21;
+    as _i20;
 import 'package:school_data_hub_client/src/protocol/schoolday/school_semester.dart'
-    as _i22;
+    as _i21;
 import 'package:school_data_hub_client/src/protocol/schoolday/schoolday.dart'
-    as _i23;
+    as _i22;
 import 'package:school_data_hub_client/src/protocol/schoolday/schoolday_event/schoolday_event.dart'
-    as _i24;
+    as _i23;
 import 'package:school_data_hub_client/src/protocol/schoolday/schoolday_event/schoolday_event_type.dart'
+    as _i24;
+import 'package:school_data_hub_client/src/protocol/user/staff_user.dart'
     as _i25;
-import 'package:school_data_hub_client/src/protocol/learning_support/support_category.dart'
+import 'package:school_data_hub_client/src/protocol/user/roles/roles.dart'
     as _i26;
-import 'protocol.dart' as _i27;
-
-/// The endpoint for admin operations.
-/// This endpoint requires the user to be logged in and have admin scope.
-/// {@category Endpoint}
-class EndpointAdmin extends _i1.EndpointRef {
-  EndpointAdmin(_i1.EndpointCaller caller) : super(caller);
-
-  @override
-  String get name => 'admin';
-
-  _i2.Future<_i3.User> createUser({
-    required String userName,
-    required String fullName,
-    required String email,
-    required String password,
-    required _i4.Role role,
-    required int timeUnits,
-    required List<String> scopeNames,
-  }) =>
-      caller.callServerEndpoint<_i3.User>(
-        'admin',
-        'createUser',
-        {
-          'userName': userName,
-          'fullName': fullName,
-          'email': email,
-          'password': password,
-          'role': role,
-          'timeUnits': timeUnits,
-          'scopeNames': scopeNames,
-        },
-      );
-
-  _i2.Future<void> deleteUser(int userId) => caller.callServerEndpoint<void>(
-        'admin',
-        'deleteUser',
-        {'userId': userId},
-      );
-
-  _i2.Future<void> promoteUserScope(
-    int userId,
-    String scopeName,
-  ) =>
-      caller.callServerEndpoint<void>(
-        'admin',
-        'promoteUserScope',
-        {
-          'userId': userId,
-          'scopeName': scopeName,
-        },
-      );
-
-  _i2.Future<void> demoteUserScope(
-    int userId,
-    String scopeName,
-  ) =>
-      caller.callServerEndpoint<void>(
-        'admin',
-        'demoteUserScope',
-        {
-          'userId': userId,
-          'scopeName': scopeName,
-        },
-      );
-
-  _i2.Future<List<_i3.User>> getAllUsers() =>
-      caller.callServerEndpoint<List<_i3.User>>(
-        'admin',
-        'getAllUsers',
-        {},
-      );
-
-  _i2.Future<_i3.User?> getUserById(int userId) =>
-      caller.callServerEndpoint<_i3.User?>(
-        'admin',
-        'getUserById',
-        {'userId': userId},
-      );
-
-  _i2.Future<Set<_i5.PupilData>> updateBackendPupilDataState(_i6.File file) =>
-      caller.callServerEndpoint<Set<_i5.PupilData>>(
-        'admin',
-        'updateBackendPupilDataState',
-        {'file': file},
-      );
-}
+import 'package:school_data_hub_client/src/protocol/user/device_info.dart'
+    as _i27;
+import 'package:serverpod_auth_client/serverpod_auth_client.dart' as _i28;
+import 'package:school_data_hub_client/src/protocol/learning_support/support_category.dart'
+    as _i29;
+import 'protocol.dart' as _i30;
 
 /// {@category Endpoint}
 class EndpointAttendance extends _i1.EndpointRef {
@@ -150,80 +70,33 @@ class EndpointAttendance extends _i1.EndpointRef {
   @override
   String get name => 'attendance';
 
-  _i2.Future<List<_i7.MissedClass>> fetchMissedClassesOnASchoolday(
+  _i2.Future<List<_i3.MissedClass>> fetchMissedClassesOnASchoolday(
           DateTime schoolday) =>
-      caller.callServerEndpoint<List<_i7.MissedClass>>(
+      caller.callServerEndpoint<List<_i3.MissedClass>>(
         'attendance',
         'fetchMissedClassesOnASchoolday',
         {'schoolday': schoolday},
       );
 
-  _i2.Future<List<_i7.MissedClass>> fetchMissedClasses() =>
-      caller.callServerEndpoint<List<_i7.MissedClass>>(
+  _i2.Future<List<_i3.MissedClass>> fetchMissedClasses() =>
+      caller.callServerEndpoint<List<_i3.MissedClass>>(
         'attendance',
         'fetchMissedClasses',
         {},
       );
 
-  _i2.Future<bool> createMissedClass(_i7.MissedClass missedClass) =>
+  _i2.Future<bool> createMissedClass(_i3.MissedClass missedClass) =>
       caller.callServerEndpoint<bool>(
         'attendance',
         'createMissedClass',
         {'missedClass': missedClass},
       );
 
-  _i2.Future<bool> deleteMissedClass(_i7.MissedClass missedClass) =>
+  _i2.Future<bool> deleteMissedClass(_i3.MissedClass missedClass) =>
       caller.callServerEndpoint<bool>(
         'attendance',
         'deleteMissedClass',
         {'missedClass': missedClass},
-      );
-}
-
-/// {@category Endpoint}
-class EndpointAuth extends _i1.EndpointRef {
-  EndpointAuth(_i1.EndpointCaller caller) : super(caller);
-
-  @override
-  String get name => 'auth';
-
-  _i2.Future<
-      ({
-        _i8.DeviceInfo? deviceInfo,
-        _i9.AuthenticationResponse response
-      })> login(
-    String email,
-    String password,
-    _i8.DeviceInfo deviceInfo,
-  ) =>
-      caller.callServerEndpoint<
-          ({_i8.DeviceInfo? deviceInfo, _i9.AuthenticationResponse response})>(
-        'auth',
-        'login',
-        {
-          'email': email,
-          'password': password,
-          'deviceInfo': deviceInfo,
-        },
-      );
-
-  _i2.Future<bool> verifyPassword(
-    int userId,
-    String password,
-  ) =>
-      caller.callServerEndpoint<bool>(
-        'auth',
-        'verifyPassword',
-        {
-          'userId': userId,
-          'password': password,
-        },
-      );
-
-  _i2.Future<bool> logOut(String keyId) => caller.callServerEndpoint<bool>(
-        'auth',
-        'logOut',
-        {'keyId': keyId},
       );
 }
 
@@ -234,27 +107,27 @@ class EndpointAuthorization extends _i1.EndpointRef {
   @override
   String get name => 'authorization';
 
-  _i2.Future<List<_i10.Authorization>> fetchAuthorizations() =>
-      caller.callServerEndpoint<List<_i10.Authorization>>(
+  _i2.Future<List<_i4.Authorization>> fetchAuthorizations() =>
+      caller.callServerEndpoint<List<_i4.Authorization>>(
         'authorization',
         'fetchAuthorizations',
         {},
       );
 
-  _i2.Future<_i10.Authorization?> fetchAuthorizationById(int id) =>
-      caller.callServerEndpoint<_i10.Authorization?>(
+  _i2.Future<_i4.Authorization?> fetchAuthorizationById(int id) =>
+      caller.callServerEndpoint<_i4.Authorization?>(
         'authorization',
         'fetchAuthorizationById',
         {'id': id},
       );
 
-  _i2.Future<_i10.Authorization> postAuthorizationWithPupils(
+  _i2.Future<_i4.Authorization> postAuthorizationWithPupils(
     String name,
     String description,
     String createdBy,
     List<int> pupilIds,
   ) =>
-      caller.callServerEndpoint<_i10.Authorization>(
+      caller.callServerEndpoint<_i4.Authorization>(
         'authorization',
         'postAuthorizationWithPupils',
         {
@@ -265,20 +138,20 @@ class EndpointAuthorization extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i10.Authorization> updateAuthorization(
+  _i2.Future<_i4.Authorization> updateAuthorization(
     int authId,
     String? name,
     String? description,
-    ({_i11.MemberOperation operation, List<int> pupilIds})? updateMembers,
+    ({_i5.MemberOperation operation, List<int> pupilIds})? updateMembers,
   ) =>
-      caller.callServerEndpoint<_i10.Authorization>(
+      caller.callServerEndpoint<_i4.Authorization>(
         'authorization',
         'updateAuthorization',
         {
           'authId': authId,
           'name': name,
           'description': description,
-          'updateMembers': _i12.mapRecordToJson(updateMembers),
+          'updateMembers': _i6.mapRecordToJson(updateMembers),
         },
       );
 
@@ -291,27 +164,66 @@ class EndpointAuthorization extends _i1.EndpointRef {
 }
 
 /// {@category Endpoint}
+class EndpointPupilAuthorization extends _i1.EndpointRef {
+  EndpointPupilAuthorization(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'pupilAuthorization';
+
+  _i2.Future<_i7.PupilAuthorization> updatePupilAuthorization(
+          _i7.PupilAuthorization authorization) =>
+      caller.callServerEndpoint<_i7.PupilAuthorization>(
+        'pupilAuthorization',
+        'updatePupilAuthorization',
+        {'authorization': authorization},
+      );
+
+  _i2.Future<_i7.PupilAuthorization> addFileToPupilAuthorization(
+    int pupilAuthId,
+    String filePath,
+    String createdBy,
+  ) =>
+      caller.callServerEndpoint<_i7.PupilAuthorization>(
+        'pupilAuthorization',
+        'addFileToPupilAuthorization',
+        {
+          'pupilAuthId': pupilAuthId,
+          'filePath': filePath,
+          'createdBy': createdBy,
+        },
+      );
+
+  _i2.Future<_i7.PupilAuthorization> removeFileFromPupilAuthorization(
+          int pupilAuthId) =>
+      caller.callServerEndpoint<_i7.PupilAuthorization>(
+        'pupilAuthorization',
+        'removeFileFromPupilAuthorization',
+        {'pupilAuthId': pupilAuthId},
+      );
+}
+
+/// {@category Endpoint}
 class EndpointCompetence extends _i1.EndpointRef {
   EndpointCompetence(_i1.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'competence';
 
-  _i2.Future<List<_i13.Competence>> importCompetencesFromJsonFile(
-          _i6.File jsonFile) =>
-      caller.callServerEndpoint<List<_i13.Competence>>(
+  _i2.Future<List<_i8.Competence>> importCompetencesFromJsonFile(
+          _i9.File jsonFile) =>
+      caller.callServerEndpoint<List<_i8.Competence>>(
         'competence',
         'importCompetencesFromJsonFile',
         {'jsonFile': jsonFile},
       );
 
-  _i2.Future<_i13.Competence> postCompetence({
+  _i2.Future<_i8.Competence> postCompetence({
     int? parentCompetence,
     required String name,
     required List<String> level,
     required List<String> indicators,
   }) =>
-      caller.callServerEndpoint<_i13.Competence>(
+      caller.callServerEndpoint<_i8.Competence>(
         'competence',
         'postCompetence',
         {
@@ -322,15 +234,15 @@ class EndpointCompetence extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<List<_i13.Competence>> getAllCompetences() =>
-      caller.callServerEndpoint<List<_i13.Competence>>(
+  _i2.Future<List<_i8.Competence>> getAllCompetences() =>
+      caller.callServerEndpoint<List<_i8.Competence>>(
         'competence',
         'getAllCompetences',
         {},
       );
 
-  _i2.Future<_i13.Competence> updateCompetence(_i13.Competence competence) =>
-      caller.callServerEndpoint<_i13.Competence>(
+  _i2.Future<_i8.Competence> updateCompetence(_i8.Competence competence) =>
+      caller.callServerEndpoint<_i8.Competence>(
         'competence',
         'updateCompetence',
         {'competence': competence},
@@ -382,8 +294,8 @@ class EndpointFiles extends _i1.EndpointRef {
       );
 
   /// As described in https://docs.serverpod.dev/concepts/file-uploads#client-side-code
-  _i2.Future<_i14.ByteData?> getImage(String documentId) =>
-      caller.callServerEndpoint<_i14.ByteData?>(
+  _i2.Future<_i10.ByteData?> getImage(String documentId) =>
+      caller.callServerEndpoint<_i10.ByteData?>(
         'files',
         'getImage',
         {'documentId': documentId},
@@ -397,40 +309,40 @@ class EndpointMissedClass extends _i1.EndpointRef {
   @override
   String get name => 'missedClass';
 
-  _i2.Stream<_i15.MissedClassDto> streamMyModels() =>
-      caller.callStreamingServerEndpoint<_i2.Stream<_i15.MissedClassDto>,
-          _i15.MissedClassDto>(
+  _i2.Stream<_i11.MissedClassDto> streamMyModels() =>
+      caller.callStreamingServerEndpoint<_i2.Stream<_i11.MissedClassDto>,
+          _i11.MissedClassDto>(
         'missedClass',
         'streamMyModels',
         {},
         {},
       );
 
-  _i2.Future<_i7.MissedClass> postMissedClass(_i7.MissedClass missedClass) =>
-      caller.callServerEndpoint<_i7.MissedClass>(
+  _i2.Future<_i3.MissedClass> postMissedClass(_i3.MissedClass missedClass) =>
+      caller.callServerEndpoint<_i3.MissedClass>(
         'missedClass',
         'postMissedClass',
         {'missedClass': missedClass},
       );
 
-  _i2.Future<List<_i7.MissedClass>> postMissedClasses(
-          List<_i7.MissedClass> missedClasses) =>
-      caller.callServerEndpoint<List<_i7.MissedClass>>(
+  _i2.Future<List<_i3.MissedClass>> postMissedClasses(
+          List<_i3.MissedClass> missedClasses) =>
+      caller.callServerEndpoint<List<_i3.MissedClass>>(
         'missedClass',
         'postMissedClasses',
         {'missedClasses': missedClasses},
       );
 
-  _i2.Future<List<_i7.MissedClass>> fetchAllMissedClasses() =>
-      caller.callServerEndpoint<List<_i7.MissedClass>>(
+  _i2.Future<List<_i3.MissedClass>> fetchAllMissedClasses() =>
+      caller.callServerEndpoint<List<_i3.MissedClass>>(
         'missedClass',
         'fetchAllMissedClasses',
         {},
       );
 
-  _i2.Future<List<_i7.MissedClass>> fetchMissedClassesOnASchoolday(
+  _i2.Future<List<_i3.MissedClass>> fetchMissedClassesOnASchoolday(
           DateTime schoolday) =>
-      caller.callServerEndpoint<List<_i7.MissedClass>>(
+      caller.callServerEndpoint<List<_i3.MissedClass>>(
         'missedClass',
         'fetchMissedClassesOnASchoolday',
         {'schoolday': schoolday},
@@ -449,8 +361,8 @@ class EndpointMissedClass extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i7.MissedClass> updateMissedClass(_i7.MissedClass missedClass) =>
-      caller.callServerEndpoint<_i7.MissedClass>(
+  _i2.Future<_i3.MissedClass> updateMissedClass(_i3.MissedClass missedClass) =>
+      caller.callServerEndpoint<_i3.MissedClass>(
         'missedClass',
         'updateMissedClass',
         {'missedClass': missedClass},
@@ -464,48 +376,47 @@ class EndpointPupil extends _i1.EndpointRef {
   @override
   String get name => 'pupil';
 
-  _i2.Stream<List<_i5.PupilData>> fetchPupilsAsStream() =>
-      caller.callStreamingServerEndpoint<_i2.Stream<List<_i5.PupilData>>,
-          List<_i5.PupilData>>(
+  _i2.Stream<List<_i12.PupilData>> fetchPupilsAsStream() =>
+      caller.callStreamingServerEndpoint<_i2.Stream<List<_i12.PupilData>>,
+          List<_i12.PupilData>>(
         'pupil',
         'fetchPupilsAsStream',
         {},
         {},
       );
 
-  _i2.Future<List<_i5.PupilData>> fetchPupils() =>
-      caller.callServerEndpoint<List<_i5.PupilData>>(
+  _i2.Future<List<_i12.PupilData>> fetchPupils() =>
+      caller.callServerEndpoint<List<_i12.PupilData>>(
         'pupil',
         'fetchPupils',
         {},
       );
 
-  _i2.Future<List<_i5.PupilData>> fetchPupilsById(Set<int> internalIds) =>
-      caller.callServerEndpoint<List<_i5.PupilData>>(
+  _i2.Future<List<_i12.PupilData>> fetchPupilsById(Set<int> internalIds) =>
+      caller.callServerEndpoint<List<_i12.PupilData>>(
         'pupil',
         'fetchPupilsById',
         {'internalIds': internalIds},
       );
 
-  _i2.Future<_i5.PupilData> deleteAvatar(int internalId) =>
-      caller.callServerEndpoint<_i5.PupilData>(
+  _i2.Future<_i12.PupilData> deletePupilDocument(
+    int pupilId,
+    _i13.PupilDocumentType documentType,
+  ) =>
+      caller.callServerEndpoint<_i12.PupilData>(
         'pupil',
-        'deleteAvatar',
-        {'internalId': internalId},
+        'deletePupilDocument',
+        {
+          'pupilId': pupilId,
+          'documentType': documentType,
+        },
       );
 
-  _i2.Future<_i5.PupilData> deleteAvatarAuth(int internalId) =>
-      caller.callServerEndpoint<_i5.PupilData>(
-        'pupil',
-        'deleteAvatarAuth',
-        {'internalId': internalId},
-      );
-
-  _i2.Future<_i5.PupilData> resetPublicMediaAuth(
+  _i2.Future<_i12.PupilData> resetPublicMediaAuth(
     int pupilId,
     String createdBy,
   ) =>
-      caller.callServerEndpoint<_i5.PupilData>(
+      caller.callServerEndpoint<_i12.PupilData>(
         'pupil',
         'resetPublicMediaAuth',
         {
@@ -514,11 +425,11 @@ class EndpointPupil extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i5.PupilData> deleteSupportLevelHistoryItem(
+  _i2.Future<_i12.PupilData> deleteSupportLevelHistoryItem(
     int internalId,
     int supportLevelId,
   ) =>
-      caller.callServerEndpoint<_i5.PupilData>(
+      caller.callServerEndpoint<_i12.PupilData>(
         'pupil',
         'deleteSupportLevelHistoryItem',
         {
@@ -535,18 +446,18 @@ class EndpointPupilUpdate extends _i1.EndpointRef {
   @override
   String get name => 'pupilUpdate';
 
-  _i2.Future<_i5.PupilData> updatePupil(_i5.PupilData pupil) =>
-      caller.callServerEndpoint<_i5.PupilData>(
+  _i2.Future<_i12.PupilData> updatePupil(_i12.PupilData pupil) =>
+      caller.callServerEndpoint<_i12.PupilData>(
         'pupilUpdate',
         'updatePupil',
         {'pupil': pupil},
       );
 
-  _i2.Future<_i5.PupilData> updateCommunicationSkills({
+  _i2.Future<_i12.PupilData> updateCommunicationSkills({
     required int pupilId,
-    required _i16.CommunicationSkills? communicationSkills,
+    required _i14.CommunicationSkills? communicationSkills,
   }) =>
-      caller.callServerEndpoint<_i5.PupilData>(
+      caller.callServerEndpoint<_i12.PupilData>(
         'pupilUpdate',
         'updateCommunicationSkills',
         {
@@ -555,11 +466,11 @@ class EndpointPupilUpdate extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i5.PupilData> updateTutorInfo(
+  _i2.Future<_i12.PupilData> updateTutorInfo(
     int pupilId,
-    _i17.TutorInfo? tutorInfo,
+    _i15.TutorInfo? tutorInfo,
   ) =>
-      caller.callServerEndpoint<_i5.PupilData>(
+      caller.callServerEndpoint<_i12.PupilData>(
         'pupilUpdate',
         'updateTutorInfo',
         {
@@ -568,50 +479,37 @@ class EndpointPupilUpdate extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<List<_i5.PupilData>> updateSiblingsTutorInfo(
-          _i18.SiblingsTutorInfo siblingsTutorInfo) =>
-      caller.callServerEndpoint<List<_i5.PupilData>>(
+  _i2.Future<List<_i12.PupilData>> updateSiblingsTutorInfo(
+          _i16.SiblingsTutorInfo siblingsTutorInfo) =>
+      caller.callServerEndpoint<List<_i12.PupilData>>(
         'pupilUpdate',
         'updateSiblingsTutorInfo',
         {'siblingsTutorInfo': siblingsTutorInfo},
       );
 
-  _i2.Future<_i5.PupilData> updatePupilAvatar(
+  _i2.Future<_i12.PupilData> updatePupilDocument(
     int pupilId,
     String filePath,
     String createdBy,
+    _i13.PupilDocumentType documentType,
   ) =>
-      caller.callServerEndpoint<_i5.PupilData>(
+      caller.callServerEndpoint<_i12.PupilData>(
         'pupilUpdate',
-        'updatePupilAvatar',
+        'updatePupilDocument',
         {
           'pupilId': pupilId,
           'filePath': filePath,
           'createdBy': createdBy,
+          'documentType': documentType,
         },
       );
 
-  _i2.Future<_i5.PupilData> updatePupilAvatarAuth(
-    int pupilId,
-    String filePath,
-    String createdBy,
-  ) =>
-      caller.callServerEndpoint<_i5.PupilData>(
-        'pupilUpdate',
-        'updatePupilAvatarAuth',
-        {
-          'pupilId': pupilId,
-          'filePath': filePath,
-          'createdBy': createdBy,
-        },
-      );
-
-  _i2.Future<_i5.PupilData> updateStringProperty(
+  _i2.Future<_i12.PupilData> updateStringProperty(
     int pupilId,
     String property,
     String? value,
   ) =>
-      caller.callServerEndpoint<_i5.PupilData>(
+      caller.callServerEndpoint<_i12.PupilData>(
         'pupilUpdate',
         'updateStringProperty',
         {
@@ -621,13 +519,13 @@ class EndpointPupilUpdate extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i5.PupilData> updateCredit(
+  _i2.Future<_i12.PupilData> updateCredit(
     int pupilId,
     int value,
     String? description,
     String sender,
   ) =>
-      caller.callServerEndpoint<_i5.PupilData>(
+      caller.callServerEndpoint<_i12.PupilData>(
         'pupilUpdate',
         'updateCredit',
         {
@@ -638,24 +536,22 @@ class EndpointPupilUpdate extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i5.PupilData> updatePupilPublicMediaAuth(
+  _i2.Future<_i12.PupilData> updatePublicMediaAuth(
     int pupilId,
-    String filePath,
-    String createdBy,
+    _i17.PublicMediaAuth publicMediaAuth,
   ) =>
-      caller.callServerEndpoint<_i5.PupilData>(
+      caller.callServerEndpoint<_i12.PupilData>(
         'pupilUpdate',
-        'updatePupilPublicMediaAuth',
+        'updatePublicMediaAuth',
         {
           'pupilId': pupilId,
-          'filePath': filePath,
-          'createdBy': createdBy,
+          'publicMediaAuth': publicMediaAuth,
         },
       );
 
-  _i2.Future<_i5.PupilData> updateSupportLevel(
-          _i19.SupportLevel supportLevel) =>
-      caller.callServerEndpoint<_i5.PupilData>(
+  _i2.Future<_i12.PupilData> updateSupportLevel(
+          _i18.SupportLevel supportLevel) =>
+      caller.callServerEndpoint<_i12.PupilData>(
         'pupilUpdate',
         'updateSupportLevel',
         {'supportLevel': supportLevel},
@@ -669,21 +565,21 @@ class EndpointSchoolList extends _i1.EndpointRef {
   @override
   String get name => 'schoolList';
 
-  _i2.Future<List<_i20.SchoolList>> fetchSchoolLists(String userName) =>
-      caller.callServerEndpoint<List<_i20.SchoolList>>(
+  _i2.Future<List<_i19.SchoolList>> fetchSchoolLists(String userName) =>
+      caller.callServerEndpoint<List<_i19.SchoolList>>(
         'schoolList',
         'fetchSchoolLists',
         {'userName': userName},
       );
 
-  _i2.Future<_i20.SchoolList> postSchoolList(
+  _i2.Future<_i19.SchoolList> postSchoolList(
     String name,
     String description,
     List<int> pupilIds,
     bool public,
     String createdBy,
   ) =>
-      caller.callServerEndpoint<_i20.SchoolList>(
+      caller.callServerEndpoint<_i19.SchoolList>(
         'schoolList',
         'postSchoolList',
         {
@@ -695,14 +591,14 @@ class EndpointSchoolList extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i20.SchoolList> updateSchoolList(
+  _i2.Future<_i19.SchoolList> updateSchoolList(
     int listId,
     String? name,
     String? description,
     bool? public,
-    ({_i11.MemberOperation operation, List<int> pupilIds})? updateMembers,
+    ({_i5.MemberOperation operation, List<int> pupilIds})? updateMembers,
   ) =>
-      caller.callServerEndpoint<_i20.SchoolList>(
+      caller.callServerEndpoint<_i19.SchoolList>(
         'schoolList',
         'updateSchoolList',
         {
@@ -710,7 +606,7 @@ class EndpointSchoolList extends _i1.EndpointRef {
           'name': name,
           'description': description,
           'public': public,
-          'updateMembers': _i12.mapRecordToJson(updateMembers),
+          'updateMembers': _i6.mapRecordToJson(updateMembers),
         },
       );
 
@@ -721,9 +617,9 @@ class EndpointSchoolList extends _i1.EndpointRef {
         {'listId': listId},
       );
 
-  _i2.Future<_i21.PupilListEntry> updatePupilListEntry(
-          _i21.PupilListEntry entry) =>
-      caller.callServerEndpoint<_i21.PupilListEntry>(
+  _i2.Future<_i20.PupilListEntry> updatePupilListEntry(
+          _i20.PupilListEntry entry) =>
+      caller.callServerEndpoint<_i20.PupilListEntry>(
         'schoolList',
         'updatePupilListEntry',
         {'entry': entry},
@@ -737,7 +633,7 @@ class EndpointSchooldayAdmin extends _i1.EndpointRef {
   @override
   String get name => 'schooldayAdmin';
 
-  _i2.Future<_i22.SchoolSemester> createSchoolSemester(
+  _i2.Future<_i21.SchoolSemester> createSchoolSemester(
     DateTime startDate,
     DateTime endDate,
     bool isFirst,
@@ -745,7 +641,7 @@ class EndpointSchooldayAdmin extends _i1.EndpointRef {
     DateTime supportConferenceDate,
     DateTime reportSignedDate,
   ) =>
-      caller.callServerEndpoint<_i22.SchoolSemester>(
+      caller.callServerEndpoint<_i21.SchoolSemester>(
         'schooldayAdmin',
         'createSchoolSemester',
         {
@@ -758,43 +654,43 @@ class EndpointSchooldayAdmin extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<List<_i22.SchoolSemester>> getAllSchoolSemesters() =>
-      caller.callServerEndpoint<List<_i22.SchoolSemester>>(
+  _i2.Future<List<_i21.SchoolSemester>> getAllSchoolSemesters() =>
+      caller.callServerEndpoint<List<_i21.SchoolSemester>>(
         'schooldayAdmin',
         'getAllSchoolSemesters',
         {},
       );
 
-  _i2.Future<_i22.SchoolSemester?> getCurrentSchoolSemester() =>
-      caller.callServerEndpoint<_i22.SchoolSemester?>(
+  _i2.Future<_i21.SchoolSemester?> getCurrentSchoolSemester() =>
+      caller.callServerEndpoint<_i21.SchoolSemester?>(
         'schooldayAdmin',
         'getCurrentSchoolSemester',
         {},
       );
 
-  _i2.Future<bool> updateSchoolSemester(_i22.SchoolSemester schoolSemester) =>
+  _i2.Future<bool> updateSchoolSemester(_i21.SchoolSemester schoolSemester) =>
       caller.callServerEndpoint<bool>(
         'schooldayAdmin',
         'updateSchoolSemester',
         {'schoolSemester': schoolSemester},
       );
 
-  _i2.Future<bool> deleteSchoolSemester(_i22.SchoolSemester semester) =>
+  _i2.Future<bool> deleteSchoolSemester(_i21.SchoolSemester semester) =>
       caller.callServerEndpoint<bool>(
         'schooldayAdmin',
         'deleteSchoolSemester',
         {'semester': semester},
       );
 
-  _i2.Future<_i23.Schoolday?> createSchoolday(DateTime date) =>
-      caller.callServerEndpoint<_i23.Schoolday?>(
+  _i2.Future<_i22.Schoolday?> createSchoolday(DateTime date) =>
+      caller.callServerEndpoint<_i22.Schoolday?>(
         'schooldayAdmin',
         'createSchoolday',
         {'date': date},
       );
 
-  _i2.Future<List<_i23.Schoolday>> createSchooldays(List<DateTime> dates) =>
-      caller.callServerEndpoint<List<_i23.Schoolday>>(
+  _i2.Future<List<_i22.Schoolday>> createSchooldays(List<DateTime> dates) =>
+      caller.callServerEndpoint<List<_i22.Schoolday>>(
         'schooldayAdmin',
         'createSchooldays',
         {'dates': dates},
@@ -807,7 +703,7 @@ class EndpointSchooldayAdmin extends _i1.EndpointRef {
         {'date': date},
       );
 
-  _i2.Future<bool> updateSchoolday(_i23.Schoolday schoolday) =>
+  _i2.Future<bool> updateSchoolday(_i22.Schoolday schoolday) =>
       caller.callServerEndpoint<bool>(
         'schooldayAdmin',
         'updateSchoolday',
@@ -822,15 +718,15 @@ class EndpointSchoolday extends _i1.EndpointRef {
   @override
   String get name => 'schoolday';
 
-  _i2.Future<List<_i22.SchoolSemester>> getSchoolSemesters() =>
-      caller.callServerEndpoint<List<_i22.SchoolSemester>>(
+  _i2.Future<List<_i21.SchoolSemester>> getSchoolSemesters() =>
+      caller.callServerEndpoint<List<_i21.SchoolSemester>>(
         'schoolday',
         'getSchoolSemesters',
         {},
       );
 
-  _i2.Future<List<_i23.Schoolday>> getSchooldays() =>
-      caller.callServerEndpoint<List<_i23.Schoolday>>(
+  _i2.Future<List<_i22.Schoolday>> getSchooldays() =>
+      caller.callServerEndpoint<List<_i22.Schoolday>>(
         'schoolday',
         'getSchooldays',
         {},
@@ -844,21 +740,21 @@ class EndpointSchooldayEvent extends _i1.EndpointRef {
   @override
   String get name => 'schooldayEvent';
 
-  _i2.Future<List<_i24.SchooldayEvent>> fetchSchooldayEvents() =>
-      caller.callServerEndpoint<List<_i24.SchooldayEvent>>(
+  _i2.Future<List<_i23.SchooldayEvent>> fetchSchooldayEvents() =>
+      caller.callServerEndpoint<List<_i23.SchooldayEvent>>(
         'schooldayEvent',
         'fetchSchooldayEvents',
         {},
       );
 
-  _i2.Future<_i24.SchooldayEvent> createSchooldayEvent({
+  _i2.Future<_i23.SchooldayEvent> createSchooldayEvent({
     required int pupilId,
     required int schooldayId,
-    required _i25.SchooldayEventType type,
+    required _i24.SchooldayEventType type,
     required String reason,
     required String createdBy,
   }) =>
-      caller.callServerEndpoint<_i24.SchooldayEvent>(
+      caller.callServerEndpoint<_i23.SchooldayEvent>(
         'schooldayEvent',
         'createSchooldayEvent',
         {
@@ -870,11 +766,11 @@ class EndpointSchooldayEvent extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i24.SchooldayEvent> updateSchooldayEvent(
-    _i24.SchooldayEvent schooldayEvent,
+  _i2.Future<_i23.SchooldayEvent> updateSchooldayEvent(
+    _i23.SchooldayEvent schooldayEvent,
     bool changedProcessedToFalse,
   ) =>
-      caller.callServerEndpoint<_i24.SchooldayEvent>(
+      caller.callServerEndpoint<_i23.SchooldayEvent>(
         'schooldayEvent',
         'updateSchooldayEvent',
         {
@@ -890,13 +786,13 @@ class EndpointSchooldayEvent extends _i1.EndpointRef {
         {'schooldayEventId': schooldayEventId},
       );
 
-  _i2.Future<_i24.SchooldayEvent> updateSchooldayEventFile(
+  _i2.Future<_i23.SchooldayEvent> updateSchooldayEventFile(
     int schooldayEventId,
     String filePath,
     String createdBy,
     bool isprocessed,
   ) =>
-      caller.callServerEndpoint<_i24.SchooldayEvent>(
+      caller.callServerEndpoint<_i23.SchooldayEvent>(
         'schooldayEvent',
         'updateSchooldayEventFile',
         {
@@ -907,17 +803,151 @@ class EndpointSchooldayEvent extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i24.SchooldayEvent> deleteSchooldayEventFile(
+  _i2.Future<_i23.SchooldayEvent> deleteSchooldayEventFile(
     int schooldayEventId,
     bool isProcessed,
   ) =>
-      caller.callServerEndpoint<_i24.SchooldayEvent>(
+      caller.callServerEndpoint<_i23.SchooldayEvent>(
         'schooldayEvent',
         'deleteSchooldayEventFile',
         {
           'schooldayEventId': schooldayEventId,
           'isProcessed': isProcessed,
         },
+      );
+}
+
+/// The endpoint for admin operations.
+/// This endpoint requires the user to be logged in and have admin scope.
+/// {@category Endpoint}
+class EndpointAdmin extends _i1.EndpointRef {
+  EndpointAdmin(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'admin';
+
+  _i2.Future<_i25.User> createUser({
+    required String userName,
+    required String fullName,
+    required String email,
+    required String password,
+    required _i26.Role role,
+    required int timeUnits,
+    required List<String> scopeNames,
+  }) =>
+      caller.callServerEndpoint<_i25.User>(
+        'admin',
+        'createUser',
+        {
+          'userName': userName,
+          'fullName': fullName,
+          'email': email,
+          'password': password,
+          'role': role,
+          'timeUnits': timeUnits,
+          'scopeNames': scopeNames,
+        },
+      );
+
+  _i2.Future<void> deleteUser(int userId) => caller.callServerEndpoint<void>(
+        'admin',
+        'deleteUser',
+        {'userId': userId},
+      );
+
+  _i2.Future<void> promoteUserScope(
+    int userId,
+    String scopeName,
+  ) =>
+      caller.callServerEndpoint<void>(
+        'admin',
+        'promoteUserScope',
+        {
+          'userId': userId,
+          'scopeName': scopeName,
+        },
+      );
+
+  _i2.Future<void> demoteUserScope(
+    int userId,
+    String scopeName,
+  ) =>
+      caller.callServerEndpoint<void>(
+        'admin',
+        'demoteUserScope',
+        {
+          'userId': userId,
+          'scopeName': scopeName,
+        },
+      );
+
+  _i2.Future<List<_i25.User>> getAllUsers() =>
+      caller.callServerEndpoint<List<_i25.User>>(
+        'admin',
+        'getAllUsers',
+        {},
+      );
+
+  _i2.Future<_i25.User?> getUserById(int userId) =>
+      caller.callServerEndpoint<_i25.User?>(
+        'admin',
+        'getUserById',
+        {'userId': userId},
+      );
+
+  _i2.Future<Set<_i12.PupilData>> updateBackendPupilDataState(_i9.File file) =>
+      caller.callServerEndpoint<Set<_i12.PupilData>>(
+        'admin',
+        'updateBackendPupilDataState',
+        {'file': file},
+      );
+}
+
+/// {@category Endpoint}
+class EndpointAuth extends _i1.EndpointRef {
+  EndpointAuth(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'auth';
+
+  _i2.Future<
+          ({_i27.DeviceInfo? deviceInfo, _i28.AuthenticationResponse response})>
+      login(
+    String email,
+    String password,
+    _i27.DeviceInfo deviceInfo,
+  ) =>
+          caller.callServerEndpoint<
+              ({
+                _i27.DeviceInfo? deviceInfo,
+                _i28.AuthenticationResponse response
+              })>(
+            'auth',
+            'login',
+            {
+              'email': email,
+              'password': password,
+              'deviceInfo': deviceInfo,
+            },
+          );
+
+  _i2.Future<bool> verifyPassword(
+    int userId,
+    String password,
+  ) =>
+      caller.callServerEndpoint<bool>(
+        'auth',
+        'verifyPassword',
+        {
+          'userId': userId,
+          'password': password,
+        },
+      );
+
+  _i2.Future<bool> logOut(String keyId) => caller.callServerEndpoint<bool>(
+        'auth',
+        'logOut',
+        {'keyId': keyId},
       );
 }
 
@@ -928,36 +958,36 @@ class EndpointSupportCategory extends _i1.EndpointRef {
   @override
   String get name => 'supportCategory';
 
-  _i2.Future<List<_i26.SupportCategory>> getSupportCategories() =>
-      caller.callServerEndpoint<List<_i26.SupportCategory>>(
+  _i2.Future<List<_i29.SupportCategory>> getSupportCategories() =>
+      caller.callServerEndpoint<List<_i29.SupportCategory>>(
         'supportCategory',
         'getSupportCategories',
         {},
       );
 
-  _i2.Future<List<_i26.SupportCategory>> importSupportCategoriesFromJsonFile(
+  _i2.Future<List<_i29.SupportCategory>> importSupportCategoriesFromJsonFile(
           String jsonFilePath) =>
-      caller.callServerEndpoint<List<_i26.SupportCategory>>(
+      caller.callServerEndpoint<List<_i29.SupportCategory>>(
         'supportCategory',
         'importSupportCategoriesFromJsonFile',
         {'jsonFilePath': jsonFilePath},
       );
 
-  _i2.Future<bool> createSupportCategory(_i26.SupportCategory category) =>
+  _i2.Future<bool> createSupportCategory(_i29.SupportCategory category) =>
       caller.callServerEndpoint<bool>(
         'supportCategory',
         'createSupportCategory',
         {'category': category},
       );
 
-  _i2.Future<bool> updateSupportCategory(_i26.SupportCategory category) =>
+  _i2.Future<bool> updateSupportCategory(_i29.SupportCategory category) =>
       caller.callServerEndpoint<bool>(
         'supportCategory',
         'updateSupportCategory',
         {'category': category},
       );
 
-  _i2.Future<bool> deleteSupportCategory(_i26.SupportCategory category) =>
+  _i2.Future<bool> deleteSupportCategory(_i29.SupportCategory category) =>
       caller.callServerEndpoint<bool>(
         'supportCategory',
         'deleteSupportCategory',
@@ -972,8 +1002,8 @@ class EndpointUser extends _i1.EndpointRef {
   @override
   String get name => 'user';
 
-  _i2.Future<_i3.User?> getCurrentUser() =>
-      caller.callServerEndpoint<_i3.User?>(
+  _i2.Future<_i25.User?> getCurrentUser() =>
+      caller.callServerEndpoint<_i25.User?>(
         'user',
         'getCurrentUser',
         {},
@@ -1001,10 +1031,10 @@ class EndpointUser extends _i1.EndpointRef {
 
 class Modules {
   Modules(Client client) {
-    auth = _i9.Caller(client);
+    auth = _i28.Caller(client);
   }
 
-  late final _i9.Caller auth;
+  late final _i28.Caller auth;
 }
 
 class Client extends _i1.ServerpodClientShared {
@@ -1023,7 +1053,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
           host,
-          _i27.Protocol(),
+          _i30.Protocol(),
           securityContext: securityContext,
           authenticationKeyManager: authenticationKeyManager,
           streamingConnectionTimeout: streamingConnectionTimeout,
@@ -1033,10 +1063,9 @@ class Client extends _i1.ServerpodClientShared {
           disconnectStreamsOnLostInternetConnection:
               disconnectStreamsOnLostInternetConnection,
         ) {
-    admin = EndpointAdmin(this);
     attendance = EndpointAttendance(this);
-    auth = EndpointAuth(this);
     authorization = EndpointAuthorization(this);
+    pupilAuthorization = EndpointPupilAuthorization(this);
     competence = EndpointCompetence(this);
     files = EndpointFiles(this);
     missedClass = EndpointMissedClass(this);
@@ -1046,18 +1075,18 @@ class Client extends _i1.ServerpodClientShared {
     schooldayAdmin = EndpointSchooldayAdmin(this);
     schoolday = EndpointSchoolday(this);
     schooldayEvent = EndpointSchooldayEvent(this);
+    admin = EndpointAdmin(this);
+    auth = EndpointAuth(this);
     supportCategory = EndpointSupportCategory(this);
     user = EndpointUser(this);
     modules = Modules(this);
   }
 
-  late final EndpointAdmin admin;
-
   late final EndpointAttendance attendance;
 
-  late final EndpointAuth auth;
-
   late final EndpointAuthorization authorization;
+
+  late final EndpointPupilAuthorization pupilAuthorization;
 
   late final EndpointCompetence competence;
 
@@ -1077,6 +1106,10 @@ class Client extends _i1.ServerpodClientShared {
 
   late final EndpointSchooldayEvent schooldayEvent;
 
+  late final EndpointAdmin admin;
+
+  late final EndpointAuth auth;
+
   late final EndpointSupportCategory supportCategory;
 
   late final EndpointUser user;
@@ -1085,10 +1118,9 @@ class Client extends _i1.ServerpodClientShared {
 
   @override
   Map<String, _i1.EndpointRef> get endpointRefLookup => {
-        'admin': admin,
         'attendance': attendance,
-        'auth': auth,
         'authorization': authorization,
+        'pupilAuthorization': pupilAuthorization,
         'competence': competence,
         'files': files,
         'missedClass': missedClass,
@@ -1098,6 +1130,8 @@ class Client extends _i1.ServerpodClientShared {
         'schooldayAdmin': schooldayAdmin,
         'schoolday': schoolday,
         'schooldayEvent': schooldayEvent,
+        'admin': admin,
+        'auth': auth,
         'supportCategory': supportCategory,
         'user': user,
       };

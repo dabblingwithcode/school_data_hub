@@ -21,7 +21,7 @@ class PupilAuthorizationsContentList extends WatchingWidget {
     List<PupilAuthorization> pupilAuthorizations = [];
     for (final authorization in authorizations) {
       for (final pupilAuthorization in authorization.authorizedPupils!) {
-        if (pupilAuthorization.pupilId == pupil.internalId) {
+        if (pupilAuthorization.pupilId == pupil.pupilId) {
           pupilAuthorizations.add(pupilAuthorization);
         }
       }

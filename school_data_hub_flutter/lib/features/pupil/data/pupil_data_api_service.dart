@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:logging/logging.dart';
-import 'package:path/path.dart' as p;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
@@ -125,147 +124,82 @@ class PupilDataApiService {
 
   //- update pupil avatar
 
-  Future<PupilData> updatePupilWithAvatar({
+  Future<PupilData> updatePupilDocument({
     required int pupilId,
     required File file,
+    required PupilDocumentType documentType,
   }) async {
-    final documentId = Uuid().v4();
-    final path = p.join(ServerStorageFolder.avatars.name, '$documentId.jpg');
-    final uploadDescription =
-        await _client.files.getUploadDescription(StorageId.private.name, path);
-    if (uploadDescription != null) {
-      // Create an uploader
-      final uploader = FileUploader(uploadDescription);
-
-      // Upload the file
-      final fileStream = file.openRead();
-
-      final fileLength = await file.length();
-      _notificationService.apiRunning(true);
-      await uploader.upload(fileStream, fileLength);
-      _notificationService.apiRunning(false);
-
-      // Verify the upload
-      final success = await _client.files.verifyUpload('private', path);
-
-      if (success) {
-        final updatedPupil = await ClientHelper.apiCall(
-          call: () => _client.pupilUpdate.updatePupilAvatar(
-              pupilId, path, _serverpodSessionManager.userName!),
-          errorMessage: 'Das Profilbild konnte nicht aktualisiert werden',
-        );
-        return updatedPupil;
-      }
-    } else {
-      _notificationService.apiRunning(false);
-
-      _log.severe('Error while uploading file', null, StackTrace.current);
-
-      _notificationService.showSnackBar(NotificationType.error,
-          'Das Profilbild konnte nicht hochgeladen werden: ${uploadDescription.toString()}');
-
-      throw Exception('Failed to upload file, $uploadDescription');
-    }
-    throw Exception('Failed to upload file, $uploadDescription');
+    final result =
+        await ClientFileUpload.uploadFile(file, ServerStorageFolder.documents);
+    final updatedPupil = await ClientHelper.apiCall(
+      call: () => _client.pupilUpdate.updatePupilDocument(pupilId, result.path!,
+          _serverpodSessionManager.userName!, documentType),
+      errorMessage: 'Das Profilbild konnte nicht aktualisiert werden',
+    );
+    return updatedPupil;
   }
 
 //- update pupil avatar auth image
 
-  Future<PupilData> updatePupilWithAvatarAuth({
-    required int pupilId,
-    required File file,
-  }) async {
-    final documentId = Uuid().v4();
-    final path = p.join(
-      ServerStorageFolder.documents.name,
-      '$documentId.jpg',
-    );
-    final uploadDescription =
-        await _client.files.getUploadDescription(StorageId.private.name, path);
-    if (uploadDescription != null) {
-      // Create an uploader
-      final uploader = FileUploader(uploadDescription);
+  // Future<PupilData> updatePupilWithAvatarAuth({
+  //   required int pupilId,
+  //   required File file,
+  // }) async {
+  //   final result =
+  //       await ClientFileUpload.uploadFile(file, ServerStorageFolder.documents);
 
-      // Upload the file
-      final fileStream = file.openRead();
-
-      final fileLength = await file.length();
-      _notificationService.apiRunning(true);
-      await uploader.upload(fileStream, fileLength);
-      _notificationService.apiRunning(false);
-
-      // Verify the upload
-      final success = await _client.files.verifyUpload('private', path);
-
-      if (success) {
-        final updatedPupil = await ClientHelper.apiCall(
-          call: () => _client.pupilUpdate.updatePupilAvatarAuth(
-              pupilId, path, _serverpodSessionManager.userName!),
-          errorMessage: 'Das Profilbild konnte nicht aktualisiert werden',
-        );
-        return updatedPupil;
-      }
-    } else {
-      _notificationService.apiRunning(false);
-
-      _log.severe('Error while uploading file', null, StackTrace.current);
-
-      _notificationService.showSnackBar(NotificationType.error,
-          'Das Profilbild konnte nicht hochgeladen werden: ${uploadDescription.toString()}');
-
-      throw Exception('Failed to upload file, $uploadDescription');
-    }
-    throw Exception('Failed to upload file, $uploadDescription');
-  }
+  //   throw Exception('Failed to upload file, $uploadDescription');
+  // }
 
 //- update pupil public media auth image
 
-  Future<PupilData> updatePupilPublicMediaAuth({
-    required int pupilId,
-    required File file,
-  }) async {
-    final uploadResult =
-        await FileUploadService.uploadFile(file, ServerStorageFolder.auths);
-    if (!uploadResult.success) {
-      throw Exception('Failed to upload file, ${uploadResult.path}');
-    }
-    try {
-      _notificationService.apiRunning(true);
-      final updatedPupil = _client.pupilUpdate.updatePupilPublicMediaAuth(
-        pupilId,
-        uploadResult.path!,
-        _serverpodSessionManager.userName!,
-      );
-      _notificationService.apiRunning(false);
-      return updatedPupil;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-      _log.severe('Error while updating pupil public media auth', e,
-          StackTrace.current);
-      _notificationService.showSnackBar(NotificationType.error,
-          'Die Einwilligung für öffentliche Medien konnte nicht aktualisiert werden: ${e.toString()}');
-      throw Exception('Failed to update pupil public media auth, $e');
-    }
-  }
+  // Future<PupilData> updatePupilPublicMediaAuth({
+  //   required int pupilId,
+  //   required File file,
+  // }) async {
+  //   final uploadResult =
+  //       await ClientFileUpload.uploadFile(file, ServerStorageFolder.auths);
+  //   if (!uploadResult.success) {
+  //     throw Exception('Failed to upload file, ${uploadResult.path}');
+  //   }
+  //   try {
+  //     _notificationService.apiRunning(true);
+  //     final updatedPupil = _client.pupilUpdate.updatePupilPublicMediaAuth(
+  //       pupilId,
+  //       uploadResult.path!,
+  //       _serverpodSessionManager.userName!,
+  //     );
+  //     _notificationService.apiRunning(false);
+  //     return updatedPupil;
+  //   } catch (e) {
+  //     _notificationService.apiRunning(false);
+  //     _log.severe('Error while updating pupil public media auth', e,
+  //         StackTrace.current);
+  //     _notificationService.showSnackBar(NotificationType.error,
+  //         'Die Einwilligung für öffentliche Medien konnte nicht aktualisiert werden: ${e.toString()}');
+  //     throw Exception('Failed to update pupil public media auth, $e');
+  //   }
+  // }
 
-//- delete pupil avatar
+//- delete pupil document
 
-  Future<PupilData> deletePupilAvatar({required int internalId}) async {
+  Future<PupilData> deletePupilDocument(
+      {required int pupilId, required PupilDocumentType documentType}) async {
     _notificationService.apiRunning(true);
     final updatedPupil = await ClientHelper.apiCall(
-      call: () => _client.pupil.deleteAvatar(internalId),
-      errorMessage: 'Das Profilbild konnte nicht gelöscht werden',
+      call: () => _client.pupil.deletePupilDocument(pupilId, documentType),
+      errorMessage: 'Das Dokument konnte nicht gelöscht werden',
     );
     return updatedPupil;
   }
 
-  Future<PupilData> deletePupilAvatarAuth({required int pupilId}) async {
-    final updatedPupil = await ClientHelper.apiCall(
-      call: () => _client.pupil.deleteAvatarAuth(pupilId),
-      errorMessage: 'Das Profilbild konnte nicht gelöscht werden',
-    );
-    return updatedPupil;
-  }
+  // Future<PupilData> deletePupilAvatarAuth({required int pupilId}) async {
+  //   final updatedPupil = await ClientHelper.apiCall(
+  //     call: () => _client.pupil.deleteAvatarAuth(pupilId),
+  //     errorMessage: 'Das Profilbild konnte nicht gelöscht werden',
+  //   );
+  //   return updatedPupil;
+  // }
 
 //- delete pupil public media auth
 
@@ -279,7 +213,22 @@ class PupilDataApiService {
     return updatedPupil;
   }
 
-//- update support level
+  //- update public media auth
+
+  Future<PupilData> updatePublicMediaAuth(
+      int pupilId, PublicMediaAuth publicMediaAuth) async {
+    final updatedPupil = await ClientHelper.apiCall(
+      call: () => _client.pupilUpdate.updatePublicMediaAuth(
+        pupilId,
+        publicMediaAuth,
+      ),
+      errorMessage:
+          'Die Einwilligung für öffentliche Medien konnte nicht aktualisiert werden',
+    );
+    return updatedPupil;
+  }
+
+  //- update support level
 
   Future<PupilData> updateSupportLevel({
     required int pupilIdId,

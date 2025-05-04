@@ -8,6 +8,7 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/data/pupil_data_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter_impl.dart';
@@ -19,7 +20,7 @@ final _log = Logger('PupilManager');
 final _notificationService = di<NotificationService>();
 final _cacheManager = di<DefaultCacheManager>();
 final _pupilIdentityManager = di<PupilIdentityManager>();
-
+final _serverpodSessionManager = di<ServerpodSessionManager>();
 final _pupilDataApiService = PupilDataApiService();
 
 class PupilManager extends ChangeNotifier {
@@ -225,9 +226,10 @@ class PupilManager extends ChangeNotifier {
     }
   }
 
-  Future<void> updateAvatarImage(
+  Future<void> updatePupilDocument(
     File imageFile,
     PupilProxy pupilProxy,
+    PupilDocumentType documentType,
   ) async {
     // first we encrypt the file
 
@@ -243,20 +245,22 @@ class PupilManager extends ChangeNotifier {
     // send the Api request
 
     final PupilData pupilUpdate =
-        await _pupilDataApiService.updatePupilWithAvatar(
-      pupilId: pupilProxy.pupilId,
-      file: encryptedFile,
-    );
+        await _pupilDataApiService.updatePupilDocument(
+            pupilId: pupilProxy.pupilId,
+            file: encryptedFile,
+            documentType: documentType);
 
     // update the pupil in the repository
     updatePupilProxyWithPupilData(pupilUpdate);
     //  pupilProxy.updatePupil(pupilUpdate);
   }
 
-  Future<void> deleteAvatarImage(int pupilId, String cacheKey) async {
+  Future<void> deletePupilDocument(
+      int pupilId, String cacheKey, PupilDocumentType documentType) async {
     // send the Api request
-    final pupilUpdate = await _pupilDataApiService.deletePupilAvatar(
-      internalId: pupilId,
+    final pupilUpdate = await _pupilDataApiService.deletePupilDocument(
+      pupilId: pupilId,
+      documentType: documentType,
     );
 
     // Delete the outdated encrypted file in the cache.
@@ -268,45 +272,75 @@ class PupilManager extends ChangeNotifier {
     // _pupils[pupilId]!.clearAvatar();
   }
 
-  Future<void> updatePupilAvatarAuth(
-    File imageFile,
-    PupilProxy pupil,
-  ) async {
-    // first we encrypt the file
-
-    final encryptedFile = await customEncrypter.encryptFile(imageFile);
-
-    // send the Api request
-
-    final PupilData pupilUpdate =
-        await _pupilDataApiService.updatePupilWithAvatarAuth(
-      pupilId: pupil.pupilId,
-      file: encryptedFile,
+  Future<void> updatePublicMediaAuth({
+    required PupilProxy pupil,
+    bool? groupPicturesOnWebsite,
+    bool? groupPicturesInPress,
+    bool? portraitPicturesOnWebsite,
+    bool? portraitPicturesInPress,
+    bool? nameOnWebsite,
+    bool? nameInPress,
+    bool? videoOnWebsite,
+    bool? videoInPress,
+  }) async {
+    final PublicMediaAuth authToUpdate = pupil.publicMediaAuth.copyWith(
+      groupPicturesOnWebsite: groupPicturesOnWebsite ??
+          pupil.publicMediaAuth.groupPicturesOnWebsite,
+      groupPicturesInPress:
+          groupPicturesInPress ?? pupil.publicMediaAuth.groupPicturesInPress,
+      portraitPicturesOnWebsite: portraitPicturesOnWebsite ??
+          pupil.publicMediaAuth.portraitPicturesOnWebsite,
+      portraitPicturesInPress: portraitPicturesInPress ??
+          pupil.publicMediaAuth.portraitPicturesInPress,
+      nameOnWebsite: nameOnWebsite ?? pupil.publicMediaAuth.nameOnWebsite,
+      nameInPress: nameInPress ?? pupil.publicMediaAuth.nameInPress,
+      videoOnWebsite: videoOnWebsite ?? pupil.publicMediaAuth.videoOnWebsite,
+      videoInPress: videoInPress ?? pupil.publicMediaAuth.videoInPress,
     );
 
-    // update the pupil in the repository
-    updatePupilProxyWithPupilData(pupilUpdate);
+    final updatedPupil = await _pupilDataApiService.updatePublicMediaAuth(
+        pupil.pupilId, authToUpdate);
+    updatePupilProxyWithPupilData(updatedPupil);
   }
+  // Future<void> updatePupilAvatarAuth(
+  //   File imageFile,
+  //   PupilProxy pupil,
+  // ) async {
+  //   // first we encrypt the file
 
-  Future<void> updatePupilPublicMediaAuth(
-    File imageFile,
-    PupilProxy pupil,
-  ) async {
-    // first we encrypt the file
+  //   final encryptedFile = await customEncrypter.encryptFile(imageFile);
 
-    final encryptedFile = await customEncrypter.encryptFile(imageFile);
+  //   // send the Api request
 
-    // send the Api request
+  //   final PupilData pupilUpdate =
+  //       await _pupilDataApiService.updatePupilWithAvatarAuth(
+  //     pupilId: pupil.pupilId,
+  //     file: encryptedFile,
+  //   );
 
-    final PupilData pupilUpdate =
-        await _pupilDataApiService.updatePupilPublicMediaAuth(
-      pupilId: pupil.pupilId,
-      file: encryptedFile,
-    );
+  //   // update the pupil in the repository
+  //   updatePupilProxyWithPupilData(pupilUpdate);
+  // }
 
-    // update the pupil in the repository
-    updatePupilProxyWithPupilData(pupilUpdate);
-  }
+  // Future<void> updatePupilPublicMediaAuth(
+  //   File imageFile,
+  //   PupilProxy pupil,
+  // ) async {
+  //   // first we encrypt the file
+
+  //   final encryptedFile = await customEncrypter.encryptFile(imageFile);
+
+  //   // send the Api request
+
+  //   final PupilData pupilUpdate =
+  //       await _pupilDataApiService.updatePupilPublicMediaAuth(
+  //     pupilId: pupil.pupilId,
+  //     file: encryptedFile,
+  //   );
+
+  //   // update the pupil in the repository
+  //   updatePupilProxyWithPupilData(pupilUpdate);
+  // }
 
   Future<void> resetPublicMediaAuth(int pupilId) async {
     // we need the cacheKey if the api request is successful
