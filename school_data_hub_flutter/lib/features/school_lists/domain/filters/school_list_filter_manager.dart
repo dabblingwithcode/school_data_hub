@@ -20,7 +20,30 @@ class SchoolListFilterManager {
   ValueListenable<bool> get filterState => _filterState;
   final _filterState = ValueNotifier<bool>(false);
 
-  // SchoolListFilterManager();
+  SchoolListFilterManager init() {
+    _schoolListManager.addListener(_onSchoolListsChanged);
+    resetFilters();
+    _log.fine('SchoolListFilterManager initialized');
+    return this;
+  }
+
+  void dispose() {
+    _schoolListManager.removeListener(_onSchoolListsChanged);
+  }
+
+  void _onSchoolListsChanged() {
+    // If we have an active filter, reapply it to the new data
+    if (_filterState.value) {
+      _filteredSchoolLists.value = _schoolListManager.schoolLists
+          .where((element) => element.name
+              .toLowerCase()
+              .contains(_filteredSchoolLists.value.first.name.toLowerCase()))
+          .toList();
+    } else {
+      // Otherwise, just update with the new full list
+      _filteredSchoolLists.value = _schoolListManager.schoolLists;
+    }
+  }
 
   void updateFilteredSchoolLists(List<SchoolList> schoolLists) {
     _filteredSchoolLists.value = schoolLists;

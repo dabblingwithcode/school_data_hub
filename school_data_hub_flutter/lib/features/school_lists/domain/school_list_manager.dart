@@ -5,7 +5,6 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/data/school_list_api_service.dart';
-import 'package:school_data_hub_flutter/features/school_lists/domain/filters/school_list_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/models/pupil_list_entry_proxy.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/models/school_list_pupil_entries_proxy.dart';
 import 'package:watch_it/watch_it.dart';
@@ -14,8 +13,6 @@ final _notificationService = di<NotificationService>();
 
 final _apiSchoolListService = SchoolListApiService();
 
-final _schoolListFilterManager = di<SchoolListFilterManager>();
-
 final _pupilManager = di<PupilManager>();
 
 final _log = Logger('SchoolListManager');
@@ -23,15 +20,14 @@ final _log = Logger('SchoolListManager');
 class SchoolListManager with ChangeNotifier {
   final Map<int, SchoolList> _schoolListMap =
       {}; //-When created, copyWith with pupilEntries = null to avoid redundance!
-  Map<int, SchoolList> get schoolListMap => _schoolListMap;
 
   List<SchoolList> get schoolLists => _schoolListMap.values.toList();
 
-  final Map<int, SchoolListPupilEntriesProxy> _schoolListIdPupilEntriesMap = {};
+  final Map<int, SchoolListPupilEntriesProxyMap> _schoolListIdPupilEntriesMap =
+      {};
 
-  Map<int, SchoolListPupilEntriesProxy> get schoolListIdPupilEntriesMap =>
-      _schoolListIdPupilEntriesMap;
-  SchoolListManager();
+  List<SchoolListPupilEntriesProxyMap> get allPupilEntries =>
+      _schoolListIdPupilEntriesMap.values.toList();
 
   void clearData() {
     _schoolListMap.clear();
@@ -45,23 +41,16 @@ class SchoolListManager with ChangeNotifier {
 
   //- Getters
 
-  SchoolListPupilEntriesProxy getPupilEntriesProxyFromSchoolList(int listId) {
+  SchoolListPupilEntriesProxyMap getPupilEntriesProxyFromSchoolList(
+      int listId) {
     if (!_schoolListIdPupilEntriesMap.containsKey(listId)) {
-      return SchoolListPupilEntriesProxy();
+      return SchoolListPupilEntriesProxyMap();
     }
     return _schoolListIdPupilEntriesMap[listId]!;
   }
 
   SchoolList getSchoolListById(int listId) {
     return _schoolListMap[listId]!;
-  }
-
-  List<PupilListEntryProxy> getSchoolListsEntryProxyFromPupil(int pupilId) {
-    final entries = _schoolListIdPupilEntriesMap.values
-        .expand((element) => element.pupilEntries.values)
-        .where((element) => element.pupilEntry.pupilId == pupilId)
-        .toList();
-    return entries;
   }
 
   PupilListEntryProxy? getPupilSchoolListEntryProxy(
@@ -101,7 +90,8 @@ class SchoolListManager with ChangeNotifier {
     // setting pupilEntries to null to avoid redundancy
     _schoolListMap[schoolList.id!] = schoolList.copyWith(pupilEntries: null);
 
-    // Next, we update the pupil entries map
+    // Next, we update the pupil entries map for the school list
+    // with the key being the pupilId
     if (_schoolListIdPupilEntriesMap.containsKey(schoolList.id!)) {
       _schoolListIdPupilEntriesMap[schoolList.id!]!
           .setPupilEntries(pupilEntries);
@@ -109,7 +99,7 @@ class SchoolListManager with ChangeNotifier {
           'Updated pupil entries map for school list number ${schoolList.id!}');
     } else {
       _schoolListIdPupilEntriesMap[schoolList.id!] =
-          SchoolListPupilEntriesProxy();
+          SchoolListPupilEntriesProxyMap();
       _schoolListIdPupilEntriesMap[schoolList.id!]!
           .setPupilEntries(pupilEntries);
       _log.fine(
@@ -157,8 +147,6 @@ class SchoolListManager with ChangeNotifier {
     _log.fine(
         'Fetched school list number ${updatedSchoolList.id!} with ${updatedSchoolList.pupilEntries!.length} pupil entries');
     _updateCollectionsFromSchoolList(updatedSchoolList);
-    _schoolListFilterManager
-        .updateFilteredSchoolLists(_schoolListMap.values.toList());
 
     _notificationService.showSnackBar(
         NotificationType.success, 'Schulliste erfolgreich aktualisiert');

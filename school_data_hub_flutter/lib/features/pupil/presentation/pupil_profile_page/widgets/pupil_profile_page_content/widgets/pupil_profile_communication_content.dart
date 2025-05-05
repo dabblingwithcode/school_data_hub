@@ -23,7 +23,10 @@ class PupilCommunicationContent extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final observedPupil = watch(pupil);
+    final communicationPupil =
+        watchPropertyValue((m) => m.communicationPupil, target: pupil);
+    final tutorInfo = watchPropertyValue((m) => m.tutorInfo, target: pupil);
+
     return Card(
       color: AppColors.pupilProfileCardColor,
       shape: RoundedRectangleBorder(
@@ -55,7 +58,7 @@ class PupilCommunicationContent extends WatchingWidget {
             children: [
               const Text('Familiensprache:', style: TextStyle(fontSize: 18.0)),
               const Gap(10),
-              Text(observedPupil.language,
+              Text(pupil.language,
                   style: const TextStyle(
                       fontSize: 18.0, fontWeight: FontWeight.bold))
             ],
@@ -66,8 +69,8 @@ class PupilCommunicationContent extends WatchingWidget {
               const Text('Erstförderung:', style: TextStyle(fontSize: 18.0)),
               const Gap(10),
               Text(
-                  observedPupil.migrationSupportEnds != null
-                      ? 'bis : ${observedPupil.migrationSupportEnds!.formatForUser()}'
+                  pupil.migrationSupportEnds != null
+                      ? 'bis : ${pupil.migrationSupportEnds!.formatForUser()}'
                       : 'keine',
                   style: const TextStyle(
                       fontSize: 18.0, fontWeight: FontWeight.bold)),
@@ -98,8 +101,8 @@ class PupilCommunicationContent extends WatchingWidget {
           ),
           const Gap(10),
           InkWell(
-            onTap: () => languageDialog(
-                context, observedPupil, CommunicationSubject.pupil),
+            onTap: () =>
+                languageDialog(context, pupil, CommunicationSubject.pupil),
             onLongPress: () async {
               if (_serverpodSessionManager.isAdmin == false) {
                 informationDialog(context, 'Keine Berechtigung',
@@ -112,11 +115,11 @@ class PupilCommunicationContent extends WatchingWidget {
                   message: 'Eintrag zurücksetzen?');
 
               _pupilManager.updatePupilCommunicationSkills(
-                pupilId: observedPupil.pupilId,
+                pupilId: pupil.pupilId,
                 communicationSkills: null,
               );
             },
-            child: observedPupil.communicationPupil == null
+            child: communicationPupil == null
                 ? const Text(
                     'kein Eintrag',
                     style: TextStyle(
@@ -137,8 +140,7 @@ class PupilCommunicationContent extends WatchingWidget {
                           Center(
                             child: InkWell(
                               child: CommunicationValues(
-                                  communicationSkills:
-                                      observedPupil.communicationPupil!),
+                                  communicationSkills: communicationPupil),
                             ),
                           )
                         ],
@@ -158,8 +160,8 @@ class PupilCommunicationContent extends WatchingWidget {
           ),
           const Gap(10),
           InkWell(
-            onTap: () => languageDialog(
-                context, observedPupil, CommunicationSubject.tutor1),
+            onTap: () =>
+                languageDialog(context, pupil, CommunicationSubject.tutor1),
             onLongPress: () async {
               final isAdmin = _serverpodSessionManager.isAdmin;
               if (!isAdmin) {
@@ -175,11 +177,10 @@ class PupilCommunicationContent extends WatchingWidget {
                 return;
               }
               _pupilManager.updateTutorInfo(
-                  pupilId: observedPupil.pupilId,
-                  tutorInfo: observedPupil.tutorInfo
-                      ?.copyWith(communicationTutor1: null));
+                  pupilId: pupil.pupilId,
+                  tutorInfo: tutorInfo?.copyWith(communicationTutor1: null));
             },
-            child: observedPupil.tutorInfo == null
+            child: tutorInfo == null
                 ? const Text(
                     'kein Eintrag',
                     style: TextStyle(
@@ -199,8 +200,8 @@ class PupilCommunicationContent extends WatchingWidget {
                           const Gap(10),
                           InkWell(
                             child: CommunicationValues(
-                                communicationSkills: observedPupil
-                                    .tutorInfo!.communicationTutor1),
+                                communicationSkills:
+                                    tutorInfo.communicationTutor1),
                           )
                         ],
                       ),
@@ -219,15 +220,14 @@ class PupilCommunicationContent extends WatchingWidget {
           ),
           const Gap(10),
           InkWell(
-            onTap: () => languageDialog(
-                context, observedPupil, CommunicationSubject.tutor2),
+            onTap: () =>
+                languageDialog(context, pupil, CommunicationSubject.tutor2),
             onLongPress: () => _pupilManager.updateTutorInfo(
-                pupilId: observedPupil.pupilId,
-                tutorInfo: observedPupil.tutorInfo != null
-                    ? observedPupil.tutorInfo!
-                        .copyWith(communicationTutor2: null)
+                pupilId: pupil.pupilId,
+                tutorInfo: tutorInfo != null
+                    ? tutorInfo.copyWith(communicationTutor2: null)
                     : TutorInfo(createdBy: _serverpodSessionManager.userName!)),
-            child: observedPupil.tutorInfo == null
+            child: tutorInfo == null
                 ? const Text(
                     'kein Eintrag',
                     style: TextStyle(
@@ -247,8 +247,8 @@ class PupilCommunicationContent extends WatchingWidget {
                           const Gap(10),
                           InkWell(
                             child: CommunicationValues(
-                                communicationSkills: observedPupil
-                                    .tutorInfo!.communicationTutor2),
+                                communicationSkills:
+                                    tutorInfo.communicationTutor2),
                           )
                         ],
                       ),

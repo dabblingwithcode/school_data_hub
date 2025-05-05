@@ -124,8 +124,8 @@ class AuthorizationManager with ChangeNotifier {
   }
 
   Future<void> updatePupilAuthorization(
-      int pupilId, int listId, bool? status, String? comment) async {
-    final pupilAuth = _authorizationsMap[listId]!
+      int pupilId, int authorizationId, bool? status, String? comment) async {
+    final pupilAuth = _authorizationsMap[authorizationId]!
         .authorizedPupils!
         .where((element) => element.pupilId == pupilId)
         .first;
@@ -158,7 +158,7 @@ class AuthorizationManager with ChangeNotifier {
 
   Future<void> deleteAuthorizationFile(
     int pupilId,
-    String authId,
+    int authId,
     String cacheKey,
   ) async {
     // final Authorization responsePupil = await _authorizationApiService

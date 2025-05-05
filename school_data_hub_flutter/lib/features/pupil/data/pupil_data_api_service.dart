@@ -25,6 +25,8 @@ class PupilDataApiService {
     return _instance;
   }
 
+  // - update backend pupil database
+
   Future<List<PupilData>> updateBackendPupilsDatabase(
       {required File file}) async {
     final pupils = await ClientHelper.apiCall(
@@ -48,6 +50,7 @@ class PupilDataApiService {
   }
 
   //- update communication skills
+
   Future<PupilData> updateCommunicationSkills({
     required int pupilId,
     required CommunicationSkills? communicationSkills,
@@ -77,7 +80,7 @@ class PupilDataApiService {
     return updatedPupil;
   }
 
-  // //- update pupil one of the pupil properties being a string
+  //- update pupil one of the pupil properties being a string
 
   Future<PupilData> updateStringProperty(
       {required int pupilId,
@@ -91,7 +94,7 @@ class PupilDataApiService {
     return updatedPupil;
   }
 
-  // - update tutor info
+  // - tutor info
 
   Future<PupilData> updateTutorInfo({
     required int pupilId,
@@ -103,8 +106,6 @@ class PupilDataApiService {
     );
     return updatedPupil;
   }
-
-  //- update siblings tutor info
 
   Future<List<PupilData>> updateSiblingsTutorInfo({
     required List<int> siblingsIds,
@@ -122,7 +123,7 @@ class PupilDataApiService {
     return updatedSiblings;
   }
 
-  //- update pupil avatar
+  //- hub document
 
   Future<PupilData> updatePupilDocument({
     required int pupilId,
@@ -139,48 +140,6 @@ class PupilDataApiService {
     return updatedPupil;
   }
 
-//- update pupil avatar auth image
-
-  // Future<PupilData> updatePupilWithAvatarAuth({
-  //   required int pupilId,
-  //   required File file,
-  // }) async {
-  //   final result =
-  //       await ClientFileUpload.uploadFile(file, ServerStorageFolder.documents);
-
-  //   throw Exception('Failed to upload file, $uploadDescription');
-  // }
-
-//- update pupil public media auth image
-
-  // Future<PupilData> updatePupilPublicMediaAuth({
-  //   required int pupilId,
-  //   required File file,
-  // }) async {
-  //   final uploadResult =
-  //       await ClientFileUpload.uploadFile(file, ServerStorageFolder.auths);
-  //   if (!uploadResult.success) {
-  //     throw Exception('Failed to upload file, ${uploadResult.path}');
-  //   }
-  //   try {
-  //     _notificationService.apiRunning(true);
-  //     final updatedPupil = _client.pupilUpdate.updatePupilPublicMediaAuth(
-  //       pupilId,
-  //       uploadResult.path!,
-  //       _serverpodSessionManager.userName!,
-  //     );
-  //     _notificationService.apiRunning(false);
-  //     return updatedPupil;
-  //   } catch (e) {
-  //     _notificationService.apiRunning(false);
-  //     _log.severe('Error while updating pupil public media auth', e,
-  //         StackTrace.current);
-  //     _notificationService.showSnackBar(NotificationType.error,
-  //         'Die Einwilligung für öffentliche Medien konnte nicht aktualisiert werden: ${e.toString()}');
-  //     throw Exception('Failed to update pupil public media auth, $e');
-  //   }
-  // }
-
 //- delete pupil document
 
   Future<PupilData> deletePupilDocument(
@@ -193,15 +152,7 @@ class PupilDataApiService {
     return updatedPupil;
   }
 
-  // Future<PupilData> deletePupilAvatarAuth({required int pupilId}) async {
-  //   final updatedPupil = await ClientHelper.apiCall(
-  //     call: () => _client.pupil.deleteAvatarAuth(pupilId),
-  //     errorMessage: 'Das Profilbild konnte nicht gelöscht werden',
-  //   );
-  //   return updatedPupil;
-  // }
-
-//- delete pupil public media auth
+//- public media auth
 
   Future<PupilData> resetPublicMediaAuth({required int pupilId}) async {
     final updatedPupil = await ClientHelper.apiCall(
@@ -212,8 +163,6 @@ class PupilDataApiService {
     );
     return updatedPupil;
   }
-
-  //- update public media auth
 
   Future<PupilData> updatePublicMediaAuth(
       int pupilId, PublicMediaAuth publicMediaAuth) async {
@@ -228,7 +177,7 @@ class PupilDataApiService {
     return updatedPupil;
   }
 
-  //- update support level
+  //- support level
 
   Future<PupilData> updateSupportLevel({
     required int pupilIdId,

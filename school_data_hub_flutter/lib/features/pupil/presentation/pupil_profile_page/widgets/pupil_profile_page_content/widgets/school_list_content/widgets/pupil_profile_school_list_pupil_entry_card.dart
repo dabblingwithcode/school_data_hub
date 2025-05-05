@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/models/pupil_list_entry_proxy.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
@@ -40,6 +42,21 @@ class PupilProfileSchoolListPupilEntryCard extends WatchingWidget {
                             schoolList,
                           ),
                         ));
+                      },
+                      onLongPress: () async {
+                        final confirm = await confirmationDialog(
+                            context: context,
+                            title: 'Schüler*in aus Liste löschen',
+                            message: 'Schüler*in aus der Liste löschen?');
+                        if (confirm != true) {
+                          return;
+                        }
+                        await _schoolListManager.updateSchoolListProperty(
+                            listId: pupilListEntry.schoolListId,
+                            operation: (
+                              pupilIds: [pupilListEntry.pupilId],
+                              operation: MemberOperation.remove
+                            ));
                       },
                       child: Text(
                         schoolList.name,

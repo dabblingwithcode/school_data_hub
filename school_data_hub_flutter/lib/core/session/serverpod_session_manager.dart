@@ -198,11 +198,12 @@ class ServerpodSessionManager with ChangeNotifier {
       }
 
       return true;
-    } catch (e) {
+    } catch (e, stackTrace) {
       // Something wentwrong with the getUserInfo call
       // so we don't have a signed user.
       // we better delete the user info from storage and remove the key.
-      _log.warning('User was not authenticated by the server: $e');
+      _log.warning(
+          'User was not authenticated by the server: $e', [e, stackTrace]);
 
       await keyManager.remove();
 

@@ -192,17 +192,19 @@ class DiManager {
         () => AttendanceManager(),
         dependsOn: [SchooldayManager, PupilsFilter]);
 
-    di.registerSingletonWithDependencies<SchoolListFilterManager>(
-        () => SchoolListFilterManager(),
-        dependsOn: [PupilsFilter]);
-
     di.registerSingletonAsync<SchoolListManager>(() async {
       _log.info('Registering SchoolListManager');
       final schoolListManager = SchoolListManager();
       await schoolListManager.init();
       _log.info('SchoolListManager initialized');
       return schoolListManager;
-    }, dependsOn: [SchoolListFilterManager, ServerpodSessionManager]);
+    }, dependsOn: [ServerpodSessionManager]);
+
+    di.registerSingletonWithDependencies<SchoolListFilterManager>(() {
+      final schoolListFilterManager = SchoolListFilterManager();
+      schoolListFilterManager.init();
+      return schoolListFilterManager;
+    }, dependsOn: [PupilsFilter, SchoolListManager]);
 
     di.registerSingletonWithDependencies<AttendancePupilFilterManager>(
         () => AttendancePupilFilterManager(),
@@ -215,6 +217,7 @@ class DiManager {
   }
 
   static Future<void> unregisterManagersDependingOnActiveEnv() async {
+    // TODO: This needs to be updated
     di<ServerpodSessionManager>().dispose();
     await di.unregister<ServerpodSessionManager>();
     _log.info('ServerpodSessionManager unregistered');

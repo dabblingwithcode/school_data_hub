@@ -4,12 +4,11 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/paddings.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/school_list_content/widgets/pupil_profile_school_list_pupil_entry_card.dart';
-import 'package:school_data_hub_flutter/features/school_lists/domain/models/pupil_list_entry_proxy.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_lists_page/school_lists_page.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _schoolListLocator = di<SchoolListManager>();
+final _schoolListManager = di<SchoolListManager>();
 
 class PupilSchoolListsContent extends StatelessWidget {
   final PupilProxy pupil;
@@ -60,9 +59,16 @@ class PupilSchoolListContentList extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final observedPupil = watch(pupil);
-    List<PupilListEntryProxy> pupilListEntryProxies = _schoolListLocator
-        .getSchoolListsEntryProxyFromPupil(observedPupil.pupilId);
+    final pupilListEntriesProxyMaps = watchPropertyValue(
+      (SchoolListManager m) => m.allPupilEntries,
+    );
+    final pupilListEntries = [
+      ...pupilListEntriesProxyMaps
+          .expand((element) => element.pupilEntries.values)
+    ];
+    final filteredPupilListEntries = pupilListEntries
+        .where((element) => element.pupilEntry.pupilId == pupil.pupilId)
+        .toList();
 
     return Column(
       children: [
@@ -70,10 +76,10 @@ class PupilSchoolListContentList extends WatchingWidget {
           padding: const EdgeInsets.all(0),
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: pupilListEntryProxies.length,
+          itemCount: filteredPupilListEntries.length,
           itemBuilder: (BuildContext context, int index) {
             return PupilProfileSchoolListPupilEntryCard(
-              pupilListEntryProxy: pupilListEntryProxies[index],
+              pupilListEntryProxy: filteredPupilListEntries[index],
             );
           },
         ),
