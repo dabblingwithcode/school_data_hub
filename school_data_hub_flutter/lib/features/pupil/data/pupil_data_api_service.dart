@@ -1,12 +1,11 @@
 import 'dart:io';
 
 import 'package:logging/logging.dart';
-import 'package:path/path.dart' as p;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/services/api/api_settings.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _notificationService = di<NotificationService>();
@@ -26,27 +25,15 @@ class PupilDataApiService {
     return _instance;
   }
 
+  // - update backend pupil database
+
   Future<List<PupilData>> updateBackendPupilsDatabase(
       {required File file}) async {
-    _notificationService.apiRunning(true);
-
-    try {
-      final pupils = await _client.admin.updateBackendPupilDataState(file);
-
-      _notificationService.apiRunning(false);
-
-      return pupils.toList();
-    } catch (e) {
-      _notificationService.apiRunning(false);
-
-      _log.severe('Error while updating backend pupils database', e,
-          StackTrace.current);
-
-      _notificationService.showSnackBar(NotificationType.error,
-          'Die Schüler konnten nicht aktualisiert werden: ${e.toString()}');
-
-      throw ApiException('Failed to update backend pupils database', 500);
-    }
+    final pupils = await ClientHelper.apiCall(
+      call: () => _client.admin.updateBackendPupilDataState(file),
+      errorMessage: 'Die Schüler konnten nicht aktualisiert werden',
+    );
+    return pupils.toList();
   }
 
   //- fetch list of pupils
@@ -55,124 +42,70 @@ class PupilDataApiService {
     required List<int> pupilInternalIds,
   }) async {
     final pupilIdsSet = pupilInternalIds.toSet();
-
-    try {
-      _notificationService.apiRunning(true);
-
-      final pupils = await _client.pupil.fetchPupilsById(pupilIdsSet);
-
-      _notificationService.apiRunning(false);
-
-      return pupils;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-
-      _log.severe('Error while fetching pupils', e, StackTrace.current);
-
-      _notificationService.showSnackBar(NotificationType.error,
-          'Die Schüler konnten nicht geladen werden: ${e.toString()}');
-
-      throw ApiException('Failed to fetch pupils', 500);
-    }
+    final pupils = await ClientHelper.apiCall(
+      call: () => _client.pupil.fetchPupilsById(pupilIdsSet),
+      errorMessage: 'Die Schüler konnten nicht geladen werden',
+    );
+    return pupils;
   }
 
   //- update communication skills
+
   Future<PupilData> updateCommunicationSkills({
     required int pupilId,
     required CommunicationSkills? communicationSkills,
   }) async {
-    try {
-      _notificationService.apiRunning(true);
-      final updatedPupil = await _client.pupilUpdate.updateCommunicationSkills(
+    final updatedPupil = await ClientHelper.apiCall(
+      call: () => _client.pupilUpdate.updateCommunicationSkills(
         pupilId: pupilId,
         communicationSkills: communicationSkills,
-      );
-      _notificationService.apiRunning(false);
-      return updatedPupil;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-
-      _log.severe('Error while updating pupil', e, StackTrace.current);
-
-      _notificationService.showSnackBar(NotificationType.error,
-          'Die Schüler konnten nicht aktualisiert werden: ${e.toString()}');
-
-      throw Exception('Failed to update pupil, $e');
-    }
+      ),
+      errorMessage: 'Die Schüler konnten nicht aktualisiert werden',
+    );
+    return updatedPupil;
   }
 
   // - update credit
+
   Future<PupilData> updateCredit({
     required int pupilId,
     required int credit,
     String? comment,
   }) async {
-    try {
-      _notificationService.apiRunning(true);
-      final updatedPupil = await _client.pupilUpdate.updateCredit(
-          pupilId, credit, comment, _serverpodSessionManager.userName!);
-      _notificationService.apiRunning(false);
-      return updatedPupil;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-
-      _log.severe('Error while updating pupil', e, StackTrace.current);
-
-      _notificationService.showSnackBar(NotificationType.error,
-          'Die Schüler konnten nicht aktualisiert werden: ${e.toString()}');
-
-      throw Exception('Failed to update pupil, $e');
-    }
+    final updatedPupil = await ClientHelper.apiCall(
+      call: () => _client.pupilUpdate.updateCredit(
+          pupilId, credit, comment, _serverpodSessionManager.userName!),
+      errorMessage: 'Die Schüler konnten nicht aktualisiert werden',
+    );
+    return updatedPupil;
   }
-  // //- update pupil one of the pupil properties being a string
+
+  //- update pupil one of the pupil properties being a string
 
   Future<PupilData> updateStringProperty(
       {required int pupilId,
       required String property,
       required String? value}) async {
-    try {
-      _notificationService.apiRunning(true);
-      final updatedPupil = await _client.pupilUpdate
-          .updateStringProperty(pupilId, property, value);
-      _notificationService.apiRunning(false);
-      return updatedPupil;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-
-      _log.severe('Error while updating pupil property', e, StackTrace.current);
-
-      _notificationService.showSnackBar(NotificationType.error,
-          'Die Schüler konnten nicht aktualisiert werden: ${e.toString()}');
-
-      throw Exception('Failed to update pupil property, $e');
-    }
+    final updatedPupil = await ClientHelper.apiCall(
+      call: () =>
+          _client.pupilUpdate.updateStringProperty(pupilId, property, value),
+      errorMessage: 'Die Schüler konnten nicht aktualisiert werden',
+    );
+    return updatedPupil;
   }
 
-  // - update tutor info
+  // - tutor info
 
   Future<PupilData> updateTutorInfo({
     required int pupilId,
     required TutorInfo? tutorInfo,
   }) async {
-    try {
-      _notificationService.apiRunning(true);
-      final updatedPupil =
-          await _client.pupilUpdate.updateTutorInfo(pupilId, tutorInfo);
-      _notificationService.apiRunning(false);
-
-      return updatedPupil;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-
-      _log.severe('Error while updating pupil', e, StackTrace.current);
-
-      _notificationService.showSnackBar(NotificationType.error,
-          'Die Schüler konnten nicht aktualisiert werden: ${e.toString()}');
-
-      throw Exception('Failed to update pupil, $e');
-    }
+    final updatedPupil = await ClientHelper.apiCall(
+      call: () => _client.pupilUpdate.updateTutorInfo(pupilId, tutorInfo),
+      errorMessage: 'Die Schüler konnten nicht aktualisiert werden',
+    );
+    return updatedPupil;
   }
-  //- update siblings tutor info
 
   Future<List<PupilData>> updateSiblingsTutorInfo({
     required List<int> siblingsIds,
@@ -182,229 +115,69 @@ class PupilDataApiService {
       siblingsIds: siblingsIds.toSet(),
       tutorInfo: tutorInfo,
     );
-
-    try {
-      _notificationService.apiRunning(true);
-      final updatedSiblings =
-          await _client.pupilUpdate.updateSiblingsTutorInfo(siblingsTutorInfo);
-      _notificationService.apiRunning(false);
-
-      return updatedSiblings;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-
-      _log.severe('Error while updating siblings', e, StackTrace.current);
-
-      _notificationService.showSnackBar(NotificationType.error,
-          'Die Geschwister konnten nicht aktualisiert werden: ${e.toString()}');
-
-      throw Exception('Failed to update siblings: $e');
-    }
-  }
-
-  //- update pupil avatar
-
-  Future<PupilData> updatePupilWithAvatar({
-    required int pupilId,
-    required File file,
-  }) async {
-    final documentId = Uuid().v4();
-    final path = p.join(ServerStorageFolder.avatars.name, '$documentId.jpg');
-    final uploadDescription =
-        await _client.files.getUploadDescription(StorageId.private.name, path);
-    if (uploadDescription != null) {
-      // Create an uploader
-      final uploader = FileUploader(uploadDescription);
-
-      // Upload the file
-      final fileStream = file.openRead();
-
-      final fileLength = await file.length();
-      _notificationService.apiRunning(true);
-      await uploader.upload(fileStream, fileLength);
-      _notificationService.apiRunning(false);
-
-      // Verify the upload
-      final success = await _client.files.verifyUpload('private', path);
-
-      if (success) {
-        try {
-          final updatedPupil = await _client.pupilUpdate.updatePupilAvatar(
-              pupilId, path, _serverpodSessionManager.userName!);
-          _notificationService.apiRunning(false);
-
-          return updatedPupil;
-        } catch (e) {
-          _notificationService.apiRunning(false);
-
-          _log.severe(
-              'Error while updating pupil avatar', e, StackTrace.current);
-
-          _notificationService.showSnackBar(NotificationType.error,
-              'Das Profilbild konnte nicht aktualisiert werden: ${e.toString()}');
-
-          throw Exception('Failed to update pupil avatar, $e');
-        }
-      }
-    } else {
-      _notificationService.apiRunning(false);
-
-      _log.severe('Error while uploading file', null, StackTrace.current);
-
-      _notificationService.showSnackBar(NotificationType.error,
-          'Das Profilbild konnte nicht hochgeladen werden: ${uploadDescription.toString()}');
-
-      throw Exception('Failed to upload file, $uploadDescription');
-    }
-    throw Exception('Failed to upload file, $uploadDescription');
-  }
-
-//- update pupil avatar auth image
-
-  Future<PupilData> updatePupilWithAvatarAuth({
-    required int pupilId,
-    required File file,
-  }) async {
-    final documentId = Uuid().v4();
-    final path = p.join(
-      ServerStorageFolder.documents.name,
-      '$documentId.jpg',
+    final updatedSiblings = await ClientHelper.apiCall(
+      call: () =>
+          _client.pupilUpdate.updateSiblingsTutorInfo(siblingsTutorInfo),
+      errorMessage: 'Die Geschwister konnten nicht aktualisiert werden',
     );
-    final uploadDescription =
-        await _client.files.getUploadDescription(StorageId.private.name, path);
-    if (uploadDescription != null) {
-      // Create an uploader
-      final uploader = FileUploader(uploadDescription);
-
-      // Upload the file
-      final fileStream = file.openRead();
-
-      final fileLength = await file.length();
-      _notificationService.apiRunning(true);
-      await uploader.upload(fileStream, fileLength);
-      _notificationService.apiRunning(false);
-
-      // Verify the upload
-      final success = await _client.files.verifyUpload('private', path);
-
-      if (success) {
-        try {
-          _notificationService.apiRunning(true);
-
-          final updatedPupil = await _client.pupilUpdate.updatePupilAvatarAuth(
-              pupilId, path, _serverpodSessionManager.userName!);
-          _notificationService.apiRunning(false);
-
-          return updatedPupil;
-        } catch (e) {
-          _notificationService.apiRunning(false);
-
-          _log.severe(
-              'Error while updating pupil avatar', e, StackTrace.current);
-
-          _notificationService.showSnackBar(NotificationType.error,
-              'Das Profilbild konnte nicht aktualisiert werden: ${e.toString()}');
-
-          throw Exception('Failed to update pupil avatar, $e');
-        }
-      }
-    } else {
-      _notificationService.apiRunning(false);
-
-      _log.severe('Error while uploading file', null, StackTrace.current);
-
-      _notificationService.showSnackBar(NotificationType.error,
-          'Das Profilbild konnte nicht hochgeladen werden: ${uploadDescription.toString()}');
-
-      throw Exception('Failed to upload file, $uploadDescription');
-    }
-    throw Exception('Failed to upload file, $uploadDescription');
+    return updatedSiblings;
   }
 
-//- update pupil public media auth image
+  //- hub document
 
-  Future<PupilData> updatePupilPublicMediaAuth({
+  Future<PupilData> updatePupilDocument({
     required int pupilId,
     required File file,
+    required PupilDocumentType documentType,
   }) async {
-    final uploadResult =
-        await FileUploadService.uploadFile(file, ServerStorageFolder.auths);
-    if (!uploadResult.success) {
-      throw Exception('Failed to upload file, ${uploadResult.path}');
-    }
-    try {
-      _notificationService.apiRunning(true);
-      final updatedPupil = _client.pupilUpdate.updatePupilPublicMediaAuth(
-        pupilId,
-        uploadResult.path!,
-        _serverpodSessionManager.userName!,
-      );
-      _notificationService.apiRunning(false);
-      return updatedPupil;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-      _log.severe('Error while updating pupil public media auth', e,
-          StackTrace.current);
-      _notificationService.showSnackBar(NotificationType.error,
-          'Die Einwilligung für öffentliche Medien konnte nicht aktualisiert werden: ${e.toString()}');
-      throw Exception('Failed to update pupil public media auth, $e');
-    }
+    final result =
+        await ClientFileUpload.uploadFile(file, ServerStorageFolder.documents);
+    final updatedPupil = await ClientHelper.apiCall(
+      call: () => _client.pupilUpdate.updatePupilDocument(pupilId, result.path!,
+          _serverpodSessionManager.userName!, documentType),
+      errorMessage: 'Das Profilbild konnte nicht aktualisiert werden',
+    );
+    return updatedPupil;
   }
 
-//- delete pupil avatar
+//- delete pupil document
 
-  Future<PupilData> deletePupilAvatar({required int internalId}) async {
+  Future<PupilData> deletePupilDocument(
+      {required int pupilId, required PupilDocumentType documentType}) async {
     _notificationService.apiRunning(true);
-    try {
-      _notificationService.apiRunning(true);
-      final updatedPupil = await _client.pupil.deleteAvatar(internalId);
-      _notificationService.apiRunning(false);
-      return updatedPupil;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-      _log.severe('Error while deleting pupil avatar', e, StackTrace.current);
-      _notificationService.showSnackBar(NotificationType.error,
-          'Das Profilbild konnte nicht gelöscht werden: ${e.toString()}');
-      throw Exception('Failed to delete pupil avatar, $e');
-    }
+    final updatedPupil = await ClientHelper.apiCall(
+      call: () => _client.pupil.deletePupilDocument(pupilId, documentType),
+      errorMessage: 'Das Dokument konnte nicht gelöscht werden',
+    );
+    return updatedPupil;
   }
 
-  Future<PupilData> deletePupilAvatarAuth({required int internalId}) async {
-    try {
-      _notificationService.apiRunning(true);
-      final updatedPupil = await _client.pupil.deleteAvatarAuth(internalId);
-      _notificationService.apiRunning(false);
-      return updatedPupil;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-      _log.severe(
-          'Error while deleting pupil avatar auth', e, StackTrace.current);
-      _notificationService.showSnackBar(NotificationType.error,
-          'Die avatar Einwilligung konnte nicht gelöscht werden: ${e.toString()}');
-      throw Exception('Failed to delete pupil avatar auth, $e');
-    }
-  }
-
-//- delete pupil public media auth
+//- public media auth
 
   Future<PupilData> resetPublicMediaAuth({required int pupilId}) async {
-    try {
-      _notificationService.apiRunning(true);
-      final updatedPupil = _client.pupil
-          .resetPublicMediaAuth(pupilId, _serverpodSessionManager.userName!);
-      _notificationService.apiRunning(false);
-      return updatedPupil;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-      _log.severe('Error while deleting pupil public media auth', e,
-          StackTrace.current);
-      _notificationService.showSnackBar(NotificationType.error,
-          'Die Einwilligung für öffentliche Medien konnte nicht gelöscht werden: ${e.toString()}');
-      throw Exception('Failed to delete pupil public media auth, $e');
-    }
+    final updatedPupil = await ClientHelper.apiCall(
+      call: () => _client.pupil
+          .resetPublicMediaAuth(pupilId, _serverpodSessionManager.userName!),
+      errorMessage:
+          'Die Einwilligung für öffentliche Medien konnte nicht gelöscht werden',
+    );
+    return updatedPupil;
   }
 
-//- update support level
+  Future<PupilData> updatePublicMediaAuth(
+      int pupilId, PublicMediaAuth publicMediaAuth) async {
+    final updatedPupil = await ClientHelper.apiCall(
+      call: () => _client.pupilUpdate.updatePublicMediaAuth(
+        pupilId,
+        publicMediaAuth,
+      ),
+      errorMessage:
+          'Die Einwilligung für öffentliche Medien konnte nicht aktualisiert werden',
+    );
+    return updatedPupil;
+  }
+
+  //- support level
 
   Future<PupilData> updateSupportLevel({
     required int pupilIdId,
@@ -419,40 +192,22 @@ class PupilDataApiService {
         createdAt: createdAt,
         createdBy: createdBy,
         pupilIdId: pupilIdId);
-
-    try {
-      _notificationService.apiRunning(true);
-      final updatedPupil =
-          await _client.pupilUpdate.updateSupportLevel(supportLevel);
-      _notificationService.apiRunning(false);
-      return updatedPupil;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-      _log.severe('Error while updating support level', e, StackTrace.current);
-      _notificationService.showSnackBar(NotificationType.error,
-          'Die Förderstufe konnte nicht aktualisiert werden: ${e.toString()}');
-      throw Exception('Failed to update support level, $e');
-    }
+    final updatedPupil = await ClientHelper.apiCall(
+      call: () => _client.pupilUpdate.updateSupportLevel(supportLevel),
+      errorMessage: 'Die Förderebene konnte nicht aktualisiert werden',
+    );
+    return updatedPupil;
   }
 
   Future<PupilData> deleteSupportLevelHistoryItem({
     required int internalId,
     required int supportLevelId,
   }) async {
-    try {
-      _notificationService.apiRunning(true);
-
-      final updatedPupil = await _client.pupil
-          .deleteSupportLevelHistoryItem(internalId, supportLevelId);
-      _notificationService.apiRunning(false);
-      return updatedPupil;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-      _log.severe('Error while deleting support level history item', e,
-          StackTrace.current);
-      _notificationService.showSnackBar(NotificationType.error,
-          'Die Förderstufe konnte nicht gelöscht werden: ${e.toString()}');
-      throw Exception('Failed to delete support level history item, $e');
-    }
+    final updatedPupil = await ClientHelper.apiCall(
+      call: () => _client.pupil
+          .deleteSupportLevelHistoryItem(internalId, supportLevelId),
+      errorMessage: 'Die Förderebene konnte nicht gelöscht werden',
+    );
+    return updatedPupil;
   }
 }

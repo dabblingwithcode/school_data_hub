@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
@@ -10,6 +12,9 @@ import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.d
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/filters/attendance_pupil_filter.dart';
+import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
+import 'package:school_data_hub_flutter/features/authorizations/domain/filters/authorization_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/authorizations/domain/filters/pupil_authorization_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/competence/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
@@ -136,6 +141,25 @@ class DiManager {
       return CompetenceFilterManager();
     }, dependsOn: [CompetenceManager]);
 
+    di.registerSingletonAsync<AuthorizationManager>(() async {
+      log('Registering AuthorizationManager');
+      final authorizationManager = AuthorizationManager();
+      await authorizationManager.init();
+      log('AuthorizationManager initialized');
+      return authorizationManager;
+    }, dependsOn: [ServerpodSessionManager]);
+
+    di.registerSingletonWithDependencies<PupilAuthorizationFilterManager>(
+        () => PupilAuthorizationFilterManager(),
+        dependsOn: [AuthorizationManager]);
+
+    di.registerSingletonWithDependencies<AuthorizationFilterManager>(() {
+      final authorizationFilterManager = AuthorizationFilterManager();
+      return authorizationFilterManager.init();
+    },
+        dispose: (instance) => instance.dispose(),
+        dependsOn: [AuthorizationManager]);
+
     di.registerSingletonAsync<PupilManager>(() async {
       final pupilManager = PupilManager();
 
@@ -168,17 +192,19 @@ class DiManager {
         () => AttendanceManager(),
         dependsOn: [SchooldayManager, PupilsFilter]);
 
-    di.registerSingletonWithDependencies<SchoolListFilterManager>(
-        () => SchoolListFilterManager(),
-        dependsOn: [PupilsFilter]);
-
     di.registerSingletonAsync<SchoolListManager>(() async {
       _log.info('Registering SchoolListManager');
       final schoolListManager = SchoolListManager();
       await schoolListManager.init();
       _log.info('SchoolListManager initialized');
       return schoolListManager;
-    }, dependsOn: [SchoolListFilterManager, ServerpodSessionManager]);
+    }, dependsOn: [ServerpodSessionManager]);
+
+    di.registerSingletonWithDependencies<SchoolListFilterManager>(() {
+      final schoolListFilterManager = SchoolListFilterManager();
+      schoolListFilterManager.init();
+      return schoolListFilterManager;
+    }, dependsOn: [PupilsFilter, SchoolListManager]);
 
     di.registerSingletonWithDependencies<AttendancePupilFilterManager>(
         () => AttendancePupilFilterManager(),
@@ -191,6 +217,7 @@ class DiManager {
   }
 
   static Future<void> unregisterManagersDependingOnActiveEnv() async {
+    // TODO: This needs to be updated
     di<ServerpodSessionManager>().dispose();
     await di.unregister<ServerpodSessionManager>();
     _log.info('ServerpodSessionManager unregistered');

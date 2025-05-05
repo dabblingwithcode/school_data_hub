@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:school_data_hub_server/src/endpoints/admin_endpoint.dart';
+import 'package:school_data_hub_server/src/endpoints/security/admin_endpoint.dart';
 import 'package:school_data_hub_server/src/endpoints/competence_endpoint.dart';
 import 'package:school_data_hub_server/src/endpoints/schoolday_admin_endpoint.dart';
 import 'package:school_data_hub_server/src/endpoints/support_category_endpoint.dart';

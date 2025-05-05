@@ -10,8 +10,9 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import '../authorization/authorization.dart' as _i2;
-import '../pupil_data/pupil_data.dart' as _i3;
+import '../shared/document.dart' as _i2;
+import '../authorization/authorization.dart' as _i3;
+import '../pupil_data/pupil_data.dart' as _i4;
 
 abstract class PupilAuthorization implements _i1.SerializableModel {
   PupilAuthorization._({
@@ -20,7 +21,7 @@ abstract class PupilAuthorization implements _i1.SerializableModel {
     this.comment,
     this.createdBy,
     this.fileId,
-    this.fileUrl,
+    this.file,
     required this.authorizationId,
     this.authorization,
     required this.pupilId,
@@ -32,12 +33,12 @@ abstract class PupilAuthorization implements _i1.SerializableModel {
     bool? status,
     String? comment,
     String? createdBy,
-    String? fileId,
-    String? fileUrl,
+    int? fileId,
+    _i2.HubDocument? file,
     required int authorizationId,
-    _i2.Authorization? authorization,
+    _i3.Authorization? authorization,
     required int pupilId,
-    _i3.PupilData? pupil,
+    _i4.PupilData? pupil,
   }) = _PupilAuthorizationImpl;
 
   factory PupilAuthorization.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -46,17 +47,20 @@ abstract class PupilAuthorization implements _i1.SerializableModel {
       status: jsonSerialization['status'] as bool?,
       comment: jsonSerialization['comment'] as String?,
       createdBy: jsonSerialization['createdBy'] as String?,
-      fileId: jsonSerialization['fileId'] as String?,
-      fileUrl: jsonSerialization['fileUrl'] as String?,
+      fileId: jsonSerialization['fileId'] as int?,
+      file: jsonSerialization['file'] == null
+          ? null
+          : _i2.HubDocument.fromJson(
+              (jsonSerialization['file'] as Map<String, dynamic>)),
       authorizationId: jsonSerialization['authorizationId'] as int,
       authorization: jsonSerialization['authorization'] == null
           ? null
-          : _i2.Authorization.fromJson(
+          : _i3.Authorization.fromJson(
               (jsonSerialization['authorization'] as Map<String, dynamic>)),
       pupilId: jsonSerialization['pupilId'] as int,
       pupil: jsonSerialization['pupil'] == null
           ? null
-          : _i3.PupilData.fromJson(
+          : _i4.PupilData.fromJson(
               (jsonSerialization['pupil'] as Map<String, dynamic>)),
     );
   }
@@ -72,17 +76,17 @@ abstract class PupilAuthorization implements _i1.SerializableModel {
 
   String? createdBy;
 
-  String? fileId;
+  int? fileId;
 
-  String? fileUrl;
+  _i2.HubDocument? file;
 
   int authorizationId;
 
-  _i2.Authorization? authorization;
+  _i3.Authorization? authorization;
 
   int pupilId;
 
-  _i3.PupilData? pupil;
+  _i4.PupilData? pupil;
 
   /// Returns a shallow copy of this [PupilAuthorization]
   /// with some or all fields replaced by the given arguments.
@@ -92,12 +96,12 @@ abstract class PupilAuthorization implements _i1.SerializableModel {
     bool? status,
     String? comment,
     String? createdBy,
-    String? fileId,
-    String? fileUrl,
+    int? fileId,
+    _i2.HubDocument? file,
     int? authorizationId,
-    _i2.Authorization? authorization,
+    _i3.Authorization? authorization,
     int? pupilId,
-    _i3.PupilData? pupil,
+    _i4.PupilData? pupil,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -107,7 +111,7 @@ abstract class PupilAuthorization implements _i1.SerializableModel {
       if (comment != null) 'comment': comment,
       if (createdBy != null) 'createdBy': createdBy,
       if (fileId != null) 'fileId': fileId,
-      if (fileUrl != null) 'fileUrl': fileUrl,
+      if (file != null) 'file': file?.toJson(),
       'authorizationId': authorizationId,
       if (authorization != null) 'authorization': authorization?.toJson(),
       'pupilId': pupilId,
@@ -129,19 +133,19 @@ class _PupilAuthorizationImpl extends PupilAuthorization {
     bool? status,
     String? comment,
     String? createdBy,
-    String? fileId,
-    String? fileUrl,
+    int? fileId,
+    _i2.HubDocument? file,
     required int authorizationId,
-    _i2.Authorization? authorization,
+    _i3.Authorization? authorization,
     required int pupilId,
-    _i3.PupilData? pupil,
+    _i4.PupilData? pupil,
   }) : super._(
           id: id,
           status: status,
           comment: comment,
           createdBy: createdBy,
           fileId: fileId,
-          fileUrl: fileUrl,
+          file: file,
           authorizationId: authorizationId,
           authorization: authorization,
           pupilId: pupilId,
@@ -158,7 +162,7 @@ class _PupilAuthorizationImpl extends PupilAuthorization {
     Object? comment = _Undefined,
     Object? createdBy = _Undefined,
     Object? fileId = _Undefined,
-    Object? fileUrl = _Undefined,
+    Object? file = _Undefined,
     int? authorizationId,
     Object? authorization = _Undefined,
     int? pupilId,
@@ -169,14 +173,14 @@ class _PupilAuthorizationImpl extends PupilAuthorization {
       status: status is bool? ? status : this.status,
       comment: comment is String? ? comment : this.comment,
       createdBy: createdBy is String? ? createdBy : this.createdBy,
-      fileId: fileId is String? ? fileId : this.fileId,
-      fileUrl: fileUrl is String? ? fileUrl : this.fileUrl,
+      fileId: fileId is int? ? fileId : this.fileId,
+      file: file is _i2.HubDocument? ? file : this.file?.copyWith(),
       authorizationId: authorizationId ?? this.authorizationId,
-      authorization: authorization is _i2.Authorization?
+      authorization: authorization is _i3.Authorization?
           ? authorization
           : this.authorization?.copyWith(),
       pupilId: pupilId ?? this.pupilId,
-      pupil: pupil is _i3.PupilData? ? pupil : this.pupil?.copyWith(),
+      pupil: pupil is _i4.PupilData? ? pupil : this.pupil?.copyWith(),
     );
   }
 }

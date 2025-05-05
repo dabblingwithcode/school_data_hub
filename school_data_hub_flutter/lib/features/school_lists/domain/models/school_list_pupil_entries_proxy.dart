@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/features/school_lists/domain/models/pupi
 
 final _log = Logger('SchoolListPupilEntriesProxy');
 
-class SchoolListPupilEntriesProxy with ChangeNotifier {
+class SchoolListPupilEntriesProxyMap with ChangeNotifier {
   /// This class is used to manage the state of pupil entries in a school list.
   /// key is the entry id, value is the list of pupil entries.
   Map<int, PupilListEntryProxy> pupilEntries = {};
@@ -60,6 +60,12 @@ class SchoolListPupilEntriesProxy with ChangeNotifier {
     }
   }
 
+  void addPupilEntry(PupilListEntry entry) {
+    pupilEntries[entry.id!] = PupilListEntryProxy(pupilEntry: entry);
+    notifyListeners();
+    _log.info('Pupil entry added: ${entry.id}');
+  }
+
   void updatePupilEntry(PupilListEntry entry) {
     final entryProxy = pupilEntries[entry.id!];
     entryProxy!.setPupilEntry(entry);
@@ -67,10 +73,10 @@ class SchoolListPupilEntriesProxy with ChangeNotifier {
     notifyListeners();
   }
 
-  void removePupilEntry(PupilListEntry entry) {
-    if (pupilEntries[entry.id!] == null) return;
+  void removePupilEntry(int entryId) {
+    if (pupilEntries[entryId] == null) return;
 
-    pupilEntries.remove(entry.id!);
+    pupilEntries.remove(entryId);
 
     notifyListeners();
     _log.info('Pupil entries set: ${pupilEntries.length}');

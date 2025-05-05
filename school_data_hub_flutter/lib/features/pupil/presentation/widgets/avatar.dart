@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/cached_image_or_download_inage.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
@@ -20,7 +21,7 @@ class AvatarImage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final avatar = watch(pupil).avatar;
+    final avatar = watchPropertyValue((m) => m.avatar, target: pupil);
 
     // TODO Thomas: How do I watch just pupil.avatarAuth?
 // final avatar =
@@ -122,8 +123,10 @@ class AvatarWithBadges extends WatchingWidget {
                             title: 'Foto löschen',
                             message: 'Möchten Sie wirklich das Foto löschen?');
                         if (confirm != true) return;
-                        await di<PupilManager>().deleteAvatarImage(
-                            pupil.internalId, pupil.internalId.toString());
+                        await di<PupilManager>().deletePupilDocument(
+                            pupil.pupilId,
+                            pupil.avatar!.documentId,
+                            PupilDocumentType.avatar);
                       },
                     ),
                 ],

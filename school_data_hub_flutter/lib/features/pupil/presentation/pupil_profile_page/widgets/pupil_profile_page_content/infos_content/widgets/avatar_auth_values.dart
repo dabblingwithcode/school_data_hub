@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/document_image.dart';
@@ -17,12 +18,16 @@ final _pupilManager = di<PupilManager>();
 
 final _notificationService = di<NotificationService>();
 
-class AvatarAuthValues extends StatelessWidget {
+class AvatarAuthValues extends WatchingWidget {
   final PupilProxy pupil;
   const AvatarAuthValues({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final avatarAuth = watchPropertyValue((m) => m.avatarAuth, target: pupil);
+    final avatarAuthId =
+        watchPropertyValue((m) => m.avatarAuthId, target: pupil);
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -37,7 +42,7 @@ class AvatarAuthValues extends StatelessWidget {
           height: 25,
           child: Checkbox(
             activeColor: Colors.red,
-            value: (pupil.avatarAuth != null) ? false : true,
+            value: (avatarAuth != null) ? false : true,
             onChanged: (newValue) async {
               // await _pupilManager.patchOnePupilProperty(
               //     pupilId: pupil.internalId,
@@ -56,7 +61,7 @@ class AvatarAuthValues extends StatelessWidget {
           height: 25,
           child: Checkbox(
             activeColor: Colors.green,
-            value: (pupil.avatarAuth != null) ? true : false,
+            value: (avatarAuth != null) ? true : false,
             onChanged: (newValue) async {
               // await _pupilManager.patchOnePupilProperty(
               //     pupilId: pupil.internalId,
@@ -70,27 +75,29 @@ class AvatarAuthValues extends StatelessWidget {
           onTap: () async {
             final File? file = await createImageFile(context);
             if (file == null) return;
-            await _pupilManager.updatePupilAvatarAuth(file, pupil);
+            await _pupilManager.updatePupilDocument(
+                file, pupil, PupilDocumentType.avatarAuth);
           },
           onLongPress: () async {
             if (_serverpodSessionManager.isAdmin != true) return;
-            if (pupil.avatarAuth != null) return;
+            if (avatarAuth == null) return;
             final bool? result = await confirmationDialog(
                 context: context,
                 title: 'Dokument löschen',
                 message:
                     'Dokument für die Einwilligung von ${pupil.firstName} ${pupil.lastName} löschen?');
             if (result != true) return;
-            // await _pupilManager.deleteAvatarAuthImage(
-            //   pupil.internalId,
-            //   pupil.avatarAuthId!,
-            // );
+            await _pupilManager.deletePupilDocument(
+              pupil.pupilId,
+              avatarAuth.documentId,
+              PupilDocumentType.avatarAuth,
+            );
             _notificationService.showSnackBar(
                 NotificationType.success, 'Die Einwilligung wurde geändert!');
           },
-          child: pupil.avatarAuthId != null
+          child: avatarAuthId != null
               ? DocumentImage(
-                  documentId: pupil.avatarAuth!.documentId,
+                  documentId: avatarAuth!.documentId,
                   size: 70,
                 )
               : SizedBox(

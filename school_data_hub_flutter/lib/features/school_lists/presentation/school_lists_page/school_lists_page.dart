@@ -20,9 +20,9 @@ class SchoolListsPage extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     bool filtersOn = watchValue((SchoolListFilterManager x) => x.filterState);
-    List<SchoolList> schoolLists =
-        watchPropertyValue((SchoolListManager x) => x.schoolLists);
-    _schoolListFilterManager.updateFilteredSchoolLists(schoolLists);
+    // List<SchoolList> schoolLists =
+    //     watchPropertyValue((SchoolListManager x) => x.schoolLists);
+    // _schoolListFilterManager.updateFilteredSchoolLists(schoolLists);
     List<SchoolList> filteredSchoolLists =
         watchValue((SchoolListFilterManager x) => x.filteredSchoolLists);
     // List<SchoolList> visibleSchoolLists = schoolLists

@@ -12,8 +12,9 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import '../authorization/authorization.dart' as _i2;
-import '../pupil_data/pupil_data.dart' as _i3;
+import '../shared/document.dart' as _i2;
+import '../authorization/authorization.dart' as _i3;
+import '../pupil_data/pupil_data.dart' as _i4;
 
 abstract class PupilAuthorization
     implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
@@ -23,7 +24,7 @@ abstract class PupilAuthorization
     this.comment,
     this.createdBy,
     this.fileId,
-    this.fileUrl,
+    this.file,
     required this.authorizationId,
     this.authorization,
     required this.pupilId,
@@ -35,12 +36,12 @@ abstract class PupilAuthorization
     bool? status,
     String? comment,
     String? createdBy,
-    String? fileId,
-    String? fileUrl,
+    int? fileId,
+    _i2.HubDocument? file,
     required int authorizationId,
-    _i2.Authorization? authorization,
+    _i3.Authorization? authorization,
     required int pupilId,
-    _i3.PupilData? pupil,
+    _i4.PupilData? pupil,
   }) = _PupilAuthorizationImpl;
 
   factory PupilAuthorization.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -49,17 +50,20 @@ abstract class PupilAuthorization
       status: jsonSerialization['status'] as bool?,
       comment: jsonSerialization['comment'] as String?,
       createdBy: jsonSerialization['createdBy'] as String?,
-      fileId: jsonSerialization['fileId'] as String?,
-      fileUrl: jsonSerialization['fileUrl'] as String?,
+      fileId: jsonSerialization['fileId'] as int?,
+      file: jsonSerialization['file'] == null
+          ? null
+          : _i2.HubDocument.fromJson(
+              (jsonSerialization['file'] as Map<String, dynamic>)),
       authorizationId: jsonSerialization['authorizationId'] as int,
       authorization: jsonSerialization['authorization'] == null
           ? null
-          : _i2.Authorization.fromJson(
+          : _i3.Authorization.fromJson(
               (jsonSerialization['authorization'] as Map<String, dynamic>)),
       pupilId: jsonSerialization['pupilId'] as int,
       pupil: jsonSerialization['pupil'] == null
           ? null
-          : _i3.PupilData.fromJson(
+          : _i4.PupilData.fromJson(
               (jsonSerialization['pupil'] as Map<String, dynamic>)),
     );
   }
@@ -77,17 +81,17 @@ abstract class PupilAuthorization
 
   String? createdBy;
 
-  String? fileId;
+  int? fileId;
 
-  String? fileUrl;
+  _i2.HubDocument? file;
 
   int authorizationId;
 
-  _i2.Authorization? authorization;
+  _i3.Authorization? authorization;
 
   int pupilId;
 
-  _i3.PupilData? pupil;
+  _i4.PupilData? pupil;
 
   @override
   _i1.Table<int?> get table => t;
@@ -100,12 +104,12 @@ abstract class PupilAuthorization
     bool? status,
     String? comment,
     String? createdBy,
-    String? fileId,
-    String? fileUrl,
+    int? fileId,
+    _i2.HubDocument? file,
     int? authorizationId,
-    _i2.Authorization? authorization,
+    _i3.Authorization? authorization,
     int? pupilId,
-    _i3.PupilData? pupil,
+    _i4.PupilData? pupil,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -115,7 +119,7 @@ abstract class PupilAuthorization
       if (comment != null) 'comment': comment,
       if (createdBy != null) 'createdBy': createdBy,
       if (fileId != null) 'fileId': fileId,
-      if (fileUrl != null) 'fileUrl': fileUrl,
+      if (file != null) 'file': file?.toJson(),
       'authorizationId': authorizationId,
       if (authorization != null) 'authorization': authorization?.toJson(),
       'pupilId': pupilId,
@@ -131,7 +135,7 @@ abstract class PupilAuthorization
       if (comment != null) 'comment': comment,
       if (createdBy != null) 'createdBy': createdBy,
       if (fileId != null) 'fileId': fileId,
-      if (fileUrl != null) 'fileUrl': fileUrl,
+      if (file != null) 'file': file?.toJsonForProtocol(),
       'authorizationId': authorizationId,
       if (authorization != null)
         'authorization': authorization?.toJsonForProtocol(),
@@ -141,10 +145,12 @@ abstract class PupilAuthorization
   }
 
   static PupilAuthorizationInclude include({
-    _i2.AuthorizationInclude? authorization,
-    _i3.PupilDataInclude? pupil,
+    _i2.HubDocumentInclude? file,
+    _i3.AuthorizationInclude? authorization,
+    _i4.PupilDataInclude? pupil,
   }) {
     return PupilAuthorizationInclude._(
+      file: file,
       authorization: authorization,
       pupil: pupil,
     );
@@ -184,19 +190,19 @@ class _PupilAuthorizationImpl extends PupilAuthorization {
     bool? status,
     String? comment,
     String? createdBy,
-    String? fileId,
-    String? fileUrl,
+    int? fileId,
+    _i2.HubDocument? file,
     required int authorizationId,
-    _i2.Authorization? authorization,
+    _i3.Authorization? authorization,
     required int pupilId,
-    _i3.PupilData? pupil,
+    _i4.PupilData? pupil,
   }) : super._(
           id: id,
           status: status,
           comment: comment,
           createdBy: createdBy,
           fileId: fileId,
-          fileUrl: fileUrl,
+          file: file,
           authorizationId: authorizationId,
           authorization: authorization,
           pupilId: pupilId,
@@ -213,7 +219,7 @@ class _PupilAuthorizationImpl extends PupilAuthorization {
     Object? comment = _Undefined,
     Object? createdBy = _Undefined,
     Object? fileId = _Undefined,
-    Object? fileUrl = _Undefined,
+    Object? file = _Undefined,
     int? authorizationId,
     Object? authorization = _Undefined,
     int? pupilId,
@@ -224,14 +230,14 @@ class _PupilAuthorizationImpl extends PupilAuthorization {
       status: status is bool? ? status : this.status,
       comment: comment is String? ? comment : this.comment,
       createdBy: createdBy is String? ? createdBy : this.createdBy,
-      fileId: fileId is String? ? fileId : this.fileId,
-      fileUrl: fileUrl is String? ? fileUrl : this.fileUrl,
+      fileId: fileId is int? ? fileId : this.fileId,
+      file: file is _i2.HubDocument? ? file : this.file?.copyWith(),
       authorizationId: authorizationId ?? this.authorizationId,
-      authorization: authorization is _i2.Authorization?
+      authorization: authorization is _i3.Authorization?
           ? authorization
           : this.authorization?.copyWith(),
       pupilId: pupilId ?? this.pupilId,
-      pupil: pupil is _i3.PupilData? ? pupil : this.pupil?.copyWith(),
+      pupil: pupil is _i4.PupilData? ? pupil : this.pupil?.copyWith(),
     );
   }
 }
@@ -251,12 +257,8 @@ class PupilAuthorizationTable extends _i1.Table<int?> {
       'createdBy',
       this,
     );
-    fileId = _i1.ColumnString(
+    fileId = _i1.ColumnInt(
       'fileId',
-      this,
-    );
-    fileUrl = _i1.ColumnString(
-      'fileUrl',
       this,
     );
     authorizationId = _i1.ColumnInt(
@@ -275,40 +277,53 @@ class PupilAuthorizationTable extends _i1.Table<int?> {
 
   late final _i1.ColumnString createdBy;
 
-  late final _i1.ColumnString fileId;
+  late final _i1.ColumnInt fileId;
 
-  late final _i1.ColumnString fileUrl;
+  _i2.HubDocumentTable? _file;
 
   late final _i1.ColumnInt authorizationId;
 
-  _i2.AuthorizationTable? _authorization;
+  _i3.AuthorizationTable? _authorization;
 
   late final _i1.ColumnInt pupilId;
 
-  _i3.PupilDataTable? _pupil;
+  _i4.PupilDataTable? _pupil;
 
-  _i2.AuthorizationTable get authorization {
+  _i2.HubDocumentTable get file {
+    if (_file != null) return _file!;
+    _file = _i1.createRelationTable(
+      relationFieldName: 'file',
+      field: PupilAuthorization.t.fileId,
+      foreignField: _i2.HubDocument.t.id,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i2.HubDocumentTable(tableRelation: foreignTableRelation),
+    );
+    return _file!;
+  }
+
+  _i3.AuthorizationTable get authorization {
     if (_authorization != null) return _authorization!;
     _authorization = _i1.createRelationTable(
       relationFieldName: 'authorization',
       field: PupilAuthorization.t.authorizationId,
-      foreignField: _i2.Authorization.t.id,
+      foreignField: _i3.Authorization.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.AuthorizationTable(tableRelation: foreignTableRelation),
+          _i3.AuthorizationTable(tableRelation: foreignTableRelation),
     );
     return _authorization!;
   }
 
-  _i3.PupilDataTable get pupil {
+  _i4.PupilDataTable get pupil {
     if (_pupil != null) return _pupil!;
     _pupil = _i1.createRelationTable(
       relationFieldName: 'pupil',
       field: PupilAuthorization.t.pupilId,
-      foreignField: _i3.PupilData.t.id,
+      foreignField: _i4.PupilData.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i3.PupilDataTable(tableRelation: foreignTableRelation),
+          _i4.PupilDataTable(tableRelation: foreignTableRelation),
     );
     return _pupil!;
   }
@@ -320,13 +335,15 @@ class PupilAuthorizationTable extends _i1.Table<int?> {
         comment,
         createdBy,
         fileId,
-        fileUrl,
         authorizationId,
         pupilId,
       ];
 
   @override
   _i1.Table? getRelationTable(String relationField) {
+    if (relationField == 'file') {
+      return file;
+    }
     if (relationField == 'authorization') {
       return authorization;
     }
@@ -339,19 +356,24 @@ class PupilAuthorizationTable extends _i1.Table<int?> {
 
 class PupilAuthorizationInclude extends _i1.IncludeObject {
   PupilAuthorizationInclude._({
-    _i2.AuthorizationInclude? authorization,
-    _i3.PupilDataInclude? pupil,
+    _i2.HubDocumentInclude? file,
+    _i3.AuthorizationInclude? authorization,
+    _i4.PupilDataInclude? pupil,
   }) {
+    _file = file;
     _authorization = authorization;
     _pupil = pupil;
   }
 
-  _i2.AuthorizationInclude? _authorization;
+  _i2.HubDocumentInclude? _file;
 
-  _i3.PupilDataInclude? _pupil;
+  _i3.AuthorizationInclude? _authorization;
+
+  _i4.PupilDataInclude? _pupil;
 
   @override
   Map<String, _i1.Include?> get includes => {
+        'file': _file,
         'authorization': _authorization,
         'pupil': _pupil,
       };
@@ -384,6 +406,8 @@ class PupilAuthorizationRepository {
   const PupilAuthorizationRepository._();
 
   final attachRow = const PupilAuthorizationAttachRowRepository._();
+
+  final detachRow = const PupilAuthorizationDetachRowRepository._();
 
   /// Returns a list of [PupilAuthorization]s matching the given query parameters.
   ///
@@ -604,12 +628,35 @@ class PupilAuthorizationRepository {
 class PupilAuthorizationAttachRowRepository {
   const PupilAuthorizationAttachRowRepository._();
 
+  /// Creates a relation between the given [PupilAuthorization] and [HubDocument]
+  /// by setting the [PupilAuthorization]'s foreign key `fileId` to refer to the [HubDocument].
+  Future<void> file(
+    _i1.Session session,
+    PupilAuthorization pupilAuthorization,
+    _i2.HubDocument file, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupilAuthorization.id == null) {
+      throw ArgumentError.notNull('pupilAuthorization.id');
+    }
+    if (file.id == null) {
+      throw ArgumentError.notNull('file.id');
+    }
+
+    var $pupilAuthorization = pupilAuthorization.copyWith(fileId: file.id);
+    await session.db.updateRow<PupilAuthorization>(
+      $pupilAuthorization,
+      columns: [PupilAuthorization.t.fileId],
+      transaction: transaction,
+    );
+  }
+
   /// Creates a relation between the given [PupilAuthorization] and [Authorization]
   /// by setting the [PupilAuthorization]'s foreign key `authorizationId` to refer to the [Authorization].
   Future<void> authorization(
     _i1.Session session,
     PupilAuthorization pupilAuthorization,
-    _i2.Authorization authorization, {
+    _i3.Authorization authorization, {
     _i1.Transaction? transaction,
   }) async {
     if (pupilAuthorization.id == null) {
@@ -633,7 +680,7 @@ class PupilAuthorizationAttachRowRepository {
   Future<void> pupil(
     _i1.Session session,
     PupilAuthorization pupilAuthorization,
-    _i3.PupilData pupil, {
+    _i4.PupilData pupil, {
     _i1.Transaction? transaction,
   }) async {
     if (pupilAuthorization.id == null) {
@@ -647,6 +694,32 @@ class PupilAuthorizationAttachRowRepository {
     await session.db.updateRow<PupilAuthorization>(
       $pupilAuthorization,
       columns: [PupilAuthorization.t.pupilId],
+      transaction: transaction,
+    );
+  }
+}
+
+class PupilAuthorizationDetachRowRepository {
+  const PupilAuthorizationDetachRowRepository._();
+
+  /// Detaches the relation between this [PupilAuthorization] and the [HubDocument] set in `file`
+  /// by setting the [PupilAuthorization]'s foreign key `fileId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> file(
+    _i1.Session session,
+    PupilAuthorization pupilauthorization, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupilauthorization.id == null) {
+      throw ArgumentError.notNull('pupilauthorization.id');
+    }
+
+    var $pupilauthorization = pupilauthorization.copyWith(fileId: null);
+    await session.db.updateRow<PupilAuthorization>(
+      $pupilauthorization,
+      columns: [PupilAuthorization.t.fileId],
       transaction: transaction,
     );
   }
