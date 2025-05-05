@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/authorization_content/pupil_content_authorization_entry.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/authorization_content/pupil_content_authorization_entry_card.dart';
 import 'package:watch_it/watch_it.dart';
 
 class PupilAuthorizationsContentList extends WatchingWidget {
@@ -34,7 +34,7 @@ class PupilAuthorizationsContentList extends WatchingWidget {
         return GestureDetector(
           onTap: () {},
           onLongPress: () async {},
-          child: PupilContentAuthorizationEntry(
+          child: PupilContentAuthorizationEntryCard(
             pupil: pupil,
             pupilAuthorization: pupilAuthorization,
             authorization: authorization,

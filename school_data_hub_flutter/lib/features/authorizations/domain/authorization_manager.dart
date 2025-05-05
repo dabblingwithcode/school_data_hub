@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
@@ -13,6 +14,7 @@ import 'package:watch_it/watch_it.dart';
 final _notificationService = di<NotificationService>();
 final _authorizationApiService = AuthorizationApiService();
 final _serverpodSessionManager = di<ServerpodSessionManager>();
+final _cacheManager = di<DefaultCacheManager>();
 
 class AuthorizationManager with ChangeNotifier {
   ValueListenable<List<Authorization>> get authorizations => _authorizations;
@@ -156,19 +158,14 @@ class AuthorizationManager with ChangeNotifier {
     return;
   }
 
-  Future<void> deleteAuthorizationFile(
-    int pupilId,
+  Future<void> removeFileFromPupilAuthorization(
     int authId,
     String cacheKey,
   ) async {
-    // final Authorization responsePupil = await _authorizationApiService
-    //     .deleteAuthorizationFile(pupilId, authId, cacheKey);
-
-    // _authorizationsMap[responsePupil.authorizationId] = responsePupil;
-    // _authorizations.value = _authorizationsMap.values.toList();
-
-    // _notificationService.showSnackBar(
-    //     NotificationType.success, 'Einwilligungsdatei gelöscht');
+    final pupilAuth =
+        await _authorizationApiService.removeFileFromPupilAuthorization(authId);
+    _updatePupilAuthInCollections(pupilAuth);
+    _cacheManager.removeFile(cacheKey);
 
     return;
   }

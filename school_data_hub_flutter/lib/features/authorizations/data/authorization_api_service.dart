@@ -87,6 +87,17 @@ class AuthorizationApiService {
     );
     return result;
   }
+
+  Future<PupilAuthorization> removeFileFromPupilAuthorization(
+    int pupilAuthId,
+  ) async {
+    final result = ClientHelper.apiCall(
+      call: () => _client.pupilAuthorization
+          .removeFileFromPupilAuthorization(pupilAuthId),
+      errorMessage: 'Einwiligungsdokument konnte nicht gelöscht werden',
+    );
+    return result;
+  }
 //   // - patch pupil authorization with file
 //   String _patchPupilAuthorizationWithFileUrl(
 //       int pupilId, String authorizationId) {

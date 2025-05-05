@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
@@ -16,11 +15,11 @@ import 'package:watch_it/watch_it.dart';
 
 final _authorizationManager = di<AuthorizationManager>();
 
-class PupilContentAuthorizationEntry extends WatchingWidget {
+class PupilContentAuthorizationEntryCard extends WatchingWidget {
   final Authorization authorization;
   final PupilAuthorization pupilAuthorization;
   final PupilProxy pupil;
-  const PupilContentAuthorizationEntry(
+  const PupilContentAuthorizationEntryCard(
       {required this.authorization,
       required this.pupilAuthorization,
       required this.pupil,
@@ -60,6 +59,22 @@ class PupilContentAuthorizationEntry extends WatchingWidget {
                                   ),
                                 ));
                               },
+                              onLongPress: () async {
+                                final bool? confirmation = await confirmationDialog(
+                                    context: context,
+                                    title: 'Kind aus der Liste löschen',
+                                    message:
+                                        'Die Einwilligung von ${pupil.firstName} löschen?');
+                                if (confirmation == true) {
+                                  _authorizationManager.updateAuthorization(
+                                      authId: authorization.id!,
+                                      membersToUpdate: (
+                                        operation: MemberOperation.remove,
+                                        pupilIds: [pupil.pupilId],
+                                      ));
+                                }
+                                return;
+                              },
                               child: Row(children: [
                                 Expanded(
                                   child: SingleChildScrollView(
@@ -98,31 +113,23 @@ class PupilContentAuthorizationEntry extends WatchingWidget {
                               await _authorizationManager
                                   .addFileToPupilAuthorization(
                                 file,
-                                pupilAuthorization.authorizationId,
+                                pupilAuthorization.id!,
                               );
                             },
-                            onLongPress: (pupilAuthorization.fileId == null)
-                                ? () {}
-                                : () async {
-                                    if (pupilAuthorization.fileId == null)
-                                      return;
-                                    final bool? result = await confirmationDialog(
-                                        context: context,
-                                        title: 'Dokument löschen',
-                                        message:
-                                            'Dokument für die Einwilligung von ${pupil.firstName} ${pupil.lastName} löschen?');
-                                    if (result != true) return;
-                                    await _authorizationManager
-                                        .deleteAuthorizationFile(
-                                      pupil.internalId,
-                                      pupilAuthorization.authorizationId,
-                                      pupilAuthorization.file!.documentId,
-                                    );
-
-                                    di<NotificationService>().showSnackBar(
-                                        NotificationType.success,
-                                        'Die Einwilligung wurde geändert!');
-                                  },
+                            onLongPress: () async {
+                              if (pupilAuthorization.fileId == null) return;
+                              final bool? result = await confirmationDialog(
+                                  context: context,
+                                  title: 'Dokument löschen',
+                                  message:
+                                      'Dokument für die Einwilligung von ${pupil.firstName} ${pupil.lastName} löschen?');
+                              if (result != true) return;
+                              await _authorizationManager
+                                  .removeFileFromPupilAuthorization(
+                                pupilAuthorization.id!,
+                                pupilAuthorization.file!.documentId,
+                              );
+                            },
                             child: pupilAuthorization.fileId != null
                                 ? DocumentImage(
                                     documentId:
@@ -198,21 +205,24 @@ class PupilContentAuthorizationEntry extends WatchingWidget {
                     Flexible(
                       child: InkWell(
                         onTap: () async {
-                          final String? comment = await longTextFieldDialog(
-                              title: 'Kommentar',
-                              labelText: 'Kommentar eintragen',
-                              textinField: pupilAuthorization.comment ?? '',
-                              parentContext: context);
-                          if (comment == null) {
+                          final String? authorizationComment =
+                              await longTextFieldDialog(
+                                  title: 'Kommentar',
+                                  labelText: 'Kommentar eintragen',
+                                  textinField: pupilAuthorization.comment ?? '',
+                                  parentContext: context);
+                          if (authorizationComment == null) {
                             return;
                           }
-                          // await di<AuthorizationManager>()
-                          //     .updatePupilAuthorizationProperty(
-                          //         pupil.internalId,
-                          //         pupilAuthorization
-                          //             .originAuthorization,
-                          //         null,
-                          //         comment);
+                          await di<AuthorizationManager>()
+                              .updatePupilAuthorization(
+                            pupil.pupilId,
+                            authorization.id!,
+                            null,
+                            authorizationComment == ''
+                                ? null
+                                : authorizationComment,
+                          );
                         },
                         child: Text(
                           pupilAuthorization.comment ?? 'kein Kommentar',

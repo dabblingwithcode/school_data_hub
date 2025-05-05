@@ -65,7 +65,6 @@ class PupilAuthorizationEndpoint extends Endpoint {
     Session session,
     int pupilAuthId,
   ) async {
-    // TODO: This is not right, check it!
     final pupilAuth = await PupilAuthorization.db.findById(
       session,
       pupilAuthId,
@@ -76,13 +75,22 @@ class PupilAuthorizationEndpoint extends Endpoint {
     if (pupilAuth == null) {
       throw Exception('PupilAuthorization not found');
     }
-    final updatedPupilAuth = pupilAuth.copyWith(
-      fileId: null,
-    );
-    await PupilAuthorization.db.updateRow(session, updatedPupilAuth);
+
+    // use a transaction
+    await session.db.transaction((transaction) async {
+      // detach the file from the pupil authorization
+      await PupilAuthorization.db.detachRow.file(session, pupilAuth);
+      // delete the file from the database
+      await HubDocument.db.deleteRow(session, pupilAuth.file!);
+      // delete the file from the storage
+      await session.storage.deleteFile(
+        storageId: 'private',
+        path: pupilAuth.file!.documentPath!,
+      );
+    });
     final authWithInclude = await PupilAuthorization.db.findById(
       session,
-      updatedPupilAuth.id!,
+      pupilAuth.id!,
       include: PupilAuthorization.include(
         file: HubDocument.include(),
       ),

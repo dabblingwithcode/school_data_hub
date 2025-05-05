@@ -179,35 +179,22 @@ class AuthorizationPupilCard extends WatchingWidget {
                         if (file == null) return;
                         await _authorizationManager.addFileToPupilAuthorization(
                             file, pupilAuthorization.id!);
-                        // await di<AuthorizationManager>().postAuthorizationFile(
-                        //     file,
-                        //     pupil.internalId,
-                        //     authorization.authorizationId);
-                        // di<NotificationService>().showSnackBar(
-                        //     NotificationType.success,
-                        //     'Dem Nachweis wurde ein Dokument hinzugefügt!');
                       },
-                      onLongPress: (pupilAuthorization.fileId == null)
-                          ? () {}
-                          : () async {
-                              // if (pupilAuthorization.fileId == null) return;
-                              final bool? result = await confirmationDialog(
-                                  context: context,
-                                  title: 'Dokument löschen',
-                                  message:
-                                      'Dokument für die Einwilligung von ${pupil.firstName} ${pupil.lastName} löschen?');
-                              if (result != true) return;
+                      onLongPress: () async {
+                        if (pupilAuthorization.fileId == null) return;
+                        final bool? result = await confirmationDialog(
+                            context: context,
+                            title: 'Dokument löschen',
+                            message:
+                                'Dokument für die Einwilligung von ${pupil.firstName} ${pupil.lastName} löschen?');
+                        if (result != true) return;
 
-                              // await di<AuthorizationManager>()
-                              //     .deleteAuthorizationFile(
-                              //   pupil.internalId,
-                              //   authorization.authorizationId,
-                              //   pupilAuthorization.fileId!,
-                              // );
-                              // di<NotificationService>().showSnackBar(
-                              //     NotificationType.success,
-                              //     'Die Einwilligung wurde geändert!');
-                            },
+                        await _authorizationManager
+                            .removeFileFromPupilAuthorization(
+                          pupilAuthorization.id!,
+                          pupilAuthorization.file!.documentId,
+                        );
+                      },
                       child: pupilAuthorization.fileId != null
                           ? DocumentImage(
                               documentId: pupilAuthorization.file!.documentId,
@@ -249,7 +236,7 @@ class AuthorizationPupilCard extends WatchingWidget {
                               textinField: pupilAuthorization.comment,
                               parentContext: context);
                       if (authorizationComment == null) return;
-                      if (authorizationComment == '') {}
+                      if (authorizationComment == '') return;
                       await di<AuthorizationManager>().updatePupilAuthorization(
                         pupil.pupilId,
                         authorization.id!,

@@ -8,13 +8,12 @@ import 'package:watch_it/watch_it.dart';
 
 final _client = di<Client>();
 final _notificationService = di<NotificationService>();
+final _cacheManager = di<DefaultCacheManager>();
 
 Future<Image> cachedImageOrDownloadImage(
     {required String documentId, required bool decrypt}) async {
-  final cacheManager = di<DefaultCacheManager>();
-
   // First look for the image in the cache
-  final fileInfo = await cacheManager.getFileFromCache(documentId);
+  final fileInfo = await _cacheManager.getFileFromCache(documentId);
 
   if (fileInfo != null && await fileInfo.file.exists()) {
     // File is already cached, if necessary, decrypt it before using
@@ -38,7 +37,7 @@ Future<Image> cachedImageOrDownloadImage(
   }
   Uint8List imageBytes = byteData.buffer.asUint8List();
   // Cache the image for future use
-  await cacheManager.putFile(documentId, imageBytes);
+  await _cacheManager.putFile(documentId, imageBytes);
   if (!decrypt) {
     return Image.memory(imageBytes);
   }
