@@ -111,7 +111,7 @@ class PupilManager extends ChangeNotifier {
   List<PupilProxy> pupilsWithBirthdaySinceDate(DateTime date) {
     Map<int, PupilProxy> allPupils = Map<int, PupilProxy>.of(_pupilIdPupilsMap);
 
-    final DateTime now = DateTime.now();
+    final DateTime now = DateTime.now().toUtc();
 
     allPupils.removeWhere((key, pupil) {
       final birthdayThisYear =
@@ -513,11 +513,11 @@ class PupilManager extends ChangeNotifier {
   }
 
   Future<void> deleteSupportLevelHistoryItem(
-      {required int pupilId, required String supportLevelId}) async {
+      {required int pupilId, required int supportLevelId}) async {
     final PupilData updatedPupil =
         await _pupilDataApiService.deleteSupportLevelHistoryItem(
       internalId: pupilId,
-      supportLevelId: int.parse(supportLevelId),
+      supportLevelId: supportLevelId,
     );
 
     _pupilIdPupilsMap[pupilId]!.updatePupil(updatedPupil);

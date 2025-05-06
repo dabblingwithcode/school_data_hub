@@ -149,6 +149,8 @@ CREATE TABLE "hub_document" (
     "createdAt" timestamp without time zone NOT NULL,
     "_competenceCheckDocumentsCompetenceCheckId" bigint,
     "_competenceGoalDocumentsCompetenceGoalId" bigint,
+    "_supportCategoryStatusDocumentsSupportCategoryStatusId" bigint,
+    "_supportGoalCheckDocumentsSupportGoalCheckId" bigint,
     "_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId" bigint,
     "_preSchoolTestPreschooltestdocumentsPreSchoolTestId" bigint
 );
@@ -506,13 +508,10 @@ CREATE TABLE "support_category_goal" (
 --
 CREATE TABLE "support_category_status" (
     "id" bigserial PRIMARY KEY,
-    "statusId" text NOT NULL,
     "status" bigint NOT NULL,
     "createdBy" text NOT NULL,
     "createdAt" timestamp without time zone NOT NULL,
     "comment" text NOT NULL,
-    "fileUrl" text NOT NULL,
-    "fileId" text NOT NULL,
     "pupilId" bigint NOT NULL,
     "supportCategoryId" bigint NOT NULL,
     "_supportCategoryCategorystatuesSupportCategoryId" bigint,
@@ -531,19 +530,6 @@ CREATE TABLE "support_goal_check" (
     "comment" text NOT NULL,
     "supportGoalId" bigint NOT NULL,
     "_supportCategoryGoalGoalchecksSupportCategoryGoalId" bigint
-);
-
---
--- ACTION CREATE TABLE
---
-CREATE TABLE "support_goal_check_file" (
-    "id" bigserial PRIMARY KEY,
-    "fileId" text NOT NULL,
-    "createdBy" text NOT NULL,
-    "createdAt" timestamp without time zone NOT NULL,
-    "fileUrl" text NOT NULL,
-    "supportGoalCheckId" bigint NOT NULL,
-    "_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId" bigint
 );
 
 --
@@ -1045,12 +1031,24 @@ ALTER TABLE ONLY "hub_document"
     ON UPDATE NO ACTION;
 ALTER TABLE ONLY "hub_document"
     ADD CONSTRAINT "hub_document_fk_2"
+    FOREIGN KEY("_supportCategoryStatusDocumentsSupportCategoryStatusId")
+    REFERENCES "support_category_status"("id")
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+ALTER TABLE ONLY "hub_document"
+    ADD CONSTRAINT "hub_document_fk_3"
+    FOREIGN KEY("_supportGoalCheckDocumentsSupportGoalCheckId")
+    REFERENCES "support_goal_check"("id")
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+ALTER TABLE ONLY "hub_document"
+    ADD CONSTRAINT "hub_document_fk_4"
     FOREIGN KEY("_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId")
     REFERENCES "pre_school_medical"("id")
     ON DELETE NO ACTION
     ON UPDATE NO ACTION;
 ALTER TABLE ONLY "hub_document"
-    ADD CONSTRAINT "hub_document_fk_3"
+    ADD CONSTRAINT "hub_document_fk_5"
     FOREIGN KEY("_preSchoolTestPreschooltestdocumentsPreSchoolTestId")
     REFERENCES "pre_school_test"("id")
     ON DELETE NO ACTION
@@ -1391,22 +1389,6 @@ ALTER TABLE ONLY "support_goal_check"
 --
 -- ACTION CREATE FOREIGN KEY
 --
-ALTER TABLE ONLY "support_goal_check_file"
-    ADD CONSTRAINT "support_goal_check_file_fk_0"
-    FOREIGN KEY("supportGoalCheckId")
-    REFERENCES "support_goal_check"("id")
-    ON DELETE CASCADE
-    ON UPDATE NO ACTION;
-ALTER TABLE ONLY "support_goal_check_file"
-    ADD CONSTRAINT "support_goal_check_file_fk_1"
-    FOREIGN KEY("_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId")
-    REFERENCES "support_goal_check"("id")
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION;
-
---
--- ACTION CREATE FOREIGN KEY
---
 ALTER TABLE ONLY "support_level"
     ADD CONSTRAINT "support_level_fk_0"
     FOREIGN KEY("pupilIdId")
@@ -1475,9 +1457,9 @@ ALTER TABLE ONLY "serverpod_query_log"
 -- MIGRATION VERSION FOR school_data_hub
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('school_data_hub', '20250506085421122', now())
+    VALUES ('school_data_hub', '20250506203403172', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20250506085421122', "timestamp" = now();
+    DO UPDATE SET "version" = '20250506203403172', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

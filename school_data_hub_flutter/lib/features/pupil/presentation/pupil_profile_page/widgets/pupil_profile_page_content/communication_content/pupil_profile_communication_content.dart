@@ -10,16 +10,16 @@ import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.d
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/dialogs/language_dialog.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/communication_values.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/communication_content/dialogs/language_dialog.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/communication_content/communication_values.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _pupilManager = di<PupilManager>();
 final _serverpodSessionManager = di<ServerpodSessionManager>();
 
-class PupilCommunicationContent extends WatchingWidget {
+class PupilProfileCommunicationContent extends WatchingWidget {
   final PupilProxy pupil;
-  const PupilCommunicationContent({required this.pupil, super.key});
+  const PupilProfileCommunicationContent({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {

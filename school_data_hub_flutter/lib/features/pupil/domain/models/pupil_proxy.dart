@@ -136,7 +136,7 @@ class PupilProxy with ChangeNotifier {
   String? get family => _pupilIdentity.family;
   DateTime get birthday => _pupilIdentity.birthday;
   int get age {
-    final today = DateTime.now();
+    final today = DateTime.now().toUtc();
     int age = today.year - _pupilIdentity.birthday.year;
     if (today.month < _pupilIdentity.birthday.month ||
         (today.month == _pupilIdentity.birthday.month &&

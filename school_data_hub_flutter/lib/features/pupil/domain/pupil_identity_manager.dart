@@ -22,7 +22,7 @@ import 'package:watch_it/watch_it.dart';
 
 final _envManager = di<EnvManager>();
 final _notificationService = di<NotificationService>();
-final _mainMenuBottomNavManager = di<MainMenuBottomNavManager>();
+final _mainMenuBottomNavManager = di<BottomNavManager>();
 
 class PupilIdentityManager {
   final log = Logger('PupilIdentityManager');

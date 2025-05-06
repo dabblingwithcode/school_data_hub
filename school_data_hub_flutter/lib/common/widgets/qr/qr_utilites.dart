@@ -111,7 +111,7 @@ Future<void> copyQrCodeToClipboard(
   Directory directory = await getTemporaryDirectory();
 
   String fileName =
-      'school_data_qr_code_${DateTime.now().millisecondsSinceEpoch}.png';
+      'school_data_qr_code_${DateTime.now().toUtc().millisecondsSinceEpoch}.png';
   String filePath = '${directory.path}/$fileName';
   File imgFile = File(filePath);
   await imgFile.writeAsBytes(pngBytes);

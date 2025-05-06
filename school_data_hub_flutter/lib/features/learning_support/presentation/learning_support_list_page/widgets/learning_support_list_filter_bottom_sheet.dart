@@ -14,17 +14,22 @@ class LearningSupportFilterBottomSheet extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    Map<SupportLevel, bool> supportLevelFilters = watchValue(
+    Map<SupportLevelType, bool> supportLevelFilters = watchValue(
         (LearningSupportFilterManager x) => x.supportLevelFilterState);
     Map<SupportArea, bool> supportAreaFilters = watchValue(
         (LearningSupportFilterManager x) => x.supportAreaFilterState);
-    bool valueSpecialNeeds = supportLevelFilters[SupportLevel.specialNeeds]!;
-    bool valueSupportLevel1 = supportLevelFilters[SupportLevel.supportLevel1]!;
-    bool valueSupportLevel2 = supportLevelFilters[SupportLevel.supportLevel2]!;
-    bool valueSupportLevel3 = supportLevelFilters[SupportLevel.supportLevel3]!;
-    bool valueSupportLevel4 = supportLevelFilters[SupportLevel.supportLevel4]!;
+    bool valueSpecialNeeds =
+        supportLevelFilters[SupportLevelType.specialNeeds]!;
+    bool valueSupportLevel1 =
+        supportLevelFilters[SupportLevelType.supportLevel1]!;
+    bool valueSupportLevel2 =
+        supportLevelFilters[SupportLevelType.supportLevel2]!;
+    bool valueSupportLevel3 =
+        supportLevelFilters[SupportLevelType.supportLevel3]!;
+    bool valueSupportLevel4 =
+        supportLevelFilters[SupportLevelType.supportLevel4]!;
     bool valueMigrationSupport =
-        supportLevelFilters[SupportLevel.migrationSupport]!;
+        supportLevelFilters[SupportLevelType.migrationSupport]!;
     bool valueSupportAreaMotorics = supportAreaFilters[SupportArea.motorics]!;
     bool valueSupportAreaEmotions = supportAreaFilters[SupportArea.emotions]!;
     bool valueSupportAreaMath = supportAreaFilters[SupportArea.math]!;
@@ -62,7 +67,7 @@ class LearningSupportFilterBottomSheet extends WatchingWidget {
                         _learningSupportFilterManager
                             .setSupportLevelFilter(supportLevelFilterRecords: [
                           (
-                            filter: SupportLevel.supportLevel1,
+                            filter: SupportLevelType.supportLevel1,
                             value: val,
                           )
                         ]);
@@ -75,7 +80,7 @@ class LearningSupportFilterBottomSheet extends WatchingWidget {
                         _learningSupportFilterManager
                             .setSupportLevelFilter(supportLevelFilterRecords: [
                           (
-                            filter: SupportLevel.supportLevel2,
+                            filter: SupportLevelType.supportLevel2,
                             value: val,
                           )
                         ]);
@@ -88,7 +93,7 @@ class LearningSupportFilterBottomSheet extends WatchingWidget {
                         _learningSupportFilterManager
                             .setSupportLevelFilter(supportLevelFilterRecords: [
                           (
-                            filter: SupportLevel.supportLevel3,
+                            filter: SupportLevelType.supportLevel3,
                             value: val,
                           )
                         ]);
@@ -101,7 +106,7 @@ class LearningSupportFilterBottomSheet extends WatchingWidget {
                         _learningSupportFilterManager
                             .setSupportLevelFilter(supportLevelFilterRecords: [
                           (
-                            filter: SupportLevel.supportLevel4,
+                            filter: SupportLevelType.supportLevel4,
                             value: val,
                           )
                         ]);
@@ -224,7 +229,7 @@ class LearningSupportFilterBottomSheet extends WatchingWidget {
                         _learningSupportFilterManager
                             .setSupportLevelFilter(supportLevelFilterRecords: [
                           (
-                            filter: SupportLevel.migrationSupport,
+                            filter: SupportLevelType.migrationSupport,
                             value: val,
                           )
                         ]);
@@ -237,7 +242,7 @@ class LearningSupportFilterBottomSheet extends WatchingWidget {
                           _learningSupportFilterManager.setSupportLevelFilter(
                               supportLevelFilterRecords: [
                                 (
-                                  filter: SupportLevel.specialNeeds,
+                                  filter: SupportLevelType.specialNeeds,
                                   value: val,
                                 )
                               ]);

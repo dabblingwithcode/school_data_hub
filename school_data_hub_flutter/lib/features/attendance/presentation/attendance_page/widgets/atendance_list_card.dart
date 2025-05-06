@@ -89,7 +89,7 @@ class AttendanceCard extends WatchingWidget {
                                     scrollDirection: Axis.horizontal,
                                     child: InkWell(
                                       onTap: () {
-                                        di<MainMenuBottomNavManager>()
+                                        di<BottomNavManager>()
                                             .setPupilProfileNavPage(3);
                                         Navigator.of(context)
                                             .pushReplacement(MaterialPageRoute(
@@ -413,7 +413,7 @@ class AttendanceCard extends WatchingWidget {
                                   scrollDirection: Axis.horizontal,
                                   child: InkWell(
                                     onTap: () {
-                                      di<MainMenuBottomNavManager>()
+                                      di<BottomNavManager>()
                                           .setPupilProfileNavPage(3);
                                       Navigator.of(context)
                                           .pushReplacement(MaterialPageRoute(

@@ -12,8 +12,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import '../../learning_support/support_goal/support_goal_check_file.dart'
-    as _i2;
+import '../../shared/document.dart' as _i2;
 import '../../learning_support/support_goal/support_goal.dart' as _i3;
 
 abstract class SupportGoalCheck
@@ -25,7 +24,7 @@ abstract class SupportGoalCheck
     required this.createdAt,
     required this.achieved,
     required this.comment,
-    this.supportGoalCheckFiles,
+    this.documents,
     required this.supportGoalId,
     this.supportGoal,
   }) : _supportCategoryGoalGoalchecksSupportCategoryGoalId = null;
@@ -37,7 +36,7 @@ abstract class SupportGoalCheck
     required DateTime createdAt,
     required int achieved,
     required String comment,
-    List<_i2.SupportGoalCheckFile>? supportGoalCheckFiles,
+    List<_i2.HubDocument>? documents,
     required int supportGoalId,
     _i3.SupportGoal? supportGoal,
   }) = _SupportGoalCheckImpl;
@@ -51,10 +50,8 @@ abstract class SupportGoalCheck
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
       achieved: jsonSerialization['achieved'] as int,
       comment: jsonSerialization['comment'] as String,
-      supportGoalCheckFiles: (jsonSerialization['supportGoalCheckFiles']
-              as List?)
-          ?.map((e) =>
-              _i2.SupportGoalCheckFile.fromJson((e as Map<String, dynamic>)))
+      documents: (jsonSerialization['documents'] as List?)
+          ?.map((e) => _i2.HubDocument.fromJson((e as Map<String, dynamic>)))
           .toList(),
       supportGoalId: jsonSerialization['supportGoalId'] as int,
       supportGoal: jsonSerialization['supportGoal'] == null
@@ -83,7 +80,7 @@ abstract class SupportGoalCheck
 
   String comment;
 
-  List<_i2.SupportGoalCheckFile>? supportGoalCheckFiles;
+  List<_i2.HubDocument>? documents;
 
   int supportGoalId;
 
@@ -104,7 +101,7 @@ abstract class SupportGoalCheck
     DateTime? createdAt,
     int? achieved,
     String? comment,
-    List<_i2.SupportGoalCheckFile>? supportGoalCheckFiles,
+    List<_i2.HubDocument>? documents,
     int? supportGoalId,
     _i3.SupportGoal? supportGoal,
   });
@@ -117,9 +114,8 @@ abstract class SupportGoalCheck
       'createdAt': createdAt.toJson(),
       'achieved': achieved,
       'comment': comment,
-      if (supportGoalCheckFiles != null)
-        'supportGoalCheckFiles':
-            supportGoalCheckFiles?.toJson(valueToJson: (v) => v.toJson()),
+      if (documents != null)
+        'documents': documents?.toJson(valueToJson: (v) => v.toJson()),
       'supportGoalId': supportGoalId,
       if (supportGoal != null) 'supportGoal': supportGoal?.toJson(),
       if (_supportCategoryGoalGoalchecksSupportCategoryGoalId != null)
@@ -137,20 +133,20 @@ abstract class SupportGoalCheck
       'createdAt': createdAt.toJson(),
       'achieved': achieved,
       'comment': comment,
-      if (supportGoalCheckFiles != null)
-        'supportGoalCheckFiles': supportGoalCheckFiles?.toJson(
-            valueToJson: (v) => v.toJsonForProtocol()),
+      if (documents != null)
+        'documents':
+            documents?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
       'supportGoalId': supportGoalId,
       if (supportGoal != null) 'supportGoal': supportGoal?.toJsonForProtocol(),
     };
   }
 
   static SupportGoalCheckInclude include({
-    _i2.SupportGoalCheckFileIncludeList? supportGoalCheckFiles,
+    _i2.HubDocumentIncludeList? documents,
     _i3.SupportGoalInclude? supportGoal,
   }) {
     return SupportGoalCheckInclude._(
-      supportGoalCheckFiles: supportGoalCheckFiles,
+      documents: documents,
       supportGoal: supportGoal,
     );
   }
@@ -191,7 +187,7 @@ class _SupportGoalCheckImpl extends SupportGoalCheck {
     required DateTime createdAt,
     required int achieved,
     required String comment,
-    List<_i2.SupportGoalCheckFile>? supportGoalCheckFiles,
+    List<_i2.HubDocument>? documents,
     required int supportGoalId,
     _i3.SupportGoal? supportGoal,
   }) : super._(
@@ -201,7 +197,7 @@ class _SupportGoalCheckImpl extends SupportGoalCheck {
           createdAt: createdAt,
           achieved: achieved,
           comment: comment,
-          supportGoalCheckFiles: supportGoalCheckFiles,
+          documents: documents,
           supportGoalId: supportGoalId,
           supportGoal: supportGoal,
         );
@@ -217,7 +213,7 @@ class _SupportGoalCheckImpl extends SupportGoalCheck {
     DateTime? createdAt,
     int? achieved,
     String? comment,
-    Object? supportGoalCheckFiles = _Undefined,
+    Object? documents = _Undefined,
     int? supportGoalId,
     Object? supportGoal = _Undefined,
   }) {
@@ -228,10 +224,9 @@ class _SupportGoalCheckImpl extends SupportGoalCheck {
       createdAt: createdAt ?? this.createdAt,
       achieved: achieved ?? this.achieved,
       comment: comment ?? this.comment,
-      supportGoalCheckFiles:
-          supportGoalCheckFiles is List<_i2.SupportGoalCheckFile>?
-              ? supportGoalCheckFiles
-              : this.supportGoalCheckFiles?.map((e0) => e0.copyWith()).toList(),
+      documents: documents is List<_i2.HubDocument>?
+          ? documents
+          : this.documents?.map((e0) => e0.copyWith()).toList(),
       supportGoalId: supportGoalId ?? this.supportGoalId,
       supportGoal: supportGoal is _i3.SupportGoal?
           ? supportGoal
@@ -250,7 +245,7 @@ class SupportGoalCheckImplicit extends _SupportGoalCheckImpl {
     required DateTime createdAt,
     required int achieved,
     required String comment,
-    List<_i2.SupportGoalCheckFile>? supportGoalCheckFiles,
+    List<_i2.HubDocument>? documents,
     required int supportGoalId,
     _i3.SupportGoal? supportGoal,
     int? $_supportCategoryGoalGoalchecksSupportCategoryGoalId,
@@ -263,7 +258,7 @@ class SupportGoalCheckImplicit extends _SupportGoalCheckImpl {
           createdAt: createdAt,
           achieved: achieved,
           comment: comment,
-          supportGoalCheckFiles: supportGoalCheckFiles,
+          documents: documents,
           supportGoalId: supportGoalId,
           supportGoal: supportGoal,
         );
@@ -279,7 +274,7 @@ class SupportGoalCheckImplicit extends _SupportGoalCheckImpl {
       createdAt: supportGoalCheck.createdAt,
       achieved: supportGoalCheck.achieved,
       comment: supportGoalCheck.comment,
-      supportGoalCheckFiles: supportGoalCheck.supportGoalCheckFiles,
+      documents: supportGoalCheck.documents,
       supportGoalId: supportGoalCheck.supportGoalId,
       supportGoal: supportGoalCheck.supportGoal,
       $_supportCategoryGoalGoalchecksSupportCategoryGoalId:
@@ -334,9 +329,9 @@ class SupportGoalCheckTable extends _i1.Table<int?> {
 
   late final _i1.ColumnString comment;
 
-  _i2.SupportGoalCheckFileTable? ___supportGoalCheckFiles;
+  _i2.HubDocumentTable? ___documents;
 
-  _i1.ManyRelation<_i2.SupportGoalCheckFileTable>? _supportGoalCheckFiles;
+  _i1.ManyRelation<_i2.HubDocumentTable>? _documents;
 
   late final _i1.ColumnInt supportGoalId;
 
@@ -344,18 +339,18 @@ class SupportGoalCheckTable extends _i1.Table<int?> {
 
   late final _i1.ColumnInt $_supportCategoryGoalGoalchecksSupportCategoryGoalId;
 
-  _i2.SupportGoalCheckFileTable get __supportGoalCheckFiles {
-    if (___supportGoalCheckFiles != null) return ___supportGoalCheckFiles!;
-    ___supportGoalCheckFiles = _i1.createRelationTable(
-      relationFieldName: '__supportGoalCheckFiles',
+  _i2.HubDocumentTable get __documents {
+    if (___documents != null) return ___documents!;
+    ___documents = _i1.createRelationTable(
+      relationFieldName: '__documents',
       field: SupportGoalCheck.t.id,
-      foreignField: _i2.SupportGoalCheckFile.t
-          .$_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId,
+      foreignField:
+          _i2.HubDocument.t.$_supportGoalCheckDocumentsSupportGoalCheckId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.SupportGoalCheckFileTable(tableRelation: foreignTableRelation),
+          _i2.HubDocumentTable(tableRelation: foreignTableRelation),
     );
-    return ___supportGoalCheckFiles!;
+    return ___documents!;
   }
 
   _i3.SupportGoalTable get supportGoal {
@@ -371,23 +366,23 @@ class SupportGoalCheckTable extends _i1.Table<int?> {
     return _supportGoal!;
   }
 
-  _i1.ManyRelation<_i2.SupportGoalCheckFileTable> get supportGoalCheckFiles {
-    if (_supportGoalCheckFiles != null) return _supportGoalCheckFiles!;
+  _i1.ManyRelation<_i2.HubDocumentTable> get documents {
+    if (_documents != null) return _documents!;
     var relationTable = _i1.createRelationTable(
-      relationFieldName: 'supportGoalCheckFiles',
+      relationFieldName: 'documents',
       field: SupportGoalCheck.t.id,
-      foreignField: _i2.SupportGoalCheckFile.t
-          .$_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId,
+      foreignField:
+          _i2.HubDocument.t.$_supportGoalCheckDocumentsSupportGoalCheckId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.SupportGoalCheckFileTable(tableRelation: foreignTableRelation),
+          _i2.HubDocumentTable(tableRelation: foreignTableRelation),
     );
-    _supportGoalCheckFiles = _i1.ManyRelation<_i2.SupportGoalCheckFileTable>(
+    _documents = _i1.ManyRelation<_i2.HubDocumentTable>(
       tableWithRelations: relationTable,
-      table: _i2.SupportGoalCheckFileTable(
+      table: _i2.HubDocumentTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
-    return _supportGoalCheckFiles!;
+    return _documents!;
   }
 
   @override
@@ -415,8 +410,8 @@ class SupportGoalCheckTable extends _i1.Table<int?> {
 
   @override
   _i1.Table? getRelationTable(String relationField) {
-    if (relationField == 'supportGoalCheckFiles') {
-      return __supportGoalCheckFiles;
+    if (relationField == 'documents') {
+      return __documents;
     }
     if (relationField == 'supportGoal') {
       return supportGoal;
@@ -427,20 +422,20 @@ class SupportGoalCheckTable extends _i1.Table<int?> {
 
 class SupportGoalCheckInclude extends _i1.IncludeObject {
   SupportGoalCheckInclude._({
-    _i2.SupportGoalCheckFileIncludeList? supportGoalCheckFiles,
+    _i2.HubDocumentIncludeList? documents,
     _i3.SupportGoalInclude? supportGoal,
   }) {
-    _supportGoalCheckFiles = supportGoalCheckFiles;
+    _documents = documents;
     _supportGoal = supportGoal;
   }
 
-  _i2.SupportGoalCheckFileIncludeList? _supportGoalCheckFiles;
+  _i2.HubDocumentIncludeList? _documents;
 
   _i3.SupportGoalInclude? _supportGoal;
 
   @override
   Map<String, _i1.Include?> get includes => {
-        'supportGoalCheckFiles': _supportGoalCheckFiles,
+        'documents': _documents,
         'supportGoal': _supportGoal,
       };
 
@@ -698,33 +693,32 @@ class SupportGoalCheckRepository {
 class SupportGoalCheckAttachRepository {
   const SupportGoalCheckAttachRepository._();
 
-  /// Creates a relation between this [SupportGoalCheck] and the given [SupportGoalCheckFile]s
-  /// by setting each [SupportGoalCheckFile]'s foreign key `_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId` to refer to this [SupportGoalCheck].
-  Future<void> supportGoalCheckFiles(
+  /// Creates a relation between this [SupportGoalCheck] and the given [HubDocument]s
+  /// by setting each [HubDocument]'s foreign key `_supportGoalCheckDocumentsSupportGoalCheckId` to refer to this [SupportGoalCheck].
+  Future<void> documents(
     _i1.Session session,
     SupportGoalCheck supportGoalCheck,
-    List<_i2.SupportGoalCheckFile> supportGoalCheckFile, {
+    List<_i2.HubDocument> hubDocument, {
     _i1.Transaction? transaction,
   }) async {
-    if (supportGoalCheckFile.any((e) => e.id == null)) {
-      throw ArgumentError.notNull('supportGoalCheckFile.id');
+    if (hubDocument.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('hubDocument.id');
     }
     if (supportGoalCheck.id == null) {
       throw ArgumentError.notNull('supportGoalCheck.id');
     }
 
-    var $supportGoalCheckFile = supportGoalCheckFile
-        .map((e) => _i2.SupportGoalCheckFileImplicit(
+    var $hubDocument = hubDocument
+        .map((e) => _i2.HubDocumentImplicit(
               e,
-              $_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId:
+              $_supportGoalCheckDocumentsSupportGoalCheckId:
                   supportGoalCheck.id,
             ))
         .toList();
-    await session.db.update<_i2.SupportGoalCheckFile>(
-      $supportGoalCheckFile,
+    await session.db.update<_i2.HubDocument>(
+      $hubDocument,
       columns: [
-        _i2.SupportGoalCheckFile.t
-            .$_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId
+        _i2.HubDocument.t.$_supportGoalCheckDocumentsSupportGoalCheckId
       ],
       transaction: transaction,
     );
@@ -758,31 +752,29 @@ class SupportGoalCheckAttachRowRepository {
     );
   }
 
-  /// Creates a relation between this [SupportGoalCheck] and the given [SupportGoalCheckFile]
-  /// by setting the [SupportGoalCheckFile]'s foreign key `_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId` to refer to this [SupportGoalCheck].
-  Future<void> supportGoalCheckFiles(
+  /// Creates a relation between this [SupportGoalCheck] and the given [HubDocument]
+  /// by setting the [HubDocument]'s foreign key `_supportGoalCheckDocumentsSupportGoalCheckId` to refer to this [SupportGoalCheck].
+  Future<void> documents(
     _i1.Session session,
     SupportGoalCheck supportGoalCheck,
-    _i2.SupportGoalCheckFile supportGoalCheckFile, {
+    _i2.HubDocument hubDocument, {
     _i1.Transaction? transaction,
   }) async {
-    if (supportGoalCheckFile.id == null) {
-      throw ArgumentError.notNull('supportGoalCheckFile.id');
+    if (hubDocument.id == null) {
+      throw ArgumentError.notNull('hubDocument.id');
     }
     if (supportGoalCheck.id == null) {
       throw ArgumentError.notNull('supportGoalCheck.id');
     }
 
-    var $supportGoalCheckFile = _i2.SupportGoalCheckFileImplicit(
-      supportGoalCheckFile,
-      $_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId:
-          supportGoalCheck.id,
+    var $hubDocument = _i2.HubDocumentImplicit(
+      hubDocument,
+      $_supportGoalCheckDocumentsSupportGoalCheckId: supportGoalCheck.id,
     );
-    await session.db.updateRow<_i2.SupportGoalCheckFile>(
-      $supportGoalCheckFile,
+    await session.db.updateRow<_i2.HubDocument>(
+      $hubDocument,
       columns: [
-        _i2.SupportGoalCheckFile.t
-            .$_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId
+        _i2.HubDocument.t.$_supportGoalCheckDocumentsSupportGoalCheckId
       ],
       transaction: transaction,
     );
@@ -792,31 +784,30 @@ class SupportGoalCheckAttachRowRepository {
 class SupportGoalCheckDetachRepository {
   const SupportGoalCheckDetachRepository._();
 
-  /// Detaches the relation between this [SupportGoalCheck] and the given [SupportGoalCheckFile]
-  /// by setting the [SupportGoalCheckFile]'s foreign key `_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId` to `null`.
+  /// Detaches the relation between this [SupportGoalCheck] and the given [HubDocument]
+  /// by setting the [HubDocument]'s foreign key `_supportGoalCheckDocumentsSupportGoalCheckId` to `null`.
   ///
   /// This removes the association between the two models without deleting
   /// the related record.
-  Future<void> supportGoalCheckFiles(
+  Future<void> documents(
     _i1.Session session,
-    List<_i2.SupportGoalCheckFile> supportGoalCheckFile, {
+    List<_i2.HubDocument> hubDocument, {
     _i1.Transaction? transaction,
   }) async {
-    if (supportGoalCheckFile.any((e) => e.id == null)) {
-      throw ArgumentError.notNull('supportGoalCheckFile.id');
+    if (hubDocument.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('hubDocument.id');
     }
 
-    var $supportGoalCheckFile = supportGoalCheckFile
-        .map((e) => _i2.SupportGoalCheckFileImplicit(
+    var $hubDocument = hubDocument
+        .map((e) => _i2.HubDocumentImplicit(
               e,
-              $_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId: null,
+              $_supportGoalCheckDocumentsSupportGoalCheckId: null,
             ))
         .toList();
-    await session.db.update<_i2.SupportGoalCheckFile>(
-      $supportGoalCheckFile,
+    await session.db.update<_i2.HubDocument>(
+      $hubDocument,
       columns: [
-        _i2.SupportGoalCheckFile.t
-            .$_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId
+        _i2.HubDocument.t.$_supportGoalCheckDocumentsSupportGoalCheckId
       ],
       transaction: transaction,
     );
@@ -826,29 +817,28 @@ class SupportGoalCheckDetachRepository {
 class SupportGoalCheckDetachRowRepository {
   const SupportGoalCheckDetachRowRepository._();
 
-  /// Detaches the relation between this [SupportGoalCheck] and the given [SupportGoalCheckFile]
-  /// by setting the [SupportGoalCheckFile]'s foreign key `_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId` to `null`.
+  /// Detaches the relation between this [SupportGoalCheck] and the given [HubDocument]
+  /// by setting the [HubDocument]'s foreign key `_supportGoalCheckDocumentsSupportGoalCheckId` to `null`.
   ///
   /// This removes the association between the two models without deleting
   /// the related record.
-  Future<void> supportGoalCheckFiles(
+  Future<void> documents(
     _i1.Session session,
-    _i2.SupportGoalCheckFile supportGoalCheckFile, {
+    _i2.HubDocument hubDocument, {
     _i1.Transaction? transaction,
   }) async {
-    if (supportGoalCheckFile.id == null) {
-      throw ArgumentError.notNull('supportGoalCheckFile.id');
+    if (hubDocument.id == null) {
+      throw ArgumentError.notNull('hubDocument.id');
     }
 
-    var $supportGoalCheckFile = _i2.SupportGoalCheckFileImplicit(
-      supportGoalCheckFile,
-      $_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId: null,
+    var $hubDocument = _i2.HubDocumentImplicit(
+      hubDocument,
+      $_supportGoalCheckDocumentsSupportGoalCheckId: null,
     );
-    await session.db.updateRow<_i2.SupportGoalCheckFile>(
-      $supportGoalCheckFile,
+    await session.db.updateRow<_i2.HubDocument>(
+      $hubDocument,
       columns: [
-        _i2.SupportGoalCheckFile.t
-            .$_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId
+        _i2.HubDocument.t.$_supportGoalCheckDocumentsSupportGoalCheckId
       ],
       transaction: transaction,
     );

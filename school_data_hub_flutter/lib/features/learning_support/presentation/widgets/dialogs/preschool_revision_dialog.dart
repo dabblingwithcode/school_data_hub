@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
-import 'package:watch_it/watch_it.dart';
 
 // based on https://mobikul.com/creating-stateful-dialog-form-in-flutter/
 
-final _pupilManager = di<PupilManager>();
-Future<void> preschoolRevisionDialog(
-    BuildContext context, PupilProxy pupil, int value) async {
+Future<void> preschoolRevisionDialog(BuildContext context, PupilProxy pupil,
+    PreSchoolMedicalStatus? value) async {
   return await showDialog(
       context: context,
       builder: (context) {
-        int dialogdropdownValue = value;
+        PreSchoolMedicalStatus dialogdropdownValue =
+            value ?? PreSchoolMedicalStatus.notAvailable;
 
         return StatefulBuilder(builder: (context, setState) {
           return AlertDialog(
@@ -23,14 +22,14 @@ Future<void> preschoolRevisionDialog(
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: DropdownButtonHideUnderline(
-                    child: DropdownButton<int>(
+                    child: DropdownButton<PreSchoolMedicalStatus>(
                         onTap: () {
                           FocusManager.instance.primaryFocus!.unfocus();
                         },
                         value: dialogdropdownValue,
                         items: const [
                           DropdownMenuItem(
-                              value: 0,
+                              value: PreSchoolMedicalStatus.notAvailable,
                               child: Center(
                                 child: Text("nicht vorhanden",
                                     textAlign: TextAlign.center,
@@ -41,7 +40,7 @@ Future<void> preschoolRevisionDialog(
                                     )),
                               )),
                           DropdownMenuItem(
-                              value: 1,
+                              value: PreSchoolMedicalStatus.ok,
                               child: Center(
                                 child: Text("unauffällig",
                                     textAlign: TextAlign.center,
@@ -52,7 +51,7 @@ Future<void> preschoolRevisionDialog(
                                     )),
                               )),
                           DropdownMenuItem(
-                              value: 2,
+                              value: PreSchoolMedicalStatus.supportAreas,
                               child: Center(
                                 child: Text("Förderbedarf",
                                     textAlign: TextAlign.center,
@@ -63,7 +62,7 @@ Future<void> preschoolRevisionDialog(
                                     )),
                               )),
                           DropdownMenuItem(
-                              value: 3,
+                              value: PreSchoolMedicalStatus.checkSpecialSupport,
                               child: Center(
                                 child: Text("AO-SF prüfen",
                                     textAlign: TextAlign.center,

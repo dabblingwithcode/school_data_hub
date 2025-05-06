@@ -50,7 +50,7 @@ class SupportCategoryStatusEntry extends StatelessWidget {
             Column(
               children: [
                 getSupportCategoryStatusSymbol(
-                    pupil, status.supportCategoryId, status.statusId),
+                    pupil, status.supportCategoryId, status.id!),
               ],
             ),
             const Gap(10),
@@ -66,7 +66,7 @@ class SupportCategoryStatusEntry extends StatelessWidget {
                               context: context,
                               initialDate: status.createdAt,
                               firstDate: DateTime(2000),
-                              lastDate: DateTime.now(),
+                              lastDate: DateTime.now().toUtc(),
                             );
                             if (correctedCreatedAt != null) {
                               // TODO: uncomment when ready

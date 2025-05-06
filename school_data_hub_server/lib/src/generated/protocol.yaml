@@ -23,6 +23,14 @@ files:
   - getUploadDescription:
   - verifyUpload:
   - getImage:
+supportCategory:
+  - fetchSupportCategories:
+  - importSupportCategoriesFromJsonFile:
+  - createSupportCategory:
+  - updateSupportCategory:
+  - deleteSupportCategory:
+  - postCategoryStatus:
+  - updateCategoryStatus:
 missedClass:
   - streamMyModels:
   - postMissedClass:
@@ -86,12 +94,6 @@ auth:
   - login:
   - verifyPassword:
   - logOut:
-supportCategory:
-  - getSupportCategories:
-  - importSupportCategoriesFromJsonFile:
-  - createSupportCategory:
-  - updateSupportCategory:
-  - deleteSupportCategory:
 user:
   - getCurrentUser:
   - changePassword:

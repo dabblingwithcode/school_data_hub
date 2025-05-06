@@ -1,4 +1,4 @@
-enum SupportLevel {
+enum SupportLevelType {
   supportLevel1,
   supportLevel2,
   supportLevel3,
@@ -7,13 +7,13 @@ enum SupportLevel {
   migrationSupport,
 }
 
-Map<SupportLevel, bool> initialSupportLevelFilterValues = {
-  SupportLevel.supportLevel1: false,
-  SupportLevel.supportLevel2: false,
-  SupportLevel.supportLevel3: false,
-  SupportLevel.supportLevel4: false,
-  SupportLevel.specialNeeds: false,
-  SupportLevel.migrationSupport: false,
+Map<SupportLevelType, bool> initialSupportLevelFilterValues = {
+  SupportLevelType.supportLevel1: false,
+  SupportLevelType.supportLevel2: false,
+  SupportLevelType.supportLevel3: false,
+  SupportLevelType.supportLevel4: false,
+  SupportLevelType.specialNeeds: false,
+  SupportLevelType.migrationSupport: false,
 };
 
 enum SupportArea {

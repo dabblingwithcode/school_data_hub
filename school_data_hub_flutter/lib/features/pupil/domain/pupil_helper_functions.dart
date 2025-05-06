@@ -2,19 +2,23 @@
 
 // TODO: these should be enums
 
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+
 class PupilHelper {
-  static String preschoolRevisionPredicate(int value) {
+  static String preschoolRevisionPredicate(PreSchoolMedical? preSchoolMedical) {
+    if (preSchoolMedical == null) {
+      return 'nicht vorhanden';
+    }
+    final value = preSchoolMedical.preschoolMedicalStatus!;
     switch (value) {
-      case 0:
+      case PreSchoolMedicalStatus.notAvailable:
         return 'nicht vorhanden';
-      case 1:
+      case PreSchoolMedicalStatus.ok:
         return "unauffällig";
-      case 2:
+      case PreSchoolMedicalStatus.supportAreas:
         return "Förderbedarf";
-      case 3:
+      case PreSchoolMedicalStatus.checkSpecialSupport:
         return "AO-SF prüfen";
-      default:
-        return "Falscher Wert im Server";
     }
   }
 
@@ -62,14 +66,14 @@ class PupilHelper {
 
   static bool hasLanguageSupport(DateTime? endOfSupport) {
     if (endOfSupport != null) {
-      return endOfSupport.isAfter(DateTime.now());
+      return endOfSupport.isAfter(DateTime.now().toUtc());
     }
     return false;
   }
 
   static bool hadLanguageSupport(DateTime? endOfSupport) {
     if (endOfSupport != null) {
-      return endOfSupport.isBefore(DateTime.now());
+      return endOfSupport.isBefore(DateTime.now().toUtc());
     }
     return false;
   }

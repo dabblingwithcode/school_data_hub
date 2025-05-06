@@ -929,6 +929,18 @@
           "dartType": "int?"
         },
         {
+          "name": "_supportCategoryStatusDocumentsSupportCategoryStatusId",
+          "columnType": 6,
+          "isNullable": true,
+          "dartType": "int?"
+        },
+        {
+          "name": "_supportGoalCheckDocumentsSupportGoalCheckId",
+          "columnType": 6,
+          "isNullable": true,
+          "dartType": "int?"
+        },
+        {
           "name": "_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId",
           "columnType": 6,
           "isNullable": true,
@@ -971,6 +983,32 @@
         {
           "constraintName": "hub_document_fk_2",
           "columns": [
+            "_supportCategoryStatusDocumentsSupportCategoryStatusId"
+          ],
+          "referenceTable": "support_category_status",
+          "referenceTableSchema": "public",
+          "referenceColumns": [
+            "id"
+          ],
+          "onUpdate": 3,
+          "onDelete": 3
+        },
+        {
+          "constraintName": "hub_document_fk_3",
+          "columns": [
+            "_supportGoalCheckDocumentsSupportGoalCheckId"
+          ],
+          "referenceTable": "support_goal_check",
+          "referenceTableSchema": "public",
+          "referenceColumns": [
+            "id"
+          ],
+          "onUpdate": 3,
+          "onDelete": 3
+        },
+        {
+          "constraintName": "hub_document_fk_4",
+          "columns": [
             "_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId"
           ],
           "referenceTable": "pre_school_medical",
@@ -982,7 +1020,7 @@
           "onDelete": 3
         },
         {
-          "constraintName": "hub_document_fk_3",
+          "constraintName": "hub_document_fk_5",
           "columns": [
             "_preSchoolTestPreschooltestdocumentsPreSchoolTestId"
           ],
@@ -3330,12 +3368,6 @@
           "dartType": "int?"
         },
         {
-          "name": "statusId",
-          "columnType": 0,
-          "isNullable": false,
-          "dartType": "String"
-        },
-        {
           "name": "status",
           "columnType": 6,
           "isNullable": false,
@@ -3355,18 +3387,6 @@
         },
         {
           "name": "comment",
-          "columnType": 0,
-          "isNullable": false,
-          "dartType": "String"
-        },
-        {
-          "name": "fileUrl",
-          "columnType": 0,
-          "isNullable": false,
-          "dartType": "String"
-        },
-        {
-          "name": "fileId",
           "columnType": 0,
           "isNullable": false,
           "dartType": "String"
@@ -3553,100 +3573,6 @@
       "indexes": [
         {
           "indexName": "support_goal_check_pkey",
-          "elements": [
-            {
-              "type": 0,
-              "definition": "id"
-            }
-          ],
-          "type": "btree",
-          "isUnique": true,
-          "isPrimary": true
-        }
-      ],
-      "managed": true
-    },
-    {
-      "name": "support_goal_check_file",
-      "dartName": "SupportGoalCheckFile",
-      "module": "school_data_hub",
-      "schema": "public",
-      "columns": [
-        {
-          "name": "id",
-          "columnType": 6,
-          "isNullable": false,
-          "columnDefault": "nextval('support_goal_check_file_id_seq'::regclass)",
-          "dartType": "int?"
-        },
-        {
-          "name": "fileId",
-          "columnType": 0,
-          "isNullable": false,
-          "dartType": "String"
-        },
-        {
-          "name": "createdBy",
-          "columnType": 0,
-          "isNullable": false,
-          "dartType": "String"
-        },
-        {
-          "name": "createdAt",
-          "columnType": 4,
-          "isNullable": false,
-          "dartType": "DateTime"
-        },
-        {
-          "name": "fileUrl",
-          "columnType": 0,
-          "isNullable": false,
-          "dartType": "String"
-        },
-        {
-          "name": "supportGoalCheckId",
-          "columnType": 6,
-          "isNullable": false,
-          "dartType": "int"
-        },
-        {
-          "name": "_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId",
-          "columnType": 6,
-          "isNullable": true,
-          "dartType": "int?"
-        }
-      ],
-      "foreignKeys": [
-        {
-          "constraintName": "support_goal_check_file_fk_0",
-          "columns": [
-            "supportGoalCheckId"
-          ],
-          "referenceTable": "support_goal_check",
-          "referenceTableSchema": "public",
-          "referenceColumns": [
-            "id"
-          ],
-          "onUpdate": 3,
-          "onDelete": 4
-        },
-        {
-          "constraintName": "support_goal_check_file_fk_1",
-          "columns": [
-            "_supportGoalCheckSupportgoalcheckfilesSupportGoalCheckId"
-          ],
-          "referenceTable": "support_goal_check",
-          "referenceTableSchema": "public",
-          "referenceColumns": [
-            "id"
-          ],
-          "onUpdate": 3,
-          "onDelete": 3
-        }
-      ],
-      "indexes": [
-        {
-          "indexName": "support_goal_check_file_pkey",
           "elements": [
             {
               "type": 0,

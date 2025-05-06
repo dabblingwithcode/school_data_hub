@@ -4,12 +4,12 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
 Widget getSupportCategoryStatusSymbol(
-    PupilProxy pupil, int goalCategoryId, String statusId) {
+    PupilProxy pupil, int goalCategoryId, int statusId) {
   if (pupil.supportCategoryStatuses!.isNotEmpty) {
     final SupportCategoryStatus categoryStatus = pupil.supportCategoryStatuses!
         .firstWhere((element) =>
             element.supportCategoryId == goalCategoryId &&
-            element.statusId == statusId);
+            element.id! == statusId);
 
     switch (categoryStatus.status) {
       case 1:

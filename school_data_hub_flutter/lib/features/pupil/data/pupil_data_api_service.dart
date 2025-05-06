@@ -130,8 +130,11 @@ class PupilDataApiService {
     required File file,
     required PupilDocumentType documentType,
   }) async {
-    final result =
-        await ClientFileUpload.uploadFile(file, ServerStorageFolder.documents);
+    final result = await ClientFileUpload.uploadFile(
+        file,
+        documentType == PupilDocumentType.avatar
+            ? ServerStorageFolder.avatars
+            : ServerStorageFolder.documents);
     final updatedPupil = await ClientHelper.apiCall(
       call: () => _client.pupilUpdate.updatePupilDocument(pupilId, result.path!,
           _serverpodSessionManager.userName!, documentType),

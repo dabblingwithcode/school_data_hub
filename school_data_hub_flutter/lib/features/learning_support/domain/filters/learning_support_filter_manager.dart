@@ -15,13 +15,13 @@ final _pupilFilterManager = di<PupilFilterManager>();
 final _pupilsFilter = di<PupilsFilter>();
 final _learningSupportManager = di<LearningSupportManager>();
 
-typedef SupportLevelFilterRecord = ({SupportLevel filter, bool value});
+typedef SupportLevelFilterRecord = ({SupportLevelType filter, bool value});
 typedef SupportAreaFilterRecord = ({SupportArea filter, bool value});
 
 class LearningSupportFilterManager {
-  final _supportLevelFilterState =
-      ValueNotifier<Map<SupportLevel, bool>>(initialSupportLevelFilterValues);
-  ValueListenable<Map<SupportLevel, bool>> get supportLevelFilterState =>
+  final _supportLevelFilterState = ValueNotifier<Map<SupportLevelType, bool>>(
+      initialSupportLevelFilterValues);
+  ValueListenable<Map<SupportLevelType, bool>> get supportLevelFilterState =>
       _supportLevelFilterState;
 
   final _supportAreaFiltersState =
@@ -102,9 +102,9 @@ class LearningSupportFilterManager {
 
     // Filter support level 1
 
-    if (activeFilters[SupportLevel.supportLevel1]! && supportLevel != 1) {
+    if (activeFilters[SupportLevelType.supportLevel1]! && supportLevel != 1) {
       isMatched = false;
-    } else if (activeFilters[SupportLevel.supportLevel1]! &&
+    } else if (activeFilters[SupportLevelType.supportLevel1]! &&
         supportLevel == 1) {
       complementaryFilter = true;
     }
@@ -112,11 +112,11 @@ class LearningSupportFilterManager {
     // Filter support level 2
 
     if (!complementaryFilter &&
-        activeFilters[SupportLevel.supportLevel2]! &&
+        activeFilters[SupportLevelType.supportLevel2]! &&
         supportLevel != 2) {
       isMatched = false;
     } else if (!complementaryFilter &&
-        activeFilters[SupportLevel.supportLevel2]! &&
+        activeFilters[SupportLevelType.supportLevel2]! &&
         supportLevel == 2) {
       isMatched = true;
       complementaryFilter = true;
@@ -125,22 +125,22 @@ class LearningSupportFilterManager {
     // Filter support level 3
 
     if (!complementaryFilter &&
-        activeFilters[SupportLevel.supportLevel3]! &&
+        activeFilters[SupportLevelType.supportLevel3]! &&
         supportLevel != 3) {
       isMatched = false;
     } else if (!complementaryFilter &&
-        activeFilters[SupportLevel.supportLevel3]! &&
+        activeFilters[SupportLevelType.supportLevel3]! &&
         supportLevel == 3) {
       isMatched = true;
       complementaryFilter = true;
     }
     // Filter support level 4
     if (!complementaryFilter &&
-        activeFilters[SupportLevel.supportLevel4]! &&
+        activeFilters[SupportLevelType.supportLevel4]! &&
         supportLevel != 4) {
       isMatched = false;
     } else if (!complementaryFilter &&
-        activeFilters[SupportLevel.supportLevel4]! &&
+        activeFilters[SupportLevelType.supportLevel4]! &&
         supportLevel == 4) {
       isMatched = true;
       complementaryFilter = true;
@@ -150,18 +150,18 @@ class LearningSupportFilterManager {
     //- regardless of the other filters
 
     if (isMatched == true) {
-      if (activeFilters[SupportLevel.specialNeeds]! &&
+      if (activeFilters[SupportLevelType.specialNeeds]! &&
           pupil.specialNeeds == null) {
         isMatched = false;
-      } else if (activeFilters[SupportLevel.specialNeeds]! &&
+      } else if (activeFilters[SupportLevelType.specialNeeds]! &&
           pupil.specialNeeds != null) {
         isMatched = true;
       }
 
-      if (activeFilters[SupportLevel.migrationSupport]! &&
+      if (activeFilters[SupportLevelType.migrationSupport]! &&
           PupilHelper.hasLanguageSupport(pupil.migrationSupportEnds) != true) {
         isMatched = false;
-      } else if (activeFilters[SupportLevel.migrationSupport]! &&
+      } else if (activeFilters[SupportLevelType.migrationSupport]! &&
           PupilHelper.hasLanguageSupport(pupil.migrationSupportEnds) == true) {
         isMatched = true;
         complementaryFilter = true;

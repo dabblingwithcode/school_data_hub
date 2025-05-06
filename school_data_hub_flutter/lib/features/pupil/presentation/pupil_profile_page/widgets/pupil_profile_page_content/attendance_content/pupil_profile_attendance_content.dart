@@ -13,9 +13,9 @@ import 'package:watch_it/watch_it.dart';
 
 final _attendanceManager = di<AttendanceManager>();
 
-class PupilAttendanceContent extends StatelessWidget {
+class PupilProfileAttendanceContent extends StatelessWidget {
   final PupilProxy pupil;
-  const PupilAttendanceContent({required this.pupil, super.key});
+  const PupilProfileAttendanceContent({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {

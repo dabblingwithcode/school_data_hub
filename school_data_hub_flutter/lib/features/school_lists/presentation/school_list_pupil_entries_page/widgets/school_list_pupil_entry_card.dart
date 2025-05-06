@@ -17,7 +17,7 @@ import 'package:school_data_hub_flutter/features/school_lists/domain/school_list
 import 'package:watch_it/watch_it.dart';
 
 final _pupilManager = di<PupilManager>();
-final _mainMenuBottomNavManager = di<MainMenuBottomNavManager>();
+final _mainMenuBottomNavManager = di<BottomNavManager>();
 final _serverpodSessionManager = di<ServerpodSessionManager>();
 final _notificationService = di<NotificationService>();
 final _schoolListManager = di<SchoolListManager>();

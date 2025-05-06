@@ -28,9 +28,9 @@ final _matrixPolicyManager = di<MatrixPolicyManager>();
 
 final _serverpodSessionManager = di<ServerpodSessionManager>();
 
-class PupilInfosContent extends StatelessWidget {
+class PupilProfileInfosContent extends StatelessWidget {
   final PupilProxy pupil;
-  const PupilInfosContent({required this.pupil, super.key});
+  const PupilProfileInfosContent({required this.pupil, super.key});
   TextEditingController createController() {
     return TextEditingController();
   }

@@ -21,7 +21,7 @@ final _schooldayEventFilterManager = di<SchooldayEventFilterManager>();
 
 final _schooldayEventManager = di<SchooldayEventManager>();
 
-final _mainMenuBottomNavManager = di<MainMenuBottomNavManager>();
+final _mainMenuBottomNavManager = di<BottomNavManager>();
 
 class SchooldayEventPupilListCard extends WatchingStatefulWidget {
   final PupilProxy passedPupil;
@@ -49,6 +49,8 @@ class _SchooldayEventListCardState extends State<SchooldayEventPupilListCard> {
         .schooldayEvents;
     schooldayEvents = _schooldayEventFilterManager
         .filteredSchooldayEvents(unfilteredEvents.values.toList());
+    // TODO: This is a workaround for the filter manager. It should be moved to
+    // - SchooldayEventListPage or to the filter manager.
     if (_schooldayEventFilterManager.schooldayEventsFilterState.value.values
         .any((x) => x == true)) {
       if (schooldayEvents.isEmpty) {

@@ -9,9 +9,9 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/presentation/credit/credit_list_page/credit_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/credit/credit_list_page/widgets/dialogues/change_credit_dialog.dart';
 
-class PupilCreditContent extends StatelessWidget {
+class PupilProfileCreditContent extends StatelessWidget {
   final PupilProxy pupil;
-  const PupilCreditContent({required this.pupil, super.key});
+  const PupilProfileCreditContent({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -6,9 +6,9 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/schoolday_events/presentation/schoolday_event_list_page/schoolday_event_list_page.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/presentation/schoolday_event_list_page/widgets/pupil_schoolday_events_list.dart';
 
-class PupilSchooldayEventsContent extends StatelessWidget {
+class PupilProfileSchooldayEventsContent extends StatelessWidget {
   final PupilProxy pupil;
-  const PupilSchooldayEventsContent({required this.pupil, super.key});
+  const PupilProfileSchooldayEventsContent({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -24,7 +24,7 @@ class ServerpodConnectivityMonitor extends ConnectivityMonitor {
   ServerpodConnectivityMonitor() {
     WidgetsFlutterBinding.ensureInitialized();
     const warmupDuration = Duration(seconds: 1);
-    var connectionTime = DateTime.now();
+    var connectionTime = DateTime.now().toUtc();
 
     // Start listening to connection status changes.
     _connectivitySubscription =
@@ -46,7 +46,8 @@ class ServerpodConnectivityMonitor extends ConnectivityMonitor {
         // Skip the first event if it happens immediately on launch as it may
         // not be correct on some platforms.
         _receivedFirstEvent = true;
-        var durationSinceStart = DateTime.now().difference(connectionTime);
+        var durationSinceStart =
+            DateTime.now().toUtc().difference(connectionTime);
         if (!hasConnectivity && durationSinceStart < warmupDuration) {
           return;
         }

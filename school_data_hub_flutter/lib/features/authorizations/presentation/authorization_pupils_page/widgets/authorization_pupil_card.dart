@@ -56,8 +56,7 @@ class AuthorizationPupilCard extends WatchingWidget {
                       children: [
                         InkWell(
                           onTap: () {
-                            di<MainMenuBottomNavManager>()
-                                .setPupilProfileNavPage(7);
+                            di<BottomNavManager>().setPupilProfileNavPage(7);
                             Navigator.of(context).push(MaterialPageRoute(
                               builder: (ctx) => PupilProfilePage(
                                 pupil: pupil,

@@ -26,7 +26,7 @@ class SchooldayManager {
   final _schoolSemesters = ValueNotifier<List<SchoolSemester>>([]);
   ValueListenable<List<SchoolSemester>> get schoolSemesters => _schoolSemesters;
 
-  final _thisDate = ValueNotifier<DateTime>(DateTime.now());
+  final _thisDate = ValueNotifier<DateTime>(DateTime.now().toUtc());
   ValueListenable<DateTime> get thisDate => _thisDate;
 
   SchooldayManager();
@@ -47,7 +47,7 @@ class SchooldayManager {
 
     _availableDates.value = [];
 
-    _thisDate.value = DateTime.now();
+    _thisDate.value = DateTime.now().toUtc();
 
     _schoolSemesters.value = [];
   }
@@ -64,8 +64,8 @@ class SchooldayManager {
   SchoolSemester? getCurrentSchoolSemester() {
     final SchoolSemester? currentSemester = _schoolSemesters.value
         .firstWhereOrNull((element) =>
-            element.startDate.isBefore(DateTime.now()) &&
-            element.endDate.isAfter(DateTime.now()));
+            element.startDate.isBefore(DateTime.now().toUtc()) &&
+            element.endDate.isAfter(DateTime.now().toUtc()));
 
     return currentSemester;
   }
@@ -89,7 +89,7 @@ class SchooldayManager {
     // we look for the closest schoolday to now and set it as thisDate
 
     final closestSchooldayToNow = schooldays.reduce((value, element) =>
-        value.schoolday.difference(DateTime.now()).abs() <
+        value.schoolday.difference(DateTime.now().toUtc()).abs() <
                 element.schoolday.difference(DateTime.now()).abs()
             ? value
             : element);

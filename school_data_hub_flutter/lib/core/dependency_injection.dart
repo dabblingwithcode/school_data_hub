@@ -59,7 +59,7 @@ class DiManager {
       ServerpodConnectivityMonitor(),
     );
 
-    di.registerSingleton<MainMenuBottomNavManager>(MainMenuBottomNavManager());
+    di.registerSingleton<BottomNavManager>(BottomNavManager());
   }
 
   static Future<void> registerManagersDependingOnActiveEnv() async {

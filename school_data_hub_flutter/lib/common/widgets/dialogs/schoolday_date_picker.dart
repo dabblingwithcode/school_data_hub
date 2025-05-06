@@ -19,8 +19,8 @@ Future<DateTime?> selectSchooldayDate(
     context: context,
     initialDate: thisDate,
     selectableDayPredicate: isSelectableSchoolday,
-    firstDate: DateTime.now().subtract(const Duration(days: 365)),
-    lastDate: DateTime.now().add(const Duration(days: 365)),
+    firstDate: DateTime.now().toUtc().subtract(const Duration(days: 365)),
+    lastDate: DateTime.now().toUtc().toUtc().add(const Duration(days: 365)),
     builder: (context, child) {
       return Theme(
           data: Theme.of(context).copyWith(

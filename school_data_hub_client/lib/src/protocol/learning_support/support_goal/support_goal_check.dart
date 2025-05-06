@@ -10,8 +10,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import '../../learning_support/support_goal/support_goal_check_file.dart'
-    as _i2;
+import '../../shared/document.dart' as _i2;
 import '../../learning_support/support_goal/support_goal.dart' as _i3;
 
 abstract class SupportGoalCheck implements _i1.SerializableModel {
@@ -22,7 +21,7 @@ abstract class SupportGoalCheck implements _i1.SerializableModel {
     required this.createdAt,
     required this.achieved,
     required this.comment,
-    this.supportGoalCheckFiles,
+    this.documents,
     required this.supportGoalId,
     this.supportGoal,
   });
@@ -34,7 +33,7 @@ abstract class SupportGoalCheck implements _i1.SerializableModel {
     required DateTime createdAt,
     required int achieved,
     required String comment,
-    List<_i2.SupportGoalCheckFile>? supportGoalCheckFiles,
+    List<_i2.HubDocument>? documents,
     required int supportGoalId,
     _i3.SupportGoal? supportGoal,
   }) = _SupportGoalCheckImpl;
@@ -48,10 +47,8 @@ abstract class SupportGoalCheck implements _i1.SerializableModel {
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
       achieved: jsonSerialization['achieved'] as int,
       comment: jsonSerialization['comment'] as String,
-      supportGoalCheckFiles: (jsonSerialization['supportGoalCheckFiles']
-              as List?)
-          ?.map((e) =>
-              _i2.SupportGoalCheckFile.fromJson((e as Map<String, dynamic>)))
+      documents: (jsonSerialization['documents'] as List?)
+          ?.map((e) => _i2.HubDocument.fromJson((e as Map<String, dynamic>)))
           .toList(),
       supportGoalId: jsonSerialization['supportGoalId'] as int,
       supportGoal: jsonSerialization['supportGoal'] == null
@@ -76,7 +73,7 @@ abstract class SupportGoalCheck implements _i1.SerializableModel {
 
   String comment;
 
-  List<_i2.SupportGoalCheckFile>? supportGoalCheckFiles;
+  List<_i2.HubDocument>? documents;
 
   int supportGoalId;
 
@@ -92,7 +89,7 @@ abstract class SupportGoalCheck implements _i1.SerializableModel {
     DateTime? createdAt,
     int? achieved,
     String? comment,
-    List<_i2.SupportGoalCheckFile>? supportGoalCheckFiles,
+    List<_i2.HubDocument>? documents,
     int? supportGoalId,
     _i3.SupportGoal? supportGoal,
   });
@@ -105,9 +102,8 @@ abstract class SupportGoalCheck implements _i1.SerializableModel {
       'createdAt': createdAt.toJson(),
       'achieved': achieved,
       'comment': comment,
-      if (supportGoalCheckFiles != null)
-        'supportGoalCheckFiles':
-            supportGoalCheckFiles?.toJson(valueToJson: (v) => v.toJson()),
+      if (documents != null)
+        'documents': documents?.toJson(valueToJson: (v) => v.toJson()),
       'supportGoalId': supportGoalId,
       if (supportGoal != null) 'supportGoal': supportGoal?.toJson(),
     };
@@ -129,7 +125,7 @@ class _SupportGoalCheckImpl extends SupportGoalCheck {
     required DateTime createdAt,
     required int achieved,
     required String comment,
-    List<_i2.SupportGoalCheckFile>? supportGoalCheckFiles,
+    List<_i2.HubDocument>? documents,
     required int supportGoalId,
     _i3.SupportGoal? supportGoal,
   }) : super._(
@@ -139,7 +135,7 @@ class _SupportGoalCheckImpl extends SupportGoalCheck {
           createdAt: createdAt,
           achieved: achieved,
           comment: comment,
-          supportGoalCheckFiles: supportGoalCheckFiles,
+          documents: documents,
           supportGoalId: supportGoalId,
           supportGoal: supportGoal,
         );
@@ -155,7 +151,7 @@ class _SupportGoalCheckImpl extends SupportGoalCheck {
     DateTime? createdAt,
     int? achieved,
     String? comment,
-    Object? supportGoalCheckFiles = _Undefined,
+    Object? documents = _Undefined,
     int? supportGoalId,
     Object? supportGoal = _Undefined,
   }) {
@@ -166,10 +162,9 @@ class _SupportGoalCheckImpl extends SupportGoalCheck {
       createdAt: createdAt ?? this.createdAt,
       achieved: achieved ?? this.achieved,
       comment: comment ?? this.comment,
-      supportGoalCheckFiles:
-          supportGoalCheckFiles is List<_i2.SupportGoalCheckFile>?
-              ? supportGoalCheckFiles
-              : this.supportGoalCheckFiles?.map((e0) => e0.copyWith()).toList(),
+      documents: documents is List<_i2.HubDocument>?
+          ? documents
+          : this.documents?.map((e0) => e0.copyWith()).toList(),
       supportGoalId: supportGoalId ?? this.supportGoalId,
       supportGoal: supportGoal is _i3.SupportGoal?
           ? supportGoal

@@ -131,7 +131,7 @@ class AttendanceHelper {
         if (missedClasses.any((missedClass) =>
             missedClass.schoolday!.schoolday == thisDate &&
             (missedClass.missedType == MissedType.missed ||
-                missedClass.missedType == 'home' ||
+                missedClass.missedType == MissedType.home ||
                 missedClass.returned == true))) {
           missedPupils.add(pupil);
         }
@@ -300,7 +300,7 @@ class AttendanceHelper {
   }
 
   static bool schooldayIsToday(DateTime schoolday) {
-    if (schoolday.isSameDate(DateTime.now())) {
+    if (schoolday.isSameDate(DateTime.now().toUtc())) {
       return true;
     }
     return false;
@@ -371,7 +371,7 @@ class AttendanceHelper {
 
     final List<SchoolSemester> schoolSemesters =
         _schooldayManager.schoolSemesters.value;
-    final DateTime now = DateTime.now();
+    final DateTime now = DateTime.now().toUtc();
 
     final SchoolSemester currentSemester = schoolSemesters.firstWhereOrNull(
             (semester) =>

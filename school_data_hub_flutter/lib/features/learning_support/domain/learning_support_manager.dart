@@ -4,6 +4,7 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/data/learning_support_api_service.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -11,9 +12,9 @@ final _notificationService = di<NotificationService>();
 
 final _envManager = di<EnvManager>();
 
-final _client = di<Client>();
-
 final _log = Logger('LearningSupportManager');
+
+final _learningSupportApiService = LearningSupportApiService();
 
 class LearningSupportManager {
   final _supportCategories = ValueNotifier<List<SupportCategory>>([]);
@@ -38,7 +39,7 @@ class LearningSupportManager {
 
   Future<void> fetchSupportCategories() async {
     final List<SupportCategory> supportCategories =
-        await _client.supportCategory.getSupportCategories();
+        await _learningSupportApiService.fetchSupportCategories();
 
     if (supportCategories.isNotEmpty) {
       // let's sort the categories by their category id to make sure they are in the right order

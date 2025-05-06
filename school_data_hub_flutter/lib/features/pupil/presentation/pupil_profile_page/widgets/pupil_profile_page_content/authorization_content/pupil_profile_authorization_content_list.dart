@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/authorization_content/pupil_content_authorization_entry_card.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/authorization_content/pupil_content_authorization_entry_card.dart';
 import 'package:watch_it/watch_it.dart';
 
-class PupilAuthorizationsContentList extends WatchingWidget {
+class PupilProfileAuthorizationContentList extends WatchingWidget {
   final PupilProxy pupil;
-  const PupilAuthorizationsContentList({required this.pupil, super.key});
+  const PupilProfileAuthorizationContentList({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.d
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/dialogs/language_dialog_dropdown.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/communication_content/dialogs/language_dialog_dropdown.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _pupilManager = di<PupilManager>();
