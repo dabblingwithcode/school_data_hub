@@ -15,6 +15,7 @@ import '../../schoolday/missed_class/contacted_type.dart' as _i3;
 import '../../schoolday/schoolday.dart' as _i4;
 import '../../pupil_data/pupil_data.dart' as _i5;
 
+/// Attendance event for a student missing a class
 abstract class MissedClass implements _i1.SerializableModel {
   MissedClass._({
     this.id,

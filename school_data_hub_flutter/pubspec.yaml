@@ -55,7 +55,7 @@ dependencies:
   top_snackbar_flutter: ^3.2.0
   encrypt: ^5.0.3
   json_annotation: ^4.9.0
-  collection: ^1.19.0
+  collection: 1.19.0
   jwt_decoder: ^2.0.1
   flutter_settings_ui: ^3.0.1
   device_info_plus: ^11.3.0
@@ -63,7 +63,7 @@ dependencies:
   logging: ^1.3.0
   ansicolor: ^2.0.3
   table_calendar: ^3.1.3
-  calendar_date_picker2: ^2.0.0
+  calendar_date_picker2: 2.0.0
   cryptography_plus: ^2.7.1
   pdf: ^3.11.3
   printing: ^5.14.2

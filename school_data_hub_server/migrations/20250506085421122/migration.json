@@ -1887,7 +1887,7 @@
               "id"
             ],
             "onUpdate": 3,
-            "onDelete": 3
+            "onDelete": 4
           },
           {
             "constraintName": "pupil_authorization_fk_1",
