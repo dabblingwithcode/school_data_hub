@@ -2,50 +2,57 @@ import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _sessionManager = di<ServerpodSessionManager>();
 
 class LearningSupportHelper {
 //- overview numbers functions
-  // static int developmentPlan1Pupils(List<PupilProxy> filteredPupils) {
-  //   List<PupilProxy> developmentPlan1Pupils = [];
-  //   if (filteredPupils.isNotEmpty) {
-  //     for (PupilProxy pupil in filteredPupils) {
-  //       if (pupil.supportLevel == 1) {
-  //         developmentPlan1Pupils.add(pupil);
-  //       }
-  //     }
-  //     return developmentPlan1Pupils.length;
-  //   }
-  //   return 0;
-  // }
+  static int developmentPlan1Pupils(List<PupilProxy> filteredPupils) {
+    List<PupilProxy> developmentPlan1Pupils = [];
+    if (filteredPupils.isNotEmpty) {
+      for (PupilProxy pupil in filteredPupils) {
+        if (pupil.latestSupportLevel != null) {
+          if (pupil.latestSupportLevel!.level == 1) {
+            developmentPlan1Pupils.add(pupil);
+          }
+        }
+      }
+      return developmentPlan1Pupils.length;
+    }
+    return 0;
+  }
 
-  // static int developmentPlan2Pupils(List<PupilProxy> filteredPupils) {
-  //   List<PupilProxy> developmentPlan1Pupils = [];
-  //   if (filteredPupils.isNotEmpty) {
-  //     for (PupilProxy pupil in filteredPupils) {
-  //       if (pupil.supportLevel == 2) {
-  //         developmentPlan1Pupils.add(pupil);
-  //       }
-  //     }
-  //     return developmentPlan1Pupils.length;
-  //   }
-  //   return 0;
-  // }
+  static int developmentPlan2Pupils(List<PupilProxy> filteredPupils) {
+    List<PupilProxy> developmentPlan1Pupils = [];
+    if (filteredPupils.isNotEmpty) {
+      for (PupilProxy pupil in filteredPupils) {
+        if (pupil.latestSupportLevel != null) {
+          if (pupil.latestSupportLevel!.level == 2) {
+            developmentPlan1Pupils.add(pupil);
+          }
+        }
+      }
+      return developmentPlan1Pupils.length;
+    }
+    return 0;
+  }
 
-  // static int developmentPlan3Pupils(List<PupilProxy> filteredPupils) {
-  //   List<PupilProxy> developmentPlan1Pupils = [];
-  //   if (filteredPupils.isNotEmpty) {
-  //     for (PupilProxy pupil in filteredPupils) {
-  //       if (pupil.supportLevel == 3) {
-  //         developmentPlan1Pupils.add(pupil);
-  //       }
-  //     }
-  //     return developmentPlan1Pupils.length;
-  //   }
-  //   return 0;
-  // }
+  static int developmentPlan3Pupils(List<PupilProxy> filteredPupils) {
+    List<PupilProxy> developmentPlan1Pupils = [];
+    if (filteredPupils.isNotEmpty) {
+      for (PupilProxy pupil in filteredPupils) {
+        if (pupil.latestSupportLevel != null) {
+          if (pupil.latestSupportLevel!.level == 3) {
+            developmentPlan1Pupils.add(pupil);
+          }
+        }
+      }
+      return developmentPlan1Pupils.length;
+    }
+    return 0;
+  }
 
   static String preschoolRevision(int value) {
     switch (value) {
