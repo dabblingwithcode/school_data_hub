@@ -2282,12 +2282,6 @@
             "dartType": "DateTime?"
           },
           {
-            "name": "latestSupportLevel",
-            "columnType": 8,
-            "isNullable": true,
-            "dartType": "protocol:SupportLevel?"
-          },
-          {
             "name": "swimmer",
             "columnType": 0,
             "isNullable": true,
@@ -3742,7 +3736,7 @@
             "dartType": "String"
           },
           {
-            "name": "pupilIdId",
+            "name": "pupilId",
             "columnType": 6,
             "isNullable": false,
             "dartType": "int"
@@ -3752,7 +3746,7 @@
           {
             "constraintName": "support_level_fk_0",
             "columns": [
-              "pupilIdId"
+              "pupilId"
             ],
             "referenceTable": "pupil_data",
             "referenceTableSchema": "public",
@@ -3760,7 +3754,7 @@
               "id"
             ],
             "onUpdate": 3,
-            "onDelete": 3
+            "onDelete": 4
           }
         ],
         "indexes": [

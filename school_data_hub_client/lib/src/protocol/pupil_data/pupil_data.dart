@@ -73,7 +73,6 @@ abstract class PupilData implements _i1.SerializableModel {
     this.pupilWorkbooks,
     this.pupilBookLendings,
     this.schoolyearHeldBackAt,
-    this.latestSupportLevel,
     this.supportLevelHistory,
     this.supportCategoryStatuses,
     this.supportGoals,
@@ -117,7 +116,6 @@ abstract class PupilData implements _i1.SerializableModel {
     List<_i17.PupilWorkbook>? pupilWorkbooks,
     List<_i18.PupilBookLending>? pupilBookLendings,
     DateTime? schoolyearHeldBackAt,
-    _i19.SupportLevel? latestSupportLevel,
     List<_i19.SupportLevel>? supportLevelHistory,
     List<_i20.SupportCategoryStatus>? supportCategoryStatuses,
     List<_i21.SupportGoal>? supportGoals,
@@ -225,10 +223,6 @@ abstract class PupilData implements _i1.SerializableModel {
           ? null
           : _i1.DateTimeJsonExtension.fromJson(
               jsonSerialization['schoolyearHeldBackAt']),
-      latestSupportLevel: jsonSerialization['latestSupportLevel'] == null
-          ? null
-          : _i19.SupportLevel.fromJson((jsonSerialization['latestSupportLevel']
-              as Map<String, dynamic>)),
       supportLevelHistory: (jsonSerialization['supportLevelHistory'] as List?)
           ?.map((e) => _i19.SupportLevel.fromJson((e as Map<String, dynamic>)))
           .toList(),
@@ -324,8 +318,6 @@ abstract class PupilData implements _i1.SerializableModel {
 
   DateTime? schoolyearHeldBackAt;
 
-  _i19.SupportLevel? latestSupportLevel;
-
   List<_i19.SupportLevel>? supportLevelHistory;
 
   List<_i20.SupportCategoryStatus>? supportCategoryStatuses;
@@ -377,7 +369,6 @@ abstract class PupilData implements _i1.SerializableModel {
     List<_i17.PupilWorkbook>? pupilWorkbooks,
     List<_i18.PupilBookLending>? pupilBookLendings,
     DateTime? schoolyearHeldBackAt,
-    _i19.SupportLevel? latestSupportLevel,
     List<_i19.SupportLevel>? supportLevelHistory,
     List<_i20.SupportCategoryStatus>? supportCategoryStatuses,
     List<_i21.SupportGoal>? supportGoals,
@@ -447,8 +438,6 @@ abstract class PupilData implements _i1.SerializableModel {
             pupilBookLendings?.toJson(valueToJson: (v) => v.toJson()),
       if (schoolyearHeldBackAt != null)
         'schoolyearHeldBackAt': schoolyearHeldBackAt?.toJson(),
-      if (latestSupportLevel != null)
-        'latestSupportLevel': latestSupportLevel?.toJson(),
       if (supportLevelHistory != null)
         'supportLevelHistory':
             supportLevelHistory?.toJson(valueToJson: (v) => v.toJson()),
@@ -512,7 +501,6 @@ class _PupilDataImpl extends PupilData {
     List<_i17.PupilWorkbook>? pupilWorkbooks,
     List<_i18.PupilBookLending>? pupilBookLendings,
     DateTime? schoolyearHeldBackAt,
-    _i19.SupportLevel? latestSupportLevel,
     List<_i19.SupportLevel>? supportLevelHistory,
     List<_i20.SupportCategoryStatus>? supportCategoryStatuses,
     List<_i21.SupportGoal>? supportGoals,
@@ -554,7 +542,6 @@ class _PupilDataImpl extends PupilData {
           pupilWorkbooks: pupilWorkbooks,
           pupilBookLendings: pupilBookLendings,
           schoolyearHeldBackAt: schoolyearHeldBackAt,
-          latestSupportLevel: latestSupportLevel,
           supportLevelHistory: supportLevelHistory,
           supportCategoryStatuses: supportCategoryStatuses,
           supportGoals: supportGoals,
@@ -602,7 +589,6 @@ class _PupilDataImpl extends PupilData {
     Object? pupilWorkbooks = _Undefined,
     Object? pupilBookLendings = _Undefined,
     Object? schoolyearHeldBackAt = _Undefined,
-    Object? latestSupportLevel = _Undefined,
     Object? supportLevelHistory = _Undefined,
     Object? supportCategoryStatuses = _Undefined,
     Object? supportGoals = _Undefined,
@@ -689,9 +675,6 @@ class _PupilDataImpl extends PupilData {
       schoolyearHeldBackAt: schoolyearHeldBackAt is DateTime?
           ? schoolyearHeldBackAt
           : this.schoolyearHeldBackAt,
-      latestSupportLevel: latestSupportLevel is _i19.SupportLevel?
-          ? latestSupportLevel
-          : this.latestSupportLevel?.copyWith(),
       supportLevelHistory: supportLevelHistory is List<_i19.SupportLevel>?
           ? supportLevelHistory
           : this.supportLevelHistory?.map((e0) => e0.copyWith()).toList(),

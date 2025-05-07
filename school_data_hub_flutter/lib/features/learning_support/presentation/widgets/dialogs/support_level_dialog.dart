@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:watch_it/watch_it.dart';
 
 // based on https://mobikul.com/creating-stateful-dialog-form-in-flutter/
+
+final _pupilManager = di<PupilManager>();
+final _serverpodSessionManager = di<ServerpodSessionManager>();
 
 Future<void> supportLevelDialog(
     BuildContext context, PupilProxy pupil, int? value) async {
@@ -163,13 +169,12 @@ Future<void> supportLevelDialog(
                         fontWeight: FontWeight.bold),
                   ),
                   onTap: () {
-                    // TODO: uncomment when ready
-                    // _pupilManager. .patchPupilWithNewSupportLevel(
-                    //       pupilId: pupil.internalId,
-                    //       level: dialogDropdownValue,
-                    //       createdAt: selectedDate,
-                    //       createdBy: 'Test',
-                    //       comment: textValue);
+                    _pupilManager.updatePupilSupportLevel(
+                        pupilId: pupil.pupilId,
+                        comment: textValue,
+                        level: dialogDropdownValue,
+                        createdAt: selectedDate,
+                        createdBy: _serverpodSessionManager.userName!);
 
                     Navigator.of(context).pop();
                   },

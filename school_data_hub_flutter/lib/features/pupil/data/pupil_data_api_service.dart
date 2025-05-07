@@ -28,9 +28,9 @@ class PupilDataApiService {
   // - update backend pupil database
 
   Future<List<PupilData>> updateBackendPupilsDatabase(
-      {required File file}) async {
+      {required String filePath}) async {
     final pupils = await ClientHelper.apiCall(
-      call: () => _client.admin.updateBackendPupilDataState(file),
+      call: () => _client.admin.updateBackendPupilDataState(filePath),
       errorMessage: 'Die Schüler konnten nicht aktualisiert werden',
     );
     return pupils.toList();
@@ -183,7 +183,7 @@ class PupilDataApiService {
   //- support level
 
   Future<PupilData> updateSupportLevel({
-    required int pupilIdId,
+    required int pupilId,
     required int supportLevelValue,
     required DateTime createdAt,
     required String createdBy,
@@ -194,21 +194,21 @@ class PupilDataApiService {
         comment: comment,
         createdAt: createdAt,
         createdBy: createdBy,
-        pupilIdId: pupilIdId);
+        pupilId: pupilId);
     final updatedPupil = await ClientHelper.apiCall(
-      call: () => _client.pupilUpdate.updateSupportLevel(supportLevel),
+      call: () => _client.pupilUpdate.updateSupportLevel(supportLevel, pupilId),
       errorMessage: 'Die Förderebene konnte nicht aktualisiert werden',
     );
     return updatedPupil;
   }
 
   Future<PupilData> deleteSupportLevelHistoryItem({
-    required int internalId,
+    required int pupilId,
     required int supportLevelId,
   }) async {
     final updatedPupil = await ClientHelper.apiCall(
-      call: () => _client.pupil
-          .deleteSupportLevelHistoryItem(internalId, supportLevelId),
+      call: () =>
+          _client.pupil.deleteSupportLevelHistoryItem(pupilId, supportLevelId),
       errorMessage: 'Die Förderebene konnte nicht gelöscht werden',
     );
     return updatedPupil;

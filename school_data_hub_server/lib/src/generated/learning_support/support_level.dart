@@ -23,8 +23,8 @@ abstract class SupportLevel
     required this.comment,
     required this.createdAt,
     required this.createdBy,
-    required this.pupilIdId,
-    this.pupilId,
+    required this.pupilId,
+    this.pupil,
   });
 
   factory SupportLevel({
@@ -33,8 +33,8 @@ abstract class SupportLevel
     required String comment,
     required DateTime createdAt,
     required String createdBy,
-    required int pupilIdId,
-    _i2.PupilData? pupilId,
+    required int pupilId,
+    _i2.PupilData? pupil,
   }) = _SupportLevelImpl;
 
   factory SupportLevel.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -45,11 +45,11 @@ abstract class SupportLevel
       createdAt:
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
       createdBy: jsonSerialization['createdBy'] as String,
-      pupilIdId: jsonSerialization['pupilIdId'] as int,
-      pupilId: jsonSerialization['pupilId'] == null
+      pupilId: jsonSerialization['pupilId'] as int,
+      pupil: jsonSerialization['pupil'] == null
           ? null
           : _i2.PupilData.fromJson(
-              (jsonSerialization['pupilId'] as Map<String, dynamic>)),
+              (jsonSerialization['pupil'] as Map<String, dynamic>)),
     );
   }
 
@@ -68,9 +68,9 @@ abstract class SupportLevel
 
   String createdBy;
 
-  int pupilIdId;
+  int pupilId;
 
-  _i2.PupilData? pupilId;
+  _i2.PupilData? pupil;
 
   @override
   _i1.Table<int?> get table => t;
@@ -84,8 +84,8 @@ abstract class SupportLevel
     String? comment,
     DateTime? createdAt,
     String? createdBy,
-    int? pupilIdId,
-    _i2.PupilData? pupilId,
+    int? pupilId,
+    _i2.PupilData? pupil,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -95,8 +95,8 @@ abstract class SupportLevel
       'comment': comment,
       'createdAt': createdAt.toJson(),
       'createdBy': createdBy,
-      'pupilIdId': pupilIdId,
-      if (pupilId != null) 'pupilId': pupilId?.toJson(),
+      'pupilId': pupilId,
+      if (pupil != null) 'pupil': pupil?.toJson(),
     };
   }
 
@@ -108,13 +108,13 @@ abstract class SupportLevel
       'comment': comment,
       'createdAt': createdAt.toJson(),
       'createdBy': createdBy,
-      'pupilIdId': pupilIdId,
-      if (pupilId != null) 'pupilId': pupilId?.toJsonForProtocol(),
+      'pupilId': pupilId,
+      if (pupil != null) 'pupil': pupil?.toJsonForProtocol(),
     };
   }
 
-  static SupportLevelInclude include({_i2.PupilDataInclude? pupilId}) {
-    return SupportLevelInclude._(pupilId: pupilId);
+  static SupportLevelInclude include({_i2.PupilDataInclude? pupil}) {
+    return SupportLevelInclude._(pupil: pupil);
   }
 
   static SupportLevelIncludeList includeList({
@@ -152,16 +152,16 @@ class _SupportLevelImpl extends SupportLevel {
     required String comment,
     required DateTime createdAt,
     required String createdBy,
-    required int pupilIdId,
-    _i2.PupilData? pupilId,
+    required int pupilId,
+    _i2.PupilData? pupil,
   }) : super._(
           id: id,
           level: level,
           comment: comment,
           createdAt: createdAt,
           createdBy: createdBy,
-          pupilIdId: pupilIdId,
           pupilId: pupilId,
+          pupil: pupil,
         );
 
   /// Returns a shallow copy of this [SupportLevel]
@@ -174,8 +174,8 @@ class _SupportLevelImpl extends SupportLevel {
     String? comment,
     DateTime? createdAt,
     String? createdBy,
-    int? pupilIdId,
-    Object? pupilId = _Undefined,
+    int? pupilId,
+    Object? pupil = _Undefined,
   }) {
     return SupportLevel(
       id: id is int? ? id : this.id,
@@ -183,8 +183,8 @@ class _SupportLevelImpl extends SupportLevel {
       comment: comment ?? this.comment,
       createdAt: createdAt ?? this.createdAt,
       createdBy: createdBy ?? this.createdBy,
-      pupilIdId: pupilIdId ?? this.pupilIdId,
-      pupilId: pupilId is _i2.PupilData? ? pupilId : this.pupilId?.copyWith(),
+      pupilId: pupilId ?? this.pupilId,
+      pupil: pupil is _i2.PupilData? ? pupil : this.pupil?.copyWith(),
     );
   }
 }
@@ -207,8 +207,8 @@ class SupportLevelTable extends _i1.Table<int?> {
       'createdBy',
       this,
     );
-    pupilIdId = _i1.ColumnInt(
-      'pupilIdId',
+    pupilId = _i1.ColumnInt(
+      'pupilId',
       this,
     );
   }
@@ -221,21 +221,21 @@ class SupportLevelTable extends _i1.Table<int?> {
 
   late final _i1.ColumnString createdBy;
 
-  late final _i1.ColumnInt pupilIdId;
+  late final _i1.ColumnInt pupilId;
 
-  _i2.PupilDataTable? _pupilId;
+  _i2.PupilDataTable? _pupil;
 
-  _i2.PupilDataTable get pupilId {
-    if (_pupilId != null) return _pupilId!;
-    _pupilId = _i1.createRelationTable(
-      relationFieldName: 'pupilId',
-      field: SupportLevel.t.pupilIdId,
+  _i2.PupilDataTable get pupil {
+    if (_pupil != null) return _pupil!;
+    _pupil = _i1.createRelationTable(
+      relationFieldName: 'pupil',
+      field: SupportLevel.t.pupilId,
       foreignField: _i2.PupilData.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
           _i2.PupilDataTable(tableRelation: foreignTableRelation),
     );
-    return _pupilId!;
+    return _pupil!;
   }
 
   @override
@@ -245,27 +245,27 @@ class SupportLevelTable extends _i1.Table<int?> {
         comment,
         createdAt,
         createdBy,
-        pupilIdId,
+        pupilId,
       ];
 
   @override
   _i1.Table? getRelationTable(String relationField) {
-    if (relationField == 'pupilId') {
-      return pupilId;
+    if (relationField == 'pupil') {
+      return pupil;
     }
     return null;
   }
 }
 
 class SupportLevelInclude extends _i1.IncludeObject {
-  SupportLevelInclude._({_i2.PupilDataInclude? pupilId}) {
-    _pupilId = pupilId;
+  SupportLevelInclude._({_i2.PupilDataInclude? pupil}) {
+    _pupil = pupil;
   }
 
-  _i2.PupilDataInclude? _pupilId;
+  _i2.PupilDataInclude? _pupil;
 
   @override
-  Map<String, _i1.Include?> get includes => {'pupilId': _pupilId};
+  Map<String, _i1.Include?> get includes => {'pupil': _pupil};
 
   @override
   _i1.Table<int?> get table => SupportLevel.t;
@@ -516,24 +516,24 @@ class SupportLevelAttachRowRepository {
   const SupportLevelAttachRowRepository._();
 
   /// Creates a relation between the given [SupportLevel] and [PupilData]
-  /// by setting the [SupportLevel]'s foreign key `pupilIdId` to refer to the [PupilData].
-  Future<void> pupilId(
+  /// by setting the [SupportLevel]'s foreign key `pupilId` to refer to the [PupilData].
+  Future<void> pupil(
     _i1.Session session,
     SupportLevel supportLevel,
-    _i2.PupilData pupilId, {
+    _i2.PupilData pupil, {
     _i1.Transaction? transaction,
   }) async {
     if (supportLevel.id == null) {
       throw ArgumentError.notNull('supportLevel.id');
     }
-    if (pupilId.id == null) {
-      throw ArgumentError.notNull('pupilId.id');
+    if (pupil.id == null) {
+      throw ArgumentError.notNull('pupil.id');
     }
 
-    var $supportLevel = supportLevel.copyWith(pupilIdId: pupilId.id);
+    var $supportLevel = supportLevel.copyWith(pupilId: pupil.id);
     await session.db.updateRow<SupportLevel>(
       $supportLevel,
-      columns: [SupportLevel.t.pupilIdId],
+      columns: [SupportLevel.t.pupilId],
       transaction: transaction,
     );
   }

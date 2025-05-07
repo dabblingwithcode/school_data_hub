@@ -1026,8 +1026,8 @@ class Endpoints extends _i1.EndpointDispatch {
         'deleteSupportLevelHistoryItem': _i1.MethodConnector(
           name: 'deleteSupportLevelHistoryItem',
           params: {
-            'internalId': _i1.ParameterDescription(
-              name: 'internalId',
+            'pupilId': _i1.ParameterDescription(
+              name: 'pupilId',
               type: _i1.getType<int>(),
               nullable: false,
             ),
@@ -1044,7 +1044,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (endpoints['pupil'] as _i9.PupilEndpoint)
                   .deleteSupportLevelHistoryItem(
             session,
-            params['internalId'],
+            params['pupilId'],
             params['supportLevelId'],
           ),
         ),
@@ -1292,7 +1292,12 @@ class Endpoints extends _i1.EndpointDispatch {
               name: 'supportLevel',
               type: _i1.getType<_i29.SupportLevel>(),
               nullable: false,
-            )
+            ),
+            'pupilId': _i1.ParameterDescription(
+              name: 'pupilId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
           },
           call: (
             _i1.Session session,
@@ -1302,6 +1307,7 @@ class Endpoints extends _i1.EndpointDispatch {
                   .updateSupportLevel(
             session,
             params['supportLevel'],
+            params['pupilId'],
           ),
         ),
       },
@@ -1990,9 +1996,9 @@ class Endpoints extends _i1.EndpointDispatch {
         'updateBackendPupilDataState': _i1.MethodConnector(
           name: 'updateBackendPupilDataState',
           params: {
-            'file': _i1.ParameterDescription(
-              name: 'file',
-              type: _i1.getType<_i20.File>(),
+            'filePath': _i1.ParameterDescription(
+              name: 'filePath',
+              type: _i1.getType<String>(),
               nullable: false,
             )
           },
@@ -2003,7 +2009,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (endpoints['admin'] as _i14.AdminEndpoint)
                   .updateBackendPupilDataState(
             session,
-            params['file'],
+            params['filePath'],
           ),
         ),
       },

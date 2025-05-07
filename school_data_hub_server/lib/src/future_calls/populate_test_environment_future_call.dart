@@ -62,13 +62,11 @@ class PopulateTestEnvironmentFutureCall extends FutureCall {
             level: LogLevel.info);
         // Path to the JSON file containing support categories
         final pupilsFilePath = '../test_data/fake_pupils_export.txt';
-        final pupilsFile = File(pupilsFilePath);
-        if (!pupilsFile.existsSync()) {
-          throw Exception('File not found: $pupilsFile');
-        }
+
         // Call the endpoint to import support categories from the JSON file
         final adminEndpoint = AdminEndpoint();
-        await adminEndpoint.updateBackendPupilDataState(session, pupilsFile);
+        await adminEndpoint.updateBackendPupilDataState(
+            session, pupilsFilePath);
         session.log('Pupils populated successfully!', level: LogLevel.info);
       }
       //- School semesters

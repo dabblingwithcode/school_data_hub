@@ -91,11 +91,12 @@ class _SupportLevelHistoryExpansionTileState
                               if (confirmation != true) return;
                               if (_serverpodSessionManager.isAdmin) {
                                 _pupilManager.deleteSupportLevelHistoryItem(
-                                    pupilId: pupil.internalId,
+                                    pupilId: pupil.pupilId,
                                     supportLevelId: plans[index].id!);
                               }
                             },
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   widget.pupil.supportLevelHistory![index]
@@ -107,23 +108,38 @@ class _SupportLevelHistoryExpansionTileState
                                       fontSize: 18),
                                 ),
                                 const Gap(20),
-                                const Text('Förderebene ',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18)),
-                                Text(
-                                  widget.pupil.supportLevelHistory![index].level
-                                      .toString(),
-                                  style: const TextStyle(
-                                      color: AppColors.backgroundColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const Text('Förderebene ',
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18)),
+                                        Text(
+                                          widget.pupil
+                                              .supportLevelHistory![index].level
+                                              .toString(),
+                                          style: const TextStyle(
+                                              color: AppColors.backgroundColor,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          pupil.supportLevelHistory![index]
+                                              .comment,
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                                const Gap(10),
-                                Text(pupil.supportLevelHistory![index].comment,
-                                    style: const TextStyle(
-                                        color: Colors.black, fontSize: 16)),
                                 const Spacer(),
                                 Text(
                                     pupil.supportLevelHistory![index].createdBy,

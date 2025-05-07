@@ -49,17 +49,6 @@ class PupilManager extends ChangeNotifier {
     return _pupilIdPupilsMap[pupilId];
   }
 
-  // @Deprecated('Use pupilsFromPupilIds instead')
-  // List<PupilProxy> pupilsFromInternalIds(List<int> internalIds) {
-  //   List<PupilProxy> pupilsfromInternalIds = [];
-
-  //   for (int internalId in internalIds) {
-  //     pupilsfromInternalIds.add(_pupilsPupilIdMap[internalId]!);
-  //   }
-
-  //   return pupilsfromInternalIds;
-  // }
-
   List<PupilProxy> pupilsFromPupilIds(List<int> pupilIds) {
     List<PupilProxy> pupilsfromPupilIds = [];
 
@@ -493,30 +482,28 @@ class PupilManager extends ChangeNotifier {
   }
 
   Future<void> updatePupilSupportLevel(
-      {required int internalId,
+      {required int pupilId,
       required int level,
       required DateTime createdAt,
       required String createdBy,
       required String comment}) async {
-    final pupilIdId = getPupilByPupilId(internalId)!.pupilId;
-
     final PupilData updatedPupil =
         await _pupilDataApiService.updateSupportLevel(
-      pupilIdId: pupilIdId,
+      pupilId: pupilId,
       supportLevelValue: level,
       createdAt: createdAt,
       createdBy: createdBy,
       comment: comment,
     );
 
-    _pupilIdPupilsMap[internalId]!.updatePupil(updatedPupil);
+    _pupilIdPupilsMap[pupilId]!.updatePupil(updatedPupil);
   }
 
   Future<void> deleteSupportLevelHistoryItem(
       {required int pupilId, required int supportLevelId}) async {
     final PupilData updatedPupil =
         await _pupilDataApiService.deleteSupportLevelHistoryItem(
-      internalId: pupilId,
+      pupilId: pupilId,
       supportLevelId: supportLevelId,
     );
 

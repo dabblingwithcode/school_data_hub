@@ -131,9 +131,14 @@ class AdminEndpoint extends Endpoint {
   }
 
   Future<Set<PupilData>> updateBackendPupilDataState(
-      Session session, File file) async {
+      Session session, String filePath) async {
+    final file = File(filePath);
+    // check if the file exists
+    if (!file.existsSync()) {
+      throw Exception('File not found: $filePath');
+    }
     // check the extension of the file
-    final extension = file.path.split('.').last;
+    final extension = filePath.split('.').last;
     if (extension != 'txt' && extension != 'csv') {
       throw Exception('File is not a compatible format!');
     }

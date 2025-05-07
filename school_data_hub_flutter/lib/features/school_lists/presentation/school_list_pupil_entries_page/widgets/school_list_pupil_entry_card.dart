@@ -109,7 +109,7 @@ class SchoolListPupilEntryCard extends WatchingWidget {
                         final listComment = await longTextFieldDialog(
                             title: 'Kommentar ändern',
                             labelText: 'Kommentar',
-                            textinField: pupilEntry.comment ?? '',
+                            initialValue: pupilEntry.comment ?? '',
                             parentContext: context);
                         if (listComment == null) {
                           return;

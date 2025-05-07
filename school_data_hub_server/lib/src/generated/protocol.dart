@@ -2316,12 +2316,6 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'DateTime?',
         ),
         _i2.ColumnDefinition(
-          name: 'latestSupportLevel',
-          columnType: _i2.ColumnType.json,
-          isNullable: true,
-          dartType: 'protocol:SupportLevel?',
-        ),
-        _i2.ColumnDefinition(
           name: 'swimmer',
           columnType: _i2.ColumnType.text,
           isNullable: true,
@@ -3664,7 +3658,7 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'String',
         ),
         _i2.ColumnDefinition(
-          name: 'pupilIdId',
+          name: 'pupilId',
           columnType: _i2.ColumnType.bigint,
           isNullable: false,
           dartType: 'int',
@@ -3673,12 +3667,12 @@ class Protocol extends _i1.SerializationManagerServer {
       foreignKeys: [
         _i2.ForeignKeyDefinition(
           constraintName: 'support_level_fk_0',
-          columns: ['pupilIdId'],
+          columns: ['pupilId'],
           referenceTable: 'pupil_data',
           referenceTableSchema: 'public',
           referenceColumns: ['id'],
           onUpdate: _i2.ForeignKeyAction.noAction,
-          onDelete: _i2.ForeignKeyAction.noAction,
+          onDelete: _i2.ForeignKeyAction.cascade,
           matchType: null,
         )
       ],

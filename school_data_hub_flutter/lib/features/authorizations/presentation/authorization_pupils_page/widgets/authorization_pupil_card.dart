@@ -232,7 +232,7 @@ class AuthorizationPupilCard extends WatchingWidget {
                           await longTextFieldDialog(
                               title: 'Kommentar ändern',
                               labelText: 'Kommentar',
-                              textinField: pupilAuthorization.comment,
+                              initialValue: pupilAuthorization.comment,
                               parentContext: context);
                       if (authorizationComment == null) return;
                       if (authorizationComment == '') return;

@@ -347,7 +347,7 @@ class AttendanceCard extends WatchingWidget {
                               await longTextFieldDialog(
                             title: 'Kommentar eintragen',
                             labelText: 'Kommentar',
-                            textinField: null,
+                            initialValue: null,
                             parentContext: context,
                           );
                           if (commentValue == null ||
@@ -713,7 +713,7 @@ class AttendanceCard extends WatchingWidget {
                         final String? commentValue = await longTextFieldDialog(
                             title: 'Kommentar',
                             labelText: 'Kommentar',
-                            textinField: attendanceInfo.commentValue,
+                            initialValue: attendanceInfo.commentValue,
                             parentContext: context);
                         if (commentValue == attendanceInfo.commentValue) {
                           return;

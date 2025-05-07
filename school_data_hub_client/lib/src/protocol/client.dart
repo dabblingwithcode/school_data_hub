@@ -512,14 +512,14 @@ class EndpointPupil extends _i1.EndpointRef {
       );
 
   _i2.Future<_i14.PupilData> deleteSupportLevelHistoryItem(
-    int internalId,
+    int pupilId,
     int supportLevelId,
   ) =>
       caller.callServerEndpoint<_i14.PupilData>(
         'pupil',
         'deleteSupportLevelHistoryItem',
         {
-          'internalId': internalId,
+          'pupilId': pupilId,
           'supportLevelId': supportLevelId,
         },
       );
@@ -636,11 +636,16 @@ class EndpointPupilUpdate extends _i1.EndpointRef {
       );
 
   _i2.Future<_i14.PupilData> updateSupportLevel(
-          _i20.SupportLevel supportLevel) =>
+    _i20.SupportLevel supportLevel,
+    int pupilId,
+  ) =>
       caller.callServerEndpoint<_i14.PupilData>(
         'pupilUpdate',
         'updateSupportLevel',
-        {'supportLevel': supportLevel},
+        {
+          'supportLevel': supportLevel,
+          'pupilId': pupilId,
+        },
       );
 }
 
@@ -981,11 +986,12 @@ class EndpointAdmin extends _i1.EndpointRef {
         {'userId': userId},
       );
 
-  _i2.Future<Set<_i14.PupilData>> updateBackendPupilDataState(_i9.File file) =>
+  _i2.Future<Set<_i14.PupilData>> updateBackendPupilDataState(
+          String filePath) =>
       caller.callServerEndpoint<Set<_i14.PupilData>>(
         'admin',
         'updateBackendPupilDataState',
-        {'file': file},
+        {'filePath': filePath},
       );
 }
 

@@ -11,6 +11,7 @@ enum ServerStorageFolder {
   documents,
   events,
   auths,
+  temp,
 }
 
 enum StorageId { public, private }

@@ -4,6 +4,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_category_status_batches.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_goals_list.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -103,10 +104,21 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                         const Text('ärztl. U.:'),
                         const Gap(10),
                         Text(
-                          'placeholder',
-                          // TODO: uncomment when ready
-                          // LearningSupportHelper.preschoolRevision(
-                          //     pupil.preschoolRevision!),
+                          LearningSupportHelper.preschoolRevision(
+                              pupil.preSchoolMedical?.preschoolMedicalStatus),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Text('Kindergartenbesuch:'),
+                        const Gap(10),
+                        Text(
+                          pupil.kindergarden ?? 'Kein Eintrag',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
@@ -145,10 +157,11 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                     const Text('Ebene'),
                     Center(
                       child: Text(
-                        'XX',
-                        // pupil.supportLevel == 4
-                        //     ? 'RB'
-                        //     : pupil.supportLevel.toString(),
+                        pupil.latestSupportLevel != null
+                            ? pupil.latestSupportLevel!.level == 4
+                                ? 'RB'
+                                : pupil.latestSupportLevel!.level.toString()
+                            : '0',
                         style: const TextStyle(
                           fontSize: 23,
                           fontWeight: FontWeight.bold,

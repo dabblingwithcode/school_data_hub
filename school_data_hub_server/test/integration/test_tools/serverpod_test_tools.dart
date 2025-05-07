@@ -1539,7 +1539,7 @@ class _PupilEndpoint {
 
   _i3.Future<_i15.PupilData> deleteSupportLevelHistoryItem(
     _i1.TestSessionBuilder sessionBuilder,
-    int internalId,
+    int pupilId,
     int supportLevelId,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -1554,7 +1554,7 @@ class _PupilEndpoint {
           endpointPath: 'pupil',
           methodName: 'deleteSupportLevelHistoryItem',
           parameters: _i1.testObjectToJson({
-            'internalId': internalId,
+            'pupilId': pupilId,
             'supportLevelId': supportLevelId,
           }),
           serializationManager: _serializationManager,
@@ -1851,6 +1851,7 @@ class _PupilUpdateEndpoint {
   _i3.Future<_i15.PupilData> updateSupportLevel(
     _i1.TestSessionBuilder sessionBuilder,
     _i21.SupportLevel supportLevel,
+    int pupilId,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1863,7 +1864,10 @@ class _PupilUpdateEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'pupilUpdate',
           methodName: 'updateSupportLevel',
-          parameters: _i1.testObjectToJson({'supportLevel': supportLevel}),
+          parameters: _i1.testObjectToJson({
+            'supportLevel': supportLevel,
+            'pupilId': pupilId,
+          }),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
@@ -2815,7 +2819,7 @@ class _AdminEndpoint {
 
   _i3.Future<Set<_i15.PupilData>> updateBackendPupilDataState(
     _i1.TestSessionBuilder sessionBuilder,
-    _i10.File file,
+    String filePath,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -2828,7 +2832,7 @@ class _AdminEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'admin',
           methodName: 'updateBackendPupilDataState',
-          parameters: _i1.testObjectToJson({'file': file}),
+          parameters: _i1.testObjectToJson({'filePath': filePath}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(

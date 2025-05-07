@@ -102,7 +102,7 @@ class SupportCategoryStatusEntry extends StatelessWidget {
                                 await longTextFieldDialog(
                                     title: 'Status korrigieren',
                                     labelText: 'Status',
-                                    textinField: status.comment,
+                                    initialValue: status.comment,
                                     parentContext: context);
                             if (correctedComment != null) {
                               // TODO: uncomment when ready

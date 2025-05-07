@@ -344,7 +344,6 @@ CREATE TABLE "pupil_data" (
     "credit" bigint NOT NULL,
     "creditEarned" bigint NOT NULL,
     "schoolyearHeldBackAt" timestamp without time zone,
-    "latestSupportLevel" json,
     "swimmer" text
 );
 
@@ -541,7 +540,7 @@ CREATE TABLE "support_level" (
     "comment" text NOT NULL,
     "createdAt" timestamp without time zone NOT NULL,
     "createdBy" text NOT NULL,
-    "pupilIdId" bigint NOT NULL
+    "pupilId" bigint NOT NULL
 );
 
 --
@@ -1391,9 +1390,9 @@ ALTER TABLE ONLY "support_goal_check"
 --
 ALTER TABLE ONLY "support_level"
     ADD CONSTRAINT "support_level_fk_0"
-    FOREIGN KEY("pupilIdId")
+    FOREIGN KEY("pupilId")
     REFERENCES "pupil_data"("id")
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION;
 
 --
@@ -1457,9 +1456,9 @@ ALTER TABLE ONLY "serverpod_query_log"
 -- MIGRATION VERSION FOR school_data_hub
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('school_data_hub', '20250506203403172', now())
+    VALUES ('school_data_hub', '20250507090351808', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20250506203403172', "timestamp" = now();
+    DO UPDATE SET "version" = '20250507090351808', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

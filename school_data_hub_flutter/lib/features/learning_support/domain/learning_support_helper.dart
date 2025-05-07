@@ -54,18 +54,19 @@ class LearningSupportHelper {
     return 0;
   }
 
-  static String preschoolRevision(int value) {
+  static String preschoolRevision(PreSchoolMedicalStatus? value) {
+    if (value == null) {
+      return 'nicht vorhanden';
+    }
     switch (value) {
-      case 0:
-        return 'nicht da';
-      case 1:
+      case PreSchoolMedicalStatus.notAvailable:
+        return 'nicht vorhanden';
+      case PreSchoolMedicalStatus.ok:
         return 'unauffällig';
-      case 2:
+      case PreSchoolMedicalStatus.supportAreas:
         return 'Förderbedarf';
-      case 3:
-        return 'AO-SF';
-      default:
-        return 'keine';
+      case PreSchoolMedicalStatus.checkSpecialSupport:
+        return 'AO-SF überprüfen';
     }
   }
 

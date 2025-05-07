@@ -158,20 +158,25 @@ class PupilEndpoint extends Endpoint {
   }
 
   Future<PupilData> deleteSupportLevelHistoryItem(
-      Session session, int internalId, int supportLevelId) async {
-    final pupil = await PupilData.db.findFirstRow(
-      session,
-      where: (t) => t.internalId.equals(internalId),
-    );
+      Session session, int pupilId, int supportLevelId) async {
+    final pupil = await PupilData.db
+        .findById(session, pupilId, include: PupilSchemas.allInclude);
     if (pupil == null) {
       throw Exception('Pupil not found');
     }
-    pupil.supportLevelHistory!
-        .removeWhere((element) => element.id == supportLevelId);
-    pupil.latestSupportLevel = pupil.supportLevelHistory!.last;
+    var supportLevel = await SupportLevel.db.findById(session, supportLevelId);
+    if (supportLevel != null) {
+      await SupportLevel.db.deleteRow(session, supportLevel);
+    }
 
-    final updatedPupil = await PupilData.db.updateRow(session, pupil);
+    //  PupilData.db.updateRow(session, pupil);
 
-    return updatedPupil;
+    // fetch the updated pupil with the support level history
+    final updatedPupilWithHistory = await PupilData.db.findById(
+      session,
+      pupilId,
+      include: PupilSchemas.allInclude,
+    );
+    return updatedPupilWithHistory!;
   }
 }

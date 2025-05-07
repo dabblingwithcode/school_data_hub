@@ -18,7 +18,7 @@ class ClientFileUpload {
   // TODO: consider exceptions here
   static Future<({String? path, bool success})> uploadFile(
       File file, ServerStorageFolder folder) async {
-    final documentId = Uuid().v4();
+    final documentId = const Uuid().v4();
     final path = p.join(folder.name, '$documentId.jpg');
     final uploadDescription =
         await _client.files.getUploadDescription(StorageId.private.name, path);

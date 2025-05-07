@@ -79,7 +79,7 @@ class PupilProfileInfosContent extends StatelessWidget {
                 final String? specialInformation = await longTextFieldDialog(
                   title: 'Besondere Infos',
                   labelText: 'Besondere Infos',
-                  textinField: pupil.specialInformation ?? '',
+                  initialValue: pupil.specialInformation ?? '',
                   parentContext: context,
                 );
                 if (specialInformation == null) return;

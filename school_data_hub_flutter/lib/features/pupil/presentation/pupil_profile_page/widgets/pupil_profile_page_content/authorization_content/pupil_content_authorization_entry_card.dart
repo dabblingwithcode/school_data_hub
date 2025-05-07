@@ -209,7 +209,8 @@ class PupilContentAuthorizationEntryCard extends WatchingWidget {
                               await longTextFieldDialog(
                                   title: 'Kommentar',
                                   labelText: 'Kommentar eintragen',
-                                  textinField: pupilAuthorization.comment ?? '',
+                                  initialValue:
+                                      pupilAuthorization.comment ?? '',
                                   parentContext: context);
                           if (authorizationComment == null) {
                             return;

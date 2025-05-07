@@ -305,17 +305,20 @@ class PupilUpdateEndpoint extends Endpoint {
   }
 
   Future<PupilData> updateSupportLevel(
-      Session session, SupportLevel supportLevel) async {
-    final pupil =
-        await PupilData.db.findById(session, supportLevel.pupilId!.id!);
+      Session session, SupportLevel supportLevel, int pupilId) async {
+    final pupil = await PupilData.db.findById(session, pupilId);
 
     if (pupil == null) {
       throw Exception('Pupil not found');
     }
-    pupil.latestSupportLevel = supportLevel;
-    pupil.supportLevelHistory ??= <SupportLevel>[];
-    pupil.supportLevelHistory!.add(supportLevel);
-    final updatedPupil = await PupilData.db.updateRow(session, pupil);
+
+    final supportLevelInDatabase =
+        await SupportLevel.db.insertRow(session, supportLevel);
+    // Update the pupil's credit balance
+    PupilData.db.attachRow
+        .supportLevelHistory(session, pupil, supportLevelInDatabase);
+
+    // await PupilData.db.updateRow(session, pupil);
     // Fetch the object again with the relation included
     final updatedPupilWithRelation = await PupilData.db.findById(
       session,

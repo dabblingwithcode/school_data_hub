@@ -16,6 +16,7 @@ reset: ## reset the server
 	cmd /c mkdir storage\private\documents
 	cmd /c mkdir storage\private\events
 	cmd /c mkdir storage\private\auths
+	cmd /c mkdir storage\private\temp
 	# rm -r database_backups
 	# mkdir database_backups
 	serverpod generate
@@ -33,6 +34,7 @@ reset_mac: ## reset the server
 	mkdir -p storage/private/documents
 	mkdir -p storage/private/events
 	mkdir -p storage/private/auths
+	mkdir -p storage/private/temp
 	# rm -r database_backups
 	# mkdir database_backups
 	serverpod generate
