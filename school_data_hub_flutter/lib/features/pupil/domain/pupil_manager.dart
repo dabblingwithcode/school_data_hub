@@ -148,6 +148,13 @@ class PupilManager extends ChangeNotifier {
     await fetchPupilsByInternalId(pupils.map((e) => e.internalId).toList());
   }
 
+  Future<void> updatePupilData(int pupilId) async {
+    final fetchedPupil = await _pupilDataApiService
+        .fetchListOfPupils(pupilInternalIds: [pupilId]);
+    if (fetchedPupil.isNotEmpty) {
+      updatePupilProxyWithPupilData(fetchedPupil.first);
+    }
+  }
   //- Fetch pupils with the given internal ids
 
   Future<void> fetchPupilsByInternalId(List<int> pupilInternalIds) async {
