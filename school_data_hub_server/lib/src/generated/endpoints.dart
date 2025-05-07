@@ -46,26 +46,28 @@ import 'package:school_data_hub_server/src/generated/pupil_data/pupil_objects/co
     as _i26;
 import 'package:school_data_hub_server/src/generated/pupil_data/dto/siblings_tutor_info_dto.dart'
     as _i27;
-import 'package:school_data_hub_server/src/generated/pupil_data/pupil_objects/communication/public_media_auth.dart'
+import 'package:school_data_hub_server/src/generated/pupil_data/pupil_objects/preschool/pre_school_medical_status.dart'
     as _i28;
-import 'package:school_data_hub_server/src/generated/learning_support/support_level.dart'
+import 'package:school_data_hub_server/src/generated/pupil_data/pupil_objects/communication/public_media_auth.dart'
     as _i29;
-import 'package:school_data_hub_server/src/generated/school_list/pupil_entry.dart'
+import 'package:school_data_hub_server/src/generated/learning_support/support_level.dart'
     as _i30;
-import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
+import 'package:school_data_hub_server/src/generated/school_list/pupil_entry.dart'
     as _i31;
-import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
     as _i32;
-import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event_type.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
     as _i33;
-import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event_type.dart'
     as _i34;
-import 'package:school_data_hub_server/src/generated/user/roles/roles.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event.dart'
     as _i35;
-import 'package:school_data_hub_server/src/generated/user/device_info.dart'
+import 'package:school_data_hub_server/src/generated/user/roles/roles.dart'
     as _i36;
-import 'package:school_data_hub_server/src/generated/protocol.dart' as _i37;
-import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i38;
+import 'package:school_data_hub_server/src/generated/user/device_info.dart'
+    as _i37;
+import 'package:school_data_hub_server/src/generated/protocol.dart' as _i38;
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i39;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -1260,6 +1262,37 @@ class Endpoints extends _i1.EndpointDispatch {
             params['sender'],
           ),
         ),
+        'updatePreSchoolMedicalStatus': _i1.MethodConnector(
+          name: 'updatePreSchoolMedicalStatus',
+          params: {
+            'pupilId': _i1.ParameterDescription(
+              name: 'pupilId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'preSchoolMedicalStatus': _i1.ParameterDescription(
+              name: 'preSchoolMedicalStatus',
+              type: _i1.getType<_i28.PreSchoolMedicalStatus>(),
+              nullable: false,
+            ),
+            'updatedBy': _i1.ParameterDescription(
+              name: 'updatedBy',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['pupilUpdate'] as _i10.PupilUpdateEndpoint)
+                  .updatePreSchoolMedicalStatus(
+            session,
+            params['pupilId'],
+            params['preSchoolMedicalStatus'],
+            params['updatedBy'],
+          ),
+        ),
         'updatePublicMediaAuth': _i1.MethodConnector(
           name: 'updatePublicMediaAuth',
           params: {
@@ -1270,7 +1303,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'publicMediaAuth': _i1.ParameterDescription(
               name: 'publicMediaAuth',
-              type: _i1.getType<_i28.PublicMediaAuth>(),
+              type: _i1.getType<_i29.PublicMediaAuth>(),
               nullable: false,
             ),
           },
@@ -1290,7 +1323,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'supportLevel': _i1.ParameterDescription(
               name: 'supportLevel',
-              type: _i1.getType<_i29.SupportLevel>(),
+              type: _i1.getType<_i30.SupportLevel>(),
               nullable: false,
             ),
             'pupilId': _i1.ParameterDescription(
@@ -1446,7 +1479,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'entry': _i1.ParameterDescription(
               name: 'entry',
-              type: _i1.getType<_i30.PupilListEntry>(),
+              type: _i1.getType<_i31.PupilListEntry>(),
               nullable: false,
             )
           },
@@ -1540,7 +1573,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'schoolSemester': _i1.ParameterDescription(
               name: 'schoolSemester',
-              type: _i1.getType<_i31.SchoolSemester>(),
+              type: _i1.getType<_i32.SchoolSemester>(),
               nullable: false,
             )
           },
@@ -1559,7 +1592,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'semester': _i1.ParameterDescription(
               name: 'semester',
-              type: _i1.getType<_i31.SchoolSemester>(),
+              type: _i1.getType<_i32.SchoolSemester>(),
               nullable: false,
             )
           },
@@ -1635,7 +1668,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'schoolday': _i1.ParameterDescription(
               name: 'schoolday',
-              type: _i1.getType<_i32.Schoolday>(),
+              type: _i1.getType<_i33.Schoolday>(),
               nullable: false,
             )
           },
@@ -1706,7 +1739,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'type': _i1.ParameterDescription(
               name: 'type',
-              type: _i1.getType<_i33.SchooldayEventType>(),
+              type: _i1.getType<_i34.SchooldayEventType>(),
               nullable: false,
             ),
             'reason': _i1.ParameterDescription(
@@ -1739,7 +1772,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'schooldayEvent': _i1.ParameterDescription(
               name: 'schooldayEvent',
-              type: _i1.getType<_i34.SchooldayEvent>(),
+              type: _i1.getType<_i35.SchooldayEvent>(),
               nullable: false,
             ),
             'changedProcessedToFalse': _i1.ParameterDescription(
@@ -1871,7 +1904,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'role': _i1.ParameterDescription(
               name: 'role',
-              type: _i1.getType<_i35.Role>(),
+              type: _i1.getType<_i36.Role>(),
               nullable: false,
             ),
             'timeUnits': _i1.ParameterDescription(
@@ -2033,7 +2066,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'deviceInfo': _i1.ParameterDescription(
               name: 'deviceInfo',
-              type: _i1.getType<_i36.DeviceInfo>(),
+              type: _i1.getType<_i37.DeviceInfo>(),
               nullable: false,
             ),
           },
@@ -2048,7 +2081,7 @@ class Endpoints extends _i1.EndpointDispatch {
                     params['password'],
                     params['deviceInfo'],
                   )
-                  .then((record) => _i37.mapRecordToJson(record)),
+                  .then((record) => _i38.mapRecordToJson(record)),
         ),
         'verifyPassword': _i1.MethodConnector(
           name: 'verifyPassword',
@@ -2143,6 +2176,6 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
-    modules['serverpod_auth'] = _i38.Endpoints()..initializeEndpoints(server);
+    modules['serverpod_auth'] = _i39.Endpoints()..initializeEndpoints(server);
   }
 }

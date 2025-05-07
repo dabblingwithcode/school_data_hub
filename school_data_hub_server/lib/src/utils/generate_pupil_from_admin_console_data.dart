@@ -22,9 +22,13 @@ PupilData generatePupilfromExternalAdminConsoleData(String importedLine) {
       swimmer: null);
 }
 
+//TODO: This should be written to the database
+
 final _defaultPreSchoolMedical = PreSchoolMedical(
   preschoolMedicalStatus: PreSchoolMedicalStatus.notAvailable,
   preschoolMedicalFiles: null,
+  createdBy: 'ADM',
+  createdAt: DateTime.now().toUtc(),
 );
 
 final _publicMediaAuth = PublicMediaAuth(

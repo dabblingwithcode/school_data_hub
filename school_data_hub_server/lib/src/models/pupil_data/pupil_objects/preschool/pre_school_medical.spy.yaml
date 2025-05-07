@@ -3,4 +3,8 @@ table: pre_school_medical
 fields:
   preschoolMedicalStatus: PreSchoolMedicalStatus?
   preschoolMedicalFiles: List<HubDocument>?, relation(optional)
+  createdBy: String
+  createdAt: DateTime
+  updatedBy: String?
+  updatedAt: DateTime?
   

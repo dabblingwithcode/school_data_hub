@@ -123,6 +123,23 @@ class PupilDataApiService {
     return updatedSiblings;
   }
 
+  //- preschool medical
+
+  Future<PupilData> updatePreSchoolMedicalStatus({
+    required int pupilId,
+    required PreSchoolMedicalStatus preSchoolMedical,
+    required String createdBy,
+  }) async {
+    final updatedPupil = await ClientHelper.apiCall(
+      call: () => _client.pupilUpdate.updatePreSchoolMedicalStatus(
+        pupilId,
+        preSchoolMedical,
+        createdBy,
+      ),
+      errorMessage: 'Die Schüler konnten nicht aktualisiert werden',
+    );
+    return updatedPupil;
+  }
   //- hub document
 
   Future<PupilData> updatePupilDocument({

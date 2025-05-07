@@ -270,7 +270,11 @@ CREATE UNIQUE INDEX "schoolday_pupil_data_idx" ON "missed_class" USING btree ("s
 --
 CREATE TABLE "pre_school_medical" (
     "id" bigserial PRIMARY KEY,
-    "preschoolMedicalStatus" text
+    "preschoolMedicalStatus" text,
+    "createdBy" text NOT NULL,
+    "createdAt" timestamp without time zone NOT NULL,
+    "updatedBy" text,
+    "updatedAt" timestamp without time zone
 );
 
 --
@@ -1456,9 +1460,9 @@ ALTER TABLE ONLY "serverpod_query_log"
 -- MIGRATION VERSION FOR school_data_hub
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('school_data_hub', '20250507090351808', now())
+    VALUES ('school_data_hub', '20250507151148012', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20250507090351808', "timestamp" = now();
+    DO UPDATE SET "version" = '20250507151148012', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

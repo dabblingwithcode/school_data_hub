@@ -286,6 +286,47 @@ class PupilUpdateEndpoint extends Endpoint {
     return updatedPupil!;
   }
 
+  Future<PupilData> updatePreSchoolMedicalStatus(
+    Session session,
+    int pupilId,
+    PreSchoolMedicalStatus preSchoolMedicalStatus,
+    String updatedBy,
+  ) async {
+    final pupil = await PupilData.db
+        .findById(session, pupilId, include: PupilSchemas.allInclude);
+    if (pupil == null) {
+      throw Exception('Pupil not found');
+    }
+    // TODO: preschoolmedical should never be null, so this should be removed
+    if (pupil.preSchoolMedical == null) {
+      final preSchoolMedicalInDatabase = await PreSchoolMedical.db.insertRow(
+          session,
+          PreSchoolMedical(
+            preschoolMedicalStatus: preSchoolMedicalStatus,
+            createdBy: updatedBy,
+            createdAt: DateTime.now().toUtc(),
+          ));
+
+      await PupilData.db.attachRow
+          .preSchoolMedical(session, pupil, preSchoolMedicalInDatabase);
+    } else {
+      final updatedPreSchoolMedicalStatus = pupil.preSchoolMedical!.copyWith(
+        preschoolMedicalStatus: preSchoolMedicalStatus,
+        updatedBy: updatedBy,
+        updatedAt: DateTime.now().toUtc(),
+      );
+      await PreSchoolMedical.db
+          .updateRow(session, updatedPreSchoolMedicalStatus);
+    }
+
+    final updatedPupil = await PupilData.db.findById(
+      session,
+      pupil.id!,
+      include: PupilSchemas.allInclude,
+    );
+    return updatedPupil!;
+  }
+
   Future<PupilData> updatePublicMediaAuth(
       Session session, int pupilId, PublicMediaAuth publicMediaAuth) async {
     final pupil = await PupilData.db.findById(session, pupilId);
@@ -294,7 +335,7 @@ class PupilUpdateEndpoint extends Endpoint {
       throw Exception('Pupil not found');
     }
     pupil.publicMediaAuth = publicMediaAuth;
-    final updatedPupil = await PupilData.db.updateRow(session, pupil);
+    await PupilData.db.updateRow(session, pupil);
     // Fetch the object again with the relation included
     final updatedPupilWithRelation = await PupilData.db.findById(
       session,

@@ -54,6 +54,7 @@ pupilUpdate:
   - updatePupilDocument:
   - updateStringProperty:
   - updateCredit:
+  - updatePreSchoolMedicalStatus:
   - updatePublicMediaAuth:
   - updateSupportLevel:
 schoolList:

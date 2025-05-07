@@ -1740,6 +1740,30 @@
           "columnType": 0,
           "isNullable": true,
           "dartType": "protocol:PreSchoolMedicalStatus?"
+        },
+        {
+          "name": "createdBy",
+          "columnType": 0,
+          "isNullable": false,
+          "dartType": "String"
+        },
+        {
+          "name": "createdAt",
+          "columnType": 4,
+          "isNullable": false,
+          "dartType": "DateTime"
+        },
+        {
+          "name": "updatedBy",
+          "columnType": 0,
+          "isNullable": true,
+          "dartType": "String?"
+        },
+        {
+          "name": "updatedAt",
+          "columnType": 4,
+          "isNullable": true,
+          "dartType": "DateTime?"
         }
       ],
       "foreignKeys": [],

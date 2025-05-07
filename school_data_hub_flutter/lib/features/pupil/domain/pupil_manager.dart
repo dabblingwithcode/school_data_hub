@@ -268,6 +268,21 @@ class PupilManager extends ChangeNotifier {
     // _pupils[pupilId]!.clearAvatar();
   }
 
+  Future<void> updatePreSchoolMedicalStatus(
+      {required int pupilId,
+      required PreSchoolMedicalStatus preSchoolMedicalStatus,
+      required String createdBy}) async {
+    // send the Api request
+    final PupilData pupilUpdate =
+        await _pupilDataApiService.updatePreSchoolMedicalStatus(
+            pupilId: pupilId,
+            preSchoolMedical: preSchoolMedicalStatus,
+            createdBy: createdBy);
+
+    // update the pupil in the repository
+    updatePupilProxyWithPupilData(pupilUpdate);
+  }
+
   Future<void> updatePublicMediaAuth({
     required PupilProxy pupil,
     bool? groupPicturesOnWebsite,
@@ -298,45 +313,6 @@ class PupilManager extends ChangeNotifier {
         pupil.pupilId, authToUpdate);
     updatePupilProxyWithPupilData(updatedPupil);
   }
-  // Future<void> updatePupilAvatarAuth(
-  //   File imageFile,
-  //   PupilProxy pupil,
-  // ) async {
-  //   // first we encrypt the file
-
-  //   final encryptedFile = await customEncrypter.encryptFile(imageFile);
-
-  //   // send the Api request
-
-  //   final PupilData pupilUpdate =
-  //       await _pupilDataApiService.updatePupilWithAvatarAuth(
-  //     pupilId: pupil.pupilId,
-  //     file: encryptedFile,
-  //   );
-
-  //   // update the pupil in the repository
-  //   updatePupilProxyWithPupilData(pupilUpdate);
-  // }
-
-  // Future<void> updatePupilPublicMediaAuth(
-  //   File imageFile,
-  //   PupilProxy pupil,
-  // ) async {
-  //   // first we encrypt the file
-
-  //   final encryptedFile = await customEncrypter.encryptFile(imageFile);
-
-  //   // send the Api request
-
-  //   final PupilData pupilUpdate =
-  //       await _pupilDataApiService.updatePupilPublicMediaAuth(
-  //     pupilId: pupil.pupilId,
-  //     file: encryptedFile,
-  //   );
-
-  //   // update the pupil in the repository
-  //   updatePupilProxyWithPupilData(pupilUpdate);
-  // }
 
   Future<void> resetPublicMediaAuth(int pupilId) async {
     // we need the cacheKey if the api request is successful
@@ -358,36 +334,7 @@ class PupilManager extends ChangeNotifier {
     // and update the repository
     updatePupilProxyWithPupilData(pupilUpdate);
   }
-//   Future<void> deleteAvatarAuthImage(int pupilId, String cacheKey) async {
-//     // send the Api request
-//     await pupilDataApiService.deletePupilAvatarAuth(
-//       internalId: pupilId,
-//     );
 
-//     // Delete the outdated encrypted file in the cache.
-
-//     await _cacheManager.removeFile(cacheKey);
-// final ScheduledLesson scheduledLesson = ScheduledLesson(recordtest: (testString: "l", testint: 2))
-//     // and update the repository
-//     _pupils[pupilId]!.deleteAvatarAuthId();
-//   }
-
-//   Future<void> deletePublicMediaAuthImage(int pupilId, String cacheKey) async {
-//     // send the Api request
-//     await pupilDataApiService.deletePupilPublicMediaAuthImage(
-//       internalId: pupilId,
-//     );
-
-//     // Delete the outdated encrypted file in the cache.
-
-//     await _cacheManager.removeFile(cacheKey);
-
-//     // and update the repository
-//     _pupils[pupilId]!.deletePublicMediaAuthId();
-//   }
-
-  /// TODO: We need to use pupilId here instead of internalId
-  /// like everywhere else in the code
   Future<void> updateTutorInfo(
       {required int pupilId, required TutorInfo? tutorInfo}) async {
     // check if the pupil is a sibling and handle them if true
