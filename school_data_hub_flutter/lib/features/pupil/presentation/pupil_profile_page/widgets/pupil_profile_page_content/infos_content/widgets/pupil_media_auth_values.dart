@@ -79,27 +79,30 @@ class PublicMediaAuthValues extends WatchingWidget {
                         },
                       ),
                     ),
-                    const Gap(10),
-                    const Icon(
-                      Icons.done,
-                      color: Colors.green,
-                    ),
-                    SizedBox(
-                      width: 25,
-                      height: 25,
-                      child: Checkbox(
-                        activeColor: Colors.green,
-                        value:
-                            publicMediaAuth.groupPicturesInPress ? true : false,
-                        onChanged: (newValue) async {
-                          if (publicMediaAuth.groupPicturesInPress &&
-                              newValue == false) return;
-                          if (publicMediaAuthDocumentId == null) return;
-                          await _pupilManager.updatePublicMediaAuth(
-                              pupil: pupil, groupPicturesInPress: true);
-                        },
+                    if (publicMediaAuthDocumentId != null) ...[
+                      const Gap(10),
+                      const Icon(
+                        Icons.done,
+                        color: Colors.green,
                       ),
-                    ),
+                      SizedBox(
+                        width: 25,
+                        height: 25,
+                        child: Checkbox(
+                          activeColor: Colors.green,
+                          value: publicMediaAuth.groupPicturesInPress
+                              ? true
+                              : false,
+                          onChanged: (newValue) async {
+                            if (publicMediaAuth.groupPicturesInPress &&
+                                newValue == false) return;
+
+                            await _pupilManager.updatePublicMediaAuth(
+                                pupil: pupil, groupPicturesInPress: true);
+                          },
+                        ),
+                      ),
+                    ]
                   ],
                 ),
                 const Gap(5),
@@ -131,28 +134,30 @@ class PublicMediaAuthValues extends WatchingWidget {
                         },
                       ),
                     ),
-                    const Gap(10),
-                    const Icon(
-                      Icons.done,
-                      color: Colors.green,
-                    ),
-                    SizedBox(
-                      width: 25,
-                      height: 25,
-                      child: Checkbox(
-                        activeColor: Colors.green,
-                        value: publicMediaAuth.groupPicturesOnWebsite
-                            ? true
-                            : false,
-                        onChanged: (newValue) async {
-                          if (publicMediaAuth.groupPicturesOnWebsite &&
-                              newValue == false) return;
-                          if (publicMediaAuthDocumentId == null) return;
-                          await _pupilManager.updatePublicMediaAuth(
-                              pupil: pupil, groupPicturesOnWebsite: true);
-                        },
+                    if (publicMediaAuthDocumentId != null) ...[
+                      const Gap(10),
+                      const Icon(
+                        Icons.done,
+                        color: Colors.green,
                       ),
-                    ),
+                      SizedBox(
+                        width: 25,
+                        height: 25,
+                        child: Checkbox(
+                          activeColor: Colors.green,
+                          value: publicMediaAuth.groupPicturesOnWebsite
+                              ? true
+                              : false,
+                          onChanged: (newValue) async {
+                            if (publicMediaAuth.groupPicturesOnWebsite &&
+                                newValue == false) return;
+
+                            await _pupilManager.updatePublicMediaAuth(
+                                pupil: pupil, groupPicturesOnWebsite: true);
+                          },
+                        ),
+                      ),
+                    ]
                   ],
                 ),
                 const Gap(5),
@@ -181,26 +186,28 @@ class PublicMediaAuthValues extends WatchingWidget {
                         },
                       ),
                     ),
-                    const Gap(10),
-                    const Icon(
-                      Icons.done,
-                      color: Colors.green,
-                    ),
-                    SizedBox(
-                      width: 25,
-                      height: 25,
-                      child: Checkbox(
-                        activeColor: Colors.green,
-                        value: publicMediaAuth.nameInPress ? true : false,
-                        onChanged: (newValue) async {
-                          if (publicMediaAuth.nameInPress && newValue == false)
-                            return;
-                          if (publicMediaAuthDocumentId == null) return;
-                          await _pupilManager.updatePublicMediaAuth(
-                              pupil: pupil, nameInPress: true);
-                        },
+                    if (publicMediaAuthDocumentId != null) ...[
+                      const Gap(10),
+                      const Icon(
+                        Icons.done,
+                        color: Colors.green,
                       ),
-                    ),
+                      SizedBox(
+                        width: 25,
+                        height: 25,
+                        child: Checkbox(
+                          activeColor: Colors.green,
+                          value: publicMediaAuth.nameInPress ? true : false,
+                          onChanged: (newValue) async {
+                            if (publicMediaAuth.nameInPress &&
+                                newValue == false) return;
+
+                            await _pupilManager.updatePublicMediaAuth(
+                                pupil: pupil, nameInPress: true);
+                          },
+                        ),
+                      ),
+                    ]
                   ],
                 ),
                 const Gap(5),
@@ -229,26 +236,27 @@ class PublicMediaAuthValues extends WatchingWidget {
                         },
                       ),
                     ),
-                    const Gap(10),
-                    const Icon(
-                      Icons.done,
-                      color: Colors.green,
-                    ),
-                    SizedBox(
-                      width: 25,
-                      height: 25,
-                      child: Checkbox(
-                        activeColor: Colors.green,
-                        value: publicMediaAuth.nameOnWebsite ? true : false,
-                        onChanged: (newValue) async {
-                          if (publicMediaAuth.nameOnWebsite &&
-                              newValue == false) return;
-                          if (publicMediaAuthDocumentId == null) return;
-                          await _pupilManager.updatePublicMediaAuth(
-                              pupil: pupil, nameOnWebsite: true);
-                        },
+                    if (publicMediaAuthDocumentId != null) ...[
+                      const Gap(10),
+                      const Icon(
+                        Icons.done,
+                        color: Colors.green,
                       ),
-                    ),
+                      SizedBox(
+                        width: 25,
+                        height: 25,
+                        child: Checkbox(
+                          activeColor: Colors.green,
+                          value: publicMediaAuth.nameOnWebsite ? true : false,
+                          onChanged: (newValue) async {
+                            if (publicMediaAuth.nameOnWebsite &&
+                                newValue == false) return;
+                            await _pupilManager.updatePublicMediaAuth(
+                                pupil: pupil, nameOnWebsite: true);
+                          },
+                        ),
+                      ),
+                    ]
                   ],
                 ),
                 const Gap(5),
@@ -280,28 +288,30 @@ class PublicMediaAuthValues extends WatchingWidget {
                         },
                       ),
                     ),
-                    const Gap(10),
-                    const Icon(
-                      Icons.done,
-                      color: Colors.green,
-                    ),
-                    SizedBox(
-                      width: 25,
-                      height: 25,
-                      child: Checkbox(
-                        activeColor: Colors.green,
-                        value: publicMediaAuth.portraitPicturesInPress
-                            ? true
-                            : false,
-                        onChanged: (newValue) async {
-                          if (publicMediaAuth.portraitPicturesInPress &&
-                              newValue == false) return;
-                          if (publicMediaAuthDocumentId == null) return;
-                          await _pupilManager.updatePublicMediaAuth(
-                              pupil: pupil, portraitPicturesInPress: true);
-                        },
+                    if (publicMediaAuthDocumentId != null) ...[
+                      const Gap(10),
+                      const Icon(
+                        Icons.done,
+                        color: Colors.green,
                       ),
-                    ),
+                      SizedBox(
+                        width: 25,
+                        height: 25,
+                        child: Checkbox(
+                          activeColor: Colors.green,
+                          value: publicMediaAuth.portraitPicturesInPress
+                              ? true
+                              : false,
+                          onChanged: (newValue) async {
+                            if (publicMediaAuth.portraitPicturesInPress &&
+                                newValue == false) return;
+
+                            await _pupilManager.updatePublicMediaAuth(
+                                pupil: pupil, portraitPicturesInPress: true);
+                          },
+                        ),
+                      ),
+                    ]
                   ],
                 ),
                 const Row(
@@ -332,28 +342,30 @@ class PublicMediaAuthValues extends WatchingWidget {
                         },
                       ),
                     ),
-                    const Gap(10),
-                    const Icon(
-                      Icons.done,
-                      color: Colors.green,
-                    ),
-                    SizedBox(
-                      width: 25,
-                      height: 25,
-                      child: Checkbox(
-                        activeColor: Colors.green,
-                        value: publicMediaAuth.portraitPicturesOnWebsite
-                            ? true
-                            : false,
-                        onChanged: (newValue) async {
-                          if (publicMediaAuth.portraitPicturesOnWebsite &&
-                              newValue == false) return;
-                          if (publicMediaAuthDocumentId == null) return;
-                          await _pupilManager.updatePublicMediaAuth(
-                              pupil: pupil, portraitPicturesOnWebsite: true);
-                        },
+                    if (publicMediaAuthDocumentId != null) ...[
+                      const Gap(10),
+                      const Icon(
+                        Icons.done,
+                        color: Colors.green,
                       ),
-                    ),
+                      SizedBox(
+                        width: 25,
+                        height: 25,
+                        child: Checkbox(
+                          activeColor: Colors.green,
+                          value: publicMediaAuth.portraitPicturesOnWebsite
+                              ? true
+                              : false,
+                          onChanged: (newValue) async {
+                            if (publicMediaAuth.portraitPicturesOnWebsite &&
+                                newValue == false) return;
+
+                            await _pupilManager.updatePublicMediaAuth(
+                                pupil: pupil, portraitPicturesOnWebsite: true);
+                          },
+                        ),
+                      ),
+                    ]
                   ],
                 ),
               ],

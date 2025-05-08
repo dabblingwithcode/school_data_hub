@@ -98,10 +98,9 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                         ),
                       ],
                     ),
-                    Row(
+                    Wrap(
                       children: [
-                        const Text('ärztl. U.:'),
-                        const Gap(10),
+                        const Text('ärztl. U.: '),
                         Text(
                           LearningSupportHelper.preschoolRevision(
                               pupil.preSchoolMedical?.preschoolMedicalStatus),
@@ -112,10 +111,9 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                         ),
                       ],
                     ),
-                    Row(
+                    Wrap(
                       children: [
-                        const Text('Kindergartenbesuch:'),
-                        const Gap(10),
+                        const Text('Kindergartenbesuch: '),
                         Text(
                           pupil.kindergarden ?? 'Kein Eintrag',
                           style: const TextStyle(
