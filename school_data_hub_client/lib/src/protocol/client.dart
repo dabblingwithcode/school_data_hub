@@ -537,6 +537,19 @@ class EndpointSupportCategory extends _i1.EndpointRef {
           'createdAt': createdAt,
         },
       );
+
+  _i2.Future<_i5.PupilData> deleteSupportCategoryStatus(
+    int pupilId,
+    int statusId,
+  ) =>
+      caller.callServerEndpoint<_i5.PupilData>(
+        'supportCategory',
+        'deleteSupportCategoryStatus',
+        {
+          'pupilId': pupilId,
+          'statusId': statusId,
+        },
+      );
 }
 
 /// {@category Endpoint}

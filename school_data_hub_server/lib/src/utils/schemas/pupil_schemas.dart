@@ -11,5 +11,6 @@ class PupilSchemas {
       preschoolMedicalFiles: HubDocument.includeList(),
     ),
     supportCategoryStatuses: SupportCategoryStatus.includeList(),
+    supportGoals: SupportGoal.includeList(),
   );
 }

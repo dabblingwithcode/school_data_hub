@@ -53,7 +53,7 @@ class SupportCategoryStatusCard extends StatelessWidget {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => NewSupportCategoryStatus(
                               appBarTitle: 'Neuer Status',
-                              pupilId: pupil.internalId,
+                              pupilId: pupil.pupilId,
                               goalCategoryId: supportCategoryId,
                               elementType: 'status',
                             )));
@@ -127,7 +127,7 @@ class SupportCategoryStatusCard extends StatelessWidget {
               await Navigator.of(context).push(MaterialPageRoute(
                   builder: (ctx) => NewSupportCategoryStatus(
                         appBarTitle: 'Neues Förderziel',
-                        pupilId: pupil.internalId,
+                        pupilId: pupil.pupilId,
                         goalCategoryId: supportCategoryId,
                         elementType: 'goal',
                       )));

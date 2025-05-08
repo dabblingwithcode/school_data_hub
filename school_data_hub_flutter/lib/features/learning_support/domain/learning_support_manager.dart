@@ -120,6 +120,15 @@ class LearningSupportManager with ChangeNotifier {
     return;
   }
 
+  Future<void> deleteSupportCategoryStatus(int pupilId, int statusId) async {
+    final updatedPupil =
+        await _learningSupportApiService.deleteSupportCategoryStatus(
+      pupilId,
+      statusId,
+    );
+    _pupilManager.updatePupilProxyWithPupilData(updatedPupil);
+    return;
+  }
   // Future<void> updateSupportCategoryStatusProperty({
   //   required PupilProxy pupil,
   //   required String statusId,

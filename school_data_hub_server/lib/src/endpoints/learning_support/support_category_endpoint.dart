@@ -135,4 +135,40 @@ class SupportCategoryEndpoint extends Endpoint {
     await session.db.updateRow(updatedStatus);
     return updatedStatus;
   }
+
+  Future<PupilData> deleteSupportCategoryStatus(
+    Session session,
+    int pupilId,
+    int statusId,
+  ) async {
+    final pupil = await PupilData.db.findById(
+      session,
+      pupilId,
+      include: PupilSchemas.allInclude,
+    );
+    if (pupil == null) {
+      throw Exception('Pupil not found');
+    }
+    final existingStatus = await SupportCategoryStatus.db.findFirstRow(
+      session,
+      where: (t) => t.pupilId.equals(pupilId) & t.id.equals(statusId),
+    );
+    if (existingStatus == null) {
+      throw Exception(
+          'SupportCategoryStatus not found for pupilId: $pupilId and supportCategoryId: $statusId');
+    }
+    await PupilData.db.detach
+        .supportCategoryStatuses(session, [existingStatus]);
+    await session.db.deleteRow<SupportCategoryStatus>(existingStatus);
+
+    final updatedPupil = await PupilData.db.findById(
+      session,
+      pupilId,
+      include: PupilSchemas.allInclude,
+    );
+    if (updatedPupil == null) {
+      throw Exception('Pupil not found after deletion');
+    }
+    return updatedPupil;
+  }
 }

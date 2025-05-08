@@ -40,9 +40,9 @@ class SupportCategoryStatusEntry extends StatelessWidget {
               title: 'Status löschen?',
               message: 'Status löschen?');
           if (confirm != true) return;
-          // TODO: uncomment when ready
-          //  _learningSupportManager
-          //         .deleteSupportCategoryStatus(status.statusId);
+
+          _learningSupportManager.deleteSupportCategoryStatus(
+              pupil.pupilId, status.id!);
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,

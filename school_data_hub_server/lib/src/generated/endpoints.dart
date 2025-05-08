@@ -1104,6 +1104,31 @@ class Endpoints extends _i1.EndpointDispatch {
             params['createdAt'],
           ),
         ),
+        'deleteSupportCategoryStatus': _i1.MethodConnector(
+          name: 'deleteSupportCategoryStatus',
+          params: {
+            'pupilId': _i1.ParameterDescription(
+              name: 'pupilId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'statusId': _i1.ParameterDescription(
+              name: 'statusId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['supportCategory'] as _i9.SupportCategoryEndpoint)
+                  .deleteSupportCategoryStatus(
+            session,
+            params['pupilId'],
+            params['statusId'],
+          ),
+        ),
       },
     );
     connectors['missedClass'] = _i1.EndpointConnector(

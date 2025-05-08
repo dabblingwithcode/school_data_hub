@@ -51,38 +51,20 @@ class LearningSupportApiService {
     return response;
   }
 
-  // Future deleteCategoryStatus(String statusId) async {
-  //   _notificationService.apiRunning(true);
+  Future<PupilData> deleteSupportCategoryStatus(
+      int pupilId, int statusId) async {
+    final pupil = await ClientHelper.apiCall(
+      call: () => _client.supportCategory
+          .deleteSupportCategoryStatus(pupilId, statusId),
+      errorMessage: 'Fehler beim Löschen des Status',
+    );
 
-  //   final response = await _client.delete(
-  //     '${_baseUrl()}${_deleteCategoryStatusUrl(statusId)}',
-  //     options: _client.hubOptions,
-  //   );
-
-  //   if (response.statusCode != 200) {
-  //     _notificationService.showSnackBar(
-  //         NotificationType.error, 'Fehler beim Löschen des Status');
-
-  //     _notificationService.apiRunning(false);
-
-  //     throw ApiException(
-  //         'Failed to delete category status', response.statusCode);
-  //   }
-
-  //   final PupilData pupil = PupilData.fromJson(response.data);
-
-  //   _notificationService.apiRunning(false);
-
-  //   return pupil;
-  // }
+    return pupil;
+  }
 
   //- GOALS ------------------------------------------------------------
 
   //- post category goal
-
-  // String _postGoalUrl(int pupilId) {
-  //   return '/support_goals/$pupilId/new';
-  // }
 
   // Future<PupilData> postNewCategoryGoal(
   //     {required int goalCategoryId,

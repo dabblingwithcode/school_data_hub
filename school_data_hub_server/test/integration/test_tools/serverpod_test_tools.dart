@@ -1567,6 +1567,39 @@ class _SupportCategoryEndpoint {
       }
     });
   }
+
+  _i3.Future<_i6.PupilData> deleteSupportCategoryStatus(
+    _i1.TestSessionBuilder sessionBuilder,
+    int pupilId,
+    int statusId,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'supportCategory',
+        method: 'deleteSupportCategoryStatus',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'supportCategory',
+          methodName: 'deleteSupportCategoryStatus',
+          parameters: _i1.testObjectToJson({
+            'pupilId': pupilId,
+            'statusId': statusId,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i6.PupilData>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
 }
 
 class _MissedClassEndpoint {
