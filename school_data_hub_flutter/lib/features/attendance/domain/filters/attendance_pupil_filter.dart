@@ -23,7 +23,20 @@ class AttendancePupilFilterManager {
   ValueListenable<Map<AttendancePupilFilter, bool>>
       get attendancePupilFilterState => _attendancePupilFilterState;
 
-  AttendancePupilFilterManager();
+  AttendancePupilFilterManager init() {
+    _attendanceManager.missedClasses.addListener(refreshPupilsFilter);
+    return this;
+  }
+
+  void refreshPupilsFilter() {
+    if (_filterStateManager.filterStates.value[FilterState.attendance] == false)
+      return;
+    _pupilsFilter.refreshs();
+  }
+
+  void dispose() {
+    _attendanceManager.missedClasses.removeListener(refreshPupilsFilter);
+  }
 
   void setAttendancePupilFilter(
       {required List<AttendancePupilFilterRecord>
@@ -53,15 +66,15 @@ class AttendancePupilFilterManager {
 
   bool isMatchedByAttendanceFilters(PupilProxy pupil) {
     final thisDate = _schooldayManager.thisDate.value;
-    final missedClasses = _attendanceManager
-        .getPupilMissedClassesList(pupil.pupilId)
-        .missedClasses;
 
     final Map<AttendancePupilFilter, bool> attendanceActiveFilters =
         _attendancePupilFilterState.value;
 
-    final MissedClass? attendanceEventThisDate = missedClasses.firstWhereOrNull(
-        (missedClass) => missedClass.schoolday!.schoolday.isSameDate(thisDate));
+    final MissedClass? attendanceEventThisDate = _attendanceManager
+        .getPupilMissedClassesProxy(pupil.pupilId)
+        .missedClasses
+        .firstWhereOrNull((missedClass) =>
+            missedClass.schoolday!.schoolday.isSameDate(thisDate));
 
     bool isMatched = true;
     //- Filter pupils present
@@ -69,7 +82,7 @@ class AttendancePupilFilterManager {
     if ((attendanceActiveFilters[AttendancePupilFilter.present]! &&
         !(attendanceEventThisDate == null ||
             attendanceEventThisDate.missedType == MissedType.late))) {
-      isMatched = false;
+      return false;
     }
 
     //- Filter pupils not present
@@ -92,8 +105,8 @@ class AttendancePupilFilterManager {
     if (isMatched) {
       return true;
     }
-    // _filterStateManager
-    //     .setFilterState(filterState: FilterState.attendance, value: true);
+    _filterStateManager.setFilterState(
+        filterState: FilterState.attendance, value: true);
     return false;
   }
 }

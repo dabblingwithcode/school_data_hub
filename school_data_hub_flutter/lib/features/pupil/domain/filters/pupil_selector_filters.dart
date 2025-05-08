@@ -17,7 +17,6 @@ class GroupFilter extends SelectorFilter<PupilProxy, String> {
 
   @override
   bool matches(PupilProxy item) {
-    //debugger();
     return selector(item) == name;
   }
 }

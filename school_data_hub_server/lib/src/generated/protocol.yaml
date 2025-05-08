@@ -1,8 +1,20 @@
+admin:
+  - createUser:
+  - deleteUser:
+  - promoteUserScope:
+  - demoteUserScope:
+  - getAllUsers:
+  - getUserById:
+  - updateBackendPupilDataState:
 attendance:
   - fetchMissedClassesOnASchoolday:
   - fetchMissedClasses:
   - createMissedClass:
   - deleteMissedClass:
+auth:
+  - login:
+  - verifyPassword:
+  - logOut:
 authorization:
   - fetchAuthorizations:
   - fetchAuthorizationById:
@@ -83,18 +95,6 @@ schooldayEvent:
   - deleteSchooldayEvent:
   - updateSchooldayEventFile:
   - deleteSchooldayEventFile:
-admin:
-  - createUser:
-  - deleteUser:
-  - promoteUserScope:
-  - demoteUserScope:
-  - getAllUsers:
-  - getUserById:
-  - updateBackendPupilDataState:
-auth:
-  - login:
-  - verifyPassword:
-  - logOut:
 user:
   - getCurrentUser:
   - changePassword:

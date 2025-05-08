@@ -5,9 +5,9 @@ import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/attendance_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/attendance_page/widgets/attendance_filters.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_search_text_field.dart';
 import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
@@ -18,12 +18,12 @@ final _pupilsFilter = di<PupilsFilter>();
 final _filterStateManager = di<FiltersStateManager>();
 
 class AttendanceListSearchBar extends WatchingWidget {
-  final List<PupilProxy> pupils;
-
-  const AttendanceListSearchBar({required this.pupils, super.key});
+  const AttendanceListSearchBar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final pupils = watchValue((PupilsFilter x) => x.filteredPupils);
+    watchValue((AttendanceManager x) => x.missedClasses);
     DateTime thisDate = watchValue((SchooldayManager x) => x.thisDate);
 
     bool filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);

@@ -21,8 +21,6 @@ import 'package:watch_it/watch_it.dart';
 
 final _attendanceManager = di<AttendanceManager>();
 
-final _client = di<Client>();
-
 final _log = Logger('AttendanceListPage');
 
 final _attendancePupilFilterManager = di<AttendancePupilFilterManager>();
@@ -32,41 +30,19 @@ class AttendanceListPage extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     createOnce<StreamSubscription<MissedClassDto>>(() {
-      return _client.missedClass.streamMyModels().listen((event) {
-        switch (event.operation) {
-          case 'add':
-            _log.info('add missedClass ${event.missedClass}');
-            _attendanceManager
-                .updateMissedClassInCollections(event.missedClass);
-            break;
-          case 'update':
-            _log.info('update missedClass ${event.missedClass}');
-            _attendanceManager
-                .updateMissedClassInCollections(event.missedClass);
-            break;
-          case 'delete':
-            _log.info('delete missedClass ${event.missedClass}');
-            _attendanceManager.removeMissedClassFromCollections(
-                event.missedClass.pupilId,
-                event.missedClass.schoolday!.schoolday);
-            break;
-        }
-      }, onError: (error) {
-        throw Exception('Error in missedClass stream: $error');
-      }, onDone: () {
-        // Handle stream completion if needed
-      });
+      return _attendanceManager.missedClassStreamSubscription();
     }, dispose: (value) {
+      _log.info('Cancelling missed class stream subscription');
       value.cancel();
     });
     DateTime thisDate = watchValue((SchooldayManager x) => x.thisDate);
-    _attendanceManager.fetchMissedClassesOnASchoolday(
-      thisDate,
-    );
-    List<PupilProxy> pupils = watchValue((PupilsFilter x) => x.filteredPupils)
-        .where((x) =>
-            _attendancePupilFilterManager.isMatchedByAttendanceFilters(x))
-        .toList();
+
+    callOnce((context) {
+      _attendanceManager.fetchMissedClassesOnASchoolday(thisDate);
+    });
+
+    watchValue((AttendanceManager x) => x.missedClasses);
+    List<PupilProxy> pupils = watchValue((PupilsFilter x) => x.filteredPupils);
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
       appBar: AppBar(
@@ -107,11 +83,8 @@ class AttendanceListPage extends WatchingWidget {
             child: CustomScrollView(
               slivers: [
                 const SliverGap(5),
-                GenericSliverSearchAppBar(
-                    height: 110,
-                    title: AttendanceListSearchBar(
-                      pupils: pupils,
-                    )),
+                const GenericSliverSearchAppBar(
+                    height: 110, title: AttendanceListSearchBar()),
                 GenericSliverListWithEmptyListCheck(
                   items: pupils,
                   itemBuilder: (_, pupil) => AttendanceCard(pupil, thisDate),

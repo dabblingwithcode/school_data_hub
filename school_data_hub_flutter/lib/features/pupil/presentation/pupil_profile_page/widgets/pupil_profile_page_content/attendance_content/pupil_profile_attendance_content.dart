@@ -22,7 +22,7 @@ class PupilProfileAttendanceContent extends StatelessWidget {
     final List<int> missedHoursForActualReport =
         AttendanceHelper.missedHoursforSemesterOrSchoolyear(pupil);
     List<MissedClass> missedClasses = _attendanceManager
-        .getPupilMissedClassesList(pupil.pupilId)
+        .getPupilMissedClassesProxy(pupil.pupilId)
         .missedClasses;
     // sort by missedDay
     missedClasses.sort(

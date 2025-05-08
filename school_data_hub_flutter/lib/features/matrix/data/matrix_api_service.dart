@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -386,9 +385,9 @@ class MatrixApiService {
             .toList();
       }
     }
-    if (roomId == '!RHMRhueGNUwEHjoMkm:hermannschule.de') {
-      debugger();
-    }
+    // if (roomId == '!RHMRhueGNUwEHjoMkm:hermannschule.de') {
+    //   debugger();
+    // }
     // Second API call
     final responseRoomName = await _apiClient.get(
       // ignore: unnecessary_string_interpolations

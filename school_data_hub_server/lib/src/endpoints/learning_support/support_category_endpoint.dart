@@ -50,7 +50,7 @@ class SupportCategoryEndpoint extends Endpoint {
     return true;
   }
 
-  Future<SupportCategoryStatus> postCategoryStatus(
+  Future<SupportCategoryStatus> postSupportCategoryStatus(
     Session session,
     int pupilId,
     int supportCategoryId,
@@ -66,9 +66,32 @@ class SupportCategoryEndpoint extends Endpoint {
       createdBy: createdBy,
       createdAt: DateTime.now().toUtc(),
     );
-    final statusInDatabase =
-        await session.db.insertRow(newSupportCategoryStatus);
+    final statusInDatabase = await SupportCategoryStatus.db
+        .insertRow(session, newSupportCategoryStatus);
     return statusInDatabase;
+  }
+
+  Future<List<SupportCategoryStatus>> fetchSupportCategoryStatus(
+    Session session,
+    int pupilId,
+  ) async {
+    final statusList = await SupportCategoryStatus.db.find(
+      session,
+      orderBy: (t) => t.createdAt,
+    );
+    return statusList;
+  }
+
+  Future<List<SupportCategoryStatus>> fetchSupportCategoryStatusFromPupil(
+    Session session,
+    int pupilId,
+  ) async {
+    final statusList = await SupportCategoryStatus.db.find(
+      session,
+      where: (t) => t.pupilId.equals(pupilId),
+      orderBy: (t) => t.createdAt,
+    );
+    return statusList;
   }
 
   Future<SupportCategoryStatus> updateCategoryStatus(

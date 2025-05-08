@@ -206,9 +206,12 @@ class DiManager {
       return schoolListFilterManager;
     }, dependsOn: [PupilsFilter, SchoolListManager]);
 
-    di.registerSingletonWithDependencies<AttendancePupilFilterManager>(
-        () => AttendancePupilFilterManager(),
-        dependsOn: [AttendanceManager]);
+    di.registerSingletonWithDependencies<AttendancePupilFilterManager>(() {
+      final attendancePupilFilterManager = AttendancePupilFilterManager();
+      return attendancePupilFilterManager.init();
+    },
+        dispose: (instance) => instance.dispose(),
+        dependsOn: [AttendanceManager, PupilsFilter]);
     _log.info('Managers depending on authenticated session initialized');
 
     di.registerSingletonWithDependencies<SchooldayEventManager>(

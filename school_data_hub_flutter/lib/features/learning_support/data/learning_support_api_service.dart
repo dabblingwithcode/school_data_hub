@@ -1,11 +1,8 @@
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _client = di<Client>();
-
-final _notificationService = di<NotificationService>();
 
 class LearningSupportApiService {
   //- SUPPORT CATEGORIES --------------------------------------------------
@@ -27,7 +24,7 @@ class LearningSupportApiService {
       required int supportCategoryId,
       required int status,
       required String comment,
-      required createdBy}) async {
+      required String createdBy}) async {
     final response = await ClientHelper.apiCall(
       call: () => _client.supportCategory.postCategoryStatus(
           pupilId, supportCategoryId, status, comment, createdBy),

@@ -34,7 +34,7 @@ class AttendanceCard extends WatchingWidget {
   Widget build(BuildContext context) {
     final FocusNode _dropdownFocusNode = FocusNode();
     final missedClassesList =
-        _attendanceManager.getPupilMissedClassesList(pupil.pupilId);
+        _attendanceManager.getPupilMissedClassesProxy(pupil.pupilId);
 
     final MissedClass? missedClass =
         watch(missedClassesList).missedClasses.firstWhereOrNull(
@@ -42,9 +42,7 @@ class AttendanceCard extends WatchingWidget {
                   element.schoolday?.schoolday.formatForJson() ==
                   thisDate.formatForJson(),
             );
-    if (missedClass != null) {
-      //debugger();
-    }
+
     AttendanceValues attendanceInfo =
         AttendanceHelper.getAttendanceValues(missedClass);
 
@@ -137,8 +135,11 @@ class AttendanceCard extends WatchingWidget {
                                         return;
                                       }
                                       if (newValue == MissedType.late) {
-                                        final int minutesLate =
+                                        final int? minutesLate =
                                             await minutesLateDialog(context);
+                                        if (minutesLate == null) {
+                                          return;
+                                        }
                                         _attendanceManager.updateLateTypeValue(
                                             pupil.pupilId,
                                             newValue!,
@@ -489,8 +490,11 @@ class AttendanceCard extends WatchingWidget {
                                           return;
                                         }
                                         if (newValue == MissedType.late) {
-                                          final int minutesLate =
+                                          final int? minutesLate =
                                               await minutesLateDialog(context);
+                                          if (minutesLate == null) {
+                                            return;
+                                          }
                                           _attendanceManager
                                               .updateLateTypeValue(
                                                   pupil.pupilId,

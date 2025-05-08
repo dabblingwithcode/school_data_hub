@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/data/learning_support_api_service.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:watch_it/watch_it.dart';
@@ -12,18 +14,19 @@ final _notificationService = di<NotificationService>();
 
 final _envManager = di<EnvManager>();
 
+final _serverpodSessionManager = di<ServerpodSessionManager>();
+
 final _log = Logger('LearningSupportManager');
 
 final _learningSupportApiService = LearningSupportApiService();
 
-class LearningSupportManager {
+class LearningSupportManager with ChangeNotifier {
   final _supportCategories = ValueNotifier<List<SupportCategory>>([]);
   ValueListenable<List<SupportCategory>> get supportCategories =>
       _supportCategories;
 
-  final _isRunning = ValueNotifier<bool>(false);
-  ValueListenable<bool> get isRunning => _isRunning;
-
+  // to avoid complicated lookups later on, we create a map
+  // with references for each category to its root category
   Map<int, int> _rootCategoriesMap = {};
 
   LearningSupportManager();
@@ -33,9 +36,47 @@ class LearningSupportManager {
     return this;
   }
 
+  // - Getters
+  //- these functions do not call the API
+  SupportCategory getSupportCategory(int categoryId) {
+    final SupportCategory goalCategory = supportCategories.value
+        .firstWhere((element) => element.categoryId == categoryId);
+    return goalCategory;
+  }
+
+  SupportCategory getRootSupportCategory(int categoryId) {
+    final rootCategoryId = _rootCategoriesMap[categoryId];
+    return getSupportCategory(rootCategoryId!);
+  }
+
+  int getRootSupportCategoryId(int categoryId) {
+    return _rootCategoriesMap[categoryId]!;
+  }
+
+  Color getCategoryColor(int categoryId) {
+    final rootCategory = getRootSupportCategory(categoryId);
+    return LearningSupportHelper.getRootSupportCategoryColor(rootCategory);
+  }
+
+  List<SupportGoal> getGoalsForSupportCategory(int categoryId) {
+    List<SupportGoal> goals = [];
+    // TODO: implement this function
+    // final List<PupilProxy> pupils = locator<PupilManager>().allPupils;
+    // for (PupilProxy pupil in pupils) {
+    //   for (SupportGoal goal in pupil.supportGoals!) {
+    //     if (goal.supportCategoryId == categoryId) {
+    //       goals.add(goal);
+    //     }
+    //   }
+    // }
+    return goals;
+  }
+
   void clearData() {
     _supportCategories.value = [];
   }
+
+  // - Repository calls
 
   Future<void> fetchSupportCategories() async {
     final List<SupportCategory> supportCategories =
@@ -57,41 +98,23 @@ class LearningSupportManager {
     return;
   }
 
-  //- this function does not call the API
-  List<SupportGoal> getGoalsForSupportCategory(int categoryId) {
-    List<SupportGoal> goals = [];
-    // TODO: implement this function
-    // final List<PupilProxy> pupils = locator<PupilManager>().allPupils;
-    // for (PupilProxy pupil in pupils) {
-    //   for (SupportGoal goal in pupil.supportGoals!) {
-    //     if (goal.supportCategoryId == categoryId) {
-    //       goals.add(goal);
-    //     }
-    //   }
-    // }
-    return goals;
+  Future<void> postSupportCategoryStatus(
+    int pupilId,
+    int supportCategoryId,
+    int status,
+    String comment,
+  ) async {
+    final supportCategoryStatus = await ClientHelper.apiCall(
+      call: () => _learningSupportApiService.postSupportCategoryStatus(
+        pupilId: pupilId,
+        supportCategoryId: supportCategoryId,
+        status: status,
+        comment: comment,
+        createdBy: _serverpodSessionManager.userName!,
+      ),
+    );
+    return;
   }
-
-  // Future<void> postSupportCategoryStatus(
-  //   PupilProxy pupil,
-  //   int goalCategoryId,
-  //   String state,
-  //   String comment,
-  // ) async {
-  //   final PupilData responsePupil =
-  //       await _learningSupportApiService.postSupportCategoryStatus(
-  //           pupilInternalId: pupil.internalId,
-  //           goalCategoryId: goalCategoryId,
-  //           state: state,
-  //           comment: comment);
-
-  //   locator<PupilManager>().updatePupilProxyWithPupilData(responsePupil);
-
-  //   _notificationService.showSnackBar(
-  //       NotificationType.success, 'Status hinzugefügt');
-
-  //   return;
-  //}
 
   // Future<void> updateSupportCategoryStatusProperty({
   //   required PupilProxy pupil,
@@ -155,25 +178,4 @@ class LearningSupportManager {
 
   //   return;
   // }
-
-  //- these functions do not call the API
-  SupportCategory getSupportCategory(int categoryId) {
-    final SupportCategory goalCategory = supportCategories.value
-        .firstWhere((element) => element.categoryId == categoryId);
-    return goalCategory;
-  }
-
-  SupportCategory getRootSupportCategory(int categoryId) {
-    final rootCategoryId = _rootCategoriesMap[categoryId];
-    return getSupportCategory(rootCategoryId!);
-  }
-
-  int getRootSupportCategoryId(int categoryId) {
-    return _rootCategoriesMap[categoryId]!;
-  }
-
-  Color getCategoryColor(int categoryId) {
-    final rootCategory = getRootSupportCategory(categoryId);
-    return LearningSupportHelper.getRootSupportCategoryColor(rootCategory);
-  }
 }
