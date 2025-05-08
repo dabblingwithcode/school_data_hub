@@ -31,7 +31,7 @@ class PupilFilterManager {
 
   PupilFilterManager();
 
-  resetFilters() {
+  void resetFilters() {
     _pupilFilterState.value = {...initialPupilFilterValues};
 
     //TODO: fix this

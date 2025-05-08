@@ -128,6 +128,11 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
             .value
             .values
             .any((x) => x == true) ||
+        di<LearningSupportFilterManager>()
+            .supportAreaFilterState
+            .value
+            .values
+            .any((x) => x == true) ||
         di<FiltersStateManager>().getFilterState(FilterState.attendance);
 
     // If no filters are active, just sort
@@ -201,6 +206,8 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
         }
       }
 
+      // schoolday event filters
+
       if (di<FiltersStateManager>()
           .getFilterState(FilterState.schooldayEvent)) {
         if (!di<SchooldayEventFilterManager>()
@@ -212,7 +219,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
         }
       }
 
-      // OGS filters
+      // after school filters
 
       if (di<PupilFilterManager>().pupilFilterState.value[PupilFilter.ogs]! &&
               pupil.afterSchoolCare == null ||
@@ -226,20 +233,19 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
 
       // support level filters
 
-      //- TODO: Uncomment when implemented
-      // if (di<LearningSupportFilterManager>().supportLevelFiltersActive) {
-      //   if (!di<LearningSupportFilterManager>().supportLevelFilters(pupil)) {
-      //     filtersOn = true;
-      //     continue;
-      //   }
-      // }
+      if (di<LearningSupportFilterManager>().supportLevelFiltersActive) {
+        if (!di<LearningSupportFilterManager>().supportLevelFilters(pupil)) {
+          filtersOn = true;
+          continue;
+        }
+      }
 
-      // if (di<LearningSupportFilterManager>().supportAreaFiltersActive) {
-      //   if (!di<LearningSupportFilterManager>().supportAreaFilters(pupil)) {
-      //     filtersOn = true;
-      //     continue;
-      //   }
-      // }
+      if (di<LearningSupportFilterManager>().supportAreaFiltersActive) {
+        if (!di<LearningSupportFilterManager>().supportAreaFilters(pupil)) {
+          filtersOn = true;
+          continue;
+        }
+      }
 
       // language support filters
 
@@ -274,57 +280,54 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
   @override
   void sortPupils() {
     PupilSortMode sortMode = _sortMode.value;
-    List<PupilProxy> thisFilteredPupils = _filteredPupils.value;
+    List<PupilProxy> filteredPupils = _filteredPupils.value;
     //TODO: Uncomment when implemented
     switch (sortMode) {
       case PupilSortMode.sortByName:
-        thisFilteredPupils.sort((a, b) => a.firstName.compareTo(b.firstName));
+        filteredPupils.sort((a, b) => a.firstName.compareTo(b.firstName));
 
       case PupilSortMode.sortByCredit:
-        thisFilteredPupils.sort((b, a) => a.credit.compareTo(b.credit));
+        filteredPupils.sort((b, a) => a.credit.compareTo(b.credit));
 
       case PupilSortMode.sortByCreditEarned:
-        thisFilteredPupils
-            .sort((b, a) => a.creditEarned.compareTo(b.creditEarned));
+        filteredPupils.sort((b, a) => a.creditEarned.compareTo(b.creditEarned));
 
       case PupilSortMode.sortBySchooldayEvents:
-        thisFilteredPupils.sort((a, b) =>
-            SchoolDayEventHelper.schooldayEventSum(b)
-                .compareTo(SchoolDayEventHelper.schooldayEventSum(a)));
+        filteredPupils.sort((a, b) => SchoolDayEventHelper.schooldayEventSum(b)
+            .compareTo(SchoolDayEventHelper.schooldayEventSum(a)));
 
       case PupilSortMode.sortByLastSchooldayEvent:
-        thisFilteredPupils.sort((a, b) =>
+        filteredPupils.sort((a, b) =>
             SchoolDayEventHelper.getPupilLastSchooldayEventDate(b).compareTo(
                 SchoolDayEventHelper.getPupilLastSchooldayEventDate(a)));
 
       case PupilSortMode.sortByLastNonProcessedSchooldayEvent:
-        thisFilteredPupils.sort(
+        filteredPupils.sort(
             SchoolDayEventHelper.comparePupilsByLastNonProcessedSchooldayEvent);
 
       case PupilSortMode.sortByMissedUnexcused:
-        thisFilteredPupils.sort((a, b) =>
+        filteredPupils.sort((a, b) =>
             AttendanceHelper.missedclassUnexcusedSum(b)
                 .compareTo(AttendanceHelper.missedclassUnexcusedSum(a)));
 
       case PupilSortMode.sortByMissedExcused:
-        thisFilteredPupils.sort((a, b) =>
-            AttendanceHelper.missedclassExcusedSum(b)
-                .compareTo(AttendanceHelper.missedclassExcusedSum(a)));
+        filteredPupils.sort((a, b) => AttendanceHelper.missedclassExcusedSum(b)
+            .compareTo(AttendanceHelper.missedclassExcusedSum(a)));
 
       case PupilSortMode.sortByLate:
-        thisFilteredPupils.sort((a, b) => AttendanceHelper.lateUnexcusedSum(b)
+        filteredPupils.sort((a, b) => AttendanceHelper.lateUnexcusedSum(b)
             .compareTo(AttendanceHelper.lateUnexcusedSum(a)));
 
       case PupilSortMode.sortByContacted:
-        thisFilteredPupils.sort((a, b) => AttendanceHelper.contactedSum(b)
+        filteredPupils.sort((a, b) => AttendanceHelper.contactedSum(b)
             .compareTo(AttendanceHelper.contactedSum(a)));
 
       case PupilSortMode.sortByGoneHome:
-        thisFilteredPupils.sort((a, b) => AttendanceHelper.goneHomeSum(b)
+        filteredPupils.sort((a, b) => AttendanceHelper.goneHomeSum(b)
             .compareTo(AttendanceHelper.goneHomeSum(a)));
     }
-    _filteredPupils.value = thisFilteredPupils;
-    _filteredPupilIds.value = thisFilteredPupils.map((e) => e.pupilId).toList();
+    _filteredPupils.value = filteredPupils;
+    _filteredPupilIds.value = filteredPupils.map((e) => e.pupilId).toList();
     notifyListeners();
   }
 
