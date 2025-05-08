@@ -49,7 +49,7 @@ class PupilManager extends ChangeNotifier {
     return _pupilIdPupilsMap[pupilId];
   }
 
-  List<PupilProxy> pupilsFromPupilIds(List<int> pupilIds) {
+  List<PupilProxy> getPupilsFromPupilIds(List<int> pupilIds) {
     List<PupilProxy> pupilsfromPupilIds = [];
 
     for (int pupilId in pupilIds) {
@@ -63,11 +63,11 @@ class PupilManager extends ChangeNotifier {
     return pupilsfromPupilIds;
   }
 
-  List<int> internalIdsFromPupils(List<PupilProxy> pupils) {
+  List<int> getInternalIdsFromPupils(List<PupilProxy> pupils) {
     return pupils.map((pupil) => pupil.internalId).toList();
   }
 
-  List<int> pupilIdsFromPupils(List<PupilProxy> pupils) {
+  List<int> getPupilIdsFromPupils(List<PupilProxy> pupils) {
     return pupils.map((pupil) => pupil.pupilId).toList();
   }
 
@@ -78,7 +78,7 @@ class PupilManager extends ChangeNotifier {
     return allPupilsMap.values.toList();
   }
 
-  List<PupilProxy> siblings(PupilProxy pupil) {
+  List<PupilProxy> getSiblings(PupilProxy pupil) {
     if (pupil.family == null) {
       return [];
     }
@@ -97,7 +97,7 @@ class PupilManager extends ChangeNotifier {
     return pupilSiblings;
   }
 
-  List<PupilProxy> pupilsWithBirthdaySinceDate(DateTime date) {
+  List<PupilProxy> getPupilsWithBirthdaySinceDate(DateTime date) {
     Map<int, PupilProxy> allPupils = Map<int, PupilProxy>.of(_pupilIdPupilsMap);
 
     final DateTime now = DateTime.now().toUtc();
@@ -145,7 +145,7 @@ class PupilManager extends ChangeNotifier {
   }
 
   Future<void> updatePupilList(List<PupilProxy> pupils) async {
-    await fetchPupilsByInternalId(pupils.map((e) => e.internalId).toList());
+    await fetchPupilsByInternalId(pupils.map((e) => e.pupilId).toList());
   }
 
   Future<void> updatePupilData(int pupilId) async {
@@ -338,7 +338,7 @@ class PupilManager extends ChangeNotifier {
   Future<void> updateTutorInfo(
       {required int pupilId, required TutorInfo? tutorInfo}) async {
     // check if the pupil is a sibling and handle them if true
-    final pupilSiblings = siblings(getPupilByPupilId(pupilId)!);
+    final pupilSiblings = getSiblings(getPupilByPupilId(pupilId)!);
     if (pupilSiblings.isNotEmpty) {
       // create list with ids of all pupils with the same family value
       final List<int> siblingIds = pupilSiblings.map((p) => p.pupilId).toList();

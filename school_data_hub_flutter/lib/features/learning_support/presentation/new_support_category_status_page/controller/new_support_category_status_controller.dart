@@ -36,14 +36,14 @@ class NewSupportCategoryStatusController
   final TextEditingController strategiesTextField2Controller =
       TextEditingController();
   int? goalCategoryId;
-  String categoryStatusValue = 'white';
+  int categoryStatusValue = 1;
   void setGoalCategoryId(int id) {
     setState(() {
       goalCategoryId = id;
     });
   }
 
-  void setCategoryStatusValue(String value) {
+  void setCategoryStatusValue(int value) {
     setState(() {
       categoryStatusValue = value;
     });

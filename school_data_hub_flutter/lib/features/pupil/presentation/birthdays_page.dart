@@ -16,7 +16,7 @@ class BirthdaysView extends StatelessWidget {
   Widget build(BuildContext context) {
     final Set<DateTime> seenBirthdays = {};
     final List<PupilProxy> pupils =
-        di<PupilManager>().pupilsWithBirthdaySinceDate(selectedDate);
+        di<PupilManager>().getPupilsWithBirthdaySinceDate(selectedDate);
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,

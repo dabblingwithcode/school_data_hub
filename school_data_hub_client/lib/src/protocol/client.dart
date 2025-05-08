@@ -482,16 +482,16 @@ class EndpointSupportCategory extends _i1.EndpointRef {
         {'category': category},
       );
 
-  _i2.Future<_i17.SupportCategoryStatus> postCategoryStatus(
+  _i2.Future<_i5.PupilData> postSupportCategoryStatus(
     int pupilId,
     int supportCategoryId,
     int status,
     String comment,
     String createdBy,
   ) =>
-      caller.callServerEndpoint<_i17.SupportCategoryStatus>(
+      caller.callServerEndpoint<_i5.PupilData>(
         'supportCategory',
-        'postCategoryStatus',
+        'postSupportCategoryStatus',
         {
           'pupilId': pupilId,
           'supportCategoryId': supportCategoryId,
@@ -500,6 +500,22 @@ class EndpointSupportCategory extends _i1.EndpointRef {
           'createdBy': createdBy,
         },
       );
+
+  _i2.Future<List<_i17.SupportCategoryStatus>> fetchSupportCategoryStatus(
+          int pupilId) =>
+      caller.callServerEndpoint<List<_i17.SupportCategoryStatus>>(
+        'supportCategory',
+        'fetchSupportCategoryStatus',
+        {'pupilId': pupilId},
+      );
+
+  _i2.Future<List<_i17.SupportCategoryStatus>>
+      fetchSupportCategoryStatusFromPupil(int pupilId) =>
+          caller.callServerEndpoint<List<_i17.SupportCategoryStatus>>(
+            'supportCategory',
+            'fetchSupportCategoryStatusFromPupil',
+            {'pupilId': pupilId},
+          );
 
   _i2.Future<_i17.SupportCategoryStatus> updateCategoryStatus(
     int pupilId,

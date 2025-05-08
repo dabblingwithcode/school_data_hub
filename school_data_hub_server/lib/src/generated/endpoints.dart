@@ -974,8 +974,8 @@ class Endpoints extends _i1.EndpointDispatch {
             params['category'],
           ),
         ),
-        'postCategoryStatus': _i1.MethodConnector(
-          name: 'postCategoryStatus',
+        'postSupportCategoryStatus': _i1.MethodConnector(
+          name: 'postSupportCategoryStatus',
           params: {
             'pupilId': _i1.ParameterDescription(
               name: 'pupilId',
@@ -1015,6 +1015,44 @@ class Endpoints extends _i1.EndpointDispatch {
             params['status'],
             params['comment'],
             params['createdBy'],
+          ),
+        ),
+        'fetchSupportCategoryStatus': _i1.MethodConnector(
+          name: 'fetchSupportCategoryStatus',
+          params: {
+            'pupilId': _i1.ParameterDescription(
+              name: 'pupilId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['supportCategory'] as _i9.SupportCategoryEndpoint)
+                  .fetchSupportCategoryStatus(
+            session,
+            params['pupilId'],
+          ),
+        ),
+        'fetchSupportCategoryStatusFromPupil': _i1.MethodConnector(
+          name: 'fetchSupportCategoryStatusFromPupil',
+          params: {
+            'pupilId': _i1.ParameterDescription(
+              name: 'pupilId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['supportCategory'] as _i9.SupportCategoryEndpoint)
+                  .fetchSupportCategoryStatusFromPupil(
+            session,
+            params['pupilId'],
           ),
         ),
         'updateCategoryStatus': _i1.MethodConnector(

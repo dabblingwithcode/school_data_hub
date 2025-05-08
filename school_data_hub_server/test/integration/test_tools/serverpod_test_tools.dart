@@ -1429,7 +1429,7 @@ class _SupportCategoryEndpoint {
     });
   }
 
-  _i3.Future<_i18.SupportCategoryStatus> postCategoryStatus(
+  _i3.Future<_i6.PupilData> postSupportCategoryStatus(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
     int supportCategoryId,
@@ -1441,13 +1441,13 @@ class _SupportCategoryEndpoint {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
         endpoint: 'supportCategory',
-        method: 'postCategoryStatus',
+        method: 'postSupportCategoryStatus',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'supportCategory',
-          methodName: 'postCategoryStatus',
+          methodName: 'postSupportCategoryStatus',
           parameters: _i1.testObjectToJson({
             'pupilId': pupilId,
             'supportCategoryId': supportCategoryId,
@@ -1460,7 +1460,66 @@ class _SupportCategoryEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i18.SupportCategoryStatus>);
+        ) as _i3.Future<_i6.PupilData>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<List<_i18.SupportCategoryStatus>> fetchSupportCategoryStatus(
+    _i1.TestSessionBuilder sessionBuilder,
+    int pupilId,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'supportCategory',
+        method: 'fetchSupportCategoryStatus',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'supportCategory',
+          methodName: 'fetchSupportCategoryStatus',
+          parameters: _i1.testObjectToJson({'pupilId': pupilId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<List<_i18.SupportCategoryStatus>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<List<_i18.SupportCategoryStatus>>
+      fetchSupportCategoryStatusFromPupil(
+    _i1.TestSessionBuilder sessionBuilder,
+    int pupilId,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'supportCategory',
+        method: 'fetchSupportCategoryStatusFromPupil',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'supportCategory',
+          methodName: 'fetchSupportCategoryStatusFromPupil',
+          parameters: _i1.testObjectToJson({'pupilId': pupilId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<List<_i18.SupportCategoryStatus>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

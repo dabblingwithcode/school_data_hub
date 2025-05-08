@@ -19,14 +19,14 @@ class LearningSupportApiService {
 
   //- STATUSES ---------------------------------------------------------
 
-  Future<SupportCategoryStatus> postSupportCategoryStatus(
+  Future<PupilData> postSupportCategoryStatus(
       {required int pupilId,
       required int supportCategoryId,
       required int status,
       required String comment,
       required String createdBy}) async {
     final response = await ClientHelper.apiCall(
-      call: () => _client.supportCategory.postCategoryStatus(
+      call: () => _client.supportCategory.postSupportCategoryStatus(
           pupilId, supportCategoryId, status, comment, createdBy),
       errorMessage: 'Fehler beim Posten des Status',
     );

@@ -8,6 +8,7 @@ import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/data/learning_support_api_service.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _notificationService = di<NotificationService>();
@@ -19,6 +20,8 @@ final _serverpodSessionManager = di<ServerpodSessionManager>();
 final _log = Logger('LearningSupportManager');
 
 final _learningSupportApiService = LearningSupportApiService();
+
+final _pupilManager = di<PupilManager>();
 
 class LearningSupportManager with ChangeNotifier {
   final _supportCategories = ValueNotifier<List<SupportCategory>>([]);
@@ -98,13 +101,13 @@ class LearningSupportManager with ChangeNotifier {
     return;
   }
 
-  Future<void> postSupportCategoryStatus(
-    int pupilId,
-    int supportCategoryId,
-    int status,
-    String comment,
-  ) async {
-    final supportCategoryStatus = await ClientHelper.apiCall(
+  Future<void> postSupportCategoryStatus({
+    required int pupilId,
+    required int supportCategoryId,
+    required int status,
+    required String comment,
+  }) async {
+    final updatedPupil = await ClientHelper.apiCall(
       call: () => _learningSupportApiService.postSupportCategoryStatus(
         pupilId: pupilId,
         supportCategoryId: supportCategoryId,
@@ -113,6 +116,7 @@ class LearningSupportManager with ChangeNotifier {
         createdBy: _serverpodSessionManager.userName!,
       ),
     );
+    _pupilManager.updatePupilProxyWithPupilData(updatedPupil);
     return;
   }
 

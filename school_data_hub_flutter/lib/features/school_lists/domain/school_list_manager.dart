@@ -77,7 +77,7 @@ class SchoolListManager with ChangeNotifier {
     final pupilIdsInList =
         pupilEntries.values.map((e) => e.pupilEntry.pupilId).toSet().toList();
 
-    return _pupilManager.pupilsFromPupilIds(pupilIdsInList);
+    return _pupilManager.getPupilsFromPupilIds(pupilIdsInList);
   }
 
   //- Update collections

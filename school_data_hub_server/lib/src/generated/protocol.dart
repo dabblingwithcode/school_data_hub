@@ -96,14 +96,16 @@ import 'package:school_data_hub_server/src/generated/learning/competence.dart'
     as _i74;
 import 'package:school_data_hub_server/src/generated/learning_support/support_category.dart'
     as _i75;
-import 'package:school_data_hub_server/src/generated/school_list/school_list.dart'
+import 'package:school_data_hub_server/src/generated/learning_support/support_category_status.dart'
     as _i76;
-import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
+import 'package:school_data_hub_server/src/generated/school_list/school_list.dart'
     as _i77;
-import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
     as _i78;
-import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event.dart'
+import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
     as _i79;
+import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event.dart'
+    as _i80;
 export 'authorization/authorization.dart';
 export 'authorization/pupil_authorization.dart';
 export 'book/book.dart';
@@ -4840,6 +4842,11 @@ class Protocol extends _i1.SerializationManagerServer {
           .map((e) => deserialize<_i75.SupportCategory>(e))
           .toList() as T;
     }
+    if (t == List<_i76.SupportCategoryStatus>) {
+      return (data as List)
+          .map((e) => deserialize<_i76.SupportCategoryStatus>(e))
+          .toList() as T;
+    }
     if (t == List<_i69.PupilData>) {
       return (data as List).map((e) => deserialize<_i69.PupilData>(e)).toList()
           as T;
@@ -4847,25 +4854,25 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == Set<int>) {
       return (data as List).map((e) => deserialize<int>(e)).toSet() as T;
     }
-    if (t == List<_i76.SchoolList>) {
-      return (data as List).map((e) => deserialize<_i76.SchoolList>(e)).toList()
+    if (t == List<_i77.SchoolList>) {
+      return (data as List).map((e) => deserialize<_i77.SchoolList>(e)).toList()
           as T;
     }
-    if (t == List<_i77.SchoolSemester>) {
+    if (t == List<_i78.SchoolSemester>) {
       return (data as List)
-          .map((e) => deserialize<_i77.SchoolSemester>(e))
+          .map((e) => deserialize<_i78.SchoolSemester>(e))
           .toList() as T;
     }
-    if (t == List<_i78.Schoolday>) {
-      return (data as List).map((e) => deserialize<_i78.Schoolday>(e)).toList()
+    if (t == List<_i79.Schoolday>) {
+      return (data as List).map((e) => deserialize<_i79.Schoolday>(e)).toList()
           as T;
     }
     if (t == List<DateTime>) {
       return (data as List).map((e) => deserialize<DateTime>(e)).toList() as T;
     }
-    if (t == List<_i79.SchooldayEvent>) {
+    if (t == List<_i80.SchooldayEvent>) {
       return (data as List)
-          .map((e) => deserialize<_i79.SchooldayEvent>(e))
+          .map((e) => deserialize<_i80.SchooldayEvent>(e))
           .toList() as T;
     }
     if (t == _i1.getType<({int testint, String testString})?>()) {

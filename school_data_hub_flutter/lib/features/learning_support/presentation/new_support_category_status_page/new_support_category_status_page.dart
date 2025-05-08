@@ -207,7 +207,7 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.only(right: 5.0),
                                 child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<String>(
+                                  child: DropdownButton<int>(
                                     itemHeight: 70,
                                     icon: const Visibility(
                                         visible: false,
@@ -273,15 +273,12 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                               'Neues Förderziel') {
                             controller.postCategoryGoal();
                           } else {
-                            // TODO: uncomment when ready
-                            //  _learningSupportManager
-                            //       .postSupportCategoryStatus(
-                            //           _pupilManager.getPupilByPupilId(
-                            //               controller.widget.pupilId)!,
-                            //           controller.goalCategoryId!,
-                            //           controller.categoryStatusValue,
-                            //           controller
-                            //               .strategiesTextField2Controller.text);
+                            _learningSupportManager.postSupportCategoryStatus(
+                                pupilId: controller.widget.pupilId,
+                                supportCategoryId: controller.goalCategoryId!,
+                                status: controller.categoryStatusValue,
+                                comment: controller
+                                    .strategiesTextField2Controller.text);
                           }
                           Navigator.pop(context);
                         },

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:school_data_hub_server/src/generated/protocol.dart';
+import 'package:school_data_hub_server/src/utils/schemas/pupil_schemas.dart';
 import 'package:serverpod/serverpod.dart';
 
 class SupportCategoryEndpoint extends Endpoint {
@@ -50,7 +51,7 @@ class SupportCategoryEndpoint extends Endpoint {
     return true;
   }
 
-  Future<SupportCategoryStatus> postSupportCategoryStatus(
+  Future<PupilData> postSupportCategoryStatus(
     Session session,
     int pupilId,
     int supportCategoryId,
@@ -58,6 +59,11 @@ class SupportCategoryEndpoint extends Endpoint {
     String comment,
     String createdBy,
   ) async {
+    final pupil = await PupilData.db.findById(
+      session,
+      pupilId,
+      include: PupilSchemas.allInclude,
+    );
     final newSupportCategoryStatus = SupportCategoryStatus(
       pupilId: pupilId,
       supportCategoryId: supportCategoryId,
@@ -66,9 +72,16 @@ class SupportCategoryEndpoint extends Endpoint {
       createdBy: createdBy,
       createdAt: DateTime.now().toUtc(),
     );
-    final statusInDatabase = await SupportCategoryStatus.db
+    final categoryStatusInDataBase = await SupportCategoryStatus.db
         .insertRow(session, newSupportCategoryStatus);
-    return statusInDatabase;
+    await PupilData.db.attach
+        .supportCategoryStatuses(session, pupil!, [categoryStatusInDataBase]);
+    final updatedPupil = await PupilData.db.findById(
+      session,
+      pupilId,
+      include: PupilSchemas.allInclude,
+    );
+    return updatedPupil!;
   }
 
   Future<List<SupportCategoryStatus>> fetchSupportCategoryStatus(

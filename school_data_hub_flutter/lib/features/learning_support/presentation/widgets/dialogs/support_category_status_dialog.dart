@@ -16,7 +16,7 @@ Future supportCategoryStatusDialog(
   return await showDialog(
       context: parentContext,
       builder: (context) {
-        String categoryStatusValue = 'white';
+        int categoryStatusValue = 1;
         return StatefulBuilder(builder: (statefulContext, setState) {
           return AlertDialog(
             content: Form(
@@ -53,7 +53,7 @@ Future supportCategoryStatusDialog(
                         Padding(
                           padding: const EdgeInsets.only(right: 5.0),
                           child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
+                            child: DropdownButton<int>(
                               icon: const Visibility(
                                   visible: false,
                                   child: Icon(Icons.arrow_downward)),

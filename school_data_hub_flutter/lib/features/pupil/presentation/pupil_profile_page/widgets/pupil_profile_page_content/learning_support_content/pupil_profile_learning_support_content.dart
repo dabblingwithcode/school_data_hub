@@ -45,7 +45,7 @@ class PupilProfileLearningSupportContent extends StatelessWidget {
             IconButton(
               onPressed: () async {
                 informationDialog(context, 'Förderplan ausdrucken ',
-                    'Diese Funktion ist noch nicht verfügbar. Bitte wenden Sie sich an den Administrator.');
+                    'Diese Funktion ist noch nicht verfügbar.');
                 // await generatePdf(pupil.internalId);
               },
               icon: const Icon(Icons.print_rounded),

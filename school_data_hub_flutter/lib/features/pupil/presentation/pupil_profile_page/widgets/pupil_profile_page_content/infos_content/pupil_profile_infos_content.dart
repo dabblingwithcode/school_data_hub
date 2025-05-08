@@ -38,7 +38,7 @@ class PupilProfileInfosContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //  final pupil = watch(passedPupil);
-    List<PupilProxy> pupilSiblings = _pupilManager.siblings(pupil);
+    List<PupilProxy> pupilSiblings = _pupilManager.getSiblings(pupil);
     return Card(
       color: AppColors.pupilProfileCardColor,
       shape: RoundedRectangleBorder(
@@ -279,7 +279,7 @@ class PupilProfileInfosContent extends StatelessWidget {
                           String? pupilSiblingsGroups;
                           if (pupil.family != null) {
                             pupilSiblingsGroups = [
-                              ..._pupilManager.siblings(pupil),
+                              ..._pupilManager.getSiblings(pupil),
                               pupil
                             ].map((e) => e.group).toList().join();
                           }

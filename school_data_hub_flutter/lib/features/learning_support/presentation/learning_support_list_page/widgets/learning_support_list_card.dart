@@ -49,7 +49,7 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Gap(15),
+                    const Gap(10),
                     Row(
                       children: [
                         Expanded(
@@ -98,7 +98,6 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                         ),
                       ],
                     ),
-                    const Gap(5),
                     Row(
                       children: [
                         const Text('ärztl. U.:'),

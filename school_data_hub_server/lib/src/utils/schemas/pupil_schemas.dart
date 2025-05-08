@@ -10,5 +10,6 @@ class PupilSchemas {
     preSchoolMedical: PreSchoolMedical.include(
       preschoolMedicalFiles: HubDocument.includeList(),
     ),
+    supportCategoryStatuses: SupportCategoryStatus.includeList(),
   );
 }

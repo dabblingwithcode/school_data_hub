@@ -38,7 +38,7 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
   @override
   Widget build(BuildContext context) {
     List<PupilProxy> pupilsFromIds =
-        _pupilManager.pupilsFromPupilIds(pupilIds.toList());
+        _pupilManager.getPupilsFromPupilIds(pupilIds.toList());
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,

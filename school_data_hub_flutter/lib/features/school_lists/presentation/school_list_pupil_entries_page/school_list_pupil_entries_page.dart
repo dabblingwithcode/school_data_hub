@@ -94,7 +94,7 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
       ),
       bottomNavigationBar: SchoolListPupilEntriesBottomNavBar(
           listId: schoolList.id!,
-          pupilsInList: _pupilManager.pupilIdsFromPupils(pupilsInList)),
+          pupilsInList: _pupilManager.getPupilIdsFromPupils(pupilsInList)),
     );
   }
 }

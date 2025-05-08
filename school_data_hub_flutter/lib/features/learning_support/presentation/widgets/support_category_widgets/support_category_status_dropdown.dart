@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
-List<DropdownMenuItem<String>> supportCategoryStatusDropdownItems = [
+List<DropdownMenuItem<int>> supportCategoryStatusDropdownItems = [
   DropdownMenuItem(
-    value: 'white',
+    value: 1,
     child: Image.asset('assets/growth_1-4.png'),
   ),
   DropdownMenuItem(
-    value: 'red',
+    value: 2,
     child: Image.asset('assets/growth_2-4.png'),
   ),
   DropdownMenuItem(
-    value: 'yellow',
+    value: 3,
     child: Image.asset('assets/growth_3-4.png'),
   ),
   DropdownMenuItem(
-    value: 'green',
+    value: 4,
     child: Image.asset('assets/growth_4-4.png'),
   ),
 ];
