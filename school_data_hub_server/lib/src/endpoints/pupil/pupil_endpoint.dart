@@ -133,7 +133,7 @@ class PupilEndpoint extends Endpoint {
       nameInPress: false,
       videoOnWebsite: false,
       videoInPress: false,
-      createdAt: DateTime.now(),
+      createdAt: DateTime.now().toUtc(),
       createdBy: createdBy,
     );
 
@@ -142,36 +142,46 @@ class PupilEndpoint extends Endpoint {
       await session.db.transaction((transaction) async {
         await PupilData.db.detachRow
             .publicMediaAuthDocument(session, pupil, transaction: transaction);
-
         await HubDocumentHelper.deleteHubDocumentAndFile(
             session: session, documentId: documentId, transaction: transaction);
-        pupil.publicMediaAuthDocument = null;
-        pupil.publicMediaAuth = publicMediaAuthReset;
       });
-    } else {
-      pupil.publicMediaAuth = publicMediaAuthReset;
-      await PupilData.db.updateRow(session, pupil);
     }
+    final releasedPupil = await PupilData.db.findFirstRow(
+      session,
+      where: (t) => t.id.equals(pupilId),
+      include: PupilData.include(
+        publicMediaAuthDocument: HubDocument.include(),
+      ),
+    );
+    // pupil.publicMediaAuthDocument = null;
+    // pupil.publicMediaAuthDocumentId = null;
+    releasedPupil!.publicMediaAuth = publicMediaAuthReset;
+    await PupilData.db.updateRow(session, releasedPupil);
     final updatedPupil = await PupilData.db
         .findById(session, pupilId, include: PupilSchemas.allInclude);
     return updatedPupil!;
   }
 
   Future<PupilData> deleteSupportLevelHistoryItem(
-      Session session, int internalId, int supportLevelId) async {
-    final pupil = await PupilData.db.findFirstRow(
-      session,
-      where: (t) => t.internalId.equals(internalId),
-    );
+      Session session, int pupilId, int supportLevelId) async {
+    final pupil = await PupilData.db
+        .findById(session, pupilId, include: PupilSchemas.allInclude);
     if (pupil == null) {
       throw Exception('Pupil not found');
     }
-    pupil.supportLevelHistory!
-        .removeWhere((element) => element.id == supportLevelId);
-    pupil.latestSupportLevel = pupil.supportLevelHistory!.last;
+    var supportLevel = await SupportLevel.db.findById(session, supportLevelId);
+    if (supportLevel != null) {
+      await SupportLevel.db.deleteRow(session, supportLevel);
+    }
 
-    final updatedPupil = await PupilData.db.updateRow(session, pupil);
+    //  PupilData.db.updateRow(session, pupil);
 
-    return updatedPupil;
+    // fetch the updated pupil with the support level history
+    final updatedPupilWithHistory = await PupilData.db.findById(
+      session,
+      pupilId,
+      include: PupilSchemas.allInclude,
+    );
+    return updatedPupilWithHistory!;
   }
 }

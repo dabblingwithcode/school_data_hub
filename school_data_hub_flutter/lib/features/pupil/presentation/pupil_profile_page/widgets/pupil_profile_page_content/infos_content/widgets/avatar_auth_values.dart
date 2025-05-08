@@ -33,43 +33,15 @@ class AvatarAuthValues extends WatchingWidget {
       children: [
         const Text('Einwilligung avatar:', style: TextStyle(fontSize: 18.0)),
         const Gap(10),
-        const Icon(
-          Icons.close,
-          color: Colors.red,
-        ),
-        SizedBox(
-          width: 25,
-          height: 25,
-          child: Checkbox(
-            activeColor: Colors.red,
-            value: (avatarAuth != null) ? false : true,
-            onChanged: (newValue) async {
-              // await _pupilManager.patchOnePupilProperty(
-              //     pupilId: pupil.internalId,
-              //     jsonKey: 'avatar_auth',
-              //     value: !newValue!);
-            },
-          ),
-        ),
-        const Gap(10),
-        const Icon(
-          Icons.done,
-          color: Colors.green,
-        ),
-        SizedBox(
-          width: 25,
-          height: 25,
-          child: Checkbox(
-            activeColor: Colors.green,
-            value: (avatarAuth != null) ? true : false,
-            onChanged: (newValue) async {
-              // await _pupilManager.patchOnePupilProperty(
-              //     pupilId: pupil.internalId,
-              //     jsonKey: 'avatar_auth',
-              //     value: newValue);
-            },
-          ),
-        ),
+        avatarAuth == null
+            ? const Icon(
+                Icons.close,
+                color: Colors.red,
+              )
+            : const Icon(
+                Icons.done,
+                color: Colors.green,
+              ),
         const Spacer(),
         InkWell(
           onTap: () async {

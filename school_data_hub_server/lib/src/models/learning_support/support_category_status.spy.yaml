@@ -2,13 +2,11 @@
 class: SupportCategoryStatus
 table: support_category_status
 fields:
-  statusId: String
   status: int
   createdBy: String
   createdAt: DateTime
   comment: String
-  fileUrl: String
-  fileId: String
+  documents: List<HubDocument>?, relation
   pupil: PupilData?, relation
   supportCategory: SupportCategory?, relation
   

@@ -28,9 +28,9 @@ final _matrixPolicyManager = di<MatrixPolicyManager>();
 
 final _serverpodSessionManager = di<ServerpodSessionManager>();
 
-class PupilInfosContent extends StatelessWidget {
+class PupilProfileInfosContent extends StatelessWidget {
   final PupilProxy pupil;
-  const PupilInfosContent({required this.pupil, super.key});
+  const PupilProfileInfosContent({required this.pupil, super.key});
   TextEditingController createController() {
     return TextEditingController();
   }
@@ -38,7 +38,7 @@ class PupilInfosContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //  final pupil = watch(passedPupil);
-    List<PupilProxy> pupilSiblings = _pupilManager.siblings(pupil);
+    List<PupilProxy> pupilSiblings = _pupilManager.getSiblings(pupil);
     return Card(
       color: AppColors.pupilProfileCardColor,
       shape: RoundedRectangleBorder(
@@ -79,7 +79,7 @@ class PupilInfosContent extends StatelessWidget {
                 final String? specialInformation = await longTextFieldDialog(
                   title: 'Besondere Infos',
                   labelText: 'Besondere Infos',
-                  textinField: pupil.specialInformation ?? '',
+                  initialValue: pupil.specialInformation ?? '',
                   parentContext: context,
                 );
                 if (specialInformation == null) return;
@@ -279,7 +279,7 @@ class PupilInfosContent extends StatelessWidget {
                           String? pupilSiblingsGroups;
                           if (pupil.family != null) {
                             pupilSiblingsGroups = [
-                              ..._pupilManager.siblings(pupil),
+                              ..._pupilManager.getSiblings(pupil),
                               pupil
                             ].map((e) => e.group).toList().join();
                           }

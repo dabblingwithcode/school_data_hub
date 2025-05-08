@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
@@ -24,7 +26,9 @@ final _log = Logger('AttendanceManager');
 
 final _attendanceApiService = AttendanceApiService();
 
-class AttendanceManager {
+final _client = di<Client>();
+
+class AttendanceManager with ChangeNotifier {
   final ValueNotifier<List<MissedClass>> _missedClasses = ValueNotifier([]);
 
   ValueListenable<List<MissedClass>> get missedClasses => _missedClasses;
@@ -34,8 +38,6 @@ class AttendanceManager {
   // it is used to observe the missed classes of a pupil in the UI
 
   final Map<int, PupilMissedClassesProxy> _pupilMissedClassesMap = {};
-
-  final Map<DateTime, List<MissedClass>> _schooldayMissedClassesMap = {};
 
   AttendanceManager() {
     init();
@@ -62,12 +64,8 @@ class AttendanceManager {
             date.formatForJson());
   }
 
-  PupilMissedClassesProxy getPupilMissedClassesList(int pupilId) {
+  PupilMissedClassesProxy getPupilMissedClassesProxy(int pupilId) {
     return _pupilMissedClassesMap[pupilId]!;
-  }
-
-  List<MissedClass> getMissedClassesOnASchoolday(DateTime date) {
-    return _schooldayMissedClassesMap[date] ?? [];
   }
 
   // - Handle collections -
@@ -83,44 +81,35 @@ class AttendanceManager {
 
     final pupilId = responseMissedClass.pupilId;
 
-    // 1. Update the main list
+    // 1. Update pupil map
+    final pupilMissedClassProxy = _pupilMissedClassesMap[pupilId]!;
+
+    pupilMissedClassProxy.updateMissedClass(responseMissedClass);
+
+    // 2. Update the main list
     final index = _missedClasses.value.indexWhere((element) =>
         element.schoolday!.schoolday == date && element.pupilId == pupilId);
 
     if (index != -1) {
       final newList = List<MissedClass>.from(_missedClasses.value);
+
       newList[index] = responseMissedClass;
+
       _missedClasses.value = newList;
     } else {
       _missedClasses.value = [..._missedClasses.value, responseMissedClass];
     }
-
-    // 2. Update pupil map
-
-    final missedClassList = _pupilMissedClassesMap[pupilId]!;
-
-    missedClassList.updateMissedClass(responseMissedClass);
-
-    // 3. Update schoolday map
-    final schooldayMissedClassList = _schooldayMissedClassesMap[date];
-    if (schooldayMissedClassList == null) {
-      _schooldayMissedClassesMap[date] = [responseMissedClass];
-    } else {
-      final schooldayMissedClassIndex = schooldayMissedClassList
-          .indexWhere((element) => element.pupilId == pupilId);
-
-      if (schooldayMissedClassIndex != -1) {
-        schooldayMissedClassList.removeAt(schooldayMissedClassIndex);
-        schooldayMissedClassList.add(responseMissedClass);
-        _schooldayMissedClassesMap[date] = schooldayMissedClassList;
-      } else {
-        schooldayMissedClassList.add(responseMissedClass);
-      }
-    }
   }
 
   void removeMissedClassFromCollections(int pupilId, DateTime date) {
-    // 1. Remove from the main list
+    // 1. Remove from pupil map
+
+    final pupilMissedClassesProxy = _pupilMissedClassesMap[pupilId]!;
+
+    pupilMissedClassesProxy.removeMissedClass(pupilId, date);
+
+    // 2. Remove from the main list
+
     final index = _missedClasses.value.indexWhere((element) =>
         element.schoolday!.schoolday == date && element.pupilId == pupilId);
 
@@ -131,24 +120,41 @@ class AttendanceManager {
 
       _missedClasses.value = updatedMissedClasses;
     }
-    // 2. Remove from pupil map
-
-    final missedClassList = _pupilMissedClassesMap[pupilId]!;
-    missedClassList.removeMissedClass(pupilId, date);
-
-    // 3. Remove from schoolday map
-    final schooldayMissedClassList = _schooldayMissedClassesMap[date];
-    if (schooldayMissedClassList != null) {
-      final schooldayMissedClassIndex = schooldayMissedClassList
-          .indexWhere((element) => element.pupilId == pupilId);
-
-      if (schooldayMissedClassIndex != -1) {
-        schooldayMissedClassList.removeAt(schooldayMissedClassIndex);
-        _schooldayMissedClassesMap[date] = schooldayMissedClassList;
-      }
-    }
   }
 
+  //- Stream function
+  StreamSubscription<MissedClassDto> missedClassStreamSubscription() {
+    _log.info('starting missedClassStreamSubscription');
+    return _client.missedClass.streamMyModels().listen(
+      (event) {
+        switch (event.operation) {
+          case 'add':
+            _log.fine('add missedClass ${event.missedClass}');
+            updateMissedClassInCollections(event.missedClass);
+            break;
+          case 'update':
+            _log.fine('update missedClass ${event.missedClass}');
+            updateMissedClassInCollections(event.missedClass);
+            break;
+          case 'delete':
+            _log.fine('delete missedClass ${event.missedClass}');
+            removeMissedClassFromCollections(event.missedClass.pupilId,
+                event.missedClass.schoolday!.schoolday);
+            break;
+        }
+      },
+      onError: (error) {
+        _log.severe('Error in missedClass stream: $error');
+        Future.delayed(
+            const Duration(seconds: 1), missedClassStreamSubscription);
+      },
+      onDone: () {
+        _log.warning('missedClass stream closed - reconnecting...');
+        Future.delayed(
+            const Duration(seconds: 1), missedClassStreamSubscription);
+      },
+    );
+  }
   //- CRUD operantions
 
   void fetchAllPupilMissedClasses() async {

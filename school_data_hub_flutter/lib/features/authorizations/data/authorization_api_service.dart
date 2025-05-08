@@ -76,7 +76,7 @@ class AuthorizationApiService {
     String createdBy,
   ) async {
     final path =
-        await ClientFileUpload.uploadFile(file, ServerStorageFolder.documents);
+        await ClientFileUpload.uploadFile(file, ServerStorageFolder.auths);
     final result = ClientHelper.apiCall(
       call: () => _client.pupilAuthorization.addFileToPupilAuthorization(
         pupilAuthId,

@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_identity.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _pupilIdentityManager = di<PupilIdentityManager>();
@@ -21,13 +23,12 @@ class PupilIdentityHelper {
 
   static Future<void> deletePupilIdentitiesForEnv(
       String secureStorageKey) async {
-    await LegacySecureStorage.delete(secureStorageKey);
+    await ServerpodSecureStorage().remove(secureStorageKey);
     _pupilIdentityManager.clearPupilIdentities();
 
-    // TODO: fix this
-    // di<PupilsFilter>().clearFilteredPupils();
+    di<PupilsFilter>().clearFilteredPupils();
 
-    // di<PupilManager>().clearData();
+    di<PupilManager>().clearData();
   }
 
   //- OBJECT HELPERS

@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:school_data_hub_server/src/endpoints/security/admin_endpoint.dart';
-import 'package:school_data_hub_server/src/endpoints/competence_endpoint.dart';
+import 'package:school_data_hub_server/src/endpoints/admin/admin_endpoint.dart';
+import 'package:school_data_hub_server/src/endpoints/competence/competence_endpoint.dart';
 import 'package:school_data_hub_server/src/endpoints/schoolday_admin_endpoint.dart';
-import 'package:school_data_hub_server/src/endpoints/support_category_endpoint.dart';
+import 'package:school_data_hub_server/src/endpoints/learning_support/support_category_endpoint.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 
@@ -62,13 +62,11 @@ class PopulateTestEnvironmentFutureCall extends FutureCall {
             level: LogLevel.info);
         // Path to the JSON file containing support categories
         final pupilsFilePath = '../test_data/fake_pupils_export.txt';
-        final pupilsFile = File(pupilsFilePath);
-        if (!pupilsFile.existsSync()) {
-          throw Exception('File not found: $pupilsFile');
-        }
+
         // Call the endpoint to import support categories from the JSON file
         final adminEndpoint = AdminEndpoint();
-        await adminEndpoint.updateBackendPupilDataState(session, pupilsFile);
+        await adminEndpoint.updateBackendPupilDataState(
+            session, pupilsFilePath);
         session.log('Pupils populated successfully!', level: LogLevel.info);
       }
       //- School semesters

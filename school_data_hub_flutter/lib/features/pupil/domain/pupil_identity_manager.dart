@@ -9,6 +9,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
+import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
@@ -22,7 +23,7 @@ import 'package:watch_it/watch_it.dart';
 
 final _envManager = di<EnvManager>();
 final _notificationService = di<NotificationService>();
-final _mainMenuBottomNavManager = di<MainMenuBottomNavManager>();
+final _mainMenuBottomNavManager = di<BottomNavManager>();
 
 class PupilIdentityManager {
   final log = Logger('PupilIdentityManager');
@@ -201,8 +202,18 @@ class PupilIdentityManager {
     final textFile = File('temp.txt')
       ..writeAsStringSync(pupilListTxtFileContentForBackendUpdate);
 
+    final filePath = await ClientFileUpload.uploadFile(
+      textFile,
+      ServerStorageFolder.temp,
+    );
+    if (filePath.success == false) {
+      _notificationService.showSnackBar(
+          NotificationType.error, 'Die Datei konnte nicht hochgeladen werden!');
+      return;
+    }
     final List<PupilData> updatedPupilDataRepository =
-        await PupilDataApiService().updateBackendPupilsDatabase(file: textFile);
+        await PupilDataApiService()
+            .updateBackendPupilsDatabase(filePath: filePath.path!);
     for (PupilData pupil in updatedPupilDataRepository) {
       di<PupilManager>().updatePupilProxyWithPupilData(pupil);
     }

@@ -22,21 +22,26 @@ PupilData generatePupilfromExternalAdminConsoleData(String importedLine) {
       swimmer: null);
 }
 
+//TODO: This should be written to the database
+
 final _defaultPreSchoolMedical = PreSchoolMedical(
-  preschoolMedicalStatus: null,
+  preschoolMedicalStatus: PreSchoolMedicalStatus.notAvailable,
   preschoolMedicalFiles: null,
+  createdBy: 'ADM',
+  createdAt: DateTime.now().toUtc(),
 );
 
 final _publicMediaAuth = PublicMediaAuth(
-    groupPicturesOnWebsite: false,
-    groupPicturesInPress: false,
-    portraitPicturesOnWebsite: false,
-    portraitPicturesInPress: false,
-    nameOnWebsite: false,
-    nameInPress: false,
-    videoOnWebsite: false,
-    videoInPress: false,
-    createdBy: 'SYS',
-    createdAt: DateTime.now());
+  groupPicturesOnWebsite: false,
+  groupPicturesInPress: false,
+  portraitPicturesOnWebsite: false,
+  portraitPicturesInPress: false,
+  nameOnWebsite: false,
+  nameInPress: false,
+  videoOnWebsite: false,
+  videoInPress: false,
+  createdBy: 'ADM',
+  createdAt: DateTime.now().toUtc(),
+);
 
 final _afterSchoolCare = AfterSchoolCare();

@@ -6,7 +6,7 @@ final TextEditingController _textEditingController = TextEditingController();
 
 // based on https://mobikul.com/creating-stateful-dialog-form-in-flutter/
 
-Future<int> minutesLateDialog(BuildContext context) async {
+Future<int?> minutesLateDialog(BuildContext context) async {
   return await showDialog(
       context: context,
       builder: (context) {

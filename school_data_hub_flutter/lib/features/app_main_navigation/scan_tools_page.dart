@@ -64,7 +64,7 @@ class ScanToolsPage extends WatchingWidget {
             child: Column(
               children: [
                 const Spacer(),
-                Platform.isWindows && _sessionManager.isAdmin
+                (Platform.isWindows || Platform.isMacOS) && _sessionManager.isAdmin
                     ? ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
@@ -92,7 +92,7 @@ class ScanToolsPage extends WatchingWidget {
                         ),
                       )
                     : const SizedBox.shrink(),
-                if (Platform.isWindows) ...<Widget>[
+                if (Platform.isWindows || Platform.isMacOS) ...<Widget>[
                   const Gap(20),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(

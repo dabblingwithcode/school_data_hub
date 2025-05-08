@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
 
-class MainMenuBottomNavManager {
+class BottomNavManager {
   final _bottomNavState = ValueNotifier<int>(0);
   ValueListenable<int> get bottomNavState => _bottomNavState;
 
   final _pupilProfileNavState = ValueNotifier<int>(0);
   ValueListenable<int> get pupilProfileNavState => _pupilProfileNavState;
 
-  MainMenuBottomNavManager() {
+  BottomNavManager() {
     _bottomNavState.value = 0;
   }
 

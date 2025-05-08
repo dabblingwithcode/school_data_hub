@@ -22,12 +22,20 @@ abstract class PreSchoolMedical
     this.id,
     this.preschoolMedicalStatus,
     this.preschoolMedicalFiles,
+    required this.createdBy,
+    required this.createdAt,
+    this.updatedBy,
+    this.updatedAt,
   });
 
   factory PreSchoolMedical({
     int? id,
     _i2.PreSchoolMedicalStatus? preschoolMedicalStatus,
     List<_i3.HubDocument>? preschoolMedicalFiles,
+    required String createdBy,
+    required DateTime createdAt,
+    String? updatedBy,
+    DateTime? updatedAt,
   }) = _PreSchoolMedicalImpl;
 
   factory PreSchoolMedical.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -42,6 +50,13 @@ abstract class PreSchoolMedical
               as List?)
           ?.map((e) => _i3.HubDocument.fromJson((e as Map<String, dynamic>)))
           .toList(),
+      createdBy: jsonSerialization['createdBy'] as String,
+      createdAt:
+          _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
+      updatedBy: jsonSerialization['updatedBy'] as String?,
+      updatedAt: jsonSerialization['updatedAt'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['updatedAt']),
     );
   }
 
@@ -56,6 +71,14 @@ abstract class PreSchoolMedical
 
   List<_i3.HubDocument>? preschoolMedicalFiles;
 
+  String createdBy;
+
+  DateTime createdAt;
+
+  String? updatedBy;
+
+  DateTime? updatedAt;
+
   @override
   _i1.Table<int?> get table => t;
 
@@ -66,6 +89,10 @@ abstract class PreSchoolMedical
     int? id,
     _i2.PreSchoolMedicalStatus? preschoolMedicalStatus,
     List<_i3.HubDocument>? preschoolMedicalFiles,
+    String? createdBy,
+    DateTime? createdAt,
+    String? updatedBy,
+    DateTime? updatedAt,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -76,6 +103,10 @@ abstract class PreSchoolMedical
       if (preschoolMedicalFiles != null)
         'preschoolMedicalFiles':
             preschoolMedicalFiles?.toJson(valueToJson: (v) => v.toJson()),
+      'createdBy': createdBy,
+      'createdAt': createdAt.toJson(),
+      if (updatedBy != null) 'updatedBy': updatedBy,
+      if (updatedAt != null) 'updatedAt': updatedAt?.toJson(),
     };
   }
 
@@ -88,6 +119,10 @@ abstract class PreSchoolMedical
       if (preschoolMedicalFiles != null)
         'preschoolMedicalFiles': preschoolMedicalFiles?.toJson(
             valueToJson: (v) => v.toJsonForProtocol()),
+      'createdBy': createdBy,
+      'createdAt': createdAt.toJson(),
+      if (updatedBy != null) 'updatedBy': updatedBy,
+      if (updatedAt != null) 'updatedAt': updatedAt?.toJson(),
     };
   }
 
@@ -130,10 +165,18 @@ class _PreSchoolMedicalImpl extends PreSchoolMedical {
     int? id,
     _i2.PreSchoolMedicalStatus? preschoolMedicalStatus,
     List<_i3.HubDocument>? preschoolMedicalFiles,
+    required String createdBy,
+    required DateTime createdAt,
+    String? updatedBy,
+    DateTime? updatedAt,
   }) : super._(
           id: id,
           preschoolMedicalStatus: preschoolMedicalStatus,
           preschoolMedicalFiles: preschoolMedicalFiles,
+          createdBy: createdBy,
+          createdAt: createdAt,
+          updatedBy: updatedBy,
+          updatedAt: updatedAt,
         );
 
   /// Returns a shallow copy of this [PreSchoolMedical]
@@ -144,6 +187,10 @@ class _PreSchoolMedicalImpl extends PreSchoolMedical {
     Object? id = _Undefined,
     Object? preschoolMedicalStatus = _Undefined,
     Object? preschoolMedicalFiles = _Undefined,
+    String? createdBy,
+    DateTime? createdAt,
+    Object? updatedBy = _Undefined,
+    Object? updatedAt = _Undefined,
   }) {
     return PreSchoolMedical(
       id: id is int? ? id : this.id,
@@ -154,6 +201,10 @@ class _PreSchoolMedicalImpl extends PreSchoolMedical {
       preschoolMedicalFiles: preschoolMedicalFiles is List<_i3.HubDocument>?
           ? preschoolMedicalFiles
           : this.preschoolMedicalFiles?.map((e0) => e0.copyWith()).toList(),
+      createdBy: createdBy ?? this.createdBy,
+      createdAt: createdAt ?? this.createdAt,
+      updatedBy: updatedBy is String? ? updatedBy : this.updatedBy,
+      updatedAt: updatedAt is DateTime? ? updatedAt : this.updatedAt,
     );
   }
 }
@@ -166,6 +217,22 @@ class PreSchoolMedicalTable extends _i1.Table<int?> {
       this,
       _i1.EnumSerialization.byName,
     );
+    createdBy = _i1.ColumnString(
+      'createdBy',
+      this,
+    );
+    createdAt = _i1.ColumnDateTime(
+      'createdAt',
+      this,
+    );
+    updatedBy = _i1.ColumnString(
+      'updatedBy',
+      this,
+    );
+    updatedAt = _i1.ColumnDateTime(
+      'updatedAt',
+      this,
+    );
   }
 
   late final _i1.ColumnEnum<_i2.PreSchoolMedicalStatus> preschoolMedicalStatus;
@@ -173,6 +240,14 @@ class PreSchoolMedicalTable extends _i1.Table<int?> {
   _i3.HubDocumentTable? ___preschoolMedicalFiles;
 
   _i1.ManyRelation<_i3.HubDocumentTable>? _preschoolMedicalFiles;
+
+  late final _i1.ColumnString createdBy;
+
+  late final _i1.ColumnDateTime createdAt;
+
+  late final _i1.ColumnString updatedBy;
+
+  late final _i1.ColumnDateTime updatedAt;
 
   _i3.HubDocumentTable get __preschoolMedicalFiles {
     if (___preschoolMedicalFiles != null) return ___preschoolMedicalFiles!;
@@ -211,6 +286,10 @@ class PreSchoolMedicalTable extends _i1.Table<int?> {
   List<_i1.Column> get columns => [
         id,
         preschoolMedicalStatus,
+        createdBy,
+        createdAt,
+        updatedBy,
+        updatedAt,
       ];
 
   @override

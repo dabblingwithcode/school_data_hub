@@ -10,7 +10,6 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profil
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_head_widget.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/pupil_profile_page_content.dart';
-
 import 'package:watch_it/watch_it.dart';
 
 final _pupilManager = di<PupilManager>();
@@ -25,7 +24,7 @@ class PupilProfilePage extends WatchingWidget {
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
       body: RefreshIndicator(
-        onRefresh: () async => _pupilManager.updatePupilList([pupil]),
+        onRefresh: () async => _pupilManager.updatePupilData(pupil.pupilId),
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.only(left: 5.0, top: 5, right: 5),

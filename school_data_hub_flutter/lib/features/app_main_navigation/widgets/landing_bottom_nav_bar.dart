@@ -17,7 +17,7 @@ import 'package:school_data_hub_flutter/features/app_main_navigation/school_list
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/settings_page.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _bottomNavmanager = di<MainMenuBottomNavManager>();
+final _bottomNavmanager = di<BottomNavManager>();
 final _envManager = di<EnvManager>();
 
 class MainMenuBottomNavigation extends WatchingWidget {
@@ -35,7 +35,7 @@ class MainMenuBottomNavigation extends WatchingWidget {
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
 
-    final tab = watchValue((MainMenuBottomNavManager x) => x.bottomNavState);
+    final tab = watchValue((BottomNavManager x) => x.bottomNavState);
     final pageViewController =
         createOnce(() => PageController(initialPage: tab));
 

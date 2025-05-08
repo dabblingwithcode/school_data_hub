@@ -12,20 +12,19 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import '../pupil_data/pupil_data.dart' as _i2;
-import '../learning_support/support_category.dart' as _i3;
+import '../shared/document.dart' as _i2;
+import '../pupil_data/pupil_data.dart' as _i3;
+import '../learning_support/support_category.dart' as _i4;
 
 abstract class SupportCategoryStatus
     implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   SupportCategoryStatus._({
     this.id,
-    required this.statusId,
     required this.status,
     required this.createdBy,
     required this.createdAt,
     required this.comment,
-    required this.fileUrl,
-    required this.fileId,
+    this.documents,
     required this.pupilId,
     this.pupil,
     required this.supportCategoryId,
@@ -35,40 +34,38 @@ abstract class SupportCategoryStatus
 
   factory SupportCategoryStatus({
     int? id,
-    required String statusId,
     required int status,
     required String createdBy,
     required DateTime createdAt,
     required String comment,
-    required String fileUrl,
-    required String fileId,
+    List<_i2.HubDocument>? documents,
     required int pupilId,
-    _i2.PupilData? pupil,
+    _i3.PupilData? pupil,
     required int supportCategoryId,
-    _i3.SupportCategory? supportCategory,
+    _i4.SupportCategory? supportCategory,
   }) = _SupportCategoryStatusImpl;
 
   factory SupportCategoryStatus.fromJson(
       Map<String, dynamic> jsonSerialization) {
     return SupportCategoryStatusImplicit._(
       id: jsonSerialization['id'] as int?,
-      statusId: jsonSerialization['statusId'] as String,
       status: jsonSerialization['status'] as int,
       createdBy: jsonSerialization['createdBy'] as String,
       createdAt:
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
       comment: jsonSerialization['comment'] as String,
-      fileUrl: jsonSerialization['fileUrl'] as String,
-      fileId: jsonSerialization['fileId'] as String,
+      documents: (jsonSerialization['documents'] as List?)
+          ?.map((e) => _i2.HubDocument.fromJson((e as Map<String, dynamic>)))
+          .toList(),
       pupilId: jsonSerialization['pupilId'] as int,
       pupil: jsonSerialization['pupil'] == null
           ? null
-          : _i2.PupilData.fromJson(
+          : _i3.PupilData.fromJson(
               (jsonSerialization['pupil'] as Map<String, dynamic>)),
       supportCategoryId: jsonSerialization['supportCategoryId'] as int,
       supportCategory: jsonSerialization['supportCategory'] == null
           ? null
-          : _i3.SupportCategory.fromJson(
+          : _i4.SupportCategory.fromJson(
               (jsonSerialization['supportCategory'] as Map<String, dynamic>)),
       $_supportCategoryCategorystatuesSupportCategoryId:
           jsonSerialization['_supportCategoryCategorystatuesSupportCategoryId']
@@ -86,8 +83,6 @@ abstract class SupportCategoryStatus
   @override
   int? id;
 
-  String statusId;
-
   int status;
 
   String createdBy;
@@ -96,17 +91,15 @@ abstract class SupportCategoryStatus
 
   String comment;
 
-  String fileUrl;
-
-  String fileId;
+  List<_i2.HubDocument>? documents;
 
   int pupilId;
 
-  _i2.PupilData? pupil;
+  _i3.PupilData? pupil;
 
   int supportCategoryId;
 
-  _i3.SupportCategory? supportCategory;
+  _i4.SupportCategory? supportCategory;
 
   final int? _supportCategoryCategorystatuesSupportCategoryId;
 
@@ -120,29 +113,26 @@ abstract class SupportCategoryStatus
   @_i1.useResult
   SupportCategoryStatus copyWith({
     int? id,
-    String? statusId,
     int? status,
     String? createdBy,
     DateTime? createdAt,
     String? comment,
-    String? fileUrl,
-    String? fileId,
+    List<_i2.HubDocument>? documents,
     int? pupilId,
-    _i2.PupilData? pupil,
+    _i3.PupilData? pupil,
     int? supportCategoryId,
-    _i3.SupportCategory? supportCategory,
+    _i4.SupportCategory? supportCategory,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
-      'statusId': statusId,
       'status': status,
       'createdBy': createdBy,
       'createdAt': createdAt.toJson(),
       'comment': comment,
-      'fileUrl': fileUrl,
-      'fileId': fileId,
+      if (documents != null)
+        'documents': documents?.toJson(valueToJson: (v) => v.toJson()),
       'pupilId': pupilId,
       if (pupil != null) 'pupil': pupil?.toJson(),
       'supportCategoryId': supportCategoryId,
@@ -160,13 +150,13 @@ abstract class SupportCategoryStatus
   Map<String, dynamic> toJsonForProtocol() {
     return {
       if (id != null) 'id': id,
-      'statusId': statusId,
       'status': status,
       'createdBy': createdBy,
       'createdAt': createdAt.toJson(),
       'comment': comment,
-      'fileUrl': fileUrl,
-      'fileId': fileId,
+      if (documents != null)
+        'documents':
+            documents?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
       'pupilId': pupilId,
       if (pupil != null) 'pupil': pupil?.toJsonForProtocol(),
       'supportCategoryId': supportCategoryId,
@@ -176,10 +166,12 @@ abstract class SupportCategoryStatus
   }
 
   static SupportCategoryStatusInclude include({
-    _i2.PupilDataInclude? pupil,
-    _i3.SupportCategoryInclude? supportCategory,
+    _i2.HubDocumentIncludeList? documents,
+    _i3.PupilDataInclude? pupil,
+    _i4.SupportCategoryInclude? supportCategory,
   }) {
     return SupportCategoryStatusInclude._(
+      documents: documents,
       pupil: pupil,
       supportCategory: supportCategory,
     );
@@ -216,26 +208,22 @@ class _Undefined {}
 class _SupportCategoryStatusImpl extends SupportCategoryStatus {
   _SupportCategoryStatusImpl({
     int? id,
-    required String statusId,
     required int status,
     required String createdBy,
     required DateTime createdAt,
     required String comment,
-    required String fileUrl,
-    required String fileId,
+    List<_i2.HubDocument>? documents,
     required int pupilId,
-    _i2.PupilData? pupil,
+    _i3.PupilData? pupil,
     required int supportCategoryId,
-    _i3.SupportCategory? supportCategory,
+    _i4.SupportCategory? supportCategory,
   }) : super._(
           id: id,
-          statusId: statusId,
           status: status,
           createdBy: createdBy,
           createdAt: createdAt,
           comment: comment,
-          fileUrl: fileUrl,
-          fileId: fileId,
+          documents: documents,
           pupilId: pupilId,
           pupil: pupil,
           supportCategoryId: supportCategoryId,
@@ -248,13 +236,11 @@ class _SupportCategoryStatusImpl extends SupportCategoryStatus {
   @override
   SupportCategoryStatus copyWith({
     Object? id = _Undefined,
-    String? statusId,
     int? status,
     String? createdBy,
     DateTime? createdAt,
     String? comment,
-    String? fileUrl,
-    String? fileId,
+    Object? documents = _Undefined,
     int? pupilId,
     Object? pupil = _Undefined,
     int? supportCategoryId,
@@ -262,17 +248,17 @@ class _SupportCategoryStatusImpl extends SupportCategoryStatus {
   }) {
     return SupportCategoryStatusImplicit._(
       id: id is int? ? id : this.id,
-      statusId: statusId ?? this.statusId,
       status: status ?? this.status,
       createdBy: createdBy ?? this.createdBy,
       createdAt: createdAt ?? this.createdAt,
       comment: comment ?? this.comment,
-      fileUrl: fileUrl ?? this.fileUrl,
-      fileId: fileId ?? this.fileId,
+      documents: documents is List<_i2.HubDocument>?
+          ? documents
+          : this.documents?.map((e0) => e0.copyWith()).toList(),
       pupilId: pupilId ?? this.pupilId,
-      pupil: pupil is _i2.PupilData? ? pupil : this.pupil?.copyWith(),
+      pupil: pupil is _i3.PupilData? ? pupil : this.pupil?.copyWith(),
       supportCategoryId: supportCategoryId ?? this.supportCategoryId,
-      supportCategory: supportCategory is _i3.SupportCategory?
+      supportCategory: supportCategory is _i4.SupportCategory?
           ? supportCategory
           : this.supportCategory?.copyWith(),
       $_supportCategoryCategorystatuesSupportCategoryId:
@@ -286,17 +272,15 @@ class _SupportCategoryStatusImpl extends SupportCategoryStatus {
 class SupportCategoryStatusImplicit extends _SupportCategoryStatusImpl {
   SupportCategoryStatusImplicit._({
     int? id,
-    required String statusId,
     required int status,
     required String createdBy,
     required DateTime createdAt,
     required String comment,
-    required String fileUrl,
-    required String fileId,
+    List<_i2.HubDocument>? documents,
     required int pupilId,
-    _i2.PupilData? pupil,
+    _i3.PupilData? pupil,
     required int supportCategoryId,
-    _i3.SupportCategory? supportCategory,
+    _i4.SupportCategory? supportCategory,
     int? $_supportCategoryCategorystatuesSupportCategoryId,
     int? $_pupilDataSupportcategorystatusesPupilDataId,
   })  : _supportCategoryCategorystatuesSupportCategoryId =
@@ -305,13 +289,11 @@ class SupportCategoryStatusImplicit extends _SupportCategoryStatusImpl {
             $_pupilDataSupportcategorystatusesPupilDataId,
         super(
           id: id,
-          statusId: statusId,
           status: status,
           createdBy: createdBy,
           createdAt: createdAt,
           comment: comment,
-          fileUrl: fileUrl,
-          fileId: fileId,
+          documents: documents,
           pupilId: pupilId,
           pupil: pupil,
           supportCategoryId: supportCategoryId,
@@ -325,13 +307,11 @@ class SupportCategoryStatusImplicit extends _SupportCategoryStatusImpl {
   }) {
     return SupportCategoryStatusImplicit._(
       id: supportCategoryStatus.id,
-      statusId: supportCategoryStatus.statusId,
       status: supportCategoryStatus.status,
       createdBy: supportCategoryStatus.createdBy,
       createdAt: supportCategoryStatus.createdAt,
       comment: supportCategoryStatus.comment,
-      fileUrl: supportCategoryStatus.fileUrl,
-      fileId: supportCategoryStatus.fileId,
+      documents: supportCategoryStatus.documents,
       pupilId: supportCategoryStatus.pupilId,
       pupil: supportCategoryStatus.pupil,
       supportCategoryId: supportCategoryStatus.supportCategoryId,
@@ -353,10 +333,6 @@ class SupportCategoryStatusImplicit extends _SupportCategoryStatusImpl {
 class SupportCategoryStatusTable extends _i1.Table<int?> {
   SupportCategoryStatusTable({super.tableRelation})
       : super(tableName: 'support_category_status') {
-    statusId = _i1.ColumnString(
-      'statusId',
-      this,
-    );
     status = _i1.ColumnInt(
       'status',
       this,
@@ -371,14 +347,6 @@ class SupportCategoryStatusTable extends _i1.Table<int?> {
     );
     comment = _i1.ColumnString(
       'comment',
-      this,
-    );
-    fileUrl = _i1.ColumnString(
-      'fileUrl',
-      this,
-    );
-    fileId = _i1.ColumnString(
-      'fileId',
       this,
     );
     pupilId = _i1.ColumnInt(
@@ -399,8 +367,6 @@ class SupportCategoryStatusTable extends _i1.Table<int?> {
     );
   }
 
-  late final _i1.ColumnString statusId;
-
   late final _i1.ColumnInt status;
 
   late final _i1.ColumnString createdBy;
@@ -409,58 +375,88 @@ class SupportCategoryStatusTable extends _i1.Table<int?> {
 
   late final _i1.ColumnString comment;
 
-  late final _i1.ColumnString fileUrl;
+  _i2.HubDocumentTable? ___documents;
 
-  late final _i1.ColumnString fileId;
+  _i1.ManyRelation<_i2.HubDocumentTable>? _documents;
 
   late final _i1.ColumnInt pupilId;
 
-  _i2.PupilDataTable? _pupil;
+  _i3.PupilDataTable? _pupil;
 
   late final _i1.ColumnInt supportCategoryId;
 
-  _i3.SupportCategoryTable? _supportCategory;
+  _i4.SupportCategoryTable? _supportCategory;
 
   late final _i1.ColumnInt $_supportCategoryCategorystatuesSupportCategoryId;
 
   late final _i1.ColumnInt $_pupilDataSupportcategorystatusesPupilDataId;
 
-  _i2.PupilDataTable get pupil {
+  _i2.HubDocumentTable get __documents {
+    if (___documents != null) return ___documents!;
+    ___documents = _i1.createRelationTable(
+      relationFieldName: '__documents',
+      field: SupportCategoryStatus.t.id,
+      foreignField: _i2.HubDocument.t
+          .$_supportCategoryStatusDocumentsSupportCategoryStatusId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i2.HubDocumentTable(tableRelation: foreignTableRelation),
+    );
+    return ___documents!;
+  }
+
+  _i3.PupilDataTable get pupil {
     if (_pupil != null) return _pupil!;
     _pupil = _i1.createRelationTable(
       relationFieldName: 'pupil',
       field: SupportCategoryStatus.t.pupilId,
-      foreignField: _i2.PupilData.t.id,
+      foreignField: _i3.PupilData.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.PupilDataTable(tableRelation: foreignTableRelation),
+          _i3.PupilDataTable(tableRelation: foreignTableRelation),
     );
     return _pupil!;
   }
 
-  _i3.SupportCategoryTable get supportCategory {
+  _i4.SupportCategoryTable get supportCategory {
     if (_supportCategory != null) return _supportCategory!;
     _supportCategory = _i1.createRelationTable(
       relationFieldName: 'supportCategory',
       field: SupportCategoryStatus.t.supportCategoryId,
-      foreignField: _i3.SupportCategory.t.id,
+      foreignField: _i4.SupportCategory.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i3.SupportCategoryTable(tableRelation: foreignTableRelation),
+          _i4.SupportCategoryTable(tableRelation: foreignTableRelation),
     );
     return _supportCategory!;
+  }
+
+  _i1.ManyRelation<_i2.HubDocumentTable> get documents {
+    if (_documents != null) return _documents!;
+    var relationTable = _i1.createRelationTable(
+      relationFieldName: 'documents',
+      field: SupportCategoryStatus.t.id,
+      foreignField: _i2.HubDocument.t
+          .$_supportCategoryStatusDocumentsSupportCategoryStatusId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i2.HubDocumentTable(tableRelation: foreignTableRelation),
+    );
+    _documents = _i1.ManyRelation<_i2.HubDocumentTable>(
+      tableWithRelations: relationTable,
+      table: _i2.HubDocumentTable(
+          tableRelation: relationTable.tableRelation!.lastRelation),
+    );
+    return _documents!;
   }
 
   @override
   List<_i1.Column> get columns => [
         id,
-        statusId,
         status,
         createdBy,
         createdAt,
         comment,
-        fileUrl,
-        fileId,
         pupilId,
         supportCategoryId,
         $_supportCategoryCategorystatuesSupportCategoryId,
@@ -470,19 +466,19 @@ class SupportCategoryStatusTable extends _i1.Table<int?> {
   @override
   List<_i1.Column> get managedColumns => [
         id,
-        statusId,
         status,
         createdBy,
         createdAt,
         comment,
-        fileUrl,
-        fileId,
         pupilId,
         supportCategoryId,
       ];
 
   @override
   _i1.Table? getRelationTable(String relationField) {
+    if (relationField == 'documents') {
+      return __documents;
+    }
     if (relationField == 'pupil') {
       return pupil;
     }
@@ -495,19 +491,24 @@ class SupportCategoryStatusTable extends _i1.Table<int?> {
 
 class SupportCategoryStatusInclude extends _i1.IncludeObject {
   SupportCategoryStatusInclude._({
-    _i2.PupilDataInclude? pupil,
-    _i3.SupportCategoryInclude? supportCategory,
+    _i2.HubDocumentIncludeList? documents,
+    _i3.PupilDataInclude? pupil,
+    _i4.SupportCategoryInclude? supportCategory,
   }) {
+    _documents = documents;
     _pupil = pupil;
     _supportCategory = supportCategory;
   }
 
-  _i2.PupilDataInclude? _pupil;
+  _i2.HubDocumentIncludeList? _documents;
 
-  _i3.SupportCategoryInclude? _supportCategory;
+  _i3.PupilDataInclude? _pupil;
+
+  _i4.SupportCategoryInclude? _supportCategory;
 
   @override
   Map<String, _i1.Include?> get includes => {
+        'documents': _documents,
         'pupil': _pupil,
         'supportCategory': _supportCategory,
       };
@@ -539,7 +540,13 @@ class SupportCategoryStatusIncludeList extends _i1.IncludeList {
 class SupportCategoryStatusRepository {
   const SupportCategoryStatusRepository._();
 
+  final attach = const SupportCategoryStatusAttachRepository._();
+
   final attachRow = const SupportCategoryStatusAttachRowRepository._();
+
+  final detach = const SupportCategoryStatusDetachRepository._();
+
+  final detachRow = const SupportCategoryStatusDetachRowRepository._();
 
   /// Returns a list of [SupportCategoryStatus]s matching the given query parameters.
   ///
@@ -757,6 +764,42 @@ class SupportCategoryStatusRepository {
   }
 }
 
+class SupportCategoryStatusAttachRepository {
+  const SupportCategoryStatusAttachRepository._();
+
+  /// Creates a relation between this [SupportCategoryStatus] and the given [HubDocument]s
+  /// by setting each [HubDocument]'s foreign key `_supportCategoryStatusDocumentsSupportCategoryStatusId` to refer to this [SupportCategoryStatus].
+  Future<void> documents(
+    _i1.Session session,
+    SupportCategoryStatus supportCategoryStatus,
+    List<_i2.HubDocument> hubDocument, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (hubDocument.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('hubDocument.id');
+    }
+    if (supportCategoryStatus.id == null) {
+      throw ArgumentError.notNull('supportCategoryStatus.id');
+    }
+
+    var $hubDocument = hubDocument
+        .map((e) => _i2.HubDocumentImplicit(
+              e,
+              $_supportCategoryStatusDocumentsSupportCategoryStatusId:
+                  supportCategoryStatus.id,
+            ))
+        .toList();
+    await session.db.update<_i2.HubDocument>(
+      $hubDocument,
+      columns: [
+        _i2.HubDocument.t
+            .$_supportCategoryStatusDocumentsSupportCategoryStatusId
+      ],
+      transaction: transaction,
+    );
+  }
+}
+
 class SupportCategoryStatusAttachRowRepository {
   const SupportCategoryStatusAttachRowRepository._();
 
@@ -765,7 +808,7 @@ class SupportCategoryStatusAttachRowRepository {
   Future<void> pupil(
     _i1.Session session,
     SupportCategoryStatus supportCategoryStatus,
-    _i2.PupilData pupil, {
+    _i3.PupilData pupil, {
     _i1.Transaction? transaction,
   }) async {
     if (supportCategoryStatus.id == null) {
@@ -789,7 +832,7 @@ class SupportCategoryStatusAttachRowRepository {
   Future<void> supportCategory(
     _i1.Session session,
     SupportCategoryStatus supportCategoryStatus,
-    _i3.SupportCategory supportCategory, {
+    _i4.SupportCategory supportCategory, {
     _i1.Transaction? transaction,
   }) async {
     if (supportCategoryStatus.id == null) {
@@ -804,6 +847,102 @@ class SupportCategoryStatusAttachRowRepository {
     await session.db.updateRow<SupportCategoryStatus>(
       $supportCategoryStatus,
       columns: [SupportCategoryStatus.t.supportCategoryId],
+      transaction: transaction,
+    );
+  }
+
+  /// Creates a relation between this [SupportCategoryStatus] and the given [HubDocument]
+  /// by setting the [HubDocument]'s foreign key `_supportCategoryStatusDocumentsSupportCategoryStatusId` to refer to this [SupportCategoryStatus].
+  Future<void> documents(
+    _i1.Session session,
+    SupportCategoryStatus supportCategoryStatus,
+    _i2.HubDocument hubDocument, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (hubDocument.id == null) {
+      throw ArgumentError.notNull('hubDocument.id');
+    }
+    if (supportCategoryStatus.id == null) {
+      throw ArgumentError.notNull('supportCategoryStatus.id');
+    }
+
+    var $hubDocument = _i2.HubDocumentImplicit(
+      hubDocument,
+      $_supportCategoryStatusDocumentsSupportCategoryStatusId:
+          supportCategoryStatus.id,
+    );
+    await session.db.updateRow<_i2.HubDocument>(
+      $hubDocument,
+      columns: [
+        _i2.HubDocument.t
+            .$_supportCategoryStatusDocumentsSupportCategoryStatusId
+      ],
+      transaction: transaction,
+    );
+  }
+}
+
+class SupportCategoryStatusDetachRepository {
+  const SupportCategoryStatusDetachRepository._();
+
+  /// Detaches the relation between this [SupportCategoryStatus] and the given [HubDocument]
+  /// by setting the [HubDocument]'s foreign key `_supportCategoryStatusDocumentsSupportCategoryStatusId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> documents(
+    _i1.Session session,
+    List<_i2.HubDocument> hubDocument, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (hubDocument.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('hubDocument.id');
+    }
+
+    var $hubDocument = hubDocument
+        .map((e) => _i2.HubDocumentImplicit(
+              e,
+              $_supportCategoryStatusDocumentsSupportCategoryStatusId: null,
+            ))
+        .toList();
+    await session.db.update<_i2.HubDocument>(
+      $hubDocument,
+      columns: [
+        _i2.HubDocument.t
+            .$_supportCategoryStatusDocumentsSupportCategoryStatusId
+      ],
+      transaction: transaction,
+    );
+  }
+}
+
+class SupportCategoryStatusDetachRowRepository {
+  const SupportCategoryStatusDetachRowRepository._();
+
+  /// Detaches the relation between this [SupportCategoryStatus] and the given [HubDocument]
+  /// by setting the [HubDocument]'s foreign key `_supportCategoryStatusDocumentsSupportCategoryStatusId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> documents(
+    _i1.Session session,
+    _i2.HubDocument hubDocument, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (hubDocument.id == null) {
+      throw ArgumentError.notNull('hubDocument.id');
+    }
+
+    var $hubDocument = _i2.HubDocumentImplicit(
+      hubDocument,
+      $_supportCategoryStatusDocumentsSupportCategoryStatusId: null,
+    );
+    await session.db.updateRow<_i2.HubDocument>(
+      $hubDocument,
+      columns: [
+        _i2.HubDocument.t
+            .$_supportCategoryStatusDocumentsSupportCategoryStatusId
+      ],
       transaction: transaction,
     );
   }

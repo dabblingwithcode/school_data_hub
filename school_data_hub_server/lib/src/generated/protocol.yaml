@@ -1,8 +1,20 @@
+admin:
+  - createUser:
+  - deleteUser:
+  - promoteUserScope:
+  - demoteUserScope:
+  - getAllUsers:
+  - getUserById:
+  - updateBackendPupilDataState:
 attendance:
   - fetchMissedClassesOnASchoolday:
   - fetchMissedClasses:
   - createMissedClass:
   - deleteMissedClass:
+auth:
+  - login:
+  - verifyPassword:
+  - logOut:
 authorization:
   - fetchAuthorizations:
   - fetchAuthorizationById:
@@ -23,6 +35,18 @@ files:
   - getUploadDescription:
   - verifyUpload:
   - getImage:
+supportCategory:
+  - fetchSupportCategories:
+  - importSupportCategoriesFromJsonFile:
+  - createSupportCategory:
+  - updateSupportCategory:
+  - deleteSupportCategory:
+  - postSupportCategoryStatus:
+  - fetchSupportCategoryStatus:
+  - fetchSupportCategoryStatusFromPupil:
+  - updateCategoryStatus:
+  - deleteSupportCategoryStatus:
+  - postCategoryGoal:
 missedClass:
   - streamMyModels:
   - postMissedClass:
@@ -46,6 +70,7 @@ pupilUpdate:
   - updatePupilDocument:
   - updateStringProperty:
   - updateCredit:
+  - updatePreSchoolMedicalStatus:
   - updatePublicMediaAuth:
   - updateSupportLevel:
 schoolList:
@@ -74,24 +99,6 @@ schooldayEvent:
   - deleteSchooldayEvent:
   - updateSchooldayEventFile:
   - deleteSchooldayEventFile:
-admin:
-  - createUser:
-  - deleteUser:
-  - promoteUserScope:
-  - demoteUserScope:
-  - getAllUsers:
-  - getUserById:
-  - updateBackendPupilDataState:
-auth:
-  - login:
-  - verifyPassword:
-  - logOut:
-supportCategory:
-  - getSupportCategories:
-  - importSupportCategoriesFromJsonFile:
-  - createSupportCategory:
-  - updateSupportCategory:
-  - deleteSupportCategory:
 user:
   - getCurrentUser:
   - changePassword:

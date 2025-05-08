@@ -108,7 +108,8 @@ class AuthorizationPupilsPage extends WatchingWidget {
       ),
       bottomNavigationBar: AuthorizationPupilsBottomNavBar(
         authorization: authorization,
-        pupilsInAuthorization: _pupilManager.pupilIdsFromPupils(pupilsInList),
+        pupilsInAuthorization:
+            _pupilManager.getPupilIdsFromPupils(pupilsInList),
       ),
     );
   }

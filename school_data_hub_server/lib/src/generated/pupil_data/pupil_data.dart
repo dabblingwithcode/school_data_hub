@@ -76,7 +76,6 @@ abstract class PupilData
     this.pupilWorkbooks,
     this.pupilBookLendings,
     this.schoolyearHeldBackAt,
-    this.latestSupportLevel,
     this.supportLevelHistory,
     this.supportCategoryStatuses,
     this.supportGoals,
@@ -120,7 +119,6 @@ abstract class PupilData
     List<_i17.PupilWorkbook>? pupilWorkbooks,
     List<_i18.PupilBookLending>? pupilBookLendings,
     DateTime? schoolyearHeldBackAt,
-    _i19.SupportLevel? latestSupportLevel,
     List<_i19.SupportLevel>? supportLevelHistory,
     List<_i20.SupportCategoryStatus>? supportCategoryStatuses,
     List<_i21.SupportGoal>? supportGoals,
@@ -228,10 +226,6 @@ abstract class PupilData
           ? null
           : _i1.DateTimeJsonExtension.fromJson(
               jsonSerialization['schoolyearHeldBackAt']),
-      latestSupportLevel: jsonSerialization['latestSupportLevel'] == null
-          ? null
-          : _i19.SupportLevel.fromJson((jsonSerialization['latestSupportLevel']
-              as Map<String, dynamic>)),
       supportLevelHistory: (jsonSerialization['supportLevelHistory'] as List?)
           ?.map((e) => _i19.SupportLevel.fromJson((e as Map<String, dynamic>)))
           .toList(),
@@ -329,8 +323,6 @@ abstract class PupilData
 
   DateTime? schoolyearHeldBackAt;
 
-  _i19.SupportLevel? latestSupportLevel;
-
   List<_i19.SupportLevel>? supportLevelHistory;
 
   List<_i20.SupportCategoryStatus>? supportCategoryStatuses;
@@ -385,7 +377,6 @@ abstract class PupilData
     List<_i17.PupilWorkbook>? pupilWorkbooks,
     List<_i18.PupilBookLending>? pupilBookLendings,
     DateTime? schoolyearHeldBackAt,
-    _i19.SupportLevel? latestSupportLevel,
     List<_i19.SupportLevel>? supportLevelHistory,
     List<_i20.SupportCategoryStatus>? supportCategoryStatuses,
     List<_i21.SupportGoal>? supportGoals,
@@ -455,8 +446,6 @@ abstract class PupilData
             pupilBookLendings?.toJson(valueToJson: (v) => v.toJson()),
       if (schoolyearHeldBackAt != null)
         'schoolyearHeldBackAt': schoolyearHeldBackAt?.toJson(),
-      if (latestSupportLevel != null)
-        'latestSupportLevel': latestSupportLevel?.toJson(),
       if (supportLevelHistory != null)
         'supportLevelHistory':
             supportLevelHistory?.toJson(valueToJson: (v) => v.toJson()),
@@ -540,8 +529,6 @@ abstract class PupilData
             valueToJson: (v) => v.toJsonForProtocol()),
       if (schoolyearHeldBackAt != null)
         'schoolyearHeldBackAt': schoolyearHeldBackAt?.toJson(),
-      if (latestSupportLevel != null)
-        'latestSupportLevel': latestSupportLevel?.toJsonForProtocol(),
       if (supportLevelHistory != null)
         'supportLevelHistory': supportLevelHistory?.toJson(
             valueToJson: (v) => v.toJsonForProtocol()),
@@ -675,7 +662,6 @@ class _PupilDataImpl extends PupilData {
     List<_i17.PupilWorkbook>? pupilWorkbooks,
     List<_i18.PupilBookLending>? pupilBookLendings,
     DateTime? schoolyearHeldBackAt,
-    _i19.SupportLevel? latestSupportLevel,
     List<_i19.SupportLevel>? supportLevelHistory,
     List<_i20.SupportCategoryStatus>? supportCategoryStatuses,
     List<_i21.SupportGoal>? supportGoals,
@@ -717,7 +703,6 @@ class _PupilDataImpl extends PupilData {
           pupilWorkbooks: pupilWorkbooks,
           pupilBookLendings: pupilBookLendings,
           schoolyearHeldBackAt: schoolyearHeldBackAt,
-          latestSupportLevel: latestSupportLevel,
           supportLevelHistory: supportLevelHistory,
           supportCategoryStatuses: supportCategoryStatuses,
           supportGoals: supportGoals,
@@ -765,7 +750,6 @@ class _PupilDataImpl extends PupilData {
     Object? pupilWorkbooks = _Undefined,
     Object? pupilBookLendings = _Undefined,
     Object? schoolyearHeldBackAt = _Undefined,
-    Object? latestSupportLevel = _Undefined,
     Object? supportLevelHistory = _Undefined,
     Object? supportCategoryStatuses = _Undefined,
     Object? supportGoals = _Undefined,
@@ -852,9 +836,6 @@ class _PupilDataImpl extends PupilData {
       schoolyearHeldBackAt: schoolyearHeldBackAt is DateTime?
           ? schoolyearHeldBackAt
           : this.schoolyearHeldBackAt,
-      latestSupportLevel: latestSupportLevel is _i19.SupportLevel?
-          ? latestSupportLevel
-          : this.latestSupportLevel?.copyWith(),
       supportLevelHistory: supportLevelHistory is List<_i19.SupportLevel>?
           ? supportLevelHistory
           : this.supportLevelHistory?.map((e0) => e0.copyWith()).toList(),
@@ -949,10 +930,6 @@ class PupilDataTable extends _i1.Table<int?> {
       'schoolyearHeldBackAt',
       this,
     );
-    latestSupportLevel = _i1.ColumnSerializable(
-      'latestSupportLevel',
-      this,
-    );
     swimmer = _i1.ColumnString(
       'swimmer',
       this,
@@ -1043,8 +1020,6 @@ class PupilDataTable extends _i1.Table<int?> {
   _i1.ManyRelation<_i18.PupilBookLendingTable>? _pupilBookLendings;
 
   late final _i1.ColumnDateTime schoolyearHeldBackAt;
-
-  late final _i1.ColumnSerializable latestSupportLevel;
 
   _i19.SupportLevelTable? ___supportLevelHistory;
 
@@ -1274,7 +1249,7 @@ class PupilDataTable extends _i1.Table<int?> {
     ___supportLevelHistory = _i1.createRelationTable(
       relationFieldName: '__supportLevelHistory',
       field: PupilData.t.id,
-      foreignField: _i19.SupportLevel.t.pupilIdId,
+      foreignField: _i19.SupportLevel.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
           _i19.SupportLevelTable(tableRelation: foreignTableRelation),
@@ -1537,7 +1512,7 @@ class PupilDataTable extends _i1.Table<int?> {
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'supportLevelHistory',
       field: PupilData.t.id,
-      foreignField: _i19.SupportLevel.t.pupilIdId,
+      foreignField: _i19.SupportLevel.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
           _i19.SupportLevelTable(tableRelation: foreignTableRelation),
@@ -1663,7 +1638,6 @@ class PupilDataTable extends _i1.Table<int?> {
         credit,
         creditEarned,
         schoolyearHeldBackAt,
-        latestSupportLevel,
         swimmer,
       ];
 
@@ -2354,7 +2328,7 @@ class PupilDataAttachRepository {
   }
 
   /// Creates a relation between this [PupilData] and the given [SupportLevel]s
-  /// by setting each [SupportLevel]'s foreign key `pupilIdId` to refer to this [PupilData].
+  /// by setting each [SupportLevel]'s foreign key `pupilId` to refer to this [PupilData].
   Future<void> supportLevelHistory(
     _i1.Session session,
     PupilData pupilData,
@@ -2369,10 +2343,10 @@ class PupilDataAttachRepository {
     }
 
     var $supportLevel =
-        supportLevel.map((e) => e.copyWith(pupilIdId: pupilData.id)).toList();
+        supportLevel.map((e) => e.copyWith(pupilId: pupilData.id)).toList();
     await session.db.update<_i19.SupportLevel>(
       $supportLevel,
-      columns: [_i19.SupportLevel.t.pupilIdId],
+      columns: [_i19.SupportLevel.t.pupilId],
       transaction: transaction,
     );
   }
@@ -2868,7 +2842,7 @@ class PupilDataAttachRowRepository {
   }
 
   /// Creates a relation between this [PupilData] and the given [SupportLevel]
-  /// by setting the [SupportLevel]'s foreign key `pupilIdId` to refer to this [PupilData].
+  /// by setting the [SupportLevel]'s foreign key `pupilId` to refer to this [PupilData].
   Future<void> supportLevelHistory(
     _i1.Session session,
     PupilData pupilData,
@@ -2882,10 +2856,10 @@ class PupilDataAttachRowRepository {
       throw ArgumentError.notNull('pupilData.id');
     }
 
-    var $supportLevel = supportLevel.copyWith(pupilIdId: pupilData.id);
+    var $supportLevel = supportLevel.copyWith(pupilId: pupilData.id);
     await session.db.updateRow<_i19.SupportLevel>(
       $supportLevel,
-      columns: [_i19.SupportLevel.t.pupilIdId],
+      columns: [_i19.SupportLevel.t.pupilId],
       transaction: transaction,
     );
   }

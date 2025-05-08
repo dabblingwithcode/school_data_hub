@@ -6,10 +6,7 @@ import 'package:school_data_hub_flutter/common/domain/filters/filters.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_selector_filters.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_identity.dart';
-import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
 import 'package:watch_it/watch_it.dart';
-
-final _schooldayManager = di<SchooldayManager>();
 
 enum SchoolGrade {
   E1('E1'),
@@ -136,7 +133,7 @@ class PupilProxy with ChangeNotifier {
   String? get family => _pupilIdentity.family;
   DateTime get birthday => _pupilIdentity.birthday;
   int get age {
-    final today = DateTime.now();
+    final today = DateTime.now().toUtc();
     int age = today.year - _pupilIdentity.birthday.year;
     if (today.month < _pupilIdentity.birthday.month ||
         (today.month == _pupilIdentity.birthday.month &&
@@ -211,7 +208,16 @@ class PupilProxy with ChangeNotifier {
 
   // learning support related
 
-  SupportLevel? get latestSupportLevel => _pupilData.latestSupportLevel;
+  SupportLevel? get latestSupportLevel {
+    final history = _pupilData.supportLevelHistory;
+    if (history == null || history.isEmpty) {
+      return null;
+    }
+
+    // Sort by created date in descending order (newest first)
+    history.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return history.first;
+  }
 
   List<SupportLevel>? get supportLevelHistory => _pupilData.supportLevelHistory;
 

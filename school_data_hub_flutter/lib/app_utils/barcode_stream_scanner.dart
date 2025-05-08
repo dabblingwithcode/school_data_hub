@@ -146,7 +146,7 @@ class _BarcodeStreamScannerState extends State<BarcodeStreamScanner> {
             child: Container(
               alignment: Alignment.bottomCenter,
               height: 150,
-              color: Colors.black.withOpacity(0.4),
+              color: Colors.black.withAlpha((0.4 * 255).toInt()),
               child: _buildBarcodeStream(),
             ),
           ),

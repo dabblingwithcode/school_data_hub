@@ -1,6 +1,7 @@
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
 import 'package:watch_it/watch_it.dart';
@@ -15,39 +16,22 @@ class AttendanceApiService {
 //- fetch all missed classes -//
 
   Future<List<MissedClass>> fetchAllMissedClasses() async {
-    try {
-      _notificationService.apiRunning(true);
-      final missedClasses = await _client.missedClass.fetchAllMissedClasses();
-      _notificationService.apiRunning(false);
-      return missedClasses;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-      _notificationService.showSnackBar(NotificationType.error, 'Fehler: $e');
-      _log.severe('Error fetching all missed classes', e);
-    }
-
-    return [];
+    final missedClasses = await ClientHelper.apiCall(
+      call: () => _client.missedClass.fetchAllMissedClasses(),
+      errorMessage: 'Fehler beim Laden der Fehlzeiten',
+    );
+    return missedClasses;
   }
 
   //- fetch missed classes for a date -//
 
   Future<List<MissedClass>> fetchMissedClassesOnASchoolday(
       DateTime schoolday) async {
-    // This one is called every 10 seconds, isRunning would be annoying
-
-    try {
-      _notificationService.apiRunning(true);
-      final missedClasses =
-          await _client.missedClass.fetchMissedClassesOnASchoolday(schoolday);
-      _notificationService.apiRunning(false);
-      return missedClasses;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-      _notificationService.showSnackBar(NotificationType.error, 'Fehler: $e');
-      _log.severe('Error fetching missed classes on a schoolday', e);
-    }
-
-    return [];
+    final missedClasses = await ClientHelper.apiCall(
+      call: () => _client.missedClass.fetchMissedClassesOnASchoolday(schoolday),
+      errorMessage: 'Fehler beim Laden der Fehlzeiten',
+    );
+    return missedClasses;
   }
 
   //- post new class -//
@@ -74,43 +58,22 @@ class AttendanceApiService {
         schooldayId: missedSchoolday!.id!,
         pupilId: pupilId);
 
-    try {
-      _notificationService.apiRunning(true);
-      final newMissedClass = await _client.missedClass.postMissedClass(
-        missedClass,
-      );
-      _notificationService.apiRunning(false);
-      return newMissedClass;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-      _notificationService.showSnackBar(NotificationType.error, 'Fehler: $e');
-      _log.severe('Error posting missed class', e);
-
-      throw Exception(
-        'Error posting missed class: $e',
-      );
-    }
+    final missedClasse = await ClientHelper.apiCall(
+      call: () => _client.missedClass.postMissedClass(missedClass),
+      errorMessage: 'Fehler beim Eintragen der Fehlzeit',
+    );
+    return missedClasse;
   }
 
   //- post a list of missed classes -//
 
   Future<List<MissedClass>> postMissedClassList(
       {required List<MissedClass> missedClasses}) async {
-    try {
-      _notificationService.apiRunning(true);
-      final missedClassesList = await _client.missedClass.postMissedClasses(
-        missedClasses,
-      );
-      _notificationService.apiRunning(false);
-      return missedClassesList;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-      _notificationService.showSnackBar(NotificationType.error, 'Fehler: $e');
-      _log.severe('Error posting missed class list', e);
-      throw Exception(
-        'Error posting missed class list: $e',
-      );
-    }
+    final missedClassesList = await ClientHelper.apiCall(
+      call: () => _client.missedClass.postMissedClasses(missedClasses),
+      errorMessage: 'Fehler beim Eintragen der Fehlzeiten',
+    );
+    return missedClassesList;
   }
 
   //- patch a missed class -//
@@ -118,43 +81,21 @@ class AttendanceApiService {
   Future<MissedClass> updateMissedClass({
     required MissedClass missedClassToUpdate,
   }) async {
-    try {
-      _notificationService.apiRunning(true);
-      final missedClass = await _client.missedClass.updateMissedClass(
-        missedClassToUpdate,
-      );
-      _notificationService.apiRunning(false);
-      return missedClass;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-      _notificationService.showSnackBar(NotificationType.error, 'Fehler: $e');
-      _log.severe('Error updating missed class', e);
-      throw Exception(
-        'Error updating missed class: $e',
-      );
-    }
+    final missedClass = await ClientHelper.apiCall(
+      call: () => _client.missedClass.updateMissedClass(missedClassToUpdate),
+      errorMessage: 'Fehler beim Aktualisieren der Fehlzeit',
+    );
+    return missedClass;
   }
 
   //- delete missed class -//
 
   Future<bool> deleteMissedClass(int pupilId, int schooldayId) async {
     _notificationService.apiRunning(true);
-
-    try {
-      _notificationService.apiRunning(true);
-      final response = await _client.missedClass.deleteMissedClass(
-        pupilId,
-        schooldayId,
-      );
-      _notificationService.apiRunning(false);
-      return response;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-      _notificationService.showSnackBar(NotificationType.error, 'Fehler: $e');
-      _log.severe('Error deleting missed class', e);
-      throw Exception(
-        'Error deleting missed class: $e',
-      );
-    }
+    final success = await ClientHelper.apiCall(
+      call: () => _client.missedClass.deleteMissedClass(pupilId, schooldayId),
+      errorMessage: 'Fehler beim Löschen der Fehlzeit',
+    );
+    return success;
   }
 }

@@ -3,7 +3,7 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 
 Future<String?> longTextFieldDialog(
     {required String title,
-    required String? textinField,
+    required String? initialValue,
     required String labelText,
     required BuildContext parentContext}) async {
   return await showDialog(
@@ -13,7 +13,7 @@ Future<String?> longTextFieldDialog(
           final TextEditingController textEditingController =
               TextEditingController();
           setState(() {
-            textEditingController.text = textinField ?? '';
+            textEditingController.text = initialValue ?? '';
           });
           return AlertDialog(
             content: Column(
@@ -58,7 +58,7 @@ Future<String?> longTextFieldDialog(
                   ),
                 ),
               ),
-              textinField != null
+              initialValue != null
                   ? Padding(
                       padding: const EdgeInsets.all(5.0),
                       child: ElevatedButton(

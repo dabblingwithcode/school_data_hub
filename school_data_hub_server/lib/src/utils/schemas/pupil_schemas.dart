@@ -7,5 +7,10 @@ class PupilSchemas {
     publicMediaAuthDocument: HubDocument.include(),
     creditTransactions: CreditTransaction.includeList(),
     supportLevelHistory: SupportLevel.includeList(),
+    preSchoolMedical: PreSchoolMedical.include(
+      preschoolMedicalFiles: HubDocument.includeList(),
+    ),
+    supportCategoryStatuses: SupportCategoryStatus.includeList(),
+    supportGoals: SupportGoal.includeList(),
   );
 }

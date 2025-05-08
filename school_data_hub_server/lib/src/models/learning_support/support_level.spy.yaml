@@ -6,5 +6,5 @@ fields:
   comment: String
   createdAt: DateTime
   createdBy: String
-  pupilId: PupilData?, relation(name=support_level_pupil)
+  pupil: PupilData?, relation(name=support_level_pupil, onDelete=Cascade)
  

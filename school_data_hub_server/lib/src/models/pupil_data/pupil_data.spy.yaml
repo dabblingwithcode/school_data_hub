@@ -42,7 +42,6 @@ fields:
   pupilBookLendings: List<PupilBookLending>?, relation(name=pupil_book_lending_pupil)
   schoolyearHeldBackAt: DateTime?
   ## learning support related
-  latestSupportLevel: SupportLevel?
   supportLevelHistory: List<SupportLevel>?, relation(name=support_level_pupil)
   supportCategoryStatuses: List<SupportCategoryStatus>?, relation
   supportGoals: List<SupportGoal>?, relation

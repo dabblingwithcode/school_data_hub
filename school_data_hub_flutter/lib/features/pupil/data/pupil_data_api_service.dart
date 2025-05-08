@@ -28,9 +28,9 @@ class PupilDataApiService {
   // - update backend pupil database
 
   Future<List<PupilData>> updateBackendPupilsDatabase(
-      {required File file}) async {
+      {required String filePath}) async {
     final pupils = await ClientHelper.apiCall(
-      call: () => _client.admin.updateBackendPupilDataState(file),
+      call: () => _client.admin.updateBackendPupilDataState(filePath),
       errorMessage: 'Die Schüler konnten nicht aktualisiert werden',
     );
     return pupils.toList();
@@ -123,6 +123,23 @@ class PupilDataApiService {
     return updatedSiblings;
   }
 
+  //- preschool medical
+
+  Future<PupilData> updatePreSchoolMedicalStatus({
+    required int pupilId,
+    required PreSchoolMedicalStatus preSchoolMedical,
+    required String createdBy,
+  }) async {
+    final updatedPupil = await ClientHelper.apiCall(
+      call: () => _client.pupilUpdate.updatePreSchoolMedicalStatus(
+        pupilId,
+        preSchoolMedical,
+        createdBy,
+      ),
+      errorMessage: 'Die Schüler konnten nicht aktualisiert werden',
+    );
+    return updatedPupil;
+  }
   //- hub document
 
   Future<PupilData> updatePupilDocument({
@@ -130,8 +147,11 @@ class PupilDataApiService {
     required File file,
     required PupilDocumentType documentType,
   }) async {
-    final result =
-        await ClientFileUpload.uploadFile(file, ServerStorageFolder.documents);
+    final result = await ClientFileUpload.uploadFile(
+        file,
+        documentType == PupilDocumentType.avatar
+            ? ServerStorageFolder.avatars
+            : ServerStorageFolder.documents);
     final updatedPupil = await ClientHelper.apiCall(
       call: () => _client.pupilUpdate.updatePupilDocument(pupilId, result.path!,
           _serverpodSessionManager.userName!, documentType),
@@ -180,7 +200,7 @@ class PupilDataApiService {
   //- support level
 
   Future<PupilData> updateSupportLevel({
-    required int pupilIdId,
+    required int pupilId,
     required int supportLevelValue,
     required DateTime createdAt,
     required String createdBy,
@@ -191,21 +211,21 @@ class PupilDataApiService {
         comment: comment,
         createdAt: createdAt,
         createdBy: createdBy,
-        pupilIdId: pupilIdId);
+        pupilId: pupilId);
     final updatedPupil = await ClientHelper.apiCall(
-      call: () => _client.pupilUpdate.updateSupportLevel(supportLevel),
+      call: () => _client.pupilUpdate.updateSupportLevel(supportLevel, pupilId),
       errorMessage: 'Die Förderebene konnte nicht aktualisiert werden',
     );
     return updatedPupil;
   }
 
   Future<PupilData> deleteSupportLevelHistoryItem({
-    required int internalId,
+    required int pupilId,
     required int supportLevelId,
   }) async {
     final updatedPupil = await ClientHelper.apiCall(
-      call: () => _client.pupil
-          .deleteSupportLevelHistoryItem(internalId, supportLevelId),
+      call: () =>
+          _client.pupil.deleteSupportLevelHistoryItem(pupilId, supportLevelId),
       errorMessage: 'Die Förderebene konnte nicht gelöscht werden',
     );
     return updatedPupil;

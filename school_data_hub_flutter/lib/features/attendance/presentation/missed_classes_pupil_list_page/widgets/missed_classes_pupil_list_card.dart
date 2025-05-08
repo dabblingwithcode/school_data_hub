@@ -66,7 +66,7 @@ class _AttendanceRankingListCardState extends State<AttendanceRankingListCard> {
                                 scrollDirection: Axis.horizontal,
                                 child: InkWell(
                                   onTap: () {
-                                    di<MainMenuBottomNavManager>()
+                                    di<BottomNavManager>()
                                         .setPupilProfileNavPage(3);
                                     Navigator.of(context)
                                         .push(MaterialPageRoute(

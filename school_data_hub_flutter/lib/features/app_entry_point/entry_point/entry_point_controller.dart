@@ -36,7 +36,7 @@ class EntryPointController extends State<EntryPoint> {
   }
 
   Future<void> importEnvFromTxt() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    FilePickerResult? result =await FilePicker.platform.pickFiles();
     if (result != null) {
       File file = File(result.files.single.path!);
       String rawTextResult = await file.readAsString();

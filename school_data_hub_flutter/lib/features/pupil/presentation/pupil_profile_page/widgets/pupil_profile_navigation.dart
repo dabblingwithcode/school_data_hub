@@ -3,7 +3,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _mainMenuBottomNavManager = di<MainMenuBottomNavManager>();
+final _mainMenuBottomNavManager = di<BottomNavManager>();
 
 enum ProfileNavigationState {
   info(0),
@@ -44,7 +44,7 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
   @override
   Widget build(BuildContext context) {
     final int pupilProfileNavState =
-        watchValue((MainMenuBottomNavManager x) => x.pupilProfileNavState);
+        watchValue((BottomNavManager x) => x.pupilProfileNavState);
     //double boxHeight = 35;
     return Theme(
       data: Theme.of(context).copyWith(

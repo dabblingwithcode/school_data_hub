@@ -21,6 +21,8 @@ abstract class HubDocument
     required this.createdAt,
   })  : _competenceCheckDocumentsCompetenceCheckId = null,
         _competenceGoalDocumentsCompetenceGoalId = null,
+        _supportCategoryStatusDocumentsSupportCategoryStatusId = null,
+        _supportGoalCheckDocumentsSupportGoalCheckId = null,
         _preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId = null,
         _preSchoolTestPreschooltestdocumentsPreSchoolTestId = null;
 
@@ -45,6 +47,12 @@ abstract class HubDocument
               as int?,
       $_competenceGoalDocumentsCompetenceGoalId:
           jsonSerialization['_competenceGoalDocumentsCompetenceGoalId'] as int?,
+      $_supportCategoryStatusDocumentsSupportCategoryStatusId:
+          jsonSerialization[
+              '_supportCategoryStatusDocumentsSupportCategoryStatusId'] as int?,
+      $_supportGoalCheckDocumentsSupportGoalCheckId:
+          jsonSerialization['_supportGoalCheckDocumentsSupportGoalCheckId']
+              as int?,
       $_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId:
           jsonSerialization[
                   '_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId']
@@ -72,6 +80,10 @@ abstract class HubDocument
   final int? _competenceCheckDocumentsCompetenceCheckId;
 
   final int? _competenceGoalDocumentsCompetenceGoalId;
+
+  final int? _supportCategoryStatusDocumentsSupportCategoryStatusId;
+
+  final int? _supportGoalCheckDocumentsSupportGoalCheckId;
 
   final int? _preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId;
 
@@ -104,6 +116,12 @@ abstract class HubDocument
       if (_competenceGoalDocumentsCompetenceGoalId != null)
         '_competenceGoalDocumentsCompetenceGoalId':
             _competenceGoalDocumentsCompetenceGoalId,
+      if (_supportCategoryStatusDocumentsSupportCategoryStatusId != null)
+        '_supportCategoryStatusDocumentsSupportCategoryStatusId':
+            _supportCategoryStatusDocumentsSupportCategoryStatusId,
+      if (_supportGoalCheckDocumentsSupportGoalCheckId != null)
+        '_supportGoalCheckDocumentsSupportGoalCheckId':
+            _supportGoalCheckDocumentsSupportGoalCheckId,
       if (_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId != null)
         '_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId':
             _preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId,
@@ -191,6 +209,10 @@ class _HubDocumentImpl extends HubDocument {
           this._competenceCheckDocumentsCompetenceCheckId,
       $_competenceGoalDocumentsCompetenceGoalId:
           this._competenceGoalDocumentsCompetenceGoalId,
+      $_supportCategoryStatusDocumentsSupportCategoryStatusId:
+          this._supportCategoryStatusDocumentsSupportCategoryStatusId,
+      $_supportGoalCheckDocumentsSupportGoalCheckId:
+          this._supportGoalCheckDocumentsSupportGoalCheckId,
       $_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId:
           this._preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId,
       $_preSchoolTestPreschooltestdocumentsPreSchoolTestId:
@@ -208,12 +230,18 @@ class HubDocumentImplicit extends _HubDocumentImpl {
     required DateTime createdAt,
     int? $_competenceCheckDocumentsCompetenceCheckId,
     int? $_competenceGoalDocumentsCompetenceGoalId,
+    int? $_supportCategoryStatusDocumentsSupportCategoryStatusId,
+    int? $_supportGoalCheckDocumentsSupportGoalCheckId,
     int? $_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId,
     int? $_preSchoolTestPreschooltestdocumentsPreSchoolTestId,
   })  : _competenceCheckDocumentsCompetenceCheckId =
             $_competenceCheckDocumentsCompetenceCheckId,
         _competenceGoalDocumentsCompetenceGoalId =
             $_competenceGoalDocumentsCompetenceGoalId,
+        _supportCategoryStatusDocumentsSupportCategoryStatusId =
+            $_supportCategoryStatusDocumentsSupportCategoryStatusId,
+        _supportGoalCheckDocumentsSupportGoalCheckId =
+            $_supportGoalCheckDocumentsSupportGoalCheckId,
         _preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId =
             $_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId,
         _preSchoolTestPreschooltestdocumentsPreSchoolTestId =
@@ -230,6 +258,8 @@ class HubDocumentImplicit extends _HubDocumentImpl {
     HubDocument hubDocument, {
     int? $_competenceCheckDocumentsCompetenceCheckId,
     int? $_competenceGoalDocumentsCompetenceGoalId,
+    int? $_supportCategoryStatusDocumentsSupportCategoryStatusId,
+    int? $_supportGoalCheckDocumentsSupportGoalCheckId,
     int? $_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId,
     int? $_preSchoolTestPreschooltestdocumentsPreSchoolTestId,
   }) {
@@ -243,6 +273,10 @@ class HubDocumentImplicit extends _HubDocumentImpl {
           $_competenceCheckDocumentsCompetenceCheckId,
       $_competenceGoalDocumentsCompetenceGoalId:
           $_competenceGoalDocumentsCompetenceGoalId,
+      $_supportCategoryStatusDocumentsSupportCategoryStatusId:
+          $_supportCategoryStatusDocumentsSupportCategoryStatusId,
+      $_supportGoalCheckDocumentsSupportGoalCheckId:
+          $_supportGoalCheckDocumentsSupportGoalCheckId,
       $_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId:
           $_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId,
       $_preSchoolTestPreschooltestdocumentsPreSchoolTestId:
@@ -255,6 +289,12 @@ class HubDocumentImplicit extends _HubDocumentImpl {
 
   @override
   final int? _competenceGoalDocumentsCompetenceGoalId;
+
+  @override
+  final int? _supportCategoryStatusDocumentsSupportCategoryStatusId;
+
+  @override
+  final int? _supportGoalCheckDocumentsSupportGoalCheckId;
 
   @override
   final int? _preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId;
@@ -289,6 +329,14 @@ class HubDocumentTable extends _i1.Table<int?> {
       '_competenceGoalDocumentsCompetenceGoalId',
       this,
     );
+    $_supportCategoryStatusDocumentsSupportCategoryStatusId = _i1.ColumnInt(
+      '_supportCategoryStatusDocumentsSupportCategoryStatusId',
+      this,
+    );
+    $_supportGoalCheckDocumentsSupportGoalCheckId = _i1.ColumnInt(
+      '_supportGoalCheckDocumentsSupportGoalCheckId',
+      this,
+    );
     $_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId = _i1.ColumnInt(
       '_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId',
       this,
@@ -312,6 +360,11 @@ class HubDocumentTable extends _i1.Table<int?> {
   late final _i1.ColumnInt $_competenceGoalDocumentsCompetenceGoalId;
 
   late final _i1.ColumnInt
+      $_supportCategoryStatusDocumentsSupportCategoryStatusId;
+
+  late final _i1.ColumnInt $_supportGoalCheckDocumentsSupportGoalCheckId;
+
+  late final _i1.ColumnInt
       $_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId;
 
   late final _i1.ColumnInt $_preSchoolTestPreschooltestdocumentsPreSchoolTestId;
@@ -325,6 +378,8 @@ class HubDocumentTable extends _i1.Table<int?> {
         createdAt,
         $_competenceCheckDocumentsCompetenceCheckId,
         $_competenceGoalDocumentsCompetenceGoalId,
+        $_supportCategoryStatusDocumentsSupportCategoryStatusId,
+        $_supportGoalCheckDocumentsSupportGoalCheckId,
         $_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId,
         $_preSchoolTestPreschooltestdocumentsPreSchoolTestId,
       ];

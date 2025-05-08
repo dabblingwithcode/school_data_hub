@@ -10,19 +10,18 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import '../pupil_data/pupil_data.dart' as _i2;
-import '../learning_support/support_category.dart' as _i3;
+import '../shared/document.dart' as _i2;
+import '../pupil_data/pupil_data.dart' as _i3;
+import '../learning_support/support_category.dart' as _i4;
 
 abstract class SupportCategoryStatus implements _i1.SerializableModel {
   SupportCategoryStatus._({
     this.id,
-    required this.statusId,
     required this.status,
     required this.createdBy,
     required this.createdAt,
     required this.comment,
-    required this.fileUrl,
-    required this.fileId,
+    this.documents,
     required this.pupilId,
     this.pupil,
     required this.supportCategoryId,
@@ -31,40 +30,38 @@ abstract class SupportCategoryStatus implements _i1.SerializableModel {
 
   factory SupportCategoryStatus({
     int? id,
-    required String statusId,
     required int status,
     required String createdBy,
     required DateTime createdAt,
     required String comment,
-    required String fileUrl,
-    required String fileId,
+    List<_i2.HubDocument>? documents,
     required int pupilId,
-    _i2.PupilData? pupil,
+    _i3.PupilData? pupil,
     required int supportCategoryId,
-    _i3.SupportCategory? supportCategory,
+    _i4.SupportCategory? supportCategory,
   }) = _SupportCategoryStatusImpl;
 
   factory SupportCategoryStatus.fromJson(
       Map<String, dynamic> jsonSerialization) {
     return SupportCategoryStatus(
       id: jsonSerialization['id'] as int?,
-      statusId: jsonSerialization['statusId'] as String,
       status: jsonSerialization['status'] as int,
       createdBy: jsonSerialization['createdBy'] as String,
       createdAt:
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
       comment: jsonSerialization['comment'] as String,
-      fileUrl: jsonSerialization['fileUrl'] as String,
-      fileId: jsonSerialization['fileId'] as String,
+      documents: (jsonSerialization['documents'] as List?)
+          ?.map((e) => _i2.HubDocument.fromJson((e as Map<String, dynamic>)))
+          .toList(),
       pupilId: jsonSerialization['pupilId'] as int,
       pupil: jsonSerialization['pupil'] == null
           ? null
-          : _i2.PupilData.fromJson(
+          : _i3.PupilData.fromJson(
               (jsonSerialization['pupil'] as Map<String, dynamic>)),
       supportCategoryId: jsonSerialization['supportCategoryId'] as int,
       supportCategory: jsonSerialization['supportCategory'] == null
           ? null
-          : _i3.SupportCategory.fromJson(
+          : _i4.SupportCategory.fromJson(
               (jsonSerialization['supportCategory'] as Map<String, dynamic>)),
     );
   }
@@ -74,8 +71,6 @@ abstract class SupportCategoryStatus implements _i1.SerializableModel {
   /// the id will be null.
   int? id;
 
-  String statusId;
-
   int status;
 
   String createdBy;
@@ -84,46 +79,41 @@ abstract class SupportCategoryStatus implements _i1.SerializableModel {
 
   String comment;
 
-  String fileUrl;
-
-  String fileId;
+  List<_i2.HubDocument>? documents;
 
   int pupilId;
 
-  _i2.PupilData? pupil;
+  _i3.PupilData? pupil;
 
   int supportCategoryId;
 
-  _i3.SupportCategory? supportCategory;
+  _i4.SupportCategory? supportCategory;
 
   /// Returns a shallow copy of this [SupportCategoryStatus]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   SupportCategoryStatus copyWith({
     int? id,
-    String? statusId,
     int? status,
     String? createdBy,
     DateTime? createdAt,
     String? comment,
-    String? fileUrl,
-    String? fileId,
+    List<_i2.HubDocument>? documents,
     int? pupilId,
-    _i2.PupilData? pupil,
+    _i3.PupilData? pupil,
     int? supportCategoryId,
-    _i3.SupportCategory? supportCategory,
+    _i4.SupportCategory? supportCategory,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
-      'statusId': statusId,
       'status': status,
       'createdBy': createdBy,
       'createdAt': createdAt.toJson(),
       'comment': comment,
-      'fileUrl': fileUrl,
-      'fileId': fileId,
+      if (documents != null)
+        'documents': documents?.toJson(valueToJson: (v) => v.toJson()),
       'pupilId': pupilId,
       if (pupil != null) 'pupil': pupil?.toJson(),
       'supportCategoryId': supportCategoryId,
@@ -142,26 +132,22 @@ class _Undefined {}
 class _SupportCategoryStatusImpl extends SupportCategoryStatus {
   _SupportCategoryStatusImpl({
     int? id,
-    required String statusId,
     required int status,
     required String createdBy,
     required DateTime createdAt,
     required String comment,
-    required String fileUrl,
-    required String fileId,
+    List<_i2.HubDocument>? documents,
     required int pupilId,
-    _i2.PupilData? pupil,
+    _i3.PupilData? pupil,
     required int supportCategoryId,
-    _i3.SupportCategory? supportCategory,
+    _i4.SupportCategory? supportCategory,
   }) : super._(
           id: id,
-          statusId: statusId,
           status: status,
           createdBy: createdBy,
           createdAt: createdAt,
           comment: comment,
-          fileUrl: fileUrl,
-          fileId: fileId,
+          documents: documents,
           pupilId: pupilId,
           pupil: pupil,
           supportCategoryId: supportCategoryId,
@@ -174,13 +160,11 @@ class _SupportCategoryStatusImpl extends SupportCategoryStatus {
   @override
   SupportCategoryStatus copyWith({
     Object? id = _Undefined,
-    String? statusId,
     int? status,
     String? createdBy,
     DateTime? createdAt,
     String? comment,
-    String? fileUrl,
-    String? fileId,
+    Object? documents = _Undefined,
     int? pupilId,
     Object? pupil = _Undefined,
     int? supportCategoryId,
@@ -188,17 +172,17 @@ class _SupportCategoryStatusImpl extends SupportCategoryStatus {
   }) {
     return SupportCategoryStatus(
       id: id is int? ? id : this.id,
-      statusId: statusId ?? this.statusId,
       status: status ?? this.status,
       createdBy: createdBy ?? this.createdBy,
       createdAt: createdAt ?? this.createdAt,
       comment: comment ?? this.comment,
-      fileUrl: fileUrl ?? this.fileUrl,
-      fileId: fileId ?? this.fileId,
+      documents: documents is List<_i2.HubDocument>?
+          ? documents
+          : this.documents?.map((e0) => e0.copyWith()).toList(),
       pupilId: pupilId ?? this.pupilId,
-      pupil: pupil is _i2.PupilData? ? pupil : this.pupil?.copyWith(),
+      pupil: pupil is _i3.PupilData? ? pupil : this.pupil?.copyWith(),
       supportCategoryId: supportCategoryId ?? this.supportCategoryId,
-      supportCategory: supportCategory is _i3.SupportCategory?
+      supportCategory: supportCategory is _i4.SupportCategory?
           ? supportCategory
           : this.supportCategory?.copyWith(),
     );

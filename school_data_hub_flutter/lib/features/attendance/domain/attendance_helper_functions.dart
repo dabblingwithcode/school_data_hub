@@ -36,7 +36,7 @@ class AttendanceHelper {
     final List<PupilProxy> allPupils = _pupilManager.allPupils;
     for (PupilProxy pupil in allPupils) {
       final missedClasses = _attendanceManager
-          .getPupilMissedClassesList(pupil.pupilId)
+          .getPupilMissedClassesProxy(pupil.pupilId)
           .missedClasses;
       if (missedClasses.isNotEmpty) {
         missedGlobalSum += missedClasses
@@ -55,7 +55,7 @@ class AttendanceHelper {
     final List<PupilProxy> allPupils = _pupilManager.allPupils;
     for (PupilProxy pupil in allPupils) {
       final missedClasses = _attendanceManager
-          .getPupilMissedClassesList(pupil.pupilId)
+          .getPupilMissedClassesProxy(pupil.pupilId)
           .missedClasses;
 
       if (missedClasses.isNotEmpty) {
@@ -74,7 +74,7 @@ class AttendanceHelper {
     final List<PupilProxy> allPupils = _pupilManager.allPupils;
     for (PupilProxy pupil in allPupils) {
       final missedClasses = _attendanceManager
-          .getPupilMissedClassesList(pupil.pupilId)
+          .getPupilMissedClassesProxy(pupil.pupilId)
           .missedClasses;
 
       if (missedClasses.isNotEmpty) {
@@ -91,7 +91,7 @@ class AttendanceHelper {
     final List<PupilProxy> allPupils = _pupilManager.allPupils;
     for (PupilProxy pupil in allPupils) {
       final missedClasses = _attendanceManager
-          .getPupilMissedClassesList(pupil.pupilId)
+          .getPupilMissedClassesProxy(pupil.pupilId)
           .missedClasses;
 
       if (missedClasses.isNotEmpty) {
@@ -108,7 +108,7 @@ class AttendanceHelper {
     final List<PupilProxy> allPupils = _pupilManager.allPupils;
     for (PupilProxy pupil in allPupils) {
       final missedClasses = _attendanceManager
-          .getPupilMissedClassesList(pupil.pupilId)
+          .getPupilMissedClassesProxy(pupil.pupilId)
           .missedClasses;
       if (missedClasses.isNotEmpty) {
         pickedUpGlobalSum +=
@@ -126,12 +126,12 @@ class AttendanceHelper {
     if (filteredPupils.isNotEmpty) {
       for (PupilProxy pupil in filteredPupils) {
         final missedClasses = _attendanceManager
-            .getPupilMissedClassesList(pupil.pupilId)
+            .getPupilMissedClassesProxy(pupil.pupilId)
             .missedClasses;
         if (missedClasses.any((missedClass) =>
-            missedClass.schoolday!.schoolday == thisDate &&
+            missedClass.schoolday!.schoolday.isSameDate(thisDate) &&
             (missedClass.missedType == MissedType.missed ||
-                missedClass.missedType == 'home' ||
+                missedClass.missedType == MissedType.home ||
                 missedClass.returned == true))) {
           missedPupils.add(pupil);
         }
@@ -147,10 +147,10 @@ class AttendanceHelper {
 
     for (PupilProxy pupil in filteredPupils) {
       final missedClasses = _attendanceManager
-          .getPupilMissedClassesList(pupil.pupilId)
+          .getPupilMissedClassesProxy(pupil.pupilId)
           .missedClasses;
       if (missedClasses.any((missedClass) =>
-          missedClass.schoolday!.schoolday == thisDate &&
+          missedClass.schoolday!.schoolday.isSameDate(thisDate) &&
           missedClass.missedType == MissedType.missed &&
           missedClass.unexcused == true)) {
         unexcusedPupils.add(pupil);
@@ -207,7 +207,7 @@ class AttendanceHelper {
     // count the number of missed classes - avoid null when missedClasses is empty
     int missedclassCount = 0;
     final missedClasses = _attendanceManager
-        .getPupilMissedClassesList(pupil.pupilId)
+        .getPupilMissedClassesProxy(pupil.pupilId)
         .missedClasses;
     if (missedClasses.isNotEmpty) {
       missedclassCount = missedClasses
@@ -223,7 +223,7 @@ class AttendanceHelper {
     // count the number of unexcused missed classes
     int missedclassCount = 0;
     final missedClasses = _attendanceManager
-        .getPupilMissedClassesList(pupil.pupilId)
+        .getPupilMissedClassesProxy(pupil.pupilId)
         .missedClasses;
     if (missedClasses.isNotEmpty) {
       missedclassCount = missedClasses
@@ -238,7 +238,7 @@ class AttendanceHelper {
   static int lateSum(PupilProxy pupil) {
     int lateCount = 0;
     final missedClasses = _attendanceManager
-        .getPupilMissedClassesList(pupil.pupilId)
+        .getPupilMissedClassesProxy(pupil.pupilId)
         .missedClasses;
     if (missedClasses.isNotEmpty) {
       lateCount = missedClasses
@@ -251,7 +251,7 @@ class AttendanceHelper {
   static int lateUnexcusedSum(PupilProxy pupil) {
     int missedClassUnexcusedCount = 0;
     final missedClasses = _attendanceManager
-        .getPupilMissedClassesList(pupil.pupilId)
+        .getPupilMissedClassesProxy(pupil.pupilId)
         .missedClasses;
     if (missedClasses.isNotEmpty) {
       missedClassUnexcusedCount = missedClasses
@@ -265,7 +265,7 @@ class AttendanceHelper {
 
   static int contactedSum(PupilProxy pupil) {
     final missedClasses = _attendanceManager
-        .getPupilMissedClassesList(pupil.pupilId)
+        .getPupilMissedClassesProxy(pupil.pupilId)
         .missedClasses;
     int contactedCount = missedClasses
         .where((element) => element.contacted != ContactedType.notSet)
@@ -276,7 +276,7 @@ class AttendanceHelper {
 
   static int goneHomeSum(PupilProxy pupil) {
     final missedClasses = _attendanceManager
-        .getPupilMissedClassesList(pupil.pupilId)
+        .getPupilMissedClassesProxy(pupil.pupilId)
         .missedClasses;
     int goneHomeCount =
         missedClasses.where((element) => element.returned == true).length;
@@ -288,7 +288,7 @@ class AttendanceHelper {
 
   static bool pupilIsMissedToday(PupilProxy pupil) {
     final missedClasses = _attendanceManager
-        .getPupilMissedClassesList(pupil.pupilId)
+        .getPupilMissedClassesProxy(pupil.pupilId)
         .missedClasses;
     if (missedClasses.isEmpty) return false;
     if (missedClasses.any((element) =>
@@ -300,7 +300,7 @@ class AttendanceHelper {
   }
 
   static bool schooldayIsToday(DateTime schoolday) {
-    if (schoolday.isSameDate(DateTime.now())) {
+    if (schoolday.isSameDate(DateTime.now().toUtc())) {
       return true;
     }
     return false;
@@ -362,7 +362,7 @@ class AttendanceHelper {
     // (for grades 3 and 4)
     // in the last semester for the school year (for grades 1 and 2)
     final missedClasses = _attendanceManager
-        .getPupilMissedClassesList(pupil.pupilId)
+        .getPupilMissedClassesProxy(pupil.pupilId)
         .missedClasses;
     // if no missed classes, we return 0, 0
     if (missedClasses.isEmpty) {
@@ -371,7 +371,7 @@ class AttendanceHelper {
 
     final List<SchoolSemester> schoolSemesters =
         _schooldayManager.schoolSemesters.value;
-    final DateTime now = DateTime.now();
+    final DateTime now = DateTime.now().toUtc();
 
     final SchoolSemester currentSemester = schoolSemesters.firstWhereOrNull(
             (semester) =>

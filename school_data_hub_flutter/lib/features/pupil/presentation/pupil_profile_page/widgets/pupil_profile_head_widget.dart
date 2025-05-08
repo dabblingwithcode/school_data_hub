@@ -59,7 +59,7 @@ class PupilProfileHeadWidget extends WatchingWidget {
               Row(
                 children: [
                   Text(
-                    'FE  ${pupil.latestSupportLevel}',
+                    'FE  ${pupil.latestSupportLevel?.level ?? '0'}',
                     textAlign: TextAlign.left,
                     style: const TextStyle(
                         color: Colors.black,

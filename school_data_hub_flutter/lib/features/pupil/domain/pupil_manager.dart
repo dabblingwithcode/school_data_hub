@@ -49,18 +49,7 @@ class PupilManager extends ChangeNotifier {
     return _pupilIdPupilsMap[pupilId];
   }
 
-  // @Deprecated('Use pupilsFromPupilIds instead')
-  // List<PupilProxy> pupilsFromInternalIds(List<int> internalIds) {
-  //   List<PupilProxy> pupilsfromInternalIds = [];
-
-  //   for (int internalId in internalIds) {
-  //     pupilsfromInternalIds.add(_pupilsPupilIdMap[internalId]!);
-  //   }
-
-  //   return pupilsfromInternalIds;
-  // }
-
-  List<PupilProxy> pupilsFromPupilIds(List<int> pupilIds) {
+  List<PupilProxy> getPupilsFromPupilIds(List<int> pupilIds) {
     List<PupilProxy> pupilsfromPupilIds = [];
 
     for (int pupilId in pupilIds) {
@@ -74,11 +63,11 @@ class PupilManager extends ChangeNotifier {
     return pupilsfromPupilIds;
   }
 
-  List<int> internalIdsFromPupils(List<PupilProxy> pupils) {
+  List<int> getInternalIdsFromPupils(List<PupilProxy> pupils) {
     return pupils.map((pupil) => pupil.internalId).toList();
   }
 
-  List<int> pupilIdsFromPupils(List<PupilProxy> pupils) {
+  List<int> getPupilIdsFromPupils(List<PupilProxy> pupils) {
     return pupils.map((pupil) => pupil.pupilId).toList();
   }
 
@@ -89,7 +78,7 @@ class PupilManager extends ChangeNotifier {
     return allPupilsMap.values.toList();
   }
 
-  List<PupilProxy> siblings(PupilProxy pupil) {
+  List<PupilProxy> getSiblings(PupilProxy pupil) {
     if (pupil.family == null) {
       return [];
     }
@@ -108,10 +97,10 @@ class PupilManager extends ChangeNotifier {
     return pupilSiblings;
   }
 
-  List<PupilProxy> pupilsWithBirthdaySinceDate(DateTime date) {
+  List<PupilProxy> getPupilsWithBirthdaySinceDate(DateTime date) {
     Map<int, PupilProxy> allPupils = Map<int, PupilProxy>.of(_pupilIdPupilsMap);
 
-    final DateTime now = DateTime.now();
+    final DateTime now = DateTime.now().toUtc();
 
     allPupils.removeWhere((key, pupil) {
       final birthdayThisYear =
@@ -156,9 +145,16 @@ class PupilManager extends ChangeNotifier {
   }
 
   Future<void> updatePupilList(List<PupilProxy> pupils) async {
-    await fetchPupilsByInternalId(pupils.map((e) => e.internalId).toList());
+    await fetchPupilsByInternalId(pupils.map((e) => e.pupilId).toList());
   }
 
+  Future<void> updatePupilData(int pupilId) async {
+    final fetchedPupil = await _pupilDataApiService
+        .fetchListOfPupils(pupilInternalIds: [pupilId]);
+    if (fetchedPupil.isNotEmpty) {
+      updatePupilProxyWithPupilData(fetchedPupil.first);
+    }
+  }
   //- Fetch pupils with the given internal ids
 
   Future<void> fetchPupilsByInternalId(List<int> pupilInternalIds) async {
@@ -272,6 +268,21 @@ class PupilManager extends ChangeNotifier {
     // _pupils[pupilId]!.clearAvatar();
   }
 
+  Future<void> updatePreSchoolMedicalStatus(
+      {required int pupilId,
+      required PreSchoolMedicalStatus preSchoolMedicalStatus,
+      required String createdBy}) async {
+    // send the Api request
+    final PupilData pupilUpdate =
+        await _pupilDataApiService.updatePreSchoolMedicalStatus(
+            pupilId: pupilId,
+            preSchoolMedical: preSchoolMedicalStatus,
+            createdBy: createdBy);
+
+    // update the pupil in the repository
+    updatePupilProxyWithPupilData(pupilUpdate);
+  }
+
   Future<void> updatePublicMediaAuth({
     required PupilProxy pupil,
     bool? groupPicturesOnWebsite,
@@ -302,45 +313,6 @@ class PupilManager extends ChangeNotifier {
         pupil.pupilId, authToUpdate);
     updatePupilProxyWithPupilData(updatedPupil);
   }
-  // Future<void> updatePupilAvatarAuth(
-  //   File imageFile,
-  //   PupilProxy pupil,
-  // ) async {
-  //   // first we encrypt the file
-
-  //   final encryptedFile = await customEncrypter.encryptFile(imageFile);
-
-  //   // send the Api request
-
-  //   final PupilData pupilUpdate =
-  //       await _pupilDataApiService.updatePupilWithAvatarAuth(
-  //     pupilId: pupil.pupilId,
-  //     file: encryptedFile,
-  //   );
-
-  //   // update the pupil in the repository
-  //   updatePupilProxyWithPupilData(pupilUpdate);
-  // }
-
-  // Future<void> updatePupilPublicMediaAuth(
-  //   File imageFile,
-  //   PupilProxy pupil,
-  // ) async {
-  //   // first we encrypt the file
-
-  //   final encryptedFile = await customEncrypter.encryptFile(imageFile);
-
-  //   // send the Api request
-
-  //   final PupilData pupilUpdate =
-  //       await _pupilDataApiService.updatePupilPublicMediaAuth(
-  //     pupilId: pupil.pupilId,
-  //     file: encryptedFile,
-  //   );
-
-  //   // update the pupil in the repository
-  //   updatePupilProxyWithPupilData(pupilUpdate);
-  // }
 
   Future<void> resetPublicMediaAuth(int pupilId) async {
     // we need the cacheKey if the api request is successful
@@ -362,40 +334,11 @@ class PupilManager extends ChangeNotifier {
     // and update the repository
     updatePupilProxyWithPupilData(pupilUpdate);
   }
-//   Future<void> deleteAvatarAuthImage(int pupilId, String cacheKey) async {
-//     // send the Api request
-//     await pupilDataApiService.deletePupilAvatarAuth(
-//       internalId: pupilId,
-//     );
 
-//     // Delete the outdated encrypted file in the cache.
-
-//     await _cacheManager.removeFile(cacheKey);
-// final ScheduledLesson scheduledLesson = ScheduledLesson(recordtest: (testString: "l", testint: 2))
-//     // and update the repository
-//     _pupils[pupilId]!.deleteAvatarAuthId();
-//   }
-
-//   Future<void> deletePublicMediaAuthImage(int pupilId, String cacheKey) async {
-//     // send the Api request
-//     await pupilDataApiService.deletePupilPublicMediaAuthImage(
-//       internalId: pupilId,
-//     );
-
-//     // Delete the outdated encrypted file in the cache.
-
-//     await _cacheManager.removeFile(cacheKey);
-
-//     // and update the repository
-//     _pupils[pupilId]!.deletePublicMediaAuthId();
-//   }
-
-  /// TODO: We need to use pupilId here instead of internalId
-  /// like everywhere else in the code
   Future<void> updateTutorInfo(
       {required int pupilId, required TutorInfo? tutorInfo}) async {
     // check if the pupil is a sibling and handle them if true
-    final pupilSiblings = siblings(getPupilByPupilId(pupilId)!);
+    final pupilSiblings = getSiblings(getPupilByPupilId(pupilId)!);
     if (pupilSiblings.isNotEmpty) {
       // create list with ids of all pupils with the same family value
       final List<int> siblingIds = pupilSiblings.map((p) => p.pupilId).toList();
@@ -493,31 +436,29 @@ class PupilManager extends ChangeNotifier {
   }
 
   Future<void> updatePupilSupportLevel(
-      {required int internalId,
+      {required int pupilId,
       required int level,
       required DateTime createdAt,
       required String createdBy,
       required String comment}) async {
-    final pupilIdId = getPupilByPupilId(internalId)!.pupilId;
-
     final PupilData updatedPupil =
         await _pupilDataApiService.updateSupportLevel(
-      pupilIdId: pupilIdId,
+      pupilId: pupilId,
       supportLevelValue: level,
       createdAt: createdAt,
       createdBy: createdBy,
       comment: comment,
     );
 
-    _pupilIdPupilsMap[internalId]!.updatePupil(updatedPupil);
+    _pupilIdPupilsMap[pupilId]!.updatePupil(updatedPupil);
   }
 
   Future<void> deleteSupportLevelHistoryItem(
-      {required int pupilId, required String supportLevelId}) async {
+      {required int pupilId, required int supportLevelId}) async {
     final PupilData updatedPupil =
         await _pupilDataApiService.deleteSupportLevelHistoryItem(
-      internalId: pupilId,
-      supportLevelId: int.parse(supportLevelId),
+      pupilId: pupilId,
+      supportLevelId: supportLevelId,
     );
 
     _pupilIdPupilsMap[pupilId]!.updatePupil(updatedPupil);

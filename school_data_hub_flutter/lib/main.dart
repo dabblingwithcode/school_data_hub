@@ -97,33 +97,29 @@ class MyApp extends WatchingWidget {
       ],
       debugShowCheckedModeBanner: false,
       title: 'Schuldaten Hub',
-      home:
-          // TODO: How can we watch the connectivity monitor instead of
-          // adding a listener?
-          !isConnected
-              ? const NoConnectionPage()
-              : envIsReady
-                  ? FutureBuilder(
-                      future: di.allReady(timeout: const Duration(seconds: 30)),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          log.shout(
-                              'Dependency Injection Error: ${snapshot.error}',
-                              StackTrace.current);
-                          return ErrorPage(error: snapshot.error.toString());
-                        } else if (snapshot.connectionState ==
-                            ConnectionState.done) {
-                          if (userIsAuthenticated) {
-                            return MainMenuBottomNavigation();
-                          } else {
-                            return const Login();
-                          }
-                        } else {
-                          return const LoadingPage();
-                        }
-                      },
-                    )
-                  : const EntryPoint(),
+      home: !isConnected
+          ? const NoConnectionPage()
+          : envIsReady
+              ? FutureBuilder(
+                  future: di.allReady(timeout: const Duration(seconds: 30)),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      log.shout('Dependency Injection Error: ${snapshot.error}',
+                          StackTrace.current);
+                      return ErrorPage(error: snapshot.error.toString());
+                    } else if (snapshot.connectionState ==
+                        ConnectionState.done) {
+                      if (userIsAuthenticated) {
+                        return MainMenuBottomNavigation();
+                      } else {
+                        return const Login();
+                      }
+                    } else {
+                      return const LoadingPage();
+                    }
+                  },
+                )
+              : const EntryPoint(),
     );
   }
 }

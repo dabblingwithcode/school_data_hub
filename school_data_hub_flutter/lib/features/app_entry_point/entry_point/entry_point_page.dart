@@ -100,11 +100,11 @@ class EntryPointPage extends WatchingWidget {
                     child: ElevatedButton(
                         style: AppStyles.actionButtonStyle,
                         onPressed: () {
-                          Platform.isWindows
+                          Platform.isWindows || Platform.isMacOS
                               ? controller.importEnvFromTxt()
                               : controller.scanEnv(context);
                         },
-                        child: Platform.isWindows
+                        child: Platform.isWindows || Platform.isMacOS
                             ? const Text('SCHULSCHLÜSSEL IMPORTIEREN',
                                 style: AppStyles.buttonTextStyle)
                             : Text(

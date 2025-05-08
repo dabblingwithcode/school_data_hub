@@ -7,5 +7,5 @@ fields:
   createdAt: DateTime
   achieved: int
   comment: String
-  supportGoalCheckFiles: List<SupportGoalCheckFile>?, relation
+  documents: List<HubDocument>?, relation
   supportGoal: SupportGoal?, relation(onDelete=Cascade)

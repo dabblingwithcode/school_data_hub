@@ -22,7 +22,7 @@ class PupilAttendanceContent extends WatchingWidget {
     final List<int> missedHoursForActualReport =
         AttendanceHelper.missedHoursforSemesterOrSchoolyear(pupil);
     List<MissedClass> missedClasses =
-        watch(_attendanceManager.getPupilMissedClassesList(pupil.pupilId))
+        watch(_attendanceManager.getPupilMissedClassesProxy(pupil.pupilId))
             .missedClasses;
 
     // sort by missedDay

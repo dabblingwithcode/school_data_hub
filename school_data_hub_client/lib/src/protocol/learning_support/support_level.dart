@@ -20,8 +20,8 @@ abstract class SupportLevel implements _i1.SerializableModel {
     required this.comment,
     required this.createdAt,
     required this.createdBy,
-    required this.pupilIdId,
-    this.pupilId,
+    required this.pupilId,
+    this.pupil,
   });
 
   factory SupportLevel({
@@ -30,8 +30,8 @@ abstract class SupportLevel implements _i1.SerializableModel {
     required String comment,
     required DateTime createdAt,
     required String createdBy,
-    required int pupilIdId,
-    _i2.PupilData? pupilId,
+    required int pupilId,
+    _i2.PupilData? pupil,
   }) = _SupportLevelImpl;
 
   factory SupportLevel.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -42,11 +42,11 @@ abstract class SupportLevel implements _i1.SerializableModel {
       createdAt:
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
       createdBy: jsonSerialization['createdBy'] as String,
-      pupilIdId: jsonSerialization['pupilIdId'] as int,
-      pupilId: jsonSerialization['pupilId'] == null
+      pupilId: jsonSerialization['pupilId'] as int,
+      pupil: jsonSerialization['pupil'] == null
           ? null
           : _i2.PupilData.fromJson(
-              (jsonSerialization['pupilId'] as Map<String, dynamic>)),
+              (jsonSerialization['pupil'] as Map<String, dynamic>)),
     );
   }
 
@@ -63,9 +63,9 @@ abstract class SupportLevel implements _i1.SerializableModel {
 
   String createdBy;
 
-  int pupilIdId;
+  int pupilId;
 
-  _i2.PupilData? pupilId;
+  _i2.PupilData? pupil;
 
   /// Returns a shallow copy of this [SupportLevel]
   /// with some or all fields replaced by the given arguments.
@@ -76,8 +76,8 @@ abstract class SupportLevel implements _i1.SerializableModel {
     String? comment,
     DateTime? createdAt,
     String? createdBy,
-    int? pupilIdId,
-    _i2.PupilData? pupilId,
+    int? pupilId,
+    _i2.PupilData? pupil,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -87,8 +87,8 @@ abstract class SupportLevel implements _i1.SerializableModel {
       'comment': comment,
       'createdAt': createdAt.toJson(),
       'createdBy': createdBy,
-      'pupilIdId': pupilIdId,
-      if (pupilId != null) 'pupilId': pupilId?.toJson(),
+      'pupilId': pupilId,
+      if (pupil != null) 'pupil': pupil?.toJson(),
     };
   }
 
@@ -107,16 +107,16 @@ class _SupportLevelImpl extends SupportLevel {
     required String comment,
     required DateTime createdAt,
     required String createdBy,
-    required int pupilIdId,
-    _i2.PupilData? pupilId,
+    required int pupilId,
+    _i2.PupilData? pupil,
   }) : super._(
           id: id,
           level: level,
           comment: comment,
           createdAt: createdAt,
           createdBy: createdBy,
-          pupilIdId: pupilIdId,
           pupilId: pupilId,
+          pupil: pupil,
         );
 
   /// Returns a shallow copy of this [SupportLevel]
@@ -129,8 +129,8 @@ class _SupportLevelImpl extends SupportLevel {
     String? comment,
     DateTime? createdAt,
     String? createdBy,
-    int? pupilIdId,
-    Object? pupilId = _Undefined,
+    int? pupilId,
+    Object? pupil = _Undefined,
   }) {
     return SupportLevel(
       id: id is int? ? id : this.id,
@@ -138,8 +138,8 @@ class _SupportLevelImpl extends SupportLevel {
       comment: comment ?? this.comment,
       createdAt: createdAt ?? this.createdAt,
       createdBy: createdBy ?? this.createdBy,
-      pupilIdId: pupilIdId ?? this.pupilIdId,
-      pupilId: pupilId is _i2.PupilData? ? pupilId : this.pupilId?.copyWith(),
+      pupilId: pupilId ?? this.pupilId,
+      pupil: pupil is _i2.PupilData? ? pupil : this.pupil?.copyWith(),
     );
   }
 }

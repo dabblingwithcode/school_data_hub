@@ -123,7 +123,7 @@ class _SelectPupilsListPageState extends State<SelectPupilsListPage> {
                   title: SelectPupilsSearchBar(
                     selectablePupils: selectablePupils,
                     selectedPupils:
-                        _pupilManager.pupilsFromPupilIds(selectedPupilIds),
+                        _pupilManager.getPupilsFromPupilIds(selectedPupilIds),
                   ),
                 ),
                 GenericSliverListWithEmptyListCheck(
