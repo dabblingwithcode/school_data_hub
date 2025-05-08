@@ -35,18 +35,6 @@ class LearningSupportListPageBottomNavBar extends StatelessWidget {
               ),
               const Gap(30),
               InkWell(
-                onTap: () {
-                  // TODO: uncomment when ready
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //     builder: (ctx) => const SelectCompetence()));
-                },
-                child: const Icon(
-                  Icons.group_add,
-                  size: 30,
-                ),
-              ),
-              const Gap(30),
-              InkWell(
                 onTap: () => showLearningSupportFilterBottomSheet(context),
                 onLongPress: () => _filtersStateManager.resetFilters(),
                 child: Icon(

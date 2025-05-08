@@ -4,6 +4,7 @@ import 'package:school_data_hub_flutter/common/domain/filters/filters.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/attendance_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/filters/attendance_pupil_filter.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_selector_filters.dart';
@@ -122,16 +123,11 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
             .value
             .values
             .any((x) => x == true) ||
-        // di<LearningSupportFilterManager>()
-        //     .supportLevelFilterState
-        //     .value
-        //     .values
-        //     .any((x) => x == true) ||
-        // di<LearningSupportFilterManager>()
-        //     .supportAreaFilterState
-        //     .value
-        //     .values
-        //     .any((x) => x == true) ||
+        di<LearningSupportFilterManager>()
+            .supportLevelFilterState
+            .value
+            .values
+            .any((x) => x == true) ||
         di<FiltersStateManager>().getFilterState(FilterState.attendance);
 
     // If no filters are active, just sort
@@ -205,19 +201,16 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
         }
       }
 
-      // if (di<FiltersStateManager>()
-      //     .getFilterState(FilterState.schooldayEvent)) {
-      //   final ids = di<SchooldayEventFilterManager>()
-      //       .pupilIdsWithFilteredSchooldayEvents
-      //       .value;
-      //   if (!di<SchooldayEventFilterManager>()
-      //       .pupilIdsWithFilteredSchooldayEvents
-      //       .value
-      //       .contains(pupil.pupilId)) {
-      //     filtersOn = true;
-      //     continue;
-      //   }
-      // }
+      if (di<FiltersStateManager>()
+          .getFilterState(FilterState.schooldayEvent)) {
+        if (!di<SchooldayEventFilterManager>()
+            .pupilIdsWithFilteredSchooldayEvents
+            .value
+            .contains(pupil.pupilId)) {
+          filtersOn = true;
+          continue;
+        }
+      }
 
       // OGS filters
 

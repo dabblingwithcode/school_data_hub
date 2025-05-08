@@ -17,6 +17,7 @@ import 'package:school_data_hub_flutter/features/authorizations/domain/filters/a
 import 'package:school_data_hub_flutter/features/authorizations/domain/filters/pupil_authorization_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/competence/domain/filters/competence_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
@@ -173,6 +174,10 @@ class DiManager {
     di.registerSingletonWithDependencies<PupilFilterManager>(
         () => PupilFilterManager(),
         dependsOn: [PupilManager]);
+
+    di.registerSingletonWithDependencies<LearningSupportFilterManager>(
+        () => LearningSupportFilterManager(),
+        dependsOn: [PupilManager, PupilFilterManager]);
 
     di.registerSingletonWithDependencies<SchooldayEventFilterManager>(() {
       _log.info('SchooldayEventFilterManager initializing');
