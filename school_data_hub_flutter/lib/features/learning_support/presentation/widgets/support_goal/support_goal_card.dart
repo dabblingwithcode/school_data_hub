@@ -122,8 +122,7 @@ class SupportGoalCard extends StatelessWidget {
                     const Gap(15),
                     Flexible(
                       child: Text(
-                        'Placeholder für Strategien',
-                        // TODO: uncomment this when ready: pupil.supportGoals![goalIndex].strategies!,
+                        pupil.supportGoals![goalIndex].strategies,
                         style: const TextStyle(
                           fontSize: 16,
                         ),
