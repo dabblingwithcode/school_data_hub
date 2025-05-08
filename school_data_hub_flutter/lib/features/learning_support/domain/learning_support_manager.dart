@@ -8,6 +8,7 @@ import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/data/learning_support_api_service.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -63,15 +64,15 @@ class LearningSupportManager with ChangeNotifier {
 
   List<SupportGoal> getGoalsForSupportCategory(int categoryId) {
     List<SupportGoal> goals = [];
-    // TODO: implement this function
-    // final List<PupilProxy> pupils = locator<PupilManager>().allPupils;
-    // for (PupilProxy pupil in pupils) {
-    //   for (SupportGoal goal in pupil.supportGoals!) {
-    //     if (goal.supportCategoryId == categoryId) {
-    //       goals.add(goal);
-    //     }
-    //   }
-    // }
+
+    final List<PupilProxy> pupils = _pupilManager.allPupils;
+    for (PupilProxy pupil in pupils) {
+      for (SupportGoal goal in pupil.supportGoals!) {
+        if (goal.supportCategoryId == categoryId) {
+          goals.add(goal);
+        }
+      }
+    }
     return goals;
   }
 
@@ -160,6 +161,28 @@ class LearningSupportManager with ChangeNotifier {
   //   return;
   // }
 
+  Future<void> postNewSupportCategoryGoal({
+    required int goalCategoryId,
+    required int pupilId,
+    required String description,
+    required String strategies,
+  }) async {
+    final PupilData responsePupil =
+        await _learningSupportApiService.postNewCategoryGoal(
+      pupilId: pupilId,
+      supportCategoryId: goalCategoryId,
+      description: description,
+      strategies: strategies,
+      createdBy: _serverpodSessionManager.userName!,
+    );
+
+    _pupilManager.updatePupilProxyWithPupilData(responsePupil);
+
+    _notificationService.showSnackBar(
+        NotificationType.success, 'Ziel hinzugefügt');
+
+    return;
+  }
   // Future postNewSupportCategoryGoal(
   //     {required int goalCategoryId,
   //     required int pupilId,

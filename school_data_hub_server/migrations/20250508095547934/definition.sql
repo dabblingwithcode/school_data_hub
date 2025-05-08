@@ -1,7 +1,7 @@
 BEGIN;
 
 --
--- ACTION CREATE TABLE
+-- Class Authorization as table authorization
 --
 CREATE TABLE "authorization" (
     "id" bigserial PRIMARY KEY,
@@ -11,7 +11,7 @@ CREATE TABLE "authorization" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class Book as table book
 --
 CREATE TABLE "book" (
     "id" bigserial PRIMARY KEY,
@@ -25,7 +25,7 @@ CREATE TABLE "book" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class BookTag as table book_tag
 --
 CREATE TABLE "book_tag" (
     "id" bigserial PRIMARY KEY,
@@ -33,7 +33,7 @@ CREATE TABLE "book_tag" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class BookTagging as table book_tagging
 --
 CREATE TABLE "book_tagging" (
     "id" bigserial PRIMARY KEY,
@@ -45,7 +45,7 @@ CREATE TABLE "book_tagging" (
 CREATE UNIQUE INDEX "book_tagging_index_idx" ON "book_tagging" USING btree ("bookId", "bookTagId");
 
 --
--- ACTION CREATE TABLE
+-- Class Competence as table competence
 --
 CREATE TABLE "competence" (
     "id" bigserial PRIMARY KEY,
@@ -58,7 +58,7 @@ CREATE TABLE "competence" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class CompetenceCheck as table competence_check
 --
 CREATE TABLE "competence_check" (
     "id" bigserial PRIMARY KEY,
@@ -75,7 +75,7 @@ CREATE TABLE "competence_check" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class CompetenceGoal as table competence_goal
 --
 CREATE TABLE "competence_goal" (
     "id" bigserial PRIMARY KEY,
@@ -92,7 +92,7 @@ CREATE TABLE "competence_goal" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class CompetenceReport as table competence_report
 --
 CREATE TABLE "competence_report" (
     "id" bigserial PRIMARY KEY,
@@ -107,7 +107,7 @@ CREATE TABLE "competence_report" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class CompetenceReportCheck as table competence_report_check
 --
 CREATE TABLE "competence_report_check" (
     "id" bigserial PRIMARY KEY,
@@ -122,7 +122,7 @@ CREATE TABLE "competence_report_check" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class CreditTransaction as table credit_transaction
 --
 CREATE TABLE "credit_transaction" (
     "id" bigserial PRIMARY KEY,
@@ -139,7 +139,7 @@ CREATE INDEX "reciever_idx" ON "credit_transaction" USING btree ("receiver");
 CREATE INDEX "sender_idx" ON "credit_transaction" USING btree ("sender");
 
 --
--- ACTION CREATE TABLE
+-- Class HubDocument as table hub_document
 --
 CREATE TABLE "hub_document" (
     "id" bigserial PRIMARY KEY,
@@ -156,7 +156,7 @@ CREATE TABLE "hub_document" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class LanguageStats as table language_stats
 --
 CREATE TABLE "language_stats" (
     "id" bigserial PRIMARY KEY,
@@ -164,7 +164,7 @@ CREATE TABLE "language_stats" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class Lesson as table lesson
 --
 CREATE TABLE "lesson" (
     "id" bigserial PRIMARY KEY,
@@ -173,7 +173,7 @@ CREATE TABLE "lesson" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class LessonAttendance as table lesson_attendance
 --
 CREATE TABLE "lesson_attendance" (
     "id" bigserial PRIMARY KEY,
@@ -187,7 +187,7 @@ CREATE TABLE "lesson_attendance" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class LessonGroup as table lesson_group
 --
 CREATE TABLE "lesson_group" (
     "id" bigserial PRIMARY KEY,
@@ -201,7 +201,7 @@ CREATE TABLE "lesson_group" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class ScheduledLessonGroupMembership as table lesson_group_pupil
 --
 CREATE TABLE "lesson_group_pupil" (
     "id" bigserial PRIMARY KEY,
@@ -213,7 +213,7 @@ CREATE TABLE "lesson_group_pupil" (
 CREATE UNIQUE INDEX "lesson_group_membership_index_idx" ON "lesson_group_pupil" USING btree ("lessonGroupId", "pupilDataId");
 
 --
--- ACTION CREATE TABLE
+-- Class LessonSubject as table lesson_subject
 --
 CREATE TABLE "lesson_subject" (
     "id" bigserial PRIMARY KEY,
@@ -222,7 +222,7 @@ CREATE TABLE "lesson_subject" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class LibraryBook as table library_book
 --
 CREATE TABLE "library_book" (
     "id" bigserial PRIMARY KEY,
@@ -236,7 +236,7 @@ CREATE TABLE "library_book" (
 CREATE UNIQUE INDEX "library_id_unique_idx" ON "library_book" USING btree ("libraryId");
 
 --
--- ACTION CREATE TABLE
+-- Class LibraryBookLocation as table library_book_location
 --
 CREATE TABLE "library_book_location" (
     "id" bigserial PRIMARY KEY,
@@ -244,7 +244,7 @@ CREATE TABLE "library_book_location" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class MissedClass as table missed_class
 --
 CREATE TABLE "missed_class" (
     "id" bigserial PRIMARY KEY,
@@ -266,7 +266,7 @@ CREATE TABLE "missed_class" (
 CREATE UNIQUE INDEX "schoolday_pupil_data_idx" ON "missed_class" USING btree ("schooldayId", "pupilId");
 
 --
--- ACTION CREATE TABLE
+-- Class PreSchoolMedical as table pre_school_medical
 --
 CREATE TABLE "pre_school_medical" (
     "id" bigserial PRIMARY KEY,
@@ -278,7 +278,7 @@ CREATE TABLE "pre_school_medical" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class PreSchoolTest as table pre_school_test
 --
 CREATE TABLE "pre_school_test" (
     "id" bigserial PRIMARY KEY,
@@ -286,7 +286,7 @@ CREATE TABLE "pre_school_test" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class PupilAuthorization as table pupil_authorization
 --
 CREATE TABLE "pupil_authorization" (
     "id" bigserial PRIMARY KEY,
@@ -299,7 +299,7 @@ CREATE TABLE "pupil_authorization" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class PupilBookLending as table pupil_book_lending
 --
 CREATE TABLE "pupil_book_lending" (
     "id" bigserial PRIMARY KEY,
@@ -314,7 +314,7 @@ CREATE TABLE "pupil_book_lending" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class PupilBookLendingFile as table pupil_book_lending_file
 --
 CREATE TABLE "pupil_book_lending_file" (
     "id" bigserial PRIMARY KEY,
@@ -327,7 +327,7 @@ CREATE TABLE "pupil_book_lending_file" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class PupilData as table pupil_data
 --
 CREATE TABLE "pupil_data" (
     "id" bigserial PRIMARY KEY,
@@ -356,7 +356,7 @@ CREATE INDEX "pupil_data_active_idx" ON "pupil_data" USING btree ("active", "int
 CREATE UNIQUE INDEX "pupil_data_internal_id_idx" ON "pupil_data" USING btree ("internalId");
 
 --
--- ACTION CREATE TABLE
+-- Class PupilListEntry as table pupil_list_entry
 --
 CREATE TABLE "pupil_list_entry" (
     "id" bigserial PRIMARY KEY,
@@ -368,7 +368,7 @@ CREATE TABLE "pupil_list_entry" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class PupilWorkbook as table pupil_workbook
 --
 CREATE TABLE "pupil_workbook" (
     "id" bigserial PRIMARY KEY,
@@ -382,7 +382,7 @@ CREATE TABLE "pupil_workbook" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class Room as table room
 --
 CREATE TABLE "room" (
     "id" bigserial PRIMARY KEY,
@@ -391,7 +391,7 @@ CREATE TABLE "room" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class ScheduledLesson as table scheduled_lesson
 --
 CREATE TABLE "scheduled_lesson" (
     "id" bigserial PRIMARY KEY,
@@ -411,7 +411,7 @@ CREATE TABLE "scheduled_lesson" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class SchoolList as table school_list
 --
 CREATE TABLE "school_list" (
     "id" bigserial PRIMARY KEY,
@@ -425,7 +425,7 @@ CREATE TABLE "school_list" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class SchoolSemester as table school_semester
 --
 CREATE TABLE "school_semester" (
     "id" bigserial PRIMARY KEY,
@@ -438,7 +438,7 @@ CREATE TABLE "school_semester" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class Schoolday as table schoolday
 --
 CREATE TABLE "schoolday" (
     "id" bigserial PRIMARY KEY,
@@ -447,7 +447,7 @@ CREATE TABLE "schoolday" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class SchooldayEvent as table schoolday_event
 --
 CREATE TABLE "schoolday_event" (
     "id" bigserial PRIMARY KEY,
@@ -465,7 +465,7 @@ CREATE TABLE "schoolday_event" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class Subject as table subject
 --
 CREATE TABLE "subject" (
     "id" bigserial PRIMARY KEY,
@@ -479,7 +479,7 @@ CREATE TABLE "subject" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class SupportCategory as table support_category
 --
 CREATE TABLE "support_category" (
     "id" bigserial PRIMARY KEY,
@@ -489,17 +489,17 @@ CREATE TABLE "support_category" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class SupportGoal as table support_category_goal
 --
 CREATE TABLE "support_category_goal" (
     "id" bigserial PRIMARY KEY,
     "goalId" text NOT NULL,
     "createdBy" text NOT NULL,
     "createdAt" timestamp without time zone NOT NULL,
-    "achieved" bigint NOT NULL,
-    "achievedAt" timestamp without time zone NOT NULL,
+    "achieved" bigint,
+    "achievedAt" timestamp without time zone,
     "description" text NOT NULL,
-    "strategies" json NOT NULL,
+    "strategies" text NOT NULL,
     "pupilId" bigint NOT NULL,
     "supportCategoryId" bigint NOT NULL,
     "_supportCategoryCategorygoalsSupportCategoryId" bigint,
@@ -507,7 +507,7 @@ CREATE TABLE "support_category_goal" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class SupportCategoryStatus as table support_category_status
 --
 CREATE TABLE "support_category_status" (
     "id" bigserial PRIMARY KEY,
@@ -522,7 +522,7 @@ CREATE TABLE "support_category_status" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class SupportGoalCheck as table support_goal_check
 --
 CREATE TABLE "support_goal_check" (
     "id" bigserial PRIMARY KEY,
@@ -536,7 +536,7 @@ CREATE TABLE "support_goal_check" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class SupportLevel as table support_level
 --
 CREATE TABLE "support_level" (
     "id" bigserial PRIMARY KEY,
@@ -548,7 +548,7 @@ CREATE TABLE "support_level" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class TimetableSlot as table timetable_slot
 --
 CREATE TABLE "timetable_slot" (
     "id" bigserial PRIMARY KEY,
@@ -558,7 +558,7 @@ CREATE TABLE "timetable_slot" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class User as table user
 --
 CREATE TABLE "user" (
     "id" bigserial PRIMARY KEY,
@@ -574,7 +574,7 @@ CREATE TABLE "user" (
 CREATE UNIQUE INDEX "user_info_id_unique_idx" ON "user" USING btree ("userInfoId");
 
 --
--- ACTION CREATE TABLE
+-- Class UserDevice as table user_device
 --
 CREATE TABLE "user_device" (
     "id" bigserial PRIMARY KEY,
@@ -590,7 +590,7 @@ CREATE TABLE "user_device" (
 CREATE UNIQUE INDEX "auth_key_user_device_idx" ON "user_device" USING btree ("authId");
 
 --
--- ACTION CREATE TABLE
+-- Class Workbook as table workbook
 --
 CREATE TABLE "workbook" (
     "id" bigserial PRIMARY KEY,
@@ -604,7 +604,7 @@ CREATE TABLE "workbook" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class CloudStorageEntry as table serverpod_cloud_storage
 --
 CREATE TABLE "serverpod_cloud_storage" (
     "id" bigserial PRIMARY KEY,
@@ -621,7 +621,7 @@ CREATE UNIQUE INDEX "serverpod_cloud_storage_path_idx" ON "serverpod_cloud_stora
 CREATE INDEX "serverpod_cloud_storage_expiration" ON "serverpod_cloud_storage" USING btree ("expiration");
 
 --
--- ACTION CREATE TABLE
+-- Class CloudStorageDirectUploadEntry as table serverpod_cloud_storage_direct_upload
 --
 CREATE TABLE "serverpod_cloud_storage_direct_upload" (
     "id" bigserial PRIMARY KEY,
@@ -635,7 +635,7 @@ CREATE TABLE "serverpod_cloud_storage_direct_upload" (
 CREATE UNIQUE INDEX "serverpod_cloud_storage_direct_upload_storage_path" ON "serverpod_cloud_storage_direct_upload" USING btree ("storageId", "path");
 
 --
--- ACTION CREATE TABLE
+-- Class FutureCallEntry as table serverpod_future_call
 --
 CREATE TABLE "serverpod_future_call" (
     "id" bigserial PRIMARY KEY,
@@ -652,7 +652,7 @@ CREATE INDEX "serverpod_future_call_serverId_idx" ON "serverpod_future_call" USI
 CREATE INDEX "serverpod_future_call_identifier_idx" ON "serverpod_future_call" USING btree ("identifier");
 
 --
--- ACTION CREATE TABLE
+-- Class ServerHealthConnectionInfo as table serverpod_health_connection_info
 --
 CREATE TABLE "serverpod_health_connection_info" (
     "id" bigserial PRIMARY KEY,
@@ -668,7 +668,7 @@ CREATE TABLE "serverpod_health_connection_info" (
 CREATE UNIQUE INDEX "serverpod_health_connection_info_timestamp_idx" ON "serverpod_health_connection_info" USING btree ("timestamp", "serverId", "granularity");
 
 --
--- ACTION CREATE TABLE
+-- Class ServerHealthMetric as table serverpod_health_metric
 --
 CREATE TABLE "serverpod_health_metric" (
     "id" bigserial PRIMARY KEY,
@@ -684,7 +684,7 @@ CREATE TABLE "serverpod_health_metric" (
 CREATE UNIQUE INDEX "serverpod_health_metric_timestamp_idx" ON "serverpod_health_metric" USING btree ("timestamp", "serverId", "name", "granularity");
 
 --
--- ACTION CREATE TABLE
+-- Class LogEntry as table serverpod_log
 --
 CREATE TABLE "serverpod_log" (
     "id" bigserial PRIMARY KEY,
@@ -704,7 +704,7 @@ CREATE TABLE "serverpod_log" (
 CREATE INDEX "serverpod_log_sessionLogId_idx" ON "serverpod_log" USING btree ("sessionLogId");
 
 --
--- ACTION CREATE TABLE
+-- Class MessageLogEntry as table serverpod_message_log
 --
 CREATE TABLE "serverpod_message_log" (
     "id" bigserial PRIMARY KEY,
@@ -721,7 +721,7 @@ CREATE TABLE "serverpod_message_log" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class MethodInfo as table serverpod_method
 --
 CREATE TABLE "serverpod_method" (
     "id" bigserial PRIMARY KEY,
@@ -733,7 +733,7 @@ CREATE TABLE "serverpod_method" (
 CREATE UNIQUE INDEX "serverpod_method_endpoint_method_idx" ON "serverpod_method" USING btree ("endpoint", "method");
 
 --
--- ACTION CREATE TABLE
+-- Class DatabaseMigrationVersion as table serverpod_migrations
 --
 CREATE TABLE "serverpod_migrations" (
     "id" bigserial PRIMARY KEY,
@@ -746,7 +746,7 @@ CREATE TABLE "serverpod_migrations" (
 CREATE UNIQUE INDEX "serverpod_migrations_ids" ON "serverpod_migrations" USING btree ("module");
 
 --
--- ACTION CREATE TABLE
+-- Class QueryLogEntry as table serverpod_query_log
 --
 CREATE TABLE "serverpod_query_log" (
     "id" bigserial PRIMARY KEY,
@@ -766,7 +766,7 @@ CREATE TABLE "serverpod_query_log" (
 CREATE INDEX "serverpod_query_log_sessionLogId_idx" ON "serverpod_query_log" USING btree ("sessionLogId");
 
 --
--- ACTION CREATE TABLE
+-- Class ReadWriteTestEntry as table serverpod_readwrite_test
 --
 CREATE TABLE "serverpod_readwrite_test" (
     "id" bigserial PRIMARY KEY,
@@ -774,7 +774,7 @@ CREATE TABLE "serverpod_readwrite_test" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class RuntimeSettings as table serverpod_runtime_settings
 --
 CREATE TABLE "serverpod_runtime_settings" (
     "id" bigserial PRIMARY KEY,
@@ -785,7 +785,7 @@ CREATE TABLE "serverpod_runtime_settings" (
 );
 
 --
--- ACTION CREATE TABLE
+-- Class SessionLogEntry as table serverpod_session_log
 --
 CREATE TABLE "serverpod_session_log" (
     "id" bigserial PRIMARY KEY,
@@ -810,7 +810,7 @@ CREATE INDEX "serverpod_session_log_touched_idx" ON "serverpod_session_log" USIN
 CREATE INDEX "serverpod_session_log_isopen_idx" ON "serverpod_session_log" USING btree ("isOpen");
 
 --
--- ACTION CREATE TABLE
+-- Class AuthKey as table serverpod_auth_key
 --
 CREATE TABLE "serverpod_auth_key" (
     "id" bigserial PRIMARY KEY,
@@ -824,7 +824,7 @@ CREATE TABLE "serverpod_auth_key" (
 CREATE INDEX "serverpod_auth_key_userId_idx" ON "serverpod_auth_key" USING btree ("userId");
 
 --
--- ACTION CREATE TABLE
+-- Class EmailAuth as table serverpod_email_auth
 --
 CREATE TABLE "serverpod_email_auth" (
     "id" bigserial PRIMARY KEY,
@@ -837,7 +837,7 @@ CREATE TABLE "serverpod_email_auth" (
 CREATE UNIQUE INDEX "serverpod_email_auth_email" ON "serverpod_email_auth" USING btree ("email");
 
 --
--- ACTION CREATE TABLE
+-- Class EmailCreateAccountRequest as table serverpod_email_create_request
 --
 CREATE TABLE "serverpod_email_create_request" (
     "id" bigserial PRIMARY KEY,
@@ -851,7 +851,7 @@ CREATE TABLE "serverpod_email_create_request" (
 CREATE UNIQUE INDEX "serverpod_email_auth_create_account_request_idx" ON "serverpod_email_create_request" USING btree ("email");
 
 --
--- ACTION CREATE TABLE
+-- Class EmailFailedSignIn as table serverpod_email_failed_sign_in
 --
 CREATE TABLE "serverpod_email_failed_sign_in" (
     "id" bigserial PRIMARY KEY,
@@ -865,7 +865,7 @@ CREATE INDEX "serverpod_email_failed_sign_in_email_idx" ON "serverpod_email_fail
 CREATE INDEX "serverpod_email_failed_sign_in_time_idx" ON "serverpod_email_failed_sign_in" USING btree ("time");
 
 --
--- ACTION CREATE TABLE
+-- Class EmailReset as table serverpod_email_reset
 --
 CREATE TABLE "serverpod_email_reset" (
     "id" bigserial PRIMARY KEY,
@@ -878,7 +878,7 @@ CREATE TABLE "serverpod_email_reset" (
 CREATE UNIQUE INDEX "serverpod_email_reset_verification_idx" ON "serverpod_email_reset" USING btree ("verificationCode");
 
 --
--- ACTION CREATE TABLE
+-- Class GoogleRefreshToken as table serverpod_google_refresh_token
 --
 CREATE TABLE "serverpod_google_refresh_token" (
     "id" bigserial PRIMARY KEY,
@@ -890,7 +890,7 @@ CREATE TABLE "serverpod_google_refresh_token" (
 CREATE UNIQUE INDEX "serverpod_google_refresh_token_userId_idx" ON "serverpod_google_refresh_token" USING btree ("userId");
 
 --
--- ACTION CREATE TABLE
+-- Class UserImage as table serverpod_user_image
 --
 CREATE TABLE "serverpod_user_image" (
     "id" bigserial PRIMARY KEY,
@@ -903,7 +903,7 @@ CREATE TABLE "serverpod_user_image" (
 CREATE INDEX "serverpod_user_image_user_id" ON "serverpod_user_image" USING btree ("userId", "version");
 
 --
--- ACTION CREATE TABLE
+-- Class UserInfo as table serverpod_user_info
 --
 CREATE TABLE "serverpod_user_info" (
     "id" bigserial PRIMARY KEY,
@@ -922,7 +922,7 @@ CREATE UNIQUE INDEX "serverpod_user_info_user_identifier" ON "serverpod_user_inf
 CREATE INDEX "serverpod_user_info_email" ON "serverpod_user_info" USING btree ("email");
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "book_tagging" table
 --
 ALTER TABLE ONLY "book_tagging"
     ADD CONSTRAINT "book_tagging_fk_0"
@@ -938,7 +938,7 @@ ALTER TABLE ONLY "book_tagging"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "competence_check" table
 --
 ALTER TABLE ONLY "competence_check"
     ADD CONSTRAINT "competence_check_fk_0"
@@ -954,7 +954,7 @@ ALTER TABLE ONLY "competence_check"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "competence_goal" table
 --
 ALTER TABLE ONLY "competence_goal"
     ADD CONSTRAINT "competence_goal_fk_0"
@@ -970,7 +970,7 @@ ALTER TABLE ONLY "competence_goal"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "competence_report" table
 --
 ALTER TABLE ONLY "competence_report"
     ADD CONSTRAINT "competence_report_fk_0"
@@ -986,7 +986,7 @@ ALTER TABLE ONLY "competence_report"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "competence_report_check" table
 --
 ALTER TABLE ONLY "competence_report_check"
     ADD CONSTRAINT "competence_report_check_fk_0"
@@ -1008,7 +1008,7 @@ ALTER TABLE ONLY "competence_report_check"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "credit_transaction" table
 --
 ALTER TABLE ONLY "credit_transaction"
     ADD CONSTRAINT "credit_transaction_fk_0"
@@ -1018,7 +1018,7 @@ ALTER TABLE ONLY "credit_transaction"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "hub_document" table
 --
 ALTER TABLE ONLY "hub_document"
     ADD CONSTRAINT "hub_document_fk_0"
@@ -1058,7 +1058,7 @@ ALTER TABLE ONLY "hub_document"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "lesson" table
 --
 ALTER TABLE ONLY "lesson"
     ADD CONSTRAINT "lesson_fk_0"
@@ -1068,7 +1068,7 @@ ALTER TABLE ONLY "lesson"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "lesson_attendance" table
 --
 ALTER TABLE ONLY "lesson_attendance"
     ADD CONSTRAINT "lesson_attendance_fk_0"
@@ -1084,7 +1084,7 @@ ALTER TABLE ONLY "lesson_attendance"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "lesson_group_pupil" table
 --
 ALTER TABLE ONLY "lesson_group_pupil"
     ADD CONSTRAINT "lesson_group_pupil_fk_0"
@@ -1100,7 +1100,7 @@ ALTER TABLE ONLY "lesson_group_pupil"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "library_book" table
 --
 ALTER TABLE ONLY "library_book"
     ADD CONSTRAINT "library_book_fk_0"
@@ -1116,7 +1116,7 @@ ALTER TABLE ONLY "library_book"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "missed_class" table
 --
 ALTER TABLE ONLY "missed_class"
     ADD CONSTRAINT "missed_class_fk_0"
@@ -1132,7 +1132,7 @@ ALTER TABLE ONLY "missed_class"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "pupil_authorization" table
 --
 ALTER TABLE ONLY "pupil_authorization"
     ADD CONSTRAINT "pupil_authorization_fk_0"
@@ -1154,7 +1154,7 @@ ALTER TABLE ONLY "pupil_authorization"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "pupil_book_lending" table
 --
 ALTER TABLE ONLY "pupil_book_lending"
     ADD CONSTRAINT "pupil_book_lending_fk_0"
@@ -1170,7 +1170,7 @@ ALTER TABLE ONLY "pupil_book_lending"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "pupil_book_lending_file" table
 --
 ALTER TABLE ONLY "pupil_book_lending_file"
     ADD CONSTRAINT "pupil_book_lending_file_fk_0"
@@ -1180,7 +1180,7 @@ ALTER TABLE ONLY "pupil_book_lending_file"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "pupil_data" table
 --
 ALTER TABLE ONLY "pupil_data"
     ADD CONSTRAINT "pupil_data_fk_0"
@@ -1214,7 +1214,7 @@ ALTER TABLE ONLY "pupil_data"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "pupil_list_entry" table
 --
 ALTER TABLE ONLY "pupil_list_entry"
     ADD CONSTRAINT "pupil_list_entry_fk_0"
@@ -1230,7 +1230,7 @@ ALTER TABLE ONLY "pupil_list_entry"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "pupil_workbook" table
 --
 ALTER TABLE ONLY "pupil_workbook"
     ADD CONSTRAINT "pupil_workbook_fk_0"
@@ -1246,7 +1246,7 @@ ALTER TABLE ONLY "pupil_workbook"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "scheduled_lesson" table
 --
 ALTER TABLE ONLY "scheduled_lesson"
     ADD CONSTRAINT "scheduled_lesson_fk_0"
@@ -1280,7 +1280,7 @@ ALTER TABLE ONLY "scheduled_lesson"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "schoolday" table
 --
 ALTER TABLE ONLY "schoolday"
     ADD CONSTRAINT "schoolday_fk_0"
@@ -1290,7 +1290,7 @@ ALTER TABLE ONLY "schoolday"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "schoolday_event" table
 --
 ALTER TABLE ONLY "schoolday_event"
     ADD CONSTRAINT "schoolday_event_fk_0"
@@ -1318,7 +1318,7 @@ ALTER TABLE ONLY "schoolday_event"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "support_category_goal" table
 --
 ALTER TABLE ONLY "support_category_goal"
     ADD CONSTRAINT "support_category_goal_fk_0"
@@ -1346,7 +1346,7 @@ ALTER TABLE ONLY "support_category_goal"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "support_category_status" table
 --
 ALTER TABLE ONLY "support_category_status"
     ADD CONSTRAINT "support_category_status_fk_0"
@@ -1374,7 +1374,7 @@ ALTER TABLE ONLY "support_category_status"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "support_goal_check" table
 --
 ALTER TABLE ONLY "support_goal_check"
     ADD CONSTRAINT "support_goal_check_fk_0"
@@ -1390,7 +1390,7 @@ ALTER TABLE ONLY "support_goal_check"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "support_level" table
 --
 ALTER TABLE ONLY "support_level"
     ADD CONSTRAINT "support_level_fk_0"
@@ -1400,7 +1400,7 @@ ALTER TABLE ONLY "support_level"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "user" table
 --
 ALTER TABLE ONLY "user"
     ADD CONSTRAINT "user_fk_0"
@@ -1410,7 +1410,7 @@ ALTER TABLE ONLY "user"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "user_device" table
 --
 ALTER TABLE ONLY "user_device"
     ADD CONSTRAINT "user_device_fk_0"
@@ -1426,7 +1426,7 @@ ALTER TABLE ONLY "user_device"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "serverpod_log" table
 --
 ALTER TABLE ONLY "serverpod_log"
     ADD CONSTRAINT "serverpod_log_fk_0"
@@ -1436,7 +1436,7 @@ ALTER TABLE ONLY "serverpod_log"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "serverpod_message_log" table
 --
 ALTER TABLE ONLY "serverpod_message_log"
     ADD CONSTRAINT "serverpod_message_log_fk_0"
@@ -1446,7 +1446,7 @@ ALTER TABLE ONLY "serverpod_message_log"
     ON UPDATE NO ACTION;
 
 --
--- ACTION CREATE FOREIGN KEY
+-- Foreign relations for "serverpod_query_log" table
 --
 ALTER TABLE ONLY "serverpod_query_log"
     ADD CONSTRAINT "serverpod_query_log_fk_0"
@@ -1460,9 +1460,9 @@ ALTER TABLE ONLY "serverpod_query_log"
 -- MIGRATION VERSION FOR school_data_hub
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('school_data_hub', '20250507151148012', now())
+    VALUES ('school_data_hub', '20250508095547934', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20250507151148012', "timestamp" = now();
+    DO UPDATE SET "version" = '20250508095547934', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

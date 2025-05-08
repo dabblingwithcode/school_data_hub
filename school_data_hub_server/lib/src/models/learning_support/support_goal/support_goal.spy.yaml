@@ -5,10 +5,10 @@ fields:
   goalId: String
   createdBy: String
   createdAt: DateTime
-  achieved: int
-  achievedAt: DateTime
+  achieved: int?
+  achievedAt: DateTime?
   description: String
-  strategies: List<String>
+  strategies: String
   pupil: PupilData?, relation
   supportCategory: SupportCategory?, relation(onDelete=Cascade)
   goalChecks: List<SupportGoalCheck>?, relation

@@ -550,6 +550,25 @@ class EndpointSupportCategory extends _i1.EndpointRef {
           'statusId': statusId,
         },
       );
+
+  _i2.Future<_i5.PupilData> postCategoryGoal(
+    int pupilId,
+    int supportCategoryId,
+    String description,
+    String strategies,
+    String createdBy,
+  ) =>
+      caller.callServerEndpoint<_i5.PupilData>(
+        'supportCategory',
+        'postCategoryGoal',
+        {
+          'pupilId': pupilId,
+          'supportCategoryId': supportCategoryId,
+          'description': description,
+          'strategies': strategies,
+          'createdBy': createdBy,
+        },
+      );
 }
 
 /// {@category Endpoint}

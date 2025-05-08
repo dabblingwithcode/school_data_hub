@@ -46,6 +46,7 @@ supportCategory:
   - fetchSupportCategoryStatusFromPupil:
   - updateCategoryStatus:
   - deleteSupportCategoryStatus:
+  - postCategoryGoal:
 missedClass:
   - streamMyModels:
   - postMissedClass:

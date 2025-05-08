@@ -59,12 +59,12 @@ class NewSupportCategoryStatusController
     if (goalCategoryId == null) {
       return;
     }
-// TODO uncomment when ready
-    // await _learningSupportManager.postNewSupportCategoryGoal(
-    //     goalCategoryId: goalCategoryId!,
-    //     pupilId: widget.pupilId,
-    //     description: descriptionTextFieldController.text,
-    //     strategies: strategiesTextField2Controller.text);
+
+    await _learningSupportManager.postNewSupportCategoryGoal(
+        goalCategoryId: goalCategoryId!,
+        pupilId: widget.pupilId,
+        description: descriptionTextFieldController.text,
+        strategies: strategiesTextField2Controller.text);
   }
 
   @override

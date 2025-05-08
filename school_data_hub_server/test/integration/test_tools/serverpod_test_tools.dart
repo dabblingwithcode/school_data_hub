@@ -1600,6 +1600,45 @@ class _SupportCategoryEndpoint {
       }
     });
   }
+
+  _i3.Future<_i6.PupilData> postCategoryGoal(
+    _i1.TestSessionBuilder sessionBuilder,
+    int pupilId,
+    int supportCategoryId,
+    String description,
+    String strategies,
+    String createdBy,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'supportCategory',
+        method: 'postCategoryGoal',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'supportCategory',
+          methodName: 'postCategoryGoal',
+          parameters: _i1.testObjectToJson({
+            'pupilId': pupilId,
+            'supportCategoryId': supportCategoryId,
+            'description': description,
+            'strategies': strategies,
+            'createdBy': createdBy,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i6.PupilData>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
 }
 
 class _MissedClassEndpoint {

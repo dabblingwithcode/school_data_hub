@@ -3365,14 +3365,14 @@
           {
             "name": "achieved",
             "columnType": 6,
-            "isNullable": false,
-            "dartType": "int"
+            "isNullable": true,
+            "dartType": "int?"
           },
           {
             "name": "achievedAt",
             "columnType": 4,
-            "isNullable": false,
-            "dartType": "DateTime"
+            "isNullable": true,
+            "dartType": "DateTime?"
           },
           {
             "name": "description",
@@ -3382,9 +3382,9 @@
           },
           {
             "name": "strategies",
-            "columnType": 8,
+            "columnType": 0,
             "isNullable": false,
-            "dartType": "List<String>"
+            "dartType": "String"
           },
           {
             "name": "pupilId",

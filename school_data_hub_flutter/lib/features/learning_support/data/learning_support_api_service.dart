@@ -66,43 +66,19 @@ class LearningSupportApiService {
 
   //- post category goal
 
-  // Future<PupilData> postNewCategoryGoal(
-  //     {required int goalCategoryId,
-  //     required int pupilId,
-  //     required String description,
-  //     required String strategies}) async {
-  //   _notificationService.apiRunning(true);
+  Future<PupilData> postNewCategoryGoal(
+      {required int supportCategoryId,
+      required int pupilId,
+      required String description,
+      required String strategies,
+      required String createdBy}) async {
+    final updatedPupil = await ClientHelper.apiCall(
+      call: () => _client.supportCategory.postCategoryGoal(
+          pupilId, supportCategoryId, description, strategies, createdBy),
+    );
 
-  //   final data = jsonEncode({
-  //     "support_category_id": goalCategoryId,
-  //     "created_at": DateTime.now().formatForJson(),
-  //     "achieved": 0,
-  //     "achieved_at": null,
-  //     "description": description,
-  //     "strategies": strategies
-  //   });
-
-  //   final Response response = await _client.post(
-  //     '${_baseUrl()}${_postGoalUrl(pupilId)}',
-  //     data: data,
-  //     options: _client.hubOptions,
-  //   );
-
-  //   if (response.statusCode != 200) {
-  //     _notificationService.showSnackBar(
-  //         NotificationType.error, 'Fehler beim Hinzufügen des Ziels');
-
-  //     _notificationService.apiRunning(false);
-
-  //     throw ApiException('Failed to post category goal', response.statusCode);
-  //   }
-
-  //   final PupilData pupil = PupilData.fromJson(response.data);
-
-  //   _notificationService.apiRunning(false);
-
-  //   return pupil;
-  // }
+    return updatedPupil;
+  }
 
   //- delete category goal
 

@@ -3324,14 +3324,14 @@ class Protocol extends _i1.SerializationManagerServer {
         _i2.ColumnDefinition(
           name: 'achieved',
           columnType: _i2.ColumnType.bigint,
-          isNullable: false,
-          dartType: 'int',
+          isNullable: true,
+          dartType: 'int?',
         ),
         _i2.ColumnDefinition(
           name: 'achievedAt',
           columnType: _i2.ColumnType.timestampWithoutTimeZone,
-          isNullable: false,
-          dartType: 'DateTime',
+          isNullable: true,
+          dartType: 'DateTime?',
         ),
         _i2.ColumnDefinition(
           name: 'description',
@@ -3341,9 +3341,9 @@ class Protocol extends _i1.SerializationManagerServer {
         ),
         _i2.ColumnDefinition(
           name: 'strategies',
-          columnType: _i2.ColumnType.json,
+          columnType: _i2.ColumnType.text,
           isNullable: false,
-          dartType: 'List<String>',
+          dartType: 'String',
         ),
         _i2.ColumnDefinition(
           name: 'pupilId',
@@ -4600,9 +4600,6 @@ class Protocol extends _i1.SerializationManagerServer {
       return (data != null
           ? (data as List).map((e) => deserialize<_i57.HubDocument>(e)).toList()
           : null) as T;
-    }
-    if (t == List<String>) {
-      return (data as List).map((e) => deserialize<String>(e)).toList() as T;
     }
     if (t == _i1.getType<List<_i31.SupportGoalCheck>?>()) {
       return (data != null

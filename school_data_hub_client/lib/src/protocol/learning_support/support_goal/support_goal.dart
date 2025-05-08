@@ -20,8 +20,8 @@ abstract class SupportGoal implements _i1.SerializableModel {
     required this.goalId,
     required this.createdBy,
     required this.createdAt,
-    required this.achieved,
-    required this.achievedAt,
+    this.achieved,
+    this.achievedAt,
     required this.description,
     required this.strategies,
     required this.pupilId,
@@ -36,10 +36,10 @@ abstract class SupportGoal implements _i1.SerializableModel {
     required String goalId,
     required String createdBy,
     required DateTime createdAt,
-    required int achieved,
-    required DateTime achievedAt,
+    int? achieved,
+    DateTime? achievedAt,
     required String description,
-    required List<String> strategies,
+    required String strategies,
     required int pupilId,
     _i2.PupilData? pupil,
     required int supportCategoryId,
@@ -54,13 +54,12 @@ abstract class SupportGoal implements _i1.SerializableModel {
       createdBy: jsonSerialization['createdBy'] as String,
       createdAt:
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
-      achieved: jsonSerialization['achieved'] as int,
-      achievedAt:
-          _i1.DateTimeJsonExtension.fromJson(jsonSerialization['achievedAt']),
+      achieved: jsonSerialization['achieved'] as int?,
+      achievedAt: jsonSerialization['achievedAt'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['achievedAt']),
       description: jsonSerialization['description'] as String,
-      strategies: (jsonSerialization['strategies'] as List)
-          .map((e) => e as String)
-          .toList(),
+      strategies: jsonSerialization['strategies'] as String,
       pupilId: jsonSerialization['pupilId'] as int,
       pupil: jsonSerialization['pupil'] == null
           ? null
@@ -89,13 +88,13 @@ abstract class SupportGoal implements _i1.SerializableModel {
 
   DateTime createdAt;
 
-  int achieved;
+  int? achieved;
 
-  DateTime achievedAt;
+  DateTime? achievedAt;
 
   String description;
 
-  List<String> strategies;
+  String strategies;
 
   int pupilId;
 
@@ -118,7 +117,7 @@ abstract class SupportGoal implements _i1.SerializableModel {
     int? achieved,
     DateTime? achievedAt,
     String? description,
-    List<String>? strategies,
+    String? strategies,
     int? pupilId,
     _i2.PupilData? pupil,
     int? supportCategoryId,
@@ -132,10 +131,10 @@ abstract class SupportGoal implements _i1.SerializableModel {
       'goalId': goalId,
       'createdBy': createdBy,
       'createdAt': createdAt.toJson(),
-      'achieved': achieved,
-      'achievedAt': achievedAt.toJson(),
+      if (achieved != null) 'achieved': achieved,
+      if (achievedAt != null) 'achievedAt': achievedAt?.toJson(),
       'description': description,
-      'strategies': strategies.toJson(),
+      'strategies': strategies,
       'pupilId': pupilId,
       if (pupil != null) 'pupil': pupil?.toJson(),
       'supportCategoryId': supportCategoryId,
@@ -159,10 +158,10 @@ class _SupportGoalImpl extends SupportGoal {
     required String goalId,
     required String createdBy,
     required DateTime createdAt,
-    required int achieved,
-    required DateTime achievedAt,
+    int? achieved,
+    DateTime? achievedAt,
     required String description,
-    required List<String> strategies,
+    required String strategies,
     required int pupilId,
     _i2.PupilData? pupil,
     required int supportCategoryId,
@@ -193,10 +192,10 @@ class _SupportGoalImpl extends SupportGoal {
     String? goalId,
     String? createdBy,
     DateTime? createdAt,
-    int? achieved,
-    DateTime? achievedAt,
+    Object? achieved = _Undefined,
+    Object? achievedAt = _Undefined,
     String? description,
-    List<String>? strategies,
+    String? strategies,
     int? pupilId,
     Object? pupil = _Undefined,
     int? supportCategoryId,
@@ -208,10 +207,10 @@ class _SupportGoalImpl extends SupportGoal {
       goalId: goalId ?? this.goalId,
       createdBy: createdBy ?? this.createdBy,
       createdAt: createdAt ?? this.createdAt,
-      achieved: achieved ?? this.achieved,
-      achievedAt: achievedAt ?? this.achievedAt,
+      achieved: achieved is int? ? achieved : this.achieved,
+      achievedAt: achievedAt is DateTime? ? achievedAt : this.achievedAt,
       description: description ?? this.description,
-      strategies: strategies ?? this.strategies.map((e0) => e0).toList(),
+      strategies: strategies ?? this.strategies,
       pupilId: pupilId ?? this.pupilId,
       pupil: pupil is _i2.PupilData? ? pupil : this.pupil?.copyWith(),
       supportCategoryId: supportCategoryId ?? this.supportCategoryId,

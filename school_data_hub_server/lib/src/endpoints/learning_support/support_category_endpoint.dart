@@ -171,4 +171,40 @@ class SupportCategoryEndpoint extends Endpoint {
     }
     return updatedPupil;
   }
+
+  Future<PupilData> postCategoryGoal(
+    Session session,
+    int pupilId,
+    int supportCategoryId,
+    String description,
+    String strategies,
+    String createdBy,
+  ) async {
+    final pupil = await PupilData.db.findById(
+      session,
+      pupilId,
+      include: PupilSchemas.allInclude,
+    );
+    final goalId = Uuid().v4().toString();
+    final newSupportGoal = SupportGoal(
+      pupilId: pupilId,
+      supportCategoryId: supportCategoryId,
+      goalId: goalId,
+      description: description,
+      strategies: strategies,
+      createdBy: createdBy,
+      createdAt: DateTime.now().toUtc(),
+    );
+    final goalInDataBase = await SupportGoal.db.insertRow(
+      session,
+      newSupportGoal,
+    );
+    await PupilData.db.attach.supportGoals(session, pupil!, [goalInDataBase]);
+    final updatedPupil = await PupilData.db.findById(
+      session,
+      pupilId,
+      include: PupilSchemas.allInclude,
+    );
+    return updatedPupil!;
+  }
 }

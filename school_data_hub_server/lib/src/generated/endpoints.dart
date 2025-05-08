@@ -1129,6 +1129,49 @@ class Endpoints extends _i1.EndpointDispatch {
             params['statusId'],
           ),
         ),
+        'postCategoryGoal': _i1.MethodConnector(
+          name: 'postCategoryGoal',
+          params: {
+            'pupilId': _i1.ParameterDescription(
+              name: 'pupilId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'supportCategoryId': _i1.ParameterDescription(
+              name: 'supportCategoryId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'description': _i1.ParameterDescription(
+              name: 'description',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'strategies': _i1.ParameterDescription(
+              name: 'strategies',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'createdBy': _i1.ParameterDescription(
+              name: 'createdBy',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['supportCategory'] as _i9.SupportCategoryEndpoint)
+                  .postCategoryGoal(
+            session,
+            params['pupilId'],
+            params['supportCategoryId'],
+            params['description'],
+            params['strategies'],
+            params['createdBy'],
+          ),
+        ),
       },
     );
     connectors['missedClass'] = _i1.EndpointConnector(
