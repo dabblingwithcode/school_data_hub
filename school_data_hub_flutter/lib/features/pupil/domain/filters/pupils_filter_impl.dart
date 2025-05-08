@@ -19,6 +19,14 @@ import 'package:school_data_hub_flutter/features/schoolday_events/domain/filters
 import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_helper_functions.dart';
 import 'package:watch_it/watch_it.dart';
 
+final _pupilIdentityManager = di<PupilIdentityManager>();
+final _learningSupportFilterManager = di<LearningSupportFilterManager>();
+
+final _schooldayEventFilterManager = di<SchooldayEventFilterManager>();
+final _pupilFilterManager = di<PupilFilterManager>();
+final _attendancePupilFilterManager = di<AttendancePupilFilterManager>();
+final _filtersStateManager = di<FiltersStateManager>();
+
 final _log = Logger('PupilsFilterImplementation');
 
 class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
@@ -30,7 +38,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
   ) : _pupilsManager = pupilsManager {
     _log.info('PupilsFilterImplementation created');
     // We need to populate the group filters with the available groups
-    final availableGroups = di<PupilIdentityManager>().groups.value;
+    final availableGroups = _pupilIdentityManager.groups.value;
     populateGroupFilters(availableGroups.toList());
     refreshs();
     _pupilsManager.addListener(refreshs);
@@ -98,8 +106,8 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
         _pupilsManager.allPupils.map((e) => e.pupilId).toList();
 
     sortPupils();
-    di<FiltersStateManager>()
-        .setFilterState(filterState: FilterState.pupil, value: false);
+    _filtersStateManager.setFilterState(
+        filterState: FilterState.pupil, value: false);
   }
 
   // updates the filtered pupils with current filters
@@ -117,23 +125,13 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
             .value
             .values
             .any((x) => x == true) ||
-        // TODO: Uncomment when implemented
-        di<SchooldayEventFilterManager>()
-            .schooldayEventsFilterState
-            .value
-            .values
+        _schooldayEventFilterManager.schooldayEventsFilterState.value.values
             .any((x) => x == true) ||
-        di<LearningSupportFilterManager>()
-            .supportLevelFilterState
-            .value
-            .values
+        _learningSupportFilterManager.supportLevelFilterState.value.values
             .any((x) => x == true) ||
-        di<LearningSupportFilterManager>()
-            .supportAreaFilterState
-            .value
-            .values
+        _learningSupportFilterManager.supportAreaFilterState.value.values
             .any((x) => x == true) ||
-        di<FiltersStateManager>().getFilterState(FilterState.attendance);
+        _filtersStateManager.getFilterState(FilterState.attendance);
 
     // If no filters are active, just sort
 
@@ -164,6 +162,9 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
       bool isMatchedByGroupFilter = !isAnyGroupFilterActive ||
           groupFilters
               .any((filter) => filter.isActive && filter.matches(pupil));
+
+      // if the pupil is not matched by any group filter, skip it
+
       if (!isMatchedByGroupFilter) {
         filtersOn = true;
         continue;
@@ -174,7 +175,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
           schoolGradeFilters
               .any((filter) => filter.isActive && filter.matches(pupil));
 
-      // if the pupil is not matched by any group or school grade filter, skip the pupil
+      // if the pupil is not matched by any school grade filter, skip itl
 
       if (!isMatchedBySchoolGradeFilter) {
         filtersOn = true;
@@ -189,7 +190,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
         filtersOn = true;
         continue;
       }
-      // if the pupil is not matched by the text filter, skip the pupil
+      // if the pupil is not matched by the text filter, skip it
 
       if (_textFilter.isActive && !_textFilter.matches(pupil)) {
         filtersOn = true;
@@ -219,7 +220,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
         }
       }
 
-      // after school filters
+      // after school care filters
 
       if (di<PupilFilterManager>().pupilFilterState.value[PupilFilter.ogs]! &&
               pupil.afterSchoolCare == null ||
@@ -234,14 +235,18 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
       // support level filters
 
       if (di<LearningSupportFilterManager>().supportLevelFiltersActive) {
-        if (!di<LearningSupportFilterManager>().supportLevelFilters(pupil)) {
+        if (!di<LearningSupportFilterManager>()
+            .matchSupportLevelFilters(pupil)) {
           filtersOn = true;
           continue;
         }
       }
 
+      // support area filters
+
       if (di<LearningSupportFilterManager>().supportAreaFiltersActive) {
-        if (!di<LearningSupportFilterManager>().supportAreaFilters(pupil)) {
+        if (!di<LearningSupportFilterManager>()
+            .matchSupportAreaFilters(pupil)) {
           filtersOn = true;
           continue;
         }

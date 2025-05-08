@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/models/learning_support_enums.dart';
@@ -14,6 +15,7 @@ final _filtersStateManager = di<FiltersStateManager>();
 final _pupilFilterManager = di<PupilFilterManager>();
 final _pupilsFilter = di<PupilsFilter>();
 final _learningSupportManager = di<LearningSupportManager>();
+final _log = Logger('LearningSupportFilterManager');
 
 typedef SupportLevelFilterRecord = ({SupportLevelType filter, bool value});
 typedef SupportAreaFilterRecord = ({SupportArea filter, bool value});
@@ -86,15 +88,15 @@ class LearningSupportFilterManager {
     _supportAreaFiltersState.value = {...initialSupportAreaFilterValues};
   }
 
-  bool supportLevelFilters(PupilProxy pupil) {
+  bool matchSupportLevelFilters(PupilProxy pupil) {
     final activeFilters = _supportLevelFilterState.value;
+
     final latestSupportLevel = pupil.latestSupportLevel;
-    if (latestSupportLevel == null) {
-      return false;
-    }
-    final supportLevel = latestSupportLevel.level;
+
+    final supportLevel = latestSupportLevel?.level;
 
     bool isMatched = true;
+
     bool complementaryFilter = false;
 
     //- these are complementary filters
@@ -167,10 +169,11 @@ class LearningSupportFilterManager {
         complementaryFilter = true;
       }
     }
+
     return isMatched;
   }
 
-  bool supportAreaFilters(PupilProxy pupil) {
+  bool matchSupportAreaFilters(PupilProxy pupil) {
     final Map<SupportArea, bool> activeFilters = _supportAreaFiltersState.value;
 
     // motorics filter

@@ -188,6 +188,7 @@ class DiManager {
         () => PupilsFilterImplementation(
               di<PupilManager>(),
             ),
+        dispose: (instance) => instance.dispose(),
         dependsOn: [PupilManager, PupilFilterManager]);
 
     di.registerSingleton<FiltersStateManager>(
