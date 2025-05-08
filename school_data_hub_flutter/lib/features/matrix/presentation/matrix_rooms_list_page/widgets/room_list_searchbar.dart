@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
+import 'package:school_data_hub_flutter/features/matrix/presentation/matrix_rooms_list_page/widgets/rooms_filter_bottom_sheet.dart';
+import 'package:school_data_hub_flutter/features/matrix/presentation/widgets/matrix_search_text_field.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _matrixPolicyFilterManager = di<MatrixPolicyFilterManager>();
@@ -47,33 +50,34 @@ class RoomListSearchBar extends WatchingWidget {
             ),
           ),
           // TODO: implement this
-          // Padding(
-          //   padding: const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
-          //   child: Row(
-          //     children: [
-          //       Expanded(
-          //           child: MatrixSearchTextField(
-          //               searchType: SearchType.room,
-          //               hintText: 'Raum suchen',
-          //               refreshFunction:
-          //                   _matrixPolicyFilterManager.setRoomsFilterText)),
-          //       InkWell(
-          //         onTap: () => const RoomsFilterBottomSheet(),
-          //         onLongPress: () =>
-          //             _matrixPolicyFilterManager.resetAllMatrixFilters(),
-          //         // onPressed: () => showBottomSheetFilters(context),
-          //         child: Padding(
-          //           padding: const EdgeInsets.all(10.0),
-          //           child: Icon(
-          //             Icons.filter_list,
-          //             color: filtersOn ? Colors.deepOrange : Colors.grey,
-          //             size: 30,
-          //           ),
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
+          Padding(
+            padding: const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
+            child: Row(
+              children: [
+                Expanded(
+                    child: MatrixSearchTextField(
+                        searchType: SearchType.room,
+                        hintText: 'Raum suchen',
+                        refreshFunction:
+                            _matrixPolicyFilterManager.setRoomsFilterText)),
+                InkWell(
+                  // TODO: repair this
+                  onTap: () => const RoomsFilterBottomSheet(),
+                  onLongPress: () =>
+                      _matrixPolicyFilterManager.resetAllMatrixFilters(),
+                  // onPressed: () => showBottomSheetFilters(context),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Icon(
+                      Icons.filter_list,
+                      color: filtersOn ? Colors.deepOrange : Colors.grey,
+                      size: 30,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
