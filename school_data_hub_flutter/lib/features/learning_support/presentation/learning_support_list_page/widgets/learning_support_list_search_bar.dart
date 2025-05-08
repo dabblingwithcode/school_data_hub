@@ -59,10 +59,8 @@ class LearningSupportListSearchBar extends StatelessWidget {
                     ),
                     const Gap(5),
                     Text(
-                      'Placeholder',
-                      // TODO: uncomment when ready
-                      // (LearningSupportHelper.developmentPlan1Pupils(pupils))
-                      //     .toString(),
+                      (LearningSupportHelper.developmentPlan1Pupils(pupils))
+                          .toString(),
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,

@@ -22,6 +22,8 @@ class EnvManager {
   bool _dependentMangagersRegistered = false;
   bool get dependentManagersRegistered => _dependentMangagersRegistered;
 
+  final _isAuthenticated = ValueNotifier<bool>(false);
+
   /// TODO: is this proxy authentication flag a hack or is this acceptable?
   /// We need to observe in [MaterialApp] if a user is authenticated
   /// without accessing [ServerpodSessionManager], because if there is not
@@ -30,7 +32,6 @@ class EnvManager {
   /// **CAUTION**
   /// Handle this value only with [ServerpodSessionManager] every time
   /// it makes an authentication status change.
-  final _isAuthenticated = ValueNotifier<bool>(false);
   ValueListenable<bool> get isAuthenticated => _isAuthenticated;
 
   /// **WARNING:**
@@ -126,7 +127,7 @@ class EnvManager {
     _packageInfo = packageInfo;
 
     final EnvsInStorage? environmentsMapWithDefaultServerEnv =
-        await environmentsInStorage();
+        await _environmentsInStorage();
 
     if (environmentsMapWithDefaultServerEnv == null) {
       _envIsReady.value = false;
@@ -174,7 +175,7 @@ class EnvManager {
     );
   }
 
-  Future<EnvsInStorage?> environmentsInStorage() async {
+  Future<EnvsInStorage?> _environmentsInStorage() async {
     bool environmentsInStorage =
         await ServerpodSecureStorage().containsKey(_storageKeyForEnvironments);
 

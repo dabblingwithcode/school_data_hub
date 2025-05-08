@@ -95,7 +95,7 @@ class SupportGoalCard extends StatelessWidget {
                     const Gap(15),
                     Flexible(
                       child: Text(
-                        pupil.supportGoals![goalIndex].description!,
+                        pupil.supportGoals![goalIndex].description,
                         style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -145,7 +145,9 @@ class SupportGoalCard extends StatelessWidget {
                     const Text('am'),
                     const Gap(10),
                     Text(
-                      pupil.supportGoals![goalIndex].createdAt.formatForUser(),
+                      pupil.supportGoals![goalIndex].createdAt
+                          .toLocal()
+                          .formatForUser(),
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],

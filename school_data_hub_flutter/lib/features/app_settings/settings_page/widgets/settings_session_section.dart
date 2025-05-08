@@ -145,7 +145,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
                 message: 'Kinder-Ids für diese Instanz löschen?');
             if (confirm == true && context.mounted) {
               PupilIdentityHelper.deletePupilIdentitiesForEnv(
-                  _envManager.activeEnv!.serverName);
+                  _envManager.storageKeyForPupilIdentities);
               _notificationService.showSnackBar(
                   NotificationType.success, 'ID-Schlüssel gelöscht');
             }

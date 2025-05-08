@@ -13,8 +13,8 @@ import 'package:watch_it/watch_it.dart';
 typedef PupilFilterRecord = ({PupilFilter filter, bool value});
 
 class PupilFilterManager {
-  final _searchText = ValueNotifier<String>('');
-  ValueListenable<String> get searchText => _searchText;
+  // final _searchText = ValueNotifier<String>('');
+  // ValueListenable<String> get searchText => _searchText;
 
   final _pupilFilterState =
       ValueNotifier<Map<PupilFilter, bool>>(initialPupilFilterValues);
@@ -37,7 +37,7 @@ class PupilFilterManager {
     //TODO: fix this
     //  di<SchooldayEventFilterManager>().resetFilters();
 
-    _searchText.value = '';
+    // _searchText.value = '';
 
     _sortMode.value = {...initialSortModeValues};
 
@@ -69,7 +69,7 @@ class PupilFilterManager {
     di<PupilsFilter>().refreshs();
   }
 
-  int comparePupilsByAdmonishedDate(PupilProxy a, PupilProxy b) {
+  int comparePupilsBySchoolEventDate(PupilProxy a, PupilProxy b) {
     // Handle potential null cases with null-aware operators
     return (a.schooldayEvents?.isEmpty ?? true) ==
             (b.schooldayEvents?.isEmpty ?? true)
@@ -99,7 +99,7 @@ class PupilFilterManager {
           .compareTo(admonishedDateA); // Reversed for descending order
     } else {
       // Handle cases where one or both lists are empty
-      return 0; // Consider them equal, or apply other logic
+      return 0;
     }
   }
 }

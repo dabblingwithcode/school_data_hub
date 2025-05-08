@@ -88,11 +88,11 @@ class LearningSupportFilterManager {
 
   bool supportLevelFilters(PupilProxy pupil) {
     final activeFilters = _supportLevelFilterState.value;
-    final supportLevelObject = pupil.latestSupportLevel;
-    if (supportLevelObject == null) {
+    final latestSupportLevel = pupil.latestSupportLevel;
+    if (latestSupportLevel == null) {
       return false;
     }
-    final supportLevel = supportLevelObject.level;
+    final supportLevel = latestSupportLevel.level;
 
     bool isMatched = true;
     bool complementaryFilter = false;
