@@ -1,5 +1,5 @@
 import 'package:school_data_hub_server/src/generated/protocol.dart';
-import 'package:school_data_hub_server/src/utils/hub_document_helper.dart';
+import 'package:school_data_hub_server/src/helpers/hub_document_helper.dart';
 import 'package:serverpod/serverpod.dart';
 
 class PupilAuthorizationEndpoint extends Endpoint {
@@ -38,7 +38,7 @@ class PupilAuthorizationEndpoint extends Endpoint {
     if (pupilAuth == null) {
       throw Exception('PupilAuthorization not found');
     }
-    final document = HubDocumentHelper.createHubDocumentObject(
+    final document = HubDocumentHelper().createHubDocumentObject(
       session: session,
       createdBy: createdBy,
       path: filePath,

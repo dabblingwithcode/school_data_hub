@@ -4,7 +4,7 @@ import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:school_data_hub_server/src/future_calls/database_backup_future_call.dart';
 import 'package:school_data_hub_server/src/future_calls/increase_credit_future_call.dart';
-import 'package:school_data_hub_server/src/future_calls/populate_test_environment_future_call.dart';
+import 'package:school_data_hub_server/src/helpers/populate_test_environment.dart';
 import 'package:school_data_hub_server/src/utils/local_storage.dart';
 import 'package:school_data_hub_server/src/utils/logger/logrecord_formatter.dart';
 import 'package:school_data_hub_server/src/web/routes/root.dart';
@@ -60,9 +60,6 @@ void run(List<String> args) async {
   pod.registerFutureCall(
       IncreaseCreditFutureCall(), 'increaseCreditFutureCall');
 
-  pod.registerFutureCall(
-      PopulateTestEnvironmentFutureCall(), 'populateTestEnvironmentFutureCall');
-
   // Setup a default page at the web root.
   pod.webServer.addRoute(RouteRoot(), '/');
   pod.webServer.addRoute(RouteRoot(), '/index.html');
@@ -77,16 +74,15 @@ void run(List<String> args) async {
 
   var session = await pod.createSession();
 
-  // Populate support categories
-  await session.serverpod.futureCallWithDelay(
-    'populateTestEnvironmentFutureCall',
-    null,
-    const Duration(seconds: 1),
-  );
+  // Check if there are any users in the database. If not, we can populate the test environment.
+  if (await auth.UserInfo.db.count(session) == 0) {
+    await populateTestEnvironment(session);
+  }
 
   // TODO: uncomment in production
-  // Trigger the backup future call to run every day at 2 AM.
-  // await session.serverpod.futureCallWithDelay(
+  // Trigger the backup future call to generate database backups.
+  // It will be triggered right away and after that it will recall itself every day at 2 AM.
+  // TODO: automate deleting old backups after a certain time (30 days?).  // await session.serverpod.futureCallWithDelay(
   //   'databaseBackupFutureCall',
   //   null,
   //   const Duration(seconds: 1),
@@ -97,57 +93,4 @@ void run(List<String> args) async {
     null,
     const Duration(seconds: 1),
   );
-
-  // We need an admin user to manage the server.
-  // TODO: This is a one-time setup step. You can comment this out after the first run.
-  // It will create an admin user if it doesn't exist.
-
-  try {
-    // Check if admin user exists (using email as identifier)
-    final adminEmail = 'admin';
-    var adminUser = await auth.Users.findUserByEmail(session, adminEmail);
-
-    if (adminUser == null) {
-      // Create admin user if it doesn't exist
-      // For email authentication, you need to create a user with email/password
-      final adminPassword = 'admin'; // Set a secure password in production
-
-      // Create the userinfo
-      adminUser = await auth.Emails.createUser(
-        session,
-        'ADM', // User name
-        adminEmail,
-        adminPassword,
-      );
-
-      if (adminUser != null) {
-        // Grant admin scope to the user
-        await auth.Users.updateUserScopes(
-            session, adminUser.id!, {Scope.admin});
-        final User adminuser = User(
-            userInfoId: adminUser.id!,
-            role: Role.technical,
-            timeUnits: 28,
-            credit: 50,
-            userFlags: UserFlags(
-                confirmedTermsOfUse: false,
-                confirmedPrivacyPolicy: false,
-                changedPassword: false,
-                madeFirstSteps: false));
-        await session.db.insertRow(adminuser);
-
-        session.log('Admin user created successfully: ');
-        session.log('Email: $adminEmail');
-        session
-            .log('Password: $adminPassword'); // Log the password for reference
-        session.log('Please change the password after the first login.');
-      } else {
-        session.log('Failed to create admin user');
-      }
-    } else {
-      session.log('Admin user already exists');
-    }
-  } finally {
-    session.close();
-  }
 }

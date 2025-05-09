@@ -1,6 +1,6 @@
 import 'package:school_data_hub_server/src/generated/protocol.dart';
-import 'package:school_data_hub_server/src/utils/hub_document_helper.dart';
-import 'package:school_data_hub_server/src/utils/schemas/pupil_schemas.dart';
+import 'package:school_data_hub_server/src/helpers/hub_document_helper.dart';
+import 'package:school_data_hub_server/src/schemas/pupil_schemas.dart';
 import 'package:serverpod/serverpod.dart';
 
 class PupilEndpoint extends Endpoint {
@@ -142,7 +142,7 @@ class PupilEndpoint extends Endpoint {
       await session.db.transaction((transaction) async {
         await PupilData.db.detachRow
             .publicMediaAuthDocument(session, pupil, transaction: transaction);
-        await HubDocumentHelper.deleteHubDocumentAndFile(
+        await HubDocumentHelper().deleteHubDocumentAndFile(
             session: session, documentId: documentId, transaction: transaction);
       });
     }

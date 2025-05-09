@@ -5,7 +5,14 @@ import 'package:serverpod/serverpod.dart';
 final _log = Logger('HubDocumentHelper');
 
 class HubDocumentHelper {
-  static HubDocument createHubDocumentObject({
+  // Create a singleton constructor
+  HubDocumentHelper._privateConstructor();
+  static final HubDocumentHelper _instance =
+      HubDocumentHelper._privateConstructor();
+  factory HubDocumentHelper() {
+    return _instance;
+  }
+  HubDocument createHubDocumentObject({
     required Session session,
     required String createdBy,
     required String path,
@@ -23,7 +30,7 @@ class HubDocumentHelper {
     return document;
   }
 
-  static Future<bool> deleteHubDocumentAndFile({
+  Future<bool> deleteHubDocumentAndFile({
     required Session session,
     required String documentId,
     Transaction? transaction,
@@ -49,14 +56,16 @@ class HubDocumentHelper {
     return true; // Document deleted successfully
   }
 
-  static Future<HubDocument?> getHubDocument({
+  Future<HubDocument?> getHubDocument({
     required Session session,
     required String documentId,
+    Transaction? transaction,
   }) async {
     // Find the HubDocument in the database
     final hubDocument = await HubDocument.db.findFirstRow(
       session,
       where: (t) => t.documentId.equals(documentId),
+      transaction: transaction,
     );
 
     return hubDocument; // Return the HubDocument or null if not found

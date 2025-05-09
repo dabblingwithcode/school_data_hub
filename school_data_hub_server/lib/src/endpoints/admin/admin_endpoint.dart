@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
-import 'package:school_data_hub_server/src/utils/generate_pupil_from_admin_console_data.dart';
+import 'package:school_data_hub_server/src/helpers/generate_pupil_from_admin_console_data.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/module.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;

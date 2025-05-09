@@ -1,7 +1,7 @@
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
-import 'package:school_data_hub_server/src/utils/hub_document_helper.dart';
-import 'package:school_data_hub_server/src/utils/schemas/pupil_schemas.dart';
+import 'package:school_data_hub_server/src/helpers/hub_document_helper.dart';
+import 'package:school_data_hub_server/src/schemas/pupil_schemas.dart';
 import 'package:serverpod/serverpod.dart';
 
 final _log = Logger('PupilUpdateEndpoint');
@@ -97,7 +97,7 @@ class PupilUpdateEndpoint extends Endpoint {
     }
 
     // Create a HubDocument with the file path
-    final newHubDocument = HubDocumentHelper.createHubDocumentObject(
+    final newHubDocument = HubDocumentHelper().createHubDocumentObject(
         session: session, createdBy: createdBy, path: filePath);
 
     // Let's create a transaction for the database operations
