@@ -20,6 +20,7 @@ import 'package:watch_it/watch_it.dart';
 final _notificationService = di<NotificationService>();
 final _envManager = di<EnvManager>();
 final _sessionManager = di<ServerpodSessionManager>();
+final _secureStorage = ServerpodSecureStorage();
 
 final _log = Logger('MatrixPolicyManager');
 
@@ -30,8 +31,6 @@ class MatrixPolicyManager extends ChangeNotifier {
             matrixUrl: _matrixUrl,
             corporalToken: _corporalToken,
             matrixToken: _matrixToken);
-
-  final _secureStorage = ServerpodSecureStorage();
 
   final _secureStorageKey = _envManager.storageKeyForMatrixCredentials;
 

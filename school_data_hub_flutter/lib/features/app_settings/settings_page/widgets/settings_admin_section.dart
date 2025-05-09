@@ -8,6 +8,7 @@ import 'package:school_data_hub_flutter/common/widgets/qr/qr_utilites.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/app_utils/app_helpers.dart';
+import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/set_matrix_environment_page/set_matrix_environment_controller.dart';
 import 'package:school_data_hub_flutter/features/schoolday/presentation/new_school_semester_page/new_school_semester_page.dart';
 import 'package:school_data_hub_flutter/features/schoolday/presentation/new_school_semester_page/schooldays_calendar_page/schooldays_calendar_page.dart';
@@ -121,8 +122,8 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
             leading: const Icon(Icons.chat_rounded),
             title: const Text('Raumverwaltung löschen'),
             onPressed: (context) async {
-              // await di<MatrixPolicyManager>()
-              //     .deleteAndDeregisterMatrixPolicyManager();
+              await di<MatrixPolicyManager>()
+                  .deleteAndDeregisterMatrixPolicyManager();
             }),
         SettingsTile.navigation(
             leading: const Icon(
