@@ -9,6 +9,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/features/books/data/pupil_book_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/data/pupil_data_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter_impl.dart';
@@ -464,56 +465,56 @@ class PupilManager extends ChangeNotifier {
     _pupilIdPupilsMap[pupilId]!.updatePupil(updatedPupil);
   }
 
-  // Future<void> borrowBook(
-  //     {required int pupilId, required String bookId}) async {
-  //   final pupilBookApiService = PupilBookApiService();
-  //   final PupilData updatedPupil = await pupilBookApiService
-  //       .postNewPupilWorkbook(pupilId: pupilId, bookId: bookId);
+  Future<void> borrowBook(
+      {required int pupilId, required String bookId}) async {
+    final pupilBookApiService = PupilBookApiService();
+    final PupilData updatedPupil = await pupilBookApiService
+        .postNewPupilWorkbook(pupilId: pupilId, bookId: bookId);
 
-  //   _pupils[pupilId]!.updatePupil(updatedPupil);
+    _pupilIdPupilsMap[pupilId]!.updatePupil(updatedPupil);
 
-  //   return;
-  // }
+    return;
+  }
 
-  // Future<void> deletePupilBook({required String lendingId}) async {
-  //   final pupilBookRepository = PupilBookApiService();
-  //   final pupil = await pupilBookRepository.deletePupilBook(lendingId);
+  Future<void> deletePupilBook({required String lendingId}) async {
+    final pupilBookRepository = PupilBookApiService();
+    final pupil = await pupilBookRepository.deletePupilBook(lendingId);
 
-  //   _pupils[pupil.internalId]!.updatePupil(pupil);
+    _pupilIdPupilsMap[pupil.pupilId]!.updatePupil(pupil);
 
-  //   return;
-  // }
+    return;
+  }
 
-  // Future<void> returnBook({required String lendingId}) async {
-  //   final returnedAt = DateTime.now();
-  //   final receivedBy = locator<SessionManager>().credentials.value.username;
-  //   final pupil = await PupilBookApiService().patchPupilBook(
-  //       returnedAt: returnedAt, receivedBy: receivedBy, lendingId: lendingId);
+  Future<void> returnBook({required String lendingId}) async {
+    final returnedAt = DateTime.now();
+    final receivedBy = _serverpodSessionManager.userName;
+    final pupil = await PupilBookApiService().patchPupilBook(
+        returnedAt: returnedAt, receivedBy: receivedBy, lendingId: lendingId);
 
-  //   _pupils[pupil.internalId]!.updatePupil(pupil);
+    _pupilIdPupilsMap[pupil.pupilId]!.updatePupil(pupil);
 
-  //   return;
-  // }
+    return;
+  }
 
-  // Future<void> patchPupilBook(
-  //     {required String lendingId,
-  //     DateTime? lentAt,
-  //     String? lentBy,
-  //     String? comment,
-  //     int? rating,
-  //     DateTime? returnedAt,
-  //     String? receivedBy}) async {
-  //   final pupil = await PupilBookApiService().patchPupilBook(
-  //       lendingId: lendingId,
-  //       lentAt: lentAt,
-  //       lentBy: lentBy,
-  //       state: comment,
-  //       rating: rating,
-  //       returnedAt: returnedAt,
-  //       receivedBy: receivedBy);
+  Future<void> patchPupilBook(
+      {required String lendingId,
+      DateTime? lentAt,
+      String? lentBy,
+      String? comment,
+      int? rating,
+      DateTime? returnedAt,
+      String? receivedBy}) async {
+    final pupil = await PupilBookApiService().patchPupilBook(
+        lendingId: lendingId,
+        lentAt: lentAt,
+        lentBy: lentBy,
+        state: comment,
+        rating: rating,
+        returnedAt: returnedAt,
+        receivedBy: receivedBy);
 
-  //   _pupils[pupil.internalId]!.updatePupil(pupil);
+    _pupilIdPupilsMap[pupil.pupilId]!.updatePupil(pupil);
 
-  //   return;
-  // }
+    return;
+  }
 }

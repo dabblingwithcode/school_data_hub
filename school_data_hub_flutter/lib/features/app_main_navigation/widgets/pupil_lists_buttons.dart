@@ -57,8 +57,7 @@ class PupilListButtons extends WatchingWidget {
             ),
             buttonText: locale.pupilCredit),
         MainMenuButton(
-            destinationPage:
-                const Placeholder(), // const LearningPupilListPage(),
+            destinationPage: null, // const LearningPupilListPage(),
             buttonIcon: const Icon(
               Icons.lightbulb,
               size: 50,
@@ -82,7 +81,7 @@ class PupilListButtons extends WatchingWidget {
             ),
             buttonText: locale.specialInfo),
         MainMenuButton(
-            destinationPage: const Placeholder(), // const OgsListPage(),
+            destinationPage: null, // const OgsListPage(),
             buttonIcon: Text(
               locale.allDayCare,
               style: const TextStyle(

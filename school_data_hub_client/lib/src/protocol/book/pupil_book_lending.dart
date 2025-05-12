@@ -12,17 +12,18 @@
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import '../pupil_data/pupil_data.dart' as _i2;
 import '../book/library_book.dart' as _i3;
-import '../book/pupil_book_lending_file.dart' as _i4;
+import '../shared/document.dart' as _i4;
 
 abstract class PupilBookLending implements _i1.SerializableModel {
   PupilBookLending._({
     this.id,
     required this.lendingId,
-    required this.status,
+    this.status,
+    this.score,
     required this.lentAt,
     required this.lentBy,
-    required this.returnedAt,
-    required this.receivedBy,
+    this.returnedAt,
+    this.receivedBy,
     required this.pupilId,
     this.pupil,
     required this.libraryBookId,
@@ -33,28 +34,31 @@ abstract class PupilBookLending implements _i1.SerializableModel {
   factory PupilBookLending({
     int? id,
     required String lendingId,
-    required String status,
+    String? status,
+    int? score,
     required DateTime lentAt,
     required String lentBy,
-    required DateTime returnedAt,
-    required String receivedBy,
+    DateTime? returnedAt,
+    String? receivedBy,
     required int pupilId,
     _i2.PupilData? pupil,
     required int libraryBookId,
     _i3.LibraryBook? libraryBook,
-    List<_i4.PupilBookLendingFile>? pupilBookLendingFiles,
+    List<_i4.HubDocument>? pupilBookLendingFiles,
   }) = _PupilBookLendingImpl;
 
   factory PupilBookLending.fromJson(Map<String, dynamic> jsonSerialization) {
     return PupilBookLending(
       id: jsonSerialization['id'] as int?,
       lendingId: jsonSerialization['lendingId'] as String,
-      status: jsonSerialization['status'] as String,
+      status: jsonSerialization['status'] as String?,
+      score: jsonSerialization['score'] as int?,
       lentAt: _i1.DateTimeJsonExtension.fromJson(jsonSerialization['lentAt']),
       lentBy: jsonSerialization['lentBy'] as String,
-      returnedAt:
-          _i1.DateTimeJsonExtension.fromJson(jsonSerialization['returnedAt']),
-      receivedBy: jsonSerialization['receivedBy'] as String,
+      returnedAt: jsonSerialization['returnedAt'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['returnedAt']),
+      receivedBy: jsonSerialization['receivedBy'] as String?,
       pupilId: jsonSerialization['pupilId'] as int,
       pupil: jsonSerialization['pupil'] == null
           ? null
@@ -67,8 +71,7 @@ abstract class PupilBookLending implements _i1.SerializableModel {
               (jsonSerialization['libraryBook'] as Map<String, dynamic>)),
       pupilBookLendingFiles: (jsonSerialization['pupilBookLendingFiles']
               as List?)
-          ?.map((e) =>
-              _i4.PupilBookLendingFile.fromJson((e as Map<String, dynamic>)))
+          ?.map((e) => _i4.HubDocument.fromJson((e as Map<String, dynamic>)))
           .toList(),
     );
   }
@@ -80,15 +83,17 @@ abstract class PupilBookLending implements _i1.SerializableModel {
 
   String lendingId;
 
-  String status;
+  String? status;
+
+  int? score;
 
   DateTime lentAt;
 
   String lentBy;
 
-  DateTime returnedAt;
+  DateTime? returnedAt;
 
-  String receivedBy;
+  String? receivedBy;
 
   int pupilId;
 
@@ -98,7 +103,7 @@ abstract class PupilBookLending implements _i1.SerializableModel {
 
   _i3.LibraryBook? libraryBook;
 
-  List<_i4.PupilBookLendingFile>? pupilBookLendingFiles;
+  List<_i4.HubDocument>? pupilBookLendingFiles;
 
   /// Returns a shallow copy of this [PupilBookLending]
   /// with some or all fields replaced by the given arguments.
@@ -107,6 +112,7 @@ abstract class PupilBookLending implements _i1.SerializableModel {
     int? id,
     String? lendingId,
     String? status,
+    int? score,
     DateTime? lentAt,
     String? lentBy,
     DateTime? returnedAt,
@@ -115,18 +121,19 @@ abstract class PupilBookLending implements _i1.SerializableModel {
     _i2.PupilData? pupil,
     int? libraryBookId,
     _i3.LibraryBook? libraryBook,
-    List<_i4.PupilBookLendingFile>? pupilBookLendingFiles,
+    List<_i4.HubDocument>? pupilBookLendingFiles,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
       'lendingId': lendingId,
-      'status': status,
+      if (status != null) 'status': status,
+      if (score != null) 'score': score,
       'lentAt': lentAt.toJson(),
       'lentBy': lentBy,
-      'returnedAt': returnedAt.toJson(),
-      'receivedBy': receivedBy,
+      if (returnedAt != null) 'returnedAt': returnedAt?.toJson(),
+      if (receivedBy != null) 'receivedBy': receivedBy,
       'pupilId': pupilId,
       if (pupil != null) 'pupil': pupil?.toJson(),
       'libraryBookId': libraryBookId,
@@ -149,20 +156,22 @@ class _PupilBookLendingImpl extends PupilBookLending {
   _PupilBookLendingImpl({
     int? id,
     required String lendingId,
-    required String status,
+    String? status,
+    int? score,
     required DateTime lentAt,
     required String lentBy,
-    required DateTime returnedAt,
-    required String receivedBy,
+    DateTime? returnedAt,
+    String? receivedBy,
     required int pupilId,
     _i2.PupilData? pupil,
     required int libraryBookId,
     _i3.LibraryBook? libraryBook,
-    List<_i4.PupilBookLendingFile>? pupilBookLendingFiles,
+    List<_i4.HubDocument>? pupilBookLendingFiles,
   }) : super._(
           id: id,
           lendingId: lendingId,
           status: status,
+          score: score,
           lentAt: lentAt,
           lentBy: lentBy,
           returnedAt: returnedAt,
@@ -181,11 +190,12 @@ class _PupilBookLendingImpl extends PupilBookLending {
   PupilBookLending copyWith({
     Object? id = _Undefined,
     String? lendingId,
-    String? status,
+    Object? status = _Undefined,
+    Object? score = _Undefined,
     DateTime? lentAt,
     String? lentBy,
-    DateTime? returnedAt,
-    String? receivedBy,
+    Object? returnedAt = _Undefined,
+    Object? receivedBy = _Undefined,
     int? pupilId,
     Object? pupil = _Undefined,
     int? libraryBookId,
@@ -195,21 +205,21 @@ class _PupilBookLendingImpl extends PupilBookLending {
     return PupilBookLending(
       id: id is int? ? id : this.id,
       lendingId: lendingId ?? this.lendingId,
-      status: status ?? this.status,
+      status: status is String? ? status : this.status,
+      score: score is int? ? score : this.score,
       lentAt: lentAt ?? this.lentAt,
       lentBy: lentBy ?? this.lentBy,
-      returnedAt: returnedAt ?? this.returnedAt,
-      receivedBy: receivedBy ?? this.receivedBy,
+      returnedAt: returnedAt is DateTime? ? returnedAt : this.returnedAt,
+      receivedBy: receivedBy is String? ? receivedBy : this.receivedBy,
       pupilId: pupilId ?? this.pupilId,
       pupil: pupil is _i2.PupilData? ? pupil : this.pupil?.copyWith(),
       libraryBookId: libraryBookId ?? this.libraryBookId,
       libraryBook: libraryBook is _i3.LibraryBook?
           ? libraryBook
           : this.libraryBook?.copyWith(),
-      pupilBookLendingFiles:
-          pupilBookLendingFiles is List<_i4.PupilBookLendingFile>?
-              ? pupilBookLendingFiles
-              : this.pupilBookLendingFiles?.map((e0) => e0.copyWith()).toList(),
+      pupilBookLendingFiles: pupilBookLendingFiles is List<_i4.HubDocument>?
+          ? pupilBookLendingFiles
+          : this.pupilBookLendingFiles?.map((e0) => e0.copyWith()).toList(),
     );
   }
 }

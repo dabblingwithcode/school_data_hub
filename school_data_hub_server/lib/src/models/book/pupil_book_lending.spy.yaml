@@ -3,11 +3,12 @@ class: PupilBookLending
 table: pupil_book_lending
 fields:
   lendingId: String
-  status: String
+  status: String?
+  score: int?
   lentAt: DateTime
   lentBy: String
-  returnedAt: DateTime
-  receivedBy: String
+  returnedAt: DateTime?
+  receivedBy: String?
   pupil: PupilData?, relation(name=pupil_book_lending_pupil)
   libraryBook: LibraryBook?, relation(name=pupil_book_lending_library_book)
-  pupilBookLendingFiles: List<PupilBookLendingFile>?, relation(name=pupil_book_lending_file_lending)
+  pupilBookLendingFiles: List<HubDocument>?, relation

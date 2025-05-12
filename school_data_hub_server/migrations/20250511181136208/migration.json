@@ -948,6 +948,12 @@
             "dartType": "DateTime"
           },
           {
+            "name": "_pupilBookLendingPupilbooklendingfilesPupilBookLendingId",
+            "columnType": 6,
+            "isNullable": true,
+            "dartType": "int?"
+          },
+          {
             "name": "_competenceCheckDocumentsCompetenceCheckId",
             "columnType": 6,
             "isNullable": true,
@@ -988,6 +994,19 @@
           {
             "constraintName": "hub_document_fk_0",
             "columns": [
+              "_pupilBookLendingPupilbooklendingfilesPupilBookLendingId"
+            ],
+            "referenceTable": "pupil_book_lending",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          },
+          {
+            "constraintName": "hub_document_fk_1",
+            "columns": [
               "_competenceCheckDocumentsCompetenceCheckId"
             ],
             "referenceTable": "competence_check",
@@ -999,7 +1018,7 @@
             "onDelete": 3
           },
           {
-            "constraintName": "hub_document_fk_1",
+            "constraintName": "hub_document_fk_2",
             "columns": [
               "_competenceGoalDocumentsCompetenceGoalId"
             ],
@@ -1012,7 +1031,7 @@
             "onDelete": 3
           },
           {
-            "constraintName": "hub_document_fk_2",
+            "constraintName": "hub_document_fk_3",
             "columns": [
               "_supportCategoryStatusDocumentsSupportCategoryStatusId"
             ],
@@ -1025,7 +1044,7 @@
             "onDelete": 3
           },
           {
-            "constraintName": "hub_document_fk_3",
+            "constraintName": "hub_document_fk_4",
             "columns": [
               "_supportGoalCheckDocumentsSupportGoalCheckId"
             ],
@@ -1038,7 +1057,7 @@
             "onDelete": 3
           },
           {
-            "constraintName": "hub_document_fk_4",
+            "constraintName": "hub_document_fk_5",
             "columns": [
               "_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId"
             ],
@@ -1051,7 +1070,7 @@
             "onDelete": 3
           },
           {
-            "constraintName": "hub_document_fk_5",
+            "constraintName": "hub_document_fk_6",
             "columns": [
               "_preSchoolTestPreschooltestdocumentsPreSchoolTestId"
             ],
@@ -2019,8 +2038,14 @@
           {
             "name": "status",
             "columnType": 0,
-            "isNullable": false,
-            "dartType": "String"
+            "isNullable": true,
+            "dartType": "String?"
+          },
+          {
+            "name": "score",
+            "columnType": 6,
+            "isNullable": true,
+            "dartType": "int?"
           },
           {
             "name": "lentAt",
@@ -2037,14 +2062,14 @@
           {
             "name": "returnedAt",
             "columnType": 4,
-            "isNullable": false,
-            "dartType": "DateTime"
+            "isNullable": true,
+            "dartType": "DateTime?"
           },
           {
             "name": "receivedBy",
             "columnType": 0,
-            "isNullable": false,
-            "dartType": "String"
+            "isNullable": true,
+            "dartType": "String?"
           },
           {
             "name": "pupilId",
@@ -2090,90 +2115,6 @@
         "indexes": [
           {
             "indexName": "pupil_book_lending_pkey",
-            "elements": [
-              {
-                "type": 0,
-                "definition": "id"
-              }
-            ],
-            "type": "btree",
-            "isUnique": true,
-            "isPrimary": true
-          }
-        ],
-        "managed": true
-      }
-    },
-    {
-      "type": "createTable",
-      "createTable": {
-        "name": "pupil_book_lending_file",
-        "dartName": "PupilBookLendingFile",
-        "module": "school_data_hub",
-        "schema": "public",
-        "columns": [
-          {
-            "name": "id",
-            "columnType": 6,
-            "isNullable": false,
-            "columnDefault": "nextval('pupil_book_lending_file_id_seq'::regclass)",
-            "dartType": "int?"
-          },
-          {
-            "name": "fileId",
-            "columnType": 0,
-            "isNullable": false,
-            "dartType": "String"
-          },
-          {
-            "name": "fileUrl",
-            "columnType": 0,
-            "isNullable": false,
-            "dartType": "String"
-          },
-          {
-            "name": "fileExtension",
-            "columnType": 0,
-            "isNullable": false,
-            "dartType": "String"
-          },
-          {
-            "name": "uploadedAt",
-            "columnType": 4,
-            "isNullable": false,
-            "dartType": "DateTime"
-          },
-          {
-            "name": "uploadedBy",
-            "columnType": 0,
-            "isNullable": false,
-            "dartType": "String"
-          },
-          {
-            "name": "lendingId",
-            "columnType": 6,
-            "isNullable": false,
-            "dartType": "int"
-          }
-        ],
-        "foreignKeys": [
-          {
-            "constraintName": "pupil_book_lending_file_fk_0",
-            "columns": [
-              "lendingId"
-            ],
-            "referenceTable": "pupil_book_lending",
-            "referenceTableSchema": "public",
-            "referenceColumns": [
-              "id"
-            ],
-            "onUpdate": 3,
-            "onDelete": 3
-          }
-        ],
-        "indexes": [
-          {
-            "indexName": "pupil_book_lending_file_pkey",
             "elements": [
               {
                 "type": 0,

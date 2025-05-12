@@ -19,7 +19,8 @@ abstract class HubDocument
     this.documentPath,
     required this.createdBy,
     required this.createdAt,
-  })  : _competenceCheckDocumentsCompetenceCheckId = null,
+  })  : _pupilBookLendingPupilbooklendingfilesPupilBookLendingId = null,
+        _competenceCheckDocumentsCompetenceCheckId = null,
         _competenceGoalDocumentsCompetenceGoalId = null,
         _supportCategoryStatusDocumentsSupportCategoryStatusId = null,
         _supportGoalCheckDocumentsSupportGoalCheckId = null,
@@ -42,6 +43,10 @@ abstract class HubDocument
       createdBy: jsonSerialization['createdBy'] as String,
       createdAt:
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
+      $_pupilBookLendingPupilbooklendingfilesPupilBookLendingId:
+          jsonSerialization[
+                  '_pupilBookLendingPupilbooklendingfilesPupilBookLendingId']
+              as int?,
       $_competenceCheckDocumentsCompetenceCheckId:
           jsonSerialization['_competenceCheckDocumentsCompetenceCheckId']
               as int?,
@@ -77,6 +82,8 @@ abstract class HubDocument
 
   DateTime createdAt;
 
+  final int? _pupilBookLendingPupilbooklendingfilesPupilBookLendingId;
+
   final int? _competenceCheckDocumentsCompetenceCheckId;
 
   final int? _competenceGoalDocumentsCompetenceGoalId;
@@ -110,6 +117,9 @@ abstract class HubDocument
       if (documentPath != null) 'documentPath': documentPath,
       'createdBy': createdBy,
       'createdAt': createdAt.toJson(),
+      if (_pupilBookLendingPupilbooklendingfilesPupilBookLendingId != null)
+        '_pupilBookLendingPupilbooklendingfilesPupilBookLendingId':
+            _pupilBookLendingPupilbooklendingfilesPupilBookLendingId,
       if (_competenceCheckDocumentsCompetenceCheckId != null)
         '_competenceCheckDocumentsCompetenceCheckId':
             _competenceCheckDocumentsCompetenceCheckId,
@@ -205,6 +215,8 @@ class _HubDocumentImpl extends HubDocument {
       documentPath: documentPath is String? ? documentPath : this.documentPath,
       createdBy: createdBy ?? this.createdBy,
       createdAt: createdAt ?? this.createdAt,
+      $_pupilBookLendingPupilbooklendingfilesPupilBookLendingId:
+          this._pupilBookLendingPupilbooklendingfilesPupilBookLendingId,
       $_competenceCheckDocumentsCompetenceCheckId:
           this._competenceCheckDocumentsCompetenceCheckId,
       $_competenceGoalDocumentsCompetenceGoalId:
@@ -228,13 +240,16 @@ class HubDocumentImplicit extends _HubDocumentImpl {
     String? documentPath,
     required String createdBy,
     required DateTime createdAt,
+    int? $_pupilBookLendingPupilbooklendingfilesPupilBookLendingId,
     int? $_competenceCheckDocumentsCompetenceCheckId,
     int? $_competenceGoalDocumentsCompetenceGoalId,
     int? $_supportCategoryStatusDocumentsSupportCategoryStatusId,
     int? $_supportGoalCheckDocumentsSupportGoalCheckId,
     int? $_preSchoolMedicalPreschoolmedicalfilesPreSchoolMedicalId,
     int? $_preSchoolTestPreschooltestdocumentsPreSchoolTestId,
-  })  : _competenceCheckDocumentsCompetenceCheckId =
+  })  : _pupilBookLendingPupilbooklendingfilesPupilBookLendingId =
+            $_pupilBookLendingPupilbooklendingfilesPupilBookLendingId,
+        _competenceCheckDocumentsCompetenceCheckId =
             $_competenceCheckDocumentsCompetenceCheckId,
         _competenceGoalDocumentsCompetenceGoalId =
             $_competenceGoalDocumentsCompetenceGoalId,
@@ -256,6 +271,7 @@ class HubDocumentImplicit extends _HubDocumentImpl {
 
   factory HubDocumentImplicit(
     HubDocument hubDocument, {
+    int? $_pupilBookLendingPupilbooklendingfilesPupilBookLendingId,
     int? $_competenceCheckDocumentsCompetenceCheckId,
     int? $_competenceGoalDocumentsCompetenceGoalId,
     int? $_supportCategoryStatusDocumentsSupportCategoryStatusId,
@@ -269,6 +285,8 @@ class HubDocumentImplicit extends _HubDocumentImpl {
       documentPath: hubDocument.documentPath,
       createdBy: hubDocument.createdBy,
       createdAt: hubDocument.createdAt,
+      $_pupilBookLendingPupilbooklendingfilesPupilBookLendingId:
+          $_pupilBookLendingPupilbooklendingfilesPupilBookLendingId,
       $_competenceCheckDocumentsCompetenceCheckId:
           $_competenceCheckDocumentsCompetenceCheckId,
       $_competenceGoalDocumentsCompetenceGoalId:
@@ -283,6 +301,9 @@ class HubDocumentImplicit extends _HubDocumentImpl {
           $_preSchoolTestPreschooltestdocumentsPreSchoolTestId,
     );
   }
+
+  @override
+  final int? _pupilBookLendingPupilbooklendingfilesPupilBookLendingId;
 
   @override
   final int? _competenceCheckDocumentsCompetenceCheckId;
@@ -321,6 +342,10 @@ class HubDocumentTable extends _i1.Table<int?> {
       'createdAt',
       this,
     );
+    $_pupilBookLendingPupilbooklendingfilesPupilBookLendingId = _i1.ColumnInt(
+      '_pupilBookLendingPupilbooklendingfilesPupilBookLendingId',
+      this,
+    );
     $_competenceCheckDocumentsCompetenceCheckId = _i1.ColumnInt(
       '_competenceCheckDocumentsCompetenceCheckId',
       this,
@@ -355,6 +380,9 @@ class HubDocumentTable extends _i1.Table<int?> {
 
   late final _i1.ColumnDateTime createdAt;
 
+  late final _i1.ColumnInt
+      $_pupilBookLendingPupilbooklendingfilesPupilBookLendingId;
+
   late final _i1.ColumnInt $_competenceCheckDocumentsCompetenceCheckId;
 
   late final _i1.ColumnInt $_competenceGoalDocumentsCompetenceGoalId;
@@ -376,6 +404,7 @@ class HubDocumentTable extends _i1.Table<int?> {
         documentPath,
         createdBy,
         createdAt,
+        $_pupilBookLendingPupilbooklendingfilesPupilBookLendingId,
         $_competenceCheckDocumentsCompetenceCheckId,
         $_competenceGoalDocumentsCompetenceGoalId,
         $_supportCategoryStatusDocumentsSupportCategoryStatusId,
