@@ -1,6 +1,7 @@
 // ignore_for_file: invalid_annotation_target
 
 import 'package:json_annotation/json_annotation.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 
 part 'pupil_identity.g.dart';
 
@@ -62,4 +63,49 @@ class PupilIdentity {
     this.religion,
     this.religionLessons,
   });
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is PupilIdentity &&
+        other.id == id &&
+        other.firstName == firstName &&
+        other.lastName == lastName &&
+        other.group == group &&
+        other.schoolGrade == schoolGrade &&
+        other.specialNeeds == specialNeeds &&
+        other.gender == gender &&
+        other.language == language &&
+        other.family == family &&
+        other.birthday.isSameDate(birthday) &&
+        (other.migrationSupportEnds
+                ?.isSameDate(migrationSupportEnds ?? DateTime(0)) ??
+            migrationSupportEnds == null) &&
+        other.pupilSince.isSameDate(pupilSince) &&
+        other.afterSchoolCare == afterSchoolCare &&
+        (other.leavingDate?.isSameDate(leavingDate ?? DateTime(0)) ??
+            leavingDate == null) &&
+        other.religion == religion &&
+        other.religionLessons == religionLessons;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        id,
+        firstName,
+        lastName,
+        group,
+        schoolGrade,
+        specialNeeds,
+        gender,
+        language,
+        family,
+        birthday,
+        migrationSupportEnds,
+        pupilSince,
+        afterSchoolCare,
+        leavingDate,
+        religion,
+        religionLessons,
+      );
 }
