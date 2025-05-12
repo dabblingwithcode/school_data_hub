@@ -1,0 +1,13 @@
+class: LibraryBookQuery
+fields:
+  title: String?
+  author: String?
+  location: LibraryBookLocation?
+  keywords: String?
+  readingLevel: String?
+  tags: List<BookTagging>?
+  borrowStatus: bool?
+  page: int
+  perPage: int
+
+

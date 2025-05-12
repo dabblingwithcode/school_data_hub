@@ -12,7 +12,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import '../../book/library_book.dart' as _i2;
+import '../../../book/library_book/library_book.dart' as _i2;
 
 abstract class LibraryBookLocation
     implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
