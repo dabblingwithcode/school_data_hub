@@ -49,3 +49,35 @@ Future<Image> cachedImageOrDownloadImage(
       : customEncrypter.decryptTheseBytes(imageBytes);
   return Image.memory(decryptedBytes);
 }
+
+Future<Image> cachedPublicImageOrDownloadPublicImage({
+  required String path,
+  required String cacheKey,
+}) async {
+  // First look for the image in the cache
+  final fileInfo = await _cacheManager.getFileFromCache(cacheKey);
+
+  if (fileInfo != null && await fileInfo.file.exists()) {
+    // File is already cached, if necessary, decrypt it before using
+
+    final fileBytes = await fileInfo.file.readAsBytes();
+    return Image.memory(fileBytes);
+  }
+  // The image is not in the cache, so we need to download it
+  _notificationService.apiRunning(true);
+  final ByteData? byteData = await _client.files.getUnencryptedImage(path);
+  _notificationService.apiRunning(false);
+
+  if (byteData == null) {
+    di<NotificationService>()
+        .showSnackBar(NotificationType.error, 'Fehler beim Laden des Bildes');
+    return Image.asset('assets/dummy-profile-pic.png');
+  }
+  Uint8List imageBytes = byteData.buffer.asUint8List();
+  // Cache the image for future use
+  await _cacheManager.putFile(cacheKey, imageBytes);
+
+  return Image.memory(imageBytes);
+
+  // The image is encrypted - decrypt the bytes before returning
+}

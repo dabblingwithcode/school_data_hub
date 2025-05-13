@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
+import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/new_book_page/new_book_controller.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -44,24 +47,21 @@ class NewBookPage extends StatelessWidget {
                 children: <Widget>[
                   Row(
                     children: [
-                      if (controller.bookImageId != null) ...<Widget>[
+                      if (controller.imagePath != null) ...<Widget>[
                         Expanded(
                           flex: 1,
                           child: Column(
                             children: [
                               ClipRRect(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  child: Container()
-                                  // TODO: Repair when image loading is implemented
-                                  //  UnencryptedImageInCard(
-                                  //   documentImageData: DocumentImageData(
-                                  //     documentTag: controller.bookImageId!,
-                                  //     documentUrl:
-                                  //         '${locator<EnvManager>().env!.serverUrl}${BookApiService.getBookImageUrl(controller.widget.isbn)}',
-                                  //     size: 220,
-                                  //   ),
-                                  // ),
-                                  ),
+                                borderRadius: BorderRadius.circular(10.0),
+                                child:
+                                    // TODO: Repair when image loading is implemented
+                                    UnencryptedImageInCard(
+                                  path: controller.imagePath!,
+                                  cacheKey: controller.widget.isbn.toString(),
+                                  size: 220,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -108,7 +108,8 @@ class NewBookPage extends StatelessWidget {
                             Row(
                               children: [
                                 Expanded(
-                                  child: DropdownButtonFormField<String>(
+                                  child: DropdownButtonFormField<
+                                      LibraryBookLocation>(
                                     decoration: AppStyles.textFieldDecoration(
                                         labelText: 'Ablageort'),
                                     items: controller.locationDropdownItems,

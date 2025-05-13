@@ -23,6 +23,7 @@ final _cacheManager = di<DefaultCacheManager>();
 final _pupilIdentityManager = di<PupilIdentityManager>();
 final _serverpodSessionManager = di<ServerpodSessionManager>();
 final _pupilDataApiService = PupilDataApiService();
+final _pupilBookApiService = PupilBookApiService();
 
 class PupilManager extends ChangeNotifier {
   final _pupilIdPupilsMap = <int, PupilProxy>{};
@@ -465,55 +466,68 @@ class PupilManager extends ChangeNotifier {
     _pupilIdPupilsMap[pupilId]!.updatePupil(updatedPupil);
   }
 
-  Future<void> borrowBook(
-      {required int pupilId, required String bookId}) async {
-    final pupilBookApiService = PupilBookApiService();
-    final PupilData updatedPupil = await pupilBookApiService
-        .postNewPupilWorkbook(pupilId: pupilId, bookId: bookId);
+  Future<void> postPupilBookLending(
+      {required int pupilId, required int libraryBookId}) async {
+    final PupilBookLending pupilBookLending = PupilBookLending(
+      lendingId: const Uuid().v4(),
+      lentAt: DateTime.now().toUtc(),
+      lentBy: _serverpodSessionManager.userName!,
+      pupilId: pupilId,
+      libraryBookId: libraryBookId,
+    );
+    final PupilData updatedPupil = await _pupilBookApiService
+        .postPupilBookLending(pupilId: pupilId, bookLending: pupilBookLending);
 
     _pupilIdPupilsMap[pupilId]!.updatePupil(updatedPupil);
 
     return;
   }
 
-  Future<void> deletePupilBook({required String lendingId}) async {
-    final pupilBookRepository = PupilBookApiService();
-    final pupil = await pupilBookRepository.deletePupilBook(lendingId);
+  Future<void> deletePupilBook({required int lendingId}) async {
+    final pupil = await _pupilBookApiService.deletePupilBook(lendingId);
 
-    _pupilIdPupilsMap[pupil.pupilId]!.updatePupil(pupil);
-
-    return;
-  }
-
-  Future<void> returnBook({required String lendingId}) async {
-    final returnedAt = DateTime.now();
-    final receivedBy = _serverpodSessionManager.userName;
-    final pupil = await PupilBookApiService().patchPupilBook(
-        returnedAt: returnedAt, receivedBy: receivedBy, lendingId: lendingId);
-
-    _pupilIdPupilsMap[pupil.pupilId]!.updatePupil(pupil);
+    _pupilIdPupilsMap[pupil.id!]!.updatePupil(pupil);
 
     return;
   }
 
-  Future<void> patchPupilBook(
-      {required String lendingId,
+  Future<void> returnBook({required PupilBookLending pupilBookLending}) async {
+    final updatedBookLending = pupilBookLending.copyWith(
+      returnedAt: DateTime.now().toUtc(),
+      receivedBy: _serverpodSessionManager.userName,
+    );
+
+    final pupil = await _pupilBookApiService.updatePupilBookLending(
+      bookLending: updatedBookLending,
+    );
+
+    _pupilIdPupilsMap[pupil.id!]!.updatePupil(pupil);
+
+    return;
+  }
+
+  Future<void> updatePupilBook(
+      {required PupilBookLending pupilBookLending,
       DateTime? lentAt,
       String? lentBy,
-      String? comment,
-      int? rating,
-      DateTime? returnedAt,
-      String? receivedBy}) async {
-    final pupil = await PupilBookApiService().patchPupilBook(
-        lendingId: lendingId,
-        lentAt: lentAt,
-        lentBy: lentBy,
-        state: comment,
-        rating: rating,
-        returnedAt: returnedAt,
-        receivedBy: receivedBy);
-
-    _pupilIdPupilsMap[pupil.pupilId]!.updatePupil(pupil);
+      ({String? value})? status,
+      ({int? value})? score,
+      ({DateTime? value})? returnedAt,
+      ({String? value})? receivedBy}) async {
+    final updatedBookLending = pupilBookLending.copyWith(
+      lentAt: lentAt ?? pupilBookLending.lentAt,
+      lentBy: lentBy ?? pupilBookLending.lentBy,
+      status: status != null ? status.value : pupilBookLending.status,
+      score: score != null ? score.value : pupilBookLending.score,
+      returnedAt:
+          returnedAt != null ? returnedAt.value : pupilBookLending.returnedAt,
+      receivedBy:
+          receivedBy != null ? receivedBy.value : pupilBookLending.receivedBy,
+    );
+    final pupil = await _pupilBookApiService.updatePupilBookLending(
+      bookLending: updatedBookLending,
+    );
+    _pupilIdPupilsMap[pupil.id!]!.updatePupil(pupil);
 
     return;
   }

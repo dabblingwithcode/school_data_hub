@@ -46,44 +46,42 @@ import 'package:school_data_hub_server/src/generated/book/book_tagging/book_tag.
 import 'package:school_data_hub_server/src/generated/book/book.dart' as _i28;
 import 'package:school_data_hub_server/src/generated/book/library_book/location/library_book_location.dart'
     as _i29;
-import 'package:school_data_hub_server/src/generated/book/library_book/library_book.dart'
-    as _i30;
 import 'package:school_data_hub_server/src/generated/book/library_book/library_book_query.dart'
-    as _i31;
+    as _i30;
 import 'package:school_data_hub_server/src/generated/book/pupil_book_lending.dart'
-    as _i32;
-import 'dart:io' as _i33;
+    as _i31;
+import 'dart:io' as _i32;
 import 'package:school_data_hub_server/src/generated/learning/competence.dart'
-    as _i34;
+    as _i33;
 import 'package:school_data_hub_server/src/generated/learning_support/support_category.dart'
-    as _i35;
+    as _i34;
 import 'package:school_data_hub_server/src/generated/pupil_data/dto/pupil_document_type.dart'
-    as _i36;
+    as _i35;
 import 'package:school_data_hub_server/src/generated/pupil_data/pupil_data.dart'
-    as _i37;
+    as _i36;
 import 'package:school_data_hub_server/src/generated/pupil_data/pupil_objects/communication/communication_skills.dart'
-    as _i38;
+    as _i37;
 import 'package:school_data_hub_server/src/generated/pupil_data/pupil_objects/communication/tutor_info.dart'
-    as _i39;
+    as _i38;
 import 'package:school_data_hub_server/src/generated/pupil_data/dto/siblings_tutor_info_dto.dart'
-    as _i40;
+    as _i39;
 import 'package:school_data_hub_server/src/generated/pupil_data/pupil_objects/preschool/pre_school_medical_status.dart'
-    as _i41;
+    as _i40;
 import 'package:school_data_hub_server/src/generated/pupil_data/pupil_objects/communication/public_media_auth.dart'
-    as _i42;
+    as _i41;
 import 'package:school_data_hub_server/src/generated/learning_support/support_level.dart'
-    as _i43;
+    as _i42;
 import 'package:school_data_hub_server/src/generated/school_list/pupil_entry.dart'
-    as _i44;
+    as _i43;
 import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
-    as _i45;
+    as _i44;
 import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
-    as _i46;
+    as _i45;
 import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event_type.dart'
-    as _i47;
+    as _i46;
 import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event.dart'
-    as _i48;
-import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i49;
+    as _i47;
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i48;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -852,9 +850,9 @@ class Endpoints extends _i1.EndpointDispatch {
         'deleteBookTag': _i1.MethodConnector(
           name: 'deleteBookTag',
           params: {
-            'id': _i1.ParameterDescription(
-              name: 'id',
-              type: _i1.getType<int>(),
+            'bookTag': _i1.ParameterDescription(
+              name: 'bookTag',
+              type: _i1.getType<_i27.BookTag>(),
               nullable: false,
             )
           },
@@ -864,7 +862,7 @@ class Endpoints extends _i1.EndpointDispatch {
           ) async =>
               (endpoints['bookTags'] as _i7.BookTagsEndpoint).deleteBookTag(
             session,
-            params['id'],
+            params['bookTag'],
           ),
         ),
       },
@@ -934,6 +932,30 @@ class Endpoints extends _i1.EndpointDispatch {
               (endpoints['books'] as _i8.BooksEndpoint).updateBook(
             session,
             params['book'],
+          ),
+        ),
+        'updateBookTags': _i1.MethodConnector(
+          name: 'updateBookTags',
+          params: {
+            'book': _i1.ParameterDescription(
+              name: 'book',
+              type: _i1.getType<_i28.Book>(),
+              nullable: false,
+            ),
+            'tags': _i1.ParameterDescription(
+              name: 'tags',
+              type: _i1.getType<List<_i27.BookTag>>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['books'] as _i8.BooksEndpoint).updateBookTags(
+            session,
+            params['book'],
+            params['tags'],
           ),
         ),
         'deleteBook': _i1.MethodConnector(
@@ -1014,9 +1036,9 @@ class Endpoints extends _i1.EndpointDispatch {
         'deleteLibraryBookLocation': _i1.MethodConnector(
           name: 'deleteLibraryBookLocation',
           params: {
-            'id': _i1.ParameterDescription(
-              name: 'id',
-              type: _i1.getType<int>(),
+            'location': _i1.ParameterDescription(
+              name: 'location',
+              type: _i1.getType<_i29.LibraryBookLocation>(),
               nullable: false,
             )
           },
@@ -1028,7 +1050,7 @@ class Endpoints extends _i1.EndpointDispatch {
                       as _i9.LibraryBookLocationsEndpoint)
                   .deleteLibraryBookLocation(
             session,
-            params['id'],
+            params['location'],
           ),
         ),
       },
@@ -1040,11 +1062,21 @@ class Endpoints extends _i1.EndpointDispatch {
         'postLibraryBook': _i1.MethodConnector(
           name: 'postLibraryBook',
           params: {
-            'libraryBook': _i1.ParameterDescription(
-              name: 'libraryBook',
-              type: _i1.getType<_i30.LibraryBook>(),
+            'isbn': _i1.ParameterDescription(
+              name: 'isbn',
+              type: _i1.getType<int>(),
               nullable: false,
-            )
+            ),
+            'libraryId': _i1.ParameterDescription(
+              name: 'libraryId',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'location': _i1.ParameterDescription(
+              name: 'location',
+              type: _i1.getType<_i29.LibraryBookLocation>(),
+              nullable: false,
+            ),
           },
           call: (
             _i1.Session session,
@@ -1053,7 +1085,9 @@ class Endpoints extends _i1.EndpointDispatch {
               (endpoints['libraryBooks'] as _i10.LibraryBooksEndpoint)
                   .postLibraryBook(
             session,
-            params['libraryBook'],
+            params['isbn'],
+            params['libraryId'],
+            params['location'],
           ),
         ),
         'fetchLibraryBooks': _i1.MethodConnector(
@@ -1085,12 +1119,31 @@ class Endpoints extends _i1.EndpointDispatch {
             params['isbn'],
           ),
         ),
+        'fetchLibraryBookByLibraryId': _i1.MethodConnector(
+          name: 'fetchLibraryBookByLibraryId',
+          params: {
+            'libraryId': _i1.ParameterDescription(
+              name: 'libraryId',
+              type: _i1.getType<String>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['libraryBooks'] as _i10.LibraryBooksEndpoint)
+                  .fetchLibraryBookByLibraryId(
+            session,
+            params['libraryId'],
+          ),
+        ),
         'fetchLibraryBooksMatchingQuery': _i1.MethodConnector(
           name: 'fetchLibraryBooksMatchingQuery',
           params: {
             'libraryBookQuery': _i1.ParameterDescription(
               name: 'libraryBookQuery',
-              type: _i1.getType<_i31.LibraryBookQuery>(),
+              type: _i1.getType<_i30.LibraryBookQuery>(),
               nullable: false,
             )
           },
@@ -1107,11 +1160,46 @@ class Endpoints extends _i1.EndpointDispatch {
         'updateLibraryBook': _i1.MethodConnector(
           name: 'updateLibraryBook',
           params: {
-            'libraryBook': _i1.ParameterDescription(
-              name: 'libraryBook',
-              type: _i1.getType<_i30.LibraryBook>(),
+            'isbn': _i1.ParameterDescription(
+              name: 'isbn',
+              type: _i1.getType<int>(),
               nullable: false,
-            )
+            ),
+            'libraryId': _i1.ParameterDescription(
+              name: 'libraryId',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'available': _i1.ParameterDescription(
+              name: 'available',
+              type: _i1.getType<bool?>(),
+              nullable: true,
+            ),
+            'location': _i1.ParameterDescription(
+              name: 'location',
+              type: _i1.getType<_i29.LibraryBookLocation?>(),
+              nullable: true,
+            ),
+            'title': _i1.ParameterDescription(
+              name: 'title',
+              type: _i1.getType<String?>(),
+              nullable: true,
+            ),
+            'author': _i1.ParameterDescription(
+              name: 'author',
+              type: _i1.getType<String?>(),
+              nullable: true,
+            ),
+            'description': _i1.ParameterDescription(
+              name: 'description',
+              type: _i1.getType<String?>(),
+              nullable: true,
+            ),
+            'readingLevel': _i1.ParameterDescription(
+              name: 'readingLevel',
+              type: _i1.getType<String?>(),
+              nullable: true,
+            ),
           },
           call: (
             _i1.Session session,
@@ -1120,14 +1208,21 @@ class Endpoints extends _i1.EndpointDispatch {
               (endpoints['libraryBooks'] as _i10.LibraryBooksEndpoint)
                   .updateLibraryBook(
             session,
-            params['libraryBook'],
+            params['isbn'],
+            params['libraryId'],
+            params['available'],
+            params['location'],
+            params['title'],
+            params['author'],
+            params['description'],
+            params['readingLevel'],
           ),
         ),
         'deleteLibraryBook': _i1.MethodConnector(
           name: 'deleteLibraryBook',
           params: {
-            'id': _i1.ParameterDescription(
-              name: 'id',
+            'libraryBookId': _i1.ParameterDescription(
+              name: 'libraryBookId',
               type: _i1.getType<int>(),
               nullable: false,
             )
@@ -1139,7 +1234,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (endpoints['libraryBooks'] as _i10.LibraryBooksEndpoint)
                   .deleteLibraryBook(
             session,
-            params['id'],
+            params['libraryBookId'],
           ),
         ),
       },
@@ -1153,7 +1248,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'pupilBookLending': _i1.ParameterDescription(
               name: 'pupilBookLending',
-              type: _i1.getType<_i32.PupilBookLending>(),
+              type: _i1.getType<_i31.PupilBookLending>(),
               nullable: false,
             )
           },
@@ -1201,7 +1296,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'pupilBookLending': _i1.ParameterDescription(
               name: 'pupilBookLending',
-              type: _i1.getType<_i32.PupilBookLending>(),
+              type: _i1.getType<_i31.PupilBookLending>(),
               nullable: false,
             )
           },
@@ -1306,6 +1401,24 @@ class Endpoints extends _i1.EndpointDispatch {
             params['documentId'],
           ),
         ),
+        'getUnencryptedImage': _i1.MethodConnector(
+          name: 'getUnencryptedImage',
+          params: {
+            'path': _i1.ParameterDescription(
+              name: 'path',
+              type: _i1.getType<String>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['files'] as _i12.FilesEndpoint).getUnencryptedImage(
+            session,
+            params['path'],
+          ),
+        ),
       },
     );
     connectors['competence'] = _i1.EndpointConnector(
@@ -1317,7 +1430,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'jsonFile': _i1.ParameterDescription(
               name: 'jsonFile',
-              type: _i1.getType<_i33.File>(),
+              type: _i1.getType<_i32.File>(),
               nullable: false,
             )
           },
@@ -1383,7 +1496,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'competence': _i1.ParameterDescription(
               name: 'competence',
-              type: _i1.getType<_i34.Competence>(),
+              type: _i1.getType<_i33.Competence>(),
               nullable: false,
             )
           },
@@ -1456,7 +1569,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'category': _i1.ParameterDescription(
               name: 'category',
-              type: _i1.getType<_i35.SupportCategory>(),
+              type: _i1.getType<_i34.SupportCategory>(),
               nullable: false,
             )
           },
@@ -1475,7 +1588,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'category': _i1.ParameterDescription(
               name: 'category',
-              type: _i1.getType<_i35.SupportCategory>(),
+              type: _i1.getType<_i34.SupportCategory>(),
               nullable: false,
             )
           },
@@ -1494,7 +1607,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'category': _i1.ParameterDescription(
               name: 'category',
-              type: _i1.getType<_i35.SupportCategory>(),
+              type: _i1.getType<_i34.SupportCategory>(),
               nullable: false,
             )
           },
@@ -1749,7 +1862,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'documentType': _i1.ParameterDescription(
               name: 'documentType',
-              type: _i1.getType<_i36.PupilDocumentType>(),
+              type: _i1.getType<_i35.PupilDocumentType>(),
               nullable: false,
             ),
           },
@@ -1836,7 +1949,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'pupil': _i1.ParameterDescription(
               name: 'pupil',
-              type: _i1.getType<_i37.PupilData>(),
+              type: _i1.getType<_i36.PupilData>(),
               nullable: false,
             )
           },
@@ -1860,7 +1973,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'communicationSkills': _i1.ParameterDescription(
               name: 'communicationSkills',
-              type: _i1.getType<_i38.CommunicationSkills?>(),
+              type: _i1.getType<_i37.CommunicationSkills?>(),
               nullable: true,
             ),
           },
@@ -1885,7 +1998,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'tutorInfo': _i1.ParameterDescription(
               name: 'tutorInfo',
-              type: _i1.getType<_i39.TutorInfo?>(),
+              type: _i1.getType<_i38.TutorInfo?>(),
               nullable: true,
             ),
           },
@@ -1905,7 +2018,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'siblingsTutorInfo': _i1.ParameterDescription(
               name: 'siblingsTutorInfo',
-              type: _i1.getType<_i40.SiblingsTutorInfo>(),
+              type: _i1.getType<_i39.SiblingsTutorInfo>(),
               nullable: false,
             )
           },
@@ -1939,7 +2052,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'documentType': _i1.ParameterDescription(
               name: 'documentType',
-              type: _i1.getType<_i36.PupilDocumentType>(),
+              type: _i1.getType<_i35.PupilDocumentType>(),
               nullable: false,
             ),
           },
@@ -2034,7 +2147,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'preSchoolMedicalStatus': _i1.ParameterDescription(
               name: 'preSchoolMedicalStatus',
-              type: _i1.getType<_i41.PreSchoolMedicalStatus>(),
+              type: _i1.getType<_i40.PreSchoolMedicalStatus>(),
               nullable: false,
             ),
             'updatedBy': _i1.ParameterDescription(
@@ -2065,7 +2178,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'publicMediaAuth': _i1.ParameterDescription(
               name: 'publicMediaAuth',
-              type: _i1.getType<_i42.PublicMediaAuth>(),
+              type: _i1.getType<_i41.PublicMediaAuth>(),
               nullable: false,
             ),
           },
@@ -2085,7 +2198,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'supportLevel': _i1.ParameterDescription(
               name: 'supportLevel',
-              type: _i1.getType<_i43.SupportLevel>(),
+              type: _i1.getType<_i42.SupportLevel>(),
               nullable: false,
             ),
             'pupilId': _i1.ParameterDescription(
@@ -2241,7 +2354,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'entry': _i1.ParameterDescription(
               name: 'entry',
-              type: _i1.getType<_i44.PupilListEntry>(),
+              type: _i1.getType<_i43.PupilListEntry>(),
               nullable: false,
             )
           },
@@ -2335,7 +2448,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'schoolSemester': _i1.ParameterDescription(
               name: 'schoolSemester',
-              type: _i1.getType<_i45.SchoolSemester>(),
+              type: _i1.getType<_i44.SchoolSemester>(),
               nullable: false,
             )
           },
@@ -2354,7 +2467,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'semester': _i1.ParameterDescription(
               name: 'semester',
-              type: _i1.getType<_i45.SchoolSemester>(),
+              type: _i1.getType<_i44.SchoolSemester>(),
               nullable: false,
             )
           },
@@ -2430,7 +2543,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'schoolday': _i1.ParameterDescription(
               name: 'schoolday',
-              type: _i1.getType<_i46.Schoolday>(),
+              type: _i1.getType<_i45.Schoolday>(),
               nullable: false,
             )
           },
@@ -2501,7 +2614,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'type': _i1.ParameterDescription(
               name: 'type',
-              type: _i1.getType<_i47.SchooldayEventType>(),
+              type: _i1.getType<_i46.SchooldayEventType>(),
               nullable: false,
             ),
             'reason': _i1.ParameterDescription(
@@ -2534,7 +2647,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'schooldayEvent': _i1.ParameterDescription(
               name: 'schooldayEvent',
-              type: _i1.getType<_i48.SchooldayEvent>(),
+              type: _i1.getType<_i47.SchooldayEvent>(),
               nullable: false,
             ),
             'changedProcessedToFalse': _i1.ParameterDescription(
@@ -2686,6 +2799,6 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
-    modules['serverpod_auth'] = _i49.Endpoints()..initializeEndpoints(server);
+    modules['serverpod_auth'] = _i48.Endpoints()..initializeEndpoints(server);
   }
 }

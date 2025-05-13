@@ -1232,7 +1232,7 @@ class _BookTagsEndpoint {
 
   _i3.Future<bool> deleteBookTag(
     _i1.TestSessionBuilder sessionBuilder,
-    int id,
+    _i15.BookTag bookTag,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1245,7 +1245,7 @@ class _BookTagsEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'bookTags',
           methodName: 'deleteBookTag',
-          parameters: _i1.testObjectToJson({'id': id}),
+          parameters: _i1.testObjectToJson({'bookTag': bookTag}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
@@ -1371,6 +1371,39 @@ class _BooksEndpoint {
           endpointPath: 'books',
           methodName: 'updateBook',
           parameters: _i1.testObjectToJson({'book': book}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i16.Book>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i16.Book> updateBookTags(
+    _i1.TestSessionBuilder sessionBuilder,
+    _i16.Book book,
+    List<_i15.BookTag> tags,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'books',
+        method: 'updateBookTags',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'books',
+          methodName: 'updateBookTags',
+          parameters: _i1.testObjectToJson({
+            'book': book,
+            'tags': tags,
+          }),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
@@ -1513,7 +1546,7 @@ class _LibraryBookLocationsEndpoint {
 
   _i3.Future<bool> deleteLibraryBookLocation(
     _i1.TestSessionBuilder sessionBuilder,
-    int id,
+    _i17.LibraryBookLocation location,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1526,7 +1559,7 @@ class _LibraryBookLocationsEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'libraryBookLocations',
           methodName: 'deleteLibraryBookLocation',
-          parameters: _i1.testObjectToJson({'id': id}),
+          parameters: _i1.testObjectToJson({'location': location}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
@@ -1553,7 +1586,9 @@ class _LibraryBooksEndpoint {
 
   _i3.Future<_i18.LibraryBook> postLibraryBook(
     _i1.TestSessionBuilder sessionBuilder,
-    _i18.LibraryBook libraryBook,
+    int isbn,
+    String libraryId,
+    _i17.LibraryBookLocation location,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1566,7 +1601,11 @@ class _LibraryBooksEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'libraryBooks',
           methodName: 'postLibraryBook',
-          parameters: _i1.testObjectToJson({'libraryBook': libraryBook}),
+          parameters: _i1.testObjectToJson({
+            'isbn': isbn,
+            'libraryId': libraryId,
+            'location': location,
+          }),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
@@ -1636,6 +1675,35 @@ class _LibraryBooksEndpoint {
     });
   }
 
+  _i3.Future<_i18.LibraryBook?> fetchLibraryBookByLibraryId(
+    _i1.TestSessionBuilder sessionBuilder,
+    String libraryId,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'libraryBooks',
+        method: 'fetchLibraryBookByLibraryId',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'libraryBooks',
+          methodName: 'fetchLibraryBookByLibraryId',
+          parameters: _i1.testObjectToJson({'libraryId': libraryId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i18.LibraryBook?>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
   _i3.Future<List<_i18.LibraryBook>> fetchLibraryBooksMatchingQuery(
     _i1.TestSessionBuilder sessionBuilder,
     _i19.LibraryBookQuery libraryBookQuery,
@@ -1668,7 +1736,14 @@ class _LibraryBooksEndpoint {
 
   _i3.Future<_i18.LibraryBook> updateLibraryBook(
     _i1.TestSessionBuilder sessionBuilder,
-    _i18.LibraryBook libraryBook,
+    int isbn,
+    String libraryId,
+    bool? available,
+    _i17.LibraryBookLocation? location,
+    String? title,
+    String? author,
+    String? description,
+    String? readingLevel,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1681,7 +1756,16 @@ class _LibraryBooksEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'libraryBooks',
           methodName: 'updateLibraryBook',
-          parameters: _i1.testObjectToJson({'libraryBook': libraryBook}),
+          parameters: _i1.testObjectToJson({
+            'isbn': isbn,
+            'libraryId': libraryId,
+            'available': available,
+            'location': location,
+            'title': title,
+            'author': author,
+            'description': description,
+            'readingLevel': readingLevel,
+          }),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
@@ -1697,7 +1781,7 @@ class _LibraryBooksEndpoint {
 
   _i3.Future<bool> deleteLibraryBook(
     _i1.TestSessionBuilder sessionBuilder,
-    int id,
+    int libraryBookId,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1710,7 +1794,7 @@ class _LibraryBooksEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'libraryBooks',
           methodName: 'deleteLibraryBook',
-          parameters: _i1.testObjectToJson({'id': id}),
+          parameters: _i1.testObjectToJson({'libraryBookId': libraryBookId}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
@@ -1735,7 +1819,7 @@ class _PupilBookLendingEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i20.PupilBookLending> postPupilBookLending(
+  _i3.Future<_i6.PupilData> postPupilBookLending(
     _i1.TestSessionBuilder sessionBuilder,
     _i20.PupilBookLending pupilBookLending,
   ) async {
@@ -1757,7 +1841,7 @@ class _PupilBookLendingEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i20.PupilBookLending>);
+        ) as _i3.Future<_i6.PupilData>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1821,7 +1905,7 @@ class _PupilBookLendingEndpoint {
     });
   }
 
-  _i3.Future<_i20.PupilBookLending> updatePupilBookLending(
+  _i3.Future<_i6.PupilData> updatePupilBookLending(
     _i1.TestSessionBuilder sessionBuilder,
     _i20.PupilBookLending pupilBookLending,
   ) async {
@@ -1843,7 +1927,7 @@ class _PupilBookLendingEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i20.PupilBookLending>);
+        ) as _i3.Future<_i6.PupilData>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1851,7 +1935,7 @@ class _PupilBookLendingEndpoint {
     });
   }
 
-  _i3.Future<bool> deletePupilBookLending(
+  _i3.Future<_i6.PupilData> deletePupilBookLending(
     _i1.TestSessionBuilder sessionBuilder,
     int id,
   ) async {
@@ -1872,7 +1956,7 @@ class _PupilBookLendingEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<bool>);
+        ) as _i3.Future<_i6.PupilData>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1973,6 +2057,35 @@ class _FilesEndpoint {
           endpointPath: 'files',
           methodName: 'getImage',
           parameters: _i1.testObjectToJson({'documentId': documentId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i21.ByteData?>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i21.ByteData?> getUnencryptedImage(
+    _i1.TestSessionBuilder sessionBuilder,
+    String path,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'files',
+        method: 'getUnencryptedImage',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'files',
+          methodName: 'getUnencryptedImage',
+          parameters: _i1.testObjectToJson({'path': path}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(

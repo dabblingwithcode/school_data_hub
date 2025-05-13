@@ -94,17 +94,11 @@
           {
             "name": "readingLevel",
             "columnType": 0,
-            "isNullable": false,
-            "dartType": "String"
+            "isNullable": true,
+            "dartType": "String?"
           },
           {
-            "name": "imageId",
-            "columnType": 0,
-            "isNullable": false,
-            "dartType": "String"
-          },
-          {
-            "name": "imageUrl",
+            "name": "imagePath",
             "columnType": 0,
             "isNullable": false,
             "dartType": "String"
@@ -1646,6 +1640,18 @@
             "type": "btree",
             "isUnique": true,
             "isPrimary": true
+          },
+          {
+            "indexName": "location_unique_idx",
+            "elements": [
+              {
+                "type": 0,
+                "definition": "location"
+              }
+            ],
+            "type": "btree",
+            "isUnique": true,
+            "isPrimary": false
           }
         ],
         "managed": true

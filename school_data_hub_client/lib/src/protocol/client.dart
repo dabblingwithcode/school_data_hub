@@ -408,10 +408,11 @@ class EndpointBookTags extends _i1.EndpointRef {
         {'bookTag': bookTag},
       );
 
-  _i2.Future<bool> deleteBookTag(int id) => caller.callServerEndpoint<bool>(
+  _i2.Future<bool> deleteBookTag(_i14.BookTag bookTag) =>
+      caller.callServerEndpoint<bool>(
         'bookTags',
         'deleteBookTag',
-        {'id': id},
+        {'bookTag': bookTag},
       );
 }
 
@@ -448,6 +449,19 @@ class EndpointBooks extends _i1.EndpointRef {
         'books',
         'updateBook',
         {'book': book},
+      );
+
+  _i2.Future<_i15.Book> updateBookTags(
+    _i15.Book book,
+    List<_i14.BookTag> tags,
+  ) =>
+      caller.callServerEndpoint<_i15.Book>(
+        'books',
+        'updateBookTags',
+        {
+          'book': book,
+          'tags': tags,
+        },
       );
 
   _i2.Future<bool> deleteBook(int id) => caller.callServerEndpoint<bool>(
@@ -487,11 +501,12 @@ class EndpointLibraryBookLocations extends _i1.EndpointRef {
         {'libraryBookLocation': libraryBookLocation},
       );
 
-  _i2.Future<bool> deleteLibraryBookLocation(int id) =>
+  _i2.Future<bool> deleteLibraryBookLocation(
+          _i16.LibraryBookLocation location) =>
       caller.callServerEndpoint<bool>(
         'libraryBookLocations',
         'deleteLibraryBookLocation',
-        {'id': id},
+        {'location': location},
       );
 }
 
@@ -502,11 +517,19 @@ class EndpointLibraryBooks extends _i1.EndpointRef {
   @override
   String get name => 'libraryBooks';
 
-  _i2.Future<_i17.LibraryBook> postLibraryBook(_i17.LibraryBook libraryBook) =>
+  _i2.Future<_i17.LibraryBook> postLibraryBook(
+    int isbn,
+    String libraryId,
+    _i16.LibraryBookLocation location,
+  ) =>
       caller.callServerEndpoint<_i17.LibraryBook>(
         'libraryBooks',
         'postLibraryBook',
-        {'libraryBook': libraryBook},
+        {
+          'isbn': isbn,
+          'libraryId': libraryId,
+          'location': location,
+        },
       );
 
   _i2.Future<List<_i17.LibraryBook>> fetchLibraryBooks() =>
@@ -523,6 +546,13 @@ class EndpointLibraryBooks extends _i1.EndpointRef {
         {'isbn': isbn},
       );
 
+  _i2.Future<_i17.LibraryBook?> fetchLibraryBookByLibraryId(String libraryId) =>
+      caller.callServerEndpoint<_i17.LibraryBook?>(
+        'libraryBooks',
+        'fetchLibraryBookByLibraryId',
+        {'libraryId': libraryId},
+      );
+
   _i2.Future<List<_i17.LibraryBook>> fetchLibraryBooksMatchingQuery(
           _i18.LibraryBookQuery libraryBookQuery) =>
       caller.callServerEndpoint<List<_i17.LibraryBook>>(
@@ -532,17 +562,35 @@ class EndpointLibraryBooks extends _i1.EndpointRef {
       );
 
   _i2.Future<_i17.LibraryBook> updateLibraryBook(
-          _i17.LibraryBook libraryBook) =>
+    int isbn,
+    String libraryId,
+    bool? available,
+    _i16.LibraryBookLocation? location,
+    String? title,
+    String? author,
+    String? description,
+    String? readingLevel,
+  ) =>
       caller.callServerEndpoint<_i17.LibraryBook>(
         'libraryBooks',
         'updateLibraryBook',
-        {'libraryBook': libraryBook},
+        {
+          'isbn': isbn,
+          'libraryId': libraryId,
+          'available': available,
+          'location': location,
+          'title': title,
+          'author': author,
+          'description': description,
+          'readingLevel': readingLevel,
+        },
       );
 
-  _i2.Future<bool> deleteLibraryBook(int id) => caller.callServerEndpoint<bool>(
+  _i2.Future<bool> deleteLibraryBook(int libraryBookId) =>
+      caller.callServerEndpoint<bool>(
         'libraryBooks',
         'deleteLibraryBook',
-        {'id': id},
+        {'libraryBookId': libraryBookId},
       );
 }
 
@@ -553,9 +601,9 @@ class EndpointPupilBookLending extends _i1.EndpointRef {
   @override
   String get name => 'pupilBookLending';
 
-  _i2.Future<_i19.PupilBookLending> postPupilBookLending(
+  _i2.Future<_i5.PupilData> postPupilBookLending(
           _i19.PupilBookLending pupilBookLending) =>
-      caller.callServerEndpoint<_i19.PupilBookLending>(
+      caller.callServerEndpoint<_i5.PupilData>(
         'pupilBookLending',
         'postPupilBookLending',
         {'pupilBookLending': pupilBookLending},
@@ -575,16 +623,16 @@ class EndpointPupilBookLending extends _i1.EndpointRef {
         {'id': id},
       );
 
-  _i2.Future<_i19.PupilBookLending> updatePupilBookLending(
+  _i2.Future<_i5.PupilData> updatePupilBookLending(
           _i19.PupilBookLending pupilBookLending) =>
-      caller.callServerEndpoint<_i19.PupilBookLending>(
+      caller.callServerEndpoint<_i5.PupilData>(
         'pupilBookLending',
         'updatePupilBookLending',
         {'pupilBookLending': pupilBookLending},
       );
 
-  _i2.Future<bool> deletePupilBookLending(int id) =>
-      caller.callServerEndpoint<bool>(
+  _i2.Future<_i5.PupilData> deletePupilBookLending(int id) =>
+      caller.callServerEndpoint<_i5.PupilData>(
         'pupilBookLending',
         'deletePupilBookLending',
         {'id': id},
@@ -634,6 +682,13 @@ class EndpointFiles extends _i1.EndpointRef {
         'files',
         'getImage',
         {'documentId': documentId},
+      );
+
+  _i2.Future<_i20.ByteData?> getUnencryptedImage(String path) =>
+      caller.callServerEndpoint<_i20.ByteData?>(
+        'files',
+        'getUnencryptedImage',
+        {'path': path},
       );
 }
 

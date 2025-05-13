@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
-import 'package:school_data_hub_flutter/features/books/domain/models/book_proxy.dart';
+import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_list_page/widgets/book_card.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_list_page/widgets/book_list_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_search_text_field.dart';
@@ -17,12 +17,12 @@ class BookListPage extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     bool filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);
-    final Map<int, List<BookProxy>> isbnBooks =
-        watchValue((BookManager x) => x.booksByIsbn);
+    final Map<int, List<LibraryBookProxy>> isbnBooks =
+        watchValue((BookManager x) => x.isbnLibraryBooksMap);
 
     //List<Book> books = watchValue((BookManager x) => x.books);
     callOnce((context) async {
-      await di<BookManager>().getLibraryBooks();
+      await di<BookManager>().fetchLibraryBooks();
     });
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
@@ -47,7 +47,7 @@ class BookListPage extends WatchingWidget {
         ),
       ),
       body: RefreshIndicator(
-        onRefresh: () async => di<BookManager>().getLibraryBooks(),
+        onRefresh: () async => di<BookManager>().fetchLibraryBooks(),
         child: isbnBooks.isEmpty
             ? const Center(
                 child: Padding(

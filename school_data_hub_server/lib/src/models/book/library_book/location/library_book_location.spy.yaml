@@ -4,3 +4,7 @@ table: library_book_location
 fields:
    location: String
    libraryBooks: List<LibraryBook>?, relation(name=library_book_locations)
+indexes:
+   location_unique_idx:
+     fields: location
+     unique: true

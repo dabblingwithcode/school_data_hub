@@ -5,13 +5,14 @@ import 'package:watch_it/watch_it.dart';
 enum BookBorrowStatus { since2Weeks, since3Weeks, since5weeks }
 
 class BookHelpers {
-  static List<PupilBookLending> pupilBooksLinkedToBook({required int bookId}) {
+  static List<PupilBookLending> pupilBooksLinkedToBook(
+      {required String libraryId}) {
     // returned starting with the most recent
     final pupilBooks = di<PupilManager>()
         .allPupils
         .map((pupil) => pupil.pupilBooks)
         .expand((element) => element as Iterable<PupilBookLending>)
-        .where((pupilBook) => pupilBook.libraryBook!.bookId == bookId)
+        .where((pupilBook) => pupilBook.libraryBook!.libraryId == libraryId)
         .toList();
 
     pupilBooks.sort((a, b) => b.lentAt.compareTo(a.lentAt));

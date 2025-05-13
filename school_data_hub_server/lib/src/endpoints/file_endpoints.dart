@@ -47,4 +47,18 @@ class FilesEndpoint extends Endpoint {
       path: path,
     );
   }
+
+  Future<ByteData?> getUnencryptedImage(Session session, String path) async {
+    var exists = await session.storage.fileExists(
+      storageId: 'public',
+      path: path,
+    );
+    if (!exists) {
+      return null;
+    }
+    return await session.storage.retrieveFile(
+      storageId: 'public',
+      path: path,
+    );
+  }
 }

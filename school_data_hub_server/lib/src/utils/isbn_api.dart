@@ -7,25 +7,23 @@ import 'package:serverpod/serverpod.dart';
 
 //- TODO: This is experimental code and should be tested before using in production
 class IsbnApiData {
-  final Uint8List? image;
-  final String imageUrl;
+  // final Uint8List? image;
+  final String imagePath;
   final String title;
   final String author;
   final String description;
   IsbnApiData(
-      {required this.image,
-      required this.imageUrl,
+      { // required this.image,
+      required this.imagePath,
       required this.title,
       required this.author,
       required this.description});
 }
 
 class IsbnApi {
-  static Future<IsbnApiData> getIsbnApiData(
-      Session session, String isbn) async {
-    final cleanIsbn = isbn.replaceAll('-', '');
+  static Future<IsbnApiData> fetchIsbnApiData(Session session, int isbn) async {
     // We check a German isbn resource for the book info
-    final imageUrl = "https://buch.isbn.de/cover/$cleanIsbn.jpg";
+    final imageUrl = "https://buch.isbn.de/cover/$isbn.jpg";
     final url = 'https://www.isbn.de/buch/$isbn';
     final response = await http.get(Uri.parse(url));
 
@@ -62,8 +60,7 @@ class IsbnApi {
     if (image.statusCode != 200) {
       // If the image is not found, we return a placeholder image
       return IsbnApiData(
-          image: null,
-          imageUrl: 'https://via.placeholder.com/150',
+          imagePath: 'https://via.placeholder.com/150',
           title: title,
           author: author,
           description: description);
@@ -85,8 +82,8 @@ class IsbnApi {
     }
     // pass the path to the image to the object
     return IsbnApiData(
-      image: image.bodyBytes,
-      imageUrl: isbnFileUrl.toString(),
+      // image: image.bodyBytes,
+      imagePath: isbnFileUrl.toString(),
       title: title,
       author: author,
       description: description,

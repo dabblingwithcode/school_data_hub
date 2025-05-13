@@ -32,17 +32,11 @@ class LibraryBookLocationsEndpoint extends Endpoint {
   }
 
   //- delete
-  Future<bool> deleteLibraryBookLocation(Session session, int id) async {
+  Future<bool> deleteLibraryBookLocation(
+      Session session, LibraryBookLocation location) async {
     // Check if the library book location exists
-    final libraryBookLocation = await LibraryBookLocation.db.findFirstRow(
-      session,
-      where: (t) => t.id.equals(id),
-    );
-    if (libraryBookLocation == null) {
-      throw Exception('Library book location with id $id does not exist.');
-    }
-    final deleted =
-        await LibraryBookLocation.db.deleteRow(session, libraryBookLocation);
+
+    final deleted = await LibraryBookLocation.db.deleteRow(session, location);
     return true;
   }
 }

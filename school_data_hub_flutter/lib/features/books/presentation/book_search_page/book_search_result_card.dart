@@ -5,12 +5,13 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
-import 'package:school_data_hub_flutter/features/books/domain/models/book_proxy.dart';
+import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_list_page/widgets/library_book_card.dart';
 import 'package:watch_it/watch_it.dart';
 
 class SearchResultBookCard extends WatchingWidget {
-  final List<BookProxy> group;
+  final List<LibraryBookProxy> group;
 
   const SearchResultBookCard({Key? key, required this.group}) : super(key: key);
 
@@ -18,8 +19,8 @@ class SearchResultBookCard extends WatchingWidget {
   Widget build(BuildContext context) {
     if (group.isEmpty) return const SizedBox.shrink();
 
-    final List<BookProxy> books = group;
-    final BookProxy book = books.first;
+    final List<LibraryBookProxy> books = group;
+    final LibraryBookProxy bookProxy = books.first;
     final descriptionTileController = createOnce<ExpansionTileController>(
       () => ExpansionTileController(),
     );
@@ -44,7 +45,7 @@ class SearchResultBookCard extends WatchingWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(
-                          book.title,
+                          bookProxy.title,
                           style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
@@ -58,7 +59,7 @@ class SearchResultBookCard extends WatchingWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        book.author,
+                        bookProxy.author,
                         style: const TextStyle(
                             fontSize: 13, fontWeight: FontWeight.normal),
                       ),
@@ -105,7 +106,7 @@ class SearchResultBookCard extends WatchingWidget {
                                 const Text('ISBN:'),
                                 const Gap(10),
                                 Text(
-                                  book.isbn.displayAsIsbn(),
+                                  bookProxy.isbn.displayAsIsbn(),
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -119,7 +120,8 @@ class SearchResultBookCard extends WatchingWidget {
                                 const Text('LeseStufe:'),
                                 const Gap(10),
                                 Text(
-                                  book.readingLevel,
+                                  bookProxy.readingLevel ??
+                                      ReadingLevel.notSet.value,
                                   overflow: TextOverflow.fade,
                                   style: const TextStyle(
                                     fontSize: 16,
@@ -133,7 +135,7 @@ class SearchResultBookCard extends WatchingWidget {
                               spacing: 2,
                               children: [
                                 const Text('Tags: '),
-                                for (final tag in book.bookTags) ...[
+                                for (final tag in bookProxy.bookTags) ...[
                                   const Gap(5),
                                   Chip(
                                     padding: const EdgeInsets.all(2),
@@ -170,15 +172,16 @@ class SearchResultBookCard extends WatchingWidget {
                         final String? description = await longTextFieldDialog(
                             title: 'Beschreibung',
                             labelText: 'Beschreibung',
-                            initialValue: book.description,
+                            initialValue: bookProxy.description,
                             parentContext: context);
                         di<BookManager>().updateBookProperty(
-                          isbn: book.isbn,
+                          isbn: bookProxy.isbn,
+                          libraryId: bookProxy.libraryId,
                           description: description,
                         );
                       },
                       child: Text(
-                        book.description,
+                        bookProxy.description,
                         style: const TextStyle(
                           fontSize: 14,
                           color: AppColors.interactiveColor,
@@ -189,7 +192,7 @@ class SearchResultBookCard extends WatchingWidget {
                 ),
                 Column(
                   children: books.map((book) {
-                    return LibraryBookCard(book: book);
+                    return LibraryBookCard(bookProxy: book);
                   }).toList(),
                 ),
                 const Gap(10),

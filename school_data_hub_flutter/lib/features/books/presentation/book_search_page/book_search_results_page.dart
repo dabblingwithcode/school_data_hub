@@ -1,10 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
+import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../domain/models/book_proxy.dart';
+import '../../domain/models/library_book_proxy.dart';
 import '../book_list_page/widgets/book_list_bottom_navbar.dart';
 import 'book_search_result_card.dart';
 
@@ -12,9 +14,9 @@ class BookSearchResultsPage extends WatchingWidget {
   final String? title;
   final String? author;
   final String? keywords;
-  final String? location;
+  final LibraryBookLocation? location;
   final String? readingLevel;
-  final String? borrowStatus;
+  final BorrowedStatus? borrowStatus;
 
   const BookSearchResultsPage({
     super.key,
@@ -41,7 +43,11 @@ class BookSearchResultsPage extends WatchingWidget {
           keywords: keywords,
           location: location,
           readingLevel: readingLevel,
-          borrowStatus: borrowStatus,
+          available: borrowStatus == BorrowedStatus.available
+              ? true
+              : borrowStatus == BorrowedStatus.borrowed
+                  ? false
+                  : null,
         );
       }
     });
@@ -49,7 +55,7 @@ class BookSearchResultsPage extends WatchingWidget {
     return Scaffold(
       appBar:
           const GenericAppBar(iconData: Icons.search, title: 'Suchergebnisse'),
-      body: ValueListenableBuilder<List<BookProxy>>(
+      body: ValueListenableBuilder<List<LibraryBookProxy>>(
         valueListenable: bookManager.searchResults,
         builder: (context, searchResults, _) {
           if (searchResults.isEmpty) {
@@ -57,7 +63,7 @@ class BookSearchResultsPage extends WatchingWidget {
           }
 
           final groupedMap =
-              groupBy(searchResults, (BookProxy book) => book.isbn);
+              groupBy(searchResults, (LibraryBookProxy book) => book.isbn);
           final groups = groupedMap.values.toList();
 
           return Center(

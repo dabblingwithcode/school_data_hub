@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
+import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_list_page/widgets/book_list_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_search_page/book_search_results_page.dart';
 import 'package:watch_it/watch_it.dart';
@@ -21,14 +23,9 @@ class BookSearchFormPage extends WatchingWidget {
     final levelSearchController =
         createOnce<TextEditingController>(() => TextEditingController());
 
-    String? selectedBorrowStatus;
-    final Map<String, String> borrowStatusMap = {
-      "all": "Alle",
-      "available": "Verfügbar",
-      "borrowed": "Ausgeliehen",
-    };
+    BorrowedStatus? selectedBorrowStatus;
 
-    String? selectedLocation;
+    LibraryBookLocation? selectedLocation;
     final bookManager = di<BookManager>();
 
     return Scaffold(
@@ -93,16 +90,16 @@ class BookSearchFormPage extends WatchingWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: ValueListenableBuilder<List<String>>(
+                  child: ValueListenableBuilder<List<LibraryBookLocation>>(
                     valueListenable: bookManager.locations,
                     builder: (context, locations, _) {
-                      final List<String> locationItems = [
-                        "Alle Räume",
+                      final List<LibraryBookLocation> locationItems = [
+                        LibraryBookLocation(location: "Alle Räume"),
                         ...locations
                       ];
                       selectedLocation ??= locationItems.first;
 
-                      return DropdownButtonFormField<String>(
+                      return DropdownButtonFormField<LibraryBookLocation>(
                         decoration: InputDecoration(
                           fillColor: Colors.white,
                           filled: true,
@@ -115,9 +112,9 @@ class BookSearchFormPage extends WatchingWidget {
                         value: selectedLocation,
                         items: locationItems
                             .map(
-                              (loc) => DropdownMenuItem<String>(
+                              (loc) => DropdownMenuItem<LibraryBookLocation>(
                                 value: loc,
-                                child: Text(loc),
+                                child: Text(loc.location),
                               ),
                             )
                             .toList(),
@@ -147,8 +144,8 @@ class BookSearchFormPage extends WatchingWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: DropdownButtonFormField<String>(
-                    value: "all",
+                  child: DropdownButtonFormField<BorrowedStatus>(
+                    value: BorrowedStatus.all,
                     decoration: InputDecoration(
                       fillColor: Colors.white,
                       filled: true,
@@ -158,16 +155,16 @@ class BookSearchFormPage extends WatchingWidget {
                       ),
                       labelText: 'Status',
                     ),
-                    items: borrowStatusMap.entries
+                    items: BorrowedStatus.values
                         .map(
-                          (entry) => DropdownMenuItem<String>(
-                            value: entry.key,
-                            child: Text(entry.value),
+                          (status) => DropdownMenuItem<BorrowedStatus>(
+                            value: status,
+                            child: Text(status.value),
                           ),
                         )
                         .toList(),
                     onChanged: (value) {
-                      selectedBorrowStatus = (value == "all") ? null : value;
+                      selectedBorrowStatus = value;
                     },
                   ),
                 ),
@@ -190,19 +187,24 @@ class BookSearchFormPage extends WatchingWidget {
                       title: title,
                       author: author,
                       keywords: keywords,
-                      location: selectedLocation == "Alle Räume"
-                          ? ""
+                      location: selectedLocation?.location == "Alle Räume"
+                          ? null
                           : selectedLocation!,
                       readingLevel: readingLevel,
-                      borrowStatus: selectedBorrowStatus,
+                      available:
+                          selectedBorrowStatus == BorrowedStatus.available
+                              ? true
+                              : selectedBorrowStatus == BorrowedStatus.borrowed
+                                  ? false
+                                  : null,
                     );
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => BookSearchResultsPage(
                           title: title,
                           author: author,
                           keywords: keywords,
-                          location: selectedLocation == "Alle Räume"
-                              ? ""
+                          location: selectedLocation?.location == "Alle Räume"
+                              ? null
                               : selectedLocation!,
                           readingLevel: readingLevel,
                           borrowStatus: selectedBorrowStatus),

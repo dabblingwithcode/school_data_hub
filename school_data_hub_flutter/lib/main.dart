@@ -91,9 +91,9 @@ class MyApp extends WatchingWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [
-        // Locale('de', 'DE'), // Set the default locale
+        Locale('de', 'DE'), // Set the default locale
         // Locale('en', 'EN'),
-        Locale('es', 'ES'),
+        //Locale('es', 'ES'),
       ],
       debugShowCheckedModeBanner: false,
       title: 'Schuldaten Hub',

@@ -22,9 +22,8 @@ abstract class Book implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     required this.title,
     required this.author,
     required this.description,
-    required this.readingLevel,
-    required this.imageId,
-    required this.imageUrl,
+    this.readingLevel,
+    required this.imagePath,
     this.tags,
     this.libraryBooks,
   });
@@ -35,9 +34,8 @@ abstract class Book implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     required String title,
     required String author,
     required String description,
-    required String readingLevel,
-    required String imageId,
-    required String imageUrl,
+    String? readingLevel,
+    required String imagePath,
     List<_i2.BookTagging>? tags,
     List<_i3.LibraryBook>? libraryBooks,
   }) = _BookImpl;
@@ -49,9 +47,8 @@ abstract class Book implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
       title: jsonSerialization['title'] as String,
       author: jsonSerialization['author'] as String,
       description: jsonSerialization['description'] as String,
-      readingLevel: jsonSerialization['readingLevel'] as String,
-      imageId: jsonSerialization['imageId'] as String,
-      imageUrl: jsonSerialization['imageUrl'] as String,
+      readingLevel: jsonSerialization['readingLevel'] as String?,
+      imagePath: jsonSerialization['imagePath'] as String,
       tags: (jsonSerialization['tags'] as List?)
           ?.map((e) => _i2.BookTagging.fromJson((e as Map<String, dynamic>)))
           .toList(),
@@ -76,11 +73,9 @@ abstract class Book implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
 
   String description;
 
-  String readingLevel;
+  String? readingLevel;
 
-  String imageId;
-
-  String imageUrl;
+  String imagePath;
 
   List<_i2.BookTagging>? tags;
 
@@ -99,8 +94,7 @@ abstract class Book implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     String? author,
     String? description,
     String? readingLevel,
-    String? imageId,
-    String? imageUrl,
+    String? imagePath,
     List<_i2.BookTagging>? tags,
     List<_i3.LibraryBook>? libraryBooks,
   });
@@ -112,9 +106,8 @@ abstract class Book implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
       'title': title,
       'author': author,
       'description': description,
-      'readingLevel': readingLevel,
-      'imageId': imageId,
-      'imageUrl': imageUrl,
+      if (readingLevel != null) 'readingLevel': readingLevel,
+      'imagePath': imagePath,
       if (tags != null) 'tags': tags?.toJson(valueToJson: (v) => v.toJson()),
       if (libraryBooks != null)
         'libraryBooks': libraryBooks?.toJson(valueToJson: (v) => v.toJson()),
@@ -129,9 +122,8 @@ abstract class Book implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
       'title': title,
       'author': author,
       'description': description,
-      'readingLevel': readingLevel,
-      'imageId': imageId,
-      'imageUrl': imageUrl,
+      if (readingLevel != null) 'readingLevel': readingLevel,
+      'imagePath': imagePath,
       if (tags != null)
         'tags': tags?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
       if (libraryBooks != null)
@@ -185,9 +177,8 @@ class _BookImpl extends Book {
     required String title,
     required String author,
     required String description,
-    required String readingLevel,
-    required String imageId,
-    required String imageUrl,
+    String? readingLevel,
+    required String imagePath,
     List<_i2.BookTagging>? tags,
     List<_i3.LibraryBook>? libraryBooks,
   }) : super._(
@@ -197,8 +188,7 @@ class _BookImpl extends Book {
           author: author,
           description: description,
           readingLevel: readingLevel,
-          imageId: imageId,
-          imageUrl: imageUrl,
+          imagePath: imagePath,
           tags: tags,
           libraryBooks: libraryBooks,
         );
@@ -213,9 +203,8 @@ class _BookImpl extends Book {
     String? title,
     String? author,
     String? description,
-    String? readingLevel,
-    String? imageId,
-    String? imageUrl,
+    Object? readingLevel = _Undefined,
+    String? imagePath,
     Object? tags = _Undefined,
     Object? libraryBooks = _Undefined,
   }) {
@@ -225,9 +214,8 @@ class _BookImpl extends Book {
       title: title ?? this.title,
       author: author ?? this.author,
       description: description ?? this.description,
-      readingLevel: readingLevel ?? this.readingLevel,
-      imageId: imageId ?? this.imageId,
-      imageUrl: imageUrl ?? this.imageUrl,
+      readingLevel: readingLevel is String? ? readingLevel : this.readingLevel,
+      imagePath: imagePath ?? this.imagePath,
       tags: tags is List<_i2.BookTagging>?
           ? tags
           : this.tags?.map((e0) => e0.copyWith()).toList(),
@@ -260,12 +248,8 @@ class BookTable extends _i1.Table<int?> {
       'readingLevel',
       this,
     );
-    imageId = _i1.ColumnString(
-      'imageId',
-      this,
-    );
-    imageUrl = _i1.ColumnString(
-      'imageUrl',
+    imagePath = _i1.ColumnString(
+      'imagePath',
       this,
     );
   }
@@ -280,9 +264,7 @@ class BookTable extends _i1.Table<int?> {
 
   late final _i1.ColumnString readingLevel;
 
-  late final _i1.ColumnString imageId;
-
-  late final _i1.ColumnString imageUrl;
+  late final _i1.ColumnString imagePath;
 
   _i2.BookTaggingTable? ___tags;
 
@@ -362,8 +344,7 @@ class BookTable extends _i1.Table<int?> {
         author,
         description,
         readingLevel,
-        imageId,
-        imageUrl,
+        imagePath,
       ];
 
   @override

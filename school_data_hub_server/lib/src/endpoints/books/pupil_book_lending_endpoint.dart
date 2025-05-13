@@ -1,4 +1,5 @@
 import 'package:school_data_hub_server/src/generated/protocol.dart';
+import 'package:school_data_hub_server/src/schemas/pupil_schemas.dart';
 import 'package:serverpod/serverpod.dart';
 
 class PupilBookLendingEndpoint extends Endpoint {
@@ -7,11 +8,38 @@ class PupilBookLendingEndpoint extends Endpoint {
 
   //- create
 
-  Future<PupilBookLending> postPupilBookLending(
+  Future<PupilData> postPupilBookLending(
       Session session, PupilBookLending pupilBookLending) async {
-    final pupilBookLendingInDatabase =
-        await PupilBookLending.db.insertRow(session, pupilBookLending);
-    return pupilBookLendingInDatabase;
+    final result = await session.db.transaction((transaction) async {
+      final pupil = await PupilData.db.findFirstRow(session,
+          where: (t) => t.id.equals(pupilBookLending.pupilId),
+          include: PupilSchemas.allInclude,
+          transaction: transaction);
+      if (pupil == null) {
+        throw Exception(
+            'Pupil with id ${pupilBookLending.pupilId} does not exist.');
+      }
+      final libraryBook = await LibraryBook.db.findFirstRow(session,
+          where: (t) => t.id.equals(pupilBookLending.libraryBookId),
+          transaction: transaction);
+      // TODO: Does everything get attached?
+      await PupilBookLending.db
+          .insertRow(session, pupilBookLending, transaction: transaction);
+      await PupilBookLending.db.attachRow
+          .pupil(session, pupilBookLending, pupil, transaction: transaction);
+      await PupilBookLending.db.attachRow.libraryBook(
+          session, pupilBookLending, libraryBook!,
+          transaction: transaction);
+
+      final updatedPupil = await PupilData.db.findFirstRow(session,
+          where: (t) => t.id.equals(pupilBookLending.pupilId),
+          include: PupilSchemas.allInclude,
+          transaction: transaction);
+
+      return updatedPupil;
+    });
+
+    return result!;
   }
 
   //- read
@@ -34,15 +62,19 @@ class PupilBookLendingEndpoint extends Endpoint {
   }
 
   //-update
-  Future<PupilBookLending> updatePupilBookLending(
+  Future<PupilData> updatePupilBookLending(
       Session session, PupilBookLending pupilBookLending) async {
     final updatedPupilBookLending =
         await PupilBookLending.db.updateRow(session, pupilBookLending);
-    return updatedPupilBookLending;
+
+    final pupil = await PupilData.db.findFirstRow(session,
+        where: (t) => t.id.equals(updatedPupilBookLending.pupilId),
+        include: PupilSchemas.allInclude);
+    return pupil!;
   }
 
   //- delete
-  Future<bool> deletePupilBookLending(Session session, int id) async {
+  Future<PupilData> deletePupilBookLending(Session session, int id) async {
     // Check if the pupil book lending exists
     final pupilBookLending = await PupilBookLending.db.findFirstRow(
       session,
@@ -51,8 +83,11 @@ class PupilBookLendingEndpoint extends Endpoint {
     if (pupilBookLending == null) {
       throw Exception('Pupil book lending with id $id does not exist.');
     }
-    final deleted =
-        await PupilBookLending.db.deleteRow(session, pupilBookLending);
-    return true;
+
+    await PupilBookLending.db.deleteRow(session, pupilBookLending);
+    final pupil = await PupilData.db.findFirstRow(session,
+        where: (t) => t.id.equals(pupilBookLending.pupilId),
+        include: PupilSchemas.allInclude);
+    return pupil!;
   }
 }

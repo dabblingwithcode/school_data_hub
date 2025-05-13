@@ -5,47 +5,19 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/features/books/data/book_api_service.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
-import 'package:school_data_hub_flutter/features/books/domain/models/book_dto.dart';
+import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/new_book_page/new_book_page.dart';
 import 'package:watch_it/watch_it.dart';
-
-enum ReadingLevel {
-  beginner('Anfänger'),
-  easy('leicht'),
-  medium('mittel'),
-  hard('schwer'),
-  notSet('nicht angegeben');
-
-  final String value;
-  static ReadingLevel fromString(String value) {
-    switch (value) {
-      case 'Anfänger':
-        return ReadingLevel.beginner;
-      case 'leicht':
-        return ReadingLevel.easy;
-      case 'mittel':
-        return ReadingLevel.medium;
-      case 'schwer':
-        return ReadingLevel.hard;
-      case 'nicht angegeben':
-        return ReadingLevel.notSet;
-      default:
-        return ReadingLevel.notSet;
-    }
-  }
-
-  const ReadingLevel(this.value);
-}
 
 class NewBook extends WatchingStatefulWidget {
   final String? bookTitle;
   final int isbn;
-  final String? bookId;
+  final String? libraryId;
   final String? bookAuthor;
   final String? bookDescription;
   final String? bookImageId;
   final String? bookReadingLevel;
-  final String? location;
+  final LibraryBookLocation? location;
   final bool? bookAvailable;
   final String? imageId;
   final bool isEdit;
@@ -53,7 +25,7 @@ class NewBook extends WatchingStatefulWidget {
       {required this.isEdit,
       this.bookTitle,
       required this.isbn,
-      this.bookId,
+      this.libraryId,
       this.bookAuthor,
       this.bookDescription,
       this.bookImageId,
@@ -107,13 +79,14 @@ class NewBookController extends State<NewBook> {
 
   Map<BookTag, bool> bookTagSelection = {};
 
-  final List<String> locations = di<BookManager>().locations.value;
+  final List<LibraryBookLocation> locations = di<BookManager>().locations.value;
 
-  String lastLocationValue = di<BookManager>().lastLocationValue.value;
+  LibraryBookLocation lastLocationValue =
+      di<BookManager>().lastLocationValue.value;
 
   String readingLevel = ReadingLevel.notSet.value;
 
-  String? bookImageId;
+  String? imagePath;
 
   void switchBookTagSelection(BookTag tag) {
     setState(() {
@@ -122,18 +95,16 @@ class NewBookController extends State<NewBook> {
   }
 
   Future<void> fetchBookData() async {
-    final BookDTO? bookData = await BookApiService().getBookData(widget.isbn);
+    final Book bookData = await BookApiService().fetchBookByIsbn(widget.isbn);
 
-    if (bookData != null) {
-      bookTitleTextFieldController.text = bookData.title;
-      authorTextFieldController.text = bookData.author;
-      bookDescriptionTextFieldController.text = bookData.description ?? '';
+    bookTitleTextFieldController.text = bookData.title;
+    authorTextFieldController.text = bookData.author;
+    bookDescriptionTextFieldController.text = bookData.description;
 
-      setState(() {
-        readingLevel = bookData.readingLevel;
-        bookImageId = bookData.imageId!;
-      });
-    }
+    setState(() {
+      readingLevel = bookData.readingLevel ?? ReadingLevel.notSet.value;
+      imagePath = bookData.imagePath;
+    });
   }
 
   @override
@@ -142,7 +113,7 @@ class NewBookController extends State<NewBook> {
     fetchBookData();
     _createDropdownItems();
     if (widget.isEdit) {
-      bookIdTextFieldController.text = widget.bookId ?? '';
+      bookIdTextFieldController.text = widget.libraryId ?? '';
       bookTitleTextFieldController.text = widget.bookTitle ?? '';
       authorTextFieldController.text = widget.bookAuthor ?? '';
       lastLocationValue =
@@ -163,7 +134,7 @@ class NewBookController extends State<NewBook> {
     });
   }
 
-  void onChangedLocationDropDown(String value) {
+  void onChangedLocationDropDown(LibraryBookLocation value) {
     setState(() {
       lastLocationValue = value;
       di<BookManager>().setLastLocationValue(value);
@@ -183,24 +154,23 @@ class NewBookController extends State<NewBook> {
     bookIdTextFieldController.text = bookId;
   }
 
-  final List<DropdownMenuItem<String>> locationDropdownItems = [];
+  final List<DropdownMenuItem<LibraryBookLocation>> locationDropdownItems = [];
 
   void _createDropdownItems() {
     for (final location in di<BookManager>().locations.value) {
       locationDropdownItems.add(DropdownMenuItem(
         value: location,
-        child: Text(location),
+        child: Text(location.location),
       ));
     }
-    if (di<BookManager>().lastLocationValue.value == 'Bitte auswählen') {
-      locationDropdownItems.add(DropdownMenuItem(
-        value: di<BookManager>().lastLocationValue.value,
-        child: Text(
-          di<BookManager>().lastLocationValue.value,
-          style: const TextStyle(color: Colors.red),
-        ),
-      ));
-    }
+
+    locationDropdownItems.add(DropdownMenuItem(
+      value: di<BookManager>().lastLocationValue.value,
+      child: Text(
+        di<BookManager>().lastLocationValue.value.location,
+        style: const TextStyle(color: Colors.red),
+      ),
+    ));
   }
 
   void addLocation() async {
@@ -210,7 +180,7 @@ class NewBookController extends State<NewBook> {
         labelText: 'Ablageort hinzufügen',
         hintText: 'Name des Ablageorts');
     if (newLocation != null) {
-      await di<BookManager>().addLocation(newLocation);
+      await di<BookManager>().postLocation(newLocation);
     }
     setState(() {
       locations.clear();
@@ -229,6 +199,7 @@ class NewBookController extends State<NewBook> {
       // Update the book
       di<BookManager>().updateBookProperty(
         isbn: widget.isbn,
+        libraryId: widget.libraryId!,
         title: bookTitleTextFieldController.text,
         description: bookDescriptionTextFieldController.text,
         readingLevel: readingLevel,
@@ -238,7 +209,7 @@ class NewBookController extends State<NewBook> {
       // Create a new book
       di<BookManager>().postLibraryBook(
         isbn: widget.isbn,
-        bookId: bookIdTextFieldController.text,
+        libraryId: bookIdTextFieldController.text,
         location: lastLocationValue,
       );
     }

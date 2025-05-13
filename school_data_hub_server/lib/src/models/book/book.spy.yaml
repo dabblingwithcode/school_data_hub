@@ -6,8 +6,7 @@ fields:
   title: String
   author: String
   description: String
-  readingLevel: String
-  imageId: String
-  imageUrl: String
+  readingLevel: String?
+  imagePath: String
   tags: List<BookTagging>?, relation(name=book_tagging)
   libraryBooks: List<LibraryBook>?, relation(name=library_books)

@@ -10,23 +10,23 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_di
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
-import 'package:school_data_hub_flutter/features/books/domain/models/book_proxy.dart';
+import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class PupilBookCard extends StatelessWidget {
   const PupilBookCard(
-      {required this.pupilBook, required this.pupilId, super.key});
-  final PupilBookLending pupilBook;
+      {required this.pupilBookLending, required this.pupilId, super.key});
+  final PupilBookLending pupilBookLending;
   final int pupilId;
 
   @override
   Widget build(BuildContext context) {
-    final BookProxy book =
-        di<BookManager>().getLibraryBookByBookId(pupilBook.id!)!;
+    final LibraryBookProxy book =
+        di<BookManager>().getLibraryBookByLibraryBookId(pupilBookLending.id!)!;
     updatepupilBookRating(int rating) {
-      di<PupilManager>()
-          .patchPupilBook(lendingId: pupilBook.lendingId, rating: rating);
+      di<PupilManager>().updatePupilBook(
+          pupilBookLending: pupilBookLending, score: (value: rating));
     }
 
     return ClipRRect(
@@ -34,7 +34,8 @@ class PupilBookCard extends StatelessWidget {
       child: Card(
           child: InkWell(
         onLongPress: () async {
-          if (pupilBook.lentBy != di<ServerpodSessionManager>().userName ||
+          if (pupilBookLending.lentBy !=
+                  di<ServerpodSessionManager>().userName ||
               !di<ServerpodSessionManager>().isAdmin) {
             informationDialog(context, 'Keine Berechtigung',
                 'Ausleihen können nur von der eintragenden Person bearbeitet werden!');
@@ -45,7 +46,7 @@ class PupilBookCard extends StatelessWidget {
               title: 'Ausleihe löschen',
               message: 'Ausleihe von "${book.title}" wirklich löschen?');
           if (result == true) {
-            di<PupilManager>().deletePupilBook(lendingId: pupilBook.lendingId);
+            di<PupilManager>().deletePupilBook(lendingId: pupilBookLending.id!);
           }
         },
         child: Padding(
@@ -101,7 +102,7 @@ class PupilBookCard extends StatelessWidget {
                           Row(
                             children: [
                               Text(
-                                pupilBook.lentBy,
+                                pupilBookLending.lentBy,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -113,18 +114,20 @@ class PupilBookCard extends StatelessWidget {
                               ),
                               const Gap(2),
                               Text(
-                                pupilBook.lentAt.toLocal().formatForUser(),
+                                pupilBookLending.lentAt
+                                    .toLocal()
+                                    .formatForUser(),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ],
                           ),
-                          if (pupilBook.returnedAt != null)
+                          if (pupilBookLending.returnedAt != null)
                             Row(
                               children: [
                                 Text(
-                                  pupilBook.receivedBy!,
+                                  pupilBookLending.receivedBy!,
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -136,7 +139,7 @@ class PupilBookCard extends StatelessWidget {
                                 ),
                                 const Gap(2),
                                 Text(
-                                  pupilBook.returnedAt!.formatForUser(),
+                                  pupilBookLending.returnedAt!.formatForUser(),
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -152,7 +155,7 @@ class PupilBookCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       GrowthDropdown(
-                          dropdownValue: pupilBook.score ?? 0,
+                          dropdownValue: pupilBookLending.score ?? 0,
                           onChangedFunction: updatepupilBookRating),
                     ],
                   ),
@@ -169,16 +172,18 @@ class PupilBookCard extends StatelessWidget {
                   final status = await longTextFieldDialog(
                       title: 'Status',
                       labelText: 'Status',
-                      initialValue: pupilBook.status ?? '',
+                      initialValue: pupilBookLending.status ?? '',
                       parentContext: context);
                   if (status == null) return;
-                  await di<PupilManager>().patchPupilBook(
-                      lendingId: pupilBook.lendingId, comment: status);
+                  await di<PupilManager>().updatePupilBook(
+                      pupilBookLending: pupilBookLending,
+                      status: (value: status));
                 },
                 child: Text(
-                  (pupilBook.status == null || pupilBook.status == '')
+                  (pupilBookLending.status == null ||
+                          pupilBookLending.status == '')
                       ? 'Kein Eintrag'
-                      : pupilBook.status!,
+                      : pupilBookLending.status!,
                   style: const TextStyle(
                     fontSize: 16,
                     color: AppColors.interactiveColor,
@@ -186,7 +191,7 @@ class PupilBookCard extends StatelessWidget {
                 ),
               ),
               const Gap(10),
-              if (pupilBook.returnedAt == null) ...[
+              if (pupilBookLending.returnedAt == null) ...[
                 const Gap(5),
                 Row(
                   children: [
@@ -203,7 +208,7 @@ class PupilBookCard extends StatelessWidget {
                                     'Buch "${book.title}" wirklich zurückgeben?');
                             if (result!) {
                               di<PupilManager>().returnBook(
-                                lendingId: pupilBook.lendingId,
+                                pupilBookLending: pupilBookLending,
                               );
                             }
                           },

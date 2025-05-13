@@ -28,16 +28,8 @@ class BookTagsEndpoint extends Endpoint {
   }
   //- delete
 
-  Future<bool> deleteBookTag(Session session, int id) async {
-    // Check if the book tag exists
-    final bookTag = await BookTag.db.findFirstRow(
-      session,
-      where: (t) => t.id.equals(id),
-    );
-    if (bookTag == null) {
-      throw Exception('Book tag with id $id does not exist.');
-    }
-    final deleted = await BookTag.db.deleteRow(session, bookTag);
+  Future<bool> deleteBookTag(Session session, BookTag bookTag) async {
+    await BookTag.db.deleteRow(session, bookTag);
     return true;
   }
 }

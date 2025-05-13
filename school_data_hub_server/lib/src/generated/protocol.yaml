@@ -38,6 +38,7 @@ books:
   - fetchBooks:
   - fetchBookByIsbn:
   - updateBook:
+  - updateBookTags:
   - deleteBook:
 libraryBookLocations:
   - postLibraryBookLocation:
@@ -48,6 +49,7 @@ libraryBooks:
   - postLibraryBook:
   - fetchLibraryBooks:
   - fetchLibraryBookByIsbn:
+  - fetchLibraryBookByLibraryId:
   - fetchLibraryBooksMatchingQuery:
   - updateLibraryBook:
   - deleteLibraryBook:
@@ -61,6 +63,7 @@ files:
   - getUploadDescription:
   - verifyUpload:
   - getImage:
+  - getUnencryptedImage:
 competence:
   - importCompetencesFromJsonFile:
   - postCompetence:

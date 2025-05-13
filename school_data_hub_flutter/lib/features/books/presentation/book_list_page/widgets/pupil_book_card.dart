@@ -9,7 +9,8 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialo
 import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
-import 'package:school_data_hub_flutter/features/books/domain/models/book_proxy.dart';
+import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _serverpodSessionManager = di<ServerpodSessionManager>();
@@ -22,8 +23,8 @@ class PupilBookCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final BookProxy book =
-        di<BookManager>().getLibraryBookByBookId(pupilBook.id)!;
+    final LibraryBookProxy bookProxy = di<BookManager>()
+        .getLibraryBookByLibraryBookId(pupilBook.libraryBookId)!;
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Card(
@@ -45,7 +46,8 @@ class PupilBookCard extends WatchingWidget {
           final bool? result = await confirmationDialog(
               context: context,
               title: 'Ausleihe löschen',
-              message: 'Ausleihe des Buches "${book.title}" wirklich löschen?');
+              message:
+                  'Ausleihe des Buches "${bookProxy.title}" wirklich löschen?');
           if (result == true) {
             // TODO: Uncomment this when the API is ready
             // di<PupilManager>().deletePupilBook(
@@ -69,24 +71,25 @@ class PupilBookCard extends WatchingWidget {
                       // await di<WorkbookManager>()
                       //     .postWorkbookFile(file, book.isbn);
                     },
-                    onLongPress: (book.imageId == null)
-                        ? () {}
-                        : () async {
-                            if (book.imageId == null) {
-                              return;
-                            }
-                            final bool? result = await confirmationDialog(
-                                context: context,
-                                title: 'Bild löschen',
-                                message: 'Bild löschen?');
-                            if (result != true) return;
-                            // await di<WorkbookManager>()
-                            //     .deleteAuthorizationFile(
-                            //   pupil.internalId,
-                            //   authorizationId,
-                            //   pupilAuthorization.fileId!,
-                            // );
-                          },
+                    // Todo: Uncomment this when the API is ready
+                    // onLongPress: (bookProxy.book.imagePath == null)
+                    //     ? () {}
+                    //     : () async {
+                    //         if (bookProxy.imageId == null) {
+                    //           return;
+                    //         }
+                    //         final bool? result = await confirmationDialog(
+                    //             context: context,
+                    //             title: 'Bild löschen',
+                    //             message: 'Bild löschen?');
+                    //         if (result != true) return;
+                    //         // await di<WorkbookManager>()
+                    //         //     .deleteAuthorizationFile(
+                    //         //   pupil.internalId,
+                    //         //   authorizationId,
+                    //         //   pupilAuthorization.fileId!,
+                    //         // );
+                    //       },
                     child: Container(),
                     // Provider<DocumentImageData>.value(
                     //   updateShouldNotify: (oldValue, newValue) =>
@@ -115,7 +118,7 @@ class PupilBookCard extends WatchingWidget {
                             child: SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Text(
-                                book.title,
+                                bookProxy.title,
                                 style: const TextStyle(
                                     fontSize: 20, fontWeight: FontWeight.bold),
                               ),
@@ -142,14 +145,14 @@ class PupilBookCard extends WatchingWidget {
                       // const Gap(5),
                       Row(
                         children: [
-                          Text(book.author,
+                          Text(bookProxy.author,
                               overflow: TextOverflow.fade,
                               style: const TextStyle(
                                 fontSize: 14,
                               )),
                           const Spacer(),
                           Text(
-                            book.readingLevel,
+                            bookProxy.readingLevel ?? ReadingLevel.notSet.value,
                             maxLines: 2,
                             overflow: TextOverflow.fade,
                             style: const TextStyle(

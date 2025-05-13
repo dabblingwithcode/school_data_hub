@@ -1,42 +1,43 @@
-import 'dart:io';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/features/books/data/book_api_service.dart';
-import 'package:school_data_hub_flutter/features/books/data/pupil_book_api_service.dart';
-import 'package:school_data_hub_flutter/features/books/domain/models/book_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
 import 'package:watch_it/watch_it.dart';
-
-final _pupilBookApiService = PupilBookApiService();
 
 final _bookApiService = BookApiService();
 
 final _notificationService = di<NotificationService>();
 
-final _pupilManager = di<PupilManager>();
-
 class BookManager {
-  final _books = ValueNotifier<List<BookProxy>>([]);
-  ValueListenable<List<BookProxy>> get books => _books;
+  final _libraryBookProxies = ValueNotifier<List<LibraryBookProxy>>([]);
+  ValueListenable<List<LibraryBookProxy>> get libraryBookProxies =>
+      _libraryBookProxies;
 
-  final _isbnBooks = ValueNotifier<Map<int, List<BookProxy>>>({});
-  ValueListenable<Map<int, List<BookProxy>>> get booksByIsbn => _isbnBooks;
+  final _isbnLibraryBooksMap =
+      ValueNotifier<Map<int, List<LibraryBookProxy>>>({});
+  ValueListenable<Map<int, List<LibraryBookProxy>>> get isbnLibraryBooksMap =>
+      _isbnLibraryBooksMap;
 
-  final _locations = ValueNotifier<List<String>>([]);
-  ValueListenable<List<String>> get locations => _locations;
+  final _locations = ValueNotifier<List<LibraryBookLocation>>([]);
+  ValueListenable<List<LibraryBookLocation>> get locations => _locations;
 
   final _bookTags = ValueNotifier<List<BookTag>>([]);
   ValueListenable<List<BookTag>> get bookTags => _bookTags;
 
   List<BookTag> selectedTags = []; // Liste für ausgewählte Buch-Tags
 
-  final _lastSelectedLocation = ValueNotifier<String>('Bitte auswählen');
-  ValueListenable<String> get lastLocationValue => _lastSelectedLocation;
+  final _lastSelectedLocation = ValueNotifier<LibraryBookLocation>(
+    LibraryBookLocation(
+      location: 'Bitte auswählen',
+    ),
+  );
+  ValueListenable<LibraryBookLocation> get lastLocationValue =>
+      _lastSelectedLocation;
 
-  final searchResults = ValueNotifier<List<BookProxy>>([]);
+  ValueListenable<List<LibraryBookProxy>> get searchResults => _searchResults;
+  final _searchResults = ValueNotifier<List<LibraryBookProxy>>([]);
 
   BookManager();
 
@@ -53,99 +54,190 @@ class BookManager {
 
   Future<BookManager> init() async {
     // await getLibraryBooks();
-    await getLocations();
-    await getBookTags();
+    await fetchLocations();
+    await fetchBookTags();
 
     return this;
   }
 
   void clearData() {
-    _books.value = [];
+    _libraryBookProxies.value = [];
     _locations.value = [];
     _bookTags.value = [];
-    _lastSelectedLocation.value = 'Bitte auswählen';
+    _lastSelectedLocation.value = LibraryBookLocation(
+      location: 'Bitte auswählen',
+    );
   }
 
-  void _refreshIsbnBooksMap() {
-    final Map<int, List<BookProxy>> isbnBooks = <int, List<BookProxy>>{};
-    for (final book in _books.value) {
-      if (isbnBooks.containsKey(book.isbn)) {
-        isbnBooks[book.isbn]!.add(book);
+  // - manage collections
+
+  void _refreshLibraryBookProxyCollection(
+    List<LibraryBook> libraryBooks,
+  ) {
+    final List<LibraryBookProxy> libraryBookProxies = [];
+    for (LibraryBook libraryBook in libraryBooks) {
+      LibraryBookProxy libraryBookProxy =
+          LibraryBookProxy(librarybook: libraryBook);
+      // 1. Add the libraryBookProxy to the collection
+      libraryBookProxies.add(libraryBookProxy);
+      // 2. Add the libraryBookProxy to the isbnLibraryBooksMap
+      if (_isbnLibraryBooksMap.value.containsKey(libraryBook.book!.isbn)) {
+        _isbnLibraryBooksMap.value[libraryBook.book!.isbn]!
+            .add(libraryBookProxy);
       } else {
-        isbnBooks[book.isbn] = [book];
+        _isbnLibraryBooksMap.value[libraryBook.book!.isbn] = [libraryBookProxy];
       }
     }
-    _isbnBooks.value = isbnBooks;
+    // 3. Sort the collection
+    libraryBookProxies.sort((a, b) => a.title.compareTo(b.title));
+    // 4. Update the libraryBookProxies value
+    _libraryBookProxies.value = libraryBookProxies;
   }
+
+  void _addLibraryBookProxyToCollection(LibraryBook libraryBook) {
+    final LibraryBookProxy libraryBookProxy =
+        LibraryBookProxy(librarybook: libraryBook);
+    final List<LibraryBookProxy> libraryBookProxies =
+        _libraryBookProxies.value.toList();
+    libraryBookProxies.add(libraryBookProxy);
+    _libraryBookProxies.value = libraryBookProxies;
+    _isbnLibraryBooksMap.value[libraryBook.book!.isbn] = libraryBookProxies;
+  }
+
+  void _updateLibraryBookProxyInCollection(
+    LibraryBook libraryBook,
+  ) {
+    final LibraryBookProxy libraryBookProxy =
+        LibraryBookProxy(librarybook: libraryBook);
+    final List<LibraryBookProxy> libraryBookProxies =
+        _libraryBookProxies.value.toList();
+    int index = libraryBookProxies.indexWhere(
+      (item) => item.libraryId == libraryBookProxy.libraryId,
+    );
+    if (index != -1) {
+      libraryBookProxies[index] = libraryBookProxy;
+      _libraryBookProxies.value = libraryBookProxies;
+    }
+    // Update the isbnLibraryBooksMap
+    if (_isbnLibraryBooksMap.value.containsKey(libraryBook.book!.isbn)) {
+      _isbnLibraryBooksMap.value[libraryBook.book!.isbn] = libraryBookProxies;
+    } else {
+      _isbnLibraryBooksMap.value[libraryBook.book!.isbn] = [libraryBookProxy];
+    }
+  }
+
+  void _removeLibraryBookProxyFromCollection(
+      LibraryBookProxy libraryBookProxy) {
+    final List<LibraryBookProxy> libraryBookProxies =
+        _libraryBookProxies.value.toList();
+    libraryBookProxies
+        .removeWhere((p) => p.libraryId == libraryBookProxy.libraryId);
+    _libraryBookProxies.value = libraryBookProxies;
+    // Remove from the isbnLibraryBooksMap
+    final isbnLibraryBookProxyList =
+        _isbnLibraryBooksMap.value[libraryBookProxy.isbn];
+    if (isbnLibraryBookProxyList != null) {
+      isbnLibraryBookProxyList.removeWhere(
+        (p) => p.libraryId == libraryBookProxy.libraryId,
+      );
+      if (isbnLibraryBookProxyList.isEmpty) {
+        _isbnLibraryBooksMap.value.remove(libraryBookProxy.isbn);
+      } else {
+        _isbnLibraryBooksMap.value[libraryBookProxy.isbn] =
+            isbnLibraryBookProxyList;
+      }
+    }
+  }
+
+  //- get functions
+
+  LibraryBookProxy? getLibraryBookByLibraryBookId(int? libraryBookId) {
+    if (libraryBookId == null) return null;
+    return _libraryBookProxies.value
+        .firstWhereOrNull((element) => element.libraryBookId == libraryBookId);
+  }
+
+  List<LibraryBookProxy> getLibraryBooksByIsbn(int isbn) {
+    return _isbnLibraryBooksMap.value[isbn] ?? [];
+  }
+
+  //- Repository calls
 
   //- BOOK TAGS
 
-  Future<void> getBookTags() async {
-    final List<BookTag> responseTags = await _bookApiService.getBookTags();
+  Future<void> fetchBookTags() async {
+    final List<BookTag> responseTags = await _bookApiService.fetchBookTags();
     _bookTags.value = responseTags;
   }
 
-  Future<void> addBookTag(String tag) async {
-    final List<BookTag> responseTags = await _bookApiService.postBookTag(tag);
-    _bookTags.value = responseTags;
+  Future<void> postBookTag(String tag) async {
+    final BookTag responseTag = await _bookApiService.postBookTag(tag);
+    _bookTags.value = [..._bookTags.value, responseTag];
   }
 
-  Future<void> deleteBookTag(String tag) async {
-    final List<BookTag> responseTags = await _bookApiService.deleteBookTag(tag);
-    _bookTags.value = responseTags;
+  Future<void> deleteBookTag(BookTag tag) async {
+    final success = await _bookApiService.deleteBookTag(tag);
+    if (success) {
+      _bookTags.value = _bookTags.value.where((t) => t != tag).toList();
+    }
   }
 
   //- BOOK LOCATIONS
 
-  Future<void> getLocations() async {
-    final List<String> responseLocations =
-        await _bookApiService.getBookLocations();
+  Future<void> fetchLocations() async {
+    final List<LibraryBookLocation> responseLocations =
+        await _bookApiService.fetchBookLocations();
     _locations.value = responseLocations;
   }
 
-  Future<void> addLocation(String location) async {
-    final List<String> responseLocations =
-        await _bookApiService.postBookLocation(location);
-    _locations.value = responseLocations;
+  Future<void> postLocation(String locationName) async {
+    final newLocation = LibraryBookLocation(
+      location: locationName,
+    );
+    final LibraryBookLocation responseLocation =
+        await _bookApiService.postBookLocation(newLocation);
+    _locations.value = [
+      ..._locations.value,
+      responseLocation
+    ]; // Add the new location
   }
 
-  Future<void> deleteLocation(String location) async {
-    final List<String> responseLocations =
-        await _bookApiService.deleteBookLocation(location);
-    _locations.value = responseLocations;
+  Future<void> deleteLocation(LibraryBookLocation location) async {
+    final bool success = await _bookApiService.deleteBookLocation(location);
+    if (success) {
+      _locations.value = _locations.value
+          .where((loc) => loc.location != location.location)
+          .toList();
+    }
   }
 
-  void setLastLocationValue(String location) {
+  void setLastLocationValue(LibraryBookLocation location) {
     _lastSelectedLocation.value = location;
   }
 
   //- LIBRARY BOOKS
 
-  Future<void> getLibraryBooks() async {
-    final List<BookProxy> responseBooks =
-        await _bookApiService.getLibraryBooks();
+  Future<void> fetchLibraryBooks() async {
+    final List<LibraryBook> responseBooks =
+        await _bookApiService.fetchLibraryBooks();
 
-    if (responseBooks.isNotEmpty) {
-      responseBooks.sort((a, b) => a.title.compareTo(b.title));
-      _books.value = responseBooks;
-    }
-    _refreshIsbnBooksMap();
+    _refreshLibraryBookProxyCollection(responseBooks);
+
     _notificationService.showSnackBar(
         NotificationType.success, 'Bücher erfolgreich geladen');
   }
 
   Future<void> postLibraryBook({
     required int isbn,
-    required String bookId,
-    required String location,
+    required String libraryId,
+    required LibraryBookLocation location,
   }) async {
-    final BookProxy responseBook = await _bookApiService.postLibraryBook(
+    final LibraryBook responseBook = await _bookApiService.postLibraryBook(
       isbn: isbn,
-      bookId: bookId,
+      bookId: libraryId,
       location: location,
     );
-
-    _books.value = [..._books.value, responseBook];
+    _addLibraryBookProxyToCollection(responseBook);
 
     _notificationService.showSnackBar(
         NotificationType.success, 'Arbeitsheft erfolgreich erstellt');
@@ -153,104 +245,80 @@ class BookManager {
 
   Future<void> updateBookProperty({
     required int isbn,
+    required String libraryId,
     String? title,
     String? author,
     String? description,
     String? readingLevel,
-    List<BookTag>? tags,
   }) async {
-    final BookProxy updatedbook = await _bookApiService.patchBookData(
+    final LibraryBook updatedbook =
+        await _bookApiService.updateLibraryBookOrBook(
       isbn: isbn,
+      libraryId: libraryId,
       title: title,
       author: author,
       description: description,
       readingLevel: readingLevel,
-      bookTags: tags,
     );
 
-    List<BookProxy> books = List.from(_books.value);
-    int index = books.indexWhere((item) => item.bookId == updatedbook.bookId);
-    books[index] = updatedbook;
-    _books.value = books;
+    _updateLibraryBookProxyInCollection(updatedbook);
 
     _notificationService.showSnackBar(
         NotificationType.success, 'Arbeitsheft erfolgreich aktualisiert');
   }
 
-  Future<void> patchBookImage(File imageFile, int isbn) async {
-    final BookProxy responsebook =
-        await _bookApiService.patchBookImage(imageFile, isbn);
+  // Future<void> patchBookImage(File imageFile, int isbn) async {
+  //   final LibraryBookProxy responsebook =
+  //       await _bookApiService.patchBookImage(imageFile, isbn);
 
-    updateBookStateWithResponse(responsebook);
+  //   updateBookStateWithResponse(responsebook);
 
-    _notificationService.showSnackBar(
-        NotificationType.success, 'Bild erfolgreich hochgeladen');
-  }
+  //   _notificationService.showSnackBar(
+  //       NotificationType.success, 'Bild erfolgreich hochgeladen');
+  // }
 
-  Future<void> deleteLibraryBook(String bookId) async {
-    final bool success = await _bookApiService.deleteLibraryBook(bookId);
+  Future<void> deleteLibraryBook(LibraryBookProxy libraryBookProxy) async {
+    final bool success =
+        await _bookApiService.deleteLibraryBook(libraryBookProxy.libraryBookId);
 
     if (success) {
-      List<BookProxy> books = List.from(_books.value);
-      books.removeWhere((item) => item.bookId == bookId);
-      _books.value = books;
-      _notificationService.showSnackBar(
-          NotificationType.success, 'Arbeitsheft erfolgreich gelöscht');
+      _removeLibraryBookProxyFromCollection(libraryBookProxy);
     }
-  }
-
-  //- PUPIL BOOKS
-
-  List<BookProxy> getLibraryBooksByIsbn(int isbn) {
-    List<BookProxy> books = [];
-    for (BookProxy book in _books.value) {
-      if (book.isbn == isbn) {
-        books.add(book);
-      }
-    }
-    return books;
-  }
-
-  //- helper function
-  BookProxy? getLibraryBookByBookId(int? bookId) {
-    if (bookId == null) return null;
-    return _books.value.firstWhereOrNull((element) => element.bookId == bookId);
-  }
-
-  //- helper function
-  void updateBookStateWithResponse(BookProxy book) {
-    List<BookProxy> books = List.from(_books.value);
-    int index = books.indexWhere((item) => item.bookId == book.bookId);
-    books[index] = book;
-    _books.value = books;
   }
 
   Future<void> searchBooks({
     String? title,
     String? author,
     String? keywords,
-    String? location,
+    LibraryBookLocation? location,
     String? readingLevel,
-    String? borrowStatus,
+    bool? available,
   }) async {
     _currentPage = 1;
     _isLoadingMore = false;
     _hasMorePages = true;
     try {
-      final List<BookProxy> results = await _bookApiService.searchBooks(
+      final List<LibraryBook> results = await _bookApiService.searchBooks(
         title: title?.isNotEmpty == true ? title : null,
         author: author?.isNotEmpty == true ? author : null,
         keywords: keywords?.isNotEmpty == true ? keywords : null,
-        location: location?.isNotEmpty == true ? location : null,
+        location: location ?? null,
         readingLevel: readingLevel?.isNotEmpty == true ? readingLevel : null,
-        borrowStatus: borrowStatus?.isNotEmpty == true ? borrowStatus : null,
+        available: available ?? null,
         page: _currentPage,
         perPage: _perPage,
       );
-      searchResults.value = results;
+      final searchResults = <LibraryBookProxy>[];
+      for (final result in results) {
+        final LibraryBookProxy libraryBookProxy =
+            LibraryBookProxy(librarybook: result);
+        searchResults.add(libraryBookProxy);
+      }
+      _searchResults.value = searchResults;
+
       _notificationService.showSnackBar(
           NotificationType.success, 'Suchergebnisse aktualisiert');
-    } catch (e, s) {
+    } catch (e) {
       _notificationService.showSnackBar(
           NotificationType.error, 'Fehler bei der Suche: $e');
     }
@@ -260,9 +328,9 @@ class BookManager {
     String? title,
     String? author,
     String? keywords,
-    String? location,
+    LibraryBookLocation? location,
     String? readingLevel,
-    String? borrowStatus,
+    bool? available,
   }) async {
     if (_isLoadingMore) return;
     if (!_hasMorePages) return;
@@ -275,9 +343,9 @@ class BookManager {
         title: title?.isNotEmpty == true ? title : null,
         author: author?.isNotEmpty == true ? author : null,
         keywords: keywords?.isNotEmpty == true ? keywords : null,
-        location: location?.isNotEmpty == true ? location : null,
+        location: location ?? null,
         readingLevel: readingLevel?.isNotEmpty == true ? readingLevel : null,
-        borrowStatus: borrowStatus?.isNotEmpty == true ? borrowStatus : null,
+        available: available ?? null,
         page: _currentPage,
         perPage: _perPage,
       );
@@ -285,8 +353,14 @@ class BookManager {
       if (newPageResults.isEmpty) {
         _hasMorePages = false;
       } else {
-        final List<BookProxy> oldList = searchResults.value;
-        searchResults.value = [...oldList, ...newPageResults];
+        final List<LibraryBookProxy> searchResultsToUpdate =
+            searchResults.value;
+        for (final result in newPageResults) {
+          final LibraryBookProxy libraryBookProxy =
+              LibraryBookProxy(librarybook: result);
+          searchResultsToUpdate.add(libraryBookProxy);
+        }
+        _searchResults.value = [...searchResultsToUpdate];
         if (newPageResults.length < _perPage) {
           _hasMorePages = false;
         }

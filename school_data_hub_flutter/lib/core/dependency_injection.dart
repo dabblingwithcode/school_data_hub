@@ -15,6 +15,7 @@ import 'package:school_data_hub_flutter/features/attendance/domain/filters/atten
 import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/filters/authorization_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/filters/pupil_authorization_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/competence/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_manager.dart';
@@ -127,6 +128,14 @@ class DiManager {
 
       return learningSupportManager;
     });
+
+    di.registerSingletonAsync<BookManager>(() async {
+      log('Registering BookManager');
+      final bookManager = BookManager();
+      await bookManager.init();
+      log('BookManager initialized');
+      return bookManager;
+    }, dependsOn: []);
 
     di.registerSingletonAsync<CompetenceManager>(() async {
       final competenceManager = CompetenceManager();
