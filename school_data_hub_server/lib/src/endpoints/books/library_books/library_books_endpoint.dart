@@ -90,7 +90,7 @@ class LibraryBooksEndpoint extends Endpoint {
 
     // query title
     if (libraryBookQuery.title != null) {
-      query = t.book.title.equals(libraryBookQuery.title);
+      query = t.book.title.ilike('%${libraryBookQuery.title}%');
     }
     // query author
     if (libraryBookQuery.author != null) {
@@ -134,10 +134,10 @@ class LibraryBooksEndpoint extends Endpoint {
 
     final libraryBooks = await LibraryBook.db.find(
       session,
-      where: query == null ? null : ((_) => query!),
+      where: (_) => query!,
       include: LibraryBookSchemas.allInclude,
-      limit: libraryBookQuery.perPage,
-      offset: libraryBookQuery.page * libraryBookQuery.perPage,
+      // limit: libraryBookQuery.perPage,
+      // offset: libraryBookQuery.page * libraryBookQuery.perPage,
     );
     return libraryBooks;
   }

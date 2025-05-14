@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
@@ -10,9 +11,9 @@ import 'package:school_data_hub_flutter/features/books/presentation/book_list_pa
 class LibraryBookCard extends StatelessWidget {
   final LibraryBookProxy bookProxy;
   const LibraryBookCard({required this.bookProxy, super.key});
-  // List<PupilBookLending> libraryBookPupilBooks(int bookId) {
-  //   return BookHelpers.pupilBooksLinkedToBook(libraryId: bookId);
-  // }
+  List<PupilBookLending> libraryBookPupilBooks(int bookId) {
+    return BookHelpers.pupilBooksLinkedToBook(libraryId: bookProxy.libraryId);
+  }
 
   @override
   Widget build(BuildContext context) {

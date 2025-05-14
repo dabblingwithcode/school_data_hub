@@ -69,13 +69,13 @@ class IsbnApi {
     final byteData = ByteData.view(image.bodyBytes.buffer);
 
     await session.storage.storeFile(
-      storageId: LocalStorageId.public.storageId, // or private
-      path: 'isbn',
+      storageId: LocalStorageId.public.storageId,
+      path: '${isbn.toString()}.jpg',
       byteData: byteData,
     );
     final isbnFileUrl = await session.storage.getPublicUrl(
       storageId: LocalStorageId.public.storageId,
-      path: 'isbn',
+      path: '${isbn.toString()}.jpg',
     );
     if (isbnFileUrl == null) {
       throw Exception('Failed to get public URL for image');

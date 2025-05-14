@@ -56,6 +56,7 @@ class BookManager {
     // await getLibraryBooks();
     await fetchLocations();
     await fetchBookTags();
+    await fetchLibraryBooks();
 
     return this;
   }
@@ -71,7 +72,7 @@ class BookManager {
 
   // - manage collections
 
-  void _refreshLibraryBookProxyCollection(
+  void _refreshLibraryBookProxyCollections(
     List<LibraryBook> libraryBooks,
   ) {
     final List<LibraryBookProxy> libraryBookProxies = [];
@@ -94,7 +95,7 @@ class BookManager {
     _libraryBookProxies.value = libraryBookProxies;
   }
 
-  void _addLibraryBookProxyToCollection(LibraryBook libraryBook) {
+  void _addLibraryBookProxyToCollections(LibraryBook libraryBook) {
     final LibraryBookProxy libraryBookProxy =
         LibraryBookProxy(librarybook: libraryBook);
     final List<LibraryBookProxy> libraryBookProxies =
@@ -104,7 +105,7 @@ class BookManager {
     _isbnLibraryBooksMap.value[libraryBook.book!.isbn] = libraryBookProxies;
   }
 
-  void _updateLibraryBookProxyInCollection(
+  void _updateLibraryBookProxyInCollections(
     LibraryBook libraryBook,
   ) {
     final LibraryBookProxy libraryBookProxy =
@@ -196,10 +197,7 @@ class BookManager {
     );
     final LibraryBookLocation responseLocation =
         await _bookApiService.postBookLocation(newLocation);
-    _locations.value = [
-      ..._locations.value,
-      responseLocation
-    ]; // Add the new location
+    _locations.value = [..._locations.value, responseLocation];
   }
 
   Future<void> deleteLocation(LibraryBookLocation location) async {
@@ -221,7 +219,7 @@ class BookManager {
     final List<LibraryBook> responseBooks =
         await _bookApiService.fetchLibraryBooks();
 
-    _refreshLibraryBookProxyCollection(responseBooks);
+    _refreshLibraryBookProxyCollections(responseBooks);
 
     _notificationService.showSnackBar(
         NotificationType.success, 'Bücher erfolgreich geladen');
@@ -237,7 +235,7 @@ class BookManager {
       bookId: libraryId,
       location: location,
     );
-    _addLibraryBookProxyToCollection(responseBook);
+    _addLibraryBookProxyToCollections(responseBook);
 
     _notificationService.showSnackBar(
         NotificationType.success, 'Arbeitsheft erfolgreich erstellt');
@@ -261,21 +259,11 @@ class BookManager {
       readingLevel: readingLevel,
     );
 
-    _updateLibraryBookProxyInCollection(updatedbook);
+    _updateLibraryBookProxyInCollections(updatedbook);
 
     _notificationService.showSnackBar(
         NotificationType.success, 'Arbeitsheft erfolgreich aktualisiert');
   }
-
-  // Future<void> patchBookImage(File imageFile, int isbn) async {
-  //   final LibraryBookProxy responsebook =
-  //       await _bookApiService.patchBookImage(imageFile, isbn);
-
-  //   updateBookStateWithResponse(responsebook);
-
-  //   _notificationService.showSnackBar(
-  //       NotificationType.success, 'Bild erfolgreich hochgeladen');
-  // }
 
   Future<void> deleteLibraryBook(LibraryBookProxy libraryBookProxy) async {
     final bool success =

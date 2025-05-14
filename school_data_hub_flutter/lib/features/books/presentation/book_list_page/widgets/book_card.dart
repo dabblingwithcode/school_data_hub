@@ -7,7 +7,10 @@ import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
 import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_helper.dart';
@@ -37,6 +40,7 @@ class BookCard extends WatchingWidget {
     );
     final LibraryBookProxy bookProxy = bookProxies.first;
 
+    // TODO: Check if this is needed
     // BookBorrowStatus? bookBorrowStatus = bookPupilBooks.isEmpty
     //     ? null
     //     : BookHelpers.getBorrowedStatus(bookPupilBooks.first);
@@ -54,19 +58,19 @@ class BookCard extends WatchingWidget {
           surfaceTintColor: Colors.white,
           child: InkWell(
             onLongPress: () async {
-              // if (!locator<SessionManager>().isAdmin.value) {
-              //   informationDialog(context, 'Keine Berechtigung',
-              //       'Bücher können nur von Admins bearbeitet werden!');
-              //   return;
-              // }
-              // final bool? result = await confirmationDialog(
-              //     context: context,
-              //     title: 'Buch löschen',
-              //     message:
-              //         'Buch "${book.title}" wirklich löschen? ACHTUNG: Alle Ausleihen dieses Buchs werden werden ebenfalls gelöscht!');
-              // if (result == true) {
-              //   await locator<BookManager>().deleteLibraryBook(book.bookId);
-              // }
+              if (!di<ServerpodSessionManager>().isAdmin) {
+                informationDialog(context, 'Keine Berechtigung',
+                    'Bücher können nur von Admins bearbeitet werden!');
+                return;
+              }
+              final bool? result = await confirmationDialog(
+                  context: context,
+                  title: 'Buch löschen',
+                  message:
+                      'Buch "${bookProxy.title}" wirklich löschen? ACHTUNG: Alle Ausleihen dieses Buchs werden werden ebenfalls gelöscht!');
+              if (result == true) {
+                await di<BookManager>().deleteLibraryBook(bookProxy);
+              }
             },
             child: Padding(
               padding: const EdgeInsets.only(top: 10, left: 15, right: 15),
@@ -133,13 +137,10 @@ class BookCard extends WatchingWidget {
                               // await di<BookManager>()
                               //     .patchBookImage(file, bookProxy.isbn);
                             },
-                            child: Container(
-                              height: 140,
-                              width: 140,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: AppColors.backgroundColor,
-                              ),
+                            child: UnencryptedImageInCard(
+                              cacheKey: bookProxy.isbn.toString(),
+                              path: bookProxy.imagePath,
+                              size: 100,
                             ),
                           ),
                           const Gap(10),
