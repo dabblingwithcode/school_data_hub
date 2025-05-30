@@ -328,6 +328,17 @@ class PupilProfileInfosContent extends StatelessWidget {
               ],
             ),
             const Gap(10),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text('Einwilligungen',
+                    softWrap: true,
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                    )),
+              ],
+            ),
             AvatarAuthValues(pupil: pupil),
             const Gap(10),
             PublicMediaAuthValues(pupil: pupil),

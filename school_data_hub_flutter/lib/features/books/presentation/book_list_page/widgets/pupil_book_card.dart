@@ -165,7 +165,7 @@ class PupilBookCard extends WatchingWidget {
                       const Gap(5),
                       Row(
                         children: [
-                          const Text('Ausgelihen von:'),
+                          const Text('Ausgeliehen von:'),
                           const Gap(5),
                           Text(
                             pupilBook.lentBy,

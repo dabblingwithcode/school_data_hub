@@ -52,7 +52,7 @@ class PupilLearningContentBooks extends StatelessWidget {
             }
             if (bookId != null) {
               di<PupilManager>().postPupilBookLending(
-                  pupilId: pupil.internalId, libraryId: bookId);
+                  pupilId: pupil.pupilId, libraryId: bookId);
               return;
             }
           },

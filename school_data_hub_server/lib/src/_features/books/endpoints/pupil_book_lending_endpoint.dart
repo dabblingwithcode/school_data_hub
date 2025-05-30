@@ -34,12 +34,13 @@ class PupilBookLendingEndpoint extends Endpoint {
         lentBy: lentBy,
       );
 
-      await PupilBookLending.db
+      final pupilBookLendingInDatabase = await PupilBookLending.db
           .insertRow(session, pupilBookLending, transaction: transaction);
-      await PupilBookLending.db.attachRow
-          .pupil(session, pupilBookLending, pupil, transaction: transaction);
+      await PupilBookLending.db.attachRow.pupil(
+          session, pupilBookLendingInDatabase, pupil,
+          transaction: transaction);
       await PupilBookLending.db.attachRow.libraryBook(
-          session, pupilBookLending, libraryBook,
+          session, pupilBookLendingInDatabase, libraryBook,
           transaction: transaction);
 
       final updatedPupil = await PupilData.db.findFirstRow(session,

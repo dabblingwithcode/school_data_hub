@@ -52,7 +52,7 @@ Widget getLastCompetenceCheckSymbol(PupilProxy pupil, int competenceId) {
 }
 
 Widget getCompetenceReportCheckSymbol(PupilProxy pupil, int competenceId) {
-  if (pupil.competenceChecks!.isNotEmpty) {
+  if (pupil.competenceChecks != null && pupil.competenceChecks!.isNotEmpty) {
     final CompetenceCheck? competenceCheck = pupil.competenceChecks!
         .lastWhereOrNull((element) => element.competenceId == competenceId);
 

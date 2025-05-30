@@ -12,7 +12,7 @@ class BookHelpers {
         .allPupils
         .map((pupil) => pupil.pupilBooks)
         .expand((element) => element as Iterable<PupilBookLending>)
-        .where((pupilBook) => pupilBook.libraryBook!.libraryId == libraryId)
+        .where((pupilBook) => pupilBook.libraryBook?.libraryId == libraryId)
         .toList();
 
     pupilBooks.sort((a, b) => b.lentAt.compareTo(a.lentAt));
