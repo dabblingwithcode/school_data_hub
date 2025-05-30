@@ -1,0 +1,34 @@
+# uml_config.yaml - Example configuration file
+paths:
+  modelsDirPath: lib/src
+  umlOutputFile: 'uml_diagram.puml'
+options:
+  printComments: true
+  useNameSpace: true
+  ignoreRootFolder: 'models'
+layout:
+  skinparamNodesep: 30
+  skinparamRanksep: 100
+style:
+  relations:
+    colorfullArrows: true
+    oneHexColor: '#9b59b6'
+    oneString: '1'
+    manyHexColor: '#27ae60'
+    manyString: 'N'
+    relationHexColor: '#0164aa'
+  class:  
+    classNameHexColor: '#ff962f'
+    classBackgroundHexColor: '#f1f8df'
+    classBorderHexColor: '#333333'
+  comment:
+    commentHexColor: '#93c47d'
+  namespace:
+    namespaceBorderHexColor: '#333333'
+    rootNamespaceBackgroundHexColor: '#fff2cc'
+    firstLevelNamespaceBackgroundHexColor: '#ffe9a7'
+    secondLevelNamespaceBackgroundHexColor: '#ffdb72'
+
+
+
+

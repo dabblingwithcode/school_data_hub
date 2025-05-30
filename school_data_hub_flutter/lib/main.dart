@@ -105,7 +105,7 @@ class MyApp extends WatchingWidget {
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
                       log.shout('Dependency Injection Error: ${snapshot.error}',
-                          StackTrace.current);
+                          snapshot.stackTrace);
                       return ErrorPage(error: snapshot.error.toString());
                     } else if (snapshot.connectionState ==
                         ConnectionState.done) {

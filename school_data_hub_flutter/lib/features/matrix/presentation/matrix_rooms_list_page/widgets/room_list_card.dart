@@ -67,9 +67,10 @@ class _RoomListCardState extends State<RoomListCard> {
                             scrollDirection: Axis.horizontal,
                             child: InkWell(
                               onTap: () {
-                                // locator<BottomNavManager>()
-                                //     .setPupilProfileNavPage(2);
                                 // TODO: implement this
+                                // di<BottomNavManager>().setPupilProfileNavPage(
+                                //     ProfileNavigationState.authorization.value);
+
                                 // Navigator.of(context).push(MaterialPageRoute(
                                 //   builder: (ctx) => MatrixRoomPage(
                                 //     matrixRoom: room,

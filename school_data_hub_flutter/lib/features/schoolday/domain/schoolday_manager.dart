@@ -26,6 +26,9 @@ class SchooldayManager {
   final _schoolSemesters = ValueNotifier<List<SchoolSemester>>([]);
   ValueListenable<List<SchoolSemester>> get schoolSemesters => _schoolSemesters;
 
+  final _currentSemester = ValueNotifier<SchoolSemester?>(null);
+  ValueListenable<SchoolSemester?> get currentSemester => _currentSemester;
+
   final _thisDate = ValueNotifier<DateTime>(DateTime.now().toUtc());
   ValueListenable<DateTime> get thisDate => _thisDate;
 
@@ -198,8 +201,11 @@ class SchooldayManager {
       'Schulhalbjahre geladen: ${responseSchoolSemesters.length}',
     );
     _schoolSemesters.value = responseSchoolSemesters;
-
-    if (responseSchoolSemesters.isNotEmpty) {
+    if (_currentSemester.value == null) {
+      _currentSemester.value = getCurrentSchoolSemester();
+    }
+    if (responseSchoolSemesters.isNotEmpty &&
+        _envManager.populatedEnvServerData.schoolSemester == false) {
       _envManager.setPopulatedEnvServerData(schoolSemester: true);
     }
     return;

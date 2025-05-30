@@ -18,6 +18,7 @@ import 'package:school_data_hub_flutter/features/attendance/presentation/attenda
 import 'package:school_data_hub_flutter/features/attendance/presentation/attendance_page/widgets/dialogues/returned_time_picker.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -88,7 +89,9 @@ class AttendanceCard extends WatchingWidget {
                                     child: InkWell(
                                       onTap: () {
                                         di<BottomNavManager>()
-                                            .setPupilProfileNavPage(3);
+                                            .setPupilProfileNavPage(
+                                                ProfileNavigationState
+                                                    .attendance.value);
                                         Navigator.of(context)
                                             .pushReplacement(MaterialPageRoute(
                                           builder: (ctx) => PupilProfilePage(
@@ -415,7 +418,9 @@ class AttendanceCard extends WatchingWidget {
                                   child: InkWell(
                                     onTap: () {
                                       di<BottomNavManager>()
-                                          .setPupilProfileNavPage(3);
+                                          .setPupilProfileNavPage(
+                                              ProfileNavigationState
+                                                  .attendance.value);
                                       Navigator.of(context)
                                           .pushReplacement(MaterialPageRoute(
                                         builder: (ctx) => PupilProfilePage(

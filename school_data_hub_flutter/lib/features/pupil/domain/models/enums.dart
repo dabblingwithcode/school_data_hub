@@ -27,3 +27,35 @@ Map<PupilSortMode, bool> initialSortModeValues = {
   PupilSortMode.sortByLastSchooldayEvent: false,
   PupilSortMode.sortByLastNonProcessedSchooldayEvent: false
 };
+
+// enum SchoolGrade {
+//   E1('E1'),
+//   E2('E2'),
+//   E3('E3'),
+//   K3('K3'),
+//   K4('K4');
+
+//   static const stringToValue = {
+//     'E1': SchoolGrade.E1,
+//     'E2': SchoolGrade.E2,
+//     'E3': SchoolGrade.E3,
+//     'K3': SchoolGrade.K3,
+//     'K4': SchoolGrade.K4,
+//   };
+
+//   final String value;
+//   const SchoolGrade(this.value);
+// }
+
+enum Gender {
+  male('m'),
+  female('w');
+
+  static const stringToValue = {
+    'm': Gender.male,
+    'w': Gender.female,
+  };
+
+  final String value;
+  const Gender(this.value);
+}

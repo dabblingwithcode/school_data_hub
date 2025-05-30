@@ -14,10 +14,6 @@ missedClass:
   - fetchMissedClassesOnASchoolday:
   - deleteMissedClass:
   - updateMissedClass:
-auth:
-  - login:
-  - verifyPassword:
-  - logOut:
 authorization:
   - fetchAuthorizations:
   - fetchAuthorizationById:
@@ -59,29 +55,31 @@ pupilBookLending:
   - fetchPupilBookLendingById:
   - updatePupilBookLending:
   - deletePupilBookLending:
-files:
-  - getUploadDescription:
-  - verifyUpload:
-  - getImage:
-  - getUnencryptedImage:
+competenceCheck:
+  - postCompetenceCheck:
 competence:
   - importCompetencesFromJsonFile:
   - postCompetence:
   - getAllCompetences:
   - updateCompetence:
   - deleteCompetence:
-supportCategory:
-  - fetchSupportCategories:
-  - importSupportCategoriesFromJsonFile:
-  - createSupportCategory:
-  - updateSupportCategory:
-  - deleteSupportCategory:
+learningSupportPlan:
+  - fetchLearningSupportPlans:
+  - createLearningSupportPlan:
+  - updateLearningSupportPlan:
+  - deleteLearningSupportPlan:
   - postSupportCategoryStatus:
   - fetchSupportCategoryStatus:
   - fetchSupportCategoryStatusFromPupil:
   - updateCategoryStatus:
   - deleteSupportCategoryStatus:
   - postCategoryGoal:
+supportCategory:
+  - fetchSupportCategories:
+  - importSupportCategoriesFromJsonFile:
+  - createSupportCategory:
+  - updateSupportCategory:
+  - deleteSupportCategory:
 pupil:
   - fetchPupilsAsStream:
   - fetchPupils:
@@ -100,6 +98,7 @@ pupilUpdate:
   - updatePreSchoolMedicalStatus:
   - updatePublicMediaAuth:
   - updateSupportLevel:
+  - updateSchoolyearHeldBackDate:
 schoolList:
   - fetchSchoolLists:
   - postSchoolList:
@@ -126,7 +125,28 @@ schooldayEvent:
   - deleteSchooldayEvent:
   - updateSchooldayEventFile:
   - deleteSchooldayEventFile:
+auth:
+  - login:
+  - verifyPassword:
+  - logOut:
 user:
   - getCurrentUser:
   - changePassword:
   - increaseStaffCredit:
+pupilWorkbooks:
+  - postPupilWorkbook:
+  - fetchPupilWorkbooks:
+  - fetchPupilWorkbooksFromPupil:
+  - updatePupilWorkbook:
+  - deletePupilWorkbook:
+workbooks:
+  - postWorkbook:
+  - fetchWorkbookByIsbn:
+  - fetchWorkbooks:
+  - updateWorkbook:
+  - deleteWorkbook:
+files:
+  - getUploadDescription:
+  - verifyUpload:
+  - getImage:
+  - getUnencryptedImage:

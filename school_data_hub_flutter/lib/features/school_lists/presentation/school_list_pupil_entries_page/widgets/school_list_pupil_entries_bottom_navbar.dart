@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/common/theme/paddings.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/common/widgets/filter_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
@@ -15,7 +15,7 @@ import 'package:school_data_hub_flutter/features/school_lists/presentation/schoo
 import 'package:watch_it/watch_it.dart';
 
 final _schoolListManager = di<SchoolListManager>();
-final _serverpodSessionManager = di<ServerpodSessionManager>();
+final _hubSessionManager = di<HubSessionManager>();
 final _pupilManager = di<PupilManager>();
 
 class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
@@ -50,7 +50,7 @@ class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
                 },
               ),
               if (schoolList.public != true ||
-                  _serverpodSessionManager.userName == schoolList.createdBy)
+                  _hubSessionManager.userName == schoolList.createdBy)
                 Row(
                   children: [
                     const Gap(30),
@@ -87,7 +87,7 @@ class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
                       await Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) => SelectPupilsListPage(
                                 selectablePupils: _pupilManager
-                                    .pupilsNotListed(pupilsInList)),
+                                    .getPupilsNotListed(pupilsInList)),
                           )) ??
                           [];
                   if (selectedPupilIds.isEmpty) return;

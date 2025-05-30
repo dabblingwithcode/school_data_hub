@@ -1,0 +1,11 @@
+## Workbook model
+class: Workbook
+table: workbook
+fields:
+  isbn: int
+  name: String
+  subject: String?
+  level: String?
+  amount: int?
+  imageUrl: String
+  assignedPupils: List<PupilWorkbook>?, relation(name=pupil_workbook_workbook)

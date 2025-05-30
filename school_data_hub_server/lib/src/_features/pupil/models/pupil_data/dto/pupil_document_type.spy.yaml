@@ -1,0 +1,6 @@
+enum: PupilDocumentType
+serialized: byName
+values:
+  - avatar
+  - avatarAuth
+  - publicMediaAuth

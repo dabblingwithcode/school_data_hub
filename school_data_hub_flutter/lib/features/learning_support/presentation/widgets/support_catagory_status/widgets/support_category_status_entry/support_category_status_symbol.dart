@@ -11,7 +11,7 @@ Widget getSupportCategoryStatusSymbol(
             element.supportCategoryId == goalCategoryId &&
             element.id! == statusId);
 
-    switch (categoryStatus.status) {
+    switch (categoryStatus.score) {
       case 1:
         return SizedBox(width: 50, child: Image.asset('assets/growth_1-4.png'));
       case 4:
@@ -24,7 +24,9 @@ Widget getSupportCategoryStatusSymbol(
     return SizedBox(width: 50, child: Image.asset('assets/growth_1-4.png'));
   }
 
-  return SizedBox(width: 50, child: Image.asset('assets/growth_1-4.png'));
+  return const SizedBox(
+      width: 50,
+      child: Icon(Icons.question_mark_rounded, color: Colors.black, size: 50));
 }
 
 Widget getLastCategoryStatusSymbol(PupilProxy pupil, int goalCategoryId) {
@@ -34,7 +36,7 @@ Widget getLastCategoryStatusSymbol(PupilProxy pupil, int goalCategoryId) {
             (element) => element.supportCategoryId == goalCategoryId);
 
     if (categoryStatus != null) {
-      switch (categoryStatus.status) {
+      switch (categoryStatus.score) {
         case 1:
           return SizedBox(
               width: 50, child: Image.asset('assets/growth_1-4.png'));
@@ -51,8 +53,13 @@ Widget getLastCategoryStatusSymbol(PupilProxy pupil, int goalCategoryId) {
               width: 50, child: Image.asset('assets/growth_2-4.png'));
       }
     }
-    return SizedBox(width: 50, child: Image.asset('assets/growth_1-4.png'));
+    return const SizedBox(
+        width: 50,
+        child:
+            Icon(Icons.question_mark_rounded, color: Colors.black, size: 50));
   }
 
-  return SizedBox(width: 40, child: Image.asset('assets/growth_1-4.png'));
+  return const SizedBox(
+      width: 50,
+      child: Icon(Icons.question_mark_rounded, color: Colors.black, size: 50));
 }

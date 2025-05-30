@@ -2,10 +2,10 @@ import 'package:school_data_hub_server/src/generated/protocol.dart';
 
 PupilData generatePupilfromExternalAdminConsoleData(String importedLine) {
   // Split the line by commas and trim whitespace
-  final data = importedLine.split(',').map((e) => e.trim()).toList();
+  final data = importedLine.split(',');
 
   bool afterSchoolCare = false;
-  if (data[14] == 'OFFGANZ' || data[14] == 'true') {
+  if (data[1] == 'OFFGANZ' || data[1] == 'true') {
     afterSchoolCare = true;
     print('After school care: $afterSchoolCare');
   }

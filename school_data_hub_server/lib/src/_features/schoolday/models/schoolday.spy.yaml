@@ -1,0 +1,7 @@
+class: Schoolday
+table: schoolday
+fields:
+  schoolday: DateTime
+  missedClasses: List<MissedClass>?, relation(name=missed_class_schoolday)
+  schooldayEvents: List<SchooldayEvent>?, relation(name=schoolday_event_schoolday)
+  schoolSemester: SchoolSemester?, relation(name=schoolday_school_semester)

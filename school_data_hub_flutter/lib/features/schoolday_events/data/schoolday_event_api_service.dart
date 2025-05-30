@@ -5,12 +5,12 @@ import 'package:path/path.dart' as p;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/models/nullable_records.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _client = di<Client>();
 final _notificationService = di<NotificationService>();
-final _serverpodSessionManager = di<ServerpodSessionManager>();
+final _hubSessionManager = di<HubSessionManager>();
 final _log = Logger('SchooldayEventApiService');
 
 class SchooldayEventApiService {
@@ -18,7 +18,7 @@ class SchooldayEventApiService {
 
   Future<SchooldayEvent> postSchooldayEvent(int pupilId, int schooldayId,
       SchooldayEventType type, String reason) async {
-    final userName = _serverpodSessionManager.userName!;
+    final userName = _hubSessionManager.userName!;
     _notificationService.apiRunning(true);
     try {
       final event = await _client.schooldayEvent.createSchooldayEvent(
@@ -73,7 +73,7 @@ class SchooldayEventApiService {
     // processing user and processed date are automatically added
 
     if (processed == true && processedBy == null && processedAt == null) {
-      processedBy = (value: _serverpodSessionManager.user!.userInfo!.userName!);
+      processedBy = (value: _hubSessionManager.user!.userInfo!.userName!);
 
       processedAt = (value: DateTime.now());
     }
@@ -144,7 +144,7 @@ class SchooldayEventApiService {
         try {
           final updatedSchooldayEvent = await _client.schooldayEvent
               .updateSchooldayEventFile(schooldayEventId, path,
-                  _serverpodSessionManager.userName!, isProcessed);
+                  _hubSessionManager.userName!, isProcessed);
           _notificationService.apiRunning(false);
 
           return updatedSchooldayEvent;

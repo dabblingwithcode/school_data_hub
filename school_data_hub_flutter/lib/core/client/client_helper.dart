@@ -18,7 +18,8 @@ class ClientHelper {
       return result;
     } catch (e) {
       _notificationService.apiRunning(false);
-      _notificationService.showInformationDialog('$errorMessage: $e');
+      _notificationService
+          .showInformationDialog('API Fehler:\n $errorMessage: $e');
 
       throw Exception('$errorMessage: $e');
     }

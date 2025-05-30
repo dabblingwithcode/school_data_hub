@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _serverpodSessionManager = di<ServerpodSessionManager>();
+final _hubSessionManager = di<HubSessionManager>();
 
 class PupilProfileHeadWidget extends WatchingWidget {
   final PupilProxy passedPupil;
@@ -69,7 +69,7 @@ class PupilProfileHeadWidget extends WatchingWidget {
                   const Gap(15),
                   pupil.specialNeeds != null
                       ? Text(
-                          pupil.schoolyear,
+                          pupil.schoolGrade.name,
                           textAlign: TextAlign.left,
                           style: const TextStyle(
                               color: AppColors.schoolyearColor,
@@ -83,7 +83,7 @@ class PupilProfileHeadWidget extends WatchingWidget {
                       Icons.warning_rounded,
                       color: Colors.red,
                     ),
-                  if (_serverpodSessionManager.isAdmin == true) ...<Widget>[
+                  if (_hubSessionManager.isAdmin == true) ...<Widget>[
                     const Gap(10),
                     Text(
                       '${pupil.internalId}',

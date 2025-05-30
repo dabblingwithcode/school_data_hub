@@ -1,3 +1,0 @@
-class: KindergardenInfo
-fields:
-  attendance: String?

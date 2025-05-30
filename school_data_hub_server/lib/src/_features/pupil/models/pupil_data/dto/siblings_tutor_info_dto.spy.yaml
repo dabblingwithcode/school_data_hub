@@ -1,0 +1,5 @@
+## we need this object for the endpoint to be able to update the parent info for all siblings
+class: SiblingsTutorInfo
+fields:
+  tutorInfo: TutorInfo?
+  siblingsIds: Set<int>

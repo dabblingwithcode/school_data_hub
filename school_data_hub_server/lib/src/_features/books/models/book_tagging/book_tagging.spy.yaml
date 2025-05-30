@@ -1,0 +1,10 @@
+## junction table for book and tag
+class: BookTagging
+table: book_tagging
+fields:
+  book: Book?, relation(name=book_tagging)
+  bookTag: BookTag?, relation(name=book_tag_tagging)
+indexes:
+  book_tagging_index_idx:
+    fields: bookId, bookTagId
+    unique: true

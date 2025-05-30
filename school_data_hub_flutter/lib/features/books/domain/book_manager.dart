@@ -41,7 +41,7 @@ class BookManager {
 
   BookManager();
 
-//  final session = di<ServerpodSessionManager>().credentials.value;
+//  final session = di<HubSessionManager>().credentials.value;
 
   int _currentPage = 1;
   final int _perPage = 30;
@@ -80,9 +80,20 @@ class BookManager {
       LibraryBookProxy libraryBookProxy =
           LibraryBookProxy(librarybook: libraryBook);
       // 1. Add the libraryBookProxy to the collection
+
       libraryBookProxies.add(libraryBookProxy);
       // 2. Add the libraryBookProxy to the isbnLibraryBooksMap
       if (_isbnLibraryBooksMap.value.containsKey(libraryBook.book!.isbn)) {
+        // Check if the libraryBookProxy already exists in the list
+        final existingLibraryBookProxy = _isbnLibraryBooksMap
+            .value[libraryBook.book!.isbn]!
+            .where((p) => p.libraryId == libraryBookProxy.libraryId);
+        if (existingLibraryBookProxy.isNotEmpty) {
+          // If it exists, remove it from the list
+          _isbnLibraryBooksMap.value[libraryBook.book!.isbn]!
+              .removeWhere((p) => p.libraryId == libraryBookProxy.libraryId);
+        }
+        // Add the new libraryBookProxy to the list
         _isbnLibraryBooksMap.value[libraryBook.book!.isbn]!
             .add(libraryBookProxy);
       } else {

@@ -1,7 +1,0 @@
-class: Lesson
-table: lesson
-fields:
-  publicId: String
-  ## TODO: implement with  schoolday: Schoolday, relation(name=lesson_schoolday)
-  attendedPupils: List<LessonAttendance>?, relation(name=lesson_attendance_lessons)
-  subject: LessonSubject?, relation(name=lesson_subject_lessons)

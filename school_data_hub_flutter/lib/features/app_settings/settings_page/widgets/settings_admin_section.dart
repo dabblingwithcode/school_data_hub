@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_utilites.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/app_utils/app_helpers.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/set_matrix_environment_page/set_matrix_environment_controller.dart';
@@ -27,7 +27,7 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final bool matrixPolicyManagerIsRegistered = watchPropertyValue(
-        (ServerpodSessionManager x) => x.matrixPolicyManagerRegistrationStatus);
+        (HubSessionManager x) => x.matrixPolicyManagerRegistrationStatus);
     return SettingsSection(
       title: const Padding(
         padding: EdgeInsets.all(8.0),

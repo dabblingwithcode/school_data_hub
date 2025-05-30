@@ -400,8 +400,8 @@ class AttendanceHelper {
               unexcusedMissedClassesThisSemester.length * 4;
           return [missedHoursThisSemester, unExcusedMissedHoursThisSemester];
 
-        case SchoolGrade.S3:
-        case SchoolGrade.S4:
+        case SchoolGrade.K3:
+        case SchoolGrade.K4:
           // for class 1 and 2 the average hours per day are 5
           final int missedHoursThisSemester =
               missedClassesThisSemester.length * 5;
@@ -442,8 +442,8 @@ class AttendanceHelper {
             missedHoursThisSemester + missedHoursLastSemester,
             unExcusedMissedHoursThisSemester + unExcusedMissedHoursLastSemester
           ];
-        case SchoolGrade.S3:
-        case SchoolGrade.S4:
+        case SchoolGrade.K3:
+        case SchoolGrade.K4:
           final int missedHoursThisSemester =
               missedClassesThisSemester.length * 5;
           final int unExcusedMissedHoursThisSemester =

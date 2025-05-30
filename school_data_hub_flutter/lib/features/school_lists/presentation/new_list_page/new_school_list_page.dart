@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
@@ -13,7 +13,7 @@ import 'package:watch_it/watch_it.dart';
 
 final _schoolListManager = di<SchoolListManager>();
 final _pupilManager = di<PupilManager>();
-final _serverpodSessionManager = di<ServerpodSessionManager>();
+final _hubSessionManager = di<HubSessionManager>();
 
 class NewSchoolListPage extends StatefulWidget {
   const NewSchoolListPage({super.key});
@@ -81,7 +81,7 @@ class NewSchoolListPageState extends State<NewSchoolListPage> {
                       labelText: 'Kurze Beschreibung der Liste'),
                 ),
                 const Gap(10),
-                _serverpodSessionManager.isAdmin == true
+                _hubSessionManager.isAdmin == true
                     ? Row(
                         children: [
                           const Text(
@@ -201,7 +201,8 @@ class NewSchoolListPageState extends State<NewSchoolListPage> {
                                                           fontSize: 18),
                                                     ),
                                                     Text(
-                                                      listedPupil.schoolyear,
+                                                      listedPupil
+                                                          .schoolGrade.name,
                                                       style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
@@ -241,7 +242,7 @@ class NewSchoolListPageState extends State<NewSchoolListPage> {
                         await Navigator.of(context).push(MaterialPageRoute(
                               builder: (ctx) => SelectPupilsListPage(
                                   selectablePupils: _pupilManager
-                                      .pupilsNotListed(pupilIds.toList())),
+                                      .getPupilsNotListed(pupilIds.toList())),
                             )) ??
                             [];
                     if (selectedPupilIds.isNotEmpty) {

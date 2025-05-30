@@ -4,13 +4,13 @@ import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_symbol.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_goal/support_goal_card_banner.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _learningSupportManager = di<LearningSupportManager>();
+final _learningSupportManager = di<SupportCategoryManager>();
 
 class SupportGoalCard extends StatelessWidget {
   final PupilProxy pupil;

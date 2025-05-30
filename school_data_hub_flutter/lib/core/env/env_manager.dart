@@ -26,17 +26,17 @@ class EnvManager {
 
   /// TODO: is this proxy authentication flag a hack or is this acceptable?
   /// We need to observe in [MaterialApp] if a user is authenticated
-  /// without accessing [ServerpodSessionManager], because if there is not
+  /// without accessing [HubSessionManager], because if there is not
   // an active env yet, it will still be unregistered.
   /// So this is a workaround setting a flag here
   /// **CAUTION**
-  /// Handle this value only with [ServerpodSessionManager] every time
+  /// Handle this value only with [HubSessionManager] every time
   /// it makes an authentication status change.
   ValueListenable<bool> get isAuthenticated => _isAuthenticated;
 
   /// **WARNING:**
   ///
-  /// This method should only be called from [ServerpodSessionManager]
+  /// This method should only be called from [HubSessionManager]
   void setUserAuthenticated(bool value) {
     _log.info('setUserAuthenticated: $value');
     _isAuthenticated.value = value;
@@ -149,10 +149,9 @@ class EnvManager {
     await DiManager.registerManagersDependingOnActiveEnv();
     setDependentManagersRegistered(true);
 
-    if (await ServerpodSecureStorage()
-        .containsKey(storageKeyForMatrixCredentials)) {
-      final matrixCredentialsJson = await ServerpodSecureStorage()
-          .getString(storageKeyForMatrixCredentials);
+    if (await HubSecureStorage().containsKey(storageKeyForMatrixCredentials)) {
+      final matrixCredentialsJson =
+          await HubSecureStorage().getString(storageKeyForMatrixCredentials);
       final matrixCredentials = MatrixCredentials.fromJson(
           json.decode(matrixCredentialsJson!) as Map<String, dynamic>);
       DiManager.registerMatrixManagers(matrixCredentials);
@@ -177,11 +176,11 @@ class EnvManager {
 
   Future<EnvsInStorage?> _environmentsInStorage() async {
     bool environmentsInStorage =
-        await ServerpodSecureStorage().containsKey(_storageKeyForEnvironments);
+        await HubSecureStorage().containsKey(_storageKeyForEnvironments);
 
     if (environmentsInStorage == true) {
       final String? storedEnvironmentsAsString =
-          await ServerpodSecureStorage().getString(_storageKeyForEnvironments);
+          await HubSecureStorage().getString(_storageKeyForEnvironments);
 
       try {
         final environmentsInStorage = EnvsInStorage.fromJson(
@@ -194,7 +193,7 @@ class EnvManager {
 
         _log.warning('deleting faulty environments from secure storage');
 
-        await ServerpodSecureStorage().remove(_storageKeyForEnvironments);
+        await HubSecureStorage().remove(_storageKeyForEnvironments);
 
         return null;
       }
@@ -235,8 +234,7 @@ class EnvManager {
     final String jsonEnvs = jsonEncode(updatedEnvsForStorage);
 
     // write the updated environments to secure storage
-    await ServerpodSecureStorage()
-        .setString(_storageKeyForEnvironments, jsonEnvs);
+    await HubSecureStorage().setString(_storageKeyForEnvironments, jsonEnvs);
 
     _envIsReady.value = true;
 
@@ -271,8 +269,7 @@ class EnvManager {
 
     final jsonEnvs = json.encode(_environments);
 
-    await ServerpodSecureStorage()
-        .setString(_storageKeyForEnvironments, jsonEnvs);
+    await HubSecureStorage().setString(_storageKeyForEnvironments, jsonEnvs);
 
     // if there are environments left in _envs, set the last one as value
 
@@ -285,7 +282,7 @@ class EnvManager {
     } else {
       // if there are no environments left, delete the environments from secure storage
 
-      await ServerpodSecureStorage().remove(_storageKeyForEnvironments);
+      await HubSecureStorage().remove(_storageKeyForEnvironments);
       DiManager.unregisterManagersDependingOnActiveEnv();
       _activeEnv = null;
 

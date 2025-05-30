@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _envManager = di<EnvManager>();
@@ -78,7 +78,7 @@ Future<bool?> changeEnvironmentDialog({
               onPressed: () async {
                 Navigator.of(context).pop();
 
-                await di<ServerpodSessionManager>().signOutDevice();
+                await di<HubSessionManager>().signOutDevice();
                 _envManager.setEnvNotReady();
               }, // Add onPressed
               child: const Text(

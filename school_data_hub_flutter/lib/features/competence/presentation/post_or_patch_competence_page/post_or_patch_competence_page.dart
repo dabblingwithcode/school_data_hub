@@ -87,8 +87,8 @@ class PostOrPatchCompetencePageState extends State<PostOrPatchCompetencePage> {
   Widget build(BuildContext context) {
     bool gradeE1 = competenceLevelContainsGrade('E1');
     bool gradeE2 = competenceLevelContainsGrade('E2');
-    bool gradeS3 = competenceLevelContainsGrade('S3');
-    bool gradeS4 = competenceLevelContainsGrade('S4');
+    bool gradeS3 = competenceLevelContainsGrade('K3');
+    bool gradeS4 = competenceLevelContainsGrade('K4');
 
     return Scaffold(
       appBar: GenericAppBar(
@@ -166,35 +166,35 @@ class PostOrPatchCompetencePageState extends State<PostOrPatchCompetencePage> {
                           }
                         }),
                     ThemedFilterChip(
-                        label: 'S3',
+                        label: 'K3',
                         selected: gradeS3,
                         onSelected: (value) {
                           if (value) {
                             setState(() {
-                              competenceLevel = '${competenceLevel}S3';
+                              competenceLevel = '${competenceLevel}03';
                               gradeS3 = true;
                             });
                           } else {
                             setState(() {
                               competenceLevel =
-                                  competenceLevel.replaceAll('S3', '');
+                                  competenceLevel.replaceAll('K3', '');
                               gradeS3 = false;
                             });
                           }
                         }),
                     ThemedFilterChip(
-                        label: 'S4',
+                        label: 'K4',
                         selected: gradeS4,
                         onSelected: (value) {
                           if (value) {
                             setState(() {
-                              competenceLevel = '${competenceLevel}S4';
+                              competenceLevel = '${competenceLevel}04';
                               gradeS4 = true;
                             });
                           } else {
                             setState(() {
                               competenceLevel =
-                                  competenceLevel.replaceAll('S4', '');
+                                  competenceLevel.replaceAll('K4', '');
                               gradeS4 = false;
                             });
                           }

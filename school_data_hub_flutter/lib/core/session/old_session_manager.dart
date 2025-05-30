@@ -71,7 +71,7 @@
 //       _isAuthenticated.value = false;
 //       return;
 //     }
-//     final validCredentials = await di<ServerpodSessionManager>().initialize();
+//     final validCredentials = await di<HubSessionManager>().initialize();
 //     if (!validCredentials) {
 //       logger.w('No valid credentials found!');
 //       _isAuthenticated.value = false;
@@ -79,7 +79,7 @@
 //     }
 //     logger.i('Valid credentials found!');
 //     _isAuthenticated.value = true;
-//     _isAdmin.value = di<ServerpodSessionManager>()
+//     _isAdmin.value = di<HubSessionManager>()
 //         .signedInUser!
 //         .scopeNames
 //         .contains('serverpod.admin');

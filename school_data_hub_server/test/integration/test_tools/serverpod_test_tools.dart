@@ -14,71 +14,80 @@
 import 'package:serverpod_test/serverpod_test.dart' as _i1;
 import 'package:serverpod/serverpod.dart' as _i2;
 import 'dart:async' as _i3;
-import 'package:school_data_hub_server/src/generated/user/staff_user.dart'
+import 'package:school_data_hub_server/src/generated/_features/user/models/staff_user.dart'
     as _i4;
-import 'package:school_data_hub_server/src/generated/user/roles/roles.dart'
+import 'package:school_data_hub_server/src/generated/_features/user/models/roles.dart'
     as _i5;
-import 'package:school_data_hub_server/src/generated/pupil_data/pupil_data.dart'
+import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/pupil_data.dart'
     as _i6;
-import 'package:school_data_hub_server/src/generated/schoolday/missed_class/missed_class_dto.dart'
+import 'package:school_data_hub_server/src/generated/_features/attendance/models/missed_class_dto.dart'
     as _i7;
-import 'package:school_data_hub_server/src/generated/schoolday/missed_class/missed_class.dart'
+import 'package:school_data_hub_server/src/generated/_features/attendance/models/missed_class.dart'
     as _i8;
-import 'package:school_data_hub_server/src/generated/user/device_info.dart'
+import 'package:school_data_hub_server/src/generated/_features/authorizations/models/authorization.dart'
     as _i9;
-import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i10;
+import 'package:school_data_hub_server/src/generated/_shared/models/member_operation.dart'
+    as _i10;
 import 'package:school_data_hub_server/src/generated/protocol.dart' as _i11;
-import 'package:school_data_hub_server/src/generated/authorization/authorization.dart'
+import 'package:school_data_hub_server/src/generated/_features/authorizations/models/pupil_authorization.dart'
     as _i12;
-import 'package:school_data_hub_server/src/generated/shared/member_operation.dart'
+import 'package:school_data_hub_server/src/generated/_features/books/models/book_tagging/book_tag.dart'
     as _i13;
-import 'package:school_data_hub_server/src/generated/authorization/pupil_authorization.dart'
+import 'package:school_data_hub_server/src/generated/_features/books/models/book.dart'
     as _i14;
-import 'package:school_data_hub_server/src/generated/book/book_tagging/book_tag.dart'
+import 'package:school_data_hub_server/src/generated/_features/books/models/library_book_location.dart'
     as _i15;
-import 'package:school_data_hub_server/src/generated/book/book.dart' as _i16;
-import 'package:school_data_hub_server/src/generated/book/library_book/location/library_book_location.dart'
+import 'package:school_data_hub_server/src/generated/_features/books/models/library_book.dart'
+    as _i16;
+import 'package:school_data_hub_server/src/generated/_features/books/models/library_book_query.dart'
     as _i17;
-import 'package:school_data_hub_server/src/generated/book/library_book/library_book.dart'
+import 'package:school_data_hub_server/src/generated/_features/books/models/pupil_book_lending.dart'
     as _i18;
-import 'package:school_data_hub_server/src/generated/book/library_book/library_book_query.dart'
+import 'package:school_data_hub_server/src/generated/_features/learning/models/competence.dart'
     as _i19;
-import 'package:school_data_hub_server/src/generated/book/pupil_book_lending.dart'
-    as _i20;
-import 'dart:typed_data' as _i21;
-import 'package:school_data_hub_server/src/generated/learning/competence.dart'
+import 'dart:io' as _i20;
+import 'package:school_data_hub_server/src/generated/_features/learning_support/models/learning_support_plan.dart'
+    as _i21;
+import 'package:school_data_hub_server/src/generated/_features/learning_support/models/support_category_status.dart'
     as _i22;
-import 'dart:io' as _i23;
-import 'package:school_data_hub_server/src/generated/learning_support/support_category.dart'
+import 'package:school_data_hub_server/src/generated/_features/learning_support/models/support_category.dart'
+    as _i23;
+import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/dto/pupil_document_type.dart'
     as _i24;
-import 'package:school_data_hub_server/src/generated/learning_support/support_category_status.dart'
+import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/communication/communication_skills.dart'
     as _i25;
-import 'package:school_data_hub_server/src/generated/pupil_data/dto/pupil_document_type.dart'
+import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/communication/tutor_info.dart'
     as _i26;
-import 'package:school_data_hub_server/src/generated/pupil_data/pupil_objects/communication/communication_skills.dart'
+import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/dto/siblings_tutor_info_dto.dart'
     as _i27;
-import 'package:school_data_hub_server/src/generated/pupil_data/pupil_objects/communication/tutor_info.dart'
+import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/preschool/pre_school_medical_status.dart'
     as _i28;
-import 'package:school_data_hub_server/src/generated/pupil_data/dto/siblings_tutor_info_dto.dart'
+import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/communication/public_media_auth.dart'
     as _i29;
-import 'package:school_data_hub_server/src/generated/pupil_data/pupil_objects/preschool/pre_school_medical_status.dart'
+import 'package:school_data_hub_server/src/generated/_features/learning_support/models/support_level.dart'
     as _i30;
-import 'package:school_data_hub_server/src/generated/pupil_data/pupil_objects/communication/public_media_auth.dart'
+import 'package:school_data_hub_server/src/generated/_features/school_lists/models/school_list.dart'
     as _i31;
-import 'package:school_data_hub_server/src/generated/learning_support/support_level.dart'
+import 'package:school_data_hub_server/src/generated/_features/school_lists/models/pupil_entry.dart'
     as _i32;
-import 'package:school_data_hub_server/src/generated/school_list/school_list.dart'
+import 'package:school_data_hub_server/src/generated/_features/schoolday/models/school_semester.dart'
     as _i33;
-import 'package:school_data_hub_server/src/generated/school_list/pupil_entry.dart'
+import 'package:school_data_hub_server/src/generated/_features/schoolday/models/schoolday.dart'
     as _i34;
-import 'package:school_data_hub_server/src/generated/schoolday/school_semester.dart'
+import 'package:school_data_hub_server/src/generated/_features/schoolday_events/models/schoolday_event.dart'
     as _i35;
-import 'package:school_data_hub_server/src/generated/schoolday/schoolday.dart'
+import 'package:school_data_hub_server/src/generated/_features/schoolday_events/models/schoolday_event_type.dart'
     as _i36;
-import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event.dart'
-    as _i37;
-import 'package:school_data_hub_server/src/generated/schoolday/schoolday_event/schoolday_event_type.dart'
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i37;
+import 'package:school_data_hub_server/src/generated/_features/user/models/user_device.dart'
     as _i38;
+import 'package:school_data_hub_server/src/generated/_features/user/models/device_info.dart'
+    as _i39;
+import 'package:school_data_hub_server/src/generated/_features/workbooks/models/pupil_workbook.dart'
+    as _i40;
+import 'package:school_data_hub_server/src/generated/_features/workbooks/models/workbook.dart'
+    as _i41;
+import 'dart:typed_data' as _i42;
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -167,8 +176,6 @@ class TestEndpoints {
 
   late final _MissedClassEndpoint missedClass;
 
-  late final _AuthEndpoint auth;
-
   late final _AuthorizationEndpoint authorization;
 
   late final _PupilAuthorizationEndpoint pupilAuthorization;
@@ -183,9 +190,11 @@ class TestEndpoints {
 
   late final _PupilBookLendingEndpoint pupilBookLending;
 
-  late final _FilesEndpoint files;
+  late final _CompetenceCheckEndpoint competenceCheck;
 
   late final _CompetenceEndpoint competence;
+
+  late final _LearningSupportPlanEndpoint learningSupportPlan;
 
   late final _SupportCategoryEndpoint supportCategory;
 
@@ -201,7 +210,15 @@ class TestEndpoints {
 
   late final _SchooldayEventEndpoint schooldayEvent;
 
+  late final _AuthEndpoint auth;
+
   late final _UserEndpoint user;
+
+  late final _PupilWorkbooksEndpoint pupilWorkbooks;
+
+  late final _WorkbooksEndpoint workbooks;
+
+  late final _FilesEndpoint files;
 }
 
 class _InternalTestEndpoints extends TestEndpoints
@@ -216,10 +233,6 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
     missedClass = _MissedClassEndpoint(
-      endpoints,
-      serializationManager,
-    );
-    auth = _AuthEndpoint(
       endpoints,
       serializationManager,
     );
@@ -251,11 +264,15 @@ class _InternalTestEndpoints extends TestEndpoints
       endpoints,
       serializationManager,
     );
-    files = _FilesEndpoint(
+    competenceCheck = _CompetenceCheckEndpoint(
       endpoints,
       serializationManager,
     );
     competence = _CompetenceEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    learningSupportPlan = _LearningSupportPlanEndpoint(
       endpoints,
       serializationManager,
     );
@@ -287,7 +304,23 @@ class _InternalTestEndpoints extends TestEndpoints
       endpoints,
       serializationManager,
     );
+    auth = _AuthEndpoint(
+      endpoints,
+      serializationManager,
+    );
     user = _UserEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    pupilWorkbooks = _PupilWorkbooksEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    workbooks = _WorkbooksEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    files = _FilesEndpoint(
       endpoints,
       serializationManager,
     );
@@ -745,122 +778,6 @@ class _MissedClassEndpoint {
   }
 }
 
-class _AuthEndpoint {
-  _AuthEndpoint(
-    this._endpointDispatch,
-    this._serializationManager,
-  );
-
-  final _i2.EndpointDispatch _endpointDispatch;
-
-  final _i2.SerializationManager _serializationManager;
-
-  _i3.Future<
-          ({_i9.DeviceInfo? deviceInfo, _i10.AuthenticationResponse response})>
-      login(
-    _i1.TestSessionBuilder sessionBuilder,
-    String email,
-    String password,
-    _i9.DeviceInfo deviceInfo,
-  ) async {
-    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
-      var _localUniqueSession =
-          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'auth',
-        method: 'login',
-      );
-      try {
-        var _localCallContext = await _endpointDispatch.getMethodCallContext(
-          createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'auth',
-          methodName: 'login',
-          parameters: _i1.testObjectToJson({
-            'email': email,
-            'password': password,
-            'deviceInfo': deviceInfo,
-          }),
-          serializationManager: _serializationManager,
-        );
-        var _localReturnValue = await _localCallContext.method
-            .call(
-              _localUniqueSession,
-              _localCallContext.arguments,
-            )
-            .then((record) => _i11.Protocol().deserialize<
-                ({
-                  _i9.DeviceInfo? deviceInfo,
-                  _i10.AuthenticationResponse response
-                })>(record));
-        return _localReturnValue;
-      } finally {
-        await _localUniqueSession.close();
-      }
-    });
-  }
-
-  _i3.Future<bool> verifyPassword(
-    _i1.TestSessionBuilder sessionBuilder,
-    int userId,
-    String password,
-  ) async {
-    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
-      var _localUniqueSession =
-          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'auth',
-        method: 'verifyPassword',
-      );
-      try {
-        var _localCallContext = await _endpointDispatch.getMethodCallContext(
-          createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'auth',
-          methodName: 'verifyPassword',
-          parameters: _i1.testObjectToJson({
-            'userId': userId,
-            'password': password,
-          }),
-          serializationManager: _serializationManager,
-        );
-        var _localReturnValue = await (_localCallContext.method.call(
-          _localUniqueSession,
-          _localCallContext.arguments,
-        ) as _i3.Future<bool>);
-        return _localReturnValue;
-      } finally {
-        await _localUniqueSession.close();
-      }
-    });
-  }
-
-  _i3.Future<bool> logOut(
-    _i1.TestSessionBuilder sessionBuilder,
-    String keyId,
-  ) async {
-    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
-      var _localUniqueSession =
-          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'auth',
-        method: 'logOut',
-      );
-      try {
-        var _localCallContext = await _endpointDispatch.getMethodCallContext(
-          createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'auth',
-          methodName: 'logOut',
-          parameters: _i1.testObjectToJson({'keyId': keyId}),
-          serializationManager: _serializationManager,
-        );
-        var _localReturnValue = await (_localCallContext.method.call(
-          _localUniqueSession,
-          _localCallContext.arguments,
-        ) as _i3.Future<bool>);
-        return _localReturnValue;
-      } finally {
-        await _localUniqueSession.close();
-      }
-    });
-  }
-}
-
 class _AuthorizationEndpoint {
   _AuthorizationEndpoint(
     this._endpointDispatch,
@@ -871,7 +788,7 @@ class _AuthorizationEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<List<_i12.Authorization>> fetchAuthorizations(
+  _i3.Future<List<_i9.Authorization>> fetchAuthorizations(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -890,7 +807,7 @@ class _AuthorizationEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i12.Authorization>>);
+        ) as _i3.Future<List<_i9.Authorization>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -898,7 +815,7 @@ class _AuthorizationEndpoint {
     });
   }
 
-  _i3.Future<_i12.Authorization?> fetchAuthorizationById(
+  _i3.Future<_i9.Authorization?> fetchAuthorizationById(
     _i1.TestSessionBuilder sessionBuilder,
     int id,
   ) async {
@@ -919,7 +836,7 @@ class _AuthorizationEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i12.Authorization?>);
+        ) as _i3.Future<_i9.Authorization?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -927,7 +844,7 @@ class _AuthorizationEndpoint {
     });
   }
 
-  _i3.Future<_i12.Authorization> postAuthorizationWithPupils(
+  _i3.Future<_i9.Authorization> postAuthorizationWithPupils(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
     String description,
@@ -956,7 +873,7 @@ class _AuthorizationEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i12.Authorization>);
+        ) as _i3.Future<_i9.Authorization>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -964,12 +881,12 @@ class _AuthorizationEndpoint {
     });
   }
 
-  _i3.Future<_i12.Authorization> updateAuthorization(
+  _i3.Future<_i9.Authorization> updateAuthorization(
     _i1.TestSessionBuilder sessionBuilder,
     int authId,
     String? name,
     String? description,
-    ({_i13.MemberOperation operation, List<int> pupilIds})? updateMembers,
+    ({_i10.MemberOperation operation, List<int> pupilIds})? updateMembers,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -993,7 +910,7 @@ class _AuthorizationEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i12.Authorization>);
+        ) as _i3.Future<_i9.Authorization>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1041,9 +958,9 @@ class _PupilAuthorizationEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i14.PupilAuthorization> updatePupilAuthorization(
+  _i3.Future<_i12.PupilAuthorization> updatePupilAuthorization(
     _i1.TestSessionBuilder sessionBuilder,
-    _i14.PupilAuthorization authorization,
+    _i12.PupilAuthorization authorization,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1062,7 +979,7 @@ class _PupilAuthorizationEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i14.PupilAuthorization>);
+        ) as _i3.Future<_i12.PupilAuthorization>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1070,7 +987,7 @@ class _PupilAuthorizationEndpoint {
     });
   }
 
-  _i3.Future<_i14.PupilAuthorization> addFileToPupilAuthorization(
+  _i3.Future<_i12.PupilAuthorization> addFileToPupilAuthorization(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilAuthId,
     String filePath,
@@ -1097,7 +1014,7 @@ class _PupilAuthorizationEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i14.PupilAuthorization>);
+        ) as _i3.Future<_i12.PupilAuthorization>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1105,7 +1022,7 @@ class _PupilAuthorizationEndpoint {
     });
   }
 
-  _i3.Future<_i14.PupilAuthorization> removeFileFromPupilAuthorization(
+  _i3.Future<_i12.PupilAuthorization> removeFileFromPupilAuthorization(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilAuthId,
   ) async {
@@ -1126,7 +1043,7 @@ class _PupilAuthorizationEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i14.PupilAuthorization>);
+        ) as _i3.Future<_i12.PupilAuthorization>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1145,9 +1062,9 @@ class _BookTagsEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i15.BookTag> postBookTag(
+  _i3.Future<_i13.BookTag> postBookTag(
     _i1.TestSessionBuilder sessionBuilder,
-    _i15.BookTag bookTag,
+    _i13.BookTag bookTag,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1166,7 +1083,7 @@ class _BookTagsEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i15.BookTag>);
+        ) as _i3.Future<_i13.BookTag>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1174,7 +1091,7 @@ class _BookTagsEndpoint {
     });
   }
 
-  _i3.Future<List<_i15.BookTag>> fetchBookTags(
+  _i3.Future<List<_i13.BookTag>> fetchBookTags(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1193,7 +1110,7 @@ class _BookTagsEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i15.BookTag>>);
+        ) as _i3.Future<List<_i13.BookTag>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1201,9 +1118,9 @@ class _BookTagsEndpoint {
     });
   }
 
-  _i3.Future<_i15.BookTag> updateBookTag(
+  _i3.Future<_i13.BookTag> updateBookTag(
     _i1.TestSessionBuilder sessionBuilder,
-    _i15.BookTag bookTag,
+    _i13.BookTag bookTag,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1222,7 +1139,7 @@ class _BookTagsEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i15.BookTag>);
+        ) as _i3.Future<_i13.BookTag>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1232,7 +1149,7 @@ class _BookTagsEndpoint {
 
   _i3.Future<bool> deleteBookTag(
     _i1.TestSessionBuilder sessionBuilder,
-    _i15.BookTag bookTag,
+    _i13.BookTag bookTag,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1270,9 +1187,9 @@ class _BooksEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i16.Book> postBook(
+  _i3.Future<_i14.Book> postBook(
     _i1.TestSessionBuilder sessionBuilder,
-    _i16.Book book,
+    _i14.Book book,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1291,7 +1208,7 @@ class _BooksEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i16.Book>);
+        ) as _i3.Future<_i14.Book>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1299,7 +1216,7 @@ class _BooksEndpoint {
     });
   }
 
-  _i3.Future<List<_i16.Book>> fetchBooks(
+  _i3.Future<List<_i14.Book>> fetchBooks(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1318,7 +1235,7 @@ class _BooksEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i16.Book>>);
+        ) as _i3.Future<List<_i14.Book>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1326,7 +1243,7 @@ class _BooksEndpoint {
     });
   }
 
-  _i3.Future<_i16.Book?> fetchBookByIsbn(
+  _i3.Future<_i14.Book?> fetchBookByIsbn(
     _i1.TestSessionBuilder sessionBuilder,
     int isbn,
   ) async {
@@ -1347,7 +1264,7 @@ class _BooksEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i16.Book?>);
+        ) as _i3.Future<_i14.Book?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1355,9 +1272,9 @@ class _BooksEndpoint {
     });
   }
 
-  _i3.Future<_i16.Book> updateBook(
+  _i3.Future<_i14.Book> updateBook(
     _i1.TestSessionBuilder sessionBuilder,
-    _i16.Book book,
+    _i14.Book book,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1376,7 +1293,7 @@ class _BooksEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i16.Book>);
+        ) as _i3.Future<_i14.Book>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1384,10 +1301,10 @@ class _BooksEndpoint {
     });
   }
 
-  _i3.Future<_i16.Book> updateBookTags(
+  _i3.Future<_i14.Book> updateBookTags(
     _i1.TestSessionBuilder sessionBuilder,
-    _i16.Book book,
-    List<_i15.BookTag> tags,
+    _i14.Book book,
+    List<_i13.BookTag> tags,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1409,7 +1326,7 @@ class _BooksEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i16.Book>);
+        ) as _i3.Future<_i14.Book>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1457,9 +1374,9 @@ class _LibraryBookLocationsEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i17.LibraryBookLocation> postLibraryBookLocation(
+  _i3.Future<_i15.LibraryBookLocation> postLibraryBookLocation(
     _i1.TestSessionBuilder sessionBuilder,
-    _i17.LibraryBookLocation libraryBookLocation,
+    _i15.LibraryBookLocation libraryBookLocation,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1479,7 +1396,7 @@ class _LibraryBookLocationsEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i17.LibraryBookLocation>);
+        ) as _i3.Future<_i15.LibraryBookLocation>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1487,7 +1404,7 @@ class _LibraryBookLocationsEndpoint {
     });
   }
 
-  _i3.Future<List<_i17.LibraryBookLocation>> fetchLibraryBookLocations(
+  _i3.Future<List<_i15.LibraryBookLocation>> fetchLibraryBookLocations(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1506,7 +1423,7 @@ class _LibraryBookLocationsEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i17.LibraryBookLocation>>);
+        ) as _i3.Future<List<_i15.LibraryBookLocation>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1514,9 +1431,9 @@ class _LibraryBookLocationsEndpoint {
     });
   }
 
-  _i3.Future<_i17.LibraryBookLocation> updateLibraryBookLocation(
+  _i3.Future<_i15.LibraryBookLocation> updateLibraryBookLocation(
     _i1.TestSessionBuilder sessionBuilder,
-    _i17.LibraryBookLocation libraryBookLocation,
+    _i15.LibraryBookLocation libraryBookLocation,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1536,7 +1453,7 @@ class _LibraryBookLocationsEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i17.LibraryBookLocation>);
+        ) as _i3.Future<_i15.LibraryBookLocation>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1546,7 +1463,7 @@ class _LibraryBookLocationsEndpoint {
 
   _i3.Future<bool> deleteLibraryBookLocation(
     _i1.TestSessionBuilder sessionBuilder,
-    _i17.LibraryBookLocation location,
+    _i15.LibraryBookLocation location,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1584,11 +1501,11 @@ class _LibraryBooksEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i18.LibraryBook> postLibraryBook(
+  _i3.Future<_i16.LibraryBook> postLibraryBook(
     _i1.TestSessionBuilder sessionBuilder,
     int isbn,
     String libraryId,
-    _i17.LibraryBookLocation location,
+    _i15.LibraryBookLocation location,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1611,7 +1528,7 @@ class _LibraryBooksEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i18.LibraryBook>);
+        ) as _i3.Future<_i16.LibraryBook>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1619,7 +1536,7 @@ class _LibraryBooksEndpoint {
     });
   }
 
-  _i3.Future<List<_i18.LibraryBook>> fetchLibraryBooks(
+  _i3.Future<List<_i16.LibraryBook>> fetchLibraryBooks(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1638,7 +1555,7 @@ class _LibraryBooksEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i18.LibraryBook>>);
+        ) as _i3.Future<List<_i16.LibraryBook>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1646,7 +1563,7 @@ class _LibraryBooksEndpoint {
     });
   }
 
-  _i3.Future<_i18.LibraryBook?> fetchLibraryBookByIsbn(
+  _i3.Future<_i16.LibraryBook?> fetchLibraryBookByIsbn(
     _i1.TestSessionBuilder sessionBuilder,
     int isbn,
   ) async {
@@ -1667,7 +1584,7 @@ class _LibraryBooksEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i18.LibraryBook?>);
+        ) as _i3.Future<_i16.LibraryBook?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1675,7 +1592,7 @@ class _LibraryBooksEndpoint {
     });
   }
 
-  _i3.Future<_i18.LibraryBook?> fetchLibraryBookByLibraryId(
+  _i3.Future<_i16.LibraryBook?> fetchLibraryBookByLibraryId(
     _i1.TestSessionBuilder sessionBuilder,
     String libraryId,
   ) async {
@@ -1696,7 +1613,7 @@ class _LibraryBooksEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i18.LibraryBook?>);
+        ) as _i3.Future<_i16.LibraryBook?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1704,9 +1621,9 @@ class _LibraryBooksEndpoint {
     });
   }
 
-  _i3.Future<List<_i18.LibraryBook>> fetchLibraryBooksMatchingQuery(
+  _i3.Future<List<_i16.LibraryBook>> fetchLibraryBooksMatchingQuery(
     _i1.TestSessionBuilder sessionBuilder,
-    _i19.LibraryBookQuery libraryBookQuery,
+    _i17.LibraryBookQuery libraryBookQuery,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1726,7 +1643,7 @@ class _LibraryBooksEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i18.LibraryBook>>);
+        ) as _i3.Future<List<_i16.LibraryBook>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1734,12 +1651,12 @@ class _LibraryBooksEndpoint {
     });
   }
 
-  _i3.Future<_i18.LibraryBook> updateLibraryBook(
+  _i3.Future<_i16.LibraryBook> updateLibraryBook(
     _i1.TestSessionBuilder sessionBuilder,
     int isbn,
     String libraryId,
     bool? available,
-    _i17.LibraryBookLocation? location,
+    _i15.LibraryBookLocation? location,
     String? title,
     String? author,
     String? description,
@@ -1771,7 +1688,7 @@ class _LibraryBooksEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i18.LibraryBook>);
+        ) as _i3.Future<_i16.LibraryBook>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1821,7 +1738,9 @@ class _PupilBookLendingEndpoint {
 
   _i3.Future<_i6.PupilData> postPupilBookLending(
     _i1.TestSessionBuilder sessionBuilder,
-    _i20.PupilBookLending pupilBookLending,
+    int pupilId,
+    String libraryId,
+    String lentBy,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1834,8 +1753,11 @@ class _PupilBookLendingEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'pupilBookLending',
           methodName: 'postPupilBookLending',
-          parameters:
-              _i1.testObjectToJson({'pupilBookLending': pupilBookLending}),
+          parameters: _i1.testObjectToJson({
+            'pupilId': pupilId,
+            'libraryId': libraryId,
+            'lentBy': lentBy,
+          }),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
@@ -1849,7 +1771,7 @@ class _PupilBookLendingEndpoint {
     });
   }
 
-  _i3.Future<List<_i20.PupilBookLending>> fetchPupilBookLendings(
+  _i3.Future<List<_i18.PupilBookLending>> fetchPupilBookLendings(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1868,7 +1790,7 @@ class _PupilBookLendingEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i20.PupilBookLending>>);
+        ) as _i3.Future<List<_i18.PupilBookLending>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1876,7 +1798,7 @@ class _PupilBookLendingEndpoint {
     });
   }
 
-  _i3.Future<_i20.PupilBookLending?> fetchPupilBookLendingById(
+  _i3.Future<_i18.PupilBookLending?> fetchPupilBookLendingById(
     _i1.TestSessionBuilder sessionBuilder,
     int id,
   ) async {
@@ -1897,7 +1819,7 @@ class _PupilBookLendingEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i20.PupilBookLending?>);
+        ) as _i3.Future<_i18.PupilBookLending?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1907,7 +1829,7 @@ class _PupilBookLendingEndpoint {
 
   _i3.Future<_i6.PupilData> updatePupilBookLending(
     _i1.TestSessionBuilder sessionBuilder,
-    _i20.PupilBookLending pupilBookLending,
+    _i18.PupilBookLending pupilBookLending,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1965,8 +1887,8 @@ class _PupilBookLendingEndpoint {
   }
 }
 
-class _FilesEndpoint {
-  _FilesEndpoint(
+class _CompetenceCheckEndpoint {
+  _CompetenceCheckEndpoint(
     this._endpointDispatch,
     this._serializationManager,
   );
@@ -1975,123 +1897,38 @@ class _FilesEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<String?> getUploadDescription(
-    _i1.TestSessionBuilder sessionBuilder,
-    String storageId,
-    String path,
-  ) async {
+  _i3.Future<_i6.PupilData> postCompetenceCheck(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required int competenceId,
+    required int pupilId,
+    required int score,
+    required double valueFactor,
+    required String createdBy,
+  }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'files',
-        method: 'getUploadDescription',
+        endpoint: 'competenceCheck',
+        method: 'postCompetenceCheck',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'files',
-          methodName: 'getUploadDescription',
+          endpointPath: 'competenceCheck',
+          methodName: 'postCompetenceCheck',
           parameters: _i1.testObjectToJson({
-            'storageId': storageId,
-            'path': path,
+            'competenceId': competenceId,
+            'pupilId': pupilId,
+            'score': score,
+            'valueFactor': valueFactor,
+            'createdBy': createdBy,
           }),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<String?>);
-        return _localReturnValue;
-      } finally {
-        await _localUniqueSession.close();
-      }
-    });
-  }
-
-  _i3.Future<bool> verifyUpload(
-    _i1.TestSessionBuilder sessionBuilder,
-    String storageId,
-    String path,
-  ) async {
-    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
-      var _localUniqueSession =
-          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'files',
-        method: 'verifyUpload',
-      );
-      try {
-        var _localCallContext = await _endpointDispatch.getMethodCallContext(
-          createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'files',
-          methodName: 'verifyUpload',
-          parameters: _i1.testObjectToJson({
-            'storageId': storageId,
-            'path': path,
-          }),
-          serializationManager: _serializationManager,
-        );
-        var _localReturnValue = await (_localCallContext.method.call(
-          _localUniqueSession,
-          _localCallContext.arguments,
-        ) as _i3.Future<bool>);
-        return _localReturnValue;
-      } finally {
-        await _localUniqueSession.close();
-      }
-    });
-  }
-
-  _i3.Future<_i21.ByteData?> getImage(
-    _i1.TestSessionBuilder sessionBuilder,
-    String documentId,
-  ) async {
-    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
-      var _localUniqueSession =
-          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'files',
-        method: 'getImage',
-      );
-      try {
-        var _localCallContext = await _endpointDispatch.getMethodCallContext(
-          createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'files',
-          methodName: 'getImage',
-          parameters: _i1.testObjectToJson({'documentId': documentId}),
-          serializationManager: _serializationManager,
-        );
-        var _localReturnValue = await (_localCallContext.method.call(
-          _localUniqueSession,
-          _localCallContext.arguments,
-        ) as _i3.Future<_i21.ByteData?>);
-        return _localReturnValue;
-      } finally {
-        await _localUniqueSession.close();
-      }
-    });
-  }
-
-  _i3.Future<_i21.ByteData?> getUnencryptedImage(
-    _i1.TestSessionBuilder sessionBuilder,
-    String path,
-  ) async {
-    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
-      var _localUniqueSession =
-          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'files',
-        method: 'getUnencryptedImage',
-      );
-      try {
-        var _localCallContext = await _endpointDispatch.getMethodCallContext(
-          createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'files',
-          methodName: 'getUnencryptedImage',
-          parameters: _i1.testObjectToJson({'path': path}),
-          serializationManager: _serializationManager,
-        );
-        var _localReturnValue = await (_localCallContext.method.call(
-          _localUniqueSession,
-          _localCallContext.arguments,
-        ) as _i3.Future<_i21.ByteData?>);
+        ) as _i3.Future<_i6.PupilData>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -2110,9 +1947,9 @@ class _CompetenceEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<List<_i22.Competence>> importCompetencesFromJsonFile(
+  _i3.Future<List<_i19.Competence>> importCompetencesFromJsonFile(
     _i1.TestSessionBuilder sessionBuilder,
-    _i23.File jsonFile,
+    _i20.File jsonFile,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -2131,7 +1968,7 @@ class _CompetenceEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i22.Competence>>);
+        ) as _i3.Future<List<_i19.Competence>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -2139,7 +1976,7 @@ class _CompetenceEndpoint {
     });
   }
 
-  _i3.Future<_i22.Competence> postCompetence(
+  _i3.Future<_i19.Competence> postCompetence(
     _i1.TestSessionBuilder sessionBuilder, {
     int? parentCompetence,
     required String name,
@@ -2168,7 +2005,7 @@ class _CompetenceEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i22.Competence>);
+        ) as _i3.Future<_i19.Competence>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -2176,7 +2013,7 @@ class _CompetenceEndpoint {
     });
   }
 
-  _i3.Future<List<_i22.Competence>> getAllCompetences(
+  _i3.Future<List<_i19.Competence>> getAllCompetences(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -2195,7 +2032,7 @@ class _CompetenceEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i22.Competence>>);
+        ) as _i3.Future<List<_i19.Competence>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -2203,9 +2040,9 @@ class _CompetenceEndpoint {
     });
   }
 
-  _i3.Future<_i22.Competence> updateCompetence(
+  _i3.Future<_i19.Competence> updateCompetence(
     _i1.TestSessionBuilder sessionBuilder,
-    _i22.Competence competence,
+    _i19.Competence competence,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -2224,7 +2061,7 @@ class _CompetenceEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i22.Competence>);
+        ) as _i3.Future<_i19.Competence>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -2262,8 +2099,8 @@ class _CompetenceEndpoint {
   }
 }
 
-class _SupportCategoryEndpoint {
-  _SupportCategoryEndpoint(
+class _LearningSupportPlanEndpoint {
+  _LearningSupportPlanEndpoint(
     this._endpointDispatch,
     this._serializationManager,
   );
@@ -2272,26 +2109,26 @@ class _SupportCategoryEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<List<_i24.SupportCategory>> fetchSupportCategories(
+  _i3.Future<List<_i21.LearningSupportPlan>> fetchLearningSupportPlans(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'supportCategory',
-        method: 'fetchSupportCategories',
+        endpoint: 'learningSupportPlan',
+        method: 'fetchLearningSupportPlans',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'supportCategory',
-          methodName: 'fetchSupportCategories',
+          endpointPath: 'learningSupportPlan',
+          methodName: 'fetchLearningSupportPlans',
           parameters: _i1.testObjectToJson({}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i24.SupportCategory>>);
+        ) as _i3.Future<List<_i21.LearningSupportPlan>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -2299,51 +2136,22 @@ class _SupportCategoryEndpoint {
     });
   }
 
-  _i3.Future<List<_i24.SupportCategory>> importSupportCategoriesFromJsonFile(
+  _i3.Future<bool> createLearningSupportPlan(
     _i1.TestSessionBuilder sessionBuilder,
-    String jsonFilePath,
+    _i21.LearningSupportPlan plan,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'supportCategory',
-        method: 'importSupportCategoriesFromJsonFile',
+        endpoint: 'learningSupportPlan',
+        method: 'createLearningSupportPlan',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'supportCategory',
-          methodName: 'importSupportCategoriesFromJsonFile',
-          parameters: _i1.testObjectToJson({'jsonFilePath': jsonFilePath}),
-          serializationManager: _serializationManager,
-        );
-        var _localReturnValue = await (_localCallContext.method.call(
-          _localUniqueSession,
-          _localCallContext.arguments,
-        ) as _i3.Future<List<_i24.SupportCategory>>);
-        return _localReturnValue;
-      } finally {
-        await _localUniqueSession.close();
-      }
-    });
-  }
-
-  _i3.Future<bool> createSupportCategory(
-    _i1.TestSessionBuilder sessionBuilder,
-    _i24.SupportCategory category,
-  ) async {
-    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
-      var _localUniqueSession =
-          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'supportCategory',
-        method: 'createSupportCategory',
-      );
-      try {
-        var _localCallContext = await _endpointDispatch.getMethodCallContext(
-          createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'supportCategory',
-          methodName: 'createSupportCategory',
-          parameters: _i1.testObjectToJson({'category': category}),
+          endpointPath: 'learningSupportPlan',
+          methodName: 'createLearningSupportPlan',
+          parameters: _i1.testObjectToJson({'plan': plan}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
@@ -2357,22 +2165,22 @@ class _SupportCategoryEndpoint {
     });
   }
 
-  _i3.Future<bool> updateSupportCategory(
+  _i3.Future<bool> updateLearningSupportPlan(
     _i1.TestSessionBuilder sessionBuilder,
-    _i24.SupportCategory category,
+    _i21.LearningSupportPlan plan,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'supportCategory',
-        method: 'updateSupportCategory',
+        endpoint: 'learningSupportPlan',
+        method: 'updateLearningSupportPlan',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'supportCategory',
-          methodName: 'updateSupportCategory',
-          parameters: _i1.testObjectToJson({'category': category}),
+          endpointPath: 'learningSupportPlan',
+          methodName: 'updateLearningSupportPlan',
+          parameters: _i1.testObjectToJson({'plan': plan}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
@@ -2386,22 +2194,22 @@ class _SupportCategoryEndpoint {
     });
   }
 
-  _i3.Future<bool> deleteSupportCategory(
+  _i3.Future<bool> deleteLearningSupportPlan(
     _i1.TestSessionBuilder sessionBuilder,
-    _i24.SupportCategory category,
+    _i21.LearningSupportPlan plan,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'supportCategory',
-        method: 'deleteSupportCategory',
+        endpoint: 'learningSupportPlan',
+        method: 'deleteLearningSupportPlan',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'supportCategory',
-          methodName: 'deleteSupportCategory',
-          parameters: _i1.testObjectToJson({'category': category}),
+          endpointPath: 'learningSupportPlan',
+          methodName: 'deleteLearningSupportPlan',
+          parameters: _i1.testObjectToJson({'plan': plan}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
@@ -2419,6 +2227,7 @@ class _SupportCategoryEndpoint {
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
     int supportCategoryId,
+    int learningSupportPlanId,
     int status,
     String comment,
     String createdBy,
@@ -2426,17 +2235,18 @@ class _SupportCategoryEndpoint {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'supportCategory',
+        endpoint: 'learningSupportPlan',
         method: 'postSupportCategoryStatus',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'supportCategory',
+          endpointPath: 'learningSupportPlan',
           methodName: 'postSupportCategoryStatus',
           parameters: _i1.testObjectToJson({
             'pupilId': pupilId,
             'supportCategoryId': supportCategoryId,
+            'learningSupportPlanId': learningSupportPlanId,
             'status': status,
             'comment': comment,
             'createdBy': createdBy,
@@ -2454,20 +2264,20 @@ class _SupportCategoryEndpoint {
     });
   }
 
-  _i3.Future<List<_i25.SupportCategoryStatus>> fetchSupportCategoryStatus(
+  _i3.Future<List<_i22.SupportCategoryStatus>> fetchSupportCategoryStatus(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'supportCategory',
+        endpoint: 'learningSupportPlan',
         method: 'fetchSupportCategoryStatus',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'supportCategory',
+          endpointPath: 'learningSupportPlan',
           methodName: 'fetchSupportCategoryStatus',
           parameters: _i1.testObjectToJson({'pupilId': pupilId}),
           serializationManager: _serializationManager,
@@ -2475,7 +2285,7 @@ class _SupportCategoryEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i25.SupportCategoryStatus>>);
+        ) as _i3.Future<List<_i22.SupportCategoryStatus>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -2483,7 +2293,7 @@ class _SupportCategoryEndpoint {
     });
   }
 
-  _i3.Future<List<_i25.SupportCategoryStatus>>
+  _i3.Future<List<_i22.SupportCategoryStatus>>
       fetchSupportCategoryStatusFromPupil(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
@@ -2491,13 +2301,13 @@ class _SupportCategoryEndpoint {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'supportCategory',
+        endpoint: 'learningSupportPlan',
         method: 'fetchSupportCategoryStatusFromPupil',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'supportCategory',
+          endpointPath: 'learningSupportPlan',
           methodName: 'fetchSupportCategoryStatusFromPupil',
           parameters: _i1.testObjectToJson({'pupilId': pupilId}),
           serializationManager: _serializationManager,
@@ -2505,7 +2315,7 @@ class _SupportCategoryEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i25.SupportCategoryStatus>>);
+        ) as _i3.Future<List<_i22.SupportCategoryStatus>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -2513,7 +2323,7 @@ class _SupportCategoryEndpoint {
     });
   }
 
-  _i3.Future<_i25.SupportCategoryStatus> updateCategoryStatus(
+  _i3.Future<_i22.SupportCategoryStatus> updateCategoryStatus(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
     int supportCategoryId,
@@ -2525,13 +2335,13 @@ class _SupportCategoryEndpoint {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'supportCategory',
+        endpoint: 'learningSupportPlan',
         method: 'updateCategoryStatus',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'supportCategory',
+          endpointPath: 'learningSupportPlan',
           methodName: 'updateCategoryStatus',
           parameters: _i1.testObjectToJson({
             'pupilId': pupilId,
@@ -2546,7 +2356,7 @@ class _SupportCategoryEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i25.SupportCategoryStatus>);
+        ) as _i3.Future<_i22.SupportCategoryStatus>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -2562,13 +2372,13 @@ class _SupportCategoryEndpoint {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'supportCategory',
+        endpoint: 'learningSupportPlan',
         method: 'deleteSupportCategoryStatus',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'supportCategory',
+          endpointPath: 'learningSupportPlan',
           methodName: 'deleteSupportCategoryStatus',
           parameters: _i1.testObjectToJson({
             'pupilId': pupilId,
@@ -2598,13 +2408,13 @@ class _SupportCategoryEndpoint {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'supportCategory',
+        endpoint: 'learningSupportPlan',
         method: 'postCategoryGoal',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'supportCategory',
+          endpointPath: 'learningSupportPlan',
           methodName: 'postCategoryGoal',
           parameters: _i1.testObjectToJson({
             'pupilId': pupilId,
@@ -2619,6 +2429,160 @@ class _SupportCategoryEndpoint {
           _localUniqueSession,
           _localCallContext.arguments,
         ) as _i3.Future<_i6.PupilData>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
+class _SupportCategoryEndpoint {
+  _SupportCategoryEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<List<_i23.SupportCategory>> fetchSupportCategories(
+      _i1.TestSessionBuilder sessionBuilder) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'supportCategory',
+        method: 'fetchSupportCategories',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'supportCategory',
+          methodName: 'fetchSupportCategories',
+          parameters: _i1.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<List<_i23.SupportCategory>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<List<_i23.SupportCategory>> importSupportCategoriesFromJsonFile(
+    _i1.TestSessionBuilder sessionBuilder,
+    String jsonFilePath,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'supportCategory',
+        method: 'importSupportCategoriesFromJsonFile',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'supportCategory',
+          methodName: 'importSupportCategoriesFromJsonFile',
+          parameters: _i1.testObjectToJson({'jsonFilePath': jsonFilePath}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<List<_i23.SupportCategory>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<bool> createSupportCategory(
+    _i1.TestSessionBuilder sessionBuilder,
+    _i23.SupportCategory category,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'supportCategory',
+        method: 'createSupportCategory',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'supportCategory',
+          methodName: 'createSupportCategory',
+          parameters: _i1.testObjectToJson({'category': category}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<bool>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<bool> updateSupportCategory(
+    _i1.TestSessionBuilder sessionBuilder,
+    _i23.SupportCategory category,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'supportCategory',
+        method: 'updateSupportCategory',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'supportCategory',
+          methodName: 'updateSupportCategory',
+          parameters: _i1.testObjectToJson({'category': category}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<bool>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<bool> deleteSupportCategory(
+    _i1.TestSessionBuilder sessionBuilder,
+    _i23.SupportCategory category,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'supportCategory',
+        method: 'deleteSupportCategory',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'supportCategory',
+          methodName: 'deleteSupportCategory',
+          parameters: _i1.testObjectToJson({'category': category}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<bool>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -2726,7 +2690,7 @@ class _PupilEndpoint {
   _i3.Future<_i6.PupilData> deletePupilDocument(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
-    _i26.PupilDocumentType documentType,
+    _i24.PupilDocumentType documentType,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -2865,7 +2829,7 @@ class _PupilUpdateEndpoint {
   _i3.Future<_i6.PupilData> updateCommunicationSkills(
     _i1.TestSessionBuilder sessionBuilder, {
     required int pupilId,
-    required _i27.CommunicationSkills? communicationSkills,
+    required _i25.CommunicationSkills? communicationSkills,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -2898,7 +2862,7 @@ class _PupilUpdateEndpoint {
   _i3.Future<_i6.PupilData> updateTutorInfo(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
-    _i28.TutorInfo? tutorInfo,
+    _i26.TutorInfo? tutorInfo,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -2930,7 +2894,7 @@ class _PupilUpdateEndpoint {
 
   _i3.Future<List<_i6.PupilData>> updateSiblingsTutorInfo(
     _i1.TestSessionBuilder sessionBuilder,
-    _i29.SiblingsTutorInfo siblingsTutorInfo,
+    _i27.SiblingsTutorInfo siblingsTutorInfo,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -2963,7 +2927,7 @@ class _PupilUpdateEndpoint {
     int pupilId,
     String filePath,
     String createdBy,
-    _i26.PupilDocumentType documentType,
+    _i24.PupilDocumentType documentType,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -3070,7 +3034,7 @@ class _PupilUpdateEndpoint {
   _i3.Future<_i6.PupilData> updatePreSchoolMedicalStatus(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
-    _i30.PreSchoolMedicalStatus preSchoolMedicalStatus,
+    _i28.PreSchoolMedicalStatus preSchoolMedicalStatus,
     String updatedBy,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -3105,7 +3069,7 @@ class _PupilUpdateEndpoint {
   _i3.Future<_i6.PupilData> updatePublicMediaAuth(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
-    _i31.PublicMediaAuth publicMediaAuth,
+    _i29.PublicMediaAuth publicMediaAuth,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -3137,7 +3101,7 @@ class _PupilUpdateEndpoint {
 
   _i3.Future<_i6.PupilData> updateSupportLevel(
     _i1.TestSessionBuilder sessionBuilder,
-    _i32.SupportLevel supportLevel,
+    _i30.SupportLevel supportLevel,
     int pupilId,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -3167,6 +3131,40 @@ class _PupilUpdateEndpoint {
       }
     });
   }
+
+  _i3.Future<_i6.PupilData> updateSchoolyearHeldBackDate(
+    _i1.TestSessionBuilder sessionBuilder,
+    int pupilId,
+    ({DateTime? value}) schoolyearHeldBackDate,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'pupilUpdate',
+        method: 'updateSchoolyearHeldBackDate',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'pupilUpdate',
+          methodName: 'updateSchoolyearHeldBackDate',
+          parameters: _i1.testObjectToJson({
+            'pupilId': pupilId,
+            'schoolyearHeldBackDate':
+                _i11.mapRecordToJson(schoolyearHeldBackDate),
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i6.PupilData>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
 }
 
 class _SchoolListEndpoint {
@@ -3179,7 +3177,7 @@ class _SchoolListEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<List<_i33.SchoolList>> fetchSchoolLists(
+  _i3.Future<List<_i31.SchoolList>> fetchSchoolLists(
     _i1.TestSessionBuilder sessionBuilder,
     String userName,
   ) async {
@@ -3200,7 +3198,7 @@ class _SchoolListEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i33.SchoolList>>);
+        ) as _i3.Future<List<_i31.SchoolList>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3208,7 +3206,7 @@ class _SchoolListEndpoint {
     });
   }
 
-  _i3.Future<_i33.SchoolList> postSchoolList(
+  _i3.Future<_i31.SchoolList> postSchoolList(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
     String description,
@@ -3239,7 +3237,7 @@ class _SchoolListEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i33.SchoolList>);
+        ) as _i3.Future<_i31.SchoolList>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3247,13 +3245,13 @@ class _SchoolListEndpoint {
     });
   }
 
-  _i3.Future<_i33.SchoolList> updateSchoolList(
+  _i3.Future<_i31.SchoolList> updateSchoolList(
     _i1.TestSessionBuilder sessionBuilder,
     int listId,
     String? name,
     String? description,
     bool? public,
-    ({_i13.MemberOperation operation, List<int> pupilIds})? updateMembers,
+    ({_i10.MemberOperation operation, List<int> pupilIds})? updateMembers,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -3278,7 +3276,7 @@ class _SchoolListEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i33.SchoolList>);
+        ) as _i3.Future<_i31.SchoolList>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3315,9 +3313,9 @@ class _SchoolListEndpoint {
     });
   }
 
-  _i3.Future<_i34.PupilListEntry> updatePupilListEntry(
+  _i3.Future<_i32.PupilListEntry> updatePupilListEntry(
     _i1.TestSessionBuilder sessionBuilder,
-    _i34.PupilListEntry entry,
+    _i32.PupilListEntry entry,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -3336,7 +3334,7 @@ class _SchoolListEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i34.PupilListEntry>);
+        ) as _i3.Future<_i32.PupilListEntry>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3355,7 +3353,7 @@ class _SchooldayAdminEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i35.SchoolSemester> createSchoolSemester(
+  _i3.Future<_i33.SchoolSemester> createSchoolSemester(
     _i1.TestSessionBuilder sessionBuilder,
     DateTime startDate,
     DateTime endDate,
@@ -3388,7 +3386,7 @@ class _SchooldayAdminEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i35.SchoolSemester>);
+        ) as _i3.Future<_i33.SchoolSemester>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3396,7 +3394,7 @@ class _SchooldayAdminEndpoint {
     });
   }
 
-  _i3.Future<List<_i35.SchoolSemester>> getAllSchoolSemesters(
+  _i3.Future<List<_i33.SchoolSemester>> getAllSchoolSemesters(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -3415,7 +3413,7 @@ class _SchooldayAdminEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i35.SchoolSemester>>);
+        ) as _i3.Future<List<_i33.SchoolSemester>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3423,7 +3421,7 @@ class _SchooldayAdminEndpoint {
     });
   }
 
-  _i3.Future<_i35.SchoolSemester?> getCurrentSchoolSemester(
+  _i3.Future<_i33.SchoolSemester?> getCurrentSchoolSemester(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -3442,7 +3440,7 @@ class _SchooldayAdminEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i35.SchoolSemester?>);
+        ) as _i3.Future<_i33.SchoolSemester?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3452,7 +3450,7 @@ class _SchooldayAdminEndpoint {
 
   _i3.Future<bool> updateSchoolSemester(
     _i1.TestSessionBuilder sessionBuilder,
-    _i35.SchoolSemester schoolSemester,
+    _i33.SchoolSemester schoolSemester,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -3481,7 +3479,7 @@ class _SchooldayAdminEndpoint {
 
   _i3.Future<bool> deleteSchoolSemester(
     _i1.TestSessionBuilder sessionBuilder,
-    _i35.SchoolSemester semester,
+    _i33.SchoolSemester semester,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -3508,7 +3506,7 @@ class _SchooldayAdminEndpoint {
     });
   }
 
-  _i3.Future<_i36.Schoolday?> createSchoolday(
+  _i3.Future<_i34.Schoolday?> createSchoolday(
     _i1.TestSessionBuilder sessionBuilder,
     DateTime date,
   ) async {
@@ -3529,7 +3527,7 @@ class _SchooldayAdminEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i36.Schoolday?>);
+        ) as _i3.Future<_i34.Schoolday?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3537,7 +3535,7 @@ class _SchooldayAdminEndpoint {
     });
   }
 
-  _i3.Future<List<_i36.Schoolday>> createSchooldays(
+  _i3.Future<List<_i34.Schoolday>> createSchooldays(
     _i1.TestSessionBuilder sessionBuilder,
     List<DateTime> dates,
   ) async {
@@ -3558,7 +3556,7 @@ class _SchooldayAdminEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i36.Schoolday>>);
+        ) as _i3.Future<List<_i34.Schoolday>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3597,7 +3595,7 @@ class _SchooldayAdminEndpoint {
 
   _i3.Future<bool> updateSchoolday(
     _i1.TestSessionBuilder sessionBuilder,
-    _i36.Schoolday schoolday,
+    _i34.Schoolday schoolday,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -3635,7 +3633,7 @@ class _SchooldayEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<List<_i35.SchoolSemester>> getSchoolSemesters(
+  _i3.Future<List<_i33.SchoolSemester>> getSchoolSemesters(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -3654,7 +3652,7 @@ class _SchooldayEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i35.SchoolSemester>>);
+        ) as _i3.Future<List<_i33.SchoolSemester>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3662,7 +3660,7 @@ class _SchooldayEndpoint {
     });
   }
 
-  _i3.Future<List<_i36.Schoolday>> getSchooldays(
+  _i3.Future<List<_i34.Schoolday>> getSchooldays(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -3681,7 +3679,7 @@ class _SchooldayEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i36.Schoolday>>);
+        ) as _i3.Future<List<_i34.Schoolday>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3700,7 +3698,7 @@ class _SchooldayEventEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<List<_i37.SchooldayEvent>> fetchSchooldayEvents(
+  _i3.Future<List<_i35.SchooldayEvent>> fetchSchooldayEvents(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -3719,7 +3717,7 @@ class _SchooldayEventEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i37.SchooldayEvent>>);
+        ) as _i3.Future<List<_i35.SchooldayEvent>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3727,11 +3725,11 @@ class _SchooldayEventEndpoint {
     });
   }
 
-  _i3.Future<_i37.SchooldayEvent> createSchooldayEvent(
+  _i3.Future<_i35.SchooldayEvent> createSchooldayEvent(
     _i1.TestSessionBuilder sessionBuilder, {
     required int pupilId,
     required int schooldayId,
-    required _i38.SchooldayEventType type,
+    required _i36.SchooldayEventType type,
     required String reason,
     required String createdBy,
   }) async {
@@ -3758,7 +3756,7 @@ class _SchooldayEventEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i37.SchooldayEvent>);
+        ) as _i3.Future<_i35.SchooldayEvent>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3766,9 +3764,9 @@ class _SchooldayEventEndpoint {
     });
   }
 
-  _i3.Future<_i37.SchooldayEvent> updateSchooldayEvent(
+  _i3.Future<_i35.SchooldayEvent> updateSchooldayEvent(
     _i1.TestSessionBuilder sessionBuilder,
-    _i37.SchooldayEvent schooldayEvent,
+    _i35.SchooldayEvent schooldayEvent,
     bool changedProcessedToFalse,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -3791,7 +3789,7 @@ class _SchooldayEventEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i37.SchooldayEvent>);
+        ) as _i3.Future<_i35.SchooldayEvent>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3829,7 +3827,7 @@ class _SchooldayEventEndpoint {
     });
   }
 
-  _i3.Future<_i37.SchooldayEvent> updateSchooldayEventFile(
+  _i3.Future<_i35.SchooldayEvent> updateSchooldayEventFile(
     _i1.TestSessionBuilder sessionBuilder,
     int schooldayEventId,
     String filePath,
@@ -3858,7 +3856,7 @@ class _SchooldayEventEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i37.SchooldayEvent>);
+        ) as _i3.Future<_i35.SchooldayEvent>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3866,7 +3864,7 @@ class _SchooldayEventEndpoint {
     });
   }
 
-  _i3.Future<_i37.SchooldayEvent> deleteSchooldayEventFile(
+  _i3.Future<_i35.SchooldayEvent> deleteSchooldayEventFile(
     _i1.TestSessionBuilder sessionBuilder,
     int schooldayEventId,
     bool isProcessed,
@@ -3891,7 +3889,123 @@ class _SchooldayEventEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i37.SchooldayEvent>);
+        ) as _i3.Future<_i35.SchooldayEvent>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
+class _AuthEndpoint {
+  _AuthEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<
+          ({_i37.AuthenticationResponse response, _i38.UserDevice? userDevice})>
+      login(
+    _i1.TestSessionBuilder sessionBuilder,
+    String email,
+    String password,
+    _i39.DeviceInfo deviceInfo,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'auth',
+        method: 'login',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'auth',
+          methodName: 'login',
+          parameters: _i1.testObjectToJson({
+            'email': email,
+            'password': password,
+            'deviceInfo': deviceInfo,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await _localCallContext.method
+            .call(
+              _localUniqueSession,
+              _localCallContext.arguments,
+            )
+            .then((record) => _i11.Protocol().deserialize<
+                ({
+                  _i37.AuthenticationResponse response,
+                  _i38.UserDevice? userDevice
+                })>(record));
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<bool> verifyPassword(
+    _i1.TestSessionBuilder sessionBuilder,
+    int userId,
+    String password,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'auth',
+        method: 'verifyPassword',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'auth',
+          methodName: 'verifyPassword',
+          parameters: _i1.testObjectToJson({
+            'userId': userId,
+            'password': password,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<bool>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<bool> logOut(
+    _i1.TestSessionBuilder sessionBuilder,
+    String keyId,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'auth',
+        method: 'logOut',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'auth',
+          methodName: 'logOut',
+          parameters: _i1.testObjectToJson({'keyId': keyId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<bool>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3990,6 +4104,456 @@ class _UserEndpoint {
           _localUniqueSession,
           _localCallContext.arguments,
         ) as _i3.Future<bool>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
+class _PupilWorkbooksEndpoint {
+  _PupilWorkbooksEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<_i40.PupilWorkbook> postPupilWorkbook(
+    _i1.TestSessionBuilder sessionBuilder,
+    int isbn,
+    int pupilId,
+    String createdBy,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'pupilWorkbooks',
+        method: 'postPupilWorkbook',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'pupilWorkbooks',
+          methodName: 'postPupilWorkbook',
+          parameters: _i1.testObjectToJson({
+            'isbn': isbn,
+            'pupilId': pupilId,
+            'createdBy': createdBy,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i40.PupilWorkbook>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<List<_i40.PupilWorkbook>> fetchPupilWorkbooks(
+      _i1.TestSessionBuilder sessionBuilder) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'pupilWorkbooks',
+        method: 'fetchPupilWorkbooks',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'pupilWorkbooks',
+          methodName: 'fetchPupilWorkbooks',
+          parameters: _i1.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<List<_i40.PupilWorkbook>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<List<_i40.PupilWorkbook>> fetchPupilWorkbooksFromPupil(
+    _i1.TestSessionBuilder sessionBuilder,
+    int pupilId,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'pupilWorkbooks',
+        method: 'fetchPupilWorkbooksFromPupil',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'pupilWorkbooks',
+          methodName: 'fetchPupilWorkbooksFromPupil',
+          parameters: _i1.testObjectToJson({'pupilId': pupilId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<List<_i40.PupilWorkbook>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i40.PupilWorkbook> updatePupilWorkbook(
+    _i1.TestSessionBuilder sessionBuilder,
+    _i40.PupilWorkbook pupilWorkbook,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'pupilWorkbooks',
+        method: 'updatePupilWorkbook',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'pupilWorkbooks',
+          methodName: 'updatePupilWorkbook',
+          parameters: _i1.testObjectToJson({'pupilWorkbook': pupilWorkbook}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i40.PupilWorkbook>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<bool> deletePupilWorkbook(
+    _i1.TestSessionBuilder sessionBuilder,
+    int pupilWorkbookId,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'pupilWorkbooks',
+        method: 'deletePupilWorkbook',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'pupilWorkbooks',
+          methodName: 'deletePupilWorkbook',
+          parameters:
+              _i1.testObjectToJson({'pupilWorkbookId': pupilWorkbookId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<bool>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
+class _WorkbooksEndpoint {
+  _WorkbooksEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<_i41.Workbook> postWorkbook(
+    _i1.TestSessionBuilder sessionBuilder,
+    _i41.Workbook workbook,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'workbooks',
+        method: 'postWorkbook',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'workbooks',
+          methodName: 'postWorkbook',
+          parameters: _i1.testObjectToJson({'workbook': workbook}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i41.Workbook>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i41.Workbook> fetchWorkbookByIsbn(
+    _i1.TestSessionBuilder sessionBuilder,
+    int isbn,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'workbooks',
+        method: 'fetchWorkbookByIsbn',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'workbooks',
+          methodName: 'fetchWorkbookByIsbn',
+          parameters: _i1.testObjectToJson({'isbn': isbn}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i41.Workbook>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<List<_i41.Workbook>> fetchWorkbooks(
+      _i1.TestSessionBuilder sessionBuilder) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'workbooks',
+        method: 'fetchWorkbooks',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'workbooks',
+          methodName: 'fetchWorkbooks',
+          parameters: _i1.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<List<_i41.Workbook>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i41.Workbook> updateWorkbook(
+    _i1.TestSessionBuilder sessionBuilder,
+    _i41.Workbook workbook,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'workbooks',
+        method: 'updateWorkbook',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'workbooks',
+          methodName: 'updateWorkbook',
+          parameters: _i1.testObjectToJson({'workbook': workbook}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i41.Workbook>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<bool> deleteWorkbook(
+    _i1.TestSessionBuilder sessionBuilder,
+    int id,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'workbooks',
+        method: 'deleteWorkbook',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'workbooks',
+          methodName: 'deleteWorkbook',
+          parameters: _i1.testObjectToJson({'id': id}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<bool>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
+class _FilesEndpoint {
+  _FilesEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<String?> getUploadDescription(
+    _i1.TestSessionBuilder sessionBuilder,
+    String storageId,
+    String path,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'files',
+        method: 'getUploadDescription',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'files',
+          methodName: 'getUploadDescription',
+          parameters: _i1.testObjectToJson({
+            'storageId': storageId,
+            'path': path,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<String?>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<bool> verifyUpload(
+    _i1.TestSessionBuilder sessionBuilder,
+    String storageId,
+    String path,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'files',
+        method: 'verifyUpload',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'files',
+          methodName: 'verifyUpload',
+          parameters: _i1.testObjectToJson({
+            'storageId': storageId,
+            'path': path,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<bool>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i42.ByteData?> getImage(
+    _i1.TestSessionBuilder sessionBuilder,
+    String documentId,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'files',
+        method: 'getImage',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'files',
+          methodName: 'getImage',
+          parameters: _i1.testObjectToJson({'documentId': documentId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i42.ByteData?>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i42.ByteData?> getUnencryptedImage(
+    _i1.TestSessionBuilder sessionBuilder,
+    String path,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'files',
+        method: 'getUnencryptedImage',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'files',
+          methodName: 'getUnencryptedImage',
+          parameters: _i1.testObjectToJson({'path': path}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i42.ByteData?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

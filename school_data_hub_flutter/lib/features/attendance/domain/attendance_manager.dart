@@ -6,7 +6,7 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/attendance/data/attendance_api_service.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/models/pupil_missed_classes_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -20,7 +20,7 @@ final _schooldayManager = di<SchooldayManager>();
 
 final _notificationService = di<NotificationService>();
 
-final _sessionManager = di<ServerpodSessionManager>();
+final _sessionManager = di<HubSessionManager>();
 
 final _log = Logger('AttendanceManager');
 

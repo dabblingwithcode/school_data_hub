@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _learningSupportManager = di<LearningSupportManager>();
+final _learningSupportManager = di<SupportCategoryManager>();
 
 class SupportCategoryStatusBatches extends StatelessWidget {
   final PupilProxy pupil;

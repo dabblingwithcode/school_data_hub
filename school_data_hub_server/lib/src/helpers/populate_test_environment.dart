@@ -3,10 +3,10 @@ import 'dart:io';
 
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
-import 'package:school_data_hub_server/src/endpoints/admin/admin_endpoint.dart';
-import 'package:school_data_hub_server/src/endpoints/learning/competence_endpoint.dart';
-import 'package:school_data_hub_server/src/endpoints/learning_support/support_category_endpoint.dart';
-import 'package:school_data_hub_server/src/endpoints/schoolday_admin_endpoint.dart';
+import 'package:school_data_hub_server/src/_features/admin/endpoints/admin_endpoint.dart';
+import 'package:school_data_hub_server/src/_features/learning/endpoints/competence_endpoint.dart';
+import 'package:school_data_hub_server/src/_features/learning_support/endpoints/support_category_endpoint.dart';
+import 'package:school_data_hub_server/src/_features/schoolday/endpoints/schoolday_admin_endpoint.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;

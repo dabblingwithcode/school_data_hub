@@ -1,0 +1,7 @@
+enum: PreSchoolMedicalStatus
+serialized: byName
+values:
+  - notAvailable
+  - ok
+  - supportAreas
+  - checkSpecialSupport

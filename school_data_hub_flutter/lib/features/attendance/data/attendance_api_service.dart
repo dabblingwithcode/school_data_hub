@@ -2,13 +2,13 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('AttendanceApiService');
 final _client = di<Client>();
-final _session = di<ServerpodSessionManager>();
+final _session = di<HubSessionManager>();
 final _schooldayManager = di<SchooldayManager>();
 final _notificationService = di<NotificationService>();
 

@@ -1,0 +1,20 @@
+class: MissedClass
+table: missed_class
+fields:
+  missedType: MissedType
+  unexcused: bool
+  contacted: ContactedType
+  returned: bool
+  returnedAt: DateTime?
+  writtenExcuse: bool
+  minutesLate: int?
+  createdBy: String
+  modifiedBy: String?
+  comment: String?
+  schoolday: Schoolday?, relation(name=missed_class_schoolday, onDelete=Cascade)
+  pupil: PupilData?, relation(name=missed_class_pupil, onDelete=Cascade)
+indexes:
+  schoolday_pupil_data_idx:
+    fields: schooldayId, pupilId
+    unique: true
+  

@@ -8,12 +8,12 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_image_picker.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _pupilIdentityManager = di<PupilIdentityManager>();
-final _sessionManager = di<ServerpodSessionManager>();
+final _sessionManager = di<HubSessionManager>();
 
 class ScanToolsPage extends WatchingWidget {
   const ScanToolsPage({super.key});
@@ -64,7 +64,8 @@ class ScanToolsPage extends WatchingWidget {
             child: Column(
               children: [
                 const Spacer(),
-                (Platform.isWindows || Platform.isMacOS) && _sessionManager.isAdmin
+                (Platform.isWindows || Platform.isMacOS) &&
+                        _sessionManager.isAdmin
                     ? ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(

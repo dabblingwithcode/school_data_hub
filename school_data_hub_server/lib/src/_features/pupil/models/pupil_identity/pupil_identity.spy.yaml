@@ -1,0 +1,20 @@
+class: PupilIdentity
+fields:
+  id: int
+  firstName: String
+  lastName: String
+  group: String
+  groupTutor: String
+  schoolGrade: SchoolGrade
+  specialNeeds: String?
+  gender: String
+  language: String
+  family: String?
+  birthday: DateTime
+  migrationSupportEnds: DateTime?
+  pupilSince: DateTime
+  afterSchoolCare: bool
+  religion: String?
+  religionLessonsSince: DateTime?
+  familyLanguageLessonsSince: DateTime?
+  leavingDate: DateTime?

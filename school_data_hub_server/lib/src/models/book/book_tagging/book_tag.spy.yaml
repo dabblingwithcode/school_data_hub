@@ -1,6 +1,0 @@
-## book tag model
-class: BookTag
-table: book_tag
-fields:
-   name: String
-   books: List<BookTagging>?, relation(name=book_tag_tagging)

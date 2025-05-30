@@ -6,14 +6,14 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/data/authorization_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _notificationService = di<NotificationService>();
 final _authorizationApiService = AuthorizationApiService();
-final _serverpodSessionManager = di<ServerpodSessionManager>();
+final _hubSessionManager = di<HubSessionManager>();
 final _cacheManager = di<DefaultCacheManager>();
 
 class AuthorizationManager with ChangeNotifier {
@@ -76,7 +76,7 @@ class AuthorizationManager with ChangeNotifier {
     String description,
     List<int> pupilIds,
   ) async {
-    final createdBy = _serverpodSessionManager.userName;
+    final createdBy = _hubSessionManager.userName;
     final Authorization authorization = await _authorizationApiService
         .postAuthorizationWithPupils(name, description, createdBy!, pupilIds);
 
@@ -150,7 +150,7 @@ class AuthorizationManager with ChangeNotifier {
     int pupilAuthId,
   ) async {
     final encryptedFile = await customEncrypter.encryptFile(file);
-    final createdBy = _serverpodSessionManager.userName;
+    final createdBy = _hubSessionManager.userName;
     final pupilAuth = await _authorizationApiService
         .addFileToPupilAuthorization(pupilAuthId, encryptedFile, createdBy!);
     _updatePupilAuthInCollections(pupilAuth);

@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
@@ -18,7 +18,7 @@ import 'package:watch_it/watch_it.dart';
 
 final _pupilManager = di<PupilManager>();
 final _mainMenuBottomNavManager = di<BottomNavManager>();
-final _serverpodSessionManager = di<ServerpodSessionManager>();
+final _hubSessionManager = di<HubSessionManager>();
 final _notificationService = di<NotificationService>();
 final _schoolListManager = di<SchoolListManager>();
 
@@ -64,10 +64,10 @@ class SchoolListPupilEntryCard extends WatchingWidget {
                         ));
                       },
                       onLongPress: () async {
-                        if (!_serverpodSessionManager.isAdmin) {
+                        if (!_hubSessionManager.isAdmin) {
                           if (SchoolListHelper.listOwner(
                                   pupilEntry.schoolListId) !=
-                              _serverpodSessionManager.userName) {
+                              _hubSessionManager.userName) {
                             _notificationService.showSnackBar(
                                 NotificationType.error,
                                 'Löschen nicht möglich - keine Berechtigung!');

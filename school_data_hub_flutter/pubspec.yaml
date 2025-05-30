@@ -71,6 +71,7 @@ dependencies:
   dio: ^5.8.0+1
   serverpod_auth_client: ^2.6.0
   image_picker_platform_interface: ^2.10.1
+  isbn: ^1.0.4
 
 
 dev_dependencies:

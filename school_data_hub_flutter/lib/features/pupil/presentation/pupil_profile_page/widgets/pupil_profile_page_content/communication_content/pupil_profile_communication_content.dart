@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/paddings.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
@@ -15,7 +15,7 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profil
 import 'package:watch_it/watch_it.dart';
 
 final _pupilManager = di<PupilManager>();
-final _serverpodSessionManager = di<ServerpodSessionManager>();
+final _hubSessionManager = di<HubSessionManager>();
 
 class PupilProfileCommunicationContent extends WatchingWidget {
   final PupilProxy pupil;
@@ -104,7 +104,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
             onTap: () =>
                 languageDialog(context, pupil, CommunicationSubject.pupil),
             onLongPress: () async {
-              if (_serverpodSessionManager.isAdmin == false) {
+              if (_hubSessionManager.isAdmin == false) {
                 informationDialog(context, 'Keine Berechtigung',
                     'Diese Aktion ist nur für Admins verfügbar.');
                 return;
@@ -163,7 +163,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
             onTap: () =>
                 languageDialog(context, pupil, CommunicationSubject.tutor1),
             onLongPress: () async {
-              final isAdmin = _serverpodSessionManager.isAdmin;
+              final isAdmin = _hubSessionManager.isAdmin;
               if (!isAdmin) {
                 informationDialog(context, 'Keine Berechtigung',
                     'Diese Aktion ist nur für Admins verfügbar.');
@@ -226,7 +226,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                 pupilId: pupil.pupilId,
                 tutorInfo: tutorInfo != null
                     ? tutorInfo.copyWith(communicationTutor2: null)
-                    : TutorInfo(createdBy: _serverpodSessionManager.userName!)),
+                    : TutorInfo(createdBy: _hubSessionManager.userName!)),
             child: tutorInfo == null
                 ? const Text(
                     'kein Eintrag',

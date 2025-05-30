@@ -5,12 +5,12 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/new_book_page/new_book_controller.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _serverpodSessionManager = di<ServerpodSessionManager>();
+final _hubSessionManager = di<HubSessionManager>();
 
 class NewBookPage extends StatelessWidget {
   final NewBookController controller;
@@ -118,7 +118,7 @@ class NewBookPage extends StatelessWidget {
                                         .onChangedLocationDropDown(value!),
                                   ),
                                 ),
-                                if (_serverpodSessionManager.isAdmin) ...[
+                                if (_hubSessionManager.isAdmin) ...[
                                   const Gap(10),
                                   InkWell(
                                     onTap: () => controller.addLocation(),

@@ -1,0 +1,4 @@
+exception: MyException
+fields:
+  message: String
+ 

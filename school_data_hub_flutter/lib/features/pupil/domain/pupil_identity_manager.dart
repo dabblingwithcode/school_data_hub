@@ -15,7 +15,6 @@ import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/data/pupil_data_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_selector_filters.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_identity.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
@@ -50,7 +49,7 @@ class PupilIdentityManager {
   }
 
   Future<void> deleteAllPupilIdentities() async {
-    await LegacySecureStorage.delete(secureStorageKey);
+    await HubSecureStorage().remove(secureStorageKey);
     _pupilIdentities.clear();
 
     //- TODO: fix this
@@ -116,7 +115,8 @@ class PupilIdentityManager {
       if (data != '') {
         List<String> pupilIdentityValues = data.split(',');
         final newPupilIdentity =
-            PupilIdentityHelper.pupilIdentityFromString(pupilIdentityValues);
+            PupilIdentityHelper.decodePupilIdentityFromStringList(
+                pupilIdentityValues);
         // TODO: DonÄt forgert to create the attendance map entry for the new pupil
         // TODO: fix this
         if (!PupilProxy.groupFilters.any((filter) =>
@@ -159,8 +159,8 @@ class PupilIdentityManager {
     );
 
     final jsonPupilIdentitiesAsString = json.encode(jsonMap);
-    await LegacySecureStorage.write(
-        secureStorageKey, jsonPupilIdentitiesAsString);
+    await HubSecureStorage()
+        .setString(secureStorageKey, jsonPupilIdentitiesAsString);
     log.info(
         'Pupil identities written to secure storage with key $secureStorageKey');
   }
@@ -179,7 +179,8 @@ class PupilIdentityManager {
         List<String> pupilIdentityValues = data.split(',');
 
         PupilIdentity pupilIdentity =
-            PupilIdentityHelper.pupilIdentityFromString(pupilIdentityValues);
+            PupilIdentityHelper.decodePupilIdentityFromStringList(
+                pupilIdentityValues);
 
         importedPupilIdentityList.add(pupilIdentity);
 
@@ -202,18 +203,18 @@ class PupilIdentityManager {
     final textFile = File('temp.txt')
       ..writeAsStringSync(pupilListTxtFileContentForBackendUpdate);
 
-    final filePath = await ClientFileUpload.uploadFile(
+    final fileResponse = await ClientFileUpload.uploadFile(
       textFile,
       ServerStorageFolder.temp,
     );
-    if (filePath.success == false) {
+    if (fileResponse.success == false) {
       _notificationService.showSnackBar(
           NotificationType.error, 'Die Datei konnte nicht hochgeladen werden!');
       return;
     }
     final List<PupilData> updatedPupilDataRepository =
         await PupilDataApiService()
-            .updateBackendPupilsDatabase(filePath: filePath.path!);
+            .updateBackendPupilsDatabase(filePath: fileResponse.path!);
     for (PupilData pupil in updatedPupilDataRepository) {
       di<PupilManager>().updatePupilProxyWithPupilData(pupil);
     }
@@ -224,7 +225,7 @@ class PupilIdentityManager {
       _pupilIdentities[element.id] = element;
     }
 
-    await LegacySecureStorage.write(
+    await HubSecureStorage().setString(
         secureStorageKey, jsonEncode(_pupilIdentities.values.toList()));
 
     // TODO: fix this

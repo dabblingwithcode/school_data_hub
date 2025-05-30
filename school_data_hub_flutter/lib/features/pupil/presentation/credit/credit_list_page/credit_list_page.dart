@@ -4,7 +4,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
@@ -20,7 +20,7 @@ class CreditListPage extends WatchingWidget {
   Widget build(BuildContext context) {
     List<PupilProxy> pupils = watchValue((PupilsFilter x) => x.filteredPupils);
     int userCredit =
-        watchPropertyValue((ServerpodSessionManager x) => x.user)!.credit;
+        watchPropertyValue((HubSessionManager x) => x.user)!.credit;
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,

@@ -8,7 +8,7 @@ class SupportCategoryStatusProxy with ChangeNotifier {
     documents = supportCategoryStatus.documents ?? [];
   }
 
-  int get status => supportCategoryStatus.status;
+  int get status => supportCategoryStatus.score;
   String get comment => supportCategoryStatus.comment;
   String get createdBy => supportCategoryStatus.createdBy;
   DateTime get createdAt => supportCategoryStatus.createdAt;

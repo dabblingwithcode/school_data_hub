@@ -42,3 +42,10 @@ reset_mac: ## reset the server
 	docker compose down --volumes --remove-orphans
 	docker compose up --build --detach
 	dart run bin/main.dart --role maintenance --apply-migrations
+
+run: 
+	## run the server
+	dart run bin/main.dart --apply-migrations
+
+uml: ## generate UML diagram
+	dart run uml_for_serverpod --config=uml_config.yaml

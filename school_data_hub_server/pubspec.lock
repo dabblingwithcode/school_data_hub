@@ -453,50 +453,50 @@ packages:
     dependency: "direct main"
     description:
       name: serverpod
-      sha256: d945d23e0224172020e576237557e784c2a4c9f3c6911a1955b886ef500e8d6d
+      sha256: "25ac84bdc4150f08d1badfaac3e562518dd052305e76ae4bcfd5b5ea796ea484"
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.0"
+    version: "2.7.0"
   serverpod_auth_server:
     dependency: "direct main"
     description:
       name: serverpod_auth_server
-      sha256: aef16a053841e5b8c81ea97f402538833aa028870c4cb7ea7a785d7a77a89f98
+      sha256: a9d37334e6a84326fbb707067d5d2d8798dc07785a283ce5f82e9ab86d052b85
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.0"
+    version: "2.7.0"
   serverpod_lints:
     dependency: transitive
     description:
       name: serverpod_lints
-      sha256: "7dd1d8ca26733b53d25584e39922bc640db74bdf2ec81753043a7294bba9d34e"
+      sha256: "3fb3ef5cb760eef4164a9a7091df92e36a1bc73afaeed363685490b4a9eaffad"
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.0"
+    version: "2.7.0"
   serverpod_serialization:
     dependency: transitive
     description:
       name: serverpod_serialization
-      sha256: "721e7a708df865767be014d26b4f4dd639f448307471218d401995fdb5720be7"
+      sha256: "4f8881a527df8b931b5093bd31aeb0d1d13d1a0a72a3f0ccc0b24ebc77ada1fa"
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.0"
+    version: "2.7.0"
   serverpod_shared:
     dependency: transitive
     description:
       name: serverpod_shared
-      sha256: "660457449075e454c303aa9cdd6fc5b275a098cc87acce497568065e91ff3b5e"
+      sha256: "466f2a16206c35c19eee4b624dfb48244a9a7f2c5b7e73172461b2cc61f0ccde"
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.0"
+    version: "2.7.0"
   serverpod_test:
     dependency: "direct dev"
     description:
       name: serverpod_test
-      sha256: eee57085806afe4b8f460c0d4e4e2af827eca2a926beb9ec2ce510904b5a7dba
+      sha256: "9e90fa5d13611504cbcf8d402ab8b69360a03fd648e55232e466c92fd5af5046"
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.0"
+    version: "2.7.0"
   shelf:
     dependency: transitive
     description:
@@ -649,6 +649,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
+  uml_for_serverpod:
+    dependency: "direct main"
+    description:
+      path: "../../uml_for_serverpod"
+      relative: true
+    source: path
+    version: "0.0.4+1"
   unorm_dart:
     dependency: transitive
     description:

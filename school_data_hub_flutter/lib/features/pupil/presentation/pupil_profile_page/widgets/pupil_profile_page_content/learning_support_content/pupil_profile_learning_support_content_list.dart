@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_goals_list.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/preschool_revision_dialog.dart';
@@ -10,11 +9,8 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/w
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/support_category_statuses_list.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_helper_functions.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/support_level_history_expansion_tile.dart';
 import 'package:watch_it/watch_it.dart';
-
-final _pupilManager = di<PupilManager>();
 
 class PupilProfileLearningSupportContentList extends WatchingWidget {
   final PupilProxy pupil;
@@ -70,23 +66,24 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
         Row(
           children: [
             InkWell(
+              //- TODO: implement long text field dialog
               onTap: () async {
-                final newKindergardenValue = await longTextFieldDialog(
-                    title: 'Informationen zum Kindergartenbesuch',
-                    labelText: 'Kindergartenbesuch',
-                    initialValue: kindergarden ?? '',
-                    parentContext: context);
-                if (newKindergardenValue == null ||
-                    newKindergardenValue.isEmpty) {
-                  return;
-                }
-                await _pupilManager.updateStringProperty(
-                    pupilId: pupil.pupilId,
-                    property: 'kindergarden',
-                    value: newKindergardenValue);
+                //   final newKindergardenValue = await longTextFieldDialog(
+                //       title: 'Informationen zum Kindergartenbesuch',
+                //       labelText: 'Kindergartenbesuch',
+                //       initialValue: kindergarden ?? '',
+                //       parentContext: context);
+                //   if (newKindergardenValue == null ||
+                //       newKindergardenValue.isEmpty) {
+                //     return;
+                //   }
+                //   await _pupilManager.updateStringProperty(
+                //       pupilId: pupil.pupilId,
+                //       property: 'kindergarden',
+                //       value: newKindergardenValue);
               },
               child: Text(
-                pupil.kindergarden ?? 'kein Eintrag',
+                kindergarden?.name ?? 'kein Eintrag',
                 style: const TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,

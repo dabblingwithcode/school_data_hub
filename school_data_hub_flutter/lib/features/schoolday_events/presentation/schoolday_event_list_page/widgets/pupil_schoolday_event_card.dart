@@ -12,7 +12,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_d
 import 'package:school_data_hub_flutter/common/widgets/document_image.dart';
 import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/presentation/schoolday_event_list_page/widgets/dialogues/schoolday_event_type_dialog.dart';
@@ -20,7 +20,7 @@ import 'package:school_data_hub_flutter/features/schoolday_events/presentation/s
 import 'package:school_data_hub_flutter/features/schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_type_icon.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _serverpodSessionManager = di<ServerpodSessionManager>();
+final _hubSessionManager = di<HubSessionManager>();
 
 final _schooldayEventManager = di<SchooldayEventManager>();
 
@@ -35,7 +35,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isAuthorized = SessionHelper.isAuthorized(schooldayEvent.createdBy);
-    final isAdmin = _serverpodSessionManager.isAdmin;
+    final isAdmin = _hubSessionManager.isAdmin;
 
     return Card(
       color: !schooldayEvent.processed
@@ -382,7 +382,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                   ),
                           if (schooldayEvent.processedAt != null) const Gap(10),
                           if (schooldayEvent.processedAt != null)
-                            _serverpodSessionManager.isAdmin
+                            _hubSessionManager.isAdmin
                                 ? InkWell(
                                     onTap: () async {
                                       final DateTime? newDate =

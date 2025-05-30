@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
@@ -34,9 +34,8 @@ class PupilBookCard extends StatelessWidget {
       child: Card(
           child: InkWell(
         onLongPress: () async {
-          if (pupilBookLending.lentBy !=
-                  di<ServerpodSessionManager>().userName ||
-              !di<ServerpodSessionManager>().isAdmin) {
+          if (pupilBookLending.lentBy != di<HubSessionManager>().userName ||
+              !di<HubSessionManager>().isAdmin) {
             informationDialog(context, 'Keine Berechtigung',
                 'Ausleihen können nur von der eintragenden Person bearbeitet werden!');
             return;
@@ -207,7 +206,7 @@ class PupilBookCard extends StatelessWidget {
                                 message:
                                     'Buch "${book.title}" wirklich zurückgeben?');
                             if (result!) {
-                              di<PupilManager>().returnBook(
+                              di<PupilManager>().returnLibraryBook(
                                 pupilBookLending: pupilBookLending,
                               );
                             }

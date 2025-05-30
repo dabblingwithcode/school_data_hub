@@ -11,9 +11,12 @@ class PupilBookApiService {
   //- create pupil book lending
 
   Future<PupilData> postPupilBookLending(
-      {required int pupilId, required PupilBookLending bookLending}) async {
+      {required int pupilId,
+      required String libraryId,
+      required String lentBy}) async {
     final pupil = await ClientHelper.apiCall(
-      call: () => _client.pupilBookLending.postPupilBookLending(bookLending),
+      call: () => _client.pupilBookLending
+          .postPupilBookLending(pupilId, libraryId, lentBy),
       errorMessage: 'Fehler beim Erstellen des Leihvorgangs',
     );
     return pupil;

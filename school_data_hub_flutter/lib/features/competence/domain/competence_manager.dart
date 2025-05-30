@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/features/competence/data/competence_check_api_service.dart';
 import 'package:school_data_hub_flutter/features/competence/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/competence/domain/filters/competence_filter_manager.dart';
 import 'package:watch_it/watch_it.dart';
@@ -16,6 +17,8 @@ final _client = di<Client>();
 final _notificationService = di<NotificationService>();
 
 final _competenceFilterManager = di<CompetenceFilterManager>();
+
+final _competenceCheckApiService = CompetenceCheckApiService();
 
 class CompetenceManager {
   final _competences = ValueNotifier<List<Competence>>([]);
@@ -190,10 +193,10 @@ class CompetenceManager {
     //   comment: competenceComment,
     //   groupId: groupId,
     // );
-    //  di<PupilManager>().updatePupilProxyWithPupilData(updatedPupilData);
+    // di<PupilManager>().updatePupilProxyWithPupilData(updatedPupilData);
 
-    _notificationService.showSnackBar(
-        NotificationType.success, 'Kompetenzcheck erstellt');
+    // _notificationService.showSnackBar(
+    //     NotificationType.success, 'Kompetenzcheck erstellt');
 
     return;
   }

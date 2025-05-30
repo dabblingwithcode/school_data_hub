@@ -1,0 +1,10 @@
+class: SupportGoalCheck
+table: support_goal_check
+fields:
+  checkId: String
+  createdBy: String
+  createdAt: DateTime
+  score: int
+  comment: String
+  documents: List<HubDocument>?, relation
+  supportGoal: SupportGoal?, relation(onDelete=Cascade)

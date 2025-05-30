@@ -1,0 +1,10 @@
+class: SupportLevel
+table: support_level
+fields:
+  level: int
+  comment: String
+  createdAt: DateTime
+  createdBy: String
+  pupil: PupilData?, relation(name=support_level_pupil, onDelete=Cascade)
+  learningSupportPlans: List<LearningSupportPlan>?, relation(name=support_level_plans)
+ 

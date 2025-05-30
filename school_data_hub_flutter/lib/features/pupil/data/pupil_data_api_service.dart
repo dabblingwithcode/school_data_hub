@@ -5,11 +5,11 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _notificationService = di<NotificationService>();
-final _serverpodSessionManager = di<ServerpodSessionManager>();
+final _hubSessionManager = di<HubSessionManager>();
 final _client = di<Client>();
 final _log = Logger('PupilDataApiService');
 
@@ -73,8 +73,8 @@ class PupilDataApiService {
     String? comment,
   }) async {
     final updatedPupil = await ClientHelper.apiCall(
-      call: () => _client.pupilUpdate.updateCredit(
-          pupilId, credit, comment, _serverpodSessionManager.userName!),
+      call: () => _client.pupilUpdate
+          .updateCredit(pupilId, credit, comment, _hubSessionManager.userName!),
       errorMessage: 'Die Schüler konnten nicht aktualisiert werden',
     );
     return updatedPupil;
@@ -94,6 +94,15 @@ class PupilDataApiService {
     return updatedPupil;
   }
 
+  Future<PupilData> updateSchoolyearHeldBackDate(
+      {required int pupilId, required ({DateTime? value}) date}) async {
+    final updatedPupil = await ClientHelper.apiCall(
+      call: () =>
+          _client.pupilUpdate.updateSchoolyearHeldBackDate(pupilId, date),
+      errorMessage: 'Die Schüler konnten nicht aktualisiert werden',
+    );
+    return updatedPupil;
+  }
   // - tutor info
 
   Future<PupilData> updateTutorInfo({
@@ -153,8 +162,8 @@ class PupilDataApiService {
             ? ServerStorageFolder.avatars
             : ServerStorageFolder.documents);
     final updatedPupil = await ClientHelper.apiCall(
-      call: () => _client.pupilUpdate.updatePupilDocument(pupilId, result.path!,
-          _serverpodSessionManager.userName!, documentType),
+      call: () => _client.pupilUpdate.updatePupilDocument(
+          pupilId, result.path!, _hubSessionManager.userName!, documentType),
       errorMessage: 'Das Profilbild konnte nicht aktualisiert werden',
     );
     return updatedPupil;
@@ -177,7 +186,7 @@ class PupilDataApiService {
   Future<PupilData> resetPublicMediaAuth({required int pupilId}) async {
     final updatedPupil = await ClientHelper.apiCall(
       call: () => _client.pupil
-          .resetPublicMediaAuth(pupilId, _serverpodSessionManager.userName!),
+          .resetPublicMediaAuth(pupilId, _hubSessionManager.userName!),
       errorMessage:
           'Die Einwilligung für öffentliche Medien konnte nicht gelöscht werden',
     );

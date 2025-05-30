@@ -51,14 +51,14 @@ class CompetenceFilters extends WatchingWidget {
               },
             ),
             ThemedFilterChip(
-              label: 'S3',
+              label: 'K3',
               selected: valueS3,
               onSelected: (val) {
                 _competenceFilterManager.setFilter(CompetenceFilter.S3, val);
               },
             ),
             ThemedFilterChip(
-              label: 'S4',
+              label: 'K4',
               selected: valueS4,
               onSelected: (val) {
                 _competenceFilterManager.setFilter(CompetenceFilter.S4, val);

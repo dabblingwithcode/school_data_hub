@@ -1,0 +1,168 @@
+/* AUTOMATICALLY GENERATED CODE DO NOT MODIFY */
+/*   To generate run: "serverpod generate"    */
+
+// ignore_for_file: implementation_imports
+// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: public_member_api_docs
+// ignore_for_file: type_literal_in_constant_pattern
+// ignore_for_file: use_super_parameters
+
+// ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:serverpod_client/serverpod_client.dart' as _i1;
+import '../../../_features/school_lists/models/pupil_entry.dart' as _i2;
+
+abstract class SchoolList implements _i1.SerializableModel {
+  SchoolList._({
+    this.id,
+    required this.listId,
+    required this.archived,
+    required this.name,
+    required this.description,
+    required this.createdBy,
+    required this.public,
+    this.authorizedUsers,
+    this.pupilEntries,
+  });
+
+  factory SchoolList({
+    int? id,
+    required String listId,
+    required bool archived,
+    required String name,
+    required String description,
+    required String createdBy,
+    required bool public,
+    String? authorizedUsers,
+    List<_i2.PupilListEntry>? pupilEntries,
+  }) = _SchoolListImpl;
+
+  factory SchoolList.fromJson(Map<String, dynamic> jsonSerialization) {
+    return SchoolList(
+      id: jsonSerialization['id'] as int?,
+      listId: jsonSerialization['listId'] as String,
+      archived: jsonSerialization['archived'] as bool,
+      name: jsonSerialization['name'] as String,
+      description: jsonSerialization['description'] as String,
+      createdBy: jsonSerialization['createdBy'] as String,
+      public: jsonSerialization['public'] as bool,
+      authorizedUsers: jsonSerialization['authorizedUsers'] as String?,
+      pupilEntries: (jsonSerialization['pupilEntries'] as List?)
+          ?.map((e) => _i2.PupilListEntry.fromJson((e as Map<String, dynamic>)))
+          .toList(),
+    );
+  }
+
+  /// The database id, set if the object has been inserted into the
+  /// database or if it has been fetched from the database. Otherwise,
+  /// the id will be null.
+  int? id;
+
+  String listId;
+
+  bool archived;
+
+  String name;
+
+  String description;
+
+  String createdBy;
+
+  bool public;
+
+  String? authorizedUsers;
+
+  List<_i2.PupilListEntry>? pupilEntries;
+
+  /// Returns a shallow copy of this [SchoolList]
+  /// with some or all fields replaced by the given arguments.
+  @_i1.useResult
+  SchoolList copyWith({
+    int? id,
+    String? listId,
+    bool? archived,
+    String? name,
+    String? description,
+    String? createdBy,
+    bool? public,
+    String? authorizedUsers,
+    List<_i2.PupilListEntry>? pupilEntries,
+  });
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      if (id != null) 'id': id,
+      'listId': listId,
+      'archived': archived,
+      'name': name,
+      'description': description,
+      'createdBy': createdBy,
+      'public': public,
+      if (authorizedUsers != null) 'authorizedUsers': authorizedUsers,
+      if (pupilEntries != null)
+        'pupilEntries': pupilEntries?.toJson(valueToJson: (v) => v.toJson()),
+    };
+  }
+
+  @override
+  String toString() {
+    return _i1.SerializationManager.encode(this);
+  }
+}
+
+class _Undefined {}
+
+class _SchoolListImpl extends SchoolList {
+  _SchoolListImpl({
+    int? id,
+    required String listId,
+    required bool archived,
+    required String name,
+    required String description,
+    required String createdBy,
+    required bool public,
+    String? authorizedUsers,
+    List<_i2.PupilListEntry>? pupilEntries,
+  }) : super._(
+          id: id,
+          listId: listId,
+          archived: archived,
+          name: name,
+          description: description,
+          createdBy: createdBy,
+          public: public,
+          authorizedUsers: authorizedUsers,
+          pupilEntries: pupilEntries,
+        );
+
+  /// Returns a shallow copy of this [SchoolList]
+  /// with some or all fields replaced by the given arguments.
+  @_i1.useResult
+  @override
+  SchoolList copyWith({
+    Object? id = _Undefined,
+    String? listId,
+    bool? archived,
+    String? name,
+    String? description,
+    String? createdBy,
+    bool? public,
+    Object? authorizedUsers = _Undefined,
+    Object? pupilEntries = _Undefined,
+  }) {
+    return SchoolList(
+      id: id is int? ? id : this.id,
+      listId: listId ?? this.listId,
+      archived: archived ?? this.archived,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      createdBy: createdBy ?? this.createdBy,
+      public: public ?? this.public,
+      authorizedUsers:
+          authorizedUsers is String? ? authorizedUsers : this.authorizedUsers,
+      pupilEntries: pupilEntries is List<_i2.PupilListEntry>?
+          ? pupilEntries
+          : this.pupilEntries?.map((e0) => e0.copyWith()).toList(),
+    );
+  }
+}

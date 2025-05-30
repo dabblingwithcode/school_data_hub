@@ -120,10 +120,8 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
 
     // checks if any not yet migrated filters are active
 
-    final bool specificFiltersOn = di<PupilFilterManager>()
-            .pupilFilterState
-            .value
-            .values
+    final bool specificFiltersOn = _pupilFilterManager
+            .pupilFilterState.value.values
             .any((x) => x == true) ||
         _schooldayEventFilterManager.schooldayEventsFilterState.value.values
             .any((x) => x == true) ||
@@ -200,7 +198,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
       // if attendance filters are on, pass the pupil through the attendance filters
 
       if (di<FiltersStateManager>().getFilterState(FilterState.attendance)) {
-        if (!di<AttendancePupilFilterManager>()
+        if (!_attendancePupilFilterManager
             .isMatchedByAttendanceFilters(pupil)) {
           filtersOn = true;
           continue;
@@ -222,11 +220,9 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
 
       // after school care filters
 
-      if (di<PupilFilterManager>().pupilFilterState.value[PupilFilter.ogs]! &&
+      if (_pupilFilterManager.pupilFilterState.value[PupilFilter.ogs]! &&
               pupil.afterSchoolCare == null ||
-          di<PupilFilterManager>()
-                  .pupilFilterState
-                  .value[PupilFilter.notOgs]! &&
+          _pupilFilterManager.pupilFilterState.value[PupilFilter.notOgs]! &&
               pupil.afterSchoolCare != null) {
         filtersOn = true;
         continue;
@@ -254,9 +250,8 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
 
       // language support filters
 
-      if (di<PupilFilterManager>()
-              .pupilFilterState
-              .value[PupilFilter.migrationSupport]! &&
+      if (_pupilFilterManager
+              .pupilFilterState.value[PupilFilter.migrationSupport]! &&
           !PupilHelper.hasLanguageSupport(pupil.migrationSupportEnds)) {
         filtersOn = true;
         continue;

@@ -18,7 +18,7 @@ import 'package:watch_it/watch_it.dart';
 final _log = Logger('MatrixPolicyHelperFunctions');
 
 final _matrixPolicyManager = di<MatrixPolicyManager>();
-final _secureStorage = ServerpodSecureStorage();
+final _secureStorage = HubSecureStorage();
 final _envManager = di<EnvManager>();
 
 class MatrixPolicyHelper {

@@ -12,7 +12,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialo
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
 import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_helper.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
@@ -58,7 +58,7 @@ class BookCard extends WatchingWidget {
           surfaceTintColor: Colors.white,
           child: InkWell(
             onLongPress: () async {
-              if (!di<ServerpodSessionManager>().isAdmin) {
+              if (!di<HubSessionManager>().isAdmin) {
                 informationDialog(context, 'Keine Berechtigung',
                     'Bücher können nur von Admins bearbeitet werden!');
                 return;
@@ -81,7 +81,7 @@ class BookCard extends WatchingWidget {
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: InkWell(
-                      onLongPress: (di<ServerpodSessionManager>().isAdmin)
+                      onLongPress: (di<HubSessionManager>().isAdmin)
                           ? () {
                               // Navigator.of(context).push(MaterialPageRoute(
                               //   builder: (ctx) => NewBook(

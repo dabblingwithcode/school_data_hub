@@ -7,12 +7,12 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/document_image.dart';
 import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _serverpodSessionManager = di<ServerpodSessionManager>();
+final _hubSessionManager = di<HubSessionManager>();
 
 final _pupilManager = di<PupilManager>();
 
@@ -379,7 +379,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                     file, pupil, PupilDocumentType.publicMediaAuth);
               },
               onLongPress: () async {
-                if (_serverpodSessionManager.isAdmin != true) return;
+                if (_hubSessionManager.isAdmin != true) return;
                 if (publicMediaAuthDocumentId == null) return;
                 final bool? result = await confirmationDialog(
                     context: context,

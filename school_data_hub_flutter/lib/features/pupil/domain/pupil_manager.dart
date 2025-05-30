@@ -8,7 +8,7 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/data/pupil_book_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/data/pupil_data_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
@@ -21,7 +21,7 @@ final _log = Logger('PupilManager');
 final _notificationService = di<NotificationService>();
 final _cacheManager = di<DefaultCacheManager>();
 final _pupilIdentityManager = di<PupilIdentityManager>();
-final _serverpodSessionManager = di<ServerpodSessionManager>();
+final _hubSessionManager = di<HubSessionManager>();
 final _pupilDataApiService = PupilDataApiService();
 final _pupilBookApiService = PupilBookApiService();
 
@@ -73,7 +73,7 @@ class PupilManager extends ChangeNotifier {
     return pupils.map((pupil) => pupil.pupilId).toList();
   }
 
-  List<PupilProxy> pupilsNotListed(List<int> pupilIds) {
+  List<PupilProxy> getPupilsNotListed(List<int> pupilIds) {
     Map<int, PupilProxy> allPupilsMap =
         Map<int, PupilProxy>.of(_pupilIdPupilsMap);
     allPupilsMap.removeWhere((key, value) => pupilIds.contains(key));
@@ -466,17 +466,23 @@ class PupilManager extends ChangeNotifier {
     _pupilIdPupilsMap[pupilId]!.updatePupil(updatedPupil);
   }
 
-  Future<void> postPupilBookLending(
-      {required int pupilId, required int libraryBookId}) async {
-    final PupilBookLending pupilBookLending = PupilBookLending(
-      lendingId: const Uuid().v4(),
-      lentAt: DateTime.now().toUtc(),
-      lentBy: _serverpodSessionManager.userName!,
+  Future<void> updateSchoolyearHeldBackDate(
+      {required int pupilId, required ({DateTime? value}) date}) async {
+    final PupilData updatedPupil =
+        await _pupilDataApiService.updateSchoolyearHeldBackDate(
       pupilId: pupilId,
-      libraryBookId: libraryBookId,
+      date: date,
     );
-    final PupilData updatedPupil = await _pupilBookApiService
-        .postPupilBookLending(pupilId: pupilId, bookLending: pupilBookLending);
+    updatePupilProxyWithPupilData(updatedPupil);
+  }
+
+  Future<void> postPupilBookLending(
+      {required int pupilId, required String libraryId}) async {
+    final userName = _hubSessionManager.userName;
+
+    final PupilData updatedPupil =
+        await _pupilBookApiService.postPupilBookLending(
+            pupilId: pupilId, libraryId: libraryId, lentBy: userName!);
 
     _pupilIdPupilsMap[pupilId]!.updatePupil(updatedPupil);
 
@@ -491,10 +497,11 @@ class PupilManager extends ChangeNotifier {
     return;
   }
 
-  Future<void> returnBook({required PupilBookLending pupilBookLending}) async {
+  Future<void> returnLibraryBook(
+      {required PupilBookLending pupilBookLending}) async {
     final updatedBookLending = pupilBookLending.copyWith(
       returnedAt: DateTime.now().toUtc(),
-      receivedBy: _serverpodSessionManager.userName,
+      receivedBy: _hubSessionManager.userName,
     );
 
     final pupil = await _pupilBookApiService.updatePupilBookLending(

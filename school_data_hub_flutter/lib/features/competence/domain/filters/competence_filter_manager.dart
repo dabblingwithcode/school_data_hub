@@ -60,9 +60,9 @@ class CompetenceFilterManager {
             (activeFilters[CompetenceFilter.E2]! &&
                 !competence.level!.contains('E2')) ||
             (activeFilters[CompetenceFilter.S3]! &&
-                !competence.level!.contains('S3')) ||
+                !competence.level!.contains('K3')) ||
             (activeFilters[CompetenceFilter.S4]! &&
-                !competence.level!.contains('S4'))) {
+                !competence.level!.contains('K4'))) {
           continue;
         }
       }

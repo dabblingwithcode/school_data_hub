@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/common/theme/paddings.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_user_helpers.dart';
@@ -26,7 +26,7 @@ final _pupilManager = di<PupilManager>();
 
 final _matrixPolicyManager = di<MatrixPolicyManager>();
 
-final _serverpodSessionManager = di<ServerpodSessionManager>();
+final _hubSessionManager = di<HubSessionManager>();
 
 class PupilProfileInfosContent extends StatelessWidget {
   final PupilProxy pupil;
@@ -264,7 +264,7 @@ class PupilProfileInfosContent extends StatelessWidget {
                               .copyWith(parentsContact: parentsContact)
                           : TutorInfo(
                               parentsContact: parentsContact,
-                              createdBy: _serverpodSessionManager.userName!),
+                              createdBy: _hubSessionManager.userName!),
                     );
                   },
                   child: Text(pupil.tutorInfo?.parentsContact ?? 'keine Angabe',

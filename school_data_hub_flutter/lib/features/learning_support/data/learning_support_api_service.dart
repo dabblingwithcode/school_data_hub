@@ -22,12 +22,13 @@ class LearningSupportApiService {
   Future<PupilData> postSupportCategoryStatus(
       {required int pupilId,
       required int supportCategoryId,
+      required int learningSupportPlanId,
       required int status,
       required String comment,
       required String createdBy}) async {
     final response = await ClientHelper.apiCall(
-      call: () => _client.supportCategory.postSupportCategoryStatus(
-          pupilId, supportCategoryId, status, comment, createdBy),
+      call: () => _client.learningSupportPlan.postSupportCategoryStatus(pupilId,
+          supportCategoryId, learningSupportPlanId, status, comment, createdBy),
       errorMessage: 'Fehler beim Posten des Status',
     );
 
@@ -44,7 +45,7 @@ class LearningSupportApiService {
       String? createdBy,
       DateTime? createdAt) async {
     final response = await ClientHelper.apiCall(
-      call: () => _client.supportCategory.updateCategoryStatus(
+      call: () => _client.learningSupportPlan.updateCategoryStatus(
           pupilId, statusId, status, comment, createdBy, createdAt),
       errorMessage: 'Fehler beim Aktualisieren des Status',
     );
@@ -54,7 +55,7 @@ class LearningSupportApiService {
   Future<PupilData> deleteSupportCategoryStatus(
       int pupilId, int statusId) async {
     final pupil = await ClientHelper.apiCall(
-      call: () => _client.supportCategory
+      call: () => _client.learningSupportPlan
           .deleteSupportCategoryStatus(pupilId, statusId),
       errorMessage: 'Fehler beim Löschen des Status',
     );
@@ -73,7 +74,7 @@ class LearningSupportApiService {
       required String strategies,
       required String createdBy}) async {
     final updatedPupil = await ClientHelper.apiCall(
-      call: () => _client.supportCategory.postCategoryGoal(
+      call: () => _client.learningSupportPlan.postCategoryGoal(
           pupilId, supportCategoryId, description, strategies, createdBy),
     );
 

@@ -7,8 +7,8 @@ import 'package:school_data_hub_flutter/common/domain/filters/filters_state_mana
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/auth/hub_auth_key_manager.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_monitor.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/filters/attendance_pupil_filter.dart';
@@ -19,7 +19,8 @@ import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart'
 import 'package:school_data_hub_flutter/features/competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/competence/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_plan_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
@@ -33,6 +34,7 @@ import 'package:school_data_hub_flutter/features/school_lists/domain/school_list
 import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_manager.dart';
+import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('DiManager');
@@ -78,10 +80,10 @@ class DiManager {
       )..connectivityMonitor = di<ServerpodConnectivityMonitor>();
     }, dependsOn: [HubAuthKeyManager]);
 
-    di.registerSingletonAsync<ServerpodSessionManager>(() async {
+    di.registerSingletonAsync<HubSessionManager>(() async {
       // like described in the serverpod documentation
       // https://docs.serverpod.dev/concepts/authentication/setup#app-setup
-      final sessionManager = ServerpodSessionManager(
+      final sessionManager = HubSessionManager(
         caller: di<Client>().modules.auth,
       );
 
@@ -106,7 +108,7 @@ class DiManager {
   }
 
   /// These managers are initialized after the session manager authenticates
-  /// the session. it is called in the [ServerpodSessionManager] class after the session is authenticated.
+  /// the session. it is called in the [HubSessionManager] class after the session is authenticated.
   static Future<void> registerManagersDependingOnSession() async {
     _log.info('Registering managers depending on session');
     di.registerSingletonAsync<SchooldayManager>(() async {
@@ -119,15 +121,29 @@ class DiManager {
       return schooldayManager;
     });
 
-    di.registerSingletonAsync<LearningSupportManager>(() async {
-      final learningSupportManager = LearningSupportManager();
+    di.registerSingletonAsync<SupportCategoryManager>(() async {
+      final supportCategoryManager = SupportCategoryManager();
 
-      await learningSupportManager.init();
+      await supportCategoryManager.init();
 
-      _log.info('LearningSupportmanager initialized');
+      _log.info('SupportCategoryManager initialized');
 
-      return learningSupportManager;
+      return supportCategoryManager;
     });
+
+    di.registerSingletonAsync<PupilManager>(() async {
+      final pupilManager = PupilManager();
+
+      await pupilManager.init();
+
+      _log.info('PupilManager initialized');
+
+      return pupilManager;
+    }, dependsOn: [HubSessionManager]);
+
+    di.registerSingletonWithDependencies<LearningSupportPlanManager>(
+        () => LearningSupportPlanManager(),
+        dependsOn: [PupilManager, SchooldayManager, SupportCategoryManager]);
 
     di.registerSingletonAsync<BookManager>(() async {
       log('Registering BookManager');
@@ -137,6 +153,13 @@ class DiManager {
       return bookManager;
     }, dependsOn: []);
 
+    di.registerSingletonAsync<WorkbookManager>(() async {
+      log('Registering WorkbookManager');
+      final workbookManager = WorkbookManager();
+      await workbookManager.init();
+      log('WorkbookManager initialized');
+      return workbookManager;
+    }, dependsOn: [HubSessionManager]);
     di.registerSingletonAsync<CompetenceManager>(() async {
       final competenceManager = CompetenceManager();
 
@@ -157,7 +180,7 @@ class DiManager {
       await authorizationManager.init();
       log('AuthorizationManager initialized');
       return authorizationManager;
-    }, dependsOn: [ServerpodSessionManager]);
+    }, dependsOn: [HubSessionManager]);
 
     di.registerSingletonWithDependencies<PupilAuthorizationFilterManager>(
         () => PupilAuthorizationFilterManager(),
@@ -169,16 +192,6 @@ class DiManager {
     },
         dispose: (instance) => instance.dispose(),
         dependsOn: [AuthorizationManager]);
-
-    di.registerSingletonAsync<PupilManager>(() async {
-      final pupilManager = PupilManager();
-
-      await pupilManager.init();
-
-      _log.info('PupilManager initialized');
-
-      return pupilManager;
-    }, dependsOn: [ServerpodSessionManager]);
 
     di.registerSingletonWithDependencies<PupilFilterManager>(
         () => PupilFilterManager(),
@@ -213,7 +226,7 @@ class DiManager {
       await schoolListManager.init();
       _log.info('SchoolListManager initialized');
       return schoolListManager;
-    }, dependsOn: [ServerpodSessionManager]);
+    }, dependsOn: [HubSessionManager]);
 
     di.registerSingletonWithDependencies<SchoolListFilterManager>(() {
       final schoolListFilterManager = SchoolListFilterManager();
@@ -236,9 +249,9 @@ class DiManager {
 
   static Future<void> unregisterManagersDependingOnActiveEnv() async {
     // TODO: This needs to be updated
-    di<ServerpodSessionManager>().dispose();
-    await di.unregister<ServerpodSessionManager>();
-    _log.info('ServerpodSessionManager unregistered');
+    di<HubSessionManager>().dispose();
+    await di.unregister<HubSessionManager>();
+    _log.info('HubSessionManager unregistered');
     await di.unregister<HubAuthKeyManager>();
     _log.info('HubAuthKeyManager unregistered');
     await di.unregister<Client>();
@@ -265,13 +278,10 @@ class DiManager {
 
       _log.info('Matrix managers initialized');
 
-      di<ServerpodSessionManager>()
-          .changeMatrixPolicyManagerRegistrationStatus(true);
+      di<HubSessionManager>().changeMatrixPolicyManagerRegistrationStatus(true);
 
       return policyManager;
-    }, dependsOn: [
-      ServerpodSessionManager
-    ]); // TODO: add dependency to PupilManager
+    }, dependsOn: [HubSessionManager]); // TODO: add dependency to PupilManager
 
     di.registerSingletonWithDependencies(() {
       return MatrixPolicyFilterManager(di<MatrixPolicyManager>());

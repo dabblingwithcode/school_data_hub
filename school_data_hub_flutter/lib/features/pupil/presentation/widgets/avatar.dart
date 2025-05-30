@@ -179,7 +179,7 @@ class AvatarWithBadges extends WatchingWidget {
               ),
               child: Center(
                 child: Text(
-                  pupil.schoolyear,
+                  pupil.schoolGrade.name,
                   style: TextStyle(
                     color: pupil.schoolyearHeldBackAt != null
                         ? const Color.fromARGB(255, 250, 197, 98)

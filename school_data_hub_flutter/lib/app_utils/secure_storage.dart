@@ -3,76 +3,19 @@ import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart
 
 const _secureStorage = FlutterSecureStorage();
 
-//enum SecureStorageKey {
-//   environments('environments'),
-//   pupilIdentities('pupil_identities'),
-//   matrix('matrix'),
-//   ;
-
-//   final String value;
-//   const SecureStorageKey(this.value);
-// }
-
-/// We are using two interfaces to interact with
-/// the same instance of [FlutterSecureStorage]
-/// [LegacySecureStorage] is used for the app
-/// for storing pupil identities and environments
-/// we keep it for now for legacy reasons
-/// and to avoid breaking changes in the app
-/// until we migrate to the new [ServerpodSecureStorage] interface
+/// [HubSecureStorage] implements the [Storage] interface
+/// for the [FlutterAuthenticationKeyManager]. We use
+/// the storage for the app.
 ///
-/// [ServerpodSecureStorage] is used for the serverpod client
-/// for storing the authentication key
-/// and implements the [Storage] interface
-/// for the [FlutterAuthenticationKeyManager]
-
-class LegacySecureStorage {
-  static Future<bool> containsKey(String key) async {
-    if (await _secureStorage.containsKey(key: key)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  static Future<String?> read(String key) async {
-    final value = await _secureStorage.read(key: key);
-    return value;
-  }
-
-  static Future<void> write(String key, String value) async {
-    await _secureStorage.write(key: key, value: value);
-    return;
-  }
-
-  static Future<void> delete(String key) async {
-    await _secureStorage.delete(key: key);
-    return;
-  }
-}
-
-/// We are using two interfaces to interact with
-/// the same instance of [FlutterSecureStorage]
-/// [LegacySecureStorage] is used for the app
-/// for storing pupil identities and environments
-/// we keep it for legacy reasons
-/// and to avoid breaking changes in the app
-///
-/// [ServerpodSecureStorage] is used for the serverpod client
-/// for storing the authentication key
-/// and implements the [Storage] interface
-/// for the [FlutterAuthenticationKeyManager]
-///
-class ServerpodSecureStorage extends Storage {
+class HubSecureStorage extends Storage {
   // Singleton instance
-  static final ServerpodSecureStorage _instance =
-      ServerpodSecureStorage._internal();
+  static final HubSecureStorage _instance = HubSecureStorage._internal();
 
   // Private constructor
-  ServerpodSecureStorage._internal();
+  HubSecureStorage._internal();
 
   // Factory constructor to return the singleton instance
-  factory ServerpodSecureStorage() {
+  factory HubSecureStorage() {
     return _instance;
   }
 

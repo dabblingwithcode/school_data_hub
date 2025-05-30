@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/attendance_page/attendance_list_page.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/missed_classes_pupil_list_page/missed_classes_pupil_list_page.dart';
+import 'package:school_data_hub_flutter/features/competence/presentation/pupil_competence_list_page/learning_pupil_list_page.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/learning_support_list_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/matrix_users_list_page/matrix_users_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/credit/credit_list_page/credit_list_page.dart';
@@ -20,7 +21,7 @@ class PupilListButtons extends WatchingWidget {
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
     bool matrixSessionConfigured = watchPropertyValue(
-        (ServerpodSessionManager x) => x.matrixPolicyManagerRegistrationStatus);
+        (HubSessionManager x) => x.matrixPolicyManagerRegistrationStatus);
     return Wrap(
       alignment: WrapAlignment.center,
       children: [
@@ -57,7 +58,7 @@ class PupilListButtons extends WatchingWidget {
             ),
             buttonText: locale.pupilCredit),
         MainMenuButton(
-            destinationPage: null, // const LearningPupilListPage(),
+            destinationPage: const LearningPupilListPage(),
             buttonIcon: const Icon(
               Icons.lightbulb,
               size: 50,

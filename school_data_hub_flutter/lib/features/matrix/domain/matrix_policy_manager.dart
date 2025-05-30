@@ -6,7 +6,7 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/data/matrix_api_service.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper_functions.dart';
@@ -19,8 +19,8 @@ import 'package:watch_it/watch_it.dart';
 
 final _notificationService = di<NotificationService>();
 final _envManager = di<EnvManager>();
-final _sessionManager = di<ServerpodSessionManager>();
-final _secureStorage = ServerpodSecureStorage();
+final _sessionManager = di<HubSessionManager>();
+final _secureStorage = HubSecureStorage();
 
 final _log = Logger('MatrixPolicyManager');
 

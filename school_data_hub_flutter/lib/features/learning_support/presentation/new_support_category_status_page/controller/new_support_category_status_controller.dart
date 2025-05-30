@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_plan_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/new_support_category_status_page.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _learningSupportManager = di<LearningSupportManager>();
+final _learningSupportPlanManager = di<LearningSupportPlanManager>();
 
 class NewSupportCategoryStatus extends StatefulWidget {
   final String appBarTitle;
@@ -60,7 +60,7 @@ class NewSupportCategoryStatusController
       return;
     }
 
-    await _learningSupportManager.postNewSupportCategoryGoal(
+    await _learningSupportPlanManager.postNewSupportCategoryGoal(
         goalCategoryId: goalCategoryId!,
         pupilId: widget.pupilId,
         description: descriptionTextFieldController.text,

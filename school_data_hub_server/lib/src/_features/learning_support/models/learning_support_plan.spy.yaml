@@ -1,0 +1,12 @@
+class: LearningSupportPlan
+table: learning_support_plan
+fields:
+  planId: String
+  createdBy: String
+  learningSupportLevel: SupportLevel?, relation(name=support_level_plans)
+  createdAt: DateTime
+  comment: String?
+  pupil: PupilData?, relation(name=learning_support_plan_pupil)
+  supportCategoryStatuses: List<SupportCategoryStatus>?, relation
+  supportGoals: List<SupportGoal>?, relation
+  schoolSemester: SchoolSemester?, relation(name=learning_support_plan_semester)

@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/select_support_category_page/controller/select_support_category_controller.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _learningSupportManager = di<LearningSupportManager>();
-final _serverpodSessionManager = di<ServerpodSessionManager>();
+final _learningSupportManager = di<SupportCategoryManager>();
+final _hubSessionManager = di<HubSessionManager>();
 
 List<Widget> pupilSupportCategoryTree({
   required BuildContext context,
@@ -127,7 +127,7 @@ List<Widget> pupilSupportCategoryTree({
                             child: InkWell(
                               onTap: () => controller
                                   .selectCategory(supportCategory.categoryId),
-                              onLongPress: _serverpodSessionManager.isAdmin
+                              onLongPress: _hubSessionManager.isAdmin
                                   ? () async {
                                       if (pupil
                                           .supportCategoryStatuses!.isEmpty) {

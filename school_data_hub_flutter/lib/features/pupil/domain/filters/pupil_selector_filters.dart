@@ -1,13 +1,15 @@
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
 class SchoolGradeFilter extends SelectorFilter<PupilProxy, SchoolGrade> {
   SchoolGradeFilter(SchoolGrade schoolGrade)
-      : super(name: schoolGrade.value, selector: (proxy) => proxy.schoolGrade);
+      : super(name: schoolGrade.name, selector: (proxy) => proxy.schoolGrade);
 
   @override
   bool matches(PupilProxy item) {
-    return selector(item).value == name;
+    return selector(item).name == name;
   }
 }
 

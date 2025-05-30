@@ -1,0 +1,12 @@
+class: PupilAuthorization
+table: pupil_authorization
+fields:
+  status: bool?
+  comment: String?
+  createdBy: String?
+  file: HubDocument?, relation(optional, onDelete=Cascade)
+  authorization: Authorization?, relation(name=pupil_authorization_authorization)
+  pupil: PupilData?, relation(name=pupil_authorization_pupil)
+
+
+  

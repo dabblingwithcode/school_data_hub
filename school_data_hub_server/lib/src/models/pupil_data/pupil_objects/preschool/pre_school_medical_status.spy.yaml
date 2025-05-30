@@ -1,8 +1,0 @@
-### enum for the medical preschool revision
-enum: PreSchoolMedicalStatus
-serialized: byName
-values:
-  - notAvailable
-  - ok
-  - supportAreas
-  - checkSpecialSupport
