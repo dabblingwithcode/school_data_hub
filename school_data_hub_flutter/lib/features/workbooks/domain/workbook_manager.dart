@@ -51,8 +51,11 @@ class WorkbookManager {
   }
 
   Future<void> fetchWorkbooks() async {
-    final List<Workbook> responseWorkbooks =
+    final List<Workbook>? responseWorkbooks =
         await _workbookApiService.getWorkbooks();
+    if (responseWorkbooks == null) {
+      return;
+    }
     // sort workbooks by name
     responseWorkbooks.sort((a, b) => a.name.compareTo(b.name));
     _notificationService.showSnackBar(
@@ -64,8 +67,11 @@ class WorkbookManager {
   }
 
   Future<void> fetchWorkbookByIsbn(int isbn) async {
-    final Workbook responseWorkbook =
+    final Workbook? responseWorkbook =
         await _workbookApiService.fetchWorkbookByIsbn(isbn);
+    if (responseWorkbook == null) {
+      return;
+    }
     _updateWorkbookInCollection(responseWorkbook);
 
     _notificationService.showSnackBar(
@@ -87,12 +93,15 @@ class WorkbookManager {
       amount: amount ?? workbook.amount,
     );
 
-    final Workbook updatedWorkbook = await ClientHelper.apiCall(
+    final updatedWorkbook = await ClientHelper.apiCall(
       call: () => _workbookApiService.updateWorkbook(
         workbook: workbookToUpdate,
       ),
       errorMessage: 'Fehler beim Aktualisieren des Arbeitshefts',
     );
+    if (updatedWorkbook == null) {
+      return;
+    }
     _updateWorkbookInCollection(updatedWorkbook);
 
     _notificationService.showSnackBar(
@@ -115,11 +124,10 @@ class WorkbookManager {
 
   Future<void> deleteWorkbook(Workbook workbook) async {
     final success = await _workbookApiService.deleteWorkbook(workbook.isbn);
-    if (!success) {
-      _notificationService.showSnackBar(
-          NotificationType.error, 'Fehler beim Löschen des Arbeitshefts');
+    if (success == null) {
       return;
     }
+
     _removeWorkbookFromCollection(workbook.isbn);
     _notificationService.showSnackBar(
         NotificationType.success, 'Arbeitsheft erfolgreich gelöscht');

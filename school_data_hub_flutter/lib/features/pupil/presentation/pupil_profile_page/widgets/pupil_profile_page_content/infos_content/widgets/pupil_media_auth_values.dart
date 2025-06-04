@@ -42,15 +42,15 @@ class PublicMediaAuthValues extends WatchingWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Flexible(
-                  child: const Text('Veröffentlichung von:',
+                  child: const Text('Veröffentlichung von...',
                       softWrap: true,
                       style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 16.0,
                       )),
                 ),
               ],
             ),
+            const Gap(5),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -60,7 +60,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                     const Row(
                       children: [
                         Text('Gruppenfotos Presse:',
-                            style: TextStyle(fontSize: 16.0)),
+                            style: TextStyle(fontSize: 14.0)),
                       ],
                     ),
                     Row(
@@ -115,7 +115,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                     const Row(
                       children: [
                         Text('Gruppenfotos Website:',
-                            style: TextStyle(fontSize: 16.0)),
+                            style: TextStyle(fontSize: 14.0)),
                       ],
                     ),
                     Row(
@@ -170,7 +170,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                     const Row(
                       children: [
                         Text('Name in Presse:',
-                            style: TextStyle(fontSize: 16.0)),
+                            style: TextStyle(fontSize: 14.0)),
                       ],
                     ),
                     Row(
@@ -221,7 +221,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                     const Row(
                       children: [
                         Text('Name in Website:',
-                            style: TextStyle(fontSize: 16.0)),
+                            style: TextStyle(fontSize: 14.0)),
                       ],
                     ),
                     Row(
@@ -272,7 +272,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                     const Row(
                       children: [
                         Text('Porträtfoto in Presse:',
-                            style: TextStyle(fontSize: 16.0)),
+                            style: TextStyle(fontSize: 14.0)),
                       ],
                     ),
                     Row(
@@ -327,7 +327,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                     const Row(
                       children: [
                         Text('Porträtfoto in Website:',
-                            style: TextStyle(fontSize: 16.0)),
+                            style: TextStyle(fontSize: 14.0)),
                       ],
                     ),
                     Row(

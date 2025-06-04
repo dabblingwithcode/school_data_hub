@@ -3,8 +3,8 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/paddings.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/schoolday_events/presentation/schoolday_event_list_page/schoolday_event_list_page.dart';
-import 'package:school_data_hub_flutter/features/schoolday_events/presentation/schoolday_event_list_page/widgets/pupil_schoolday_events_list.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/schoolday_event_list_page.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/pupil_schoolday_events_list.dart';
 
 class PupilProfileSchooldayEventsContent extends StatelessWidget {
   final PupilProxy pupil;

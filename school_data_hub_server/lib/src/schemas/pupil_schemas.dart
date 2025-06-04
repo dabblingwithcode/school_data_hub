@@ -12,6 +12,9 @@ class PupilSchemas {
     ),
     supportCategoryStatuses: SupportCategoryStatus.includeList(),
     supportGoals: SupportGoal.includeList(),
+    competenceChecks: CompetenceCheck.includeList(
+      include: CompetenceCheck.include(),
+    ),
     pupilBookLendings: PupilBookLending.includeList(
         include: PupilBookLending.include(
       pupilBookLendingFiles: HubDocument.includeList(),

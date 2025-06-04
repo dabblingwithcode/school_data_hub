@@ -63,7 +63,9 @@ class AuthorizationManager with ChangeNotifier {
 
   Future<void> fetchAuthorizations() async {
     final authorizations = await _authorizationApiService.fetchAuthorizations();
-
+    if (authorizations == null) {
+      return;
+    }
     _updateAuthsInCollections(authorizations);
     _notificationService.showSnackBar(NotificationType.success,
         '${authorizations.length} Einwilligungen geladen');
@@ -77,9 +79,11 @@ class AuthorizationManager with ChangeNotifier {
     List<int> pupilIds,
   ) async {
     final createdBy = _hubSessionManager.userName;
-    final Authorization authorization = await _authorizationApiService
+    final Authorization? authorization = await _authorizationApiService
         .postAuthorizationWithPupils(name, description, createdBy!, pupilIds);
-
+    if (authorization == null) {
+      return;
+    }
     _authorizationsMap[authorization.id!] = authorization;
     _authorizations.value = _authorizationsMap.values.toList();
 
@@ -100,7 +104,9 @@ class AuthorizationManager with ChangeNotifier {
     final updatedAuth = await ClientHelper.apiCall(
         call: () => _authorizationApiService.updateAuthorization(
             authId, name, description, membersToUpdate));
-
+    if (updatedAuth == null) {
+      return;
+    }
     _updateAuthsInCollections([updatedAuth]);
     _notificationService.showSnackBar(
         NotificationType.success, 'Einwilligung geändert');
@@ -110,9 +116,7 @@ class AuthorizationManager with ChangeNotifier {
 
   Future<void> deleteAuthorization(int authId) async {
     final confirm = await _authorizationApiService.deleteAuthorization(authId);
-    if (!confirm) {
-      _notificationService.showSnackBar(
-          NotificationType.error, 'Einwilligung konnte nicht gelöscht werden');
+    if (confirm == null) {
       return;
     }
     _authorizationsMap.remove(authId);
@@ -137,6 +141,9 @@ class AuthorizationManager with ChangeNotifier {
     );
     final updatedPupilAuth = await _authorizationApiService
         .updatePupilAuthorization(pupilAuthUpdate);
+    if (updatedPupilAuth == null) {
+      return;
+    }
     _updatePupilAuthInCollections(updatedPupilAuth);
 
     _notificationService.showSnackBar(
@@ -153,6 +160,9 @@ class AuthorizationManager with ChangeNotifier {
     final createdBy = _hubSessionManager.userName;
     final pupilAuth = await _authorizationApiService
         .addFileToPupilAuthorization(pupilAuthId, encryptedFile, createdBy!);
+    if (pupilAuth == null) {
+      return;
+    }
     _updatePupilAuthInCollections(pupilAuth);
 
     return;
@@ -164,6 +174,9 @@ class AuthorizationManager with ChangeNotifier {
   ) async {
     final pupilAuth =
         await _authorizationApiService.removeFileFromPupilAuthorization(authId);
+    if (pupilAuth == null) {
+      return;
+    }
     _updatePupilAuthInCollections(pupilAuth);
     _cacheManager.removeFile(cacheKey);
 

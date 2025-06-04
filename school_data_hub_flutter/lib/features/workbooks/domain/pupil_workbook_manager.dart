@@ -52,10 +52,12 @@ class PupilWorkbookManager with ChangeNotifier {
   Future<void> postPupilWorkbook(
       int pupilId, int isbn, String createdBy) async {
     final createdBy = _hubSessionManager.userName!;
-    final PupilWorkbook responsePupil =
+    final PupilWorkbook? responsePupil =
         await _pupilWorkbookApiService.postNewPupilWorkbook(
             pupilId: pupilId, isbn: isbn, createdBy: createdBy);
-
+    if (responsePupil == null) {
+      return;
+    }
     addPupilWorkbook(pupilId, responsePupil);
 
     _notificationService.showSnackBar(
@@ -69,9 +71,11 @@ class PupilWorkbookManager with ChangeNotifier {
   Future<void> fetchPupilWorkbooks(int pupilId) async {
     // Simulate fetching from an API or database
     // In a real application, you would replace this with an actual API call
-    List<PupilWorkbook> fetchedWorkbooks = await _pupilWorkbookApiService
+    List<PupilWorkbook>? fetchedWorkbooks = await _pupilWorkbookApiService
         .fetchAllPupilWorkbooksFromPupil(pupilId: pupilId);
-
+    if (fetchedWorkbooks == null) {
+      return;
+    }
     _pupilWorkbooks[pupilId] = fetchedWorkbooks;
     notifyListeners();
   }
@@ -100,7 +104,9 @@ class PupilWorkbookManager with ChangeNotifier {
       ),
       errorMessage: 'Fehler beim Aktualisieren des Arbeitshefts',
     );
-
+    if (updatedPupilWorkbook == null) {
+      return;
+    }
     // - TODO: check this AI code
     //// Update the local collection
     if (_pupilWorkbooks.containsKey(pupilWorkbook.pupilId)) {
@@ -124,17 +130,16 @@ class PupilWorkbookManager with ChangeNotifier {
   //- delete
 
   Future<void> deletePupilWorkbook(int pupilId, int pupilWorkbookId) async {
-    final response = await ClientHelper.apiCall<bool>(
+    final response = await ClientHelper.apiCall(
       call: () => _pupilWorkbookApiService.deletePupilWorkbook(
         pupilWorkbookId,
       ),
       errorMessage: 'Fehler beim Löschen des Arbeitshefts',
     );
-    if (!response) {
-      _notificationService.showSnackBar(
-          NotificationType.error, 'Fehler beim Löschen des Arbeitshefts');
+    if (response == null) {
       return;
     }
+
     // Remove the workbook from the local collection
     if (_pupilWorkbooks.containsKey(pupilId)) {
       _pupilWorkbooks[pupilId]!.removeWhere((wb) => wb.id == pupilWorkbookId);

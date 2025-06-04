@@ -125,6 +125,26 @@ class Book <<table: <b>book</b>>> #e2f0fb##[bold] {
 
 }
 
+class BookTag <<table: <b>book_tag</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/books/models/book_tagging/book_tag.spy.yaml</size></b>
+--
+  <i>name</i>: <b><color:#ff962f>String</color></b>
+ ➡️ <i>books</i> : <b><color:#ff962f>List<BookTagging>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>book_tag_tagging<color:#ff962f>)</color>
+
+}
+
+class BookTagging <<table: <b>book_tagging</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/books/models/book_tagging/book_tagging.spy.yaml</size></b>
+--
+<color:#93c47d>## junction table for book and tag</color>
+ ➡️ <i>book</i> : <b><color:#ff962f>Book?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>book_tagging<color:#ff962f>)</color>
+ ➡️ <i>bookTag</i> : <b><color:#ff962f>BookTag?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>book_tag_tagging<color:#ff962f>)</color>
+<b><color:#0164aa>indexes:</color></b>
+<b><color:#0164aa>book_tagging_index_idx:</color></b>
+<b><color:#0164aa>unique</color></b>: <b><color:#ff962f>true</color></b>
+
+}
+
 class LibraryBook <<table: <b>library_book</b>>> #e2f0fb##[bold] {
 <size:14>📁</size> <b><size:12> /_features/books/models/library_book.spy.yaml</size></b>
 --
@@ -300,6 +320,35 @@ class SupportCategoryStatus <<table: <b>support_category_status</b>>> #e2f0fb##[
 
 }
 
+class SupportGoal <<table: <b>support_category_goal</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/learning_support/models/support_goal/support_goal.spy.yaml</size></b>
+--
+  <i>goalId</i>: <b><color:#ff962f>String</color></b>
+  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
+  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
+  <i>score</i>: <b><color:#ff962f>int</color></b>
+  <i>achievedAt</i>: <b><color:#ff962f>DateTime?</color></b>
+  <i>description</i>: <b><color:#ff962f>String</color></b>
+  <i>strategies</i>: <b><color:#ff962f>String</color></b>
+ ➡️ <i>pupil</i> : <b><color:#ff962f>PupilData?</color></b>,  <b><color:#0164aa>relation</color></b>
+ ➡️ <i>supportCategory</i> : <b><color:#ff962f>SupportCategory?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>onDelete</color></b><color:#ff962f>=</color>Cascade<color:#ff962f>)</color>
+ ➡️ <i>goalChecks</i> : <b><color:#ff962f>List<SupportGoalCheck>?</color></b>,  <b><color:#0164aa>relation</color></b>
+
+}
+
+class SupportGoalCheck <<table: <b>support_goal_check</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/learning_support/models/support_goal/support_goal_check.spy.yaml</size></b>
+--
+  <i>checkId</i>: <b><color:#ff962f>String</color></b>
+  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
+  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
+  <i>score</i>: <b><color:#ff962f>int</color></b>
+  <i>comment</i>: <b><color:#ff962f>String</color></b>
+ ➡️ <i>documents</i> : <b><color:#ff962f>List<HubDocument>?</color></b>,  <b><color:#0164aa>relation</color></b>
+ ➡️ <i>supportGoal</i> : <b><color:#ff962f>SupportGoal?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>onDelete</color></b><color:#ff962f>=</color>Cascade<color:#ff962f>)</color>
+
+}
+
 class SupportLevel <<table: <b>support_level</b>>> #e2f0fb##[bold] {
 <size:14>📁</size> <b><size:12> /_features/learning_support/models/support_level.spy.yaml</size></b>
 --
@@ -309,6 +358,246 @@ class SupportLevel <<table: <b>support_level</b>>> #e2f0fb##[bold] {
   <i>createdBy</i>: <b><color:#ff962f>String</color></b>
  ➡️ <i>pupil</i> : <b><color:#ff962f>PupilData?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>support_level_pupil
  ➡️ <i>learningSupportPlans</i> : <b><color:#ff962f>List<LearningSupportPlan>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>support_level_plans<color:#ff962f>)</color>
+
+}
+
+class AfterSchoolCare ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/after_school_care/after_school_care.spy.yaml</size></b>
+--
+  <i>pickUpTimes</i>: <b><color:#ff962f>AfterSchoolCarePickUpTimes?</color></b>
+  <i>afterSchoolCareInfo</i>: <b><color:#ff962f>String?</color></b>
+  <i>emergencyCare</i>: <b><color:#ff962f>bool?</color></b>
+
+}
+
+class AfterSchoolCarePickUpTimes ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/after_school_care/after_school_pickup_times.spy.yaml</size></b>
+--
+  <i>monday</i>: <b><color:#ff962f>PickUpInfo?</color></b>
+  <i>tuesday</i>: <b><color:#ff962f>PickUpInfo?</color></b>
+  <i>wednesday</i>: <b><color:#ff962f>PickUpInfo?</color></b>
+  <i>thursday</i>: <b><color:#ff962f>PickUpInfo?</color></b>
+  <i>friday</i>: <b><color:#ff962f>PickUpInfo?</color></b>
+
+}
+
+class PickUpInfo ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/after_school_care/pick_up_info.spy.yaml</size></b>
+--
+  <i>time</i>: <b><color:#ff962f>String</color></b>
+  <i>modality</i>: <b><color:#ff962f>String</color></b>
+
+}
+
+class CommunicationSkills ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/communication/communication_skills.spy.yaml</size></b>
+--
+  <i>understanding</i>: <b><color:#ff962f>int</color></b>
+  <i>speaking</i>: <b><color:#ff962f>int</color></b>
+  <i>reading</i>: <b><color:#ff962f>int</color></b>
+  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
+  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
+
+}
+
+class PublicMediaAuth ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/communication/public_media_auth.spy.yaml</size></b>
+--
+  <i>groupPicturesOnWebsite</i>: <b><color:#ff962f>bool</color></b>
+  <i>groupPicturesInPress</i>: <b><color:#ff962f>bool</color></b>
+  <i>portraitPicturesOnWebsite</i>: <b><color:#ff962f>bool</color></b>
+  <i>portraitPicturesInPress</i>: <b><color:#ff962f>bool</color></b>
+  <i>nameOnWebsite</i>: <b><color:#ff962f>bool</color></b>
+  <i>nameInPress</i>: <b><color:#ff962f>bool</color></b>
+  <i>videoOnWebsite</i>: <b><color:#ff962f>bool</color></b>
+  <i>videoInPress</i>: <b><color:#ff962f>bool</color></b>
+  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
+  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
+
+}
+
+class TutorInfo ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/communication/tutor_info.spy.yaml</size></b>
+--
+  <i>parentsContact</i>: <b><color:#ff962f>String?</color></b>
+  <i>communicationTutor1</i>: <b><color:#ff962f>CommunicationSkills?</color></b>
+  <i>communicationTutor2</i>: <b><color:#ff962f>CommunicationSkills?</color></b>
+  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
+
+}
+
+class CreditTransaction <<table: <b>credit_transaction</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/credit_transaction.spy.yaml</size></b>
+--
+<color:#93c47d>### Sender of the transaction will either be a staff member</color>
+<color:#93c47d>### or the system itself</color>
+<color:#93c47d>### Receiver could be a pupil or a staff member</color>
+<color:#93c47d>### That is why there are no relationships defined here</color>
+<color:#93c47d>### In case of a pupil, it will be the internalId</color>
+<color:#93c47d>### In case of a staff member, it will be the userInfoId</color>
+<color:#93c47d>### We create indexes for both fields to speed up the queries</color>
+  <i>sender</i>: <b><color:#ff962f>String</color></b>
+  <i>receiver</i>: <b><color:#ff962f>int,</color></b>
+  <i>amount</i>: <b><color:#ff962f>int</color></b>
+  <i>dateTime</i>: <b><color:#ff962f>DateTime</color></b>
+  <i>description</i>: <b><color:#ff962f>String?</color></b>
+<b><color:#0164aa>indexes:</color></b>
+<b><color:#0164aa>reciever_idx:</color></b>
+<b><color:#0164aa>sender_idx:</color></b>
+
+}
+
+enum PupilDocumentType #ece4ff ##[bold] {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/dto/pupil_document_type.spy.yaml</size></b>
+--
+  serialized: byName
+  values: avatar, avatarAuth, publicMediaAuth
+
+}
+
+class SiblingsTutorInfo ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/dto/siblings_tutor_info_dto.spy.yaml</size></b>
+--
+<color:#93c47d>## we need this object for the endpoint to be able to update the parent info for all siblings</color>
+  <i>tutorInfo</i>: <b><color:#ff962f>TutorInfo?</color></b>
+  <i>siblingsIds</i>: <b><color:#ff962f>Set<int></color></b>
+
+}
+
+class Kindergarden <<table: <b>kindergarden</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/preschool/kindergarden.spy.yaml</size></b>
+--
+  <i>name</i>: <b><color:#ff962f>String</color></b>
+  <i>phone</i>: <b><color:#ff962f>String</color></b>
+  <i>address</i>: <b><color:#ff962f>String</color></b>
+  <i>email</i>: <b><color:#ff962f>String</color></b>
+  <i>contactPerson</i>: <b><color:#ff962f>String</color></b>
+ ➡️ <i>pupils</i> : <b><color:#ff962f>List<PupilData>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
+
+}
+
+class KindergardenInfo ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/preschool/kindergarden_info.spy.yaml</size></b>
+--
+  <i>attendedMonths</i>: <b><color:#ff962f>int</color></b>
+  <i>comments</i>: <b><color:#ff962f>String</color></b>
+
+}
+
+class PreSchoolMedical <<table: <b>pre_school_medical</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/preschool/pre_school_medical.spy.yaml</size></b>
+--
+  <i>preschoolMedicalStatus</i>: <b><color:#ff962f>PreSchoolMedicalStatus?</color></b>
+ ➡️ <i>preschoolMedicalFiles</i> : <b><color:#ff962f>List<HubDocument>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
+  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
+  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
+  <i>updatedBy</i>: <b><color:#ff962f>String?</color></b>
+  <i>updatedAt</i>: <b><color:#ff962f>DateTime?</color></b>
+
+}
+
+enum PreSchoolMedicalStatus #ece4ff ##[bold] {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/preschool/pre_school_medical_status.spy.yaml</size></b>
+--
+  serialized: byName
+  values: notAvailable, ok, supportAreas, checkSpecialSupport
+
+}
+
+class PreSchoolTest <<table: <b>pre_school_test</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/preschool/pre_school_test.spy.yaml</size></b>
+--
+  <i>careNeedsIntensity</i>: <b><color:#ff962f>int?</color></b>
+ ➡️ <i>preSchoolTestDocuments</i> : <b><color:#ff962f>List<HubDocument>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
+
+}
+
+class PupilData <<table: <b>pupil_data</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/pupil_data.spy.yaml</size></b>
+--
+  <i>active</i>: <b><color:#ff962f>bool</color></b>
+  <i>internalId</i>: <b><color:#ff962f>int</color></b>
+<color:#93c47d>## preschool related</color>
+ ➡️ <i>preSchoolMedical</i> : <b><color:#ff962f>PreSchoolMedical?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
+ ➡️ <i>kindergarden</i> : <b><color:#ff962f>Kindergarden?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
+  <i>kindergardenData</i>: <b><color:#ff962f>KindergardenInfo?</color></b>
+ ➡️ <i>preSchoolTest</i> : <b><color:#ff962f>PreSchoolTest?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
+<color:#93c47d>## avatar related</color>
+ ➡️ <i>avatar</i> : <b><color:#ff962f>HubDocument?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
+ ➡️ <i>avatarAuth</i> : <b><color:#ff962f>HubDocument?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
+<color:#93c47d>## public media related</color>
+  <i>publicMediaAuth</i>: <b><color:#ff962f>PublicMediaAuth</color></b>
+ ➡️ <i>publicMediaAuthDocument</i> : <b><color:#ff962f>HubDocument?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
+<color:#93c47d>## communication and tutor related</color>
+  <i>contact</i>: <b><color:#ff962f>String?</color></b>
+  <i>communicationPupil</i>: <b><color:#ff962f>CommunicationSkills?</color></b>
+  <i>specialInformation</i>: <b><color:#ff962f>String?</color></b>
+<color:#93c47d>## - Beware: This object is used in siblings parent info</color>
+  <i>tutorInfo</i>: <b><color:#ff962f>TutorInfo?</color></b>
+ ➡️ <i>authorizations</i> : <b><color:#ff962f>List<PupilAuthorization>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>pupil_authorization_pupil<color:#ff962f>)</color>
+<color:#93c47d>## after school care related</color>
+  <i>afterSchoolCare</i>: <b><color:#ff962f>AfterSchoolCare?</color></b>
+<color:#93c47d>## rewards related</color>
+  <i>credit</i>: <b><color:#ff962f>int</color></b>
+  <i>creditEarned</i>: <b><color:#ff962f>int</color></b>
+ ➡️ <i>creditTransactions</i> : <b><color:#ff962f>List<CreditTransaction>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
+<color:#93c47d>## learning related</color>
+ ➡️ <i>lessonGroupMemberships</i> : <b><color:#ff962f>List<ScheduledLessonGroupMembership>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>pupil_scheduled_lesson_group_memberships<color:#ff962f>)</color>
+ ➡️ <i>lessonsAttended</i> : <b><color:#ff962f>List<LessonAttendance>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_attendance_pupils<color:#ff962f>)</color>
+ ➡️ <i>competenceGoals</i> : <b><color:#ff962f>List<CompetenceGoal>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_goal_pupil<color:#ff962f>)</color>
+ ➡️ <i>competenceChecks</i> : <b><color:#ff962f>List<CompetenceCheck>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_check_pupil<color:#ff962f>)</color>
+ ➡️ <i>competenceReports</i> : <b><color:#ff962f>List<CompetenceReport>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_report_pupil<color:#ff962f>)</color>
+ ➡️ <i>competenceReportChecks</i> : <b><color:#ff962f>List<CompetenceReportCheck>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_report_check_pupil<color:#ff962f>)</color>
+ ➡️ <i>pupilWorkbooks</i> : <b><color:#ff962f>List<PupilWorkbook>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>pupil_workbook_pupil<color:#ff962f>)</color>
+ ➡️ <i>pupilBookLendings</i> : <b><color:#ff962f>List<PupilBookLending>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>pupil_book_lending_pupil<color:#ff962f>)</color>
+  <i>schoolyearHeldBackAt</i>: <b><color:#ff962f>DateTime?</color></b>
+<color:#93c47d>## learning support related</color>
+ ➡️ <i>supportLevelHistory</i> : <b><color:#ff962f>List<SupportLevel>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>support_level_pupil<color:#ff962f>)</color>
+ ➡️ <i>supportCategoryStatuses</i> : <b><color:#ff962f>List<SupportCategoryStatus>?</color></b>,  <b><color:#0164aa>relation</color></b>
+ ➡️ <i>supportGoals</i> : <b><color:#ff962f>List<SupportGoal>?</color></b>,  <b><color:#0164aa>relation</color></b>
+ ➡️ <i>learningSupportPlans</i> : <b><color:#ff962f>List<LearningSupportPlan>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>learning_support_plan_pupil<color:#ff962f>)</color>
+<color:#93c47d>## schoolday related</color>
+ ➡️ <i>missedClasses</i> : <b><color:#ff962f>List<MissedClass>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>missed_class_pupil<color:#ff962f>)</color>
+ ➡️ <i>schooldayEvents</i> : <b><color:#ff962f>List<SchooldayEvent>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>schoolday_event_pupil<color:#ff962f>)</color>
+<color:#93c47d>## miscellaneous</color>
+  <i>swimmer</i>: <b><color:#ff962f>String?</color></b>
+ ➡️ <i>pupilListEntries</i> : <b><color:#ff962f>List<PupilListEntry>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>pupil_list_entry_pupil<color:#ff962f>)</color>
+<b><color:#0164aa>indexes:</color></b>
+<b><color:#0164aa>pupil_data_active_idx:</color></b>
+<b><color:#0164aa>pupil_data_internal_id_idx:</color></b>
+<b><color:#0164aa>unique</color></b>: <b><color:#ff962f>true</color></b>
+
+}
+
+class PupilIdentity ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_identity/pupil_identity.spy.yaml</size></b>
+--
+  <i>id</i>: <b><color:#ff962f>int</color></b>
+  <i>firstName</i>: <b><color:#ff962f>String</color></b>
+  <i>lastName</i>: <b><color:#ff962f>String</color></b>
+  <i>group</i>: <b><color:#ff962f>String</color></b>
+  <i>groupTutor</i>: <b><color:#ff962f>String</color></b>
+  <i>schoolGrade</i>: <b><color:#ff962f>SchoolGrade</color></b>
+  <i>specialNeeds</i>: <b><color:#ff962f>String?</color></b>
+  <i>gender</i>: <b><color:#ff962f>String</color></b>
+  <i>language</i>: <b><color:#ff962f>String</color></b>
+  <i>family</i>: <b><color:#ff962f>String?</color></b>
+  <i>birthday</i>: <b><color:#ff962f>DateTime</color></b>
+  <i>migrationSupportEnds</i>: <b><color:#ff962f>DateTime?</color></b>
+  <i>pupilSince</i>: <b><color:#ff962f>DateTime</color></b>
+  <i>afterSchoolCare</i>: <b><color:#ff962f>bool</color></b>
+  <i>religion</i>: <b><color:#ff962f>String?</color></b>
+  <i>religionLessonsSince</i>: <b><color:#ff962f>DateTime?</color></b>
+  <i>familyLanguageLessonsSince</i>: <b><color:#ff962f>DateTime?</color></b>
+  <i>leavingDate</i>: <b><color:#ff962f>DateTime?</color></b>
+
+}
+
+enum SchoolGrade #ece4ff ##[bold] {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_identity/school_grade.spy.yaml</size></b>
+--
+  serialized: byName
+  values: E1, E2, E3, K3, K4
 
 }
 
@@ -393,6 +682,80 @@ class Classroom <<table: <b>room</b>>> #e2f0fb##[bold] {
   <i>roomCode</i>: <b><color:#ff962f>String</color></b>
   <i>roomName</i>: <b><color:#ff962f>String</color></b>
  ➡️ <i>scheduledLessons</i> : <b><color:#ff962f>List<ScheduledLesson>?</color></b>,  <b><color:#0164aa>relation</color></b>
+
+}
+
+class Lesson <<table: <b>lesson</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/timetable/models/lesson/lesson.spy.yaml</size></b>
+--
+  <i>publicId</i>: <b><color:#ff962f>String</color></b>
+<color:#93c47d>## TODO: should relate with schoolday</color>
+ ➡️ <i>attendedPupils</i> : <b><color:#ff962f>List<LessonAttendance>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_attendance_lessons<color:#ff962f>)</color>
+ ➡️ <i>subject</i> : <b><color:#ff962f>LessonSubject?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_subject_lessons<color:#ff962f>)</color>
+
+}
+
+class LessonAttendance <<table: <b>lesson_attendance</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/timetable/models/lesson/lesson_attendance.spy.yaml</size></b>
+--
+<color:#93c47d>## junction table for pupils and lessons (many-to-many)</color>
+ ➡️ <i>lesson</i> : <b><color:#ff962f>Lesson?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_attendance_lessons<color:#ff962f>)</color>
+ ➡️ <i>pupil</i> : <b><color:#ff962f>PupilData?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_attendance_pupils<color:#ff962f>)</color>
+  <i>comment</i>: <b><color:#ff962f>String?</color></b>
+  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
+  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
+  <i>modifiedBy</i>: <b><color:#ff962f>String</color></b>
+  <i>modifiedAt</i>: <b><color:#ff962f>DateTime</color></b>
+
+}
+
+class LessonGroup <<table: <b>lesson_group</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/timetable/models/lesson/lesson_group.spy.yaml</size></b>
+--
+  <i>publicId</i>: <b><color:#ff962f>String</color></b>
+  <i>name</i>: <b><color:#ff962f>String</color></b>
+  <i>color</i>: <b><color:#ff962f>String?</color></b>
+  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
+  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
+  <i>modifiedBy</i>: <b><color:#ff962f>String</color></b>
+  <i>modifiedAt</i>: <b><color:#ff962f>DateTime</color></b>
+ ➡️ <i>scheduledLessons</i> : <b><color:#ff962f>List<ScheduledLesson>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_group_scheduled_lesson<color:#ff962f>)</color>
+ ➡️ <i>memberships</i> : <b><color:#ff962f>List<ScheduledLessonGroupMembership>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>group_scheduled_lesson_memberships<color:#ff962f>)</color>
+
+}
+
+class ScheduledLessonGroupMembership <<table: <b>lesson_group_pupil</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/timetable/models/lesson/lesson_group_membership.spy.yaml</size></b>
+--
+<color:#93c47d>## Junction table for lessongroup and pupil</color>
+ ➡️ <i>lessonGroup</i> : <b><color:#ff962f>LessonGroup?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>group_scheduled_lesson_memberships<color:#ff962f>)</color>
+ ➡️ <i>pupilData</i> : <b><color:#ff962f>PupilData?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>pupil_scheduled_lesson_group_memberships<color:#ff962f>)</color>
+<b><color:#0164aa>indexes:</color></b>
+<b><color:#0164aa>lesson_group_membership_index_idx:</color></b>
+<b><color:#0164aa>unique</color></b>: <b><color:#ff962f>true</color></b>
+
+}
+
+class LessonSubject <<table: <b>lesson_subject</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/timetable/models/lesson/lesson_subject.spy.yaml</size></b>
+--
+  <i>name</i>: <b><color:#ff962f>String</color></b>
+  <i>description</i>: <b><color:#ff962f>String?</color></b>
+ ➡️ <i>lessons</i> : <b><color:#ff962f>List<Lesson>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_subject_lessons<color:#ff962f>)</color>
+
+}
+
+class Subject <<table: <b>subject</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/timetable/models/lesson/subject.spy.yaml</size></b>
+--
+  <i>publicId</i>: <b><color:#ff962f>String</color></b>
+  <i>name</i>: <b><color:#ff962f>String</color></b>
+  <i>description</i>: <b><color:#ff962f>String?</color></b>
+  <i>color</i>: <b><color:#ff962f>String?</color></b>
+  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
+  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
+  <i>modifiedBy</i>: <b><color:#ff962f>String</color></b>
+ ➡️ <i>scheduledLessons</i> : <b><color:#ff962f>List<ScheduledLesson>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>subject_scheduled_lesson<color:#ff962f>)</color>
 
 }
 
@@ -517,6 +880,13 @@ class Workbook <<table: <b>workbook</b>>> #e2f0fb##[bold] {
 
 }
 
+exception MyException #ffe6e6##[bold]  {
+<size:14>📁</size> <b><size:12> /_shared/models/exceptions/test_exception.spy.yaml</size></b>
+--
+  <i>message</i>: <b><color:#ff962f>String</color></b>
+
+}
+
 class HubDocument <<table: <b>hub_document</b>>> #e2f0fb##[bold] {
 <size:14>📁</size> <b><size:12> /_shared/models/hub_document.spy.yaml</size></b>
 --
@@ -532,397 +902,6 @@ enum MemberOperation #ece4ff ##[bold] {
 --
   serialized: byName
   values: add, remove
-
-}
-
-package book_tagging as " book_tagging "  #fff2cc {
-  class BookTag <<table: <b>book_tag</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/books/models/book_tagging/book_tag.spy.yaml</size></b>
---
-  <i>name</i>: <b><color:#ff962f>String</color></b>
- ➡️ <i>books</i> : <b><color:#ff962f>List<BookTagging>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>book_tag_tagging<color:#ff962f>)</color>
-
-}
-
-  class BookTagging <<table: <b>book_tagging</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/books/models/book_tagging/book_tagging.spy.yaml</size></b>
---
-<color:#93c47d>## junction table for book and tag</color>
- ➡️ <i>book</i> : <b><color:#ff962f>Book?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>book_tagging<color:#ff962f>)</color>
- ➡️ <i>bookTag</i> : <b><color:#ff962f>BookTag?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>book_tag_tagging<color:#ff962f>)</color>
-<b><color:#0164aa>indexes:</color></b>
-<b><color:#0164aa>book_tagging_index_idx:</color></b>
-<b><color:#0164aa>unique</color></b>: <b><color:#ff962f>true</color></b>
-
-}
-
-}
-package support_goal as " support_goal "  #fff2cc {
-  class SupportGoal <<table: <b>support_category_goal</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/learning_support/models/support_goal/support_goal.spy.yaml</size></b>
---
-  <i>goalId</i>: <b><color:#ff962f>String</color></b>
-  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
-  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
-  <i>score</i>: <b><color:#ff962f>int</color></b>
-  <i>achievedAt</i>: <b><color:#ff962f>DateTime?</color></b>
-  <i>description</i>: <b><color:#ff962f>String</color></b>
-  <i>strategies</i>: <b><color:#ff962f>String</color></b>
- ➡️ <i>pupil</i> : <b><color:#ff962f>PupilData?</color></b>,  <b><color:#0164aa>relation</color></b>
- ➡️ <i>supportCategory</i> : <b><color:#ff962f>SupportCategory?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>onDelete</color></b><color:#ff962f>=</color>Cascade<color:#ff962f>)</color>
- ➡️ <i>goalChecks</i> : <b><color:#ff962f>List<SupportGoalCheck>?</color></b>,  <b><color:#0164aa>relation</color></b>
-
-}
-
-  class SupportGoalCheck <<table: <b>support_goal_check</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/learning_support/models/support_goal/support_goal_check.spy.yaml</size></b>
---
-  <i>checkId</i>: <b><color:#ff962f>String</color></b>
-  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
-  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
-  <i>score</i>: <b><color:#ff962f>int</color></b>
-  <i>comment</i>: <b><color:#ff962f>String</color></b>
- ➡️ <i>documents</i> : <b><color:#ff962f>List<HubDocument>?</color></b>,  <b><color:#0164aa>relation</color></b>
- ➡️ <i>supportGoal</i> : <b><color:#ff962f>SupportGoal?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>onDelete</color></b><color:#ff962f>=</color>Cascade<color:#ff962f>)</color>
-
-}
-
-}
-package pupil_data as " pupil_data "  #fff2cc {
-  class CreditTransaction <<table: <b>credit_transaction</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/credit_transaction.spy.yaml</size></b>
---
-<color:#93c47d>### Sender of the transaction will either be a staff member</color>
-<color:#93c47d>### or the system itself</color>
-<color:#93c47d>### Receiver could be a pupil or a staff member</color>
-<color:#93c47d>### That is why there are no relationships defined here</color>
-<color:#93c47d>### In case of a pupil, it will be the internalId</color>
-<color:#93c47d>### In case of a staff member, it will be the userInfoId</color>
-<color:#93c47d>### We create indexes for both fields to speed up the queries</color>
-  <i>sender</i>: <b><color:#ff962f>String</color></b>
-  <i>receiver</i>: <b><color:#ff962f>int,</color></b>
-  <i>amount</i>: <b><color:#ff962f>int</color></b>
-  <i>dateTime</i>: <b><color:#ff962f>DateTime</color></b>
-  <i>description</i>: <b><color:#ff962f>String?</color></b>
-<b><color:#0164aa>indexes:</color></b>
-<b><color:#0164aa>reciever_idx:</color></b>
-<b><color:#0164aa>sender_idx:</color></b>
-
-}
-
-  class PupilData <<table: <b>pupil_data</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/pupil_data.spy.yaml</size></b>
---
-  <i>active</i>: <b><color:#ff962f>bool</color></b>
-  <i>internalId</i>: <b><color:#ff962f>int</color></b>
-<color:#93c47d>## preschool related</color>
- ➡️ <i>preSchoolMedical</i> : <b><color:#ff962f>PreSchoolMedical?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
- ➡️ <i>kindergarden</i> : <b><color:#ff962f>Kindergarden?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
-  <i>kindergardenData</i>: <b><color:#ff962f>KindergardenInfo?</color></b>
- ➡️ <i>preSchoolTest</i> : <b><color:#ff962f>PreSchoolTest?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
-<color:#93c47d>## avatar related</color>
- ➡️ <i>avatar</i> : <b><color:#ff962f>HubDocument?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
- ➡️ <i>avatarAuth</i> : <b><color:#ff962f>HubDocument?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
-<color:#93c47d>## public media related</color>
-  <i>publicMediaAuth</i>: <b><color:#ff962f>PublicMediaAuth</color></b>
- ➡️ <i>publicMediaAuthDocument</i> : <b><color:#ff962f>HubDocument?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
-<color:#93c47d>## communication and tutor related</color>
-  <i>contact</i>: <b><color:#ff962f>String?</color></b>
-  <i>communicationPupil</i>: <b><color:#ff962f>CommunicationSkills?</color></b>
-  <i>specialInformation</i>: <b><color:#ff962f>String?</color></b>
-<color:#93c47d>## - Beware: This object is used in siblings parent info</color>
-  <i>tutorInfo</i>: <b><color:#ff962f>TutorInfo?</color></b>
- ➡️ <i>authorizations</i> : <b><color:#ff962f>List<PupilAuthorization>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>pupil_authorization_pupil<color:#ff962f>)</color>
-<color:#93c47d>## after school care related</color>
-  <i>afterSchoolCare</i>: <b><color:#ff962f>AfterSchoolCare?</color></b>
-<color:#93c47d>## rewards related</color>
-  <i>credit</i>: <b><color:#ff962f>int</color></b>
-  <i>creditEarned</i>: <b><color:#ff962f>int</color></b>
- ➡️ <i>creditTransactions</i> : <b><color:#ff962f>List<CreditTransaction>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
-<color:#93c47d>## learning related</color>
- ➡️ <i>lessonGroupMemberships</i> : <b><color:#ff962f>List<ScheduledLessonGroupMembership>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>pupil_scheduled_lesson_group_memberships<color:#ff962f>)</color>
- ➡️ <i>lessonsAttended</i> : <b><color:#ff962f>List<LessonAttendance>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_attendance_pupils<color:#ff962f>)</color>
- ➡️ <i>competenceGoals</i> : <b><color:#ff962f>List<CompetenceGoal>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_goal_pupil<color:#ff962f>)</color>
- ➡️ <i>competenceChecks</i> : <b><color:#ff962f>List<CompetenceCheck>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_check_pupil<color:#ff962f>)</color>
- ➡️ <i>competenceReports</i> : <b><color:#ff962f>List<CompetenceReport>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_report_pupil<color:#ff962f>)</color>
- ➡️ <i>competenceReportChecks</i> : <b><color:#ff962f>List<CompetenceReportCheck>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_report_check_pupil<color:#ff962f>)</color>
- ➡️ <i>pupilWorkbooks</i> : <b><color:#ff962f>List<PupilWorkbook>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>pupil_workbook_pupil<color:#ff962f>)</color>
- ➡️ <i>pupilBookLendings</i> : <b><color:#ff962f>List<PupilBookLending>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>pupil_book_lending_pupil<color:#ff962f>)</color>
-  <i>schoolyearHeldBackAt</i>: <b><color:#ff962f>DateTime?</color></b>
-<color:#93c47d>## learning support related</color>
- ➡️ <i>supportLevelHistory</i> : <b><color:#ff962f>List<SupportLevel>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>support_level_pupil<color:#ff962f>)</color>
- ➡️ <i>supportCategoryStatuses</i> : <b><color:#ff962f>List<SupportCategoryStatus>?</color></b>,  <b><color:#0164aa>relation</color></b>
- ➡️ <i>supportGoals</i> : <b><color:#ff962f>List<SupportGoal>?</color></b>,  <b><color:#0164aa>relation</color></b>
- ➡️ <i>learningSupportPlans</i> : <b><color:#ff962f>List<LearningSupportPlan>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>learning_support_plan_pupil<color:#ff962f>)</color>
-<color:#93c47d>## schoolday related</color>
- ➡️ <i>missedClasses</i> : <b><color:#ff962f>List<MissedClass>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>missed_class_pupil<color:#ff962f>)</color>
- ➡️ <i>schooldayEvents</i> : <b><color:#ff962f>List<SchooldayEvent>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>schoolday_event_pupil<color:#ff962f>)</color>
-<color:#93c47d>## miscellaneous</color>
-  <i>swimmer</i>: <b><color:#ff962f>String?</color></b>
- ➡️ <i>pupilListEntries</i> : <b><color:#ff962f>List<PupilListEntry>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>pupil_list_entry_pupil<color:#ff962f>)</color>
-<b><color:#0164aa>indexes:</color></b>
-<b><color:#0164aa>pupil_data_active_idx:</color></b>
-<b><color:#0164aa>pupil_data_internal_id_idx:</color></b>
-<b><color:#0164aa>unique</color></b>: <b><color:#ff962f>true</color></b>
-
-}
-
-  package after_school_care as " after_school_care "  #ffdb72 {
-    class AfterSchoolCare ##[bold]  {
-<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/after_school_care/after_school_care.spy.yaml</size></b>
---
-  <i>pickUpTimes</i>: <b><color:#ff962f>AfterSchoolCarePickUpTimes?</color></b>
-  <i>afterSchoolCareInfo</i>: <b><color:#ff962f>String?</color></b>
-  <i>emergencyCare</i>: <b><color:#ff962f>bool?</color></b>
-
-}
-
-    class AfterSchoolCarePickUpTimes ##[bold]  {
-<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/after_school_care/after_school_pickup_times.spy.yaml</size></b>
---
-  <i>monday</i>: <b><color:#ff962f>PickUpInfo?</color></b>
-  <i>tuesday</i>: <b><color:#ff962f>PickUpInfo?</color></b>
-  <i>wednesday</i>: <b><color:#ff962f>PickUpInfo?</color></b>
-  <i>thursday</i>: <b><color:#ff962f>PickUpInfo?</color></b>
-  <i>friday</i>: <b><color:#ff962f>PickUpInfo?</color></b>
-
-}
-
-    class PickUpInfo ##[bold]  {
-<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/after_school_care/pick_up_info.spy.yaml</size></b>
---
-  <i>time</i>: <b><color:#ff962f>String</color></b>
-  <i>modality</i>: <b><color:#ff962f>String</color></b>
-
-}
-
-  }
-  package communication as " communication "  #ffdb72 {
-    class CommunicationSkills ##[bold]  {
-<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/communication/communication_skills.spy.yaml</size></b>
---
-  <i>understanding</i>: <b><color:#ff962f>int</color></b>
-  <i>speaking</i>: <b><color:#ff962f>int</color></b>
-  <i>reading</i>: <b><color:#ff962f>int</color></b>
-  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
-  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
-
-}
-
-    class PublicMediaAuth ##[bold]  {
-<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/communication/public_media_auth.spy.yaml</size></b>
---
-  <i>groupPicturesOnWebsite</i>: <b><color:#ff962f>bool</color></b>
-  <i>groupPicturesInPress</i>: <b><color:#ff962f>bool</color></b>
-  <i>portraitPicturesOnWebsite</i>: <b><color:#ff962f>bool</color></b>
-  <i>portraitPicturesInPress</i>: <b><color:#ff962f>bool</color></b>
-  <i>nameOnWebsite</i>: <b><color:#ff962f>bool</color></b>
-  <i>nameInPress</i>: <b><color:#ff962f>bool</color></b>
-  <i>videoOnWebsite</i>: <b><color:#ff962f>bool</color></b>
-  <i>videoInPress</i>: <b><color:#ff962f>bool</color></b>
-  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
-  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
-
-}
-
-    class TutorInfo ##[bold]  {
-<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/communication/tutor_info.spy.yaml</size></b>
---
-  <i>parentsContact</i>: <b><color:#ff962f>String?</color></b>
-  <i>communicationTutor1</i>: <b><color:#ff962f>CommunicationSkills?</color></b>
-  <i>communicationTutor2</i>: <b><color:#ff962f>CommunicationSkills?</color></b>
-  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
-
-}
-
-  }
-  package dto as " dto "  #ffdb72 {
-    enum PupilDocumentType #ece4ff ##[bold] {
-<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/dto/pupil_document_type.spy.yaml</size></b>
---
-  serialized: byName
-  values: avatar, avatarAuth, publicMediaAuth
-
-}
-
-    class SiblingsTutorInfo ##[bold]  {
-<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/dto/siblings_tutor_info_dto.spy.yaml</size></b>
---
-<color:#93c47d>## we need this object for the endpoint to be able to update the parent info for all siblings</color>
-  <i>tutorInfo</i>: <b><color:#ff962f>TutorInfo?</color></b>
-  <i>siblingsIds</i>: <b><color:#ff962f>Set<int></color></b>
-
-}
-
-  }
-  package preschool as " preschool "  #ffdb72 {
-    class Kindergarden <<table: <b>kindergarden</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/preschool/kindergarden.spy.yaml</size></b>
---
-  <i>name</i>: <b><color:#ff962f>String</color></b>
-  <i>phone</i>: <b><color:#ff962f>String</color></b>
-  <i>address</i>: <b><color:#ff962f>String</color></b>
-  <i>email</i>: <b><color:#ff962f>String</color></b>
-  <i>contactPerson</i>: <b><color:#ff962f>String</color></b>
- ➡️ <i>pupils</i> : <b><color:#ff962f>List<PupilData>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
-
-}
-
-    class KindergardenInfo ##[bold]  {
-<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/preschool/kindergarden_info.spy.yaml</size></b>
---
-  <i>attendedMonths</i>: <b><color:#ff962f>int</color></b>
-  <i>comments</i>: <b><color:#ff962f>String</color></b>
-
-}
-
-    class PreSchoolMedical <<table: <b>pre_school_medical</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/preschool/pre_school_medical.spy.yaml</size></b>
---
-  <i>preschoolMedicalStatus</i>: <b><color:#ff962f>PreSchoolMedicalStatus?</color></b>
- ➡️ <i>preschoolMedicalFiles</i> : <b><color:#ff962f>List<HubDocument>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
-  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
-  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
-  <i>updatedBy</i>: <b><color:#ff962f>String?</color></b>
-  <i>updatedAt</i>: <b><color:#ff962f>DateTime?</color></b>
-
-}
-
-    enum PreSchoolMedicalStatus #ece4ff ##[bold] {
-<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/preschool/pre_school_medical_status.spy.yaml</size></b>
---
-  serialized: byName
-  values: notAvailable, ok, supportAreas, checkSpecialSupport
-
-}
-
-    class PreSchoolTest <<table: <b>pre_school_test</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/preschool/pre_school_test.spy.yaml</size></b>
---
-  <i>careNeedsIntensity</i>: <b><color:#ff962f>int?</color></b>
- ➡️ <i>preSchoolTestDocuments</i> : <b><color:#ff962f>List<HubDocument>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
-
-}
-
-  }
-}
-package pupil_identity as " pupil_identity "  #fff2cc {
-  class PupilIdentity ##[bold]  {
-<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_identity/pupil_identity.spy.yaml</size></b>
---
-  <i>id</i>: <b><color:#ff962f>int</color></b>
-  <i>firstName</i>: <b><color:#ff962f>String</color></b>
-  <i>lastName</i>: <b><color:#ff962f>String</color></b>
-  <i>group</i>: <b><color:#ff962f>String</color></b>
-  <i>groupTutor</i>: <b><color:#ff962f>String</color></b>
-  <i>schoolGrade</i>: <b><color:#ff962f>SchoolGrade</color></b>
-  <i>specialNeeds</i>: <b><color:#ff962f>String?</color></b>
-  <i>gender</i>: <b><color:#ff962f>String</color></b>
-  <i>language</i>: <b><color:#ff962f>String</color></b>
-  <i>family</i>: <b><color:#ff962f>String?</color></b>
-  <i>birthday</i>: <b><color:#ff962f>DateTime</color></b>
-  <i>migrationSupportEnds</i>: <b><color:#ff962f>DateTime?</color></b>
-  <i>pupilSince</i>: <b><color:#ff962f>DateTime</color></b>
-  <i>afterSchoolCare</i>: <b><color:#ff962f>bool</color></b>
-  <i>religion</i>: <b><color:#ff962f>String?</color></b>
-  <i>religionLessonsSince</i>: <b><color:#ff962f>DateTime?</color></b>
-  <i>familyLanguageLessonsSince</i>: <b><color:#ff962f>DateTime?</color></b>
-  <i>leavingDate</i>: <b><color:#ff962f>DateTime?</color></b>
-
-}
-
-  enum SchoolGrade #ece4ff ##[bold] {
-<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_identity/school_grade.spy.yaml</size></b>
---
-  serialized: byName
-  values: E1, E2, E3, K3, K4
-
-}
-
-}
-package lesson as " lesson "  #fff2cc {
-  class Lesson <<table: <b>lesson</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/timetable/models/lesson/lesson.spy.yaml</size></b>
---
-  <i>publicId</i>: <b><color:#ff962f>String</color></b>
-<color:#93c47d>## TODO: should relate with schoolday</color>
- ➡️ <i>attendedPupils</i> : <b><color:#ff962f>List<LessonAttendance>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_attendance_lessons<color:#ff962f>)</color>
- ➡️ <i>subject</i> : <b><color:#ff962f>LessonSubject?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_subject_lessons<color:#ff962f>)</color>
-
-}
-
-  class LessonAttendance <<table: <b>lesson_attendance</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/timetable/models/lesson/lesson_attendance.spy.yaml</size></b>
---
-<color:#93c47d>## junction table for pupils and lessons (many-to-many)</color>
- ➡️ <i>lesson</i> : <b><color:#ff962f>Lesson?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_attendance_lessons<color:#ff962f>)</color>
- ➡️ <i>pupil</i> : <b><color:#ff962f>PupilData?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_attendance_pupils<color:#ff962f>)</color>
-  <i>comment</i>: <b><color:#ff962f>String?</color></b>
-  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
-  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
-  <i>modifiedBy</i>: <b><color:#ff962f>String</color></b>
-  <i>modifiedAt</i>: <b><color:#ff962f>DateTime</color></b>
-
-}
-
-  class LessonGroup <<table: <b>lesson_group</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/timetable/models/lesson/lesson_group.spy.yaml</size></b>
---
-  <i>publicId</i>: <b><color:#ff962f>String</color></b>
-  <i>name</i>: <b><color:#ff962f>String</color></b>
-  <i>color</i>: <b><color:#ff962f>String?</color></b>
-  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
-  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
-  <i>modifiedBy</i>: <b><color:#ff962f>String</color></b>
-  <i>modifiedAt</i>: <b><color:#ff962f>DateTime</color></b>
- ➡️ <i>scheduledLessons</i> : <b><color:#ff962f>List<ScheduledLesson>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_group_scheduled_lesson<color:#ff962f>)</color>
- ➡️ <i>memberships</i> : <b><color:#ff962f>List<ScheduledLessonGroupMembership>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>group_scheduled_lesson_memberships<color:#ff962f>)</color>
-
-}
-
-  class ScheduledLessonGroupMembership <<table: <b>lesson_group_pupil</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/timetable/models/lesson/lesson_group_membership.spy.yaml</size></b>
---
-<color:#93c47d>## Junction table for lessongroup and pupil</color>
- ➡️ <i>lessonGroup</i> : <b><color:#ff962f>LessonGroup?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>group_scheduled_lesson_memberships<color:#ff962f>)</color>
- ➡️ <i>pupilData</i> : <b><color:#ff962f>PupilData?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>pupil_scheduled_lesson_group_memberships<color:#ff962f>)</color>
-<b><color:#0164aa>indexes:</color></b>
-<b><color:#0164aa>lesson_group_membership_index_idx:</color></b>
-<b><color:#0164aa>unique</color></b>: <b><color:#ff962f>true</color></b>
-
-}
-
-  class LessonSubject <<table: <b>lesson_subject</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/timetable/models/lesson/lesson_subject.spy.yaml</size></b>
---
-  <i>name</i>: <b><color:#ff962f>String</color></b>
-  <i>description</i>: <b><color:#ff962f>String?</color></b>
- ➡️ <i>lessons</i> : <b><color:#ff962f>List<Lesson>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_subject_lessons<color:#ff962f>)</color>
-
-}
-
-  class Subject <<table: <b>subject</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/timetable/models/lesson/subject.spy.yaml</size></b>
---
-  <i>publicId</i>: <b><color:#ff962f>String</color></b>
-  <i>name</i>: <b><color:#ff962f>String</color></b>
-  <i>description</i>: <b><color:#ff962f>String?</color></b>
-  <i>color</i>: <b><color:#ff962f>String?</color></b>
-  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
-  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
-  <i>modifiedBy</i>: <b><color:#ff962f>String</color></b>
- ➡️ <i>scheduledLessons</i> : <b><color:#ff962f>List<ScheduledLesson>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>subject_scheduled_lesson<color:#ff962f>)</color>
-
-}
-
-}
-package exceptions as " exceptions "  #fff2cc {
-  exception MyException #ffe6e6##[bold]  {
-<size:14>📁</size> <b><size:12> /_shared/models/exceptions/test_exception.spy.yaml</size></b>
---
-  <i>message</i>: <b><color:#ff962f>String</color></b>
-
-}
 
 }
 

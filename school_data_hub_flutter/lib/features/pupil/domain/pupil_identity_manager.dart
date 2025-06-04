@@ -212,9 +212,12 @@ class PupilIdentityManager {
           NotificationType.error, 'Die Datei konnte nicht hochgeladen werden!');
       return;
     }
-    final List<PupilData> updatedPupilDataRepository =
+    final List<PupilData>? updatedPupilDataRepository =
         await PupilDataApiService()
             .updateBackendPupilsDatabase(filePath: fileResponse.path!);
+    if (updatedPupilDataRepository == null) {
+      return;
+    }
     for (PupilData pupil in updatedPupilDataRepository) {
       di<PupilManager>().updatePupilProxyWithPupilData(pupil);
     }

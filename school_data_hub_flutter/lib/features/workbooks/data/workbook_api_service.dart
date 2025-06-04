@@ -7,7 +7,7 @@ final _client = di<Client>();
 class WorkbookApiService {
   //- get workbooks
 
-  Future<List<Workbook>> getWorkbooks() async {
+  Future<List<Workbook>?> getWorkbooks() async {
     final workbooks = ClientHelper.apiCall(
       call: () => _client.workbooks.fetchWorkbooks(),
       errorMessage: 'Fehler beim Laden der Arbeitshefte',
@@ -15,7 +15,7 @@ class WorkbookApiService {
     return workbooks;
   }
 
-  Future<Workbook> fetchWorkbookByIsbn(int isbn) async {
+  Future<Workbook?> fetchWorkbookByIsbn(int isbn) async {
     final workbook = ClientHelper.apiCall(
       call: () => _client.workbooks.fetchWorkbookByIsbn(isbn),
       errorMessage: 'Fehler beim Laden des Arbeitshefts',
@@ -25,7 +25,7 @@ class WorkbookApiService {
 
   //- post new workbook
 
-  Future<Workbook> updateWorkbook({
+  Future<Workbook?> updateWorkbook({
     required Workbook workbook,
   }) async {
     final updatedWorkbook = await ClientHelper.apiCall(
@@ -36,7 +36,7 @@ class WorkbookApiService {
     return updatedWorkbook;
   }
 
-  Future<bool> deleteWorkbook(int isbn) async {
+  Future<bool?> deleteWorkbook(int isbn) async {
     final success = await ClientHelper.apiCall(
       call: () => _client.workbooks.deleteWorkbook(isbn),
       errorMessage: 'Fehler beim Löschen des Arbeitshefts',

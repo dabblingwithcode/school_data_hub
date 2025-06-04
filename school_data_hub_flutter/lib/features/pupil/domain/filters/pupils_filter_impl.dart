@@ -2,8 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:school_data_hub_flutter/features/attendance/domain/attendance_helper_functions.dart';
-import 'package:school_data_hub_flutter/features/attendance/domain/filters/attendance_pupil_filter.dart';
+import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/_attendance/domain/filters/attendance_pupil_filter.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
@@ -15,8 +17,6 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
-import 'package:school_data_hub_flutter/features/schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_helper_functions.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _pupilIdentityManager = di<PupilIdentityManager>();
@@ -164,7 +164,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
       // if the pupil is not matched by any group filter, skip it
 
       if (!isMatchedByGroupFilter) {
-        filtersOn = true;
+        if (filtersOn == false) filtersOn = true;
         continue;
       }
       // matches if no school grade filter is active or if the school grade matches the pupil's grade
@@ -176,7 +176,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
       // if the pupil is not matched by any school grade filter, skip itl
 
       if (!isMatchedBySchoolGradeFilter) {
-        filtersOn = true;
+        if (filtersOn == false) filtersOn = true;
         continue;
       }
 
@@ -185,13 +185,13 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
               .any((filter) => filter.isActive && filter.matches(pupil));
 
       if (!isMatchedByGenderFilter) {
-        filtersOn = true;
+        if (filtersOn == false) filtersOn = true;
         continue;
       }
       // if the pupil is not matched by the text filter, skip it
 
       if (_textFilter.isActive && !_textFilter.matches(pupil)) {
-        filtersOn = true;
+        if (filtersOn == false) filtersOn = true;
         continue;
       }
 
@@ -200,7 +200,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
       if (di<FiltersStateManager>().getFilterState(FilterState.attendance)) {
         if (!_attendancePupilFilterManager
             .isMatchedByAttendanceFilters(pupil)) {
-          filtersOn = true;
+          if (filtersOn == false) filtersOn = true;
           continue;
         }
       }
@@ -213,7 +213,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
             .pupilIdsWithFilteredSchooldayEvents
             .value
             .contains(pupil.pupilId)) {
-          filtersOn = true;
+          if (filtersOn == false) filtersOn = true;
           continue;
         }
       }
@@ -224,7 +224,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
               pupil.afterSchoolCare == null ||
           _pupilFilterManager.pupilFilterState.value[PupilFilter.notOgs]! &&
               pupil.afterSchoolCare != null) {
-        filtersOn = true;
+        if (filtersOn == false) filtersOn = true;
         continue;
       }
 
@@ -233,7 +233,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
       if (di<LearningSupportFilterManager>().supportLevelFiltersActive) {
         if (!di<LearningSupportFilterManager>()
             .matchSupportLevelFilters(pupil)) {
-          filtersOn = true;
+          if (filtersOn == false) filtersOn = true;
           continue;
         }
       }
@@ -243,7 +243,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
       if (di<LearningSupportFilterManager>().supportAreaFiltersActive) {
         if (!di<LearningSupportFilterManager>()
             .matchSupportAreaFilters(pupil)) {
-          filtersOn = true;
+          if (filtersOn == false) filtersOn = true;
           continue;
         }
       }
@@ -253,7 +253,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
       if (_pupilFilterManager
               .pupilFilterState.value[PupilFilter.migrationSupport]! &&
           !PupilHelper.hasLanguageSupport(pupil.migrationSupportEnds)) {
-        filtersOn = true;
+        if (filtersOn == false) filtersOn = true;
         continue;
       }
       thisFilteredPupils.add(pupil);
@@ -261,11 +261,11 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
 
     _filteredPupils.value = thisFilteredPupils;
     _filteredPupilIds.value = thisFilteredPupils.map((e) => e.pupilId).toList();
-    if (filtersOn) {
-      //- TODO: Do we need this if we already use FiltersStateManager?
-      di<FiltersStateManager>()
-          .setFilterState(filterState: FilterState.pupil, value: true);
-    }
+    // if (filtersOn) {
+    //   //- TODO: Do we need this if we already use FiltersStateManager?
+    //   di<FiltersStateManager>()
+    //       .setFilterState(filterState: FilterState.pupil, value: true);
+    // }
     sortPupils();
   }
 
@@ -281,7 +281,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
   void sortPupils() {
     PupilSortMode sortMode = _sortMode.value;
     List<PupilProxy> filteredPupils = _filteredPupils.value;
-    //TODO: Uncomment when implemented
+
     switch (sortMode) {
       case PupilSortMode.sortByName:
         filteredPupils.sort((a, b) => a.firstName.compareTo(b.firstName));

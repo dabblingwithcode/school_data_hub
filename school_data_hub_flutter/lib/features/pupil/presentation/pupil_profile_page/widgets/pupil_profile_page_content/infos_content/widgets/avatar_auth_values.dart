@@ -36,8 +36,7 @@ class AvatarAuthValues extends WatchingWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Einwilligung avatar:',
-                style: TextStyle(fontSize: 18.0)),
+            const Text('Avatar:', style: TextStyle(fontSize: 16.0)),
             const Gap(10),
             avatarAuth == null
                 ? const Icon(

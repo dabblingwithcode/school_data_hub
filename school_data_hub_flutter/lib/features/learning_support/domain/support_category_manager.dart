@@ -79,9 +79,11 @@ class SupportCategoryManager with ChangeNotifier {
   // - Repository calls
 
   Future<void> fetchSupportCategories() async {
-    final List<SupportCategory> supportCategories =
+    final List<SupportCategory>? supportCategories =
         await _learningSupportApiService.fetchSupportCategories();
-
+    if (supportCategories == null) {
+      return;
+    }
     if (supportCategories.isNotEmpty) {
       // let's sort the categories by their category id to make sure they are in the right order
       supportCategories.sort((a, b) => a.categoryId.compareTo(b.categoryId));

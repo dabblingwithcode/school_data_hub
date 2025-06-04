@@ -152,7 +152,7 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                                 (controller.widget.appBarTitle ==
                                         'Neues Förderziel')
                                     ? 'Förderziel'
-                                    : 'Status',
+                                    : 'Beobachtungen',
                                 style: const TextStyle(
                                   fontSize: 20,
                                   color: Colors.black,
@@ -192,7 +192,7 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                             labelText: (controller.widget.appBarTitle ==
                                     'Neues Förderziel')
                                 ? 'Hilfen für das Erreichen des Zieles'
-                                : 'Beschreibung des Status',
+                                : 'Beschreibung des Ist-Zustandes',
                           ),
                         ),
                         const Gap(20),
@@ -201,7 +201,7 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                'Aktueller Status:',
+                                'Ist-Zustand:',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               const Gap(10),

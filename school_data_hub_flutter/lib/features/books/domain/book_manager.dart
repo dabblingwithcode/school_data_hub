@@ -178,27 +178,37 @@ class BookManager {
   //- BOOK TAGS
 
   Future<void> fetchBookTags() async {
-    final List<BookTag> responseTags = await _bookApiService.fetchBookTags();
+    final List<BookTag>? responseTags = await _bookApiService.fetchBookTags();
+    if (responseTags == null) {
+      return;
+    }
     _bookTags.value = responseTags;
   }
 
   Future<void> postBookTag(String tag) async {
-    final BookTag responseTag = await _bookApiService.postBookTag(tag);
+    final BookTag? responseTag = await _bookApiService.postBookTag(tag);
+    if (responseTag == null) {
+      return;
+    }
     _bookTags.value = [..._bookTags.value, responseTag];
   }
 
   Future<void> deleteBookTag(BookTag tag) async {
     final success = await _bookApiService.deleteBookTag(tag);
-    if (success) {
-      _bookTags.value = _bookTags.value.where((t) => t != tag).toList();
+    if (success == null) {
+      return;
     }
+    _bookTags.value = _bookTags.value.where((t) => t != tag).toList();
   }
 
   //- BOOK LOCATIONS
 
   Future<void> fetchLocations() async {
-    final List<LibraryBookLocation> responseLocations =
+    final List<LibraryBookLocation>? responseLocations =
         await _bookApiService.fetchBookLocations();
+    if (responseLocations == null) {
+      return;
+    }
     _locations.value = responseLocations;
   }
 
@@ -206,18 +216,23 @@ class BookManager {
     final newLocation = LibraryBookLocation(
       location: locationName,
     );
-    final LibraryBookLocation responseLocation =
+    final LibraryBookLocation? responseLocation =
         await _bookApiService.postBookLocation(newLocation);
+    if (responseLocation == null) {
+      return;
+    }
     _locations.value = [..._locations.value, responseLocation];
   }
 
   Future<void> deleteLocation(LibraryBookLocation location) async {
-    final bool success = await _bookApiService.deleteBookLocation(location);
-    if (success) {
-      _locations.value = _locations.value
-          .where((loc) => loc.location != location.location)
-          .toList();
+    final bool? success = await _bookApiService.deleteBookLocation(location);
+    if (success == null) {
+      return;
     }
+
+    _locations.value = _locations.value
+        .where((loc) => loc.location != location.location)
+        .toList();
   }
 
   void setLastLocationValue(LibraryBookLocation location) {
@@ -227,9 +242,11 @@ class BookManager {
   //- LIBRARY BOOKS
 
   Future<void> fetchLibraryBooks() async {
-    final List<LibraryBook> responseBooks =
+    final List<LibraryBook>? responseBooks =
         await _bookApiService.fetchLibraryBooks();
-
+    if (responseBooks == null) {
+      return;
+    }
     _refreshLibraryBookProxyCollections(responseBooks);
 
     _notificationService.showSnackBar(
@@ -241,11 +258,14 @@ class BookManager {
     required String libraryId,
     required LibraryBookLocation location,
   }) async {
-    final LibraryBook responseBook = await _bookApiService.postLibraryBook(
+    final LibraryBook? responseBook = await _bookApiService.postLibraryBook(
       isbn: isbn,
       bookId: libraryId,
       location: location,
     );
+    if (responseBook == null) {
+      return;
+    }
     _addLibraryBookProxyToCollections(responseBook);
 
     _notificationService.showSnackBar(
@@ -260,7 +280,7 @@ class BookManager {
     String? description,
     String? readingLevel,
   }) async {
-    final LibraryBook updatedbook =
+    final LibraryBook? updatedbook =
         await _bookApiService.updateLibraryBookOrBook(
       isbn: isbn,
       libraryId: libraryId,
@@ -269,7 +289,9 @@ class BookManager {
       description: description,
       readingLevel: readingLevel,
     );
-
+    if (updatedbook == null) {
+      return;
+    }
     _updateLibraryBookProxyInCollections(updatedbook);
 
     _notificationService.showSnackBar(
@@ -277,12 +299,12 @@ class BookManager {
   }
 
   Future<void> deleteLibraryBook(LibraryBookProxy libraryBookProxy) async {
-    final bool success =
+    final bool? success =
         await _bookApiService.deleteLibraryBook(libraryBookProxy.libraryBookId);
-
-    if (success) {
-      _removeLibraryBookProxyFromCollection(libraryBookProxy);
+    if (success == null) {
+      return;
     }
+    _removeLibraryBookProxyFromCollection(libraryBookProxy);
   }
 
   Future<void> searchBooks({
@@ -297,7 +319,7 @@ class BookManager {
     _isLoadingMore = false;
     _hasMorePages = true;
     try {
-      final List<LibraryBook> results = await _bookApiService.searchBooks(
+      final List<LibraryBook>? results = await _bookApiService.searchBooks(
         title: title?.isNotEmpty == true ? title : null,
         author: author?.isNotEmpty == true ? author : null,
         keywords: keywords?.isNotEmpty == true ? keywords : null,
@@ -307,6 +329,9 @@ class BookManager {
         page: _currentPage,
         perPage: _perPage,
       );
+      if (results == null) {
+        return;
+      }
       final searchResults = <LibraryBookProxy>[];
       for (final result in results) {
         final LibraryBookProxy libraryBookProxy =
@@ -348,7 +373,9 @@ class BookManager {
         page: _currentPage,
         perPage: _perPage,
       );
-
+      if (newPageResults == null) {
+        return;
+      }
       if (newPageResults.isEmpty) {
         _hasMorePages = false;
       } else {

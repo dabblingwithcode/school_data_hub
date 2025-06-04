@@ -10,7 +10,7 @@ class BookApiService {
 
   // - BOOK TAGS - //
 
-  Future<BookTag> postBookTag(String name) async {
+  Future<BookTag?> postBookTag(String name) async {
     final bookTag = BookTag(
       name: name,
     );
@@ -23,7 +23,7 @@ class BookApiService {
     return bookTagInServer;
   }
 
-  Future<List<BookTag>> fetchBookTags() async {
+  Future<List<BookTag>?> fetchBookTags() async {
     final bookTags = await ClientHelper.apiCall(
       call: () => _client.bookTags.fetchBookTags(),
       errorMessage: 'Fehler beim Laden der Buchtags',
@@ -32,7 +32,7 @@ class BookApiService {
     return bookTags;
   }
 
-  Future<bool> deleteBookTag(BookTag bookTag) async {
+  Future<bool?> deleteBookTag(BookTag bookTag) async {
     final success = await ClientHelper.apiCall(
       call: () => _client.bookTags.deleteBookTag(bookTag),
       errorMessage: 'Fehler beim Löschen des Buchtags',
@@ -42,7 +42,7 @@ class BookApiService {
 
   // - BOOK LOCATIONS - //
 
-  Future<LibraryBookLocation> postBookLocation(
+  Future<LibraryBookLocation?> postBookLocation(
       LibraryBookLocation location) async {
     final bookLocationInServer = await ClientHelper.apiCall(
       call: () =>
@@ -52,7 +52,7 @@ class BookApiService {
     return bookLocationInServer;
   }
 
-  Future<List<LibraryBookLocation>> fetchBookLocations() async {
+  Future<List<LibraryBookLocation>?> fetchBookLocations() async {
     final locations = await ClientHelper.apiCall(
       call: () => _client.libraryBookLocations.fetchLibraryBookLocations(),
       errorMessage: 'Fehler beim Laden der Buchstandorte',
@@ -60,7 +60,7 @@ class BookApiService {
     return locations;
   }
 
-  Future<bool> deleteBookLocation(LibraryBookLocation location) async {
+  Future<bool?> deleteBookLocation(LibraryBookLocation location) async {
     final success = await ClientHelper.apiCall(
       call: () =>
           _client.libraryBookLocations.deleteLibraryBookLocation(location),
@@ -71,25 +71,25 @@ class BookApiService {
 
   // -BOOKS- //
 
-  Future<Book> fetchBookByIsbn(int isbn) async {
+  Future<Book?> fetchBookByIsbn(int isbn) async {
     final book = await ClientHelper.apiCall(
       call: () => _client.books.fetchBookByIsbn(isbn),
       errorMessage: 'Fehler beim Laden des Buches',
     );
-    return book!;
+    return book;
   }
 
   // - LIBRARY BOOKS - //
 
-  Future<List<LibraryBook>> fetchLibraryBooks() async {
-    final List<LibraryBook> libraryBooks = await ClientHelper.apiCall(
+  Future<List<LibraryBook>?> fetchLibraryBooks() async {
+    final libraryBooks = await ClientHelper.apiCall(
       call: () => _client.libraryBooks.fetchLibraryBooks(),
       errorMessage: 'Fehler beim Laden der Bibliotheksbücher',
     );
     return libraryBooks;
   }
 
-  Future<LibraryBook> fetchLibraryBookByIsbn(int isbn) async {
+  Future<LibraryBook?> fetchLibraryBookByIsbn(int isbn) async {
     final librarybook = await ClientHelper.apiCall(
       call: () => _client.libraryBooks.fetchLibraryBookByIsbn(isbn),
       errorMessage: 'Fehler beim Laden des Buches',
@@ -97,9 +97,7 @@ class BookApiService {
     return librarybook!;
   }
 
-  static const _postLibraryBookUrl = '/library_books/new';
-
-  Future<LibraryBook> postLibraryBook({
+  Future<LibraryBook?> postLibraryBook({
     required int isbn,
     required String bookId,
     required LibraryBookLocation location,
@@ -115,7 +113,7 @@ class BookApiService {
     return returnedLibraryBook;
   }
 
-  Future<LibraryBook> updateLibraryBookOrBook({
+  Future<LibraryBook?> updateLibraryBookOrBook({
     required int isbn,
     required String libraryId,
     bool? available,
@@ -209,7 +207,7 @@ class BookApiService {
     return '/library_books/$bookId';
   }
 
-  Future<bool> deleteLibraryBook(int libraryBookId) async {
+  Future<bool?> deleteLibraryBook(int libraryBookId) async {
     final success = await ClientHelper.apiCall(
       call: () => _client.libraryBooks.deleteLibraryBook(libraryBookId),
       errorMessage: 'Fehler beim Löschen des Buches',
@@ -219,16 +217,16 @@ class BookApiService {
 
   //- fetch library book by library id
 
-  Future<LibraryBook> fetchLibraryBookByLibraryId(String libraryId) async {
+  Future<LibraryBook?> fetchLibraryBookByLibraryId(String libraryId) async {
     final libraryBook = await ClientHelper.apiCall(
       call: () => _client.libraryBooks.fetchLibraryBookByLibraryId(libraryId),
       errorMessage: 'Fehler beim Laden des Buches',
     );
 
-    return libraryBook!;
+    return libraryBook;
   }
 
-  Future<List<LibraryBook>> searchBooks({
+  Future<List<LibraryBook>?> searchBooks({
     String? title,
     String? author,
     String? keywords,
@@ -249,7 +247,7 @@ class BookApiService {
       perPage: perPage,
     );
 
-    final List<LibraryBook> queriedLibraryBooks = await ClientHelper.apiCall(
+    final queriedLibraryBooks = await ClientHelper.apiCall(
       call: () => _client.libraryBooks.fetchLibraryBooksMatchingQuery(query),
       errorMessage: 'Fehler bei der Suche',
     );

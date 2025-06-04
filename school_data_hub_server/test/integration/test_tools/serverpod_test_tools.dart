@@ -1902,6 +1902,7 @@ class _CompetenceCheckEndpoint {
     required int competenceId,
     required int pupilId,
     required int score,
+    String? comment,
     required double valueFactor,
     required String createdBy,
   }) async {
@@ -1920,6 +1921,7 @@ class _CompetenceCheckEndpoint {
             'competenceId': competenceId,
             'pupilId': pupilId,
             'score': score,
+            'comment': comment,
             'valueFactor': valueFactor,
             'createdBy': createdBy,
           }),

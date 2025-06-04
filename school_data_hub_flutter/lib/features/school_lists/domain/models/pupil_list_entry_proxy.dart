@@ -10,7 +10,7 @@ class PupilListEntryProxy with ChangeNotifier {
     notifyListeners();
     _log.info('PupilListEntryProxy created: ${pupilEntry.id}');
   }
-  setPupilEntry(PupilListEntry entry) {
+  void setPupilEntry(PupilListEntry entry) {
     pupilEntry = entry;
     notifyListeners();
     _log.info('PupilListEntryProxy updated: ${pupilEntry.id}');

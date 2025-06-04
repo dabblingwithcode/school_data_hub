@@ -7,6 +7,7 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profil
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/communication_content/pupil_profile_communication_content.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/credit/pupil_profile_credit_content.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/infos_content/pupil_profile_infos_content.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_content/pupil_profile_learning_content.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/pupil_profile_learning_support_content.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/school_list_content/pupil_school_lists_content_card.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/schoolday_events_content/pupil_profile_schoolday_events_content.dart';
@@ -40,8 +41,10 @@ class PupilProfilePageContent extends WatchingWidget {
             PupilSchoolListsContentCard(pupil: pupil),
           if (navState == ProfileNavigationState.authorization.value)
             PupilProfileAuthorizationContent(pupil: pupil),
-          if (navState == 8) PupilProfileLearningSupportContent(pupil: pupil),
-          // if (navState == 9) PupilLearningContent(pupil: pupil),
+          if (navState == ProfileNavigationState.learningSupport.value)
+            PupilProfileLearningSupportContent(pupil: pupil),
+          if (navState == ProfileNavigationState.learning.value)
+            PupilLearningContent(pupil: pupil),
           const Gap(20),
         ],
       ),

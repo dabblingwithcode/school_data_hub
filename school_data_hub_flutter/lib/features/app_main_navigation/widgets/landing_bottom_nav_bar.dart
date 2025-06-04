@@ -31,6 +31,48 @@ class MainMenuBottomNavigation extends WatchingWidget {
     const SettingsPage(),
   ];
 
+  void showHeavyLoadingOverlay(BuildContext context) {
+    overlayEntry = OverlayEntry(
+      builder: (context) => const Stack(
+        fit: StackFit.expand,
+        children: [
+          ModalBarrier(
+            dismissible: false,
+            color:
+                Color.fromARGB(108, 0, 0, 0), // Colors.black.withOpacity(0.3)
+          ), // Background color
+          Material(
+            color: Colors.transparent,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text('Bitte warten...', // Your text here
+                      style: TextStyle(
+                          color: Colors.white, // Text color
+                          fontSize: 20, // Text size
+                          fontWeight: FontWeight.bold)),
+                  SizedBox(height: 16),
+                  CircularProgressIndicator(
+                    color: AppColors.interactiveColor,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    Overlay.of(context).insert(overlayEntry!);
+  }
+
+  void hideLoadingOverlay() {
+    overlayEntry?.remove();
+    overlayEntry = null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
@@ -64,7 +106,7 @@ class MainMenuBottomNavigation extends WatchingWidget {
       final envDataIncomplete =
           di<EnvManager>().isAnyImportantEnvDataNotPopulatedInServer();
       if (envDataIncomplete) {
-        final serverDataStatus = di<EnvManager>().populatedEnvServerData;
+        final serverDataStatus = _envManager.populatedEnvServerData;
         final List<String> missingFields = [];
         if (!serverDataStatus.schoolSemester) {
           missingFields.add('Schulhalbjahr');
@@ -213,45 +255,4 @@ void showInstanceLoadingOverlay(BuildContext context) {
   );
 
   Overlay.of(context).insert(overlayEntry!);
-}
-
-void showHeavyLoadingOverlay(BuildContext context) {
-  overlayEntry = OverlayEntry(
-    builder: (context) => const Stack(
-      fit: StackFit.expand,
-      children: [
-        ModalBarrier(
-          dismissible: false,
-          color: Color.fromARGB(108, 0, 0, 0), // Colors.black.withOpacity(0.3)
-        ), // Background color
-        Material(
-          color: Colors.transparent,
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text('Bitte warten...', // Your text here
-                    style: TextStyle(
-                        color: Colors.white, // Text color
-                        fontSize: 20, // Text size
-                        fontWeight: FontWeight.bold)),
-                SizedBox(height: 16),
-                CircularProgressIndicator(
-                  color: AppColors.interactiveColor,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    ),
-  );
-
-  Overlay.of(context).insert(overlayEntry!);
-}
-
-void hideLoadingOverlay() {
-  overlayEntry?.remove();
-  overlayEntry = null;
 }

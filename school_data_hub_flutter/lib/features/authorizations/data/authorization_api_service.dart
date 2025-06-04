@@ -14,7 +14,7 @@ class AuthorizationApiService {
 
   //- getAuthorizations
 
-  Future<List<Authorization>> fetchAuthorizations() async {
+  Future<List<Authorization>?> fetchAuthorizations() async {
     final auths = ClientHelper.apiCall(
         call: () => _client.authorization.fetchAuthorizations());
     return auths;
@@ -22,7 +22,7 @@ class AuthorizationApiService {
 
   //- post authorization with a list of pupils as members
 
-  Future<Authorization> postAuthorizationWithPupils(String name,
+  Future<Authorization?> postAuthorizationWithPupils(String name,
       String description, String createdBy, List<int> pupilIds) async {
     final auth = ClientHelper.apiCall(
         call: () => _client.authorization.postAuthorizationWithPupils(
@@ -32,7 +32,7 @@ class AuthorizationApiService {
 
 //- update authorization
 
-  Future<Authorization> updateAuthorization(
+  Future<Authorization?> updateAuthorization(
       int authId,
       String? name,
       String? description,
@@ -49,7 +49,7 @@ class AuthorizationApiService {
   }
   //- delete authorization
 
-  Future<bool> deleteAuthorization(int authId) async {
+  Future<bool?> deleteAuthorization(int authId) async {
     final success = await ClientHelper.apiCall(
       call: () => _client.authorization.deleteAuthorization(authId),
       errorMessage: 'Einwilligung konnte nicht gelöscht werden',
@@ -61,7 +61,7 @@ class AuthorizationApiService {
 
   //- update pupil authorization
 
-  Future<PupilAuthorization> updatePupilAuthorization(
+  Future<PupilAuthorization?> updatePupilAuthorization(
       PupilAuthorization pupilauth) {
     return ClientHelper.apiCall(
       call: () =>
@@ -70,7 +70,7 @@ class AuthorizationApiService {
     );
   }
 
-  Future<PupilAuthorization> addFileToPupilAuthorization(
+  Future<PupilAuthorization?> addFileToPupilAuthorization(
     int pupilAuthId,
     File file,
     String createdBy,
@@ -88,7 +88,7 @@ class AuthorizationApiService {
     return result;
   }
 
-  Future<PupilAuthorization> removeFileFromPupilAuthorization(
+  Future<PupilAuthorization?> removeFileFromPupilAuthorization(
     int pupilAuthId,
   ) async {
     final result = ClientHelper.apiCall(

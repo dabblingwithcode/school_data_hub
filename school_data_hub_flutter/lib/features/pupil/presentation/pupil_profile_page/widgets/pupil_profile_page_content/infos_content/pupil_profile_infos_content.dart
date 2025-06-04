@@ -112,7 +112,7 @@ class PupilProfileInfosContent extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.backgroundColor))
                         : const Text(
-                            'keine Einträge',
+                            'keine Einträge', //TODO:  BUG - this does not update when the value is changed
                             style: TextStyle(
                                 fontSize: 18.0,
                                 fontWeight: FontWeight.bold,
@@ -232,7 +232,7 @@ class PupilProfileInfosContent extends StatelessWidget {
                         icon: const Icon(Icons.qr_code_2_rounded, size: 30)),
               ],
             ),
-            const Gap(10),
+            const Gap(5),
             Row(
               children: [
                 const Text('Kontakt Familie:',
@@ -347,9 +347,10 @@ class PupilProfileInfosContent extends StatelessWidget {
                 ? const Row(
                     children: [
                       Text(
-                        'Geschwister:',
+                        'Geschwister',
                         style: TextStyle(
                           fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],

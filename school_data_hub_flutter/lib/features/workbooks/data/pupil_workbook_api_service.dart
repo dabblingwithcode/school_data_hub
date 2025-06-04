@@ -10,7 +10,7 @@ final _client = di<Client>();
 class PupilWorkbookApiService {
   //- create
 
-  Future<PupilWorkbook> postNewPupilWorkbook(
+  Future<PupilWorkbook?> postNewPupilWorkbook(
       {required int pupilId,
       required int isbn,
       required String createdBy}) async {
@@ -27,7 +27,7 @@ class PupilWorkbookApiService {
 
   //- read
 
-  Future<List<PupilWorkbook>> fetchAllPupilWorkbooks() async {
+  Future<List<PupilWorkbook>?> fetchAllPupilWorkbooks() async {
     final fetchedPupilWorkbooks =
         await ClientHelper.apiCall<List<PupilWorkbook>>(
       call: () => _client.pupilWorkbooks.fetchPupilWorkbooks(),
@@ -37,7 +37,7 @@ class PupilWorkbookApiService {
     return fetchedPupilWorkbooks;
   }
 
-  Future<List<PupilWorkbook>> fetchAllPupilWorkbooksFromPupil(
+  Future<List<PupilWorkbook>?> fetchAllPupilWorkbooksFromPupil(
       {required int pupilId}) async {
     final fetchedPupilWorkbooks =
         await ClientHelper.apiCall<List<PupilWorkbook>>(
@@ -49,7 +49,7 @@ class PupilWorkbookApiService {
 
   // - update
 
-  Future<PupilWorkbook> updatePupilWorkbook(
+  Future<PupilWorkbook?> updatePupilWorkbook(
       int pupilId, PupilWorkbook pupilWorkbook) async {
     final updatedPupilWorkbook = await ClientHelper.apiCall<PupilWorkbook>(
       call: () => _client.pupilWorkbooks.updatePupilWorkbook(
@@ -66,7 +66,7 @@ class PupilWorkbookApiService {
 
   //- delete pupil workbook
 
-  Future<bool> deletePupilWorkbook(int pupilWorkbookId) async {
+  Future<bool?> deletePupilWorkbook(int pupilWorkbookId) async {
     final result = await ClientHelper.apiCall<bool>(
       call: () => _client.pupilWorkbooks.deletePupilWorkbook(pupilWorkbookId),
       errorMessage: 'Fehler beim Löschen des Arbeitshefts',

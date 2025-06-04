@@ -27,18 +27,18 @@ class PupilDataApiService {
 
   // - update backend pupil database
 
-  Future<List<PupilData>> updateBackendPupilsDatabase(
+  Future<List<PupilData>?> updateBackendPupilsDatabase(
       {required String filePath}) async {
     final pupils = await ClientHelper.apiCall(
       call: () => _client.admin.updateBackendPupilDataState(filePath),
       errorMessage: 'Die Schüler konnten nicht aktualisiert werden',
     );
-    return pupils.toList();
+    return pupils?.toList();
   }
 
   //- fetch list of pupils
 
-  Future<List<PupilData>> fetchListOfPupils({
+  Future<List<PupilData>?> fetchListOfPupils({
     required List<int> pupilInternalIds,
   }) async {
     final pupilIdsSet = pupilInternalIds.toSet();
@@ -51,7 +51,7 @@ class PupilDataApiService {
 
   //- update communication skills
 
-  Future<PupilData> updateCommunicationSkills({
+  Future<PupilData?> updateCommunicationSkills({
     required int pupilId,
     required CommunicationSkills? communicationSkills,
   }) async {
@@ -67,7 +67,7 @@ class PupilDataApiService {
 
   // - update credit
 
-  Future<PupilData> updateCredit({
+  Future<PupilData?> updateCredit({
     required int pupilId,
     required int credit,
     String? comment,
@@ -82,7 +82,7 @@ class PupilDataApiService {
 
   //- update pupil one of the pupil properties being a string
 
-  Future<PupilData> updateStringProperty(
+  Future<PupilData?> updateStringProperty(
       {required int pupilId,
       required String property,
       required String? value}) async {
@@ -94,7 +94,7 @@ class PupilDataApiService {
     return updatedPupil;
   }
 
-  Future<PupilData> updateSchoolyearHeldBackDate(
+  Future<PupilData?> updateSchoolyearHeldBackDate(
       {required int pupilId, required ({DateTime? value}) date}) async {
     final updatedPupil = await ClientHelper.apiCall(
       call: () =>
@@ -105,7 +105,7 @@ class PupilDataApiService {
   }
   // - tutor info
 
-  Future<PupilData> updateTutorInfo({
+  Future<PupilData?> updateTutorInfo({
     required int pupilId,
     required TutorInfo? tutorInfo,
   }) async {
@@ -116,7 +116,7 @@ class PupilDataApiService {
     return updatedPupil;
   }
 
-  Future<List<PupilData>> updateSiblingsTutorInfo({
+  Future<List<PupilData>?> updateSiblingsTutorInfo({
     required List<int> siblingsIds,
     required TutorInfo? tutorInfo,
   }) async {
@@ -134,7 +134,7 @@ class PupilDataApiService {
 
   //- preschool medical
 
-  Future<PupilData> updatePreSchoolMedicalStatus({
+  Future<PupilData?> updatePreSchoolMedicalStatus({
     required int pupilId,
     required PreSchoolMedicalStatus preSchoolMedical,
     required String createdBy,
@@ -151,7 +151,7 @@ class PupilDataApiService {
   }
   //- hub document
 
-  Future<PupilData> updatePupilDocument({
+  Future<PupilData?> updatePupilDocument({
     required int pupilId,
     required File file,
     required PupilDocumentType documentType,
@@ -171,7 +171,7 @@ class PupilDataApiService {
 
 //- delete pupil document
 
-  Future<PupilData> deletePupilDocument(
+  Future<PupilData?> deletePupilDocument(
       {required int pupilId, required PupilDocumentType documentType}) async {
     _notificationService.apiRunning(true);
     final updatedPupil = await ClientHelper.apiCall(
@@ -183,7 +183,7 @@ class PupilDataApiService {
 
 //- public media auth
 
-  Future<PupilData> resetPublicMediaAuth({required int pupilId}) async {
+  Future<PupilData?> resetPublicMediaAuth({required int pupilId}) async {
     final updatedPupil = await ClientHelper.apiCall(
       call: () => _client.pupil
           .resetPublicMediaAuth(pupilId, _hubSessionManager.userName!),
@@ -193,7 +193,7 @@ class PupilDataApiService {
     return updatedPupil;
   }
 
-  Future<PupilData> updatePublicMediaAuth(
+  Future<PupilData?> updatePublicMediaAuth(
       int pupilId, PublicMediaAuth publicMediaAuth) async {
     final updatedPupil = await ClientHelper.apiCall(
       call: () => _client.pupilUpdate.updatePublicMediaAuth(
@@ -208,7 +208,7 @@ class PupilDataApiService {
 
   //- support level
 
-  Future<PupilData> updateSupportLevel({
+  Future<PupilData?> updateSupportLevel({
     required int pupilId,
     required int supportLevelValue,
     required DateTime createdAt,
@@ -228,7 +228,7 @@ class PupilDataApiService {
     return updatedPupil;
   }
 
-  Future<PupilData> deleteSupportLevelHistoryItem({
+  Future<PupilData?> deleteSupportLevelHistoryItem({
     required int pupilId,
     required int supportLevelId,
   }) async {

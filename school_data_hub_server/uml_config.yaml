@@ -4,7 +4,7 @@ paths:
   umlOutputFile: 'uml_diagram.puml'
 options:
   printComments: true
-  useNameSpace: true
+  useNameSpace: false
   ignoreRootFolder: 'models'
 layout:
   skinparamNodesep: 30

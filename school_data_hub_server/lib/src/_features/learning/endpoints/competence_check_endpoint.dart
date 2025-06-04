@@ -11,6 +11,7 @@ class CompetenceCheckEndpoint extends Endpoint {
     required int competenceId,
     required int pupilId,
     required int score,
+    String? comment,
     required double valueFactor,
     required String createdBy,
   }) async {
@@ -22,6 +23,7 @@ class CompetenceCheckEndpoint extends Endpoint {
       createdAt: DateTime.now().toUtc(),
       pupilId: pupilId,
       competenceId: competenceId,
+      comment: comment,
     );
 
     var transactionResult = await session.db.transaction((transaction) async {

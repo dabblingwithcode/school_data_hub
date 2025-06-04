@@ -2,8 +2,8 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/models/learning_support_enums.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
@@ -148,7 +148,7 @@ class LearningSupportFilterManager {
       complementaryFilter = true;
     }
 
-    //- Theses filters exclude pupil that not match
+    //- These filters exclude pupil that not match
     //- regardless of the other filters
 
     if (isMatched == true) {

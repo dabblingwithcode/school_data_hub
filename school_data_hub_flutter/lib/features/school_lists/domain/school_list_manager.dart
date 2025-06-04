@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/data/school_list_api_service.dart';
@@ -114,9 +115,10 @@ class SchoolListManager with ChangeNotifier {
   //- API calls
 
   Future<void> fetchSchoolLists() async {
-    final List<SchoolList> responseSchoolLists =
-        await _apiSchoolListService.fetchSchoolLists();
-
+    final responseSchoolLists = await _apiSchoolListService.fetchSchoolLists();
+    if (responseSchoolLists == null) {
+      return;
+    }
     _notificationService.showSnackBar(NotificationType.success,
         '${responseSchoolLists.length} Schullisten geladen!');
 
@@ -137,15 +139,16 @@ class SchoolListManager with ChangeNotifier {
       String? description,
       bool? public,
       ({List<int> pupilIds, MemberOperation operation})? operation}) async {
-    final SchoolList updatedSchoolList =
+    final SchoolList? updatedSchoolList =
         await _apiSchoolListService.updateSchoolListProperty(
             listId: listId,
             name: name,
             description: description,
             public: public,
             updateMembers: operation);
-    _log.fine(
-        'Fetched school list number ${updatedSchoolList.id!} with ${updatedSchoolList.pupilEntries!.length} pupil entries');
+    if (updatedSchoolList == null) {
+      return;
+    }
     _updateCollectionsFromSchoolList(updatedSchoolList);
 
     _notificationService.showSnackBar(
@@ -164,8 +167,11 @@ class SchoolListManager with ChangeNotifier {
       comment: comment?.value != null ? comment!.value : entry.comment,
     );
 
-    final PupilListEntry updatedEntry =
+    final PupilListEntry? updatedEntry =
         await _apiSchoolListService.updatePupilEntry(entry: entryToUpdate);
+    if (updatedEntry == null) {
+      return;
+    }
     _schoolListIdPupilEntriesMap[updatedEntry.schoolListId]!
         .updatePupilEntry(updatedEntry);
     _notificationService.showSnackBar(
@@ -175,22 +181,15 @@ class SchoolListManager with ChangeNotifier {
   }
 
   Future<void> deleteSchoolList(int listId) async {
-    try {
-      final success = await _apiSchoolListService.deleteSchoolList(listId);
-      if (success) {
-        _schoolListMap.remove(listId);
-        _schoolListIdPupilEntriesMap.remove(listId);
-        _notificationService.showSnackBar(
-            NotificationType.success, 'Schulliste erfolgreich gelöscht');
-      } else {
-        _notificationService.showSnackBar(
-            NotificationType.error, 'Fehler beim Löschen der Schulliste');
-      }
-    } catch (e) {
-      _log.severe('Error deleting school list: $e');
-      _notificationService.showSnackBar(
-          NotificationType.error, 'Fehler beim Löschen der Schulliste: $e');
+    final success = await _apiSchoolListService.deleteSchoolList(listId);
+    if (success == null) {
+      return;
     }
+    _schoolListMap.remove(listId);
+    _schoolListIdPupilEntriesMap.remove(listId);
+    _notificationService.showSnackBar(
+        NotificationType.success, 'Schulliste erfolgreich gelöscht');
+
     notifyListeners();
   }
 // Future<void> deleteSchoolList(String listId) async {
@@ -225,21 +224,18 @@ class SchoolListManager with ChangeNotifier {
       required String description,
       required List<int> pupilIds,
       required bool public}) async {
-    try {
-      final schoolList = await _apiSchoolListService.postSchoolListWithGroup(
-          name: name,
-          description: description,
-          pupilIds: pupilIds,
-          public: public);
-
-      _schoolListMap[schoolList.id!] = schoolList;
-      _updateCollectionsFromSchoolList(schoolList);
-    } catch (e) {
-      _log.severe('Error creating school list: $e');
-
-      throw Exception(
-          'Fehler beim Erstellen der Schulliste: $e'); // Handle the error
+    final schoolList = await ClientHelper.apiCall(
+        call: () => _apiSchoolListService.postSchoolListWithGroup(
+            name: name,
+            description: description,
+            pupilIds: pupilIds,
+            public: public),
+        errorMessage: 'Fehler beim Erstellen der Schulliste');
+    if (schoolList == null) {
+      return;
     }
+    _schoolListMap[schoolList.id!] = schoolList;
+    _updateCollectionsFromSchoolList(schoolList);
 
     _notificationService.showSnackBar(
         NotificationType.success, 'Schulliste erfolgreich erstellt');

@@ -619,6 +619,7 @@ class EndpointCompetenceCheck extends _i1.EndpointRef {
     required int competenceId,
     required int pupilId,
     required int score,
+    String? comment,
     required double valueFactor,
     required String createdBy,
   }) =>
@@ -629,6 +630,7 @@ class EndpointCompetenceCheck extends _i1.EndpointRef {
           'competenceId': competenceId,
           'pupilId': pupilId,
           'score': score,
+          'comment': comment,
           'valueFactor': valueFactor,
           'createdBy': createdBy,
         },

@@ -1326,6 +1326,11 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<int>(),
               nullable: false,
             ),
+            'comment': _i1.ParameterDescription(
+              name: 'comment',
+              type: _i1.getType<String?>(),
+              nullable: true,
+            ),
             'valueFactor': _i1.ParameterDescription(
               name: 'valueFactor',
               type: _i1.getType<double>(),
@@ -1347,6 +1352,7 @@ class Endpoints extends _i1.EndpointDispatch {
             competenceId: params['competenceId'],
             pupilId: params['pupilId'],
             score: params['score'],
+            comment: params['comment'],
             valueFactor: params['valueFactor'],
             createdBy: params['createdBy'],
           ),

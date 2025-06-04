@@ -6,8 +6,8 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/paddings.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/credit/credit_list_page/credit_list_page.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/credit/credit_list_page/widgets/dialogues/change_credit_dialog.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/credit_list_page.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/widgets/dialogues/change_credit_dialog.dart';
 
 class PupilProfileCreditContent extends StatelessWidget {
   final PupilProxy pupil;
@@ -106,7 +106,7 @@ class PupilProfileCreditContent extends StatelessWidget {
           const Gap(10),
           if (pupil.creditTransactions != null)
             ListView.builder(
-              padding: const EdgeInsets.only(left: 20, top: 5, bottom: 15),
+              padding: const EdgeInsets.only(left: 20, bottom: 15),
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: pupil.creditTransactions?.length,

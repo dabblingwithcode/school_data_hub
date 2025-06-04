@@ -74,7 +74,7 @@ class PupilProxy with ChangeNotifier {
   //     // there is no missed class for this pupil on this date
   //     // if there is a missed class for this date in the pupil's missed classes in memory
   //     // remove it
-  //     if (_missedClasses.containsKey(_schooldayManager.thisDate.value)) {
+  //     if (_missedClasses.containsKey(_schoolCalendarManager.thisDate.value)) {
   //       _missedClasses.remove(di<SchooldayManager>().thisDate.value);
   //       pupilIsDirty = true;
   //     }

@@ -6,10 +6,10 @@ import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/data/learning_support_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
-import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
+import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _schooldayManager = di<SchooldayManager>();
+final _schoolCalendarManager = di<SchoolCalendarManager>();
 final _learningSupportApiService = di<LearningSupportApiService>();
 final _pupilManager = di<PupilManager>();
 final _hubSessionManager = di<HubSessionManager>();
@@ -22,7 +22,8 @@ class LearningSupportPlanManager with ChangeNotifier {
   LearningSupportPlan? getCurrentLearningSupportPlan(int pupilId) {
     return _learningSupportPlans.value[pupilId]?.firstWhereOrNull(
       (plan) =>
-          plan.schoolSemesterId == _schooldayManager.currentSemester.value!.id,
+          plan.schoolSemesterId ==
+          _schoolCalendarManager.currentSemester.value!.id,
     );
   }
 
@@ -55,6 +56,9 @@ class LearningSupportPlanManager with ChangeNotifier {
         createdBy: _hubSessionManager.userName!,
       ),
     );
+    if (updatedPupil == null) {
+      return;
+    }
     _pupilManager.updatePupilProxyWithPupilData(updatedPupil);
     return;
   }
@@ -65,6 +69,9 @@ class LearningSupportPlanManager with ChangeNotifier {
       pupilId,
       statusId,
     );
+    if (updatedPupil == null) {
+      return;
+    }
     _pupilManager.updatePupilProxyWithPupilData(updatedPupil);
     return;
   }
@@ -105,7 +112,7 @@ class LearningSupportPlanManager with ChangeNotifier {
     required String description,
     required String strategies,
   }) async {
-    final PupilData responsePupil =
+    final PupilData? responsePupil =
         await _learningSupportApiService.postNewCategoryGoal(
       pupilId: pupilId,
       supportCategoryId: goalCategoryId,
@@ -113,7 +120,9 @@ class LearningSupportPlanManager with ChangeNotifier {
       strategies: strategies,
       createdBy: _hubSessionManager.userName!,
     );
-
+    if (responsePupil == null) {
+      return;
+    }
     _pupilManager.updatePupilProxyWithPupilData(responsePupil);
 
     _notificationService.showSnackBar(

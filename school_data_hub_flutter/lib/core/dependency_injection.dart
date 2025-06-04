@@ -9,15 +9,17 @@ import 'package:school_data_hub_flutter/core/auth/hub_auth_key_manager.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_monitor.dart';
+import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
+import 'package:school_data_hub_flutter/features/_attendance/domain/filters/attendance_pupil_filter.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
-import 'package:school_data_hub_flutter/features/attendance/domain/attendance_manager.dart';
-import 'package:school_data_hub_flutter/features/attendance/domain/filters/attendance_pupil_filter.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/filters/authorization_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/filters/pupil_authorization_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
-import 'package:school_data_hub_flutter/features/competence/domain/competence_manager.dart';
-import 'package:school_data_hub_flutter/features/competence/domain/filters/competence_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_plan_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
@@ -29,11 +31,9 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_fil
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter_impl.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/filters/school_list_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
-import 'package:school_data_hub_flutter/features/schoolday/domain/schoolday_manager.dart';
-import 'package:school_data_hub_flutter/features/schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -111,14 +111,14 @@ class DiManager {
   /// the session. it is called in the [HubSessionManager] class after the session is authenticated.
   static Future<void> registerManagersDependingOnSession() async {
     _log.info('Registering managers depending on session');
-    di.registerSingletonAsync<SchooldayManager>(() async {
-      final schooldayManager = SchooldayManager();
+    di.registerSingletonAsync<SchoolCalendarManager>(() async {
+      final schoolCalendarManager = SchoolCalendarManager();
 
-      await schooldayManager.init();
+      await schoolCalendarManager.init();
 
-      _log.info('SchooldayManager initialized');
+      _log.info('SchoolCalendarManager initialized');
 
-      return schooldayManager;
+      return schoolCalendarManager;
     });
 
     di.registerSingletonAsync<SupportCategoryManager>(() async {
@@ -139,11 +139,15 @@ class DiManager {
       _log.info('PupilManager initialized');
 
       return pupilManager;
-    }, dependsOn: [HubSessionManager]);
+    });
 
     di.registerSingletonWithDependencies<LearningSupportPlanManager>(
         () => LearningSupportPlanManager(),
-        dependsOn: [PupilManager, SchooldayManager, SupportCategoryManager]);
+        dependsOn: [
+          PupilManager,
+          SchoolCalendarManager,
+          SupportCategoryManager
+        ]);
 
     di.registerSingletonAsync<BookManager>(() async {
       log('Registering BookManager');
@@ -218,7 +222,7 @@ class DiManager {
 
     di.registerSingletonWithDependencies<AttendanceManager>(
         () => AttendanceManager(),
-        dependsOn: [SchooldayManager, PupilsFilter]);
+        dependsOn: [SchoolCalendarManager, PupilsFilter]);
 
     di.registerSingletonAsync<SchoolListManager>(() async {
       _log.info('Registering SchoolListManager');
@@ -244,7 +248,7 @@ class DiManager {
 
     di.registerSingletonWithDependencies<SchooldayEventManager>(
         () => SchooldayEventManager(),
-        dependsOn: [SchooldayManager, PupilsFilter]);
+        dependsOn: [SchoolCalendarManager, PupilsFilter]);
   }
 
   static Future<void> unregisterManagersDependingOnActiveEnv() async {
@@ -281,7 +285,7 @@ class DiManager {
       di<HubSessionManager>().changeMatrixPolicyManagerRegistrationStatus(true);
 
       return policyManager;
-    }, dependsOn: [HubSessionManager]); // TODO: add dependency to PupilManager
+    }, dependsOn: [HubSessionManager]); // TODO: add dependency to PupilManager?
 
     di.registerSingletonWithDependencies(() {
       return MatrixPolicyFilterManager(di<MatrixPolicyManager>());

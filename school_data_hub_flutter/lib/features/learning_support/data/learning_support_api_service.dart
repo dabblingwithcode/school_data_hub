@@ -9,7 +9,7 @@ class LearningSupportApiService {
 
   //- fetch goal categories
 
-  Future<List<SupportCategory>> fetchSupportCategories() async {
+  Future<List<SupportCategory>?> fetchSupportCategories() async {
     final response = await ClientHelper.apiCall(
       call: () => _client.supportCategory.fetchSupportCategories(),
       errorMessage: 'Fehler beim Laden der Kategorien',
@@ -19,7 +19,7 @@ class LearningSupportApiService {
 
   //- STATUSES ---------------------------------------------------------
 
-  Future<PupilData> postSupportCategoryStatus(
+  Future<PupilData?> postSupportCategoryStatus(
       {required int pupilId,
       required int supportCategoryId,
       required int learningSupportPlanId,
@@ -37,7 +37,7 @@ class LearningSupportApiService {
 
   //- update category status
 
-  Future<SupportCategoryStatus> updateCategoryStatus(
+  Future<SupportCategoryStatus?> updateCategoryStatus(
       int pupilId,
       int statusId,
       int? status,
@@ -52,7 +52,7 @@ class LearningSupportApiService {
     return response;
   }
 
-  Future<PupilData> deleteSupportCategoryStatus(
+  Future<PupilData?> deleteSupportCategoryStatus(
       int pupilId, int statusId) async {
     final pupil = await ClientHelper.apiCall(
       call: () => _client.learningSupportPlan
@@ -67,7 +67,7 @@ class LearningSupportApiService {
 
   //- post category goal
 
-  Future<PupilData> postNewCategoryGoal(
+  Future<PupilData?> postNewCategoryGoal(
       {required int supportCategoryId,
       required int pupilId,
       required String description,

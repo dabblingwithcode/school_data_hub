@@ -13,8 +13,8 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_d
 import 'package:school_data_hub_flutter/common/widgets/grades_widget.dart';
 import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/competence/domain/enums.dart';
-import 'package:school_data_hub_flutter/features/competence/presentation/widgets/competence_check_dropdown.dart';
+import 'package:school_data_hub_flutter/features/learning/domain/enums.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/widgets/competence_check_dropdown.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
 import 'package:watch_it/watch_it.dart';
