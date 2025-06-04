@@ -20,9 +20,9 @@ import 'package:school_data_hub_server/src/generated/_features/user/models/roles
     as _i5;
 import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/pupil_data.dart'
     as _i6;
-import 'package:school_data_hub_server/src/generated/_features/attendance/models/missed_class_dto.dart'
+import 'package:school_data_hub_server/src/generated/_features/attendance/models/missed_schoolday_dto.dart'
     as _i7;
-import 'package:school_data_hub_server/src/generated/_features/attendance/models/missed_class.dart'
+import 'package:school_data_hub_server/src/generated/_features/attendance/models/missed_schoolday.dart'
     as _i8;
 import 'package:school_data_hub_server/src/generated/_features/authorizations/models/authorization.dart'
     as _i9;
@@ -174,7 +174,7 @@ void withServerpod(
 class TestEndpoints {
   late final _AdminEndpoint admin;
 
-  late final _MissedClassEndpoint missedClass;
+  late final _MissedSchooldayEndpoint missedSchoolday;
 
   late final _AuthorizationEndpoint authorization;
 
@@ -232,7 +232,7 @@ class _InternalTestEndpoints extends TestEndpoints
       endpoints,
       serializationManager,
     );
-    missedClass = _MissedClassEndpoint(
+    missedSchoolday = _MissedSchooldayEndpoint(
       endpoints,
       serializationManager,
     );
@@ -561,8 +561,8 @@ class _AdminEndpoint {
   }
 }
 
-class _MissedClassEndpoint {
-  _MissedClassEndpoint(
+class _MissedSchooldayEndpoint {
+  _MissedSchooldayEndpoint(
     this._endpointDispatch,
     this._serializationManager,
   );
@@ -571,20 +571,21 @@ class _MissedClassEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Stream<_i7.MissedClassDto> streamMyModels(
+  _i3.Stream<_i7.MissedSchooldayDto> streamMyModels(
       _i1.TestSessionBuilder sessionBuilder) {
-    var _localTestStreamManager = _i1.TestStreamManager<_i7.MissedClassDto>();
+    var _localTestStreamManager =
+        _i1.TestStreamManager<_i7.MissedSchooldayDto>();
     _i1.callStreamFunctionAndHandleExceptions(
       () async {
         var _localUniqueSession =
             (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-          endpoint: 'missedClass',
+          endpoint: 'missedSchoolday',
           method: 'streamMyModels',
         );
         var _localCallContext =
             await _endpointDispatch.getMethodStreamCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'missedClass',
+          endpointPath: 'missedSchoolday',
           methodName: 'streamMyModels',
           arguments: {},
           requestedInputStreams: [],
@@ -601,28 +602,28 @@ class _MissedClassEndpoint {
     return _localTestStreamManager.outputStreamController.stream;
   }
 
-  _i3.Future<_i8.MissedClass> postMissedClass(
+  _i3.Future<_i8.MissedSchoolday> postMissedSchoolday(
     _i1.TestSessionBuilder sessionBuilder,
-    _i8.MissedClass missedClass,
+    _i8.MissedSchoolday missedClass,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'missedClass',
-        method: 'postMissedClass',
+        endpoint: 'missedSchoolday',
+        method: 'postMissedSchoolday',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'missedClass',
-          methodName: 'postMissedClass',
+          endpointPath: 'missedSchoolday',
+          methodName: 'postMissedSchoolday',
           parameters: _i1.testObjectToJson({'missedClass': missedClass}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i8.MissedClass>);
+        ) as _i3.Future<_i8.MissedSchoolday>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -630,28 +631,28 @@ class _MissedClassEndpoint {
     });
   }
 
-  _i3.Future<List<_i8.MissedClass>> postMissedClasses(
+  _i3.Future<List<_i8.MissedSchoolday>> postMissedSchooldayes(
     _i1.TestSessionBuilder sessionBuilder,
-    List<_i8.MissedClass> missedClasses,
+    List<_i8.MissedSchoolday> missedClasses,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'missedClass',
-        method: 'postMissedClasses',
+        endpoint: 'missedSchoolday',
+        method: 'postMissedSchooldayes',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'missedClass',
-          methodName: 'postMissedClasses',
+          endpointPath: 'missedSchoolday',
+          methodName: 'postMissedSchooldayes',
           parameters: _i1.testObjectToJson({'missedClasses': missedClasses}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i8.MissedClass>>);
+        ) as _i3.Future<List<_i8.MissedSchoolday>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -659,26 +660,26 @@ class _MissedClassEndpoint {
     });
   }
 
-  _i3.Future<List<_i8.MissedClass>> fetchAllMissedClasses(
+  _i3.Future<List<_i8.MissedSchoolday>> fetchAllMissedSchooldayes(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'missedClass',
-        method: 'fetchAllMissedClasses',
+        endpoint: 'missedSchoolday',
+        method: 'fetchAllMissedSchooldayes',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'missedClass',
-          methodName: 'fetchAllMissedClasses',
+          endpointPath: 'missedSchoolday',
+          methodName: 'fetchAllMissedSchooldayes',
           parameters: _i1.testObjectToJson({}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i8.MissedClass>>);
+        ) as _i3.Future<List<_i8.MissedSchoolday>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -686,28 +687,28 @@ class _MissedClassEndpoint {
     });
   }
 
-  _i3.Future<List<_i8.MissedClass>> fetchMissedClassesOnASchoolday(
+  _i3.Future<List<_i8.MissedSchoolday>> fetchMissedSchooldayesOnASchoolday(
     _i1.TestSessionBuilder sessionBuilder,
     DateTime schoolday,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'missedClass',
-        method: 'fetchMissedClassesOnASchoolday',
+        endpoint: 'missedSchoolday',
+        method: 'fetchMissedSchooldayesOnASchoolday',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'missedClass',
-          methodName: 'fetchMissedClassesOnASchoolday',
+          endpointPath: 'missedSchoolday',
+          methodName: 'fetchMissedSchooldayesOnASchoolday',
           parameters: _i1.testObjectToJson({'schoolday': schoolday}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i8.MissedClass>>);
+        ) as _i3.Future<List<_i8.MissedSchoolday>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -715,7 +716,7 @@ class _MissedClassEndpoint {
     });
   }
 
-  _i3.Future<bool> deleteMissedClass(
+  _i3.Future<bool> deleteMissedSchoolday(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
     int schooldayId,
@@ -723,14 +724,14 @@ class _MissedClassEndpoint {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'missedClass',
-        method: 'deleteMissedClass',
+        endpoint: 'missedSchoolday',
+        method: 'deleteMissedSchoolday',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'missedClass',
-          methodName: 'deleteMissedClass',
+          endpointPath: 'missedSchoolday',
+          methodName: 'deleteMissedSchoolday',
           parameters: _i1.testObjectToJson({
             'pupilId': pupilId,
             'schooldayId': schooldayId,
@@ -748,28 +749,29 @@ class _MissedClassEndpoint {
     });
   }
 
-  _i3.Future<_i8.MissedClass> updateMissedClass(
+  _i3.Future<_i8.MissedSchoolday> updateMissedSchoolday(
     _i1.TestSessionBuilder sessionBuilder,
-    _i8.MissedClass missedClass,
+    _i8.MissedSchoolday missedSchoolday,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'missedClass',
-        method: 'updateMissedClass',
+        endpoint: 'missedSchoolday',
+        method: 'updateMissedSchoolday',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'missedClass',
-          methodName: 'updateMissedClass',
-          parameters: _i1.testObjectToJson({'missedClass': missedClass}),
+          endpointPath: 'missedSchoolday',
+          methodName: 'updateMissedSchoolday',
+          parameters:
+              _i1.testObjectToJson({'missedSchoolday': missedSchoolday}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i8.MissedClass>);
+        ) as _i3.Future<_i8.MissedSchoolday>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

@@ -15,8 +15,8 @@ import '../../../_features/attendance/models/contacted_type.dart' as _i3;
 import '../../../_features/schoolday/models/schoolday.dart' as _i4;
 import '../../../_features/pupil/models/pupil_data/pupil_data.dart' as _i5;
 
-abstract class MissedClass implements _i1.SerializableModel {
-  MissedClass._({
+abstract class MissedSchoolday implements _i1.SerializableModel {
+  MissedSchoolday._({
     this.id,
     required this.missedType,
     required this.unexcused,
@@ -34,7 +34,7 @@ abstract class MissedClass implements _i1.SerializableModel {
     this.pupil,
   });
 
-  factory MissedClass({
+  factory MissedSchoolday({
     int? id,
     required _i2.MissedType missedType,
     required bool unexcused,
@@ -50,10 +50,10 @@ abstract class MissedClass implements _i1.SerializableModel {
     _i4.Schoolday? schoolday,
     required int pupilId,
     _i5.PupilData? pupil,
-  }) = _MissedClassImpl;
+  }) = _MissedSchooldayImpl;
 
-  factory MissedClass.fromJson(Map<String, dynamic> jsonSerialization) {
-    return MissedClass(
+  factory MissedSchoolday.fromJson(Map<String, dynamic> jsonSerialization) {
+    return MissedSchoolday(
       id: jsonSerialization['id'] as int?,
       missedType:
           _i2.MissedType.fromJson((jsonSerialization['missedType'] as String)),
@@ -115,10 +115,10 @@ abstract class MissedClass implements _i1.SerializableModel {
 
   _i5.PupilData? pupil;
 
-  /// Returns a shallow copy of this [MissedClass]
+  /// Returns a shallow copy of this [MissedSchoolday]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
-  MissedClass copyWith({
+  MissedSchoolday copyWith({
     int? id,
     _i2.MissedType? missedType,
     bool? unexcused,
@@ -164,8 +164,8 @@ abstract class MissedClass implements _i1.SerializableModel {
 
 class _Undefined {}
 
-class _MissedClassImpl extends MissedClass {
-  _MissedClassImpl({
+class _MissedSchooldayImpl extends MissedSchoolday {
+  _MissedSchooldayImpl({
     int? id,
     required _i2.MissedType missedType,
     required bool unexcused,
@@ -199,11 +199,11 @@ class _MissedClassImpl extends MissedClass {
           pupil: pupil,
         );
 
-  /// Returns a shallow copy of this [MissedClass]
+  /// Returns a shallow copy of this [MissedSchoolday]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   @override
-  MissedClass copyWith({
+  MissedSchoolday copyWith({
     Object? id = _Undefined,
     _i2.MissedType? missedType,
     bool? unexcused,
@@ -220,7 +220,7 @@ class _MissedClassImpl extends MissedClass {
     int? pupilId,
     Object? pupil = _Undefined,
   }) {
-    return MissedClass(
+    return MissedSchoolday(
       id: id is int? ? id : this.id,
       missedType: missedType ?? this.missedType,
       unexcused: unexcused ?? this.unexcused,

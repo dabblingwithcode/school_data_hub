@@ -4,11 +4,10 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
-
 import 'package:watch_it/watch_it.dart';
 
-class MissedClassFilters extends WatchingWidget {
-  const MissedClassFilters({super.key});
+class MissedSchooldayFilters extends WatchingWidget {
+  const MissedSchooldayFilters({super.key});
 
   @override
   Widget build(BuildContext context) {

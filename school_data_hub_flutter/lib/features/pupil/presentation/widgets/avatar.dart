@@ -90,7 +90,7 @@ class AvatarWithBadges extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    // watchValue((AttendanceManager x) => x.missedClasses);
+    // watchValue((AttendanceManager x) => x.missedSchooldays);
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Stack(

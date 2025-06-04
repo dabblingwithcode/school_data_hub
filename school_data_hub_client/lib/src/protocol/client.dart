@@ -17,9 +17,9 @@ import 'package:school_data_hub_client/src/protocol/_features/user/models/roles.
     as _i4;
 import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_data/pupil_data.dart'
     as _i5;
-import 'package:school_data_hub_client/src/protocol/_features/attendance/models/missed_class_dto.dart'
+import 'package:school_data_hub_client/src/protocol/_features/attendance/models/missed_schoolday_dto.dart'
     as _i6;
-import 'package:school_data_hub_client/src/protocol/_features/attendance/models/missed_class.dart'
+import 'package:school_data_hub_client/src/protocol/_features/attendance/models/missed_schoolday.dart'
     as _i7;
 import 'package:school_data_hub_client/src/protocol/_features/authorizations/models/authorization.dart'
     as _i8;
@@ -174,69 +174,71 @@ class EndpointAdmin extends _i1.EndpointRef {
 }
 
 /// {@category Endpoint}
-class EndpointMissedClass extends _i1.EndpointRef {
-  EndpointMissedClass(_i1.EndpointCaller caller) : super(caller);
+class EndpointMissedSchoolday extends _i1.EndpointRef {
+  EndpointMissedSchoolday(_i1.EndpointCaller caller) : super(caller);
 
   @override
-  String get name => 'missedClass';
+  String get name => 'missedSchoolday';
 
-  _i2.Stream<_i6.MissedClassDto> streamMyModels() =>
-      caller.callStreamingServerEndpoint<_i2.Stream<_i6.MissedClassDto>,
-          _i6.MissedClassDto>(
-        'missedClass',
+  _i2.Stream<_i6.MissedSchooldayDto> streamMyModels() =>
+      caller.callStreamingServerEndpoint<_i2.Stream<_i6.MissedSchooldayDto>,
+          _i6.MissedSchooldayDto>(
+        'missedSchoolday',
         'streamMyModels',
         {},
         {},
       );
 
-  _i2.Future<_i7.MissedClass> postMissedClass(_i7.MissedClass missedClass) =>
-      caller.callServerEndpoint<_i7.MissedClass>(
-        'missedClass',
-        'postMissedClass',
+  _i2.Future<_i7.MissedSchoolday> postMissedSchoolday(
+          _i7.MissedSchoolday missedClass) =>
+      caller.callServerEndpoint<_i7.MissedSchoolday>(
+        'missedSchoolday',
+        'postMissedSchoolday',
         {'missedClass': missedClass},
       );
 
-  _i2.Future<List<_i7.MissedClass>> postMissedClasses(
-          List<_i7.MissedClass> missedClasses) =>
-      caller.callServerEndpoint<List<_i7.MissedClass>>(
-        'missedClass',
-        'postMissedClasses',
+  _i2.Future<List<_i7.MissedSchoolday>> postMissedSchooldayes(
+          List<_i7.MissedSchoolday> missedClasses) =>
+      caller.callServerEndpoint<List<_i7.MissedSchoolday>>(
+        'missedSchoolday',
+        'postMissedSchooldayes',
         {'missedClasses': missedClasses},
       );
 
-  _i2.Future<List<_i7.MissedClass>> fetchAllMissedClasses() =>
-      caller.callServerEndpoint<List<_i7.MissedClass>>(
-        'missedClass',
-        'fetchAllMissedClasses',
+  _i2.Future<List<_i7.MissedSchoolday>> fetchAllMissedSchooldayes() =>
+      caller.callServerEndpoint<List<_i7.MissedSchoolday>>(
+        'missedSchoolday',
+        'fetchAllMissedSchooldayes',
         {},
       );
 
-  _i2.Future<List<_i7.MissedClass>> fetchMissedClassesOnASchoolday(
+  _i2.Future<List<_i7.MissedSchoolday>> fetchMissedSchooldayesOnASchoolday(
           DateTime schoolday) =>
-      caller.callServerEndpoint<List<_i7.MissedClass>>(
-        'missedClass',
-        'fetchMissedClassesOnASchoolday',
+      caller.callServerEndpoint<List<_i7.MissedSchoolday>>(
+        'missedSchoolday',
+        'fetchMissedSchooldayesOnASchoolday',
         {'schoolday': schoolday},
       );
 
-  _i2.Future<bool> deleteMissedClass(
+  _i2.Future<bool> deleteMissedSchoolday(
     int pupilId,
     int schooldayId,
   ) =>
       caller.callServerEndpoint<bool>(
-        'missedClass',
-        'deleteMissedClass',
+        'missedSchoolday',
+        'deleteMissedSchoolday',
         {
           'pupilId': pupilId,
           'schooldayId': schooldayId,
         },
       );
 
-  _i2.Future<_i7.MissedClass> updateMissedClass(_i7.MissedClass missedClass) =>
-      caller.callServerEndpoint<_i7.MissedClass>(
-        'missedClass',
-        'updateMissedClass',
-        {'missedClass': missedClass},
+  _i2.Future<_i7.MissedSchoolday> updateMissedSchoolday(
+          _i7.MissedSchoolday missedSchoolday) =>
+      caller.callServerEndpoint<_i7.MissedSchoolday>(
+        'missedSchoolday',
+        'updateMissedSchoolday',
+        {'missedSchoolday': missedSchoolday},
       );
 }
 
@@ -1608,7 +1610,7 @@ class Client extends _i1.ServerpodClientShared {
               disconnectStreamsOnLostInternetConnection,
         ) {
     admin = EndpointAdmin(this);
-    missedClass = EndpointMissedClass(this);
+    missedSchoolday = EndpointMissedSchoolday(this);
     authorization = EndpointAuthorization(this);
     pupilAuthorization = EndpointPupilAuthorization(this);
     bookTags = EndpointBookTags(this);
@@ -1636,7 +1638,7 @@ class Client extends _i1.ServerpodClientShared {
 
   late final EndpointAdmin admin;
 
-  late final EndpointMissedClass missedClass;
+  late final EndpointMissedSchoolday missedSchoolday;
 
   late final EndpointAuthorization authorization;
 
@@ -1687,7 +1689,7 @@ class Client extends _i1.ServerpodClientShared {
   @override
   Map<String, _i1.EndpointRef> get endpointRefLookup => {
         'admin': admin,
-        'missedClass': missedClass,
+        'missedSchoolday': missedSchoolday,
         'authorization': authorization,
         'pupilAuthorization': pupilAuthorization,
         'bookTags': bookTags,

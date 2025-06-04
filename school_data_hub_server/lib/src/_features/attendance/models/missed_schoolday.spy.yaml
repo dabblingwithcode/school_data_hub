@@ -1,4 +1,4 @@
-class: MissedClass
+class: MissedSchoolday
 table: missed_class
 fields:
   missedType: MissedType
@@ -11,8 +11,8 @@ fields:
   createdBy: String
   modifiedBy: String?
   comment: String?
-  schoolday: Schoolday?, relation(name=missed_class_schoolday, onDelete=Cascade)
-  pupil: PupilData?, relation(name=missed_class_pupil, onDelete=Cascade)
+  schoolday: Schoolday?, relation(name=missed_schoolday_schoolday, onDelete=Cascade)
+  pupil: PupilData?, relation(name=missed_schoolday_pupil, onDelete=Cascade)
 indexes:
   schoolday_pupil_data_idx:
     fields: schooldayId, pupilId

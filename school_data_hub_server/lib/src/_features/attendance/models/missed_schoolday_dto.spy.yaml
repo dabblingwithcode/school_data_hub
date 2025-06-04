@@ -1,0 +1,4 @@
+class: MissedSchooldayDto
+fields:
+  missedSchoolday: MissedSchoolday
+  operation: String

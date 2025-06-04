@@ -1,14 +1,14 @@
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 
-class MissedClassEndpoint extends Endpoint {
+class MissedSchooldayEndpoint extends Endpoint {
   @override
   bool get requireLogin => true;
 
-  Stream<MissedClassDto> streamMyModels(Session session) async* {
+  Stream<MissedSchooldayDto> streamMyModels(Session session) async* {
     // Create a stream from the server's message central
-    var stream =
-        session.messages.createStream<MissedClassDto>('missed_class_stream');
+    var stream = session.messages
+        .createStream<MissedSchooldayDto>('missed_class_stream');
 
     // Relay messages from the stream to the client
     await for (var missedClassDto in stream) {
@@ -16,99 +16,99 @@ class MissedClassEndpoint extends Endpoint {
     }
   }
 
-  Future<MissedClass> postMissedClass(
-      Session session, MissedClass missedClass) async {
-    final createdMissedClass = await session.db.insertRow(missedClass);
+  Future<MissedSchoolday> postMissedSchoolday(
+      Session session, MissedSchoolday missedClass) async {
+    final createdMissedSchoolday = await session.db.insertRow(missedClass);
     // Fetch the object again with the relation included
-    final missedClassWithRelation = await MissedClass.db.findById(
+    final missedClassWithRelation = await MissedSchoolday.db.findById(
       session,
-      createdMissedClass.id!,
-      include: MissedClass.include(
+      createdMissedSchoolday.id!,
+      include: MissedSchoolday.include(
         schoolday: Schoolday.include(),
       ),
     );
-    final newMissedClassDto = MissedClassDto(
-      missedClass: missedClassWithRelation!,
+    final newMissedSchooldayDto = MissedSchooldayDto(
+      missedSchoolday: missedClassWithRelation!,
       operation: 'add',
     );
     // Send the new missed class to the stream
     session.messages.postMessage(
       'missed_class_stream',
-      newMissedClassDto,
+      newMissedSchooldayDto,
     );
     return missedClassWithRelation;
   }
 
-  Future<List<MissedClass>> postMissedClasses(
-      Session session, List<MissedClass> missedClasses) async {
-    final createdMissedClasses = await session.db.insert(missedClasses);
-    return createdMissedClasses;
+  Future<List<MissedSchoolday>> postMissedSchooldayes(
+      Session session, List<MissedSchoolday> missedClasses) async {
+    final createdMissedSchooldayes = await session.db.insert(missedClasses);
+    return createdMissedSchooldayes;
   }
 
-  Future<List<MissedClass>> fetchAllMissedClasses(Session session) {
-    return MissedClass.db.find(
+  Future<List<MissedSchoolday>> fetchAllMissedSchooldayes(Session session) {
+    return MissedSchoolday.db.find(
       session,
-      include: MissedClass.include(
+      include: MissedSchoolday.include(
         schoolday: Schoolday.include(),
       ),
     );
   }
 
-  Future<List<MissedClass>> fetchMissedClassesOnASchoolday(
+  Future<List<MissedSchoolday>> fetchMissedSchooldayesOnASchoolday(
       Session session, DateTime schoolday) async {
-    final missedClasses = await MissedClass.db.find(
+    final missedClasses = await MissedSchoolday.db.find(
       session,
       where: (t) => t.schoolday.schoolday.equals(schoolday),
-      include: MissedClass.include(
+      include: MissedSchoolday.include(
         schoolday: Schoolday.include(),
       ),
     );
     return missedClasses;
   }
 
-  Future<bool> deleteMissedClass(
+  Future<bool> deleteMissedSchoolday(
       Session session, int pupilId, int schooldayId) async {
-    var missedClassToDelete = await MissedClass.db.findFirstRow(
+    var missedClassToDelete = await MissedSchoolday.db.findFirstRow(
       session,
       where: (t) =>
           t.pupilId.equals(pupilId) & t.schooldayId.equals(schooldayId),
-      include: MissedClass.include(
+      include: MissedSchoolday.include(
         schoolday: Schoolday.include(),
       ),
     );
-    await MissedClass.db.deleteRow(session, missedClassToDelete!);
-    final deletedMissedClassDto = MissedClassDto(
-      missedClass: missedClassToDelete,
+    await MissedSchoolday.db.deleteRow(session, missedClassToDelete!);
+    final deletedMissedSchooldayDto = MissedSchooldayDto(
+      missedSchoolday: missedClassToDelete,
       operation: 'delete',
     );
     // Send the deleted missed class to the stream
     session.messages.postMessage(
       'missed_class_stream',
-      deletedMissedClassDto,
+      deletedMissedSchooldayDto,
     );
     return true;
   }
 
-  Future<MissedClass> updateMissedClass(
-      Session session, MissedClass missedClass) async {
-    final updatedMissedClass = await session.db.updateRow(missedClass);
+  Future<MissedSchoolday> updateMissedSchoolday(
+      Session session, MissedSchoolday missedSchoolday) async {
+    final updatedMissedSchoolday = await session.db.updateRow(missedSchoolday);
     // Fetch the object again with the relation included
-    final missedClassWithRelation = await MissedClass.db.findById(
+    final missedClassWithRelation = await MissedSchoolday.db.findById(
       session,
-      updatedMissedClass.id!,
-      include: MissedClass.include(
+      updatedMissedSchoolday.id!,
+      include: MissedSchoolday.include(
         schoolday: Schoolday.include(),
       ),
     );
 
-    final updatedMissedClassDto = MissedClassDto(
-      missedClass: missedClassWithRelation!,
+    final updatedMissedSchooldayDto = MissedSchooldayDto(
+      missedSchoolday: missedClassWithRelation!,
       operation: 'update',
     );
     // Send the updated missed class to the stream
     session.messages.postMessage(
       'missed_class_stream',
-      updatedMissedClassDto,
+      updatedMissedSchooldayDto,
     );
 
     return missedClassWithRelation;

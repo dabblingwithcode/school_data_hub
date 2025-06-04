@@ -41,8 +41,8 @@ class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
   Widget build(BuildContext context) {
     final schooldays = watchValue((SchoolCalendarManager x) => x.schooldays);
     final schooldayDates = schooldays.map((e) => e.schoolday).toList();
-    // List<MissedClass> missedClasses =
-    //     di<AttendanceManager>().getMissedClassesOnADay(_selectedDay!);
+    // List<MissedSchoolday> missedSchooldays =
+    //     di<AttendanceManager>().getMissedSchooldayesOnADay(_selectedDay!);
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.white,
@@ -223,9 +223,9 @@ class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
                                   fontSize: 20.0, fontWeight: FontWeight.bold)),
                           const Gap(40),
                           // Text(
-                          //     missedClasses
-                          //         .where((missedClass) =>
-                          //             missedClass.missedType == 'missed')
+                          //     missedSchooldays
+                          //         .where((missedSchoolday) =>
+                          //             missedSchoolday.missedType == 'missed')
                           //         .length
                           //         .toString(),
                           //     style: const TextStyle(
@@ -247,10 +247,10 @@ class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
               //     (BuildContext context, int index) {
               //       return AttendanceCard(
               //           locator<PupilManager>()
-              //               .getPupilById(missedClasses[index].missedPupilId)!,
+              //               .getPupilById(missedSchooldays[index].missedPupilId)!,
               //           _selectedDay!);
               //     },
-              //     childCount: missedClasses.length,
+              //     childCount: missedSchooldays.length,
               //   ),
               // )
             ],

@@ -44,7 +44,7 @@ class AttendanceRankingListPageBottomNavBar extends WatchingWidget {
                   tooltip: 'Info',
                   icon: const Icon(Icons.info, size: 30),
                   onPressed: () async {
-                    missedClassesBadgesInformationDialog(context: context);
+                    missedSchooldaysBadgesInformationDialog(context: context);
                   },
                 ),
                 const Gap(30),
@@ -55,7 +55,7 @@ class AttendanceRankingListPageBottomNavBar extends WatchingWidget {
                 //         context: context,
                 //         filterList: [
                 //           const CommonPupilFiltersWidget(),
-                //           const MissedClassFilters()
+                //           const MissedSchooldayFilters()
                 //         ],
                 //       );
                 //     }),
@@ -65,7 +65,7 @@ class AttendanceRankingListPageBottomNavBar extends WatchingWidget {
                       context: context,
                       filterList: [
                         const CommonPupilFiltersWidget(),
-                        const MissedClassFilters()
+                        const MissedSchooldayFilters()
                       ],
                     );
                   },

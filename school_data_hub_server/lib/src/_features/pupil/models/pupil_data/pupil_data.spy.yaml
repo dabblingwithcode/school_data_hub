@@ -43,7 +43,7 @@ fields:
   supportGoals: List<SupportGoal>?, relation
   learningSupportPlans: List<LearningSupportPlan>?, relation(name=learning_support_plan_pupil)
   ## schoolday related
-  missedClasses: List<MissedClass>?, relation(name=missed_class_pupil)
+  missedSchooldays: List<MissedSchoolday>?, relation(name=missed_schoolday_pupil)
   schooldayEvents: List<SchooldayEvent>?, relation(name=schoolday_event_pupil)
   ## miscellaneous  
   swimmer: String?

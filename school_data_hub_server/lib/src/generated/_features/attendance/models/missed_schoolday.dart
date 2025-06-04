@@ -17,9 +17,9 @@ import '../../../_features/attendance/models/contacted_type.dart' as _i3;
 import '../../../_features/schoolday/models/schoolday.dart' as _i4;
 import '../../../_features/pupil/models/pupil_data/pupil_data.dart' as _i5;
 
-abstract class MissedClass
+abstract class MissedSchoolday
     implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
-  MissedClass._({
+  MissedSchoolday._({
     this.id,
     required this.missedType,
     required this.unexcused,
@@ -37,7 +37,7 @@ abstract class MissedClass
     this.pupil,
   });
 
-  factory MissedClass({
+  factory MissedSchoolday({
     int? id,
     required _i2.MissedType missedType,
     required bool unexcused,
@@ -53,10 +53,10 @@ abstract class MissedClass
     _i4.Schoolday? schoolday,
     required int pupilId,
     _i5.PupilData? pupil,
-  }) = _MissedClassImpl;
+  }) = _MissedSchooldayImpl;
 
-  factory MissedClass.fromJson(Map<String, dynamic> jsonSerialization) {
-    return MissedClass(
+  factory MissedSchoolday.fromJson(Map<String, dynamic> jsonSerialization) {
+    return MissedSchoolday(
       id: jsonSerialization['id'] as int?,
       missedType:
           _i2.MissedType.fromJson((jsonSerialization['missedType'] as String)),
@@ -85,9 +85,9 @@ abstract class MissedClass
     );
   }
 
-  static final t = MissedClassTable();
+  static final t = MissedSchooldayTable();
 
-  static const db = MissedClassRepository._();
+  static const db = MissedSchooldayRepository._();
 
   @override
   int? id;
@@ -123,10 +123,10 @@ abstract class MissedClass
   @override
   _i1.Table<int?> get table => t;
 
-  /// Returns a shallow copy of this [MissedClass]
+  /// Returns a shallow copy of this [MissedSchoolday]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
-  MissedClass copyWith({
+  MissedSchoolday copyWith({
     int? id,
     _i2.MissedType? missedType,
     bool? unexcused,
@@ -185,32 +185,32 @@ abstract class MissedClass
     };
   }
 
-  static MissedClassInclude include({
+  static MissedSchooldayInclude include({
     _i4.SchooldayInclude? schoolday,
     _i5.PupilDataInclude? pupil,
   }) {
-    return MissedClassInclude._(
+    return MissedSchooldayInclude._(
       schoolday: schoolday,
       pupil: pupil,
     );
   }
 
-  static MissedClassIncludeList includeList({
-    _i1.WhereExpressionBuilder<MissedClassTable>? where,
+  static MissedSchooldayIncludeList includeList({
+    _i1.WhereExpressionBuilder<MissedSchooldayTable>? where,
     int? limit,
     int? offset,
-    _i1.OrderByBuilder<MissedClassTable>? orderBy,
+    _i1.OrderByBuilder<MissedSchooldayTable>? orderBy,
     bool orderDescending = false,
-    _i1.OrderByListBuilder<MissedClassTable>? orderByList,
-    MissedClassInclude? include,
+    _i1.OrderByListBuilder<MissedSchooldayTable>? orderByList,
+    MissedSchooldayInclude? include,
   }) {
-    return MissedClassIncludeList._(
+    return MissedSchooldayIncludeList._(
       where: where,
       limit: limit,
       offset: offset,
-      orderBy: orderBy?.call(MissedClass.t),
+      orderBy: orderBy?.call(MissedSchoolday.t),
       orderDescending: orderDescending,
-      orderByList: orderByList?.call(MissedClass.t),
+      orderByList: orderByList?.call(MissedSchoolday.t),
       include: include,
     );
   }
@@ -223,8 +223,8 @@ abstract class MissedClass
 
 class _Undefined {}
 
-class _MissedClassImpl extends MissedClass {
-  _MissedClassImpl({
+class _MissedSchooldayImpl extends MissedSchoolday {
+  _MissedSchooldayImpl({
     int? id,
     required _i2.MissedType missedType,
     required bool unexcused,
@@ -258,11 +258,11 @@ class _MissedClassImpl extends MissedClass {
           pupil: pupil,
         );
 
-  /// Returns a shallow copy of this [MissedClass]
+  /// Returns a shallow copy of this [MissedSchoolday]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   @override
-  MissedClass copyWith({
+  MissedSchoolday copyWith({
     Object? id = _Undefined,
     _i2.MissedType? missedType,
     bool? unexcused,
@@ -279,7 +279,7 @@ class _MissedClassImpl extends MissedClass {
     int? pupilId,
     Object? pupil = _Undefined,
   }) {
-    return MissedClass(
+    return MissedSchoolday(
       id: id is int? ? id : this.id,
       missedType: missedType ?? this.missedType,
       unexcused: unexcused ?? this.unexcused,
@@ -300,8 +300,9 @@ class _MissedClassImpl extends MissedClass {
   }
 }
 
-class MissedClassTable extends _i1.Table<int?> {
-  MissedClassTable({super.tableRelation}) : super(tableName: 'missed_class') {
+class MissedSchooldayTable extends _i1.Table<int?> {
+  MissedSchooldayTable({super.tableRelation})
+      : super(tableName: 'missed_class') {
     missedType = _i1.ColumnEnum(
       'missedType',
       this,
@@ -386,7 +387,7 @@ class MissedClassTable extends _i1.Table<int?> {
     if (_schoolday != null) return _schoolday!;
     _schoolday = _i1.createRelationTable(
       relationFieldName: 'schoolday',
-      field: MissedClass.t.schooldayId,
+      field: MissedSchoolday.t.schooldayId,
       foreignField: _i4.Schoolday.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
@@ -399,7 +400,7 @@ class MissedClassTable extends _i1.Table<int?> {
     if (_pupil != null) return _pupil!;
     _pupil = _i1.createRelationTable(
       relationFieldName: 'pupil',
-      field: MissedClass.t.pupilId,
+      field: MissedSchoolday.t.pupilId,
       foreignField: _i5.PupilData.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
@@ -437,8 +438,8 @@ class MissedClassTable extends _i1.Table<int?> {
   }
 }
 
-class MissedClassInclude extends _i1.IncludeObject {
-  MissedClassInclude._({
+class MissedSchooldayInclude extends _i1.IncludeObject {
+  MissedSchooldayInclude._({
     _i4.SchooldayInclude? schoolday,
     _i5.PupilDataInclude? pupil,
   }) {
@@ -457,12 +458,12 @@ class MissedClassInclude extends _i1.IncludeObject {
       };
 
   @override
-  _i1.Table<int?> get table => MissedClass.t;
+  _i1.Table<int?> get table => MissedSchoolday.t;
 }
 
-class MissedClassIncludeList extends _i1.IncludeList {
-  MissedClassIncludeList._({
-    _i1.WhereExpressionBuilder<MissedClassTable>? where,
+class MissedSchooldayIncludeList extends _i1.IncludeList {
+  MissedSchooldayIncludeList._({
+    _i1.WhereExpressionBuilder<MissedSchooldayTable>? where,
     super.limit,
     super.offset,
     super.orderBy,
@@ -470,22 +471,22 @@ class MissedClassIncludeList extends _i1.IncludeList {
     super.orderByList,
     super.include,
   }) {
-    super.where = where?.call(MissedClass.t);
+    super.where = where?.call(MissedSchoolday.t);
   }
 
   @override
   Map<String, _i1.Include?> get includes => include?.includes ?? {};
 
   @override
-  _i1.Table<int?> get table => MissedClass.t;
+  _i1.Table<int?> get table => MissedSchoolday.t;
 }
 
-class MissedClassRepository {
-  const MissedClassRepository._();
+class MissedSchooldayRepository {
+  const MissedSchooldayRepository._();
 
-  final attachRow = const MissedClassAttachRowRepository._();
+  final attachRow = const MissedSchooldayAttachRowRepository._();
 
-  /// Returns a list of [MissedClass]s matching the given query parameters.
+  /// Returns a list of [MissedSchoolday]s matching the given query parameters.
   ///
   /// Use [where] to specify which items to include in the return value.
   /// If none is specified, all items will be returned.
@@ -507,21 +508,21 @@ class MissedClassRepository {
   ///   limit: 100,
   /// );
   /// ```
-  Future<List<MissedClass>> find(
+  Future<List<MissedSchoolday>> find(
     _i1.Session session, {
-    _i1.WhereExpressionBuilder<MissedClassTable>? where,
+    _i1.WhereExpressionBuilder<MissedSchooldayTable>? where,
     int? limit,
     int? offset,
-    _i1.OrderByBuilder<MissedClassTable>? orderBy,
+    _i1.OrderByBuilder<MissedSchooldayTable>? orderBy,
     bool orderDescending = false,
-    _i1.OrderByListBuilder<MissedClassTable>? orderByList,
+    _i1.OrderByListBuilder<MissedSchooldayTable>? orderByList,
     _i1.Transaction? transaction,
-    MissedClassInclude? include,
+    MissedSchooldayInclude? include,
   }) async {
-    return session.db.find<MissedClass>(
-      where: where?.call(MissedClass.t),
-      orderBy: orderBy?.call(MissedClass.t),
-      orderByList: orderByList?.call(MissedClass.t),
+    return session.db.find<MissedSchoolday>(
+      where: where?.call(MissedSchoolday.t),
+      orderBy: orderBy?.call(MissedSchoolday.t),
+      orderByList: orderByList?.call(MissedSchoolday.t),
       orderDescending: orderDescending,
       limit: limit,
       offset: offset,
@@ -530,7 +531,7 @@ class MissedClassRepository {
     );
   }
 
-  /// Returns the first matching [MissedClass] matching the given query parameters.
+  /// Returns the first matching [MissedSchoolday] matching the given query parameters.
   ///
   /// Use [where] to specify which items to include in the return value.
   /// If none is specified, all items will be returned.
@@ -547,20 +548,20 @@ class MissedClassRepository {
   ///   orderBy: (t) => t.age,
   /// );
   /// ```
-  Future<MissedClass?> findFirstRow(
+  Future<MissedSchoolday?> findFirstRow(
     _i1.Session session, {
-    _i1.WhereExpressionBuilder<MissedClassTable>? where,
+    _i1.WhereExpressionBuilder<MissedSchooldayTable>? where,
     int? offset,
-    _i1.OrderByBuilder<MissedClassTable>? orderBy,
+    _i1.OrderByBuilder<MissedSchooldayTable>? orderBy,
     bool orderDescending = false,
-    _i1.OrderByListBuilder<MissedClassTable>? orderByList,
+    _i1.OrderByListBuilder<MissedSchooldayTable>? orderByList,
     _i1.Transaction? transaction,
-    MissedClassInclude? include,
+    MissedSchooldayInclude? include,
   }) async {
-    return session.db.findFirstRow<MissedClass>(
-      where: where?.call(MissedClass.t),
-      orderBy: orderBy?.call(MissedClass.t),
-      orderByList: orderByList?.call(MissedClass.t),
+    return session.db.findFirstRow<MissedSchoolday>(
+      where: where?.call(MissedSchoolday.t),
+      orderBy: orderBy?.call(MissedSchoolday.t),
+      orderByList: orderByList?.call(MissedSchoolday.t),
       orderDescending: orderDescending,
       offset: offset,
       transaction: transaction,
@@ -568,119 +569,119 @@ class MissedClassRepository {
     );
   }
 
-  /// Finds a single [MissedClass] by its [id] or null if no such row exists.
-  Future<MissedClass?> findById(
+  /// Finds a single [MissedSchoolday] by its [id] or null if no such row exists.
+  Future<MissedSchoolday?> findById(
     _i1.Session session,
     int id, {
     _i1.Transaction? transaction,
-    MissedClassInclude? include,
+    MissedSchooldayInclude? include,
   }) async {
-    return session.db.findById<MissedClass>(
+    return session.db.findById<MissedSchoolday>(
       id,
       transaction: transaction,
       include: include,
     );
   }
 
-  /// Inserts all [MissedClass]s in the list and returns the inserted rows.
+  /// Inserts all [MissedSchoolday]s in the list and returns the inserted rows.
   ///
-  /// The returned [MissedClass]s will have their `id` fields set.
+  /// The returned [MissedSchoolday]s will have their `id` fields set.
   ///
   /// This is an atomic operation, meaning that if one of the rows fails to
   /// insert, none of the rows will be inserted.
-  Future<List<MissedClass>> insert(
+  Future<List<MissedSchoolday>> insert(
     _i1.Session session,
-    List<MissedClass> rows, {
+    List<MissedSchoolday> rows, {
     _i1.Transaction? transaction,
   }) async {
-    return session.db.insert<MissedClass>(
+    return session.db.insert<MissedSchoolday>(
       rows,
       transaction: transaction,
     );
   }
 
-  /// Inserts a single [MissedClass] and returns the inserted row.
+  /// Inserts a single [MissedSchoolday] and returns the inserted row.
   ///
-  /// The returned [MissedClass] will have its `id` field set.
-  Future<MissedClass> insertRow(
+  /// The returned [MissedSchoolday] will have its `id` field set.
+  Future<MissedSchoolday> insertRow(
     _i1.Session session,
-    MissedClass row, {
+    MissedSchoolday row, {
     _i1.Transaction? transaction,
   }) async {
-    return session.db.insertRow<MissedClass>(
+    return session.db.insertRow<MissedSchoolday>(
       row,
       transaction: transaction,
     );
   }
 
-  /// Updates all [MissedClass]s in the list and returns the updated rows. If
+  /// Updates all [MissedSchoolday]s in the list and returns the updated rows. If
   /// [columns] is provided, only those columns will be updated. Defaults to
   /// all columns.
   /// This is an atomic operation, meaning that if one of the rows fails to
   /// update, none of the rows will be updated.
-  Future<List<MissedClass>> update(
+  Future<List<MissedSchoolday>> update(
     _i1.Session session,
-    List<MissedClass> rows, {
-    _i1.ColumnSelections<MissedClassTable>? columns,
+    List<MissedSchoolday> rows, {
+    _i1.ColumnSelections<MissedSchooldayTable>? columns,
     _i1.Transaction? transaction,
   }) async {
-    return session.db.update<MissedClass>(
+    return session.db.update<MissedSchoolday>(
       rows,
-      columns: columns?.call(MissedClass.t),
+      columns: columns?.call(MissedSchoolday.t),
       transaction: transaction,
     );
   }
 
-  /// Updates a single [MissedClass]. The row needs to have its id set.
+  /// Updates a single [MissedSchoolday]. The row needs to have its id set.
   /// Optionally, a list of [columns] can be provided to only update those
   /// columns. Defaults to all columns.
-  Future<MissedClass> updateRow(
+  Future<MissedSchoolday> updateRow(
     _i1.Session session,
-    MissedClass row, {
-    _i1.ColumnSelections<MissedClassTable>? columns,
+    MissedSchoolday row, {
+    _i1.ColumnSelections<MissedSchooldayTable>? columns,
     _i1.Transaction? transaction,
   }) async {
-    return session.db.updateRow<MissedClass>(
+    return session.db.updateRow<MissedSchoolday>(
       row,
-      columns: columns?.call(MissedClass.t),
+      columns: columns?.call(MissedSchoolday.t),
       transaction: transaction,
     );
   }
 
-  /// Deletes all [MissedClass]s in the list and returns the deleted rows.
+  /// Deletes all [MissedSchoolday]s in the list and returns the deleted rows.
   /// This is an atomic operation, meaning that if one of the rows fail to
   /// be deleted, none of the rows will be deleted.
-  Future<List<MissedClass>> delete(
+  Future<List<MissedSchoolday>> delete(
     _i1.Session session,
-    List<MissedClass> rows, {
+    List<MissedSchoolday> rows, {
     _i1.Transaction? transaction,
   }) async {
-    return session.db.delete<MissedClass>(
+    return session.db.delete<MissedSchoolday>(
       rows,
       transaction: transaction,
     );
   }
 
-  /// Deletes a single [MissedClass].
-  Future<MissedClass> deleteRow(
+  /// Deletes a single [MissedSchoolday].
+  Future<MissedSchoolday> deleteRow(
     _i1.Session session,
-    MissedClass row, {
+    MissedSchoolday row, {
     _i1.Transaction? transaction,
   }) async {
-    return session.db.deleteRow<MissedClass>(
+    return session.db.deleteRow<MissedSchoolday>(
       row,
       transaction: transaction,
     );
   }
 
   /// Deletes all rows matching the [where] expression.
-  Future<List<MissedClass>> deleteWhere(
+  Future<List<MissedSchoolday>> deleteWhere(
     _i1.Session session, {
-    required _i1.WhereExpressionBuilder<MissedClassTable> where,
+    required _i1.WhereExpressionBuilder<MissedSchooldayTable> where,
     _i1.Transaction? transaction,
   }) async {
-    return session.db.deleteWhere<MissedClass>(
-      where: where(MissedClass.t),
+    return session.db.deleteWhere<MissedSchoolday>(
+      where: where(MissedSchoolday.t),
       transaction: transaction,
     );
   }
@@ -689,63 +690,63 @@ class MissedClassRepository {
   /// will return the count of all rows in the table.
   Future<int> count(
     _i1.Session session, {
-    _i1.WhereExpressionBuilder<MissedClassTable>? where,
+    _i1.WhereExpressionBuilder<MissedSchooldayTable>? where,
     int? limit,
     _i1.Transaction? transaction,
   }) async {
-    return session.db.count<MissedClass>(
-      where: where?.call(MissedClass.t),
+    return session.db.count<MissedSchoolday>(
+      where: where?.call(MissedSchoolday.t),
       limit: limit,
       transaction: transaction,
     );
   }
 }
 
-class MissedClassAttachRowRepository {
-  const MissedClassAttachRowRepository._();
+class MissedSchooldayAttachRowRepository {
+  const MissedSchooldayAttachRowRepository._();
 
-  /// Creates a relation between the given [MissedClass] and [Schoolday]
-  /// by setting the [MissedClass]'s foreign key `schooldayId` to refer to the [Schoolday].
+  /// Creates a relation between the given [MissedSchoolday] and [Schoolday]
+  /// by setting the [MissedSchoolday]'s foreign key `schooldayId` to refer to the [Schoolday].
   Future<void> schoolday(
     _i1.Session session,
-    MissedClass missedClass,
+    MissedSchoolday missedSchoolday,
     _i4.Schoolday schoolday, {
     _i1.Transaction? transaction,
   }) async {
-    if (missedClass.id == null) {
-      throw ArgumentError.notNull('missedClass.id');
+    if (missedSchoolday.id == null) {
+      throw ArgumentError.notNull('missedSchoolday.id');
     }
     if (schoolday.id == null) {
       throw ArgumentError.notNull('schoolday.id');
     }
 
-    var $missedClass = missedClass.copyWith(schooldayId: schoolday.id);
-    await session.db.updateRow<MissedClass>(
-      $missedClass,
-      columns: [MissedClass.t.schooldayId],
+    var $missedSchoolday = missedSchoolday.copyWith(schooldayId: schoolday.id);
+    await session.db.updateRow<MissedSchoolday>(
+      $missedSchoolday,
+      columns: [MissedSchoolday.t.schooldayId],
       transaction: transaction,
     );
   }
 
-  /// Creates a relation between the given [MissedClass] and [PupilData]
-  /// by setting the [MissedClass]'s foreign key `pupilId` to refer to the [PupilData].
+  /// Creates a relation between the given [MissedSchoolday] and [PupilData]
+  /// by setting the [MissedSchoolday]'s foreign key `pupilId` to refer to the [PupilData].
   Future<void> pupil(
     _i1.Session session,
-    MissedClass missedClass,
+    MissedSchoolday missedSchoolday,
     _i5.PupilData pupil, {
     _i1.Transaction? transaction,
   }) async {
-    if (missedClass.id == null) {
-      throw ArgumentError.notNull('missedClass.id');
+    if (missedSchoolday.id == null) {
+      throw ArgumentError.notNull('missedSchoolday.id');
     }
     if (pupil.id == null) {
       throw ArgumentError.notNull('pupil.id');
     }
 
-    var $missedClass = missedClass.copyWith(pupilId: pupil.id);
-    await session.db.updateRow<MissedClass>(
-      $missedClass,
-      columns: [MissedClass.t.pupilId],
+    var $missedSchoolday = missedSchoolday.copyWith(pupilId: pupil.id);
+    await session.db.updateRow<MissedSchoolday>(
+      $missedSchoolday,
+      columns: [MissedSchoolday.t.pupilId],
       transaction: transaction,
     );
   }

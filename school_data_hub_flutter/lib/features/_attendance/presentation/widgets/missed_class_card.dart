@@ -10,11 +10,11 @@ import 'package:school_data_hub_flutter/features/_attendance/presentation/widget
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
-class MissedClassCard extends StatelessWidget {
+class MissedSchooldayCard extends StatelessWidget {
   final PupilProxy pupil;
-  final MissedClass missedClass;
-  const MissedClassCard(
-      {required this.pupil, required this.missedClass, super.key});
+  final MissedSchoolday missedSchoolday;
+  const MissedSchooldayCard(
+      {required this.pupil, required this.missedSchoolday, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +35,8 @@ class MissedClassCard extends StatelessWidget {
                 title: 'Fehlzeit löschen',
                 message: 'Die Fehlzeit löschen?');
             if (confirm != true) return;
-            await di<AttendanceManager>().deleteMissedClass(
-                pupil.pupilId, missedClass.schoolday!.schoolday);
+            await di<AttendanceManager>().deleteMissedSchoolday(
+                pupil.pupilId, missedSchoolday.schoolday!.schoolday);
 
             di<NotificationService>()
                 .showSnackBar(NotificationType.success, 'Fehlzeit gelöscht!');
@@ -48,7 +48,7 @@ class MissedClassCard extends StatelessWidget {
                 children: [
                   Text(
                     DateFormat('dd.MM.yyyy')
-                        .format(missedClass.schoolday!.schoolday)
+                        .format(missedSchoolday.schoolday!.schoolday)
                         .toString(),
                     style: const TextStyle(
                       color: Colors.black,
@@ -57,16 +57,16 @@ class MissedClassCard extends StatelessWidget {
                     ),
                   ),
                   const Gap(5),
-                  missedTypeBadge(missedClass.missedType),
+                  missedTypeBadge(missedSchoolday.missedType),
                   const Gap(3),
-                  excusedBadge(missedClass.unexcused),
+                  excusedBadge(missedSchoolday.unexcused),
                   const Gap(3),
-                  contactedDayBadge(missedClass.contacted),
+                  contactedDayBadge(missedSchoolday.contacted),
                   const Gap(3),
-                  returnedBadge(missedClass.returned),
+                  returnedBadge(missedSchoolday.returned),
                   const Spacer(),
                   Text(
-                    missedClass.createdBy,
+                    missedSchoolday.createdBy,
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 16),
                   ),
@@ -76,27 +76,27 @@ class MissedClassCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  if (missedClass.missedType == MissedType.late)
+                  if (missedSchoolday.missedType == MissedType.late)
                     Row(
                       children: [
                         const Text('Verspätung:'),
                         const Gap(5),
-                        Text('${missedClass.minutesLate ?? 0} min',
+                        Text('${missedSchoolday.minutesLate ?? 0} min',
                             style:
                                 const TextStyle(fontWeight: FontWeight.bold)),
                         const Gap(5),
                       ],
                     ),
-                  if (missedClass.returned == true) ...[
+                  if (missedSchoolday.returned == true) ...[
                     RichText(
                         text: TextSpan(
                       text: 'abgeholt um: ',
                       style: DefaultTextStyle.of(context).style,
                       children: <TextSpan>[
                         TextSpan(
-                            text: missedClass.returnedAt != null
+                            text: missedSchoolday.returnedAt != null
                                 ? DateFormat('HH:mm')
-                                    .format(missedClass.returnedAt!)
+                                    .format(missedSchoolday.returnedAt!)
                                     .toString()
                                 : 'kein Eintrag',
                             style:
@@ -113,21 +113,21 @@ class MissedClassCard extends StatelessWidget {
                   const Text('Kommentar:'),
                   const Gap(5),
                   Text(
-                    missedClass.comment ?? 'kein Eintrag',
+                    missedSchoolday.comment ?? 'kein Eintrag',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
 
                   // TODO: check why no modifiedBy values are stored
                 ],
               ),
-              if (missedClass.modifiedBy != null) ...[
+              if (missedSchoolday.modifiedBy != null) ...[
                 const Gap(5),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     const Text('zuletzt geändert von: '),
                     Text(
-                      missedClass.modifiedBy!,
+                      missedSchoolday.modifiedBy!,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],

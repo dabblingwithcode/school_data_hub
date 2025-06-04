@@ -3,7 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/attendance_badges.dart';
 
-void missedClassesBadgesInformationDialog(
+void missedSchooldaysBadgesInformationDialog(
         {required BuildContext context, bool? isAttendancePage}) =>
     showDialog(
       context: context,

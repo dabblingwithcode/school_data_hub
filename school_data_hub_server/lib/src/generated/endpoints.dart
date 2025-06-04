@@ -42,7 +42,7 @@ import '../_features/workbooks/endpoints/workbooks_endpoint.dart' as _i23;
 import '../_shared/endpoints/file_endpoints.dart' as _i24;
 import 'package:school_data_hub_server/src/generated/_features/user/models/roles.dart'
     as _i25;
-import 'package:school_data_hub_server/src/generated/_features/attendance/models/missed_class.dart'
+import 'package:school_data_hub_server/src/generated/_features/attendance/models/missed_schoolday.dart'
     as _i26;
 import 'package:school_data_hub_server/src/generated/_shared/models/member_operation.dart'
     as _i27;
@@ -110,10 +110,10 @@ class Endpoints extends _i1.EndpointDispatch {
           'admin',
           null,
         ),
-      'missedClass': _i3.MissedClassEndpoint()
+      'missedSchoolday': _i3.MissedSchooldayEndpoint()
         ..initialize(
           server,
-          'missedClass',
+          'missedSchoolday',
           null,
         ),
       'authorization': _i4.AuthorizationEndpoint()
@@ -421,16 +421,16 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
-    connectors['missedClass'] = _i1.EndpointConnector(
-      name: 'missedClass',
-      endpoint: endpoints['missedClass']!,
+    connectors['missedSchoolday'] = _i1.EndpointConnector(
+      name: 'missedSchoolday',
+      endpoint: endpoints['missedSchoolday']!,
       methodConnectors: {
-        'postMissedClass': _i1.MethodConnector(
-          name: 'postMissedClass',
+        'postMissedSchoolday': _i1.MethodConnector(
+          name: 'postMissedSchoolday',
           params: {
             'missedClass': _i1.ParameterDescription(
               name: 'missedClass',
-              type: _i1.getType<_i26.MissedClass>(),
+              type: _i1.getType<_i26.MissedSchoolday>(),
               nullable: false,
             )
           },
@@ -438,18 +438,18 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['missedClass'] as _i3.MissedClassEndpoint)
-                  .postMissedClass(
+              (endpoints['missedSchoolday'] as _i3.MissedSchooldayEndpoint)
+                  .postMissedSchoolday(
             session,
             params['missedClass'],
           ),
         ),
-        'postMissedClasses': _i1.MethodConnector(
-          name: 'postMissedClasses',
+        'postMissedSchooldayes': _i1.MethodConnector(
+          name: 'postMissedSchooldayes',
           params: {
             'missedClasses': _i1.ParameterDescription(
               name: 'missedClasses',
-              type: _i1.getType<List<_i26.MissedClass>>(),
+              type: _i1.getType<List<_i26.MissedSchoolday>>(),
               nullable: false,
             )
           },
@@ -457,24 +457,24 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['missedClass'] as _i3.MissedClassEndpoint)
-                  .postMissedClasses(
+              (endpoints['missedSchoolday'] as _i3.MissedSchooldayEndpoint)
+                  .postMissedSchooldayes(
             session,
             params['missedClasses'],
           ),
         ),
-        'fetchAllMissedClasses': _i1.MethodConnector(
-          name: 'fetchAllMissedClasses',
+        'fetchAllMissedSchooldayes': _i1.MethodConnector(
+          name: 'fetchAllMissedSchooldayes',
           params: {},
           call: (
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['missedClass'] as _i3.MissedClassEndpoint)
-                  .fetchAllMissedClasses(session),
+              (endpoints['missedSchoolday'] as _i3.MissedSchooldayEndpoint)
+                  .fetchAllMissedSchooldayes(session),
         ),
-        'fetchMissedClassesOnASchoolday': _i1.MethodConnector(
-          name: 'fetchMissedClassesOnASchoolday',
+        'fetchMissedSchooldayesOnASchoolday': _i1.MethodConnector(
+          name: 'fetchMissedSchooldayesOnASchoolday',
           params: {
             'schoolday': _i1.ParameterDescription(
               name: 'schoolday',
@@ -486,14 +486,14 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['missedClass'] as _i3.MissedClassEndpoint)
-                  .fetchMissedClassesOnASchoolday(
+              (endpoints['missedSchoolday'] as _i3.MissedSchooldayEndpoint)
+                  .fetchMissedSchooldayesOnASchoolday(
             session,
             params['schoolday'],
           ),
         ),
-        'deleteMissedClass': _i1.MethodConnector(
-          name: 'deleteMissedClass',
+        'deleteMissedSchoolday': _i1.MethodConnector(
+          name: 'deleteMissedSchoolday',
           params: {
             'pupilId': _i1.ParameterDescription(
               name: 'pupilId',
@@ -510,19 +510,19 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['missedClass'] as _i3.MissedClassEndpoint)
-                  .deleteMissedClass(
+              (endpoints['missedSchoolday'] as _i3.MissedSchooldayEndpoint)
+                  .deleteMissedSchoolday(
             session,
             params['pupilId'],
             params['schooldayId'],
           ),
         ),
-        'updateMissedClass': _i1.MethodConnector(
-          name: 'updateMissedClass',
+        'updateMissedSchoolday': _i1.MethodConnector(
+          name: 'updateMissedSchoolday',
           params: {
-            'missedClass': _i1.ParameterDescription(
-              name: 'missedClass',
-              type: _i1.getType<_i26.MissedClass>(),
+            'missedSchoolday': _i1.ParameterDescription(
+              name: 'missedSchoolday',
+              type: _i1.getType<_i26.MissedSchoolday>(),
               nullable: false,
             )
           },
@@ -530,10 +530,10 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['missedClass'] as _i3.MissedClassEndpoint)
-                  .updateMissedClass(
+              (endpoints['missedSchoolday'] as _i3.MissedSchooldayEndpoint)
+                  .updateMissedSchoolday(
             session,
-            params['missedClass'],
+            params['missedSchoolday'],
           ),
         ),
         'streamMyModels': _i1.MethodStreamConnector(
@@ -546,7 +546,7 @@ class Endpoints extends _i1.EndpointDispatch {
             Map<String, dynamic> params,
             Map<String, Stream> streamParams,
           ) =>
-              (endpoints['missedClass'] as _i3.MissedClassEndpoint)
+              (endpoints['missedSchoolday'] as _i3.MissedSchooldayEndpoint)
                   .streamMyModels(session),
         ),
       },

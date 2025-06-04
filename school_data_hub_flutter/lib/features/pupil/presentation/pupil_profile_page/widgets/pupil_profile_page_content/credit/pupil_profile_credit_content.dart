@@ -124,7 +124,7 @@ class PupilProfileCreditContent extends StatelessWidget {
                   child: GestureDetector(
                     onTap: () {
                       //- TO-DO: change missed class function
-                      //- like _changeMissedClassHermannpupilPage
+                      //- like _changeMissedSchooldayHermannpupilPage
                     },
                     onLongPress: () async {},
                     child: SingleChildScrollView(

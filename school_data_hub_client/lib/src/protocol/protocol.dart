@@ -11,8 +11,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import '_features/attendance/models/contacted_type.dart' as _i2;
-import '_features/attendance/models/missed_class.dart' as _i3;
-import '_features/attendance/models/missed_class_dto.dart' as _i4;
+import '_features/attendance/models/missed_schoolday.dart' as _i3;
+import '_features/attendance/models/missed_schoolday_dto.dart' as _i4;
 import '_features/attendance/models/missed_type.dart' as _i5;
 import '_features/authorizations/models/authorization.dart' as _i6;
 import '_features/authorizations/models/pupil_authorization.dart' as _i7;
@@ -94,7 +94,7 @@ import 'package:school_data_hub_client/src/protocol/_features/user/models/staff_
     as _i69;
 import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_data/pupil_data.dart'
     as _i70;
-import 'package:school_data_hub_client/src/protocol/_features/attendance/models/missed_class.dart'
+import 'package:school_data_hub_client/src/protocol/_features/attendance/models/missed_schoolday.dart'
     as _i71;
 import 'package:school_data_hub_client/src/protocol/_features/authorizations/models/authorization.dart'
     as _i72;
@@ -134,8 +134,8 @@ import 'package:school_data_hub_client/src/protocol/_features/workbooks/models/p
 import 'package:school_data_hub_client/src/protocol/_features/workbooks/models/workbook.dart'
     as _i90;
 export '_features/attendance/models/contacted_type.dart';
-export '_features/attendance/models/missed_class.dart';
-export '_features/attendance/models/missed_class_dto.dart';
+export '_features/attendance/models/missed_schoolday.dart';
+export '_features/attendance/models/missed_schoolday_dto.dart';
 export '_features/attendance/models/missed_type.dart';
 export '_features/authorizations/models/authorization.dart';
 export '_features/authorizations/models/pupil_authorization.dart';
@@ -218,11 +218,11 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i2.ContactedType) {
       return _i2.ContactedType.fromJson(data) as T;
     }
-    if (t == _i3.MissedClass) {
-      return _i3.MissedClass.fromJson(data) as T;
+    if (t == _i3.MissedSchoolday) {
+      return _i3.MissedSchoolday.fromJson(data) as T;
     }
-    if (t == _i4.MissedClassDto) {
-      return _i4.MissedClassDto.fromJson(data) as T;
+    if (t == _i4.MissedSchooldayDto) {
+      return _i4.MissedSchooldayDto.fromJson(data) as T;
     }
     if (t == _i5.MissedType) {
       return _i5.MissedType.fromJson(data) as T;
@@ -419,11 +419,11 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i1.getType<_i2.ContactedType?>()) {
       return (data != null ? _i2.ContactedType.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i3.MissedClass?>()) {
-      return (data != null ? _i3.MissedClass.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i3.MissedSchoolday?>()) {
+      return (data != null ? _i3.MissedSchoolday.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i4.MissedClassDto?>()) {
-      return (data != null ? _i4.MissedClassDto.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i4.MissedSchooldayDto?>()) {
+      return (data != null ? _i4.MissedSchooldayDto.fromJson(data) : null) as T;
     }
     if (t == _i1.getType<_i5.MissedType?>()) {
       return (data != null ? _i5.MissedType.fromJson(data) : null) as T;
@@ -887,9 +887,11 @@ class Protocol extends _i1.SerializationManager {
               .toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i3.MissedClass>?>()) {
+    if (t == _i1.getType<List<_i3.MissedSchoolday>?>()) {
       return (data != null
-          ? (data as List).map((e) => deserialize<_i3.MissedClass>(e)).toList()
+          ? (data as List)
+              .map((e) => deserialize<_i3.MissedSchoolday>(e))
+              .toList()
           : null) as T;
     }
     if (t == _i1.getType<List<_i47.SchooldayEvent>?>()) {
@@ -932,9 +934,11 @@ class Protocol extends _i1.SerializationManager {
               .toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i3.MissedClass>?>()) {
+    if (t == _i1.getType<List<_i3.MissedSchoolday>?>()) {
       return (data != null
-          ? (data as List).map((e) => deserialize<_i3.MissedClass>(e)).toList()
+          ? (data as List)
+              .map((e) => deserialize<_i3.MissedSchoolday>(e))
+              .toList()
           : null) as T;
     }
     if (t == _i1.getType<List<_i47.SchooldayEvent>?>()) {
@@ -1014,9 +1018,9 @@ class Protocol extends _i1.SerializationManager {
       return (data as List).map((e) => deserialize<_i70.PupilData>(e)).toSet()
           as T;
     }
-    if (t == List<_i71.MissedClass>) {
+    if (t == List<_i71.MissedSchoolday>) {
       return (data as List)
-          .map((e) => deserialize<_i71.MissedClass>(e))
+          .map((e) => deserialize<_i71.MissedSchoolday>(e))
           .toList() as T;
     }
     if (t == List<_i72.Authorization>) {
@@ -1158,11 +1162,11 @@ class Protocol extends _i1.SerializationManager {
     if (data is _i2.ContactedType) {
       return 'ContactedType';
     }
-    if (data is _i3.MissedClass) {
-      return 'MissedClass';
+    if (data is _i3.MissedSchoolday) {
+      return 'MissedSchoolday';
     }
-    if (data is _i4.MissedClassDto) {
-      return 'MissedClassDto';
+    if (data is _i4.MissedSchooldayDto) {
+      return 'MissedSchooldayDto';
     }
     if (data is _i5.MissedType) {
       return 'MissedType';
@@ -1375,11 +1379,11 @@ class Protocol extends _i1.SerializationManager {
     if (dataClassName == 'ContactedType') {
       return deserialize<_i2.ContactedType>(data['data']);
     }
-    if (dataClassName == 'MissedClass') {
-      return deserialize<_i3.MissedClass>(data['data']);
+    if (dataClassName == 'MissedSchoolday') {
+      return deserialize<_i3.MissedSchoolday>(data['data']);
     }
-    if (dataClassName == 'MissedClassDto') {
-      return deserialize<_i4.MissedClassDto>(data['data']);
+    if (dataClassName == 'MissedSchooldayDto') {
+      return deserialize<_i4.MissedSchooldayDto>(data['data']);
     }
     if (dataClassName == 'MissedType') {
       return deserialize<_i5.MissedType>(data['data']);

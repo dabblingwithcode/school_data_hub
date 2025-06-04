@@ -8,7 +8,6 @@ import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/models/attendance_values.dart';
@@ -16,6 +15,7 @@ import 'package:school_data_hub_flutter/features/_attendance/presentation/attend
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/dialogues/late_in_minutes_dialog.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/dialogues/multiple_entries_dialog.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/dialogues/returned_time_picker.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
@@ -34,18 +34,18 @@ class AttendanceCard extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final FocusNode _dropdownFocusNode = FocusNode();
-    final missedClassesList =
-        _attendanceManager.getPupilMissedClassesProxy(pupil.pupilId);
+    final missedSchooldaysList =
+        _attendanceManager.getPupilMissedSchooldayesProxy(pupil.pupilId);
 
-    final MissedClass? missedClass =
-        watch(missedClassesList).missedClasses.firstWhereOrNull(
+    final MissedSchoolday? missedSchoolday =
+        watch(missedSchooldaysList).missedSchooldays.firstWhereOrNull(
               (element) =>
                   element.schoolday?.schoolday.formatForJson() ==
                   thisDate.formatForJson(),
             );
 
     AttendanceValues attendanceInfo =
-        AttendanceHelper.getAttendanceValues(missedClass);
+        AttendanceHelper.getAttendanceValues(missedSchoolday);
 
     //- TODO: This widget is a mess, should be refactored!
 
@@ -69,7 +69,8 @@ class AttendanceCard extends WatchingWidget {
                   AvatarWithBadges(pupil: pupil, size: 80),
                   Expanded(
                     child: GestureDetector(
-                      onLongPress: () => createMissedClassList(context, pupil),
+                      onLongPress: () =>
+                          createMissedSchooldayList(context, pupil),
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (ctx) => PupilProfilePage(
@@ -398,7 +399,8 @@ class AttendanceCard extends WatchingWidget {
                 AvatarWithBadges(pupil: pupil, size: 80),
                 Expanded(
                   child: GestureDetector(
-                    onLongPress: () => createMissedClassList(context, pupil),
+                    onLongPress: () =>
+                        createMissedSchooldayList(context, pupil),
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => PupilProfilePage(

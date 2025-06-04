@@ -39,7 +39,7 @@ class PupilProxy with ChangeNotifier {
     //if (pupilData == _pupilData) return;
     _pupilData = pupilData;
     // ignore: prefer_for_elements_to_map_fromiterable
-    // _missedClasses = Map.fromIterable(pupilData.missedClasses,
+    // _missedSchooldays = Map.fromIterable(pupilData.missedSchooldays,
     //     key: (e) => e.missedDay, value: (e) => e);
 
     pupilIsDirty = true;
@@ -54,28 +54,28 @@ class PupilProxy with ChangeNotifier {
     }
   }
 
-  // void updateFromMissedClassesOnASchoolday(
-  //     List<MissedClass> allMissedClassesThisDay) {
+  // void updateFromMissedSchooldayesOnASchoolday(
+  //     List<MissedSchoolday> allMissedSchooldayesThisDay) {
   //   pupilIsDirty = false;
 
-  //   if (allMissedClassesThisDay
-  //       .any((missedClass) => missedClass.pupilId == _pupilData.internalId)) {
-  //     final missedClass = allMissedClassesThisDay.firstWhere(
-  //         (missedClass) => missedClass.pupilId == _pupilData.internalId);
+  //   if (allMissedSchooldayesThisDay
+  //       .any((missedSchoolday) => missedSchoolday.pupilId == _pupilData.internalId)) {
+  //     final missedSchoolday = allMissedSchooldayesThisDay.firstWhere(
+  //         (missedSchoolday) => missedSchoolday.pupilId == _pupilData.internalId);
   //     // if the missed class is not already in the missed classes
   //     // or if the missed class is different from the one in the missed classes
   //     // write it
-  //     if (!_missedClasses.containsKey(missedClass.schoolday!.schoolday) ||
-  //         !(_missedClasses[missedClass.schoolday!.schoolday] == missedClass)) {
-  //       _missedClasses[missedClass.schoolday!.schoolday] = missedClass;
+  //     if (!_missedSchooldays.containsKey(missedSchoolday.schoolday!.schoolday) ||
+  //         !(_missedSchooldays[missedSchoolday.schoolday!.schoolday] == missedSchoolday)) {
+  //       _missedSchooldays[missedSchoolday.schoolday!.schoolday] = missedSchoolday;
   //       pupilIsDirty = true;
   //     }
   //   } else {
   //     // there is no missed class for this pupil on this date
   //     // if there is a missed class for this date in the pupil's missed classes in memory
   //     // remove it
-  //     if (_missedClasses.containsKey(_schoolCalendarManager.thisDate.value)) {
-  //       _missedClasses.remove(di<SchooldayManager>().thisDate.value);
+  //     if (_missedSchooldays.containsKey(_schoolCalendarManager.thisDate.value)) {
+  //       _missedSchooldays.remove(di<SchooldayManager>().thisDate.value);
   //       pupilIsDirty = true;
   //     }
   //   }

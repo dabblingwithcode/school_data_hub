@@ -10,42 +10,42 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import '../../../_features/attendance/models/missed_class.dart' as _i2;
+import '../../../_features/attendance/models/missed_schoolday.dart' as _i2;
 
-abstract class MissedClassDto implements _i1.SerializableModel {
-  MissedClassDto._({
-    required this.missedClass,
+abstract class MissedSchooldayDto implements _i1.SerializableModel {
+  MissedSchooldayDto._({
+    required this.missedSchoolday,
     required this.operation,
   });
 
-  factory MissedClassDto({
-    required _i2.MissedClass missedClass,
+  factory MissedSchooldayDto({
+    required _i2.MissedSchoolday missedSchoolday,
     required String operation,
-  }) = _MissedClassDtoImpl;
+  }) = _MissedSchooldayDtoImpl;
 
-  factory MissedClassDto.fromJson(Map<String, dynamic> jsonSerialization) {
-    return MissedClassDto(
-      missedClass: _i2.MissedClass.fromJson(
-          (jsonSerialization['missedClass'] as Map<String, dynamic>)),
+  factory MissedSchooldayDto.fromJson(Map<String, dynamic> jsonSerialization) {
+    return MissedSchooldayDto(
+      missedSchoolday: _i2.MissedSchoolday.fromJson(
+          (jsonSerialization['missedSchoolday'] as Map<String, dynamic>)),
       operation: jsonSerialization['operation'] as String,
     );
   }
 
-  _i2.MissedClass missedClass;
+  _i2.MissedSchoolday missedSchoolday;
 
   String operation;
 
-  /// Returns a shallow copy of this [MissedClassDto]
+  /// Returns a shallow copy of this [MissedSchooldayDto]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
-  MissedClassDto copyWith({
-    _i2.MissedClass? missedClass,
+  MissedSchooldayDto copyWith({
+    _i2.MissedSchoolday? missedSchoolday,
     String? operation,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
-      'missedClass': missedClass.toJson(),
+      'missedSchoolday': missedSchoolday.toJson(),
       'operation': operation,
     };
   }
@@ -56,25 +56,25 @@ abstract class MissedClassDto implements _i1.SerializableModel {
   }
 }
 
-class _MissedClassDtoImpl extends MissedClassDto {
-  _MissedClassDtoImpl({
-    required _i2.MissedClass missedClass,
+class _MissedSchooldayDtoImpl extends MissedSchooldayDto {
+  _MissedSchooldayDtoImpl({
+    required _i2.MissedSchoolday missedSchoolday,
     required String operation,
   }) : super._(
-          missedClass: missedClass,
+          missedSchoolday: missedSchoolday,
           operation: operation,
         );
 
-  /// Returns a shallow copy of this [MissedClassDto]
+  /// Returns a shallow copy of this [MissedSchooldayDto]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   @override
-  MissedClassDto copyWith({
-    _i2.MissedClass? missedClass,
+  MissedSchooldayDto copyWith({
+    _i2.MissedSchoolday? missedSchoolday,
     String? operation,
   }) {
-    return MissedClassDto(
-      missedClass: missedClass ?? this.missedClass.copyWith(),
+    return MissedSchooldayDto(
+      missedSchoolday: missedSchoolday ?? this.missedSchoolday.copyWith(),
       operation: operation ?? this.operation,
     );
   }

@@ -18,7 +18,7 @@ final _schoolCalendarManager = di<SchoolCalendarManager>();
 
 // based on https://mobikul.com/creating-stateful-dialog-form-in-flutter/
 
-Future<void> createMissedClassList(
+Future<void> createMissedSchooldayList(
     BuildContext context, PupilProxy pupil) async {
   final DateTime thisDate = _schoolCalendarManager.thisDate.value;
   return await showDialog(
@@ -207,8 +207,11 @@ Future<void> createMissedClassList(
                   style: AppStyles.successButtonStyle,
                   onPressed: () {
                     if (_missedDatesformKey.currentState!.validate()) {
-                      _attendanceManager.postManyMissedClasses(pupil.internalId,
-                          startDate, endDate, dialogdropdownValue);
+                      _attendanceManager.postManyMissedSchooldayes(
+                          pupil.internalId,
+                          startDate,
+                          endDate,
+                          dialogdropdownValue);
                       _missedDatesformKey.currentState!.reset();
                       Navigator.of(context).pop();
                     }

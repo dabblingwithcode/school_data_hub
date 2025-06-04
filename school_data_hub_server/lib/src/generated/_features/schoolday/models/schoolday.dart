@@ -12,7 +12,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import '../../../_features/attendance/models/missed_class.dart' as _i2;
+import '../../../_features/attendance/models/missed_schoolday.dart' as _i2;
 import '../../../_features/schoolday_events/models/schoolday_event.dart' as _i3;
 import '../../../_features/schoolday/models/school_semester.dart' as _i4;
 
@@ -21,7 +21,7 @@ abstract class Schoolday
   Schoolday._({
     this.id,
     required this.schoolday,
-    this.missedClasses,
+    this.missedSchooldays,
     this.schooldayEvents,
     required this.schoolSemesterId,
     this.schoolSemester,
@@ -30,7 +30,7 @@ abstract class Schoolday
   factory Schoolday({
     int? id,
     required DateTime schoolday,
-    List<_i2.MissedClass>? missedClasses,
+    List<_i2.MissedSchoolday>? missedSchooldays,
     List<_i3.SchooldayEvent>? schooldayEvents,
     required int schoolSemesterId,
     _i4.SchoolSemester? schoolSemester,
@@ -41,8 +41,9 @@ abstract class Schoolday
       id: jsonSerialization['id'] as int?,
       schoolday:
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['schoolday']),
-      missedClasses: (jsonSerialization['missedClasses'] as List?)
-          ?.map((e) => _i2.MissedClass.fromJson((e as Map<String, dynamic>)))
+      missedSchooldays: (jsonSerialization['missedSchooldays'] as List?)
+          ?.map(
+              (e) => _i2.MissedSchoolday.fromJson((e as Map<String, dynamic>)))
           .toList(),
       schooldayEvents: (jsonSerialization['schooldayEvents'] as List?)
           ?.map((e) => _i3.SchooldayEvent.fromJson((e as Map<String, dynamic>)))
@@ -64,7 +65,7 @@ abstract class Schoolday
 
   DateTime schoolday;
 
-  List<_i2.MissedClass>? missedClasses;
+  List<_i2.MissedSchoolday>? missedSchooldays;
 
   List<_i3.SchooldayEvent>? schooldayEvents;
 
@@ -81,7 +82,7 @@ abstract class Schoolday
   Schoolday copyWith({
     int? id,
     DateTime? schoolday,
-    List<_i2.MissedClass>? missedClasses,
+    List<_i2.MissedSchoolday>? missedSchooldays,
     List<_i3.SchooldayEvent>? schooldayEvents,
     int? schoolSemesterId,
     _i4.SchoolSemester? schoolSemester,
@@ -91,8 +92,9 @@ abstract class Schoolday
     return {
       if (id != null) 'id': id,
       'schoolday': schoolday.toJson(),
-      if (missedClasses != null)
-        'missedClasses': missedClasses?.toJson(valueToJson: (v) => v.toJson()),
+      if (missedSchooldays != null)
+        'missedSchooldays':
+            missedSchooldays?.toJson(valueToJson: (v) => v.toJson()),
       if (schooldayEvents != null)
         'schooldayEvents':
             schooldayEvents?.toJson(valueToJson: (v) => v.toJson()),
@@ -106,9 +108,9 @@ abstract class Schoolday
     return {
       if (id != null) 'id': id,
       'schoolday': schoolday.toJson(),
-      if (missedClasses != null)
-        'missedClasses':
-            missedClasses?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
+      if (missedSchooldays != null)
+        'missedSchooldays':
+            missedSchooldays?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
       if (schooldayEvents != null)
         'schooldayEvents':
             schooldayEvents?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
@@ -119,12 +121,12 @@ abstract class Schoolday
   }
 
   static SchooldayInclude include({
-    _i2.MissedClassIncludeList? missedClasses,
+    _i2.MissedSchooldayIncludeList? missedSchooldays,
     _i3.SchooldayEventIncludeList? schooldayEvents,
     _i4.SchoolSemesterInclude? schoolSemester,
   }) {
     return SchooldayInclude._(
-      missedClasses: missedClasses,
+      missedSchooldays: missedSchooldays,
       schooldayEvents: schooldayEvents,
       schoolSemester: schoolSemester,
     );
@@ -162,14 +164,14 @@ class _SchooldayImpl extends Schoolday {
   _SchooldayImpl({
     int? id,
     required DateTime schoolday,
-    List<_i2.MissedClass>? missedClasses,
+    List<_i2.MissedSchoolday>? missedSchooldays,
     List<_i3.SchooldayEvent>? schooldayEvents,
     required int schoolSemesterId,
     _i4.SchoolSemester? schoolSemester,
   }) : super._(
           id: id,
           schoolday: schoolday,
-          missedClasses: missedClasses,
+          missedSchooldays: missedSchooldays,
           schooldayEvents: schooldayEvents,
           schoolSemesterId: schoolSemesterId,
           schoolSemester: schoolSemester,
@@ -182,7 +184,7 @@ class _SchooldayImpl extends Schoolday {
   Schoolday copyWith({
     Object? id = _Undefined,
     DateTime? schoolday,
-    Object? missedClasses = _Undefined,
+    Object? missedSchooldays = _Undefined,
     Object? schooldayEvents = _Undefined,
     int? schoolSemesterId,
     Object? schoolSemester = _Undefined,
@@ -190,9 +192,9 @@ class _SchooldayImpl extends Schoolday {
     return Schoolday(
       id: id is int? ? id : this.id,
       schoolday: schoolday ?? this.schoolday,
-      missedClasses: missedClasses is List<_i2.MissedClass>?
-          ? missedClasses
-          : this.missedClasses?.map((e0) => e0.copyWith()).toList(),
+      missedSchooldays: missedSchooldays is List<_i2.MissedSchoolday>?
+          ? missedSchooldays
+          : this.missedSchooldays?.map((e0) => e0.copyWith()).toList(),
       schooldayEvents: schooldayEvents is List<_i3.SchooldayEvent>?
           ? schooldayEvents
           : this.schooldayEvents?.map((e0) => e0.copyWith()).toList(),
@@ -218,9 +220,9 @@ class SchooldayTable extends _i1.Table<int?> {
 
   late final _i1.ColumnDateTime schoolday;
 
-  _i2.MissedClassTable? ___missedClasses;
+  _i2.MissedSchooldayTable? ___missedSchooldays;
 
-  _i1.ManyRelation<_i2.MissedClassTable>? _missedClasses;
+  _i1.ManyRelation<_i2.MissedSchooldayTable>? _missedSchooldays;
 
   _i3.SchooldayEventTable? ___schooldayEvents;
 
@@ -230,17 +232,17 @@ class SchooldayTable extends _i1.Table<int?> {
 
   _i4.SchoolSemesterTable? _schoolSemester;
 
-  _i2.MissedClassTable get __missedClasses {
-    if (___missedClasses != null) return ___missedClasses!;
-    ___missedClasses = _i1.createRelationTable(
-      relationFieldName: '__missedClasses',
+  _i2.MissedSchooldayTable get __missedSchooldays {
+    if (___missedSchooldays != null) return ___missedSchooldays!;
+    ___missedSchooldays = _i1.createRelationTable(
+      relationFieldName: '__missedSchooldays',
       field: Schoolday.t.id,
-      foreignField: _i2.MissedClass.t.schooldayId,
+      foreignField: _i2.MissedSchoolday.t.schooldayId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.MissedClassTable(tableRelation: foreignTableRelation),
+          _i2.MissedSchooldayTable(tableRelation: foreignTableRelation),
     );
-    return ___missedClasses!;
+    return ___missedSchooldays!;
   }
 
   _i3.SchooldayEventTable get __schooldayEvents {
@@ -269,22 +271,22 @@ class SchooldayTable extends _i1.Table<int?> {
     return _schoolSemester!;
   }
 
-  _i1.ManyRelation<_i2.MissedClassTable> get missedClasses {
-    if (_missedClasses != null) return _missedClasses!;
+  _i1.ManyRelation<_i2.MissedSchooldayTable> get missedSchooldays {
+    if (_missedSchooldays != null) return _missedSchooldays!;
     var relationTable = _i1.createRelationTable(
-      relationFieldName: 'missedClasses',
+      relationFieldName: 'missedSchooldays',
       field: Schoolday.t.id,
-      foreignField: _i2.MissedClass.t.schooldayId,
+      foreignField: _i2.MissedSchoolday.t.schooldayId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.MissedClassTable(tableRelation: foreignTableRelation),
+          _i2.MissedSchooldayTable(tableRelation: foreignTableRelation),
     );
-    _missedClasses = _i1.ManyRelation<_i2.MissedClassTable>(
+    _missedSchooldays = _i1.ManyRelation<_i2.MissedSchooldayTable>(
       tableWithRelations: relationTable,
-      table: _i2.MissedClassTable(
+      table: _i2.MissedSchooldayTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
-    return _missedClasses!;
+    return _missedSchooldays!;
   }
 
   _i1.ManyRelation<_i3.SchooldayEventTable> get schooldayEvents {
@@ -314,8 +316,8 @@ class SchooldayTable extends _i1.Table<int?> {
 
   @override
   _i1.Table? getRelationTable(String relationField) {
-    if (relationField == 'missedClasses') {
-      return __missedClasses;
+    if (relationField == 'missedSchooldays') {
+      return __missedSchooldays;
     }
     if (relationField == 'schooldayEvents') {
       return __schooldayEvents;
@@ -329,16 +331,16 @@ class SchooldayTable extends _i1.Table<int?> {
 
 class SchooldayInclude extends _i1.IncludeObject {
   SchooldayInclude._({
-    _i2.MissedClassIncludeList? missedClasses,
+    _i2.MissedSchooldayIncludeList? missedSchooldays,
     _i3.SchooldayEventIncludeList? schooldayEvents,
     _i4.SchoolSemesterInclude? schoolSemester,
   }) {
-    _missedClasses = missedClasses;
+    _missedSchooldays = missedSchooldays;
     _schooldayEvents = schooldayEvents;
     _schoolSemester = schoolSemester;
   }
 
-  _i2.MissedClassIncludeList? _missedClasses;
+  _i2.MissedSchooldayIncludeList? _missedSchooldays;
 
   _i3.SchooldayEventIncludeList? _schooldayEvents;
 
@@ -346,7 +348,7 @@ class SchooldayInclude extends _i1.IncludeObject {
 
   @override
   Map<String, _i1.Include?> get includes => {
-        'missedClasses': _missedClasses,
+        'missedSchooldays': _missedSchooldays,
         'schooldayEvents': _schooldayEvents,
         'schoolSemester': _schoolSemester,
       };
@@ -605,26 +607,27 @@ class SchooldayRepository {
 class SchooldayAttachRepository {
   const SchooldayAttachRepository._();
 
-  /// Creates a relation between this [Schoolday] and the given [MissedClass]s
-  /// by setting each [MissedClass]'s foreign key `schooldayId` to refer to this [Schoolday].
-  Future<void> missedClasses(
+  /// Creates a relation between this [Schoolday] and the given [MissedSchoolday]s
+  /// by setting each [MissedSchoolday]'s foreign key `schooldayId` to refer to this [Schoolday].
+  Future<void> missedSchooldays(
     _i1.Session session,
     Schoolday schoolday,
-    List<_i2.MissedClass> missedClass, {
+    List<_i2.MissedSchoolday> missedSchoolday, {
     _i1.Transaction? transaction,
   }) async {
-    if (missedClass.any((e) => e.id == null)) {
-      throw ArgumentError.notNull('missedClass.id');
+    if (missedSchoolday.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('missedSchoolday.id');
     }
     if (schoolday.id == null) {
       throw ArgumentError.notNull('schoolday.id');
     }
 
-    var $missedClass =
-        missedClass.map((e) => e.copyWith(schooldayId: schoolday.id)).toList();
-    await session.db.update<_i2.MissedClass>(
-      $missedClass,
-      columns: [_i2.MissedClass.t.schooldayId],
+    var $missedSchoolday = missedSchoolday
+        .map((e) => e.copyWith(schooldayId: schoolday.id))
+        .toList();
+    await session.db.update<_i2.MissedSchoolday>(
+      $missedSchoolday,
+      columns: [_i2.MissedSchoolday.t.schooldayId],
       transaction: transaction,
     );
   }
@@ -681,25 +684,25 @@ class SchooldayAttachRowRepository {
     );
   }
 
-  /// Creates a relation between this [Schoolday] and the given [MissedClass]
-  /// by setting the [MissedClass]'s foreign key `schooldayId` to refer to this [Schoolday].
-  Future<void> missedClasses(
+  /// Creates a relation between this [Schoolday] and the given [MissedSchoolday]
+  /// by setting the [MissedSchoolday]'s foreign key `schooldayId` to refer to this [Schoolday].
+  Future<void> missedSchooldays(
     _i1.Session session,
     Schoolday schoolday,
-    _i2.MissedClass missedClass, {
+    _i2.MissedSchoolday missedSchoolday, {
     _i1.Transaction? transaction,
   }) async {
-    if (missedClass.id == null) {
-      throw ArgumentError.notNull('missedClass.id');
+    if (missedSchoolday.id == null) {
+      throw ArgumentError.notNull('missedSchoolday.id');
     }
     if (schoolday.id == null) {
       throw ArgumentError.notNull('schoolday.id');
     }
 
-    var $missedClass = missedClass.copyWith(schooldayId: schoolday.id);
-    await session.db.updateRow<_i2.MissedClass>(
-      $missedClass,
-      columns: [_i2.MissedClass.t.schooldayId],
+    var $missedSchoolday = missedSchoolday.copyWith(schooldayId: schoolday.id);
+    await session.db.updateRow<_i2.MissedSchoolday>(
+      $missedSchoolday,
+      columns: [_i2.MissedSchoolday.t.schooldayId],
       transaction: transaction,
     );
   }

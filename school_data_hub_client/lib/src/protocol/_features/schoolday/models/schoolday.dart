@@ -10,7 +10,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import '../../../_features/attendance/models/missed_class.dart' as _i2;
+import '../../../_features/attendance/models/missed_schoolday.dart' as _i2;
 import '../../../_features/schoolday_events/models/schoolday_event.dart' as _i3;
 import '../../../_features/schoolday/models/school_semester.dart' as _i4;
 
@@ -18,7 +18,7 @@ abstract class Schoolday implements _i1.SerializableModel {
   Schoolday._({
     this.id,
     required this.schoolday,
-    this.missedClasses,
+    this.missedSchooldays,
     this.schooldayEvents,
     required this.schoolSemesterId,
     this.schoolSemester,
@@ -27,7 +27,7 @@ abstract class Schoolday implements _i1.SerializableModel {
   factory Schoolday({
     int? id,
     required DateTime schoolday,
-    List<_i2.MissedClass>? missedClasses,
+    List<_i2.MissedSchoolday>? missedSchooldays,
     List<_i3.SchooldayEvent>? schooldayEvents,
     required int schoolSemesterId,
     _i4.SchoolSemester? schoolSemester,
@@ -38,8 +38,9 @@ abstract class Schoolday implements _i1.SerializableModel {
       id: jsonSerialization['id'] as int?,
       schoolday:
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['schoolday']),
-      missedClasses: (jsonSerialization['missedClasses'] as List?)
-          ?.map((e) => _i2.MissedClass.fromJson((e as Map<String, dynamic>)))
+      missedSchooldays: (jsonSerialization['missedSchooldays'] as List?)
+          ?.map(
+              (e) => _i2.MissedSchoolday.fromJson((e as Map<String, dynamic>)))
           .toList(),
       schooldayEvents: (jsonSerialization['schooldayEvents'] as List?)
           ?.map((e) => _i3.SchooldayEvent.fromJson((e as Map<String, dynamic>)))
@@ -59,7 +60,7 @@ abstract class Schoolday implements _i1.SerializableModel {
 
   DateTime schoolday;
 
-  List<_i2.MissedClass>? missedClasses;
+  List<_i2.MissedSchoolday>? missedSchooldays;
 
   List<_i3.SchooldayEvent>? schooldayEvents;
 
@@ -73,7 +74,7 @@ abstract class Schoolday implements _i1.SerializableModel {
   Schoolday copyWith({
     int? id,
     DateTime? schoolday,
-    List<_i2.MissedClass>? missedClasses,
+    List<_i2.MissedSchoolday>? missedSchooldays,
     List<_i3.SchooldayEvent>? schooldayEvents,
     int? schoolSemesterId,
     _i4.SchoolSemester? schoolSemester,
@@ -83,8 +84,9 @@ abstract class Schoolday implements _i1.SerializableModel {
     return {
       if (id != null) 'id': id,
       'schoolday': schoolday.toJson(),
-      if (missedClasses != null)
-        'missedClasses': missedClasses?.toJson(valueToJson: (v) => v.toJson()),
+      if (missedSchooldays != null)
+        'missedSchooldays':
+            missedSchooldays?.toJson(valueToJson: (v) => v.toJson()),
       if (schooldayEvents != null)
         'schooldayEvents':
             schooldayEvents?.toJson(valueToJson: (v) => v.toJson()),
@@ -105,14 +107,14 @@ class _SchooldayImpl extends Schoolday {
   _SchooldayImpl({
     int? id,
     required DateTime schoolday,
-    List<_i2.MissedClass>? missedClasses,
+    List<_i2.MissedSchoolday>? missedSchooldays,
     List<_i3.SchooldayEvent>? schooldayEvents,
     required int schoolSemesterId,
     _i4.SchoolSemester? schoolSemester,
   }) : super._(
           id: id,
           schoolday: schoolday,
-          missedClasses: missedClasses,
+          missedSchooldays: missedSchooldays,
           schooldayEvents: schooldayEvents,
           schoolSemesterId: schoolSemesterId,
           schoolSemester: schoolSemester,
@@ -125,7 +127,7 @@ class _SchooldayImpl extends Schoolday {
   Schoolday copyWith({
     Object? id = _Undefined,
     DateTime? schoolday,
-    Object? missedClasses = _Undefined,
+    Object? missedSchooldays = _Undefined,
     Object? schooldayEvents = _Undefined,
     int? schoolSemesterId,
     Object? schoolSemester = _Undefined,
@@ -133,9 +135,9 @@ class _SchooldayImpl extends Schoolday {
     return Schoolday(
       id: id is int? ? id : this.id,
       schoolday: schoolday ?? this.schoolday,
-      missedClasses: missedClasses is List<_i2.MissedClass>?
-          ? missedClasses
-          : this.missedClasses?.map((e0) => e0.copyWith()).toList(),
+      missedSchooldays: missedSchooldays is List<_i2.MissedSchoolday>?
+          ? missedSchooldays
+          : this.missedSchooldays?.map((e0) => e0.copyWith()).toList(),
       schooldayEvents: schooldayEvents is List<_i3.SchooldayEvent>?
           ? schooldayEvents
           : this.schooldayEvents?.map((e0) => e0.copyWith()).toList(),

@@ -10,11 +10,10 @@ import 'package:school_data_hub_flutter/features/_attendance/presentation/missed
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
-
 import 'package:watch_it/watch_it.dart';
 
-class MissedClassesPupilListPage extends WatchingWidget {
-  const MissedClassesPupilListPage({super.key});
+class MissedSchooldayesPupilListPage extends WatchingWidget {
+  const MissedSchooldayesPupilListPage({super.key});
 
   @override
   Widget build(BuildContext context) {

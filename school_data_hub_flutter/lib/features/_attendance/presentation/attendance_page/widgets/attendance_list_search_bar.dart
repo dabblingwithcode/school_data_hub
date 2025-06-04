@@ -23,7 +23,7 @@ class AttendanceListSearchBar extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final pupils = watchValue((PupilsFilter x) => x.filteredPupils);
-    watchValue((AttendanceManager x) => x.missedClasses);
+    watchValue((AttendanceManager x) => x.missedSchooldays);
     DateTime thisDate = watchValue((SchoolCalendarManager x) => x.thisDate);
 
     bool filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);

@@ -29,8 +29,8 @@ class AttendanceListPage extends WatchingWidget {
   const AttendanceListPage({super.key});
   @override
   Widget build(BuildContext context) {
-    createOnce<StreamSubscription<MissedClassDto>>(() {
-      return _attendanceManager.missedClassStreamSubscription();
+    createOnce<StreamSubscription<MissedSchooldayDto>>(() {
+      return _attendanceManager.missedSchooldayStreamSubscription();
     }, dispose: (value) {
       _log.info('Cancelling missed class stream subscription');
       value.cancel();
@@ -38,10 +38,10 @@ class AttendanceListPage extends WatchingWidget {
     DateTime thisDate = watchValue((SchoolCalendarManager x) => x.thisDate);
 
     callOnce((context) {
-      _attendanceManager.fetchMissedClassesOnASchoolday(thisDate);
+      _attendanceManager.fetchMissedSchooldayesOnASchoolday(thisDate);
     });
 
-    watchValue((AttendanceManager x) => x.missedClasses);
+    watchValue((AttendanceManager x) => x.missedSchooldays);
     List<PupilProxy> pupils = watchValue((PupilsFilter x) => x.filteredPupils);
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
@@ -76,7 +76,7 @@ class AttendanceListPage extends WatchingWidget {
       ),
       body: RefreshIndicator(
         onRefresh: () async =>
-            _attendanceManager.fetchMissedClassesOnASchoolday(thisDate),
+            _attendanceManager.fetchMissedSchooldayesOnASchoolday(thisDate),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 800),

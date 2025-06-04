@@ -13,8 +13,8 @@ import 'package:serverpod/serverpod.dart' as _i1;
 import 'package:serverpod/protocol.dart' as _i2;
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i3;
 import '_features/attendance/models/contacted_type.dart' as _i4;
-import '_features/attendance/models/missed_class.dart' as _i5;
-import '_features/attendance/models/missed_class_dto.dart' as _i6;
+import '_features/attendance/models/missed_schoolday.dart' as _i5;
+import '_features/attendance/models/missed_schoolday_dto.dart' as _i6;
 import '_features/attendance/models/missed_type.dart' as _i7;
 import '_features/authorizations/models/authorization.dart' as _i8;
 import '_features/authorizations/models/pupil_authorization.dart' as _i9;
@@ -96,7 +96,7 @@ import 'package:school_data_hub_server/src/generated/_features/user/models/staff
     as _i71;
 import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/pupil_data.dart'
     as _i72;
-import 'package:school_data_hub_server/src/generated/_features/attendance/models/missed_class.dart'
+import 'package:school_data_hub_server/src/generated/_features/attendance/models/missed_schoolday.dart'
     as _i73;
 import 'package:school_data_hub_server/src/generated/_features/authorizations/models/authorization.dart'
     as _i74;
@@ -135,8 +135,8 @@ import 'package:school_data_hub_server/src/generated/_features/workbooks/models/
 import 'package:school_data_hub_server/src/generated/_features/workbooks/models/workbook.dart'
     as _i91;
 export '_features/attendance/models/contacted_type.dart';
-export '_features/attendance/models/missed_class.dart';
-export '_features/attendance/models/missed_class_dto.dart';
+export '_features/attendance/models/missed_schoolday.dart';
+export '_features/attendance/models/missed_schoolday_dto.dart';
 export '_features/attendance/models/missed_type.dart';
 export '_features/authorizations/models/authorization.dart';
 export '_features/authorizations/models/pupil_authorization.dart';
@@ -1902,7 +1902,7 @@ class Protocol extends _i1.SerializationManagerServer {
     ),
     _i2.TableDefinition(
       name: 'missed_class',
-      dartName: 'MissedClass',
+      dartName: 'MissedSchoolday',
       schema: 'public',
       module: 'school_data_hub',
       columns: [
@@ -4261,11 +4261,11 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i4.ContactedType) {
       return _i4.ContactedType.fromJson(data) as T;
     }
-    if (t == _i5.MissedClass) {
-      return _i5.MissedClass.fromJson(data) as T;
+    if (t == _i5.MissedSchoolday) {
+      return _i5.MissedSchoolday.fromJson(data) as T;
     }
-    if (t == _i6.MissedClassDto) {
-      return _i6.MissedClassDto.fromJson(data) as T;
+    if (t == _i6.MissedSchooldayDto) {
+      return _i6.MissedSchooldayDto.fromJson(data) as T;
     }
     if (t == _i7.MissedType) {
       return _i7.MissedType.fromJson(data) as T;
@@ -4462,11 +4462,11 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i1.getType<_i4.ContactedType?>()) {
       return (data != null ? _i4.ContactedType.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i5.MissedClass?>()) {
-      return (data != null ? _i5.MissedClass.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i5.MissedSchoolday?>()) {
+      return (data != null ? _i5.MissedSchoolday.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i6.MissedClassDto?>()) {
-      return (data != null ? _i6.MissedClassDto.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i6.MissedSchooldayDto?>()) {
+      return (data != null ? _i6.MissedSchooldayDto.fromJson(data) : null) as T;
     }
     if (t == _i1.getType<_i7.MissedType?>()) {
       return (data != null ? _i7.MissedType.fromJson(data) : null) as T;
@@ -4930,9 +4930,11 @@ class Protocol extends _i1.SerializationManagerServer {
               .toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i5.MissedClass>?>()) {
+    if (t == _i1.getType<List<_i5.MissedSchoolday>?>()) {
       return (data != null
-          ? (data as List).map((e) => deserialize<_i5.MissedClass>(e)).toList()
+          ? (data as List)
+              .map((e) => deserialize<_i5.MissedSchoolday>(e))
+              .toList()
           : null) as T;
     }
     if (t == _i1.getType<List<_i49.SchooldayEvent>?>()) {
@@ -4975,9 +4977,11 @@ class Protocol extends _i1.SerializationManagerServer {
               .toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i5.MissedClass>?>()) {
+    if (t == _i1.getType<List<_i5.MissedSchoolday>?>()) {
       return (data != null
-          ? (data as List).map((e) => deserialize<_i5.MissedClass>(e)).toList()
+          ? (data as List)
+              .map((e) => deserialize<_i5.MissedSchoolday>(e))
+              .toList()
           : null) as T;
     }
     if (t == _i1.getType<List<_i49.SchooldayEvent>?>()) {
@@ -5057,9 +5061,9 @@ class Protocol extends _i1.SerializationManagerServer {
       return (data as List).map((e) => deserialize<_i72.PupilData>(e)).toSet()
           as T;
     }
-    if (t == List<_i73.MissedClass>) {
+    if (t == List<_i73.MissedSchoolday>) {
       return (data as List)
-          .map((e) => deserialize<_i73.MissedClass>(e))
+          .map((e) => deserialize<_i73.MissedSchoolday>(e))
           .toList() as T;
     }
     if (t == List<_i74.Authorization>) {
@@ -5204,11 +5208,11 @@ class Protocol extends _i1.SerializationManagerServer {
     if (data is _i4.ContactedType) {
       return 'ContactedType';
     }
-    if (data is _i5.MissedClass) {
-      return 'MissedClass';
+    if (data is _i5.MissedSchoolday) {
+      return 'MissedSchoolday';
     }
-    if (data is _i6.MissedClassDto) {
-      return 'MissedClassDto';
+    if (data is _i6.MissedSchooldayDto) {
+      return 'MissedSchooldayDto';
     }
     if (data is _i7.MissedType) {
       return 'MissedType';
@@ -5425,11 +5429,11 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName == 'ContactedType') {
       return deserialize<_i4.ContactedType>(data['data']);
     }
-    if (dataClassName == 'MissedClass') {
-      return deserialize<_i5.MissedClass>(data['data']);
+    if (dataClassName == 'MissedSchoolday') {
+      return deserialize<_i5.MissedSchoolday>(data['data']);
     }
-    if (dataClassName == 'MissedClassDto') {
-      return deserialize<_i6.MissedClassDto>(data['data']);
+    if (dataClassName == 'MissedSchooldayDto') {
+      return deserialize<_i6.MissedSchooldayDto>(data['data']);
     }
     if (dataClassName == 'MissedType') {
       return deserialize<_i7.MissedType>(data['data']);
@@ -5652,8 +5656,8 @@ class Protocol extends _i1.SerializationManagerServer {
       }
     }
     switch (t) {
-      case _i5.MissedClass:
-        return _i5.MissedClass.t;
+      case _i5.MissedSchoolday:
+        return _i5.MissedSchoolday.t;
       case _i8.Authorization:
         return _i8.Authorization.t;
       case _i9.PupilAuthorization:

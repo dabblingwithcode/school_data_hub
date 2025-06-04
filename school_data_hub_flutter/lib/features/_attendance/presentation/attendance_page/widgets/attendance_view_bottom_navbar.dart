@@ -48,7 +48,7 @@ class AttendanceListPageBottomNavBar extends WatchingWidget {
                 tooltip: 'Info',
                 icon: const Icon(Icons.info, size: 30),
                 onPressed: () async {
-                  missedClassesBadgesInformationDialog(
+                  missedSchooldaysBadgesInformationDialog(
                       context: context, isAttendancePage: true);
                 },
               ),

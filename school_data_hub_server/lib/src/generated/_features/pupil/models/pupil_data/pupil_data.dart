@@ -52,7 +52,7 @@ import '../../../../_features/learning_support/models/support_goal/support_goal.
     as _i23;
 import '../../../../_features/learning_support/models/learning_support_plan.dart'
     as _i24;
-import '../../../../_features/attendance/models/missed_class.dart' as _i25;
+import '../../../../_features/attendance/models/missed_schoolday.dart' as _i25;
 import '../../../../_features/schoolday_events/models/schoolday_event.dart'
     as _i26;
 import '../../../../_features/school_lists/models/pupil_entry.dart' as _i27;
@@ -99,7 +99,7 @@ abstract class PupilData
     this.supportCategoryStatuses,
     this.supportGoals,
     this.learningSupportPlans,
-    this.missedClasses,
+    this.missedSchooldays,
     this.schooldayEvents,
     this.swimmer,
     this.pupilListEntries,
@@ -145,7 +145,7 @@ abstract class PupilData
     List<_i22.SupportCategoryStatus>? supportCategoryStatuses,
     List<_i23.SupportGoal>? supportGoals,
     List<_i24.LearningSupportPlan>? learningSupportPlans,
-    List<_i25.MissedClass>? missedClasses,
+    List<_i25.MissedSchoolday>? missedSchooldays,
     List<_i26.SchooldayEvent>? schooldayEvents,
     String? swimmer,
     List<_i27.PupilListEntry>? pupilListEntries,
@@ -272,8 +272,9 @@ abstract class PupilData
           ?.map((e) =>
               _i24.LearningSupportPlan.fromJson((e as Map<String, dynamic>)))
           .toList(),
-      missedClasses: (jsonSerialization['missedClasses'] as List?)
-          ?.map((e) => _i25.MissedClass.fromJson((e as Map<String, dynamic>)))
+      missedSchooldays: (jsonSerialization['missedSchooldays'] as List?)
+          ?.map(
+              (e) => _i25.MissedSchoolday.fromJson((e as Map<String, dynamic>)))
           .toList(),
       schooldayEvents: (jsonSerialization['schooldayEvents'] as List?)
           ?.map(
@@ -372,7 +373,7 @@ abstract class PupilData
 
   List<_i24.LearningSupportPlan>? learningSupportPlans;
 
-  List<_i25.MissedClass>? missedClasses;
+  List<_i25.MissedSchoolday>? missedSchooldays;
 
   List<_i26.SchooldayEvent>? schooldayEvents;
 
@@ -428,7 +429,7 @@ abstract class PupilData
     List<_i22.SupportCategoryStatus>? supportCategoryStatuses,
     List<_i23.SupportGoal>? supportGoals,
     List<_i24.LearningSupportPlan>? learningSupportPlans,
-    List<_i25.MissedClass>? missedClasses,
+    List<_i25.MissedSchoolday>? missedSchooldays,
     List<_i26.SchooldayEvent>? schooldayEvents,
     String? swimmer,
     List<_i27.PupilListEntry>? pupilListEntries,
@@ -508,8 +509,9 @@ abstract class PupilData
       if (learningSupportPlans != null)
         'learningSupportPlans':
             learningSupportPlans?.toJson(valueToJson: (v) => v.toJson()),
-      if (missedClasses != null)
-        'missedClasses': missedClasses?.toJson(valueToJson: (v) => v.toJson()),
+      if (missedSchooldays != null)
+        'missedSchooldays':
+            missedSchooldays?.toJson(valueToJson: (v) => v.toJson()),
       if (schooldayEvents != null)
         'schooldayEvents':
             schooldayEvents?.toJson(valueToJson: (v) => v.toJson()),
@@ -601,9 +603,9 @@ abstract class PupilData
       if (learningSupportPlans != null)
         'learningSupportPlans': learningSupportPlans?.toJson(
             valueToJson: (v) => v.toJsonForProtocol()),
-      if (missedClasses != null)
-        'missedClasses':
-            missedClasses?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
+      if (missedSchooldays != null)
+        'missedSchooldays':
+            missedSchooldays?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
       if (schooldayEvents != null)
         'schooldayEvents':
             schooldayEvents?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
@@ -635,7 +637,7 @@ abstract class PupilData
     _i22.SupportCategoryStatusIncludeList? supportCategoryStatuses,
     _i23.SupportGoalIncludeList? supportGoals,
     _i24.LearningSupportPlanIncludeList? learningSupportPlans,
-    _i25.MissedClassIncludeList? missedClasses,
+    _i25.MissedSchooldayIncludeList? missedSchooldays,
     _i26.SchooldayEventIncludeList? schooldayEvents,
     _i27.PupilListEntryIncludeList? pupilListEntries,
   }) {
@@ -660,7 +662,7 @@ abstract class PupilData
       supportCategoryStatuses: supportCategoryStatuses,
       supportGoals: supportGoals,
       learningSupportPlans: learningSupportPlans,
-      missedClasses: missedClasses,
+      missedSchooldays: missedSchooldays,
       schooldayEvents: schooldayEvents,
       pupilListEntries: pupilListEntries,
     );
@@ -735,7 +737,7 @@ class _PupilDataImpl extends PupilData {
     List<_i22.SupportCategoryStatus>? supportCategoryStatuses,
     List<_i23.SupportGoal>? supportGoals,
     List<_i24.LearningSupportPlan>? learningSupportPlans,
-    List<_i25.MissedClass>? missedClasses,
+    List<_i25.MissedSchoolday>? missedSchooldays,
     List<_i26.SchooldayEvent>? schooldayEvents,
     String? swimmer,
     List<_i27.PupilListEntry>? pupilListEntries,
@@ -779,7 +781,7 @@ class _PupilDataImpl extends PupilData {
           supportCategoryStatuses: supportCategoryStatuses,
           supportGoals: supportGoals,
           learningSupportPlans: learningSupportPlans,
-          missedClasses: missedClasses,
+          missedSchooldays: missedSchooldays,
           schooldayEvents: schooldayEvents,
           swimmer: swimmer,
           pupilListEntries: pupilListEntries,
@@ -829,7 +831,7 @@ class _PupilDataImpl extends PupilData {
     Object? supportCategoryStatuses = _Undefined,
     Object? supportGoals = _Undefined,
     Object? learningSupportPlans = _Undefined,
-    Object? missedClasses = _Undefined,
+    Object? missedSchooldays = _Undefined,
     Object? schooldayEvents = _Undefined,
     Object? swimmer = _Undefined,
     Object? pupilListEntries = _Undefined,
@@ -933,9 +935,9 @@ class _PupilDataImpl extends PupilData {
           learningSupportPlans is List<_i24.LearningSupportPlan>?
               ? learningSupportPlans
               : this.learningSupportPlans?.map((e0) => e0.copyWith()).toList(),
-      missedClasses: missedClasses is List<_i25.MissedClass>?
-          ? missedClasses
-          : this.missedClasses?.map((e0) => e0.copyWith()).toList(),
+      missedSchooldays: missedSchooldays is List<_i25.MissedSchoolday>?
+          ? missedSchooldays
+          : this.missedSchooldays?.map((e0) => e0.copyWith()).toList(),
       schooldayEvents: schooldayEvents is List<_i26.SchooldayEvent>?
           ? schooldayEvents
           : this.schooldayEvents?.map((e0) => e0.copyWith()).toList(),
@@ -990,7 +992,7 @@ class PupilDataImplicit extends _PupilDataImpl {
     List<_i22.SupportCategoryStatus>? supportCategoryStatuses,
     List<_i23.SupportGoal>? supportGoals,
     List<_i24.LearningSupportPlan>? learningSupportPlans,
-    List<_i25.MissedClass>? missedClasses,
+    List<_i25.MissedSchoolday>? missedSchooldays,
     List<_i26.SchooldayEvent>? schooldayEvents,
     String? swimmer,
     List<_i27.PupilListEntry>? pupilListEntries,
@@ -1036,7 +1038,7 @@ class PupilDataImplicit extends _PupilDataImpl {
           supportCategoryStatuses: supportCategoryStatuses,
           supportGoals: supportGoals,
           learningSupportPlans: learningSupportPlans,
-          missedClasses: missedClasses,
+          missedSchooldays: missedSchooldays,
           schooldayEvents: schooldayEvents,
           swimmer: swimmer,
           pupilListEntries: pupilListEntries,
@@ -1086,7 +1088,7 @@ class PupilDataImplicit extends _PupilDataImpl {
       supportCategoryStatuses: pupilData.supportCategoryStatuses,
       supportGoals: pupilData.supportGoals,
       learningSupportPlans: pupilData.learningSupportPlans,
-      missedClasses: pupilData.missedClasses,
+      missedSchooldays: pupilData.missedSchooldays,
       schooldayEvents: pupilData.schooldayEvents,
       swimmer: pupilData.swimmer,
       pupilListEntries: pupilData.pupilListEntries,
@@ -1287,9 +1289,9 @@ class PupilDataTable extends _i1.Table<int?> {
 
   _i1.ManyRelation<_i24.LearningSupportPlanTable>? _learningSupportPlans;
 
-  _i25.MissedClassTable? ___missedClasses;
+  _i25.MissedSchooldayTable? ___missedSchooldays;
 
-  _i1.ManyRelation<_i25.MissedClassTable>? _missedClasses;
+  _i1.ManyRelation<_i25.MissedSchooldayTable>? _missedSchooldays;
 
   _i26.SchooldayEventTable? ___schooldayEvents;
 
@@ -1566,17 +1568,17 @@ class PupilDataTable extends _i1.Table<int?> {
     return ___learningSupportPlans!;
   }
 
-  _i25.MissedClassTable get __missedClasses {
-    if (___missedClasses != null) return ___missedClasses!;
-    ___missedClasses = _i1.createRelationTable(
-      relationFieldName: '__missedClasses',
+  _i25.MissedSchooldayTable get __missedSchooldays {
+    if (___missedSchooldays != null) return ___missedSchooldays!;
+    ___missedSchooldays = _i1.createRelationTable(
+      relationFieldName: '__missedSchooldays',
       field: PupilData.t.id,
-      foreignField: _i25.MissedClass.t.pupilId,
+      foreignField: _i25.MissedSchoolday.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i25.MissedClassTable(tableRelation: foreignTableRelation),
+          _i25.MissedSchooldayTable(tableRelation: foreignTableRelation),
     );
-    return ___missedClasses!;
+    return ___missedSchooldays!;
   }
 
   _i26.SchooldayEventTable get __schooldayEvents {
@@ -1864,22 +1866,22 @@ class PupilDataTable extends _i1.Table<int?> {
     return _learningSupportPlans!;
   }
 
-  _i1.ManyRelation<_i25.MissedClassTable> get missedClasses {
-    if (_missedClasses != null) return _missedClasses!;
+  _i1.ManyRelation<_i25.MissedSchooldayTable> get missedSchooldays {
+    if (_missedSchooldays != null) return _missedSchooldays!;
     var relationTable = _i1.createRelationTable(
-      relationFieldName: 'missedClasses',
+      relationFieldName: 'missedSchooldays',
       field: PupilData.t.id,
-      foreignField: _i25.MissedClass.t.pupilId,
+      foreignField: _i25.MissedSchoolday.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i25.MissedClassTable(tableRelation: foreignTableRelation),
+          _i25.MissedSchooldayTable(tableRelation: foreignTableRelation),
     );
-    _missedClasses = _i1.ManyRelation<_i25.MissedClassTable>(
+    _missedSchooldays = _i1.ManyRelation<_i25.MissedSchooldayTable>(
       tableWithRelations: relationTable,
-      table: _i25.MissedClassTable(
+      table: _i25.MissedSchooldayTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
-    return _missedClasses!;
+    return _missedSchooldays!;
   }
 
   _i1.ManyRelation<_i26.SchooldayEventTable> get schooldayEvents {
@@ -2029,8 +2031,8 @@ class PupilDataTable extends _i1.Table<int?> {
     if (relationField == 'learningSupportPlans') {
       return __learningSupportPlans;
     }
-    if (relationField == 'missedClasses') {
-      return __missedClasses;
+    if (relationField == 'missedSchooldays') {
+      return __missedSchooldays;
     }
     if (relationField == 'schooldayEvents') {
       return __schooldayEvents;
@@ -2064,7 +2066,7 @@ class PupilDataInclude extends _i1.IncludeObject {
     _i22.SupportCategoryStatusIncludeList? supportCategoryStatuses,
     _i23.SupportGoalIncludeList? supportGoals,
     _i24.LearningSupportPlanIncludeList? learningSupportPlans,
-    _i25.MissedClassIncludeList? missedClasses,
+    _i25.MissedSchooldayIncludeList? missedSchooldays,
     _i26.SchooldayEventIncludeList? schooldayEvents,
     _i27.PupilListEntryIncludeList? pupilListEntries,
   }) {
@@ -2088,7 +2090,7 @@ class PupilDataInclude extends _i1.IncludeObject {
     _supportCategoryStatuses = supportCategoryStatuses;
     _supportGoals = supportGoals;
     _learningSupportPlans = learningSupportPlans;
-    _missedClasses = missedClasses;
+    _missedSchooldays = missedSchooldays;
     _schooldayEvents = schooldayEvents;
     _pupilListEntries = pupilListEntries;
   }
@@ -2133,7 +2135,7 @@ class PupilDataInclude extends _i1.IncludeObject {
 
   _i24.LearningSupportPlanIncludeList? _learningSupportPlans;
 
-  _i25.MissedClassIncludeList? _missedClasses;
+  _i25.MissedSchooldayIncludeList? _missedSchooldays;
 
   _i26.SchooldayEventIncludeList? _schooldayEvents;
 
@@ -2161,7 +2163,7 @@ class PupilDataInclude extends _i1.IncludeObject {
         'supportCategoryStatuses': _supportCategoryStatuses,
         'supportGoals': _supportGoals,
         'learningSupportPlans': _learningSupportPlans,
-        'missedClasses': _missedClasses,
+        'missedSchooldays': _missedSchooldays,
         'schooldayEvents': _schooldayEvents,
         'pupilListEntries': _pupilListEntries,
       };
@@ -2777,26 +2779,26 @@ class PupilDataAttachRepository {
     );
   }
 
-  /// Creates a relation between this [PupilData] and the given [MissedClass]s
-  /// by setting each [MissedClass]'s foreign key `pupilId` to refer to this [PupilData].
-  Future<void> missedClasses(
+  /// Creates a relation between this [PupilData] and the given [MissedSchoolday]s
+  /// by setting each [MissedSchoolday]'s foreign key `pupilId` to refer to this [PupilData].
+  Future<void> missedSchooldays(
     _i1.Session session,
     PupilData pupilData,
-    List<_i25.MissedClass> missedClass, {
+    List<_i25.MissedSchoolday> missedSchoolday, {
     _i1.Transaction? transaction,
   }) async {
-    if (missedClass.any((e) => e.id == null)) {
-      throw ArgumentError.notNull('missedClass.id');
+    if (missedSchoolday.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('missedSchoolday.id');
     }
     if (pupilData.id == null) {
       throw ArgumentError.notNull('pupilData.id');
     }
 
-    var $missedClass =
-        missedClass.map((e) => e.copyWith(pupilId: pupilData.id)).toList();
-    await session.db.update<_i25.MissedClass>(
-      $missedClass,
-      columns: [_i25.MissedClass.t.pupilId],
+    var $missedSchoolday =
+        missedSchoolday.map((e) => e.copyWith(pupilId: pupilData.id)).toList();
+    await session.db.update<_i25.MissedSchoolday>(
+      $missedSchoolday,
+      columns: [_i25.MissedSchoolday.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3333,25 +3335,25 @@ class PupilDataAttachRowRepository {
     );
   }
 
-  /// Creates a relation between this [PupilData] and the given [MissedClass]
-  /// by setting the [MissedClass]'s foreign key `pupilId` to refer to this [PupilData].
-  Future<void> missedClasses(
+  /// Creates a relation between this [PupilData] and the given [MissedSchoolday]
+  /// by setting the [MissedSchoolday]'s foreign key `pupilId` to refer to this [PupilData].
+  Future<void> missedSchooldays(
     _i1.Session session,
     PupilData pupilData,
-    _i25.MissedClass missedClass, {
+    _i25.MissedSchoolday missedSchoolday, {
     _i1.Transaction? transaction,
   }) async {
-    if (missedClass.id == null) {
-      throw ArgumentError.notNull('missedClass.id');
+    if (missedSchoolday.id == null) {
+      throw ArgumentError.notNull('missedSchoolday.id');
     }
     if (pupilData.id == null) {
       throw ArgumentError.notNull('pupilData.id');
     }
 
-    var $missedClass = missedClass.copyWith(pupilId: pupilData.id);
-    await session.db.updateRow<_i25.MissedClass>(
-      $missedClass,
-      columns: [_i25.MissedClass.t.pupilId],
+    var $missedSchoolday = missedSchoolday.copyWith(pupilId: pupilData.id);
+    await session.db.updateRow<_i25.MissedSchoolday>(
+      $missedSchoolday,
+      columns: [_i25.MissedSchoolday.t.pupilId],
       transaction: transaction,
     );
   }

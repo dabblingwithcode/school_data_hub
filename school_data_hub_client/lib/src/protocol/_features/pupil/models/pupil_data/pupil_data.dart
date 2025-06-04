@@ -50,7 +50,7 @@ import '../../../../_features/learning_support/models/support_goal/support_goal.
     as _i23;
 import '../../../../_features/learning_support/models/learning_support_plan.dart'
     as _i24;
-import '../../../../_features/attendance/models/missed_class.dart' as _i25;
+import '../../../../_features/attendance/models/missed_schoolday.dart' as _i25;
 import '../../../../_features/schoolday_events/models/schoolday_event.dart'
     as _i26;
 import '../../../../_features/school_lists/models/pupil_entry.dart' as _i27;
@@ -96,7 +96,7 @@ abstract class PupilData implements _i1.SerializableModel {
     this.supportCategoryStatuses,
     this.supportGoals,
     this.learningSupportPlans,
-    this.missedClasses,
+    this.missedSchooldays,
     this.schooldayEvents,
     this.swimmer,
     this.pupilListEntries,
@@ -142,7 +142,7 @@ abstract class PupilData implements _i1.SerializableModel {
     List<_i22.SupportCategoryStatus>? supportCategoryStatuses,
     List<_i23.SupportGoal>? supportGoals,
     List<_i24.LearningSupportPlan>? learningSupportPlans,
-    List<_i25.MissedClass>? missedClasses,
+    List<_i25.MissedSchoolday>? missedSchooldays,
     List<_i26.SchooldayEvent>? schooldayEvents,
     String? swimmer,
     List<_i27.PupilListEntry>? pupilListEntries,
@@ -269,8 +269,9 @@ abstract class PupilData implements _i1.SerializableModel {
           ?.map((e) =>
               _i24.LearningSupportPlan.fromJson((e as Map<String, dynamic>)))
           .toList(),
-      missedClasses: (jsonSerialization['missedClasses'] as List?)
-          ?.map((e) => _i25.MissedClass.fromJson((e as Map<String, dynamic>)))
+      missedSchooldays: (jsonSerialization['missedSchooldays'] as List?)
+          ?.map(
+              (e) => _i25.MissedSchoolday.fromJson((e as Map<String, dynamic>)))
           .toList(),
       schooldayEvents: (jsonSerialization['schooldayEvents'] as List?)
           ?.map(
@@ -365,7 +366,7 @@ abstract class PupilData implements _i1.SerializableModel {
 
   List<_i24.LearningSupportPlan>? learningSupportPlans;
 
-  List<_i25.MissedClass>? missedClasses;
+  List<_i25.MissedSchoolday>? missedSchooldays;
 
   List<_i26.SchooldayEvent>? schooldayEvents;
 
@@ -416,7 +417,7 @@ abstract class PupilData implements _i1.SerializableModel {
     List<_i22.SupportCategoryStatus>? supportCategoryStatuses,
     List<_i23.SupportGoal>? supportGoals,
     List<_i24.LearningSupportPlan>? learningSupportPlans,
-    List<_i25.MissedClass>? missedClasses,
+    List<_i25.MissedSchoolday>? missedSchooldays,
     List<_i26.SchooldayEvent>? schooldayEvents,
     String? swimmer,
     List<_i27.PupilListEntry>? pupilListEntries,
@@ -496,8 +497,9 @@ abstract class PupilData implements _i1.SerializableModel {
       if (learningSupportPlans != null)
         'learningSupportPlans':
             learningSupportPlans?.toJson(valueToJson: (v) => v.toJson()),
-      if (missedClasses != null)
-        'missedClasses': missedClasses?.toJson(valueToJson: (v) => v.toJson()),
+      if (missedSchooldays != null)
+        'missedSchooldays':
+            missedSchooldays?.toJson(valueToJson: (v) => v.toJson()),
       if (schooldayEvents != null)
         'schooldayEvents':
             schooldayEvents?.toJson(valueToJson: (v) => v.toJson()),
@@ -557,7 +559,7 @@ class _PupilDataImpl extends PupilData {
     List<_i22.SupportCategoryStatus>? supportCategoryStatuses,
     List<_i23.SupportGoal>? supportGoals,
     List<_i24.LearningSupportPlan>? learningSupportPlans,
-    List<_i25.MissedClass>? missedClasses,
+    List<_i25.MissedSchoolday>? missedSchooldays,
     List<_i26.SchooldayEvent>? schooldayEvents,
     String? swimmer,
     List<_i27.PupilListEntry>? pupilListEntries,
@@ -601,7 +603,7 @@ class _PupilDataImpl extends PupilData {
           supportCategoryStatuses: supportCategoryStatuses,
           supportGoals: supportGoals,
           learningSupportPlans: learningSupportPlans,
-          missedClasses: missedClasses,
+          missedSchooldays: missedSchooldays,
           schooldayEvents: schooldayEvents,
           swimmer: swimmer,
           pupilListEntries: pupilListEntries,
@@ -651,7 +653,7 @@ class _PupilDataImpl extends PupilData {
     Object? supportCategoryStatuses = _Undefined,
     Object? supportGoals = _Undefined,
     Object? learningSupportPlans = _Undefined,
-    Object? missedClasses = _Undefined,
+    Object? missedSchooldays = _Undefined,
     Object? schooldayEvents = _Undefined,
     Object? swimmer = _Undefined,
     Object? pupilListEntries = _Undefined,
@@ -755,9 +757,9 @@ class _PupilDataImpl extends PupilData {
           learningSupportPlans is List<_i24.LearningSupportPlan>?
               ? learningSupportPlans
               : this.learningSupportPlans?.map((e0) => e0.copyWith()).toList(),
-      missedClasses: missedClasses is List<_i25.MissedClass>?
-          ? missedClasses
-          : this.missedClasses?.map((e0) => e0.copyWith()).toList(),
+      missedSchooldays: missedSchooldays is List<_i25.MissedSchoolday>?
+          ? missedSchooldays
+          : this.missedSchooldays?.map((e0) => e0.copyWith()).toList(),
       schooldayEvents: schooldayEvents is List<_i26.SchooldayEvent>?
           ? schooldayEvents
           : this.schooldayEvents?.map((e0) => e0.copyWith()).toList(),

@@ -21,11 +21,11 @@ class PupilProfileAttendanceContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final missedHoursForActualReport =
         AttendanceHelper.missedHoursforSemesterOrSchoolyear(pupil);
-    List<MissedClass> missedClasses = _attendanceManager
-        .getPupilMissedClassesProxy(pupil.pupilId)
-        .missedClasses;
+    List<MissedSchoolday> missedSchooldays = _attendanceManager
+        .getPupilMissedSchooldayesProxy(pupil.pupilId)
+        .missedSchooldays;
     // sort by missedDay
-    missedClasses.sort(
+    missedSchooldays.sort(
         (b, a) => a.schoolday!.schoolday.compareTo(b.schoolday!.schoolday));
     return Card(
       color: AppColors.pupilProfileCardColor,
@@ -45,7 +45,7 @@ class PupilProfileAttendanceContent extends StatelessWidget {
             InkWell(
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (ctx) => const MissedClassesPupilListPage(),
+                  builder: (ctx) => const MissedSchooldayesPupilListPage(),
                 ));
               },
               child: const Text('Fehlzeiten',
@@ -95,13 +95,13 @@ class PupilProfileAttendanceContent extends StatelessWidget {
             padding: const EdgeInsets.only(top: 5, bottom: 15),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: missedClasses.length,
+            itemCount: missedSchooldays.length,
             itemBuilder: (BuildContext context, int index) {
-              // pupil.pupilMissedClasses.sort(
+              // pupil.pupilMissedSchooldayes.sort(
               //     (a, b) => a.missedDay.compareTo(b.missedDay));
 
-              return MissedClassCard(
-                  pupil: pupil, missedClass: missedClasses[index]);
+              return MissedSchooldayCard(
+                  pupil: pupil, missedSchoolday: missedSchooldays[index]);
             },
           ),
         ]),

@@ -24,7 +24,7 @@ class AttendancePupilFilterManager {
       get attendancePupilFilterState => _attendancePupilFilterState;
 
   AttendancePupilFilterManager init() {
-    _attendanceManager.missedClasses.addListener(refreshPupilsFilter);
+    _attendanceManager.missedSchooldays.addListener(refreshPupilsFilter);
     return this;
   }
 
@@ -35,7 +35,7 @@ class AttendancePupilFilterManager {
   }
 
   void dispose() {
-    _attendanceManager.missedClasses.removeListener(refreshPupilsFilter);
+    _attendanceManager.missedSchooldays.removeListener(refreshPupilsFilter);
   }
 
   void setAttendancePupilFilter(
@@ -70,11 +70,11 @@ class AttendancePupilFilterManager {
     final Map<AttendancePupilFilter, bool> attendanceActiveFilters =
         _attendancePupilFilterState.value;
 
-    final MissedClass? attendanceEventThisDate = _attendanceManager
-        .getPupilMissedClassesProxy(pupil.pupilId)
-        .missedClasses
-        .firstWhereOrNull((missedClass) =>
-            missedClass.schoolday!.schoolday.isSameDate(thisDate));
+    final MissedSchoolday? attendanceEventThisDate = _attendanceManager
+        .getPupilMissedSchooldayesProxy(pupil.pupilId)
+        .missedSchooldays
+        .firstWhereOrNull((missedSchoolday) =>
+            missedSchoolday.schoolday!.schoolday.isSameDate(thisDate));
 
     bool isMatched = true;
     //- Filter pupils present

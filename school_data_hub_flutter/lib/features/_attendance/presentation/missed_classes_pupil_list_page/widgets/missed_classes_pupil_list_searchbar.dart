@@ -127,7 +127,7 @@ class AttendanceRankingListSearchbar extends WatchingWidget {
                     context: context,
                     filterList: [
                       const CommonPupilFiltersWidget(),
-                      const MissedClassFilters()
+                      const MissedSchooldayFilters()
                     ],
                   ),
                 ),
