@@ -67,188 +67,207 @@ class DiManager {
   }
 
   static Future<void> registerManagersDependingOnActiveEnv() async {
-    di.registerSingletonWithDependencies<HubAuthKeyManager>(() {
-      return HubAuthKeyManager(
-        storageKeyForAuthKey: di<EnvManager>().storageKeyForAuthKey,
-      );
-    }, dependsOn: [EnvManager]);
+    di.pushNewScopeAsync(
+      scopeName: 'active_env_scope',
+      dispose: () {
+        _log.info('Disposing active_env_scope');
+      },
+      init: (getIt) async {
+        _log.info('Registering managers depending on active_env_scope');
 
-    di.registerSingletonWithDependencies<Client>(() {
-      return Client(
-        di<EnvManager>().activeEnv!.serverUrl,
-        authenticationKeyManager: di<HubAuthKeyManager>(),
-      )..connectivityMonitor = di<ServerpodConnectivityMonitor>();
-    }, dependsOn: [HubAuthKeyManager]);
+        di.registerSingletonWithDependencies<HubAuthKeyManager>(() {
+          return HubAuthKeyManager(
+            storageKeyForAuthKey: di<EnvManager>().storageKeyForAuthKey,
+          );
+        }, dependsOn: [EnvManager]);
 
-    di.registerSingletonAsync<HubSessionManager>(() async {
-      // like described in the serverpod documentation
-      // https://docs.serverpod.dev/concepts/authentication/setup#app-setup
-      final sessionManager = HubSessionManager(
-        caller: di<Client>().modules.auth,
-      );
+        di.registerSingletonWithDependencies<Client>(() {
+          return Client(
+            di<EnvManager>().activeEnv!.serverUrl,
+            authenticationKeyManager: di<HubAuthKeyManager>(),
+          )..connectivityMonitor = di<ServerpodConnectivityMonitor>();
+        }, dependsOn: [HubAuthKeyManager]);
 
-      // this will initialize the session manager and load the stored user info
-      // it returns a bool
-      await sessionManager.initialize();
-      _log.info('SessionManager initialized');
-      return sessionManager;
-    }, dependsOn: [EnvManager, Client]);
+        di.registerSingletonAsync<HubSessionManager>(() async {
+          // like described in the serverpod documentation
+          // https://docs.serverpod.dev/concepts/authentication/setup#app-setup
+          final sessionManager = HubSessionManager(
+            caller: di<Client>().modules.auth,
+          );
 
-    di.registerSingletonAsync<PupilIdentityManager>(() async {
-      final pupilIdentityManager = PupilIdentityManager();
+          // this will initialize the session manager and load the stored user info
+          // it returns a bool
+          await sessionManager.initialize();
+          _log.info('SessionManager initialized');
+          return sessionManager;
+        }, dependsOn: [EnvManager, Client]);
 
-      await pupilIdentityManager.init();
+        di.registerSingletonAsync<PupilIdentityManager>(() async {
+          final pupilIdentityManager = PupilIdentityManager();
 
-      _log.info('PupilIdentityManager initialized');
+          await pupilIdentityManager.init();
 
-      return pupilIdentityManager;
-    }, dependsOn: [EnvManager]);
+          _log.info('PupilIdentityManager initialized');
 
-    _log.info('Managers dependent on active environment initialized');
+          return pupilIdentityManager;
+        }, dependsOn: [EnvManager]);
+
+        _log.info('Managers dependent on active environment initialized');
+      },
+    );
   }
 
   /// These managers are initialized after the session manager authenticates
   /// the session. it is called in the [HubSessionManager] class after the session is authenticated.
   static Future<void> registerManagersDependingOnSession() async {
     _log.info('Registering managers depending on session');
-    di.registerSingletonAsync<SchoolCalendarManager>(() async {
-      final schoolCalendarManager = SchoolCalendarManager();
 
-      await schoolCalendarManager.init();
+    di.pushNewScopeAsync(
+      scopeName: 'logged_in_user_scope',
+      dispose: () {
+        _log.info('Disposing logged_in_user_scope');
+      },
+      init: (getIt) async {
+        di.registerSingletonAsync<SchoolCalendarManager>(() async {
+          final schoolCalendarManager = SchoolCalendarManager();
 
-      _log.info('SchoolCalendarManager initialized');
+          await schoolCalendarManager.init();
 
-      return schoolCalendarManager;
-    });
+          _log.info('SchoolCalendarManager initialized');
 
-    di.registerSingletonAsync<SupportCategoryManager>(() async {
-      final supportCategoryManager = SupportCategoryManager();
+          return schoolCalendarManager;
+        });
 
-      await supportCategoryManager.init();
+        di.registerSingletonAsync<SupportCategoryManager>(() async {
+          final supportCategoryManager = SupportCategoryManager();
 
-      _log.info('SupportCategoryManager initialized');
+          await supportCategoryManager.init();
 
-      return supportCategoryManager;
-    });
+          _log.info('SupportCategoryManager initialized');
 
-    di.registerSingletonAsync<PupilManager>(() async {
-      final pupilManager = PupilManager();
+          return supportCategoryManager;
+        });
 
-      await pupilManager.init();
+        di.registerSingletonAsync<PupilManager>(() async {
+          final pupilManager = PupilManager();
 
-      _log.info('PupilManager initialized');
+          await pupilManager.init();
 
-      return pupilManager;
-    }, dependsOn: [PupilIdentityManager]);
+          _log.info('PupilManager initialized');
 
-    di.registerSingletonWithDependencies<LearningSupportPlanManager>(
-        () => LearningSupportPlanManager(),
-        dependsOn: [
-          PupilManager,
-          SchoolCalendarManager,
-          SupportCategoryManager
-        ]);
+          return pupilManager;
+        }, dependsOn: [PupilIdentityManager]);
 
-    di.registerSingletonAsync<BookManager>(() async {
-      log('Registering BookManager');
-      final bookManager = BookManager();
-      await bookManager.init();
-      log('BookManager initialized');
-      return bookManager;
-    }, dependsOn: []);
+        di.registerSingletonWithDependencies<LearningSupportPlanManager>(
+            () => LearningSupportPlanManager(),
+            dependsOn: [
+              PupilManager,
+              SchoolCalendarManager,
+              SupportCategoryManager
+            ]);
 
-    di.registerSingletonAsync<WorkbookManager>(() async {
-      log('Registering WorkbookManager');
-      final workbookManager = WorkbookManager();
-      await workbookManager.init();
-      log('WorkbookManager initialized');
-      return workbookManager;
-    }, dependsOn: [HubSessionManager]);
-    di.registerSingletonAsync<CompetenceManager>(() async {
-      final competenceManager = CompetenceManager();
+        di.registerSingletonAsync<BookManager>(() async {
+          log('Registering BookManager');
+          final bookManager = BookManager();
+          await bookManager.init();
+          log('BookManager initialized');
+          return bookManager;
+        }, dependsOn: []);
 
-      await competenceManager.init();
+        di.registerSingletonAsync<WorkbookManager>(() async {
+          log('Registering WorkbookManager');
+          final workbookManager = WorkbookManager();
+          await workbookManager.init();
+          log('WorkbookManager initialized');
+          return workbookManager;
+        }, dependsOn: [HubSessionManager]);
+        di.registerSingletonAsync<CompetenceManager>(() async {
+          final competenceManager = CompetenceManager();
 
-      _log.info('CompetenceManager initialized');
+          await competenceManager.init();
 
-      return competenceManager;
-    });
+          _log.info('CompetenceManager initialized');
 
-    di.registerSingletonWithDependencies<CompetenceFilterManager>(() {
-      return CompetenceFilterManager();
-    }, dependsOn: [CompetenceManager]);
+          return competenceManager;
+        });
 
-    di.registerSingletonAsync<AuthorizationManager>(() async {
-      log('Registering AuthorizationManager');
-      final authorizationManager = AuthorizationManager();
-      await authorizationManager.init();
-      log('AuthorizationManager initialized');
-      return authorizationManager;
-    }, dependsOn: [HubSessionManager]);
+        di.registerSingletonWithDependencies<CompetenceFilterManager>(() {
+          return CompetenceFilterManager();
+        }, dependsOn: [CompetenceManager]);
 
-    di.registerSingletonWithDependencies<PupilAuthorizationFilterManager>(
-        () => PupilAuthorizationFilterManager(),
-        dependsOn: [AuthorizationManager]);
+        di.registerSingletonAsync<AuthorizationManager>(() async {
+          log('Registering AuthorizationManager');
+          final authorizationManager = AuthorizationManager();
+          await authorizationManager.init();
+          log('AuthorizationManager initialized');
+          return authorizationManager;
+        }, dependsOn: [HubSessionManager]);
 
-    di.registerSingletonWithDependencies<AuthorizationFilterManager>(() {
-      final authorizationFilterManager = AuthorizationFilterManager();
-      return authorizationFilterManager.init();
-    },
-        dispose: (instance) => instance.dispose(),
-        dependsOn: [AuthorizationManager]);
+        di.registerSingletonWithDependencies<PupilAuthorizationFilterManager>(
+            () => PupilAuthorizationFilterManager(),
+            dependsOn: [AuthorizationManager]);
 
-    di.registerSingletonWithDependencies<PupilFilterManager>(
-        () => PupilFilterManager(),
-        dependsOn: [PupilManager]);
+        di.registerSingletonWithDependencies<AuthorizationFilterManager>(() {
+          final authorizationFilterManager = AuthorizationFilterManager();
+          return authorizationFilterManager.init();
+        },
+            dispose: (instance) => instance.dispose(),
+            dependsOn: [AuthorizationManager]);
 
-    di.registerSingletonWithDependencies<LearningSupportFilterManager>(
-        () => LearningSupportFilterManager(),
-        dependsOn: [PupilManager, PupilFilterManager]);
+        di.registerSingletonWithDependencies<PupilFilterManager>(
+            () => PupilFilterManager(),
+            dependsOn: [PupilManager]);
 
-    di.registerSingletonWithDependencies<SchooldayEventFilterManager>(() {
-      _log.info('SchooldayEventFilterManager initializing');
-      return SchooldayEventFilterManager();
-    }, dependsOn: [PupilManager, PupilFilterManager]);
+        di.registerSingletonWithDependencies<LearningSupportFilterManager>(
+            () => LearningSupportFilterManager(),
+            dependsOn: [PupilManager, PupilFilterManager]);
 
-    di.registerSingletonWithDependencies<PupilsFilter>(
-        () => PupilsFilterImplementation(
-              di<PupilManager>(),
-            ),
-        dispose: (instance) => instance.dispose(),
-        dependsOn: [PupilManager, PupilFilterManager]);
+        di.registerSingletonWithDependencies<SchooldayEventFilterManager>(() {
+          _log.info('SchooldayEventFilterManager initializing');
+          return SchooldayEventFilterManager();
+        }, dependsOn: [PupilManager, PupilFilterManager]);
 
-    di.registerSingleton<FiltersStateManager>(
-        FiltersStateManagerImplementation());
+        di.registerSingletonWithDependencies<PupilsFilter>(
+            () => PupilsFilterImplementation(
+                  di<PupilManager>(),
+                ),
+            dispose: (instance) => instance.dispose(),
+            dependsOn: [PupilManager, PupilFilterManager]);
 
-    di.registerSingletonWithDependencies<AttendanceManager>(
-        () => AttendanceManager(),
-        dependsOn: [SchoolCalendarManager, PupilsFilter]);
+        di.registerSingleton<FiltersStateManager>(
+            FiltersStateManagerImplementation());
 
-    di.registerSingletonAsync<SchoolListManager>(() async {
-      _log.info('Registering SchoolListManager');
-      final schoolListManager = SchoolListManager();
-      await schoolListManager.init();
-      _log.info('SchoolListManager initialized');
-      return schoolListManager;
-    }, dependsOn: [HubSessionManager]);
+        di.registerSingletonWithDependencies<AttendanceManager>(
+            () => AttendanceManager(),
+            dependsOn: [SchoolCalendarManager, PupilsFilter]);
 
-    di.registerSingletonWithDependencies<SchoolListFilterManager>(() {
-      final schoolListFilterManager = SchoolListFilterManager();
-      schoolListFilterManager.init();
-      return schoolListFilterManager;
-    }, dependsOn: [PupilsFilter, SchoolListManager]);
+        di.registerSingletonAsync<SchoolListManager>(() async {
+          _log.info('Registering SchoolListManager');
+          final schoolListManager = SchoolListManager();
+          await schoolListManager.init();
+          _log.info('SchoolListManager initialized');
+          return schoolListManager;
+        }, dependsOn: [HubSessionManager]);
 
-    di.registerSingletonWithDependencies<AttendancePupilFilterManager>(() {
-      final attendancePupilFilterManager = AttendancePupilFilterManager();
-      return attendancePupilFilterManager.init();
-    },
-        dispose: (instance) => instance.dispose(),
-        dependsOn: [AttendanceManager, PupilsFilter]);
-    _log.info('Managers depending on authenticated session initialized');
+        di.registerSingletonWithDependencies<SchoolListFilterManager>(() {
+          final schoolListFilterManager = SchoolListFilterManager();
+          schoolListFilterManager.init();
+          return schoolListFilterManager;
+        }, dependsOn: [PupilsFilter, SchoolListManager]);
 
-    di.registerSingletonWithDependencies<SchooldayEventManager>(
-        () => SchooldayEventManager(),
-        dependsOn: [SchoolCalendarManager, PupilsFilter]);
+        di.registerSingletonWithDependencies<AttendancePupilFilterManager>(() {
+          final attendancePupilFilterManager = AttendancePupilFilterManager();
+          return attendancePupilFilterManager.init();
+        },
+            dispose: (instance) => instance.dispose(),
+            dependsOn: [AttendanceManager, PupilsFilter]);
+        _log.info('Managers depending on authenticated session initialized');
+
+        di.registerSingletonWithDependencies<SchooldayEventManager>(
+            () => SchooldayEventManager(),
+            dependsOn: [SchoolCalendarManager, PupilsFilter]);
+      },
+    );
   }
 
   static Future<void> unregisterManagersDependingOnActiveEnv() async {

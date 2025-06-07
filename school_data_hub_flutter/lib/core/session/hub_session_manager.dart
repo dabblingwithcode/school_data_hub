@@ -164,7 +164,9 @@ class HubSessionManager with ChangeNotifier {
   /// Signs the user out from the current device.
   /// Returns true if successful.
   Future<bool> signOutDevice() async {
-    return _signOut(allDevices: false);
+    di.popScope();
+    final signOut = await _signOut(allDevices: false);
+    return signOut;
   }
 
   /// Verify the current sign in status with the server and update the UserInfo.

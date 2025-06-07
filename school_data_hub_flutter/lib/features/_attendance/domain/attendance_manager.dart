@@ -29,6 +29,8 @@ final _attendanceApiService = AttendanceApiService();
 final _client = di<Client>();
 
 class AttendanceManager with ChangeNotifier {
+  StreamSubscription<MissedSchooldayDto>? _missedSchooldaySubscription;
+
   final ValueNotifier<List<MissedSchoolday>> _missedSchooldays =
       ValueNotifier([]);
 
@@ -134,7 +136,9 @@ class AttendanceManager with ChangeNotifier {
   //- Stream function
   StreamSubscription<MissedSchooldayDto> missedSchooldayStreamSubscription() {
     _log.info('starting missedSchooldayStreamSubscription');
-    return _client.missedSchoolday.streamMissedSchooldays().listen(
+    _missedSchooldaySubscription?.cancel();
+    _missedSchooldaySubscription =
+        _client.missedSchoolday.streamMissedSchooldays().listen(
       (event) {
         switch (event.operation) {
           case 'add':
@@ -152,8 +156,22 @@ class AttendanceManager with ChangeNotifier {
             break;
         }
       },
-      onError: (error) {
+      onError: (error) async {
+        final errorString = error.toString();
+        ;
         _log.severe('Error in missedSchoolday stream: $error');
+        if (error.toString().contains('Unauthorized')) {
+          _missedSchooldaySubscription!.cancel();
+          return di<HubSessionManager>().signOutDevice();
+        } else if (error.toString().contains('Netzwerkverbindung abgelehnt')) {
+          // TODO: Implement server not responding
+          //- This is very buggy
+          _notificationService.showInformationDialog(
+              'Der Server konnte nicht gefunden werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.');
+        } else {
+          _notificationService.showSnackBar(
+              NotificationType.error, 'Ein unbekannter Fehler ist aufgetreten');
+        }
         Future.delayed(
             const Duration(seconds: 1), missedSchooldayStreamSubscription);
       },
@@ -163,6 +181,19 @@ class AttendanceManager with ChangeNotifier {
             const Duration(seconds: 1), missedSchooldayStreamSubscription);
       },
     );
+    return _missedSchooldaySubscription!;
+  }
+
+  void _closeStreamSubscription() {
+    _log.info('Closing missedSchooldayStreamSubscription');
+    _missedSchooldaySubscription?.cancel();
+    _missedSchooldaySubscription = null;
+  }
+
+  @override
+  void dispose() {
+    _closeStreamSubscription();
+    super.dispose();
   }
   //- CRUD operantions
 

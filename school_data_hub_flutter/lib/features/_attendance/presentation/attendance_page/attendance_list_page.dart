@@ -5,15 +5,17 @@ import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
-import 'package:school_data_hub_flutter/features/_attendance/domain/filters/attendance_pupil_filter.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/atendance_list_card.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/attendance_list_search_bar.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/attendance_view_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
@@ -21,14 +23,30 @@ import 'package:watch_it/watch_it.dart';
 
 final _attendanceManager = di<AttendanceManager>();
 
-final _log = Logger('AttendanceListPage');
+final _notificationService = di<NotificationService>();
 
-final _attendancePupilFilterManager = di<AttendancePupilFilterManager>();
+final _log = Logger('AttendanceListPage');
 
 class AttendanceListPage extends WatchingWidget {
   const AttendanceListPage({super.key});
   @override
   Widget build(BuildContext context) {
+    final bool isAuthenticated =
+        watchPropertyValue((HubSessionManager x) => x.isSignedIn);
+
+    // If not authenticated, redirect to login page
+    if (!isAuthenticated) {
+      _notificationService.showInformationDialog(
+        'Die Sitzung ist abgelaufen.\nBitte erneut anmelden.',
+      );
+      // Use Future.microtask to avoid build-phase navigation issues
+      Future.microtask(() {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const Login()));
+      });
+      // Return an empty container or loading indicator while navigating
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
     createOnce<StreamSubscription<MissedSchooldayDto>>(() {
       return _attendanceManager.missedSchooldayStreamSubscription();
     }, dispose: (value) {
