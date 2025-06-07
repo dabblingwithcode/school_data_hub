@@ -134,7 +134,7 @@ class AttendanceManager with ChangeNotifier {
   //- Stream function
   StreamSubscription<MissedSchooldayDto> missedSchooldayStreamSubscription() {
     _log.info('starting missedSchooldayStreamSubscription');
-    return _client.missedSchoolday.streamMyModels().listen(
+    return _client.missedSchoolday.streamMissedSchooldays().listen(
       (event) {
         switch (event.operation) {
           case 'add':

@@ -49,8 +49,8 @@ enum ContactedType #ece4ff ##[bold] {
 
 }
 
-class MissedClass <<table: <b>missed_class</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/attendance/models/missed_class.spy.yaml</size></b>
+class MissedSchoolday <<table: <b>missed_class</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/attendance/models/missed_schoolday.spy.yaml</size></b>
 --
   <i>missedType</i>: <b><color:#ff962f>MissedType</color></b>
   <i>unexcused</i>: <b><color:#ff962f>bool</color></b>
@@ -62,18 +62,18 @@ class MissedClass <<table: <b>missed_class</b>>> #e2f0fb##[bold] {
   <i>createdBy</i>: <b><color:#ff962f>String</color></b>
   <i>modifiedBy</i>: <b><color:#ff962f>String?</color></b>
   <i>comment</i>: <b><color:#ff962f>String?</color></b>
- ➡️ <i>schoolday</i> : <b><color:#ff962f>Schoolday?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>missed_class_schoolday
- ➡️ <i>pupil</i> : <b><color:#ff962f>PupilData?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>missed_class_pupil
+ ➡️ <i>schoolday</i> : <b><color:#ff962f>Schoolday?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>missed_schoolday_schoolday
+ ➡️ <i>pupil</i> : <b><color:#ff962f>PupilData?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>missed_schoolday_pupil
 <b><color:#0164aa>indexes:</color></b>
 <b><color:#0164aa>schoolday_pupil_data_idx:</color></b>
 <b><color:#0164aa>unique</color></b>: <b><color:#ff962f>true</color></b>
 
 }
 
-class MissedClassDto ##[bold]  {
-<size:14>📁</size> <b><size:12> /_features/attendance/models/missed_class_dto.spy.yaml</size></b>
+class MissedSchooldayDto ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/attendance/models/missed_schoolday_dto.spy.yaml</size></b>
 --
-  <i>missedClass</i>: <b><color:#ff962f>MissedClass</color></b>
+  <i>missedSchoolday</i>: <b><color:#ff962f>MissedSchoolday</color></b>
   <i>operation</i>: <b><color:#ff962f>String</color></b>
 
 }
@@ -213,7 +213,6 @@ class Competence <<table: <b>competence</b>>> #e2f0fb##[bold] {
   <i>order</i>: <b><color:#ff962f>int?</color></b>
  ➡️ <i>competenceGoals</i> : <b><color:#ff962f>List<CompetenceGoal>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_goal_competence<color:#ff962f>)</color>
  ➡️ <i>competenceChecks</i> : <b><color:#ff962f>List<CompetenceCheck>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_check_competence<color:#ff962f>)</color>
- ➡️ <i>competenceReportChecks</i> : <b><color:#ff962f>List<CompetenceReportCheck>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_report_check_competence<color:#ff962f>)</color>
 
 }
 
@@ -275,8 +274,20 @@ class CompetenceReportCheck <<table: <b>competence_report_check</b>>> #e2f0fb##[
   <i>createdBy</i>: <b><color:#ff962f>String</color></b>
   <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
  ➡️ <i>pupil</i> : <b><color:#ff962f>PupilData?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_report_check_pupil<color:#ff962f>)</color>
- ➡️ <i>competence</i> : <b><color:#ff962f>Competence?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_report_check_competence<color:#ff962f>)</color>
+ ➡️ <i>competence</i> : <b><color:#ff962f>CompetenceReportItem?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_report_item_competence_report_check<color:#ff962f>)</color>
  ➡️ <i>competenceReport</i> : <b><color:#ff962f>CompetenceReport?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_report_check_report<color:#ff962f>)</color>
+
+}
+
+class CompetenceReportItem <<table: <b>competence_report_item</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/learning/models/competence_report_item.spy.yaml</size></b>
+--
+  <i>publicId</i>: <b><color:#ff962f>int</color></b>
+  <i>parentItem</i>: <b><color:#ff962f>int?</color></b>
+  <i>name</i>: <b><color:#ff962f>String</color></b>
+  <i>level</i>: <b><color:#ff962f>List<String>?</color></b>
+  <i>order</i>: <b><color:#ff962f>int?</color></b>
+ ➡️ <i>competenceReportchecks</i> : <b><color:#ff962f>List<CompetenceReportCheck>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_report_item_competence_report_check<color:#ff962f>)</color>
 
 }
 
@@ -557,7 +568,7 @@ class PupilData <<table: <b>pupil_data</b>>> #e2f0fb##[bold] {
  ➡️ <i>supportGoals</i> : <b><color:#ff962f>List<SupportGoal>?</color></b>,  <b><color:#0164aa>relation</color></b>
  ➡️ <i>learningSupportPlans</i> : <b><color:#ff962f>List<LearningSupportPlan>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>learning_support_plan_pupil<color:#ff962f>)</color>
 <color:#93c47d>## schoolday related</color>
- ➡️ <i>missedClasses</i> : <b><color:#ff962f>List<MissedClass>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>missed_class_pupil<color:#ff962f>)</color>
+ ➡️ <i>missedSchooldays</i> : <b><color:#ff962f>List<MissedSchoolday>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>missed_schoolday_pupil<color:#ff962f>)</color>
  ➡️ <i>schooldayEvents</i> : <b><color:#ff962f>List<SchooldayEvent>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>schoolday_event_pupil<color:#ff962f>)</color>
 <color:#93c47d>## miscellaneous</color>
   <i>swimmer</i>: <b><color:#ff962f>String?</color></b>
@@ -605,7 +616,7 @@ class Schoolday <<table: <b>schoolday</b>>> #e2f0fb##[bold] {
 <size:14>📁</size> <b><size:12> /_features/schoolday/models/schoolday.spy.yaml</size></b>
 --
   <i>schoolday</i>: <b><color:#ff962f>DateTime</color></b>
- ➡️ <i>missedClasses</i> : <b><color:#ff962f>List<MissedClass>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>missed_class_schoolday<color:#ff962f>)</color>
+ ➡️ <i>missedSchooldays</i> : <b><color:#ff962f>List<MissedSchoolday>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>missed_schoolday_schoolday<color:#ff962f>)</color>
  ➡️ <i>schooldayEvents</i> : <b><color:#ff962f>List<SchooldayEvent>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>schoolday_event_schoolday<color:#ff962f>)</color>
  ➡️ <i>schoolSemester</i> : <b><color:#ff962f>SchoolSemester?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>schoolday_school_semester<color:#ff962f>)</color>
 
@@ -905,8 +916,8 @@ enum MemberOperation #ece4ff ##[bold] {
 
 }
 
- MissedClass::schoolday "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FF4500,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Schoolday 
- MissedClass::pupil "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#008000,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilData 
+ MissedSchoolday::schoolday "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FF4500,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Schoolday 
+ MissedSchoolday::pupil "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#008000,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilData 
  Authorization::authorizedPupils "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#4169E1,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilAuthorization 
  PupilAuthorization::file "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FFD700,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
  PupilAuthorization::pupil "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#8A2BE2,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilData 
@@ -919,15 +930,15 @@ enum MemberOperation #ece4ff ##[bold] {
  PupilBookLending::pupilBookLendingFiles "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#4682B4,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
  Competence::competenceGoals "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#FF4500,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" CompetenceGoal 
  Competence::competenceChecks "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#008000,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" CompetenceCheck 
- Competence::competenceReportChecks "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#4169E1,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" CompetenceReportCheck 
- CompetenceCheck::pupil "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FFD700,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilData 
- CompetenceCheck::documents "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#8A2BE2,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
- CompetenceGoal::pupil "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4682B4,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilData 
- CompetenceGoal::documents "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#FF4500,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
- CompetenceReport::pupil "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#008000,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilData 
- CompetenceReport::competenceReportChecks "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#4169E1,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" CompetenceReportCheck 
- CompetenceReport::schoolSemester "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FFD700,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" SchoolSemester 
- CompetenceReportCheck::pupil "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#8A2BE2,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilData 
+ CompetenceCheck::pupil "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4169E1,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilData 
+ CompetenceCheck::documents "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#FFD700,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
+ CompetenceGoal::pupil "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#8A2BE2,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilData 
+ CompetenceGoal::documents "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#4682B4,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
+ CompetenceReport::pupil "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FF4500,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilData 
+ CompetenceReport::competenceReportChecks "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#008000,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" CompetenceReportCheck 
+ CompetenceReport::schoolSemester "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4169E1,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" SchoolSemester 
+ CompetenceReportCheck::pupil "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FFD700,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilData 
+ CompetenceReportCheck::competence "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#8A2BE2,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" CompetenceReportItem 
  LearningSupportPlan::learningSupportLevel "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4682B4,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" SupportLevel 
  LearningSupportPlan::pupil "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FF4500,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilData 
  LearningSupportPlan::supportCategoryStatuses "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#008000,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" SupportCategoryStatus 
@@ -972,9 +983,10 @@ enum MemberOperation #ece4ff ##[bold] {
  UserDevice::authId "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#8A2BE2,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" int 
  PupilWorkbook::workbook "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4682B4,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Workbook 
 
-MissedClass - ContactedType
-MissedClass - MissedType
-MissedClassDto - MissedClass
+MissedSchoolday - ContactedType
+MissedSchoolday - MissedType
+MissedSchooldayDto - MissedSchoolday
+MissedSchooldayDto - Schoolday
 LibraryBookQuery - Book
 LibraryBookQuery - BookTag
 LibraryBookQuery - BookTagging

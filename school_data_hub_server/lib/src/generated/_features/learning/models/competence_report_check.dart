@@ -13,7 +13,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../../../_features/pupil/models/pupil_data/pupil_data.dart' as _i2;
-import '../../../_features/learning/models/competence.dart' as _i3;
+import '../../../_features/learning/models/competence_report_item.dart' as _i3;
 import '../../../_features/learning/models/competence_report.dart' as _i4;
 
 abstract class CompetenceReportCheck
@@ -43,7 +43,7 @@ abstract class CompetenceReportCheck
     required int pupilId,
     _i2.PupilData? pupil,
     required int competenceId,
-    _i3.Competence? competence,
+    _i3.CompetenceReportItem? competence,
     required int competenceReportId,
     _i4.CompetenceReport? competenceReport,
   }) = _CompetenceReportCheckImpl;
@@ -66,7 +66,7 @@ abstract class CompetenceReportCheck
       competenceId: jsonSerialization['competenceId'] as int,
       competence: jsonSerialization['competence'] == null
           ? null
-          : _i3.Competence.fromJson(
+          : _i3.CompetenceReportItem.fromJson(
               (jsonSerialization['competence'] as Map<String, dynamic>)),
       competenceReportId: jsonSerialization['competenceReportId'] as int,
       competenceReport: jsonSerialization['competenceReport'] == null
@@ -99,7 +99,7 @@ abstract class CompetenceReportCheck
 
   int competenceId;
 
-  _i3.Competence? competence;
+  _i3.CompetenceReportItem? competence;
 
   int competenceReportId;
 
@@ -121,7 +121,7 @@ abstract class CompetenceReportCheck
     int? pupilId,
     _i2.PupilData? pupil,
     int? competenceId,
-    _i3.Competence? competence,
+    _i3.CompetenceReportItem? competence,
     int? competenceReportId,
     _i4.CompetenceReport? competenceReport,
   });
@@ -165,7 +165,7 @@ abstract class CompetenceReportCheck
 
   static CompetenceReportCheckInclude include({
     _i2.PupilDataInclude? pupil,
-    _i3.CompetenceInclude? competence,
+    _i3.CompetenceReportItemInclude? competence,
     _i4.CompetenceReportInclude? competenceReport,
   }) {
     return CompetenceReportCheckInclude._(
@@ -214,7 +214,7 @@ class _CompetenceReportCheckImpl extends CompetenceReportCheck {
     required int pupilId,
     _i2.PupilData? pupil,
     required int competenceId,
-    _i3.Competence? competence,
+    _i3.CompetenceReportItem? competence,
     required int competenceReportId,
     _i4.CompetenceReport? competenceReport,
   }) : super._(
@@ -260,7 +260,7 @@ class _CompetenceReportCheckImpl extends CompetenceReportCheck {
       pupilId: pupilId ?? this.pupilId,
       pupil: pupil is _i2.PupilData? ? pupil : this.pupil?.copyWith(),
       competenceId: competenceId ?? this.competenceId,
-      competence: competence is _i3.Competence?
+      competence: competence is _i3.CompetenceReportItem?
           ? competence
           : this.competence?.copyWith(),
       competenceReportId: competenceReportId ?? this.competenceReportId,
@@ -324,7 +324,7 @@ class CompetenceReportCheckTable extends _i1.Table<int?> {
 
   late final _i1.ColumnInt competenceId;
 
-  _i3.CompetenceTable? _competence;
+  _i3.CompetenceReportItemTable? _competence;
 
   late final _i1.ColumnInt competenceReportId;
 
@@ -343,15 +343,15 @@ class CompetenceReportCheckTable extends _i1.Table<int?> {
     return _pupil!;
   }
 
-  _i3.CompetenceTable get competence {
+  _i3.CompetenceReportItemTable get competence {
     if (_competence != null) return _competence!;
     _competence = _i1.createRelationTable(
       relationFieldName: 'competence',
       field: CompetenceReportCheck.t.competenceId,
-      foreignField: _i3.Competence.t.id,
+      foreignField: _i3.CompetenceReportItem.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i3.CompetenceTable(tableRelation: foreignTableRelation),
+          _i3.CompetenceReportItemTable(tableRelation: foreignTableRelation),
     );
     return _competence!;
   }
@@ -400,7 +400,7 @@ class CompetenceReportCheckTable extends _i1.Table<int?> {
 class CompetenceReportCheckInclude extends _i1.IncludeObject {
   CompetenceReportCheckInclude._({
     _i2.PupilDataInclude? pupil,
-    _i3.CompetenceInclude? competence,
+    _i3.CompetenceReportItemInclude? competence,
     _i4.CompetenceReportInclude? competenceReport,
   }) {
     _pupil = pupil;
@@ -410,7 +410,7 @@ class CompetenceReportCheckInclude extends _i1.IncludeObject {
 
   _i2.PupilDataInclude? _pupil;
 
-  _i3.CompetenceInclude? _competence;
+  _i3.CompetenceReportItemInclude? _competence;
 
   _i4.CompetenceReportInclude? _competenceReport;
 
@@ -693,12 +693,12 @@ class CompetenceReportCheckAttachRowRepository {
     );
   }
 
-  /// Creates a relation between the given [CompetenceReportCheck] and [Competence]
-  /// by setting the [CompetenceReportCheck]'s foreign key `competenceId` to refer to the [Competence].
+  /// Creates a relation between the given [CompetenceReportCheck] and [CompetenceReportItem]
+  /// by setting the [CompetenceReportCheck]'s foreign key `competenceId` to refer to the [CompetenceReportItem].
   Future<void> competence(
     _i1.Session session,
     CompetenceReportCheck competenceReportCheck,
-    _i3.Competence competence, {
+    _i3.CompetenceReportItem competence, {
     _i1.Transaction? transaction,
   }) async {
     if (competenceReportCheck.id == null) {

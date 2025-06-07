@@ -7,7 +7,7 @@ admin:
   - getUserById:
   - updateBackendPupilDataState:
 missedSchoolday:
-  - streamMyModels:
+  - streamMissedSchooldays:
   - postMissedSchoolday:
   - postMissedSchooldayes:
   - fetchAllMissedSchooldayes:

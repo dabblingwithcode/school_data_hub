@@ -7,6 +7,6 @@ fields:
   createdBy: String
   createdAt: DateTime
   pupil: PupilData?, relation(name=competence_report_check_pupil)
-  competence: Competence?, relation(name=competence_report_check_competence)
+  competence: CompetenceReportItem?, relation(name=competence_report_item_competence_report_check)
   
   competenceReport: CompetenceReport?, relation(name=competence_report_check_report)

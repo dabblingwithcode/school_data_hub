@@ -139,7 +139,7 @@ class DiManager {
       _log.info('PupilManager initialized');
 
       return pupilManager;
-    });
+    }, dependsOn: [PupilIdentityManager]);
 
     di.registerSingletonWithDependencies<LearningSupportPlanManager>(
         () => LearningSupportPlanManager(),

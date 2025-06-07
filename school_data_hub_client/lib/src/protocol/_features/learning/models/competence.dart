@@ -12,7 +12,6 @@
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import '../../../_features/learning/models/competence_goal.dart' as _i2;
 import '../../../_features/learning/models/competence_check.dart' as _i3;
-import '../../../_features/learning/models/competence_report_check.dart' as _i4;
 
 abstract class Competence implements _i1.SerializableModel {
   Competence._({
@@ -25,7 +24,6 @@ abstract class Competence implements _i1.SerializableModel {
     this.order,
     this.competenceGoals,
     this.competenceChecks,
-    this.competenceReportChecks,
   });
 
   factory Competence({
@@ -38,7 +36,6 @@ abstract class Competence implements _i1.SerializableModel {
     int? order,
     List<_i2.CompetenceGoal>? competenceGoals,
     List<_i3.CompetenceCheck>? competenceChecks,
-    List<_i4.CompetenceReportCheck>? competenceReportChecks,
   }) = _CompetenceImpl;
 
   factory Competence.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -60,11 +57,6 @@ abstract class Competence implements _i1.SerializableModel {
       competenceChecks: (jsonSerialization['competenceChecks'] as List?)
           ?.map(
               (e) => _i3.CompetenceCheck.fromJson((e as Map<String, dynamic>)))
-          .toList(),
-      competenceReportChecks: (jsonSerialization['competenceReportChecks']
-              as List?)
-          ?.map((e) =>
-              _i4.CompetenceReportCheck.fromJson((e as Map<String, dynamic>)))
           .toList(),
     );
   }
@@ -90,8 +82,6 @@ abstract class Competence implements _i1.SerializableModel {
 
   List<_i3.CompetenceCheck>? competenceChecks;
 
-  List<_i4.CompetenceReportCheck>? competenceReportChecks;
-
   /// Returns a shallow copy of this [Competence]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
@@ -105,7 +95,6 @@ abstract class Competence implements _i1.SerializableModel {
     int? order,
     List<_i2.CompetenceGoal>? competenceGoals,
     List<_i3.CompetenceCheck>? competenceChecks,
-    List<_i4.CompetenceReportCheck>? competenceReportChecks,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -123,9 +112,6 @@ abstract class Competence implements _i1.SerializableModel {
       if (competenceChecks != null)
         'competenceChecks':
             competenceChecks?.toJson(valueToJson: (v) => v.toJson()),
-      if (competenceReportChecks != null)
-        'competenceReportChecks':
-            competenceReportChecks?.toJson(valueToJson: (v) => v.toJson()),
     };
   }
 
@@ -148,7 +134,6 @@ class _CompetenceImpl extends Competence {
     int? order,
     List<_i2.CompetenceGoal>? competenceGoals,
     List<_i3.CompetenceCheck>? competenceChecks,
-    List<_i4.CompetenceReportCheck>? competenceReportChecks,
   }) : super._(
           id: id,
           publicId: publicId,
@@ -159,7 +144,6 @@ class _CompetenceImpl extends Competence {
           order: order,
           competenceGoals: competenceGoals,
           competenceChecks: competenceChecks,
-          competenceReportChecks: competenceReportChecks,
         );
 
   /// Returns a shallow copy of this [Competence]
@@ -176,7 +160,6 @@ class _CompetenceImpl extends Competence {
     Object? order = _Undefined,
     Object? competenceGoals = _Undefined,
     Object? competenceChecks = _Undefined,
-    Object? competenceReportChecks = _Undefined,
   }) {
     return Competence(
       id: id is int? ? id : this.id,
@@ -196,10 +179,6 @@ class _CompetenceImpl extends Competence {
       competenceChecks: competenceChecks is List<_i3.CompetenceCheck>?
           ? competenceChecks
           : this.competenceChecks?.map((e0) => e0.copyWith()).toList(),
-      competenceReportChecks: competenceReportChecks
-              is List<_i4.CompetenceReportCheck>?
-          ? competenceReportChecks
-          : this.competenceReportChecks?.map((e0) => e0.copyWith()).toList(),
     );
   }
 }

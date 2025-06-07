@@ -1,0 +1,9 @@
+class: CompetenceReportItem
+table: competence_report_item
+fields:
+  publicId: int
+  parentItem: int?
+  name: String
+  level: List<String>?
+  order: int?
+  competenceReportchecks: List<CompetenceReportCheck>?, relation(name=competence_report_item_competence_report_check)

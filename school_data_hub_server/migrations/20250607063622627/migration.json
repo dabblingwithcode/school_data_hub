@@ -767,7 +767,7 @@
             "columns": [
               "competenceId"
             ],
-            "referenceTable": "competence",
+            "referenceTable": "competence_report_item",
             "referenceTableSchema": "public",
             "referenceColumns": [
               "id"
@@ -792,6 +792,70 @@
         "indexes": [
           {
             "indexName": "competence_report_check_pkey",
+            "elements": [
+              {
+                "type": 0,
+                "definition": "id"
+              }
+            ],
+            "type": "btree",
+            "isUnique": true,
+            "isPrimary": true
+          }
+        ],
+        "managed": true
+      }
+    },
+    {
+      "type": "createTable",
+      "createTable": {
+        "name": "competence_report_item",
+        "dartName": "CompetenceReportItem",
+        "module": "school_data_hub",
+        "schema": "public",
+        "columns": [
+          {
+            "name": "id",
+            "columnType": 6,
+            "isNullable": false,
+            "columnDefault": "nextval('competence_report_item_id_seq'::regclass)",
+            "dartType": "int?"
+          },
+          {
+            "name": "publicId",
+            "columnType": 6,
+            "isNullable": false,
+            "dartType": "int"
+          },
+          {
+            "name": "parentItem",
+            "columnType": 6,
+            "isNullable": true,
+            "dartType": "int?"
+          },
+          {
+            "name": "name",
+            "columnType": 0,
+            "isNullable": false,
+            "dartType": "String"
+          },
+          {
+            "name": "level",
+            "columnType": 8,
+            "isNullable": true,
+            "dartType": "List<String>?"
+          },
+          {
+            "name": "order",
+            "columnType": 6,
+            "isNullable": true,
+            "dartType": "int?"
+          }
+        ],
+        "foreignKeys": [],
+        "indexes": [
+          {
+            "indexName": "competence_report_item_pkey",
             "elements": [
               {
                 "type": 0,
@@ -1813,7 +1877,7 @@
       "type": "createTable",
       "createTable": {
         "name": "missed_class",
-        "dartName": "MissedClass",
+        "dartName": "MissedSchoolday",
         "module": "school_data_hub",
         "schema": "public",
         "columns": [

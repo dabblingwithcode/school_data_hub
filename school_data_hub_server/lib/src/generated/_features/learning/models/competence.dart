@@ -14,7 +14,6 @@
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../../../_features/learning/models/competence_goal.dart' as _i2;
 import '../../../_features/learning/models/competence_check.dart' as _i3;
-import '../../../_features/learning/models/competence_report_check.dart' as _i4;
 
 abstract class Competence
     implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
@@ -28,7 +27,6 @@ abstract class Competence
     this.order,
     this.competenceGoals,
     this.competenceChecks,
-    this.competenceReportChecks,
   });
 
   factory Competence({
@@ -41,7 +39,6 @@ abstract class Competence
     int? order,
     List<_i2.CompetenceGoal>? competenceGoals,
     List<_i3.CompetenceCheck>? competenceChecks,
-    List<_i4.CompetenceReportCheck>? competenceReportChecks,
   }) = _CompetenceImpl;
 
   factory Competence.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -63,11 +60,6 @@ abstract class Competence
       competenceChecks: (jsonSerialization['competenceChecks'] as List?)
           ?.map(
               (e) => _i3.CompetenceCheck.fromJson((e as Map<String, dynamic>)))
-          .toList(),
-      competenceReportChecks: (jsonSerialization['competenceReportChecks']
-              as List?)
-          ?.map((e) =>
-              _i4.CompetenceReportCheck.fromJson((e as Map<String, dynamic>)))
           .toList(),
     );
   }
@@ -95,8 +87,6 @@ abstract class Competence
 
   List<_i3.CompetenceCheck>? competenceChecks;
 
-  List<_i4.CompetenceReportCheck>? competenceReportChecks;
-
   @override
   _i1.Table<int?> get table => t;
 
@@ -113,7 +103,6 @@ abstract class Competence
     int? order,
     List<_i2.CompetenceGoal>? competenceGoals,
     List<_i3.CompetenceCheck>? competenceChecks,
-    List<_i4.CompetenceReportCheck>? competenceReportChecks,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -131,9 +120,6 @@ abstract class Competence
       if (competenceChecks != null)
         'competenceChecks':
             competenceChecks?.toJson(valueToJson: (v) => v.toJson()),
-      if (competenceReportChecks != null)
-        'competenceReportChecks':
-            competenceReportChecks?.toJson(valueToJson: (v) => v.toJson()),
     };
   }
 
@@ -153,21 +139,16 @@ abstract class Competence
       if (competenceChecks != null)
         'competenceChecks':
             competenceChecks?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
-      if (competenceReportChecks != null)
-        'competenceReportChecks': competenceReportChecks?.toJson(
-            valueToJson: (v) => v.toJsonForProtocol()),
     };
   }
 
   static CompetenceInclude include({
     _i2.CompetenceGoalIncludeList? competenceGoals,
     _i3.CompetenceCheckIncludeList? competenceChecks,
-    _i4.CompetenceReportCheckIncludeList? competenceReportChecks,
   }) {
     return CompetenceInclude._(
       competenceGoals: competenceGoals,
       competenceChecks: competenceChecks,
-      competenceReportChecks: competenceReportChecks,
     );
   }
 
@@ -210,7 +191,6 @@ class _CompetenceImpl extends Competence {
     int? order,
     List<_i2.CompetenceGoal>? competenceGoals,
     List<_i3.CompetenceCheck>? competenceChecks,
-    List<_i4.CompetenceReportCheck>? competenceReportChecks,
   }) : super._(
           id: id,
           publicId: publicId,
@@ -221,7 +201,6 @@ class _CompetenceImpl extends Competence {
           order: order,
           competenceGoals: competenceGoals,
           competenceChecks: competenceChecks,
-          competenceReportChecks: competenceReportChecks,
         );
 
   /// Returns a shallow copy of this [Competence]
@@ -238,7 +217,6 @@ class _CompetenceImpl extends Competence {
     Object? order = _Undefined,
     Object? competenceGoals = _Undefined,
     Object? competenceChecks = _Undefined,
-    Object? competenceReportChecks = _Undefined,
   }) {
     return Competence(
       id: id is int? ? id : this.id,
@@ -258,10 +236,6 @@ class _CompetenceImpl extends Competence {
       competenceChecks: competenceChecks is List<_i3.CompetenceCheck>?
           ? competenceChecks
           : this.competenceChecks?.map((e0) => e0.copyWith()).toList(),
-      competenceReportChecks: competenceReportChecks
-              is List<_i4.CompetenceReportCheck>?
-          ? competenceReportChecks
-          : this.competenceReportChecks?.map((e0) => e0.copyWith()).toList(),
     );
   }
 }
@@ -314,10 +288,6 @@ class CompetenceTable extends _i1.Table<int?> {
 
   _i1.ManyRelation<_i3.CompetenceCheckTable>? _competenceChecks;
 
-  _i4.CompetenceReportCheckTable? ___competenceReportChecks;
-
-  _i1.ManyRelation<_i4.CompetenceReportCheckTable>? _competenceReportChecks;
-
   _i2.CompetenceGoalTable get __competenceGoals {
     if (___competenceGoals != null) return ___competenceGoals!;
     ___competenceGoals = _i1.createRelationTable(
@@ -342,19 +312,6 @@ class CompetenceTable extends _i1.Table<int?> {
           _i3.CompetenceCheckTable(tableRelation: foreignTableRelation),
     );
     return ___competenceChecks!;
-  }
-
-  _i4.CompetenceReportCheckTable get __competenceReportChecks {
-    if (___competenceReportChecks != null) return ___competenceReportChecks!;
-    ___competenceReportChecks = _i1.createRelationTable(
-      relationFieldName: '__competenceReportChecks',
-      field: Competence.t.id,
-      foreignField: _i4.CompetenceReportCheck.t.competenceId,
-      tableRelation: tableRelation,
-      createTable: (foreignTableRelation) =>
-          _i4.CompetenceReportCheckTable(tableRelation: foreignTableRelation),
-    );
-    return ___competenceReportChecks!;
   }
 
   _i1.ManyRelation<_i2.CompetenceGoalTable> get competenceGoals {
@@ -393,24 +350,6 @@ class CompetenceTable extends _i1.Table<int?> {
     return _competenceChecks!;
   }
 
-  _i1.ManyRelation<_i4.CompetenceReportCheckTable> get competenceReportChecks {
-    if (_competenceReportChecks != null) return _competenceReportChecks!;
-    var relationTable = _i1.createRelationTable(
-      relationFieldName: 'competenceReportChecks',
-      field: Competence.t.id,
-      foreignField: _i4.CompetenceReportCheck.t.competenceId,
-      tableRelation: tableRelation,
-      createTable: (foreignTableRelation) =>
-          _i4.CompetenceReportCheckTable(tableRelation: foreignTableRelation),
-    );
-    _competenceReportChecks = _i1.ManyRelation<_i4.CompetenceReportCheckTable>(
-      tableWithRelations: relationTable,
-      table: _i4.CompetenceReportCheckTable(
-          tableRelation: relationTable.tableRelation!.lastRelation),
-    );
-    return _competenceReportChecks!;
-  }
-
   @override
   List<_i1.Column> get columns => [
         id,
@@ -430,9 +369,6 @@ class CompetenceTable extends _i1.Table<int?> {
     if (relationField == 'competenceChecks') {
       return __competenceChecks;
     }
-    if (relationField == 'competenceReportChecks') {
-      return __competenceReportChecks;
-    }
     return null;
   }
 }
@@ -441,24 +377,19 @@ class CompetenceInclude extends _i1.IncludeObject {
   CompetenceInclude._({
     _i2.CompetenceGoalIncludeList? competenceGoals,
     _i3.CompetenceCheckIncludeList? competenceChecks,
-    _i4.CompetenceReportCheckIncludeList? competenceReportChecks,
   }) {
     _competenceGoals = competenceGoals;
     _competenceChecks = competenceChecks;
-    _competenceReportChecks = competenceReportChecks;
   }
 
   _i2.CompetenceGoalIncludeList? _competenceGoals;
 
   _i3.CompetenceCheckIncludeList? _competenceChecks;
 
-  _i4.CompetenceReportCheckIncludeList? _competenceReportChecks;
-
   @override
   Map<String, _i1.Include?> get includes => {
         'competenceGoals': _competenceGoals,
         'competenceChecks': _competenceChecks,
-        'competenceReportChecks': _competenceReportChecks,
       };
 
   @override
@@ -764,31 +695,6 @@ class CompetenceAttachRepository {
       transaction: transaction,
     );
   }
-
-  /// Creates a relation between this [Competence] and the given [CompetenceReportCheck]s
-  /// by setting each [CompetenceReportCheck]'s foreign key `competenceId` to refer to this [Competence].
-  Future<void> competenceReportChecks(
-    _i1.Session session,
-    Competence competence,
-    List<_i4.CompetenceReportCheck> competenceReportCheck, {
-    _i1.Transaction? transaction,
-  }) async {
-    if (competenceReportCheck.any((e) => e.id == null)) {
-      throw ArgumentError.notNull('competenceReportCheck.id');
-    }
-    if (competence.id == null) {
-      throw ArgumentError.notNull('competence.id');
-    }
-
-    var $competenceReportCheck = competenceReportCheck
-        .map((e) => e.copyWith(competenceId: competence.id))
-        .toList();
-    await session.db.update<_i4.CompetenceReportCheck>(
-      $competenceReportCheck,
-      columns: [_i4.CompetenceReportCheck.t.competenceId],
-      transaction: transaction,
-    );
-  }
 }
 
 class CompetenceAttachRowRepository {
@@ -837,30 +743,6 @@ class CompetenceAttachRowRepository {
     await session.db.updateRow<_i3.CompetenceCheck>(
       $competenceCheck,
       columns: [_i3.CompetenceCheck.t.competenceId],
-      transaction: transaction,
-    );
-  }
-
-  /// Creates a relation between this [Competence] and the given [CompetenceReportCheck]
-  /// by setting the [CompetenceReportCheck]'s foreign key `competenceId` to refer to this [Competence].
-  Future<void> competenceReportChecks(
-    _i1.Session session,
-    Competence competence,
-    _i4.CompetenceReportCheck competenceReportCheck, {
-    _i1.Transaction? transaction,
-  }) async {
-    if (competenceReportCheck.id == null) {
-      throw ArgumentError.notNull('competenceReportCheck.id');
-    }
-    if (competence.id == null) {
-      throw ArgumentError.notNull('competence.id');
-    }
-
-    var $competenceReportCheck =
-        competenceReportCheck.copyWith(competenceId: competence.id);
-    await session.db.updateRow<_i4.CompetenceReportCheck>(
-      $competenceReportCheck,
-      columns: [_i4.CompetenceReportCheck.t.competenceId],
       transaction: transaction,
     );
   }
@@ -914,30 +796,6 @@ class CompetenceDetachRepository {
       transaction: transaction,
     );
   }
-
-  /// Detaches the relation between this [Competence] and the given [CompetenceReportCheck]
-  /// by setting the [CompetenceReportCheck]'s foreign key `competenceId` to `null`.
-  ///
-  /// This removes the association between the two models without deleting
-  /// the related record.
-  Future<void> competenceReportChecks(
-    _i1.Session session,
-    List<_i4.CompetenceReportCheck> competenceReportCheck, {
-    _i1.Transaction? transaction,
-  }) async {
-    if (competenceReportCheck.any((e) => e.id == null)) {
-      throw ArgumentError.notNull('competenceReportCheck.id');
-    }
-
-    var $competenceReportCheck = competenceReportCheck
-        .map((e) => e.copyWith(competenceId: null))
-        .toList();
-    await session.db.update<_i4.CompetenceReportCheck>(
-      $competenceReportCheck,
-      columns: [_i4.CompetenceReportCheck.t.competenceId],
-      transaction: transaction,
-    );
-  }
 }
 
 class CompetenceDetachRowRepository {
@@ -983,29 +841,6 @@ class CompetenceDetachRowRepository {
     await session.db.updateRow<_i3.CompetenceCheck>(
       $competenceCheck,
       columns: [_i3.CompetenceCheck.t.competenceId],
-      transaction: transaction,
-    );
-  }
-
-  /// Detaches the relation between this [Competence] and the given [CompetenceReportCheck]
-  /// by setting the [CompetenceReportCheck]'s foreign key `competenceId` to `null`.
-  ///
-  /// This removes the association between the two models without deleting
-  /// the related record.
-  Future<void> competenceReportChecks(
-    _i1.Session session,
-    _i4.CompetenceReportCheck competenceReportCheck, {
-    _i1.Transaction? transaction,
-  }) async {
-    if (competenceReportCheck.id == null) {
-      throw ArgumentError.notNull('competenceReportCheck.id');
-    }
-
-    var $competenceReportCheck =
-        competenceReportCheck.copyWith(competenceId: null);
-    await session.db.updateRow<_i4.CompetenceReportCheck>(
-      $competenceReportCheck,
-      columns: [_i4.CompetenceReportCheck.t.competenceId],
       transaction: transaction,
     );
   }

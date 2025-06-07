@@ -17,14 +17,17 @@ class PupilIdentityHelper {
     final pupilsJson = await HubSecureStorage().getString(secureStorageKey);
     if (pupilsJson == null) return {};
 
-    final List<dynamic> decodedJson = jsonDecode(pupilsJson);
-    final List<PupilIdentity> pupilIdentities = decodedJson
-        .map((item) => PupilIdentity.fromJson(item as Map<String, dynamic>))
-        .toList();
+    final Map<String, dynamic> decodedJson = jsonDecode(pupilsJson);
 
-    // Convert list to map using ID as key
-    return Map<int, PupilIdentity>.fromEntries(
-        pupilIdentities.map((pupil) => MapEntry(pupil.id, pupil)));
+    return Map<int, PupilIdentity>.fromEntries(decodedJson.entries.map(
+      (entry) {
+        final int pupilId = int.parse(entry.key);
+
+        final PupilIdentity pupilIdentity = PupilIdentity.fromJson(entry.value);
+
+        return MapEntry(pupilId, pupilIdentity);
+      },
+    ));
   }
 
   static Future<void> deletePupilIdentitiesForEnv(

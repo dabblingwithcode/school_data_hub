@@ -571,7 +571,7 @@ class _MissedSchooldayEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Stream<_i7.MissedSchooldayDto> streamMyModels(
+  _i3.Stream<_i7.MissedSchooldayDto> streamMissedSchooldays(
       _i1.TestSessionBuilder sessionBuilder) {
     var _localTestStreamManager =
         _i1.TestStreamManager<_i7.MissedSchooldayDto>();
@@ -580,13 +580,13 @@ class _MissedSchooldayEndpoint {
         var _localUniqueSession =
             (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
           endpoint: 'missedSchoolday',
-          method: 'streamMyModels',
+          method: 'streamMissedSchooldays',
         );
         var _localCallContext =
             await _endpointDispatch.getMethodStreamCallContext(
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'missedSchoolday',
-          methodName: 'streamMyModels',
+          methodName: 'streamMissedSchooldays',
           arguments: {},
           requestedInputStreams: [],
           serializationManager: _serializationManager,

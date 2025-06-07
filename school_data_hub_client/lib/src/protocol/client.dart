@@ -180,11 +180,11 @@ class EndpointMissedSchoolday extends _i1.EndpointRef {
   @override
   String get name => 'missedSchoolday';
 
-  _i2.Stream<_i6.MissedSchooldayDto> streamMyModels() =>
+  _i2.Stream<_i6.MissedSchooldayDto> streamMissedSchooldays() =>
       caller.callStreamingServerEndpoint<_i2.Stream<_i6.MissedSchooldayDto>,
           _i6.MissedSchooldayDto>(
         'missedSchoolday',
-        'streamMyModels',
+        'streamMissedSchooldays',
         {},
         {},
       );

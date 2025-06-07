@@ -11,7 +11,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../_features/admin/endpoints/admin_endpoint.dart' as _i2;
-import '../_features/attendance/endpoints/missed_class_endpoint.dart' as _i3;
+import '../_features/attendance/endpoints/missed_schoolday_endpoint.dart'
+    as _i3;
 import '../_features/authorizations/endpoints/authorization_endpoint.dart'
     as _i4;
 import '../_features/authorizations/endpoints/pupil_authorization_endpoint.dart'
@@ -536,8 +537,8 @@ class Endpoints extends _i1.EndpointDispatch {
             params['missedSchoolday'],
           ),
         ),
-        'streamMyModels': _i1.MethodStreamConnector(
-          name: 'streamMyModels',
+        'streamMissedSchooldays': _i1.MethodStreamConnector(
+          name: 'streamMissedSchooldays',
           params: {},
           streamParams: {},
           returnType: _i1.MethodStreamReturnType.streamType,
@@ -547,7 +548,7 @@ class Endpoints extends _i1.EndpointDispatch {
             Map<String, Stream> streamParams,
           ) =>
               (endpoints['missedSchoolday'] as _i3.MissedSchooldayEndpoint)
-                  .streamMyModels(session),
+                  .streamMissedSchooldays(session),
         ),
       },
     );

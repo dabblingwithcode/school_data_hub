@@ -11,7 +11,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import '../../../_features/pupil/models/pupil_data/pupil_data.dart' as _i2;
-import '../../../_features/learning/models/competence.dart' as _i3;
+import '../../../_features/learning/models/competence_report_item.dart' as _i3;
 import '../../../_features/learning/models/competence_report.dart' as _i4;
 
 abstract class CompetenceReportCheck implements _i1.SerializableModel {
@@ -40,7 +40,7 @@ abstract class CompetenceReportCheck implements _i1.SerializableModel {
     required int pupilId,
     _i2.PupilData? pupil,
     required int competenceId,
-    _i3.Competence? competence,
+    _i3.CompetenceReportItem? competence,
     required int competenceReportId,
     _i4.CompetenceReport? competenceReport,
   }) = _CompetenceReportCheckImpl;
@@ -63,7 +63,7 @@ abstract class CompetenceReportCheck implements _i1.SerializableModel {
       competenceId: jsonSerialization['competenceId'] as int,
       competence: jsonSerialization['competence'] == null
           ? null
-          : _i3.Competence.fromJson(
+          : _i3.CompetenceReportItem.fromJson(
               (jsonSerialization['competence'] as Map<String, dynamic>)),
       competenceReportId: jsonSerialization['competenceReportId'] as int,
       competenceReport: jsonSerialization['competenceReport'] == null
@@ -94,7 +94,7 @@ abstract class CompetenceReportCheck implements _i1.SerializableModel {
 
   int competenceId;
 
-  _i3.Competence? competence;
+  _i3.CompetenceReportItem? competence;
 
   int competenceReportId;
 
@@ -113,7 +113,7 @@ abstract class CompetenceReportCheck implements _i1.SerializableModel {
     int? pupilId,
     _i2.PupilData? pupil,
     int? competenceId,
-    _i3.Competence? competence,
+    _i3.CompetenceReportItem? competence,
     int? competenceReportId,
     _i4.CompetenceReport? competenceReport,
   });
@@ -155,7 +155,7 @@ class _CompetenceReportCheckImpl extends CompetenceReportCheck {
     required int pupilId,
     _i2.PupilData? pupil,
     required int competenceId,
-    _i3.Competence? competence,
+    _i3.CompetenceReportItem? competence,
     required int competenceReportId,
     _i4.CompetenceReport? competenceReport,
   }) : super._(
@@ -201,7 +201,7 @@ class _CompetenceReportCheckImpl extends CompetenceReportCheck {
       pupilId: pupilId ?? this.pupilId,
       pupil: pupil is _i2.PupilData? ? pupil : this.pupil?.copyWith(),
       competenceId: competenceId ?? this.competenceId,
-      competence: competence is _i3.Competence?
+      competence: competence is _i3.CompetenceReportItem?
           ? competence
           : this.competence?.copyWith(),
       competenceReportId: competenceReportId ?? this.competenceReportId,
