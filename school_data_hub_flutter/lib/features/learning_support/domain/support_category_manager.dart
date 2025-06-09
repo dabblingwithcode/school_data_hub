@@ -10,17 +10,15 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _notificationService = di<NotificationService>();
-
-final _envManager = di<EnvManager>();
-
-final _log = Logger('LearningSupportManager');
-
-final _learningSupportApiService = LearningSupportApiService();
-
-final _pupilManager = di<PupilManager>();
-
 class SupportCategoryManager with ChangeNotifier {
+  final _notificationService = di<NotificationService>();
+
+  final _envManager = di<EnvManager>();
+
+  final _log = Logger('LearningSupportManager');
+
+  final _learningSupportApiService = LearningSupportApiService();
+
   final _supportCategories = ValueNotifier<List<SupportCategory>>([]);
   ValueListenable<List<SupportCategory>> get supportCategories =>
       _supportCategories;
@@ -61,7 +59,7 @@ class SupportCategoryManager with ChangeNotifier {
   List<SupportGoal> getGoalsForSupportCategory(int categoryId) {
     List<SupportGoal> goals = [];
 
-    final List<PupilProxy> pupils = _pupilManager.allPupils;
+    final List<PupilProxy> pupils = di<PupilManager>().allPupils;
     for (PupilProxy pupil in pupils) {
       for (SupportGoal goal in pupil.supportGoals!) {
         if (goal.supportCategoryId == categoryId) {

@@ -12,17 +12,15 @@ import 'package:school_data_hub_flutter/features/learning/domain/filters/compete
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _envManager = di<EnvManager>();
-
-final _client = di<Client>();
-
-final _notificationService = di<NotificationService>();
-
-final _competenceFilterManager = di<CompetenceFilterManager>();
-
-final _competenceCheckApiService = CompetenceCheckApiService();
-
 class CompetenceManager {
+  final _envManager = di<EnvManager>();
+
+  final _client = di<Client>();
+
+  final _notificationService = di<NotificationService>();
+
+  final _competenceCheckApiService = CompetenceCheckApiService();
+
   final _competences = ValueNotifier<List<Competence>>([]);
   ValueListenable<List<Competence>> get competences => _competences;
 
@@ -87,7 +85,7 @@ class CompetenceManager {
     _rootCompetencesMap =
         CompetenceHelper.generateRootCompetencesMap(competences);
 
-    _competenceFilterManager.refreshFilteredCompetences(competences);
+    di<CompetenceFilterManager>().refreshFilteredCompetences(competences);
 
     _notificationService.showSnackBar(
         NotificationType.success, 'Kompetenzen aktualisiert!');
@@ -109,7 +107,8 @@ class CompetenceManager {
 
     _competences.value = CompetenceHelper.sortCompetences(
         [..._competences.value, newCompetence]);
-    _competenceFilterManager.refreshFilteredCompetences(_competences.value);
+    di<CompetenceFilterManager>()
+        .refreshFilteredCompetences(_competences.value);
     _rootCompetencesMap =
         CompetenceHelper.generateRootCompetencesMap(_competences.value);
     _notificationService.showSnackBar(
@@ -152,7 +151,8 @@ class CompetenceManager {
 
     _competences.value = competences;
 
-    _competenceFilterManager.refreshFilteredCompetences(_competences.value);
+    di<CompetenceFilterManager>()
+        .refreshFilteredCompetences(_competences.value);
 
     _notificationService.showSnackBar(
         NotificationType.success, 'Kompetenz aktualisiert');
@@ -170,7 +170,8 @@ class CompetenceManager {
 
       _competences.value = competences;
 
-      _competenceFilterManager.refreshFilteredCompetences(_competences.value);
+      di<CompetenceFilterManager>()
+          .refreshFilteredCompetences(_competences.value);
 
       _notificationService.showSnackBar(
           NotificationType.success, 'Kompetenz gelöscht');

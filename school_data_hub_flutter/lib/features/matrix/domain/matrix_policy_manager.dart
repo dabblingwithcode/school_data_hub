@@ -5,10 +5,10 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/di/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/data/matrix_api_service.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
@@ -17,14 +17,15 @@ import 'package:school_data_hub_flutter/features/matrix/domain/models/policy.dar
 import 'package:school_data_hub_flutter/features/matrix/services/matrix_credentials_pdf_generator.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _notificationService = di<NotificationService>();
-final _envManager = di<EnvManager>();
-final _sessionManager = di<HubSessionManager>();
-final _secureStorage = HubSecureStorage();
-
-final _log = Logger('MatrixPolicyManager');
-
 class MatrixPolicyManager extends ChangeNotifier {
+  final _notificationService = di<NotificationService>();
+
+  final _sessionManager = di<HubSessionManager>();
+
+  final _secureStorage = HubSecureStorage();
+
+  final _log = Logger('MatrixPolicyManager');
+
   MatrixPolicyManager(this._matrixUrl, this._corporalToken, this._matrixToken,
       this._compulsoryRooms)
       : _matrixApiService = MatrixApiService(
@@ -32,7 +33,7 @@ class MatrixPolicyManager extends ChangeNotifier {
             corporalToken: _corporalToken,
             matrixToken: _matrixToken);
 
-  final _secureStorageKey = _envManager.storageKeyForMatrixCredentials;
+  final _secureStorageKey = di<EnvManager>().storageKeyForMatrixCredentials;
 
   late final String _matrixUrl;
   String get matrixUrl => _matrixUrl;
@@ -109,8 +110,7 @@ class MatrixPolicyManager extends ChangeNotifier {
 
   Future<void> deleteAndDeregisterMatrixPolicyManager() async {
     await _secureStorage.remove(_secureStorageKey);
-    di.unregister<MatrixPolicyFilterManager>();
-    di.unregister<MatrixPolicyManager>();
+    di.dropScope(DiScope.matrixScope.name);
 
     _sessionManager.changeMatrixPolicyManagerRegistrationStatus(false);
     _notificationService.showSnackBar(

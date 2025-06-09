@@ -14,21 +14,21 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _pupilManager = di<PupilManager>();
-
-final _schoolCalendarManager = di<SchoolCalendarManager>();
-
-final _notificationService = di<NotificationService>();
-
-final _sessionManager = di<HubSessionManager>();
-
-final _log = Logger('AttendanceManager');
-
-final _attendanceApiService = AttendanceApiService();
-
-final _client = di<Client>();
-
 class AttendanceManager with ChangeNotifier {
+  final _pupilManager = di<PupilManager>();
+
+  final _schoolCalendarManager = di<SchoolCalendarManager>();
+
+  final _notificationService = di<NotificationService>();
+
+  final _sessionManager = di<HubSessionManager>();
+
+  final _log = Logger('AttendanceManager');
+
+  final _attendanceApiService = AttendanceApiService();
+
+  final _client = di<Client>();
+
   StreamSubscription<MissedSchooldayDto>? _missedSchooldaySubscription;
 
   final ValueNotifier<List<MissedSchoolday>> _missedSchooldays =
@@ -41,7 +41,7 @@ class AttendanceManager with ChangeNotifier {
   // with a change notifier
   // it is used to observe the missed classes of a pupil in the UI
 
-  final Map<int, PupilMissedSchooldayesProxy> _pupilMissedSchooldayesMap = {};
+  final Map<int, PupilMissedSchooldaysProxy> _pupilMissedSchooldayesMap = {};
 
   AttendanceManager() {
     init();
@@ -52,7 +52,7 @@ class AttendanceManager with ChangeNotifier {
     // watch them in the UI unconditionally (even if there are no entries)
     final pupilIds = _pupilManager.allPupils.map((e) => e.pupilId).toList();
     for (final pupilId in pupilIds) {
-      _pupilMissedSchooldayesMap[pupilId] = PupilMissedSchooldayesProxy();
+      _pupilMissedSchooldayesMap[pupilId] = PupilMissedSchooldaysProxy();
     }
     // await fetchMissedSchooldayesOnASchoolday(schoolCalendarManager.thisDate.value);
     fetchAllPupilMissedSchooldayes();
@@ -69,7 +69,12 @@ class AttendanceManager with ChangeNotifier {
             date.formatForJson());
   }
 
-  PupilMissedSchooldayesProxy getPupilMissedSchooldayesProxy(int pupilId) {
+  PupilMissedSchooldaysProxy getPupilMissedSchooldayesProxy(int pupilId) {
+    if (!_pupilMissedSchooldayesMap.containsKey(pupilId)) {
+      _log.warning(
+          'No PupilMissedSchooldaysProxy found for pupilId: $pupilId - creating a new one');
+      _pupilMissedSchooldayesMap[pupilId] = PupilMissedSchooldaysProxy();
+    }
     return _pupilMissedSchooldayesMap[pupilId]!;
   }
 
@@ -88,10 +93,14 @@ class AttendanceManager with ChangeNotifier {
 
     final pupilId = responseMissedSchoolday.pupilId;
 
+    if (!_pupilMissedSchooldayesMap.containsKey(pupilId)) {
+      // If the pupil is not in the map, we need to create a new proxy for them
+      _pupilMissedSchooldayesMap[pupilId] = PupilMissedSchooldaysProxy();
+    }
     // 1. Update pupil map
-    final pupilMissedSchooldayProxy = _pupilMissedSchooldayesMap[pupilId]!;
+    final pupilMissedSchooldayProxy = _pupilMissedSchooldayesMap[pupilId];
 
-    pupilMissedSchooldayProxy.updateMissedSchoolday(responseMissedSchoolday);
+    pupilMissedSchooldayProxy!.updateMissedSchoolday(responseMissedSchoolday);
 
     // 2. Update the main list
     final index = _missedSchooldays.value.indexWhere((element) =>

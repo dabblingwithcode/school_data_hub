@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 
-class PupilMissedSchooldayesProxy with ChangeNotifier {
+class PupilMissedSchooldaysProxy with ChangeNotifier {
   List<MissedSchoolday> missedSchooldays = [];
 
   void setMissedSchooldayes(List<MissedSchoolday> value) {

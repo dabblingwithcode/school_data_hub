@@ -6,19 +6,18 @@ import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/core/dependency_injection.dart';
+import 'package:school_data_hub_flutter/core/di/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
 import 'package:school_data_hub_flutter/core/models/populated_server_session_data.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _log = Logger('EnvManager');
-
-final _notificationService = di<NotificationService>();
-final _pupilIdentityManager = di<PupilIdentityManager>();
-
 class EnvManager {
+  final _log = Logger('EnvManager');
+
+  final _notificationService = di<NotificationService>();
+
   bool _dependentMangagersRegistered = false;
   bool get dependentManagersRegistered => _dependentMangagersRegistered;
 
@@ -37,7 +36,7 @@ class EnvManager {
   /// **WARNING:**
   ///
   /// This method should only be called from [HubSessionManager]
-  void setUserAuthenticated(bool value) {
+  void setUserAuthenticatedOnlyByHubSessionManager(bool value) {
     _log.info('setUserAuthenticated: $value');
     _isAuthenticated.value = value;
   }
@@ -241,24 +240,28 @@ class EnvManager {
     _log.info('Activated Env: ${_activeEnv!.serverName}');
     _log.info('Environments in storage: ${_environments.length}');
 
-    _notificationService.showSnackBar(
-        NotificationType.success, 'Schulschlüssel für $envName gespeichert!');
-
     // Check if there are any dependent managers registered
     // and if so, unregister them
     // and register them again with the new environment
-    if (dependentManagersRegistered) {
-      await resetManagersDependentOnEnv();
-    } else {
-      await DiManager.registerManagersDependingOnActiveEnv();
-    }
-    // Set the isAuthenticated flag to false
-    // because the user is not authenticated in the new environment (yet)
-    // and we need to show the login screen again
-    _isAuthenticated.value = false;
+
+    await DiManager.resetActiveEnvDependentManagers();
+    await di.allReady();
+    _notificationService.showInformationDialog(
+      'Die Umgebung ${_activeEnv!.serverName} wurde aktiviert.',
+    );
+
+    // propagate the new environment to the pupil identity manager
+    await propagateNewEnv();
+
+    // notify the user that the environment has been activated
+    _notificationService.showSnackBar(NotificationType.success,
+        'Umgebung ${_activeEnv!.serverName} aktiviert!');
+
+    // reset the managers depending on the active environment
+    di.popScope();
   }
 
-  deleteEnv() async {
+  Future<void> deleteEnv() async {
     final deletedEnvironment = _activeEnv!.serverName;
 
     // delete _env.value from _envs
@@ -278,12 +281,21 @@ class EnvManager {
 
       _defaultEnv = _environments.keys.last;
       _log.info('Env $deletedEnvironment New defaultEnv: $_defaultEnv');
-      resetManagersDependentOnEnv();
+      di.dropScope('logged_in_user');
+
+      _notificationService.showSnackBar(NotificationType.success,
+          'Schulschlüssel für $deletedEnvironment gelöscht!');
+
+      // reset the managers depending on the active environment
+      di.popScope();
+      // propagate the new environment to the pupil identity manager
+      await propagateNewEnv();
     } else {
       // if there are no environments left, delete the environments from secure storage
 
       await HubSecureStorage().remove(_storageKeyForEnvironments);
-      DiManager.unregisterManagersDependingOnActiveEnv();
+
+      DiManager.unregisterManagersDependentOnEnv();
       _activeEnv = null;
 
       _defaultEnv = '';
@@ -292,12 +304,8 @@ class EnvManager {
     }
   }
 
-  Future<void> resetManagersDependentOnEnv() async {
-    await DiManager.unregisterManagersDependingOnActiveEnv();
-    await DiManager.registerManagersDependingOnActiveEnv();
-  }
-
   Future<void> propagateNewEnv() async {
+    final _pupilIdentityManager = di<PupilIdentityManager>();
     // TODO: implement this if needed
     await _pupilIdentityManager.getPupilIdentitiesForEnv();
   }

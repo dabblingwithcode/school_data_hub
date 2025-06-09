@@ -7,22 +7,24 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/core/auth/hub_auth_key_manager.dart';
-import 'package:school_data_hub_flutter/core/dependency_injection.dart';
+import 'package:school_data_hub_flutter/core/di/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:serverpod_auth_client/serverpod_auth_client.dart'
     as auth_client;
 import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _log = Logger('HubSessionManager');
-final _envManager = di<EnvManager>();
-final _client = di<Client>();
-
 /// The [SessionManager] keeps track of and manages the signed-in state of the
 /// user. Use the [instance] method to get access to the singleton instance.
 /// This [HubSessionManager] is specifically modified for the School Data Hub
 /// and uses the [HubAuthKeyManager] for authentication key management.
 class HubSessionManager with ChangeNotifier {
+  final _log = Logger('HubSessionManager');
+
+  final _envManager = di<EnvManager>();
+
+  final _client = di<Client>();
+
   static HubSessionManager? _instance;
 
   String get _userInfoStorageKey => _envManager.storageKeyForUserInfo;
@@ -147,7 +149,7 @@ class HubSessionManager with ChangeNotifier {
       /// to get to the login screen.
       _log.info('User signed out ');
 
-      _envManager.setUserAuthenticated(false);
+      _envManager.setUserAuthenticatedOnlyByHubSessionManager(false);
 
       return true;
     } catch (e) {
@@ -183,7 +185,7 @@ class HubSessionManager with ChangeNotifier {
       if (_signedInUser != null) {
         /// Don't forget to set the flag in [EnvManager] to false
         /// to get to the login screen.
-        _envManager.setUserAuthenticated(true);
+        _envManager.setUserAuthenticatedOnlyByHubSessionManager(true);
 
         _log.info(
             'User was authenticated by the server. Registering managers depending on authentication...');
@@ -215,7 +217,7 @@ class HubSessionManager with ChangeNotifier {
 
       /// Don't forget to set the flag in [EnvManager] to false
       /// to get to the login screen.
-      _envManager.setUserAuthenticated(false);
+      _envManager.setUserAuthenticatedOnlyByHubSessionManager(false);
 
       return false;
     }
@@ -256,7 +258,7 @@ class HubSessionManager with ChangeNotifier {
       notifyListeners();
       _log.fine(
           'User fetched in _handleAuthCallResultInStorage: ${_user?.toJson()}');
-      await DiManager.registerManagersDependingOnSession();
+      await DiManager.registerManagersDependingOnAuthedSession();
     }
   }
 

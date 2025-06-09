@@ -132,7 +132,7 @@ class LoginController extends State<Login> {
 
         /// Don't forget to set the flag in [EnvManager] to false
         /// to get to the login screen.
-        _envManager.setUserAuthenticated(true);
+        _envManager.setUserAuthenticatedOnlyByHubSessionManager(true);
         return;
       } else {
         _notificationService.showInformationDialog(

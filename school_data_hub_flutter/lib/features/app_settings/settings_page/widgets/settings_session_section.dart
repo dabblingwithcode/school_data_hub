@@ -5,6 +5,7 @@ import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/core/di/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -13,16 +14,19 @@ import 'package:school_data_hub_flutter/features/app_settings/settings_page/dial
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _sessionManager = di<HubSessionManager>();
-final _envManager = di<EnvManager>();
-final _cacheManager = di<DefaultCacheManager>();
-final _notificationService = di<NotificationService>();
-
 class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
   const SettingsSessionSection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _sessionManager = di<HubSessionManager>();
+
+    final _envManager = di<EnvManager>();
+
+    final _cacheManager = di<DefaultCacheManager>();
+
+    final _notificationService = di<NotificationService>();
+
     final locale = AppLocalizations.of(context)!;
 
     //final int credit = session.credit!;
@@ -73,7 +77,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
         SettingsTile.navigation(
           leading: const Icon(Icons.attach_money_rounded),
           title: const Text('Guthaben'),
-          value: Text(
+          value: const Text(
             'nicht implementiert', // credit.toString(),
             style: const TextStyle(
               fontWeight: FontWeight.bold,
@@ -147,7 +151,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
               PupilIdentityHelper.deletePupilIdentitiesForEnv(
                   _envManager.storageKeyForPupilIdentities);
               _notificationService.showSnackBar(
-                  NotificationType.success, 'ID-Schlüssel gelöscht');
+                  NotificationType.success, 'Kinder-Ids gelöscht');
             }
             return;
           },
@@ -167,6 +171,8 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
                 message: 'Instanz-ID-Schlüssel löschen?');
             if (confirm == true && context.mounted) {
               await _envManager.deleteEnv();
+              _sessionManager.signOutDevice();
+              DiManager.unregisterManagersDependentOnEnv();
               _notificationService.showSnackBar(
                   NotificationType.success, 'Instanz-ID-Schlüssel gelöscht');
 
@@ -208,8 +214,8 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
                   Icon(Icons.delete_forever_outlined)
                 ],
               )),
-          title: const Text('Cache löschen'),
-          value: const Text('Lokal gespeicherte Bilder löschen'),
+          title: const Text('Lokal gespeicherte Bilder löschen'),
+
           //onPressed:
         ),
         SettingsTile.navigation(

@@ -11,12 +11,15 @@ import 'package:school_data_hub_flutter/features/authorizations/data/authorizati
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _notificationService = di<NotificationService>();
-final _authorizationApiService = AuthorizationApiService();
-final _hubSessionManager = di<HubSessionManager>();
-final _cacheManager = di<DefaultCacheManager>();
-
 class AuthorizationManager with ChangeNotifier {
+  final _notificationService = di<NotificationService>();
+
+  final _authorizationApiService = AuthorizationApiService();
+
+  final _hubSessionManager = di<HubSessionManager>();
+
+  final _cacheManager = di<DefaultCacheManager>();
+
   ValueListenable<List<Authorization>> get authorizations => _authorizations;
 
   final _authorizations = ValueNotifier<List<Authorization>>([]);

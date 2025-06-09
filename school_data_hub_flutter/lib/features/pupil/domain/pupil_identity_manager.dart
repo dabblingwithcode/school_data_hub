@@ -23,17 +23,21 @@ import 'package:watch_it/watch_it.dart';
 final _envManager = di<EnvManager>();
 final _notificationService = di<NotificationService>();
 final _mainMenuBottomNavManager = di<BottomNavManager>();
+final _log = Logger('PupilIdentityManager');
 
 class PupilIdentityManager {
-  final log = Logger('PupilIdentityManager');
-
   final secureStorageKey = _envManager.storageKeyForPupilIdentities;
   Map<int, PupilIdentity> _pupilIdentities = {};
 
   final _groups = ValueNotifier<Set<String>>({});
   ValueListenable<Set<String>> get groups => _groups;
 
-  List<int> get availablePupilIds => _pupilIdentities.keys.toList();
+  // List<int> get availablePupilIds => _pupilIdentities.keys.toList();
+  List<int> get availablePupilIds {
+    _log.info(
+        'getter returning [${_pupilIdentities.keys.length}] available pupil ids');
+    return _pupilIdentities.keys.toList();
+  }
 
   PupilIdentity getPupilIdentity(int internalId) {
     if (_pupilIdentities.containsKey(internalId) == false) {
@@ -46,6 +50,12 @@ class PupilIdentityManager {
   Future<PupilIdentityManager> init() async {
     await getPupilIdentitiesForEnv();
     return this;
+  }
+
+  void dispose() {
+    _groups.dispose();
+    _pupilIdentities.clear();
+    _log.info('PupilIdentityManager disposed');
   }
 
   Future<void> deleteAllPupilIdentities() async {
@@ -70,15 +80,16 @@ class PupilIdentityManager {
             secureStorageKey: secureStorageKey);
 
     if (pupilIdentities.isEmpty) {
-      log.warning(
+      _log.warning(
           'No stored pupil identities found for ${activeEnv.serverName}');
     } else {
-      log.info(
+      _log.info(
           '${pupilIdentities.length} Pupil identities for [${activeEnv.serverName}] loaded from secure storage');
     }
-
+    _pupilIdentities.clear();
     _pupilIdentities = pupilIdentities;
-
+    _log.warning(
+        '${_pupilIdentities.entries.length} Pupil identities for [${activeEnv.serverName}] loaded from secure storage: ${_pupilIdentities.length}');
     _groups.value = _pupilIdentities.values.map((e) => e.group).toSet();
 
     return;
@@ -161,7 +172,7 @@ class PupilIdentityManager {
     final jsonPupilIdentitiesAsString = json.encode(jsonMap);
     await HubSecureStorage()
         .setString(secureStorageKey, jsonPupilIdentitiesAsString);
-    log.info(
+    _log.info(
         'Pupil identities written to secure storage with key $secureStorageKey');
   }
 
@@ -261,7 +272,7 @@ class PupilIdentityManager {
           ${pupilIdentity.lastName},
           ${pupilIdentity.group},
           ${pupilIdentity.schoolGrade},
-          $specialNeeds,, 
+          $specialNeeds,,
           ${pupilIdentity.gender},
           ${pupilIdentity.language},
           $family,
@@ -340,7 +351,7 @@ class PupilIdentityManager {
 
     writePupilIdentitiesToStorage();
 
-    log.info(
+    _log.info(
         ' ${toBeDeletedPupilIds.length} pupils are not in the database any moreand wer deleted.');
 
     return toBeDeletedPupilIdentities.join('\n');

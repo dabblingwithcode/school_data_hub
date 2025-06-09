@@ -10,7 +10,7 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/snackbars.dart';
-import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/widgets/environments_dropdown.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/landing_bottom_nav_bar.dart';
@@ -33,7 +33,8 @@ class LoginPage extends WatchingWidget {
               : snackbar(context, value.type, value.message),
     );
 
-    final bool isAuthenticated = watch(di<HubSessionManager>()).isSignedIn;
+    final bool isAuthenticated =
+        watchValue((EnvManager x) => x.isAuthenticated);
 
     final locale = AppLocalizations.of(context)!;
     log.info('isAuthenticated: $isAuthenticated');

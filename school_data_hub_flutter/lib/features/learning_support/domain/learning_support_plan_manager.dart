@@ -9,13 +9,17 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _schoolCalendarManager = di<SchoolCalendarManager>();
-final _learningSupportApiService = di<LearningSupportApiService>();
-final _pupilManager = di<PupilManager>();
-final _hubSessionManager = di<HubSessionManager>();
-final _notificationService = di<NotificationService>();
-
 class LearningSupportPlanManager with ChangeNotifier {
+  final _schoolCalendarManager = di<SchoolCalendarManager>();
+
+  final _learningSupportApiService = LearningSupportApiService();
+
+  final _pupilManager = di<PupilManager>();
+
+  final _hubSessionManager = di<HubSessionManager>();
+
+  final _notificationService = di<NotificationService>();
+
   final _learningSupportPlans =
       ValueNotifier<Map<int, List<LearningSupportPlan>>>({});
 

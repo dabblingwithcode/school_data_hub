@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
@@ -7,7 +8,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_man
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _pupilIdentityManager = di<PupilIdentityManager>();
+final _log = Logger('PupilIdentityHelper');
 
 class PupilIdentityHelper {
   //- LOCAL STORAGE HELPERS
@@ -33,7 +34,9 @@ class PupilIdentityHelper {
   static Future<void> deletePupilIdentitiesForEnv(
       String secureStorageKey) async {
     await HubSecureStorage().remove(secureStorageKey);
-    _pupilIdentityManager.clearPupilIdentities();
+    _log.warning(
+        'Pupil identities for environment $secureStorageKey have been deleted.');
+    di<PupilIdentityManager>().clearPupilIdentities();
 
     di<PupilsFilter>().clearFilteredPupils();
 
@@ -44,7 +47,6 @@ class PupilIdentityHelper {
 
   static PupilIdentity decodePupilIdentityFromStringList(
       List<String> pupilIdentityStringItems) {
-    //-TODO implement enum for the schoolyear
     final SchoolGrade schoolgrade;
     switch (pupilIdentityStringItems[5]) {
       case 'E1':

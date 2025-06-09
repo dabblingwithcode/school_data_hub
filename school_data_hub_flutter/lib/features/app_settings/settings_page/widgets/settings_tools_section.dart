@@ -6,13 +6,13 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_man
 import 'package:school_data_hub_flutter/features/pupil/presentation/birthdays_page.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _pupilIdentityManager = di<PupilIdentityManager>();
-
 class SettingsToolsSection extends AbstractSettingsSection {
   const SettingsToolsSection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _pupilIdentityManager = di<PupilIdentityManager>();
+
     return SettingsSection(
       title: const Padding(
         padding: EdgeInsets.all(8.0),

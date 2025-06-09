@@ -6,11 +6,11 @@ import 'package:school_data_hub_flutter/features/books/data/book_api_service.dar
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _bookApiService = BookApiService();
-
-final _notificationService = di<NotificationService>();
-
 class BookManager {
+  final _bookApiService = BookApiService();
+
+  final _notificationService = di<NotificationService>();
+
   final _libraryBookProxies = ValueNotifier<List<LibraryBookProxy>>([]);
   ValueListenable<List<LibraryBookProxy>> get libraryBookProxies =>
       _libraryBookProxies;

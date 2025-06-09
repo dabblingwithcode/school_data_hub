@@ -7,22 +7,22 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/domain/models/nullable_records.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/data/schoolday_event_api_service.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/models/pupil_schoolday_events_proxy.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _cacheManager = di<DefaultCacheManager>();
-
-final _log = Logger('SchooldayEventManager');
-
-final _notificationService = di<NotificationService>();
-
-final _pupilManager = di<PupilManager>();
-
-final _schooldayEventApiService = SchooldayEventApiService();
-
 class SchooldayEventManager with ChangeNotifier {
+  final _cacheManager = di<DefaultCacheManager>();
+
+  final _log = Logger('SchooldayEventManager');
+
+  final _notificationService = di<NotificationService>();
+
+  final _pupilManager = di<PupilManager>();
+
+  final _schooldayEventApiService = SchooldayEventApiService();
+
   final Map<int, SchooldayEvent> _schooldayEventsMap = {};
 
   List<SchooldayEvent> get schooldayEvents =>
@@ -48,6 +48,10 @@ class SchooldayEventManager with ChangeNotifier {
   //- Getters
 
   PupilSchooldayEventsProxy getPupilSchooldayEventsProxy(int pupilId) {
+    if (!_pupilSchooldayEventsMap.containsKey(pupilId)) {
+      _log.warning('No PupilSchooldayEventsProxy found for pupilId: $pupilId');
+      _pupilSchooldayEventsMap[pupilId] = PupilSchooldayEventsProxy();
+    }
     return _pupilSchooldayEventsMap[pupilId]!;
   }
 
@@ -56,7 +60,10 @@ class SchooldayEventManager with ChangeNotifier {
   void _updateSchooldayEventCollections(SchooldayEvent event) {
     _log.info('updateSchooldayEventInCollections: $event');
     final pupilId = event.pupilId;
-
+    // Ensure the pupil proxy exists
+    if (!_pupilSchooldayEventsMap.containsKey(pupilId)) {
+      _pupilSchooldayEventsMap[pupilId] = PupilSchooldayEventsProxy();
+    }
     // 1. Update pupil map
     _pupilSchooldayEventsMap[pupilId]!.updateSchooldayEvent(event);
 

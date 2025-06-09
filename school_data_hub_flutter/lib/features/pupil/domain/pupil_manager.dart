@@ -17,15 +17,19 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _log = Logger('PupilManager');
-final _notificationService = di<NotificationService>();
-final _cacheManager = di<DefaultCacheManager>();
-final _pupilIdentityManager = di<PupilIdentityManager>();
-final _hubSessionManager = di<HubSessionManager>();
-final _pupilDataApiService = PupilDataApiService();
-final _pupilBookApiService = PupilBookApiService();
-
 class PupilManager extends ChangeNotifier {
+  final _log = Logger('PupilManager');
+
+  final _notificationService = di<NotificationService>();
+
+  final _cacheManager = di<DefaultCacheManager>();
+
+  final _hubSessionManager = di<HubSessionManager>();
+
+  final _pupilDataApiService = PupilDataApiService();
+
+  final _pupilBookApiService = PupilBookApiService();
+
   final _pupilIdPupilsMap = <int, PupilProxy>{};
 
   List<PupilProxy> get allPupils => _pupilIdPupilsMap.values.toList();
@@ -139,8 +143,10 @@ class PupilManager extends ChangeNotifier {
   //- Fetch all available pupils from the backend
 
   Future<void> fetchAllPupils() async {
-    final pupilsToFetch = _pupilIdentityManager.availablePupilIds;
+    final pupilsToFetch = di<PupilIdentityManager>().availablePupilIds;
+    _log.info('Fetching pupils with internal ids: $pupilsToFetch');
     if (pupilsToFetch.isEmpty) {
+      _log.info('No pupil identities to fetch data from the backend');
       return;
     }
     await fetchPupilsByInternalId(pupilsToFetch);
@@ -189,8 +195,8 @@ class PupilManager extends ChangeNotifier {
         // if the pupil is not in the repository, that would be weird
         // since we did not send the id to the backend
 
-        final pupilIdentity =
-            _pupilIdentityManager.getPupilIdentity(fetchedPupil.internalId);
+        final pupilIdentity = di<PupilIdentityManager>()
+            .getPupilIdentity(fetchedPupil.internalId);
 
         _pupilIdPupilsMap[fetchedPupil.id!] =
             PupilProxy(pupilData: fetchedPupil, pupilIdentity: pupilIdentity);
@@ -203,7 +209,7 @@ class PupilManager extends ChangeNotifier {
     // and we need to delete the personal data from the device
 
     if (outdatedPupilIdentitiesIds.isNotEmpty) {
-      final deletedPupilIdentities = await _pupilIdentityManager
+      final deletedPupilIdentities = await di<PupilIdentityManager>()
           .deleteOrphanPupilIdentities(outdatedPupilIdentitiesIds);
       _notificationService.showInformationDialog(
           'Diese Schüler_innen existieren nicht mehr in der Datenbank, Ihre Ids wurden aus dem Gerät gelöscht:\n\n$deletedPupilIdentities');

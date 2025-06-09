@@ -2,12 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
+import 'package:school_data_hub_flutter/app_utils/app_helpers.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_utilites.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/app_utils/app_helpers.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/set_matrix_environment_page/set_matrix_environment_controller.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_page/new_school_semester_page.dart';
@@ -16,16 +16,17 @@ import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/create_user_page.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _envManager = di<EnvManager>();
-final _notificationService = di<NotificationService>();
-
-final _userManager = di<UserManager>();
-
 class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
   const SettingsAdminSection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _envManager = di<EnvManager>();
+
+    final _notificationService = di<NotificationService>();
+
+    final _userManager = di<UserManager>();
+
     final bool matrixPolicyManagerIsRegistered = watchPropertyValue(
         (HubSessionManager x) => x.matrixPolicyManagerRegistrationStatus);
     return SettingsSection(

@@ -10,15 +10,15 @@ import 'package:school_data_hub_flutter/features/school_lists/domain/models/pupi
 import 'package:school_data_hub_flutter/features/school_lists/domain/models/school_list_pupil_entries_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _notificationService = di<NotificationService>();
-
-final _apiSchoolListService = SchoolListApiService();
-
-final _pupilManager = di<PupilManager>();
-
-final _log = Logger('SchoolListManager');
-
 class SchoolListManager with ChangeNotifier {
+  final _notificationService = di<NotificationService>();
+
+  final _apiSchoolListService = SchoolListApiService();
+
+  final _pupilManager = di<PupilManager>();
+
+  final _log = Logger('SchoolListManager');
+
   final Map<int, SchoolList> _schoolListMap =
       {}; //-When created, copyWith with pupilEntries = null to avoid redundance!
 
