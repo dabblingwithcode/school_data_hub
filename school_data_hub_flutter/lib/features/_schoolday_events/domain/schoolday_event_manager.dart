@@ -58,7 +58,6 @@ class SchooldayEventManager with ChangeNotifier {
   //- Handle collections
 
   void _updateSchooldayEventCollections(SchooldayEvent event) {
-    _log.info('updateSchooldayEventInCollections: $event');
     final pupilId = event.pupilId;
     // Ensure the pupil proxy exists
     if (!_pupilSchooldayEventsMap.containsKey(pupilId)) {
@@ -78,15 +77,12 @@ class SchooldayEventManager with ChangeNotifier {
   }
 
   void updateSchooldayEventsBatchInCollections(List<SchooldayEvent> events) {
-    _log.info('updateSchooldayEventsInCollections: $events');
     for (var event in events) {
       _updateSchooldayEventCollections(event);
     }
   }
 
   void removeSchooldayEventFromCollections(SchooldayEvent event) {
-    _log.info('removeSchooldayEventFromCollections: $event');
-
     final pupilId = event.pupilId;
 
     // 1. Remove pupil map

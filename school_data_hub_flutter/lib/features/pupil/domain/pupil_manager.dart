@@ -144,7 +144,7 @@ class PupilManager extends ChangeNotifier {
 
   Future<void> fetchAllPupils() async {
     final pupilsToFetch = di<PupilIdentityManager>().availablePupilIds;
-    _log.info('Fetching pupils with internal ids: $pupilsToFetch');
+
     if (pupilsToFetch.isEmpty) {
       _log.info('No pupil identities to fetch data from the backend');
       return;

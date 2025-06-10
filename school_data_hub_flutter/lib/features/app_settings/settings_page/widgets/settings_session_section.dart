@@ -19,10 +19,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final _sessionManager = di<HubSessionManager>();
-
-    final _envManager = di<EnvManager>();
-
+    final serverName = watchPropertyValue((EnvManager x) => x.activeEnv);
     final _cacheManager = di<DefaultCacheManager>();
 
     final _notificationService = di<NotificationService>();
@@ -30,7 +27,9 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
     final locale = AppLocalizations.of(context)!;
 
     //final int credit = session.credit!;
-    final String username = _sessionManager.signedInUser!.userName!;
+    final String username = watchPropertyValue((HubSessionManager x) => x.user)!
+        .userInfo!
+        .userName!;
 
     return SettingsSection(
       title: Text(
@@ -43,7 +42,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           leading: const Icon(Icons.home),
           title: const Text('Instanz:'),
           value: Text(
-            _envManager.activeEnv!.serverName,
+            serverName!.serverName,
           ),
           trailing: null,
         ),
@@ -53,7 +52,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           leading: const Icon(
             Icons.account_circle_rounded,
           ),
-          title: const Text('Angemeldet als'),
+          title: const Text('Benutzername'),
           value: Text(
             username,
             style: const TextStyle(
@@ -122,7 +121,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
                 title: 'Ausloggen',
                 message: 'Wirklich ausloggen?\n\nDaten bleiben erhalten!');
             if (confirm == true && context.mounted) {
-              _sessionManager.signOutDevice();
+              di<HubSessionManager>().signOutDevice();
 
               _notificationService.showSnackBar(
                   NotificationType.success, 'Erfolgreich ausgeloggt!');
@@ -149,7 +148,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
                 message: 'Kinder-Ids für diese Instanz löschen?');
             if (confirm == true && context.mounted) {
               PupilIdentityHelper.deletePupilIdentitiesForEnv(
-                  _envManager.storageKeyForPupilIdentities);
+                  di<EnvManager>().storageKeyForPupilIdentities);
               _notificationService.showSnackBar(
                   NotificationType.success, 'Kinder-Ids gelöscht');
             }
@@ -170,8 +169,8 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
                 title: 'Instanz-ID-Schlüssel löschen',
                 message: 'Instanz-ID-Schlüssel löschen?');
             if (confirm == true && context.mounted) {
-              await _envManager.deleteEnv();
-              _sessionManager.signOutDevice();
+              await di<EnvManager>().deleteEnv();
+              di<HubSessionManager>().signOutDevice();
               DiManager.unregisterManagersDependentOnEnv();
               _notificationService.showSnackBar(
                   NotificationType.success, 'Instanz-ID-Schlüssel gelöscht');

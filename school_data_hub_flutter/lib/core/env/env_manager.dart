@@ -13,7 +13,7 @@ import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_cre
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-class EnvManager {
+class EnvManager with ChangeNotifier {
   final _log = Logger('EnvManager');
 
   final _notificationService = di<NotificationService>();
@@ -139,7 +139,7 @@ class EnvManager {
 
     _activeEnv =
         environmentsMapWithDefaultServerEnv.environmentsMap[_defaultEnv];
-
+    notifyListeners();
     _log.info(
       'Default Environment set: $_defaultEnv',
     );
@@ -224,7 +224,7 @@ class EnvManager {
     _activeEnv = _environments[envName]!;
 
     _defaultEnv = envName;
-
+    notifyListeners();
     // The active environment changed, we need to update
     // this information in storage
     final updatedEnvsForStorage = EnvsInStorage(
@@ -256,9 +256,6 @@ class EnvManager {
     // notify the user that the environment has been activated
     _notificationService.showSnackBar(NotificationType.success,
         'Umgebung ${_activeEnv!.serverName} aktiviert!');
-
-    // reset the managers depending on the active environment
-    di.popScope();
   }
 
   Future<void> deleteEnv() async {
@@ -281,15 +278,12 @@ class EnvManager {
 
       _defaultEnv = _environments.keys.last;
       _log.info('Env $deletedEnvironment New defaultEnv: $_defaultEnv');
-      di.dropScope('logged_in_user');
 
       _notificationService.showSnackBar(NotificationType.success,
           'Schulschlüssel für $deletedEnvironment gelöscht!');
 
       // reset the managers depending on the active environment
-      di.popScope();
-      // propagate the new environment to the pupil identity manager
-      await propagateNewEnv();
+      DiManager.resetActiveEnvDependentManagers();
     } else {
       // if there are no environments left, delete the environments from secure storage
 

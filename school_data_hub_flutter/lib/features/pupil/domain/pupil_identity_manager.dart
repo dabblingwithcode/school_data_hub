@@ -79,17 +79,16 @@ class PupilIdentityManager {
         await PupilIdentityHelper.readPupilIdentitiesFromStorage(
             secureStorageKey: secureStorageKey);
 
+    _pupilIdentities.clear();
+    _pupilIdentities = pupilIdentities;
     if (pupilIdentities.isEmpty) {
       _log.warning(
           'No stored pupil identities found for ${activeEnv.serverName}');
     } else {
       _log.info(
-          '${pupilIdentities.length} Pupil identities for [${activeEnv.serverName}] loaded from secure storage');
+          '${pupilIdentities.length} Pupil identities for [${activeEnv.serverName}] loaded from secure storage: ${_pupilIdentities.length}');
     }
-    _pupilIdentities.clear();
-    _pupilIdentities = pupilIdentities;
-    _log.warning(
-        '${_pupilIdentities.entries.length} Pupil identities for [${activeEnv.serverName}] loaded from secure storage: ${_pupilIdentities.length}');
+
     _groups.value = _pupilIdentities.values.map((e) => e.group).toSet();
 
     return;

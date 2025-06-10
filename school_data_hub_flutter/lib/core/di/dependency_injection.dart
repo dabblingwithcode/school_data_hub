@@ -57,7 +57,7 @@ class DiManager {
     di.pushNewScopeAsync(
       scopeName: DiScope.activeEnvScope.name,
       dispose: () {
-        _log.info('Disposing activeEnvScope');
+        _log.severe('Disposing activeEnvScope', [StackTrace.current]);
       },
       init: (getIt) async {
         _log.info('Registering managers depending on activeEnvScope');
@@ -73,15 +73,16 @@ class DiManager {
     _log.info('Registering managers depending on session');
 
     if (di.hasScope(DiScope.loggedInUserScope.name)) {
+      _log.severe(
+          'Logged in user scope already exists, resetting it to reinitialize managers...');
       await di.dropScope(DiScope.loggedInUserScope.name);
-      _log.info(
-          'Logged in user scope already exists, resetting it to reinitialize managers');
+
       return;
     }
     di.pushNewScopeAsync(
       scopeName: DiScope.loggedInUserScope.name,
       dispose: () {
-        _log.info('Disposing loggedInUserScope');
+        _log.severe('Disposing loggedInUserScope', [StackTrace.current]);
       },
       init: (getIt) async {
         await DiOnUserAuth.registerManagers();
@@ -91,7 +92,7 @@ class DiManager {
   }
 
   static Future<void> unregisterManagersDependingOnSession() async {
-    _log.info('Unregistering managers depending on session');
+    _log.severe('Unregistering managers depending on session');
 
     di.dropScope(DiScope.loggedInUserScope
         .name); // This will dispose the 'logged_in_user_scope'
@@ -99,16 +100,18 @@ class DiManager {
 
   static Future<void> resetActiveEnvDependentManagers() async {
     if (di.hasScope(DiScope.loggedInUserScope.name)) {
+      _log.severe(
+          'resetActiveEnvDependentManagers: dropping loggedInUserScope...');
       await di.dropScope(DiScope.loggedInUserScope.name);
     }
 
     await di.dropScope(DiScope.activeEnvScope.name);
-    _log.info('Active environment dependent managers reset');
+    _log.warning('Active environment dependent managers reset');
     await registerManagersDependingOnActiveEnv();
   }
 
   static Future<void> unregisterManagersDependentOnEnv() async {
-    _log.info('Unregistering managers depending on environment');
+    _log.severe('unregisterManagersDependentOnEnv: dropping scopes...');
 
     await di.dropScope(DiScope.loggedInUserScope.name);
     await di.dropScope(DiScope.activeEnvScope.name);
