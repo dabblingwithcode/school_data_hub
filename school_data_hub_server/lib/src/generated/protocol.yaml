@@ -9,9 +9,9 @@ admin:
 missedSchoolday:
   - streamMissedSchooldays:
   - postMissedSchoolday:
-  - postMissedSchooldayes:
-  - fetchAllMissedSchooldayes:
-  - fetchMissedSchooldayesOnASchoolday:
+  - postMissedSchooldays:
+  - fetchAllMissedSchooldays:
+  - fetchMissedSchooldaysOnASchoolday:
   - deleteMissedSchoolday:
   - updateMissedSchoolday:
 authorization:
@@ -87,6 +87,9 @@ pupil:
   - deletePupilDocument:
   - resetPublicMediaAuth:
   - deleteSupportLevelHistoryItem:
+pupilIdentityStream:
+  - streamEncryptedPupilIds:
+  - sendPupilIdentityMessage:
 pupilUpdate:
   - updatePupil:
   - updateCommunicationSkills:

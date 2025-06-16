@@ -15,7 +15,7 @@ class AttendanceApiService {
 
   Future<List<MissedSchoolday>?> fetchAllMissedSchooldayes() async {
     final missedSchooldays = await ClientHelper.apiCall(
-      call: () => _client.missedSchoolday.fetchAllMissedSchooldayes(),
+      call: () => _client.missedSchoolday.fetchAllMissedSchooldays(),
       errorMessage: 'Fehler beim Laden der Fehlzeiten',
     );
     return missedSchooldays;
@@ -27,7 +27,7 @@ class AttendanceApiService {
       DateTime schoolday) async {
     final missedSchooldays = await ClientHelper.apiCall(
       call: () =>
-          _client.missedSchoolday.fetchMissedSchooldayesOnASchoolday(schoolday),
+          _client.missedSchoolday.fetchMissedSchooldaysOnASchoolday(schoolday),
       errorMessage: 'Fehler beim Laden der Fehlzeiten',
     );
     return missedSchooldays;
@@ -70,7 +70,7 @@ class AttendanceApiService {
       {required List<MissedSchoolday> missedSchooldays}) async {
     final missedSchooldaysList = await ClientHelper.apiCall(
       call: () =>
-          _client.missedSchoolday.postMissedSchooldayes(missedSchooldays),
+          _client.missedSchoolday.postMissedSchooldays(missedSchooldays),
       errorMessage: 'Fehler beim Eintragen der Fehlzeiten',
     );
     return missedSchooldaysList;

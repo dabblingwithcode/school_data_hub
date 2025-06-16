@@ -244,6 +244,11 @@ class EnvManager with ChangeNotifier {
     // and if so, unregister them
     // and register them again with the new environment
 
+    // Set the isAuthenticated flag to false
+    // because the user might not be authenticated in the new environment (yet)
+    // and we need to show the login screen again then
+
+    _isAuthenticated.value = false;
     await DiManager.resetActiveEnvDependentManagers();
     await di.allReady();
     _notificationService.showInformationDialog(

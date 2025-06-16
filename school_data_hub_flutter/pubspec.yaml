@@ -31,11 +31,11 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.5
-  window_manager: ^0.4.3
+  window_manager: ^0.5.0
   serverpod_auth_shared_flutter: 2.8.0
   watch_it: ^1.6.5
   package_info_plus: ^8.3.0
-  file_picker: ^9.2.1
+  file_picker: ^10.1.9
   gap: ^3.0.1
   flutter_localizations: 
     sdk: flutter
@@ -46,7 +46,7 @@ dependencies:
   qr_flutter: ^4.1.0
   qr_code_vision: ^0.1.2 ## This one is used to read a qr code from an image - we need it to scan code files in windows (no camera)
   image_picker: ^1.1.2
-  pasteboard: ^0.3.0
+  pasteboard: ^0.4.0
   path_provider: ^2.1.5
   crop_image: ^1.0.16
   widget_zoom: ^0.0.4
@@ -63,7 +63,7 @@ dependencies:
   logging: ^1.3.0
   ansicolor: ^2.0.3
   table_calendar: ^3.1.3
-  calendar_date_picker2: 2.0.0
+  calendar_date_picker2: 2.0.1
   cryptography_plus: ^2.7.1
   pdf: ^3.11.3
   printing: ^5.14.2

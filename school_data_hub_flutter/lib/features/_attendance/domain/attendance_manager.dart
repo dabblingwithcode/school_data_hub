@@ -178,8 +178,8 @@ class AttendanceManager with ChangeNotifier {
           _notificationService.showInformationDialog(
               'Der Server konnte nicht gefunden werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.');
         } else {
-          _notificationService.showSnackBar(
-              NotificationType.error, 'Ein unbekannter Fehler ist aufgetreten');
+          _notificationService.showSnackBar(NotificationType.error,
+              'Ein unbekannter Fehler ist aufgetreten: $errorString');
         }
         Future.delayed(
             const Duration(seconds: 1), missedSchooldayStreamSubscription);

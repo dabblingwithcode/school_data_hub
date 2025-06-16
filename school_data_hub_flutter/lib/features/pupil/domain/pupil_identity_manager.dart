@@ -12,6 +12,7 @@ import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/data/pupil_data_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_selector_filters.dart';
@@ -25,12 +26,19 @@ final _notificationService = di<NotificationService>();
 final _mainMenuBottomNavManager = di<BottomNavManager>();
 final _log = Logger('PupilIdentityManager');
 
+enum PupilIdentityStreamRole {
+  sender,
+  receiver,
+}
+
 class PupilIdentityManager {
   final secureStorageKey = _envManager.storageKeyForPupilIdentities;
   Map<int, PupilIdentity> _pupilIdentities = {};
 
   final _groups = ValueNotifier<Set<String>>({});
   ValueListenable<Set<String>> get groups => _groups;
+
+  StreamSubscription<PupilIdentityDto>? _encryptedPupilIdsSubscription;
 
   // List<int> get availablePupilIds => _pupilIdentities.keys.toList();
   List<int> get availablePupilIds {
@@ -265,6 +273,8 @@ class PupilIdentityManager {
       // We need
       final specialNeeds = pupilIdentity.specialNeeds ?? '';
       final family = pupilIdentity.family ?? '';
+      //! THIS IS WRONG AND SHOULD BE FIXED
+      //! TODO: fix this
       final String pupilbaseString = '''
           ${pupilIdentity.id},
           ${pupilIdentity.firstName},
@@ -354,5 +364,80 @@ class PupilIdentityManager {
         ' ${toBeDeletedPupilIds.length} pupils are not in the database any moreand wer deleted.');
 
     return toBeDeletedPupilIdentities.join('\n');
+  }
+
+  StreamSubscription<PupilIdentityDto> encryptedPupilIdsStreamSubscription(
+      {required String channelName,
+      required PupilIdentityStreamRole role,
+      String? encryptedPupilIds}) {
+    _log.info(
+        'encryptedPupilIdsStreamSubscription called with channelName: $channelName and role: $role');
+    final _client = di<Client>();
+    _log.info('starting missedSchooldayStreamSubscription');
+    // just in case we have a previous subscription, we cancel it first
+    _encryptedPupilIdsSubscription?.cancel();
+    _encryptedPupilIdsSubscription =
+        _client.pupilIdentityStream.streamEncryptedPupilIds(channelName).listen(
+      (event) async {
+        switch (role) {
+          case PupilIdentityStreamRole.sender:
+            switch (event.type) {
+              case 'request':
+                // TODO: Show in UI
+                await _client.pupilIdentityStream.sendPupilIdentityMessage(
+                  channelName,
+                  PupilIdentityDto(
+                      type: 'data', value: encryptedPupilIds ?? ''),
+                );
+                break;
+              case 'ok':
+                _encryptedPupilIdsSubscription!.cancel();
+                return;
+            }
+            break;
+          case PupilIdentityStreamRole.receiver:
+            switch (event.type) {
+              case 'data':
+                await decryptAndAddOrUpdatePupilIdentities([event.value]);
+                await _client.pupilIdentityStream.sendPupilIdentityMessage(
+                  channelName,
+                  PupilIdentityDto(type: 'ok', value: ''),
+                );
+                _encryptedPupilIdsSubscription!.cancel();
+                return;
+            }
+        }
+      },
+      onError: (error) async {
+        final errorString = error.toString();
+        ;
+        _log.severe('Error in pupil identity stream: $error');
+        if (error.toString().contains('Unauthorized')) {
+          _encryptedPupilIdsSubscription!.cancel();
+          return di<HubSessionManager>().signOutDevice();
+        } else if (error.toString().contains('Netzwerkverbindung abgelehnt')) {
+          // TODO: Implement server not responding
+          //- This is very buggy
+          _notificationService.showInformationDialog(
+              'Der Server konnte nicht gefunden werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.');
+        } else {
+          _notificationService.showSnackBar(NotificationType.error,
+              'Ein unbekannter Fehler ist aufgetreten: $errorString');
+        }
+        // retry the subscription after a delay
+        await Future.delayed(const Duration(seconds: 1));
+        _encryptedPupilIdsSubscription!.cancel();
+        encryptedPupilIdsStreamSubscription(
+          channelName: channelName,
+          role: role,
+          encryptedPupilIds: encryptedPupilIds,
+        );
+      },
+      onDone: () {
+        _notificationService.showSnackBar(
+            NotificationType.success, 'Verbindung zum Client geschlossen.');
+      },
+    );
+    return _encryptedPupilIdsSubscription!;
   }
 }

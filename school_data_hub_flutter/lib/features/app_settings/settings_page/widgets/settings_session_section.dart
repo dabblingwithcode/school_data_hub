@@ -19,6 +19,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
+    di.allReady();
     final serverName = watchPropertyValue((EnvManager x) => x.activeEnv);
     final _cacheManager = di<DefaultCacheManager>();
 

@@ -33,19 +33,19 @@ class MissedSchooldayEndpoint extends Endpoint {
     );
     // Send the new missed class to the stream
     session.messages.postMessage(
-      'missed_class_stream',
+      'missed_schooldays_stream',
       newMissedSchooldayDto,
     );
     return missedSchooldayWithRelation;
   }
 
-  Future<List<MissedSchoolday>> postMissedSchooldayes(
+  Future<List<MissedSchoolday>> postMissedSchooldays(
       Session session, List<MissedSchoolday> missedClasses) async {
     final createdMissedSchooldays = await session.db.insert(missedClasses);
     return createdMissedSchooldays;
   }
 
-  Future<List<MissedSchoolday>> fetchAllMissedSchooldayes(Session session) {
+  Future<List<MissedSchoolday>> fetchAllMissedSchooldays(Session session) {
     return MissedSchoolday.db.find(
       session,
       include: MissedSchoolday.include(
@@ -54,7 +54,7 @@ class MissedSchooldayEndpoint extends Endpoint {
     );
   }
 
-  Future<List<MissedSchoolday>> fetchMissedSchooldayesOnASchoolday(
+  Future<List<MissedSchoolday>> fetchMissedSchooldaysOnASchoolday(
       Session session, DateTime schoolday) async {
     final missedSchooldays = await MissedSchoolday.db.find(
       session,
@@ -83,7 +83,7 @@ class MissedSchooldayEndpoint extends Endpoint {
     );
     // Send the deleted missed class to the stream
     session.messages.postMessage(
-      'missed_class_stream',
+      'missed_schooldays_stream',
       deletedMissedSchooldayDto,
     );
     return true;
@@ -107,7 +107,7 @@ class MissedSchooldayEndpoint extends Endpoint {
     );
     // Send the updated missed class to the stream
     session.messages.postMessage(
-      'missed_class_stream',
+      'missed_schooldays_stream',
       updatedMissedSchooldayDto,
     );
 
