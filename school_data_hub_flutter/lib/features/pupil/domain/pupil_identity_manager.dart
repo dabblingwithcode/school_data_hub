@@ -261,11 +261,11 @@ class PupilIdentityManager {
     return;
   }
 
-  Future<String> generatePupilIdentitiesQrData(List<int> pupilIds) async {
+  Future<String> generatePupilIdentitiesQrData(List<int> internalIds) async {
     String qrString = '';
-    for (int pupilId in pupilIds) {
+    for (int internalId in internalIds) {
       PupilIdentity pupilIdentity = _pupilIdentities.values
-          .where((element) => element.id == pupilId)
+          .where((element) => element.id == internalId)
           .single;
       final migrationSupportEnds = pupilIdentity.migrationSupportEnds != null
           ? pupilIdentity.migrationSupportEnds!.formatForJson()
@@ -273,23 +273,29 @@ class PupilIdentityManager {
       // We need
       final specialNeeds = pupilIdentity.specialNeeds ?? '';
       final family = pupilIdentity.family ?? '';
-      //! THIS IS WRONG AND SHOULD BE FIXED
-      //! TODO: fix this
-      final String pupilbaseString = '''
-          ${pupilIdentity.id},
-          ${pupilIdentity.firstName},
-          ${pupilIdentity.lastName},
-          ${pupilIdentity.group},
-          ${pupilIdentity.schoolGrade},
-          $specialNeeds,,
-          ${pupilIdentity.gender},
-          ${pupilIdentity.language},
-          $family,
-          ${pupilIdentity.birthday.formatForJson()},
-          $migrationSupportEnds,
-          ${pupilIdentity.pupilSince.formatForJson()},
-          \n''';
-      qrString = qrString + pupilbaseString;
+
+      final String pupilIdentityString = [
+            pupilIdentity.id.toString(),
+            pupilIdentity.firstName,
+            pupilIdentity.lastName,
+            pupilIdentity.group,
+            pupilIdentity.groupTutor,
+            pupilIdentity.schoolGrade,
+            specialNeeds,
+            '', // this is a placeholder for the second special needs field in the administrative data source
+            pupilIdentity.gender,
+            pupilIdentity.language,
+            family,
+            pupilIdentity.birthday.formatForJson(),
+            migrationSupportEnds,
+            pupilIdentity.pupilSince.formatForJson(),
+            pupilIdentity.afterSchoolCare,
+            pupilIdentity.religion ?? '',
+            pupilIdentity.religionLessonsSince?.formatForJson() ?? '',
+            pupilIdentity.leavingDate?.formatForJson() ?? '',
+          ].join(',') +
+          ',\n';
+      qrString = qrString + pupilIdentityString;
     }
     final encryptedString = customEncrypter.encryptString(qrString);
     return encryptedString;
@@ -383,21 +389,30 @@ class PupilIdentityManager {
           case PupilIdentityStreamRole.sender:
             switch (event.type) {
               case 'request':
+                _log.info(
+                    'Sender requested encrypted pupil identities, sending data...');
                 // TODO: Show in UI
                 await _client.pupilIdentityStream.sendPupilIdentityMessage(
                   channelName,
                   PupilIdentityDto(
                       type: 'data', value: encryptedPupilIds ?? ''),
                 );
+
                 break;
               case 'ok':
+                _log.info('Receiver acknowledged the data');
                 _encryptedPupilIdsSubscription!.cancel();
                 return;
             }
             break;
           case PupilIdentityStreamRole.receiver:
             switch (event.type) {
+              case 'request':
+                _log.info('Sender requested encrypted pupil identities');
+                break;
               case 'data':
+                _log.info(
+                    'Received encrypted pupil identities: ${event.value.length} characters');
                 await decryptAndAddOrUpdatePupilIdentities([event.value]);
                 await _client.pupilIdentityStream.sendPupilIdentityMessage(
                   channelName,
@@ -438,6 +453,7 @@ class PupilIdentityManager {
             NotificationType.success, 'Verbindung zum Client geschlossen.');
       },
     );
+
     return _encryptedPupilIdsSubscription!;
   }
 }

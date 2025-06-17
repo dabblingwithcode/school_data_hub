@@ -21,10 +21,11 @@ class FilesEndpoint extends Endpoint {
   /// as described in https://docs.serverpod.dev/concepts/file-uploads#client-side-code
   Future<bool> verifyUpload(
       Session session, String storageId, String path) async {
-    return await session.storage.verifyDirectFileUpload(
+    final result = await session.storage.verifyDirectFileUpload(
       storageId: storageId,
       path: path,
     );
+    return result;
   }
 
   /// As described in https://docs.serverpod.dev/concepts/file-uploads#client-side-code

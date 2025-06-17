@@ -134,7 +134,15 @@ class SchooldayEventApiService {
 
       final fileLength = await file.length();
       _notificationService.apiRunning(true);
-      await uploader.upload(fileStream, fileLength);
+      try {
+        await uploader.upload(fileStream, fileLength);
+      } catch (e) {
+        _notificationService.apiRunning(false);
+        _log.severe('Error while uploading file', e, StackTrace.current);
+
+        throw Exception('Failed to upload file, $uploadDescription');
+      }
+
       _notificationService.apiRunning(false);
 
       // Verify the upload

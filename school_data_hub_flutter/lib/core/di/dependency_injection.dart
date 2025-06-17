@@ -104,7 +104,7 @@ class DiManager {
           'resetActiveEnvDependentManagers: dropping loggedInUserScope...');
       await di.dropScope(DiScope.loggedInUserScope.name);
     }
-
+    //- TODO IMPORTANT: check if this is necessary - makes trouble setting up the first env
     await di.dropScope(DiScope.activeEnvScope.name);
     _log.warning('Active environment dependent managers reset');
     await registerManagersDependingOnActiveEnv();

@@ -69,12 +69,37 @@ class PupilManager extends ChangeNotifier {
     return pupilsfromPupilIds;
   }
 
+  List<PupilProxy> getPupilsFromInternalIds(List<int> internalIds) {
+    List<PupilProxy> pupilsfromInternalIds = [];
+
+    for (int internalId in internalIds) {
+      final PupilProxy? pupil = _pupilIdPupilsMap.values
+          .firstWhereOrNull((pupil) => pupil.internalId == internalId);
+      if (pupil != null) {
+        pupilsfromInternalIds.add(pupil);
+      }
+    }
+
+    return pupilsfromInternalIds;
+  }
+
   List<int> getInternalIdsFromPupils(List<PupilProxy> pupils) {
     return pupils.map((pupil) => pupil.internalId).toList();
   }
 
   List<int> getPupilIdsFromPupils(List<PupilProxy> pupils) {
     return pupils.map((pupil) => pupil.pupilId).toList();
+  }
+
+  List<int> getInternalIdsFromPupilIds(List<int> pupilIds) {
+    List<int> internalIds = [];
+    for (int pupilId in pupilIds) {
+      final PupilProxy? pupil = _pupilIdPupilsMap[pupilId];
+      if (pupil != null) {
+        internalIds.add(pupil.internalId);
+      }
+    }
+    return internalIds;
   }
 
   List<PupilProxy> getPupilsNotListed(List<int> pupilIds) {

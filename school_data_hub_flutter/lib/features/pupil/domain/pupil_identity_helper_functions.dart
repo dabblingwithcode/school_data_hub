@@ -61,7 +61,13 @@ class PupilIdentityHelper {
       case '03':
         schoolgrade = SchoolGrade.K3;
         break;
+      case 'K3':
+        schoolgrade = SchoolGrade.K3;
+        break;
       case '04':
+        schoolgrade = SchoolGrade.K4;
+        break;
+      case 'K4':
         schoolgrade = SchoolGrade.K4;
         break;
       default:
