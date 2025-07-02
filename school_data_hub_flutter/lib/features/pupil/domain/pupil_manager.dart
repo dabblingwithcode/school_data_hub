@@ -221,10 +221,10 @@ class PupilManager extends ChangeNotifier {
         // since we did not send the id to the backend
 
         final pupilIdentity = di<PupilIdentityManager>()
-            .getPupilIdentity(fetchedPupil.internalId);
+            .getPupilIdentityByInternalId(fetchedPupil.internalId);
 
         _pupilIdPupilsMap[fetchedPupil.id!] =
-            PupilProxy(pupilData: fetchedPupil, pupilIdentity: pupilIdentity);
+            PupilProxy(pupilData: fetchedPupil, pupilIdentity: pupilIdentity!);
       }
     }
 

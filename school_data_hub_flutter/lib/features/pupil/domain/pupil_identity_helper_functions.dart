@@ -106,8 +106,7 @@ class PupilIdentityHelper {
       familyLanguageLessonsSince: pupilIdentityStringItems[17] == ''
           ? null
           : DateTime.tryParse(pupilIdentityStringItems[17])!,
-      leavingDate: pupilIdentityStringItems[18] == '' ||
-              pupilIdentityStringItems[18] == null
+      leavingDate: pupilIdentityStringItems[18] == ''
           ? null
           : DateTime.tryParse(pupilIdentityStringItems[18]),
     );

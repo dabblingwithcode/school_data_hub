@@ -22,9 +22,6 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart
 import 'package:watch_it/watch_it.dart';
 
 final _envManager = di<EnvManager>();
-final _notificationService = di<NotificationService>();
-final _mainMenuBottomNavManager = di<BottomNavManager>();
-final _log = Logger('PupilIdentityManager');
 
 enum PupilIdentityStreamRole {
   sender,
@@ -32,7 +29,14 @@ enum PupilIdentityStreamRole {
 }
 
 class PupilIdentityManager {
+  final _notificationService = di<NotificationService>();
+
+  final _mainMenuBottomNavManager = di<BottomNavManager>();
+
+  final _log = Logger('PupilIdentityManager');
+
   final secureStorageKey = _envManager.storageKeyForPupilIdentities;
+
   Map<int, PupilIdentity> _pupilIdentities = {};
 
   final _groups = ValueNotifier<Set<String>>({});
@@ -41,16 +45,22 @@ class PupilIdentityManager {
   StreamSubscription<PupilIdentityDto>? _encryptedPupilIdsSubscription;
 
   // List<int> get availablePupilIds => _pupilIdentities.keys.toList();
+
   List<int> get availablePupilIds {
-    _log.info(
+    _log.fine(
         'getter returning [${_pupilIdentities.keys.length}] available pupil ids');
     return _pupilIdentities.keys.toList();
   }
 
-  PupilIdentity getPupilIdentity(int internalId) {
+  PupilIdentity? getPupilIdentityByInternalId(int internalId) {
     if (_pupilIdentities.containsKey(internalId) == false) {
-      throw StateError(
-          'Pupil with id $internalId not found in pupil identities!');
+      _notificationService.showSnackBar(NotificationType.warning,
+          'Schülerdaten nicht gefunden (ID: $internalId)');
+      _notificationService.showInformationDialog(
+          '''Die Schülerdaten mit der ID $internalId konnten nicht gefunden werden.
+          
+          Bitte überprüfen Sie die ID und versuchen Sie es erneut.''');
+      return null;
     }
     return _pupilIdentities[internalId]!;
   }
@@ -372,10 +382,14 @@ class PupilIdentityManager {
     return toBeDeletedPupilIdentities.join('\n');
   }
 
-  StreamSubscription<PupilIdentityDto> encryptedPupilIdsStreamSubscription(
-      {required String channelName,
-      required PupilIdentityStreamRole role,
-      String? encryptedPupilIds}) {
+  StreamSubscription<PupilIdentityDto> encryptedPupilIdsStreamSubscription({
+    required String channelName,
+    required PupilIdentityStreamRole role,
+    String? encryptedPupilIds,
+    required Function() onConnected,
+    required Function(String message) onStatusUpdate,
+    required Function() onCompleted,
+  }) {
     _log.info(
         'encryptedPupilIdsStreamSubscription called with channelName: $channelName and role: $role');
     final _client = di<Client>();
@@ -385,13 +399,14 @@ class PupilIdentityManager {
     _encryptedPupilIdsSubscription =
         _client.pupilIdentityStream.streamEncryptedPupilIds(channelName).listen(
       (event) async {
+        onConnected();
         switch (role) {
           case PupilIdentityStreamRole.sender:
             switch (event.type) {
               case 'request':
                 _log.info(
                     'Sender requested encrypted pupil identities, sending data...');
-                // TODO: Show in UI
+                onStatusUpdate('Sende Daten...');
                 await _client.pupilIdentityStream.sendPupilIdentityMessage(
                   channelName,
                   PupilIdentityDto(
@@ -400,20 +415,26 @@ class PupilIdentityManager {
 
                 break;
               case 'ok':
+                onCompleted();
                 _log.info('Receiver acknowledged the data');
-                _encryptedPupilIdsSubscription!.cancel();
+
                 return;
             }
             break;
           case PupilIdentityStreamRole.receiver:
             switch (event.type) {
               case 'request':
+                onStatusUpdate(
+                    'Empfänger hat eine Anfrage für verschlüsselte Schülerdaten gesendet.');
+
                 _log.info('Sender requested encrypted pupil identities');
                 break;
               case 'data':
+                onStatusUpdate('Verschlüsselte Schülerdaten empfangen.');
                 _log.info(
                     'Received encrypted pupil identities: ${event.value.length} characters');
-                await decryptAndAddOrUpdatePupilIdentities([event.value]);
+                await di<PupilIdentityManager>()
+                    .decryptAndAddOrUpdatePupilIdentities([event.value]);
                 await _client.pupilIdentityStream.sendPupilIdentityMessage(
                   channelName,
                   PupilIdentityDto(type: 'ok', value: ''),
@@ -446,6 +467,9 @@ class PupilIdentityManager {
           channelName: channelName,
           role: role,
           encryptedPupilIds: encryptedPupilIds,
+          onConnected: onConnected,
+          onStatusUpdate: onStatusUpdate,
+          onCompleted: onCompleted,
         );
       },
       onDone: () {
