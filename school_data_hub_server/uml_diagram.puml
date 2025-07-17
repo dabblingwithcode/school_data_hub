@@ -604,6 +604,14 @@ class PupilIdentity ##[bold]  {
 
 }
 
+class PupilIdentityDto ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_identity/pupil_identity_dto.spy.yaml</size></b>
+--
+  <i>type</i>: <b><color:#ff962f>String</color></b>
+  <i>value</i>: <b><color:#ff962f>String</color></b>
+
+}
+
 enum SchoolGrade #ece4ff ##[bold] {
 <size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_identity/school_grade.spy.yaml</size></b>
 --

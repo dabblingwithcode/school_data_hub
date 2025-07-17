@@ -25,7 +25,7 @@ class Policy {
 
   Map<String, dynamic> toJson() => _$PolicyToJson(this);
 
-  copyWith(
+  Policy copyWith(
           {int? schemaVersion,
           dynamic identificationStamp,
           Flags? flags,

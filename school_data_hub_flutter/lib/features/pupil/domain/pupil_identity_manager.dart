@@ -398,7 +398,7 @@ class PupilIdentityManager {
     _encryptedPupilIdsSubscription?.cancel();
     _encryptedPupilIdsSubscription =
         _client.pupilIdentityStream.streamEncryptedPupilIds(channelName).listen(
-      (event) async {
+      (PupilIdentityDto event) async {
         onConnected();
         switch (role) {
           case PupilIdentityStreamRole.sender:
@@ -425,7 +425,7 @@ class PupilIdentityManager {
             switch (event.type) {
               case 'request':
                 onStatusUpdate(
-                    'Empfänger hat eine Anfrage für verschlüsselte Schülerdaten gesendet.');
+                    'Empfänger ${event.value} hat die verschlüsselten Schülerdaten angefordert.');
 
                 _log.info('Sender requested encrypted pupil identities');
                 break;

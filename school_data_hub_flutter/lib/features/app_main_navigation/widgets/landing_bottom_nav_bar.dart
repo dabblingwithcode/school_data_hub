@@ -122,6 +122,7 @@ class MainMenuBottomNavigation extends WatchingWidget {
         }
         final String missingData = missingFields.join('\n');
 
+        // delayed because of race condition
         unawaited(Future<void>.delayed(const Duration(milliseconds: 500), () {
           di<NotificationService>().showInformationDialog(
               'Es fehlen noch diese Daten im Server:\n\n$missingData');
