@@ -103,12 +103,12 @@ class PupilIdentityHelper {
       religionLessonsSince: pupilIdentityStringItems[16] == ''
           ? null
           : DateTime.tryParse(pupilIdentityStringItems[16])!,
-      familyLanguageLessonsSince: pupilIdentityStringItems[17] == ''
+      familyLanguageLessonsSince: pupilIdentityStringItems[18] == ''
           ? null
-          : DateTime.tryParse(pupilIdentityStringItems[17])!,
+          : DateTime.tryParse(pupilIdentityStringItems[18])!,
       leavingDate: pupilIdentityStringItems[18] == ''
           ? null
-          : DateTime.tryParse(pupilIdentityStringItems[18]),
+          : DateTime.tryParse(pupilIdentityStringItems[19]),
     );
     return newPupilIdentity;
   }

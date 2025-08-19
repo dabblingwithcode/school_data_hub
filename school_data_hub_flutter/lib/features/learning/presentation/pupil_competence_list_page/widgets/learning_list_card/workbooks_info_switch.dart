@@ -14,7 +14,7 @@ class WorkbooksInfoSwitch extends WatchingWidget {
       children: [
         Column(
           children: [
-            Text('Anzahl: ${pupil.pupilWorkbooks!.length}'),
+            Text('Anzahl: ${pupil.pupilWorkbooks?.length ?? 0}'),
           ],
         ),
         Column(

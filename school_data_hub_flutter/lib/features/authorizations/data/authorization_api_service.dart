@@ -7,7 +7,6 @@ import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _client = di<Client>();
-final _notificationService = di<NotificationService>();
 
 class AuthorizationApiService {
   //- AUTHORIZATIONS -------------------------------------------

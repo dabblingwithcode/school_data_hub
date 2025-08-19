@@ -20,6 +20,9 @@
 # is commented out by default.
 .vscode/
 
+# debug related files
+matrix-policy.json
+
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id

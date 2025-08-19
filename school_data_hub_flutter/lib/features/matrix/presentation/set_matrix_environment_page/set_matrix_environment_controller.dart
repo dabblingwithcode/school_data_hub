@@ -18,6 +18,8 @@ class SetMatrixEnvironmentController extends State<SetMatrixEnvironment> {
       TextEditingController();
   final TextEditingController policyTokenTextFieldController =
       TextEditingController();
+  final TextEditingController matrixAdminTextFieldController =
+      TextEditingController();
   Set<String> roomIds = {};
   //Set<int> pupilIds = {};
   void setMatrixEnvironment() async {
@@ -28,6 +30,7 @@ class SetMatrixEnvironmentController extends State<SetMatrixEnvironment> {
       url: url,
       matrixToken: matrixToken,
       policyToken: policyToken,
+      matrixAdmin: matrixAdminTextFieldController.text,
     );
     if (!di.isRegistered<MatrixPolicyManager>()) {
       await MatrixPolicyHelper.registerMatrixPolicyManager(
@@ -48,6 +51,7 @@ class SetMatrixEnvironmentController extends State<SetMatrixEnvironment> {
     urlTextFieldController.dispose();
     matrixTokenTextFieldController.dispose();
     policyTokenTextFieldController.dispose();
+    matrixAdminTextFieldController.dispose();
     super.dispose();
   }
 }

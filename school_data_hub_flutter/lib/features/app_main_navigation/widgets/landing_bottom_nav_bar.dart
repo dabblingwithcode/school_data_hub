@@ -102,6 +102,11 @@ class MainMenuBottomNavigation extends WatchingWidget {
         handler: (context, value, cancel) {
           value ? showHeavyLoadingOverlay(context) : hideLoadingOverlay();
         });
+    registerHandler(
+        select: (BottomNavManager x) => x.bottomNavState,
+        handler: (context, value, cancel) {
+          pageViewController.jumpToPage(value);
+        });
     callOnce((context) async {
       final envDataIncomplete =
           di<EnvManager>().isAnyImportantEnvDataNotPopulatedInServer();

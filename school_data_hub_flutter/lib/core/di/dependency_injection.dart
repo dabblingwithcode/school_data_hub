@@ -57,7 +57,7 @@ class DiManager {
     di.pushNewScopeAsync(
       scopeName: DiScope.activeEnvScope.name,
       dispose: () {
-        _log.severe('Disposing activeEnvScope', [StackTrace.current]);
+        _log.info('Disposing activeEnvScope');
       },
       init: (getIt) async {
         _log.info('Registering managers depending on activeEnvScope');
@@ -105,15 +105,24 @@ class DiManager {
       await di.dropScope(DiScope.loggedInUserScope.name);
     }
     //- TODO IMPORTANT: check if this is necessary - makes trouble setting up the first env
-    await di.dropScope(DiScope.activeEnvScope.name);
+    if (di.hasScope(DiScope.activeEnvScope.name)) {
+      _log.severe(
+          'resetActiveEnvDependentManagers: dropping activeEnvScope...');
+      await di.dropScope(DiScope.activeEnvScope.name);
+    }
+
     _log.warning('Active environment dependent managers reset');
     await registerManagersDependingOnActiveEnv();
   }
 
   static Future<void> unregisterManagersDependentOnEnv() async {
-    _log.severe('unregisterManagersDependentOnEnv: dropping scopes...');
+    _log.warning('unregisterManagersDependentOnEnv: dropping scopes...');
+    if (di.hasScope(DiScope.loggedInUserScope.name)) {
+      _log.warning(
+          'unregisterManagersDependentOnEnv: dropping loggedInUserScopr...');
+      await di.dropScope(DiScope.loggedInUserScope.name);
+    }
 
-    await di.dropScope(DiScope.loggedInUserScope.name);
     await di.dropScope(DiScope.activeEnvScope.name);
   }
 
@@ -132,7 +141,7 @@ class DiManager {
                   matrixCredentials!.url,
                   matrixCredentials.policyToken,
                   matrixCredentials.matrixToken,
-                  matrixCredentials.compulsoryRooms ?? [])
+                  matrixCredentials.matrixAdmin)
               .init();
 
           _log.info('Matrix managers initialized');

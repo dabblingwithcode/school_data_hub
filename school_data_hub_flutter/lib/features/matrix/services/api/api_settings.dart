@@ -1,4 +1,4 @@
-export '../../data/matrix_api_service.dart';
+export '../../data/matrix_api_service_old.dart';
 
 class ApiSettings {
   // dev environment urls:

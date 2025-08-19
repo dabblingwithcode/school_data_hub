@@ -1,0 +1,12 @@
+enum: MatrixRoomType
+serialized: byName
+values:
+  - contacts
+  - globalParents
+  - globalChildrem
+  - globalTeacher
+  - groupChildren
+  - groupParents
+  - staff
+  - other
+  

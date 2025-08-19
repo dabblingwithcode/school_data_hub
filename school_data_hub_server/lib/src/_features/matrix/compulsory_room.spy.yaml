@@ -1,0 +1,6 @@
+class: CompulsoryRoom
+table: compulsory_room
+fields:
+  roomId: String
+  roomType: MatrixRoomType
+

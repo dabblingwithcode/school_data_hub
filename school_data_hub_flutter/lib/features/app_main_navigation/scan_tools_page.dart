@@ -21,7 +21,7 @@ final _sessionManager = di<HubSessionManager>();
 class ScanToolsPage extends WatchingWidget {
   const ScanToolsPage({super.key});
 
-  importFileWithWindows(String function) async {
+  void importFileWithWindows(String function) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result != null) {
       File file = File(result.files.single.path!);
@@ -39,7 +39,7 @@ class ScanToolsPage extends WatchingWidget {
     }
   }
 
-  importFromQrImage() async {
+  void importFromQrImage() async {
     final rawTextResult = await scanPickedQrImage();
     if (rawTextResult == null) {
       return;

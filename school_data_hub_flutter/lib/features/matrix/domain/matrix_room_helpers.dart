@@ -31,6 +31,17 @@ class MatrixRoomHelper {
     return room.powerLevelReactions;
   }
 
+  static List<MatrixRoom> roomsFromRoomJoinedRooms(
+      List<JoinedRoom> joinedRooms) {
+    final List<MatrixRoom> rooms =
+        List.from(_matrixPolicyManager.matrixRooms.value);
+    final roomsFromRoomIds = rooms
+        .where(
+            (room) => joinedRooms.any((element) => element.roomId == room.id))
+        .toList();
+    return roomsFromRoomIds;
+  }
+
   static List<MatrixRoom> roomsFromRoomIds(List<String> roomIds) {
     final List<MatrixRoom> rooms =
         List.from(_matrixPolicyManager.matrixRooms.value);
@@ -75,19 +86,27 @@ class MatrixRoomHelper {
 
     // TODO: This is hard coded for now
     // first the common rooms
-    roomIds
-        .add(allRooms.firstWhere((room) => room.name!.contains('Kontakte')).id);
-    roomIds.add(allRooms
-        .firstWhere((room) => room.name!.contains('Hermannkinder 2024-25'))
-        .id);
+    final contactsRoom =
+        allRooms.firstWhereOrNull((room) => room.name!.contains('Kontakte'));
+    if (contactsRoom != null) {
+      roomIds.add(contactsRoom.id);
+    }
 
-    // then the rooms for the pupil or parent
+    final hermannkinderRoom = allRooms.firstWhereOrNull(
+        (room) => room.name!.contains('Hermannkinder 2024-25'));
+    if (hermannkinderRoom != null) {
+      roomIds.add(hermannkinderRoom.id);
+    }
+
+    // Then the rooms for the pupil or parent
     if (isParent == true) {
-      // this room is common for all parents
-      roomIds.add(allRooms
-          .firstWhere(
-              (room) => room.name!.contains('Familien-Grundschul-Zentrum'))
-          .id);
+      // This room is common for all parents
+      final fgzRoom = allRooms.firstWhereOrNull(
+          (room) => room.name!.contains('Familien-Grundschul-Zentrum'));
+      if (fgzRoom != null) {
+        roomIds.add(fgzRoom.id);
+      }
+
       final String groupStringPart =
           getSubstringAfterCharacter(displayName, ')').replaceAll(' ', '');
 
@@ -96,19 +115,19 @@ class MatrixRoomHelper {
         for (String group in groups) {
           if (room.name!.contains(group)) {
             roomIds.add(room.id);
-
             break; // No need to check other groups if one matches
           }
         }
       }
     } else {
-      // pupil rooms
+      // Pupil rooms
       final group =
           getSubstringAfterCharacter(displayName, '(').substring(0, 2);
-      roomIds.add(allRooms
-          .firstWhere((room) =>
-              room.name!.contains(group) && !room.name!.contains('Eltern'))
-          .id);
+      final pupilRoom = allRooms.firstWhereOrNull((room) =>
+          room.name!.contains(group) && !room.name!.contains('Eltern'));
+      if (pupilRoom != null) {
+        roomIds.add(pupilRoom.id);
+      }
     }
     return roomIds;
   }

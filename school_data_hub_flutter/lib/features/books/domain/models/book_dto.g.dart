@@ -6,15 +6,7 @@ part of 'book_dto.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-BookTag _$BookTagFromJson(Map<String, dynamic> json) => BookTag(
-      name: json['name'] as String,
-    );
-
-Map<String, dynamic> _$BookTagToJson(BookTag instance) => <String, dynamic>{
-      'name': instance.name,
-    };
-
-BookDTO _$BookFromJson(Map<String, dynamic> json) => BookDTO(
+BookDTO _$BookDTOFromJson(Map<String, dynamic> json) => BookDTO(
       author: json['author'] as String,
       description: json['description'] as String?,
       imageId: json['image_id'] as String?,
@@ -26,12 +18,12 @@ BookDTO _$BookFromJson(Map<String, dynamic> json) => BookDTO(
           .toList(),
     );
 
-Map<String, dynamic> _$BookToJson(BookDTO instance) => <String, dynamic>{
+Map<String, dynamic> _$BookDTOToJson(BookDTO instance) => <String, dynamic>{
+      'isbn': instance.isbn,
+      'title': instance.title,
       'author': instance.author,
       'description': instance.description,
       'image_id': instance.imageId,
-      'isbn': instance.isbn,
       'reading_level': instance.readingLevel,
-      'title': instance.title,
       'book_tags': instance.bookTags,
     };

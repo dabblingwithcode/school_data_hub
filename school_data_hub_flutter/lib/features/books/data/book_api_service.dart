@@ -1,12 +1,9 @@
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:watch_it/watch_it.dart';
 
 class BookApiService {
   final _client = di<Client>();
-
-  final _notificationService = di<NotificationService>();
 
   // - BOOK TAGS - //
 

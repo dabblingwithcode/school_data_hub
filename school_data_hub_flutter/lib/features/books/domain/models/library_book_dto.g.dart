@@ -6,16 +6,18 @@ part of 'library_book_dto.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-LibraryBookDTO _$BookFromJson(Map<String, dynamic> json) => LibraryBookDTO(
+LibraryBookDTO _$LibraryBookDTOFromJson(Map<String, dynamic> json) =>
+    LibraryBookDTO(
       available: json['available'] as bool,
       bookId: json['book_id'] as String,
       isbn: (json['isbn'] as num).toInt(),
       location: json['location'] as String,
     );
 
-Map<String, dynamic> _$BookToJson(LibraryBookDTO instance) => <String, dynamic>{
-      'available': instance.available,
+Map<String, dynamic> _$LibraryBookDTOToJson(LibraryBookDTO instance) =>
+    <String, dynamic>{
       'book_id': instance.bookId,
       'isbn': instance.isbn,
       'location': instance.location,
+      'available': instance.available,
     };

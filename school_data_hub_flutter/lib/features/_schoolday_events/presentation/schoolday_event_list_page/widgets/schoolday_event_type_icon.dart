@@ -51,8 +51,6 @@ class SchooldayEventTypeIcon extends StatelessWidget {
             color: AppColors.accentColor,
           )
         ]);
-      default:
-        return const Icon(Icons.question_mark_rounded, color: Colors.red);
     }
   }
 }

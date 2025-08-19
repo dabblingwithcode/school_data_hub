@@ -11,12 +11,13 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-class PupilLearningContent extends StatelessWidget {
+class PupilLearningContent extends WatchingWidget {
   final PupilProxy pupil;
   const PupilLearningContent({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {
+    watch(pupil);
     return Card(
       color: AppColors.pupilProfileCardColor,
       shape: RoundedRectangleBorder(

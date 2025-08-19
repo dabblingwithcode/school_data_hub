@@ -14,9 +14,9 @@ class LibraryBookDTO {
   final bool available;
 
   factory LibraryBookDTO.fromJson(Map<String, dynamic> json) =>
-      _$BookFromJson(json);
+      _$LibraryBookDTOFromJson(json);
 
-  Map<String, dynamic> toJson() => _$BookToJson(this);
+  Map<String, dynamic> toJson() => _$LibraryBookDTOToJson(this);
 
   LibraryBookDTO({
     required this.available,

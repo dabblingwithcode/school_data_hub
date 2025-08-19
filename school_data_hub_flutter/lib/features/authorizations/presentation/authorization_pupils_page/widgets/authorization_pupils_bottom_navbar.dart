@@ -15,7 +15,6 @@ import 'package:watch_it/watch_it.dart';
 
 final _hubSessionManager = di<HubSessionManager>();
 final _authorizationManager = di<AuthorizationManager>();
-final _pupilManager = di<PupilManager>();
 
 class AuthorizationPupilsBottomNavBar extends WatchingWidget {
   final Authorization authorization;

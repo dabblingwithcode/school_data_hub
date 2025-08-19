@@ -7,39 +7,51 @@ import 'package:watch_it/watch_it.dart';
 
 part 'matrix_user.g.dart';
 
-//- After running build_runner, in matrix_user.g.dart you must do these modifications:
-//- 1. in _$MatrixUserImpl ->  matrixRooms: (json['joinedRoomIds'] as List<dynamic>).map((e) => MatrixRoom(id: e)).toList(),
-//- 2. in _$$MatrixUserImplToJson -> 'joinedRoomIds': getRoomIds(instance.matrixRooms!),
-//- 3. add this funtion getRoomIds(List<MatrixRoom> rooms) {return rooms.map((room) => room.id).toList();}
-//- 4. in _$MatrixUserImpl ->  comment out // 'authCredential': instance.authCredential,
-
 final _matrixPolicyManager = di<MatrixPolicyManager>();
 
 @JsonSerializable()
+class JoinedRoom {
+  final String roomId;
+  final int powerLevel;
+
+  JoinedRoom({
+    required this.roomId,
+    required this.powerLevel,
+  });
+
+  factory JoinedRoom.fromJson(Map<String, dynamic> json) =>
+      _$JoinedRoomFromJson(json);
+  Map<String, dynamic> toJson() => _$JoinedRoomToJson(this);
+}
+
+@JsonSerializable()
 class MatrixUser extends ChangeNotifier {
-  final String? _id;
-  final bool? _active;
-  final String? _authType;
+  final String _id;
+  bool? _active;
+  String? _authType;
+  String? _authCredential;
   String _displayName;
-  List<String> _joinedRoomIds;
+  List<JoinedRoom> _joinedRooms;
   @JsonKey(includeFromJson: false, includeToJson: false)
   List<MatrixRoom> _matrixRooms = [];
 
   MatrixUser({
-    String? id,
+    required String id,
     bool? active,
     String? authType,
+    String? authCredential,
     required String displayName,
-    required List<String> joinedRoomIds,
+    required List<JoinedRoom> joinedRooms,
   })  : _id = id,
         _active = active,
         _authType = authType,
+        _authCredential = authCredential,
         _displayName = displayName,
-        _joinedRoomIds = joinedRoomIds {
-    if (_joinedRoomIds.isNotEmpty) {
-      _joinedRoomIds = _joinedRoomIds.toSet().toList();
-      for (var roomId in _joinedRoomIds) {
-        _matrixRooms.add(MatrixRoom(id: roomId));
+        _joinedRooms = joinedRooms {
+    if (_joinedRooms.isNotEmpty) {
+      for (var room in _joinedRooms) {
+        if (_matrixRooms.any((x) => x.id == room.roomId)) continue;
+        _matrixRooms.add(MatrixRoom(id: room.roomId));
       }
     }
   }
@@ -48,10 +60,11 @@ class MatrixUser extends ChangeNotifier {
   String? get id => _id;
   bool? get active => _active;
   String? get authType => _authType;
+  String? get authCredential => _authCredential;
   String get displayName => _displayName;
-  List<String> get joinedRoomIds => _joinedRoomIds;
+  List<JoinedRoom> get joinedRooms => _joinedRooms;
   List<MatrixRoom> get matrixRooms => _matrixRooms;
-  bool get isParent => _id!.contains('_e') ? true : false;
+  bool get isParent => _id.contains('_e') ? true : false;
 
   // Setters
   set displayName(String value) {
@@ -61,17 +74,20 @@ class MatrixUser extends ChangeNotifier {
     }
   }
 
-  void joinRooms(List<String> roomIds) {
-    _matrixRooms.addAll(MatrixRoomHelper.roomsFromRoomIds(roomIds));
+  void joinRooms(List<JoinedRoom> roomIds) {
+    _matrixRooms.addAll(MatrixRoomHelper.roomsFromRoomJoinedRooms(roomIds));
 
-    _joinedRoomIds.addAll(roomIds);
+    _joinedRooms.addAll(roomIds);
     _matrixPolicyManager.pendingChangesHandler(true);
     notifyListeners();
   }
 
   void joinRoom(MatrixRoom room) {
     _matrixRooms.add(room);
-    _joinedRoomIds.add(room.id);
+    _joinedRooms.add(JoinedRoom(
+      roomId: room.id,
+      powerLevel: 0,
+    ));
     _matrixPolicyManager.pendingChangesHandler(true);
     notifyListeners();
   }
@@ -82,14 +98,8 @@ class MatrixUser extends ChangeNotifier {
     if (roomIndex == -1) return;
     _matrixRooms.removeAt(roomIndex);
 
-    _joinedRoomIds.remove(room.id);
+    _joinedRooms.remove(room.id);
     _matrixPolicyManager.pendingChangesHandler(true);
-    notifyListeners();
-  }
-
-  set joinedRoomIds(List<String> value) {
-    _joinedRoomIds = value.toSet().toList();
-    _matrixRooms = _joinedRoomIds.map((id) => MatrixRoom(id: id)).toList();
     notifyListeners();
   }
 

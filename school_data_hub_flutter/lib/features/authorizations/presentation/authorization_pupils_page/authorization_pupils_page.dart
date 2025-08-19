@@ -4,7 +4,6 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
-import 'package:school_data_hub_flutter/features/authorizations/domain/filters/authorization_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/filters/pupil_authorization_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/presentation/authorization_pupils_page/widgets/authorization_pupil_card.dart';
 import 'package:school_data_hub_flutter/features/authorizations/presentation/authorization_pupils_page/widgets/authorization_pupil_list_searchbar.dart';
@@ -14,8 +13,6 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _authorizationManager = di<AuthorizationManager>();
-final _authorizationFilterManager = di<AuthorizationFilterManager>();
 final _pupilManager = di<PupilManager>();
 final _pupilAuthorizationFilterManager = di<PupilAuthorizationFilterManager>();
 

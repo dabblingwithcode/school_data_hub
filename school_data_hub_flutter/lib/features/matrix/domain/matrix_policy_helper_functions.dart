@@ -51,7 +51,8 @@ class MatrixPolicyHelper {
           jsonEncode(MatrixCredentials(
               url: passedCredentials.url,
               matrixToken: passedCredentials.matrixToken,
-              policyToken: passedCredentials.policyToken)));
+              policyToken: passedCredentials.policyToken,
+              matrixAdmin: passedCredentials.matrixAdmin)));
     }
 
     // if the MatrixPolicyManager is already registered, we will return
@@ -70,10 +71,10 @@ class MatrixPolicyHelper {
     return;
   }
 
-  static Future<File> generatePolicyJsonFile() async {
+  static Future<File> generatePolicyJsonFile({required String filename}) async {
     // create a new json file with the policy
 
-    final File file = File('matrix-policy.json');
+    final File file = File('$filename.json');
     if (file.existsSync()) {
       file.deleteSync();
     }

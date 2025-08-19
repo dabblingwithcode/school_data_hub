@@ -2,13 +2,13 @@ class MatrixCredentials {
   final String url;
   final String matrixToken;
   final String policyToken;
-  List<String>? compulsoryRooms;
+  final String matrixAdmin;
 
   MatrixCredentials({
     required this.url,
     required this.matrixToken,
     required this.policyToken,
-    this.compulsoryRooms,
+    required this.matrixAdmin,
   });
 
   Map<String, dynamic> toJson() {
@@ -16,7 +16,7 @@ class MatrixCredentials {
       'url': url,
       'matrixToken': matrixToken,
       'policyToken': policyToken,
-      'compulsoryRooms': compulsoryRooms,
+      'matrixAdmin': matrixAdmin,
     };
   }
 
@@ -25,7 +25,7 @@ class MatrixCredentials {
       url: json['url'],
       matrixToken: json['matrixToken'],
       policyToken: json['policyToken'],
-      compulsoryRooms: json['compulsoryRooms'],
+      matrixAdmin: json['matrixAdmin'],
     );
   }
 }

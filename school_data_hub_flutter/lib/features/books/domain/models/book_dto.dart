@@ -18,9 +18,10 @@ class BookDTO {
   @JsonKey(name: "book_tags")
   final List<BookTag>? bookTags;
 
-  factory BookDTO.fromJson(Map<String, dynamic> json) => _$BookFromJson(json);
+  factory BookDTO.fromJson(Map<String, dynamic> json) =>
+      _$BookDTOFromJson(json);
 
-  Map<String, dynamic> toJson() => _$BookToJson(this);
+  Map<String, dynamic> toJson() => _$BookDTOToJson(this);
 
   BookDTO({
     required this.author,

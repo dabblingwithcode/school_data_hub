@@ -80,6 +80,10 @@ supportCategory:
   - createSupportCategory:
   - updateSupportCategory:
   - deleteSupportCategory:
+matrix:
+  - getCompulsoryRooms:
+  - setCompulsoryRooms:
+  - deleteCompulsoryRoom:
 pupil:
   - fetchPupilsAsStream:
   - fetchPupils:

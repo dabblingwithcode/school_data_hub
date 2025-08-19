@@ -38,7 +38,7 @@ class PupilCompetenceListBottomNavBar extends StatelessWidget {
                       builder: (ctx) => const SelectCompetence()));
                 },
                 child: const Icon(
-                  Icons.group_add,
+                  Icons.add_a_photo_rounded,
                   size: 30,
                 ),
               ),

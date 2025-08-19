@@ -16,6 +16,7 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/data/pupil_data_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_selector_filters.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
@@ -169,16 +170,15 @@ class PupilIdentityManager {
     writePupilIdentitiesToStorage();
 
     // TODO: fix this
-    // if (updateGroupFilters) {
-    //   final availableGroups =
-    //       _pupilIdentities.values.map((e) => e.group).toSet();
-    //   _groups.value = availableGroups;
-    //   di<PupilsFilter>().populateGroupFilters(availableGroups.toList());
-    // }
+    if (updateGroupFilters) {
+      final availableGroups =
+          _pupilIdentities.values.map((e) => e.group).toSet();
+      _groups.value = availableGroups;
+      di<PupilsFilter>().populateGroupFilters(availableGroups.toList());
+    }
 
-    // await di<PupilManager>().fetchAllPupils();
-    // di<MainMenuBottomNavManager>().setBottomNavPage(0);
-    // di<MainMenuBottomNavManager>().pageViewController.value.jumpToPage(0);
+    await di<PupilManager>().fetchAllPupils();
+    _mainMenuBottomNavManager.setBottomNavPage(0);
   }
 
   Future<void> writePupilIdentitiesToStorage() async {
@@ -377,7 +377,7 @@ class PupilIdentityManager {
     writePupilIdentitiesToStorage();
 
     _log.info(
-        ' ${toBeDeletedPupilIds.length} pupils are not in the database any moreand wer deleted.');
+        ' ${toBeDeletedPupilIds.length} pupils are not in the database any more and wer deleted.');
 
     return toBeDeletedPupilIdentities.join('\n');
   }

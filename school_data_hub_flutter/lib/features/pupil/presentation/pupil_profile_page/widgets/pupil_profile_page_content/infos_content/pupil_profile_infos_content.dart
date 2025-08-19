@@ -10,10 +10,10 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_d
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/matrix_user_helpers.dart';
-import 'package:school_data_hub_flutter/features/matrix/presentation/new_matrix_user_page/new_matrix_user_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/widgets/dialogues/logout_devices_dialog.dart';
 import 'package:school_data_hub_flutter/features/matrix/services/matrix_credentials_pdf_generator.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helpers.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_page/new_matrix_user_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
@@ -213,8 +213,8 @@ class PupilProfileInfosContent extends StatelessWidget {
                             final logOutDevices =
                                 await logoutDevicesDialog(context);
                             if (logOutDevices == null) return;
-                            final file =
-                                await _matrixPolicyManager.resetPassword(
+                            final file = await _matrixPolicyManager.users
+                                .resetPassword(
                                     user: MatrixUserHelper.usersFromUserIds(
                                         [pupil.contact!]).first,
                                     logoutDevices: logOutDevices,
@@ -308,8 +308,8 @@ class PupilProfileInfosContent extends StatelessWidget {
                             final logOutDevices =
                                 await logoutDevicesDialog(context);
                             if (logOutDevices == null) return;
-                            final file =
-                                await _matrixPolicyManager.resetPassword(
+                            final file = await _matrixPolicyManager.users
+                                .resetPassword(
                                     user: MatrixUserHelper.usersFromUserIds(
                                         [pupil.contact!]).first,
                                     logoutDevices: logOutDevices,
