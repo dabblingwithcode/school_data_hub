@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/policy.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/data/matrix_room_api_service.dart'
     as room_api;

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/features/matrix/data/matrix_api_service.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/services/matrix_credentials_pdf_generator.dart';
