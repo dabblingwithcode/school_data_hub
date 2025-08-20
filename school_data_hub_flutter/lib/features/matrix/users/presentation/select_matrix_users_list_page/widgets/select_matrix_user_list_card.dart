@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helpers.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/controller/select_matrix_users_list_controller.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';

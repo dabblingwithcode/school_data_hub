@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_man
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helpers.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/controller/select_matrix_users_list_controller.dart';
 import 'package:watch_it/watch_it.dart';
 

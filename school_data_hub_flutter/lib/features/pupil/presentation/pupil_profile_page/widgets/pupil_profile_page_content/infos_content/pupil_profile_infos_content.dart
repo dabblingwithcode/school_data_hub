@@ -12,7 +12,7 @@ import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_hel
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/widgets/dialogues/logout_devices_dialog.dart';
 import 'package:school_data_hub_flutter/features/matrix/services/matrix_credentials_pdf_generator.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helpers.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_page/new_matrix_user_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';

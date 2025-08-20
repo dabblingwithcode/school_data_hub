@@ -12,7 +12,7 @@ import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_man
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/controller/select_matrix_rooms_list_controller.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helpers.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/widgets/pupil_rooms_list.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
