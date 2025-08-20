@@ -8,7 +8,8 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:school_data_hub_flutter/features/books/data/pupil_book_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/data/pupil_data_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter_impl.dart';
@@ -16,14 +17,19 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _log = Logger('PupilManager');
-final _notificationService = di<NotificationService>();
-final _cacheManager = di<DefaultCacheManager>();
-final _pupilIdentityManager = di<PupilIdentityManager>();
-final _serverpodSessionManager = di<ServerpodSessionManager>();
-final _pupilDataApiService = PupilDataApiService();
-
 class PupilManager extends ChangeNotifier {
+  final _log = Logger('PupilManager');
+
+  final _notificationService = di<NotificationService>();
+
+  final _cacheManager = di<DefaultCacheManager>();
+
+  final _hubSessionManager = di<HubSessionManager>();
+
+  final _pupilDataApiService = PupilDataApiService();
+
+  final _pupilBookApiService = PupilBookApiService();
+
   final _pupilIdPupilsMap = <int, PupilProxy>{};
 
   List<PupilProxy> get allPupils => _pupilIdPupilsMap.values.toList();
@@ -63,6 +69,20 @@ class PupilManager extends ChangeNotifier {
     return pupilsfromPupilIds;
   }
 
+  List<PupilProxy> getPupilsFromInternalIds(List<int> internalIds) {
+    List<PupilProxy> pupilsfromInternalIds = [];
+
+    for (int internalId in internalIds) {
+      final PupilProxy? pupil = _pupilIdPupilsMap.values
+          .firstWhereOrNull((pupil) => pupil.internalId == internalId);
+      if (pupil != null) {
+        pupilsfromInternalIds.add(pupil);
+      }
+    }
+
+    return pupilsfromInternalIds;
+  }
+
   List<int> getInternalIdsFromPupils(List<PupilProxy> pupils) {
     return pupils.map((pupil) => pupil.internalId).toList();
   }
@@ -71,7 +91,18 @@ class PupilManager extends ChangeNotifier {
     return pupils.map((pupil) => pupil.pupilId).toList();
   }
 
-  List<PupilProxy> pupilsNotListed(List<int> pupilIds) {
+  List<int> getInternalIdsFromPupilIds(List<int> pupilIds) {
+    List<int> internalIds = [];
+    for (int pupilId in pupilIds) {
+      final PupilProxy? pupil = _pupilIdPupilsMap[pupilId];
+      if (pupil != null) {
+        internalIds.add(pupil.internalId);
+      }
+    }
+    return internalIds;
+  }
+
+  List<PupilProxy> getPupilsNotListed(List<int> pupilIds) {
     Map<int, PupilProxy> allPupilsMap =
         Map<int, PupilProxy>.of(_pupilIdPupilsMap);
     allPupilsMap.removeWhere((key, value) => pupilIds.contains(key));
@@ -137,8 +168,10 @@ class PupilManager extends ChangeNotifier {
   //- Fetch all available pupils from the backend
 
   Future<void> fetchAllPupils() async {
-    final pupilsToFetch = _pupilIdentityManager.availablePupilIds;
+    final pupilsToFetch = di<PupilIdentityManager>().availablePupilIds;
+
     if (pupilsToFetch.isEmpty) {
+      _log.info('No pupil identities to fetch data from the backend');
       return;
     }
     await fetchPupilsByInternalId(pupilsToFetch);
@@ -151,6 +184,9 @@ class PupilManager extends ChangeNotifier {
   Future<void> updatePupilData(int pupilId) async {
     final fetchedPupil = await _pupilDataApiService
         .fetchListOfPupils(pupilInternalIds: [pupilId]);
+    if (fetchedPupil == null) {
+      return;
+    }
     if (fetchedPupil.isNotEmpty) {
       updatePupilProxyWithPupilData(fetchedPupil.first);
     }
@@ -164,7 +200,9 @@ class PupilManager extends ChangeNotifier {
     // fetch the pupils from the backend
     final fetchedPupils = await _pupilDataApiService.fetchListOfPupils(
         pupilInternalIds: pupilInternalIds);
-
+    if (fetchedPupils == null) {
+      return;
+    }
     // check if we did not get a pupil response for some ids
     // if so, we will delete the personal data for those ids later
     final List<int> outdatedPupilIdentitiesIds = pupilInternalIds
@@ -182,11 +220,11 @@ class PupilManager extends ChangeNotifier {
         // if the pupil is not in the repository, that would be weird
         // since we did not send the id to the backend
 
-        final pupilIdentity =
-            _pupilIdentityManager.getPupilIdentity(fetchedPupil.internalId);
+        final pupilIdentity = di<PupilIdentityManager>()
+            .getPupilIdentityByInternalId(fetchedPupil.internalId);
 
         _pupilIdPupilsMap[fetchedPupil.id!] =
-            PupilProxy(pupilData: fetchedPupil, pupilIdentity: pupilIdentity);
+            PupilProxy(pupilData: fetchedPupil, pupilIdentity: pupilIdentity!);
       }
     }
 
@@ -196,7 +234,7 @@ class PupilManager extends ChangeNotifier {
     // and we need to delete the personal data from the device
 
     if (outdatedPupilIdentitiesIds.isNotEmpty) {
-      final deletedPupilIdentities = await _pupilIdentityManager
+      final deletedPupilIdentities = await di<PupilIdentityManager>()
           .deleteOrphanPupilIdentities(outdatedPupilIdentitiesIds);
       _notificationService.showInformationDialog(
           'Diese Schüler_innen existieren nicht mehr in der Datenbank, Ihre Ids wurden aus dem Gerät gelöscht:\n\n$deletedPupilIdentities');
@@ -240,12 +278,14 @@ class PupilManager extends ChangeNotifier {
 
     // send the Api request
 
-    final PupilData pupilUpdate =
+    final PupilData? pupilUpdate =
         await _pupilDataApiService.updatePupilDocument(
             pupilId: pupilProxy.pupilId,
             file: encryptedFile,
             documentType: documentType);
-
+    if (pupilUpdate == null) {
+      return;
+    }
     // update the pupil in the repository
     updatePupilProxyWithPupilData(pupilUpdate);
     //  pupilProxy.updatePupil(pupilUpdate);
@@ -258,7 +298,9 @@ class PupilManager extends ChangeNotifier {
       pupilId: pupilId,
       documentType: documentType,
     );
-
+    if (pupilUpdate == null) {
+      return;
+    }
     // Delete the outdated encrypted file in the cache.
 
     await _cacheManager.removeFile(cacheKey);
@@ -273,12 +315,14 @@ class PupilManager extends ChangeNotifier {
       required PreSchoolMedicalStatus preSchoolMedicalStatus,
       required String createdBy}) async {
     // send the Api request
-    final PupilData pupilUpdate =
+    final PupilData? pupilUpdate =
         await _pupilDataApiService.updatePreSchoolMedicalStatus(
             pupilId: pupilId,
             preSchoolMedical: preSchoolMedicalStatus,
             createdBy: createdBy);
-
+    if (pupilUpdate == null) {
+      return;
+    }
     // update the pupil in the repository
     updatePupilProxyWithPupilData(pupilUpdate);
   }
@@ -311,6 +355,9 @@ class PupilManager extends ChangeNotifier {
 
     final updatedPupil = await _pupilDataApiService.updatePublicMediaAuth(
         pupil.pupilId, authToUpdate);
+    if (updatedPupil == null) {
+      return;
+    }
     updatePupilProxyWithPupilData(updatedPupil);
   }
 
@@ -327,6 +374,9 @@ class PupilManager extends ChangeNotifier {
     final pupilUpdate = await _pupilDataApiService.resetPublicMediaAuth(
       pupilId: pupilId,
     );
+    if (pupilUpdate == null) {
+      return;
+    }
     if (cacheKey != null) {
       // Delete the outdated encrypted file in the cache.
       await _cacheManager.removeFile(cacheKey.toString());
@@ -345,10 +395,13 @@ class PupilManager extends ChangeNotifier {
 
       // call the endpoint to update the siblings
 
-      final List<PupilData> siblingsUpdate = await _pupilDataApiService
+      final List<PupilData>? siblingsUpdate = await _pupilDataApiService
           .updateSiblingsTutorInfo(
               tutorInfo: tutorInfo, siblingsIds: [...siblingIds, pupilId]);
 
+      if (siblingsUpdate == null) {
+        return;
+      }
       // now update the siblings with the new data
 
       for (PupilData sibling in siblingsUpdate) {
@@ -363,9 +416,12 @@ class PupilManager extends ChangeNotifier {
     // send the Api request
     final pupilToUpdate = getPupilByPupilId(pupilId)!;
 
-    final PupilData pupilUpdate = await _pupilDataApiService.updateTutorInfo(
+    final PupilData? pupilUpdate = await _pupilDataApiService.updateTutorInfo(
         pupilId: pupilToUpdate.pupilId, tutorInfo: tutorInfo);
 
+    if (pupilUpdate == null) {
+      return;
+    }
     // update the pupil in the repository
     updatePupilProxyWithPupilData(pupilUpdate);
   }
@@ -373,28 +429,26 @@ class PupilManager extends ChangeNotifier {
   Future<void> updatePupilCommunicationSkills(
       {required int pupilId,
       required CommunicationSkills? communicationSkills}) async {
-    try {
-      final PupilData pupilData =
-          await _pupilDataApiService.updateCommunicationSkills(
-        pupilId: pupilId,
-        communicationSkills: communicationSkills,
-      );
-      updatePupilProxyWithPupilData(pupilData);
-    } catch (e) {
-      _log.severe('Error updating communication skills: $e');
-      _notificationService.showSnackBar(
-          NotificationType.error, 'Fehler beim Aktualisieren der Daten!');
+    final PupilData? pupilData =
+        await _pupilDataApiService.updateCommunicationSkills(
+      pupilId: pupilId,
+      communicationSkills: communicationSkills,
+    );
+    if (pupilData == null) {
+      return;
     }
+    updatePupilProxyWithPupilData(pupilData);
   }
 
   Future<void> updateCredit({required int pupilId, required int credit}) async {
-    // send the Api request
-    final PupilData pupilUpdate = await _pupilDataApiService.updateCredit(
+    final PupilData? pupilUpdate = await _pupilDataApiService.updateCredit(
       pupilId: pupilId,
       credit: credit,
     );
+    if (pupilUpdate == null) {
+      return;
+    }
 
-    // update the pupil in the repository
     updatePupilProxyWithPupilData(pupilUpdate);
   }
 
@@ -402,37 +456,29 @@ class PupilManager extends ChangeNotifier {
       {required int pupilId,
       required String property,
       required String? value}) async {
-    try {
-      final PupilData pupilData =
-          await _pupilDataApiService.updateStringProperty(
-        pupilId: pupilId,
-        property: property,
-        value: value,
-      );
-      updatePupilProxyWithPupilData(pupilData);
-    } catch (e) {
-      _log.severe('Error updating string property: $e');
-      _notificationService.showSnackBar(
-          NotificationType.error, 'Fehler beim Aktualisieren der Daten!');
+    final PupilData? pupilData =
+        await _pupilDataApiService.updateStringProperty(
+      pupilId: pupilId,
+      property: property,
+      value: value,
+    );
+    if (pupilData == null) {
+      return;
     }
-
-    notifyListeners();
+    updatePupilProxyWithPupilData(pupilData);
   }
 
   Future<void> updateCommunicationSkills(
       {required int pupilId, required CommunicationSkills? skills}) async {
-    try {
-      final PupilData pupilData =
-          await _pupilDataApiService.updateCommunicationSkills(
-        pupilId: pupilId,
-        communicationSkills: skills,
-      );
-      updatePupilProxyWithPupilData(pupilData);
-    } catch (e) {
-      _log.severe('Error updating communication skills: $e');
-      _notificationService.showSnackBar(
-          NotificationType.error, 'Fehler beim Aktualisieren der Daten!');
+    final PupilData? pupilData =
+        await _pupilDataApiService.updateCommunicationSkills(
+      pupilId: pupilId,
+      communicationSkills: skills,
+    );
+    if (pupilData == null) {
+      return;
     }
+    updatePupilProxyWithPupilData(pupilData);
   }
 
   Future<void> updatePupilSupportLevel(
@@ -441,7 +487,7 @@ class PupilManager extends ChangeNotifier {
       required DateTime createdAt,
       required String createdBy,
       required String comment}) async {
-    final PupilData updatedPupil =
+    final PupilData? updatedPupil =
         await _pupilDataApiService.updateSupportLevel(
       pupilId: pupilId,
       supportLevelValue: level,
@@ -449,71 +495,107 @@ class PupilManager extends ChangeNotifier {
       createdBy: createdBy,
       comment: comment,
     );
-
+    if (updatedPupil == null) {
+      return;
+    }
     _pupilIdPupilsMap[pupilId]!.updatePupil(updatedPupil);
   }
 
   Future<void> deleteSupportLevelHistoryItem(
       {required int pupilId, required int supportLevelId}) async {
-    final PupilData updatedPupil =
+    final PupilData? updatedPupil =
         await _pupilDataApiService.deleteSupportLevelHistoryItem(
       pupilId: pupilId,
       supportLevelId: supportLevelId,
     );
-
+    if (updatedPupil == null) {
+      return;
+    }
     _pupilIdPupilsMap[pupilId]!.updatePupil(updatedPupil);
   }
 
-  // Future<void> borrowBook(
-  //     {required int pupilId, required String bookId}) async {
-  //   final pupilBookApiService = PupilBookApiService();
-  //   final PupilData updatedPupil = await pupilBookApiService
-  //       .postNewPupilWorkbook(pupilId: pupilId, bookId: bookId);
+  Future<void> updateSchoolyearHeldBackDate(
+      {required int pupilId, required ({DateTime? value}) date}) async {
+    final PupilData? updatedPupil =
+        await _pupilDataApiService.updateSchoolyearHeldBackDate(
+      pupilId: pupilId,
+      date: date,
+    );
+    if (updatedPupil == null) {
+      return;
+    }
+    updatePupilProxyWithPupilData(updatedPupil);
+  }
 
-  //   _pupils[pupilId]!.updatePupil(updatedPupil);
+  Future<void> postPupilBookLending(
+      {required int pupilId, required String libraryId}) async {
+    final userName = _hubSessionManager.userName;
 
-  //   return;
-  // }
+    final PupilData? updatedPupil =
+        await _pupilBookApiService.postPupilBookLending(
+            pupilId: pupilId, libraryId: libraryId, lentBy: userName!);
+    if (updatedPupil == null) {
+      return;
+    }
+    _pupilIdPupilsMap[pupilId]!.updatePupil(updatedPupil);
 
-  // Future<void> deletePupilBook({required String lendingId}) async {
-  //   final pupilBookRepository = PupilBookApiService();
-  //   final pupil = await pupilBookRepository.deletePupilBook(lendingId);
+    return;
+  }
 
-  //   _pupils[pupil.internalId]!.updatePupil(pupil);
+  Future<void> deletePupilBook({required int lendingId}) async {
+    final pupil = await _pupilBookApiService.deletePupilBook(lendingId);
+    if (pupil == null) {
+      return;
+    }
+    _pupilIdPupilsMap[pupil.id!]!.updatePupil(pupil);
 
-  //   return;
-  // }
+    return;
+  }
 
-  // Future<void> returnBook({required String lendingId}) async {
-  //   final returnedAt = DateTime.now();
-  //   final receivedBy = locator<SessionManager>().credentials.value.username;
-  //   final pupil = await PupilBookApiService().patchPupilBook(
-  //       returnedAt: returnedAt, receivedBy: receivedBy, lendingId: lendingId);
+  Future<void> returnLibraryBook(
+      {required PupilBookLending pupilBookLending}) async {
+    final updatedBookLending = pupilBookLending.copyWith(
+      returnedAt: DateTime.now().toUtc(),
+      receivedBy: _hubSessionManager.userName,
+    );
 
-  //   _pupils[pupil.internalId]!.updatePupil(pupil);
+    final pupil = await _pupilBookApiService.updatePupilBookLending(
+      bookLending: updatedBookLending,
+    );
+    if (pupil == null) {
+      return;
+    }
+    _pupilIdPupilsMap[pupil.id!]!.updatePupil(pupil);
 
-  //   return;
-  // }
+    return;
+  }
 
-  // Future<void> patchPupilBook(
-  //     {required String lendingId,
-  //     DateTime? lentAt,
-  //     String? lentBy,
-  //     String? comment,
-  //     int? rating,
-  //     DateTime? returnedAt,
-  //     String? receivedBy}) async {
-  //   final pupil = await PupilBookApiService().patchPupilBook(
-  //       lendingId: lendingId,
-  //       lentAt: lentAt,
-  //       lentBy: lentBy,
-  //       state: comment,
-  //       rating: rating,
-  //       returnedAt: returnedAt,
-  //       receivedBy: receivedBy);
+  Future<void> updatePupilBook(
+      {required PupilBookLending pupilBookLending,
+      DateTime? lentAt,
+      String? lentBy,
+      ({String? value})? status,
+      ({int? value})? score,
+      ({DateTime? value})? returnedAt,
+      ({String? value})? receivedBy}) async {
+    final updatedBookLending = pupilBookLending.copyWith(
+      lentAt: lentAt ?? pupilBookLending.lentAt,
+      lentBy: lentBy ?? pupilBookLending.lentBy,
+      status: status != null ? status.value : pupilBookLending.status,
+      score: score != null ? score.value : pupilBookLending.score,
+      returnedAt:
+          returnedAt != null ? returnedAt.value : pupilBookLending.returnedAt,
+      receivedBy:
+          receivedBy != null ? receivedBy.value : pupilBookLending.receivedBy,
+    );
+    final pupil = await _pupilBookApiService.updatePupilBookLending(
+      bookLending: updatedBookLending,
+    );
+    if (pupil == null) {
+      return;
+    }
+    _pupilIdPupilsMap[pupil.id!]!.updatePupil(pupil);
 
-  //   _pupils[pupil.internalId]!.updatePupil(pupil);
-
-  //   return;
-  // }
+    return;
+  }
 }

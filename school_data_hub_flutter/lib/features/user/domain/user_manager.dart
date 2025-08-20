@@ -2,25 +2,23 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-//- DEPENDENCY INJECTIONS
-
-final _log = Logger('UserManager');
-
-final _client = di<Client>();
-
-final _sessionManager = di<ServerpodSessionManager>();
-
-final _notificationService = di<NotificationService>();
-
 class UserManager {
+  final _log = Logger('UserManager');
+
+  final _client = di<Client>();
+
+  final _sessionManager = di<HubSessionManager>();
+
+  final _notificationService = di<NotificationService>();
   ValueListenable<List<User>> get users => _users;
   final _users = ValueNotifier<List<User>>([]);
 
   UserManager();
   Future<UserManager> init() async {
+    await fetchUsers();
     return this;
   }
 

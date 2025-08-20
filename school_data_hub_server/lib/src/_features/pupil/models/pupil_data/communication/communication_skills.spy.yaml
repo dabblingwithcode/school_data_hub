@@ -1,0 +1,7 @@
+class: CommunicationSkills
+fields:
+  understanding: int
+  speaking: int
+  reading: int
+  createdBy: String
+  createdAt: DateTime

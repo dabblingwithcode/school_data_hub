@@ -4,7 +4,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_page/school_list_pupil_entries_page.dart';
@@ -12,7 +12,7 @@ import 'package:school_data_hub_flutter/features/school_lists/presentation/schoo
 import 'package:watch_it/watch_it.dart';
 
 final _schoolListManager = di<SchoolListManager>();
-final _serverpodSessionManager = di<ServerpodSessionManager>();
+final _hubSessionManager = di<HubSessionManager>();
 final _pupilManager = di<PupilManager>();
 
 class SchoolListCard extends WatchingWidget {
@@ -38,7 +38,7 @@ class SchoolListCard extends WatchingWidget {
               ));
             },
             onLongPress: () async {
-              if (schoolList.createdBy != _serverpodSessionManager.userName) {
+              if (schoolList.createdBy != _hubSessionManager.userName) {
                 informationDialog(context, 'Keine Berechtigung',
                     'Listen können nur von ListenbesiterInnen bearbeitet werden!');
                 return;

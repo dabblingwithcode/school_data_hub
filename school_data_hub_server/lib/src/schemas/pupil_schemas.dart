@@ -12,5 +12,25 @@ class PupilSchemas {
     ),
     supportCategoryStatuses: SupportCategoryStatus.includeList(),
     supportGoals: SupportGoal.includeList(),
+    competenceChecks: CompetenceCheck.includeList(
+      include: CompetenceCheck.include(),
+    ),
+    pupilBookLendings: PupilBookLending.includeList(
+        include: PupilBookLending.include(
+      pupilBookLendingFiles: HubDocument.includeList(),
+    )),
+  );
+}
+
+class LibraryBookSchemas {
+  static LibraryBookInclude allInclude = LibraryBook.include(
+    book: Book.include(
+      tags: BookTagging.includeList(
+        include: BookTagging.include(
+          bookTag: BookTag.include(),
+        ),
+      ),
+    ),
+    location: LibraryBookLocation.include(),
   );
 }

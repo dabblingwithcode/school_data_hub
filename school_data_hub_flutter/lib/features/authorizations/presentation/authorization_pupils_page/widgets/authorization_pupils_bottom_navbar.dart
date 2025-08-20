@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/common/domain/filters/filters_state_mana
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/paddings.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/presentation/authorization_pupils_page/widgets/authorization_pupils_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
@@ -13,9 +13,8 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart
 import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _serverpodSessionManager = di<ServerpodSessionManager>();
+final _hubSessionManager = di<HubSessionManager>();
 final _authorizationManager = di<AuthorizationManager>();
-final _pupilManager = di<PupilManager>();
 
 class AuthorizationPupilsBottomNavBar extends WatchingWidget {
   final Authorization authorization;
@@ -51,9 +50,8 @@ class AuthorizationPupilsBottomNavBar extends WatchingWidget {
                   Navigator.pop(context);
                 },
               ),
-              if (di<ServerpodSessionManager>().userName ==
-                      authorization.createdBy ||
-                  _serverpodSessionManager.isAdmin) ...[
+              if (di<HubSessionManager>().userName == authorization.createdBy ||
+                  _hubSessionManager.isAdmin) ...[
                 const Gap(AppPaddings.bottomNavBarButtonGap),
                 IconButton(
                     tooltip: 'Kinder hinzufügen',
@@ -63,7 +61,7 @@ class AuthorizationPupilsBottomNavBar extends WatchingWidget {
                           await Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => SelectPupilsListPage(
                             selectablePupils: di<PupilManager>()
-                                .pupilsNotListed(pupilsInAuthorization)),
+                                .getPupilsNotListed(pupilsInAuthorization)),
                       ));
                       if (selectedPupilIds == null) {
                         return;
@@ -124,7 +122,7 @@ BottomAppBar authorizationPupilsBottomNavBar(
             },
           ),
           const Gap(30),
-          di<ServerpodSessionManager>().userName == authorization.createdBy
+          di<HubSessionManager>().userName == authorization.createdBy
               ? IconButton(
                   tooltip: 'Kinder hinzufügen',
                   icon: const Icon(Icons.add, color: Colors.white, size: 30),
@@ -133,7 +131,7 @@ BottomAppBar authorizationPupilsBottomNavBar(
                         await Navigator.of(context).push(MaterialPageRoute(
                       builder: (ctx) => SelectPupilsListPage(
                           selectablePupils: di<PupilManager>()
-                              .pupilsNotListed(pupilsInAuthorization)),
+                              .getPupilsNotListed(pupilsInAuthorization)),
                     ));
                     if (selectedPupilIds == null) {
                       return;

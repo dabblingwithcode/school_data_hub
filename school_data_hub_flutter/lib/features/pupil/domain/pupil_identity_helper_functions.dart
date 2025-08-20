@@ -1,30 +1,42 @@
 import 'dart:convert';
 
+import 'package:logging/logging.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_identity.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _pupilIdentityManager = di<PupilIdentityManager>();
+final _log = Logger('PupilIdentityHelper');
 
 class PupilIdentityHelper {
   //- LOCAL STORAGE HELPERS
+
   static Future<Map<int, PupilIdentity>> readPupilIdentitiesFromStorage(
       {required String secureStorageKey}) async {
-    final pupilsJson = await LegacySecureStorage.read(secureStorageKey);
+    final pupilsJson = await HubSecureStorage().getString(secureStorageKey);
     if (pupilsJson == null) return {};
 
-    final Map<String, dynamic> decoded = jsonDecode(pupilsJson);
-    return decoded.map((key, value) =>
-        MapEntry(int.parse(key), PupilIdentity.fromJson(value)));
+    final Map<String, dynamic> decodedJson = jsonDecode(pupilsJson);
+
+    return Map<int, PupilIdentity>.fromEntries(decodedJson.entries.map(
+      (entry) {
+        final int pupilId = int.parse(entry.key);
+
+        final PupilIdentity pupilIdentity = PupilIdentity.fromJson(entry.value);
+
+        return MapEntry(pupilId, pupilIdentity);
+      },
+    ));
   }
 
   static Future<void> deletePupilIdentitiesForEnv(
       String secureStorageKey) async {
-    await ServerpodSecureStorage().remove(secureStorageKey);
-    _pupilIdentityManager.clearPupilIdentities();
+    await HubSecureStorage().remove(secureStorageKey);
+    _log.warning(
+        'Pupil identities for environment $secureStorageKey have been deleted.');
+    di<PupilIdentityManager>().clearPupilIdentities();
 
     di<PupilsFilter>().clearFilteredPupils();
 
@@ -32,35 +44,71 @@ class PupilIdentityHelper {
   }
 
   //- OBJECT HELPERS
-  static PupilIdentity pupilIdentityFromString(
+
+  static PupilIdentity decodePupilIdentityFromStringList(
       List<String> pupilIdentityStringItems) {
-    //-TODO implement enum for the schoolyear
-    final schoolyear = pupilIdentityStringItems[4] == '03'
-        ? 'S3'
-        : pupilIdentityStringItems[4] == '04'
-            ? 'S4'
-            : pupilIdentityStringItems[4];
+    final SchoolGrade schoolgrade;
+    switch (pupilIdentityStringItems[5]) {
+      case 'E1':
+        schoolgrade = SchoolGrade.E1;
+        break;
+      case 'E2':
+        schoolgrade = SchoolGrade.E2;
+        break;
+      case 'E3':
+        schoolgrade = SchoolGrade.E3;
+        break;
+      case '03':
+        schoolgrade = SchoolGrade.K3;
+        break;
+      case 'K3':
+        schoolgrade = SchoolGrade.K3;
+        break;
+      case '04':
+        schoolgrade = SchoolGrade.K4;
+        break;
+      case 'K4':
+        schoolgrade = SchoolGrade.K4;
+        break;
+      default:
+        throw Exception('Unknown school grade: ${pupilIdentityStringItems[5]}');
+    }
+
     final newPupilIdentity = PupilIdentity(
       id: int.parse(pupilIdentityStringItems[0]),
       firstName: pupilIdentityStringItems[1],
       lastName: pupilIdentityStringItems[2],
       group: pupilIdentityStringItems[3],
-      schoolGrade: schoolyear,
-      specialNeeds: pupilIdentityStringItems[5] == ''
+      groupTutor: pupilIdentityStringItems[4],
+      schoolGrade: schoolgrade,
+      // If there is a special needs string, it may be split into two parts
+      // and concatenated to form the full special needs string.
+      specialNeeds: pupilIdentityStringItems[6] == ''
           ? null
-          : '${pupilIdentityStringItems[5]}${pupilIdentityStringItems[6]}',
-      gender: pupilIdentityStringItems[7],
-      language: pupilIdentityStringItems[8],
-      family: pupilIdentityStringItems[9] == ''
+          : '${pupilIdentityStringItems[6]}${pupilIdentityStringItems[7]}',
+      gender: pupilIdentityStringItems[8],
+      language: pupilIdentityStringItems[9],
+      family: pupilIdentityStringItems[10] == ''
           ? null
-          : pupilIdentityStringItems[9],
-      birthday: DateTime.tryParse(pupilIdentityStringItems[10])!,
-      migrationSupportEnds: pupilIdentityStringItems[11] == ''
+          : pupilIdentityStringItems[10],
+      birthday: DateTime.tryParse(pupilIdentityStringItems[11])!,
+      migrationSupportEnds: pupilIdentityStringItems[12] == ''
           ? null
-          : DateTime.tryParse(pupilIdentityStringItems[11])!,
-      pupilSince: DateTime.tryParse(pupilIdentityStringItems[12])!,
-      // TODO: check this
-      afterSchoolCare: null,
+          : DateTime.tryParse(pupilIdentityStringItems[12])!,
+      pupilSince: DateTime.tryParse(pupilIdentityStringItems[13])!,
+      afterSchoolCare: pupilIdentityStringItems[14] != '' ? true : false,
+      religion: pupilIdentityStringItems[15] == ''
+          ? null
+          : pupilIdentityStringItems[15],
+      religionLessonsSince: pupilIdentityStringItems[16] == ''
+          ? null
+          : DateTime.tryParse(pupilIdentityStringItems[16])!,
+      familyLanguageLessonsSince: pupilIdentityStringItems[18] == ''
+          ? null
+          : DateTime.tryParse(pupilIdentityStringItems[18])!,
+      leavingDate: pupilIdentityStringItems[18] == ''
+          ? null
+          : DateTime.tryParse(pupilIdentityStringItems[19]),
     );
     return newPupilIdentity;
   }

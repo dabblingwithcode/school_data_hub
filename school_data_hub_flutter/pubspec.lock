@@ -173,10 +173,10 @@ packages:
     dependency: "direct main"
     description:
       name: calendar_date_picker2
-      sha256: "293020a283210ccefff669499178c127acbb5e77ae13864f992c8a3e68a8aca1"
+      sha256: "9c9b5586fb512bf1181d7f3a6273bffa9e65a4e16689902e112771e7d71d063b"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.0"
+    version: "2.0.1"
   carousel_slider:
     dependency: "direct main"
     description:
@@ -405,10 +405,10 @@ packages:
     dependency: "direct main"
     description:
       name: file_picker
-      sha256: "09b474c0c8117484b80cbebc043801ff91e05cfbd2874d512825c899e1754694"
+      sha256: "77f8e81d22d2a07d0dee2c62e1dda71dc1da73bf43bb2d45af09727406167964"
       url: "https://pub.dev"
     source: hosted
-    version: "9.2.3"
+    version: "10.1.9"
   file_selector_linux:
     dependency: transitive
     description:
@@ -749,6 +749,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  isbn:
+    dependency: "direct main"
+    description:
+      name: isbn
+      sha256: bf1b1785388f63e25b8bf24377bb948c131bf59a50e048a5e96c823bf8295920
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4"
   js:
     dependency: transitive
     description:
@@ -905,10 +913,10 @@ packages:
     dependency: "direct main"
     description:
       name: pasteboard
-      sha256: "7bf733f3a00c7188ec1f2c6f0612854248b302cf91ef3611a2b7bb141c0f9d55"
+      sha256: "9ff73ada33f79a59ff91f6c01881fd4ed0a0031cfc4ae2d86c0384471525fca1"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.0"
+    version: "0.4.0"
   path:
     dependency: transitive
     description:
@@ -1136,42 +1144,42 @@ packages:
     dependency: "direct main"
     description:
       name: serverpod_auth_client
-      sha256: "51aab7f19b1e43751fc24f73d1ee17a19cda34bb5626d8f7466ed4d1665db575"
+      sha256: "635fecab7e0144cb614186aaec4ba1e44a9d3c97a07b9d2479f5b04d4fe274ff"
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.0"
+    version: "2.8.0"
   serverpod_auth_shared_flutter:
     dependency: "direct main"
     description:
       name: serverpod_auth_shared_flutter
-      sha256: "5f3cf3e8d21851e49618786dbf22d4ca1286739cd54ad0d78d1db4f938969c7e"
+      sha256: "9d998eeb3b8d5c07f89ea8c018547b0ecc6a7d521ed98ee16deae729522c8aef"
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.0"
+    version: "2.8.0"
   serverpod_client:
     dependency: transitive
     description:
       name: serverpod_client
-      sha256: "23c7a08b91b18ca7ecc73580ba5fc2c3b399925d6d9dd96fc8847f3d61552efd"
+      sha256: "5865a1430f3eba167fa37fbd543e6975f26592da32ad8d7c5e23e4c15dbf8c4c"
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.0"
+    version: "2.8.0"
   serverpod_flutter:
     dependency: "direct main"
     description:
       name: serverpod_flutter
-      sha256: "13747345025a63ab5fa0027ca6b4419610e13b7e3fe32a8b9d30157d162124d1"
+      sha256: "1cf797c5ef0341786ed9721ef6b976621fb5cedfe5eb22533b08add7bc3a3c57"
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.0"
+    version: "2.8.0"
   serverpod_serialization:
     dependency: transitive
     description:
       name: serverpod_serialization
-      sha256: "721e7a708df865767be014d26b4f4dd639f448307471218d401995fdb5720be7"
+      sha256: "86c57fbe8a030c19862b194574cfa2b3d72be084c487617f738f54ff36fb5233"
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.0"
+    version: "2.8.0"
   shared_preferences:
     dependency: transitive
     description:
@@ -1573,10 +1581,10 @@ packages:
     dependency: "direct main"
     description:
       name: window_manager
-      sha256: "732896e1416297c63c9e3fb95aea72d0355f61390263982a47fd519169dc5059"
+      sha256: "51d50168ab267d344b975b15390426b1243600d436770d3f13de67e55b05ec16"
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.3"
+    version: "0.5.0"
   xdg_directories:
     dependency: transitive
     description:

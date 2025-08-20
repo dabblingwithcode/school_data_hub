@@ -4,21 +4,24 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/barcode_stream_scanner.dart';
+import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_image_picker.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identity_stream_page/pupil_identity_stream_page.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _pupilIdentityManager = di<PupilIdentityManager>();
-final _sessionManager = di<ServerpodSessionManager>();
+final _sessionManager = di<HubSessionManager>();
 
 class ScanToolsPage extends WatchingWidget {
   const ScanToolsPage({super.key});
 
-  importFileWithWindows(String function) async {
+  void importFileWithWindows(String function) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result != null) {
       File file = File(result.files.single.path!);
@@ -36,7 +39,7 @@ class ScanToolsPage extends WatchingWidget {
     }
   }
 
-  importFromQrImage() async {
+  void importFromQrImage() async {
     final rawTextResult = await scanPickedQrImage();
     if (rawTextResult == null) {
       return;
@@ -64,7 +67,58 @@ class ScanToolsPage extends WatchingWidget {
             child: Column(
               children: [
                 const Spacer(),
-                (Platform.isWindows || Platform.isMacOS) && _sessionManager.isAdmin
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      backgroundColor: Colors.amber[800],
+                      minimumSize: const Size.fromHeight(90)),
+                  onPressed: () async {
+                    String? channelName;
+                    if (!Platform.isWindows && !Platform.isMacOS) {
+                      channelName = await qrScanner(
+                        context: context,
+                        overlayText: "Bitte Verbindungscode scannen",
+                      );
+                    } else {
+                      channelName = await shortTextfieldDialog(
+                        context: context,
+                        title: 'Verbindungscode eingeben',
+                        hintText: 'z.B. 12345678',
+                        labelText: 'Verbindungscode',
+                      );
+                    }
+
+                    if (channelName == null || channelName.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Kein gültiger Verbindungscode.'),
+                        ),
+                      );
+                      return;
+                    }
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => PupilIdentityStreamPage(
+                          role: PupilIdentityStreamRole.receiver,
+                          importedChannelName: channelName,
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    'Schülerdaten vom Client importieren',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.white),
+                  ),
+                ),
+                const Gap(20),
+                (Platform.isWindows || Platform.isMacOS) &&
+                        _sessionManager.isAdmin
                     ? ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
@@ -115,22 +169,22 @@ class ScanToolsPage extends WatchingWidget {
                   ),
                   const Gap(20),
                   ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          backgroundColor: Colors.amber[800],
-                          minimumSize: const Size.fromHeight(90)),
-                      onPressed: () =>
-                          importFileWithWindows('pupil_identities'),
-                      child: const Text(
-                        'ID-Liste importieren',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Colors.white),
-                      ))
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        backgroundColor: Colors.amber[800],
+                        minimumSize: const Size.fromHeight(90)),
+                    onPressed: () => importFileWithWindows('pupil_identities'),
+                    child: const Text(
+                      'ID-Liste importieren',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.white),
+                    ),
+                  ),
                 ],
                 if (Platform.isAndroid || Platform.isIOS)
                   Container(

@@ -1,4 +1,0 @@
-class: MissedClassDto
-fields:
-  missedClass: MissedClass
-  operation: String

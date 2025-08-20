@@ -24,7 +24,7 @@ class HubDocumentHelper {
       documentId: documentId,
       documentPath: path, // Store the path in the HubDocument
       createdBy: createdBy,
-      createdAt: DateTime.now(),
+      createdAt: DateTime.now().toUtc(),
     );
 
     return document;

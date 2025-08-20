@@ -1,0 +1,9 @@
+class: Kindergarden
+table: kindergarden
+fields:
+  name: String
+  phone: String
+  address: String
+  email: String
+  contactPerson: String
+  pupils: List<PupilData>?, relation(optional)

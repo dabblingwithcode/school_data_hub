@@ -192,7 +192,8 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
                                                           fontSize: 18),
                                                     ),
                                                     Text(
-                                                      listedPupil.schoolyear,
+                                                      listedPupil
+                                                          .schoolGrade.name,
                                                       style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
@@ -232,7 +233,7 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
                         await Navigator.of(context).push(MaterialPageRoute(
                               builder: (ctx) => SelectPupilsListPage(
                                   selectablePupils: _pupilManager
-                                      .pupilsNotListed(pupilIds.toList())),
+                                      .getPupilsNotListed(pupilIds.toList())),
                             )) ??
                             [];
                     if (selectedPupilIds.isNotEmpty) {

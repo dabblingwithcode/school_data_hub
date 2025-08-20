@@ -1,0 +1,12 @@
+class: SupportCategoryStatus
+table: support_category_status
+fields:
+  score: int
+  createdBy: String
+  createdAt: DateTime
+  comment: String
+  documents: List<HubDocument>?, relation
+  pupil: PupilData?, relation
+  supportCategory: SupportCategory?, relation
+  learningSupportPlan: LearningSupportPlan?, relation
+  

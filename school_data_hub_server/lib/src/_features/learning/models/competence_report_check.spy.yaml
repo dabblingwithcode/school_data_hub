@@ -1,0 +1,12 @@
+class: CompetenceReportCheck
+table: competence_report_check
+fields:
+  publicId: String
+  achievement: int
+  comment: String
+  createdBy: String
+  createdAt: DateTime
+  pupil: PupilData?, relation(name=competence_report_check_pupil)
+  competence: CompetenceReportItem?, relation(name=competence_report_item_competence_report_check)
+  
+  competenceReport: CompetenceReport?, relation(name=competence_report_check_report)

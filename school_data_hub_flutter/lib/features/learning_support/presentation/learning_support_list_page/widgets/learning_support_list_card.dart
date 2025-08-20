@@ -9,6 +9,7 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/l
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_goals_list.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -58,7 +59,9 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                             child: InkWell(
                               onTap: () {
                                 _mainMenuBottomNavManager
-                                    .setPupilProfileNavPage(8);
+                                    .setPupilProfileNavPage(
+                                        ProfileNavigationState
+                                            .learningSupport.value);
                                 Navigator.of(context).push(MaterialPageRoute(
                                   builder: (ctx) => PupilProfilePage(
                                     pupil: pupil,
@@ -115,7 +118,8 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                       children: [
                         const Text('Kindergartenbesuch: '),
                         Text(
-                          pupil.kindergarden ?? 'Kein Eintrag',
+                          pupil.kindergardenInfo?.attendedMonths.toString() ??
+                              'Kein Eintrag',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14,

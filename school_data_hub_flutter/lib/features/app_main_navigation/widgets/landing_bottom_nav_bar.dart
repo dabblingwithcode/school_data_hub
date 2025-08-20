@@ -31,6 +31,48 @@ class MainMenuBottomNavigation extends WatchingWidget {
     const SettingsPage(),
   ];
 
+  void showHeavyLoadingOverlay(BuildContext context) {
+    overlayEntry = OverlayEntry(
+      builder: (context) => const Stack(
+        fit: StackFit.expand,
+        children: [
+          ModalBarrier(
+            dismissible: false,
+            color:
+                Color.fromARGB(108, 0, 0, 0), // Colors.black.withOpacity(0.3)
+          ), // Background color
+          Material(
+            color: Colors.transparent,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text('Bitte warten...', // Your text here
+                      style: TextStyle(
+                          color: Colors.white, // Text color
+                          fontSize: 20, // Text size
+                          fontWeight: FontWeight.bold)),
+                  SizedBox(height: 16),
+                  CircularProgressIndicator(
+                    color: AppColors.interactiveColor,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    Overlay.of(context).insert(overlayEntry!);
+  }
+
+  void hideLoadingOverlay() {
+    overlayEntry?.remove();
+    overlayEntry = null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
@@ -60,11 +102,16 @@ class MainMenuBottomNavigation extends WatchingWidget {
         handler: (context, value, cancel) {
           value ? showHeavyLoadingOverlay(context) : hideLoadingOverlay();
         });
+    registerHandler(
+        select: (BottomNavManager x) => x.bottomNavState,
+        handler: (context, value, cancel) {
+          pageViewController.jumpToPage(value);
+        });
     callOnce((context) async {
       final envDataIncomplete =
           di<EnvManager>().isAnyImportantEnvDataNotPopulatedInServer();
       if (envDataIncomplete) {
-        final serverDataStatus = di<EnvManager>().populatedEnvServerData;
+        final serverDataStatus = _envManager.populatedEnvServerData;
         final List<String> missingFields = [];
         if (!serverDataStatus.schoolSemester) {
           missingFields.add('Schulhalbjahr');
@@ -80,6 +127,7 @@ class MainMenuBottomNavigation extends WatchingWidget {
         }
         final String missingData = missingFields.join('\n');
 
+        // delayed because of race condition
         unawaited(Future<void>.delayed(const Duration(milliseconds: 500), () {
           di<NotificationService>().showInformationDialog(
               'Es fehlen noch diese Daten im Server:\n\n$missingData');
@@ -213,45 +261,4 @@ void showInstanceLoadingOverlay(BuildContext context) {
   );
 
   Overlay.of(context).insert(overlayEntry!);
-}
-
-void showHeavyLoadingOverlay(BuildContext context) {
-  overlayEntry = OverlayEntry(
-    builder: (context) => const Stack(
-      fit: StackFit.expand,
-      children: [
-        ModalBarrier(
-          dismissible: false,
-          color: Color.fromARGB(108, 0, 0, 0), // Colors.black.withOpacity(0.3)
-        ), // Background color
-        Material(
-          color: Colors.transparent,
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text('Bitte warten...', // Your text here
-                    style: TextStyle(
-                        color: Colors.white, // Text color
-                        fontSize: 20, // Text size
-                        fontWeight: FontWeight.bold)),
-                SizedBox(height: 16),
-                CircularProgressIndicator(
-                  color: AppColors.interactiveColor,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    ),
-  );
-
-  Overlay.of(context).insert(overlayEntry!);
-}
-
-void hideLoadingOverlay() {
-  overlayEntry?.remove();
-  overlayEntry = null;
 }

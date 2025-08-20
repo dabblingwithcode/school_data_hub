@@ -8,9 +8,11 @@ part of 'policy.dart';
 
 Policy _$PolicyFromJson(Map<String, dynamic> json) => Policy(
       schemaVersion: (json['schemaVersion'] as num).toInt(),
-      identificationStamp: json['identificationStamp'],
+      identificationStamp: json['identificationStamp'] as String?,
       flags: Flags.fromJson(json['flags'] as Map<String, dynamic>),
-      hooks: json['hooks'],
+      hooks: (json['hooks'] as List<dynamic>?)
+          ?.map((e) => Hook.fromJson(e as Map<String, dynamic>))
+          .toList(),
       matrixUsers: (json['users'] as List<dynamic>?)
           ?.map((e) => MatrixUser.fromJson(e as Map<String, dynamic>))
           .toList(),

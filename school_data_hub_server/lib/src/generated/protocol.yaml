@@ -6,15 +6,14 @@ admin:
   - getAllUsers:
   - getUserById:
   - updateBackendPupilDataState:
-attendance:
-  - fetchMissedClassesOnASchoolday:
-  - fetchMissedClasses:
-  - createMissedClass:
-  - deleteMissedClass:
-auth:
-  - login:
-  - verifyPassword:
-  - logOut:
+missedSchoolday:
+  - streamMissedSchooldays:
+  - postMissedSchoolday:
+  - postMissedSchooldays:
+  - fetchAllMissedSchooldays:
+  - fetchMissedSchooldaysOnASchoolday:
+  - deleteMissedSchoolday:
+  - updateMissedSchoolday:
 authorization:
   - fetchAuthorizations:
   - fetchAuthorizationById:
@@ -25,36 +24,66 @@ pupilAuthorization:
   - updatePupilAuthorization:
   - addFileToPupilAuthorization:
   - removeFileFromPupilAuthorization:
+bookTags:
+  - postBookTag:
+  - fetchBookTags:
+  - updateBookTag:
+  - deleteBookTag:
+books:
+  - postBook:
+  - fetchBooks:
+  - fetchBookByIsbn:
+  - updateBook:
+  - updateBookTags:
+  - deleteBook:
+libraryBookLocations:
+  - postLibraryBookLocation:
+  - fetchLibraryBookLocations:
+  - updateLibraryBookLocation:
+  - deleteLibraryBookLocation:
+libraryBooks:
+  - postLibraryBook:
+  - fetchLibraryBooks:
+  - fetchLibraryBookByIsbn:
+  - fetchLibraryBookByLibraryId:
+  - fetchLibraryBooksMatchingQuery:
+  - updateLibraryBook:
+  - deleteLibraryBook:
+pupilBookLending:
+  - postPupilBookLending:
+  - fetchPupilBookLendings:
+  - fetchPupilBookLendingById:
+  - updatePupilBookLending:
+  - deletePupilBookLending:
+competenceCheck:
+  - postCompetenceCheck:
 competence:
   - importCompetencesFromJsonFile:
   - postCompetence:
   - getAllCompetences:
   - updateCompetence:
   - deleteCompetence:
-files:
-  - getUploadDescription:
-  - verifyUpload:
-  - getImage:
-supportCategory:
-  - fetchSupportCategories:
-  - importSupportCategoriesFromJsonFile:
-  - createSupportCategory:
-  - updateSupportCategory:
-  - deleteSupportCategory:
+learningSupportPlan:
+  - fetchLearningSupportPlans:
+  - createLearningSupportPlan:
+  - updateLearningSupportPlan:
+  - deleteLearningSupportPlan:
   - postSupportCategoryStatus:
   - fetchSupportCategoryStatus:
   - fetchSupportCategoryStatusFromPupil:
   - updateCategoryStatus:
   - deleteSupportCategoryStatus:
   - postCategoryGoal:
-missedClass:
-  - streamMyModels:
-  - postMissedClass:
-  - postMissedClasses:
-  - fetchAllMissedClasses:
-  - fetchMissedClassesOnASchoolday:
-  - deleteMissedClass:
-  - updateMissedClass:
+supportCategory:
+  - fetchSupportCategories:
+  - importSupportCategoriesFromJsonFile:
+  - createSupportCategory:
+  - updateSupportCategory:
+  - deleteSupportCategory:
+matrix:
+  - getCompulsoryRooms:
+  - setCompulsoryRooms:
+  - deleteCompulsoryRoom:
 pupil:
   - fetchPupilsAsStream:
   - fetchPupils:
@@ -62,6 +91,9 @@ pupil:
   - deletePupilDocument:
   - resetPublicMediaAuth:
   - deleteSupportLevelHistoryItem:
+pupilIdentityStream:
+  - streamEncryptedPupilIds:
+  - sendPupilIdentityMessage:
 pupilUpdate:
   - updatePupil:
   - updateCommunicationSkills:
@@ -73,6 +105,7 @@ pupilUpdate:
   - updatePreSchoolMedicalStatus:
   - updatePublicMediaAuth:
   - updateSupportLevel:
+  - updateSchoolyearHeldBackDate:
 schoolList:
   - fetchSchoolLists:
   - postSchoolList:
@@ -99,7 +132,28 @@ schooldayEvent:
   - deleteSchooldayEvent:
   - updateSchooldayEventFile:
   - deleteSchooldayEventFile:
+auth:
+  - login:
+  - verifyPassword:
+  - logOut:
 user:
   - getCurrentUser:
   - changePassword:
   - increaseStaffCredit:
+pupilWorkbooks:
+  - postPupilWorkbook:
+  - fetchPupilWorkbooks:
+  - fetchPupilWorkbooksFromPupil:
+  - updatePupilWorkbook:
+  - deletePupilWorkbook:
+workbooks:
+  - postWorkbook:
+  - fetchWorkbookByIsbn:
+  - fetchWorkbooks:
+  - updateWorkbook:
+  - deleteWorkbook:
+files:
+  - getUploadDescription:
+  - verifyUpload:
+  - getImage:
+  - getUnencryptedImage:

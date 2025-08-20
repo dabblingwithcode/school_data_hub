@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_plan_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/select_support_category_page/controller/select_support_category_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/goal_examples_dialog.dart';
@@ -12,7 +13,8 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart
 import 'package:watch_it/watch_it.dart';
 
 final _pupilManager = di<PupilManager>();
-final _learningSupportManager = di<LearningSupportManager>();
+final _learningSupportPlanManager = di<LearningSupportPlanManager>();
+final _supportCategoryManager = di<SupportCategoryManager>();
 
 class NewSupportCategoryStatusPage extends StatelessWidget {
   final NewSupportCategoryStatusController controller;
@@ -95,7 +97,7 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5.0),
-                                    color: _learningSupportManager
+                                    color: _supportCategoryManager
                                         .getCategoryColor(
                                       controller.goalCategoryId!,
                                     ),
@@ -127,13 +129,13 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                                     children: [
                                       Flexible(
                                         child: Text(
-                                          _learningSupportManager
+                                          _supportCategoryManager
                                               .getSupportCategory(
                                                   controller.goalCategoryId!)
                                               .name,
                                           style: TextStyle(
                                             fontSize: 20,
-                                            color: _learningSupportManager
+                                            color: _supportCategoryManager
                                                 .getCategoryColor(
                                                     controller.goalCategoryId!),
                                             fontWeight: FontWeight.bold,
@@ -150,7 +152,7 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                                 (controller.widget.appBarTitle ==
                                         'Neues Förderziel')
                                     ? 'Förderziel'
-                                    : 'Status',
+                                    : 'Beobachtungen',
                                 style: const TextStyle(
                                   fontSize: 20,
                                   color: Colors.black,
@@ -190,7 +192,7 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                             labelText: (controller.widget.appBarTitle ==
                                     'Neues Förderziel')
                                 ? 'Hilfen für das Erreichen des Zieles'
-                                : 'Beschreibung des Status',
+                                : 'Beschreibung des Ist-Zustandes',
                           ),
                         ),
                         const Gap(20),
@@ -199,7 +201,7 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                'Aktueller Status:',
+                                'Ist-Zustand:',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               const Gap(10),
@@ -239,7 +241,7 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                   child: Column(
                     children: [
                       if (controller.goalCategoryId != null)
-                        if (_learningSupportManager
+                        if (_supportCategoryManager
                             .getGoalsForSupportCategory(
                                 controller.goalCategoryId!)
                             .isNotEmpty) ...<Widget>[
@@ -250,7 +252,7 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                                   await goalExamplesDialog(
                                       context,
                                       'Beispiele',
-                                      _learningSupportManager
+                                      _supportCategoryManager
                                           .getGoalsForSupportCategory(
                                               controller.goalCategoryId!));
                               if (result != null) {
@@ -273,12 +275,14 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                               'Neues Förderziel') {
                             controller.postCategoryGoal();
                           } else {
-                            _learningSupportManager.postSupportCategoryStatus(
-                                pupilId: controller.widget.pupilId,
-                                supportCategoryId: controller.goalCategoryId!,
-                                status: controller.categoryStatusValue,
-                                comment: controller
-                                    .strategiesTextField2Controller.text);
+                            _learningSupportPlanManager
+                                .postSupportCategoryStatus(
+                                    pupilId: controller.widget.pupilId,
+                                    supportCategoryId:
+                                        controller.goalCategoryId!,
+                                    status: controller.categoryStatusValue,
+                                    comment: controller
+                                        .strategiesTextField2Controller.text);
                           }
                           Navigator.pop(context);
                         },

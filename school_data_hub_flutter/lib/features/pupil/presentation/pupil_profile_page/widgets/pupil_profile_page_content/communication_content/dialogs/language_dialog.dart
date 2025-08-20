@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
@@ -10,7 +10,7 @@ import 'package:watch_it/watch_it.dart';
 
 final _pupilManager = di<PupilManager>();
 
-final _serverpodSessionManager = di<ServerpodSessionManager>();
+final _hubSessionManager = di<HubSessionManager>();
 
 // based on https://mobikul.com/creating-stateful-dialog-form-in-flutter/
 // TODO: It must be a better way to do this
@@ -108,7 +108,7 @@ Future<void> languageDialog(BuildContext context, PupilProxy pupil,
                       understanding: dropdownUnderstandValue,
                       speaking: dropdownSpeakValue,
                       reading: dropdownReadValue,
-                      createdBy: _serverpodSessionManager.userName!,
+                      createdBy: _hubSessionManager.userName!,
                       createdAt: DateTime.now(),
                     );
                     switch (subject) {
@@ -123,7 +123,7 @@ Future<void> languageDialog(BuildContext context, PupilProxy pupil,
                               )
                             : TutorInfo(
                                 communicationTutor1: languageValue,
-                                createdBy: _serverpodSessionManager.userName!,
+                                createdBy: _hubSessionManager.userName!,
                               );
                         _pupilManager.updateTutorInfo(
                             pupilId: pupil.pupilId, tutorInfo: tutorInfo);
@@ -135,7 +135,7 @@ Future<void> languageDialog(BuildContext context, PupilProxy pupil,
                               )
                             : TutorInfo(
                                 communicationTutor2: languageValue,
-                                createdBy: _serverpodSessionManager.userName!,
+                                createdBy: _hubSessionManager.userName!,
                               );
                         _pupilManager.updateTutorInfo(
                             pupilId: pupil.pupilId, tutorInfo: tutorInfo);

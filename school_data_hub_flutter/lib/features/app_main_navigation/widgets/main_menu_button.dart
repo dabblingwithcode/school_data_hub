@@ -40,6 +40,7 @@ class MainMenuButton extends StatelessWidget {
                 const Gap(10),
                 Text(
                   buttonText,
+                  textAlign: TextAlign.center,
                   style: const TextStyle(
                       color: Colors.white, fontWeight: FontWeight.bold),
                 ),

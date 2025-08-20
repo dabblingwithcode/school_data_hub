@@ -6,19 +6,18 @@ import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/core/dependency_injection.dart';
+import 'package:school_data_hub_flutter/core/di/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
 import 'package:school_data_hub_flutter/core/models/populated_server_session_data.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _log = Logger('EnvManager');
+class EnvManager with ChangeNotifier {
+  final _log = Logger('EnvManager');
 
-final _notificationService = di<NotificationService>();
-final _pupilIdentityManager = di<PupilIdentityManager>();
+  final _notificationService = di<NotificationService>();
 
-class EnvManager {
   bool _dependentMangagersRegistered = false;
   bool get dependentManagersRegistered => _dependentMangagersRegistered;
 
@@ -26,18 +25,18 @@ class EnvManager {
 
   /// TODO: is this proxy authentication flag a hack or is this acceptable?
   /// We need to observe in [MaterialApp] if a user is authenticated
-  /// without accessing [ServerpodSessionManager], because if there is not
+  /// without accessing [HubSessionManager], because if there is not
   // an active env yet, it will still be unregistered.
   /// So this is a workaround setting a flag here
   /// **CAUTION**
-  /// Handle this value only with [ServerpodSessionManager] every time
+  /// Handle this value only with [HubSessionManager] every time
   /// it makes an authentication status change.
   ValueListenable<bool> get isAuthenticated => _isAuthenticated;
 
   /// **WARNING:**
   ///
-  /// This method should only be called from [ServerpodSessionManager]
-  void setUserAuthenticated(bool value) {
+  /// This method should only be called from [HubSessionManager]
+  void setUserAuthenticatedOnlyByHubSessionManager(bool value) {
     _log.info('setUserAuthenticated: $value');
     _isAuthenticated.value = value;
   }
@@ -140,7 +139,7 @@ class EnvManager {
 
     _activeEnv =
         environmentsMapWithDefaultServerEnv.environmentsMap[_defaultEnv];
-
+    notifyListeners();
     _log.info(
       'Default Environment set: $_defaultEnv',
     );
@@ -149,10 +148,9 @@ class EnvManager {
     await DiManager.registerManagersDependingOnActiveEnv();
     setDependentManagersRegistered(true);
 
-    if (await ServerpodSecureStorage()
-        .containsKey(storageKeyForMatrixCredentials)) {
-      final matrixCredentialsJson = await ServerpodSecureStorage()
-          .getString(storageKeyForMatrixCredentials);
+    if (await HubSecureStorage().containsKey(storageKeyForMatrixCredentials)) {
+      final matrixCredentialsJson =
+          await HubSecureStorage().getString(storageKeyForMatrixCredentials);
       final matrixCredentials = MatrixCredentials.fromJson(
           json.decode(matrixCredentialsJson!) as Map<String, dynamic>);
       DiManager.registerMatrixManagers(matrixCredentials);
@@ -177,11 +175,11 @@ class EnvManager {
 
   Future<EnvsInStorage?> _environmentsInStorage() async {
     bool environmentsInStorage =
-        await ServerpodSecureStorage().containsKey(_storageKeyForEnvironments);
+        await HubSecureStorage().containsKey(_storageKeyForEnvironments);
 
     if (environmentsInStorage == true) {
       final String? storedEnvironmentsAsString =
-          await ServerpodSecureStorage().getString(_storageKeyForEnvironments);
+          await HubSecureStorage().getString(_storageKeyForEnvironments);
 
       try {
         final environmentsInStorage = EnvsInStorage.fromJson(
@@ -194,7 +192,7 @@ class EnvManager {
 
         _log.warning('deleting faulty environments from secure storage');
 
-        await ServerpodSecureStorage().remove(_storageKeyForEnvironments);
+        await HubSecureStorage().remove(_storageKeyForEnvironments);
 
         return null;
       }
@@ -226,7 +224,7 @@ class EnvManager {
     _activeEnv = _environments[envName]!;
 
     _defaultEnv = envName;
-
+    notifyListeners();
     // The active environment changed, we need to update
     // this information in storage
     final updatedEnvsForStorage = EnvsInStorage(
@@ -235,32 +233,37 @@ class EnvManager {
     final String jsonEnvs = jsonEncode(updatedEnvsForStorage);
 
     // write the updated environments to secure storage
-    await ServerpodSecureStorage()
-        .setString(_storageKeyForEnvironments, jsonEnvs);
+    await HubSecureStorage().setString(_storageKeyForEnvironments, jsonEnvs);
 
     _envIsReady.value = true;
 
     _log.info('Activated Env: ${_activeEnv!.serverName}');
     _log.info('Environments in storage: ${_environments.length}');
 
-    _notificationService.showSnackBar(
-        NotificationType.success, 'Schulschlüssel für $envName gespeichert!');
-
     // Check if there are any dependent managers registered
     // and if so, unregister them
     // and register them again with the new environment
-    if (dependentManagersRegistered) {
-      await resetManagersDependentOnEnv();
-    } else {
-      await DiManager.registerManagersDependingOnActiveEnv();
-    }
+
     // Set the isAuthenticated flag to false
-    // because the user is not authenticated in the new environment (yet)
-    // and we need to show the login screen again
+    // because the user might not be authenticated in the new environment (yet)
+    // and we need to show the login screen again then
+
     _isAuthenticated.value = false;
+    await DiManager.resetActiveEnvDependentManagers();
+    await di.allReady();
+    _notificationService.showInformationDialog(
+      'Die Umgebung ${_activeEnv!.serverName} wurde aktiviert.',
+    );
+
+    // propagate the new environment to the pupil identity manager
+    await propagateNewEnv();
+
+    // notify the user that the environment has been activated
+    _notificationService.showSnackBar(NotificationType.success,
+        'Umgebung ${_activeEnv!.serverName} aktiviert!');
   }
 
-  deleteEnv() async {
+  Future<void> deleteEnv() async {
     final deletedEnvironment = _activeEnv!.serverName;
 
     // delete _env.value from _envs
@@ -271,8 +274,7 @@ class EnvManager {
 
     final jsonEnvs = json.encode(_environments);
 
-    await ServerpodSecureStorage()
-        .setString(_storageKeyForEnvironments, jsonEnvs);
+    await HubSecureStorage().setString(_storageKeyForEnvironments, jsonEnvs);
 
     // if there are environments left in _envs, set the last one as value
 
@@ -281,12 +283,18 @@ class EnvManager {
 
       _defaultEnv = _environments.keys.last;
       _log.info('Env $deletedEnvironment New defaultEnv: $_defaultEnv');
-      resetManagersDependentOnEnv();
+
+      _notificationService.showSnackBar(NotificationType.success,
+          'Schulschlüssel für $deletedEnvironment gelöscht!');
+
+      // reset the managers depending on the active environment
+      DiManager.resetActiveEnvDependentManagers();
     } else {
       // if there are no environments left, delete the environments from secure storage
 
-      await ServerpodSecureStorage().remove(_storageKeyForEnvironments);
-      DiManager.unregisterManagersDependingOnActiveEnv();
+      await HubSecureStorage().remove(_storageKeyForEnvironments);
+
+      DiManager.unregisterManagersDependentOnEnv();
       _activeEnv = null;
 
       _defaultEnv = '';
@@ -295,12 +303,8 @@ class EnvManager {
     }
   }
 
-  Future<void> resetManagersDependentOnEnv() async {
-    await DiManager.unregisterManagersDependingOnActiveEnv();
-    await DiManager.registerManagersDependingOnActiveEnv();
-  }
-
   Future<void> propagateNewEnv() async {
+    final _pupilIdentityManager = di<PupilIdentityManager>();
     // TODO: implement this if needed
     await _pupilIdentityManager.getPupilIdentitiesForEnv();
   }

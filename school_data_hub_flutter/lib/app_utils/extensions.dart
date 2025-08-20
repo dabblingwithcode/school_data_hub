@@ -23,8 +23,9 @@ extension DateOnlyCompare on DateTime {
   }
 
   String formatForUser() {
+    final date = this.toLocal();
     final DateFormat dateFormat = DateFormat("dd.MM.yyyy");
-    return dateFormat.format(this).toString();
+    return dateFormat.format(date).toString();
   }
 
   String formatForJson() {

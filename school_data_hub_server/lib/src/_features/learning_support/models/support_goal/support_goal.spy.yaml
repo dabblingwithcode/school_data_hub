@@ -1,0 +1,15 @@
+class: SupportGoal
+table: support_category_goal
+fields:
+  goalId: String
+  createdBy: String
+  createdAt: DateTime
+  score: int
+  achievedAt: DateTime?
+  description: String
+  strategies: String
+  pupil: PupilData?, relation
+  supportCategory: SupportCategory?, relation(onDelete=Cascade)
+  goalChecks: List<SupportGoalCheck>?, relation
+
+

@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/loading_page.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_page.dart';
 import 'package:watch_it/watch_it.dart';
@@ -120,10 +120,11 @@ class LoginController extends State<Login> {
     try {
       final authResponse = await _client.auth.login(username, password,
           DeviceInfo(deviceId: '1', deviceName: 'Test device'));
+
       if (authResponse.response.success) {
         _notificationService.showSnackBar(
             NotificationType.success, 'Erfolgreich eingeloggt!');
-        await di<ServerpodSessionManager>().registerSignedInUser(
+        await di<HubSessionManager>().registerSignedInUser(
           authResponse.response.userInfo!,
           authResponse.response.keyId!,
           authResponse.response.key!,
@@ -131,7 +132,7 @@ class LoginController extends State<Login> {
 
         /// Don't forget to set the flag in [EnvManager] to false
         /// to get to the login screen.
-        _envManager.setUserAuthenticated(true);
+        _envManager.setUserAuthenticatedOnlyByHubSessionManager(true);
         return;
       } else {
         _notificationService.showInformationDialog(

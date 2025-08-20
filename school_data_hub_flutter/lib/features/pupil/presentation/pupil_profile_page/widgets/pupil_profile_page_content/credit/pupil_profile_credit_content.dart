@@ -6,15 +6,19 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/paddings.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/credit/credit_list_page/credit_list_page.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/credit/credit_list_page/widgets/dialogues/change_credit_dialog.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/credit_list_page.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/widgets/dialogues/change_credit_dialog.dart';
+import 'package:watch_it/watch_it.dart';
 
-class PupilProfileCreditContent extends StatelessWidget {
+class PupilProfileCreditContent extends WatchingWidget {
   final PupilProxy pupil;
   const PupilProfileCreditContent({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final credit = watchPropertyValue((x) => x.credit, target: pupil);
+    final creditTransactions =
+        watchPropertyValue((x) => x.creditTransactions, target: pupil);
     return Card(
       color: AppColors.pupilProfileCardColor,
       shape: RoundedRectangleBorder(
@@ -45,7 +49,7 @@ class PupilProfileCreditContent extends StatelessWidget {
             ),
             const Spacer(),
             Text(
-              pupil.credit.toString(),
+              credit.toString(),
               style: const TextStyle(
                   color: AppColors.groupColor,
                   fontSize: 60,
@@ -104,12 +108,12 @@ class PupilProfileCreditContent extends StatelessWidget {
             ],
           ),
           const Gap(10),
-          if (pupil.creditTransactions != null)
+          if (creditTransactions != null)
             ListView.builder(
-              padding: const EdgeInsets.only(left: 20, top: 5, bottom: 15),
+              padding: const EdgeInsets.only(left: 20, bottom: 15),
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: pupil.creditTransactions?.length,
+              itemCount: creditTransactions.length,
               itemBuilder: (BuildContext context, int index) {
                 final List<CreditTransaction> pupilCreditHistoryLogs =
                     List.from(pupil.creditTransactions!);
@@ -124,7 +128,7 @@ class PupilProfileCreditContent extends StatelessWidget {
                   child: GestureDetector(
                     onTap: () {
                       //- TO-DO: change missed class function
-                      //- like _changeMissedClassHermannpupilPage
+                      //- like _changeMissedSchooldayHermannpupilPage
                     },
                     onLongPress: () async {},
                     child: SingleChildScrollView(

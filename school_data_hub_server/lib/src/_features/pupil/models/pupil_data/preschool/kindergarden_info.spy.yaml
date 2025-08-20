@@ -1,0 +1,4 @@
+class: KindergardenInfo
+fields:
+  attendedMonths: int
+  comments: String

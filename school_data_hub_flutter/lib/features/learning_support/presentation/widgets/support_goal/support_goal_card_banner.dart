@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _learningSupportManager = di<LearningSupportManager>();
+final _learningSupportManager = di<SupportCategoryManager>();
 
 class SupportCategoryCardBanner extends StatelessWidget {
   final int categoryId;

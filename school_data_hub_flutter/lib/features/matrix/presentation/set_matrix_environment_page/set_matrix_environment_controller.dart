@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/set_matrix_environment_page/set_matrix_environment_page.dart';
@@ -18,6 +18,8 @@ class SetMatrixEnvironmentController extends State<SetMatrixEnvironment> {
       TextEditingController();
   final TextEditingController policyTokenTextFieldController =
       TextEditingController();
+  final TextEditingController matrixAdminTextFieldController =
+      TextEditingController();
   Set<String> roomIds = {};
   //Set<int> pupilIds = {};
   void setMatrixEnvironment() async {
@@ -28,6 +30,7 @@ class SetMatrixEnvironmentController extends State<SetMatrixEnvironment> {
       url: url,
       matrixToken: matrixToken,
       policyToken: policyToken,
+      matrixAdmin: matrixAdminTextFieldController.text,
     );
     if (!di.isRegistered<MatrixPolicyManager>()) {
       await MatrixPolicyHelper.registerMatrixPolicyManager(
@@ -48,6 +51,7 @@ class SetMatrixEnvironmentController extends State<SetMatrixEnvironment> {
     urlTextFieldController.dispose();
     matrixTokenTextFieldController.dispose();
     policyTokenTextFieldController.dispose();
+    matrixAdminTextFieldController.dispose();
     super.dispose();
   }
 }

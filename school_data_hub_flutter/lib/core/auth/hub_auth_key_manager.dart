@@ -7,7 +7,7 @@ final _log = Logger('HubAuthKeyManager');
 
 /// Implementation of a Serverpod [AuthenticationKeyManager] specifically for this app
 /// because we need to consider the environment on which the app is running
-/// and we want our storage implementation [ServerpodSecureStorage] for the authentication key.
+/// and we want our storage implementation [HubSecureStorage] for the authentication key.
 class HubAuthKeyManager extends AuthenticationKeyManager {
   // String _storageKey() => '${envName}_${runMode}_hub_auth_key';
 
@@ -15,7 +15,7 @@ class HubAuthKeyManager extends AuthenticationKeyManager {
   bool _initialized = false;
   String? _authenticationKey;
 
-  final Storage _storage = ServerpodSecureStorage();
+  final Storage _storage = HubSecureStorage();
 
   /// Creates a new authentication key manager. By default it will use
   /// secure storage for storing keys.

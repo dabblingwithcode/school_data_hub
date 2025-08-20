@@ -1,0 +1,9 @@
+class: PupilListEntry
+table: pupil_list_entry
+fields:
+  status: bool?
+  comment: String?
+  entryBy: String?
+  schoolList: SchoolList?, relation(name=pupil_list_entry_school_list, onDelete=Cascade)
+  pupil: PupilData?, relation(name=pupil_list_entry_pupil, onDelete=Cascade)
+  

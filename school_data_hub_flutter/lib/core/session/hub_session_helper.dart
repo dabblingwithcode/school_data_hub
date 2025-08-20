@@ -2,7 +2,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -32,7 +32,7 @@ class SessionHelper {
 
     await di<EnvManager>().deleteEnv();
 
-    await di<ServerpodSessionManager>().signOutDevice();
+    await di<HubSessionManager>().signOutDevice();
 
     final cacheManager = di<DefaultCacheManager>();
 
@@ -43,8 +43,8 @@ class SessionHelper {
   }
 
   static bool isAuthorized(String createdBy) {
-    return di<ServerpodSessionManager>().signedInUser!.userName == createdBy ||
-            di<ServerpodSessionManager>().isAdmin
+    return di<HubSessionManager>().signedInUser!.userName == createdBy ||
+            di<HubSessionManager>().isAdmin
         ? true
         : false;
   }

@@ -1,0 +1,15 @@
+class: Book
+table: book
+fields:
+  isbn: int
+  title: String
+  author: String
+  description: String
+  readingLevel: String?
+  imagePath: String
+  tags: List<BookTagging>?, relation(name=book_tagging)
+  libraryBooks: List<LibraryBook>?, relation(name=library_books)
+indexes:
+  book_id_unique_idx:
+    fields: isbn
+    unique: true

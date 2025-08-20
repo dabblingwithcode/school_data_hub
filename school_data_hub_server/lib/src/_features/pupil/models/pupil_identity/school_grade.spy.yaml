@@ -1,0 +1,8 @@
+enum: SchoolGrade
+serialized: byName
+values:
+  - E1
+  - E2
+  - E3
+  - K3
+  - K4

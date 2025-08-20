@@ -5,40 +5,42 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/di/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/data/matrix_api_service.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/policy.dart';
-import 'package:school_data_hub_flutter/features/matrix/services/matrix_credentials_pdf_generator.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_manager.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _notificationService = di<NotificationService>();
-final _envManager = di<EnvManager>();
-final _sessionManager = di<ServerpodSessionManager>();
-final _secureStorage = ServerpodSecureStorage();
-
-final _log = Logger('MatrixPolicyManager');
-
 class MatrixPolicyManager extends ChangeNotifier {
+  final _notificationService = di<NotificationService>();
+
+  final _sessionManager = di<HubSessionManager>();
+
+  final _secureStorage = HubSecureStorage();
+
+  final _log = Logger('MatrixPolicyManager');
+
   MatrixPolicyManager(this._matrixUrl, this._corporalToken, this._matrixToken,
-      this._compulsoryRooms)
+      this._matrixAdminId)
       : _matrixApiService = MatrixApiService(
             matrixUrl: _matrixUrl,
             corporalToken: _corporalToken,
-            matrixToken: _matrixToken);
+            matrixToken: _matrixToken) {}
 
-  final _secureStorageKey = _envManager.storageKeyForMatrixCredentials;
+  final _secureStorageKey = di<EnvManager>().storageKeyForMatrixCredentials;
 
   late final String _matrixUrl;
   String get matrixUrl => _matrixUrl;
 
   String? _matrixAdminId;
-  String? get matrixAdmin => _matrixAdminId;
+  String? get matrixAdminId => _matrixAdminId;
 
   String _matrixToken;
   String get matrixToken => 'Bearer $_matrixToken';
@@ -46,19 +48,25 @@ class MatrixPolicyManager extends ChangeNotifier {
   String _corporalToken;
   String get corporalToken => 'Bearer $_corporalToken';
 
-  List<String> _compulsoryRooms;
-  List<String> get compulsoryRooms => _compulsoryRooms;
+  // List<String> _compulsoryRooms;
+  // List<String> get compulsoryRooms => _compulsoryRooms;
 
   Policy? _matrixPolicy;
   Policy? get matrixPolicy => _matrixPolicy;
 
   bool get isMatrixPolicyLoaded => _matrixPolicy != null;
 
-  final _matrixUsers = ValueNotifier<List<MatrixUser>>([]);
-  ValueListenable<List<MatrixUser>> get matrixUsers => _matrixUsers;
+  // Sub-managers
+  late final MatrixRoomManager _roomManager;
+  late final MatrixUserManager _userManager;
 
-  final _matrixRooms = ValueNotifier<List<MatrixRoom>>([]);
-  ValueListenable<List<MatrixRoom>> get matrixRooms => _matrixRooms;
+  // Expose sub-managers
+  MatrixRoomManager get rooms => _roomManager;
+  MatrixUserManager get users => _userManager;
+
+  // Delegate to sub-managers for backward compatibility
+  ValueListenable<List<MatrixUser>> get matrixUsers => _userManager.matrixUsers;
+  ValueListenable<List<MatrixRoom>> get matrixRooms => _roomManager.matrixRooms;
 
   // TODO: improve lookups with maps
 
@@ -71,8 +79,12 @@ class MatrixPolicyManager extends ChangeNotifier {
     if (_sessionManager.isAdmin == true) {
       _notificationService.showSnackBar(
           NotificationType.success, 'Matrix-Räumeverwaltung wird geladen...');
-
+      _roomManager = MatrixRoomManager(
+          matrixAdminId!, _matrixApiService, pendingChangesHandler);
+      _userManager = MatrixUserManager(_matrixApiService, pendingChangesHandler,
+          _matrixUrl, applyPolicyChanges);
       await fetchMatrixPolicy();
+      // Initialize the sub-managers with callback functions instead of direct ValueNotifier access
     }
     return this;
   }
@@ -82,19 +94,15 @@ class MatrixPolicyManager extends ChangeNotifier {
     _policyPendingChanges.value = newValue;
   }
 
-  MatrixUser getUserById(String userId) {
-    return _matrixUsers.value.firstWhere((element) => element.id == userId);
-  }
-
   void setMatrixEnvironmentValues(
       {required String url,
       required String policyToken,
       required String matrixToken,
-      required List<String> compulsoryRooms}) async {
+      required String matrixAdmin}) async {
     _matrixUrl = url;
     _corporalToken = policyToken;
     _matrixToken = matrixToken;
-    _compulsoryRooms.addAll(compulsoryRooms);
+    _matrixAdminId = matrixAdmin;
 
     _secureStorage.setString(
         _secureStorageKey,
@@ -102,22 +110,19 @@ class MatrixPolicyManager extends ChangeNotifier {
             url: url,
             matrixToken: matrixToken,
             policyToken: policyToken,
-            compulsoryRooms: [..._compulsoryRooms]).toJson()));
+            matrixAdmin: matrixAdmin)));
 
     await fetchMatrixPolicy();
   }
 
   Future<void> deleteAndDeregisterMatrixPolicyManager() async {
     await _secureStorage.remove(_secureStorageKey);
-    di.unregister<MatrixPolicyFilterManager>();
-    di.unregister<MatrixPolicyManager>();
+    di.dropScope(DiScope.matrixScope.name);
 
     _sessionManager.changeMatrixPolicyManagerRegistrationStatus(false);
     _notificationService.showSnackBar(
         NotificationType.success, 'Matrix-Räumeverwaltung deaktiviert');
   }
-
-  //- MATRIX POLICY
 
   Future<void> fetchMatrixPolicy() async {
     final Policy? policy = await _matrixApiService.fetchMatrixPolicy();
@@ -126,6 +131,17 @@ class MatrixPolicyManager extends ChangeNotifier {
       return;
     }
 
+    final File file = File('matrix-fetched-policy.json');
+    if (file.existsSync()) {
+      file.deleteSync();
+    }
+
+    final Map<String, dynamic> jsonString = policy.toJson();
+    // transform the map into a json string
+    final String policyJson = jsonEncode(jsonString);
+
+    file.writeAsStringSync(policyJson);
+
     _matrixPolicy = policy;
 
     // we get the users from the policy and sort them by name
@@ -133,31 +149,13 @@ class MatrixPolicyManager extends ChangeNotifier {
 
     matrixUsers.sort((a, b) => a.displayName.compareTo(b.displayName));
 
-    _matrixUsers.value = matrixUsers;
-    notifyListeners();
+    _userManager.setUsers(matrixUsers);
 
     _notificationService.showSnackBar(
         NotificationType.success, 'Matrix-Konten geladen! Jetzt die Räume...');
 
-    List<MatrixRoom> rooms = [];
-
-    // now we fetch the additional infos for the managed rooms and create them
-
-    final List<String> roomIds = policy.managedRoomIds.toSet().toList();
-
-    for (String roomId in roomIds) {
-      MatrixRoom namedRoom =
-          await _matrixApiService.fetchAdditionalRoomInfos(roomId);
-      rooms.add(namedRoom);
-    }
-
-    // we sort the rooms by name for better overview
-    rooms.sort((a, b) => a.name!.compareTo(b.name!));
-    _matrixRooms.value = rooms;
-
-    _notificationService.showSnackBar(
-        NotificationType.success, 'Räume geladen');
-
+    // Load rooms using the room manager
+    await _roomManager.loadRoomsFromPolicy(policy.managedRoomIds);
     _log.info('Fetched Matrix policy!');
 
     _policyPendingChanges.value = false;
@@ -172,178 +170,5 @@ class MatrixPolicyManager extends ChangeNotifier {
     _matrixPolicy = updatedPolicy;
     await _matrixApiService.putMatrixPolicy();
     _policyPendingChanges.value = false;
-  }
-
-  MatrixRoom getRoomById(String roomId) {
-    return _matrixRooms.value.firstWhere((element) => element.id == roomId);
-  }
-
-  //- ROOM REPOSITORY
-
-  Future<void> createNewRoom(
-      {required String name,
-      required String topic,
-      required String? aliasName,
-      required ChatTypePreset chatTypePreset}) async {
-    final MatrixRoom? room = await _matrixApiService.createMatrixRoom(
-        name: name,
-        topic: topic,
-        aliasName: aliasName,
-        chatTypePreset: chatTypePreset);
-    if (room == null) {
-      return;
-    }
-    addManagedRoom(room);
-    _notificationService.showSnackBar(
-        NotificationType.success, 'Raum ${room.name} erstellt');
-  }
-
-  void addManagedRoom(MatrixRoom newRoom) {
-    final matrixRooms = [..._matrixRooms.value];
-    matrixRooms.add(newRoom);
-    _matrixRooms.value = matrixRooms;
-    // _matrixRooms.add(newRoom);
-
-    final admin = _matrixUsers.value
-        .firstWhere((element) => element.id == _matrixAdminId);
-
-    admin.joinRoom(newRoom);
-
-    _policyPendingChanges.value = true;
-  }
-
-  Future<void> changeRoomPowerLevels(
-      {required String roomId,
-      RoomAdmin? roomAdmin,
-      String? removeAdminWithId,
-      int? eventsDefault,
-      int? reactions}) async {
-    final MatrixRoom room = await _matrixApiService.changeRoomPowerLevels(
-        roomId: roomId,
-        newRoomAdmin: roomAdmin,
-        removeAdminWithId: removeAdminWithId,
-        eventsDefault: eventsDefault,
-        reactions: reactions);
-
-    _matrixRooms.value = {..._matrixRooms.value, room}.toList();
-    _notificationService.showSnackBar(
-        NotificationType.success, 'Power Levels gesetzt');
-  }
-
-  //- USER REPOSITORY
-
-  /// This function:
-  ///
-  /// **1.** generates a password for the new user
-  ///
-  /// **2.** creates a new user on the matrix server
-  ///
-  /// **3.** If successful, the user is added to the policy.
-  ///
-  /// **4.** Then the policy is updated.
-  ///
-  /// **5.** `printMatrixCredentials` is called - a pdf file with the credentials is generated and returned.
-  Future<File?> createNewMatrixUser(
-      {required String matrixId,
-      required String displayName,
-      required bool isStaff}) async {
-    final password = MatrixPolicyHelper.generatePassword();
-
-    final MatrixUser? newUser = await _matrixApiService.createNewMatrixUser(
-      matrixId: matrixId,
-      displayName: displayName,
-      password: password,
-    );
-    if (newUser == null) {
-      return null;
-    }
-    // TODO: revert these changes for debugging
-    // final MatrixUser newUser = MatrixUser(
-    //     id: matrixId,
-    //     displayName: displayName,
-    //     authType: 'passThrough',
-    //     joinedRoomIds: [],
-    //     active: true);
-
-    final matrixUsers = [..._matrixUsers.value, newUser];
-
-    _matrixUsers.value = matrixUsers;
-
-    await applyPolicyChanges();
-
-    final file = await MatrixCredentialsPrinter.printMatrixCredentials(
-        matrixDomain: _matrixUrl,
-        matrixUser: newUser,
-        password: password,
-        isStaff: isStaff);
-
-    _policyPendingChanges.value = true;
-    return file;
-  }
-
-  /// This function:
-  ///
-  /// 1. deletes the user from the matrix server.
-  /// 2. If successful, the user is removed from the policy.
-  /// 3. Then the policy is updated.
-  Future<void> deleteUser({required String userId}) async {
-    _notificationService.setHeavyLoadingValue(true);
-
-    final bool success = await _matrixApiService.deleteMatrixUser(userId);
-
-    _notificationService.setHeavyLoadingValue(false);
-
-    if (!success) {
-      _notificationService
-          .showInformationDialog('Fehler beim Löschen vom Konto!');
-      return;
-    }
-    _notificationService.showSnackBar(NotificationType.success,
-        'Benutzer gelöscht - die Moderation der Räume wird aktualisiert...');
-    List<MatrixUser> matrixUsers = List.from(_matrixUsers.value);
-    matrixUsers.removeWhere((user) => user.id == userId);
-    _matrixUsers.value = matrixUsers;
-
-    // TODO funktioniert nicht
-    await applyPolicyChanges();
-
-    _notificationService.showSnackBar(
-        NotificationType.success, 'Benutzer gelöscht');
-  }
-
-  Future<File?> resetPassword(
-      {required MatrixUser user,
-      bool? logoutDevices,
-      required bool isStaff}) async {
-    final password = MatrixPolicyHelper.generatePassword();
-    debugPrint('Generated password: $password');
-    final bool success = await _matrixApiService.resetPassword(
-        userId: user.id!, newPassword: password, logoutDevices: logoutDevices);
-    if (!success) {
-      _notificationService
-          .showInformationDialog('Fehler beim Zurücksetzen des Passworts!');
-      return null;
-    }
-    final file = await MatrixCredentialsPrinter.printMatrixCredentials(
-        matrixDomain: _matrixUrl,
-        matrixUser: user,
-        password: password,
-        isStaff: isStaff);
-    _notificationService.showSnackBar(
-        NotificationType.success, 'Passwort zurückgesetzt');
-    return file;
-  }
-
-  void addMatrixUserToRooms(String matrixUserId, List<String> roomIds) {
-    final user =
-        _matrixUsers.value.firstWhere((element) => element.id == matrixUserId);
-    for (String roomId in roomIds) {
-      user.joinRoom(MatrixRoom(id: roomId));
-      final updatedUsers = _matrixUsers.value
-          .map((e) => e.id == matrixUserId ? user : e)
-          .toList();
-      _matrixUsers.value = updatedUsers;
-    }
-    _policyPendingChanges.value = true;
   }
 }

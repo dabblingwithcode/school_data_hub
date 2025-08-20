@@ -8,12 +8,12 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialo
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_plan_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_symbol.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _learningSupportManager = di<LearningSupportManager>();
+final _learningSupportPlanManager = di<LearningSupportPlanManager>();
 
 class SupportCategoryStatusEntry extends StatelessWidget {
   final PupilProxy pupil;
@@ -41,7 +41,7 @@ class SupportCategoryStatusEntry extends StatelessWidget {
               message: 'Status löschen?');
           if (confirm != true) return;
 
-          _learningSupportManager.deleteSupportCategoryStatus(
+          _learningSupportPlanManager.deleteSupportCategoryStatus(
               pupil.pupilId, status.id!);
         },
         child: Row(

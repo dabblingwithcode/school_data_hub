@@ -33,6 +33,7 @@ class MatrixPolicyFilterManager {
       : _policyManager = matrixPolicyManager {
     refreshFilteredMatrixUsers();
     _policyManager.addListener(refreshFilteredMatrixUsers);
+    _policyManager.rooms.matrixRooms.addListener(reactWhenRoomListChanges);
   }
 
   final MatrixPolicyManager _policyManager;
@@ -40,9 +41,10 @@ class MatrixPolicyFilterManager {
   void dispose() {
     _searchController.value.dispose();
     _policyManager.removeListener(refreshFilteredMatrixUsers);
+    _policyManager.rooms.matrixRooms.removeListener(reactWhenRoomListChanges);
   }
 
-  resetAllMatrixFilters() {
+  void resetAllMatrixFilters() {
     _searchText.value = '';
     _filteredMatrixUsers.value = _matrixPolicyManager.matrixUsers.value;
     _filteredMatrixRooms.value = _matrixPolicyManager.matrixRooms.value;
@@ -50,12 +52,19 @@ class MatrixPolicyFilterManager {
     _searchController.value.clear();
   }
 
-  refreshFilteredMatrixUsers() {
+  void refreshFilteredMatrixUsers() {
     setUsersFilterText(_searchText.value);
+  }
+
+  void reactWhenRoomListChanges() {
+    _filteredMatrixRooms.value = _matrixPolicyManager.matrixRooms.value;
+  }
+
+  void refreshFilteredMatrixRooms() {
     setRoomsFilterText(_searchText.value);
   }
 
-  setUsersFilterText(String text) {
+  void setUsersFilterText(String text) {
     if (text == '') {
       _searchText.value = text;
       _filteredMatrixUsers.value = _matrixPolicyManager.matrixUsers.value;

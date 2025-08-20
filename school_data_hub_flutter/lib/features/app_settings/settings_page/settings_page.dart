@@ -4,7 +4,7 @@ import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/widgets/settings_admin_section.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/widgets/settings_session_section.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/widgets/settings_tools_section.dart';
@@ -19,7 +19,7 @@ class SettingsPage extends StatelessWidget {
 
     final envManager = di<EnvManager>();
 
-    final bool isAdmin = di<ServerpodSessionManager>().isAdmin;
+    final bool isAdmin = di<HubSessionManager>().isAdmin;
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,

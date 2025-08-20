@@ -24,14 +24,14 @@ class GradesWidget extends StatelessWidget {
           ),
           const Gap(5)
         ],
-        if (stringWithGrades.contains('S3')) ...[
+        if (stringWithGrades.contains('K3')) ...[
           Image.asset(
             'assets/grade_3.png',
             width: 25,
           ),
           const Gap(5)
         ],
-        if (stringWithGrades.contains('S4')) ...[
+        if (stringWithGrades.contains('K4')) ...[
           Image.asset(
             'assets/grade_4.png',
             width: 25,

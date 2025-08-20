@@ -1,8 +1,0 @@
-## Authorization model
-class: Authorization
-table: authorization
-fields:
-  name: String
-  description: String
-  createdBy: String
-  authorizedPupils: List<PupilAuthorization>?, relation(name=pupil_authorization_authorization)

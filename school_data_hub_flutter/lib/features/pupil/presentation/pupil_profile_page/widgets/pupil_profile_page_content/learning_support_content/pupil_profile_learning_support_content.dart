@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/paddings.dart';
-import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/learning_support_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/pupil_profile_learning_support_content_list.dart';
@@ -40,17 +39,6 @@ class PupilProfileLearningSupportContent extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     color: AppColors.backgroundColor,
                   )),
-            ),
-            const Spacer(),
-            IconButton(
-              onPressed: () async {
-                informationDialog(context, 'Förderplan ausdrucken ',
-                    'Diese Funktion ist noch nicht verfügbar.');
-                // await generatePdf(pupil.internalId);
-              },
-              icon: const Icon(Icons.print_rounded),
-              color: AppColors.backgroundColor,
-              iconSize: 24,
             ),
           ]),
           const Gap(15),

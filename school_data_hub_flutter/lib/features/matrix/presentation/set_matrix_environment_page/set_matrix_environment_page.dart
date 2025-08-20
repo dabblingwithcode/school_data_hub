@@ -85,6 +85,14 @@ class SetupMatrixEnvironmentPage extends StatelessWidget {
                   decoration: AppStyles.textFieldDecoration(
                       labelText: 'Matrix-Corporal Token'),
                 ),
+                const Gap(20),
+                TextField(
+                  minLines: 1,
+                  maxLines: 2,
+                  controller: viewModel.matrixAdminTextFieldController,
+                  decoration: AppStyles.textFieldDecoration(
+                      labelText: 'Matrix-Admin ID'),
+                ),
                 const Spacer(),
                 const Gap(15),
                 ElevatedButton(
@@ -126,6 +134,8 @@ class SetupMatrixEnvironmentPage extends StatelessWidget {
 
                       viewModel.policyTokenTextFieldController.text =
                           matrixCredentialsMap['policyToken'];
+                      viewModel.matrixAdminTextFieldController.text =
+                          matrixCredentialsMap['matrixAdmin'];
 
                       viewModel.setMatrixEnvironment();
 

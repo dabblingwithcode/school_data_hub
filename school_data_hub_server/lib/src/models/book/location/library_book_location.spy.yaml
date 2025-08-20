@@ -1,6 +1,0 @@
-##ä library book location model
-class: LibraryBookLocation
-table: library_book_location
-fields:
-   location: String
-   libraryBooks: List<LibraryBook>?, relation(name=library_book_locations)

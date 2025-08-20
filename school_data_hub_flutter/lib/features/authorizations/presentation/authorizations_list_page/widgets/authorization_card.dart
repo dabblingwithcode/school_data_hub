@@ -8,8 +8,6 @@ import 'package:school_data_hub_flutter/features/authorizations/presentation/aut
 import 'package:school_data_hub_flutter/features/authorizations/presentation/authorizations_list_page/widgets/authorization_list_stats_row.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _authorizationManager = di<AuthorizationManager>();
-
 class AuthorizationCard extends WatchingWidget {
   final Authorization authorization;
   const AuthorizationCard({required this.authorization, super.key});

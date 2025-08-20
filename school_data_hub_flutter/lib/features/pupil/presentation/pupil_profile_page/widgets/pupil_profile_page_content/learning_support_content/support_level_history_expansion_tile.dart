@@ -4,7 +4,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/support_level_dialog.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
@@ -19,7 +19,7 @@ class SupportLevelHistoryExpansionTile extends StatefulWidget {
       _SupportLevelHistoryExpansionTileState();
 }
 
-final _serverpodSessionManager = di<ServerpodSessionManager>();
+final _hubSessionManager = di<HubSessionManager>();
 final _pupilManager = di<PupilManager>();
 
 class _SupportLevelHistoryExpansionTileState
@@ -89,7 +89,7 @@ class _SupportLevelHistoryExpansionTileState
                                   title: 'Eintrag löschen',
                                   message: 'Eintrag wirklich löschen?');
                               if (confirmation != true) return;
-                              if (_serverpodSessionManager.isAdmin) {
+                              if (_hubSessionManager.isAdmin) {
                                 _pupilManager.deleteSupportLevelHistoryItem(
                                     pupilId: pupil.pupilId,
                                     supportLevelId: plans[index].id!);

@@ -3,11 +3,11 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/paddings.dart';
-import 'package:school_data_hub_flutter/features/attendance/domain/attendance_helper_functions.dart';
-import 'package:school_data_hub_flutter/features/attendance/domain/attendance_manager.dart';
-import 'package:school_data_hub_flutter/features/attendance/presentation/missed_classes_pupil_list_page/missed_classes_pupil_list_page.dart';
-import 'package:school_data_hub_flutter/features/attendance/presentation/widgets/attendance_stats_pupil.dart';
-import 'package:school_data_hub_flutter/features/attendance/presentation/widgets/missed_class_card.dart';
+import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
+import 'package:school_data_hub_flutter/features/_attendance/presentation/missed_classes_pupil_list_page/missed_classes_pupil_list_page.dart';
+import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/attendance_stats_pupil.dart';
+import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/missed_class_card.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -19,14 +19,14 @@ class PupilAttendanceContent extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<int> missedHoursForActualReport =
+    final missedHoursForActualReport =
         AttendanceHelper.missedHoursforSemesterOrSchoolyear(pupil);
-    List<MissedClass> missedClasses =
-        watch(_attendanceManager.getPupilMissedClassesProxy(pupil.pupilId))
-            .missedClasses;
+    List<MissedSchoolday> missedSchooldays =
+        watch(_attendanceManager.getPupilMissedSchooldayesProxy(pupil.pupilId))
+            .missedSchooldays;
 
     // sort by missedDay
-    missedClasses.sort(
+    missedSchooldays.sort(
         (b, a) => a.schoolday!.schoolday.compareTo(b.schoolday!.schoolday));
     return Card(
       color: AppColors.pupilProfileCardColor,
@@ -46,7 +46,7 @@ class PupilAttendanceContent extends WatchingWidget {
             InkWell(
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (ctx) => const MissedClassesPupilListPage(),
+                  builder: (ctx) => const MissedSchooldayesPupilListPage(),
                 ));
               },
               child: const Text('Fehlzeiten',
@@ -68,7 +68,7 @@ class PupilAttendanceContent extends WatchingWidget {
                 style: TextStyle(fontSize: 14),
               ),
               Text(
-                ' ${missedHoursForActualReport[0].toString()}',
+                ' ${missedHoursForActualReport.missed.toString()}',
                 style: const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
@@ -81,7 +81,7 @@ class PupilAttendanceContent extends WatchingWidget {
                 style: TextStyle(fontSize: 14),
               ),
               Text(
-                ' ${missedHoursForActualReport[1].toString()}',
+                ' ${missedHoursForActualReport.unexcused.toString()}',
                 style: const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
@@ -96,13 +96,13 @@ class PupilAttendanceContent extends WatchingWidget {
             padding: const EdgeInsets.only(top: 5, bottom: 5),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: missedClasses.length,
+            itemCount: missedSchooldays.length,
             itemBuilder: (BuildContext context, int index) {
-              // pupil.pupilMissedClasses.sort(
+              // pupil.pupilMissedSchooldayes.sort(
               //     (a, b) => a.missedDay.compareTo(b.missedDay));
 
-              return MissedClassCard(
-                  pupil: pupil, missedClass: missedClasses[index]);
+              return MissedSchooldayCard(
+                  pupil: pupil, missedSchoolday: missedSchooldays[index]);
             },
           ),
         ]),
@@ -112,21 +112,21 @@ class PupilAttendanceContent extends WatchingWidget {
 }
 
 // List<Widget> pupilAttendanceContentList(PupilProxy pupil, context) {
-//   List<MissedClass> missedClasses = List.from(pupil.missedClasses!);
+//   List<MissedSchoolday> missedSchooldays = List.from(pupil.missedSchooldays!);
 //   // sort by missedDay
-//   missedClasses
+//   missedSchooldays
 //       .sort((b, a) => a.schoolday!.schoolday.compareTo(b.schoolday!.schoolday));
 //   return [
 //     ListView.builder(
 //       padding: const EdgeInsets.only(top: 5, bottom: 15),
 //       shrinkWrap: true,
 //       physics: const NeverScrollableScrollPhysics(),
-//       itemCount: missedClasses.length,
+//       itemCount: missedSchooldays.length,
 //       itemBuilder: (BuildContext context, int index) {
-//         // pupil.pupilMissedClasses.sort(
+//         // pupil.pupilMissedSchooldayes.sort(
 //         //     (a, b) => a.missedDay.compareTo(b.missedDay));
 
-//         return MissedClassCard(pupil: pupil, missedClass: missedClasses[index]);
+//         return MissedSchooldayCard(pupil: pupil, missedSchoolday: missedSchooldays[index]);
 //       },
 //     ),
 //   ];

@@ -93,10 +93,10 @@ class PupilFilterManager {
   int compareLastSchooldayEventDates(PupilProxy a, PupilProxy b) {
     // Ensure non-empty lists before accessing elements
     if (a.schooldayEvents!.isNotEmpty && b.schooldayEvents!.isNotEmpty) {
-      final admonishedDateA = a.schooldayEvents!.last.schoolday!.schoolday;
-      final admonishedDateB = b.schooldayEvents!.last.schoolday!.schoolday;
-      return admonishedDateB
-          .compareTo(admonishedDateA); // Reversed for descending order
+      final schooldayEventDateA = a.schooldayEvents!.last.schoolday!.schoolday;
+      final schooldayEventDateB = b.schooldayEvents!.last.schoolday!.schoolday;
+      return schooldayEventDateB
+          .compareTo(schooldayEventDateA); // Reversed for descending order
     } else {
       // Handle cases where one or both lists are empty
       return 0;
