@@ -8,6 +8,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -81,6 +82,11 @@ class PupilIdentityStreamPage extends WatchingWidget {
           encryptedPupilIds: dataToSend,
           onConnected: () {
             isConnected.value = true;
+            if (role == PupilIdentityStreamRole.sender) {
+              statusMessage.value = 'Verbunden! Warte auf Empfänger...';
+            } else {
+              statusMessage.value = 'Verbunden! Sende Anfrage...';
+            }
             _log.info(
                 'Connection established for channel: $channelName with role: $role');
           },
@@ -105,7 +111,10 @@ class PupilIdentityStreamPage extends WatchingWidget {
               'Receiver is sending request for encrypted pupil identities');
           _client.pupilIdentityStream.sendPupilIdentityMessage(
             channelName,
-            PupilIdentityDto(type: 'request', value: ''),
+            PupilIdentityDto(
+                type: 'request',
+                value:
+                    'TEST ${di<HubSessionManager>().user!.userInfo!.userName!}'),
           );
         }
 
@@ -210,15 +219,15 @@ class PupilIdentityStreamPage extends WatchingWidget {
             const Gap(1),
 
             // Status indicators
-            _buildStatusIndicator(
+            _statusIndicators(
               'Verbindung',
               isConnectedValue,
             ),
-            _buildStatusIndicator(
+            _statusIndicators(
               'Datenübertragung',
               isProcessingValue && isConnectedValue,
             ),
-            _buildStatusIndicator(
+            _statusIndicators(
               'Abgeschlossen',
               isCompletedValue,
             ),
@@ -285,7 +294,7 @@ class PupilIdentityStreamPage extends WatchingWidget {
     );
   }
 
-  Widget _buildStatusIndicator(String label, bool isActive) {
+  Widget _statusIndicators(String label, bool isActive) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(

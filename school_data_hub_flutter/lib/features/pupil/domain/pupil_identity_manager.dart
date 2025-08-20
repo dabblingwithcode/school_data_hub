@@ -404,6 +404,8 @@ class PupilIdentityManager {
           case PupilIdentityStreamRole.sender:
             switch (event.type) {
               case 'request':
+                _notificationService.showInformationDialog(
+                    'Empfänger ${event.value} hat die verschlüsselten Schülerdaten angefordert.');
                 _log.info(
                     'Sender requested encrypted pupil identities, sending data...');
                 onStatusUpdate('Sende Daten...');
@@ -423,18 +425,17 @@ class PupilIdentityManager {
             break;
           case PupilIdentityStreamRole.receiver:
             switch (event.type) {
-              case 'request':
-                onStatusUpdate(
-                    'Empfänger ${event.value} hat die verschlüsselten Schülerdaten angefordert.');
+              // case 'request':
+              //   onStatusUpdate(
+              //       'Empfänger ${event.value} hat die verschlüsselten Schülerdaten angefordert.');
 
-                _log.info('Sender requested encrypted pupil identities');
-                break;
+              //   _log.info('Sender requested encrypted pupil identities');
+              //   break;
               case 'data':
                 onStatusUpdate('Verschlüsselte Schülerdaten empfangen.');
                 _log.info(
                     'Received encrypted pupil identities: ${event.value.length} characters');
-                await di<PupilIdentityManager>()
-                    .decryptAndAddOrUpdatePupilIdentities([event.value]);
+                await decryptAndAddOrUpdatePupilIdentities([event.value]);
                 await _client.pupilIdentityStream.sendPupilIdentityMessage(
                   channelName,
                   PupilIdentityDto(type: 'ok', value: ''),
