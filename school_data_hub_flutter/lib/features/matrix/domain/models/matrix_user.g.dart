@@ -8,7 +8,7 @@ part of 'matrix_user.dart';
 
 JoinedRoom _$JoinedRoomFromJson(Map<String, dynamic> json) => JoinedRoom(
       roomId: json['roomId'] as String,
-      powerLevel: (json['powerLevel'] as num).toInt(),
+      powerLevel: (json['powerLevel'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$JoinedRoomToJson(JoinedRoom instance) =>

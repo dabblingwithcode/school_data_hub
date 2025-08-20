@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -92,6 +93,12 @@ class MatrixApiService {
           NotificationType.error, 'Fehler: status code ${response.statusCode}');
       throw ApiException('Fehler beim Laden der Policy', response.statusCode);
     }
+     final File file = File('matrix-fetched-policy.json');
+    if (file.existsSync()) {
+      file.deleteSync();
+    }
+    file.writeAsStringSync(jsonEncode(response.data['policy']));
+
     final Policy policy = Policy.fromJson(response.data['policy']);
     _notificationService.showSnackBar(
         NotificationType.success, 'Matrix-Räumeverwaltung geladen');

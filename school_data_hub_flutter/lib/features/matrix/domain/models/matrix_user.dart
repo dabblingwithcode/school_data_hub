@@ -12,11 +12,11 @@ final _matrixPolicyManager = di<MatrixPolicyManager>();
 @JsonSerializable()
 class JoinedRoom {
   final String roomId;
-  final int powerLevel;
+  final int? powerLevel;
 
   JoinedRoom({
     required this.roomId,
-    required this.powerLevel,
+    this.powerLevel,
   });
 
   factory JoinedRoom.fromJson(Map<String, dynamic> json) =>
@@ -103,8 +103,33 @@ class MatrixUser extends ChangeNotifier {
     notifyListeners();
   }
 
-  factory MatrixUser.fromJson(Map<String, dynamic> json) =>
-      _$MatrixUserFromJson(json);
+  // Custom factory constructor to handle both schema versions
+  factory MatrixUser.fromJson(Map<String, dynamic> json) {
+    // Check if this is schema version 1 (has joinedRoomIds instead of joinedRooms)
+    if (json.containsKey('joinedRoomIds')) {
+      // Create a modified JSON for the old schema
+      final Map<String, dynamic> modifiedJson = Map<String, dynamic>.from(json);
+      
+      // Convert List<String> to List<JoinedRoom> format
+      final List<String> roomIds = List<String>.from(json['joinedRoomIds']);
+      final List<Map<String, dynamic>> joinedRoomsJson = roomIds
+          .map((roomId) => {
+                'roomId': roomId,
+                'powerLevel': 0, // Default power level for legacy data
+              })
+          .toList();
+      
+      // Replace joinedRoomIds with joinedRooms in the correct format
+      modifiedJson['joinedRooms'] = joinedRoomsJson;
+      modifiedJson.remove('joinedRoomIds');
+      
+      // Now use the generated method with the modified JSON
+      return _$MatrixUserFromJson(modifiedJson);
+    } else {
+      // Use generated method for schema v2+
+      return _$MatrixUserFromJson(json);
+    }
+  }
 
   Map<String, dynamic> toJson() => _$MatrixUserToJson(this);
 }

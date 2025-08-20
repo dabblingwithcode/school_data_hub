@@ -125,22 +125,12 @@ class MatrixPolicyManager extends ChangeNotifier {
   }
 
   Future<void> fetchMatrixPolicy() async {
+    _log.info('Fetching Matrix policy...');
     final Policy? policy = await _matrixApiService.fetchMatrixPolicy();
     if (policy == null) {
       _log.severe('Error fetching Matrix policy!');
       return;
     }
-
-    final File file = File('matrix-fetched-policy.json');
-    if (file.existsSync()) {
-      file.deleteSync();
-    }
-
-    final Map<String, dynamic> jsonString = policy.toJson();
-    // transform the map into a json string
-    final String policyJson = jsonEncode(jsonString);
-
-    file.writeAsStringSync(policyJson);
 
     _matrixPolicy = policy;
 

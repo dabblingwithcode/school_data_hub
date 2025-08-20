@@ -12,7 +12,7 @@
 import 'package:serverpod/serverpod.dart' as _i1;
 import 'package:serverpod/protocol.dart' as _i2;
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i3;
-import '_features/attendance/models/contacted_type.dart' as _i4;
+import '_features/learning_support/models/support_level.dart' as _i4;
 import '_features/attendance/models/missed_schoolday.dart' as _i5;
 import '_features/attendance/models/missed_schoolday_dto.dart' as _i6;
 import '_features/attendance/models/missed_type.dart' as _i7;
@@ -38,7 +38,7 @@ import '_features/learning_support/models/support_goal/support_goal.dart'
     as _i26;
 import '_features/learning_support/models/support_goal/support_goal_check.dart'
     as _i27;
-import '_features/learning_support/models/support_level.dart' as _i28;
+import '_features/attendance/models/contacted_type.dart' as _i28;
 import '_features/matrix/compulsory_room.dart' as _i29;
 import '_features/matrix/matrix_room_type.dart' as _i30;
 import '_features/pupil/models/pupil_data/after_school_care/after_school_care.dart'
@@ -71,7 +71,7 @@ import '_features/pupil/models/pupil_identity/pupil_identity.dart' as _i46;
 import '_features/pupil/models/pupil_identity/pupil_identity_dto.dart' as _i47;
 import '_features/pupil/models/pupil_identity/school_grade.dart' as _i48;
 import '_features/school_lists/models/pupil_entry.dart' as _i49;
-import '_features/school_lists/models/school_list.dart' as _i50;
+import '_shared/models/member_operation.dart' as _i50;
 import '_features/schoolday/models/school_semester.dart' as _i51;
 import '_features/schoolday/models/schoolday.dart' as _i52;
 import '_features/schoolday_events/models/schoolday_event.dart' as _i53;
@@ -95,7 +95,7 @@ import '_features/workbooks/models/pupil_workbook.dart' as _i70;
 import '_features/workbooks/models/workbook.dart' as _i71;
 import '_shared/models/exceptions/test_exception.dart' as _i72;
 import '_shared/models/hub_document.dart' as _i73;
-import '_shared/models/member_operation.dart' as _i74;
+import '_features/school_lists/models/school_list.dart' as _i74;
 import 'package:school_data_hub_server/src/generated/_features/user/models/staff_user.dart'
     as _i75;
 import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/pupil_data.dart'
@@ -4374,8 +4374,8 @@ class Protocol extends _i1.SerializationManagerServer {
     Type? t,
   ]) {
     t ??= T;
-    if (t == _i4.ContactedType) {
-      return _i4.ContactedType.fromJson(data) as T;
+    if (t == _i4.SupportLevel) {
+      return _i4.SupportLevel.fromJson(data) as T;
     }
     if (t == _i5.MissedSchoolday) {
       return _i5.MissedSchoolday.fromJson(data) as T;
@@ -4446,8 +4446,8 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i27.SupportGoalCheck) {
       return _i27.SupportGoalCheck.fromJson(data) as T;
     }
-    if (t == _i28.SupportLevel) {
-      return _i28.SupportLevel.fromJson(data) as T;
+    if (t == _i28.ContactedType) {
+      return _i28.ContactedType.fromJson(data) as T;
     }
     if (t == _i29.CompulsoryRoom) {
       return _i29.CompulsoryRoom.fromJson(data) as T;
@@ -4512,8 +4512,8 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i49.PupilListEntry) {
       return _i49.PupilListEntry.fromJson(data) as T;
     }
-    if (t == _i50.SchoolList) {
-      return _i50.SchoolList.fromJson(data) as T;
+    if (t == _i50.MemberOperation) {
+      return _i50.MemberOperation.fromJson(data) as T;
     }
     if (t == _i51.SchoolSemester) {
       return _i51.SchoolSemester.fromJson(data) as T;
@@ -4584,11 +4584,11 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i73.HubDocument) {
       return _i73.HubDocument.fromJson(data) as T;
     }
-    if (t == _i74.MemberOperation) {
-      return _i74.MemberOperation.fromJson(data) as T;
+    if (t == _i74.SchoolList) {
+      return _i74.SchoolList.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i4.ContactedType?>()) {
-      return (data != null ? _i4.ContactedType.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i4.SupportLevel?>()) {
+      return (data != null ? _i4.SupportLevel.fromJson(data) : null) as T;
     }
     if (t == _i1.getType<_i5.MissedSchoolday?>()) {
       return (data != null ? _i5.MissedSchoolday.fromJson(data) : null) as T;
@@ -4664,8 +4664,8 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i1.getType<_i27.SupportGoalCheck?>()) {
       return (data != null ? _i27.SupportGoalCheck.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i28.SupportLevel?>()) {
-      return (data != null ? _i28.SupportLevel.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i28.ContactedType?>()) {
+      return (data != null ? _i28.ContactedType.fromJson(data) : null) as T;
     }
     if (t == _i1.getType<_i29.CompulsoryRoom?>()) {
       return (data != null ? _i29.CompulsoryRoom.fromJson(data) : null) as T;
@@ -4734,8 +4734,8 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i1.getType<_i49.PupilListEntry?>()) {
       return (data != null ? _i49.PupilListEntry.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i50.SchoolList?>()) {
-      return (data != null ? _i50.SchoolList.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i50.MemberOperation?>()) {
+      return (data != null ? _i50.MemberOperation.fromJson(data) : null) as T;
     }
     if (t == _i1.getType<_i51.SchoolSemester?>()) {
       return (data != null ? _i51.SchoolSemester.fromJson(data) : null) as T;
@@ -4809,8 +4809,15 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i1.getType<_i73.HubDocument?>()) {
       return (data != null ? _i73.HubDocument.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i74.MemberOperation?>()) {
-      return (data != null ? _i74.MemberOperation.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i74.SchoolList?>()) {
+      return (data != null ? _i74.SchoolList.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<List<_i23.LearningSupportPlan>?>()) {
+      return (data != null
+          ? (data as List)
+              .map((e) => deserialize<_i23.LearningSupportPlan>(e))
+              .toList()
+          : null) as T;
     }
     if (t == _i1.getType<List<_i9.PupilAuthorization>?>()) {
       return (data != null
@@ -4955,13 +4962,6 @@ class Protocol extends _i1.SerializationManagerServer {
           ? (data as List).map((e) => deserialize<_i73.HubDocument>(e)).toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i23.LearningSupportPlan>?>()) {
-      return (data != null
-          ? (data as List)
-              .map((e) => deserialize<_i23.LearningSupportPlan>(e))
-              .toList()
-          : null) as T;
-    }
     if (t == Set<int>) {
       return (data as List).map((e) => deserialize<int>(e)).toSet() as T;
     }
@@ -5050,11 +5050,9 @@ class Protocol extends _i1.SerializationManagerServer {
               .toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i28.SupportLevel>?>()) {
+    if (t == _i1.getType<List<_i4.SupportLevel>?>()) {
       return (data != null
-          ? (data as List)
-              .map((e) => deserialize<_i28.SupportLevel>(e))
-              .toList()
+          ? (data as List).map((e) => deserialize<_i4.SupportLevel>(e)).toList()
           : null) as T;
     }
     if (t == _i1.getType<List<_i25.SupportCategoryStatus>?>()) {
@@ -5087,13 +5085,6 @@ class Protocol extends _i1.SerializationManagerServer {
       return (data != null
           ? (data as List)
               .map((e) => deserialize<_i53.SchooldayEvent>(e))
-              .toList()
-          : null) as T;
-    }
-    if (t == _i1.getType<List<_i49.PupilListEntry>?>()) {
-      return (data != null
-          ? (data as List)
-              .map((e) => deserialize<_i49.PupilListEntry>(e))
               .toList()
           : null) as T;
     }
@@ -5194,6 +5185,13 @@ class Protocol extends _i1.SerializationManagerServer {
       return (data != null
           ? (data as List)
               .map((e) => deserialize<_i70.PupilWorkbook>(e))
+              .toList()
+          : null) as T;
+    }
+    if (t == _i1.getType<List<_i49.PupilListEntry>?>()) {
+      return (data != null
+          ? (data as List)
+              .map((e) => deserialize<_i49.PupilListEntry>(e))
               .toList()
           : null) as T;
     }
@@ -5363,8 +5361,8 @@ class Protocol extends _i1.SerializationManagerServer {
   String? getClassNameForObject(Object? data) {
     String? className = super.getClassNameForObject(data);
     if (className != null) return className;
-    if (data is _i4.ContactedType) {
-      return 'ContactedType';
+    if (data is _i4.SupportLevel) {
+      return 'SupportLevel';
     }
     if (data is _i5.MissedSchoolday) {
       return 'MissedSchoolday';
@@ -5435,8 +5433,8 @@ class Protocol extends _i1.SerializationManagerServer {
     if (data is _i27.SupportGoalCheck) {
       return 'SupportGoalCheck';
     }
-    if (data is _i28.SupportLevel) {
-      return 'SupportLevel';
+    if (data is _i28.ContactedType) {
+      return 'ContactedType';
     }
     if (data is _i29.CompulsoryRoom) {
       return 'CompulsoryRoom';
@@ -5501,8 +5499,8 @@ class Protocol extends _i1.SerializationManagerServer {
     if (data is _i49.PupilListEntry) {
       return 'PupilListEntry';
     }
-    if (data is _i50.SchoolList) {
-      return 'SchoolList';
+    if (data is _i50.MemberOperation) {
+      return 'MemberOperation';
     }
     if (data is _i51.SchoolSemester) {
       return 'SchoolSemester';
@@ -5573,8 +5571,8 @@ class Protocol extends _i1.SerializationManagerServer {
     if (data is _i73.HubDocument) {
       return 'HubDocument';
     }
-    if (data is _i74.MemberOperation) {
-      return 'MemberOperation';
+    if (data is _i74.SchoolList) {
+      return 'SchoolList';
     }
     className = _i2.Protocol().getClassNameForObject(data);
     if (className != null) {
@@ -5596,8 +5594,8 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName is! String) {
       return super.deserializeByClassName(data);
     }
-    if (dataClassName == 'ContactedType') {
-      return deserialize<_i4.ContactedType>(data['data']);
+    if (dataClassName == 'SupportLevel') {
+      return deserialize<_i4.SupportLevel>(data['data']);
     }
     if (dataClassName == 'MissedSchoolday') {
       return deserialize<_i5.MissedSchoolday>(data['data']);
@@ -5668,8 +5666,8 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName == 'SupportGoalCheck') {
       return deserialize<_i27.SupportGoalCheck>(data['data']);
     }
-    if (dataClassName == 'SupportLevel') {
-      return deserialize<_i28.SupportLevel>(data['data']);
+    if (dataClassName == 'ContactedType') {
+      return deserialize<_i28.ContactedType>(data['data']);
     }
     if (dataClassName == 'CompulsoryRoom') {
       return deserialize<_i29.CompulsoryRoom>(data['data']);
@@ -5734,8 +5732,8 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName == 'PupilListEntry') {
       return deserialize<_i49.PupilListEntry>(data['data']);
     }
-    if (dataClassName == 'SchoolList') {
-      return deserialize<_i50.SchoolList>(data['data']);
+    if (dataClassName == 'MemberOperation') {
+      return deserialize<_i50.MemberOperation>(data['data']);
     }
     if (dataClassName == 'SchoolSemester') {
       return deserialize<_i51.SchoolSemester>(data['data']);
@@ -5806,8 +5804,8 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName == 'HubDocument') {
       return deserialize<_i73.HubDocument>(data['data']);
     }
-    if (dataClassName == 'MemberOperation') {
-      return deserialize<_i74.MemberOperation>(data['data']);
+    if (dataClassName == 'SchoolList') {
+      return deserialize<_i74.SchoolList>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -5878,8 +5876,8 @@ class Protocol extends _i1.SerializationManagerServer {
         return _i26.SupportGoal.t;
       case _i27.SupportGoalCheck:
         return _i27.SupportGoalCheck.t;
-      case _i28.SupportLevel:
-        return _i28.SupportLevel.t;
+      case _i4.SupportLevel:
+        return _i4.SupportLevel.t;
       case _i29.CompulsoryRoom:
         return _i29.CompulsoryRoom.t;
       case _i37.CreditTransaction:
@@ -5894,8 +5892,8 @@ class Protocol extends _i1.SerializationManagerServer {
         return _i45.PupilData.t;
       case _i49.PupilListEntry:
         return _i49.PupilListEntry.t;
-      case _i50.SchoolList:
-        return _i50.SchoolList.t;
+      case _i74.SchoolList:
+        return _i74.SchoolList.t;
       case _i51.SchoolSemester:
         return _i51.SchoolSemester.t;
       case _i52.Schoolday:

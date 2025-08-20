@@ -47,7 +47,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
     return Card(
       color: userRelationship != null && userRelationship.isParent
           ? AppColors.selectedCardColor
-          : Colors.white,
+          : !matrixUser.id!.contains('_') ? const Color.fromARGB(255, 208, 122, 194) : Colors.white,
       surfaceTintColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       elevation: 1.0,

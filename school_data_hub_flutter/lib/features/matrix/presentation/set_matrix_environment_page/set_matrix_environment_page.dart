@@ -119,7 +119,7 @@ class SetupMatrixEnvironmentPage extends StatelessWidget {
                     if (Platform.isWindows ||
                         Platform.isLinux ||
                         Platform.isMacOS) {
-                      scanResult = await importStringtromTxtFile();
+                      scanResult = await importStringfromTxtFile();
                     }
                     if (scanResult != null) {
                       final matrixCredentialsMap = jsonDecode(scanResult);
