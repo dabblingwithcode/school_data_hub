@@ -61,7 +61,6 @@ class BookListBottomNavBar extends WatchingWidget {
                       final String? isbn = await qrScanner(
                           context: context, overlayText: 'ISBN scannen');
                       if (isbn != null && isbn.isNotEmpty) {
-                        final cleanIsbn = isbn.replaceAll('-', '');
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (ctx) => NewBook(
                             isEdit: false,

@@ -12,8 +12,6 @@ class SettingsToolsSection extends AbstractSettingsSection {
 
   @override
   Widget build(BuildContext context) {
-    final _pupilIdentityManager = di<PupilIdentityManager>();
-
     return SettingsSection(
       title: const Padding(
         padding: EdgeInsets.all(8.0),

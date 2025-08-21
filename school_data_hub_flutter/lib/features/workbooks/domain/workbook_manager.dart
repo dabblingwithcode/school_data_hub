@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/data/workbook_api_service.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -11,8 +10,6 @@ class WorkbookManager {
   final _workbookApiService = WorkbookApiService();
 
   final _notificationService = di<NotificationService>();
-
-  final _pupilManager = di<PupilManager>();
 
   ValueListenable<List<Workbook>> get workbooks => _workbooks;
 

@@ -5,8 +5,6 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profil
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _schoolListManager = di<SchoolListManager>();
-
 class PupilSchoolListContentList extends WatchingWidget {
   final PupilProxy pupil;
   const PupilSchoolListContentList({required this.pupil, super.key});

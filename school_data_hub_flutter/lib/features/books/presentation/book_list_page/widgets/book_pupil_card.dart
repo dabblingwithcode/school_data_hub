@@ -22,7 +22,7 @@ class BookPupilCard extends WatchingWidget {
         di<PupilManager>().getPupilByPupilId(passedPupilBook.pupilId)!);
     final watchedPupilBook = pupil.pupilBooks?.firstWhere(
         (element) => element.lendingId == passedPupilBook.lendingId);
-    updatepupilBookRating(int rating) {
+    void updatepupilBookRating(int rating) {
       // TODO: Uncomment this when the API is ready
       // di<PupilManager>()
       //     .patchPupilBook(lendingId: passedPupilBook.lendingId, rating: rating);
@@ -153,7 +153,7 @@ class BookPupilCard extends WatchingWidget {
                   children: [
                     const Gap(20),
                     GrowthDropdown(
-                        dropdownValue: watchedPupilBook.score ?? 0,
+                        dropdownValue: watchedPupilBook.score,
                         onChangedFunction: updatepupilBookRating),
                   ],
                 ),

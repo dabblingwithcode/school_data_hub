@@ -5,7 +5,6 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_page/school_list_pupil_entries_page.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_stats_row.dart';
@@ -13,7 +12,6 @@ import 'package:watch_it/watch_it.dart';
 
 final _schoolListManager = di<SchoolListManager>();
 final _hubSessionManager = di<HubSessionManager>();
-final _pupilManager = di<PupilManager>();
 
 class SchoolListCard extends WatchingWidget {
   final SchoolList schoolList;
