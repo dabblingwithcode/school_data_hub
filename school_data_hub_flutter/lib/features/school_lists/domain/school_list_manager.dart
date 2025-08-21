@@ -3,6 +3,7 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/data/school_list_api_service.dart';
@@ -163,8 +164,9 @@ class SchoolListManager with ChangeNotifier {
     ({String? value})? comment,
   }) async {
     final entryToUpdate = entry.copyWith(
-      status: status?.value != null ? status!.value : entry.status,
-      comment: comment?.value != null ? comment!.value : entry.comment,
+      status: status != null ? status.value : entry.status,
+      comment: comment != null ? comment.value : entry.comment,
+      entryBy: di<HubSessionManager>().userName,
     );
 
     final PupilListEntry? updatedEntry =

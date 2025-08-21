@@ -117,6 +117,16 @@ class SchoolListPupilEntryCard extends WatchingWidget {
                         await _schoolListManager.updatePupilListEntry(
                             entry: pupilEntry, comment: (value: listComment));
                       },
+                      onLongPress: () async {
+                        final confirm = await confirmationDialog(
+                            context: context,
+                            title: 'Kommentar löschen',
+                            message:
+                                'Möchten Sie wirklich den Kommentar löschen?');
+                        if (confirm != true) return;
+                        await _schoolListManager.updatePupilListEntry(
+                            entry: pupilEntry, comment: (value: null));
+                      },
                       child: Text(
                           pupilEntry.comment != null && pupilEntry.comment != ''
                               ? pupilEntry.comment!
@@ -154,6 +164,11 @@ class SchoolListPupilEntryCard extends WatchingWidget {
                             ? false
                             : true,
                         onChanged: (value) async {
+                          if (value == false && pupilEntry.status == false) {
+                            await _schoolListManager.updatePupilListEntry(
+                                entry: pupilEntry, status: (value: null));
+                            return;
+                          }
                           await _schoolListManager.updatePupilListEntry(
                               entry: pupilEntry, status: (value: false));
                         },
