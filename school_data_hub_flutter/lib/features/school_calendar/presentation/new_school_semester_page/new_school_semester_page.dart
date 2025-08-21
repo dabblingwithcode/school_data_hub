@@ -209,7 +209,11 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
                       reportSignedDate: reportSignedDate!,
                       reportConferenceDate: reportConferenceDate!,
                       isFirst: true),
-                  child: Text('send')),
+                  child: const Text('Senden')),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Abbrechen'),
+              ),
             ],
           ),
         ),

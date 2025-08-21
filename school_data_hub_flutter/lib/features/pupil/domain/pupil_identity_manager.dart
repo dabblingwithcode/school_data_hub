@@ -55,8 +55,6 @@ class PupilIdentityManager {
 
   PupilIdentity? getPupilIdentityByInternalId(int internalId) {
     if (_pupilIdentities.containsKey(internalId) == false) {
-      _notificationService.showSnackBar(NotificationType.warning,
-          'Schülerdaten nicht gefunden (ID: $internalId)');
       _notificationService.showInformationDialog(
           '''Die Schülerdaten mit der ID $internalId konnten nicht gefunden werden.
           
@@ -81,9 +79,8 @@ class PupilIdentityManager {
     await HubSecureStorage().remove(secureStorageKey);
     _pupilIdentities.clear();
 
-    //- TODO: fix this
-    // di<PupilsFilter>().clearFilteredPupils();
-    // di<PupilManager>().clearData();
+    di<PupilsFilter>().clearFilteredPupils();
+    di<PupilManager>().clearData();
   }
 
   void clearPupilIdentities() {
@@ -110,6 +107,21 @@ class PupilIdentityManager {
 
     _groups.value = _pupilIdentities.values.map((e) => e.group).toSet();
 
+    // We check now if the identities are outdated
+
+    final lastIdentitiesUpdate =
+        await PupilDataApiService().fetchLastIdentitiesUpdate();
+    if (lastIdentitiesUpdate != null &&
+        activeEnv.lastIdentitiesUpdate != null) {
+      if (lastIdentitiesUpdate.isAfter(activeEnv.lastIdentitiesUpdate!)) {
+        _notificationService.showInformationDialog(
+            'Die Schülerdaten sind veraltet. Die neueste Version ist vom $lastIdentitiesUpdate! Bitte aktualisieren Sie die Schülerdaten.');
+      } else {
+        _log.info('Pupil identities are up to date.');
+      }
+    } else {
+      _log.warning('No last identities update found in the server.');
+    }
     return;
   }
 
@@ -147,30 +159,20 @@ class PupilIdentityManager {
         final newPupilIdentity =
             PupilIdentityHelper.decodePupilIdentityFromStringList(
                 pupilIdentityValues);
-        // TODO: DonÄt forgert to create the attendance map entry for the new pupil
+
         // TODO: fix this
-        if (!PupilProxy.groupFilters.any((filter) =>
+        if (PupilProxy.groupFilters.any((filter) =>
                 (filter as GroupFilter).name == newPupilIdentity.group) ==
             false) {
           updateGroupFilters = true;
         }
         //- add the new pupil to the pupilIdentities map
         _pupilIdentities[newPupilIdentity.id] = newPupilIdentity;
-
-        // TODO: fix this
-        // final existingPupilProxy =
-        //     di<PupilManager>().getPupilById(newPupilIdentity.id);
-
-        // if (existingPupilProxy != null) {
-        //   existingPupilProxy
-        //       .updatePupilIdentityFromMoreRecentSource(newPupilIdentity);
-        // }
       }
     }
 
-    writePupilIdentitiesToStorage();
+    await writePupilIdentitiesToStorage();
 
-    // TODO: fix this
     if (updateGroupFilters) {
       final availableGroups =
           _pupilIdentities.values.map((e) => e.group).toSet();
@@ -179,7 +181,7 @@ class PupilIdentityManager {
     }
     await _envManager.updateActiveEnv(
         lastIdentitiesUpdate: DateTime.now().toUtc());
-
+    di<PupilManager>().fetchAllPupils();
     _mainMenuBottomNavManager.setBottomNavPage(0);
   }
 
@@ -215,7 +217,7 @@ class PupilIdentityManager {
         importedPupilIdentityList.add(pupilIdentity);
 
         final bool ogsStatus =
-            pupilIdentityValues[13] == 'OFFGANZ' ? true : false;
+            pupilIdentityValues[14] == 'OFFGANZ' ? true : false;
 
         final idAndOgsStatus =
             '${int.parse(pupilIdentityValues[0])},$ogsStatus';
@@ -258,8 +260,9 @@ class PupilIdentityManager {
       _pupilIdentities[element.id] = element;
     }
 
-    await HubSecureStorage().setString(
-        secureStorageKey, jsonEncode(_pupilIdentities.values.toList()));
+    await writePupilIdentitiesToStorage();
+    await _envManager.updateActiveEnv(
+        lastIdentitiesUpdate: DateTime.now().toUtc());
 
     await ClientHelper.apiCall(
       call: () => di<Client>().pupilIdentity.updateLastPupilIdentitiesUpdate(
@@ -328,58 +331,6 @@ class PupilIdentityManager {
     final encryptedString = customEncrypter.encryptString(qrString);
     return encryptedString;
   }
-
-  // List<Map<String, Object>> generateAllPupilIdentitiesQrData(
-  //     {required int pupilsPerCode}) {
-  //   final List<PupilIdentity> pupilIdentity = _pupilIdentities.values.toList();
-  //   // First we group the pupils by their group in a map
-  //   Map<String, List<PupilIdentity>> groupedPupils =
-  //       pupilIdentity.groupListsBy((element) => element.group);
-  //   Map<String, int> groupLengths = {};
-  //   final Map<String, String> finalGroupedList = {};
-
-  //   // Now we iterate over the groupedPupils and generate maps with smaller lists
-  //   // with no more than [pupilsPerCode] items and add to the group name the subgroup number
-  //   for (String groupName in groupedPupils.keys) {
-  //     final List<PupilIdentity> group = groupedPupils[groupName]!;
-  //     groupLengths[groupName] = group.length;
-  //     int numSubgroups = (group.length / pupilsPerCode).ceil();
-
-  //     for (int i = 0; i < numSubgroups; i++) {
-  //       List<PupilIdentity> smallerGroup = [];
-  //       int start = i * pupilsPerCode;
-  //       int end = (i + 1) * pupilsPerCode;
-  //       if (end > group.length) {
-  //         end = group.length;
-  //       }
-  //       smallerGroup.addAll(group.sublist(start, end));
-  //       String qrString = '';
-  //       for (PupilIdentity pupilIdentity in smallerGroup) {
-  //         final migrationSupportEnds =
-  //             pupilIdentity.migrationSupportEnds != null
-  //                 ? pupilIdentity.migrationSupportEnds!.formatForJson()
-  //                 : '';
-  //         final specialNeeds = pupilIdentity.specialNeeds ?? '';
-  //         final family = pupilIdentity.family ?? '';
-  //         final String pupilIdentityString =
-  //             '${pupilIdentity.id},${pupilIdentity.firstName},${pupilIdentity.lastName},${pupilIdentity.group},${pupilIdentity.schoolGrade},$specialNeeds,,${pupilIdentity.gender},${pupilIdentity.language},$family,${pupilIdentity.birthday.formatForJson()},$migrationSupportEnds,${pupilIdentity.pupilSince.formatForJson()},\n';
-  //         qrString = qrString + pupilIdentityString;
-  //       }
-  //       final encryptedString = customEncrypter.encryptString(qrString);
-  //       String subgroupName = "$groupName - ${i + 1}/$numSubgroups";
-  //       finalGroupedList[subgroupName] = encryptedString;
-  //     }
-  //   }
-  //   // Extracting entries from the map and sorting them based on keys
-  //   List<MapEntry<String, String>> sortedEntries = finalGroupedList.entries
-  //       .toList()
-  //     ..sort((a, b) => a.key.compareTo(b.key));
-  //   groupLengths = Map.fromEntries(
-  //       groupLengths.entries.toList()..sort((a, b) => a.key.compareTo(b.key)));
-  //   // Creating a new map with sorted entries
-  //   Map<String, String> sortedQrGroupLists = Map.fromEntries(sortedEntries);
-  //   return [groupLengths, sortedQrGroupLists];
-  // }
 
   Future<String> deleteOrphanPupilIdentities(
       List<int> toBeDeletedPupilIds) async {

@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/get_non_holiday_weekdays.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:watch_it/watch_it.dart';
@@ -217,6 +218,11 @@ class SchoolCalendarManager {
     );
 
     _schoolSemesters.value = [..._schoolSemesters.value, newSemester];
+    final schooldaysInSemester = await getNonHolidayWeekdays(
+      startDate: newSemester.startDate,
+      endDate: newSemester.endDate,
+    );
+    await postMultipleSchooldays(dates: schooldaysInSemester);
 
     _notificationService.showSnackBar(
         NotificationType.success, 'Schulhalbjahr erfolgreich erstellt');

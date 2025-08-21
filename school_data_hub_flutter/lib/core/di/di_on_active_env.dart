@@ -37,15 +37,5 @@ class DiOnActiveEnv {
       _log.info('SessionManager initialized');
       return sessionManager;
     }, dependsOn: [EnvManager, Client]);
-
-    di.registerSingletonAsync<PupilIdentityManager>(() async {
-      final pupilIdentityManager = PupilIdentityManager();
-
-      await pupilIdentityManager.init();
-
-      _log.info('PupilIdentityManager initialized');
-
-      return pupilIdentityManager;
-    }, dependsOn: [EnvManager]);
   }
 }

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
@@ -76,16 +75,15 @@ class MatrixPolicyManager extends ChangeNotifier {
   late final MatrixApiService _matrixApiService;
 
   Future<MatrixPolicyManager> init() async {
-    if (_sessionManager.isAdmin == true) {
-      _notificationService.showSnackBar(
-          NotificationType.success, 'Matrix-Räumeverwaltung wird geladen...');
-      _roomManager = MatrixRoomManager(
-          matrixAdminId!, _matrixApiService, pendingChangesHandler);
-      _userManager = MatrixUserManager(_matrixApiService, pendingChangesHandler,
-          _matrixUrl, applyPolicyChanges);
-      await fetchMatrixPolicy();
-      // Initialize the sub-managers with callback functions instead of direct ValueNotifier access
-    }
+    _notificationService.showSnackBar(
+        NotificationType.success, 'Matrix-Räumeverwaltung wird geladen...');
+    _roomManager = MatrixRoomManager(
+        matrixAdminId!, _matrixApiService, pendingChangesHandler);
+    _userManager = MatrixUserManager(_matrixApiService, pendingChangesHandler,
+        _matrixUrl, applyPolicyChanges);
+    await fetchMatrixPolicy();
+    // Initialize the sub-managers with callback functions instead of direct ValueNotifier access
+
     return this;
   }
 

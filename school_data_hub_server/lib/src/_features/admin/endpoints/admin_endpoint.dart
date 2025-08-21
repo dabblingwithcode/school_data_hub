@@ -162,7 +162,7 @@ class AdminEndpoint extends Endpoint {
         await PupilData.db.find(session, where: (t) => t.active.equals(true));
 
     // we monitor the pupils that we haven't processed yet
-    final List<PupilData> unprocessedPupilsList = activePupils.toList();
+    final List<PupilData> unprocessedPupilsList = List.from(activePupils);
     session.log('Unprocessed pupils: $unprocessedPupilsList');
 
     final List<String> lines = LineSplitter.split(content).toList();
@@ -175,7 +175,7 @@ class AdminEndpoint extends Endpoint {
       if (existingPupil != null) {
         // If the pupil exists, we process it updating just the after care status
         // This is the second string of the line
-        if (line.split(',')[1] == 'OFFGANZ' || line.split(',')[1] == 'true') {
+        if (line.split(',')[1] == 'true') {
           // we just check if the after achool care is set
           // if it is already set we leave it alone
           // if not, we set the after school care as an empty object
@@ -187,9 +187,6 @@ class AdminEndpoint extends Endpoint {
           } else {
             // the after school care is already set, we leave it alone
           }
-          // the pupil is processed
-          // we remove it from the unprocessed list
-          unprocessedPupilsList.remove(existingPupil);
         } else {
           // there is no entry for after School care
           // if the existing pupil has an after school care entry, we remove it
@@ -201,18 +198,32 @@ class AdminEndpoint extends Endpoint {
         // we have processed the pupil, let's remove it from the unprocessed list
         unprocessedPupilsList.remove(existingPupil);
       } else {
-        // If the pupil doesn't exist, we create a new one
-        final pupil = generatePupilfromExternalAdminConsoleData(line);
+        // If the pupil doesn't exist, we first need to check if it exists and should be activated
+        // if it doesn't exist, we'll created a new one
+        final inactivePupil = await PupilData.db.findFirstRow(
+          session,
+          where: (t) => t.internalId.equals(int.parse(line.split(',')[0])),
+        );
+        if (inactivePupil != null) {
+          // If the pupil exists, we just activate it and update the after school care status
+          inactivePupil.active = true;
+          inactivePupil.afterSchoolCare =
+              line.split(',')[1] == 'true' ? AfterSchoolCare() : null;
+          await session.db.updateRow(inactivePupil);
+        } else {
+          final pupil = generatePupilfromExternalAdminConsoleData(line);
 
-        await session.db.insertRow(pupil);
-      }
-      // if there are unprocessed pupils, they are not active in the school data system
-      // we set them to inactive
-      for (final pupil in unprocessedPupilsList) {
-        pupil.active = false;
-        await session.db.updateRow(pupil);
+          await session.db.insertRow(pupil);
+        }
       }
     }
+    // if there are unprocessed pupils, they are not active in the school data system
+    // we set them to inactive
+    for (final pupil in unprocessedPupilsList) {
+      pupil.active = false;
+      await session.db.updateRow(pupil);
+    }
+
     // we return the updated set of pupils that are active in the school data system
     final pupils = await PupilData.db.find(session);
     return pupils.toSet();

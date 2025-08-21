@@ -11,7 +11,6 @@ import 'package:school_data_hub_flutter/core/env/models/enums.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
 import 'package:school_data_hub_flutter/core/models/populated_server_session_data.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class EnvManager with ChangeNotifier {
@@ -247,7 +246,7 @@ class EnvManager with ChangeNotifier {
     final updatedEnvsForStorage = EnvsInStorage(
         defaultEnv: _activeEnv!.serverName, environmentsMap: _environments);
 
-    final String jsonEnvs = jsonEncode(updatedEnvsForStorage);
+    final String jsonEnvs = jsonEncode(updatedEnvsForStorage.toJson());
 
     // write the updated environments to secure storage
     await HubSecureStorage().setString(_storageKeyForEnvironments, jsonEnvs);
@@ -290,7 +289,7 @@ class EnvManager with ChangeNotifier {
     );
 
     // propagate the new environment to the pupil identity manager
-    await propagateNewEnv();
+    // await propagateNewEnv();
 
     // notify the user that the environment has been activated
     _notificationService.showSnackBar(NotificationType.success,
@@ -337,9 +336,9 @@ class EnvManager with ChangeNotifier {
     }
   }
 
-  Future<void> propagateNewEnv() async {
-    final _pupilIdentityManager = di<PupilIdentityManager>();
-    // TODO: implement this if needed
-    await _pupilIdentityManager.getPupilIdentitiesForEnv();
-  }
+//   Future<void> propagateNewEnv() async {
+//     final _pupilIdentityManager = di<PupilIdentityManager>();
+//     // TODO: implement this if needed
+//     await _pupilIdentityManager.getPupilIdentitiesForEnv();
+//   }
 }

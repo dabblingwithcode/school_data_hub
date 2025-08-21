@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
@@ -12,6 +11,7 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/dialogs/change_env_dialog.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
+import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
 
 class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
@@ -69,7 +69,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           //   ));
           // },
           leading: const Icon(
-            Icons.text_fields_rounded,
+            Icons.password_rounded,
           ),
           title: const Text('Passwort ändern'),
           trailing: null,
@@ -94,27 +94,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
         //     ),
         //   ),
         // ),
-        SettingsTile.navigation(
-          onPressed: (context) async {
-            // try {
-            //   final String? password = await shortTextfieldDialog(
-            //       context: context,
-            //       title: 'Token erneuern',
-            //       labelText: 'Passwort eingeben',
-            //       hintText: 'Ihr Passwort hier eingeben',
-            //       obscureText: true);
-            //   if (password == null) {
-            //     return;
-            //   }
-            //   await sessionManager.refreshToken(password);
-            // } catch (e) {
-            //   notificationService.showSnackBar(
-            //       NotificationType.error, 'Unbekannter Fehler: $e');
-            // }
-          },
-          leading: const Icon(Icons.password_rounded),
-          title: const Text('Token erneuern'),
-        ),
+
         SettingsTile.navigation(
           onPressed: (context) async {
             final confirm = await confirmationDialog(

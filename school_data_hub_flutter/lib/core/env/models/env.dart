@@ -7,13 +7,13 @@ class EnvsInStorage {
   EnvsInStorage({required this.defaultEnv, required this.environmentsMap});
 
   factory EnvsInStorage.fromJson(Map<String, dynamic> json) => EnvsInStorage(
-        defaultEnv: json["defalutEnv"],
+        defaultEnv: json["defaultEnv"],
         environmentsMap: Map.from(json["environmentsMap"])
             .map((k, v) => MapEntry<String, Env>(k, Env.fromJson(v))),
       );
 
   Map<String, dynamic> toJson() => {
-        "defalutEnv": defaultEnv,
+        "defaultEnv": defaultEnv,
         "environmentsMap": environmentsMap,
       };
 }
@@ -54,6 +54,9 @@ class Env {
   factory Env.fromJson(Map<String, dynamic> json) => Env(
         serverName: json["server_name"],
         runMode: HubRunMode.fromJson(json["run_mode"]),
+        lastIdentitiesUpdate: json["lastIdentitiesUpdate"] != null
+            ? DateTime.parse(json["lastIdentitiesUpdate"])
+            : null,
         key: json["key"],
         iv: json["iv"],
         serverUrl: json["server_url"],
@@ -62,6 +65,7 @@ class Env {
   Map<String, dynamic> toJson() => {
         "server_name": serverName,
         "run_mode": runMode.toJson(),
+        "lastIdentitiesUpdate": lastIdentitiesUpdate?.toIso8601String(),
         "key": key,
         "iv": iv,
         "server_url": serverUrl,

@@ -32,6 +32,16 @@ final _log = Logger('DiOnUserAuth');
 
 class DiOnUserAuth {
   static Future<void> registerManagers() async {
+    di.registerSingletonAsync<PupilIdentityManager>(() async {
+      final pupilIdentityManager = PupilIdentityManager();
+
+      await pupilIdentityManager.init();
+
+      _log.info('PupilIdentityManager initialized');
+
+      return pupilIdentityManager;
+    });
+
     di.registerSingletonAsync<SchoolCalendarManager>(() async {
       final schoolCalendarManager = SchoolCalendarManager();
 
