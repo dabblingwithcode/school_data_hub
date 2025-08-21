@@ -50,7 +50,7 @@ class AuthorizationsListPage extends WatchingWidget {
         onRefresh: () async => _authorizationManager.fetchAuthorizations(),
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 800),
+            constraints: const BoxConstraints(maxWidth: 700),
             child: Column(
               children: [
                 Padding(

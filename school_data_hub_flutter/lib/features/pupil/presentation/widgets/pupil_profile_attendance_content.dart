@@ -28,84 +28,87 @@ class PupilAttendanceContent extends WatchingWidget {
     // sort by missedDay
     missedSchooldays.sort(
         (b, a) => a.schoolday!.schoolday.compareTo(b.schoolday!.schoolday));
-    return Card(
-      color: AppColors.pupilProfileCardColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Padding(
-        padding: AppPaddings.pupilProfileCardPadding,
-        child: Column(children: [
-          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Icon(
-              Icons.calendar_month_rounded,
-              color: Colors.grey[700],
-              size: 24,
-            ),
-            const Gap(5),
-            InkWell(
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (ctx) => const MissedSchooldayesPupilListPage(),
-                ));
-              },
-              child: const Text('Fehlzeiten',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.backgroundColor,
-                  )),
-            )
-          ]),
-          const Gap(15),
-          attendanceStats(pupil),
-          const Gap(10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const Text(
-                'Fehlstunden:',
-                style: TextStyle(fontSize: 14),
-              ),
-              Text(
-                ' ${missedHoursForActualReport.missed.toString()}',
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
+    return Padding(
+      padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 4.0),
+      child: Card(
+        color: AppColors.pupilProfileCardColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: AppPaddings.pupilProfileCardPadding,
+          child: Column(children: [
+            Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Icon(
+                Icons.calendar_month_rounded,
+                color: Colors.grey[700],
+                size: 24,
               ),
               const Gap(5),
-              const Text(
-                'davon unent:',
-                style: TextStyle(fontSize: 14),
-              ),
-              Text(
-                ' ${missedHoursForActualReport.unexcused.toString()}',
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (ctx) => const MissedSchooldayesPupilListPage(),
+                  ));
+                },
+                child: const Text('Fehlzeiten',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.backgroundColor,
+                    )),
+              )
+            ]),
+            const Gap(15),
+            attendanceStats(pupil),
+            const Gap(10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Text(
+                  'Fehlstunden:',
+                  style: TextStyle(fontSize: 14),
                 ),
-              ),
-              const Gap(15),
-            ],
-          ),
-          const Gap(10),
-          ListView.builder(
-            padding: const EdgeInsets.only(top: 5, bottom: 5),
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: missedSchooldays.length,
-            itemBuilder: (BuildContext context, int index) {
-              // pupil.pupilMissedSchooldayes.sort(
-              //     (a, b) => a.missedDay.compareTo(b.missedDay));
+                Text(
+                  ' ${missedHoursForActualReport.missed.toString()}',
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                const Gap(5),
+                const Text(
+                  'davon unent:',
+                  style: TextStyle(fontSize: 14),
+                ),
+                Text(
+                  ' ${missedHoursForActualReport.unexcused.toString()}',
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                const Gap(15),
+              ],
+            ),
+            const Gap(10),
+            ListView.builder(
+              padding: const EdgeInsets.only(top: 5, bottom: 5),
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: missedSchooldays.length,
+              itemBuilder: (BuildContext context, int index) {
+                // pupil.pupilMissedSchooldayes.sort(
+                //     (a, b) => a.missedDay.compareTo(b.missedDay));
 
-              return MissedSchooldayCard(
-                  pupil: pupil, missedSchoolday: missedSchooldays[index]);
-            },
-          ),
-        ]),
+                return MissedSchooldayCard(
+                    pupil: pupil, missedSchoolday: missedSchooldays[index]);
+              },
+            ),
+          ]),
+        ),
       ),
     );
   }

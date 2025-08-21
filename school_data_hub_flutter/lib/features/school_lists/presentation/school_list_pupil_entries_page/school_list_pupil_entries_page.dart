@@ -54,7 +54,7 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
           padding: const EdgeInsets.only(left: 5.0, right: 5),
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 800),
+              constraints: const BoxConstraints(maxWidth: 700),
               child: CustomScrollView(
                 slivers: [
                   const SliverGap(10),

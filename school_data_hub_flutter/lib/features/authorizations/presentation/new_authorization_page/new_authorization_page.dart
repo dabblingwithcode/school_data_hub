@@ -50,7 +50,7 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
             Icon(Icons.fact_check_rounded, size: 25, color: Colors.white),
             Gap(10),
             Text(
-              'Neue Einwilligung',
+              'Neue Nachweis-Liste',
               style: AppStyles.appBarTextStyle,
             ),
           ],

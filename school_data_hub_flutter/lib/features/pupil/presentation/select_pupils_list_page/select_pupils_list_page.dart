@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -14,6 +13,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart
 import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/widgets/select_pupils_list_card.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/widgets/select_pupils_search_bar.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/widgets/select_pupils_view_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _pupilManager = di<PupilManager>();
@@ -114,7 +114,7 @@ class _SelectPupilsListPageState extends State<SelectPupilsListPage> {
         onRefresh: () async => _pupilManager.fetchAllPupils(),
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 800),
+            constraints: const BoxConstraints(maxWidth: 700),
             child: CustomScrollView(
               slivers: [
                 const SliverGap(5),

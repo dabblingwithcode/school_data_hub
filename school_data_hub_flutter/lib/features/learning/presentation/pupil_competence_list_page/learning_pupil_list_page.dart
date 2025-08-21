@@ -30,7 +30,7 @@ class LearningPupilListPage extends WatchingWidget {
         onRefresh: () async => di<PupilManager>().updatePupilList(pupils),
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 800),
+            constraints: const BoxConstraints(maxWidth: 700),
             child: CustomScrollView(
               slivers: [
                 const SliverGap(5),
