@@ -1,0 +1,4 @@
+class: LastPupilIdentiesUpdate
+table: last_pupil_identities_update
+fields:
+  date: DateTime?

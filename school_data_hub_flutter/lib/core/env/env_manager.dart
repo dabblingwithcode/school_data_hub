@@ -7,6 +7,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/di/dependency_injection.dart';
+import 'package:school_data_hub_flutter/core/env/models/enums.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
 import 'package:school_data_hub_flutter/core/models/populated_server_session_data.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
@@ -218,6 +219,39 @@ class EnvManager with ChangeNotifier {
     activateEnv(envName: env.serverName);
 
     return;
+  }
+
+  Future<void> updateActiveEnv({
+    String? serverName,
+    HubRunMode? runMode,
+    String? key,
+    String? iv,
+    DateTime? lastIdentitiesUpdate,
+  }) async {
+    if (_activeEnv == null) {
+      _log.warning('No active environment set, cannot update it.');
+      return;
+    }
+    _activeEnv = _activeEnv!.copyWith(
+      serverName: serverName ?? _activeEnv!.serverName,
+      runMode: runMode ?? _activeEnv!.runMode,
+      key: key ?? _activeEnv!.key,
+      iv: iv ?? _activeEnv!.iv,
+      lastIdentitiesUpdate:
+          lastIdentitiesUpdate ?? _activeEnv!.lastIdentitiesUpdate,
+    );
+    _environments[_activeEnv!.serverName] = _activeEnv!;
+    notifyListeners();
+    // The active environment changed, we need to update
+    // this information in storage
+    final updatedEnvsForStorage = EnvsInStorage(
+        defaultEnv: _activeEnv!.serverName, environmentsMap: _environments);
+
+    final String jsonEnvs = jsonEncode(updatedEnvsForStorage);
+
+    // write the updated environments to secure storage
+    await HubSecureStorage().setString(_storageKeyForEnvironments, jsonEnvs);
+    _log.info('Active environment updated: ${_activeEnv!.serverName}');
   }
 
   Future<void> activateEnv({required String envName}) async {

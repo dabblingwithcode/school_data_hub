@@ -24,6 +24,7 @@ class Env {
   final String key;
   final String iv;
   final String serverUrl;
+  final DateTime? lastIdentitiesUpdate;
 
   Env({
     required this.serverName,
@@ -31,7 +32,24 @@ class Env {
     required this.key,
     required this.iv,
     required this.serverUrl,
+    this.lastIdentitiesUpdate,
   });
+
+  Env copyWith({
+    String? serverName,
+    HubRunMode? runMode,
+    String? key,
+    String? iv,
+    DateTime? lastIdentitiesUpdate,
+  }) =>
+      Env(
+        serverName: serverName ?? this.serverName,
+        runMode: runMode ?? this.runMode,
+        key: key ?? this.key,
+        iv: iv ?? this.iv,
+        serverUrl: this.serverUrl,
+        lastIdentitiesUpdate: lastIdentitiesUpdate ?? this.lastIdentitiesUpdate,
+      );
 
   factory Env.fromJson(Map<String, dynamic> json) => Env(
         serverName: json["server_name"],

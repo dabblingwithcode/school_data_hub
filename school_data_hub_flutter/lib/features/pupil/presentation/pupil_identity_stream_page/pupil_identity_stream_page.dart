@@ -82,6 +82,27 @@ class PupilIdentityStreamPage extends WatchingWidget {
           encryptedPupilIds: dataToSend,
           onConnected: () {
             isConnected.value = true;
+            switch (role) {
+              case PupilIdentityStreamRole.sender:
+                isConnected.value = true;
+                statusMessage.value = 'Warte auf Empfänger-Anfrage...';
+                break;
+              case PupilIdentityStreamRole.receiver:
+                isConnected.value = true;
+                _log.info(
+                    'Receiver is sending request for encrypted pupil identities');
+                _client.pupilIdentity.sendPupilIdentityMessage(
+                  channelName,
+                  PupilIdentityDto(
+                      type: 'request',
+                      value:
+                          '${di<HubSessionManager>().user!.userInfo!.userName!}'),
+                );
+
+                isProcessing.value = true;
+
+                break;
+            }
             if (role == PupilIdentityStreamRole.sender) {
               statusMessage.value = 'Verbunden! Warte auf Empfänger...';
             } else {
@@ -105,18 +126,6 @@ class PupilIdentityStreamPage extends WatchingWidget {
             );
           },
         );
-
-        if (role == PupilIdentityStreamRole.receiver) {
-          _log.info(
-              'Receiver is sending request for encrypted pupil identities');
-          _client.pupilIdentityStream.sendPupilIdentityMessage(
-            channelName,
-            PupilIdentityDto(
-                type: 'request',
-                value:
-                    'TEST ${di<HubSessionManager>().user!.userInfo!.userName!}'),
-          );
-        }
 
         statusMessage.value = role == PupilIdentityStreamRole.sender
             ? 'Verbunden! Warte auf Empfänger-Anfrage...'
@@ -262,7 +271,7 @@ class PupilIdentityStreamPage extends WatchingWidget {
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    await _client.pupilIdentityStream.sendPupilIdentityMessage(
+                    await _client.pupilIdentity.sendPupilIdentityMessage(
                       channelName,
                       PupilIdentityDto(type: 'request', value: ''),
                     );

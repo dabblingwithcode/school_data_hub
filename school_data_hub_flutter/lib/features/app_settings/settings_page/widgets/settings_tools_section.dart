@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
-import 'package:school_data_hub_flutter/common/widgets/qr/qr_carousel_with_controller.dart';
-import 'package:school_data_hub_flutter/common/widgets/qr/qr_speed_show.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/birthdays_page.dart';
@@ -85,28 +83,28 @@ class SettingsToolsSection extends AbstractSettingsSection {
                 ),
               );
             }),
-        SettingsTile.navigation(
-            leading: const Icon(Icons.qr_code_rounded),
-            title: const Text('Alle vorhandenen QR-Ids zeigen (autoplay)'),
-            onPressed: (context) async {
-              final List<Map<String, Object>> qrData = _pupilIdentityManager
-                  .generateAllPupilIdentitiesQrData(pupilsPerCode: 8);
+        // SettingsTile.navigation(
+        //     leading: const Icon(Icons.qr_code_rounded),
+        //     title: const Text('Alle vorhandenen QR-Ids zeigen (autoplay)'),
+        //     onPressed: (context) async {
+        //       final List<Map<String, Object>> qrData = _pupilIdentityManager
+        //           .generateAllPupilIdentitiesQrData(pupilsPerCode: 8);
 
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (ctx) => QrCodeSpeedShow(qrMaps: qrData),
-              ));
-            }),
-        SettingsTile.navigation(
-            leading: const Icon(Icons.qr_code_rounded),
-            title:
-                const Text('Alle vorhandenen QR-Ids zeigen (manuelle slides)'),
-            onPressed: (context) async {
-              final qrDataMaps = _pupilIdentityManager
-                  .generateAllPupilIdentitiesQrData(pupilsPerCode: 8);
-              final qrData = qrDataMaps[1] as Map<String, String>;
+        //       Navigator.of(context).push(MaterialPageRoute(
+        //         builder: (ctx) => QrCodeSpeedShow(qrMaps: qrData),
+        //       ));
+        //     }),
+        // SettingsTile.navigation(
+        //     leading: const Icon(Icons.qr_code_rounded),
+        //     title:
+        //         const Text('Alle vorhandenen QR-Ids zeigen (manuelle slides)'),
+        //     onPressed: (context) async {
+        //       final qrDataMaps = _pupilIdentityManager
+        //           .generateAllPupilIdentitiesQrData(pupilsPerCode: 8);
+        //       final qrData = qrDataMaps[1] as Map<String, String>;
 
-              showQrCarouselWithController(qrData, context);
-            }),
+        //       showQrCarouselWithController(qrData, context);
+        //     }),
       ],
     );
   }

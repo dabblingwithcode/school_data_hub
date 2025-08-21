@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
@@ -11,6 +10,7 @@ import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
@@ -140,6 +140,7 @@ class PupilIdentityManager {
     // The properties are separated by commas, let's build the PupilIdentity objects with them
 
     bool updateGroupFilters = false;
+
     for (String data in splittedPupilIdentities) {
       if (data != '') {
         List<String> pupilIdentityValues = data.split(',');
@@ -176,8 +177,9 @@ class PupilIdentityManager {
       _groups.value = availableGroups;
       di<PupilsFilter>().populateGroupFilters(availableGroups.toList());
     }
+    await _envManager.updateActiveEnv(
+        lastIdentitiesUpdate: DateTime.now().toUtc());
 
-    await di<PupilManager>().fetchAllPupils();
     _mainMenuBottomNavManager.setBottomNavPage(0);
   }
 
@@ -259,16 +261,32 @@ class PupilIdentityManager {
     await HubSecureStorage().setString(
         secureStorageKey, jsonEncode(_pupilIdentities.values.toList()));
 
-    // TODO: fix this
+    await ClientHelper.apiCall(
+      call: () => di<Client>().pupilIdentity.updateLastPupilIdentitiesUpdate(
+            DateTime.now().toUtc(),
+          ),
+      errorMessage: 'Die letzte Aktualisierung konnte nicht gespeichert werden',
+    );
+
     await di<PupilManager>().fetchAllPupils();
 
     _notificationService.showSnackBar(NotificationType.success,
         '${_pupilIdentities.length} Schülerdaten wurden aktualisiert!');
 
-    // TODO: fix this
     _mainMenuBottomNavManager.setBottomNavPage(0);
-    // _mainMenuBottomNavManager.pageViewController.value.jumpToPage(0);
+
     return;
+  }
+
+  Future<void> fetchLastIdentitiesUpdate() async {
+    final lastUpdate = await PupilDataApiService().fetchLastIdentitiesUpdate();
+    if (lastUpdate == null) {
+      _notificationService.showSnackBar(NotificationType.error,
+          'Die letzte Aktualisierung konnte nicht geladen werden');
+      return;
+    }
+    _notificationService.showSnackBar(NotificationType.success,
+        'Letzte Aktualisierung: ${lastUpdate.formatForJson()}');
   }
 
   Future<String> generatePupilIdentitiesQrData(List<int> internalIds) async {
@@ -311,57 +329,57 @@ class PupilIdentityManager {
     return encryptedString;
   }
 
-  List<Map<String, Object>> generateAllPupilIdentitiesQrData(
-      {required int pupilsPerCode}) {
-    final List<PupilIdentity> pupilIdentity = _pupilIdentities.values.toList();
-    // First we group the pupils by their group in a map
-    Map<String, List<PupilIdentity>> groupedPupils =
-        pupilIdentity.groupListsBy((element) => element.group);
-    Map<String, int> groupLengths = {};
-    final Map<String, String> finalGroupedList = {};
+  // List<Map<String, Object>> generateAllPupilIdentitiesQrData(
+  //     {required int pupilsPerCode}) {
+  //   final List<PupilIdentity> pupilIdentity = _pupilIdentities.values.toList();
+  //   // First we group the pupils by their group in a map
+  //   Map<String, List<PupilIdentity>> groupedPupils =
+  //       pupilIdentity.groupListsBy((element) => element.group);
+  //   Map<String, int> groupLengths = {};
+  //   final Map<String, String> finalGroupedList = {};
 
-    // Now we iterate over the groupedPupils and generate maps with smaller lists
-    // with no more than [pupilsPerCode] items and add to the group name the subgroup number
-    for (String groupName in groupedPupils.keys) {
-      final List<PupilIdentity> group = groupedPupils[groupName]!;
-      groupLengths[groupName] = group.length;
-      int numSubgroups = (group.length / pupilsPerCode).ceil();
+  //   // Now we iterate over the groupedPupils and generate maps with smaller lists
+  //   // with no more than [pupilsPerCode] items and add to the group name the subgroup number
+  //   for (String groupName in groupedPupils.keys) {
+  //     final List<PupilIdentity> group = groupedPupils[groupName]!;
+  //     groupLengths[groupName] = group.length;
+  //     int numSubgroups = (group.length / pupilsPerCode).ceil();
 
-      for (int i = 0; i < numSubgroups; i++) {
-        List<PupilIdentity> smallerGroup = [];
-        int start = i * pupilsPerCode;
-        int end = (i + 1) * pupilsPerCode;
-        if (end > group.length) {
-          end = group.length;
-        }
-        smallerGroup.addAll(group.sublist(start, end));
-        String qrString = '';
-        for (PupilIdentity pupilIdentity in smallerGroup) {
-          final migrationSupportEnds =
-              pupilIdentity.migrationSupportEnds != null
-                  ? pupilIdentity.migrationSupportEnds!.formatForJson()
-                  : '';
-          final specialNeeds = pupilIdentity.specialNeeds ?? '';
-          final family = pupilIdentity.family ?? '';
-          final String pupilIdentityString =
-              '${pupilIdentity.id},${pupilIdentity.firstName},${pupilIdentity.lastName},${pupilIdentity.group},${pupilIdentity.schoolGrade},$specialNeeds,,${pupilIdentity.gender},${pupilIdentity.language},$family,${pupilIdentity.birthday.formatForJson()},$migrationSupportEnds,${pupilIdentity.pupilSince.formatForJson()},\n';
-          qrString = qrString + pupilIdentityString;
-        }
-        final encryptedString = customEncrypter.encryptString(qrString);
-        String subgroupName = "$groupName - ${i + 1}/$numSubgroups";
-        finalGroupedList[subgroupName] = encryptedString;
-      }
-    }
-    // Extracting entries from the map and sorting them based on keys
-    List<MapEntry<String, String>> sortedEntries = finalGroupedList.entries
-        .toList()
-      ..sort((a, b) => a.key.compareTo(b.key));
-    groupLengths = Map.fromEntries(
-        groupLengths.entries.toList()..sort((a, b) => a.key.compareTo(b.key)));
-    // Creating a new map with sorted entries
-    Map<String, String> sortedQrGroupLists = Map.fromEntries(sortedEntries);
-    return [groupLengths, sortedQrGroupLists];
-  }
+  //     for (int i = 0; i < numSubgroups; i++) {
+  //       List<PupilIdentity> smallerGroup = [];
+  //       int start = i * pupilsPerCode;
+  //       int end = (i + 1) * pupilsPerCode;
+  //       if (end > group.length) {
+  //         end = group.length;
+  //       }
+  //       smallerGroup.addAll(group.sublist(start, end));
+  //       String qrString = '';
+  //       for (PupilIdentity pupilIdentity in smallerGroup) {
+  //         final migrationSupportEnds =
+  //             pupilIdentity.migrationSupportEnds != null
+  //                 ? pupilIdentity.migrationSupportEnds!.formatForJson()
+  //                 : '';
+  //         final specialNeeds = pupilIdentity.specialNeeds ?? '';
+  //         final family = pupilIdentity.family ?? '';
+  //         final String pupilIdentityString =
+  //             '${pupilIdentity.id},${pupilIdentity.firstName},${pupilIdentity.lastName},${pupilIdentity.group},${pupilIdentity.schoolGrade},$specialNeeds,,${pupilIdentity.gender},${pupilIdentity.language},$family,${pupilIdentity.birthday.formatForJson()},$migrationSupportEnds,${pupilIdentity.pupilSince.formatForJson()},\n';
+  //         qrString = qrString + pupilIdentityString;
+  //       }
+  //       final encryptedString = customEncrypter.encryptString(qrString);
+  //       String subgroupName = "$groupName - ${i + 1}/$numSubgroups";
+  //       finalGroupedList[subgroupName] = encryptedString;
+  //     }
+  //   }
+  //   // Extracting entries from the map and sorting them based on keys
+  //   List<MapEntry<String, String>> sortedEntries = finalGroupedList.entries
+  //       .toList()
+  //     ..sort((a, b) => a.key.compareTo(b.key));
+  //   groupLengths = Map.fromEntries(
+  //       groupLengths.entries.toList()..sort((a, b) => a.key.compareTo(b.key)));
+  //   // Creating a new map with sorted entries
+  //   Map<String, String> sortedQrGroupLists = Map.fromEntries(sortedEntries);
+  //   return [groupLengths, sortedQrGroupLists];
+  // }
 
   Future<String> deleteOrphanPupilIdentities(
       List<int> toBeDeletedPupilIds) async {
@@ -397,19 +415,23 @@ class PupilIdentityManager {
     // just in case we have a previous subscription, we cancel it first
     _encryptedPupilIdsSubscription?.cancel();
     _encryptedPupilIdsSubscription =
-        _client.pupilIdentityStream.streamEncryptedPupilIds(channelName).listen(
+        _client.pupilIdentity.streamEncryptedPupilIds(channelName).listen(
       (PupilIdentityDto event) async {
         onConnected();
         switch (role) {
+          //- Stream behavior for sender role
           case PupilIdentityStreamRole.sender:
+            // - Handle the event based on its type
             switch (event.type) {
               case 'request':
                 _notificationService.showInformationDialog(
                     'Empfänger ${event.value} hat die verschlüsselten Schülerdaten angefordert.');
                 _log.info(
                     'Sender requested encrypted pupil identities, sending data...');
+
                 onStatusUpdate('Sende Daten...');
-                await _client.pupilIdentityStream.sendPupilIdentityMessage(
+
+                await _client.pupilIdentity.sendPupilIdentityMessage(
                   channelName,
                   PupilIdentityDto(
                       type: 'data', value: encryptedPupilIds ?? ''),
@@ -423,6 +445,7 @@ class PupilIdentityManager {
                 return;
             }
             break;
+          //- Stream behavior for receiver role
           case PupilIdentityStreamRole.receiver:
             switch (event.type) {
               // case 'request':
@@ -436,7 +459,7 @@ class PupilIdentityManager {
                 _log.info(
                     'Received encrypted pupil identities: ${event.value.length} characters');
                 await decryptAndAddOrUpdatePupilIdentities([event.value]);
-                await _client.pupilIdentityStream.sendPupilIdentityMessage(
+                await _client.pupilIdentity.sendPupilIdentityMessage(
                   channelName,
                   PupilIdentityDto(type: 'ok', value: ''),
                 );
@@ -481,4 +504,10 @@ class PupilIdentityManager {
 
     return _encryptedPupilIdsSubscription!;
   }
+}
+
+enum PupilIdentityDtoType {
+  request,
+  data,
+  ok,
 }

@@ -166,69 +166,69 @@ Future<void> populateTestEnvironment(Session session) async {
 
     //- Pupils
 
-    final existingPupils = await PupilData.db.find(session);
+    // final existingPupils = await PupilData.db.find(session);
 
-    if (existingPupils.isEmpty) {
-      _log.info(
-        'No pupils in the database. Populating...',
-      );
+    // if (existingPupils.isEmpty) {
+    //   _log.info(
+    //     'No pupils in the database. Populating...',
+    //   );
 
-      // Path to the JSON file containing support categories
-      final pupilsFilePath = p.join(testDataDir.path, 'fake_pupils_export.txt');
+    //   // Path to the JSON file containing support categories
+    //   final pupilsFilePath = p.join(testDataDir.path, 'fake_pupils_export.txt');
 
-      // Call the endpoint to import support categories from the JSON file
-      final adminEndpoint = AdminEndpoint();
+    //   // Call the endpoint to import support categories from the JSON file
+    //   final adminEndpoint = AdminEndpoint();
 
-      await adminEndpoint.updateBackendPupilDataState(session, pupilsFilePath);
+    //   await adminEndpoint.updateBackendPupilDataState(session, pupilsFilePath);
 
-      _log.fine('Pupils populated successfully!');
-    }
+    //   _log.fine('Pupils populated successfully!');
+    // }
 
     //- School semesters
 
-    final existingSchoolSemesters = await SchoolSemester.db.find(session);
+    // final existingSchoolSemesters = await SchoolSemester.db.find(session);
 
-    if (existingSchoolSemesters.isEmpty) {
-      _log.info('No school semesters in the database. Populating...');
+    // if (existingSchoolSemesters.isEmpty) {
+    //   _log.info('No school semesters in the database. Populating...');
 
-      final schoolSemesterFilePath =
-          p.join(testDataDir.path, 'school_semester.json');
+    //   final schoolSemesterFilePath =
+    //       p.join(testDataDir.path, 'school_semester.json');
 
-      final schoolSemesterFile = File(schoolSemesterFilePath);
+    //   final schoolSemesterFile = File(schoolSemesterFilePath);
 
-      if (schoolSemesterFile.existsSync()) {
-        _log.info('School semester file found! populating...');
-        final jsonString = schoolSemesterFile.readAsStringSync();
+    //   if (schoolSemesterFile.existsSync()) {
+    //     _log.info('School semester file found! populating...');
+    //     final jsonString = schoolSemesterFile.readAsStringSync();
 
-        final schoolSemester = SchoolSemester.fromJson(jsonDecode(jsonString));
+    //     final schoolSemester = SchoolSemester.fromJson(jsonDecode(jsonString));
 
-        await SchoolSemester.db.insertRow(session, schoolSemester);
-        _log.fine('School semesters populated successfully!');
-      } else {
-        _log.warning(
-          'No school semester file found in the test_data directory.',
-        );
-      }
-    }
+    //     await SchoolSemester.db.insertRow(session, schoolSemester);
+    //     _log.fine('School semesters populated successfully!');
+    //   } else {
+    //     _log.warning(
+    //       'No school semester file found in the test_data directory.',
+    //     );
+    //   }
+    // }
 
     //- Schooldays
 
-    final existingSchooldays = await Schoolday.db.find(session);
+    // final existingSchooldays = await Schoolday.db.find(session);
 
-    if (existingSchooldays.isEmpty) {
-      _log.info(
-        'No school days in the database. Populating...',
-      );
+    // if (existingSchooldays.isEmpty) {
+    //   _log.info(
+    //     'No school days in the database. Populating...',
+    //   );
 
-      final schooldayEndpoint = SchooldayAdminEndpoint();
+    //   final schooldayEndpoint = SchooldayAdminEndpoint();
 
-      final schooldays =
-          generateWeekdays(DateTime(2025, 2, 7), DateTime(2025, 7, 11));
+    //   final schooldays =
+    //       generateWeekdays(DateTime(2025, 2, 7), DateTime(2025, 7, 11));
 
-      await schooldayEndpoint.createSchooldays(session, schooldays);
+    //   await schooldayEndpoint.createSchooldays(session, schooldays);
 
-      _log.fine('Schooldays populated successfully!');
-    }
+    //   _log.fine('Schooldays populated successfully!');
+    // }
 
     _log.fine(
       'Test environment populated successfully!',

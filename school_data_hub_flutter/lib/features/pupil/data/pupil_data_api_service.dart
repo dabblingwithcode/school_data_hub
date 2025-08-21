@@ -239,4 +239,12 @@ class PupilDataApiService {
     );
     return updatedPupil;
   }
+
+  Future<DateTime?> fetchLastIdentitiesUpdate() async {
+    final lastUpdate = await ClientHelper.apiCall(
+      call: () => _client.pupilIdentity.fetchLastPupilIdentitiesUpdate(),
+      errorMessage: 'Die letzte Aktualisierung konnte nicht geladen werden',
+    );
+    return lastUpdate;
+  }
 }

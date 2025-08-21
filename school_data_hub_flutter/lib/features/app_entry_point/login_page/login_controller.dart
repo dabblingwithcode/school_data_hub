@@ -3,15 +3,16 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
+import 'package:school_data_hub_flutter/core/env/utils/env_utils.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/loading_page.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_page.dart';
+import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _envManager = di<EnvManager>();
@@ -118,8 +119,13 @@ class LoginController extends State<Login> {
   Future<void> attemptLogin(
       {required String username, required String password}) async {
     try {
-      final authResponse = await _client.auth.login(username, password,
-          DeviceInfo(deviceId: '1', deviceName: 'Test device'));
+      final deviceInfos = await EnvUtils.getDeviceNameAndId();
+      final authResponse = await _client.auth.login(
+        username,
+        password,
+        DeviceInfo(
+            deviceId: deviceInfos.deviceId, deviceName: deviceInfos.deviceName),
+      );
 
       if (authResponse.response.success) {
         _notificationService.showSnackBar(

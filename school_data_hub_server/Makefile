@@ -17,8 +17,8 @@ reset: ## reset the server
 	cmd /c mkdir storage\private\events
 	cmd /c mkdir storage\private\auths
 	cmd /c mkdir storage\private\temp
-	# rm -r database_backups
-	# mkdir database_backups
+# 	## rm -r database_backups
+# 	## mkdir database_backups
 	serverpod generate
 	serverpod create-migration
 	docker compose down --volumes --remove-orphans
@@ -44,7 +44,7 @@ reset_mac: ## reset the server
 	dart run bin/main.dart --role maintenance --apply-migrations
 
 run: 
-	## run the server
+#	run the server
 	dart run bin/main.dart --apply-migrations
 
 uml: ## generate UML diagram
