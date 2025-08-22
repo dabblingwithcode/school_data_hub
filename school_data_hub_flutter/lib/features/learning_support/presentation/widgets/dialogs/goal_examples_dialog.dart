@@ -34,7 +34,7 @@ Future<Map<String, String?>?> goalExamplesDialog(
                         ),
                         Row(
                           children: [
-                            Expanded(child: Text(goals[index].description!)),
+                            Expanded(child: Text(goals[index].description)),
                           ],
                         ),
                         const Gap(10),

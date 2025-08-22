@@ -3,7 +3,7 @@ enum NotificationType {
   error,
   warning,
   info,
-  infoDialog,
+  dialog,
 }
 
 enum ServerStorageFolder {

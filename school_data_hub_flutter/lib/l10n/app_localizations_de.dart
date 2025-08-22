@@ -1,3 +1,5 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -22,16 +24,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get deleteKeyPrompt => 'Schulschlüssel löschen?';
 
   @override
-  String get areYouSureYouWantToDeleteSchoolKey => 'Sind Sie sicher, dass Sie den Schulschlüssel löschen möchten?';
+  String get areYouSureYouWantToDeleteSchoolKey =>
+      'Sind Sie sicher, dass Sie den Schulschlüssel löschen möchten?';
 
   @override
   String get deleteKeyButtonText => 'SCHULSCHLÜSSEL LÖSCHEN';
 
   @override
-  String get importSchoolDataToContinue => 'Schul-ID importieren, um fortfahren zu können.';
+  String get importSchoolDataToContinue =>
+      'Schul-ID importieren, um fortfahren zu können.';
 
   @override
-  String get scanSchoolIdToContinue => 'Schul-ID scannen, um fortfahren zu können.';
+  String get scanSchoolIdToContinue =>
+      'Schul-ID scannen, um fortfahren zu können.';
 
   @override
   String get chooseFileButton => 'DATEI AUSWÄHLEN';

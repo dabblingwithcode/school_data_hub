@@ -154,7 +154,7 @@ class LibraryBooksEndpoint extends Endpoint {
     String? description,
     String? readingLevel,
   ) async {
-    var result = await session.db.transaction((transaction) async {
+    await session.db.transaction((transaction) async {
       if (available != null || location != null) {
         final libraryBook = await LibraryBook.db.findFirstRow(
           session,
@@ -269,7 +269,7 @@ class LibraryBooksEndpoint extends Endpoint {
     if (libraryBook == null) {
       throw Exception('Library book with id $libraryBookId does not exist.');
     }
-    final deleted = await LibraryBook.db.deleteRow(session, libraryBook);
+    await LibraryBook.db.deleteRow(session, libraryBook);
     return true;
   }
 }

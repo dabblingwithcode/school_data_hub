@@ -99,9 +99,12 @@ class _BarcodeStreamScannerState extends State<BarcodeStreamScanner> {
                     child: ElevatedButton(
                       style: AppStyles.successButtonStyle,
                       onPressed: () {
-                        unawaited(_pupilIdentityManager
-                            .decryptAndAddOrUpdatePupilIdentities(
-                                _scannedQrCodes));
+                        unawaited(
+                          _pupilIdentityManager
+                              .decryptAndAddOrUpdatePupilIdentities(
+                                _scannedQrCodes,
+                              ),
+                        );
 
                         //  unawaited(locator<PupilManager>().fetchAllPupils());
                         Navigator.pop(context);
@@ -134,10 +137,13 @@ class _BarcodeStreamScannerState extends State<BarcodeStreamScanner> {
         children: [
           MobileScanner(
             controller: controller,
-            errorBuilder: (context, error, child) {
+            errorBuilder: (context, error) {
               return Center(
-                  child: Text('Error: $error',
-                      style: const TextStyle(color: Colors.red)));
+                child: Text(
+                  'Error: $error',
+                  style: const TextStyle(color: Colors.red),
+                ),
+              );
             },
             fit: BoxFit.contain,
           ),

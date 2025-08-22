@@ -23,9 +23,7 @@ class PupilWorkbooksEndpoint extends Endpoint {
               'WorkbooksEndpoint',
             )
             ?.endpoint as WorkbooksEndpoint;
-        if (workbooksEndpoint == null) {
-          throw Exception('WorkbooksEndpoint not found.');
-        }
+
         // Post the workbook using the WorkbooksEndpoint
         await workbooksEndpoint.fetchWorkbookByIsbn(
           session,

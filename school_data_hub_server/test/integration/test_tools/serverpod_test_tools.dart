@@ -3717,12 +3717,14 @@ class _SchooldayAdminEndpoint {
 
   _i3.Future<_i38.SchoolSemester> createSchoolSemester(
     _i1.TestSessionBuilder sessionBuilder,
+    String schoolYearName,
     DateTime startDate,
     DateTime endDate,
     bool isFirst,
-    DateTime classConferenceDate,
-    DateTime supportConferenceDate,
-    DateTime reportSignedDate,
+    DateTime? classConferenceDate,
+    DateTime? supportConferenceDate,
+    DateTime? reportConferenceDate,
+    DateTime? reportSignedDate,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -3736,11 +3738,13 @@ class _SchooldayAdminEndpoint {
           endpointPath: 'schooldayAdmin',
           methodName: 'createSchoolSemester',
           parameters: _i1.testObjectToJson({
+            'schoolYearName': schoolYearName,
             'startDate': startDate,
             'endDate': endDate,
             'isFirst': isFirst,
             'classConferenceDate': classConferenceDate,
             'supportConferenceDate': supportConferenceDate,
+            'reportConferenceDate': reportConferenceDate,
             'reportSignedDate': reportSignedDate,
           }),
           serializationManager: _serializationManager,

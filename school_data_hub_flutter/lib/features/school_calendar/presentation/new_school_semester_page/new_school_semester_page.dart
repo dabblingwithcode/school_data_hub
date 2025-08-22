@@ -23,6 +23,13 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
   DateTime? reportSignedDate;
   DateTime? reportConferenceDate;
   bool isFirst = false;
+  final _textController = TextEditingController();
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,13 +42,13 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
         title: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.calendar_view_month_rounded,
-                size: 25, color: Colors.white),
-            Gap(10),
-            Text(
-              'Neuer Schulsemester',
-              style: AppStyles.appBarTextStyle,
+            Icon(
+              Icons.calendar_view_month_rounded,
+              size: 25,
+              color: Colors.white,
             ),
+            Gap(10),
+            Text('Neuer Schulsemester', style: AppStyles.appBarTextStyle),
           ],
         ),
       ),
@@ -51,16 +58,35 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
           child: Column(
             children: [
               Padding(
-                padding:
-                    const EdgeInsets.only(left: 10.0, top: 15.0, right: 10.00),
+                padding: const EdgeInsets.only(
+                  left: 10.0,
+                  top: 15.0,
+                  right: 10.00,
+                ),
                 child: Row(
                   children: [
-                    const Text(
-                      'Startdatum:',
-                      style: TextStyle(
-                        fontSize: 13,
+                    const Text('Schuljahr:', style: TextStyle(fontSize: 13)),
+                    const Gap(10),
+                    Expanded(
+                      child: TextField(
+                        controller: _textController,
+                        decoration: const InputDecoration(
+                          hintText: 'z.B. 2023/2024',
+                        ),
                       ),
                     ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 10.0,
+                  top: 15.0,
+                  right: 10.00,
+                ),
+                child: Row(
+                  children: [
+                    const Text('Startdatum:', style: TextStyle(fontSize: 13)),
                     const Gap(10),
                     DatePickerButton(
                       dateToSelect: startDate,
@@ -76,16 +102,14 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.only(left: 10.0, top: 15.0, right: 10.00),
+                padding: const EdgeInsets.only(
+                  left: 10.0,
+                  top: 15.0,
+                  right: 10.00,
+                ),
                 child: Row(
                   children: [
-                    const Text(
-                      'Enddatum:',
-                      style: TextStyle(
-                        fontSize: 13,
-                      ),
-                    ),
+                    const Text('Enddatum:', style: TextStyle(fontSize: 13)),
                     const Gap(10),
                     DatePickerButton(
                       dateToSelect: endDate,
@@ -101,15 +125,16 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.only(left: 10.0, top: 15.0, right: 10.00),
+                padding: const EdgeInsets.only(
+                  left: 10.0,
+                  top: 15.0,
+                  right: 10.00,
+                ),
                 child: Row(
                   children: [
                     const Text(
                       'Klassenkonferenzdatum:',
-                      style: TextStyle(
-                        fontSize: 13,
-                      ),
+                      style: TextStyle(fontSize: 13),
                     ),
                     const Gap(10),
                     DatePickerButton(
@@ -126,15 +151,16 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.only(left: 10.0, top: 15.0, right: 10.00),
+                padding: const EdgeInsets.only(
+                  left: 10.0,
+                  top: 15.0,
+                  right: 10.00,
+                ),
                 child: Row(
                   children: [
                     const Text(
                       'Förderkonferenzdatum:',
-                      style: TextStyle(
-                        fontSize: 13,
-                      ),
+                      style: TextStyle(fontSize: 13),
                     ),
                     const Gap(10),
                     DatePickerButton(
@@ -151,15 +177,16 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.only(left: 10.0, top: 15.0, right: 10.00),
+                padding: const EdgeInsets.only(
+                  left: 10.0,
+                  top: 15.0,
+                  right: 10.00,
+                ),
                 child: Row(
                   children: [
                     const Text(
                       'Zeugniskonferenzdatum:',
-                      style: TextStyle(
-                        fontSize: 13,
-                      ),
+                      style: TextStyle(fontSize: 13),
                     ),
                     const Gap(10),
                     DatePickerButton(
@@ -176,15 +203,16 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.only(left: 10.0, top: 15.0, right: 10.00),
+                padding: const EdgeInsets.only(
+                  left: 10.0,
+                  top: 15.0,
+                  right: 10.00,
+                ),
                 child: Row(
                   children: [
                     const Text(
                       'Zeugnisausgabe:',
-                      style: TextStyle(
-                        fontSize: 13,
-                      ),
+                      style: TextStyle(fontSize: 13),
                     ),
                     const Gap(10),
                     DatePickerButton(
@@ -201,15 +229,20 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
                 ),
               ),
               ElevatedButton(
-                  onPressed: () => _schoolCalendarManager.postSchoolSemester(
+                onPressed:
+                    () => _schoolCalendarManager.postSchoolSemester(
+                      schoolYearName:
+                          _textController.text, // Replace with actual input
                       startDate: startDate!,
                       endDate: endDate!,
-                      classConferenceDate: classConferenceDate!,
-                      supportConferenceDate: supportConferenceDate!,
-                      reportSignedDate: reportSignedDate!,
-                      reportConferenceDate: reportConferenceDate!,
-                      isFirst: true),
-                  child: const Text('Senden')),
+                      classConferenceDate: classConferenceDate,
+                      supportConferenceDate: supportConferenceDate,
+                      reportSignedDate: reportSignedDate,
+                      reportConferenceDate: reportConferenceDate,
+                      isFirst: true,
+                    ),
+                child: const Text('Senden'),
+              ),
               ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(),
                 child: const Text('Abbrechen'),

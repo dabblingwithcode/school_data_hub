@@ -5,7 +5,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/roles_dropdown.dart';
+import 'package:school_data_hub_flutter/features/user/presentation/widgets/roles_dropdown.dart';
 import 'package:watch_it/watch_it.dart';
 
 class CreateUserPage extends WatchingWidget {
@@ -13,26 +13,33 @@ class CreateUserPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController fullNameController =
-        createOnce(() => TextEditingController());
-    final TextEditingController userNameController =
-        createOnce(() => TextEditingController());
-    final TextEditingController passwordController =
-        createOnce(() => TextEditingController());
-    final TextEditingController repeatPasswordController =
-        createOnce(() => TextEditingController());
-    final TextEditingController contactController =
-        createOnce(() => TextEditingController());
+    final TextEditingController fullNameController = createOnce(
+      () => TextEditingController(),
+    );
+    final TextEditingController userNameController = createOnce(
+      () => TextEditingController(),
+    );
+    final TextEditingController passwordController = createOnce(
+      () => TextEditingController(),
+    );
+    final TextEditingController repeatPasswordController = createOnce(
+      () => TextEditingController(),
+    );
+    final TextEditingController contactController = createOnce(
+      () => TextEditingController(),
+    );
     final setAsAdmin = createOnce(() => ValueNotifier<bool>(false));
     final role = createOnce(() => ValueNotifier<Role>(Role.notAssigned));
     void changeRole(Role? newRole) {
       role.value = newRole!;
     }
 
-    final TextEditingController timeUnitsController =
-        createOnce(() => TextEditingController());
-    final TextEditingController creditController =
-        createOnce(() => TextEditingController());
+    final TextEditingController timeUnitsController = createOnce(
+      () => TextEditingController(),
+    );
+    final TextEditingController creditController = createOnce(
+      () => TextEditingController(),
+    );
     // final TextEditingController tutoringController =
     //     createOnce(() => TextEditingController());
 
@@ -46,16 +53,9 @@ class CreateUserPage extends WatchingWidget {
         title: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.account_box_rounded,
-              size: 25,
-              color: Colors.white,
-            ),
+            Icon(Icons.account_box_rounded, size: 25, color: Colors.white),
             Gap(10),
-            Text(
-              'Neues Team-Konto',
-              style: AppStyles.appBarTextStyle,
-            ),
+            Text('Neues Team-Konto', style: AppStyles.appBarTextStyle),
           ],
         ),
       ),
@@ -82,8 +82,9 @@ class CreateUserPage extends WatchingWidget {
                         minLines: 1,
                         maxLines: 1,
                         controller: fullNameController,
-                        decoration:
-                            AppStyles.textFieldDecoration(labelText: 'Name'),
+                        decoration: AppStyles.textFieldDecoration(
+                          labelText: 'Name',
+                        ),
                       ),
                     ),
                   ],
@@ -107,8 +108,9 @@ class CreateUserPage extends WatchingWidget {
                         maxLines: 1,
                         controller: userNameController,
                         inputFormatters: [LengthLimitingTextInputFormatter(3)],
-                        decoration:
-                            AppStyles.textFieldDecoration(labelText: 'Kürzel'),
+                        decoration: AppStyles.textFieldDecoration(
+                          labelText: 'Kürzel',
+                        ),
                       ),
                     ),
                     const Gap(15),
@@ -120,10 +122,11 @@ class CreateUserPage extends WatchingWidget {
                       ),
                     ),
                     Checkbox(
-                        value: watchedSetAsAdmin,
-                        onChanged: (bool? newValue) {
-                          setAsAdmin.value = newValue ?? false;
-                        }),
+                      value: watchedSetAsAdmin,
+                      onChanged: (bool? newValue) {
+                        setAsAdmin.value = newValue ?? false;
+                      },
+                    ),
                     const Gap(5),
                   ],
                 ),
@@ -144,7 +147,8 @@ class CreateUserPage extends WatchingWidget {
                         maxLines: 1,
                         controller: passwordController,
                         decoration: AppStyles.textFieldDecoration(
-                            labelText: 'Passwort'),
+                          labelText: 'Passwort',
+                        ),
                       ),
                     ),
                   ],
@@ -166,7 +170,8 @@ class CreateUserPage extends WatchingWidget {
                         maxLines: 1,
                         controller: repeatPasswordController,
                         decoration: AppStyles.textFieldDecoration(
-                            labelText: 'Passwort wiederholen'),
+                          labelText: 'Passwort wiederholen',
+                        ),
                       ),
                     ),
                   ],
@@ -174,7 +179,9 @@ class CreateUserPage extends WatchingWidget {
                 Row(
                   children: [
                     RolesDropdown(
-                        selectedRole: watchedRole, changeRole: changeRole)
+                      selectedRole: watchedRole,
+                      changeRole: changeRole,
+                    ),
                   ],
                 ),
                 const Gap(20),
@@ -193,8 +200,9 @@ class CreateUserPage extends WatchingWidget {
                         minLines: 1,
                         maxLines: 1,
                         controller: contactController,
-                        decoration:
-                            AppStyles.textFieldDecoration(labelText: 'Kontakt'),
+                        decoration: AppStyles.textFieldDecoration(
+                          labelText: 'Kontakt',
+                        ),
                       ),
                     ),
                   ],
@@ -216,7 +224,8 @@ class CreateUserPage extends WatchingWidget {
                         maxLines: 1,
                         controller: creditController,
                         decoration: AppStyles.textFieldDecoration(
-                            labelText: 'Guthaben'),
+                          labelText: 'Guthaben',
+                        ),
                       ),
                     ),
                     const Gap(15),
@@ -233,8 +242,9 @@ class CreateUserPage extends WatchingWidget {
                         minLines: 1,
                         maxLines: 1,
                         controller: timeUnitsController,
-                        decoration:
-                            AppStyles.textFieldDecoration(labelText: 'Stunden'),
+                        decoration: AppStyles.textFieldDecoration(
+                          labelText: 'Stunden',
+                        ),
                       ),
                     ),
                   ],
@@ -247,28 +257,27 @@ class CreateUserPage extends WatchingWidget {
                     if (passwordController.text !=
                         repeatPasswordController.text) {
                       informationDialog(
-                          context,
-                          'Passwörter stimmen nicht überein',
-                          'Bitte Passwort überprüfen');
+                        context,
+                        'Passwörter stimmen nicht überein',
+                        'Bitte Passwort überprüfen',
+                      );
                       return;
                     }
                     // TODO: refactor this and put it in a manager
                     await di<Client>().admin.createUser(
-                        userName: userNameController.text,
-                        fullName: fullNameController.text,
-                        email: contactController.text,
-                        password: passwordController.text,
-                        role: role.value,
-                        timeUnits: int.tryParse(timeUnitsController.text)!,
-                        scopeNames: []);
+                      userName: userNameController.text,
+                      fullName: fullNameController.text,
+                      email: contactController.text,
+                      password: passwordController.text,
+                      role: role.value,
+                      timeUnits: int.tryParse(timeUnitsController.text)!,
+                      scopeNames: [],
+                    );
                     if (context.mounted) {
                       Navigator.pop(context);
                     }
                   },
-                  child: const Text(
-                    'SENDEN',
-                    style: AppStyles.buttonTextStyle,
-                  ),
+                  child: const Text('SENDEN', style: AppStyles.buttonTextStyle),
                 ),
                 const Gap(15),
                 ElevatedButton(

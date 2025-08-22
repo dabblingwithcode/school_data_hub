@@ -55,19 +55,23 @@ class SchoolCalendarManager {
   }
 
   Schoolday? getSchooldayByDate(DateTime date) {
-    final Schoolday? schoolday = _schooldays.value.firstWhereOrNull((element) =>
-        element.schoolday.year == date.year &&
-        element.schoolday.month == date.month &&
-        element.schoolday.day == date.day);
+    final Schoolday? schoolday = _schooldays.value.firstWhereOrNull(
+      (element) =>
+          element.schoolday.year == date.year &&
+          element.schoolday.month == date.month &&
+          element.schoolday.day == date.day,
+    );
 
     return schoolday;
   }
 
   SchoolSemester? getCurrentSchoolSemester() {
     final SchoolSemester? currentSemester = _schoolSemesters.value
-        .firstWhereOrNull((element) =>
-            element.startDate.isBefore(DateTime.now().toUtc()) &&
-            element.endDate.isAfter(DateTime.now().toUtc()));
+        .firstWhereOrNull(
+          (element) =>
+              element.startDate.isBefore(DateTime.now().toUtc()) &&
+              element.endDate.isAfter(DateTime.now().toUtc()),
+        );
 
     return currentSemester;
   }
@@ -90,11 +94,13 @@ class SchoolCalendarManager {
 
     // we look for the closest schoolday to now and set it as thisDate
 
-    final closestSchooldayToNow = schooldays.reduce((value, element) =>
-        value.schoolday.difference(DateTime.now().toUtc()).abs() <
-                element.schoolday.difference(DateTime.now()).abs()
-            ? value
-            : element);
+    final closestSchooldayToNow = schooldays.reduce(
+      (value, element) =>
+          value.schoolday.difference(DateTime.now().toUtc()).abs() <
+                  element.schoolday.difference(DateTime.now()).abs()
+              ? value
+              : element,
+    );
 
     _thisDate.value = closestSchooldayToNow.schoolday;
 
@@ -110,17 +116,21 @@ class SchoolCalendarManager {
   //- create
 
   Future<void> postSchoolday(DateTime schoolday) async {
-    final Schoolday? newSchoolday =
-        await _client.schooldayAdmin.createSchoolday(schoolday);
+    final Schoolday? newSchoolday = await _client.schooldayAdmin
+        .createSchoolday(schoolday);
     if (newSchoolday == null) {
       _notificationService.showSnackBar(
-          NotificationType.error, 'Schultag konnte nicht erstellt werden');
+        NotificationType.error,
+        'Schultag konnte nicht erstellt werden',
+      );
       return;
     }
     _schooldays.value = [..._schooldays.value, newSchoolday];
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Schultag erfolgreich erstellt');
+      NotificationType.success,
+      'Schultag erfolgreich erstellt',
+    );
 
     setAvailableDates();
 
@@ -130,13 +140,15 @@ class SchoolCalendarManager {
   Future<void> postMultipleSchooldays({required List<DateTime> dates}) async {
     // we need to transform the dates to utc
     final List<DateTime> utcDates = dates.map((date) => date.toUtc()).toList();
-    final List<Schoolday> newSchooldays =
-        await _client.schooldayAdmin.createSchooldays(utcDates);
+    final List<Schoolday> newSchooldays = await _client.schooldayAdmin
+        .createSchooldays(utcDates);
 
     _schooldays.value = [..._schooldays.value, ...newSchooldays];
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Schultage erfolgreich erstellt');
+      NotificationType.success,
+      'Schultage erfolgreich erstellt',
+    );
 
     setAvailableDates();
 
@@ -151,7 +163,9 @@ class SchoolCalendarManager {
 
     if (responseSchooldays.isNotEmpty) {
       _notificationService.showSnackBar(
-          NotificationType.success, 'Schultage geladen');
+        NotificationType.success,
+        'Schultage geladen',
+      );
       _schooldays.value = responseSchooldays;
 
       // if the schooldays flag is not set, we set it to true
@@ -164,8 +178,10 @@ class SchoolCalendarManager {
       return;
     }
 
-    _notificationService.showSnackBar(NotificationType.warning,
-        '${responseSchooldays.length} Keine Schultage gefunden!');
+    _notificationService.showSnackBar(
+      NotificationType.warning,
+      '${responseSchooldays.length} Keine Schultage gefunden!',
+    );
 
     return;
   }
@@ -178,7 +194,9 @@ class SchoolCalendarManager {
     final Schoolday? schoolday = getSchooldayByDate(date);
     if (schoolday == null) {
       _notificationService.showSnackBar(
-          NotificationType.error, 'Schultag konnte nicht gefunden werden');
+        NotificationType.error,
+        'Schultag konnte nicht gefunden werden',
+      );
       return;
     }
     if (isDeleted) {
@@ -186,7 +204,9 @@ class SchoolCalendarManager {
           _schooldays.value.where((day) => day != schoolday).toList();
 
       _notificationService.showSnackBar(
-          NotificationType.success, 'Schultag erfolgreich gelöscht');
+        NotificationType.success,
+        'Schultag erfolgreich gelöscht',
+      );
       return;
     }
 
@@ -199,23 +219,28 @@ class SchoolCalendarManager {
 
   //- create
 
-  Future<void> postSchoolSemester(
-      {required DateTime startDate,
-      required DateTime endDate,
-      required DateTime classConferenceDate,
-      required DateTime supportConferenceDate,
-      required DateTime reportSignedDate,
-      required DateTime reportConferenceDate,
-      required bool isFirst}) async {
-    final SchoolSemester newSemester =
-        await _client.schooldayAdmin.createSchoolSemester(
-      startDate,
-      endDate,
-      isFirst,
-      classConferenceDate,
-      supportConferenceDate,
-      reportSignedDate,
-    );
+  Future<void> postSchoolSemester({
+    required DateTime startDate,
+    required DateTime endDate,
+    required String schoolYearName,
+    DateTime? classConferenceDate,
+    DateTime? supportConferenceDate,
+    DateTime? reportConferenceDate,
+    DateTime? reportSignedDate,
+
+    required bool isFirst,
+  }) async {
+    final SchoolSemester newSemester = await _client.schooldayAdmin
+        .createSchoolSemester(
+          schoolYearName,
+          startDate,
+          endDate,
+          isFirst,
+          classConferenceDate,
+          supportConferenceDate,
+          reportConferenceDate,
+          reportSignedDate,
+        );
 
     _schoolSemesters.value = [..._schoolSemesters.value, newSemester];
     final schooldaysInSemester = await getNonHolidayWeekdays(
@@ -225,7 +250,9 @@ class SchoolCalendarManager {
     await postMultipleSchooldays(dates: schooldaysInSemester);
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Schulhalbjahr erfolgreich erstellt');
+      NotificationType.success,
+      'Schulhalbjahr erfolgreich erstellt',
+    );
 
     return;
   }
@@ -236,12 +263,12 @@ class SchoolCalendarManager {
     final List<SchoolSemester> responseSchoolSemesters =
         await _client.schoolday.getSchoolSemesters();
 
-    _notificationService.showSnackBar(NotificationType.success,
-        '${responseSchoolSemesters.length} Schulhalbjahre geladen!');
-
-    _log.info(
-      'Schulhalbjahre geladen: ${responseSchoolSemesters.length}',
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      '${responseSchoolSemesters.length} Schulhalbjahre geladen!',
     );
+
+    _log.info('Schulhalbjahre geladen: ${responseSchoolSemesters.length}');
     _schoolSemesters.value = responseSchoolSemesters;
     if (_currentSemester.value == null) {
       _currentSemester.value = getCurrentSchoolSemester();

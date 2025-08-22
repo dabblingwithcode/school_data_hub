@@ -1282,22 +1282,26 @@ class EndpointSchooldayAdmin extends _i1.EndpointRef {
   String get name => 'schooldayAdmin';
 
   _i2.Future<_i37.SchoolSemester> createSchoolSemester(
+    String schoolYearName,
     DateTime startDate,
     DateTime endDate,
     bool isFirst,
-    DateTime classConferenceDate,
-    DateTime supportConferenceDate,
-    DateTime reportSignedDate,
+    DateTime? classConferenceDate,
+    DateTime? supportConferenceDate,
+    DateTime? reportConferenceDate,
+    DateTime? reportSignedDate,
   ) =>
       caller.callServerEndpoint<_i37.SchoolSemester>(
         'schooldayAdmin',
         'createSchoolSemester',
         {
+          'schoolYearName': schoolYearName,
           'startDate': startDate,
           'endDate': endDate,
           'isFirst': isFirst,
           'classConferenceDate': classConferenceDate,
           'supportConferenceDate': supportConferenceDate,
+          'reportConferenceDate': reportConferenceDate,
           'reportSignedDate': reportSignedDate,
         },
       );

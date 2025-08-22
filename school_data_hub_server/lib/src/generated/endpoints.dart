@@ -2648,6 +2648,11 @@ class Endpoints extends _i1.EndpointDispatch {
         'createSchoolSemester': _i1.MethodConnector(
           name: 'createSchoolSemester',
           params: {
+            'schoolYearName': _i1.ParameterDescription(
+              name: 'schoolYearName',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
             'startDate': _i1.ParameterDescription(
               name: 'startDate',
               type: _i1.getType<DateTime>(),
@@ -2665,18 +2670,23 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'classConferenceDate': _i1.ParameterDescription(
               name: 'classConferenceDate',
-              type: _i1.getType<DateTime>(),
-              nullable: false,
+              type: _i1.getType<DateTime?>(),
+              nullable: true,
             ),
             'supportConferenceDate': _i1.ParameterDescription(
               name: 'supportConferenceDate',
-              type: _i1.getType<DateTime>(),
-              nullable: false,
+              type: _i1.getType<DateTime?>(),
+              nullable: true,
+            ),
+            'reportConferenceDate': _i1.ParameterDescription(
+              name: 'reportConferenceDate',
+              type: _i1.getType<DateTime?>(),
+              nullable: true,
             ),
             'reportSignedDate': _i1.ParameterDescription(
               name: 'reportSignedDate',
-              type: _i1.getType<DateTime>(),
-              nullable: false,
+              type: _i1.getType<DateTime?>(),
+              nullable: true,
             ),
           },
           call: (
@@ -2686,11 +2696,13 @@ class Endpoints extends _i1.EndpointDispatch {
               (endpoints['schooldayAdmin'] as _i21.SchooldayAdminEndpoint)
                   .createSchoolSemester(
             session,
+            params['schoolYearName'],
             params['startDate'],
             params['endDate'],
             params['isFirst'],
             params['classConferenceDate'],
             params['supportConferenceDate'],
+            params['reportConferenceDate'],
             params['reportSignedDate'],
           ),
         ),
