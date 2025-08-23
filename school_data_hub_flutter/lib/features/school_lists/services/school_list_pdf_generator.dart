@@ -427,7 +427,7 @@ class SchoolListPdfGenerator {
       return pw.Table(
         border: pw.TableBorder.all(color: PdfColors.grey400),
         columnWidths: const {
-          0: pw.FixedColumnWidth(35), // Nr. - increased to fit 3-digit numbers
+          0: pw.FixedColumnWidth(30), // Nr. - increased to fit 3-digit numbers
           1: pw.FlexColumnWidth(3), // Name
           2: pw.FixedColumnWidth(25), // Status
           3: pw.FixedColumnWidth(40), // Gruppe
