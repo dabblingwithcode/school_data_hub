@@ -29,6 +29,16 @@ class UserEndpoint extends Endpoint {
     );
   }
 
+  Future<List<User>> getAllUsers(Session session) async {
+    final users = await User.db.find(
+      session,
+      include: User.include(
+        userInfo: UserInfo.include(),
+      ),
+    );
+    return users;
+  }
+
   Future<User?> updateUserInfo(
       {required Session session,
       String? userName,

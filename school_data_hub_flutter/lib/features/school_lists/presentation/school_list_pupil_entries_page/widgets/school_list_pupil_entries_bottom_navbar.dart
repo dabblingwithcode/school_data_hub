@@ -13,6 +13,8 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/comm
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_pupil_entries_filters_widget.dart';
 import 'package:school_data_hub_flutter/features/school_lists/services/school_list_pdf_generator.dart';
+import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
+import 'package:school_data_hub_flutter/features/user/presentation/select_users_page/select_users_page.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _schoolListManager = di<SchoolListManager>();
@@ -58,17 +60,48 @@ class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
                     IconButton(
                       tooltip: 'Liste teilen',
                       onPressed: () async {
-                        // TODO: UNCOMMENT THIS
-                        // final String? visibility = await shortTextfieldDialog(
-                        //     context: context,
-                        //     title: 'Liste teilen mit...',
-                        //     labelText: 'Kürzel eingeben',
-                        //     hintText: 'Kürzel eingeben',
-                        //     obscureText: false);
-                        // if (visibility != null) {
-                        //   _schoolListManager.updateSchoolListProperty(
-                        //       listId, null, null, visibility);
-                        // }
+                        final users = di<UserManager>().users.value;
+                        final List<int>? selectedUsers = await Navigator.of(
+                          context,
+                        ).push(
+                          MaterialPageRoute(
+                            builder:
+                                (ctx) => SelectUsersPage(
+                                  selectableUsers:
+                                      users
+                                          .where(
+                                            (user) =>
+                                                user.userInfo?.userName !=
+                                                _hubSessionManager.userName,
+                                          )
+                                          .toList(),
+                                  authorizedUsers: schoolList.authorizedUsers,
+                                ),
+                          ),
+                        );
+                        if (selectedUsers == null) return;
+
+                        final userManager = di<UserManager>();
+                        final authorizedUsernames =
+                            selectedUsers.isEmpty
+                                ? null
+                                : selectedUsers
+                                    .map(
+                                      (userId) =>
+                                          userManager.users.value
+                                              .firstWhere(
+                                                (user) => user.id == userId,
+                                              )
+                                              .userInfo
+                                              ?.userName ??
+                                          'Unknown',
+                                    )
+                                    .join('*');
+
+                        _schoolListManager.updateSchoolListProperty(
+                          listId: listId,
+                          authorizedUsers: (value: authorizedUsernames),
+                        );
                       },
                       icon: const Icon(Icons.share, size: 30),
                     ),

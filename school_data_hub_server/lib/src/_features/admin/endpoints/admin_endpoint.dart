@@ -112,16 +112,6 @@ class AdminEndpoint extends Endpoint {
     await auth.Users.updateUserScopes(session, user.id!, userscopes);
   }
 
-  Future<List<User>> getAllUsers(Session session) async {
-    final users = await User.db.find(
-      session,
-      include: User.include(
-        userInfo: UserInfo.include(),
-      ),
-    );
-    return users;
-  }
-
   Future<User?> getUserById(Session session, int userId) async {
     final user = await User.db.findFirstRow(
       session,

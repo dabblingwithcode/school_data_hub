@@ -1,7 +1,6 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
@@ -60,7 +59,6 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
               constraints: const BoxConstraints(maxWidth: 700),
               child: CustomScrollView(
                 slivers: [
-                  const SliverGap(10),
                   GenericSliverSearchAppBar(
                     height: 135,
                     title: SchoolListPupilEntriesPageSearchBar(

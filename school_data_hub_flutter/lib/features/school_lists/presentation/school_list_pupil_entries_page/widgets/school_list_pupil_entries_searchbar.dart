@@ -10,6 +10,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_search_text_field.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_pupil_entries_filters_widget.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_stats_row.dart';
 import 'package:watch_it/watch_it.dart';
@@ -28,6 +29,9 @@ class SchoolListPupilEntriesPageSearchBar extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final observedSchoolList = watchPropertyValue(
+      (SchoolListManager m) => m.getSchoolListById(schoolList.id!),
+    );
     return Container(
       decoration: BoxDecoration(
         color: AppColors.canvasColor,
@@ -61,13 +65,13 @@ class SchoolListPupilEntriesPageSearchBar extends WatchingWidget {
                   Row(
                     children: [
                       SchoolListStatsRow(
-                        schoolList: schoolList,
+                        schoolList: observedSchoolList,
                         pupils: pupilsInList,
                       ),
                       const Gap(10),
-                      schoolList.public != true
+                      observedSchoolList.public != true
                           ? Text(
-                            schoolList.createdBy,
+                            observedSchoolList.createdBy,
                             style: const TextStyle(
                               color: AppColors.backgroundColor,
                               fontWeight: FontWeight.bold,
@@ -78,7 +82,7 @@ class SchoolListPupilEntriesPageSearchBar extends WatchingWidget {
                             color: AppColors.backgroundColor,
                           ),
                       Text(
-                        SchoolListHelper.listOwners(schoolList),
+                        SchoolListHelper.listOwners(observedSchoolList),
                         style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,

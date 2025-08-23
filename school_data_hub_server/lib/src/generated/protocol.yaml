@@ -3,7 +3,6 @@ admin:
   - deleteUser:
   - promoteUserScope:
   - demoteUserScope:
-  - getAllUsers:
   - getUserById:
   - updateBackendPupilDataState:
 missedSchoolday:
@@ -140,6 +139,7 @@ schooldayEvent:
   - deleteSchooldayEventFile:
 user:
   - getCurrentUser:
+  - getAllUsers:
   - changePassword:
   - increaseStaffCredit:
 pupilWorkbooks:

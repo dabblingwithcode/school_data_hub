@@ -23,16 +23,13 @@ class UserManager {
   }
 
   Future<void> fetchUsers() async {
-    if (_sessionManager.isAdmin == false) {
-      return;
-    }
-
     try {
-      final List<User> responseUsers = await _client.admin.getAllUsers();
+      final List<User> responseUsers = await _client.user.getAllUsers();
 
       // reorder the list alphabetically by the user's name
       responseUsers.sort(
-          (a, b) => a.userInfo!.userName!.compareTo(b.userInfo!.userName!));
+        (a, b) => a.userInfo!.userName!.compareTo(b.userInfo!.userName!),
+      );
       _users.value = responseUsers;
     } catch (e) {
       // Handle the error appropriately
@@ -43,18 +40,19 @@ class UserManager {
     return;
   }
 
-  Future<void> createUser(
-      {required String userName,
-      required String fullName,
-      required String password,
-      required String email,
-      required bool isAdmin,
-      required int timeUnits,
-      required int credit,
-      required String contact,
-      required List<String> scopeNames,
-      required Role role,
-      String? tutoring}) async {
+  Future<void> createUser({
+    required String userName,
+    required String fullName,
+    required String password,
+    required String email,
+    required bool isAdmin,
+    required int timeUnits,
+    required int credit,
+    required String contact,
+    required List<String> scopeNames,
+    required Role role,
+    String? tutoring,
+  }) async {
     final User user = await _client.admin.createUser(
       userName: userName,
       fullName: fullName,
@@ -68,7 +66,9 @@ class UserManager {
     addUser(user);
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'User erstellt!');
+      NotificationType.success,
+      'User erstellt!',
+    );
     return;
   }
 
@@ -76,12 +76,16 @@ class UserManager {
     final success = await _client.user.changePassword(oldPassword, newPassword);
     if (!success) {
       _notificationService.showSnackBar(
-          NotificationType.error, 'Passwort konnte nicht geändert werden!');
+        NotificationType.error,
+        'Passwort konnte nicht geändert werden!',
+      );
       return;
     }
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Passwort erfolgreich geändert!');
+      NotificationType.success,
+      'Passwort erfolgreich geändert!',
+    );
     return;
   }
 
@@ -113,13 +117,17 @@ class UserManager {
   Future<void> blockUser(User user) async {
     if (!_sessionManager.isAdmin) {
       _notificationService.showSnackBar(
-          NotificationType.error, 'Sie sind kein Admin!');
+        NotificationType.error,
+        'Sie sind kein Admin!',
+      );
       return;
     }
     await _client.admin.deleteUser(user.userInfo!.id!);
     removeUser(user);
     _notificationService.showSnackBar(
-        NotificationType.success, 'User gelöscht!');
+      NotificationType.success,
+      'User gelöscht!',
+    );
     return;
   }
 
@@ -131,8 +139,9 @@ class UserManager {
     final List<User> users = List.from(_users.value);
     users.add(user);
 
-    users
-        .sort((a, b) => a.userInfo!.userName!.compareTo(b.userInfo!.userName!));
+    users.sort(
+      (a, b) => a.userInfo!.userName!.compareTo(b.userInfo!.userName!),
+    );
     _users.value = users;
   }
 
@@ -178,10 +187,14 @@ class UserManager {
     //  updateUsers(users);
     if (!success) {
       _notificationService.showSnackBar(
-          NotificationType.error, 'Guthaben konnte nicht erhöht werden!');
+        NotificationType.error,
+        'Guthaben konnte nicht erhöht werden!',
+      );
       return;
     }
     _notificationService.showSnackBar(
-        NotificationType.success, 'Guthaben erfolgreich erhöht!');
+      NotificationType.success,
+      'Guthaben erfolgreich erhöht!',
+    );
   }
 }

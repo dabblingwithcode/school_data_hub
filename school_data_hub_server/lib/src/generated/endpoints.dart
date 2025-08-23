@@ -392,15 +392,6 @@ class Endpoints extends _i1.EndpointDispatch {
             params['scopeName'],
           ),
         ),
-        'getAllUsers': _i1.MethodConnector(
-          name: 'getAllUsers',
-          params: {},
-          call: (
-            _i1.Session session,
-            Map<String, dynamic> params,
-          ) async =>
-              (endpoints['admin'] as _i2.AdminEndpoint).getAllUsers(session),
-        ),
         'getUserById': _i1.MethodConnector(
           name: 'getUserById',
           params: {
@@ -2575,6 +2566,11 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<String?>(),
               nullable: true,
             ),
+            'authorizedUsers': _i1.ParameterDescription(
+              name: 'authorizedUsers',
+              type: _i1.getType<({String? value})?>(),
+              nullable: true,
+            ),
             'public': _i1.ParameterDescription(
               name: 'public',
               type: _i1.getType<bool?>(),
@@ -2597,6 +2593,7 @@ class Endpoints extends _i1.EndpointDispatch {
             params['listId'],
             params['name'],
             params['description'],
+            params['authorizedUsers'],
             params['public'],
             params['updateMembers'],
           ),
@@ -3045,6 +3042,15 @@ class Endpoints extends _i1.EndpointDispatch {
             Map<String, dynamic> params,
           ) async =>
               (endpoints['user'] as _i23.UserEndpoint).getCurrentUser(session),
+        ),
+        'getAllUsers': _i1.MethodConnector(
+          name: 'getAllUsers',
+          params: {},
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['user'] as _i23.UserEndpoint).getAllUsers(session),
         ),
         'changePassword': _i1.MethodConnector(
           name: 'changePassword',

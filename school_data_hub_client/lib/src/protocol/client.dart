@@ -155,13 +155,6 @@ class EndpointAdmin extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<List<_i3.User>> getAllUsers() =>
-      caller.callServerEndpoint<List<_i3.User>>(
-        'admin',
-        'getAllUsers',
-        {},
-      );
-
   _i2.Future<_i3.User?> getUserById(int userId) =>
       caller.callServerEndpoint<_i3.User?>(
         'admin',
@@ -1243,6 +1236,7 @@ class EndpointSchoolList extends _i1.EndpointRef {
     int listId,
     String? name,
     String? description,
+    ({String? value})? authorizedUsers,
     bool? public,
     ({_i12.MemberOperation operation, List<int> pupilIds})? updateMembers,
   ) =>
@@ -1253,6 +1247,7 @@ class EndpointSchoolList extends _i1.EndpointRef {
           'listId': listId,
           'name': name,
           'description': description,
+          'authorizedUsers': _i13.mapRecordToJson(authorizedUsers),
           'public': public,
           'updateMembers': _i13.mapRecordToJson(updateMembers),
         },
@@ -1480,6 +1475,13 @@ class EndpointUser extends _i1.EndpointRef {
       caller.callServerEndpoint<_i3.User?>(
         'user',
         'getCurrentUser',
+        {},
+      );
+
+  _i2.Future<List<_i3.User>> getAllUsers() =>
+      caller.callServerEndpoint<List<_i3.User>>(
+        'user',
+        'getAllUsers',
         {},
       );
 

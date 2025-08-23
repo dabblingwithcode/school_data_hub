@@ -96,46 +96,46 @@ import '_features/workbooks/models/workbook.dart' as _i70;
 import '_shared/models/exceptions/test_exception.dart' as _i71;
 import '_shared/models/hub_document.dart' as _i72;
 import '_features/pupil/models/pupil_identity/school_grade.dart' as _i73;
-import 'package:school_data_hub_client/src/protocol/_features/user/models/staff_user.dart'
-    as _i74;
 import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_data/pupil_data.dart'
-    as _i75;
+    as _i74;
 import 'package:school_data_hub_client/src/protocol/_features/attendance/models/missed_schoolday.dart'
-    as _i76;
-import 'package:serverpod_auth_client/serverpod_auth_client.dart' as _i77;
+    as _i75;
+import 'package:serverpod_auth_client/serverpod_auth_client.dart' as _i76;
 import 'package:school_data_hub_client/src/protocol/_features/auth/models/user_device.dart'
-    as _i78;
+    as _i77;
 import 'package:school_data_hub_client/src/protocol/_features/authorizations/models/authorization.dart'
-    as _i79;
+    as _i78;
 import 'package:school_data_hub_client/src/protocol/_shared/models/member_operation.dart'
-    as _i80;
+    as _i79;
 import 'package:school_data_hub_client/src/protocol/_features/books/models/book_tagging/book_tag.dart'
-    as _i81;
+    as _i80;
 import 'package:school_data_hub_client/src/protocol/_features/books/models/book.dart'
-    as _i82;
+    as _i81;
 import 'package:school_data_hub_client/src/protocol/_features/books/models/library_book_location.dart'
-    as _i83;
+    as _i82;
 import 'package:school_data_hub_client/src/protocol/_features/books/models/library_book.dart'
-    as _i84;
+    as _i83;
 import 'package:school_data_hub_client/src/protocol/_features/books/models/pupil_book_lending.dart'
-    as _i85;
+    as _i84;
 import 'package:school_data_hub_client/src/protocol/_features/learning/models/competence.dart'
-    as _i86;
+    as _i85;
 import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/learning_support_plan.dart'
-    as _i87;
+    as _i86;
 import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/support_category_status.dart'
-    as _i88;
+    as _i87;
 import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/support_category.dart'
-    as _i89;
+    as _i88;
 import 'package:school_data_hub_client/src/protocol/_features/matrix/compulsory_room.dart'
-    as _i90;
+    as _i89;
 import 'package:school_data_hub_client/src/protocol/_features/school_lists/models/school_list.dart'
-    as _i91;
+    as _i90;
 import 'package:school_data_hub_client/src/protocol/_features/schoolday/models/school_semester.dart'
-    as _i92;
+    as _i91;
 import 'package:school_data_hub_client/src/protocol/_features/schoolday/models/schoolday.dart'
-    as _i93;
+    as _i92;
 import 'package:school_data_hub_client/src/protocol/_features/schoolday_events/models/schoolday_event.dart'
+    as _i93;
+import 'package:school_data_hub_client/src/protocol/_features/user/models/staff_user.dart'
     as _i94;
 import 'package:school_data_hub_client/src/protocol/_features/workbooks/models/pupil_workbook.dart'
     as _i95;
@@ -1061,35 +1061,32 @@ class Protocol extends _i1.SerializationManager {
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
     }
-    if (t == List<_i74.User>) {
-      return (data as List).map((e) => deserialize<_i74.User>(e)).toList() as T;
-    }
-    if (t == Set<_i75.PupilData>) {
-      return (data as List).map((e) => deserialize<_i75.PupilData>(e)).toSet()
+    if (t == Set<_i74.PupilData>) {
+      return (data as List).map((e) => deserialize<_i74.PupilData>(e)).toSet()
           as T;
     }
-    if (t == List<_i76.MissedSchoolday>) {
+    if (t == List<_i75.MissedSchoolday>) {
       return (data as List)
-          .map((e) => deserialize<_i76.MissedSchoolday>(e))
+          .map((e) => deserialize<_i75.MissedSchoolday>(e))
           .toList() as T;
     }
     if (t ==
         _i1.getType<
             ({
-              _i77.AuthenticationResponse response,
-              _i78.UserDevice? userDevice
+              _i76.AuthenticationResponse response,
+              _i77.UserDevice? userDevice
             })>()) {
       return (
-        response: deserialize<_i77.AuthenticationResponse>(
+        response: deserialize<_i76.AuthenticationResponse>(
             ((data as Map)['n'] as Map)['response']),
         userDevice: ((data)['n'] as Map)['userDevice'] == null
             ? null
-            : deserialize<_i78.UserDevice>(data['n']['userDevice']),
+            : deserialize<_i77.UserDevice>(data['n']['userDevice']),
       ) as T;
     }
-    if (t == List<_i79.Authorization>) {
+    if (t == List<_i78.Authorization>) {
       return (data as List)
-          .map((e) => deserialize<_i79.Authorization>(e))
+          .map((e) => deserialize<_i78.Authorization>(e))
           .toList() as T;
     }
     if (t == List<int>) {
@@ -1097,70 +1094,70 @@ class Protocol extends _i1.SerializationManager {
     }
     if (t ==
         _i1.getType<
-            ({_i80.MemberOperation operation, List<int> pupilIds})?>()) {
+            ({_i79.MemberOperation operation, List<int> pupilIds})?>()) {
       return (data == null)
           ? null as T
           : (
-              operation: deserialize<_i80.MemberOperation>(
+              operation: deserialize<_i79.MemberOperation>(
                   ((data as Map)['n'] as Map)['operation']),
               pupilIds: deserialize<List<int>>(data['n']['pupilIds']),
             ) as T;
     }
-    if (t == List<_i81.BookTag>) {
-      return (data as List).map((e) => deserialize<_i81.BookTag>(e)).toList()
+    if (t == List<_i80.BookTag>) {
+      return (data as List).map((e) => deserialize<_i80.BookTag>(e)).toList()
           as T;
     }
-    if (t == List<_i82.Book>) {
-      return (data as List).map((e) => deserialize<_i82.Book>(e)).toList() as T;
+    if (t == List<_i81.Book>) {
+      return (data as List).map((e) => deserialize<_i81.Book>(e)).toList() as T;
     }
-    if (t == List<_i83.LibraryBookLocation>) {
+    if (t == List<_i82.LibraryBookLocation>) {
       return (data as List)
-          .map((e) => deserialize<_i83.LibraryBookLocation>(e))
+          .map((e) => deserialize<_i82.LibraryBookLocation>(e))
           .toList() as T;
     }
-    if (t == List<_i84.LibraryBook>) {
+    if (t == List<_i83.LibraryBook>) {
       return (data as List)
-          .map((e) => deserialize<_i84.LibraryBook>(e))
+          .map((e) => deserialize<_i83.LibraryBook>(e))
           .toList() as T;
     }
-    if (t == List<_i85.PupilBookLending>) {
+    if (t == List<_i84.PupilBookLending>) {
       return (data as List)
-          .map((e) => deserialize<_i85.PupilBookLending>(e))
+          .map((e) => deserialize<_i84.PupilBookLending>(e))
           .toList() as T;
     }
-    if (t == List<_i86.Competence>) {
-      return (data as List).map((e) => deserialize<_i86.Competence>(e)).toList()
+    if (t == List<_i85.Competence>) {
+      return (data as List).map((e) => deserialize<_i85.Competence>(e)).toList()
           as T;
     }
-    if (t == List<_i87.LearningSupportPlan>) {
+    if (t == List<_i86.LearningSupportPlan>) {
       return (data as List)
-          .map((e) => deserialize<_i87.LearningSupportPlan>(e))
+          .map((e) => deserialize<_i86.LearningSupportPlan>(e))
           .toList() as T;
     }
-    if (t == List<_i88.SupportCategoryStatus>) {
+    if (t == List<_i87.SupportCategoryStatus>) {
       return (data as List)
-          .map((e) => deserialize<_i88.SupportCategoryStatus>(e))
+          .map((e) => deserialize<_i87.SupportCategoryStatus>(e))
           .toList() as T;
     }
-    if (t == List<_i89.SupportCategory>) {
+    if (t == List<_i88.SupportCategory>) {
       return (data as List)
-          .map((e) => deserialize<_i89.SupportCategory>(e))
+          .map((e) => deserialize<_i88.SupportCategory>(e))
           .toList() as T;
     }
-    if (t == _i1.getType<List<_i90.CompulsoryRoom>?>()) {
+    if (t == _i1.getType<List<_i89.CompulsoryRoom>?>()) {
       return (data != null
           ? (data as List)
-              .map((e) => deserialize<_i90.CompulsoryRoom>(e))
+              .map((e) => deserialize<_i89.CompulsoryRoom>(e))
               .toList()
           : null) as T;
     }
-    if (t == List<_i90.CompulsoryRoom>) {
+    if (t == List<_i89.CompulsoryRoom>) {
       return (data as List)
-          .map((e) => deserialize<_i90.CompulsoryRoom>(e))
+          .map((e) => deserialize<_i89.CompulsoryRoom>(e))
           .toList() as T;
     }
-    if (t == List<_i75.PupilData>) {
-      return (data as List).map((e) => deserialize<_i75.PupilData>(e)).toList()
+    if (t == List<_i74.PupilData>) {
+      return (data as List).map((e) => deserialize<_i74.PupilData>(e)).toList()
           as T;
     }
     if (t == Set<int>) {
@@ -1173,26 +1170,38 @@ class Protocol extends _i1.SerializationManager {
             : deserialize<DateTime>(data['n']['value']),
       ) as T;
     }
-    if (t == List<_i91.SchoolList>) {
-      return (data as List).map((e) => deserialize<_i91.SchoolList>(e)).toList()
+    if (t == List<_i90.SchoolList>) {
+      return (data as List).map((e) => deserialize<_i90.SchoolList>(e)).toList()
           as T;
     }
-    if (t == List<_i92.SchoolSemester>) {
+    if (t == _i1.getType<({String? value})?>()) {
+      return (data == null)
+          ? null as T
+          : (
+              value: ((data as Map)['n'] as Map)['value'] == null
+                  ? null
+                  : deserialize<String>(data['n']['value']),
+            ) as T;
+    }
+    if (t == List<_i91.SchoolSemester>) {
       return (data as List)
-          .map((e) => deserialize<_i92.SchoolSemester>(e))
+          .map((e) => deserialize<_i91.SchoolSemester>(e))
           .toList() as T;
     }
-    if (t == List<_i93.Schoolday>) {
-      return (data as List).map((e) => deserialize<_i93.Schoolday>(e)).toList()
+    if (t == List<_i92.Schoolday>) {
+      return (data as List).map((e) => deserialize<_i92.Schoolday>(e)).toList()
           as T;
     }
     if (t == List<DateTime>) {
       return (data as List).map((e) => deserialize<DateTime>(e)).toList() as T;
     }
-    if (t == List<_i94.SchooldayEvent>) {
+    if (t == List<_i93.SchooldayEvent>) {
       return (data as List)
-          .map((e) => deserialize<_i94.SchooldayEvent>(e))
+          .map((e) => deserialize<_i93.SchooldayEvent>(e))
           .toList() as T;
+    }
+    if (t == List<_i94.User>) {
+      return (data as List).map((e) => deserialize<_i94.User>(e)).toList() as T;
     }
     if (t == List<_i95.PupilWorkbook>) {
       return (data as List)
@@ -1212,7 +1221,7 @@ class Protocol extends _i1.SerializationManager {
             ) as T;
     }
     try {
-      return _i77.Protocol().deserialize<T>(data, t);
+      return _i76.Protocol().deserialize<T>(data, t);
     } on _i1.DeserializationTypeNotFoundException catch (_) {}
     return super.deserialize<T>(data, t);
   }
@@ -1437,11 +1446,11 @@ class Protocol extends _i1.SerializationManager {
     if (data is _i73.SchoolGrade) {
       return 'SchoolGrade';
     }
-    className = _i77.Protocol().getClassNameForObject(data);
+    className = _i76.Protocol().getClassNameForObject(data);
     if (className != null) {
       return 'serverpod_auth.$className';
     }
-    if (data is List<_i75.PupilData>) {
+    if (data is List<_i74.PupilData>) {
       return 'List<PupilData>';
     }
     return null;
@@ -1671,10 +1680,10 @@ class Protocol extends _i1.SerializationManager {
     }
     if (dataClassName.startsWith('serverpod_auth.')) {
       data['className'] = dataClassName.substring(15);
-      return _i77.Protocol().deserializeByClassName(data);
+      return _i76.Protocol().deserializeByClassName(data);
     }
     if (dataClassName == 'List<PupilData>') {
-      return deserialize<List<_i75.PupilData>>(data['data']);
+      return deserialize<List<_i74.PupilData>>(data['data']);
     }
     return super.deserializeByClassName(data);
   }
@@ -1690,8 +1699,8 @@ Map<String, dynamic>? mapRecordToJson(Record? record) {
     return null;
   }
   if (record is ({
-    _i77.AuthenticationResponse response,
-    _i78.UserDevice? userDevice
+    _i76.AuthenticationResponse response,
+    _i77.UserDevice? userDevice
   })) {
     return {
       "n": {
@@ -1700,7 +1709,7 @@ Map<String, dynamic>? mapRecordToJson(Record? record) {
       },
     };
   }
-  if (record is ({_i80.MemberOperation operation, List<int> pupilIds})) {
+  if (record is ({_i79.MemberOperation operation, List<int> pupilIds})) {
     return {
       "n": {
         "operation": record.operation,
@@ -1709,6 +1718,13 @@ Map<String, dynamic>? mapRecordToJson(Record? record) {
     };
   }
   if (record is ({DateTime? value})) {
+    return {
+      "n": {
+        "value": record.value,
+      },
+    };
+  }
+  if (record is ({String? value})) {
     return {
       "n": {
         "value": record.value,

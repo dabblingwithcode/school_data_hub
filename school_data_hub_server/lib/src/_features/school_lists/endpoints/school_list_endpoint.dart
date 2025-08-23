@@ -73,6 +73,7 @@ class SchoolListEndpoint extends Endpoint {
       int listId,
       String? name,
       String? description,
+      ({String? value})? authorizedUsers,
       bool? public,
       ({List<int> pupilIds, MemberOperation operation})? updateMembers) async {
     final schoolList = await SchoolList.db.findById(session, listId,
@@ -89,6 +90,9 @@ class SchoolListEndpoint extends Endpoint {
     }
     if (public != null) {
       schoolList.public = public;
+    }
+    if (authorizedUsers != null) {
+      schoolList.authorizedUsers = authorizedUsers.value;
     }
     if (updateMembers != null) {
       if (updateMembers.operation == MemberOperation.add) {

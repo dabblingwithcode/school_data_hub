@@ -17,12 +17,13 @@ class SchoolListHelper {
     if (schoolList.public == true) {
       return 'ADM';
     }
-    if (schoolList.public == false) {
+    if (schoolList.authorizedUsers == null ||
+        schoolList.authorizedUsers!.isEmpty) {
       return '';
     }
     schoolList.authorizedUsers!.split('*').forEach((element) {
       if (element.isNotEmpty) {
-        owners += ' - $element';
+        owners += ' + $element';
       }
     });
     return owners;
@@ -35,13 +36,15 @@ class SchoolListHelper {
   }
 
   static Map<String, int> schoolListStatsForGivenPupils(
-      SchoolList schoolList, List<PupilProxy> pupilsInList) {
+    SchoolList schoolList,
+    List<PupilProxy> pupilsInList,
+  ) {
     int countYes = 0;
     int countNo = 0;
     int countNull = 0;
     int countComment = 0;
-    final pupilEntriesProxy =
-        _schoolListManager.getPupilEntriesProxyFromSchoolList(schoolList.id!);
+    final pupilEntriesProxy = _schoolListManager
+        .getPupilEntriesProxyFromSchoolList(schoolList.id!);
 
     for (PupilProxy pupil in pupilsInList) {
       for (PupilListEntryProxy pupilEntryProxy
@@ -50,8 +53,8 @@ class SchoolListHelper {
           pupilEntryProxy.pupilEntry.status == true
               ? countYes++
               : pupilEntryProxy.pupilEntry.status == false
-                  ? countNo++
-                  : countNull++;
+              ? countNo++
+              : countNull++;
           pupilEntryProxy.pupilEntry.comment != null &&
                   pupilEntryProxy.pupilEntry.comment!.isNotEmpty
               ? countComment++
@@ -64,7 +67,7 @@ class SchoolListHelper {
       'yes': countYes,
       'no': countNo,
       'null': countNull,
-      'comment': countComment
+      'comment': countComment,
     };
   }
 }
