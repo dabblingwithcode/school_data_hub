@@ -47,6 +47,11 @@ class SchoolListPdfGenerator {
     final data = await rootBundle.load('assets/foreground_windows.png');
     final imageBytes = data.buffer.asUint8List();
     final image = pw.MemoryImage(imageBytes);
+
+    // Load Unicode-supporting fonts
+    final fontRegular = await PdfGoogleFonts.robotoRegular();
+    final fontBold = await PdfGoogleFonts.robotoBold();
+
     final pdf = pw.Document();
 
     // Get statistics
@@ -71,14 +76,14 @@ class SchoolListPdfGenerator {
 
     // Sort pupils by last name, then first name
     pupilEntries.sort((a, b) {
-      final lastNameComparison = a.pupil.lastName.compareTo(b.pupil.lastName);
-      if (lastNameComparison != 0) return lastNameComparison;
+      // final lastNameComparison = a.pupil.lastName.compareTo(b.pupil.lastName);
+      // if (lastNameComparison != 0) return lastNameComparison;
       return a.pupil.firstName.compareTo(b.pupil.firstName);
     });
 
     // Configuration for pagination
     const int maxPupilsFirstPage = 24;
-    const int maxPupilsPerPage = 25;
+    const int maxPupilsPerPage = 26;
     // Calculate total pages
     int totalPages;
     if (pupilEntries.length <= maxPupilsFirstPage) {
@@ -100,6 +105,8 @@ class SchoolListPdfGenerator {
           totalPages: 1,
           totalPupils: 0,
           startIndex: 0,
+          fontRegular: fontRegular,
+          fontBold: fontBold,
         ),
       );
     } else {
@@ -131,6 +138,8 @@ class SchoolListPdfGenerator {
             totalPages: totalPages,
             totalPupils: pupilEntries.length,
             startIndex: currentIndex,
+            fontRegular: fontRegular,
+            fontBold: fontBold,
           ),
         );
 
@@ -155,6 +164,8 @@ class SchoolListPdfGenerator {
     required int totalPages,
     required int totalPupils,
     required int startIndex,
+    required pw.Font fontRegular,
+    required pw.Font fontBold,
   }) {
     print(
       'Building page $pageNumber with ${pupils.length} pupils, startIndex=$startIndex',
@@ -170,21 +181,28 @@ class SchoolListPdfGenerator {
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
                 // Header
-                _buildHeader(image, schoolList, pageNumber, totalPages),
+                _buildHeader(
+                  image,
+                  schoolList,
+                  pageNumber,
+                  totalPages,
+                  fontRegular,
+                  fontBold,
+                ),
                 pw.SizedBox(height: 15),
 
                 // Statistics (only on first page)
                 if (pageNumber == 1) ...[
-                  _buildStatistics(stats, totalPupils),
+                  _buildStatistics(stats, totalPupils, fontRegular, fontBold),
                   pw.SizedBox(height: 12),
                 ],
 
                 // Pupils table
-                _buildPupilsTable(pupils, startIndex),
+                _buildPupilsTable(pupils, startIndex, fontRegular, fontBold),
 
                 // Footer
                 pw.Spacer(),
-                _buildFooter(schoolList),
+                _buildFooter(schoolList, fontRegular),
               ],
             );
           } catch (e) {
@@ -216,6 +234,8 @@ class SchoolListPdfGenerator {
     SchoolList schoolList,
     int pageNumber,
     int totalPages,
+    pw.Font fontRegular,
+    pw.Font fontBold,
   ) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -232,14 +252,11 @@ class SchoolListPdfGenerator {
                   children: [
                     pw.Text(
                       'Schuldaten Hub',
-                      style: pw.TextStyle(
-                        fontSize: 16,
-                        fontWeight: pw.FontWeight.bold,
-                      ),
+                      style: pw.TextStyle(fontSize: 16, font: fontBold),
                     ),
                     pw.Text(
                       'Schulliste',
-                      style: const pw.TextStyle(fontSize: 10),
+                      style: pw.TextStyle(fontSize: 10, font: fontRegular),
                     ),
                   ],
                 ),
@@ -247,7 +264,7 @@ class SchoolListPdfGenerator {
             ),
             pw.Text(
               'Seite $pageNumber von $totalPages',
-              style: const pw.TextStyle(fontSize: 10),
+              style: pw.TextStyle(fontSize: 10, font: fontRegular),
             ),
           ],
         ),
@@ -268,15 +285,12 @@ class SchoolListPdfGenerator {
                 children: [
                   pw.Text(
                     schoolList.name,
-                    style: pw.TextStyle(
-                      fontSize: 20,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
+                    style: pw.TextStyle(fontSize: 20, font: fontBold),
                   ),
                   pw.SizedBox(height: 5),
                   pw.Text(
                     schoolList.description,
-                    style: const pw.TextStyle(fontSize: 12),
+                    style: pw.TextStyle(fontSize: 12, font: fontRegular),
                   ),
                 ],
               ),
@@ -288,14 +302,11 @@ class SchoolListPdfGenerator {
                   children: [
                     pw.Text(
                       'Erstellt von: ',
-                      style: const pw.TextStyle(fontSize: 10),
+                      style: pw.TextStyle(fontSize: 10, font: fontRegular),
                     ),
                     pw.Text(
                       schoolList.createdBy,
-                      style: pw.TextStyle(
-                        fontSize: 10,
-                        fontWeight: pw.FontWeight.bold,
-                      ),
+                      style: pw.TextStyle(fontSize: 10, font: fontBold),
                     ),
                   ],
                 ),
@@ -304,14 +315,11 @@ class SchoolListPdfGenerator {
                   children: [
                     pw.Text(
                       'Sichtbarkeit: ',
-                      style: const pw.TextStyle(fontSize: 10),
+                      style: pw.TextStyle(fontSize: 10, font: fontRegular),
                     ),
                     pw.Text(
                       schoolList.public ? 'Öffentlich' : 'Privat',
-                      style: pw.TextStyle(
-                        fontSize: 10,
-                        fontWeight: pw.FontWeight.bold,
-                      ),
+                      style: pw.TextStyle(fontSize: 10, font: fontBold),
                     ),
                   ],
                 ),
@@ -323,7 +331,12 @@ class SchoolListPdfGenerator {
     );
   }
 
-  static pw.Widget _buildStatistics(Map<String, int> stats, int totalPupils) {
+  static pw.Widget _buildStatistics(
+    Map<String, int> stats,
+    int totalPupils,
+    pw.Font fontRegular,
+    pw.Font fontBold,
+  ) {
     return pw.Container(
       padding: const pw.EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: pw.BoxDecoration(
@@ -334,18 +347,28 @@ class SchoolListPdfGenerator {
         children: [
           pw.Text(
             'Statistik:',
-            style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
+            style: pw.TextStyle(fontSize: 12, font: fontBold),
           ),
           pw.SizedBox(width: 15),
           pw.Expanded(
             child: pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
               children: [
-                _buildStatItem('Gesamt', totalPupils),
-                _buildStatItem('Ja', stats['yes'] ?? 0),
-                _buildStatItem('Nein', stats['no'] ?? 0),
-                _buildStatItem('Offen', stats['null'] ?? 0),
-                _buildStatItem('Kommentare', stats['comment'] ?? 0),
+                _buildStatItem('Gesamt', totalPupils, fontRegular, fontBold),
+                _buildStatItem('Ja', stats['yes'] ?? 0, fontRegular, fontBold),
+                _buildStatItem('Nein', stats['no'] ?? 0, fontRegular, fontBold),
+                _buildStatItem(
+                  'Offen',
+                  stats['null'] ?? 0,
+                  fontRegular,
+                  fontBold,
+                ),
+                _buildStatItem(
+                  'Kommentare',
+                  stats['comment'] ?? 0,
+                  fontRegular,
+                  fontBold,
+                ),
               ],
             ),
           ),
@@ -354,14 +377,19 @@ class SchoolListPdfGenerator {
     );
   }
 
-  static pw.Widget _buildStatItem(String label, int value) {
+  static pw.Widget _buildStatItem(
+    String label,
+    int value,
+    pw.Font fontRegular,
+    pw.Font fontBold,
+  ) {
     return pw.Column(
       children: [
         pw.Text(
           value.toString(),
-          style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
+          style: pw.TextStyle(fontSize: 14, font: fontBold),
         ),
-        pw.Text(label, style: const pw.TextStyle(fontSize: 9)),
+        pw.Text(label, style: pw.TextStyle(fontSize: 9, font: fontRegular)),
       ],
     );
   }
@@ -369,6 +397,8 @@ class SchoolListPdfGenerator {
   static pw.Widget _buildPupilsTable(
     List<_PupilEntryData> pupils,
     int startIndex,
+    pw.Font fontRegular,
+    pw.Font fontBold,
   ) {
     print(
       '  Building pupils table with ${pupils.length} pupils, startIndex=$startIndex',
@@ -383,7 +413,11 @@ class SchoolListPdfGenerator {
           child: pw.Center(
             child: pw.Text(
               'Keine Schüler:innen in dieser Liste',
-              style: pw.TextStyle(fontSize: 14, fontStyle: pw.FontStyle.italic),
+              style: pw.TextStyle(
+                fontSize: 14,
+                fontStyle: pw.FontStyle.italic,
+                font: fontRegular,
+              ),
             ),
           ),
         );
@@ -393,7 +427,7 @@ class SchoolListPdfGenerator {
       return pw.Table(
         border: pw.TableBorder.all(color: PdfColors.grey400),
         columnWidths: const {
-          0: pw.FixedColumnWidth(25), // Nr.
+          0: pw.FixedColumnWidth(35), // Nr. - increased to fit 3-digit numbers
           1: pw.FlexColumnWidth(3), // Name
           2: pw.FixedColumnWidth(25), // Status
           3: pw.FixedColumnWidth(40), // Gruppe
@@ -406,13 +440,23 @@ class SchoolListPdfGenerator {
           pw.TableRow(
             decoration: const pw.BoxDecoration(color: PdfColors.grey200),
             children: [
-              _buildTableCell('Nr.', isHeader: true),
-              _buildTableCell('Name', isHeader: true),
-              _buildTableCell('Status', isHeader: true),
-              _buildTableCell('Gruppe', isHeader: true),
-              _buildTableCell('Klasse', isHeader: true),
-              _buildTableCell('Kommentar', isHeader: true),
-              _buildTableCell('Erstellt von', isHeader: true),
+              _buildTableCell('Nr.', fontRegular, fontBold, isHeader: true),
+              _buildTableCell('Name', fontRegular, fontBold, isHeader: true),
+              _buildTableCell('Status', fontRegular, fontBold, isHeader: true),
+              _buildTableCell('Gruppe', fontRegular, fontBold, isHeader: true),
+              _buildTableCell('Klasse', fontRegular, fontBold, isHeader: true),
+              _buildTableCell(
+                'Kommentar',
+                fontRegular,
+                fontBold,
+                isHeader: true,
+              ),
+              _buildTableCell(
+                'Erstellt von',
+                fontRegular,
+                fontBold,
+                isHeader: true,
+              ),
             ],
           ),
           // Data rows
@@ -423,15 +467,33 @@ class SchoolListPdfGenerator {
             try {
               return pw.TableRow(
                 children: [
-                  _buildTableCell(index.toString()),
+                  _buildTableCell(index.toString(), fontRegular, fontBold),
                   _buildTableCell(
                     '${pupilData.pupil.firstName} ${pupilData.pupil.lastName}',
+                    fontRegular,
+                    fontBold,
                   ),
-                  _buildTableCell(_getStatusText(pupilData.entry.status)),
-                  _buildTableCell(pupilData.pupil.group),
-                  _buildTableCell(pupilData.pupil.schoolGrade.name),
-                  _buildTableCell(pupilData.entry.comment ?? ''),
-                  _buildTableCell(pupilData.entry.entryBy ?? ''),
+                  _buildTableCell(
+                    _getStatusText(pupilData.entry.status),
+                    fontRegular,
+                    fontBold,
+                  ),
+                  _buildTableCell(pupilData.pupil.group, fontRegular, fontBold),
+                  _buildTableCell(
+                    pupilData.pupil.schoolGrade.name,
+                    fontRegular,
+                    fontBold,
+                  ),
+                  _buildTableCell(
+                    pupilData.entry.comment ?? '',
+                    fontRegular,
+                    fontBold,
+                  ),
+                  _buildTableCell(
+                    pupilData.entry.entryBy ?? '',
+                    fontRegular,
+                    fontBold,
+                  ),
                 ],
               );
             } catch (e) {
@@ -439,13 +501,17 @@ class SchoolListPdfGenerator {
               // Return a row with error info
               return pw.TableRow(
                 children: [
-                  _buildTableCell(index.toString()),
-                  _buildTableCell('ERROR: Row ${entry.key}'),
-                  _buildTableCell('ERROR'),
-                  _buildTableCell('ERROR'),
-                  _buildTableCell('ERROR'),
-                  _buildTableCell('ERROR'),
-                  _buildTableCell('ERROR'),
+                  _buildTableCell(index.toString(), fontRegular, fontBold),
+                  _buildTableCell(
+                    'ERROR: Row ${entry.key}',
+                    fontRegular,
+                    fontBold,
+                  ),
+                  _buildTableCell('ERROR', fontRegular, fontBold),
+                  _buildTableCell('ERROR', fontRegular, fontBold),
+                  _buildTableCell('ERROR', fontRegular, fontBold),
+                  _buildTableCell('ERROR', fontRegular, fontBold),
+                  _buildTableCell('ERROR', fontRegular, fontBold),
                 ],
               );
             }
@@ -456,12 +522,20 @@ class SchoolListPdfGenerator {
       print('  ERROR building pupils table: $e');
       return pw.Container(
         padding: const pw.EdgeInsets.all(20),
-        child: pw.Text('Error building table: $e'),
+        child: pw.Text(
+          'Error building table: $e',
+          style: pw.TextStyle(font: fontRegular),
+        ),
       );
     }
   }
 
-  static pw.Widget _buildTableCell(String text, {bool isHeader = false}) {
+  static pw.Widget _buildTableCell(
+    String text,
+    pw.Font fontRegular,
+    pw.Font fontBold, {
+    bool isHeader = false,
+  }) {
     // Truncate text if it's too long to prevent overflow issues
     String displayText = text;
     if (!isHeader && text.length > 25) {
@@ -474,7 +548,7 @@ class SchoolListPdfGenerator {
         displayText,
         style: pw.TextStyle(
           fontSize: isHeader ? 11 : 10,
-          fontWeight: isHeader ? pw.FontWeight.bold : pw.FontWeight.normal,
+          font: isHeader ? fontBold : fontRegular,
         ),
         overflow: pw.TextOverflow.clip, // Clip text that's still too long
       ),
@@ -486,7 +560,7 @@ class SchoolListPdfGenerator {
     return status ? '✓' : '✗';
   }
 
-  static pw.Widget _buildFooter(SchoolList schoolList) {
+  static pw.Widget _buildFooter(SchoolList schoolList, pw.Font fontRegular) {
     return pw.Column(
       children: [
         pw.Container(
@@ -500,11 +574,11 @@ class SchoolListPdfGenerator {
           children: [
             pw.Text(
               'Liste ID: ${schoolList.listId}',
-              style: const pw.TextStyle(fontSize: 8),
+              style: pw.TextStyle(fontSize: 8, font: fontRegular),
             ),
             pw.Text(
               'Erstellt am: ${DateTime.now().formatForUser()}',
-              style: const pw.TextStyle(fontSize: 8),
+              style: pw.TextStyle(fontSize: 8, font: fontRegular),
             ),
           ],
         ),
