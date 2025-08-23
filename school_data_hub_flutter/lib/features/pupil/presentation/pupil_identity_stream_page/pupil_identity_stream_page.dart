@@ -60,6 +60,19 @@ class PupilIdentityStreamPage extends WatchingWidget {
     // Access state through the controller
     final state = controller.state;
 
+    // Watch all state variables at the top of build method (best practice)
+    final isConnected = watch(state.streamState.isConnected).value;
+    final isProcessing = watch(state.streamState.isProcessing).value;
+    final receivers = watch(state.receiverState.connectedReceivers).value;
+    final pendingRequests = watch(state.receiverState.pendingRequests).value;
+    final activeTransfers = watch(state.receiverState.activeTransfers).value;
+    final transferHistory = watch(state.transferState.transferHistory).value;
+    final transferCounter = watch(state.transferState.transferCounter).value;
+    final rejectedUsers = watch(state.receiverState.rejectedUsers).value;
+    final receiverJoined = watch(state.streamState.receiverJoined).value;
+    final requestSent = watch(state.streamState.requestSent).value;
+    final isTransmitting = watch(state.streamState.isTransmitting).value;
+
     return Scaffold(
       appBar: const GenericAppBar(
         iconData: Icons.people,
@@ -75,19 +88,10 @@ class PupilIdentityStreamPage extends WatchingWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Connection Status (fixed at top)
-                ValueListenableBuilder(
-                  valueListenable: state.streamState.isConnected,
-                  builder:
-                      (context, isConnected, _) => ValueListenableBuilder(
-                        valueListenable: state.streamState.isProcessing,
-                        builder:
-                            (context, isProcessing, _) => ConnectionStatus(
-                              isConnected: isConnected,
-                              isProcessing: isProcessing,
-                              statusMessage:
-                                  state.streamState.statusMessage.value,
-                            ),
-                      ),
+                ConnectionStatus(
+                  isConnected: isConnected,
+                  isProcessing: isProcessing,
+                  statusMessage: state.streamState.statusMessage.value,
                 ),
 
                 const Gap(16),
@@ -97,13 +101,24 @@ class PupilIdentityStreamPage extends WatchingWidget {
                   child: Column(
                     children: [
                       if (role == PupilIdentityStreamRole.sender) ...[
-                        _buildSenderTopSection(context, state, controller),
+                        _buildSenderTopSection(
+                          context,
+                          state,
+                          controller,
+                          isConnected,
+                        ),
                         const Gap(16),
                         Expanded(
                           child: _buildSenderScrollableContent(
                             context,
                             state,
                             controller,
+                            receivers,
+                            pendingRequests,
+                            activeTransfers,
+                            transferHistory,
+                            transferCounter,
+                            rejectedUsers,
                           ),
                         ),
                       ] else ...[
@@ -112,6 +127,9 @@ class PupilIdentityStreamPage extends WatchingWidget {
                             context,
                             state,
                             controller,
+                            receiverJoined,
+                            requestSent,
+                            isTransmitting,
                           ),
                         ),
                       ],
@@ -122,7 +140,14 @@ class PupilIdentityStreamPage extends WatchingWidget {
                 const Gap(16),
 
                 // Action Buttons (fixed at bottom)
-                _buildActionButtons(context, state, controller),
+                _buildActionButtons(
+                  context,
+                  state,
+                  controller,
+                  isConnected,
+                  activeTransfers,
+                  isProcessing,
+                ),
               ],
             ),
           ),
@@ -135,18 +160,14 @@ class PupilIdentityStreamPage extends WatchingWidget {
     BuildContext context,
     PupilIdentityStreamState state,
     PupilIdentityStreamController controller,
+    bool isConnected,
   ) {
-    return ValueListenableBuilder(
-      valueListenable: state.streamState.isConnected,
-      builder: (context, isConnected, _) {
-        if (!isConnected) {
-          return const SizedBox.shrink();
-        }
-        return ConnectionCodeDisplay(
-          channelName: controller.channelName,
-          description: 'Teilen Sie diesen Code mit dem Empfänger',
-        );
-      },
+    if (!isConnected) {
+      return const SizedBox.shrink();
+    }
+    return ConnectionCodeDisplay(
+      channelName: controller.channelName,
+      description: 'Teilen Sie diesen Code mit dem Empfänger',
     );
   }
 
@@ -154,59 +175,40 @@ class PupilIdentityStreamPage extends WatchingWidget {
     BuildContext context,
     PupilIdentityStreamState state,
     PupilIdentityStreamController controller,
+    Set<String> receivers,
+    Map<String, DateTime> pendingRequests,
+    Set<String> activeTransfers,
+    List<String> transferHistory,
+    int transferCounter,
+    Set<String> rejectedUsers,
   ) {
     return SingleChildScrollView(
       child: Column(
         children: [
           // Connected Receivers Management
-          ValueListenableBuilder(
-            valueListenable: state.receiverState.connectedReceivers,
-            builder:
-                (context, receivers, _) => ValueListenableBuilder(
-                  valueListenable: state.receiverState.pendingRequests,
-                  builder:
-                      (context, pendingRequests, _) => ValueListenableBuilder(
-                        valueListenable: state.receiverState.activeTransfers,
-                        builder:
-                            (context, activeTransfers, _) =>
-                                _buildReceiversSection(
-                                  context,
-                                  receivers,
-                                  pendingRequests,
-                                  activeTransfers,
-                                  controller,
-                                ),
-                      ),
-                ),
+          _buildReceiversSection(
+            context,
+            receivers,
+            pendingRequests,
+            activeTransfers,
+            controller,
           ),
 
           // Transfer History
-          ValueListenableBuilder(
-            valueListenable: state.transferState.transferHistory,
-            builder:
-                (context, history, _) => ValueListenableBuilder(
-                  valueListenable: state.transferState.transferCounter,
-                  builder:
-                      (context, counter, _) => TransferHistoryWidget(
-                        transferHistory: history,
-                        transferCounter: counter,
-                      ),
-                ),
+          TransferHistoryWidget(
+            transferHistory: transferHistory,
+            transferCounter: transferCounter,
           ),
 
           const Gap(16),
 
           // Rejected Requests
-          ValueListenableBuilder(
-            valueListenable: state.receiverState.rejectedUsers,
-            builder:
-                (context, rejectedUsers, _) => RejectedRequestsWidget(
-                  rejectedUsers: rejectedUsers,
-                  onClearRejected:
-                      rejectedUsers.isNotEmpty
-                          ? () => controller.clearRejectedUsers()
-                          : null,
-                ),
+          RejectedRequestsWidget(
+            rejectedUsers: rejectedUsers,
+            onClearRejected:
+                rejectedUsers.isNotEmpty
+                    ? () => controller.clearRejectedUsers()
+                    : null,
           ),
         ],
       ),
@@ -217,30 +219,15 @@ class PupilIdentityStreamPage extends WatchingWidget {
     BuildContext context,
     PupilIdentityStreamState state,
     PupilIdentityStreamController controller,
+    bool joined,
+    bool requestSent,
+    bool isTransmitting,
   ) {
     return SingleChildScrollView(
       child: Column(
         children: [
           // Connection Status
-          ValueListenableBuilder(
-            valueListenable: state.streamState.receiverJoined,
-            builder:
-                (context, joined, _) => ValueListenableBuilder(
-                  valueListenable: state.streamState.requestSent,
-                  builder:
-                      (context, requestSent, _) => ValueListenableBuilder(
-                        valueListenable: state.streamState.isTransmitting,
-                        builder:
-                            (context, isTransmitting, _) =>
-                                _buildReceiverStatus(
-                                  context,
-                                  joined,
-                                  requestSent,
-                                  isTransmitting,
-                                ),
-                      ),
-                ),
-          ),
+          _buildReceiverStatus(context, joined, requestSent, isTransmitting),
         ],
       ),
     );
@@ -250,32 +237,22 @@ class PupilIdentityStreamPage extends WatchingWidget {
     BuildContext context,
     PupilIdentityStreamState state,
     PupilIdentityStreamController controller,
+    bool isConnected,
+    Set<String> activeTransfers,
+    bool isProcessing,
   ) {
-    return ValueListenableBuilder(
-      valueListenable: state.streamState.isConnected,
-      builder:
-          (context, isConnected, _) => ValueListenableBuilder(
-            valueListenable: state.receiverState.activeTransfers,
-            builder:
-                (context, activeTransfers, _) => ValueListenableBuilder(
-                  valueListenable: state.streamState.isProcessing,
-                  builder:
-                      (context, isProcessing, _) => StreamActionButtons(
-                        isConnected: isConnected,
-                        hasActiveTransfers: activeTransfers.isNotEmpty,
-                        isProcessing: isProcessing,
-                        onStartStream:
-                            role == PupilIdentityStreamRole.sender
-                                ? () => controller.startStream()
-                                : () =>
-                                    _showConnectionDialog(context, controller),
-                        onStopStream: () {
-                          controller.stopStream();
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                ),
-          ),
+    return StreamActionButtons(
+      isConnected: isConnected,
+      hasActiveTransfers: activeTransfers.isNotEmpty,
+      isProcessing: isProcessing,
+      onStartStream:
+          role == PupilIdentityStreamRole.sender
+              ? () => controller.startStream()
+              : () => _showConnectionDialog(context, controller),
+      onStopStream: () {
+        controller.stopStream();
+        Navigator.of(context).pop();
+      },
     );
   }
 
