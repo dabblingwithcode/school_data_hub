@@ -19,6 +19,8 @@ import 'widgets/rejected_requests.dart';
 import 'widgets/status_indicators/connection_status.dart';
 import 'widgets/transfer_history.dart';
 
+OverlayEntry? _receiverStatusOverlay;
+
 class PupilIdentityStreamPage extends WatchingWidget {
   final PupilIdentityStreamRole role;
   final String? encryptedData;
@@ -46,12 +48,14 @@ class PupilIdentityStreamPage extends WatchingWidget {
           // No dialog needed - confirmation is handled directly in ReceiverCard buttons
           // This callback is now just for logging/tracking purposes
         },
-        onTransferCompleted:
-            (totalPupils, newPupils) =>
-                _showSuccessDialog(context, totalPupils, newPupils),
-        onRejectionReceived:
-            (wasAutoRejected) =>
-                _showRejectionDialog(context, wasAutoRejected: wasAutoRejected),
+        onTransferCompleted: (totalPupils, newPupils) {
+          _hideReceiverStatusOverlay();
+          _showSuccessDialog(context, totalPupils, newPupils);
+        },
+        onRejectionReceived: (wasAutoRejected) {
+          _hideReceiverStatusOverlay();
+          _showRejectionDialog(context, wasAutoRejected: wasAutoRejected);
+        },
         onSenderShutdown: () => _handleSenderShutdown(context),
       );
       return ctrl;
@@ -72,6 +76,51 @@ class PupilIdentityStreamPage extends WatchingWidget {
     final receiverJoined = watch(state.streamState.receiverJoined).value;
     final requestSent = watch(state.streamState.requestSent).value;
     final isTransmitting = watch(state.streamState.isTransmitting).value;
+
+    // Register handlers for receiver status changes that require overlay management
+    if (role == PupilIdentityStreamRole.receiver) {
+      registerHandler(
+        select: (state) => state.streamState.receiverJoined,
+        target: state,
+        handler: (context, joined, cancel) {
+          _updateReceiverOverlay(
+            context,
+            controller,
+            joined,
+            requestSent,
+            isTransmitting,
+          );
+        },
+      );
+
+      registerHandler(
+        select: (state) => state.streamState.requestSent,
+        target: state,
+        handler: (context, reqSent, cancel) {
+          _updateReceiverOverlay(
+            context,
+            controller,
+            receiverJoined,
+            reqSent,
+            isTransmitting,
+          );
+        },
+      );
+
+      registerHandler(
+        select: (state) => state.streamState.isTransmitting,
+        target: state,
+        handler: (context, transmitting, cancel) {
+          _updateReceiverOverlay(
+            context,
+            controller,
+            receiverJoined,
+            requestSent,
+            transmitting,
+          );
+        },
+      );
+    }
 
     return Scaffold(
       appBar: const GenericAppBar(
@@ -223,11 +272,11 @@ class PupilIdentityStreamPage extends WatchingWidget {
     bool requestSent,
     bool isTransmitting,
   ) {
-    return SingleChildScrollView(
+    // Overlay management is now handled by registerHandler calls
+    return const SingleChildScrollView(
       child: Column(
         children: [
-          // Connection Status
-          _buildReceiverStatus(context, joined, requestSent, isTransmitting),
+          // Overlay will be shown instead of inline content
         ],
       ),
     );
@@ -315,55 +364,141 @@ class PupilIdentityStreamPage extends WatchingWidget {
     );
   }
 
-  Widget _buildReceiverStatus(
+  void _updateReceiverOverlay(
     BuildContext context,
+    PupilIdentityStreamController controller,
     bool joined,
     bool requestSent,
     bool isTransmitting,
   ) {
-    String statusText;
-    Color statusColor;
-    IconData statusIcon;
-
-    if (isTransmitting) {
-      statusText = 'Empfange Schülerdaten...';
-      statusColor = Colors.blue;
-      statusIcon = Icons.download;
-    } else if (requestSent) {
-      statusText = 'Anfrage gesendet - warte auf Bestätigung';
-      statusColor = Colors.orange;
-      statusIcon = Icons.hourglass_empty;
-    } else if (joined) {
-      statusText = 'Mit Sender verbunden';
-      statusColor = Colors.green;
-      statusIcon = Icons.check_circle;
+    if (joined || requestSent || isTransmitting) {
+      _showReceiverStatusOverlay(
+        context,
+        controller,
+        joined,
+        requestSent,
+        isTransmitting,
+      );
     } else {
-      statusText = 'Nicht verbunden';
-      statusColor = Colors.grey;
-      statusIcon = Icons.circle_outlined;
+      _hideReceiverStatusOverlay();
+    }
+  }
+
+  void _showReceiverStatusOverlay(
+    BuildContext context,
+    PupilIdentityStreamController controller,
+    bool joined,
+    bool requestSent,
+    bool isTransmitting,
+  ) {
+    if (_receiverStatusOverlay != null) {
+      return; // Overlay is already shown
     }
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            Icon(statusIcon, color: statusColor),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                statusText,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: statusColor,
-                  fontWeight: FontWeight.w500,
+    _receiverStatusOverlay = OverlayEntry(
+      builder:
+          (context) => Material(
+            color: Colors.black54,
+            child: Center(
+              child: Card(
+                margin: const EdgeInsets.all(20),
+                child: Container(
+                  width: 350,
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (isTransmitting)
+                        const Column(
+                          children: [
+                            CircularProgressIndicator(),
+                            Gap(16),
+                            Text(
+                              'Daten werden übertragen...',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Gap(8),
+                            Text(
+                              'Bitte warten Sie, bis die Übertragung abgeschlossen ist.',
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        )
+                      else if (joined)
+                        const Column(
+                          children: [
+                            Icon(
+                              Icons.check_circle,
+                              color: Colors.green,
+                              size: 48,
+                            ),
+                            Gap(16),
+                            Text(
+                              'Mit Sender verbunden',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Gap(8),
+                            Text(
+                              'Warten auf Datenübertragung vom Sender.',
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        )
+                      else if (requestSent)
+                        const Column(
+                          children: [
+                            CircularProgressIndicator(),
+                            Gap(16),
+                            Text(
+                              'Anfrage gesendet',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Gap(8),
+                            Text(
+                              'Warten auf Bestätigung vom Sender.',
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      const Gap(20),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            controller.stopStream();
+                            _hideReceiverStatusOverlay();
+                            Navigator.of(context).pop();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                          ),
+                          child: const Text('Stream beenden'),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ],
-        ),
-      ),
+          ),
     );
+
+    Overlay.of(context).insert(_receiverStatusOverlay!);
+  }
+
+  void _hideReceiverStatusOverlay() {
+    _receiverStatusOverlay?.remove();
+    _receiverStatusOverlay = null;
   }
 
   // Dialog Methods
@@ -383,6 +518,7 @@ class PupilIdentityStreamPage extends WatchingWidget {
   }
 
   Future<void> _handleSenderShutdown(BuildContext context) async {
+    _hideReceiverStatusOverlay();
     await _showSenderShutdownDialog(context);
     if (Navigator.canPop(context)) {
       Navigator.pop(context);

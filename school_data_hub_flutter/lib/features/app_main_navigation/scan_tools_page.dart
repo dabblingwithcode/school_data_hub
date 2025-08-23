@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/app_utils/barcode_stream_scanner.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
@@ -27,11 +26,13 @@ class ScanToolsPage extends WatchingWidget {
       File file = File(result.files.single.path!);
       String rawTextResult = await file.readAsString();
       if (function == 'update_backend') {
-        _pupilIdentityManager
-            .updateBackendPupilsFromSchoolPupilIdentitySource(rawTextResult);
+        _pupilIdentityManager.updateBackendPupilsFromSchoolPupilIdentitySource(
+          rawTextResult,
+        );
       } else if (function == 'pupil_identities') {
         _pupilIdentityManager.addOrUpdateNewPupilIdentities(
-            identitiesInStringLines: rawTextResult);
+          identitiesInStringLines: rawTextResult,
+        );
       }
     } else {
       // User canceled the picker
@@ -54,10 +55,7 @@ class ScanToolsPage extends WatchingWidget {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: AppColors.backgroundColor,
-        title: const Text(
-          'Scan-Tools',
-          style: AppStyles.appBarTextStyle,
-        ),
+        title: const Text('Scan-Tools', style: AppStyles.appBarTextStyle),
       ),
       body: Center(
         child: ConstrainedBox(
@@ -67,94 +65,147 @@ class ScanToolsPage extends WatchingWidget {
             child: Column(
               children: [
                 const Spacer(),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       backgroundColor: Colors.amber[800],
-                      minimumSize: const Size.fromHeight(90)),
-                  onPressed: () async {
-                    String? channelName;
-                    if (!Platform.isWindows && !Platform.isMacOS) {
-                      channelName = await qrScanner(
-                        context: context,
-                        overlayText: "Bitte Verbindungscode scannen",
-                      );
-                    } else {
-                      channelName = await shortTextfieldDialog(
-                        context: context,
-                        title: 'Verbindungscode eingeben',
-                        hintText: 'z.B. 12345678',
-                        labelText: 'Verbindungscode',
-                      );
-                    }
+                      minimumSize: const Size.fromHeight(90),
+                    ),
+                    onLongPress: () async {
+                      if (Platform.isAndroid || Platform.isIOS) {
+                        final channelName = await shortTextfieldDialog(
+                          context: context,
+                          title: 'Verbindungscode eingeben',
+                          hintText: 'z.B. 12345678',
+                          labelText: 'Verbindungscode',
+                        );
+                        if (channelName == null || channelName.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Kein gültiger Verbindungscode.'),
+                            ),
+                          );
+                          return;
+                        }
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder:
+                                (context) => PupilIdentityStreamPage(
+                                  role: PupilIdentityStreamRole.receiver,
+                                  importedChannelName: channelName,
+                                ),
+                          ),
+                        );
+                      }
+                    },
+                    onPressed: () async {
+                      String? channelName;
+                      if (!Platform.isWindows && !Platform.isMacOS) {
+                        channelName = await qrScanner(
+                          context: context,
+                          overlayText: "Bitte Verbindungscode scannen",
+                        );
+                      } else {
+                        channelName = await shortTextfieldDialog(
+                          context: context,
+                          title: 'Verbindungscode eingeben',
+                          hintText: 'z.B. 12345678',
+                          labelText: 'Verbindungscode',
+                        );
+                      }
 
-                    if (channelName == null || channelName.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Kein gültiger Verbindungscode.'),
+                      if (channelName == null || channelName.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Kein gültiger Verbindungscode.'),
+                          ),
+                        );
+                        return;
+                      }
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder:
+                              (context) => PupilIdentityStreamPage(
+                                role: PupilIdentityStreamRole.receiver,
+                                importedChannelName: channelName,
+                              ),
                         ),
                       );
-                      return;
-                    }
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => PupilIdentityStreamPage(
-                          role: PupilIdentityStreamRole.receiver,
-                          importedChannelName: channelName,
+                    },
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.mobile_screen_share,
+                          size: 30,
+                          color: Colors.white,
                         ),
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    'Schülerdaten vom Client importieren',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: Colors.white),
+                        const Icon(
+                          Icons.mobile_friendly_rounded,
+                          size: 30,
+                          color: Colors.white,
+                        ),
+                        const Gap(10),
+                        const Text(
+                          'Schülerdaten von einem anderen Gerät übertragen',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const Gap(20),
                 (Platform.isWindows || Platform.isMacOS) &&
                         _sessionManager.isAdmin
                     ? ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            backgroundColor: Colors.amber[800],
-                            minimumSize: const Size.fromHeight(90)),
-                        onPressed: () async {
-                          final bool? confirm = await confirmationDialog(
-                              context: context,
-                              title: 'Datenbank aus SchiLD importieren',
-                              message:
-                                  'Achtung! Nicht mehr vorhandene SchülerInnen auf dem Server werden gelöscht. Fortfahren?');
-                          if (confirm == true) {
-                            importFileWithWindows('update_backend');
-                          }
-                        },
-                        child: const Text(
-                          'Daten aus SchiLD importieren',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: Colors.white),
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
                         ),
-                      )
+                        backgroundColor: Colors.amber[800],
+                        minimumSize: const Size.fromHeight(90),
+                      ),
+                      onPressed: () async {
+                        final bool? confirm = await confirmationDialog(
+                          context: context,
+                          title: 'Datenbank aus SchiLD importieren',
+                          message:
+                              'Achtung! Nicht mehr vorhandene SchülerInnen auf dem Server werden gelöscht. Fortfahren?',
+                        );
+                        if (confirm == true) {
+                          importFileWithWindows('update_backend');
+                        }
+                      },
+                      child: const Text(
+                        'Daten aus SchiLD importieren',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.white,
+                        ),
+                      ),
+                    )
                     : const SizedBox.shrink(),
                 if (Platform.isWindows || Platform.isMacOS) ...<Widget>[
                   const Gap(20),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        backgroundColor: Colors.amber[800],
-                        minimumSize: const Size.fromHeight(90)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      backgroundColor: Colors.amber[800],
+                      minimumSize: const Size.fromHeight(90),
+                    ),
                     onPressed: () async {
                       importFromQrImage();
                     },
@@ -162,57 +213,34 @@ class ScanToolsPage extends WatchingWidget {
                       'Daten aus QR-Bilddatei importieren',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.white),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                   const Gap(20),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        backgroundColor: Colors.amber[800],
-                        minimumSize: const Size.fromHeight(90)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      backgroundColor: Colors.amber[800],
+                      minimumSize: const Size.fromHeight(90),
+                    ),
                     onPressed: () => importFileWithWindows('pupil_identities'),
                     child: const Text(
                       'ID-Liste importieren',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.white),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
-                if (Platform.isAndroid || Platform.isIOS)
-                  Container(
-                    height: 90,
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12),
-                    child: FloatingActionButton.extended(
-                      heroTag: 'tag',
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      ),
-                      backgroundColor: AppColors.accentColor,
-                      foregroundColor: Colors.white,
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (ctx) => const BarcodeStreamScanner(),
-                        ));
-                      },
-                      label: const Text(
-                        'alle Kinder-IDs scannen',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                      icon: const Icon(Icons.note_add),
-                    ),
-                  ),
+
                 const Gap(20),
               ],
             ),

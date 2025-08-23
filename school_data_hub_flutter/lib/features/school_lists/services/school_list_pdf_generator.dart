@@ -3,11 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:logging/logging.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -17,27 +19,6 @@ import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('SchoolListPdfGenerator');
 final _schoolListManager = di<SchoolListManager>();
-
-/// Service for generating PDF documents from school lists
-///
-/// This service creates PDF documents containing school list information
-/// including pupil entries, statistics, and proper pagination.
-///
-/// Example usage:
-/// ```dart
-/// final schoolList = _schoolListManager.getSchoolListById(listId);
-/// final pupils = _schoolListManager.getPupilsinSchoolList(listId);
-///
-/// final pdfFile = await SchoolListPdfGenerator.generateSchoolListPdf(
-///   schoolList: schoolList,
-///   pupils: pupils,
-/// );
-///
-/// // Display PDF
-/// Navigator.of(context).push(MaterialPageRoute(
-///   builder: (ctx) => SchoolListPdfViewPage(pdfFile: pdfFile),
-/// ));
-/// ```
 
 class SchoolListPdfGenerator {
   static Future<File> generateSchoolListPdf({
@@ -74,10 +55,10 @@ class SchoolListPdfGenerator {
       }
     }
 
-    // Sort pupils by last name, then first name
+    // Sort pupils by group, then by first name
     pupilEntries.sort((a, b) {
-      // final lastNameComparison = a.pupil.lastName.compareTo(b.pupil.lastName);
-      // if (lastNameComparison != 0) return lastNameComparison;
+      final groupComparison = a.pupil.group.compareTo(b.pupil.group);
+      if (groupComparison != 0) return groupComparison;
       return a.pupil.firstName.compareTo(b.pupil.firstName);
     });
 
@@ -92,7 +73,7 @@ class SchoolListPdfGenerator {
       final remainingPupils = pupilEntries.length - maxPupilsFirstPage;
       totalPages = 1 + (remainingPupils / maxPupilsPerPage).ceil();
     }
-
+    di<NotificationService>().setHeavyLoadingValue(true);
     if (totalPages == 0) {
       // If no pupils, still create one page
       pdf.addPage(
@@ -146,10 +127,13 @@ class SchoolListPdfGenerator {
         currentIndex = endIndex;
       }
     }
+    di<NotificationService>().setHeavyLoadingValue(false);
+    // Get the proper directory for saving files
+    final directory = await getApplicationDocumentsDirectory();
+    final fileName =
+        "Schulliste_${schoolList.name}_${DateTime.now().formatForUser()}.pdf";
+    final file = File('${directory.path}/$fileName');
 
-    final file = File(
-      "Schulliste_${schoolList.name}_${DateTime.now().formatForUser()}.pdf",
-    );
     await file.writeAsBytes(await pdf.save());
     _log.info('PDF generated: ${file.path}');
     return file;
@@ -594,9 +578,24 @@ class _PupilEntryData {
   _PupilEntryData({required this.pupil, required this.entry});
 }
 
-class SchoolListPdfViewPage extends StatelessWidget {
+class SchoolListPdfViewPage extends StatefulWidget {
   final File pdfFile;
   const SchoolListPdfViewPage({required this.pdfFile, super.key});
+
+  @override
+  State<SchoolListPdfViewPage> createState() => _SchoolListPdfViewPageState();
+}
+
+class _SchoolListPdfViewPageState extends State<SchoolListPdfViewPage> {
+  @override
+  void dispose() {
+    // Ensure the file is deleted when the widget is disposed
+    // This handles all cases where the page is popped/closed
+    if (widget.pdfFile.existsSync()) {
+      widget.pdfFile.delete();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -612,21 +611,34 @@ class SchoolListPdfViewPage extends StatelessWidget {
           textStyle: TextStyle(color: Colors.white),
         ),
         allowSharing: true,
+        allowPrinting: true,
         canChangePageFormat: false,
         canChangeOrientation: false,
         canDebug: false,
+        useActions: true,
+        scrollViewDecoration: const BoxDecoration(color: Colors.grey),
+        pdfPreviewPageDecoration: const BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              offset: Offset(0, 2),
+              blurRadius: 4,
+            ),
+          ],
+        ),
         onPrinted: (context) {
-          pdfFile.delete();
+          // File will be deleted in dispose(), no need to delete here
           if (context.mounted) {
             Navigator.of(context).pop();
           }
         },
-        build: (format) => pdfFile.readAsBytes(),
+        build: (format) => widget.pdfFile.readAsBytes(),
         actions: [
           IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              pdfFile.delete();
+              // File will be deleted in dispose(), no need to delete here
               if (context.mounted) {
                 Navigator.of(context).pop();
               }

@@ -28,22 +28,25 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final unfilteredPupilListEntries = watch(_schoolListManager
-            .getPupilEntriesProxyFromSchoolList(schoolList.id!))
-        .pupilEntries
-        .values
-        .map((e) => e.pupilEntry)
-        .toList();
+    final unfilteredPupilListEntries =
+        watch(
+          _schoolListManager.getPupilEntriesProxyFromSchoolList(schoolList.id!),
+        ).pupilEntries.values.map((e) => e.pupilEntry).toList();
 
     final pupilListEntries = _schoolListFilterManager
         .addPupilEntryFiltersToFilteredPupils(unfilteredPupilListEntries);
-    final List<PupilProxy> filteredPupils =
-        watchValue((PupilsFilter x) => x.filteredPupils);
+    final List<PupilProxy> filteredPupils = watchValue(
+      (PupilsFilter x) => x.filteredPupils,
+    );
 
-    List<PupilProxy> pupilsInList = filteredPupils
-        .where((pupil) => pupilListEntries
-            .any((pupilList) => pupilList.pupilId == pupil.pupilId))
-        .toList();
+    List<PupilProxy> pupilsInList =
+        filteredPupils
+            .where(
+              (pupil) => pupilListEntries.any(
+                (pupilList) => pupilList.pupilId == pupil.pupilId,
+              ),
+            )
+            .toList();
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
@@ -67,25 +70,27 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
                   ),
                   pupilsInList.isEmpty
                       ? const SliverToBoxAdapter(
-                          child: Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                'Keine Ergebnisse',
-                                style: TextStyle(fontSize: 18),
-                              ),
+                        child: Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'Keine Ergebnisse',
+                              style: TextStyle(fontSize: 18),
                             ),
                           ),
-                        )
-                      : SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (BuildContext context, int index) {
-                              return SchoolListPupilEntryCard(
-                                  pupilsInList[index].pupilId, schoolList.id!);
-                            },
-                            childCount: pupilsInList.length,
-                          ),
                         ),
+                      )
+                      : SliverList(
+                        delegate: SliverChildBuilderDelegate((
+                          BuildContext context,
+                          int index,
+                        ) {
+                          return SchoolListPupilEntryCard(
+                            pupilsInList[index].pupilId,
+                            schoolList.id!,
+                          );
+                        }, childCount: pupilsInList.length),
+                      ),
                 ],
               ),
             ),
@@ -93,8 +98,9 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
         ),
       ),
       bottomNavigationBar: SchoolListPupilEntriesBottomNavBar(
-          listId: schoolList.id!,
-          pupilsInList: _pupilManager.getPupilIdsFromPupils(pupilsInList)),
+        listId: schoolList.id!,
+        pupilsInList: _pupilManager.getPupilIdsFromPupils(pupilsInList),
+      ),
     );
   }
 }

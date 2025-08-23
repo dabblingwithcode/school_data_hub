@@ -44,43 +44,56 @@ class SettingsToolsSection extends AbstractSettingsSection {
               return;
             }
             if (context.mounted) {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (ctx) => BirthdaysView(
-                  selectedDate: selectedDate,
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (ctx) => BirthdaysView(selectedDate: selectedDate),
                 ),
-              ));
+              );
             }
           },
         ),
         SettingsTile.navigation(
-            leading: const Icon(Icons.qr_code_rounded),
-            title: const Text('QR-Ids von ausgewählten Kindern zeigen'),
-            onPressed: (context) async {
-              final List<int>? pupilIds =
-                  await Navigator.of(context).push(MaterialPageRoute(
-                builder: (ctx) => SelectPupilsListPage(
-                    selectablePupils: di<PupilManager>()
-                        .getPupilsFromInternalIds(
-                            di<PupilIdentityManager>().availablePupilIds)),
-              ));
-              if (pupilIds == null || pupilIds.isEmpty) {
-                return;
-              }
-              final internalIds =
-                  di<PupilManager>().getInternalIdsFromPupilIds(pupilIds);
-              final String encryptedPupilIdentities =
-                  await di<PupilIdentityManager>()
-                      .generatePupilIdentitiesQrData(internalIds);
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => PupilIdentityStreamPage(
-                    role: PupilIdentityStreamRole.sender,
-                    encryptedData: encryptedPupilIdentities,
-                    selectedPupilIds: pupilIds,
-                  ),
-                ),
-              );
-            }),
+          leading: const Row(
+            children: [
+              const Icon(Icons.mobile_screen_share, size: 30),
+              const Icon(Icons.mobile_friendly_rounded, size: 30),
+            ],
+          ),
+          title: const Text('Schülerdaten übertragen'),
+          onPressed: (context) async {
+            final List<int>? pupilIds = await Navigator.of(context).push(
+              MaterialPageRoute(
+                builder:
+                    (ctx) => SelectPupilsListPage(
+                      selectablePupils: di<PupilManager>()
+                          .getPupilsFromInternalIds(
+                            di<PupilIdentityManager>().availablePupilIds,
+                          ),
+                    ),
+              ),
+            );
+            if (pupilIds == null || pupilIds.isEmpty) {
+              return;
+            }
+            final internalIds = di<PupilManager>().getInternalIdsFromPupilIds(
+              pupilIds,
+            );
+            final String encryptedPupilIdentities =
+                await di<PupilIdentityManager>().generatePupilIdentitiesQrData(
+                  internalIds,
+                );
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder:
+                    (context) => PupilIdentityStreamPage(
+                      role: PupilIdentityStreamRole.sender,
+                      encryptedData: encryptedPupilIdentities,
+                      selectedPupilIds: pupilIds,
+                    ),
+              ),
+            );
+          },
+        ),
         // SettingsTile.navigation(
         //     leading: const Icon(Icons.qr_code_rounded),
         //     title: const Text('Alle vorhandenen QR-Ids zeigen (autoplay)'),
