@@ -24,10 +24,7 @@ import 'package:watch_it/watch_it.dart';
 
 final _envManager = di<EnvManager>();
 
-enum PupilIdentityStreamRole {
-  sender,
-  receiver,
-}
+enum PupilIdentityStreamRole { sender, receiver }
 
 class PupilIdentityManager {
   final _notificationService = di<NotificationService>();
@@ -49,16 +46,18 @@ class PupilIdentityManager {
 
   List<int> get availablePupilIds {
     _log.fine(
-        'getter returning [${_pupilIdentities.keys.length}] available pupil ids');
+      'getter returning [${_pupilIdentities.keys.length}] available pupil ids',
+    );
     return _pupilIdentities.keys.toList();
   }
 
   PupilIdentity? getPupilIdentityByInternalId(int internalId) {
     if (_pupilIdentities.containsKey(internalId) == false) {
       _notificationService.showInformationDialog(
-          '''Die Schülerdaten mit der ID $internalId konnten nicht gefunden werden.
+        '''Die Schülerdaten mit der ID $internalId konnten nicht gefunden werden.
           
-          Bitte überprüfen Sie die ID und versuchen Sie es erneut.''');
+          Bitte überprüfen Sie die ID und versuchen Sie es erneut.''',
+      );
       return null;
     }
     return _pupilIdentities[internalId]!;
@@ -93,16 +92,19 @@ class PupilIdentityManager {
 
     final Map<int, PupilIdentity> pupilIdentities =
         await PupilIdentityHelper.readPupilIdentitiesFromStorage(
-            secureStorageKey: secureStorageKey);
+          secureStorageKey: secureStorageKey,
+        );
 
     _pupilIdentities.clear();
     _pupilIdentities = pupilIdentities;
     if (pupilIdentities.isEmpty) {
       _log.warning(
-          'No stored pupil identities found for ${activeEnv.serverName}');
+        'No stored pupil identities found for ${activeEnv.serverName}',
+      );
     } else {
       _log.info(
-          '${pupilIdentities.length} Pupil identities for [${activeEnv.serverName}] loaded from secure storage: ${_pupilIdentities.length}');
+        '${pupilIdentities.length} Pupil identities for [${activeEnv.serverName}] loaded from secure storage: ${_pupilIdentities.length}',
+      );
     }
 
     _groups.value = _pupilIdentities.values.map((e) => e.group).toSet();
@@ -115,7 +117,8 @@ class PupilIdentityManager {
         activeEnv.lastIdentitiesUpdate != null) {
       if (lastIdentitiesUpdate.isAfter(activeEnv.lastIdentitiesUpdate!)) {
         _notificationService.showInformationDialog(
-            'Die Schülerdaten sind veraltet. Die neueste Version ist vom $lastIdentitiesUpdate! Bitte aktualisieren Sie die Schülerdaten.');
+          'Die Schülerdaten sind veraltet. Die neueste Version ist vom $lastIdentitiesUpdate! Bitte aktualisieren Sie die Schülerdaten.',
+        );
       } else {
         _log.info('Pupil identities are up to date.');
       }
@@ -126,7 +129,8 @@ class PupilIdentityManager {
   }
 
   Future<void> decryptAndAddOrUpdatePupilIdentities(
-      List<String> encryptedCodes) async {
+    List<String> encryptedCodes,
+  ) async {
     // We need the decrypted information as a string with line breaks.
     // Since every string in the list of the argument i an encrypted code,
     // we need to decrypt them and aggregate them to a string with line breaks
@@ -139,16 +143,18 @@ class PupilIdentityManager {
     addOrUpdateNewPupilIdentities(identitiesInStringLines: decryptedString);
   }
 
-  Future<void> addOrUpdateNewPupilIdentities(
-      {required String identitiesInStringLines}) async {
+  Future<void> addOrUpdateNewPupilIdentities({
+    required String identitiesInStringLines,
+  }) async {
     late final String? decryptedIdentitiesAsString;
 
     // If the string is imported in windows, it comes from a .txt file and it's not encrypted
     decryptedIdentitiesAsString = identitiesInStringLines;
 
     // The pupils in the string are separated by a '\n' - let's split them apart
-    List<String> splittedPupilIdentities =
-        decryptedIdentitiesAsString.split('\n');
+    List<String> splittedPupilIdentities = decryptedIdentitiesAsString.split(
+      '\n',
+    );
     // The properties are separated by commas, let's build the PupilIdentity objects with them
 
     bool updateGroupFilters = false;
@@ -158,11 +164,14 @@ class PupilIdentityManager {
         List<String> pupilIdentityValues = data.split(',');
         final newPupilIdentity =
             PupilIdentityHelper.decodePupilIdentityFromStringList(
-                pupilIdentityValues);
+              pupilIdentityValues,
+            );
 
         // TODO: fix this
-        if (PupilProxy.groupFilters.any((filter) =>
-                (filter as GroupFilter).name == newPupilIdentity.group) ==
+        if (PupilProxy.groupFilters.any(
+              (filter) =>
+                  (filter as GroupFilter).name == newPupilIdentity.group,
+            ) ==
             false) {
           updateGroupFilters = true;
         }
@@ -180,7 +189,8 @@ class PupilIdentityManager {
       di<PupilsFilter>().populateGroupFilters(availableGroups.toList());
     }
     await _envManager.updateActiveEnv(
-        lastIdentitiesUpdate: DateTime.now().toUtc());
+      lastIdentitiesUpdate: DateTime.now().toUtc(),
+    );
     di<PupilManager>().fetchAllPupils();
     _mainMenuBottomNavManager.setBottomNavPage(0);
   }
@@ -191,14 +201,18 @@ class PupilIdentityManager {
     );
 
     final jsonPupilIdentitiesAsString = json.encode(jsonMap);
-    await HubSecureStorage()
-        .setString(secureStorageKey, jsonPupilIdentitiesAsString);
+    await HubSecureStorage().setString(
+      secureStorageKey,
+      jsonPupilIdentitiesAsString,
+    );
     _log.info(
-        'Pupil identities written to secure storage with key $secureStorageKey');
+      'Pupil identities written to secure storage with key $secureStorageKey',
+    );
   }
 
   Future<void> updateBackendPupilsFromSchoolPupilIdentitySource(
-      String textFileContent) async {
+    String textFileContent,
+  ) async {
     // The pupils in the string are separated by a line break - let's split them out
     List<String> splittedPupilIdentities = textFileContent.split('\n');
     // Wer prepare a string with the pupils that are going to be updated later in the server
@@ -212,7 +226,8 @@ class PupilIdentityManager {
 
         PupilIdentity pupilIdentity =
             PupilIdentityHelper.decodePupilIdentityFromStringList(
-                pupilIdentityValues);
+              pupilIdentityValues,
+            );
 
         importedPupilIdentityList.add(pupilIdentity);
 
@@ -241,12 +256,15 @@ class PupilIdentityManager {
     );
     if (fileResponse.success == false) {
       _notificationService.showSnackBar(
-          NotificationType.error, 'Die Datei konnte nicht hochgeladen werden!');
+        NotificationType.error,
+        'Die Datei konnte nicht hochgeladen werden!',
+      );
       return;
     }
     final List<PupilData>? updatedPupilDataRepository =
-        await PupilDataApiService()
-            .updateBackendPupilsDatabase(filePath: fileResponse.path!);
+        await PupilDataApiService().updateBackendPupilsDatabase(
+          filePath: fileResponse.path!,
+        );
     if (updatedPupilDataRepository == null) {
       return;
     }
@@ -262,10 +280,12 @@ class PupilIdentityManager {
 
     await writePupilIdentitiesToStorage();
     await _envManager.updateActiveEnv(
-        lastIdentitiesUpdate: DateTime.now().toUtc());
+      lastIdentitiesUpdate: DateTime.now().toUtc(),
+    );
 
     await ClientHelper.apiCall(
-      call: () => di<Client>().pupilIdentity.updateLastPupilIdentitiesUpdate(
+      call:
+          () => di<Client>().pupilIdentity.updateLastPupilIdentitiesUpdate(
             DateTime.now().toUtc(),
           ),
       errorMessage: 'Die letzte Aktualisierung konnte nicht gespeichert werden',
@@ -273,8 +293,10 @@ class PupilIdentityManager {
 
     await di<PupilManager>().fetchAllPupils();
 
-    _notificationService.showSnackBar(NotificationType.success,
-        '${_pupilIdentities.length} Schülerdaten wurden aktualisiert!');
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      '${_pupilIdentities.length} Schülerdaten wurden aktualisiert!',
+    );
 
     _mainMenuBottomNavManager.setBottomNavPage(0);
 
@@ -284,28 +306,35 @@ class PupilIdentityManager {
   Future<void> fetchLastIdentitiesUpdate() async {
     final lastUpdate = await PupilDataApiService().fetchLastIdentitiesUpdate();
     if (lastUpdate == null) {
-      _notificationService.showSnackBar(NotificationType.error,
-          'Die letzte Aktualisierung konnte nicht geladen werden');
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Die letzte Aktualisierung konnte nicht geladen werden',
+      );
       return;
     }
-    _notificationService.showSnackBar(NotificationType.success,
-        'Letzte Aktualisierung: ${lastUpdate.formatForJson()}');
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Letzte Aktualisierung: ${lastUpdate.formatForJson()}',
+    );
   }
 
   Future<String> generatePupilIdentitiesQrData(List<int> internalIds) async {
     String qrString = '';
     for (int internalId in internalIds) {
-      PupilIdentity pupilIdentity = _pupilIdentities.values
-          .where((element) => element.id == internalId)
-          .single;
-      final migrationSupportEnds = pupilIdentity.migrationSupportEnds != null
-          ? pupilIdentity.migrationSupportEnds!.formatForJson()
-          : '';
+      PupilIdentity pupilIdentity =
+          _pupilIdentities.values
+              .where((element) => element.id == internalId)
+              .single;
+      final migrationSupportEnds =
+          pupilIdentity.migrationSupportEnds != null
+              ? pupilIdentity.migrationSupportEnds!.formatForJson()
+              : '';
       // We need
       final specialNeeds = pupilIdentity.specialNeeds ?? '';
       final family = pupilIdentity.family ?? '';
 
-      final String pupilIdentityString = [
+      final String pupilIdentityString =
+          [
             pupilIdentity.id.toString(),
             pupilIdentity.firstName,
             pupilIdentity.lastName,
@@ -333,12 +362,14 @@ class PupilIdentityManager {
   }
 
   Future<String> deleteOrphanPupilIdentities(
-      List<int> toBeDeletedPupilIds) async {
+    List<int> toBeDeletedPupilIds,
+  ) async {
     List<String> toBeDeletedPupilIdentities = [];
 
     for (int id in toBeDeletedPupilIds) {
       toBeDeletedPupilIdentities.add(
-          '${_pupilIdentities[id]!.firstName} ${_pupilIdentities[id]!.lastName}, ${_pupilIdentities[id]!.group}');
+        '${_pupilIdentities[id]!.firstName} ${_pupilIdentities[id]!.lastName}, ${_pupilIdentities[id]!.group}',
+      );
 
       _pupilIdentities.remove(id);
     }
@@ -346,7 +377,8 @@ class PupilIdentityManager {
     writePupilIdentitiesToStorage();
 
     _log.info(
-        ' ${toBeDeletedPupilIds.length} pupils are not in the database any more and wer deleted.');
+      ' ${toBeDeletedPupilIds.length} pupils are not in the database any more and wer deleted.',
+    );
 
     return toBeDeletedPupilIdentities.join('\n');
   }
@@ -358,107 +390,281 @@ class PupilIdentityManager {
     required Function() onConnected,
     required Function(String message) onStatusUpdate,
     required Function() onCompleted,
+    Function(String userName)? onReceiverJoined, // New callback
+    Function(String userName)?
+    onReceiverLeft, // New callback for receiver leaving
+    Function(String userName)? onRequestReceived, // New callback
+    Function()? onRequestConfirmed, // New callback
+    Function(bool wasAutoRejected)?
+    onRequestRejected, // New callback for rejection
+    Function()? onShouldPopPage, // New callback for receiver
+    Function(String message)?
+    onSenderShutdown, // New callback for sender shutdown
+    Function(int newCount, int totalCount)?
+    onDataReceived, // New callback for showing success info
   }) {
     _log.info(
-        'encryptedPupilIdsStreamSubscription called with channelName: $channelName and role: $role');
+      'encryptedPupilIdsStreamSubscription called with channelName: $channelName and role: $role',
+    );
     final _client = di<Client>();
-    _log.info('starting missedSchooldayStreamSubscription');
+    _log.info('starting encryptedPupilIdsStreamSubscription');
     // just in case we have a previous subscription, we cancel it first
     _encryptedPupilIdsSubscription?.cancel();
-    _encryptedPupilIdsSubscription =
-        _client.pupilIdentity.streamEncryptedPupilIds(channelName).listen(
-      (PupilIdentityDto event) async {
-        onConnected();
-        switch (role) {
-          //- Stream behavior for sender role
-          case PupilIdentityStreamRole.sender:
-            // - Handle the event based on its type
-            switch (event.type) {
-              case 'request':
-                _notificationService.showInformationDialog(
-                    'Empfänger ${event.value} hat die verschlüsselten Schülerdaten angefordert.');
-                _log.info(
-                    'Sender requested encrypted pupil identities, sending data...');
+    _encryptedPupilIdsSubscription = _client.pupilIdentity
+        .streamEncryptedPupilIds(channelName)
+        .listen(
+          (PupilIdentityDto event) async {
+            _log.info(
+              'Received event: ${event.type} with value: ${event.value}',
+            );
 
-                onStatusUpdate('Sende Daten...');
-
-                await _client.pupilIdentity.sendPupilIdentityMessage(
-                  channelName,
-                  PupilIdentityDto(
-                      type: 'data', value: encryptedPupilIds ?? ''),
-                );
-
+            switch (role) {
+              //- Stream behavior for sender role
+              case PupilIdentityStreamRole.sender:
+                // - Handle the event based on its type
+                switch (event.type) {
+                  case 'joined':
+                    // Receiver joined the stream
+                    if (onReceiverJoined != null) {
+                      onReceiverJoined(event.value);
+                    }
+                    onStatusUpdate(
+                      'Empfänger ${event.value} ist der Übertragung beigetreten.',
+                    );
+                    break;
+                  case 'request':
+                    // Receiver requests data
+                    if (onRequestReceived != null) {
+                      onRequestReceived(event.value);
+                    }
+                    onStatusUpdate(
+                      'Empfänger ${event.value} hat Daten angefordert. Warten auf Bestätigung...',
+                    );
+                    break;
+                  case 'confirmed':
+                    // Check if confirmation is for a specific user
+                    final targetUser =
+                        event.value.isNotEmpty ? event.value : null;
+                    if (targetUser == null) {
+                      // Legacy: no targeting, proceed for any receiver
+                      if (onRequestConfirmed != null) {
+                        onRequestConfirmed();
+                      }
+                      onStatusUpdate('Sende Daten...');
+                      await _client.pupilIdentity.sendPupilIdentityMessage(
+                        channelName,
+                        PupilIdentityDto(
+                          type: 'data',
+                          value: encryptedPupilIds ?? '',
+                        ),
+                      );
+                      onStatusUpdate(
+                        'Daten gesendet. Warte auf Bestätigung...',
+                      );
+                    } else {
+                      // Targeted: send data to specific user
+                      if (onRequestConfirmed != null) {
+                        onRequestConfirmed();
+                      }
+                      onStatusUpdate('Sende Daten an $targetUser...');
+                      await _client.pupilIdentity.sendPupilIdentityMessage(
+                        channelName,
+                        PupilIdentityDto(
+                          type: 'data',
+                          value: '$targetUser:${encryptedPupilIds ?? ''}',
+                        ),
+                      );
+                      onStatusUpdate(
+                        'Daten an $targetUser gesendet. Warte auf Bestätigung...',
+                      );
+                    }
+                    break;
+                  case 'ok':
+                    onCompleted();
+                    onStatusUpdate(
+                      'Datenübertragung erfolgreich abgeschlossen!',
+                    );
+                    _log.info('Receiver acknowledged the data');
+                    break;
+                  case 'rejected':
+                    onStatusUpdate('Anfrage wurde vom Sender abgelehnt.');
+                    _log.info('Request was rejected by sender');
+                    break;
+                  case 'close':
+                    // Receiver left the stream
+                    _log.info('Receiver ${event.value} left the stream');
+                    onStatusUpdate(
+                      'Empfänger ${event.value} hat die Verbindung beendet.',
+                    );
+                    if (onReceiverLeft != null) {
+                      onReceiverLeft(event.value);
+                    }
+                    break;
+                }
                 break;
-              case 'ok':
-                onCompleted();
-                _log.info('Receiver acknowledged the data');
+              //- Stream behavior for receiver role
+              case PupilIdentityStreamRole.receiver:
+                switch (event.type) {
+                  case 'rejected':
+                    // Check if rejection is targeted to this user
+                    String targetUser = event.value;
+                    bool isAutoRejection = false;
 
-                return;
-            }
-            break;
-          //- Stream behavior for receiver role
-          case PupilIdentityStreamRole.receiver:
-            switch (event.type) {
-              // case 'request':
-              //   onStatusUpdate(
-              //       'Empfänger ${event.value} hat die verschlüsselten Schülerdaten angefordert.');
+                    // Check if this is an auto-rejection (prefixed with 'auto:')
+                    if (targetUser.startsWith('auto:')) {
+                      isAutoRejection = true;
+                      targetUser = targetUser.substring(
+                        5,
+                      ); // Remove 'auto:' prefix
+                    }
 
-              //   _log.info('Sender requested encrypted pupil identities');
-              //   break;
-              case 'data':
-                onStatusUpdate('Verschlüsselte Schülerdaten empfangen.');
-                _log.info(
-                    'Received encrypted pupil identities: ${event.value.length} characters');
-                await decryptAndAddOrUpdatePupilIdentities([event.value]);
-                await _client.pupilIdentity.sendPupilIdentityMessage(
-                  channelName,
-                  PupilIdentityDto(type: 'ok', value: ''),
-                );
-                _encryptedPupilIdsSubscription!.cancel();
-                return;
+                    final currentUserName =
+                        di<HubSessionManager>().user?.userInfo?.userName;
+
+                    if (targetUser.isEmpty || targetUser == currentUserName) {
+                      onStatusUpdate('Anfrage wurde vom Sender abgelehnt.');
+                      if (onRequestRejected != null) {
+                        onRequestRejected(isAutoRejection);
+                      }
+                      _log.info(
+                        'Request was rejected by sender (auto: $isAutoRejection)',
+                      );
+
+                      // Close the connection to kick the receiver off the stream
+                      _encryptedPupilIdsSubscription?.cancel();
+                      _encryptedPupilIdsSubscription = null;
+                    }
+                    // If rejection is for another user, ignore it
+                    break;
+                  case 'data':
+                    // Check if data is targeted to this user
+                    final currentUserName =
+                        di<HubSessionManager>().user?.userInfo?.userName;
+                    String actualData = event.value;
+
+                    if (event.value.contains(':')) {
+                      final parts = event.value.split(':');
+                      if (parts.length >= 2) {
+                        final targetUser = parts[0];
+                        if (targetUser != currentUserName) {
+                          // Data is not for this user, ignore it
+                          _log.info(
+                            'Data received for $targetUser, ignoring as current user is $currentUserName',
+                          );
+                          break;
+                        }
+                        // Extract actual data after removing target prefix
+                        actualData = parts.sublist(1).join(':');
+                      }
+                    }
+
+                    onStatusUpdate(
+                      'Verschlüsselte Schülerdaten empfangen. Verarbeite...',
+                    );
+                    _log.info(
+                      'Received encrypted pupil identities: ${actualData.length} characters',
+                    );
+
+                    try {
+                      final beforeCount = _pupilIdentities.length;
+                      await decryptAndAddOrUpdatePupilIdentities([actualData]);
+                      final afterCount = _pupilIdentities.length;
+                      final newCount = afterCount - beforeCount;
+
+                      // Send confirmation
+                      await _client.pupilIdentity.sendPupilIdentityMessage(
+                        channelName,
+                        PupilIdentityDto(type: 'ok', value: ''),
+                      );
+
+                      onCompleted();
+                      onStatusUpdate(
+                        'Schülerdaten erfolgreich empfangen und verarbeitet!',
+                      );
+
+                      // Call the data received callback with count information
+                      if (onDataReceived != null) {
+                        onDataReceived(newCount, afterCount);
+                      } else if (onShouldPopPage != null) {
+                        // Fallback: if no data received callback, use the old pop page callback
+                        onShouldPopPage();
+                      }
+
+                      _encryptedPupilIdsSubscription!.cancel();
+                    } catch (e) {
+                      _log.severe('Error processing received data: $e');
+                      onStatusUpdate('Fehler beim Verarbeiten der Daten: $e');
+                    }
+                    break;
+                  case 'shutdown':
+                    // Sender has shut down the stream
+                    _log.info('Sender has shut down the stream');
+                    onStatusUpdate('Der Sender hat den Stream beendet.');
+                    if (onSenderShutdown != null) {
+                      onSenderShutdown(event.value);
+                    }
+                    // Close the connection
+                    _encryptedPupilIdsSubscription?.cancel();
+                    _encryptedPupilIdsSubscription = null;
+                    break;
+                }
             }
-        }
-      },
-      onError: (error) async {
-        final errorString = error.toString();
-        ;
-        _log.severe('Error in pupil identity stream: $error');
-        if (error.toString().contains('Unauthorized')) {
-          _encryptedPupilIdsSubscription!.cancel();
-          return di<HubSessionManager>().signOutDevice();
-        } else if (error.toString().contains('Netzwerkverbindung abgelehnt')) {
-          // TODO: Implement server not responding
-          //- This is very buggy
-          _notificationService.showInformationDialog(
-              'Der Server konnte nicht gefunden werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.');
-        } else {
-          _notificationService.showSnackBar(NotificationType.error,
-              'Ein unbekannter Fehler ist aufgetreten: $errorString');
-        }
-        // retry the subscription after a delay
-        await Future.delayed(const Duration(seconds: 1));
-        _encryptedPupilIdsSubscription!.cancel();
-        encryptedPupilIdsStreamSubscription(
-          channelName: channelName,
-          role: role,
-          encryptedPupilIds: encryptedPupilIds,
-          onConnected: onConnected,
-          onStatusUpdate: onStatusUpdate,
-          onCompleted: onCompleted,
+          },
+          onError: (error) async {
+            final errorString = error.toString();
+            _log.severe('Error in pupil identity stream: $error');
+            if (error.toString().contains('Unauthorized')) {
+              _encryptedPupilIdsSubscription!.cancel();
+              return di<HubSessionManager>().signOutDevice();
+            } else if (error.toString().contains(
+              'Netzwerkverbindung abgelehnt',
+            )) {
+              // TODO: Implement server not responding
+              //- This is very buggy
+              _notificationService.showInformationDialog(
+                'Der Server konnte nicht gefunden werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.',
+              );
+            } else {
+              _notificationService.showSnackBar(
+                NotificationType.error,
+                'Ein unbekannter Fehler ist aufgetreten: $errorString',
+              );
+            }
+            // retry the subscription after a delay
+            await Future.delayed(const Duration(seconds: 1));
+            _encryptedPupilIdsSubscription!.cancel();
+            encryptedPupilIdsStreamSubscription(
+              channelName: channelName,
+              role: role,
+              encryptedPupilIds: encryptedPupilIds,
+              onConnected: onConnected,
+              onStatusUpdate: onStatusUpdate,
+              onCompleted: onCompleted,
+              onReceiverJoined: onReceiverJoined,
+              onRequestReceived: onRequestReceived,
+              onRequestConfirmed: onRequestConfirmed,
+              onRequestRejected: onRequestRejected,
+              onShouldPopPage: onShouldPopPage,
+              onDataReceived: onDataReceived,
+              onSenderShutdown: onSenderShutdown,
+            );
+          },
+          onDone: () {
+            _notificationService.showSnackBar(
+              NotificationType.success,
+              'Verbindung zum Client geschlossen.',
+            );
+          },
         );
-      },
-      onDone: () {
-        _notificationService.showSnackBar(
-            NotificationType.success, 'Verbindung zum Client geschlossen.');
-      },
+
+    // Call onConnected immediately after subscription is established
+    _log.info(
+      'Stream subscription established for channel: $channelName with role: $role',
     );
+    onConnected();
 
     return _encryptedPupilIdsSubscription!;
   }
 }
 
-enum PupilIdentityDtoType {
-  request,
-  data,
-  ok,
-}
+enum PupilIdentityDtoType { request, data, ok }
