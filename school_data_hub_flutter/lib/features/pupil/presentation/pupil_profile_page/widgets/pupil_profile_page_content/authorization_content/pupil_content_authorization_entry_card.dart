@@ -191,8 +191,7 @@ class PupilContentAuthorizationEntryCard extends WatchingWidget {
                         representedBoolValue: false, // Red/negative checkbox
                         currentStatus: pupilAuthorization.status,
                         onStatusChanged: (newStatus) async {
-                          await _authorizationManager
-                              .updatePupilAuthorization(
+                          await _authorizationManager.updatePupilAuthorization(
                             pupilId: pupil.pupilId,
                             authorizationId: authorization.id!,
                             status: (value: newStatus),
@@ -206,8 +205,7 @@ class PupilContentAuthorizationEntryCard extends WatchingWidget {
                         representedBoolValue: true, // Green/positive checkbox
                         currentStatus: pupilAuthorization.status,
                         onStatusChanged: (newStatus) async {
-                          await _authorizationManager
-                              .updatePupilAuthorization(
+                          await _authorizationManager.updatePupilAuthorization(
                             pupilId: pupil.pupilId,
                             authorizationId: authorization.id!,
                             status: (value: newStatus),

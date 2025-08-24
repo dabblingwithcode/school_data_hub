@@ -192,6 +192,14 @@ CREATE TABLE "kindergarden" (
 );
 
 --
+-- Class LastPupilIdentiesUpdate as table last_pupil_identities_update
+--
+CREATE TABLE "last_pupil_identities_update" (
+    "id" bigserial PRIMARY KEY,
+    "date" timestamp without time zone
+);
+
+--
 -- Class LearningSupportPlan as table learning_support_plan
 --
 CREATE TABLE "learning_support_plan" (
@@ -466,12 +474,14 @@ CREATE TABLE "school_list" (
 --
 CREATE TABLE "school_semester" (
     "id" bigserial PRIMARY KEY,
+    "schoolYear" text NOT NULL,
+    "isFirst" boolean NOT NULL,
     "startDate" timestamp without time zone NOT NULL,
     "endDate" timestamp without time zone NOT NULL,
-    "classConferenceDate" timestamp without time zone NOT NULL,
-    "supportConferenceDate" timestamp without time zone NOT NULL,
-    "isFirst" boolean NOT NULL,
-    "reportConferenceDate" timestamp without time zone NOT NULL
+    "classConferenceDate" timestamp without time zone,
+    "supportConferenceDate" timestamp without time zone,
+    "reportConferenceDate" timestamp without time zone,
+    "reportSignedDate" timestamp without time zone
 );
 
 --
@@ -1547,9 +1557,9 @@ ALTER TABLE ONLY "serverpod_query_log"
 -- MIGRATION VERSION FOR school_data_hub
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('school_data_hub', '20250718151055108', now())
+    VALUES ('school_data_hub', '20250822190759616', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20250718151055108', "timestamp" = now();
+    DO UPDATE SET "version" = '20250822190759616', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

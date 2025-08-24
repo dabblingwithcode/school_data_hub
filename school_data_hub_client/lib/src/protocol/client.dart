@@ -738,8 +738,9 @@ class EndpointLearningSupportPlan extends _i1.EndpointRef {
         {},
       );
 
-  _i2.Future<bool> createLearningSupportPlan(_i23.LearningSupportPlan plan) =>
-      caller.callServerEndpoint<bool>(
+  _i2.Future<_i23.LearningSupportPlan> createLearningSupportPlan(
+          _i23.LearningSupportPlan plan) =>
+      caller.callServerEndpoint<_i23.LearningSupportPlan>(
         'learningSupportPlan',
         'createLearningSupportPlan',
         {'plan': plan},

@@ -151,15 +151,10 @@ class SchoolListPdfGenerator {
     required pw.Font fontRegular,
     required pw.Font fontBold,
   }) {
-    print(
-      'Building page $pageNumber with ${pupils.length} pupils, startIndex=$startIndex',
-    );
-
     try {
       return pw.Page(
         margin: const pw.EdgeInsets.all(20),
         build: (pw.Context context) {
-          print('  Page $pageNumber: Building content...');
           try {
             return pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -190,7 +185,6 @@ class SchoolListPdfGenerator {
               ],
             );
           } catch (e) {
-            print('  ERROR in page $pageNumber content building: $e');
             // Return a simple error page
             return pw.Column(
               children: [
@@ -203,7 +197,6 @@ class SchoolListPdfGenerator {
         },
       );
     } catch (e) {
-      print('ERROR building page $pageNumber: $e');
       // Return a minimal page
       return pw.Page(
         build:
@@ -384,13 +377,8 @@ class SchoolListPdfGenerator {
     pw.Font fontRegular,
     pw.Font fontBold,
   ) {
-    print(
-      '  Building pupils table with ${pupils.length} pupils, startIndex=$startIndex',
-    );
-
     try {
       if (pupils.isEmpty) {
-        print('    Pupils list is empty');
         return pw.Container(
           width: double.infinity,
           padding: const pw.EdgeInsets.all(20),
@@ -407,7 +395,6 @@ class SchoolListPdfGenerator {
         );
       }
 
-      print('    Building table with ${pupils.length} rows');
       return pw.Table(
         border: pw.TableBorder.all(color: PdfColors.grey400),
         columnWidths: const {
@@ -481,7 +468,6 @@ class SchoolListPdfGenerator {
                 ],
               );
             } catch (e) {
-              print('    ERROR building row for pupil ${entry.key}: $e');
               // Return a row with error info
               return pw.TableRow(
                 children: [
@@ -503,7 +489,6 @@ class SchoolListPdfGenerator {
         ],
       );
     } catch (e) {
-      print('  ERROR building pupils table: $e');
       return pw.Container(
         padding: const pw.EdgeInsets.all(20),
         child: pw.Text(

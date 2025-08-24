@@ -138,6 +138,15 @@ CREATE TABLE "competence_report_item" (
 --
 -- ACTION CREATE TABLE
 --
+CREATE TABLE "compulsory_room" (
+    "id" bigserial PRIMARY KEY,
+    "roomId" text NOT NULL,
+    "roomType" text NOT NULL
+);
+
+--
+-- ACTION CREATE TABLE
+--
 CREATE TABLE "credit_transaction" (
     "id" bigserial PRIMARY KEY,
     "sender" text NOT NULL,
@@ -180,6 +189,14 @@ CREATE TABLE "kindergarden" (
     "address" text NOT NULL,
     "email" text NOT NULL,
     "contactPerson" text NOT NULL
+);
+
+--
+-- ACTION CREATE TABLE
+--
+CREATE TABLE "last_pupil_identities_update" (
+    "id" bigserial PRIMARY KEY,
+    "date" timestamp without time zone
 );
 
 --
@@ -457,12 +474,14 @@ CREATE TABLE "school_list" (
 --
 CREATE TABLE "school_semester" (
     "id" bigserial PRIMARY KEY,
+    "schoolYear" text NOT NULL,
+    "isFirst" boolean NOT NULL,
     "startDate" timestamp without time zone NOT NULL,
     "endDate" timestamp without time zone NOT NULL,
-    "classConferenceDate" timestamp without time zone NOT NULL,
-    "supportConferenceDate" timestamp without time zone NOT NULL,
-    "isFirst" boolean NOT NULL,
-    "reportConferenceDate" timestamp without time zone NOT NULL
+    "classConferenceDate" timestamp without time zone,
+    "supportConferenceDate" timestamp without time zone,
+    "reportConferenceDate" timestamp without time zone,
+    "reportSignedDate" timestamp without time zone
 );
 
 --
@@ -1538,9 +1557,9 @@ ALTER TABLE ONLY "serverpod_query_log"
 -- MIGRATION VERSION FOR school_data_hub
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('school_data_hub', '20250607110332975', now())
+    VALUES ('school_data_hub', '20250822190759616', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20250607110332975', "timestamp" = now();
+    DO UPDATE SET "version" = '20250822190759616', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

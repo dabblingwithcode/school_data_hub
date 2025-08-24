@@ -9,7 +9,9 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-class LearningSupportPlanManager with ChangeNotifier {
+class LearningSupportManager with ChangeNotifier {
+  //- IMPORTS -//
+
   final _schoolCalendarManager = di<SchoolCalendarManager>();
 
   final _learningSupportApiService = LearningSupportApiService();
@@ -20,8 +22,74 @@ class LearningSupportPlanManager with ChangeNotifier {
 
   final _notificationService = di<NotificationService>();
 
+  //- OBSERVABLES -//
+
   final _learningSupportPlans =
       ValueNotifier<Map<int, List<LearningSupportPlan>>>({});
+
+  ValueListenable<Map<int, List<LearningSupportPlan>>>
+  get learningSupportPlans => _learningSupportPlans;
+
+  Future<void> postNewLearningSupportPlan({
+    required int pupilId,
+    required int supportLevelId,
+    required String planId,
+    String? comment,
+  }) async {
+    // First check if we have a current semester
+    final currentSemester = _schoolCalendarManager.currentSemester.value;
+
+    if (currentSemester == null) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Kein aktuelles Schulhalbjahr gefunden.',
+      );
+      return;
+    }
+
+    final pupilLearningSupportPlans =
+        _learningSupportPlans.value[pupilId] ?? [];
+    final existingPlan = pupilLearningSupportPlans.firstWhereOrNull(
+      (p) => p.schoolSemesterId == currentSemester.id,
+    );
+    if (existingPlan != null) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Für das aktuelle Schulhalbjahr existiert bereits ein Förderplan.',
+      );
+      return;
+    }
+    final plan = await _learningSupportApiService.postLearningSupportPlan(
+      LearningSupportPlan(
+        pupilId: pupilId,
+        learningSupportLevelId: supportLevelId,
+        planId: planId,
+        comment: comment,
+        schoolSemesterId: currentSemester.id!,
+        createdBy: _hubSessionManager.userName!,
+        createdAt: DateTime.now(),
+      ),
+    );
+
+    if (plan == null) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Erstellen des Förderplans.',
+      );
+      return;
+    }
+    final plansToUpdate = _learningSupportPlans.value;
+    plansToUpdate[pupilId] = [...pupilLearningSupportPlans, plan];
+
+    _learningSupportPlans.value = plansToUpdate;
+
+    notifyListeners();
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Förderplan erstellt',
+    );
+    return;
+  }
 
   LearningSupportPlan? getCurrentLearningSupportPlan(int pupilId) {
     return _learningSupportPlans.value[pupilId]?.firstWhereOrNull(
@@ -51,14 +119,15 @@ class LearningSupportPlanManager with ChangeNotifier {
       return;
     }
     final updatedPupil = await ClientHelper.apiCall(
-      call: () => _learningSupportApiService.postSupportCategoryStatus(
-        pupilId: pupilId,
-        supportCategoryId: supportCategoryId,
-        learningSupportPlanId: learningSupportPlan.id!,
-        status: status,
-        comment: comment,
-        createdBy: _hubSessionManager.userName!,
-      ),
+      call:
+          () => _learningSupportApiService.postSupportCategoryStatus(
+            pupilId: pupilId,
+            supportCategoryId: supportCategoryId,
+            learningSupportPlanId: learningSupportPlan.id!,
+            status: status,
+            comment: comment,
+            createdBy: _hubSessionManager.userName!,
+          ),
     );
     if (updatedPupil == null) {
       return;
@@ -68,11 +137,8 @@ class LearningSupportPlanManager with ChangeNotifier {
   }
 
   Future<void> deleteSupportCategoryStatus(int pupilId, int statusId) async {
-    final updatedPupil =
-        await _learningSupportApiService.deleteSupportCategoryStatus(
-      pupilId,
-      statusId,
-    );
+    final updatedPupil = await _learningSupportApiService
+        .deleteSupportCategoryStatus(pupilId, statusId);
     if (updatedPupil == null) {
       return;
     }
@@ -116,21 +182,23 @@ class LearningSupportPlanManager with ChangeNotifier {
     required String description,
     required String strategies,
   }) async {
-    final PupilData? responsePupil =
-        await _learningSupportApiService.postNewCategoryGoal(
-      pupilId: pupilId,
-      supportCategoryId: goalCategoryId,
-      description: description,
-      strategies: strategies,
-      createdBy: _hubSessionManager.userName!,
-    );
+    final PupilData? responsePupil = await _learningSupportApiService
+        .postNewCategoryGoal(
+          pupilId: pupilId,
+          supportCategoryId: goalCategoryId,
+          description: description,
+          strategies: strategies,
+          createdBy: _hubSessionManager.userName!,
+        );
     if (responsePupil == null) {
       return;
     }
     _pupilManager.updatePupilProxyWithPupilData(responsePupil);
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Ziel hinzugefügt');
+      NotificationType.success,
+      'Ziel hinzugefügt',
+    );
 
     return;
   }

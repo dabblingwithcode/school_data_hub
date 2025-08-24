@@ -12,12 +12,13 @@ class SelectPupilListCard extends WatchingWidget {
   final OnCardPressCallback onCardPress;
   final bool isSelectMode;
   final bool isSelected;
-  const SelectPupilListCard(
-      {required this.passedPupil,
-      required this.onCardPress,
-      required this.isSelectMode,
-      required this.isSelected,
-      super.key});
+  const SelectPupilListCard({
+    required this.passedPupil,
+    required this.onCardPress,
+    required this.isSelectMode,
+    required this.isSelected,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,56 +28,40 @@ class SelectPupilListCard extends WatchingWidget {
       onLongPress: () => onCardPress(pupil.pupilId),
       onTap: () => isSelectMode ? onCardPress(pupil.pupilId) : {},
       child: Card(
-          color: isSelected ? AppColors.selectedCardColor : Colors.white,
-          child: Row(
-            children: [
-              AvatarWithBadges(pupil: pupil, size: 80),
-              InkWell(
+        color: isSelected ? AppColors.selectedCardColor : Colors.white,
+        child: Row(
+          children: [
+            AvatarWithBadges(pupil: pupil, size: 80),
+            Expanded(
+              child: InkWell(
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (ctx) => PupilProfilePage(
-                      pupil: pupil,
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (ctx) => PupilProfilePage(pupil: pupil),
                     ),
-                  ));
+                  );
                 },
-                child: SizedBox(
-                  width: 200,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Text(
-                                '${pupil.firstName} ${pupil.lastName}',
-                                style: const TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          )
-                        ],
+                      Text(
+                        '${pupil.firstName} ${pupil.lastName}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      // Gap(5),
-                      // Row(
-                      //   children: [
-                      //     Text('bisjetzt verdient:'),
-                      //     Gap(10),
-                      //     Text(
-                      //       pupil.creditEarned.toString(),
-                      //       style: TextStyle(
-                      //         fontWeight: FontWeight.bold,
-                      //         fontSize: 18,
-                      //       ),
-                      //     )
-                      //   ],
-                      // )
                     ],
                   ),
                 ),
               ),
-            ],
-          )),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

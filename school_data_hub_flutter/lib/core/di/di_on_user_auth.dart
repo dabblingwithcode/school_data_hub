@@ -14,7 +14,7 @@ import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart'
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_plan_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
@@ -72,13 +72,10 @@ class DiOnUserAuth {
       return pupilManager;
     }, dependsOn: [PupilIdentityManager, HubSessionManager]);
 
-    di.registerSingletonWithDependencies<LearningSupportPlanManager>(
-        () => LearningSupportPlanManager(),
-        dependsOn: [
-          PupilManager,
-          SchoolCalendarManager,
-          SupportCategoryManager
-        ]);
+    di.registerSingletonWithDependencies<LearningSupportManager>(
+      () => LearningSupportManager(),
+      dependsOn: [PupilManager, SchoolCalendarManager, SupportCategoryManager],
+    );
 
     di.registerSingletonAsync<BookManager>(() async {
       log('Registering BookManager');
@@ -118,23 +115,28 @@ class DiOnUserAuth {
     }, dependsOn: [HubSessionManager]);
 
     di.registerSingletonWithDependencies<PupilAuthorizationFilterManager>(
-        () => PupilAuthorizationFilterManager(),
-        dependsOn: [AuthorizationManager]);
+      () => PupilAuthorizationFilterManager(),
+      dependsOn: [AuthorizationManager],
+    );
 
-    di.registerSingletonWithDependencies<AuthorizationFilterManager>(() {
-      final authorizationFilterManager = AuthorizationFilterManager();
-      return authorizationFilterManager.init();
-    },
-        dispose: (instance) => instance.dispose(),
-        dependsOn: [AuthorizationManager]);
+    di.registerSingletonWithDependencies<AuthorizationFilterManager>(
+      () {
+        final authorizationFilterManager = AuthorizationFilterManager();
+        return authorizationFilterManager.init();
+      },
+      dispose: (instance) => instance.dispose(),
+      dependsOn: [AuthorizationManager],
+    );
 
     di.registerSingletonWithDependencies<PupilFilterManager>(
-        () => PupilFilterManager(),
-        dependsOn: [PupilManager]);
+      () => PupilFilterManager(),
+      dependsOn: [PupilManager],
+    );
 
     di.registerSingletonWithDependencies<LearningSupportFilterManager>(
-        () => LearningSupportFilterManager(),
-        dependsOn: [PupilManager, PupilFilterManager]);
+      () => LearningSupportFilterManager(),
+      dependsOn: [PupilManager, PupilFilterManager],
+    );
 
     di.registerSingletonWithDependencies<SchooldayEventFilterManager>(() {
       _log.info('SchooldayEventFilterManager initializing');
@@ -142,18 +144,19 @@ class DiOnUserAuth {
     }, dependsOn: [PupilManager, PupilFilterManager]);
 
     di.registerSingletonWithDependencies<PupilsFilter>(
-        () => PupilsFilterImplementation(
-              di<PupilManager>(),
-            ),
-        dispose: (instance) => instance.dispose(),
-        dependsOn: [PupilManager, PupilFilterManager]);
+      () => PupilsFilterImplementation(di<PupilManager>()),
+      dispose: (instance) => instance.dispose(),
+      dependsOn: [PupilManager, PupilFilterManager],
+    );
 
     di.registerSingleton<FiltersStateManager>(
-        FiltersStateManagerImplementation());
+      FiltersStateManagerImplementation(),
+    );
 
     di.registerSingletonWithDependencies<AttendanceManager>(
-        () => AttendanceManager(),
-        dependsOn: [SchoolCalendarManager, PupilsFilter]);
+      () => AttendanceManager(),
+      dependsOn: [SchoolCalendarManager, PupilsFilter],
+    );
 
     di.registerSingletonAsync<SchoolListManager>(() async {
       _log.info('Registering SchoolListManager');
@@ -169,17 +172,20 @@ class DiOnUserAuth {
       return schoolListFilterManager;
     }, dependsOn: [PupilsFilter, SchoolListManager]);
 
-    di.registerSingletonWithDependencies<AttendancePupilFilterManager>(() {
-      final attendancePupilFilterManager = AttendancePupilFilterManager();
-      return attendancePupilFilterManager.init();
-    },
-        dispose: (instance) => instance.dispose(),
-        dependsOn: [AttendanceManager, PupilsFilter]);
+    di.registerSingletonWithDependencies<AttendancePupilFilterManager>(
+      () {
+        final attendancePupilFilterManager = AttendancePupilFilterManager();
+        return attendancePupilFilterManager.init();
+      },
+      dispose: (instance) => instance.dispose(),
+      dependsOn: [AttendanceManager, PupilsFilter],
+    );
     _log.info('Managers depending on authenticated session initialized');
 
     di.registerSingletonWithDependencies<SchooldayEventManager>(
-        () => SchooldayEventManager(),
-        dependsOn: [SchoolCalendarManager, PupilsFilter]);
+      () => SchooldayEventManager(),
+      dependsOn: [SchoolCalendarManager, PupilsFilter],
+    );
 
     di.registerSingletonAsync<UserManager>(() async {
       _log.info('Registering UserManager');

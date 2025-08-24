@@ -25,403 +25,306 @@ class PublicMediaAuthValues extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final publicMediaAuth =
-        watchPropertyValue((m) => m.publicMediaAuth, target: pupil);
-    final publicMediaAuthDocumentId =
-        watchPropertyValue((m) => m.publicMediaAuthDocumentId, target: pupil);
-    final publicMediaAuthDocument =
-        watchPropertyValue((m) => m.publicMediaAuthDocument, target: pupil);
+    final publicMediaAuth = watchPropertyValue(
+      (m) => m.publicMediaAuth,
+      target: pupil,
+    );
+    final publicMediaAuthDocumentId = watchPropertyValue(
+      (m) => m.publicMediaAuthDocumentId,
+      target: pupil,
+    );
+    final publicMediaAuthDocument = watchPropertyValue(
+      (m) => m.publicMediaAuthDocument,
+      target: pupil,
+    );
 
-    return Card(
-      color: AppColors.cardInCardColor,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            const Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Flexible(
-                  child: const Text('Veröffentlichung von...',
-                      softWrap: true,
-                      style: TextStyle(
-                        fontSize: 16.0,
-                      )),
-                ),
-              ],
-            ),
-            const Gap(5),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppColors.backgroundColor.withValues(alpha: 0.2),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.backgroundColor.withValues(alpha: 0.08),
+            blurRadius: 6,
+            spreadRadius: 1,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header with document upload
+          Row(
+            children: [
+              Expanded(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Row(
-                      children: [
-                        Text('Gruppenfotos Presse:',
-                            style: TextStyle(fontSize: 14.0)),
-                      ],
+                    Text(
+                      'Veröffentlichungseinwilligung',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.backgroundColor,
+                      ),
                     ),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.close,
-                          color: Colors.red,
-                        ),
-                        SizedBox(
-                          width: 25,
-                          height: 25,
-                          child: Checkbox(
-                            activeColor: Colors.red,
-                            value: publicMediaAuth.groupPicturesInPress
-                                ? false
-                                : true,
-                            onChanged: (newValue) async {
-                              if (newValue == false) return;
-                              if (publicMediaAuthDocumentId == null) return;
-                              await _pupilManager.updatePublicMediaAuth(
-                                  pupil: pupil, groupPicturesInPress: false);
-                            },
-                          ),
-                        ),
-                        if (publicMediaAuthDocumentId != null) ...[
-                          const Gap(10),
-                          const Icon(
-                            Icons.done,
-                            color: Colors.green,
-                          ),
-                          SizedBox(
-                            width: 25,
-                            height: 25,
-                            child: Checkbox(
-                              activeColor: Colors.green,
-                              value: publicMediaAuth.groupPicturesInPress
-                                  ? true
-                                  : false,
-                              onChanged: (newValue) async {
-                                if (publicMediaAuth.groupPicturesInPress &&
-                                    newValue == false) return;
-
-                                await _pupilManager.updatePublicMediaAuth(
-                                    pupil: pupil, groupPicturesInPress: true);
-                              },
-                            ),
-                          ),
-                        ]
-                      ],
-                    ),
-                    const Gap(5),
-                    const Row(
-                      children: [
-                        Text('Gruppenfotos Website:',
-                            style: TextStyle(fontSize: 14.0)),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.close,
-                          color: Colors.red,
-                        ),
-                        SizedBox(
-                          width: 25,
-                          height: 25,
-                          child: Checkbox(
-                            activeColor: Colors.red,
-                            value: publicMediaAuth.groupPicturesOnWebsite
-                                ? false
-                                : true,
-                            onChanged: (newValue) async {
-                              if (newValue == false) return;
-                              if (publicMediaAuthDocumentId == null) return;
-                              await _pupilManager.updatePublicMediaAuth(
-                                  pupil: pupil, groupPicturesOnWebsite: false);
-                            },
-                          ),
-                        ),
-                        if (publicMediaAuthDocumentId != null) ...[
-                          const Gap(10),
-                          const Icon(
-                            Icons.done,
-                            color: Colors.green,
-                          ),
-                          SizedBox(
-                            width: 25,
-                            height: 25,
-                            child: Checkbox(
-                              activeColor: Colors.green,
-                              value: publicMediaAuth.groupPicturesOnWebsite
-                                  ? true
-                                  : false,
-                              onChanged: (newValue) async {
-                                if (publicMediaAuth.groupPicturesOnWebsite &&
-                                    newValue == false) return;
-
-                                await _pupilManager.updatePublicMediaAuth(
-                                    pupil: pupil, groupPicturesOnWebsite: true);
-                              },
-                            ),
-                          ),
-                        ]
-                      ],
-                    ),
-                    const Gap(5),
-                    const Row(
-                      children: [
-                        Text('Name in Presse:',
-                            style: TextStyle(fontSize: 14.0)),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.close,
-                          color: Colors.red,
-                        ),
-                        SizedBox(
-                          width: 25,
-                          height: 25,
-                          child: Checkbox(
-                            activeColor: Colors.red,
-                            value: publicMediaAuth.nameInPress ? false : true,
-                            onChanged: (newValue) async {
-                              if (newValue == false) return;
-                              if (publicMediaAuthDocumentId == null) return;
-                              await _pupilManager.updatePublicMediaAuth(
-                                  pupil: pupil, nameInPress: false);
-                            },
-                          ),
-                        ),
-                        if (publicMediaAuthDocumentId != null) ...[
-                          const Gap(10),
-                          const Icon(
-                            Icons.done,
-                            color: Colors.green,
-                          ),
-                          SizedBox(
-                            width: 25,
-                            height: 25,
-                            child: Checkbox(
-                              activeColor: Colors.green,
-                              value: publicMediaAuth.nameInPress ? true : false,
-                              onChanged: (newValue) async {
-                                if (publicMediaAuth.nameInPress &&
-                                    newValue == false) return;
-
-                                await _pupilManager.updatePublicMediaAuth(
-                                    pupil: pupil, nameInPress: true);
-                              },
-                            ),
-                          ),
-                        ]
-                      ],
-                    ),
-                    const Gap(5),
-                    const Row(
-                      children: [
-                        Text('Name in Website:',
-                            style: TextStyle(fontSize: 14.0)),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.close,
-                          color: Colors.red,
-                        ),
-                        SizedBox(
-                          width: 25,
-                          height: 25,
-                          child: Checkbox(
-                            activeColor: Colors.red,
-                            value: publicMediaAuth.nameOnWebsite ? false : true,
-                            onChanged: (newValue) async {
-                              if (newValue == false) return;
-                              if (publicMediaAuthDocumentId == null) return;
-                              await _pupilManager.updatePublicMediaAuth(
-                                  pupil: pupil, nameOnWebsite: false);
-                            },
-                          ),
-                        ),
-                        if (publicMediaAuthDocumentId != null) ...[
-                          const Gap(10),
-                          const Icon(
-                            Icons.done,
-                            color: Colors.green,
-                          ),
-                          SizedBox(
-                            width: 25,
-                            height: 25,
-                            child: Checkbox(
-                              activeColor: Colors.green,
-                              value:
-                                  publicMediaAuth.nameOnWebsite ? true : false,
-                              onChanged: (newValue) async {
-                                if (publicMediaAuth.nameOnWebsite &&
-                                    newValue == false) return;
-                                await _pupilManager.updatePublicMediaAuth(
-                                    pupil: pupil, nameOnWebsite: true);
-                              },
-                            ),
-                          ),
-                        ]
-                      ],
-                    ),
-                    const Gap(5),
-                    const Row(
-                      children: [
-                        Text('Porträtfoto in Presse:',
-                            style: TextStyle(fontSize: 14.0)),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.close,
-                          color: Colors.red,
-                        ),
-                        SizedBox(
-                          width: 25,
-                          height: 25,
-                          child: Checkbox(
-                            activeColor: Colors.red,
-                            value: publicMediaAuth.portraitPicturesInPress
-                                ? false
-                                : true,
-                            onChanged: (newValue) async {
-                              if (newValue == false) return;
-                              if (publicMediaAuthDocumentId == null) return;
-                              await _pupilManager.updatePublicMediaAuth(
-                                  pupil: pupil, portraitPicturesInPress: false);
-                            },
-                          ),
-                        ),
-                        if (publicMediaAuthDocumentId != null) ...[
-                          const Gap(10),
-                          const Icon(
-                            Icons.done,
-                            color: Colors.green,
-                          ),
-                          SizedBox(
-                            width: 25,
-                            height: 25,
-                            child: Checkbox(
-                              activeColor: Colors.green,
-                              value: publicMediaAuth.portraitPicturesInPress
-                                  ? true
-                                  : false,
-                              onChanged: (newValue) async {
-                                if (publicMediaAuth.portraitPicturesInPress &&
-                                    newValue == false) return;
-
-                                await _pupilManager.updatePublicMediaAuth(
-                                    pupil: pupil,
-                                    portraitPicturesInPress: true);
-                              },
-                            ),
-                          ),
-                        ]
-                      ],
-                    ),
-                    const Row(
-                      children: [
-                        Text('Porträtfoto in Website:',
-                            style: TextStyle(fontSize: 14.0)),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.close,
-                          color: Colors.red,
-                        ),
-                        SizedBox(
-                          width: 25,
-                          height: 25,
-                          child: Checkbox(
-                            activeColor: Colors.red,
-                            value: publicMediaAuth.portraitPicturesOnWebsite
-                                ? false
-                                : true,
-                            onChanged: (newValue) async {
-                              if (newValue == false) return;
-                              if (publicMediaAuthDocumentId == null) return;
-                              await _pupilManager.updatePublicMediaAuth(
-                                  pupil: pupil,
-                                  portraitPicturesOnWebsite: false);
-                            },
-                          ),
-                        ),
-                        if (publicMediaAuthDocumentId != null) ...[
-                          const Gap(10),
-                          const Icon(
-                            Icons.done,
-                            color: Colors.green,
-                          ),
-                          SizedBox(
-                            width: 25,
-                            height: 25,
-                            child: Checkbox(
-                              activeColor: Colors.green,
-                              value: publicMediaAuth.portraitPicturesOnWebsite
-                                  ? true
-                                  : false,
-                              onChanged: (newValue) async {
-                                if (publicMediaAuth.portraitPicturesOnWebsite &&
-                                    newValue == false) return;
-
-                                await _pupilManager.updatePublicMediaAuth(
-                                    pupil: pupil,
-                                    portraitPicturesOnWebsite: true);
-                              },
-                            ),
-                          ),
-                        ]
-                      ],
+                    const Gap(4),
+                    Text(
+                      'Bilder, Videos und Namen in Medien',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.withValues(alpha: 0.7),
+                      ),
                     ),
                   ],
                 ),
-                const Spacer(),
-                InkWell(
-                  onTap: () async {
-                    final File? file = await createImageFile(context);
-                    if (file == null) return;
-                    await _pupilManager.updatePupilDocument(
-                        file, pupil, PupilDocumentType.publicMediaAuth);
-                  },
-                  onLongPress: () async {
-                    if (_hubSessionManager.isAdmin != true) return;
-                    if (publicMediaAuthDocumentId == null) return;
-                    final bool? result = await confirmationDialog(
-                        context: context,
-                        title: 'Dokument löschen',
-                        message:
-                            'Dokument für die Einwilligung in Veröffentlichungen von ${pupil.firstName} ${pupil.lastName} löschen?\nDie Werte werden zurückgesetzt! ');
-                    if (result != true) return;
-                    await _pupilManager.resetPublicMediaAuth(pupil.pupilId);
-                    _notificationService.showSnackBar(NotificationType.success,
-                        'Die Einwilligung wurde geändert!');
-                  },
-                  child: publicMediaAuthDocumentId != null
-                      ? DocumentImage(
-                          documentId: publicMediaAuthDocument!.documentId,
-                          size: 70,
-                        )
-                      : SizedBox(
-                          height: 70,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(5),
-                            child: Image.asset('assets/document_camera.png'),
+              ),
+              InkWell(
+                onTap: () async {
+                  final File? file = await createImageFile(context);
+                  if (file == null) return;
+                  await _pupilManager.updatePupilDocument(
+                    file,
+                    pupil,
+                    PupilDocumentType.publicMediaAuth,
+                  );
+                },
+                onLongPress: () async {
+                  if (_hubSessionManager.isAdmin != true) return;
+                  if (publicMediaAuthDocumentId == null) return;
+                  final bool? result = await confirmationDialog(
+                    context: context,
+                    title: 'Dokument löschen',
+                    message:
+                        'Dokument für die Einwilligung in Veröffentlichungen von ${pupil.firstName} ${pupil.lastName} löschen?\nDie Werte werden zurückgesetzt! ',
+                  );
+                  if (result != true) return;
+                  await _pupilManager.resetPublicMediaAuth(pupil.pupilId);
+                  _notificationService.showSnackBar(
+                    NotificationType.success,
+                    'Die Einwilligung wurde geändert!',
+                  );
+                },
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: AppColors.backgroundColor.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: AppColors.backgroundColor.withValues(alpha: 0.1),
+                      width: 1,
+                    ),
+                  ),
+                  child:
+                      publicMediaAuthDocumentId != null
+                          ? DocumentImage(
+                            documentId: publicMediaAuthDocument!.documentId,
+                            size: 40, // Smaller than before
+                          )
+                          : Container(
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                              color: AppColors.backgroundColor.withValues(
+                                alpha: 0.1,
+                              ),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Icon(
+                              Icons.add_a_photo,
+                              color: AppColors.backgroundColor.withValues(
+                                alpha: 0.6,
+                              ),
+                              size: 20,
+                            ),
                           ),
-                        ),
                 ),
-                const Gap(10),
+              ),
+            ],
+          ),
+          const Gap(12),
+
+          // Compact authorization grid
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.backgroundColor.withValues(alpha: 0.03),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: AppColors.backgroundColor.withValues(alpha: 0.1),
+                width: 1,
+              ),
+            ),
+            child: Column(
+              children: [
+                _buildAuthRow(
+                  'Gruppenfotos Presse',
+                  publicMediaAuth.groupPicturesInPress,
+                  publicMediaAuthDocumentId != null,
+                  (value) => _pupilManager.updatePublicMediaAuth(
+                    pupil: pupil,
+                    groupPicturesInPress: value,
+                  ),
+                ),
+                _buildAuthRow(
+                  'Gruppenfotos Website',
+                  publicMediaAuth.groupPicturesOnWebsite,
+                  publicMediaAuthDocumentId != null,
+                  (value) => _pupilManager.updatePublicMediaAuth(
+                    pupil: pupil,
+                    groupPicturesOnWebsite: value,
+                  ),
+                ),
+                _buildAuthRow(
+                  'Name in Presse',
+                  publicMediaAuth.nameInPress,
+                  publicMediaAuthDocumentId != null,
+                  (value) => _pupilManager.updatePublicMediaAuth(
+                    pupil: pupil,
+                    nameInPress: value,
+                  ),
+                ),
+                _buildAuthRow(
+                  'Name auf Website',
+                  publicMediaAuth.nameOnWebsite,
+                  publicMediaAuthDocumentId != null,
+                  (value) => _pupilManager.updatePublicMediaAuth(
+                    pupil: pupil,
+                    nameOnWebsite: value,
+                  ),
+                ),
+                _buildAuthRow(
+                  'Porträtfoto Presse',
+                  publicMediaAuth.portraitPicturesInPress,
+                  publicMediaAuthDocumentId != null,
+                  (value) => _pupilManager.updatePublicMediaAuth(
+                    pupil: pupil,
+                    portraitPicturesInPress: value,
+                  ),
+                ),
+                _buildAuthRow(
+                  'Porträtfoto Website',
+                  publicMediaAuth.portraitPicturesOnWebsite,
+                  publicMediaAuthDocumentId != null,
+                  (value) => _pupilManager.updatePublicMediaAuth(
+                    pupil: pupil,
+                    portraitPicturesOnWebsite: value,
+                  ),
+                  isLast: true,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAuthRow(
+    String label,
+    bool isAllowed,
+    bool hasDocument,
+    Future<void> Function(bool) onChanged, {
+    bool isLast = false,
+  }) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.backgroundColor,
+                ),
+              ),
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Deny checkbox
+                Container(
+                  decoration: BoxDecoration(
+                    color:
+                        !isAllowed
+                            ? Colors.red.withValues(alpha: 0.1)
+                            : Colors.transparent,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Transform.scale(
+                    scale: 0.8,
+                    child: Checkbox(
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      value: !isAllowed,
+                      activeColor: Colors.red,
+                      onChanged:
+                          hasDocument
+                              ? (newValue) async {
+                                if (newValue == true) {
+                                  await onChanged(false);
+                                }
+                              }
+                              : null,
+                    ),
+                  ),
+                ),
+                Icon(
+                  Icons.close,
+                  color: Colors.red.withValues(alpha: 0.7),
+                  size: 16,
+                ),
+                const Gap(8),
+                // Allow checkbox
+                Container(
+                  decoration: BoxDecoration(
+                    color:
+                        isAllowed
+                            ? Colors.green.withValues(alpha: 0.1)
+                            : Colors.transparent,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Transform.scale(
+                    scale: 0.8,
+                    child: Checkbox(
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      value: isAllowed,
+                      activeColor: Colors.green,
+                      onChanged:
+                          hasDocument
+                              ? (newValue) async {
+                                if (newValue == true && !isAllowed) {
+                                  await onChanged(true);
+                                }
+                              }
+                              : null,
+                    ),
+                  ),
+                ),
+                Icon(
+                  Icons.done,
+                  color: Colors.green.withValues(alpha: 0.7),
+                  size: 16,
+                ),
               ],
             ),
           ],
         ),
-      ),
+        if (!isLast)
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 4),
+            height: 1,
+            color: AppColors.backgroundColor.withValues(alpha: 0.1),
+          ),
+      ],
     );
   }
 }

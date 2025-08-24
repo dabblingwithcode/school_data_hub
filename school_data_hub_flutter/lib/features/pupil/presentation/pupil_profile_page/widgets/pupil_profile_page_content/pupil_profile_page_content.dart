@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
@@ -23,31 +24,92 @@ class PupilProfilePageContent extends WatchingWidget {
   Widget build(BuildContext context) {
     int navState = watchValue((BottomNavManager x) => x.pupilProfileNavState);
 
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          if (navState == ProfileNavigationState.info.value)
-            PupilProfileInfosContent(pupil: pupil),
-          if (navState == ProfileNavigationState.language.value)
-            PupilProfileCommunicationContent(pupil: pupil),
-          if (navState == ProfileNavigationState.credit.value)
-            PupilProfileCreditContent(pupil: pupil),
-          if (navState == ProfileNavigationState.attendance.value)
-            PupilAttendanceContent(pupil: pupil),
-          if (navState == ProfileNavigationState.schooldayEvent.value)
-            PupilProfileSchooldayEventsContent(pupil: pupil),
-          // if (navState == 5) PupilOgsContent(pupil: pupil),
-          if (navState == ProfileNavigationState.lists.value)
-            PupilSchoolListsContentCard(pupil: pupil),
-          if (navState == ProfileNavigationState.authorization.value)
-            PupilProfileAuthorizationContent(pupil: pupil),
-          if (navState == ProfileNavigationState.learningSupport.value)
-            PupilProfileLearningSupportContent(pupil: pupil),
-          if (navState == ProfileNavigationState.learning.value)
-            PupilLearningContent(pupil: pupil),
-          const Gap(20),
-        ],
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.pupilProfileBackgroundColor,
+      ),
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.only(
+            left: 8.0,
+            right: 8,
+            bottom: 8.0,
+          ), // Reduced padding
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              // Add animated transition for content switching
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  return SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(0.1, 0),
+                      end: Offset.zero,
+                    ).animate(
+                      CurvedAnimation(
+                        parent: animation,
+                        curve: Curves.easeInOut,
+                      ),
+                    ),
+                    child: FadeTransition(opacity: animation, child: child),
+                  );
+                },
+                child: _buildContentForState(navState),
+              ),
+              const Gap(16), // Reduced from 32 to 16
+            ],
+          ),
+        ),
       ),
     );
+  }
+
+  Widget _buildContentForState(int navState) {
+    // Use a key to ensure AnimatedSwitcher recognizes content changes
+    final contentKey = ValueKey(navState);
+
+    return Container(
+      key: contentKey,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: _getContentWidget(navState),
+      ),
+    );
+  }
+
+  Widget _getContentWidget(int navState) {
+    if (navState == ProfileNavigationState.info.value) {
+      return PupilProfileInfosContent(pupil: pupil);
+    } else if (navState == ProfileNavigationState.language.value) {
+      return PupilProfileCommunicationContent(pupil: pupil);
+    } else if (navState == ProfileNavigationState.credit.value) {
+      return PupilProfileCreditContent(pupil: pupil);
+    } else if (navState == ProfileNavigationState.attendance.value) {
+      return PupilAttendanceContent(pupil: pupil);
+    } else if (navState == ProfileNavigationState.schooldayEvent.value) {
+      return PupilProfileSchooldayEventsContent(pupil: pupil);
+    } else if (navState == ProfileNavigationState.lists.value) {
+      return PupilSchoolListsContentCard(pupil: pupil);
+    } else if (navState == ProfileNavigationState.authorization.value) {
+      return PupilProfileAuthorizationContent(pupil: pupil);
+    } else if (navState == ProfileNavigationState.learningSupport.value) {
+      return PupilProfileLearningSupportContent(pupil: pupil);
+    } else if (navState == ProfileNavigationState.learning.value) {
+      return PupilLearningContent(pupil: pupil);
+    } else {
+      return PupilProfileInfosContent(pupil: pupil);
+    }
   }
 }

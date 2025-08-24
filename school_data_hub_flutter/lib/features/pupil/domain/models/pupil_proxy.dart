@@ -9,9 +9,10 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart'
 import 'package:watch_it/watch_it.dart';
 
 class PupilProxy with ChangeNotifier {
-  PupilProxy(
-      {required PupilData pupilData, required PupilIdentity pupilIdentity})
-      : _pupilIdentity = pupilIdentity {
+  PupilProxy({
+    required PupilData pupilData,
+    required PupilIdentity pupilIdentity,
+  }) : _pupilIdentity = pupilIdentity {
     updatePupil(pupilData);
   }
 
@@ -148,7 +149,7 @@ class PupilProxy with ChangeNotifier {
 
   List<PupilAuthorization>? get authorizations => _pupilData.authorizations;
 
-// after school care related
+  // after school care related
 
   AfterSchoolCare? get afterSchoolCare => _pupilData.afterSchoolCare;
 
@@ -193,7 +194,10 @@ class PupilProxy with ChangeNotifier {
 
   List<SupportGoal>? get supportGoals => _pupilData.supportGoals;
 
-// schoolday related
+  List<LearningSupportPlan>? get individualLearningPlans =>
+      _pupilData.learningSupportPlans;
+
+  // schoolday related
 
   List<SchooldayEvent>? get schooldayEvents => _pupilData.schooldayEvents;
 }

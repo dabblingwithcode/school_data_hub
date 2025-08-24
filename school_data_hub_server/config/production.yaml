@@ -7,7 +7,7 @@
 # Configuration for the main API server.
 apiServer:
   port: 8080
-  publicHost: api.examplepod.com
+  publicHost: serverpoddatahub.hermannschule.de
   publicPort: 443
   publicScheme: https
   maxRequestSize: 10485760 # 10 MB in bytes
@@ -15,14 +15,14 @@ apiServer:
 # Configuration for the Insights server.
 insightsServer:
   port: 8081
-  publicHost: insights.examplepod.com
+  publicHost: datahubinsights.hermannschule.de
   publicPort: 443
   publicScheme: https
 
 # Configuration for the web server.
 webServer:
   port: 8082
-  publicHost: app.examplepod.com
+  publicHost: datahubweb.examplepod.com
   publicPort: 443
   publicScheme: https
 
@@ -31,7 +31,7 @@ webServer:
 # If you are connecting on a public IP (e.g. on AWS or Google Cloud Run), you
 # connect on the public IP of the database e.g. database.examplepod.com.
 database:
-  host: database.private-production.examplepod.com
+  host: serverpoddatabase.hermannschule.de
   port: 5432
   name: serverpod
   user: postgres

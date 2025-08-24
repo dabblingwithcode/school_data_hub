@@ -5,6 +5,18 @@ import 'package:watch_it/watch_it.dart';
 final _client = di<Client>();
 
 class LearningSupportApiService {
+  //- LEARNING SUPPORT PLANS ------------------------------------------
+
+  Future<LearningSupportPlan?> postLearningSupportPlan(
+    LearningSupportPlan plan,
+  ) async {
+    final response = await ClientHelper.apiCall(
+      call: () => _client.learningSupportPlan.createLearningSupportPlan(plan),
+      errorMessage: 'Fehler beim Erstellen des Förderplans',
+    );
+    return response;
+  }
+
   //- SUPPORT CATEGORIES --------------------------------------------------
 
   //- fetch goal categories
@@ -19,16 +31,24 @@ class LearningSupportApiService {
 
   //- STATUSES ---------------------------------------------------------
 
-  Future<PupilData?> postSupportCategoryStatus(
-      {required int pupilId,
-      required int supportCategoryId,
-      required int learningSupportPlanId,
-      required int status,
-      required String comment,
-      required String createdBy}) async {
+  Future<PupilData?> postSupportCategoryStatus({
+    required int pupilId,
+    required int supportCategoryId,
+    required int learningSupportPlanId,
+    required int status,
+    required String comment,
+    required String createdBy,
+  }) async {
     final response = await ClientHelper.apiCall(
-      call: () => _client.learningSupportPlan.postSupportCategoryStatus(pupilId,
-          supportCategoryId, learningSupportPlanId, status, comment, createdBy),
+      call:
+          () => _client.learningSupportPlan.postSupportCategoryStatus(
+            pupilId,
+            supportCategoryId,
+            learningSupportPlanId,
+            status,
+            comment,
+            createdBy,
+          ),
       errorMessage: 'Fehler beim Posten des Status',
     );
 
@@ -38,25 +58,38 @@ class LearningSupportApiService {
   //- update category status
 
   Future<SupportCategoryStatus?> updateCategoryStatus(
-      int pupilId,
-      int statusId,
-      int? status,
-      String? comment,
-      String? createdBy,
-      DateTime? createdAt) async {
+    int pupilId,
+    int statusId,
+    int? status,
+    String? comment,
+    String? createdBy,
+    DateTime? createdAt,
+  ) async {
     final response = await ClientHelper.apiCall(
-      call: () => _client.learningSupportPlan.updateCategoryStatus(
-          pupilId, statusId, status, comment, createdBy, createdAt),
+      call:
+          () => _client.learningSupportPlan.updateCategoryStatus(
+            pupilId,
+            statusId,
+            status,
+            comment,
+            createdBy,
+            createdAt,
+          ),
       errorMessage: 'Fehler beim Aktualisieren des Status',
     );
     return response;
   }
 
   Future<PupilData?> deleteSupportCategoryStatus(
-      int pupilId, int statusId) async {
+    int pupilId,
+    int statusId,
+  ) async {
     final pupil = await ClientHelper.apiCall(
-      call: () => _client.learningSupportPlan
-          .deleteSupportCategoryStatus(pupilId, statusId),
+      call:
+          () => _client.learningSupportPlan.deleteSupportCategoryStatus(
+            pupilId,
+            statusId,
+          ),
       errorMessage: 'Fehler beim Löschen des Status',
     );
 
@@ -67,15 +100,22 @@ class LearningSupportApiService {
 
   //- post category goal
 
-  Future<PupilData?> postNewCategoryGoal(
-      {required int supportCategoryId,
-      required int pupilId,
-      required String description,
-      required String strategies,
-      required String createdBy}) async {
+  Future<PupilData?> postNewCategoryGoal({
+    required int supportCategoryId,
+    required int pupilId,
+    required String description,
+    required String strategies,
+    required String createdBy,
+  }) async {
     final updatedPupil = await ClientHelper.apiCall(
-      call: () => _client.learningSupportPlan.postCategoryGoal(
-          pupilId, supportCategoryId, description, strategies, createdBy),
+      call:
+          () => _client.learningSupportPlan.postCategoryGoal(
+            pupilId,
+            supportCategoryId,
+            description,
+            strategies,
+            createdBy,
+          ),
     );
 
     return updatedPupil;
