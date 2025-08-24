@@ -5,8 +5,11 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
+import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/widgets/roles_dropdown.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _userManager = di<UserManager>();
 
 class CreateUserPage extends WatchingWidget {
   const CreateUserPage({super.key});
@@ -263,16 +266,19 @@ class CreateUserPage extends WatchingWidget {
                       );
                       return;
                     }
-                    // TODO: refactor this and put it in a manager
-                    await di<Client>().admin.createUser(
+
+                    await _userManager.createUser(
                       userName: userNameController.text,
                       fullName: fullNameController.text,
                       email: contactController.text,
                       password: passwordController.text,
-                      role: role.value,
-                      timeUnits: int.tryParse(timeUnitsController.text)!,
-                      scopeNames: [],
+                      role: watchedSetAsAdmin ? Role.admin : watchedRole,
+                      timeUnits: int.tryParse(timeUnitsController.text) ?? 0,
+                      credit: int.tryParse(creditController.text) ?? 0,
+                      contact: contactController.text,
+                      scopeNames: watchedSetAsAdmin ? ['admin'] : ['standard'],
                     );
+
                     if (context.mounted) {
                       Navigator.pop(context);
                     }

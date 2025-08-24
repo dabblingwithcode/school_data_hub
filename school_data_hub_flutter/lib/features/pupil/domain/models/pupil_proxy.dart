@@ -37,6 +37,7 @@ class PupilProxy with ChangeNotifier {
   bool pupilIsDirty = false;
 
   void updatePupil(PupilData pupilData) {
+    //- TODO ADVICE: Would it make sense?
     //if (pupilData == _pupilData) return;
     _pupilData = pupilData;
     // ignore: prefer_for_elements_to_map_fromiterable
@@ -199,5 +200,6 @@ class PupilProxy with ChangeNotifier {
 
   // schoolday related
 
+  List<MissedSchoolday>? get missedSchooldays => _pupilData.missedSchooldays;
   List<SchooldayEvent>? get schooldayEvents => _pupilData.schooldayEvents;
 }

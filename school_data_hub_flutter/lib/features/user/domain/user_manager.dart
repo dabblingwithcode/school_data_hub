@@ -45,7 +45,7 @@ class UserManager {
     required String fullName,
     required String password,
     required String email,
-    required bool isAdmin,
+
     required int timeUnits,
     required int credit,
     required String contact,

@@ -164,8 +164,8 @@ class ScanToolsPage extends WatchingWidget {
                   ),
                 ),
                 const Gap(20),
-                (Platform.isWindows || Platform.isMacOS) &&
-                        _sessionManager.isAdmin
+                (Platform.isWindows || Platform.isMacOS)
+                    // &&                        _sessionManager.isAdmin
                     ? ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(

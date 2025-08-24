@@ -5,6 +5,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart
 import 'package:school_data_hub_flutter/features/pupil/presentation/birthdays_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identity_stream_page/pupil_identity_stream_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
+import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
 import 'package:watch_it/watch_it.dart';
 
 class SettingsToolsSection extends AbstractSettingsSection {
@@ -25,9 +26,9 @@ class SettingsToolsSection extends AbstractSettingsSection {
           leading: const Icon(Icons.bar_chart_rounded),
           title: const Text('Statistik-Zahlen ansehen'),
           onPressed: (context) {
-            // Navigator.of(context).push(MaterialPageRoute(
-            //   builder: (ctx) => const Statistics(),
-            // ));
+            Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (ctx) => const Statistics()));
           },
         ),
         SettingsTile.navigation(

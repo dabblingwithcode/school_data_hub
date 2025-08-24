@@ -7,9 +7,9 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/select_users_page/widgets/select_users_list_card.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/select_users_page/widgets/select_users_search_bar.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/select_users_page/widgets/select_users_view_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/features/user/presentation/select_users/widgets/select_users_list_card.dart';
+import 'package:school_data_hub_flutter/features/user/presentation/select_users/widgets/select_users_search_bar.dart';
+import 'package:school_data_hub_flutter/features/user/presentation/select_users/widgets/select_users_view_bottom_navbar.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _userManager = di<UserManager>();
