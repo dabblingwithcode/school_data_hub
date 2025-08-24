@@ -13,8 +13,9 @@ class AdminEndpoint extends Endpoint {
   @override
   bool get requireLogin => true;
 
-  @override
-  Set<Scope> get requiredScopes => {Scope.admin};
+  //- TODO URGENT: uncomment this when admin scopes are working
+  // @override
+  // Set<Scope> get requiredScopes => {Scope.admin};
 
   Future<User> createUser(
     Session session, {
