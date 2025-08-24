@@ -10,12 +10,11 @@ import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
 /// The endpoint for admin operations.
 /// This endpoint requires the user to be logged in and have admin scope.
 class AdminEndpoint extends Endpoint {
-  // TODO: Uncomment this in production!
-  // @override
-  // bool get requireLogin => true;
+  @override
+  bool get requireLogin => true;
 
-  // @override
-  // Set<Scope> get requiredScopes => {Scope.admin};
+  @override
+  Set<Scope> get requiredScopes => {Scope.admin};
 
   Future<User> createUser(
     Session session, {
