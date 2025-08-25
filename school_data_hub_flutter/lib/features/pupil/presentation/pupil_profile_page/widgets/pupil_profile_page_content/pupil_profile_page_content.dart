@@ -32,8 +32,8 @@ class PupilProfilePageContent extends WatchingWidget {
         physics: const BouncingScrollPhysics(),
         child: Padding(
           padding: const EdgeInsets.only(
-            left: 8.0,
-            right: 8,
+            left: 4,
+            right: 4,
             bottom: 8.0,
           ), // Reduced padding
           child: Column(

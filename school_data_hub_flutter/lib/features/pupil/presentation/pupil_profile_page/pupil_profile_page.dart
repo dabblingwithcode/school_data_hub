@@ -26,60 +26,56 @@ class PupilProfilePage extends WatchingWidget {
       body: RefreshIndicator(
         onRefresh: () async => _pupilManager.updatePupilData(pupil.pupilId),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 5.0, top: 5, right: 5),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 800),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: CustomScrollView(
-                        dragStartBehavior: DragStartBehavior.down,
-                        slivers: [
-                          SliverAppBar(
-                            systemOverlayStyle: const SystemUiOverlayStyle(
-                              statusBarColor:
-                                  AppColors.pupilProfileBackgroundColor,
-                            ),
-                            pinned: false,
-                            floating: true,
-                            scrolledUnderElevation: null,
-                            automaticallyImplyLeading: false,
-                            leading: null,
-                            backgroundColor:
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 800),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: CustomScrollView(
+                      dragStartBehavior: DragStartBehavior.down,
+                      slivers: [
+                        const SliverGap(5),
+                        SliverAppBar(
+                          systemOverlayStyle: const SystemUiOverlayStyle(
+                            statusBarColor:
                                 AppColors.pupilProfileBackgroundColor,
-                            collapsedHeight: 140,
-                            expandedHeight: 140.0,
-                            stretch: false,
-                            elevation: 0,
-                            flexibleSpace: FlexibleSpaceBar(
-                              expandedTitleScale: 1,
-                              collapseMode: CollapseMode.none,
-                              titlePadding: const EdgeInsets.only(
-                                left: 5,
-                                top: 5,
-                                right: 5,
-                                bottom: 5,
-                              ),
-                              title: PupilProfileHeadingCard(
-                                passedPupil: pupil,
-                              ),
-                            ),
                           ),
-                          SliverToBoxAdapter(
-                            child: PupilProfilePageContent(pupil: pupil),
+                          pinned: false,
+                          floating: true,
+                          scrolledUnderElevation: null,
+                          automaticallyImplyLeading: false,
+                          leading: null,
+                          backgroundColor:
+                              AppColors.pupilProfileBackgroundColor,
+                          collapsedHeight: 150,
+                          expandedHeight: 150,
+                          stretch: false,
+                          elevation: 0,
+                          flexibleSpace: FlexibleSpaceBar(
+                            expandedTitleScale: 1,
+                            collapseMode: CollapseMode.none,
+                            // titlePadding: const EdgeInsets.only(
+                            //   left: 5,
+                            //   top: 5,
+                            //   right: 5,
+                            //   bottom: 5,
+                            // ),
+                            title: PupilProfileHeadingCard(passedPupil: pupil),
                           ),
-                          const SliverGap(60),
-                        ],
-                      ),
+                        ),
+                        SliverToBoxAdapter(
+                          child: PupilProfilePageContent(pupil: pupil),
+                        ),
+                        const SliverGap(60),
+                      ],
                     ),
-                    PupilProfileNavigation(
-                      boxWidth: MediaQuery.of(context).size.width,
-                      //MediaQuery.of(context).size.width / 5,
-                    ),
-                  ],
-                ),
+                  ),
+                  PupilProfileNavigation(
+                    boxWidth: MediaQuery.of(context).size.width,
+                    //MediaQuery.of(context).size.width / 5,
+                  ),
+                ],
               ),
             ),
           ),

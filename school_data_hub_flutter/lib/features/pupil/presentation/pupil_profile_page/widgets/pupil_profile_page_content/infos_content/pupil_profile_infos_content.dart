@@ -76,7 +76,7 @@ class PupilProfileInfosContent extends StatelessWidget {
               ],
             ),
           ),
-          const Gap(16), // Reduced from 24 to 16
+          const Gap(8), // Reduced from 24 to 16
           // Special Information Section
           _buildInfoSection(
             icon: Icons.priority_high_rounded,
@@ -149,7 +149,7 @@ class PupilProfileInfosContent extends StatelessWidget {
               ),
             ),
           ),
-          const Gap(12), // Reduced from 20 to 12
+          const Gap(8),
           // Basic Information Section
           _buildInfoSection(
             icon: Icons.person_outline,
@@ -176,7 +176,7 @@ class PupilProfileInfosContent extends StatelessWidget {
               ],
             ),
           ),
-          const Gap(12), // Reduced from 20 to 12
+          const Gap(8),
           // Contact Information Section
           _buildInfoSection(
             icon: Icons.contact_phone_outlined,
@@ -397,7 +397,7 @@ class PupilProfileInfosContent extends StatelessWidget {
               ],
             ),
           ),
-          const Gap(12), // Reduced from 20 to 12
+          const Gap(8),
           // Authorizations Section
           _buildInfoSection(
             icon: Icons.verified_user_outlined,
@@ -410,7 +410,7 @@ class PupilProfileInfosContent extends StatelessWidget {
               ],
             ),
           ),
-          const Gap(12), // Reduced from 20 to 12
+          const Gap(8),
           // Siblings Section
           _buildInfoSection(
             icon: Icons.family_restroom_outlined,
@@ -559,7 +559,7 @@ class PupilProfileInfosContent extends StatelessWidget {
     required Widget child,
   }) {
     return Container(
-      padding: const EdgeInsets.all(12), // Reduced from 20 to 12
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12), // Reduced from 16 to 12
         border: Border.all(
@@ -578,7 +578,7 @@ class PupilProfileInfosContent extends StatelessWidget {
               Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 18, // Reduced from 20 to 18
+                  fontSize: 20, // Reduced from 20 to 18
                   fontWeight: FontWeight.bold,
                   color: AppColors.backgroundColor,
                 ),
@@ -603,7 +603,7 @@ class PupilProfileInfosContent extends StatelessWidget {
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        vertical: 8,
+        vertical: 2,
         horizontal: 12,
       ), // Reduced padding
       decoration: BoxDecoration(

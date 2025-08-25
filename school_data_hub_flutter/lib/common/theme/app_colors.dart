@@ -8,8 +8,10 @@ class AppColors {
   static const accentColor = Color.fromRGBO(252, 160, 39, 1);
   static const canvasColor = Color(0xfff2f2f7);
   static const gridViewColor = Color.fromRGBO(252, 160, 39, 1);
-  static const pupilProfileBackgroundColor = Color(0xfff2f2f7);
-  static const pupilProfileCardColor = Color.fromARGB(255, 195, 195, 253);
+  static const pupilProfileBackgroundColor = Color.fromARGB(255, 215, 215, 235);
+  static const pupilProfileCardColor = Color(
+    0xfff2f2f7,
+  ); // Color.fromARGB(255, 195, 195, 253);
   static const cardInCardColor = Color.fromARGB(255, 248, 248, 255);
   static const cardInCardBorderColor = Color.fromARGB(255, 195, 195, 253);
   static const notProcessedColor = Color.fromARGB(255, 249, 202, 131);

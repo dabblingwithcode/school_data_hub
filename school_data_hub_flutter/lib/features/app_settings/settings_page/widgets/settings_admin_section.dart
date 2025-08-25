@@ -10,6 +10,7 @@ import 'package:school_data_hub_flutter/common/widgets/qr/qr_utilites.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/set_matrix_environment_page/set_matrix_environment_controller.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/pupil_matrix_contacts_list_page/pupils_matrix_contacts_list_page.dart';
@@ -206,6 +207,16 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
           },
           leading: const Icon(Icons.compare_arrows_rounded),
           title: const Text('Kompetenzen aus Datei importieren'),
+
+          //onPressed:
+        ),
+        SettingsTile.navigation(
+          onPressed: (context) async {
+            await di<SupportCategoryManager>()
+                .importSupportCategoriesFromFile();
+          },
+          leading: const Icon(Icons.compare_arrows_rounded),
+          title: const Text('Förderkategorien aus Datei importieren'),
 
           //onPressed:
         ),
