@@ -568,19 +568,19 @@ class _DevOpsEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<void> resetDbAndCreateAdmin(
+  _i3.Future<void> resetDatabaseAndCreateAdmin(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
         endpoint: 'devOps',
-        method: 'resetDbAndCreateAdmin',
+        method: 'resetDatabaseAndCreateAdmin',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'devOps',
-          methodName: 'resetDbAndCreateAdmin',
+          methodName: 'resetDatabaseAndCreateAdmin',
           parameters: _i1.testObjectToJson({}),
           serializationManager: _serializationManager,
         );

@@ -63,7 +63,7 @@ class UserManager {
       scopeNames: scopeNames,
     );
 
-    addUser(user);
+    _addUser(user);
 
     _notificationService.showSnackBar(
       NotificationType.success,
@@ -135,7 +135,7 @@ class UserManager {
     _users.value = users;
   }
 
-  void addUser(User user) {
+  void _addUser(User user) {
     final List<User> users = List.from(_users.value);
     users.add(user);
 

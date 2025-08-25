@@ -442,15 +442,15 @@ class Endpoints extends _i1.EndpointDispatch {
       name: 'devOps',
       endpoint: endpoints['devOps']!,
       methodConnectors: {
-        'resetDbAndCreateAdmin': _i1.MethodConnector(
-          name: 'resetDbAndCreateAdmin',
+        'resetDatabaseAndCreateAdmin': _i1.MethodConnector(
+          name: 'resetDatabaseAndCreateAdmin',
           params: {},
           call: (
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
               (endpoints['devOps'] as _i3.DevOpsEndpoint)
-                  .resetDbAndCreateAdmin(session),
+                  .resetDatabaseAndCreateAdmin(session),
         )
       },
     );

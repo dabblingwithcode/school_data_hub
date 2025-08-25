@@ -8,7 +8,7 @@ class DevOpsEndpoint extends Endpoint {
   // @override
   // Set<Scope> get requiredScopes => {Scope.admin};
 
-  Future<void> resetDbAndCreateAdmin(Session session) async {
+  Future<void> resetDatabaseAndCreateAdmin(Session session) async {
     // Get all table names from the database
     final result = await session.db.unsafeQuery(
       'SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = \'public\';',
