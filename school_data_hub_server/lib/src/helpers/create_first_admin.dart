@@ -16,7 +16,7 @@ Future<User?> createFirstAdmin(
   // Create the userinfo
   var adminUser = await auth.Emails.createUser(
     session,
-    'ADM', // User name
+    'ADM',
     adminEmail,
     adminPassword,
   );

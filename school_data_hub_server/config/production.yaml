@@ -10,7 +10,7 @@ apiServer:
   publicHost: serverpoddatahub.hermannschule.de
   publicPort: 443
   publicScheme: https
-  maxRequestSize: 10485760 # 10 MB in bytes
+#  maxRequestSize: 10485760 # 10 MB in bytes
 
 # Configuration for the Insights server.
 insightsServer:

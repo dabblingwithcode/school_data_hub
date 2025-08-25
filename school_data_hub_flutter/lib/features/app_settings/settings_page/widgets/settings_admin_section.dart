@@ -195,7 +195,7 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
                   'Wirklich alles löschen?\n\nAlle Informationen im Server werden gelöscht!',
             );
             if (confirm == true && context.mounted) {
-              await di<Client>().devOps.resetDbAndCreateAdmin();
+              await di<Client>().devOps.resetDatabaseAndCreateAdmin();
               di<HubSessionManager>().signOutDevice();
 
               DiManager.unregisterManagersDependingOnSession();

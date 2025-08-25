@@ -1,4 +1,4 @@
-import 'package:school_data_hub_server/src/helpers/create_first_admin.dart';
+import 'package:school_data_hub_server/src/helpers/populate_test_environment.dart';
 import 'package:serverpod/serverpod.dart';
 
 class DevOpsEndpoint extends Endpoint {
@@ -22,6 +22,6 @@ class DevOpsEndpoint extends Endpoint {
     }
 
     // Create a default admin user
-    await createFirstAdmin(session);
+    await populateTestEnvironment(session);
   }
 }

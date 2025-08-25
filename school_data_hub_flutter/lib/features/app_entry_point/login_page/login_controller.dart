@@ -8,7 +8,6 @@ import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
-import 'package:school_data_hub_flutter/core/env/utils/env_utils.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/loading_page.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_page.dart';
@@ -35,7 +34,7 @@ class LoginController extends State<Login> {
   String selectedEnv = '';
 
   @override
-  initState() {
+  void initState() {
     super.initState();
     if (_envManager.envIsReady.value) {
       envs = _envManager.envs;
@@ -64,28 +63,37 @@ class LoginController extends State<Login> {
     });
   }
 
-  scanCredentials(BuildContext context) async {
+  void scanCredentials(BuildContext context) async {
     final locale = AppLocalizations.of(context)!;
-    final String? scanResponse =
-        await qrScanner(context: context, overlayText: locale.scanAccessCode);
+    final String? scanResponse = await qrScanner(
+      context: context,
+      overlayText: locale.scanAccessCode,
+    );
     if (scanResponse != null) {
       final loginData = await json.decode(scanResponse);
       final String username = loginData['username'];
       final String password = loginData['password'];
 
-      attemptLogin(username: username, password: password);
+      di<HubSessionManager>().attemptLogin(
+        username: username,
+        password: password,
+      );
     } else {
       _notificationService.showSnackBar(
-          NotificationType.warning, locale.scanAborted);
+        NotificationType.warning,
+        locale.scanAborted,
+      );
 
       return;
     }
   }
 
-  scanEnv(BuildContext context) async {
+  void scanEnv(BuildContext context) async {
     final locale = AppLocalizations.of(context)!;
-    final String? scanResponse =
-        await qrScanner(context: context, overlayText: locale.scanSchoolId);
+    final String? scanResponse = await qrScanner(
+      context: context,
+      overlayText: locale.scanSchoolId,
+    );
     if (scanResponse != null) {
       _envManager.importNewEnv(scanResponse);
       setState(() {
@@ -96,60 +104,29 @@ class LoginController extends State<Login> {
       return;
     } else {
       _notificationService.showSnackBar(
-          NotificationType.warning, 'Keine Daten gescannt');
+        NotificationType.warning,
+        'Keine Daten gescannt',
+      );
       return;
     }
   }
 
   List<DropdownMenuItem<String>> get envDropdownItems {
     return envs.keys
-        .map((String key) => DropdownMenuItem<String>(
-              value: key,
-              child: Text(key),
-            ))
+        .map(
+          (String key) =>
+              DropdownMenuItem<String>(value: key, child: Text(key)),
+        )
         .toList();
   }
 
   Future<void> loginWithTextCredentials() async {
     final String username = usernameController.text;
     final String password = passwordController.text;
-    await attemptLogin(username: username, password: password);
-  }
-
-  Future<void> attemptLogin(
-      {required String username, required String password}) async {
-    try {
-      final deviceInfos = await EnvUtils.getDeviceNameAndId();
-      final authResponse = await _client.auth.login(
-        username,
-        password,
-        DeviceInfo(
-            deviceId: deviceInfos.deviceId, deviceName: deviceInfos.deviceName),
-      );
-
-      if (authResponse.response.success) {
-        _notificationService.showSnackBar(
-            NotificationType.success, 'Erfolgreich eingeloggt!');
-        await di<HubSessionManager>().registerSignedInUser(
-          authResponse.response.userInfo!,
-          authResponse.response.keyId!,
-          authResponse.response.key!,
-        );
-
-        /// Don't forget to set the flag in [EnvManager] to false
-        /// to get to the login screen.
-        _envManager.setUserAuthenticatedOnlyByHubSessionManager(true);
-        return;
-      } else {
-        _notificationService.showInformationDialog(
-            'Login fehlgeschlagen: ${authResponse.response.failReason}');
-
-        return;
-      }
-    } catch (e) {
-      _notificationService.showInformationDialog('Fehler beim Einloggen: $e');
-      return;
-    }
+    await di<HubSessionManager>().attemptLogin(
+      username: username,
+      password: password,
+    );
   }
 
   Future<void> importEnvFromTxt() async {

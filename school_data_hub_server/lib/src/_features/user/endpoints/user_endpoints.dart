@@ -8,7 +8,8 @@ class UserEndpoint extends Endpoint {
 
   Future<User?> getCurrentUser(Session session) async {
     // Get the authenticated user's ID
-    var userId = (await session.authenticated)?.userId;
+    final authenticatedUder = await session.authenticated;
+    var userId = authenticatedUder?.userId;
     if (userId == null) {
       return null;
     }

@@ -6,9 +6,11 @@ import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/auth/hub_auth_key_manager.dart';
 import 'package:school_data_hub_flutter/core/di/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/core/env/utils/env_utils.dart';
 import 'package:serverpod_auth_client/serverpod_auth_client.dart'
     as auth_client;
 import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
@@ -22,6 +24,7 @@ class HubSessionManager with ChangeNotifier {
   final _log = Logger('HubSessionManager');
 
   final _envManager = di<EnvManager>();
+  final _notificationService = di<NotificationService>();
 
   final _client = di<Client>();
 
@@ -157,6 +160,49 @@ class HubSessionManager with ChangeNotifier {
     }
   }
 
+  Future<void> attemptLogin({
+    required String username,
+    required String password,
+  }) async {
+    try {
+      final deviceInfos = await EnvUtils.getDeviceNameAndId();
+      final authResponse = await _client.auth.login(
+        username,
+        password,
+        DeviceInfo(
+          deviceId: deviceInfos.deviceId,
+          deviceName: deviceInfos.deviceName,
+        ),
+      );
+
+      if (authResponse.response.success) {
+        _notificationService.showSnackBar(
+          NotificationType.success,
+          'Erfolgreich eingeloggt!',
+        );
+        await di<HubSessionManager>().registerSignedInUser(
+          authResponse.response.userInfo!,
+          authResponse.response.keyId!,
+          authResponse.response.key!,
+        );
+
+        /// Don't forget to set the flag in [EnvManager] to false
+        /// to get to the login screen.
+        _envManager.setUserAuthenticatedOnlyByHubSessionManager(true);
+        return;
+      } else {
+        _notificationService.showInformationDialog(
+          'Login fehlgeschlagen: ${authResponse.response.failReason}',
+        );
+
+        return;
+      }
+    } catch (e) {
+      _notificationService.showInformationDialog('Fehler beim Einloggen: $e');
+      return;
+    }
+  }
+
   /// Signs the user out from all connected devices.
   /// Returns true if successful.
   Future<bool> signOutAllDevices() async {
@@ -191,6 +237,16 @@ class HubSessionManager with ChangeNotifier {
           'User was authenticated by the server. Registering managers depending on authentication...',
         );
 
+        // final User user = await _client.admin.createUser(
+        //   userName: 'XYZ',
+        //   fullName: 'Administrator',
+        //   email: 'admin2',
+        //   password: 'admin',
+        //   role: Role.admin,
+        //   timeUnits: 0,
+        //   scopeNames: ['admin'],
+        // );
+        // await attemptLogin(username: 'admin2', password: 'admin');
         _user = await _client.user.getCurrentUser();
 
         notifyListeners();
