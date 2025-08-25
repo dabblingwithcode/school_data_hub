@@ -180,8 +180,6 @@ void withServerpod(
 class TestEndpoints {
   late final _AdminEndpoint admin;
 
-  late final _DevOpsEndpoint devOps;
-
   late final _MissedSchooldayEndpoint missedSchoolday;
 
   late final _AuthEndpoint auth;
@@ -241,10 +239,6 @@ class _InternalTestEndpoints extends TestEndpoints
     _i2.EndpointDispatch endpoints,
   ) {
     admin = _AdminEndpoint(
-      endpoints,
-      serializationManager,
-    );
-    devOps = _DevOpsEndpoint(
       endpoints,
       serializationManager,
     );
@@ -550,44 +544,6 @@ class _AdminEndpoint {
           _localUniqueSession,
           _localCallContext.arguments,
         ) as _i3.Future<Set<_i6.PupilData>>);
-        return _localReturnValue;
-      } finally {
-        await _localUniqueSession.close();
-      }
-    });
-  }
-}
-
-class _DevOpsEndpoint {
-  _DevOpsEndpoint(
-    this._endpointDispatch,
-    this._serializationManager,
-  );
-
-  final _i2.EndpointDispatch _endpointDispatch;
-
-  final _i2.SerializationManager _serializationManager;
-
-  _i3.Future<void> resetDatabaseAndCreateAdmin(
-      _i1.TestSessionBuilder sessionBuilder) async {
-    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
-      var _localUniqueSession =
-          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'devOps',
-        method: 'resetDatabaseAndCreateAdmin',
-      );
-      try {
-        var _localCallContext = await _endpointDispatch.getMethodCallContext(
-          createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'devOps',
-          methodName: 'resetDatabaseAndCreateAdmin',
-          parameters: _i1.testObjectToJson({}),
-          serializationManager: _serializationManager,
-        );
-        var _localReturnValue = await (_localCallContext.method.call(
-          _localUniqueSession,
-          _localCallContext.arguments,
-        ) as _i3.Future<void>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

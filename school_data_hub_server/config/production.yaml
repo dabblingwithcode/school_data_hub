@@ -7,7 +7,7 @@ maxRequestSize: 10485760
 # Configuration for the main API server.
 apiServer:
   port: 8080
-  publicHost: serverpoddatahub.hermannschule.de
+  publicHost: datahubserverpod.hermannschule.de
   publicPort: 443
   publicScheme: https
 #  maxRequestSize: 10485760 # 10 MB in bytes

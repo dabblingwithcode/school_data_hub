@@ -49,11 +49,6 @@ void createLocalStorageDirectories() {
 Future<void> populateTestEnvironment(Session session) async {
   await createFirstAdmin(session);
   try {
-    _log.fine('Admin user created successfully: ');
-    _log.fine('Email: admin');
-    _log.fine('Password: admin'); // Log the password for reference
-    _log.warning('You should NOT use this in production!');
-
     // Check if there is a folder 'test_data' in the project root directory
     final serverDir = Directory.current.path;
 

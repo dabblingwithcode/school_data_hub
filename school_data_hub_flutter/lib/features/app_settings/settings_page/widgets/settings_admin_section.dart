@@ -194,16 +194,6 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
               message:
                   'Wirklich alles löschen?\n\nAlle Informationen im Server werden gelöscht!',
             );
-            if (confirm == true && context.mounted) {
-              await di<Client>().devOps.resetDatabaseAndCreateAdmin();
-              di<HubSessionManager>().signOutDevice();
-
-              DiManager.unregisterManagersDependingOnSession();
-              _notificationService.showSnackBar(
-                NotificationType.success,
-                'Erfolgreich ausgeloggt!',
-              );
-            }
           },
           leading: const Icon(Icons.logout),
           title: const Text('Alles löschen und ausloggen'),

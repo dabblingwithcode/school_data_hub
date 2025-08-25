@@ -27,7 +27,7 @@ class AdminEndpoint extends Endpoint {
     required int timeUnits,
     required List<String> scopeNames,
   }) async {
-    session.log('Creating user: $userName, $email, $password');
+    session.log('Creating user: $userName, $email');
     final UserInfo? userInfo =
         await auth.Emails.createUser(session, userName, email, password);
 
