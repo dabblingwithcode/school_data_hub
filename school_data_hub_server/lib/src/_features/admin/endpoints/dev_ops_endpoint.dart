@@ -5,8 +5,8 @@ class DevOpsEndpoint extends Endpoint {
   @override
   bool get requireLogin => true;
 
-  @override
-  Set<Scope> get requiredScopes => {Scope.admin};
+  // @override
+  // Set<Scope> get requiredScopes => {Scope.admin};
 
   Future<void> resetDbAndCreateAdmin(Session session) async {
     // Get all table names from the database

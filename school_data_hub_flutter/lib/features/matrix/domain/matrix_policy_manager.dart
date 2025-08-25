@@ -26,12 +26,16 @@ class MatrixPolicyManager extends ChangeNotifier {
 
   final _log = Logger('MatrixPolicyManager');
 
-  MatrixPolicyManager(this._matrixUrl, this._corporalToken, this._matrixToken,
-      this._matrixAdminId)
-      : _matrixApiService = MatrixApiService(
-            matrixUrl: _matrixUrl,
-            corporalToken: _corporalToken,
-            matrixToken: _matrixToken) {}
+  MatrixPolicyManager(
+    this._matrixUrl,
+    this._corporalToken,
+    this._matrixToken,
+    this._matrixAdminId,
+  ) : _matrixApiService = MatrixApiService(
+        matrixUrl: _matrixUrl,
+        corporalToken: _corporalToken,
+        matrixToken: _matrixToken,
+      ) {}
 
   final _secureStorageKey = di<EnvManager>().storageKeyForMatrixCredentials;
 
@@ -76,11 +80,20 @@ class MatrixPolicyManager extends ChangeNotifier {
 
   Future<MatrixPolicyManager> init() async {
     _notificationService.showSnackBar(
-        NotificationType.success, 'Matrix-Räumeverwaltung wird geladen...');
+      NotificationType.success,
+      'Matrix-Räumeverwaltung wird geladen...',
+    );
     _roomManager = MatrixRoomManager(
-        matrixAdminId!, _matrixApiService, pendingChangesHandler);
-    _userManager = MatrixUserManager(_matrixApiService, pendingChangesHandler,
-        _matrixUrl, applyPolicyChanges);
+      matrixAdminId!,
+      _matrixApiService,
+      pendingChangesHandler,
+    );
+    _userManager = MatrixUserManager(
+      _matrixApiService,
+      pendingChangesHandler,
+      _matrixUrl,
+      applyPolicyChanges,
+    );
     await fetchMatrixPolicy();
     // Initialize the sub-managers with callback functions instead of direct ValueNotifier access
 
@@ -92,23 +105,28 @@ class MatrixPolicyManager extends ChangeNotifier {
     _policyPendingChanges.value = newValue;
   }
 
-  void setMatrixEnvironmentValues(
-      {required String url,
-      required String policyToken,
-      required String matrixToken,
-      required String matrixAdmin}) async {
+  void setMatrixEnvironmentValues({
+    required String url,
+    required String policyToken,
+    required String matrixToken,
+    required String matrixAdmin,
+  }) async {
     _matrixUrl = url;
     _corporalToken = policyToken;
     _matrixToken = matrixToken;
     _matrixAdminId = matrixAdmin;
 
     _secureStorage.setString(
-        _secureStorageKey,
-        jsonEncode(MatrixCredentials(
-            url: url,
-            matrixToken: matrixToken,
-            policyToken: policyToken,
-            matrixAdmin: matrixAdmin)));
+      _secureStorageKey,
+      jsonEncode(
+        MatrixCredentials(
+          url: url,
+          matrixToken: matrixToken,
+          policyToken: policyToken,
+          matrixAdmin: matrixAdmin,
+        ),
+      ),
+    );
 
     await fetchMatrixPolicy();
   }
@@ -119,7 +137,9 @@ class MatrixPolicyManager extends ChangeNotifier {
 
     _sessionManager.changeMatrixPolicyManagerRegistrationStatus(false);
     _notificationService.showSnackBar(
-        NotificationType.success, 'Matrix-Räumeverwaltung deaktiviert');
+      NotificationType.success,
+      'Matrix-Räumeverwaltung deaktiviert',
+    );
   }
 
   Future<void> fetchMatrixPolicy() async {
@@ -140,7 +160,9 @@ class MatrixPolicyManager extends ChangeNotifier {
     _userManager.setUsers(matrixUsers);
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Matrix-Konten geladen! Jetzt die Räume...');
+      NotificationType.success,
+      'Matrix-Konten geladen! Jetzt die Räume...',
+    );
 
     // Load rooms using the room manager
     await _roomManager.loadRoomsFromPolicy(policy.managedRoomIds);
@@ -156,6 +178,8 @@ class MatrixPolicyManager extends ChangeNotifier {
   Future<void> applyPolicyChanges() async {
     final updatedPolicy = MatrixPolicyHelper.refreshMatrixPolicy();
     _matrixPolicy = updatedPolicy;
+
+    //- TODO URGENT: uncomment this when the backend is ready
     await _matrixApiService.putMatrixPolicy();
     _policyPendingChanges.value = false;
   }
