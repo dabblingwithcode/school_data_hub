@@ -2,15 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
-import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/app_helpers.dart';
 import 'package:school_data_hub_flutter/app_utils/shorebird_code_push.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_utilites.dart';
-import 'package:school_data_hub_flutter/core/di/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/set_matrix_environment_page/set_matrix_environment_controller.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/pupil_matrix_contacts_list_page/pupils_matrix_contacts_list_page.dart';
@@ -198,6 +197,15 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
           leading: const Icon(Icons.logout),
           title: const Text('Alles löschen und ausloggen'),
           description: const Text('Es wird alles gelöscht!'),
+
+          //onPressed:
+        ),
+        SettingsTile.navigation(
+          onPressed: (context) async {
+            await di<CompetenceManager>().importCompetencesFromFile();
+          },
+          leading: const Icon(Icons.compare_arrows_rounded),
+          title: const Text('Kompetenzen aus Datei importieren'),
 
           //onPressed:
         ),

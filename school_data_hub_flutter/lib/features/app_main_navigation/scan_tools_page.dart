@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/app_utils/pick_file_return_content_as_string.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
@@ -21,22 +22,21 @@ class ScanToolsPage extends WatchingWidget {
   const ScanToolsPage({super.key});
 
   void importFileWithWindows(String function) async {
+    final fileContent = await pickFileReturnContentAsString();
     FilePickerResult? result = await FilePicker.platform.pickFiles();
-    if (result != null) {
-      File file = File(result.files.single.path!);
-      String rawTextResult = await file.readAsString();
-      if (function == 'update_backend') {
-        _pupilIdentityManager.updateBackendPupilsFromSchoolPupilIdentitySource(
-          rawTextResult,
-        );
-      } else if (function == 'pupil_identities') {
-        _pupilIdentityManager.addOrUpdateNewPupilIdentities(
-          identitiesInStringLines: rawTextResult,
-        );
-      }
-    } else {
+    if (result == null || fileContent == null) {
       // User canceled the picker
       return;
+    }
+
+    if (function == 'update_backend') {
+      _pupilIdentityManager.updateBackendPupilsFromSchoolPupilIdentitySource(
+        fileContent,
+      );
+    } else if (function == 'pupil_identities') {
+      _pupilIdentityManager.addOrUpdateNewPupilIdentities(
+        identitiesInStringLines: fileContent,
+      );
     }
   }
 

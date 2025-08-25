@@ -237,16 +237,6 @@ class HubSessionManager with ChangeNotifier {
           'User was authenticated by the server. Registering managers depending on authentication...',
         );
 
-        final User user = await _client.admin.createUser(
-          userName: 'XYZ',
-          fullName: 'Administrator',
-          email: 'admin2',
-          password: 'admin',
-          role: Role.admin,
-          timeUnits: 0,
-          scopeNames: ['admin'],
-        );
-        await attemptLogin(username: 'admin2', password: 'admin');
         _user = await _client.user.getCurrentUser();
 
         notifyListeners();

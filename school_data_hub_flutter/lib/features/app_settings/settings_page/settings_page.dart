@@ -35,7 +35,7 @@ class SettingsPage extends StatelessWidget {
             contentPadding: const EdgeInsets.only(top: 10),
             sections: [
               const SettingsSessionSection(),
-              const SettingsAdminSection(),
+              if (isAdmin) const SettingsAdminSection(),
               const SettingsToolsSection(),
               SettingsSection(
                 title: const Padding(

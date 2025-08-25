@@ -14,13 +14,16 @@ class CompetenceCheckApiService {
     String? comment,
   }) async {
     final PupilData? pupil = await ClientHelper.apiCall(
-        call: () => _client.competenceCheck.postCompetenceCheck(
+      call:
+          () => _client.competenceCheck.postCompetenceCheck(
             competenceId: competenceId,
             pupilId: pupilId,
             score: 0,
             valueFactor: 1,
             comment: comment,
-            createdBy: createdBy));
+            createdBy: createdBy,
+          ),
+    );
     return pupil;
   }
 

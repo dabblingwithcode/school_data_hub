@@ -27,11 +27,11 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
 
     final locale = AppLocalizations.of(context)!;
 
-    // final int userCredit = di<HubSessionManager>().userCredit ?? 0;
-    // final String username =
-    //     watchPropertyValue(
-    //       (HubSessionManager x) => x.user,
-    //     )!.userInfo!.userName!;
+    final int userCredit = di<HubSessionManager>().userCredit ?? 0;
+    final String username =
+        watchPropertyValue(
+          (HubSessionManager x) => x.user,
+        )!.userInfo!.userName!;
 
     return SettingsSection(
       title: Text(
@@ -51,8 +51,8 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           //     di<PupilManager>().cleanPupilsAvatarIds(),
           leading: const Icon(Icons.account_circle_rounded),
           title: const Text('Benutzername'),
-          value: const Text(
-            'test', //  username,
+          value: Text(
+            username,
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           trailing: null,
@@ -70,22 +70,12 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
         SettingsTile.navigation(
           leading: const Icon(Icons.attach_money_rounded),
           title: const Text('Guthaben'),
-          value: const Text(
-            '0', // userCredit.toString(),
+          value: Text(
+            userCredit.toString(),
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
 
-        // SettingsTile.navigation(
-        //   leading: const Icon(Icons.punch_clock_rounded),
-        //   title: const Text('Token gültig noch:'),
-        //   value: Text(
-        //     SessionHelper.tokenLifetimeLeft(session.jwt!).toString(),
-        //     style: const TextStyle(
-        //       fontWeight: FontWeight.bold,
-        //     ),
-        //   ),
-        // ),
         SettingsTile.navigation(
           onPressed: (context) async {
             final confirm = await confirmationDialog(

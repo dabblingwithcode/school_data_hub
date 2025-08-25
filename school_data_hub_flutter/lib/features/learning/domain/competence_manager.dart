@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -31,8 +33,9 @@ class CompetenceManager {
   Map<int, int> get rootCompetencesMap => _rootCompetencesMap;
 
   Competence getCompetenceById(int publicId) {
-    return _competences.value
-        .firstWhere((element) => element.publicId == publicId);
+    return _competences.value.firstWhere(
+      (element) => element.publicId == publicId,
+    );
   }
 
   CompetenceManager();
@@ -63,12 +66,15 @@ class CompetenceManager {
 
       _rootCompetencesMap.clear();
 
-      _rootCompetencesMap =
-          CompetenceHelper.generateRootCompetencesMap(competences);
+      _rootCompetencesMap = CompetenceHelper.generateRootCompetencesMap(
+        competences,
+      );
     }
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Kompetenzen aktualisiert!');
+      NotificationType.success,
+      'Kompetenzen aktualisiert!',
+    );
 
     return;
   }
@@ -82,13 +88,16 @@ class CompetenceManager {
 
     _rootCompetencesMap.clear();
 
-    _rootCompetencesMap =
-        CompetenceHelper.generateRootCompetencesMap(competences);
+    _rootCompetencesMap = CompetenceHelper.generateRootCompetencesMap(
+      competences,
+    );
 
     di<CompetenceFilterManager>().refreshFilteredCompetences(competences);
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Kompetenzen aktualisiert!');
+      NotificationType.success,
+      'Kompetenzen aktualisiert!',
+    );
 
     return;
   }
@@ -105,16 +114,59 @@ class CompetenceManager {
       indicators: indicators,
     );
 
-    _competences.value = CompetenceHelper.sortCompetences(
-        [..._competences.value, newCompetence]);
-    di<CompetenceFilterManager>()
-        .refreshFilteredCompetences(_competences.value);
-    _rootCompetencesMap =
-        CompetenceHelper.generateRootCompetencesMap(_competences.value);
+    _competences.value = CompetenceHelper.sortCompetences([
+      ..._competences.value,
+      newCompetence,
+    ]);
+    di<CompetenceFilterManager>().refreshFilteredCompetences(
+      _competences.value,
+    );
+    _rootCompetencesMap = CompetenceHelper.generateRootCompetencesMap(
+      _competences.value,
+    );
     _notificationService.showSnackBar(
-        NotificationType.success, 'Kompetenz erstellt');
+      NotificationType.success,
+      'Kompetenz erstellt',
+    );
 
     return;
+  }
+
+  Future<void> importCompetencesFromFile() async {
+    FilePickerResult? pickedFile = await FilePicker.platform.pickFiles();
+    if (pickedFile != null) {
+      File file = File(pickedFile.files.single.path!);
+
+      final fileResponse = await ClientFileUpload.uploadFile(
+        file,
+        ServerStorageFolder.temp,
+      );
+
+      if (fileResponse.success == false) {
+        _notificationService.showSnackBar(
+          NotificationType.error,
+          'Die Datei konnte nicht hochgeladen werden!',
+        );
+        return;
+      }
+      final List<Competence> importedCompetences = await _client.admin
+          .importCompetencesFromJsonFile(fileResponse.path!);
+
+      final sortedCompetences = CompetenceHelper.sortCompetences(
+        importedCompetences,
+      );
+      _competences.value = sortedCompetences;
+
+      _rootCompetencesMap.clear();
+
+      _rootCompetencesMap = CompetenceHelper.generateRootCompetencesMap(
+        sortedCompetences,
+      );
+
+      di<CompetenceFilterManager>().refreshFilteredCompetences(
+        sortedCompetences,
+      );
+    }
   }
 
   Future<void> updateCompetenceProperty({
@@ -127,12 +179,15 @@ class CompetenceManager {
     final competenceListIndex = _competences.value.indexWhere(
       (element) => element.publicId == publicId,
     );
-    final competence = competenceListIndex != -1
-        ? _competences.value[competenceListIndex]
-        : null;
+    final competence =
+        competenceListIndex != -1
+            ? _competences.value[competenceListIndex]
+            : null;
     if (competence == null) {
       _notificationService.showSnackBar(
-          NotificationType.error, 'Kompetenz nicht gefunden');
+        NotificationType.error,
+        'Kompetenz nicht gefunden',
+      );
       return;
     }
 
@@ -142,8 +197,9 @@ class CompetenceManager {
       indicators: indicators != null ? indicators.value : competence.indicators,
       order: order != null ? order.value : competence.order,
     );
-    final verifiedUpdatedCompetence =
-        await _client.competence.updateCompetence(updatedCompetence);
+    final verifiedUpdatedCompetence = await _client.competence.updateCompetence(
+      updatedCompetence,
+    );
 
     final List<Competence> competences = List.from(_competences.value);
 
@@ -151,11 +207,14 @@ class CompetenceManager {
 
     _competences.value = competences;
 
-    di<CompetenceFilterManager>()
-        .refreshFilteredCompetences(_competences.value);
+    di<CompetenceFilterManager>().refreshFilteredCompetences(
+      _competences.value,
+    );
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Kompetenz aktualisiert');
+      NotificationType.success,
+      'Kompetenz aktualisiert',
+    );
 
     return;
   }
@@ -170,14 +229,19 @@ class CompetenceManager {
 
       _competences.value = competences;
 
-      di<CompetenceFilterManager>()
-          .refreshFilteredCompetences(_competences.value);
+      di<CompetenceFilterManager>().refreshFilteredCompetences(
+        _competences.value,
+      );
 
       _notificationService.showSnackBar(
-          NotificationType.success, 'Kompetenz gelöscht');
+        NotificationType.success,
+        'Kompetenz gelöscht',
+      );
     } else {
       _notificationService.showSnackBar(
-          NotificationType.error, 'Fehler beim Löschen der Kompetenz');
+        NotificationType.error,
+        'Fehler beim Löschen der Kompetenz',
+      );
     }
   }
 
@@ -189,19 +253,21 @@ class CompetenceManager {
     required String? groupId,
   }) async {
     final createdBy = di<HubSessionManager>().userName;
-    final PupilData? updatedPupilData =
-        await _competenceCheckApiService.postCompetenceCheck(
-      pupilId: pupilId,
-      competenceId: competenceId,
-      createdBy: createdBy!,
-    );
+    final PupilData? updatedPupilData = await _competenceCheckApiService
+        .postCompetenceCheck(
+          pupilId: pupilId,
+          competenceId: competenceId,
+          createdBy: createdBy!,
+        );
     if (updatedPupilData == null) {
       return;
     }
     di<PupilManager>().updatePupilProxyWithPupilData(updatedPupilData);
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Kompetenzcheck erstellt');
+      NotificationType.success,
+      'Kompetenzcheck erstellt',
+    );
 
     return;
   }
@@ -224,7 +290,9 @@ class CompetenceManager {
     // di<PupilManager>().updatePupilProxyWithPupilData(updatedPupilData);
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Kompetenzcheck erstellt');
+      NotificationType.success,
+      'Kompetenzcheck erstellt',
+    );
 
     return;
   }
@@ -248,7 +316,9 @@ class CompetenceManager {
     //   di<PupilManager>().updatePupilProxyWithPupilData(updatedPupilData);
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Kompetenzcheck aktualisiert');
+      NotificationType.success,
+      'Kompetenzcheck aktualisiert',
+    );
 
     return;
   }
@@ -283,8 +353,10 @@ class CompetenceManager {
     // return;
   }
 
-  Future<void> deleteCompetenceCheckFile(
-      {required String competenceCheckId, required String fileId}) async {
+  Future<void> deleteCompetenceCheckFile({
+    required String competenceCheckId,
+    required String fileId,
+  }) async {
     // final PupilData updatedPupilData =
     //     await _competenceCheckApiService.deleteCompetenceCheckFile(fileId);
 
@@ -297,8 +369,9 @@ class CompetenceManager {
   }
 
   Competence findCompetenceById(int competenceId) {
-    final Competence competence = _competences.value
-        .firstWhere((element) => element.publicId == competenceId);
+    final Competence competence = _competences.value.firstWhere(
+      (element) => element.publicId == competenceId,
+    );
 
     return competence;
   }
@@ -312,7 +385,8 @@ class CompetenceManager {
   }
 
   bool isCompetenceWithChildren(Competence competence) {
-    return _competences.value
-        .any((element) => element.parentCompetence == competence.publicId);
+    return _competences.value.any(
+      (element) => element.parentCompetence == competence.publicId,
+    );
   }
 }

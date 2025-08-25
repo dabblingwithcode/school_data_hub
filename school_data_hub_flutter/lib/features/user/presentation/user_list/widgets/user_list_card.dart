@@ -55,7 +55,7 @@ class UserListCard extends WatchingWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Gap(15),
+                    const Gap(10),
                     Row(
                       children: [
                         Expanded(

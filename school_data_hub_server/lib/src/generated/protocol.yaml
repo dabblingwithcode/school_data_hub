@@ -5,6 +5,8 @@ admin:
   - demoteUserScope:
   - getUserById:
   - updateBackendPupilDataState:
+  - importCompetencesFromJsonFile:
+  - importSupportCategoriesFromJsonFile:
 missedSchoolday:
   - streamMissedSchooldays:
   - postMissedSchoolday:
@@ -60,7 +62,6 @@ pupilBookLending:
 competenceCheck:
   - postCompetenceCheck:
 competence:
-  - importCompetencesFromJsonFile:
   - postCompetence:
   - getAllCompetences:
   - updateCompetence:

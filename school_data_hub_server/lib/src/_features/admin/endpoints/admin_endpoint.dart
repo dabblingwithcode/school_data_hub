@@ -1,7 +1,10 @@
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
+import 'package:school_data_hub_server/src/_features/learning/helpers/import_competences_from_json_file.dart';
+import 'package:school_data_hub_server/src/_features/learning_support/helpers/import_support_categories_from_file_content_json.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
+import 'package:school_data_hub_server/src/helpers/convert_file_to_content_string.dart';
 import 'package:school_data_hub_server/src/helpers/generate_pupil_from_admin_console_data.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/module.dart';
@@ -13,9 +16,8 @@ class AdminEndpoint extends Endpoint {
   @override
   bool get requireLogin => true;
 
-  //- TODO URGENT: uncomment this when admin scopes are working
-  // @override
-  // Set<Scope> get requiredScopes => {Scope.admin};
+  @override
+  Set<Scope> get requiredScopes => {Scope.admin};
 
   Future<User> createUser(
     Session session, {
@@ -40,8 +42,6 @@ class AdminEndpoint extends Endpoint {
 
     await auth.UserInfo.db.updateRow(session, userInfo);
 
-// Update scopes if provided
-
     // Convert string scopes to Scope objects
     final scopes = scopeNames.map((name) => Scope(name)).toSet();
 
@@ -62,7 +62,7 @@ class AdminEndpoint extends Endpoint {
 
     await User.db.insertRow(session, newUser);
 
-    // Update user scopes
+    // Update scopes if provided
     await auth.Users.updateUserScopes(session, userInfo.id!, scopes);
 
     return newUser;
@@ -122,30 +122,14 @@ class AdminEndpoint extends Endpoint {
 
   Future<Set<PupilData>> updateBackendPupilDataState(
       Session session, String filePath) async {
-    // check if the file exists
-    var exists = await session.storage.fileExists(
-      storageId: 'private',
-      path: filePath,
-    );
-    if (!exists) {
-      throw Exception('File not found: $filePath');
-    }
-    final fileBytes = await session.storage.retrieveFile(
-      storageId: 'private',
-      path: filePath,
-    );
-
-    // check the extension of the file
+    // check if the file is a txt or csv file
     final extension = filePath.split('.').last;
     if (extension != 'txt' && extension != 'csv') {
       throw Exception('File is not a compatible format!');
     }
-    final buffer = fileBytes!.buffer;
-    final uint8List =
-        buffer.asUint8List(fileBytes.offsetInBytes, fileBytes.lengthInBytes);
 
     // Decode bytes to string (UTF-8 is common, but you can use other encodings)
-    final content = utf8.decode(uint8List);
+    final content = await convertFileToContentString(session, filePath);
 
     // get all active pupils from the database and create a list
     final activePupils =
@@ -217,5 +201,24 @@ class AdminEndpoint extends Endpoint {
     // we return the updated set of pupils that are active in the school data system
     final pupils = await PupilData.db.find(session);
     return pupils.toSet();
+  }
+
+  Future<List<Competence>> importCompetencesFromJsonFile(
+      Session session, String filePath) async {
+    final content = await convertFileToContentString(session, filePath);
+
+    final categories = await importCompetencesFromFileContentJson(content);
+    await Competence.db.insert(session, categories);
+    return categories;
+  }
+
+  Future<List<SupportCategory>> importSupportCategoriesFromJsonFile(
+      Session session, String filePath) async {
+    final content = await convertFileToContentString(session, filePath);
+
+    final categories =
+        await importSupportCategoriesFromFileContentJson(content);
+    await SupportCategory.db.insert(session, categories);
+    return categories;
   }
 }

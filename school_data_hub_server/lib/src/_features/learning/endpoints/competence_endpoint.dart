@@ -1,27 +1,9 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 
 class CompetenceEndpoint extends Endpoint {
   @override
   bool get requireLogin => true;
-
-  Future<List<Competence>> importCompetencesFromJsonFile(
-      Session session, File jsonFile) async {
-    final fileContent = await jsonFile.readAsString();
-    if (fileContent.isEmpty) {
-      throw Exception('File is empty: $jsonFile');
-    }
-    // Parse the JSON content
-    final List<dynamic> jsonList = jsonDecode(fileContent);
-    final List<Competence> categories = jsonList.map((json) {
-      return Competence.fromJson(json as Map<String, dynamic>);
-    }).toList();
-    await Competence.db.insert(session, categories);
-    return categories;
-  }
 
   Future<Competence> postCompetence(
     Session session, {

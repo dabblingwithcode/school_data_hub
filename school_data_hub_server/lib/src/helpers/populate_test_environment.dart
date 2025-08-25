@@ -2,9 +2,10 @@ import 'dart:io';
 
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
-import 'package:school_data_hub_server/src/_features/learning/endpoints/competence_endpoint.dart';
-import 'package:school_data_hub_server/src/_features/learning_support/endpoints/support_category_endpoint.dart';
+import 'package:school_data_hub_server/src/_features/learning/helpers/import_competences_from_json_file.dart';
+import 'package:school_data_hub_server/src/_features/learning_support/helpers/import_support_categories_from_file_content_json.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
+import 'package:school_data_hub_server/src/helpers/convert_file_to_content_string.dart';
 import 'package:school_data_hub_server/src/helpers/create_first_admin.dart';
 import 'package:serverpod/serverpod.dart';
 
@@ -36,18 +37,13 @@ Future<void> populateTestEnvironment(Session session) async {
         'No competences in the database. Looking for file...',
       );
 
-      // Path to the JSON file containing containing the competences
-      final competenceJsonFilePath =
-          p.join(testDataDir.path, 'competence.json');
+      final fileContent = await convertFileToContentString(
+          session, p.join(testDataDir.path, 'competence.json'));
+      final content = await importCompetencesFromFileContentJson(fileContent);
 
-      final File file = File(competenceJsonFilePath);
-
-      if (file.existsSync()) {
+      if (content.isNotEmpty) {
         _log.info('Competences file found! populating...');
-        // Call the endpoint to import competences from the JSON file
-        final competenceEndpoint = CompetenceEndpoint();
-
-        await competenceEndpoint.importCompetencesFromJsonFile(session, file);
+        await Competence.db.insert(session, content);
 
         _log.fine('Competences populated successfully!');
       } else {
@@ -65,29 +61,21 @@ Future<void> populateTestEnvironment(Session session) async {
       _log.info('No support categories in the database. Looking for file...');
 
       // Path to the JSON file containing support categories
+      final fileContent = await convertFileToContentString(
+          session, p.join(testDataDir.path, 'support_category.json'));
 
-      final supportCategoriesjsonFilePath =
-          p.join(testDataDir.path, 'support_category.json');
-
-      if (File(supportCategoriesjsonFilePath).existsSync()) {
+      final categories =
+          await importSupportCategoriesFromFileContentJson(fileContent);
+      if (categories.isNotEmpty) {
         _log.info('Support categories file found! populating...');
-
-        // Call the endpoint to import support categories from the JSON file
-        final supportCategoryEndpoint = SupportCategoryEndpoint();
-
-        await supportCategoryEndpoint.importSupportCategoriesFromJsonFile(
-            session, supportCategoriesjsonFilePath);
-
+        await SupportCategory.db.insert(session, categories);
         _log.fine('Support categories populated successfully!');
       } else {
         _log.warning(
-            'No support categories file found in the test_data directory.');
+          'No support categories file found in the test_data directory.',
+        );
       }
     }
-
-    _log.fine(
-      'Test environment populated successfully!',
-    );
   } catch (e) {
     _log.severe('Error populating test environment: $e');
   }

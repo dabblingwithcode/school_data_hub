@@ -62,8 +62,9 @@ class UserManager {
       timeUnits: timeUnits,
       scopeNames: scopeNames,
     );
+    final userWithDetails = await _client.user.getCurrentUser();
 
-    _addUser(user);
+    _addUser(userWithDetails!);
 
     _notificationService.showSnackBar(
       NotificationType.success,
