@@ -10,15 +10,22 @@ import 'package:serverpod/serverpod.dart';
 
 final _log = Logger('PopulateTestEnvironment');
 
-void createLocalStorageDirectories(String projectRootPath) {
+void createLocalStorageDirectories() {
+  // Get the current working directory
+  final serverDirPath = Directory.current.path;
+  // Assuming the project root is one level up from the server directory
+  final projectRootPath = p.dirname(serverDirPath);
   // Create the directories for local storage
   final storageDir = Directory(p.join(projectRootPath, 'storage'));
 
   // If the storage directory does not exist,
   // the subdirectories do not exist either
-  if (!storageDir.existsSync()) {
+  if (storageDir.existsSync()) {
+    _log.fine('Storage directory [${storageDir.path}] already exists.');
+  } else {
     _log.warning(
-        'Storage directories not found in [${storageDir.path}] - creating...');
+        'Storage directory not found in [${storageDir.path}] - creating...');
+    storageDir.createSync(recursive: true);
     final publicDir = Directory(p.join(storageDir.path, 'public'));
     final privateDir = Directory(p.join(storageDir.path, 'private'));
     final tempDir = Directory(p.join(storageDir.path, 'temp'));
@@ -40,12 +47,6 @@ void createLocalStorageDirectories(String projectRootPath) {
 }
 
 Future<void> populateTestEnvironment(Session session) async {
-  // Get the current working directory
-  final serverDirPath = Directory.current.path;
-
-  final projectRootPath = p.dirname(serverDirPath);
-
-  createLocalStorageDirectories(projectRootPath);
   await createFirstAdmin(session);
   try {
     _log.fine('Admin user created successfully: ');

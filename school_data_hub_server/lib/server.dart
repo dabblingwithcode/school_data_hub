@@ -78,6 +78,7 @@ void run(List<String> args) async {
   if (await auth.UserInfo.db.count(session) == 0) {
     await populateTestEnvironment(session);
   }
+  createLocalStorageDirectories();
 
   // TODO: uncomment in production
   // Trigger the backup future call to generate database backups.
