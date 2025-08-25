@@ -177,9 +177,10 @@ class EndpointDevOps extends _i1.EndpointRef {
   @override
   String get name => 'devOps';
 
-  _i2.Future<void> resetDbAndCreateAdmin() => caller.callServerEndpoint<void>(
+  _i2.Future<void> resetDatabaseAndCreateAdmin() =>
+      caller.callServerEndpoint<void>(
         'devOps',
-        'resetDbAndCreateAdmin',
+        'resetDatabaseAndCreateAdmin',
         {},
       );
 }
