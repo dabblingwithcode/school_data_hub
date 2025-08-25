@@ -2,10 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/app_helpers.dart';
+import 'package:school_data_hub_flutter/app_utils/shorebird_code_push.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_utilites.dart';
+import 'package:school_data_hub_flutter/core/di/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
@@ -176,12 +179,37 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
         ),
         SettingsTile.navigation(
           leading: const Icon(Icons.bug_report_rounded),
-          title: const Text('Server Logs'),
+          title: const Text('App Updates überprüfen'),
           onPressed: (context) {
-            // Navigator.of(context).push(MaterialPageRoute(
-            //   builder: (ctx) => const LogsPage(),
-            // ));
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (ctx) => const CheckForUpdatesPage()),
+            );
           },
+        ),
+        SettingsTile.navigation(
+          onPressed: (context) async {
+            final confirm = await confirmationDialog(
+              context: context,
+              title: 'Alles löschen',
+              message:
+                  'Wirklich alles löschen?\n\nAlle Informationen im Server werden gelöscht!',
+            );
+            if (confirm == true && context.mounted) {
+              await di<Client>().devOps.resetDbAndCreateAdmin();
+              di<HubSessionManager>().signOutDevice();
+
+              DiManager.unregisterManagersDependingOnSession();
+              _notificationService.showSnackBar(
+                NotificationType.success,
+                'Erfolgreich ausgeloggt!',
+              );
+            }
+          },
+          leading: const Icon(Icons.logout),
+          title: const Text('Alles löschen und ausloggen'),
+          description: const Text('Es wird alles gelöscht!'),
+
+          //onPressed:
         ),
       ],
     );

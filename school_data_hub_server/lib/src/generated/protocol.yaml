@@ -5,6 +5,8 @@ admin:
   - demoteUserScope:
   - getUserById:
   - updateBackendPupilDataState:
+devOps:
+  - resetDbAndCreateAdmin:
 missedSchoolday:
   - streamMissedSchooldays:
   - postMissedSchoolday:

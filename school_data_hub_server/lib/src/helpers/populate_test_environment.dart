@@ -5,8 +5,8 @@ import 'package:path/path.dart' as p;
 import 'package:school_data_hub_server/src/_features/learning/endpoints/competence_endpoint.dart';
 import 'package:school_data_hub_server/src/_features/learning_support/endpoints/support_category_endpoint.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
+import 'package:school_data_hub_server/src/helpers/create_first_admin.dart';
 import 'package:serverpod/serverpod.dart';
-import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
 
 final _log = Logger('PopulateTestEnvironment');
 
@@ -46,48 +46,12 @@ Future<void> populateTestEnvironment(Session session) async {
   final projectRootPath = p.dirname(serverDirPath);
 
   createLocalStorageDirectories(projectRootPath);
-
+  await createFirstAdmin(session);
   try {
-    //- Create test admin
-
-    final adminEmail = 'admin';
-    var adminUser = await auth.Users.findUserByEmail(session, adminEmail);
-
-    // For email authentication, you need to create a user with email/password
-    final adminPassword = 'admin'; // Set a secure password in production
-
-    // Create the userinfo
-    adminUser = await auth.Emails.createUser(
-      session,
-      'ADM', // User name
-      adminEmail,
-      adminPassword,
-    );
-
-    if (adminUser != null) {
-      // Grant admin scope to the user
-      await auth.Users.updateUserScopes(session, adminUser.id!, {Scope.admin});
-
-      final User adminuser = User(
-          userInfoId: adminUser.id!,
-          role: Role.admin,
-          timeUnits: 28,
-          credit: 50,
-          userFlags: UserFlags(
-              confirmedTermsOfUse: false,
-              confirmedPrivacyPolicy: false,
-              changedPassword: false,
-              madeFirstSteps: false));
-
-      await session.db.insertRow(adminuser);
-
-      _log.fine('Admin user created successfully: ');
-      _log.fine('Email: $adminEmail');
-      _log.fine('Password: $adminPassword'); // Log the password for reference
-      _log.warning('You should NOT use this in production!');
-    } else {
-      _log.severe('Failed to create admin user');
-    }
+    _log.fine('Admin user created successfully: ');
+    _log.fine('Email: admin');
+    _log.fine('Password: admin'); // Log the password for reference
+    _log.warning('You should NOT use this in production!');
 
     // Check if there is a folder 'test_data' in the project root directory
     final serverDir = Directory.current.path;
@@ -160,72 +124,6 @@ Future<void> populateTestEnvironment(Session session) async {
             'No support categories file found in the test_data directory.');
       }
     }
-
-    //- Pupils
-
-    // final existingPupils = await PupilData.db.find(session);
-
-    // if (existingPupils.isEmpty) {
-    //   _log.info(
-    //     'No pupils in the database. Populating...',
-    //   );
-
-    //   // Path to the JSON file containing support categories
-    //   final pupilsFilePath = p.join(testDataDir.path, 'fake_pupils_export.txt');
-
-    //   // Call the endpoint to import support categories from the JSON file
-    //   final adminEndpoint = AdminEndpoint();
-
-    //   await adminEndpoint.updateBackendPupilDataState(session, pupilsFilePath);
-
-    //   _log.fine('Pupils populated successfully!');
-    // }
-
-    //- School semesters
-
-    // final existingSchoolSemesters = await SchoolSemester.db.find(session);
-
-    // if (existingSchoolSemesters.isEmpty) {
-    //   _log.info('No school semesters in the database. Populating...');
-
-    //   final schoolSemesterFilePath =
-    //       p.join(testDataDir.path, 'school_semester.json');
-
-    //   final schoolSemesterFile = File(schoolSemesterFilePath);
-
-    //   if (schoolSemesterFile.existsSync()) {
-    //     _log.info('School semester file found! populating...');
-    //     final jsonString = schoolSemesterFile.readAsStringSync();
-
-    //     final schoolSemester = SchoolSemester.fromJson(jsonDecode(jsonString));
-
-    //     await SchoolSemester.db.insertRow(session, schoolSemester);
-    //     _log.fine('School semesters populated successfully!');
-    //   } else {
-    //     _log.warning(
-    //       'No school semester file found in the test_data directory.',
-    //     );
-    //   }
-    // }
-
-    //- Schooldays
-
-    // final existingSchooldays = await Schoolday.db.find(session);
-
-    // if (existingSchooldays.isEmpty) {
-    //   _log.info(
-    //     'No school days in the database. Populating...',
-    //   );
-
-    //   final schooldayEndpoint = SchooldayAdminEndpoint();
-
-    //   final schooldays =
-    //       generateWeekdays(DateTime(2025, 2, 7), DateTime(2025, 7, 11));
-
-    //   await schooldayEndpoint.createSchooldays(session, schooldays);
-
-    //   _log.fine('Schooldays populated successfully!');
-    // }
 
     _log.fine(
       'Test environment populated successfully!',

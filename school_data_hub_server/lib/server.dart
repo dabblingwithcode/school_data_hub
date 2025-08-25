@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
@@ -78,48 +77,6 @@ void run(List<String> args) async {
   // Check if there are any users in the database. If not, we can populate the test environment.
   if (await auth.UserInfo.db.count(session) == 0) {
     await populateTestEnvironment(session);
-  }
-
-  // Check if the storage directories exist, if not create them
-  final storageDir = Directory('storage');
-  if (!await storageDir.exists()) {
-    await storageDir.create(recursive: true);
-  }
-
-  final privateDir = Directory('storage/private');
-  if (!await privateDir.exists()) {
-    await privateDir.create(recursive: true);
-  }
-
-  final publicDir = Directory('storage/public');
-  if (!await publicDir.exists()) {
-    await publicDir.create(recursive: true);
-  }
-
-  // Create all private subdirectories
-  final authsDir = Directory('storage/private/auths');
-  if (!await authsDir.exists()) {
-    await authsDir.create(recursive: true);
-  }
-
-  final avatarsDir = Directory('storage/private/avatars');
-  if (!await avatarsDir.exists()) {
-    await avatarsDir.create(recursive: true);
-  }
-
-  final documentsDir = Directory('storage/private/documents');
-  if (!await documentsDir.exists()) {
-    await documentsDir.create(recursive: true);
-  }
-
-  final eventsDir = Directory('storage/private/events');
-  if (!await eventsDir.exists()) {
-    await eventsDir.create(recursive: true);
-  }
-
-  final tempDir = Directory('storage/private/temp');
-  if (!await tempDir.exists()) {
-    await tempDir.create(recursive: true);
   }
 
   // TODO: uncomment in production

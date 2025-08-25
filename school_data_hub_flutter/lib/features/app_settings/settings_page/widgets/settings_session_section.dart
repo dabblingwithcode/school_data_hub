@@ -27,10 +27,11 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
 
     final locale = AppLocalizations.of(context)!;
 
-    //final int credit = session.credit!;
-    final String username = watchPropertyValue((HubSessionManager x) => x.user)!
-        .userInfo!
-        .userName!;
+    final int userCredit = di<HubSessionManager>().userCredit ?? 0;
+    final String username =
+        watchPropertyValue(
+          (HubSessionManager x) => x.user,
+        )!.userInfo!.userName!;
 
     return SettingsSection(
       title: Text(
@@ -42,23 +43,17 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           onPressed: (context) => changeEnvironmentDialog(context: context),
           leading: const Icon(Icons.home),
           title: const Text('Instanz:'),
-          value: Text(
-            serverName!.serverName,
-          ),
+          value: Text(serverName!.serverName),
           trailing: null,
         ),
         SettingsTile.navigation(
           // onPressed: (context) =>
           //     di<PupilManager>().cleanPupilsAvatarIds(),
-          leading: const Icon(
-            Icons.account_circle_rounded,
-          ),
+          leading: const Icon(Icons.account_circle_rounded),
           title: const Text('Benutzername'),
           value: Text(
             username,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           trailing: null,
         ),
@@ -68,22 +63,19 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           //     builder: (ctx) => const UserChangePasswordPage(),
           //   ));
           // },
-          leading: const Icon(
-            Icons.password_rounded,
-          ),
+          leading: const Icon(Icons.password_rounded),
           title: const Text('Passwort ändern'),
           trailing: null,
         ),
         SettingsTile.navigation(
           leading: const Icon(Icons.attach_money_rounded),
           title: const Text('Guthaben'),
-          value: const Text(
-            'nicht implementiert', // credit.toString(),
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
+          value: Text(
+            userCredit.toString(),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
+
         // SettingsTile.navigation(
         //   leading: const Icon(Icons.punch_clock_rounded),
         //   title: const Text('Token gültig noch:'),
@@ -94,18 +86,20 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
         //     ),
         //   ),
         // ),
-
         SettingsTile.navigation(
           onPressed: (context) async {
             final confirm = await confirmationDialog(
-                context: context,
-                title: 'Ausloggen',
-                message: 'Wirklich ausloggen?\n\nDaten bleiben erhalten!');
+              context: context,
+              title: 'Ausloggen',
+              message: 'Wirklich ausloggen?\n\nDaten bleiben erhalten!',
+            );
             if (confirm == true && context.mounted) {
               di<HubSessionManager>().signOutDevice();
 
               _notificationService.showSnackBar(
-                  NotificationType.success, 'Erfolgreich ausgeloggt!');
+                NotificationType.success,
+                'Erfolgreich ausgeloggt!',
+              );
             }
           },
           leading: const Icon(Icons.logout),
@@ -124,44 +118,46 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           title: const Text('gespeicherte Identitäten löschen'),
           onPressed: (context) async {
             final confirm = await confirmationDialog(
-                context: context,
-                title: 'Lokale Kinder-Ids löschen',
-                message: 'Kinder-Ids für diese Instanz löschen?');
+              context: context,
+              title: 'Lokale Kinder-Ids löschen',
+              message: 'Kinder-Ids für diese Instanz löschen?',
+            );
             if (confirm == true && context.mounted) {
               PupilIdentityHelper.deletePupilIdentitiesForEnv(
-                  di<EnvManager>().storageKeyForPupilIdentities);
+                di<EnvManager>().storageKeyForPupilIdentities,
+              );
               _notificationService.showSnackBar(
-                  NotificationType.success, 'Kinder-Ids gelöscht');
+                NotificationType.success,
+                'Kinder-Ids gelöscht',
+              );
             }
             return;
           },
         ),
         SettingsTile.navigation(
           leading: const Row(
-            children: [
-              Icon(Icons.key),
-              Icon(Icons.delete_forever_outlined),
-            ],
+            children: [Icon(Icons.key), Icon(Icons.delete_forever_outlined)],
           ),
           title: const Text('Schul-Schlüssel löschen'),
           onPressed: (context) async {
             final confirm = await confirmationDialog(
-                context: context,
-                title: 'Instanz-ID-Schlüssel löschen',
-                message: 'Instanz-ID-Schlüssel löschen?');
+              context: context,
+              title: 'Instanz-ID-Schlüssel löschen',
+              message: 'Instanz-ID-Schlüssel löschen?',
+            );
             if (confirm == true && context.mounted) {
               await di<EnvManager>().deleteEnv();
               di<HubSessionManager>().signOutDevice();
               DiManager.unregisterManagersDependentOnEnv();
               _notificationService.showSnackBar(
-                  NotificationType.success, 'Instanz-ID-Schlüssel gelöscht');
+                NotificationType.success,
+                'Instanz-ID-Schlüssel gelöscht',
+              );
 
               await _cacheManager.emptyCache();
               if (context.mounted) {
                 Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (ctx) => const Login(),
-                  ),
+                  MaterialPageRoute(builder: (ctx) => const Login()),
                   (route) => false,
                 );
               }
@@ -175,48 +171,54 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
         ),
         SettingsTile.navigation(
           leading: GestureDetector(
-              onTap: () async {
-                bool? confirm = await confirmationDialog(
-                    context: context,
-                    title: 'Bilder-Cache löschen',
-                    message: 'Cached Bilder löschen?');
-                if (confirm == true && context.mounted) {
-                  await _cacheManager.emptyCache();
-                  _notificationService.showSnackBar(NotificationType.success,
-                      'der Bilder-Cache wurde gelöscht');
-                }
-                return;
-              },
-              child: const Row(
-                children: [
-                  Icon(Icons.logout),
-                  Gap(5),
-                  Icon(Icons.delete_forever_outlined)
-                ],
-              )),
+            onTap: () async {
+              bool? confirm = await confirmationDialog(
+                context: context,
+                title: 'Bilder-Cache löschen',
+                message: 'Cached Bilder löschen?',
+              );
+              if (confirm == true && context.mounted) {
+                await _cacheManager.emptyCache();
+                _notificationService.showSnackBar(
+                  NotificationType.success,
+                  'der Bilder-Cache wurde gelöscht',
+                );
+              }
+              return;
+            },
+            child: const Row(
+              children: [
+                Icon(Icons.logout),
+                Gap(5),
+                Icon(Icons.delete_forever_outlined),
+              ],
+            ),
+          ),
           title: const Text('Lokal gespeicherte Bilder löschen'),
 
           //onPressed:
         ),
         SettingsTile.navigation(
           leading: GestureDetector(
-              onTap: () async {
-                bool? confirm = await confirmationDialog(
-                    context: context,
-                    title: 'Achtung!',
-                    message: 'Ausloggen und alle Daten löschen?');
-                if (confirm == true && context.mounted) {
-                  SessionHelper.logoutAndDeleteAllInstanceData();
-                }
-                return;
-              },
-              child: const Row(
-                children: [
-                  Icon(Icons.logout),
-                  Gap(5),
-                  Icon(Icons.delete_forever_outlined)
-                ],
-              )),
+            onTap: () async {
+              bool? confirm = await confirmationDialog(
+                context: context,
+                title: 'Achtung!',
+                message: 'Ausloggen und alle Daten löschen?',
+              );
+              if (confirm == true && context.mounted) {
+                SessionHelper.logoutAndDeleteAllInstanceData();
+              }
+              return;
+            },
+            child: const Row(
+              children: [
+                Icon(Icons.logout),
+                Gap(5),
+                Icon(Icons.delete_forever_outlined),
+              ],
+            ),
+          ),
           title: const Text('Ausloggen und Daten löschen'),
           value: const Text('App wird zurückgesetzt!'),
           //onPressed:

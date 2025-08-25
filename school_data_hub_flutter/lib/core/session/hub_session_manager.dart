@@ -48,6 +48,8 @@ class HubSessionManager with ChangeNotifier {
 
   String? get userName => _user?.userInfo?.userName;
 
+  int? get userCredit => _user?.credit;
+
   void changeUserCredit(int credit) {
     if (_user != null) {
       final newCredit = _user!.credit + credit;
@@ -57,19 +59,21 @@ class HubSessionManager with ChangeNotifier {
   }
 
   /// Creates a new session manager.
-  HubSessionManager({
-    required this.caller,
-  }) : _storage = HubSecureStorage() {
+  HubSessionManager({required this.caller}) : _storage = HubSecureStorage() {
     _instance = this;
-    assert(caller.client.authenticationKeyManager != null,
-        'The client needs an associated key manager');
+    assert(
+      caller.client.authenticationKeyManager != null,
+      'The client needs an associated key manager',
+    );
     keyManager = caller.client.authenticationKeyManager! as HubAuthKeyManager;
   }
 
   /// Returns a singleton instance of the session manager
   static Future<HubSessionManager> get instance async {
-    assert(_instance != null,
-        'You need to create a SessionManager before the instance method can be called');
+    assert(
+      _instance != null,
+      'You need to create a SessionManager before the instance method can be called',
+    );
     return _instance!;
   }
 
@@ -93,9 +97,7 @@ class HubSessionManager with ChangeNotifier {
     var key = '$authenticationKeyId:$authenticationKey';
 
     // Store in key manager.
-    await keyManager.put(
-      key,
-    );
+    await keyManager.put(key);
 
     //_envManager.setUserAuthenticated(true);
     await _handleAuthCallResultInStorage();
@@ -124,9 +126,7 @@ class HubSessionManager with ChangeNotifier {
   /// Signs the user out from their devices.
   /// If [allDevices] is true, signs out from all devices; otherwise, signs out from the current device only.
   /// Returns true if the sign-out is successful.
-  Future<bool> _signOut({
-    required bool allDevices,
-  }) async {
+  Future<bool> _signOut({required bool allDevices}) async {
     if (!isSignedIn) return true;
 
     try {
@@ -188,7 +188,8 @@ class HubSessionManager with ChangeNotifier {
         _envManager.setUserAuthenticatedOnlyByHubSessionManager(true);
 
         _log.info(
-            'User was authenticated by the server. Registering managers depending on authentication...');
+          'User was authenticated by the server. Registering managers depending on authentication...',
+        );
 
         _user = await _client.user.getCurrentUser();
 
@@ -206,8 +207,10 @@ class HubSessionManager with ChangeNotifier {
       // Something wentwrong with the getUserInfo call
       // so we don't have a signed user.
       // we better delete the user info from storage and remove the key.
-      _log.warning(
-          'User was not authenticated by the server: $e', [e, stackTrace]);
+      _log.warning('User was not authenticated by the server: $e', [
+        e,
+        stackTrace,
+      ]);
 
       await keyManager.remove();
 
@@ -232,8 +235,9 @@ class HubSessionManager with ChangeNotifier {
       return;
     }
 
-    _signedInUser =
-        Protocol().deserialize<auth_client.UserInfo>(jsonDecode(json));
+    _signedInUser = Protocol().deserialize<auth_client.UserInfo>(
+      jsonDecode(json),
+    );
 
     notifyListeners();
   }
@@ -245,19 +249,23 @@ class HubSessionManager with ChangeNotifier {
       await keyManager.remove();
     } else {
       _log.info(
-          'We have a signed user - Saving userinfo to storage with key: $_userInfoStorageKey');
+        'We have a signed user - Saving userinfo to storage with key: $_userInfoStorageKey',
+      );
 
       _log.fine('User info: ${signedInUser!.toJson()}');
 
       await _storage.setString(
-          _userInfoStorageKey, SerializationManager.encode(signedInUser));
+        _userInfoStorageKey,
+        SerializationManager.encode(signedInUser),
+      );
 
       // We can start now the managers dependent on authentication
       _user = await _client.user.getCurrentUser();
 
       notifyListeners();
       _log.fine(
-          'User fetched in _handleAuthCallResultInStorage: ${_user?.toJson()}');
+        'User fetched in _handleAuthCallResultInStorage: ${_user?.toJson()}',
+      );
       await DiManager.registerManagersDependingOnAuthedSession();
     }
   }
@@ -291,7 +299,8 @@ class HubSessionManager with ChangeNotifier {
       notifyListeners();
 
       _log.info(
-          'MatrixPolicyManager registration status changed to $isRegistered');
+        'MatrixPolicyManager registration status changed to $isRegistered',
+      );
     }
   }
 }
