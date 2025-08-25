@@ -166,6 +166,12 @@ class CompetenceManager {
       di<CompetenceFilterManager>().refreshFilteredCompetences(
         sortedCompetences,
       );
+      _envManager.setPopulatedEnvServerData(competences: true);
+
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Kompetenzen importiert',
+      );
     }
   }
 

@@ -207,9 +207,35 @@ class AdminEndpoint extends Endpoint {
       Session session, String filePath) async {
     final content = await convertFileToContentString(session, filePath);
 
-    final categories = await importCompetencesFromFileContentJson(content);
-    await Competence.db.insert(session, categories);
-    return categories;
+    final competences = await importCompetencesFromFileContentJson(content);
+
+    final List<Competence> processedCompetences = [];
+
+    for (final competence in competences) {
+      // Check if competence exists by publicId
+      final existingCompetence = await Competence.db.findFirstRow(
+        session,
+        where: (t) => t.publicId.equals(competence.publicId),
+      );
+
+      if (existingCompetence != null) {
+        // Update existing competence
+        final updatedCompetence = existingCompetence.copyWith(
+          name: competence.name,
+          parentCompetence: competence.parentCompetence,
+          level: competence.level,
+          indicators: competence.indicators,
+        );
+        await session.db.updateRow(updatedCompetence);
+        processedCompetences.add(updatedCompetence);
+      } else {
+        // Create new competence
+        await session.db.insertRow(competence);
+        processedCompetences.add(competence);
+      }
+    }
+
+    return processedCompetences;
   }
 
   Future<List<SupportCategory>> importSupportCategoriesFromJsonFile(
@@ -218,7 +244,31 @@ class AdminEndpoint extends Endpoint {
 
     final categories =
         await importSupportCategoriesFromFileContentJson(content);
-    await SupportCategory.db.insert(session, categories);
-    return categories;
+
+    final List<SupportCategory> processedCategories = [];
+
+    for (final category in categories) {
+      // Check if support category exists by categoryId
+      final existingCategory = await SupportCategory.db.findFirstRow(
+        session,
+        where: (t) => t.categoryId.equals(category.categoryId),
+      );
+
+      if (existingCategory != null) {
+        // Update existing category
+        final updatedCategory = existingCategory.copyWith(
+          name: category.name,
+          parentCategory: category.parentCategory,
+        );
+        await session.db.updateRow(updatedCategory);
+        processedCategories.add(updatedCategory);
+      } else {
+        // Create new category
+        await session.db.insertRow(category);
+        processedCategories.add(category);
+      }
+    }
+
+    return processedCategories;
   }
 }
