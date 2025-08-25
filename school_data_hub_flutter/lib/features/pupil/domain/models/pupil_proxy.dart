@@ -154,6 +154,24 @@ class PupilProxy with ChangeNotifier {
 
   AfterSchoolCare? get afterSchoolCare => _pupilData.afterSchoolCare;
 
+  // Legacy OGS getters for backward compatibility
+  // TODO URGENT: Remove these after migrating all OGS code to use proper afterSchoolCare model
+  bool get ogs => afterSchoolCare != null;
+
+  String? get pickUpTime {
+    // For now, return a simplified representation
+    // This would need to be updated based on business logic for which day to show
+    final pickUpTimes = afterSchoolCare?.pickUpTimes;
+    if (pickUpTimes?.monday != null) return pickUpTimes!.monday!.time;
+    if (pickUpTimes?.tuesday != null) return pickUpTimes!.tuesday!.time;
+    if (pickUpTimes?.wednesday != null) return pickUpTimes!.wednesday!.time;
+    if (pickUpTimes?.thursday != null) return pickUpTimes!.thursday!.time;
+    if (pickUpTimes?.friday != null) return pickUpTimes!.friday!.time;
+    return null;
+  }
+
+  String? get ogsInfo => afterSchoolCare?.afterSchoolCareInfo;
+
   // rewards related
 
   int get credit => _pupilData.credit;

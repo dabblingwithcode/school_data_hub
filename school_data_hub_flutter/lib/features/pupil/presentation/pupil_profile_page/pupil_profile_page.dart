@@ -35,7 +35,6 @@ class PupilProfilePage extends WatchingWidget {
                     child: CustomScrollView(
                       dragStartBehavior: DragStartBehavior.down,
                       slivers: [
-                        const SliverGap(5),
                         SliverAppBar(
                           systemOverlayStyle: const SystemUiOverlayStyle(
                             statusBarColor:
@@ -55,12 +54,12 @@ class PupilProfilePage extends WatchingWidget {
                           flexibleSpace: FlexibleSpaceBar(
                             expandedTitleScale: 1,
                             collapseMode: CollapseMode.none,
-                            // titlePadding: const EdgeInsets.only(
-                            //   left: 5,
-                            //   top: 5,
-                            //   right: 5,
-                            //   bottom: 5,
-                            // ),
+                            titlePadding: const EdgeInsets.only(
+                              left: 0,
+                              top: 5,
+                              right: 0,
+                              bottom: 5,
+                            ),
                             title: PupilProfileHeadingCard(passedPupil: pupil),
                           ),
                         ),

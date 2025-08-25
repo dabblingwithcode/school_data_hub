@@ -229,7 +229,7 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
                                 ),
                                 const Gap(16),
                                 DropdownButtonFormField<ChatTypePreset>(
-                                  initialValue: selectedRoomType,
+                                  value: selectedRoomType,
                                   decoration: const InputDecoration(
                                     border: OutlineInputBorder(),
                                   ),

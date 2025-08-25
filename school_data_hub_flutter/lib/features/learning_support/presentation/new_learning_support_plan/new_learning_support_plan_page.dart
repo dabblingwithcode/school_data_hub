@@ -14,10 +14,11 @@ class NewLearningSupportPlanPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentSemester =
-        watchPropertyValue(
-          (SchoolCalendarManager m) => m.currentSemester,
-        ).value;
+    final currentSemester = di<SchoolCalendarManager>().currentSemester;
+    // final currentSemester =
+    //     watchPropertyValue(
+    //       (SchoolCalendarManager m) => m.currentSemester,
+    //     ).value;
 
     return Theme(
       data: ThemeData(
