@@ -4,6 +4,7 @@ import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:school_data_hub_server/src/future_calls/database_backup_future_call.dart';
 import 'package:school_data_hub_server/src/future_calls/increase_credit_future_call.dart';
+import 'package:school_data_hub_server/src/helpers/create_local_storage_directories.dart';
 import 'package:school_data_hub_server/src/helpers/populate_test_environment.dart';
 import 'package:school_data_hub_server/src/utils/local_storage.dart';
 import 'package:school_data_hub_server/src/utils/logger/logrecord_formatter.dart';
