@@ -45,9 +45,6 @@ class AdminEndpoint extends Endpoint {
     // Convert string scopes to Scope objects
     final scopes = scopeNames.map((name) => Scope(name)).toSet();
 
-    // Update user scopes
-    await auth.Users.updateUserScopes(session, userInfo.id!, scopes);
-
     // Create a new User object and insert it into the database
     final newUser = User(
       userInfoId: userInfo.id!,
@@ -64,6 +61,9 @@ class AdminEndpoint extends Endpoint {
     );
 
     await User.db.insertRow(session, newUser);
+
+    // Update user scopes
+    await auth.Users.updateUserScopes(session, userInfo.id!, scopes);
 
     return newUser;
   }

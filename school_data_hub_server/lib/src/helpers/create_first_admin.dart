@@ -29,8 +29,6 @@ Future<User?> createFirstAdmin(
 
   adminUser!.fullName = 'Administrator';
   await auth.UserInfo.db.updateRow(session, adminUser);
-  // Grant admin scope to the user
-  await auth.Users.updateUserScopes(session, adminUser.id!, {Scope.admin});
 
   final User adminuser = User(
       userInfoId: adminUser.id!,
@@ -44,6 +42,9 @@ Future<User?> createFirstAdmin(
           madeFirstSteps: false));
 
   await session.db.insertRow(adminuser);
+  // Grant admin scope to the user
+  await auth.Users.updateUserScopes(session, adminUser.id!, {Scope.admin});
+
   _log.fine('Admin user created successfully: ');
   _log.fine('Email: admin');
   _log.fine('Password: admin'); // Log the password for reference
