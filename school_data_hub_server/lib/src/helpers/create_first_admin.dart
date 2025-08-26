@@ -26,10 +26,13 @@ Future<User?> createFirstAdmin(
     return null;
   }
 
-  adminUser!.fullName = 'Administrator';
+  // Grant admin scope to the user
+  await auth.Users.updateUserScopes(session, adminUser!.id!, {Scope.admin});
+
+  adminUser.fullName = 'Administrator';
   await auth.UserInfo.db.updateRow(session, adminUser);
 
-  final User adminuser = User(
+  final User hubUser = User(
       userInfoId: adminUser.id!,
       role: Role.admin,
       timeUnits: 28,
@@ -42,13 +45,11 @@ Future<User?> createFirstAdmin(
           changedPassword: false,
           madeFirstSteps: false));
 
-  await session.db.insertRow(adminuser);
-  // Grant admin scope to the user
-  await auth.Users.updateUserScopes(session, adminUser.id!, {Scope.admin});
+  await session.db.insertRow(hubUser);
 
   _log.fine('Admin user created successfully: ');
   _log.fine('Email: admin');
   _log.fine('Password: admin'); // Log the password for reference
   _log.warning('You should NOT use this in production!');
-  return adminuser;
+  return hubUser;
 }
