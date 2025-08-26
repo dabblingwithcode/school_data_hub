@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_category_widgets/support_category_status_dropdown.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:watch_it/watch_it.dart';
 
 final GlobalKey<FormState> _categoryStatusKey = GlobalKey<FormState>();
 final TextEditingController _textEditingController = TextEditingController();
-final _learningSupportManager = di<SupportCategoryManager>();
 // based on https://mobikul.com/creating-stateful-dialog-form-in-flutter/
 
 Future supportCategoryStatusDialog(

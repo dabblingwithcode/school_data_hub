@@ -3,6 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_goals_list.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan/controller/new_learning_support_plan_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/preschool_revision_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/support_level_dialog.dart';
@@ -14,26 +15,31 @@ import 'package:watch_it/watch_it.dart';
 
 class PupilProfileLearningSupportContentList extends WatchingWidget {
   final PupilProxy pupil;
-  const PupilProfileLearningSupportContentList(
-      {required this.pupil, super.key});
+  const PupilProfileLearningSupportContentList({
+    required this.pupil,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final kindergarden =
-        watchPropertyValue((m) => m.kindergarden, target: pupil);
-    final latestSupportLevel =
-        watchPropertyValue((m) => m.latestSupportLevel, target: pupil);
-    final supportLevelHistory =
-        watchPropertyValue((m) => m.supportLevelHistory, target: pupil);
+    final kindergarden = watchPropertyValue(
+      (m) => m.kindergarden,
+      target: pupil,
+    );
+    final latestSupportLevel = watchPropertyValue(
+      (m) => m.latestSupportLevel,
+      target: pupil,
+    );
+    final supportLevelHistory = watchPropertyValue(
+      (m) => m.supportLevelHistory,
+      target: pupil,
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Row(
           children: [
-            Text(
-              'Eingangsuntersuchung: ',
-              style: TextStyle(fontSize: 15.0),
-            ),
+            Text('Eingangsuntersuchung: ', style: TextStyle(fontSize: 15.0)),
             Gap(5),
           ],
         ),
@@ -41,24 +47,26 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
         Row(
           children: [
             InkWell(
-              onTap: () => preschoolRevisionDialog(context, pupil,
-                  pupil.preSchoolMedical?.preschoolMedicalStatus),
+              onTap:
+                  () => preschoolRevisionDialog(
+                    context,
+                    pupil,
+                    pupil.preSchoolMedical?.preschoolMedicalStatus,
+                  ),
               child: Text(
                 PupilHelper.preschoolRevisionPredicate(pupil.preSchoolMedical),
                 style: const TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.interactiveColor),
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.interactiveColor,
+                ),
               ),
-            )
+            ),
           ],
         ),
         const Row(
           children: [
-            Text(
-              'Kindergartenbesuch: ',
-              style: TextStyle(fontSize: 15.0),
-            ),
+            Text('Kindergartenbesuch: ', style: TextStyle(fontSize: 15.0)),
             Gap(5),
           ],
         ),
@@ -85,11 +93,12 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
               child: Text(
                 kindergarden?.name ?? 'kein Eintrag',
                 style: const TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.interactiveColor),
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.interactiveColor,
+                ),
               ),
-            )
+            ),
           ],
         ),
         const Gap(10),
@@ -97,31 +106,35 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
           supportLevelHistory.isNotEmpty
               ? SupportLevelHistoryExpansionTile(pupil: pupil)
               : Row(
-                  children: [
-                    const Text('Förderebene:',
-                        style: TextStyle(fontSize: 15.0)),
-                    const Gap(10),
-                    InkWell(
-                      onTap: () => supportLevelDialog(
-                          context, pupil, pupil.latestSupportLevel?.level),
-                      child: Text(
-                        latestSupportLevel == null
-                            ? 'kein Eintrag'
-                            : latestSupportLevel.level == 1
-                                ? 'Förderebene 1'
-                                : latestSupportLevel.level == 2
-                                    ? 'Förderebene 2'
-                                    : latestSupportLevel.level == 3
-                                        ? 'Förderebene 3'
-                                        : 'Regenbogenförderung',
-                        style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.interactiveColor),
+                children: [
+                  const Text('Förderebene:', style: TextStyle(fontSize: 15.0)),
+                  const Gap(10),
+                  InkWell(
+                    onTap:
+                        () => supportLevelDialog(
+                          context,
+                          pupil,
+                          pupil.latestSupportLevel?.level,
+                        ),
+                    child: Text(
+                      latestSupportLevel == null
+                          ? 'kein Eintrag'
+                          : latestSupportLevel.level == 1
+                          ? 'Förderebene 1'
+                          : latestSupportLevel.level == 2
+                          ? 'Förderebene 2'
+                          : latestSupportLevel.level == 3
+                          ? 'Förderebene 3'
+                          : 'Regenbogenförderung',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.interactiveColor,
                       ),
-                    )
-                  ],
-                ),
+                    ),
+                  ),
+                ],
+              ),
         const Gap(10),
         Row(
           children: [
@@ -129,21 +142,25 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
             const Gap(5),
             pupil.specialNeeds == '' || pupil.specialNeeds == null
                 ? const Text(
-                    'keins',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  )
+                  'keins',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                )
                 : Text(
-                    '${pupil.specialNeeds}',
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
-                  )
+                  '${pupil.specialNeeds}',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
           ],
         ),
         const Gap(10),
         const Row(
           children: [
-            Text('Förderbereiche',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(
+              'Förderpläne',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
           ],
         ),
         const Gap(5),
@@ -152,20 +169,53 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
           child: ElevatedButton(
             style: AppStyles.actionButtonStyle,
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (ctx) => NewSupportCategoryStatus(
-                        appBarTitle: 'Neuer Förderbereich',
-                        pupilId: pupil.pupilId,
-                        goalCategoryId: 0,
-                        elementType: 'status',
-                      )));
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (ctx) => NewLearningSupportPlan(pupil: pupil),
+                ),
+              );
             },
             child: const Text(
-              "NEUER FÖRDERBEREICH",
+              "NEUER FÖRDERPLAN",
               style: AppStyles.buttonTextStyle,
             ),
           ),
         ),
+        const Gap(10),
+        const Row(
+          children: [
+            Text(
+              'Förderbereiche',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+
+        const Gap(5),
+        if (pupil.individualLearningPlans?.isNotEmpty ?? true)
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: ElevatedButton(
+              style: AppStyles.actionButtonStyle,
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder:
+                        (ctx) => NewSupportCategoryStatus(
+                          appBarTitle: 'Neuer Förderbereich',
+                          pupilId: pupil.pupilId,
+                          goalCategoryId: 0,
+                          elementType: 'status',
+                        ),
+                  ),
+                );
+              },
+              child: const Text(
+                "NEUER FÖRDERBEREICH",
+                style: AppStyles.buttonTextStyle,
+              ),
+            ),
+          ),
         const Gap(5),
         ...pupilCategoryStatusesList(pupil, context),
 

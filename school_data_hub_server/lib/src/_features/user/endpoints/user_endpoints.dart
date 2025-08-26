@@ -8,7 +8,8 @@ class UserEndpoint extends Endpoint {
 
   Future<User?> getCurrentUser(Session session) async {
     // Get the authenticated user's ID
-    var userId = (await session.authenticated)?.userId;
+    final authenticatedUder = await session.authenticated;
+    var userId = authenticatedUder?.userId;
     if (userId == null) {
       return null;
     }
@@ -27,6 +28,81 @@ class UserEndpoint extends Endpoint {
         userInfo: UserInfo.include(),
       ),
     );
+  }
+
+  Future<List<User>> getAllUsers(Session session) async {
+    final users = await User.db.find(
+      session,
+      include: User.include(
+        userInfo: UserInfo.include(),
+      ),
+    );
+    return users;
+  }
+
+  Future<User?> updateUserInfo(
+      {required Session session,
+      String? userName,
+      String? fullName,
+      String? email}) async {
+    // Get the authenticated user
+    final authenticationInfo = await session.authenticated;
+    if (authenticationInfo == null) {
+      return null; // User is not authenticated
+    }
+    // Find the user's UserInfo
+    var userInfo = await UserInfo.db.findFirstRow(session,
+        where: (t) => t.id.equals(authenticationInfo.userId));
+    if (userInfo == null) {
+      return null; // UserInfo not found
+    }
+    // Update the UserInfo fields
+    if (userName != null) {
+      userInfo.userName = userName;
+    }
+    if (fullName != null) {
+      userInfo.fullName = fullName;
+    }
+    if (email != null) {
+      userInfo.email = email;
+    }
+    // Save the updated UserInfo
+    await UserInfo.db.updateRow(session, userInfo);
+    // Optionally, update the User object if needed
+    var user = await User.db.findFirstRow(
+      session,
+      where: (t) => t.userInfoId.equals(userInfo.id),
+    );
+    return user;
+  }
+
+  Future<UserDevice?> updateUserDevice({
+    required Session session,
+    String? deviceName,
+  }) async {
+    // Get the authenticated user
+    final authenticationInfo = await session.authenticated;
+    if (authenticationInfo == null) {
+      return null; // User is not authenticated
+    }
+
+    // Find the user's device
+    var userDevice = await UserDevice.db.findFirstRow(
+      session,
+      where: (t) => t.userInfoId.equals(authenticationInfo.userId),
+    );
+    if (userDevice == null) {
+      return null; // UserDevice not found
+    }
+
+    // Update the UserDevice fields
+    if (deviceName != null) {
+      userDevice.deviceName = deviceName;
+    }
+
+    // Save the updated UserDevice
+    await UserDevice.db.updateRow(session, userDevice);
+    return userDevice;
   }
 
   Future<bool> changePassword(

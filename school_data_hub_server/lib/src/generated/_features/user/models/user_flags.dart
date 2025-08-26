@@ -18,6 +18,7 @@ abstract class UserFlags
     required this.confirmedPrivacyPolicy,
     required this.changedPassword,
     required this.madeFirstSteps,
+    required this.isTester,
   });
 
   factory UserFlags({
@@ -25,6 +26,7 @@ abstract class UserFlags
     required bool confirmedPrivacyPolicy,
     required bool changedPassword,
     required bool madeFirstSteps,
+    required bool isTester,
   }) = _UserFlagsImpl;
 
   factory UserFlags.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -34,6 +36,7 @@ abstract class UserFlags
           jsonSerialization['confirmedPrivacyPolicy'] as bool,
       changedPassword: jsonSerialization['changedPassword'] as bool,
       madeFirstSteps: jsonSerialization['madeFirstSteps'] as bool,
+      isTester: jsonSerialization['isTester'] as bool,
     );
   }
 
@@ -45,6 +48,8 @@ abstract class UserFlags
 
   bool madeFirstSteps;
 
+  bool isTester;
+
   /// Returns a shallow copy of this [UserFlags]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
@@ -53,6 +58,7 @@ abstract class UserFlags
     bool? confirmedPrivacyPolicy,
     bool? changedPassword,
     bool? madeFirstSteps,
+    bool? isTester,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -61,6 +67,7 @@ abstract class UserFlags
       'confirmedPrivacyPolicy': confirmedPrivacyPolicy,
       'changedPassword': changedPassword,
       'madeFirstSteps': madeFirstSteps,
+      'isTester': isTester,
     };
   }
 
@@ -71,6 +78,7 @@ abstract class UserFlags
       'confirmedPrivacyPolicy': confirmedPrivacyPolicy,
       'changedPassword': changedPassword,
       'madeFirstSteps': madeFirstSteps,
+      'isTester': isTester,
     };
   }
 
@@ -86,11 +94,13 @@ class _UserFlagsImpl extends UserFlags {
     required bool confirmedPrivacyPolicy,
     required bool changedPassword,
     required bool madeFirstSteps,
+    required bool isTester,
   }) : super._(
           confirmedTermsOfUse: confirmedTermsOfUse,
           confirmedPrivacyPolicy: confirmedPrivacyPolicy,
           changedPassword: changedPassword,
           madeFirstSteps: madeFirstSteps,
+          isTester: isTester,
         );
 
   /// Returns a shallow copy of this [UserFlags]
@@ -102,6 +112,7 @@ class _UserFlagsImpl extends UserFlags {
     bool? confirmedPrivacyPolicy,
     bool? changedPassword,
     bool? madeFirstSteps,
+    bool? isTester,
   }) {
     return UserFlags(
       confirmedTermsOfUse: confirmedTermsOfUse ?? this.confirmedTermsOfUse,
@@ -109,6 +120,7 @@ class _UserFlagsImpl extends UserFlags {
           confirmedPrivacyPolicy ?? this.confirmedPrivacyPolicy,
       changedPassword: changedPassword ?? this.changedPassword,
       madeFirstSteps: madeFirstSteps ?? this.madeFirstSteps,
+      isTester: isTester ?? this.isTester,
     );
   }
 }

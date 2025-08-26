@@ -9,9 +9,10 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart'
 import 'package:watch_it/watch_it.dart';
 
 class PupilProxy with ChangeNotifier {
-  PupilProxy(
-      {required PupilData pupilData, required PupilIdentity pupilIdentity})
-      : _pupilIdentity = pupilIdentity {
+  PupilProxy({
+    required PupilData pupilData,
+    required PupilIdentity pupilIdentity,
+  }) : _pupilIdentity = pupilIdentity {
     updatePupil(pupilData);
   }
 
@@ -36,6 +37,7 @@ class PupilProxy with ChangeNotifier {
   bool pupilIsDirty = false;
 
   void updatePupil(PupilData pupilData) {
+    //- TODO ADVICE: Would it make sense?
     //if (pupilData == _pupilData) return;
     _pupilData = pupilData;
     // ignore: prefer_for_elements_to_map_fromiterable
@@ -115,7 +117,7 @@ class PupilProxy with ChangeNotifier {
   //- PUPIL DATA GETTERS
 
   int get pupilId => _pupilData.id!;
-  bool get active => _pupilData.active;
+  PupilStatus get active => _pupilData.status;
   int get internalId => _pupilData.internalId;
 
   // preschool related
@@ -148,9 +150,27 @@ class PupilProxy with ChangeNotifier {
 
   List<PupilAuthorization>? get authorizations => _pupilData.authorizations;
 
-// after school care related
+  // after school care related
 
   AfterSchoolCare? get afterSchoolCare => _pupilData.afterSchoolCare;
+
+  // Legacy OGS getters for backward compatibility
+  // TODO URGENT: Remove these after migrating all OGS code to use proper afterSchoolCare model
+  bool get ogs => afterSchoolCare != null;
+
+  String? get pickUpTime {
+    // For now, return a simplified representation
+    // This would need to be updated based on business logic for which day to show
+    final pickUpTimes = afterSchoolCare?.pickUpTimes;
+    if (pickUpTimes?.monday != null) return pickUpTimes!.monday!.time;
+    if (pickUpTimes?.tuesday != null) return pickUpTimes!.tuesday!.time;
+    if (pickUpTimes?.wednesday != null) return pickUpTimes!.wednesday!.time;
+    if (pickUpTimes?.thursday != null) return pickUpTimes!.thursday!.time;
+    if (pickUpTimes?.friday != null) return pickUpTimes!.friday!.time;
+    return null;
+  }
+
+  String? get ogsInfo => afterSchoolCare?.afterSchoolCareInfo;
 
   // rewards related
 
@@ -193,7 +213,11 @@ class PupilProxy with ChangeNotifier {
 
   List<SupportGoal>? get supportGoals => _pupilData.supportGoals;
 
-// schoolday related
+  List<LearningSupportPlan>? get individualLearningPlans =>
+      _pupilData.learningSupportPlans;
 
+  // schoolday related
+
+  List<MissedSchoolday>? get missedSchooldays => _pupilData.missedSchooldays;
   List<SchooldayEvent>? get schooldayEvents => _pupilData.schooldayEvents;
 }

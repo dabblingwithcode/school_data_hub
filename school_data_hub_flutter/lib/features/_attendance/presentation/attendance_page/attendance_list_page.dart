@@ -97,7 +97,7 @@ class AttendanceListPage extends WatchingWidget {
             _attendanceManager.fetchMissedSchooldayesOnASchoolday(thisDate),
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 800),
+            constraints: const BoxConstraints(maxWidth: 600),
             child: CustomScrollView(
               slivers: [
                 const SliverGap(5),

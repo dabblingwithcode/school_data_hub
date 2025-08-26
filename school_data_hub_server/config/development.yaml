@@ -10,7 +10,7 @@ maxRequestSize: 10485760 # 10 MB in bytes
 # Configuration for the main API server.
 apiServer:
   port: 8080
-  publicHost: 10.31.0.40 # localhost # 192.168.178.20
+  publicHost: 192.168.178.20 # 10.31.0.40 # localhost # 
   publicPort: 8080
   publicScheme: http
   #- TODO: Take an informed decission about the request size limit.

@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
@@ -11,7 +10,6 @@ import 'package:watch_it/watch_it.dart';
 final _notificationService = di<NotificationService>();
 final _hubSessionManager = di<HubSessionManager>();
 final _client = di<Client>();
-final _log = Logger('PupilDataApiService');
 
 class PupilDataApiService {
   // Private constructor
@@ -238,5 +236,13 @@ class PupilDataApiService {
       errorMessage: 'Die Förderebene konnte nicht gelöscht werden',
     );
     return updatedPupil;
+  }
+
+  Future<DateTime?> fetchLastIdentitiesUpdate() async {
+    final lastUpdate = await ClientHelper.apiCall(
+      call: () => _client.pupilIdentity.fetchLastPupilIdentitiesUpdate(),
+      errorMessage: 'Die letzte Aktualisierung konnte nicht geladen werden',
+    );
+    return lastUpdate;
   }
 }

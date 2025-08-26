@@ -1,7 +1,6 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
@@ -28,22 +27,25 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final unfilteredPupilListEntries = watch(_schoolListManager
-            .getPupilEntriesProxyFromSchoolList(schoolList.id!))
-        .pupilEntries
-        .values
-        .map((e) => e.pupilEntry)
-        .toList();
+    final unfilteredPupilListEntries =
+        watch(
+          _schoolListManager.getPupilEntriesProxyFromSchoolList(schoolList.id!),
+        ).pupilEntries.values.map((e) => e.pupilEntry).toList();
 
     final pupilListEntries = _schoolListFilterManager
         .addPupilEntryFiltersToFilteredPupils(unfilteredPupilListEntries);
-    final List<PupilProxy> filteredPupils =
-        watchValue((PupilsFilter x) => x.filteredPupils);
+    final List<PupilProxy> filteredPupils = watchValue(
+      (PupilsFilter x) => x.filteredPupils,
+    );
 
-    List<PupilProxy> pupilsInList = filteredPupils
-        .where((pupil) => pupilListEntries
-            .any((pupilList) => pupilList.pupilId == pupil.pupilId))
-        .toList();
+    List<PupilProxy> pupilsInList =
+        filteredPupils
+            .where(
+              (pupil) => pupilListEntries.any(
+                (pupilList) => pupilList.pupilId == pupil.pupilId,
+              ),
+            )
+            .toList();
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
@@ -54,10 +56,9 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
           padding: const EdgeInsets.only(left: 5.0, right: 5),
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 800),
+              constraints: const BoxConstraints(maxWidth: 700),
               child: CustomScrollView(
                 slivers: [
-                  const SliverGap(10),
                   GenericSliverSearchAppBar(
                     height: 135,
                     title: SchoolListPupilEntriesPageSearchBar(
@@ -67,25 +68,27 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
                   ),
                   pupilsInList.isEmpty
                       ? const SliverToBoxAdapter(
-                          child: Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                'Keine Ergebnisse',
-                                style: TextStyle(fontSize: 18),
-                              ),
+                        child: Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'Keine Ergebnisse',
+                              style: TextStyle(fontSize: 18),
                             ),
                           ),
-                        )
-                      : SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (BuildContext context, int index) {
-                              return SchoolListPupilEntryCard(
-                                  pupilsInList[index].pupilId, schoolList.id!);
-                            },
-                            childCount: pupilsInList.length,
-                          ),
                         ),
+                      )
+                      : SliverList(
+                        delegate: SliverChildBuilderDelegate((
+                          BuildContext context,
+                          int index,
+                        ) {
+                          return SchoolListPupilEntryCard(
+                            pupilsInList[index].pupilId,
+                            schoolList.id!,
+                          );
+                        }, childCount: pupilsInList.length),
+                      ),
                 ],
               ),
             ),
@@ -93,8 +96,9 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
         ),
       ),
       bottomNavigationBar: SchoolListPupilEntriesBottomNavBar(
-          listId: schoolList.id!,
-          pupilsInList: _pupilManager.getPupilIdsFromPupils(pupilsInList)),
+        listId: schoolList.id!,
+        pupilsInList: _pupilManager.getPupilIdsFromPupils(pupilsInList),
+      ),
     );
   }
 }

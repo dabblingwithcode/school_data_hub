@@ -1,7 +1,10 @@
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
+import 'package:school_data_hub_server/src/_features/learning/helpers/import_competences_from_json_file.dart';
+import 'package:school_data_hub_server/src/_features/learning_support/helpers/import_support_categories_from_file_content_json.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
+import 'package:school_data_hub_server/src/helpers/convert_file_to_content_string.dart';
 import 'package:school_data_hub_server/src/helpers/generate_pupil_from_admin_console_data.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/module.dart';
@@ -10,12 +13,11 @@ import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
 /// The endpoint for admin operations.
 /// This endpoint requires the user to be logged in and have admin scope.
 class AdminEndpoint extends Endpoint {
-  // TODO: Uncomment this in production!
-  // @override
-  // bool get requireLogin => true;
+  @override
+  bool get requireLogin => true;
 
-  // @override
-  // Set<Scope> get requiredScopes => {Scope.admin};
+  @override
+  Set<Scope> get requiredScopes => {Scope.admin};
 
   Future<User> createUser(
     Session session, {
@@ -25,9 +27,11 @@ class AdminEndpoint extends Endpoint {
     required String password,
     required Role role,
     required int timeUnits,
+    required int reliefTimeUnits,
     required List<String> scopeNames,
+    required bool isTester,
   }) async {
-    session.log('Creating user: $userName, $email, $password');
+    session.log('Creating user: $userName, $email');
     final UserInfo? userInfo =
         await auth.Emails.createUser(session, userName, email, password);
 
@@ -40,18 +44,23 @@ class AdminEndpoint extends Endpoint {
 
     await auth.UserInfo.db.updateRow(session, userInfo);
 
-// Update scopes if provided
-
     // Convert string scopes to Scope objects
-    final scopes = scopeNames.map((name) => Scope(name)).toSet();
+    // TODO: fix this when we use more scopes
+    bool isAdmin = false;
 
-    // Update user scopes
-    await auth.Users.updateUserScopes(session, userInfo.id!, scopes);
-
+    for (final scope in scopeNames) {
+      if (scope.contains('admin')) {
+        isAdmin = true;
+      }
+    }
+    // Update scopes if provided
+    await auth.Users.updateUserScopes(
+        session, userInfo.id!, isAdmin ? {Scope.admin} : {});
     // Create a new User object and insert it into the database
     final newUser = User(
       userInfoId: userInfo.id!,
       userFlags: UserFlags(
+        isTester: isTester,
         confirmedTermsOfUse: false,
         confirmedPrivacyPolicy: false,
         changedPassword: false,
@@ -60,6 +69,7 @@ class AdminEndpoint extends Endpoint {
       pupilsAuth: {},
       role: role,
       timeUnits: timeUnits,
+      reliefTimeUnits: reliefTimeUnits,
       credit: 50,
     );
 
@@ -75,7 +85,7 @@ class AdminEndpoint extends Endpoint {
       throw Exception('User not found.');
     }
 
-    // TODO; for now no easy way to delete user from all tables, so just set blocked to true
+    // TODO; for now no flow to delete user from all tables, so just set blocked to true
     // await session.db.deleteRow(user);
     user.blocked = true;
   }
@@ -112,16 +122,6 @@ class AdminEndpoint extends Endpoint {
     await auth.Users.updateUserScopes(session, user.id!, userscopes);
   }
 
-  Future<List<User>> getAllUsers(Session session) async {
-    final users = await User.db.find(
-      session,
-      include: User.include(
-        userInfo: UserInfo.include(),
-      ),
-    );
-    return users;
-  }
-
   Future<User?> getUserById(Session session, int userId) async {
     final user = await User.db.findFirstRow(
       session,
@@ -132,37 +132,20 @@ class AdminEndpoint extends Endpoint {
 
   Future<Set<PupilData>> updateBackendPupilDataState(
       Session session, String filePath) async {
-    // check if the file exists
-    var exists = await session.storage.fileExists(
-      storageId: 'private',
-      path: filePath,
-    );
-    if (!exists) {
-      throw Exception('File not found: $filePath');
-    }
-    final fileBytes = await session.storage.retrieveFile(
-      storageId: 'private',
-      path: filePath,
-    );
-
-    // check the extension of the file
+    // check if the file is a txt or csv file
     final extension = filePath.split('.').last;
     if (extension != 'txt' && extension != 'csv') {
       throw Exception('File is not a compatible format!');
     }
-    final buffer = fileBytes!.buffer;
-    final uint8List =
-        buffer.asUint8List(fileBytes.offsetInBytes, fileBytes.lengthInBytes);
-
-    // Decode bytes to string (UTF-8 is common, but you can use other encodings)
-    final content = utf8.decode(uint8List);
+    // read the file content
+    final content = await convertFileToContentString(session, filePath);
 
     // get all active pupils from the database and create a list
-    final activePupils =
-        await PupilData.db.find(session, where: (t) => t.active.equals(true));
+    final activePupils = await PupilData.db
+        .find(session, where: (t) => t.status.equals(PupilStatus.active));
 
     // we monitor the pupils that we haven't processed yet
-    final List<PupilData> unprocessedPupilsList = activePupils.toList();
+    final List<PupilData> unprocessedPupilsList = List.from(activePupils);
     session.log('Unprocessed pupils: $unprocessedPupilsList');
 
     final List<String> lines = LineSplitter.split(content).toList();
@@ -175,7 +158,7 @@ class AdminEndpoint extends Endpoint {
       if (existingPupil != null) {
         // If the pupil exists, we process it updating just the after care status
         // This is the second string of the line
-        if (line.split(',')[1] == 'OFFGANZ' || line.split(',')[1] == 'true') {
+        if (line.split(',')[1] == 'true') {
           // we just check if the after achool care is set
           // if it is already set we leave it alone
           // if not, we set the after school care as an empty object
@@ -187,9 +170,6 @@ class AdminEndpoint extends Endpoint {
           } else {
             // the after school care is already set, we leave it alone
           }
-          // the pupil is processed
-          // we remove it from the unprocessed list
-          unprocessedPupilsList.remove(existingPupil);
         } else {
           // there is no entry for after School care
           // if the existing pupil has an after school care entry, we remove it
@@ -201,20 +181,103 @@ class AdminEndpoint extends Endpoint {
         // we have processed the pupil, let's remove it from the unprocessed list
         unprocessedPupilsList.remove(existingPupil);
       } else {
-        // If the pupil doesn't exist, we create a new one
-        final pupil = generatePupilfromExternalAdminConsoleData(line);
+        // If the pupil doesn't exist, we first need to check if it exists and should be activated
+        // if it doesn't exist, we'll created a new one
+        final inactivePupil = await PupilData.db.findFirstRow(
+          session,
+          where: (t) => t.internalId.equals(int.parse(line.split(',')[0])),
+        );
+        if (inactivePupil != null) {
+          // If the pupil exists, we just activate it and update the after school care status
+          inactivePupil.status = PupilStatus.active;
+          inactivePupil.afterSchoolCare =
+              line.split(',')[1] == 'true' ? AfterSchoolCare() : null;
+          await session.db.updateRow(inactivePupil);
+        } else {
+          final pupil = generatePupilfromExternalAdminConsoleData(line);
 
-        await session.db.insertRow(pupil);
-      }
-      // if there are unprocessed pupils, they are not active in the school data system
-      // we set them to inactive
-      for (final pupil in unprocessedPupilsList) {
-        pupil.active = false;
-        await session.db.updateRow(pupil);
+          await session.db.insertRow(pupil);
+        }
       }
     }
+    // if there are unprocessed pupils, they are not active in the school data system
+    // we set them to inactive
+    for (final pupil in unprocessedPupilsList) {
+      pupil.status = PupilStatus.inactive;
+      await session.db.updateRow(pupil);
+    }
+
     // we return the updated set of pupils that are active in the school data system
     final pupils = await PupilData.db.find(session);
     return pupils.toSet();
+  }
+
+  Future<List<Competence>> importCompetencesFromJsonFile(
+      Session session, String filePath) async {
+    final content = await convertFileToContentString(session, filePath);
+
+    final competences = await importCompetencesFromFileContentJson(content);
+
+    final List<Competence> processedCompetences = [];
+
+    for (final competence in competences) {
+      // Check if competence exists by publicId
+      final existingCompetence = await Competence.db.findFirstRow(
+        session,
+        where: (t) => t.publicId.equals(competence.publicId),
+      );
+
+      if (existingCompetence != null) {
+        // Update existing competence
+        final updatedCompetence = existingCompetence.copyWith(
+          name: competence.name,
+          parentCompetence: competence.parentCompetence,
+          level: competence.level,
+          indicators: competence.indicators,
+        );
+        await session.db.updateRow(updatedCompetence);
+        processedCompetences.add(updatedCompetence);
+      } else {
+        // Create new competence
+        await session.db.insertRow(competence);
+        processedCompetences.add(competence);
+      }
+    }
+
+    return processedCompetences;
+  }
+
+  Future<List<SupportCategory>> importSupportCategoriesFromJsonFile(
+      Session session, String filePath) async {
+    final content = await convertFileToContentString(session, filePath);
+
+    final categories =
+        await importSupportCategoriesFromFileContentJson(content);
+
+    final List<SupportCategory> processedCategories = [];
+
+    for (final category in categories) {
+      // Check if support category exists by categoryId
+      final existingCategory = await SupportCategory.db.findFirstRow(
+        session,
+        where: (t) => t.categoryId.equals(category.categoryId),
+      );
+
+      if (existingCategory != null) {
+        // Update existing category
+        final updatedCategory = existingCategory.copyWith(
+          name: category.name,
+          parentCategory: category.parentCategory,
+        );
+        await session.db.updateRow(updatedCategory);
+        processedCategories.add(updatedCategory);
+      } else {
+        // Create new category
+        await session.db.insertRow(category);
+        processedCategories.add(category);
+      }
+    }
+
+    return processedCategories;
   }
 }

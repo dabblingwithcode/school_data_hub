@@ -1,11 +1,8 @@
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _client = di<Client>();
-
-final _notificationService = di<NotificationService>();
 
 class CompetenceCheckApiService {
   //- create
@@ -17,13 +14,16 @@ class CompetenceCheckApiService {
     String? comment,
   }) async {
     final PupilData? pupil = await ClientHelper.apiCall(
-        call: () => _client.competenceCheck.postCompetenceCheck(
+      call:
+          () => _client.competenceCheck.postCompetenceCheck(
             competenceId: competenceId,
             pupilId: pupilId,
             score: 0,
             valueFactor: 1,
             comment: comment,
-            createdBy: createdBy));
+            createdBy: createdBy,
+          ),
+    );
     return pupil;
   }
 

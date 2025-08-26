@@ -36,7 +36,7 @@ class LibraryBookLocationsEndpoint extends Endpoint {
       Session session, LibraryBookLocation location) async {
     // Check if the library book location exists
 
-    final deleted = await LibraryBookLocation.db.deleteRow(session, location);
+    await LibraryBookLocation.db.deleteRow(session, location);
     return true;
   }
 }

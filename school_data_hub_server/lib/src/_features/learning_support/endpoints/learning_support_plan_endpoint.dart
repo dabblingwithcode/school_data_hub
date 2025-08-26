@@ -12,10 +12,10 @@ class LearningSupportPlanEndpoint extends Endpoint {
     return plans;
   }
 
-  Future<bool> createLearningSupportPlan(
+  Future<LearningSupportPlan> createLearningSupportPlan(
       Session session, LearningSupportPlan plan) async {
-    await session.db.insertRow(plan);
-    return true;
+    final newPlan = await session.db.insertRow(plan);
+    return newPlan;
   }
 
   Future<bool> updateLearningSupportPlan(

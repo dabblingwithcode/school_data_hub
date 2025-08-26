@@ -1,13 +1,12 @@
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _client = di<Client>();
 final _hubSessionManager = di<HubSessionManager>();
-final _notificationService = di<NotificationService>();
+
 final _log = Logger('SchoolListApiService');
 
 class SchoolListApiService {
@@ -15,8 +14,9 @@ class SchoolListApiService {
 
   Future<List<SchoolList>?> fetchSchoolLists() async {
     final response = await ClientHelper.apiCall(
-      call: () =>
-          _client.schoolList.fetchSchoolLists(_hubSessionManager.userName!),
+      call:
+          () =>
+              _client.schoolList.fetchSchoolLists(_hubSessionManager.userName!),
       errorMessage: 'Fehler beim Abrufen der Schullisten',
     );
     return response;
@@ -24,14 +24,21 @@ class SchoolListApiService {
 
   //- post school list
 
-  Future<SchoolList?> postSchoolListWithGroup(
-      {required String name,
-      required String description,
-      required List<int> pupilIds,
-      required bool public}) async {
+  Future<SchoolList?> postSchoolListWithGroup({
+    required String name,
+    required String description,
+    required List<int> pupilIds,
+    required bool public,
+  }) async {
     final response = await ClientHelper.apiCall(
-      call: () => _client.schoolList.postSchoolList(
-          name, description, pupilIds, public, _hubSessionManager.userName!),
+      call:
+          () => _client.schoolList.postSchoolList(
+            name,
+            description,
+            pupilIds,
+            public,
+            _hubSessionManager.userName!,
+          ),
       errorMessage: 'Fehler beim Erstellen der Schulliste',
     );
     return response;
@@ -39,27 +46,39 @@ class SchoolListApiService {
 
   //- update school list
 
-  Future<SchoolList?> updateSchoolListProperty(
-      {required int listId,
-      String? name,
-      String? description,
-      bool? public,
-      ({List<int> pupilIds, MemberOperation operation})? updateMembers}) async {
+  Future<SchoolList?> updateSchoolListProperty({
+    required int listId,
+    String? name,
+    String? description,
+    bool? public,
+    ({String? value})? authorizedUsers,
+    ({List<int> pupilIds, MemberOperation operation})? updateMembers,
+  }) async {
     assert(
-        name != null ||
-            description != null ||
-            public != null ||
-            updateMembers != null,
-        'At least one property must be provided to update the school list.');
+      name != null ||
+          description != null ||
+          public != null ||
+          updateMembers != null ||
+          authorizedUsers != null,
+      'At least one property must be provided to update the school list.',
+    );
     final response = await ClientHelper.apiCall(
-      call: () => _client.schoolList
-          .updateSchoolList(listId, name, description, public, updateMembers),
+      call:
+          () => _client.schoolList.updateSchoolList(
+            listId,
+            name,
+            description,
+            authorizedUsers,
+            public,
+
+            updateMembers,
+          ),
       errorMessage: 'Fehler beim Aktualisieren der Schulliste',
     );
     return response;
   }
 
-//   //- delete school list
+  //   //- delete school list
 
   Future<bool?> deleteSchoolList(int listId) async {
     final response = await ClientHelper.apiCall(
@@ -70,7 +89,7 @@ class SchoolListApiService {
     return response;
   }
 
-//   //- update pupil list property
+  //   //- update pupil list property
 
   Future<PupilListEntry?> updatePupilEntry({
     required PupilListEntry entry,

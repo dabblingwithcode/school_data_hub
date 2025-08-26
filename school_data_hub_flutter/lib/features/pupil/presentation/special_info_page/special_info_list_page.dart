@@ -78,7 +78,7 @@ class SpecialInfoListPage extends WatchingWidget {
           onRefresh: () async => _pupilManager.updatePupilList(pupils),
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 800),
+              constraints: const BoxConstraints(maxWidth: 700),
               child: CustomScrollView(
                 slivers: [
                   const SliverGap(5),

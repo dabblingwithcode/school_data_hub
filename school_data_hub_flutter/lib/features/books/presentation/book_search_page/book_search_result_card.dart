@@ -21,8 +21,8 @@ class SearchResultBookCard extends WatchingWidget {
 
     final List<LibraryBookProxy> books = group;
     final LibraryBookProxy bookProxy = books.first;
-    final descriptionTileController = createOnce<ExpansionTileController>(
-      () => ExpansionTileController(),
+    final descriptionTileController = createOnce<ExpansibleController>(
+      () => ExpansibleController(),
     );
 
     return ClipRRect(
@@ -47,7 +47,9 @@ class SearchResultBookCard extends WatchingWidget {
                         Text(
                           bookProxy.title,
                           style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
@@ -61,7 +63,9 @@ class SearchResultBookCard extends WatchingWidget {
                       Text(
                         bookProxy.author,
                         style: const TextStyle(
-                            fontSize: 13, fontWeight: FontWeight.normal),
+                          fontSize: 13,
+                          fontWeight: FontWeight.normal,
+                        ),
                       ),
                     ],
                   ),
@@ -71,10 +75,7 @@ class SearchResultBookCard extends WatchingWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Column(
-                      children: [
-                        SizedBox(height: 10),
-                        const Gap(10),
-                      ],
+                      children: [SizedBox(height: 10), const Gap(10)],
 
                       // TODOD: Repair when image loading is implemented
                       //  InkWell(
@@ -162,18 +163,20 @@ class SearchResultBookCard extends WatchingWidget {
                   title: const Text(
                     'Beschreibung:',
                     style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
                   children: [
                     InkWell(
                       onTap: () async {
                         final String? description = await longTextFieldDialog(
-                            title: 'Beschreibung',
-                            labelText: 'Beschreibung',
-                            initialValue: bookProxy.description,
-                            parentContext: context);
+                          title: 'Beschreibung',
+                          labelText: 'Beschreibung',
+                          initialValue: bookProxy.description,
+                          parentContext: context,
+                        );
                         di<BookManager>().updateBookProperty(
                           isbn: bookProxy.isbn,
                           libraryId: bookProxy.libraryId,
@@ -191,9 +194,10 @@ class SearchResultBookCard extends WatchingWidget {
                   ],
                 ),
                 Column(
-                  children: books.map((book) {
-                    return LibraryBookCard(bookProxy: book);
-                  }).toList(),
+                  children:
+                      books.map((book) {
+                        return LibraryBookCard(bookProxy: book);
+                      }).toList(),
                 ),
                 const Gap(10),
               ],

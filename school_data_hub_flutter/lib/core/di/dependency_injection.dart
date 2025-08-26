@@ -6,6 +6,7 @@ import 'package:school_data_hub_flutter/core/di/di_on_user_auth.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_monitor.dart';
+import 'package:school_data_hub_flutter/core/updater/shorebird_update_manager.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
@@ -45,6 +46,13 @@ class DiManager {
     );
 
     di.registerSingleton<BottomNavManager>(BottomNavManager());
+
+    // Register ShorebirdUpdateManager
+    di.registerSingletonAsync<ShorebirdUpdateManager>(() async {
+      final updateManager = ShorebirdUpdateManager();
+      await updateManager.initialize();
+      return updateManager;
+    });
   }
 
   static Future<void> registerManagersDependingOnActiveEnv() async {

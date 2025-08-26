@@ -1,9 +1,13 @@
 enum: Role
 serialized: byName
 values:
-  - technical
+  - admin
   - teacher
+  - specialEducatorE
+  - specialEducatorK
   - educator
-  - pupil
+  - trainee
+  - afterSchoolCare
+  - socialWorker
   - notAssigned
 

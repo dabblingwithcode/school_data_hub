@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
@@ -140,12 +139,12 @@ List<Widget> pupilSupportCategoryTree({
                                               message:
                                                   'Kategoriestatus löschen?');
                                       if (delete == true) {
-                                        final SupportCategoryStatus?
-                                            supportCategoryStatus = pupil
-                                                .supportCategoryStatuses!
-                                                .lastWhereOrNull((element) =>
-                                                    element.supportCategoryId ==
-                                                    supportCategory.categoryId);
+                                        // final SupportCategoryStatus?
+                                        //     supportCategoryStatus = pupil
+                                        //         .supportCategoryStatuses!
+                                        //         .lastWhereOrNull((element) =>
+                                        //             element.supportCategoryId ==
+                                        //             supportCategory.categoryId);
                                         // TODO: uncomment when ready
                                         // await _learningSupportManager
                                         //     .deleteSupportCategoryStatus(

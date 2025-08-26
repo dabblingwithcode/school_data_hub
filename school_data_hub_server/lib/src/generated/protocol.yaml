@@ -3,9 +3,10 @@ admin:
   - deleteUser:
   - promoteUserScope:
   - demoteUserScope:
-  - getAllUsers:
   - getUserById:
   - updateBackendPupilDataState:
+  - importCompetencesFromJsonFile:
+  - importSupportCategoriesFromJsonFile:
 missedSchoolday:
   - streamMissedSchooldays:
   - postMissedSchoolday:
@@ -14,6 +15,9 @@ missedSchoolday:
   - fetchMissedSchooldaysOnASchoolday:
   - deleteMissedSchoolday:
   - updateMissedSchoolday:
+auth:
+  - login:
+  - logOut:
 authorization:
   - fetchAuthorizations:
   - fetchAuthorizationById:
@@ -58,7 +62,6 @@ pupilBookLending:
 competenceCheck:
   - postCompetenceCheck:
 competence:
-  - importCompetencesFromJsonFile:
   - postCompetence:
   - getAllCompetences:
   - updateCompetence:
@@ -91,9 +94,12 @@ pupil:
   - deletePupilDocument:
   - resetPublicMediaAuth:
   - deleteSupportLevelHistoryItem:
-pupilIdentityStream:
+pupilIdentity:
   - streamEncryptedPupilIds:
   - sendPupilIdentityMessage:
+  - fetchLastPupilIdentitiesUpdate:
+  - updateLastPupilIdentitiesUpdate:
+  - deleteLastPupilIdentitiesUpdate:
 pupilUpdate:
   - updatePupil:
   - updateCommunicationSkills:
@@ -132,12 +138,9 @@ schooldayEvent:
   - deleteSchooldayEvent:
   - updateSchooldayEventFile:
   - deleteSchooldayEventFile:
-auth:
-  - login:
-  - verifyPassword:
-  - logOut:
 user:
   - getCurrentUser:
+  - getAllUsers:
   - changePassword:
   - increaseStaffCredit:
 pupilWorkbooks:

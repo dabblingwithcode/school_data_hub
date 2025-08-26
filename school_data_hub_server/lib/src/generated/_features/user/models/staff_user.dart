@@ -23,6 +23,7 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     this.userInfo,
     required this.role,
     required this.timeUnits,
+    required this.reliefTimeUnits,
     this.pupilsAuth,
     required this.credit,
     required this.userFlags,
@@ -34,6 +35,7 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     _i2.UserInfo? userInfo,
     required _i3.Role role,
     required int timeUnits,
+    required int reliefTimeUnits,
     Set<int>? pupilsAuth,
     required int credit,
     required _i4.UserFlags userFlags,
@@ -49,6 +51,7 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
               (jsonSerialization['userInfo'] as Map<String, dynamic>)),
       role: _i3.Role.fromJson((jsonSerialization['role'] as String)),
       timeUnits: jsonSerialization['timeUnits'] as int,
+      reliefTimeUnits: jsonSerialization['reliefTimeUnits'] as int,
       pupilsAuth: jsonSerialization['pupilsAuth'] == null
           ? null
           : _i1.SetJsonExtension.fromJson(
@@ -75,6 +78,8 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
 
   int timeUnits;
 
+  int reliefTimeUnits;
+
   Set<int>? pupilsAuth;
 
   int credit;
@@ -93,6 +98,7 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     _i2.UserInfo? userInfo,
     _i3.Role? role,
     int? timeUnits,
+    int? reliefTimeUnits,
     Set<int>? pupilsAuth,
     int? credit,
     _i4.UserFlags? userFlags,
@@ -105,6 +111,7 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
       if (userInfo != null) 'userInfo': userInfo?.toJson(),
       'role': role.toJson(),
       'timeUnits': timeUnits,
+      'reliefTimeUnits': reliefTimeUnits,
       if (pupilsAuth != null) 'pupilsAuth': pupilsAuth?.toJson(),
       'credit': credit,
       'userFlags': userFlags.toJson(),
@@ -119,6 +126,7 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
       if (userInfo != null) 'userInfo': userInfo?.toJsonForProtocol(),
       'role': role.toJson(),
       'timeUnits': timeUnits,
+      'reliefTimeUnits': reliefTimeUnits,
       if (pupilsAuth != null) 'pupilsAuth': pupilsAuth?.toJson(),
       'credit': credit,
       'userFlags': userFlags.toJsonForProtocol(),
@@ -164,6 +172,7 @@ class _UserImpl extends User {
     _i2.UserInfo? userInfo,
     required _i3.Role role,
     required int timeUnits,
+    required int reliefTimeUnits,
     Set<int>? pupilsAuth,
     required int credit,
     required _i4.UserFlags userFlags,
@@ -173,6 +182,7 @@ class _UserImpl extends User {
           userInfo: userInfo,
           role: role,
           timeUnits: timeUnits,
+          reliefTimeUnits: reliefTimeUnits,
           pupilsAuth: pupilsAuth,
           credit: credit,
           userFlags: userFlags,
@@ -188,6 +198,7 @@ class _UserImpl extends User {
     Object? userInfo = _Undefined,
     _i3.Role? role,
     int? timeUnits,
+    int? reliefTimeUnits,
     Object? pupilsAuth = _Undefined,
     int? credit,
     _i4.UserFlags? userFlags,
@@ -199,6 +210,7 @@ class _UserImpl extends User {
           userInfo is _i2.UserInfo? ? userInfo : this.userInfo?.copyWith(),
       role: role ?? this.role,
       timeUnits: timeUnits ?? this.timeUnits,
+      reliefTimeUnits: reliefTimeUnits ?? this.reliefTimeUnits,
       pupilsAuth: pupilsAuth is Set<int>?
           ? pupilsAuth
           : this.pupilsAuth?.map((e0) => e0).toSet(),
@@ -223,6 +235,10 @@ class UserTable extends _i1.Table<int?> {
       'timeUnits',
       this,
     );
+    reliefTimeUnits = _i1.ColumnInt(
+      'reliefTimeUnits',
+      this,
+    );
     pupilsAuth = _i1.ColumnSerializable(
       'pupilsAuth',
       this,
@@ -244,6 +260,8 @@ class UserTable extends _i1.Table<int?> {
   late final _i1.ColumnEnum<_i3.Role> role;
 
   late final _i1.ColumnInt timeUnits;
+
+  late final _i1.ColumnInt reliefTimeUnits;
 
   late final _i1.ColumnSerializable pupilsAuth;
 
@@ -270,6 +288,7 @@ class UserTable extends _i1.Table<int?> {
         userInfoId,
         role,
         timeUnits,
+        reliefTimeUnits,
         pupilsAuth,
         credit,
         userFlags,

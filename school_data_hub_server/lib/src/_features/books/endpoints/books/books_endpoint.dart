@@ -34,9 +34,9 @@ class BooksEndpoint extends Endpoint {
       final IsbnApiData isbnApiData =
           await IsbnApi.fetchIsbnApiData(session, isbn);
 
-      if (isbnApiData == null) {
-        throw Exception('Book with isbn $isbn does not exist.');
-      }
+      // if (isbnApiData == null) {
+      //   throw Exception('Book with isbn $isbn does not exist.');
+      // }
       final book = Book(
         isbn: isbn,
         title: isbnApiData.title,
@@ -111,8 +111,8 @@ class BooksEndpoint extends Endpoint {
     if (book == null) {
       throw Exception('Book with id $id does not exist.');
     }
-    final deleted = await Book.db.deleteRow(session, book);
-    // TODO: Is this the right way to check if the book was deleted?
+    await Book.db.deleteRow(session, book);
+    // QUESTION: Is this the right way to check if the book was deleted?
 
     return true;
   }

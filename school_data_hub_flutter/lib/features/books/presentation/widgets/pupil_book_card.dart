@@ -24,7 +24,7 @@ class PupilBookCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final LibraryBookProxy book =
         di<BookManager>().getLibraryBookByLibraryBookId(pupilBookLending.id!)!;
-    updatepupilBookRating(int rating) {
+    void updatepupilBookRating(int rating) {
       di<PupilManager>().updatePupilBook(
           pupilBookLending: pupilBookLending, score: (value: rating));
     }
@@ -154,7 +154,7 @@ class PupilBookCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       GrowthDropdown(
-                          dropdownValue: pupilBookLending.score ?? 0,
+                          dropdownValue: pupilBookLending.score,
                           onChangedFunction: updatepupilBookRating),
                     ],
                   ),

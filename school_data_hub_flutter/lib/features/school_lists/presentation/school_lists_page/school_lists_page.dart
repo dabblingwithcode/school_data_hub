@@ -54,7 +54,7 @@ class SchoolListsPage extends WatchingWidget {
         onRefresh: () async => _schoolListManager.fetchSchoolLists(),
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 800),
+            constraints: const BoxConstraints(maxWidth: 700),
             child: Column(
               children: [
                 Padding(

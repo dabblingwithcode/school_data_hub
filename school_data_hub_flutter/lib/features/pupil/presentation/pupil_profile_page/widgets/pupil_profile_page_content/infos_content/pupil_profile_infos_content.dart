@@ -3,7 +3,6 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/paddings.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
@@ -37,44 +36,52 @@ class PupilProfileInfosContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //  final pupil = watch(passedPupil);
     List<PupilProxy> pupilSiblings = _pupilManager.getSiblings(pupil);
-    return Card(
-      color: AppColors.pupilProfileCardColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.pupilProfileBackgroundColor,
       ),
-      child: Padding(
-        padding: AppPaddings.pupilProfileCardPadding,
-        child: Column(
-          children: [
-            const Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header Section
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration: BoxDecoration(
+              color: AppColors.canvasColor,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: AppColors.backgroundColor.withValues(alpha: 0.2),
+                width: 1,
+              ),
+            ),
+            child: const Row(
               children: [
                 Icon(
                   Icons.info_rounded,
                   color: AppColors.backgroundColor,
-                  size: 24,
+                  size: 28,
                 ),
-                Gap(5),
+                Gap(12),
                 Text(
-                  'Infos',
+                  'Persönliche Informationen',
                   style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.backgroundColor),
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.backgroundColor,
+                  ),
                 ),
               ],
             ),
-            const Gap(15),
-            const Row(
-              children: [
-                Text('Besondere Infos:', style: TextStyle(fontSize: 18.0)),
-                Gap(5),
-              ],
-            ),
-            const Gap(5),
-            InkWell(
+          ),
+          const Gap(8), // Reduced from 24 to 16
+          // Special Information Section
+          _buildInfoSection(
+            icon: Icons.priority_high_rounded,
+            title: 'Besondere Infos',
+            child: InkWell(
               onTap: () async {
                 final String? specialInformation = await longTextFieldDialog(
                   title: 'Besondere Infos',
@@ -84,84 +91,111 @@ class PupilProfileInfosContent extends StatelessWidget {
                 );
                 if (specialInformation == null) return;
                 await _pupilManager.updateStringProperty(
-                    pupilId: pupil.pupilId,
-                    property: 'specialInformation',
-                    value: specialInformation);
+                  pupilId: pupil.pupilId,
+                  property: 'specialInformation',
+                  value: specialInformation,
+                );
               },
               onLongPress: () async {
                 if (pupil.specialInformation == null) return;
                 final bool? confirm = await confirmationDialog(
-                    context: context,
-                    title: 'Besondere Infos löschen',
-                    message:
-                        'Besondere Informationen für dieses Kind löschen?');
+                  context: context,
+                  title: 'Besondere Infos löschen',
+                  message: 'Besondere Informationen für dieses Kind löschen?',
+                );
                 if (confirm == false || confirm == null) return;
                 await _pupilManager.updateStringProperty(
-                    pupilId: pupil.pupilId,
-                    property: 'specialInformation',
-                    value: null);
+                  pupilId: pupil.pupilId,
+                  property: 'specialInformation',
+                  value: null,
+                );
               },
-              child: Row(
-                children: [
-                  Flexible(
-                    child: pupil.specialInformation != null
-                        ? Text(pupil.specialInformation!,
-                            softWrap: true,
-                            style: const TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.backgroundColor))
-                        : const Text(
-                            'keine Einträge', //TODO:  BUG - this does not update when the value is changed
-                            style: TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.interactiveColor),
-                          ),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color:
+                      pupil.specialInformation != null
+                          ? AppColors.backgroundColor.withValues(alpha: 0.05)
+                          : AppColors.interactiveColor.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color:
+                        pupil.specialInformation != null
+                            ? AppColors.backgroundColor.withValues(alpha: 0.2)
+                            : AppColors.interactiveColor.withValues(alpha: 0.2),
+                    width: 1,
                   ),
-                ],
+                ),
+                child: Text(
+                  pupil.specialInformation ??
+                      'Tippen Sie hier, um besondere Informationen hinzuzufügen',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight:
+                        pupil.specialInformation != null
+                            ? FontWeight.w500
+                            : FontWeight.normal,
+                    color:
+                        pupil.specialInformation != null
+                            ? AppColors.backgroundColor
+                            : AppColors.interactiveColor,
+                    fontStyle:
+                        pupil.specialInformation == null
+                            ? FontStyle.italic
+                            : FontStyle.normal,
+                  ),
+                ),
               ),
             ),
-            const Gap(10),
-            Row(
+          ),
+          const Gap(8),
+          // Basic Information Section
+          _buildInfoSection(
+            icon: Icons.person_outline,
+            title: 'Grunddaten',
+            child: Column(
               children: [
-                const Text('Geschlecht:', style: TextStyle(fontSize: 18.0)),
-                const Gap(10),
-                Text(pupil.gender == 'm' ? 'männlich' : 'weiblich',
-                    style: const TextStyle(
-                        fontSize: 18.0, fontWeight: FontWeight.bold))
+                _buildInfoRow(
+                  icon: Icons.wc,
+                  label: 'Geschlecht',
+                  value: pupil.gender == 'm' ? 'männlich' : 'weiblich',
+                ),
+                const Gap(8), // Reduced from 12 to 8
+                _buildInfoRow(
+                  icon: Icons.cake_outlined,
+                  label: 'Geburtsdatum',
+                  value: pupil.birthday.formatForUser(),
+                ),
+                const Gap(8), // Reduced from 12 to 8
+                _buildInfoRow(
+                  icon: Icons.school_outlined,
+                  label: 'Aufnahmedatum',
+                  value: pupil.pupilSince.formatForUser(),
+                ),
               ],
             ),
-            const Gap(10),
-            Row(
+          ),
+          const Gap(8),
+          // Contact Information Section
+          _buildInfoSection(
+            icon: Icons.contact_phone_outlined,
+            title: 'Kontaktinformationen',
+            child: Column(
               children: [
-                const Text('Geburtsdatum:', style: TextStyle(fontSize: 18.0)),
-                const Gap(10),
-                Text(pupil.birthday.formatForUser(),
-                    style: const TextStyle(
-                        fontSize: 18.0, fontWeight: FontWeight.bold))
-              ],
-            ),
-            const Gap(10),
-            Row(
-              children: [
-                const Text('Aufnahmedatum:', style: TextStyle(fontSize: 18.0)),
-                const Gap(10),
-                Text(pupil.pupilSince.formatForUser(),
-                    style: const TextStyle(
-                        fontSize: 18.0, fontWeight: FontWeight.bold))
-              ],
-            ),
-            const Gap(10),
-            Row(
-              children: [
-                const Text('Kontakt:', style: TextStyle(fontSize: 18.0)),
-                const Gap(10),
-                InkWell(
+                _buildContactRow(
+                  icon: Icons.person_outline,
+                  label: 'Schüler/in Kontakt',
+                  value:
+                      pupil.contact?.isNotEmpty == true
+                          ? pupil.contact!
+                          : 'keine Angabe',
                   onTap: () {
                     if (pupil.contact != null && pupil.contact!.isNotEmpty) {
                       MatrixPolicyHelper.launchMatrixUrl(
-                          context, pupil.contact!);
+                        context,
+                        pupil.contact!,
+                      );
                     }
                   },
                   onLongPress: () async {
@@ -174,249 +208,553 @@ class PupilProfileInfosContent extends StatelessWidget {
                     );
                     if (contact == null) return;
                     await _pupilManager.updateStringProperty(
-                        pupilId: pupil.pupilId,
-                        property: 'contact',
-                        value: contact);
+                      pupilId: pupil.pupilId,
+                      property: 'contact',
+                      value: contact,
+                    );
                   },
-                  child: Text(
-                      pupil.contact?.isNotEmpty == true
-                          ? pupil.contact!
-                          : 'keine Angabe',
-                      style: const TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.interactiveColor)),
-                ),
-                pupil.contact == null || pupil.contact!.isEmpty
-                    ? IconButton(
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => NewMatrixUserPage(
-                              pupil: pupil,
-                              matrixId: MatrixPolicyHelper.generateMatrixId(
-                                  isParent: false),
-                              displayName:
-                                  '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (${pupil.group})',
-                            ),
-                          ));
-                        },
-                        icon: const Icon(Icons.add, size: 30))
-                    : IconButton(
-                        onPressed: () async {
-                          final confirmation = await confirmationDialog(
-                              context: context,
-                              title: 'Passwort zurücksetzen',
-                              message:
-                                  'Möchten Sie das Passwort wirklich zurücksetzen?');
-                          if (confirmation != true) return;
-                          if (context.mounted) {
-                            final logOutDevices =
-                                await logoutDevicesDialog(context);
-                            if (logOutDevices == null) return;
-                            final file = await _matrixPolicyManager.users
-                                .resetPassword(
-                                    user: MatrixUserHelper.usersFromUserIds(
-                                        [pupil.contact!]).first,
-                                    logoutDevices: logOutDevices,
-                                    isStaff: false);
-                            if (file != null && context.mounted) {
+                  actionButton:
+                      pupil.contact == null || pupil.contact!.isEmpty
+                          ? IconButton(
+                            onPressed: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      PdfViewPage(pdfFile: file),
+                                  builder:
+                                      (ctx) => NewMatrixUserPage(
+                                        pupil: pupil,
+                                        matrixId:
+                                            MatrixPolicyHelper.generateMatrixId(
+                                              isParent: false,
+                                            ),
+                                        displayName:
+                                            '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (${pupil.group})',
+                                      ),
                                 ),
                               );
-                            }
-                          }
-                        },
-                        icon: const Icon(Icons.qr_code_2_rounded, size: 30)),
-              ],
-            ),
-            const Gap(5),
-            Row(
-              children: [
-                const Text('Kontakt Familie:',
-                    style: TextStyle(fontSize: 18.0)),
-                const Gap(10),
-                InkWell(
+                            },
+                            icon: const Icon(
+                              Icons.add_circle_outline,
+                              size: 24,
+                              color: AppColors.interactiveColor,
+                            ),
+                          )
+                          : IconButton(
+                            onPressed: () async {
+                              final confirmation = await confirmationDialog(
+                                context: context,
+                                title: 'Passwort zurücksetzen',
+                                message:
+                                    'Möchten Sie das Passwort wirklich zurücksetzen?',
+                              );
+                              if (confirmation != true) return;
+                              if (context.mounted) {
+                                final logOutDevices = await logoutDevicesDialog(
+                                  context,
+                                );
+                                if (logOutDevices == null) return;
+                                final file = await _matrixPolicyManager.users
+                                    .resetPassword(
+                                      user:
+                                          MatrixUserHelper.usersFromUserIds([
+                                            pupil.contact!,
+                                          ]).first,
+                                      logoutDevices: logOutDevices,
+                                      isStaff: false,
+                                    );
+                                if (file != null && context.mounted) {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) =>
+                                              PdfViewPage(pdfFile: file),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                            icon: const Icon(
+                              Icons.qr_code_2_rounded,
+                              size: 24,
+                              color: AppColors.backgroundColor,
+                            ),
+                          ),
+                ),
+                const Gap(10), // Reduced from 16 to 10
+                _buildContactRow(
+                  icon: Icons.family_restroom_outlined,
+                  label: 'Familie Kontakt',
+                  value: pupil.tutorInfo?.parentsContact ?? 'keine Angabe',
                   onTap: () {
                     final bool tutorInfoExists = pupil.tutorInfo != null;
-
                     if (tutorInfoExists &&
                         pupil.tutorInfo!.parentsContact != null) {
                       MatrixPolicyHelper.launchMatrixUrl(
-                          context, pupil.tutorInfo!.parentsContact!);
+                        context,
+                        pupil.tutorInfo!.parentsContact!,
+                      );
                     }
                   },
                   onLongPress: () async {
                     final String? parentsContact = await shortTextfieldDialog(
-                        title: 'Kontakt Familie',
-                        hintText: 'Kontakt der Familie',
-                        labelText: 'Kontakt Familie',
-                        textinField:
-                            pupil.tutorInfo?.parentsContact ?? 'keine Angabe',
-                        context: context);
+                      title: 'Kontakt Familie',
+                      hintText: 'Kontakt der Familie',
+                      labelText: 'Kontakt Familie',
+                      textinField:
+                          pupil.tutorInfo?.parentsContact ?? 'keine Angabe',
+                      context: context,
+                    );
                     if (parentsContact == null) return;
                     await _pupilManager.updateTutorInfo(
                       pupilId: pupil.pupilId,
-                      tutorInfo: pupil.tutorInfo != null
-                          ? pupil.tutorInfo!
-                              .copyWith(parentsContact: parentsContact)
-                          : TutorInfo(
-                              parentsContact: parentsContact,
-                              createdBy: _hubSessionManager.userName!),
+                      tutorInfo:
+                          pupil.tutorInfo != null
+                              ? pupil.tutorInfo!.copyWith(
+                                parentsContact: parentsContact,
+                              )
+                              : TutorInfo(
+                                parentsContact: parentsContact,
+                                createdBy: _hubSessionManager.userName!,
+                              ),
                     );
                   },
-                  child: Text(pupil.tutorInfo?.parentsContact ?? 'keine Angabe',
-                      style: const TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.interactiveColor)),
-                ),
-                pupil.tutorInfo?.parentsContact == null
-                    ? IconButton(
-                        onPressed: () {
-                          String? pupilSiblingsGroups;
-                          if (pupil.family != null) {
-                            pupilSiblingsGroups = [
-                              ..._pupilManager.getSiblings(pupil),
-                              pupil
-                            ].map((e) => e.group).toList().join();
-                          }
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => NewMatrixUserPage(
-                              pupil: pupil,
-                              matrixId: MatrixPolicyHelper.generateMatrixId(
-                                  isParent: true),
-                              displayName: pupilSiblingsGroups != null
-                                  ? 'Fa. ${pupil.lastName} (E) $pupilSiblingsGroups'
-                                  : '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (E) ${pupil.group}',
-                              isParent: true,
-                            ),
-                          ));
-                        },
-                        icon: const Icon(Icons.add, size: 30))
-                    : IconButton(
-                        onPressed: () async {
-                          final confirmation = await confirmationDialog(
-                              context: context,
-                              title: 'Passwort zurücksetzen',
-                              message:
-                                  'Möchten Sie das Passwort wirklich zurücksetzen?');
-                          if (confirmation != true) return;
-                          if (context.mounted) {
-                            final logOutDevices =
-                                await logoutDevicesDialog(context);
-                            if (logOutDevices == null) return;
-                            final file = await _matrixPolicyManager.users
-                                .resetPassword(
-                                    user: MatrixUserHelper.usersFromUserIds(
-                                        [pupil.contact!]).first,
-                                    logoutDevices: logOutDevices,
-                                    isStaff: false);
-                            if (file != null && context.mounted) {
+                  actionButton:
+                      pupil.tutorInfo?.parentsContact == null
+                          ? IconButton(
+                            onPressed: () {
+                              String? pupilSiblingsGroups;
+                              if (pupil.family != null) {
+                                pupilSiblingsGroups =
+                                    [
+                                      ..._pupilManager.getSiblings(pupil),
+                                      pupil,
+                                    ].map((e) => e.group).toList().join();
+                              }
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      PdfViewPage(pdfFile: file),
+                                  builder:
+                                      (ctx) => NewMatrixUserPage(
+                                        pupil: pupil,
+                                        matrixId:
+                                            MatrixPolicyHelper.generateMatrixId(
+                                              isParent: true,
+                                            ),
+                                        displayName:
+                                            pupilSiblingsGroups != null
+                                                ? 'Fa. ${pupil.lastName} (E) $pupilSiblingsGroups'
+                                                : '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (E) ${pupil.group}',
+                                        isParent: true,
+                                      ),
                                 ),
                               );
-                            }
-                          }
-                        },
-                        icon: const Icon(Icons.qr_code_2_rounded, size: 30)),
-              ],
-            ),
-            const Gap(10),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text('Einwilligungen',
-                    softWrap: true,
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                    )),
-              ],
-            ),
-            AvatarAuthValues(pupil: pupil),
-            const Gap(10),
-            PublicMediaAuthValues(pupil: pupil),
-            const Gap(10),
-            pupilSiblings.isNotEmpty
-                ? const Row(
-                    children: [
-                      Text(
-                        'Geschwister',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  )
-                : const SizedBox.shrink(),
-            pupilSiblings.isNotEmpty
-                ? ListView.builder(
-                    padding: const EdgeInsets.only(top: 5, bottom: 15),
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: pupilSiblings.length,
-                    itemBuilder: (context, int index) {
-                      PupilProxy sibling = pupilSiblings[index];
-                      return Column(
-                        children: [
-                          const Gap(5),
-                          InkWell(
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (ctx) => PupilProfilePage(
-                                  pupil: sibling,
-                                ),
-                              ));
                             },
-                            child: Card(
+                            icon: const Icon(
+                              Icons.add_circle_outline,
+                              size: 24,
+                              color: AppColors.interactiveColor,
+                            ),
+                          )
+                          : IconButton(
+                            onPressed: () async {
+                              final confirmation = await confirmationDialog(
+                                context: context,
+                                title: 'Passwort zurücksetzen',
+                                message:
+                                    'Möchten Sie das Passwort wirklich zurücksetzen?',
+                              );
+                              if (confirmation != true) return;
+                              if (context.mounted) {
+                                final logOutDevices = await logoutDevicesDialog(
+                                  context,
+                                );
+                                if (logOutDevices == null) return;
+                                final file = await _matrixPolicyManager.users
+                                    .resetPassword(
+                                      user:
+                                          MatrixUserHelper.usersFromUserIds([
+                                            pupil.contact!,
+                                          ]).first,
+                                      logoutDevices: logOutDevices,
+                                      isStaff: false,
+                                    );
+                                if (file != null && context.mounted) {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) =>
+                                              PdfViewPage(pdfFile: file),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                            icon: const Icon(
+                              Icons.qr_code_2_rounded,
+                              size: 24,
+                              color: AppColors.backgroundColor,
+                            ),
+                          ),
+                ),
+              ],
+            ),
+          ),
+          const Gap(8),
+          // Authorizations Section
+          _buildInfoSection(
+            icon: Icons.verified_user_outlined,
+            title: 'Einwilligungen',
+            child: Column(
+              children: [
+                AvatarAuthValues(pupil: pupil),
+                const Gap(16),
+                PublicMediaAuthValues(pupil: pupil),
+              ],
+            ),
+          ),
+          const Gap(8),
+          // Siblings Section
+          _buildInfoSection(
+            icon: Icons.family_restroom_outlined,
+            title: 'Geschwister',
+            child:
+                pupilSiblings.isNotEmpty
+                    ? ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: pupilSiblings.length,
+                      itemBuilder: (context, int index) {
+                        PupilProxy sibling = pupilSiblings[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12.0),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder:
+                                      (ctx) => PupilProfilePage(pupil: sibling),
+                                ),
+                              );
+                            },
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.pupilProfileCardColor,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: AppColors.backgroundColor.withValues(
+                                    alpha: 0.3,
+                                  ),
+                                  width: 1,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.backgroundColor.withValues(
+                                      alpha: 0.08,
+                                    ),
+                                    blurRadius: 8,
+                                    spreadRadius: 1,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
                               child: Padding(
-                                padding: const EdgeInsets.all(15.0),
+                                padding: const EdgeInsets.all(16.0),
                                 child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    AvatarWithBadges(pupil: sibling, size: 80),
-                                    const Gap(10),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        const Gap(5),
-                                        Text(
-                                          sibling.firstName,
-                                          style: const TextStyle(
+                                    AvatarWithBadges(pupil: sibling, size: 60),
+                                    const Gap(16),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '${sibling.firstName} ${sibling.lastName}',
+                                            style: const TextStyle(
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 18),
-                                        ),
-                                        Text(
-                                          sibling.lastName,
-                                          style: const TextStyle(fontSize: 18),
-                                        ),
-                                        Text(
-                                          'Geburtsdatum: ${sibling.birthday.formatForUser()}',
-                                          style: const TextStyle(fontSize: 16),
-                                        ),
-                                      ],
+                                              fontSize: 18,
+                                              color: AppColors.backgroundColor,
+                                            ),
+                                          ),
+                                          const Gap(4),
+                                          Text(
+                                            'Klasse ${sibling.group}',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.grey.withValues(
+                                                alpha: 0.8,
+                                              ),
+                                            ),
+                                          ),
+                                          const Gap(4),
+                                          Text(
+                                            'Geburtsdatum: ${sibling.birthday.formatForUser()}',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.grey.withValues(
+                                                alpha: 0.7,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: AppColors.interactiveColor,
+                                      size: 18,
                                     ),
                                   ],
                                 ),
                               ),
                             ),
                           ),
+                        );
+                      },
+                    )
+                    : Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: AppColors.pupilProfileCardColor.withValues(
+                          alpha: 0.5,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: AppColors.backgroundColor.withValues(
+                            alpha: 0.2,
+                          ),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.info_outline,
+                            color: Colors.grey.withValues(alpha: 0.6),
+                            size: 24,
+                          ),
+                          const Gap(12),
+                          Text(
+                            'Keine Geschwister erfasst',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey.withValues(alpha: 0.7),
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
                         ],
-                      );
-                    })
-                : const SizedBox.shrink(),
-          ],
+                      ),
+                    ),
+          ),
+          const Gap(20), // Extra spacing at the bottom
+        ],
+      ),
+    );
+  }
+
+  // Helper method to build section containers
+  Widget _buildInfoSection({
+    required IconData icon,
+    required String title,
+    required Widget child,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12), // Reduced from 16 to 12
+        border: Border.all(
+          color: AppColors.backgroundColor.withValues(alpha: 0.2),
+          width: 1.5,
         ),
+        color: AppColors.cardInCardColor,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: AppColors.backgroundColor, size: 25),
+              const Gap(10), // Reduced from 12 to 10
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 20, // Reduced from 20 to 18
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.backgroundColor,
+                ),
+              ),
+            ],
+          ),
+          const Gap(12), // Reduced from 16 to 12
+          child,
+        ],
+      ),
+    );
+  }
+
+  // Helper method to build information rows
+  Widget _buildInfoRow({
+    required IconData icon,
+    required String label,
+    required String value,
+    VoidCallback? onTap,
+    VoidCallback? onLongPress,
+    Widget? actionButton,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        vertical: 2,
+        horizontal: 12,
+      ), // Reduced padding
+      decoration: BoxDecoration(
+        color: AppColors.pupilProfileCardColor.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(8), // Reduced from 12 to 8
+        border: Border.all(
+          color: AppColors.backgroundColor.withValues(alpha: 0.1),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            color: AppColors.backgroundColor.withValues(alpha: 0.7),
+            size: 18, // Reduced from 20 to 18
+          ),
+          const Gap(8), // Reduced from 12 to 8
+          Text(
+            '$label:',
+            style: const TextStyle(
+              fontSize: 14, // Reduced from 16 to 14
+              fontWeight: FontWeight.w500,
+              color: AppColors.backgroundColor,
+            ),
+          ),
+          const Gap(6), // Reduced from 8 to 6
+          Expanded(
+            child: InkWell(
+              onTap: onTap,
+              onLongPress: onLongPress,
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 12,
+                ),
+                decoration: BoxDecoration(
+                  color:
+                      onTap != null
+                          ? AppColors.interactiveColor.withValues(alpha: 0.1)
+                          : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 14, // Reduced from 16 to 14
+                    fontWeight: FontWeight.w600,
+                    color:
+                        onTap != null
+                            ? AppColors
+                                .interactiveColor // Keep blue for interactive elements
+                            : Colors
+                                .black87, // Changed from AppColors.backgroundColor to black for non-interactive
+                  ),
+                ),
+              ),
+            ),
+          ),
+          if (actionButton != null) ...[const Gap(8), actionButton],
+        ],
+      ),
+    );
+  }
+
+  // Helper method to build contact rows
+  Widget _buildContactRow({
+    required IconData icon,
+    required String label,
+    required String value,
+    VoidCallback? onTap,
+    VoidCallback? onLongPress,
+    Widget? actionButton,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(12), // Reduced from 16 to 12
+      decoration: BoxDecoration(
+        color: AppColors.pupilProfileCardColor.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(8), // Reduced from 12 to 8
+        border: Border.all(
+          color: AppColors.backgroundColor.withValues(alpha: 0.1),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(6), // Reduced from 8 to 6
+            decoration: BoxDecoration(
+              color: AppColors.backgroundColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(6), // Reduced from 8 to 6
+            ),
+            child: Icon(
+              icon,
+              color: AppColors.backgroundColor,
+              size: 18,
+            ), // Reduced from 20 to 18
+          ),
+          const Gap(10), // Reduced from 12 to 10
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 12, // Reduced from 14 to 12
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey.withValues(alpha: 0.8),
+                  ),
+                ),
+                const Gap(3), // Reduced from 4 to 3
+                InkWell(
+                  onTap: onTap,
+                  onLongPress: onLongPress,
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color:
+                          onTap != null
+                              ? AppColors.interactiveColor.withValues(
+                                alpha: 0.1,
+                              )
+                              : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      value,
+                      style: TextStyle(
+                        fontSize: 14, // Reduced from 16 to 14
+                        fontWeight: FontWeight.w600,
+                        color:
+                            onTap != null
+                                ? AppColors
+                                    .interactiveColor // Keep blue for interactive elements
+                                : Colors
+                                    .black87, // Changed from AppColors.backgroundColor to black for non-interactive
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (actionButton != null) ...[const Gap(8), actionButton],
+        ],
       ),
     );
   }

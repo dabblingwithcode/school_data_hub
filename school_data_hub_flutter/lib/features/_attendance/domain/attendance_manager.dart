@@ -31,8 +31,9 @@ class AttendanceManager with ChangeNotifier {
 
   StreamSubscription<MissedSchooldayDto>? _missedSchooldaySubscription;
 
-  final ValueNotifier<List<MissedSchoolday>> _missedSchooldays =
-      ValueNotifier([]);
+  final ValueNotifier<List<MissedSchoolday>> _missedSchooldays = ValueNotifier(
+    [],
+  );
 
   ValueListenable<List<MissedSchoolday>> get missedSchooldays =>
       _missedSchooldays;
@@ -62,17 +63,24 @@ class AttendanceManager with ChangeNotifier {
   //- Getters
 
   MissedSchoolday? getPupilMissedSchooldayOnDate(int pupilId, DateTime date) {
-    return _pupilMissedSchooldayesMap[pupilId]!
-        .missedSchooldays
-        .firstWhereOrNull((element) =>
-            element.schoolday!.schoolday.formatForJson() ==
-            date.formatForJson());
+    return _pupilMissedSchooldayesMap[pupilId]!.missedSchooldays
+        .firstWhereOrNull(
+          (element) =>
+              element.schoolday!.schoolday.formatForJson() ==
+              date.formatForJson(),
+        );
   }
 
-  PupilMissedSchooldaysProxy getPupilMissedSchooldayesProxy(int pupilId) {
+  List<MissedSchoolday> getAllPupilMissedSchooldays(int pupilId) {
+    return _pupilMissedSchooldayesMap[pupilId]!.missedSchooldays;
+  }
+
+  // TODO ADVICE: This is bad - need help to review
+  PupilMissedSchooldaysProxy getPupilMissedSchooldaysProxy(int pupilId) {
     if (!_pupilMissedSchooldayesMap.containsKey(pupilId)) {
       _log.warning(
-          'No PupilMissedSchooldaysProxy found for pupilId: $pupilId - creating a new one');
+        'No PupilMissedSchooldaysProxy found for pupilId: $pupilId - creating a new one',
+      );
       _pupilMissedSchooldayesMap[pupilId] = PupilMissedSchooldaysProxy();
     }
     return _pupilMissedSchooldayesMap[pupilId]!;
@@ -81,14 +89,16 @@ class AttendanceManager with ChangeNotifier {
   // - Handle collections -
 
   void _updateMissedSchooldayesInCollections(
-      List<MissedSchoolday> missedSchooldays) {
+    List<MissedSchoolday> missedSchooldays,
+  ) {
     for (final missedSchoolday in missedSchooldays) {
       updateMissedSchooldayInCollections(missedSchoolday);
     }
   }
 
   void updateMissedSchooldayInCollections(
-      MissedSchoolday responseMissedSchoolday) {
+    MissedSchoolday responseMissedSchoolday,
+  ) {
     final date = responseMissedSchoolday.schoolday!.schoolday;
 
     final pupilId = responseMissedSchoolday.pupilId;
@@ -103,8 +113,10 @@ class AttendanceManager with ChangeNotifier {
     pupilMissedSchooldayProxy!.updateMissedSchoolday(responseMissedSchoolday);
 
     // 2. Update the main list
-    final index = _missedSchooldays.value.indexWhere((element) =>
-        element.schoolday!.schoolday == date && element.pupilId == pupilId);
+    final index = _missedSchooldays.value.indexWhere(
+      (element) =>
+          element.schoolday!.schoolday == date && element.pupilId == pupilId,
+    );
 
     if (index != -1) {
       final newList = List<MissedSchoolday>.from(_missedSchooldays.value);
@@ -115,7 +127,7 @@ class AttendanceManager with ChangeNotifier {
     } else {
       _missedSchooldays.value = [
         ..._missedSchooldays.value,
-        responseMissedSchoolday
+        responseMissedSchoolday,
       ];
     }
   }
@@ -129,12 +141,15 @@ class AttendanceManager with ChangeNotifier {
 
     // 2. Remove from the main list
 
-    final index = _missedSchooldays.value.indexWhere((element) =>
-        element.schoolday!.schoolday == date && element.pupilId == pupilId);
+    final index = _missedSchooldays.value.indexWhere(
+      (element) =>
+          element.schoolday!.schoolday == date && element.pupilId == pupilId,
+    );
 
     if (index != -1) {
-      final updatedMissedSchooldayes =
-          List<MissedSchoolday>.from(_missedSchooldays.value);
+      final updatedMissedSchooldayes = List<MissedSchoolday>.from(
+        _missedSchooldays.value,
+      );
 
       updatedMissedSchooldayes.removeAt(index);
 
@@ -146,50 +161,62 @@ class AttendanceManager with ChangeNotifier {
   StreamSubscription<MissedSchooldayDto> missedSchooldayStreamSubscription() {
     _log.info('starting missedSchooldayStreamSubscription');
     _missedSchooldaySubscription?.cancel();
-    _missedSchooldaySubscription =
-        _client.missedSchoolday.streamMissedSchooldays().listen(
-      (event) {
-        switch (event.operation) {
-          case 'add':
-            _log.fine('add missedSchoolday ${event.missedSchoolday}');
-            updateMissedSchooldayInCollections(event.missedSchoolday);
-            break;
-          case 'update':
-            _log.fine('update missedSchoolday ${event.missedSchoolday}');
-            updateMissedSchooldayInCollections(event.missedSchoolday);
-            break;
-          case 'delete':
-            _log.fine('delete missedSchoolday ${event.missedSchoolday}');
-            removeMissedSchooldayFromCollections(event.missedSchoolday.pupilId,
-                event.missedSchoolday.schoolday!.schoolday);
-            break;
-        }
-      },
-      onError: (error) async {
-        final errorString = error.toString();
-        ;
-        _log.severe('Error in missedSchoolday stream: $error');
-        if (error.toString().contains('Unauthorized')) {
-          _missedSchooldaySubscription!.cancel();
-          return di<HubSessionManager>().signOutDevice();
-        } else if (error.toString().contains('Netzwerkverbindung abgelehnt')) {
-          // TODO: Implement server not responding
-          //- This is very buggy
-          _notificationService.showInformationDialog(
-              'Der Server konnte nicht gefunden werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.');
-        } else {
-          _notificationService.showSnackBar(NotificationType.error,
-              'Ein unbekannter Fehler ist aufgetreten: $errorString');
-        }
-        Future.delayed(
-            const Duration(seconds: 1), missedSchooldayStreamSubscription);
-      },
-      onDone: () {
-        _log.warning('missedSchoolday stream closed - reconnecting...');
-        Future.delayed(
-            const Duration(seconds: 1), missedSchooldayStreamSubscription);
-      },
-    );
+    _missedSchooldaySubscription = _client.missedSchoolday
+        .streamMissedSchooldays()
+        .listen(
+          (event) {
+            switch (event.operation) {
+              case 'add':
+                _log.fine('add missedSchoolday ${event.missedSchoolday}');
+                updateMissedSchooldayInCollections(event.missedSchoolday);
+                break;
+              case 'update':
+                _log.fine('update missedSchoolday ${event.missedSchoolday}');
+                updateMissedSchooldayInCollections(event.missedSchoolday);
+                break;
+              case 'delete':
+                _log.fine('delete missedSchoolday ${event.missedSchoolday}');
+                removeMissedSchooldayFromCollections(
+                  event.missedSchoolday.pupilId,
+                  event.missedSchoolday.schoolday!.schoolday,
+                );
+                break;
+            }
+          },
+          onError: (error) async {
+            final errorString = error.toString();
+            ;
+            _log.severe('Error in missedSchoolday stream: $error');
+            if (error.toString().contains('Unauthorized')) {
+              _missedSchooldaySubscription!.cancel();
+              return di<HubSessionManager>().signOutDevice();
+            } else if (error.toString().contains(
+              'Netzwerkverbindung abgelehnt',
+            )) {
+              // TODO: Implement server not responding
+              //- This is very buggy
+              _notificationService.showInformationDialog(
+                'Der Server konnte nicht gefunden werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.',
+              );
+            } else {
+              _notificationService.showSnackBar(
+                NotificationType.error,
+                'Ein unbekannter Fehler ist aufgetreten: $errorString',
+              );
+            }
+            Future.delayed(
+              const Duration(seconds: 1),
+              missedSchooldayStreamSubscription,
+            );
+          },
+          onDone: () {
+            _log.warning('missedSchoolday stream closed - reconnecting...');
+            Future.delayed(
+              const Duration(seconds: 1),
+              missedSchooldayStreamSubscription,
+            );
+          },
+        );
     return _missedSchooldaySubscription!;
   }
 
@@ -224,7 +251,10 @@ class AttendanceManager with ChangeNotifier {
   }
 
   Future<void> updateUnexcusedValue(
-      int pupilId, DateTime date, bool newValue) async {
+    int pupilId,
+    DateTime date,
+    bool newValue,
+  ) async {
     final missedSchoolday = getPupilMissedSchooldayOnDate(pupilId, date);
 
     if (missedSchoolday == null) {
@@ -234,9 +264,10 @@ class AttendanceManager with ChangeNotifier {
       unexcused: newValue,
       modifiedBy: _sessionManager.signedInUser!.userName!,
     );
-    final MissedSchoolday? responseMissedSchoolday =
-        await _attendanceApiService.updateMissedSchoolday(
-            missedSchooldayToUpdate: missedSchooldayToUpdate);
+    final MissedSchoolday? responseMissedSchoolday = await _attendanceApiService
+        .updateMissedSchoolday(
+          missedSchooldayToUpdate: missedSchooldayToUpdate,
+        );
 
     if (responseMissedSchoolday == null) {
       return;
@@ -255,18 +286,26 @@ class AttendanceManager with ChangeNotifier {
     if (response == true) {
       removeMissedSchooldayFromCollections(pupilId, date);
       _notificationService.showSnackBar(
-          NotificationType.success, 'Fehlzeit erfolgreich gelöscht!');
+        NotificationType.success,
+        'Fehlzeit erfolgreich gelöscht!',
+      );
     } else {
       _notificationService.showSnackBar(
-          NotificationType.error, 'Fehlzeit konnte nicht gelöscht werden!');
+        NotificationType.error,
+        'Fehlzeit konnte nicht gelöscht werden!',
+      );
       return;
     }
 
     return;
   }
 
-  Future<void> updateReturnedValue(int pupilId, bool newValue, DateTime date,
-      DateTime? returnedDateTime) async {
+  Future<void> updateReturnedValue(
+    int pupilId,
+    bool newValue,
+    DateTime date,
+    DateTime? returnedDateTime,
+  ) async {
     final missedSchoolday = getPupilMissedSchooldayOnDate(pupilId, date);
 
     // pupils gone home during class for whatever reason
@@ -277,22 +316,24 @@ class AttendanceManager with ChangeNotifier {
 
     if (missedSchoolday == null) {
       // This missed class is new
-      final MissedSchoolday? missedSchoolday =
-          await _attendanceApiService.postMissedSchoolday(
-        pupilId: pupilId,
-        missedType: MissedType.notSet,
-        date: date,
-        unexcused: false,
-        contactedType: ContactedType.notSet,
-        returned: true,
-        returnedAt: returnedDateTime,
-      );
+      final MissedSchoolday? missedSchoolday = await _attendanceApiService
+          .postMissedSchoolday(
+            pupilId: pupilId,
+            missedType: MissedType.notSet,
+            date: date,
+            unexcused: false,
+            contactedType: ContactedType.notSet,
+            returned: true,
+            returnedAt: returnedDateTime,
+          );
       if (missedSchoolday == null) {
         return;
       }
       updateMissedSchooldayInCollections(missedSchoolday);
       _notificationService.showSnackBar(
-          NotificationType.success, 'Eintrag erfolgreich!');
+        NotificationType.success,
+        'Eintrag erfolgreich!',
+      );
 
       return;
     }
@@ -309,10 +350,14 @@ class AttendanceManager with ChangeNotifier {
       if (success == true) {
         removeMissedSchooldayFromCollections(pupilId, date);
         _notificationService.showSnackBar(
-            NotificationType.success, 'Eintrag erfolgreich gelöscht!');
+          NotificationType.success,
+          'Eintrag erfolgreich gelöscht!',
+        );
       } else {
         _notificationService.showSnackBar(
-            NotificationType.error, 'Eintrag konnte nicht gelöscht werden!');
+          NotificationType.error,
+          'Eintrag konnte nicht gelöscht werden!',
+        );
       }
       return;
     }
@@ -327,7 +372,8 @@ class AttendanceManager with ChangeNotifier {
       );
       final MissedSchoolday? updatedMissedSchoolday =
           await _attendanceApiService.updateMissedSchoolday(
-              missedSchooldayToUpdate: missedSchooldayToUpdate);
+            missedSchooldayToUpdate: missedSchooldayToUpdate,
+          );
       if (updatedMissedSchoolday == null) {
         return;
       }
@@ -342,7 +388,8 @@ class AttendanceManager with ChangeNotifier {
       );
       final MissedSchoolday? updatedMissedSchoolday =
           await _attendanceApiService.updateMissedSchoolday(
-              missedSchooldayToUpdate: missedSchooldayToUpdate);
+            missedSchooldayToUpdate: missedSchooldayToUpdate,
+          );
       if (updatedMissedSchoolday == null) {
         return;
       }
@@ -352,8 +399,12 @@ class AttendanceManager with ChangeNotifier {
     }
   }
 
-  Future<void> updateLateTypeValue(int pupilId, MissedType dropdownValue,
-      DateTime date, int minutesLate) async {
+  Future<void> updateLateTypeValue(
+    int pupilId,
+    MissedType dropdownValue,
+    DateTime date,
+    int minutesLate,
+  ) async {
     // Let's look for an existing missed class - if pupil and date match, there is one
     final missedSchoolday = getPupilMissedSchooldayOnDate(pupilId, date);
 
@@ -362,16 +413,16 @@ class AttendanceManager with ChangeNotifier {
 
       final MissedSchoolday? updatedMissedSchoolday =
           await _attendanceApiService.postMissedSchoolday(
-        pupilId: pupilId,
-        missedType: dropdownValue,
-        date: date,
-        minutesLate: minutesLate,
-        unexcused: false,
-        contactedType: ContactedType.notSet,
-        returned: false,
-        returnedAt: null,
-        writtenExcuse: null,
-      );
+            pupilId: pupilId,
+            missedType: dropdownValue,
+            date: date,
+            minutesLate: minutesLate,
+            unexcused: false,
+            contactedType: ContactedType.notSet,
+            returned: false,
+            returnedAt: null,
+            writtenExcuse: null,
+          );
       if (updatedMissedSchoolday == null) {
         return;
       }
@@ -386,9 +437,10 @@ class AttendanceManager with ChangeNotifier {
       minutesLate: minutesLate,
       modifiedBy: _sessionManager.signedInUser!.userName!,
     );
-    final MissedSchoolday? updatedMissedSchoolday =
-        await _attendanceApiService.updateMissedSchoolday(
-            missedSchooldayToUpdate: missedSchooldayToUpdate);
+    final MissedSchoolday? updatedMissedSchoolday = await _attendanceApiService
+        .updateMissedSchoolday(
+          missedSchooldayToUpdate: missedSchooldayToUpdate,
+        );
     if (updatedMissedSchoolday == null) {
       return;
     }
@@ -398,9 +450,14 @@ class AttendanceManager with ChangeNotifier {
   }
 
   Future<void> updateCommentValue(
-      int pupilId, String? comment, DateTime date) async {
-    final MissedSchoolday? missedSchoolday =
-        getPupilMissedSchooldayOnDate(pupilId, date);
+    int pupilId,
+    String? comment,
+    DateTime date,
+  ) async {
+    final MissedSchoolday? missedSchoolday = getPupilMissedSchooldayOnDate(
+      pupilId,
+      date,
+    );
 
     if (missedSchoolday == null) {
       return;
@@ -409,26 +466,34 @@ class AttendanceManager with ChangeNotifier {
       comment: comment,
       modifiedBy: _sessionManager.signedInUser!.userName!,
     );
-    final MissedSchoolday? updatedMissedSchoolday =
-        await _attendanceApiService.updateMissedSchoolday(
-            missedSchooldayToUpdate: missedSchooldayToUpdate);
+    final MissedSchoolday? updatedMissedSchoolday = await _attendanceApiService
+        .updateMissedSchoolday(
+          missedSchooldayToUpdate: missedSchooldayToUpdate,
+        );
     if (updatedMissedSchoolday == null) {
       return;
     }
     updateMissedSchooldayInCollections(updatedMissedSchoolday);
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Eintrag erfolgreich!');
+      NotificationType.success,
+      'Eintrag erfolgreich!',
+    );
 
     return;
   }
 
   Future<void> postManyMissedSchooldayes(
-      id, startdate, enddate, missedType) async {
+    id,
+    startdate,
+    enddate,
+    missedType,
+  ) async {
     List<MissedSchoolday> missedSchooldays = [];
 
-    final PupilProxy pupil =
-        _pupilManager.allPupils.firstWhere((pupil) => pupil.internalId == id);
+    final PupilProxy pupil = _pupilManager.allPupils.firstWhere(
+      (pupil) => pupil.internalId == id,
+    );
 
     final List<DateTime> validSchooldays =
         _schoolCalendarManager.availableDates.value;
@@ -439,28 +504,32 @@ class AttendanceManager with ChangeNotifier {
           validSchoolday.isSameDate(enddate) ||
           (validSchoolday.isAfterDate(startdate) &&
               validSchoolday.isBeforeDate(enddate))) {
-        final schoolday =
-            _schoolCalendarManager.getSchooldayByDate(validSchoolday);
-        missedSchooldays.add(MissedSchoolday(
-          createdBy: _sessionManager.signedInUser!.userName!,
-          pupilId: pupil.pupilId,
-          schoolday: schoolday,
-          missedType: missedType,
-          unexcused: false,
-          contacted: ContactedType.notSet,
-          returned: false,
-          returnedAt: null,
-          minutesLate: null,
-          writtenExcuse: false,
-          modifiedBy: null,
-          comment: null,
-          schooldayId: schoolday!.id!,
-        ));
+        final schoolday = _schoolCalendarManager.getSchooldayByDate(
+          validSchoolday,
+        );
+        missedSchooldays.add(
+          MissedSchoolday(
+            createdBy: _sessionManager.signedInUser!.userName!,
+            pupilId: pupil.pupilId,
+            schoolday: schoolday,
+            missedType: missedType,
+            unexcused: false,
+            contacted: ContactedType.notSet,
+            returned: false,
+            returnedAt: null,
+            minutesLate: null,
+            writtenExcuse: false,
+            modifiedBy: null,
+            comment: null,
+            schooldayId: schoolday!.id!,
+          ),
+        );
       }
     }
     final List<MissedSchoolday>? responseMissedSchooldayes =
         await _attendanceApiService.postMissedSchooldayList(
-            missedSchooldays: missedSchooldays);
+          missedSchooldays: missedSchooldays,
+        );
     if (responseMissedSchooldayes == null) {
       return;
     }
@@ -469,13 +538,18 @@ class AttendanceManager with ChangeNotifier {
       updateMissedSchooldayInCollections(responseMissedSchoolday);
     }
     _notificationService.showSnackBar(
-        NotificationType.success, 'Einträge erfolgreich!');
+      NotificationType.success,
+      'Einträge erfolgreich!',
+    );
 
     return;
   }
 
   Future<void> updateMissedTypeValue(
-      int pupilId, MissedType missedType, DateTime date) async {
+    int pupilId,
+    MissedType missedType,
+    DateTime date,
+  ) async {
     if (missedType == MissedType.notSet) {
       // change value to 'notSet' means there was a missed class that has to be deleted
 
@@ -495,17 +569,19 @@ class AttendanceManager with ChangeNotifier {
 
       final MissedSchoolday? updatedMissedSchoolday =
           await _attendanceApiService.postMissedSchoolday(
-        pupilId: pupilId,
-        missedType: missedType,
-        date: date,
-      );
+            pupilId: pupilId,
+            missedType: missedType,
+            date: date,
+          );
       if (updatedMissedSchoolday == null) {
         return;
       }
       updateMissedSchooldayInCollections(updatedMissedSchoolday);
 
       _notificationService.showSnackBar(
-          NotificationType.success, 'Eintrag erfolgreich!');
+        NotificationType.success,
+        'Eintrag erfolgreich!',
+      );
 
       return;
     }
@@ -516,25 +592,32 @@ class AttendanceManager with ChangeNotifier {
       minutesLate: null,
       modifiedBy: _sessionManager.signedInUser!.userName!,
     );
-    final MissedSchoolday? updatedMissedSchoolday =
-        await _attendanceApiService.updateMissedSchoolday(
-      missedSchooldayToUpdate: missedSchooldayToUpdate,
-    );
+    final MissedSchoolday? updatedMissedSchoolday = await _attendanceApiService
+        .updateMissedSchoolday(
+          missedSchooldayToUpdate: missedSchooldayToUpdate,
+        );
     if (updatedMissedSchoolday == null) {
       return;
     }
     updateMissedSchooldayInCollections(updatedMissedSchoolday);
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Eintrag erfolgreich!');
+      NotificationType.success,
+      'Eintrag erfolgreich!',
+    );
 
     return;
   }
 
   Future<void> updateContactedValue(
-      int pupilId, ContactedType contactedType, DateTime date) async {
-    final MissedSchoolday? missedSchoolday =
-        getPupilMissedSchooldayOnDate(pupilId, date);
+    int pupilId,
+    ContactedType contactedType,
+    DateTime date,
+  ) async {
+    final MissedSchoolday? missedSchoolday = getPupilMissedSchooldayOnDate(
+      pupilId,
+      date,
+    );
     if (missedSchoolday == null) {
       return;
     }
@@ -543,16 +626,18 @@ class AttendanceManager with ChangeNotifier {
       contacted: contactedType,
       modifiedBy: _sessionManager.signedInUser!.userName!,
     );
-    final MissedSchoolday? updatedMissedSchoolday =
-        await _attendanceApiService.updateMissedSchoolday(
-      missedSchooldayToUpdate: missedSchooldayToUpdate,
-    );
+    final MissedSchoolday? updatedMissedSchoolday = await _attendanceApiService
+        .updateMissedSchoolday(
+          missedSchooldayToUpdate: missedSchooldayToUpdate,
+        );
     if (updatedMissedSchoolday == null) {
       return;
     }
     updateMissedSchooldayInCollections(updatedMissedSchoolday);
     _notificationService.showSnackBar(
-        NotificationType.success, 'Eintrag erfolgreich!');
+      NotificationType.success,
+      'Eintrag erfolgreich!',
+    );
 
     return;
   }

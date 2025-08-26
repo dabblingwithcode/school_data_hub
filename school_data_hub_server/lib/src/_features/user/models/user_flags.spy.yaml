@@ -4,3 +4,4 @@ fields:
   confirmedPrivacyPolicy: bool
   changedPassword: bool
   madeFirstSteps: bool
+  isTester: bool

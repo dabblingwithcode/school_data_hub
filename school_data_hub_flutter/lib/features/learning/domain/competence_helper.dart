@@ -166,8 +166,7 @@ class CompetenceHelper {
           getLastCompetenceCheckOfCompetence(pupil, publicId);
 
       if (competenceCheck != null) {
-        getCompetenceCheckSymbol(
-            status: competenceCheck.score ?? 0, size: size);
+        getCompetenceCheckSymbol(status: competenceCheck.score, size: size);
       }
       return const SizedBox(
           width: 50,

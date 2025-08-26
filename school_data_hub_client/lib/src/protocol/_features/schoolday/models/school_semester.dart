@@ -18,12 +18,14 @@ import '../../../_features/learning_support/models/learning_support_plan.dart'
 abstract class SchoolSemester implements _i1.SerializableModel {
   SchoolSemester._({
     this.id,
+    required this.schoolYear,
+    required this.isFirst,
     required this.startDate,
     required this.endDate,
-    required this.classConferenceDate,
-    required this.supportConferenceDate,
-    required this.isFirst,
-    required this.reportConferenceDate,
+    this.classConferenceDate,
+    this.supportConferenceDate,
+    this.reportConferenceDate,
+    this.reportSignedDate,
     this.schooldays,
     this.competenceReports,
     this.learningSupportPlans,
@@ -31,12 +33,14 @@ abstract class SchoolSemester implements _i1.SerializableModel {
 
   factory SchoolSemester({
     int? id,
+    required String schoolYear,
+    required bool isFirst,
     required DateTime startDate,
     required DateTime endDate,
-    required DateTime classConferenceDate,
-    required DateTime supportConferenceDate,
-    required bool isFirst,
-    required DateTime reportConferenceDate,
+    DateTime? classConferenceDate,
+    DateTime? supportConferenceDate,
+    DateTime? reportConferenceDate,
+    DateTime? reportSignedDate,
     List<_i2.Schoolday>? schooldays,
     List<_i3.CompetenceReport>? competenceReports,
     List<_i4.LearningSupportPlan>? learningSupportPlans,
@@ -45,16 +49,27 @@ abstract class SchoolSemester implements _i1.SerializableModel {
   factory SchoolSemester.fromJson(Map<String, dynamic> jsonSerialization) {
     return SchoolSemester(
       id: jsonSerialization['id'] as int?,
+      schoolYear: jsonSerialization['schoolYear'] as String,
+      isFirst: jsonSerialization['isFirst'] as bool,
       startDate:
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['startDate']),
       endDate: _i1.DateTimeJsonExtension.fromJson(jsonSerialization['endDate']),
-      classConferenceDate: _i1.DateTimeJsonExtension.fromJson(
-          jsonSerialization['classConferenceDate']),
-      supportConferenceDate: _i1.DateTimeJsonExtension.fromJson(
-          jsonSerialization['supportConferenceDate']),
-      isFirst: jsonSerialization['isFirst'] as bool,
-      reportConferenceDate: _i1.DateTimeJsonExtension.fromJson(
-          jsonSerialization['reportConferenceDate']),
+      classConferenceDate: jsonSerialization['classConferenceDate'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(
+              jsonSerialization['classConferenceDate']),
+      supportConferenceDate: jsonSerialization['supportConferenceDate'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(
+              jsonSerialization['supportConferenceDate']),
+      reportConferenceDate: jsonSerialization['reportConferenceDate'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(
+              jsonSerialization['reportConferenceDate']),
+      reportSignedDate: jsonSerialization['reportSignedDate'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(
+              jsonSerialization['reportSignedDate']),
       schooldays: (jsonSerialization['schooldays'] as List?)
           ?.map((e) => _i2.Schoolday.fromJson((e as Map<String, dynamic>)))
           .toList(),
@@ -74,17 +89,21 @@ abstract class SchoolSemester implements _i1.SerializableModel {
   /// the id will be null.
   int? id;
 
+  String schoolYear;
+
+  bool isFirst;
+
   DateTime startDate;
 
   DateTime endDate;
 
-  DateTime classConferenceDate;
+  DateTime? classConferenceDate;
 
-  DateTime supportConferenceDate;
+  DateTime? supportConferenceDate;
 
-  bool isFirst;
+  DateTime? reportConferenceDate;
 
-  DateTime reportConferenceDate;
+  DateTime? reportSignedDate;
 
   List<_i2.Schoolday>? schooldays;
 
@@ -97,12 +116,14 @@ abstract class SchoolSemester implements _i1.SerializableModel {
   @_i1.useResult
   SchoolSemester copyWith({
     int? id,
+    String? schoolYear,
+    bool? isFirst,
     DateTime? startDate,
     DateTime? endDate,
     DateTime? classConferenceDate,
     DateTime? supportConferenceDate,
-    bool? isFirst,
     DateTime? reportConferenceDate,
+    DateTime? reportSignedDate,
     List<_i2.Schoolday>? schooldays,
     List<_i3.CompetenceReport>? competenceReports,
     List<_i4.LearningSupportPlan>? learningSupportPlans,
@@ -111,12 +132,18 @@ abstract class SchoolSemester implements _i1.SerializableModel {
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
+      'schoolYear': schoolYear,
+      'isFirst': isFirst,
       'startDate': startDate.toJson(),
       'endDate': endDate.toJson(),
-      'classConferenceDate': classConferenceDate.toJson(),
-      'supportConferenceDate': supportConferenceDate.toJson(),
-      'isFirst': isFirst,
-      'reportConferenceDate': reportConferenceDate.toJson(),
+      if (classConferenceDate != null)
+        'classConferenceDate': classConferenceDate?.toJson(),
+      if (supportConferenceDate != null)
+        'supportConferenceDate': supportConferenceDate?.toJson(),
+      if (reportConferenceDate != null)
+        'reportConferenceDate': reportConferenceDate?.toJson(),
+      if (reportSignedDate != null)
+        'reportSignedDate': reportSignedDate?.toJson(),
       if (schooldays != null)
         'schooldays': schooldays?.toJson(valueToJson: (v) => v.toJson()),
       if (competenceReports != null)
@@ -139,23 +166,27 @@ class _Undefined {}
 class _SchoolSemesterImpl extends SchoolSemester {
   _SchoolSemesterImpl({
     int? id,
+    required String schoolYear,
+    required bool isFirst,
     required DateTime startDate,
     required DateTime endDate,
-    required DateTime classConferenceDate,
-    required DateTime supportConferenceDate,
-    required bool isFirst,
-    required DateTime reportConferenceDate,
+    DateTime? classConferenceDate,
+    DateTime? supportConferenceDate,
+    DateTime? reportConferenceDate,
+    DateTime? reportSignedDate,
     List<_i2.Schoolday>? schooldays,
     List<_i3.CompetenceReport>? competenceReports,
     List<_i4.LearningSupportPlan>? learningSupportPlans,
   }) : super._(
           id: id,
+          schoolYear: schoolYear,
+          isFirst: isFirst,
           startDate: startDate,
           endDate: endDate,
           classConferenceDate: classConferenceDate,
           supportConferenceDate: supportConferenceDate,
-          isFirst: isFirst,
           reportConferenceDate: reportConferenceDate,
+          reportSignedDate: reportSignedDate,
           schooldays: schooldays,
           competenceReports: competenceReports,
           learningSupportPlans: learningSupportPlans,
@@ -167,25 +198,36 @@ class _SchoolSemesterImpl extends SchoolSemester {
   @override
   SchoolSemester copyWith({
     Object? id = _Undefined,
+    String? schoolYear,
+    bool? isFirst,
     DateTime? startDate,
     DateTime? endDate,
-    DateTime? classConferenceDate,
-    DateTime? supportConferenceDate,
-    bool? isFirst,
-    DateTime? reportConferenceDate,
+    Object? classConferenceDate = _Undefined,
+    Object? supportConferenceDate = _Undefined,
+    Object? reportConferenceDate = _Undefined,
+    Object? reportSignedDate = _Undefined,
     Object? schooldays = _Undefined,
     Object? competenceReports = _Undefined,
     Object? learningSupportPlans = _Undefined,
   }) {
     return SchoolSemester(
       id: id is int? ? id : this.id,
+      schoolYear: schoolYear ?? this.schoolYear,
+      isFirst: isFirst ?? this.isFirst,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
-      classConferenceDate: classConferenceDate ?? this.classConferenceDate,
-      supportConferenceDate:
-          supportConferenceDate ?? this.supportConferenceDate,
-      isFirst: isFirst ?? this.isFirst,
-      reportConferenceDate: reportConferenceDate ?? this.reportConferenceDate,
+      classConferenceDate: classConferenceDate is DateTime?
+          ? classConferenceDate
+          : this.classConferenceDate,
+      supportConferenceDate: supportConferenceDate is DateTime?
+          ? supportConferenceDate
+          : this.supportConferenceDate,
+      reportConferenceDate: reportConferenceDate is DateTime?
+          ? reportConferenceDate
+          : this.reportConferenceDate,
+      reportSignedDate: reportSignedDate is DateTime?
+          ? reportSignedDate
+          : this.reportSignedDate,
       schooldays: schooldays is List<_i2.Schoolday>?
           ? schooldays
           : this.schooldays?.map((e0) => e0.copyWith()).toList(),

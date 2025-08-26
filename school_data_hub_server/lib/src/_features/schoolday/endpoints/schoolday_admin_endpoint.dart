@@ -11,19 +11,23 @@ class SchooldayAdminEndpoint extends Endpoint {
 
   Future<SchoolSemester> createSchoolSemester(
       Session session,
+      String schoolYearName,
       DateTime startDate,
       DateTime endDate,
       bool isFirst,
-      DateTime classConferenceDate,
-      DateTime supportConferenceDate,
-      DateTime reportSignedDate) async {
+      DateTime? classConferenceDate,
+      DateTime? supportConferenceDate,
+      DateTime? reportConferenceDate,
+      DateTime? reportSignedDate) async {
     final schoolSemester = SchoolSemester(
+      schoolYear: schoolYearName,
       startDate: startDate,
       endDate: endDate,
       isFirst: isFirst,
       classConferenceDate: classConferenceDate,
       supportConferenceDate: supportConferenceDate,
-      reportConferenceDate: reportSignedDate,
+      reportConferenceDate: reportConferenceDate,
+      reportSignedDate: reportSignedDate,
     );
 
     await session.db.insertRow(schoolSemester);

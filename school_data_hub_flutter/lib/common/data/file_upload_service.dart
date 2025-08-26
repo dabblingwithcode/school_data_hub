@@ -15,37 +15,57 @@ class ClientFileUpload {
   static final _instance = ClientFileUpload.__internal();
   factory ClientFileUpload() => _instance;
 
-  // TODO: consider exceptions here
   static Future<({String? path, bool success})> uploadFile(
-      File file, ServerStorageFolder folder) async {
+    File file,
+    ServerStorageFolder folder,
+  ) async {
     final documentId = const Uuid().v4();
     final path = p.join(folder.name, '$documentId${p.extension(file.path)}');
-    final uploadDescription =
-        await _client.files.getUploadDescription(StorageId.private.name, path);
-    if (uploadDescription != null) {
-      // Create an uploader
-      final uploader = FileUploader(uploadDescription);
+    try {
+      final uploadDescription = await _client.files.getUploadDescription(
+        StorageId.private.name,
+        path,
+      );
+      _log.info('Upload description received for $path');
+      _log.fine('Upload description: $uploadDescription');
 
-      // Upload the file
-      final fileStream = file.openRead();
+      if (uploadDescription != null) {
+        // Create an uploader
+        final uploader = FileUploader(uploadDescription);
 
-      final fileLength = await file.length();
-      _notificationService.apiRunning(true);
-      await uploader.upload(fileStream, fileLength);
-      _notificationService.apiRunning(false);
+        // Upload the file
+        final fileStream = file.openRead();
 
-      // Verify the upload
-      try {
-        final success =
-            await _client.files.verifyUpload(StorageId.private.name, path);
-        return (path: path, success: success);
-      } catch (e) {
-        _log.severe('Upload failed for $path: $e');
-        _notificationService.showSnackBar(
-            NotificationType.error, 'Upload failed for $path: $e');
-        return (path: null, success: false);
+        final fileLength = await file.length();
+        _notificationService.apiRunning(true);
+        await uploader.upload(fileStream, fileLength);
+        _notificationService.apiRunning(false);
+
+        // Verify the upload
+        try {
+          final success = await _client.files.verifyUpload(
+            StorageId.private.name,
+            path,
+          );
+          return (path: path, success: success);
+        } catch (e) {
+          _log.severe('Upload failed for $path: $e');
+          _notificationService.showSnackBar(
+            NotificationType.error,
+            'Upload failed for $path: $e',
+          );
+          return (path: null, success: false);
+        }
       }
+    } catch (e) {
+      _log.severe('Failed to get upload description for $path: $e');
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Failed to get upload description for $path: $e',
+      );
+      return (path: null, success: false);
     }
+
     _log.severe('Upload description is null for $path');
     return (path: null, success: false);
   }

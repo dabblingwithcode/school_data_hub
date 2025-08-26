@@ -12,56 +12,57 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
+import '../../../../_features/pupil/models/pupil_data/pupil_status.dart' as _i2;
 import '../../../../_features/pupil/models/pupil_data/preschool/pre_school_medical.dart'
-    as _i2;
-import '../../../../_features/pupil/models/pupil_data/preschool/kindergarden.dart'
     as _i3;
-import '../../../../_features/pupil/models/pupil_data/preschool/kindergarden_info.dart'
+import '../../../../_features/pupil/models/pupil_data/preschool/kindergarden.dart'
     as _i4;
-import '../../../../_features/pupil/models/pupil_data/preschool/pre_school_test.dart'
+import '../../../../_features/pupil/models/pupil_data/preschool/kindergarden_info.dart'
     as _i5;
-import '../../../../_shared/models/hub_document.dart' as _i6;
+import '../../../../_features/pupil/models/pupil_data/preschool/pre_school_test.dart'
+    as _i6;
+import '../../../../_shared/models/hub_document.dart' as _i7;
 import '../../../../_features/pupil/models/pupil_data/communication/public_media_auth.dart'
-    as _i7;
-import '../../../../_features/pupil/models/pupil_data/communication/communication_skills.dart'
     as _i8;
-import '../../../../_features/pupil/models/pupil_data/communication/tutor_info.dart'
+import '../../../../_features/pupil/models/pupil_data/communication/communication_skills.dart'
     as _i9;
-import '../../../../_features/authorizations/models/pupil_authorization.dart'
+import '../../../../_features/pupil/models/pupil_data/communication/tutor_info.dart'
     as _i10;
-import '../../../../_features/pupil/models/pupil_data/after_school_care/after_school_care.dart'
+import '../../../../_features/authorizations/models/pupil_authorization.dart'
     as _i11;
-import '../../../../_features/pupil/models/pupil_data/credit_transaction.dart'
+import '../../../../_features/pupil/models/pupil_data/after_school_care/after_school_care.dart'
     as _i12;
-import '../../../../_features/timetable/models/lesson/lesson_group_membership.dart'
+import '../../../../_features/pupil/models/pupil_data/credit_transaction.dart'
     as _i13;
-import '../../../../_features/timetable/models/lesson/lesson_attendance.dart'
+import '../../../../_features/timetable/models/lesson/lesson_group_membership.dart'
     as _i14;
-import '../../../../_features/learning/models/competence_goal.dart' as _i15;
-import '../../../../_features/learning/models/competence_check.dart' as _i16;
-import '../../../../_features/learning/models/competence_report.dart' as _i17;
+import '../../../../_features/timetable/models/lesson/lesson_attendance.dart'
+    as _i15;
+import '../../../../_features/learning/models/competence_goal.dart' as _i16;
+import '../../../../_features/learning/models/competence_check.dart' as _i17;
+import '../../../../_features/learning/models/competence_report.dart' as _i18;
 import '../../../../_features/learning/models/competence_report_check.dart'
-    as _i18;
-import '../../../../_features/workbooks/models/pupil_workbook.dart' as _i19;
-import '../../../../_features/books/models/pupil_book_lending.dart' as _i20;
+    as _i19;
+import '../../../../_features/workbooks/models/pupil_workbook.dart' as _i20;
+import '../../../../_features/books/models/pupil_book_lending.dart' as _i21;
 import '../../../../_features/learning_support/models/support_level.dart'
-    as _i21;
-import '../../../../_features/learning_support/models/support_category_status.dart'
     as _i22;
-import '../../../../_features/learning_support/models/support_goal/support_goal.dart'
+import '../../../../_features/learning_support/models/support_category_status.dart'
     as _i23;
-import '../../../../_features/learning_support/models/learning_support_plan.dart'
+import '../../../../_features/learning_support/models/support_goal/support_goal.dart'
     as _i24;
-import '../../../../_features/attendance/models/missed_schoolday.dart' as _i25;
+import '../../../../_features/learning_support/models/learning_support_plan.dart'
+    as _i25;
+import '../../../../_features/attendance/models/missed_schoolday.dart' as _i26;
 import '../../../../_features/schoolday_events/models/schoolday_event.dart'
-    as _i26;
-import '../../../../_features/school_lists/models/pupil_entry.dart' as _i27;
+    as _i27;
+import '../../../../_features/school_lists/models/pupil_entry.dart' as _i28;
 
 abstract class PupilData
     implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   PupilData._({
     this.id,
-    required this.active,
+    required this.status,
     required this.internalId,
     this.preSchoolMedicalId,
     this.preSchoolMedical,
@@ -107,183 +108,183 @@ abstract class PupilData
 
   factory PupilData({
     int? id,
-    required bool active,
+    required _i2.PupilStatus status,
     required int internalId,
     int? preSchoolMedicalId,
-    _i2.PreSchoolMedical? preSchoolMedical,
+    _i3.PreSchoolMedical? preSchoolMedical,
     int? kindergardenId,
-    _i3.Kindergarden? kindergarden,
-    _i4.KindergardenInfo? kindergardenData,
+    _i4.Kindergarden? kindergarden,
+    _i5.KindergardenInfo? kindergardenData,
     int? preSchoolTestId,
-    _i5.PreSchoolTest? preSchoolTest,
+    _i6.PreSchoolTest? preSchoolTest,
     int? avatarId,
-    _i6.HubDocument? avatar,
+    _i7.HubDocument? avatar,
     int? avatarAuthId,
-    _i6.HubDocument? avatarAuth,
-    required _i7.PublicMediaAuth publicMediaAuth,
+    _i7.HubDocument? avatarAuth,
+    required _i8.PublicMediaAuth publicMediaAuth,
     int? publicMediaAuthDocumentId,
-    _i6.HubDocument? publicMediaAuthDocument,
+    _i7.HubDocument? publicMediaAuthDocument,
     String? contact,
-    _i8.CommunicationSkills? communicationPupil,
+    _i9.CommunicationSkills? communicationPupil,
     String? specialInformation,
-    _i9.TutorInfo? tutorInfo,
-    List<_i10.PupilAuthorization>? authorizations,
-    _i11.AfterSchoolCare? afterSchoolCare,
+    _i10.TutorInfo? tutorInfo,
+    List<_i11.PupilAuthorization>? authorizations,
+    _i12.AfterSchoolCare? afterSchoolCare,
     required int credit,
     required int creditEarned,
-    List<_i12.CreditTransaction>? creditTransactions,
-    List<_i13.ScheduledLessonGroupMembership>? lessonGroupMemberships,
-    List<_i14.LessonAttendance>? lessonsAttended,
-    List<_i15.CompetenceGoal>? competenceGoals,
-    List<_i16.CompetenceCheck>? competenceChecks,
-    List<_i17.CompetenceReport>? competenceReports,
-    List<_i18.CompetenceReportCheck>? competenceReportChecks,
-    List<_i19.PupilWorkbook>? pupilWorkbooks,
-    List<_i20.PupilBookLending>? pupilBookLendings,
+    List<_i13.CreditTransaction>? creditTransactions,
+    List<_i14.ScheduledLessonGroupMembership>? lessonGroupMemberships,
+    List<_i15.LessonAttendance>? lessonsAttended,
+    List<_i16.CompetenceGoal>? competenceGoals,
+    List<_i17.CompetenceCheck>? competenceChecks,
+    List<_i18.CompetenceReport>? competenceReports,
+    List<_i19.CompetenceReportCheck>? competenceReportChecks,
+    List<_i20.PupilWorkbook>? pupilWorkbooks,
+    List<_i21.PupilBookLending>? pupilBookLendings,
     DateTime? schoolyearHeldBackAt,
-    List<_i21.SupportLevel>? supportLevelHistory,
-    List<_i22.SupportCategoryStatus>? supportCategoryStatuses,
-    List<_i23.SupportGoal>? supportGoals,
-    List<_i24.LearningSupportPlan>? learningSupportPlans,
-    List<_i25.MissedSchoolday>? missedSchooldays,
-    List<_i26.SchooldayEvent>? schooldayEvents,
+    List<_i22.SupportLevel>? supportLevelHistory,
+    List<_i23.SupportCategoryStatus>? supportCategoryStatuses,
+    List<_i24.SupportGoal>? supportGoals,
+    List<_i25.LearningSupportPlan>? learningSupportPlans,
+    List<_i26.MissedSchoolday>? missedSchooldays,
+    List<_i27.SchooldayEvent>? schooldayEvents,
     String? swimmer,
-    List<_i27.PupilListEntry>? pupilListEntries,
+    List<_i28.PupilListEntry>? pupilListEntries,
   }) = _PupilDataImpl;
 
   factory PupilData.fromJson(Map<String, dynamic> jsonSerialization) {
     return PupilDataImplicit._(
       id: jsonSerialization['id'] as int?,
-      active: jsonSerialization['active'] as bool,
+      status: _i2.PupilStatus.fromJson((jsonSerialization['status'] as String)),
       internalId: jsonSerialization['internalId'] as int,
       preSchoolMedicalId: jsonSerialization['preSchoolMedicalId'] as int?,
       preSchoolMedical: jsonSerialization['preSchoolMedical'] == null
           ? null
-          : _i2.PreSchoolMedical.fromJson(
+          : _i3.PreSchoolMedical.fromJson(
               (jsonSerialization['preSchoolMedical'] as Map<String, dynamic>)),
       kindergardenId: jsonSerialization['kindergardenId'] as int?,
       kindergarden: jsonSerialization['kindergarden'] == null
           ? null
-          : _i3.Kindergarden.fromJson(
+          : _i4.Kindergarden.fromJson(
               (jsonSerialization['kindergarden'] as Map<String, dynamic>)),
       kindergardenData: jsonSerialization['kindergardenData'] == null
           ? null
-          : _i4.KindergardenInfo.fromJson(
+          : _i5.KindergardenInfo.fromJson(
               (jsonSerialization['kindergardenData'] as Map<String, dynamic>)),
       preSchoolTestId: jsonSerialization['preSchoolTestId'] as int?,
       preSchoolTest: jsonSerialization['preSchoolTest'] == null
           ? null
-          : _i5.PreSchoolTest.fromJson(
+          : _i6.PreSchoolTest.fromJson(
               (jsonSerialization['preSchoolTest'] as Map<String, dynamic>)),
       avatarId: jsonSerialization['avatarId'] as int?,
       avatar: jsonSerialization['avatar'] == null
           ? null
-          : _i6.HubDocument.fromJson(
+          : _i7.HubDocument.fromJson(
               (jsonSerialization['avatar'] as Map<String, dynamic>)),
       avatarAuthId: jsonSerialization['avatarAuthId'] as int?,
       avatarAuth: jsonSerialization['avatarAuth'] == null
           ? null
-          : _i6.HubDocument.fromJson(
+          : _i7.HubDocument.fromJson(
               (jsonSerialization['avatarAuth'] as Map<String, dynamic>)),
-      publicMediaAuth: _i7.PublicMediaAuth.fromJson(
+      publicMediaAuth: _i8.PublicMediaAuth.fromJson(
           (jsonSerialization['publicMediaAuth'] as Map<String, dynamic>)),
       publicMediaAuthDocumentId:
           jsonSerialization['publicMediaAuthDocumentId'] as int?,
       publicMediaAuthDocument:
           jsonSerialization['publicMediaAuthDocument'] == null
               ? null
-              : _i6.HubDocument.fromJson(
+              : _i7.HubDocument.fromJson(
                   (jsonSerialization['publicMediaAuthDocument']
                       as Map<String, dynamic>)),
       contact: jsonSerialization['contact'] as String?,
       communicationPupil: jsonSerialization['communicationPupil'] == null
           ? null
-          : _i8.CommunicationSkills.fromJson(
+          : _i9.CommunicationSkills.fromJson(
               (jsonSerialization['communicationPupil']
                   as Map<String, dynamic>)),
       specialInformation: jsonSerialization['specialInformation'] as String?,
       tutorInfo: jsonSerialization['tutorInfo'] == null
           ? null
-          : _i9.TutorInfo.fromJson(
+          : _i10.TutorInfo.fromJson(
               (jsonSerialization['tutorInfo'] as Map<String, dynamic>)),
       authorizations: (jsonSerialization['authorizations'] as List?)
           ?.map((e) =>
-              _i10.PupilAuthorization.fromJson((e as Map<String, dynamic>)))
+              _i11.PupilAuthorization.fromJson((e as Map<String, dynamic>)))
           .toList(),
       afterSchoolCare: jsonSerialization['afterSchoolCare'] == null
           ? null
-          : _i11.AfterSchoolCare.fromJson(
+          : _i12.AfterSchoolCare.fromJson(
               (jsonSerialization['afterSchoolCare'] as Map<String, dynamic>)),
       credit: jsonSerialization['credit'] as int,
       creditEarned: jsonSerialization['creditEarned'] as int,
       creditTransactions: (jsonSerialization['creditTransactions'] as List?)
           ?.map((e) =>
-              _i12.CreditTransaction.fromJson((e as Map<String, dynamic>)))
+              _i13.CreditTransaction.fromJson((e as Map<String, dynamic>)))
           .toList(),
       lessonGroupMemberships:
           (jsonSerialization['lessonGroupMemberships'] as List?)
-              ?.map((e) => _i13.ScheduledLessonGroupMembership.fromJson(
+              ?.map((e) => _i14.ScheduledLessonGroupMembership.fromJson(
                   (e as Map<String, dynamic>)))
               .toList(),
       lessonsAttended: (jsonSerialization['lessonsAttended'] as List?)
           ?.map((e) =>
-              _i14.LessonAttendance.fromJson((e as Map<String, dynamic>)))
+              _i15.LessonAttendance.fromJson((e as Map<String, dynamic>)))
           .toList(),
       competenceGoals: (jsonSerialization['competenceGoals'] as List?)
           ?.map(
-              (e) => _i15.CompetenceGoal.fromJson((e as Map<String, dynamic>)))
+              (e) => _i16.CompetenceGoal.fromJson((e as Map<String, dynamic>)))
           .toList(),
       competenceChecks: (jsonSerialization['competenceChecks'] as List?)
           ?.map(
-              (e) => _i16.CompetenceCheck.fromJson((e as Map<String, dynamic>)))
+              (e) => _i17.CompetenceCheck.fromJson((e as Map<String, dynamic>)))
           .toList(),
       competenceReports: (jsonSerialization['competenceReports'] as List?)
           ?.map((e) =>
-              _i17.CompetenceReport.fromJson((e as Map<String, dynamic>)))
+              _i18.CompetenceReport.fromJson((e as Map<String, dynamic>)))
           .toList(),
       competenceReportChecks: (jsonSerialization['competenceReportChecks']
               as List?)
           ?.map((e) =>
-              _i18.CompetenceReportCheck.fromJson((e as Map<String, dynamic>)))
+              _i19.CompetenceReportCheck.fromJson((e as Map<String, dynamic>)))
           .toList(),
       pupilWorkbooks: (jsonSerialization['pupilWorkbooks'] as List?)
-          ?.map((e) => _i19.PupilWorkbook.fromJson((e as Map<String, dynamic>)))
+          ?.map((e) => _i20.PupilWorkbook.fromJson((e as Map<String, dynamic>)))
           .toList(),
       pupilBookLendings: (jsonSerialization['pupilBookLendings'] as List?)
           ?.map((e) =>
-              _i20.PupilBookLending.fromJson((e as Map<String, dynamic>)))
+              _i21.PupilBookLending.fromJson((e as Map<String, dynamic>)))
           .toList(),
       schoolyearHeldBackAt: jsonSerialization['schoolyearHeldBackAt'] == null
           ? null
           : _i1.DateTimeJsonExtension.fromJson(
               jsonSerialization['schoolyearHeldBackAt']),
       supportLevelHistory: (jsonSerialization['supportLevelHistory'] as List?)
-          ?.map((e) => _i21.SupportLevel.fromJson((e as Map<String, dynamic>)))
+          ?.map((e) => _i22.SupportLevel.fromJson((e as Map<String, dynamic>)))
           .toList(),
       supportCategoryStatuses: (jsonSerialization['supportCategoryStatuses']
               as List?)
           ?.map((e) =>
-              _i22.SupportCategoryStatus.fromJson((e as Map<String, dynamic>)))
+              _i23.SupportCategoryStatus.fromJson((e as Map<String, dynamic>)))
           .toList(),
       supportGoals: (jsonSerialization['supportGoals'] as List?)
-          ?.map((e) => _i23.SupportGoal.fromJson((e as Map<String, dynamic>)))
+          ?.map((e) => _i24.SupportGoal.fromJson((e as Map<String, dynamic>)))
           .toList(),
       learningSupportPlans: (jsonSerialization['learningSupportPlans'] as List?)
           ?.map((e) =>
-              _i24.LearningSupportPlan.fromJson((e as Map<String, dynamic>)))
+              _i25.LearningSupportPlan.fromJson((e as Map<String, dynamic>)))
           .toList(),
       missedSchooldays: (jsonSerialization['missedSchooldays'] as List?)
           ?.map(
-              (e) => _i25.MissedSchoolday.fromJson((e as Map<String, dynamic>)))
+              (e) => _i26.MissedSchoolday.fromJson((e as Map<String, dynamic>)))
           .toList(),
       schooldayEvents: (jsonSerialization['schooldayEvents'] as List?)
           ?.map(
-              (e) => _i26.SchooldayEvent.fromJson((e as Map<String, dynamic>)))
+              (e) => _i27.SchooldayEvent.fromJson((e as Map<String, dynamic>)))
           .toList(),
       swimmer: jsonSerialization['swimmer'] as String?,
       pupilListEntries: (jsonSerialization['pupilListEntries'] as List?)
           ?.map(
-              (e) => _i27.PupilListEntry.fromJson((e as Map<String, dynamic>)))
+              (e) => _i28.PupilListEntry.fromJson((e as Map<String, dynamic>)))
           .toList(),
       $_kindergardenPupilsKindergardenId:
           jsonSerialization['_kindergardenPupilsKindergardenId'] as int?,
@@ -297,89 +298,89 @@ abstract class PupilData
   @override
   int? id;
 
-  bool active;
+  _i2.PupilStatus status;
 
   int internalId;
 
   int? preSchoolMedicalId;
 
-  _i2.PreSchoolMedical? preSchoolMedical;
+  _i3.PreSchoolMedical? preSchoolMedical;
 
   int? kindergardenId;
 
-  _i3.Kindergarden? kindergarden;
+  _i4.Kindergarden? kindergarden;
 
-  _i4.KindergardenInfo? kindergardenData;
+  _i5.KindergardenInfo? kindergardenData;
 
   int? preSchoolTestId;
 
-  _i5.PreSchoolTest? preSchoolTest;
+  _i6.PreSchoolTest? preSchoolTest;
 
   int? avatarId;
 
-  _i6.HubDocument? avatar;
+  _i7.HubDocument? avatar;
 
   int? avatarAuthId;
 
-  _i6.HubDocument? avatarAuth;
+  _i7.HubDocument? avatarAuth;
 
-  _i7.PublicMediaAuth publicMediaAuth;
+  _i8.PublicMediaAuth publicMediaAuth;
 
   int? publicMediaAuthDocumentId;
 
-  _i6.HubDocument? publicMediaAuthDocument;
+  _i7.HubDocument? publicMediaAuthDocument;
 
   String? contact;
 
-  _i8.CommunicationSkills? communicationPupil;
+  _i9.CommunicationSkills? communicationPupil;
 
   String? specialInformation;
 
-  _i9.TutorInfo? tutorInfo;
+  _i10.TutorInfo? tutorInfo;
 
-  List<_i10.PupilAuthorization>? authorizations;
+  List<_i11.PupilAuthorization>? authorizations;
 
-  _i11.AfterSchoolCare? afterSchoolCare;
+  _i12.AfterSchoolCare? afterSchoolCare;
 
   int credit;
 
   int creditEarned;
 
-  List<_i12.CreditTransaction>? creditTransactions;
+  List<_i13.CreditTransaction>? creditTransactions;
 
-  List<_i13.ScheduledLessonGroupMembership>? lessonGroupMemberships;
+  List<_i14.ScheduledLessonGroupMembership>? lessonGroupMemberships;
 
-  List<_i14.LessonAttendance>? lessonsAttended;
+  List<_i15.LessonAttendance>? lessonsAttended;
 
-  List<_i15.CompetenceGoal>? competenceGoals;
+  List<_i16.CompetenceGoal>? competenceGoals;
 
-  List<_i16.CompetenceCheck>? competenceChecks;
+  List<_i17.CompetenceCheck>? competenceChecks;
 
-  List<_i17.CompetenceReport>? competenceReports;
+  List<_i18.CompetenceReport>? competenceReports;
 
-  List<_i18.CompetenceReportCheck>? competenceReportChecks;
+  List<_i19.CompetenceReportCheck>? competenceReportChecks;
 
-  List<_i19.PupilWorkbook>? pupilWorkbooks;
+  List<_i20.PupilWorkbook>? pupilWorkbooks;
 
-  List<_i20.PupilBookLending>? pupilBookLendings;
+  List<_i21.PupilBookLending>? pupilBookLendings;
 
   DateTime? schoolyearHeldBackAt;
 
-  List<_i21.SupportLevel>? supportLevelHistory;
+  List<_i22.SupportLevel>? supportLevelHistory;
 
-  List<_i22.SupportCategoryStatus>? supportCategoryStatuses;
+  List<_i23.SupportCategoryStatus>? supportCategoryStatuses;
 
-  List<_i23.SupportGoal>? supportGoals;
+  List<_i24.SupportGoal>? supportGoals;
 
-  List<_i24.LearningSupportPlan>? learningSupportPlans;
+  List<_i25.LearningSupportPlan>? learningSupportPlans;
 
-  List<_i25.MissedSchoolday>? missedSchooldays;
+  List<_i26.MissedSchoolday>? missedSchooldays;
 
-  List<_i26.SchooldayEvent>? schooldayEvents;
+  List<_i27.SchooldayEvent>? schooldayEvents;
 
   String? swimmer;
 
-  List<_i27.PupilListEntry>? pupilListEntries;
+  List<_i28.PupilListEntry>? pupilListEntries;
 
   final int? _kindergardenPupilsKindergardenId;
 
@@ -391,54 +392,54 @@ abstract class PupilData
   @_i1.useResult
   PupilData copyWith({
     int? id,
-    bool? active,
+    _i2.PupilStatus? status,
     int? internalId,
     int? preSchoolMedicalId,
-    _i2.PreSchoolMedical? preSchoolMedical,
+    _i3.PreSchoolMedical? preSchoolMedical,
     int? kindergardenId,
-    _i3.Kindergarden? kindergarden,
-    _i4.KindergardenInfo? kindergardenData,
+    _i4.Kindergarden? kindergarden,
+    _i5.KindergardenInfo? kindergardenData,
     int? preSchoolTestId,
-    _i5.PreSchoolTest? preSchoolTest,
+    _i6.PreSchoolTest? preSchoolTest,
     int? avatarId,
-    _i6.HubDocument? avatar,
+    _i7.HubDocument? avatar,
     int? avatarAuthId,
-    _i6.HubDocument? avatarAuth,
-    _i7.PublicMediaAuth? publicMediaAuth,
+    _i7.HubDocument? avatarAuth,
+    _i8.PublicMediaAuth? publicMediaAuth,
     int? publicMediaAuthDocumentId,
-    _i6.HubDocument? publicMediaAuthDocument,
+    _i7.HubDocument? publicMediaAuthDocument,
     String? contact,
-    _i8.CommunicationSkills? communicationPupil,
+    _i9.CommunicationSkills? communicationPupil,
     String? specialInformation,
-    _i9.TutorInfo? tutorInfo,
-    List<_i10.PupilAuthorization>? authorizations,
-    _i11.AfterSchoolCare? afterSchoolCare,
+    _i10.TutorInfo? tutorInfo,
+    List<_i11.PupilAuthorization>? authorizations,
+    _i12.AfterSchoolCare? afterSchoolCare,
     int? credit,
     int? creditEarned,
-    List<_i12.CreditTransaction>? creditTransactions,
-    List<_i13.ScheduledLessonGroupMembership>? lessonGroupMemberships,
-    List<_i14.LessonAttendance>? lessonsAttended,
-    List<_i15.CompetenceGoal>? competenceGoals,
-    List<_i16.CompetenceCheck>? competenceChecks,
-    List<_i17.CompetenceReport>? competenceReports,
-    List<_i18.CompetenceReportCheck>? competenceReportChecks,
-    List<_i19.PupilWorkbook>? pupilWorkbooks,
-    List<_i20.PupilBookLending>? pupilBookLendings,
+    List<_i13.CreditTransaction>? creditTransactions,
+    List<_i14.ScheduledLessonGroupMembership>? lessonGroupMemberships,
+    List<_i15.LessonAttendance>? lessonsAttended,
+    List<_i16.CompetenceGoal>? competenceGoals,
+    List<_i17.CompetenceCheck>? competenceChecks,
+    List<_i18.CompetenceReport>? competenceReports,
+    List<_i19.CompetenceReportCheck>? competenceReportChecks,
+    List<_i20.PupilWorkbook>? pupilWorkbooks,
+    List<_i21.PupilBookLending>? pupilBookLendings,
     DateTime? schoolyearHeldBackAt,
-    List<_i21.SupportLevel>? supportLevelHistory,
-    List<_i22.SupportCategoryStatus>? supportCategoryStatuses,
-    List<_i23.SupportGoal>? supportGoals,
-    List<_i24.LearningSupportPlan>? learningSupportPlans,
-    List<_i25.MissedSchoolday>? missedSchooldays,
-    List<_i26.SchooldayEvent>? schooldayEvents,
+    List<_i22.SupportLevel>? supportLevelHistory,
+    List<_i23.SupportCategoryStatus>? supportCategoryStatuses,
+    List<_i24.SupportGoal>? supportGoals,
+    List<_i25.LearningSupportPlan>? learningSupportPlans,
+    List<_i26.MissedSchoolday>? missedSchooldays,
+    List<_i27.SchooldayEvent>? schooldayEvents,
     String? swimmer,
-    List<_i27.PupilListEntry>? pupilListEntries,
+    List<_i28.PupilListEntry>? pupilListEntries,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
-      'active': active,
+      'status': status.toJson(),
       'internalId': internalId,
       if (preSchoolMedicalId != null) 'preSchoolMedicalId': preSchoolMedicalId,
       if (preSchoolMedical != null)
@@ -528,7 +529,7 @@ abstract class PupilData
   Map<String, dynamic> toJsonForProtocol() {
     return {
       if (id != null) 'id': id,
-      'active': active,
+      'status': status.toJson(),
       'internalId': internalId,
       if (preSchoolMedicalId != null) 'preSchoolMedicalId': preSchoolMedicalId,
       if (preSchoolMedical != null)
@@ -617,29 +618,29 @@ abstract class PupilData
   }
 
   static PupilDataInclude include({
-    _i2.PreSchoolMedicalInclude? preSchoolMedical,
-    _i3.KindergardenInclude? kindergarden,
-    _i5.PreSchoolTestInclude? preSchoolTest,
-    _i6.HubDocumentInclude? avatar,
-    _i6.HubDocumentInclude? avatarAuth,
-    _i6.HubDocumentInclude? publicMediaAuthDocument,
-    _i10.PupilAuthorizationIncludeList? authorizations,
-    _i12.CreditTransactionIncludeList? creditTransactions,
-    _i13.ScheduledLessonGroupMembershipIncludeList? lessonGroupMemberships,
-    _i14.LessonAttendanceIncludeList? lessonsAttended,
-    _i15.CompetenceGoalIncludeList? competenceGoals,
-    _i16.CompetenceCheckIncludeList? competenceChecks,
-    _i17.CompetenceReportIncludeList? competenceReports,
-    _i18.CompetenceReportCheckIncludeList? competenceReportChecks,
-    _i19.PupilWorkbookIncludeList? pupilWorkbooks,
-    _i20.PupilBookLendingIncludeList? pupilBookLendings,
-    _i21.SupportLevelIncludeList? supportLevelHistory,
-    _i22.SupportCategoryStatusIncludeList? supportCategoryStatuses,
-    _i23.SupportGoalIncludeList? supportGoals,
-    _i24.LearningSupportPlanIncludeList? learningSupportPlans,
-    _i25.MissedSchooldayIncludeList? missedSchooldays,
-    _i26.SchooldayEventIncludeList? schooldayEvents,
-    _i27.PupilListEntryIncludeList? pupilListEntries,
+    _i3.PreSchoolMedicalInclude? preSchoolMedical,
+    _i4.KindergardenInclude? kindergarden,
+    _i6.PreSchoolTestInclude? preSchoolTest,
+    _i7.HubDocumentInclude? avatar,
+    _i7.HubDocumentInclude? avatarAuth,
+    _i7.HubDocumentInclude? publicMediaAuthDocument,
+    _i11.PupilAuthorizationIncludeList? authorizations,
+    _i13.CreditTransactionIncludeList? creditTransactions,
+    _i14.ScheduledLessonGroupMembershipIncludeList? lessonGroupMemberships,
+    _i15.LessonAttendanceIncludeList? lessonsAttended,
+    _i16.CompetenceGoalIncludeList? competenceGoals,
+    _i17.CompetenceCheckIncludeList? competenceChecks,
+    _i18.CompetenceReportIncludeList? competenceReports,
+    _i19.CompetenceReportCheckIncludeList? competenceReportChecks,
+    _i20.PupilWorkbookIncludeList? pupilWorkbooks,
+    _i21.PupilBookLendingIncludeList? pupilBookLendings,
+    _i22.SupportLevelIncludeList? supportLevelHistory,
+    _i23.SupportCategoryStatusIncludeList? supportCategoryStatuses,
+    _i24.SupportGoalIncludeList? supportGoals,
+    _i25.LearningSupportPlanIncludeList? learningSupportPlans,
+    _i26.MissedSchooldayIncludeList? missedSchooldays,
+    _i27.SchooldayEventIncludeList? schooldayEvents,
+    _i28.PupilListEntryIncludeList? pupilListEntries,
   }) {
     return PupilDataInclude._(
       preSchoolMedical: preSchoolMedical,
@@ -699,51 +700,51 @@ class _Undefined {}
 class _PupilDataImpl extends PupilData {
   _PupilDataImpl({
     int? id,
-    required bool active,
+    required _i2.PupilStatus status,
     required int internalId,
     int? preSchoolMedicalId,
-    _i2.PreSchoolMedical? preSchoolMedical,
+    _i3.PreSchoolMedical? preSchoolMedical,
     int? kindergardenId,
-    _i3.Kindergarden? kindergarden,
-    _i4.KindergardenInfo? kindergardenData,
+    _i4.Kindergarden? kindergarden,
+    _i5.KindergardenInfo? kindergardenData,
     int? preSchoolTestId,
-    _i5.PreSchoolTest? preSchoolTest,
+    _i6.PreSchoolTest? preSchoolTest,
     int? avatarId,
-    _i6.HubDocument? avatar,
+    _i7.HubDocument? avatar,
     int? avatarAuthId,
-    _i6.HubDocument? avatarAuth,
-    required _i7.PublicMediaAuth publicMediaAuth,
+    _i7.HubDocument? avatarAuth,
+    required _i8.PublicMediaAuth publicMediaAuth,
     int? publicMediaAuthDocumentId,
-    _i6.HubDocument? publicMediaAuthDocument,
+    _i7.HubDocument? publicMediaAuthDocument,
     String? contact,
-    _i8.CommunicationSkills? communicationPupil,
+    _i9.CommunicationSkills? communicationPupil,
     String? specialInformation,
-    _i9.TutorInfo? tutorInfo,
-    List<_i10.PupilAuthorization>? authorizations,
-    _i11.AfterSchoolCare? afterSchoolCare,
+    _i10.TutorInfo? tutorInfo,
+    List<_i11.PupilAuthorization>? authorizations,
+    _i12.AfterSchoolCare? afterSchoolCare,
     required int credit,
     required int creditEarned,
-    List<_i12.CreditTransaction>? creditTransactions,
-    List<_i13.ScheduledLessonGroupMembership>? lessonGroupMemberships,
-    List<_i14.LessonAttendance>? lessonsAttended,
-    List<_i15.CompetenceGoal>? competenceGoals,
-    List<_i16.CompetenceCheck>? competenceChecks,
-    List<_i17.CompetenceReport>? competenceReports,
-    List<_i18.CompetenceReportCheck>? competenceReportChecks,
-    List<_i19.PupilWorkbook>? pupilWorkbooks,
-    List<_i20.PupilBookLending>? pupilBookLendings,
+    List<_i13.CreditTransaction>? creditTransactions,
+    List<_i14.ScheduledLessonGroupMembership>? lessonGroupMemberships,
+    List<_i15.LessonAttendance>? lessonsAttended,
+    List<_i16.CompetenceGoal>? competenceGoals,
+    List<_i17.CompetenceCheck>? competenceChecks,
+    List<_i18.CompetenceReport>? competenceReports,
+    List<_i19.CompetenceReportCheck>? competenceReportChecks,
+    List<_i20.PupilWorkbook>? pupilWorkbooks,
+    List<_i21.PupilBookLending>? pupilBookLendings,
     DateTime? schoolyearHeldBackAt,
-    List<_i21.SupportLevel>? supportLevelHistory,
-    List<_i22.SupportCategoryStatus>? supportCategoryStatuses,
-    List<_i23.SupportGoal>? supportGoals,
-    List<_i24.LearningSupportPlan>? learningSupportPlans,
-    List<_i25.MissedSchoolday>? missedSchooldays,
-    List<_i26.SchooldayEvent>? schooldayEvents,
+    List<_i22.SupportLevel>? supportLevelHistory,
+    List<_i23.SupportCategoryStatus>? supportCategoryStatuses,
+    List<_i24.SupportGoal>? supportGoals,
+    List<_i25.LearningSupportPlan>? learningSupportPlans,
+    List<_i26.MissedSchoolday>? missedSchooldays,
+    List<_i27.SchooldayEvent>? schooldayEvents,
     String? swimmer,
-    List<_i27.PupilListEntry>? pupilListEntries,
+    List<_i28.PupilListEntry>? pupilListEntries,
   }) : super._(
           id: id,
-          active: active,
+          status: status,
           internalId: internalId,
           preSchoolMedicalId: preSchoolMedicalId,
           preSchoolMedical: preSchoolMedical,
@@ -793,7 +794,7 @@ class _PupilDataImpl extends PupilData {
   @override
   PupilData copyWith({
     Object? id = _Undefined,
-    bool? active,
+    _i2.PupilStatus? status,
     int? internalId,
     Object? preSchoolMedicalId = _Undefined,
     Object? preSchoolMedical = _Undefined,
@@ -806,7 +807,7 @@ class _PupilDataImpl extends PupilData {
     Object? avatar = _Undefined,
     Object? avatarAuthId = _Undefined,
     Object? avatarAuth = _Undefined,
-    _i7.PublicMediaAuth? publicMediaAuth,
+    _i8.PublicMediaAuth? publicMediaAuth,
     Object? publicMediaAuthDocumentId = _Undefined,
     Object? publicMediaAuthDocument = _Undefined,
     Object? contact = _Undefined,
@@ -838,111 +839,111 @@ class _PupilDataImpl extends PupilData {
   }) {
     return PupilDataImplicit._(
       id: id is int? ? id : this.id,
-      active: active ?? this.active,
+      status: status ?? this.status,
       internalId: internalId ?? this.internalId,
       preSchoolMedicalId: preSchoolMedicalId is int?
           ? preSchoolMedicalId
           : this.preSchoolMedicalId,
-      preSchoolMedical: preSchoolMedical is _i2.PreSchoolMedical?
+      preSchoolMedical: preSchoolMedical is _i3.PreSchoolMedical?
           ? preSchoolMedical
           : this.preSchoolMedical?.copyWith(),
       kindergardenId:
           kindergardenId is int? ? kindergardenId : this.kindergardenId,
-      kindergarden: kindergarden is _i3.Kindergarden?
+      kindergarden: kindergarden is _i4.Kindergarden?
           ? kindergarden
           : this.kindergarden?.copyWith(),
-      kindergardenData: kindergardenData is _i4.KindergardenInfo?
+      kindergardenData: kindergardenData is _i5.KindergardenInfo?
           ? kindergardenData
           : this.kindergardenData?.copyWith(),
       preSchoolTestId:
           preSchoolTestId is int? ? preSchoolTestId : this.preSchoolTestId,
-      preSchoolTest: preSchoolTest is _i5.PreSchoolTest?
+      preSchoolTest: preSchoolTest is _i6.PreSchoolTest?
           ? preSchoolTest
           : this.preSchoolTest?.copyWith(),
       avatarId: avatarId is int? ? avatarId : this.avatarId,
-      avatar: avatar is _i6.HubDocument? ? avatar : this.avatar?.copyWith(),
+      avatar: avatar is _i7.HubDocument? ? avatar : this.avatar?.copyWith(),
       avatarAuthId: avatarAuthId is int? ? avatarAuthId : this.avatarAuthId,
-      avatarAuth: avatarAuth is _i6.HubDocument?
+      avatarAuth: avatarAuth is _i7.HubDocument?
           ? avatarAuth
           : this.avatarAuth?.copyWith(),
       publicMediaAuth: publicMediaAuth ?? this.publicMediaAuth.copyWith(),
       publicMediaAuthDocumentId: publicMediaAuthDocumentId is int?
           ? publicMediaAuthDocumentId
           : this.publicMediaAuthDocumentId,
-      publicMediaAuthDocument: publicMediaAuthDocument is _i6.HubDocument?
+      publicMediaAuthDocument: publicMediaAuthDocument is _i7.HubDocument?
           ? publicMediaAuthDocument
           : this.publicMediaAuthDocument?.copyWith(),
       contact: contact is String? ? contact : this.contact,
-      communicationPupil: communicationPupil is _i8.CommunicationSkills?
+      communicationPupil: communicationPupil is _i9.CommunicationSkills?
           ? communicationPupil
           : this.communicationPupil?.copyWith(),
       specialInformation: specialInformation is String?
           ? specialInformation
           : this.specialInformation,
       tutorInfo:
-          tutorInfo is _i9.TutorInfo? ? tutorInfo : this.tutorInfo?.copyWith(),
-      authorizations: authorizations is List<_i10.PupilAuthorization>?
+          tutorInfo is _i10.TutorInfo? ? tutorInfo : this.tutorInfo?.copyWith(),
+      authorizations: authorizations is List<_i11.PupilAuthorization>?
           ? authorizations
           : this.authorizations?.map((e0) => e0.copyWith()).toList(),
-      afterSchoolCare: afterSchoolCare is _i11.AfterSchoolCare?
+      afterSchoolCare: afterSchoolCare is _i12.AfterSchoolCare?
           ? afterSchoolCare
           : this.afterSchoolCare?.copyWith(),
       credit: credit ?? this.credit,
       creditEarned: creditEarned ?? this.creditEarned,
-      creditTransactions: creditTransactions is List<_i12.CreditTransaction>?
+      creditTransactions: creditTransactions is List<_i13.CreditTransaction>?
           ? creditTransactions
           : this.creditTransactions?.map((e0) => e0.copyWith()).toList(),
       lessonGroupMemberships: lessonGroupMemberships
-              is List<_i13.ScheduledLessonGroupMembership>?
+              is List<_i14.ScheduledLessonGroupMembership>?
           ? lessonGroupMemberships
           : this.lessonGroupMemberships?.map((e0) => e0.copyWith()).toList(),
-      lessonsAttended: lessonsAttended is List<_i14.LessonAttendance>?
+      lessonsAttended: lessonsAttended is List<_i15.LessonAttendance>?
           ? lessonsAttended
           : this.lessonsAttended?.map((e0) => e0.copyWith()).toList(),
-      competenceGoals: competenceGoals is List<_i15.CompetenceGoal>?
+      competenceGoals: competenceGoals is List<_i16.CompetenceGoal>?
           ? competenceGoals
           : this.competenceGoals?.map((e0) => e0.copyWith()).toList(),
-      competenceChecks: competenceChecks is List<_i16.CompetenceCheck>?
+      competenceChecks: competenceChecks is List<_i17.CompetenceCheck>?
           ? competenceChecks
           : this.competenceChecks?.map((e0) => e0.copyWith()).toList(),
-      competenceReports: competenceReports is List<_i17.CompetenceReport>?
+      competenceReports: competenceReports is List<_i18.CompetenceReport>?
           ? competenceReports
           : this.competenceReports?.map((e0) => e0.copyWith()).toList(),
       competenceReportChecks: competenceReportChecks
-              is List<_i18.CompetenceReportCheck>?
+              is List<_i19.CompetenceReportCheck>?
           ? competenceReportChecks
           : this.competenceReportChecks?.map((e0) => e0.copyWith()).toList(),
-      pupilWorkbooks: pupilWorkbooks is List<_i19.PupilWorkbook>?
+      pupilWorkbooks: pupilWorkbooks is List<_i20.PupilWorkbook>?
           ? pupilWorkbooks
           : this.pupilWorkbooks?.map((e0) => e0.copyWith()).toList(),
-      pupilBookLendings: pupilBookLendings is List<_i20.PupilBookLending>?
+      pupilBookLendings: pupilBookLendings is List<_i21.PupilBookLending>?
           ? pupilBookLendings
           : this.pupilBookLendings?.map((e0) => e0.copyWith()).toList(),
       schoolyearHeldBackAt: schoolyearHeldBackAt is DateTime?
           ? schoolyearHeldBackAt
           : this.schoolyearHeldBackAt,
-      supportLevelHistory: supportLevelHistory is List<_i21.SupportLevel>?
+      supportLevelHistory: supportLevelHistory is List<_i22.SupportLevel>?
           ? supportLevelHistory
           : this.supportLevelHistory?.map((e0) => e0.copyWith()).toList(),
       supportCategoryStatuses: supportCategoryStatuses
-              is List<_i22.SupportCategoryStatus>?
+              is List<_i23.SupportCategoryStatus>?
           ? supportCategoryStatuses
           : this.supportCategoryStatuses?.map((e0) => e0.copyWith()).toList(),
-      supportGoals: supportGoals is List<_i23.SupportGoal>?
+      supportGoals: supportGoals is List<_i24.SupportGoal>?
           ? supportGoals
           : this.supportGoals?.map((e0) => e0.copyWith()).toList(),
       learningSupportPlans:
-          learningSupportPlans is List<_i24.LearningSupportPlan>?
+          learningSupportPlans is List<_i25.LearningSupportPlan>?
               ? learningSupportPlans
               : this.learningSupportPlans?.map((e0) => e0.copyWith()).toList(),
-      missedSchooldays: missedSchooldays is List<_i25.MissedSchoolday>?
+      missedSchooldays: missedSchooldays is List<_i26.MissedSchoolday>?
           ? missedSchooldays
           : this.missedSchooldays?.map((e0) => e0.copyWith()).toList(),
-      schooldayEvents: schooldayEvents is List<_i26.SchooldayEvent>?
+      schooldayEvents: schooldayEvents is List<_i27.SchooldayEvent>?
           ? schooldayEvents
           : this.schooldayEvents?.map((e0) => e0.copyWith()).toList(),
       swimmer: swimmer is String? ? swimmer : this.swimmer,
-      pupilListEntries: pupilListEntries is List<_i27.PupilListEntry>?
+      pupilListEntries: pupilListEntries is List<_i28.PupilListEntry>?
           ? pupilListEntries
           : this.pupilListEntries?.map((e0) => e0.copyWith()).toList(),
       $_kindergardenPupilsKindergardenId:
@@ -954,53 +955,53 @@ class _PupilDataImpl extends PupilData {
 class PupilDataImplicit extends _PupilDataImpl {
   PupilDataImplicit._({
     int? id,
-    required bool active,
+    required _i2.PupilStatus status,
     required int internalId,
     int? preSchoolMedicalId,
-    _i2.PreSchoolMedical? preSchoolMedical,
+    _i3.PreSchoolMedical? preSchoolMedical,
     int? kindergardenId,
-    _i3.Kindergarden? kindergarden,
-    _i4.KindergardenInfo? kindergardenData,
+    _i4.Kindergarden? kindergarden,
+    _i5.KindergardenInfo? kindergardenData,
     int? preSchoolTestId,
-    _i5.PreSchoolTest? preSchoolTest,
+    _i6.PreSchoolTest? preSchoolTest,
     int? avatarId,
-    _i6.HubDocument? avatar,
+    _i7.HubDocument? avatar,
     int? avatarAuthId,
-    _i6.HubDocument? avatarAuth,
-    required _i7.PublicMediaAuth publicMediaAuth,
+    _i7.HubDocument? avatarAuth,
+    required _i8.PublicMediaAuth publicMediaAuth,
     int? publicMediaAuthDocumentId,
-    _i6.HubDocument? publicMediaAuthDocument,
+    _i7.HubDocument? publicMediaAuthDocument,
     String? contact,
-    _i8.CommunicationSkills? communicationPupil,
+    _i9.CommunicationSkills? communicationPupil,
     String? specialInformation,
-    _i9.TutorInfo? tutorInfo,
-    List<_i10.PupilAuthorization>? authorizations,
-    _i11.AfterSchoolCare? afterSchoolCare,
+    _i10.TutorInfo? tutorInfo,
+    List<_i11.PupilAuthorization>? authorizations,
+    _i12.AfterSchoolCare? afterSchoolCare,
     required int credit,
     required int creditEarned,
-    List<_i12.CreditTransaction>? creditTransactions,
-    List<_i13.ScheduledLessonGroupMembership>? lessonGroupMemberships,
-    List<_i14.LessonAttendance>? lessonsAttended,
-    List<_i15.CompetenceGoal>? competenceGoals,
-    List<_i16.CompetenceCheck>? competenceChecks,
-    List<_i17.CompetenceReport>? competenceReports,
-    List<_i18.CompetenceReportCheck>? competenceReportChecks,
-    List<_i19.PupilWorkbook>? pupilWorkbooks,
-    List<_i20.PupilBookLending>? pupilBookLendings,
+    List<_i13.CreditTransaction>? creditTransactions,
+    List<_i14.ScheduledLessonGroupMembership>? lessonGroupMemberships,
+    List<_i15.LessonAttendance>? lessonsAttended,
+    List<_i16.CompetenceGoal>? competenceGoals,
+    List<_i17.CompetenceCheck>? competenceChecks,
+    List<_i18.CompetenceReport>? competenceReports,
+    List<_i19.CompetenceReportCheck>? competenceReportChecks,
+    List<_i20.PupilWorkbook>? pupilWorkbooks,
+    List<_i21.PupilBookLending>? pupilBookLendings,
     DateTime? schoolyearHeldBackAt,
-    List<_i21.SupportLevel>? supportLevelHistory,
-    List<_i22.SupportCategoryStatus>? supportCategoryStatuses,
-    List<_i23.SupportGoal>? supportGoals,
-    List<_i24.LearningSupportPlan>? learningSupportPlans,
-    List<_i25.MissedSchoolday>? missedSchooldays,
-    List<_i26.SchooldayEvent>? schooldayEvents,
+    List<_i22.SupportLevel>? supportLevelHistory,
+    List<_i23.SupportCategoryStatus>? supportCategoryStatuses,
+    List<_i24.SupportGoal>? supportGoals,
+    List<_i25.LearningSupportPlan>? learningSupportPlans,
+    List<_i26.MissedSchoolday>? missedSchooldays,
+    List<_i27.SchooldayEvent>? schooldayEvents,
     String? swimmer,
-    List<_i27.PupilListEntry>? pupilListEntries,
+    List<_i28.PupilListEntry>? pupilListEntries,
     int? $_kindergardenPupilsKindergardenId,
   })  : _kindergardenPupilsKindergardenId = $_kindergardenPupilsKindergardenId,
         super(
           id: id,
-          active: active,
+          status: status,
           internalId: internalId,
           preSchoolMedicalId: preSchoolMedicalId,
           preSchoolMedical: preSchoolMedical,
@@ -1050,7 +1051,7 @@ class PupilDataImplicit extends _PupilDataImpl {
   }) {
     return PupilDataImplicit._(
       id: pupilData.id,
-      active: pupilData.active,
+      status: pupilData.status,
       internalId: pupilData.internalId,
       preSchoolMedicalId: pupilData.preSchoolMedicalId,
       preSchoolMedical: pupilData.preSchoolMedical,
@@ -1102,9 +1103,10 @@ class PupilDataImplicit extends _PupilDataImpl {
 
 class PupilDataTable extends _i1.Table<int?> {
   PupilDataTable({super.tableRelation}) : super(tableName: 'pupil_data') {
-    active = _i1.ColumnBool(
-      'active',
+    status = _i1.ColumnEnum(
+      'status',
       this,
+      _i1.EnumSerialization.byName,
     );
     internalId = _i1.ColumnInt(
       'internalId',
@@ -1184,37 +1186,37 @@ class PupilDataTable extends _i1.Table<int?> {
     );
   }
 
-  late final _i1.ColumnBool active;
+  late final _i1.ColumnEnum<_i2.PupilStatus> status;
 
   late final _i1.ColumnInt internalId;
 
   late final _i1.ColumnInt preSchoolMedicalId;
 
-  _i2.PreSchoolMedicalTable? _preSchoolMedical;
+  _i3.PreSchoolMedicalTable? _preSchoolMedical;
 
   late final _i1.ColumnInt kindergardenId;
 
-  _i3.KindergardenTable? _kindergarden;
+  _i4.KindergardenTable? _kindergarden;
 
   late final _i1.ColumnSerializable kindergardenData;
 
   late final _i1.ColumnInt preSchoolTestId;
 
-  _i5.PreSchoolTestTable? _preSchoolTest;
+  _i6.PreSchoolTestTable? _preSchoolTest;
 
   late final _i1.ColumnInt avatarId;
 
-  _i6.HubDocumentTable? _avatar;
+  _i7.HubDocumentTable? _avatar;
 
   late final _i1.ColumnInt avatarAuthId;
 
-  _i6.HubDocumentTable? _avatarAuth;
+  _i7.HubDocumentTable? _avatarAuth;
 
   late final _i1.ColumnSerializable publicMediaAuth;
 
   late final _i1.ColumnInt publicMediaAuthDocumentId;
 
-  _i6.HubDocumentTable? _publicMediaAuthDocument;
+  _i7.HubDocumentTable? _publicMediaAuthDocument;
 
   late final _i1.ColumnString contact;
 
@@ -1224,9 +1226,9 @@ class PupilDataTable extends _i1.Table<int?> {
 
   late final _i1.ColumnSerializable tutorInfo;
 
-  _i10.PupilAuthorizationTable? ___authorizations;
+  _i11.PupilAuthorizationTable? ___authorizations;
 
-  _i1.ManyRelation<_i10.PupilAuthorizationTable>? _authorizations;
+  _i1.ManyRelation<_i11.PupilAuthorizationTable>? _authorizations;
 
   late final _i1.ColumnSerializable afterSchoolCare;
 
@@ -1234,687 +1236,687 @@ class PupilDataTable extends _i1.Table<int?> {
 
   late final _i1.ColumnInt creditEarned;
 
-  _i12.CreditTransactionTable? ___creditTransactions;
+  _i13.CreditTransactionTable? ___creditTransactions;
 
-  _i1.ManyRelation<_i12.CreditTransactionTable>? _creditTransactions;
+  _i1.ManyRelation<_i13.CreditTransactionTable>? _creditTransactions;
 
-  _i13.ScheduledLessonGroupMembershipTable? ___lessonGroupMemberships;
+  _i14.ScheduledLessonGroupMembershipTable? ___lessonGroupMemberships;
 
-  _i1.ManyRelation<_i13.ScheduledLessonGroupMembershipTable>?
+  _i1.ManyRelation<_i14.ScheduledLessonGroupMembershipTable>?
       _lessonGroupMemberships;
 
-  _i14.LessonAttendanceTable? ___lessonsAttended;
+  _i15.LessonAttendanceTable? ___lessonsAttended;
 
-  _i1.ManyRelation<_i14.LessonAttendanceTable>? _lessonsAttended;
+  _i1.ManyRelation<_i15.LessonAttendanceTable>? _lessonsAttended;
 
-  _i15.CompetenceGoalTable? ___competenceGoals;
+  _i16.CompetenceGoalTable? ___competenceGoals;
 
-  _i1.ManyRelation<_i15.CompetenceGoalTable>? _competenceGoals;
+  _i1.ManyRelation<_i16.CompetenceGoalTable>? _competenceGoals;
 
-  _i16.CompetenceCheckTable? ___competenceChecks;
+  _i17.CompetenceCheckTable? ___competenceChecks;
 
-  _i1.ManyRelation<_i16.CompetenceCheckTable>? _competenceChecks;
+  _i1.ManyRelation<_i17.CompetenceCheckTable>? _competenceChecks;
 
-  _i17.CompetenceReportTable? ___competenceReports;
+  _i18.CompetenceReportTable? ___competenceReports;
 
-  _i1.ManyRelation<_i17.CompetenceReportTable>? _competenceReports;
+  _i1.ManyRelation<_i18.CompetenceReportTable>? _competenceReports;
 
-  _i18.CompetenceReportCheckTable? ___competenceReportChecks;
+  _i19.CompetenceReportCheckTable? ___competenceReportChecks;
 
-  _i1.ManyRelation<_i18.CompetenceReportCheckTable>? _competenceReportChecks;
+  _i1.ManyRelation<_i19.CompetenceReportCheckTable>? _competenceReportChecks;
 
-  _i19.PupilWorkbookTable? ___pupilWorkbooks;
+  _i20.PupilWorkbookTable? ___pupilWorkbooks;
 
-  _i1.ManyRelation<_i19.PupilWorkbookTable>? _pupilWorkbooks;
+  _i1.ManyRelation<_i20.PupilWorkbookTable>? _pupilWorkbooks;
 
-  _i20.PupilBookLendingTable? ___pupilBookLendings;
+  _i21.PupilBookLendingTable? ___pupilBookLendings;
 
-  _i1.ManyRelation<_i20.PupilBookLendingTable>? _pupilBookLendings;
+  _i1.ManyRelation<_i21.PupilBookLendingTable>? _pupilBookLendings;
 
   late final _i1.ColumnDateTime schoolyearHeldBackAt;
 
-  _i21.SupportLevelTable? ___supportLevelHistory;
+  _i22.SupportLevelTable? ___supportLevelHistory;
 
-  _i1.ManyRelation<_i21.SupportLevelTable>? _supportLevelHistory;
+  _i1.ManyRelation<_i22.SupportLevelTable>? _supportLevelHistory;
 
-  _i22.SupportCategoryStatusTable? ___supportCategoryStatuses;
+  _i23.SupportCategoryStatusTable? ___supportCategoryStatuses;
 
-  _i1.ManyRelation<_i22.SupportCategoryStatusTable>? _supportCategoryStatuses;
+  _i1.ManyRelation<_i23.SupportCategoryStatusTable>? _supportCategoryStatuses;
 
-  _i23.SupportGoalTable? ___supportGoals;
+  _i24.SupportGoalTable? ___supportGoals;
 
-  _i1.ManyRelation<_i23.SupportGoalTable>? _supportGoals;
+  _i1.ManyRelation<_i24.SupportGoalTable>? _supportGoals;
 
-  _i24.LearningSupportPlanTable? ___learningSupportPlans;
+  _i25.LearningSupportPlanTable? ___learningSupportPlans;
 
-  _i1.ManyRelation<_i24.LearningSupportPlanTable>? _learningSupportPlans;
+  _i1.ManyRelation<_i25.LearningSupportPlanTable>? _learningSupportPlans;
 
-  _i25.MissedSchooldayTable? ___missedSchooldays;
+  _i26.MissedSchooldayTable? ___missedSchooldays;
 
-  _i1.ManyRelation<_i25.MissedSchooldayTable>? _missedSchooldays;
+  _i1.ManyRelation<_i26.MissedSchooldayTable>? _missedSchooldays;
 
-  _i26.SchooldayEventTable? ___schooldayEvents;
+  _i27.SchooldayEventTable? ___schooldayEvents;
 
-  _i1.ManyRelation<_i26.SchooldayEventTable>? _schooldayEvents;
+  _i1.ManyRelation<_i27.SchooldayEventTable>? _schooldayEvents;
 
   late final _i1.ColumnString swimmer;
 
-  _i27.PupilListEntryTable? ___pupilListEntries;
+  _i28.PupilListEntryTable? ___pupilListEntries;
 
-  _i1.ManyRelation<_i27.PupilListEntryTable>? _pupilListEntries;
+  _i1.ManyRelation<_i28.PupilListEntryTable>? _pupilListEntries;
 
   late final _i1.ColumnInt $_kindergardenPupilsKindergardenId;
 
-  _i2.PreSchoolMedicalTable get preSchoolMedical {
+  _i3.PreSchoolMedicalTable get preSchoolMedical {
     if (_preSchoolMedical != null) return _preSchoolMedical!;
     _preSchoolMedical = _i1.createRelationTable(
       relationFieldName: 'preSchoolMedical',
       field: PupilData.t.preSchoolMedicalId,
-      foreignField: _i2.PreSchoolMedical.t.id,
+      foreignField: _i3.PreSchoolMedical.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.PreSchoolMedicalTable(tableRelation: foreignTableRelation),
+          _i3.PreSchoolMedicalTable(tableRelation: foreignTableRelation),
     );
     return _preSchoolMedical!;
   }
 
-  _i3.KindergardenTable get kindergarden {
+  _i4.KindergardenTable get kindergarden {
     if (_kindergarden != null) return _kindergarden!;
     _kindergarden = _i1.createRelationTable(
       relationFieldName: 'kindergarden',
       field: PupilData.t.kindergardenId,
-      foreignField: _i3.Kindergarden.t.id,
+      foreignField: _i4.Kindergarden.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i3.KindergardenTable(tableRelation: foreignTableRelation),
+          _i4.KindergardenTable(tableRelation: foreignTableRelation),
     );
     return _kindergarden!;
   }
 
-  _i5.PreSchoolTestTable get preSchoolTest {
+  _i6.PreSchoolTestTable get preSchoolTest {
     if (_preSchoolTest != null) return _preSchoolTest!;
     _preSchoolTest = _i1.createRelationTable(
       relationFieldName: 'preSchoolTest',
       field: PupilData.t.preSchoolTestId,
-      foreignField: _i5.PreSchoolTest.t.id,
+      foreignField: _i6.PreSchoolTest.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i5.PreSchoolTestTable(tableRelation: foreignTableRelation),
+          _i6.PreSchoolTestTable(tableRelation: foreignTableRelation),
     );
     return _preSchoolTest!;
   }
 
-  _i6.HubDocumentTable get avatar {
+  _i7.HubDocumentTable get avatar {
     if (_avatar != null) return _avatar!;
     _avatar = _i1.createRelationTable(
       relationFieldName: 'avatar',
       field: PupilData.t.avatarId,
-      foreignField: _i6.HubDocument.t.id,
+      foreignField: _i7.HubDocument.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i6.HubDocumentTable(tableRelation: foreignTableRelation),
+          _i7.HubDocumentTable(tableRelation: foreignTableRelation),
     );
     return _avatar!;
   }
 
-  _i6.HubDocumentTable get avatarAuth {
+  _i7.HubDocumentTable get avatarAuth {
     if (_avatarAuth != null) return _avatarAuth!;
     _avatarAuth = _i1.createRelationTable(
       relationFieldName: 'avatarAuth',
       field: PupilData.t.avatarAuthId,
-      foreignField: _i6.HubDocument.t.id,
+      foreignField: _i7.HubDocument.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i6.HubDocumentTable(tableRelation: foreignTableRelation),
+          _i7.HubDocumentTable(tableRelation: foreignTableRelation),
     );
     return _avatarAuth!;
   }
 
-  _i6.HubDocumentTable get publicMediaAuthDocument {
+  _i7.HubDocumentTable get publicMediaAuthDocument {
     if (_publicMediaAuthDocument != null) return _publicMediaAuthDocument!;
     _publicMediaAuthDocument = _i1.createRelationTable(
       relationFieldName: 'publicMediaAuthDocument',
       field: PupilData.t.publicMediaAuthDocumentId,
-      foreignField: _i6.HubDocument.t.id,
+      foreignField: _i7.HubDocument.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i6.HubDocumentTable(tableRelation: foreignTableRelation),
+          _i7.HubDocumentTable(tableRelation: foreignTableRelation),
     );
     return _publicMediaAuthDocument!;
   }
 
-  _i10.PupilAuthorizationTable get __authorizations {
+  _i11.PupilAuthorizationTable get __authorizations {
     if (___authorizations != null) return ___authorizations!;
     ___authorizations = _i1.createRelationTable(
       relationFieldName: '__authorizations',
       field: PupilData.t.id,
-      foreignField: _i10.PupilAuthorization.t.pupilId,
+      foreignField: _i11.PupilAuthorization.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i10.PupilAuthorizationTable(tableRelation: foreignTableRelation),
+          _i11.PupilAuthorizationTable(tableRelation: foreignTableRelation),
     );
     return ___authorizations!;
   }
 
-  _i12.CreditTransactionTable get __creditTransactions {
+  _i13.CreditTransactionTable get __creditTransactions {
     if (___creditTransactions != null) return ___creditTransactions!;
     ___creditTransactions = _i1.createRelationTable(
       relationFieldName: '__creditTransactions',
       field: PupilData.t.id,
       foreignField:
-          _i12.CreditTransaction.t.$_pupilDataCredittransactionsPupilDataId,
+          _i13.CreditTransaction.t.$_pupilDataCredittransactionsPupilDataId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i12.CreditTransactionTable(tableRelation: foreignTableRelation),
+          _i13.CreditTransactionTable(tableRelation: foreignTableRelation),
     );
     return ___creditTransactions!;
   }
 
-  _i13.ScheduledLessonGroupMembershipTable get __lessonGroupMemberships {
+  _i14.ScheduledLessonGroupMembershipTable get __lessonGroupMemberships {
     if (___lessonGroupMemberships != null) return ___lessonGroupMemberships!;
     ___lessonGroupMemberships = _i1.createRelationTable(
       relationFieldName: '__lessonGroupMemberships',
       field: PupilData.t.id,
-      foreignField: _i13.ScheduledLessonGroupMembership.t.pupilDataId,
+      foreignField: _i14.ScheduledLessonGroupMembership.t.pupilDataId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i13.ScheduledLessonGroupMembershipTable(
+          _i14.ScheduledLessonGroupMembershipTable(
               tableRelation: foreignTableRelation),
     );
     return ___lessonGroupMemberships!;
   }
 
-  _i14.LessonAttendanceTable get __lessonsAttended {
+  _i15.LessonAttendanceTable get __lessonsAttended {
     if (___lessonsAttended != null) return ___lessonsAttended!;
     ___lessonsAttended = _i1.createRelationTable(
       relationFieldName: '__lessonsAttended',
       field: PupilData.t.id,
-      foreignField: _i14.LessonAttendance.t.pupilId,
+      foreignField: _i15.LessonAttendance.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i14.LessonAttendanceTable(tableRelation: foreignTableRelation),
+          _i15.LessonAttendanceTable(tableRelation: foreignTableRelation),
     );
     return ___lessonsAttended!;
   }
 
-  _i15.CompetenceGoalTable get __competenceGoals {
+  _i16.CompetenceGoalTable get __competenceGoals {
     if (___competenceGoals != null) return ___competenceGoals!;
     ___competenceGoals = _i1.createRelationTable(
       relationFieldName: '__competenceGoals',
       field: PupilData.t.id,
-      foreignField: _i15.CompetenceGoal.t.pupilId,
+      foreignField: _i16.CompetenceGoal.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i15.CompetenceGoalTable(tableRelation: foreignTableRelation),
+          _i16.CompetenceGoalTable(tableRelation: foreignTableRelation),
     );
     return ___competenceGoals!;
   }
 
-  _i16.CompetenceCheckTable get __competenceChecks {
+  _i17.CompetenceCheckTable get __competenceChecks {
     if (___competenceChecks != null) return ___competenceChecks!;
     ___competenceChecks = _i1.createRelationTable(
       relationFieldName: '__competenceChecks',
       field: PupilData.t.id,
-      foreignField: _i16.CompetenceCheck.t.pupilId,
+      foreignField: _i17.CompetenceCheck.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i16.CompetenceCheckTable(tableRelation: foreignTableRelation),
+          _i17.CompetenceCheckTable(tableRelation: foreignTableRelation),
     );
     return ___competenceChecks!;
   }
 
-  _i17.CompetenceReportTable get __competenceReports {
+  _i18.CompetenceReportTable get __competenceReports {
     if (___competenceReports != null) return ___competenceReports!;
     ___competenceReports = _i1.createRelationTable(
       relationFieldName: '__competenceReports',
       field: PupilData.t.id,
-      foreignField: _i17.CompetenceReport.t.pupilId,
+      foreignField: _i18.CompetenceReport.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i17.CompetenceReportTable(tableRelation: foreignTableRelation),
+          _i18.CompetenceReportTable(tableRelation: foreignTableRelation),
     );
     return ___competenceReports!;
   }
 
-  _i18.CompetenceReportCheckTable get __competenceReportChecks {
+  _i19.CompetenceReportCheckTable get __competenceReportChecks {
     if (___competenceReportChecks != null) return ___competenceReportChecks!;
     ___competenceReportChecks = _i1.createRelationTable(
       relationFieldName: '__competenceReportChecks',
       field: PupilData.t.id,
-      foreignField: _i18.CompetenceReportCheck.t.pupilId,
+      foreignField: _i19.CompetenceReportCheck.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i18.CompetenceReportCheckTable(tableRelation: foreignTableRelation),
+          _i19.CompetenceReportCheckTable(tableRelation: foreignTableRelation),
     );
     return ___competenceReportChecks!;
   }
 
-  _i19.PupilWorkbookTable get __pupilWorkbooks {
+  _i20.PupilWorkbookTable get __pupilWorkbooks {
     if (___pupilWorkbooks != null) return ___pupilWorkbooks!;
     ___pupilWorkbooks = _i1.createRelationTable(
       relationFieldName: '__pupilWorkbooks',
       field: PupilData.t.id,
-      foreignField: _i19.PupilWorkbook.t.pupilId,
+      foreignField: _i20.PupilWorkbook.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i19.PupilWorkbookTable(tableRelation: foreignTableRelation),
+          _i20.PupilWorkbookTable(tableRelation: foreignTableRelation),
     );
     return ___pupilWorkbooks!;
   }
 
-  _i20.PupilBookLendingTable get __pupilBookLendings {
+  _i21.PupilBookLendingTable get __pupilBookLendings {
     if (___pupilBookLendings != null) return ___pupilBookLendings!;
     ___pupilBookLendings = _i1.createRelationTable(
       relationFieldName: '__pupilBookLendings',
       field: PupilData.t.id,
-      foreignField: _i20.PupilBookLending.t.pupilId,
+      foreignField: _i21.PupilBookLending.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i20.PupilBookLendingTable(tableRelation: foreignTableRelation),
+          _i21.PupilBookLendingTable(tableRelation: foreignTableRelation),
     );
     return ___pupilBookLendings!;
   }
 
-  _i21.SupportLevelTable get __supportLevelHistory {
+  _i22.SupportLevelTable get __supportLevelHistory {
     if (___supportLevelHistory != null) return ___supportLevelHistory!;
     ___supportLevelHistory = _i1.createRelationTable(
       relationFieldName: '__supportLevelHistory',
       field: PupilData.t.id,
-      foreignField: _i21.SupportLevel.t.pupilId,
+      foreignField: _i22.SupportLevel.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i21.SupportLevelTable(tableRelation: foreignTableRelation),
+          _i22.SupportLevelTable(tableRelation: foreignTableRelation),
     );
     return ___supportLevelHistory!;
   }
 
-  _i22.SupportCategoryStatusTable get __supportCategoryStatuses {
+  _i23.SupportCategoryStatusTable get __supportCategoryStatuses {
     if (___supportCategoryStatuses != null) return ___supportCategoryStatuses!;
     ___supportCategoryStatuses = _i1.createRelationTable(
       relationFieldName: '__supportCategoryStatuses',
       field: PupilData.t.id,
-      foreignField: _i22.SupportCategoryStatus.t
+      foreignField: _i23.SupportCategoryStatus.t
           .$_pupilDataSupportcategorystatusesPupilDataId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i22.SupportCategoryStatusTable(tableRelation: foreignTableRelation),
+          _i23.SupportCategoryStatusTable(tableRelation: foreignTableRelation),
     );
     return ___supportCategoryStatuses!;
   }
 
-  _i23.SupportGoalTable get __supportGoals {
+  _i24.SupportGoalTable get __supportGoals {
     if (___supportGoals != null) return ___supportGoals!;
     ___supportGoals = _i1.createRelationTable(
       relationFieldName: '__supportGoals',
       field: PupilData.t.id,
-      foreignField: _i23.SupportGoal.t.$_pupilDataSupportgoalsPupilDataId,
+      foreignField: _i24.SupportGoal.t.$_pupilDataSupportgoalsPupilDataId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i23.SupportGoalTable(tableRelation: foreignTableRelation),
+          _i24.SupportGoalTable(tableRelation: foreignTableRelation),
     );
     return ___supportGoals!;
   }
 
-  _i24.LearningSupportPlanTable get __learningSupportPlans {
+  _i25.LearningSupportPlanTable get __learningSupportPlans {
     if (___learningSupportPlans != null) return ___learningSupportPlans!;
     ___learningSupportPlans = _i1.createRelationTable(
       relationFieldName: '__learningSupportPlans',
       field: PupilData.t.id,
-      foreignField: _i24.LearningSupportPlan.t.pupilId,
+      foreignField: _i25.LearningSupportPlan.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i24.LearningSupportPlanTable(tableRelation: foreignTableRelation),
+          _i25.LearningSupportPlanTable(tableRelation: foreignTableRelation),
     );
     return ___learningSupportPlans!;
   }
 
-  _i25.MissedSchooldayTable get __missedSchooldays {
+  _i26.MissedSchooldayTable get __missedSchooldays {
     if (___missedSchooldays != null) return ___missedSchooldays!;
     ___missedSchooldays = _i1.createRelationTable(
       relationFieldName: '__missedSchooldays',
       field: PupilData.t.id,
-      foreignField: _i25.MissedSchoolday.t.pupilId,
+      foreignField: _i26.MissedSchoolday.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i25.MissedSchooldayTable(tableRelation: foreignTableRelation),
+          _i26.MissedSchooldayTable(tableRelation: foreignTableRelation),
     );
     return ___missedSchooldays!;
   }
 
-  _i26.SchooldayEventTable get __schooldayEvents {
+  _i27.SchooldayEventTable get __schooldayEvents {
     if (___schooldayEvents != null) return ___schooldayEvents!;
     ___schooldayEvents = _i1.createRelationTable(
       relationFieldName: '__schooldayEvents',
       field: PupilData.t.id,
-      foreignField: _i26.SchooldayEvent.t.pupilId,
+      foreignField: _i27.SchooldayEvent.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i26.SchooldayEventTable(tableRelation: foreignTableRelation),
+          _i27.SchooldayEventTable(tableRelation: foreignTableRelation),
     );
     return ___schooldayEvents!;
   }
 
-  _i27.PupilListEntryTable get __pupilListEntries {
+  _i28.PupilListEntryTable get __pupilListEntries {
     if (___pupilListEntries != null) return ___pupilListEntries!;
     ___pupilListEntries = _i1.createRelationTable(
       relationFieldName: '__pupilListEntries',
       field: PupilData.t.id,
-      foreignField: _i27.PupilListEntry.t.pupilId,
+      foreignField: _i28.PupilListEntry.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i27.PupilListEntryTable(tableRelation: foreignTableRelation),
+          _i28.PupilListEntryTable(tableRelation: foreignTableRelation),
     );
     return ___pupilListEntries!;
   }
 
-  _i1.ManyRelation<_i10.PupilAuthorizationTable> get authorizations {
+  _i1.ManyRelation<_i11.PupilAuthorizationTable> get authorizations {
     if (_authorizations != null) return _authorizations!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'authorizations',
       field: PupilData.t.id,
-      foreignField: _i10.PupilAuthorization.t.pupilId,
+      foreignField: _i11.PupilAuthorization.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i10.PupilAuthorizationTable(tableRelation: foreignTableRelation),
+          _i11.PupilAuthorizationTable(tableRelation: foreignTableRelation),
     );
-    _authorizations = _i1.ManyRelation<_i10.PupilAuthorizationTable>(
+    _authorizations = _i1.ManyRelation<_i11.PupilAuthorizationTable>(
       tableWithRelations: relationTable,
-      table: _i10.PupilAuthorizationTable(
+      table: _i11.PupilAuthorizationTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
     return _authorizations!;
   }
 
-  _i1.ManyRelation<_i12.CreditTransactionTable> get creditTransactions {
+  _i1.ManyRelation<_i13.CreditTransactionTable> get creditTransactions {
     if (_creditTransactions != null) return _creditTransactions!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'creditTransactions',
       field: PupilData.t.id,
       foreignField:
-          _i12.CreditTransaction.t.$_pupilDataCredittransactionsPupilDataId,
+          _i13.CreditTransaction.t.$_pupilDataCredittransactionsPupilDataId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i12.CreditTransactionTable(tableRelation: foreignTableRelation),
+          _i13.CreditTransactionTable(tableRelation: foreignTableRelation),
     );
-    _creditTransactions = _i1.ManyRelation<_i12.CreditTransactionTable>(
+    _creditTransactions = _i1.ManyRelation<_i13.CreditTransactionTable>(
       tableWithRelations: relationTable,
-      table: _i12.CreditTransactionTable(
+      table: _i13.CreditTransactionTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
     return _creditTransactions!;
   }
 
-  _i1.ManyRelation<_i13.ScheduledLessonGroupMembershipTable>
+  _i1.ManyRelation<_i14.ScheduledLessonGroupMembershipTable>
       get lessonGroupMemberships {
     if (_lessonGroupMemberships != null) return _lessonGroupMemberships!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'lessonGroupMemberships',
       field: PupilData.t.id,
-      foreignField: _i13.ScheduledLessonGroupMembership.t.pupilDataId,
+      foreignField: _i14.ScheduledLessonGroupMembership.t.pupilDataId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i13.ScheduledLessonGroupMembershipTable(
+          _i14.ScheduledLessonGroupMembershipTable(
               tableRelation: foreignTableRelation),
     );
     _lessonGroupMemberships =
-        _i1.ManyRelation<_i13.ScheduledLessonGroupMembershipTable>(
+        _i1.ManyRelation<_i14.ScheduledLessonGroupMembershipTable>(
       tableWithRelations: relationTable,
-      table: _i13.ScheduledLessonGroupMembershipTable(
+      table: _i14.ScheduledLessonGroupMembershipTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
     return _lessonGroupMemberships!;
   }
 
-  _i1.ManyRelation<_i14.LessonAttendanceTable> get lessonsAttended {
+  _i1.ManyRelation<_i15.LessonAttendanceTable> get lessonsAttended {
     if (_lessonsAttended != null) return _lessonsAttended!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'lessonsAttended',
       field: PupilData.t.id,
-      foreignField: _i14.LessonAttendance.t.pupilId,
+      foreignField: _i15.LessonAttendance.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i14.LessonAttendanceTable(tableRelation: foreignTableRelation),
+          _i15.LessonAttendanceTable(tableRelation: foreignTableRelation),
     );
-    _lessonsAttended = _i1.ManyRelation<_i14.LessonAttendanceTable>(
+    _lessonsAttended = _i1.ManyRelation<_i15.LessonAttendanceTable>(
       tableWithRelations: relationTable,
-      table: _i14.LessonAttendanceTable(
+      table: _i15.LessonAttendanceTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
     return _lessonsAttended!;
   }
 
-  _i1.ManyRelation<_i15.CompetenceGoalTable> get competenceGoals {
+  _i1.ManyRelation<_i16.CompetenceGoalTable> get competenceGoals {
     if (_competenceGoals != null) return _competenceGoals!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'competenceGoals',
       field: PupilData.t.id,
-      foreignField: _i15.CompetenceGoal.t.pupilId,
+      foreignField: _i16.CompetenceGoal.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i15.CompetenceGoalTable(tableRelation: foreignTableRelation),
+          _i16.CompetenceGoalTable(tableRelation: foreignTableRelation),
     );
-    _competenceGoals = _i1.ManyRelation<_i15.CompetenceGoalTable>(
+    _competenceGoals = _i1.ManyRelation<_i16.CompetenceGoalTable>(
       tableWithRelations: relationTable,
-      table: _i15.CompetenceGoalTable(
+      table: _i16.CompetenceGoalTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
     return _competenceGoals!;
   }
 
-  _i1.ManyRelation<_i16.CompetenceCheckTable> get competenceChecks {
+  _i1.ManyRelation<_i17.CompetenceCheckTable> get competenceChecks {
     if (_competenceChecks != null) return _competenceChecks!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'competenceChecks',
       field: PupilData.t.id,
-      foreignField: _i16.CompetenceCheck.t.pupilId,
+      foreignField: _i17.CompetenceCheck.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i16.CompetenceCheckTable(tableRelation: foreignTableRelation),
+          _i17.CompetenceCheckTable(tableRelation: foreignTableRelation),
     );
-    _competenceChecks = _i1.ManyRelation<_i16.CompetenceCheckTable>(
+    _competenceChecks = _i1.ManyRelation<_i17.CompetenceCheckTable>(
       tableWithRelations: relationTable,
-      table: _i16.CompetenceCheckTable(
+      table: _i17.CompetenceCheckTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
     return _competenceChecks!;
   }
 
-  _i1.ManyRelation<_i17.CompetenceReportTable> get competenceReports {
+  _i1.ManyRelation<_i18.CompetenceReportTable> get competenceReports {
     if (_competenceReports != null) return _competenceReports!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'competenceReports',
       field: PupilData.t.id,
-      foreignField: _i17.CompetenceReport.t.pupilId,
+      foreignField: _i18.CompetenceReport.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i17.CompetenceReportTable(tableRelation: foreignTableRelation),
+          _i18.CompetenceReportTable(tableRelation: foreignTableRelation),
     );
-    _competenceReports = _i1.ManyRelation<_i17.CompetenceReportTable>(
+    _competenceReports = _i1.ManyRelation<_i18.CompetenceReportTable>(
       tableWithRelations: relationTable,
-      table: _i17.CompetenceReportTable(
+      table: _i18.CompetenceReportTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
     return _competenceReports!;
   }
 
-  _i1.ManyRelation<_i18.CompetenceReportCheckTable> get competenceReportChecks {
+  _i1.ManyRelation<_i19.CompetenceReportCheckTable> get competenceReportChecks {
     if (_competenceReportChecks != null) return _competenceReportChecks!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'competenceReportChecks',
       field: PupilData.t.id,
-      foreignField: _i18.CompetenceReportCheck.t.pupilId,
+      foreignField: _i19.CompetenceReportCheck.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i18.CompetenceReportCheckTable(tableRelation: foreignTableRelation),
+          _i19.CompetenceReportCheckTable(tableRelation: foreignTableRelation),
     );
-    _competenceReportChecks = _i1.ManyRelation<_i18.CompetenceReportCheckTable>(
+    _competenceReportChecks = _i1.ManyRelation<_i19.CompetenceReportCheckTable>(
       tableWithRelations: relationTable,
-      table: _i18.CompetenceReportCheckTable(
+      table: _i19.CompetenceReportCheckTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
     return _competenceReportChecks!;
   }
 
-  _i1.ManyRelation<_i19.PupilWorkbookTable> get pupilWorkbooks {
+  _i1.ManyRelation<_i20.PupilWorkbookTable> get pupilWorkbooks {
     if (_pupilWorkbooks != null) return _pupilWorkbooks!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'pupilWorkbooks',
       field: PupilData.t.id,
-      foreignField: _i19.PupilWorkbook.t.pupilId,
+      foreignField: _i20.PupilWorkbook.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i19.PupilWorkbookTable(tableRelation: foreignTableRelation),
+          _i20.PupilWorkbookTable(tableRelation: foreignTableRelation),
     );
-    _pupilWorkbooks = _i1.ManyRelation<_i19.PupilWorkbookTable>(
+    _pupilWorkbooks = _i1.ManyRelation<_i20.PupilWorkbookTable>(
       tableWithRelations: relationTable,
-      table: _i19.PupilWorkbookTable(
+      table: _i20.PupilWorkbookTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
     return _pupilWorkbooks!;
   }
 
-  _i1.ManyRelation<_i20.PupilBookLendingTable> get pupilBookLendings {
+  _i1.ManyRelation<_i21.PupilBookLendingTable> get pupilBookLendings {
     if (_pupilBookLendings != null) return _pupilBookLendings!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'pupilBookLendings',
       field: PupilData.t.id,
-      foreignField: _i20.PupilBookLending.t.pupilId,
+      foreignField: _i21.PupilBookLending.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i20.PupilBookLendingTable(tableRelation: foreignTableRelation),
+          _i21.PupilBookLendingTable(tableRelation: foreignTableRelation),
     );
-    _pupilBookLendings = _i1.ManyRelation<_i20.PupilBookLendingTable>(
+    _pupilBookLendings = _i1.ManyRelation<_i21.PupilBookLendingTable>(
       tableWithRelations: relationTable,
-      table: _i20.PupilBookLendingTable(
+      table: _i21.PupilBookLendingTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
     return _pupilBookLendings!;
   }
 
-  _i1.ManyRelation<_i21.SupportLevelTable> get supportLevelHistory {
+  _i1.ManyRelation<_i22.SupportLevelTable> get supportLevelHistory {
     if (_supportLevelHistory != null) return _supportLevelHistory!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'supportLevelHistory',
       field: PupilData.t.id,
-      foreignField: _i21.SupportLevel.t.pupilId,
+      foreignField: _i22.SupportLevel.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i21.SupportLevelTable(tableRelation: foreignTableRelation),
+          _i22.SupportLevelTable(tableRelation: foreignTableRelation),
     );
-    _supportLevelHistory = _i1.ManyRelation<_i21.SupportLevelTable>(
+    _supportLevelHistory = _i1.ManyRelation<_i22.SupportLevelTable>(
       tableWithRelations: relationTable,
-      table: _i21.SupportLevelTable(
+      table: _i22.SupportLevelTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
     return _supportLevelHistory!;
   }
 
-  _i1.ManyRelation<_i22.SupportCategoryStatusTable>
+  _i1.ManyRelation<_i23.SupportCategoryStatusTable>
       get supportCategoryStatuses {
     if (_supportCategoryStatuses != null) return _supportCategoryStatuses!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'supportCategoryStatuses',
       field: PupilData.t.id,
-      foreignField: _i22.SupportCategoryStatus.t
+      foreignField: _i23.SupportCategoryStatus.t
           .$_pupilDataSupportcategorystatusesPupilDataId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i22.SupportCategoryStatusTable(tableRelation: foreignTableRelation),
+          _i23.SupportCategoryStatusTable(tableRelation: foreignTableRelation),
     );
     _supportCategoryStatuses =
-        _i1.ManyRelation<_i22.SupportCategoryStatusTable>(
+        _i1.ManyRelation<_i23.SupportCategoryStatusTable>(
       tableWithRelations: relationTable,
-      table: _i22.SupportCategoryStatusTable(
+      table: _i23.SupportCategoryStatusTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
     return _supportCategoryStatuses!;
   }
 
-  _i1.ManyRelation<_i23.SupportGoalTable> get supportGoals {
+  _i1.ManyRelation<_i24.SupportGoalTable> get supportGoals {
     if (_supportGoals != null) return _supportGoals!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'supportGoals',
       field: PupilData.t.id,
-      foreignField: _i23.SupportGoal.t.$_pupilDataSupportgoalsPupilDataId,
+      foreignField: _i24.SupportGoal.t.$_pupilDataSupportgoalsPupilDataId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i23.SupportGoalTable(tableRelation: foreignTableRelation),
+          _i24.SupportGoalTable(tableRelation: foreignTableRelation),
     );
-    _supportGoals = _i1.ManyRelation<_i23.SupportGoalTable>(
+    _supportGoals = _i1.ManyRelation<_i24.SupportGoalTable>(
       tableWithRelations: relationTable,
-      table: _i23.SupportGoalTable(
+      table: _i24.SupportGoalTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
     return _supportGoals!;
   }
 
-  _i1.ManyRelation<_i24.LearningSupportPlanTable> get learningSupportPlans {
+  _i1.ManyRelation<_i25.LearningSupportPlanTable> get learningSupportPlans {
     if (_learningSupportPlans != null) return _learningSupportPlans!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'learningSupportPlans',
       field: PupilData.t.id,
-      foreignField: _i24.LearningSupportPlan.t.pupilId,
+      foreignField: _i25.LearningSupportPlan.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i24.LearningSupportPlanTable(tableRelation: foreignTableRelation),
+          _i25.LearningSupportPlanTable(tableRelation: foreignTableRelation),
     );
-    _learningSupportPlans = _i1.ManyRelation<_i24.LearningSupportPlanTable>(
+    _learningSupportPlans = _i1.ManyRelation<_i25.LearningSupportPlanTable>(
       tableWithRelations: relationTable,
-      table: _i24.LearningSupportPlanTable(
+      table: _i25.LearningSupportPlanTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
     return _learningSupportPlans!;
   }
 
-  _i1.ManyRelation<_i25.MissedSchooldayTable> get missedSchooldays {
+  _i1.ManyRelation<_i26.MissedSchooldayTable> get missedSchooldays {
     if (_missedSchooldays != null) return _missedSchooldays!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'missedSchooldays',
       field: PupilData.t.id,
-      foreignField: _i25.MissedSchoolday.t.pupilId,
+      foreignField: _i26.MissedSchoolday.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i25.MissedSchooldayTable(tableRelation: foreignTableRelation),
+          _i26.MissedSchooldayTable(tableRelation: foreignTableRelation),
     );
-    _missedSchooldays = _i1.ManyRelation<_i25.MissedSchooldayTable>(
+    _missedSchooldays = _i1.ManyRelation<_i26.MissedSchooldayTable>(
       tableWithRelations: relationTable,
-      table: _i25.MissedSchooldayTable(
+      table: _i26.MissedSchooldayTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
     return _missedSchooldays!;
   }
 
-  _i1.ManyRelation<_i26.SchooldayEventTable> get schooldayEvents {
+  _i1.ManyRelation<_i27.SchooldayEventTable> get schooldayEvents {
     if (_schooldayEvents != null) return _schooldayEvents!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'schooldayEvents',
       field: PupilData.t.id,
-      foreignField: _i26.SchooldayEvent.t.pupilId,
+      foreignField: _i27.SchooldayEvent.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i26.SchooldayEventTable(tableRelation: foreignTableRelation),
+          _i27.SchooldayEventTable(tableRelation: foreignTableRelation),
     );
-    _schooldayEvents = _i1.ManyRelation<_i26.SchooldayEventTable>(
+    _schooldayEvents = _i1.ManyRelation<_i27.SchooldayEventTable>(
       tableWithRelations: relationTable,
-      table: _i26.SchooldayEventTable(
+      table: _i27.SchooldayEventTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
     return _schooldayEvents!;
   }
 
-  _i1.ManyRelation<_i27.PupilListEntryTable> get pupilListEntries {
+  _i1.ManyRelation<_i28.PupilListEntryTable> get pupilListEntries {
     if (_pupilListEntries != null) return _pupilListEntries!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'pupilListEntries',
       field: PupilData.t.id,
-      foreignField: _i27.PupilListEntry.t.pupilId,
+      foreignField: _i28.PupilListEntry.t.pupilId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i27.PupilListEntryTable(tableRelation: foreignTableRelation),
+          _i28.PupilListEntryTable(tableRelation: foreignTableRelation),
     );
-    _pupilListEntries = _i1.ManyRelation<_i27.PupilListEntryTable>(
+    _pupilListEntries = _i1.ManyRelation<_i28.PupilListEntryTable>(
       tableWithRelations: relationTable,
-      table: _i27.PupilListEntryTable(
+      table: _i28.PupilListEntryTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
     return _pupilListEntries!;
@@ -1923,7 +1925,7 @@ class PupilDataTable extends _i1.Table<int?> {
   @override
   List<_i1.Column> get columns => [
         id,
-        active,
+        status,
         internalId,
         preSchoolMedicalId,
         kindergardenId,
@@ -1948,7 +1950,7 @@ class PupilDataTable extends _i1.Table<int?> {
   @override
   List<_i1.Column> get managedColumns => [
         id,
-        active,
+        status,
         internalId,
         preSchoolMedicalId,
         kindergardenId,
@@ -2046,29 +2048,29 @@ class PupilDataTable extends _i1.Table<int?> {
 
 class PupilDataInclude extends _i1.IncludeObject {
   PupilDataInclude._({
-    _i2.PreSchoolMedicalInclude? preSchoolMedical,
-    _i3.KindergardenInclude? kindergarden,
-    _i5.PreSchoolTestInclude? preSchoolTest,
-    _i6.HubDocumentInclude? avatar,
-    _i6.HubDocumentInclude? avatarAuth,
-    _i6.HubDocumentInclude? publicMediaAuthDocument,
-    _i10.PupilAuthorizationIncludeList? authorizations,
-    _i12.CreditTransactionIncludeList? creditTransactions,
-    _i13.ScheduledLessonGroupMembershipIncludeList? lessonGroupMemberships,
-    _i14.LessonAttendanceIncludeList? lessonsAttended,
-    _i15.CompetenceGoalIncludeList? competenceGoals,
-    _i16.CompetenceCheckIncludeList? competenceChecks,
-    _i17.CompetenceReportIncludeList? competenceReports,
-    _i18.CompetenceReportCheckIncludeList? competenceReportChecks,
-    _i19.PupilWorkbookIncludeList? pupilWorkbooks,
-    _i20.PupilBookLendingIncludeList? pupilBookLendings,
-    _i21.SupportLevelIncludeList? supportLevelHistory,
-    _i22.SupportCategoryStatusIncludeList? supportCategoryStatuses,
-    _i23.SupportGoalIncludeList? supportGoals,
-    _i24.LearningSupportPlanIncludeList? learningSupportPlans,
-    _i25.MissedSchooldayIncludeList? missedSchooldays,
-    _i26.SchooldayEventIncludeList? schooldayEvents,
-    _i27.PupilListEntryIncludeList? pupilListEntries,
+    _i3.PreSchoolMedicalInclude? preSchoolMedical,
+    _i4.KindergardenInclude? kindergarden,
+    _i6.PreSchoolTestInclude? preSchoolTest,
+    _i7.HubDocumentInclude? avatar,
+    _i7.HubDocumentInclude? avatarAuth,
+    _i7.HubDocumentInclude? publicMediaAuthDocument,
+    _i11.PupilAuthorizationIncludeList? authorizations,
+    _i13.CreditTransactionIncludeList? creditTransactions,
+    _i14.ScheduledLessonGroupMembershipIncludeList? lessonGroupMemberships,
+    _i15.LessonAttendanceIncludeList? lessonsAttended,
+    _i16.CompetenceGoalIncludeList? competenceGoals,
+    _i17.CompetenceCheckIncludeList? competenceChecks,
+    _i18.CompetenceReportIncludeList? competenceReports,
+    _i19.CompetenceReportCheckIncludeList? competenceReportChecks,
+    _i20.PupilWorkbookIncludeList? pupilWorkbooks,
+    _i21.PupilBookLendingIncludeList? pupilBookLendings,
+    _i22.SupportLevelIncludeList? supportLevelHistory,
+    _i23.SupportCategoryStatusIncludeList? supportCategoryStatuses,
+    _i24.SupportGoalIncludeList? supportGoals,
+    _i25.LearningSupportPlanIncludeList? learningSupportPlans,
+    _i26.MissedSchooldayIncludeList? missedSchooldays,
+    _i27.SchooldayEventIncludeList? schooldayEvents,
+    _i28.PupilListEntryIncludeList? pupilListEntries,
   }) {
     _preSchoolMedical = preSchoolMedical;
     _kindergarden = kindergarden;
@@ -2095,51 +2097,51 @@ class PupilDataInclude extends _i1.IncludeObject {
     _pupilListEntries = pupilListEntries;
   }
 
-  _i2.PreSchoolMedicalInclude? _preSchoolMedical;
+  _i3.PreSchoolMedicalInclude? _preSchoolMedical;
 
-  _i3.KindergardenInclude? _kindergarden;
+  _i4.KindergardenInclude? _kindergarden;
 
-  _i5.PreSchoolTestInclude? _preSchoolTest;
+  _i6.PreSchoolTestInclude? _preSchoolTest;
 
-  _i6.HubDocumentInclude? _avatar;
+  _i7.HubDocumentInclude? _avatar;
 
-  _i6.HubDocumentInclude? _avatarAuth;
+  _i7.HubDocumentInclude? _avatarAuth;
 
-  _i6.HubDocumentInclude? _publicMediaAuthDocument;
+  _i7.HubDocumentInclude? _publicMediaAuthDocument;
 
-  _i10.PupilAuthorizationIncludeList? _authorizations;
+  _i11.PupilAuthorizationIncludeList? _authorizations;
 
-  _i12.CreditTransactionIncludeList? _creditTransactions;
+  _i13.CreditTransactionIncludeList? _creditTransactions;
 
-  _i13.ScheduledLessonGroupMembershipIncludeList? _lessonGroupMemberships;
+  _i14.ScheduledLessonGroupMembershipIncludeList? _lessonGroupMemberships;
 
-  _i14.LessonAttendanceIncludeList? _lessonsAttended;
+  _i15.LessonAttendanceIncludeList? _lessonsAttended;
 
-  _i15.CompetenceGoalIncludeList? _competenceGoals;
+  _i16.CompetenceGoalIncludeList? _competenceGoals;
 
-  _i16.CompetenceCheckIncludeList? _competenceChecks;
+  _i17.CompetenceCheckIncludeList? _competenceChecks;
 
-  _i17.CompetenceReportIncludeList? _competenceReports;
+  _i18.CompetenceReportIncludeList? _competenceReports;
 
-  _i18.CompetenceReportCheckIncludeList? _competenceReportChecks;
+  _i19.CompetenceReportCheckIncludeList? _competenceReportChecks;
 
-  _i19.PupilWorkbookIncludeList? _pupilWorkbooks;
+  _i20.PupilWorkbookIncludeList? _pupilWorkbooks;
 
-  _i20.PupilBookLendingIncludeList? _pupilBookLendings;
+  _i21.PupilBookLendingIncludeList? _pupilBookLendings;
 
-  _i21.SupportLevelIncludeList? _supportLevelHistory;
+  _i22.SupportLevelIncludeList? _supportLevelHistory;
 
-  _i22.SupportCategoryStatusIncludeList? _supportCategoryStatuses;
+  _i23.SupportCategoryStatusIncludeList? _supportCategoryStatuses;
 
-  _i23.SupportGoalIncludeList? _supportGoals;
+  _i24.SupportGoalIncludeList? _supportGoals;
 
-  _i24.LearningSupportPlanIncludeList? _learningSupportPlans;
+  _i25.LearningSupportPlanIncludeList? _learningSupportPlans;
 
-  _i25.MissedSchooldayIncludeList? _missedSchooldays;
+  _i26.MissedSchooldayIncludeList? _missedSchooldays;
 
-  _i26.SchooldayEventIncludeList? _schooldayEvents;
+  _i27.SchooldayEventIncludeList? _schooldayEvents;
 
-  _i27.PupilListEntryIncludeList? _pupilListEntries;
+  _i28.PupilListEntryIncludeList? _pupilListEntries;
 
   @override
   Map<String, _i1.Include?> get includes => {
@@ -2427,7 +2429,7 @@ class PupilDataAttachRepository {
   Future<void> authorizations(
     _i1.Session session,
     PupilData pupilData,
-    List<_i10.PupilAuthorization> pupilAuthorization, {
+    List<_i11.PupilAuthorization> pupilAuthorization, {
     _i1.Transaction? transaction,
   }) async {
     if (pupilAuthorization.any((e) => e.id == null)) {
@@ -2440,9 +2442,9 @@ class PupilDataAttachRepository {
     var $pupilAuthorization = pupilAuthorization
         .map((e) => e.copyWith(pupilId: pupilData.id))
         .toList();
-    await session.db.update<_i10.PupilAuthorization>(
+    await session.db.update<_i11.PupilAuthorization>(
       $pupilAuthorization,
-      columns: [_i10.PupilAuthorization.t.pupilId],
+      columns: [_i11.PupilAuthorization.t.pupilId],
       transaction: transaction,
     );
   }
@@ -2452,7 +2454,7 @@ class PupilDataAttachRepository {
   Future<void> creditTransactions(
     _i1.Session session,
     PupilData pupilData,
-    List<_i12.CreditTransaction> creditTransaction, {
+    List<_i13.CreditTransaction> creditTransaction, {
     _i1.Transaction? transaction,
   }) async {
     if (creditTransaction.any((e) => e.id == null)) {
@@ -2463,15 +2465,15 @@ class PupilDataAttachRepository {
     }
 
     var $creditTransaction = creditTransaction
-        .map((e) => _i12.CreditTransactionImplicit(
+        .map((e) => _i13.CreditTransactionImplicit(
               e,
               $_pupilDataCredittransactionsPupilDataId: pupilData.id,
             ))
         .toList();
-    await session.db.update<_i12.CreditTransaction>(
+    await session.db.update<_i13.CreditTransaction>(
       $creditTransaction,
       columns: [
-        _i12.CreditTransaction.t.$_pupilDataCredittransactionsPupilDataId
+        _i13.CreditTransaction.t.$_pupilDataCredittransactionsPupilDataId
       ],
       transaction: transaction,
     );
@@ -2482,7 +2484,7 @@ class PupilDataAttachRepository {
   Future<void> lessonGroupMemberships(
     _i1.Session session,
     PupilData pupilData,
-    List<_i13.ScheduledLessonGroupMembership> scheduledLessonGroupMembership, {
+    List<_i14.ScheduledLessonGroupMembership> scheduledLessonGroupMembership, {
     _i1.Transaction? transaction,
   }) async {
     if (scheduledLessonGroupMembership.any((e) => e.id == null)) {
@@ -2495,9 +2497,9 @@ class PupilDataAttachRepository {
     var $scheduledLessonGroupMembership = scheduledLessonGroupMembership
         .map((e) => e.copyWith(pupilDataId: pupilData.id))
         .toList();
-    await session.db.update<_i13.ScheduledLessonGroupMembership>(
+    await session.db.update<_i14.ScheduledLessonGroupMembership>(
       $scheduledLessonGroupMembership,
-      columns: [_i13.ScheduledLessonGroupMembership.t.pupilDataId],
+      columns: [_i14.ScheduledLessonGroupMembership.t.pupilDataId],
       transaction: transaction,
     );
   }
@@ -2507,7 +2509,7 @@ class PupilDataAttachRepository {
   Future<void> lessonsAttended(
     _i1.Session session,
     PupilData pupilData,
-    List<_i14.LessonAttendance> lessonAttendance, {
+    List<_i15.LessonAttendance> lessonAttendance, {
     _i1.Transaction? transaction,
   }) async {
     if (lessonAttendance.any((e) => e.id == null)) {
@@ -2519,9 +2521,9 @@ class PupilDataAttachRepository {
 
     var $lessonAttendance =
         lessonAttendance.map((e) => e.copyWith(pupilId: pupilData.id)).toList();
-    await session.db.update<_i14.LessonAttendance>(
+    await session.db.update<_i15.LessonAttendance>(
       $lessonAttendance,
-      columns: [_i14.LessonAttendance.t.pupilId],
+      columns: [_i15.LessonAttendance.t.pupilId],
       transaction: transaction,
     );
   }
@@ -2531,7 +2533,7 @@ class PupilDataAttachRepository {
   Future<void> competenceGoals(
     _i1.Session session,
     PupilData pupilData,
-    List<_i15.CompetenceGoal> competenceGoal, {
+    List<_i16.CompetenceGoal> competenceGoal, {
     _i1.Transaction? transaction,
   }) async {
     if (competenceGoal.any((e) => e.id == null)) {
@@ -2543,9 +2545,9 @@ class PupilDataAttachRepository {
 
     var $competenceGoal =
         competenceGoal.map((e) => e.copyWith(pupilId: pupilData.id)).toList();
-    await session.db.update<_i15.CompetenceGoal>(
+    await session.db.update<_i16.CompetenceGoal>(
       $competenceGoal,
-      columns: [_i15.CompetenceGoal.t.pupilId],
+      columns: [_i16.CompetenceGoal.t.pupilId],
       transaction: transaction,
     );
   }
@@ -2555,7 +2557,7 @@ class PupilDataAttachRepository {
   Future<void> competenceChecks(
     _i1.Session session,
     PupilData pupilData,
-    List<_i16.CompetenceCheck> competenceCheck, {
+    List<_i17.CompetenceCheck> competenceCheck, {
     _i1.Transaction? transaction,
   }) async {
     if (competenceCheck.any((e) => e.id == null)) {
@@ -2567,9 +2569,9 @@ class PupilDataAttachRepository {
 
     var $competenceCheck =
         competenceCheck.map((e) => e.copyWith(pupilId: pupilData.id)).toList();
-    await session.db.update<_i16.CompetenceCheck>(
+    await session.db.update<_i17.CompetenceCheck>(
       $competenceCheck,
-      columns: [_i16.CompetenceCheck.t.pupilId],
+      columns: [_i17.CompetenceCheck.t.pupilId],
       transaction: transaction,
     );
   }
@@ -2579,7 +2581,7 @@ class PupilDataAttachRepository {
   Future<void> competenceReports(
     _i1.Session session,
     PupilData pupilData,
-    List<_i17.CompetenceReport> competenceReport, {
+    List<_i18.CompetenceReport> competenceReport, {
     _i1.Transaction? transaction,
   }) async {
     if (competenceReport.any((e) => e.id == null)) {
@@ -2591,9 +2593,9 @@ class PupilDataAttachRepository {
 
     var $competenceReport =
         competenceReport.map((e) => e.copyWith(pupilId: pupilData.id)).toList();
-    await session.db.update<_i17.CompetenceReport>(
+    await session.db.update<_i18.CompetenceReport>(
       $competenceReport,
-      columns: [_i17.CompetenceReport.t.pupilId],
+      columns: [_i18.CompetenceReport.t.pupilId],
       transaction: transaction,
     );
   }
@@ -2603,7 +2605,7 @@ class PupilDataAttachRepository {
   Future<void> competenceReportChecks(
     _i1.Session session,
     PupilData pupilData,
-    List<_i18.CompetenceReportCheck> competenceReportCheck, {
+    List<_i19.CompetenceReportCheck> competenceReportCheck, {
     _i1.Transaction? transaction,
   }) async {
     if (competenceReportCheck.any((e) => e.id == null)) {
@@ -2616,9 +2618,9 @@ class PupilDataAttachRepository {
     var $competenceReportCheck = competenceReportCheck
         .map((e) => e.copyWith(pupilId: pupilData.id))
         .toList();
-    await session.db.update<_i18.CompetenceReportCheck>(
+    await session.db.update<_i19.CompetenceReportCheck>(
       $competenceReportCheck,
-      columns: [_i18.CompetenceReportCheck.t.pupilId],
+      columns: [_i19.CompetenceReportCheck.t.pupilId],
       transaction: transaction,
     );
   }
@@ -2628,7 +2630,7 @@ class PupilDataAttachRepository {
   Future<void> pupilWorkbooks(
     _i1.Session session,
     PupilData pupilData,
-    List<_i19.PupilWorkbook> pupilWorkbook, {
+    List<_i20.PupilWorkbook> pupilWorkbook, {
     _i1.Transaction? transaction,
   }) async {
     if (pupilWorkbook.any((e) => e.id == null)) {
@@ -2640,9 +2642,9 @@ class PupilDataAttachRepository {
 
     var $pupilWorkbook =
         pupilWorkbook.map((e) => e.copyWith(pupilId: pupilData.id)).toList();
-    await session.db.update<_i19.PupilWorkbook>(
+    await session.db.update<_i20.PupilWorkbook>(
       $pupilWorkbook,
-      columns: [_i19.PupilWorkbook.t.pupilId],
+      columns: [_i20.PupilWorkbook.t.pupilId],
       transaction: transaction,
     );
   }
@@ -2652,7 +2654,7 @@ class PupilDataAttachRepository {
   Future<void> pupilBookLendings(
     _i1.Session session,
     PupilData pupilData,
-    List<_i20.PupilBookLending> pupilBookLending, {
+    List<_i21.PupilBookLending> pupilBookLending, {
     _i1.Transaction? transaction,
   }) async {
     if (pupilBookLending.any((e) => e.id == null)) {
@@ -2664,9 +2666,9 @@ class PupilDataAttachRepository {
 
     var $pupilBookLending =
         pupilBookLending.map((e) => e.copyWith(pupilId: pupilData.id)).toList();
-    await session.db.update<_i20.PupilBookLending>(
+    await session.db.update<_i21.PupilBookLending>(
       $pupilBookLending,
-      columns: [_i20.PupilBookLending.t.pupilId],
+      columns: [_i21.PupilBookLending.t.pupilId],
       transaction: transaction,
     );
   }
@@ -2676,7 +2678,7 @@ class PupilDataAttachRepository {
   Future<void> supportLevelHistory(
     _i1.Session session,
     PupilData pupilData,
-    List<_i21.SupportLevel> supportLevel, {
+    List<_i22.SupportLevel> supportLevel, {
     _i1.Transaction? transaction,
   }) async {
     if (supportLevel.any((e) => e.id == null)) {
@@ -2688,9 +2690,9 @@ class PupilDataAttachRepository {
 
     var $supportLevel =
         supportLevel.map((e) => e.copyWith(pupilId: pupilData.id)).toList();
-    await session.db.update<_i21.SupportLevel>(
+    await session.db.update<_i22.SupportLevel>(
       $supportLevel,
-      columns: [_i21.SupportLevel.t.pupilId],
+      columns: [_i22.SupportLevel.t.pupilId],
       transaction: transaction,
     );
   }
@@ -2700,7 +2702,7 @@ class PupilDataAttachRepository {
   Future<void> supportCategoryStatuses(
     _i1.Session session,
     PupilData pupilData,
-    List<_i22.SupportCategoryStatus> supportCategoryStatus, {
+    List<_i23.SupportCategoryStatus> supportCategoryStatus, {
     _i1.Transaction? transaction,
   }) async {
     if (supportCategoryStatus.any((e) => e.id == null)) {
@@ -2711,15 +2713,15 @@ class PupilDataAttachRepository {
     }
 
     var $supportCategoryStatus = supportCategoryStatus
-        .map((e) => _i22.SupportCategoryStatusImplicit(
+        .map((e) => _i23.SupportCategoryStatusImplicit(
               e,
               $_pupilDataSupportcategorystatusesPupilDataId: pupilData.id,
             ))
         .toList();
-    await session.db.update<_i22.SupportCategoryStatus>(
+    await session.db.update<_i23.SupportCategoryStatus>(
       $supportCategoryStatus,
       columns: [
-        _i22.SupportCategoryStatus.t
+        _i23.SupportCategoryStatus.t
             .$_pupilDataSupportcategorystatusesPupilDataId
       ],
       transaction: transaction,
@@ -2731,7 +2733,7 @@ class PupilDataAttachRepository {
   Future<void> supportGoals(
     _i1.Session session,
     PupilData pupilData,
-    List<_i23.SupportGoal> supportGoal, {
+    List<_i24.SupportGoal> supportGoal, {
     _i1.Transaction? transaction,
   }) async {
     if (supportGoal.any((e) => e.id == null)) {
@@ -2742,14 +2744,14 @@ class PupilDataAttachRepository {
     }
 
     var $supportGoal = supportGoal
-        .map((e) => _i23.SupportGoalImplicit(
+        .map((e) => _i24.SupportGoalImplicit(
               e,
               $_pupilDataSupportgoalsPupilDataId: pupilData.id,
             ))
         .toList();
-    await session.db.update<_i23.SupportGoal>(
+    await session.db.update<_i24.SupportGoal>(
       $supportGoal,
-      columns: [_i23.SupportGoal.t.$_pupilDataSupportgoalsPupilDataId],
+      columns: [_i24.SupportGoal.t.$_pupilDataSupportgoalsPupilDataId],
       transaction: transaction,
     );
   }
@@ -2759,7 +2761,7 @@ class PupilDataAttachRepository {
   Future<void> learningSupportPlans(
     _i1.Session session,
     PupilData pupilData,
-    List<_i24.LearningSupportPlan> learningSupportPlan, {
+    List<_i25.LearningSupportPlan> learningSupportPlan, {
     _i1.Transaction? transaction,
   }) async {
     if (learningSupportPlan.any((e) => e.id == null)) {
@@ -2772,9 +2774,9 @@ class PupilDataAttachRepository {
     var $learningSupportPlan = learningSupportPlan
         .map((e) => e.copyWith(pupilId: pupilData.id))
         .toList();
-    await session.db.update<_i24.LearningSupportPlan>(
+    await session.db.update<_i25.LearningSupportPlan>(
       $learningSupportPlan,
-      columns: [_i24.LearningSupportPlan.t.pupilId],
+      columns: [_i25.LearningSupportPlan.t.pupilId],
       transaction: transaction,
     );
   }
@@ -2784,7 +2786,7 @@ class PupilDataAttachRepository {
   Future<void> missedSchooldays(
     _i1.Session session,
     PupilData pupilData,
-    List<_i25.MissedSchoolday> missedSchoolday, {
+    List<_i26.MissedSchoolday> missedSchoolday, {
     _i1.Transaction? transaction,
   }) async {
     if (missedSchoolday.any((e) => e.id == null)) {
@@ -2796,9 +2798,9 @@ class PupilDataAttachRepository {
 
     var $missedSchoolday =
         missedSchoolday.map((e) => e.copyWith(pupilId: pupilData.id)).toList();
-    await session.db.update<_i25.MissedSchoolday>(
+    await session.db.update<_i26.MissedSchoolday>(
       $missedSchoolday,
-      columns: [_i25.MissedSchoolday.t.pupilId],
+      columns: [_i26.MissedSchoolday.t.pupilId],
       transaction: transaction,
     );
   }
@@ -2808,7 +2810,7 @@ class PupilDataAttachRepository {
   Future<void> schooldayEvents(
     _i1.Session session,
     PupilData pupilData,
-    List<_i26.SchooldayEvent> schooldayEvent, {
+    List<_i27.SchooldayEvent> schooldayEvent, {
     _i1.Transaction? transaction,
   }) async {
     if (schooldayEvent.any((e) => e.id == null)) {
@@ -2820,9 +2822,9 @@ class PupilDataAttachRepository {
 
     var $schooldayEvent =
         schooldayEvent.map((e) => e.copyWith(pupilId: pupilData.id)).toList();
-    await session.db.update<_i26.SchooldayEvent>(
+    await session.db.update<_i27.SchooldayEvent>(
       $schooldayEvent,
-      columns: [_i26.SchooldayEvent.t.pupilId],
+      columns: [_i27.SchooldayEvent.t.pupilId],
       transaction: transaction,
     );
   }
@@ -2832,7 +2834,7 @@ class PupilDataAttachRepository {
   Future<void> pupilListEntries(
     _i1.Session session,
     PupilData pupilData,
-    List<_i27.PupilListEntry> pupilListEntry, {
+    List<_i28.PupilListEntry> pupilListEntry, {
     _i1.Transaction? transaction,
   }) async {
     if (pupilListEntry.any((e) => e.id == null)) {
@@ -2844,9 +2846,9 @@ class PupilDataAttachRepository {
 
     var $pupilListEntry =
         pupilListEntry.map((e) => e.copyWith(pupilId: pupilData.id)).toList();
-    await session.db.update<_i27.PupilListEntry>(
+    await session.db.update<_i28.PupilListEntry>(
       $pupilListEntry,
-      columns: [_i27.PupilListEntry.t.pupilId],
+      columns: [_i28.PupilListEntry.t.pupilId],
       transaction: transaction,
     );
   }
@@ -2860,7 +2862,7 @@ class PupilDataAttachRowRepository {
   Future<void> preSchoolMedical(
     _i1.Session session,
     PupilData pupilData,
-    _i2.PreSchoolMedical preSchoolMedical, {
+    _i3.PreSchoolMedical preSchoolMedical, {
     _i1.Transaction? transaction,
   }) async {
     if (pupilData.id == null) {
@@ -2884,7 +2886,7 @@ class PupilDataAttachRowRepository {
   Future<void> kindergarden(
     _i1.Session session,
     PupilData pupilData,
-    _i3.Kindergarden kindergarden, {
+    _i4.Kindergarden kindergarden, {
     _i1.Transaction? transaction,
   }) async {
     if (pupilData.id == null) {
@@ -2907,7 +2909,7 @@ class PupilDataAttachRowRepository {
   Future<void> preSchoolTest(
     _i1.Session session,
     PupilData pupilData,
-    _i5.PreSchoolTest preSchoolTest, {
+    _i6.PreSchoolTest preSchoolTest, {
     _i1.Transaction? transaction,
   }) async {
     if (pupilData.id == null) {
@@ -2930,7 +2932,7 @@ class PupilDataAttachRowRepository {
   Future<void> avatar(
     _i1.Session session,
     PupilData pupilData,
-    _i6.HubDocument avatar, {
+    _i7.HubDocument avatar, {
     _i1.Transaction? transaction,
   }) async {
     if (pupilData.id == null) {
@@ -2953,7 +2955,7 @@ class PupilDataAttachRowRepository {
   Future<void> avatarAuth(
     _i1.Session session,
     PupilData pupilData,
-    _i6.HubDocument avatarAuth, {
+    _i7.HubDocument avatarAuth, {
     _i1.Transaction? transaction,
   }) async {
     if (pupilData.id == null) {
@@ -2976,7 +2978,7 @@ class PupilDataAttachRowRepository {
   Future<void> publicMediaAuthDocument(
     _i1.Session session,
     PupilData pupilData,
-    _i6.HubDocument publicMediaAuthDocument, {
+    _i7.HubDocument publicMediaAuthDocument, {
     _i1.Transaction? transaction,
   }) async {
     if (pupilData.id == null) {
@@ -3000,7 +3002,7 @@ class PupilDataAttachRowRepository {
   Future<void> authorizations(
     _i1.Session session,
     PupilData pupilData,
-    _i10.PupilAuthorization pupilAuthorization, {
+    _i11.PupilAuthorization pupilAuthorization, {
     _i1.Transaction? transaction,
   }) async {
     if (pupilAuthorization.id == null) {
@@ -3012,9 +3014,9 @@ class PupilDataAttachRowRepository {
 
     var $pupilAuthorization =
         pupilAuthorization.copyWith(pupilId: pupilData.id);
-    await session.db.updateRow<_i10.PupilAuthorization>(
+    await session.db.updateRow<_i11.PupilAuthorization>(
       $pupilAuthorization,
-      columns: [_i10.PupilAuthorization.t.pupilId],
+      columns: [_i11.PupilAuthorization.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3024,7 +3026,7 @@ class PupilDataAttachRowRepository {
   Future<void> creditTransactions(
     _i1.Session session,
     PupilData pupilData,
-    _i12.CreditTransaction creditTransaction, {
+    _i13.CreditTransaction creditTransaction, {
     _i1.Transaction? transaction,
   }) async {
     if (creditTransaction.id == null) {
@@ -3034,14 +3036,14 @@ class PupilDataAttachRowRepository {
       throw ArgumentError.notNull('pupilData.id');
     }
 
-    var $creditTransaction = _i12.CreditTransactionImplicit(
+    var $creditTransaction = _i13.CreditTransactionImplicit(
       creditTransaction,
       $_pupilDataCredittransactionsPupilDataId: pupilData.id,
     );
-    await session.db.updateRow<_i12.CreditTransaction>(
+    await session.db.updateRow<_i13.CreditTransaction>(
       $creditTransaction,
       columns: [
-        _i12.CreditTransaction.t.$_pupilDataCredittransactionsPupilDataId
+        _i13.CreditTransaction.t.$_pupilDataCredittransactionsPupilDataId
       ],
       transaction: transaction,
     );
@@ -3052,7 +3054,7 @@ class PupilDataAttachRowRepository {
   Future<void> lessonGroupMemberships(
     _i1.Session session,
     PupilData pupilData,
-    _i13.ScheduledLessonGroupMembership scheduledLessonGroupMembership, {
+    _i14.ScheduledLessonGroupMembership scheduledLessonGroupMembership, {
     _i1.Transaction? transaction,
   }) async {
     if (scheduledLessonGroupMembership.id == null) {
@@ -3064,9 +3066,9 @@ class PupilDataAttachRowRepository {
 
     var $scheduledLessonGroupMembership =
         scheduledLessonGroupMembership.copyWith(pupilDataId: pupilData.id);
-    await session.db.updateRow<_i13.ScheduledLessonGroupMembership>(
+    await session.db.updateRow<_i14.ScheduledLessonGroupMembership>(
       $scheduledLessonGroupMembership,
-      columns: [_i13.ScheduledLessonGroupMembership.t.pupilDataId],
+      columns: [_i14.ScheduledLessonGroupMembership.t.pupilDataId],
       transaction: transaction,
     );
   }
@@ -3076,7 +3078,7 @@ class PupilDataAttachRowRepository {
   Future<void> lessonsAttended(
     _i1.Session session,
     PupilData pupilData,
-    _i14.LessonAttendance lessonAttendance, {
+    _i15.LessonAttendance lessonAttendance, {
     _i1.Transaction? transaction,
   }) async {
     if (lessonAttendance.id == null) {
@@ -3087,9 +3089,9 @@ class PupilDataAttachRowRepository {
     }
 
     var $lessonAttendance = lessonAttendance.copyWith(pupilId: pupilData.id);
-    await session.db.updateRow<_i14.LessonAttendance>(
+    await session.db.updateRow<_i15.LessonAttendance>(
       $lessonAttendance,
-      columns: [_i14.LessonAttendance.t.pupilId],
+      columns: [_i15.LessonAttendance.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3099,7 +3101,7 @@ class PupilDataAttachRowRepository {
   Future<void> competenceGoals(
     _i1.Session session,
     PupilData pupilData,
-    _i15.CompetenceGoal competenceGoal, {
+    _i16.CompetenceGoal competenceGoal, {
     _i1.Transaction? transaction,
   }) async {
     if (competenceGoal.id == null) {
@@ -3110,9 +3112,9 @@ class PupilDataAttachRowRepository {
     }
 
     var $competenceGoal = competenceGoal.copyWith(pupilId: pupilData.id);
-    await session.db.updateRow<_i15.CompetenceGoal>(
+    await session.db.updateRow<_i16.CompetenceGoal>(
       $competenceGoal,
-      columns: [_i15.CompetenceGoal.t.pupilId],
+      columns: [_i16.CompetenceGoal.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3122,7 +3124,7 @@ class PupilDataAttachRowRepository {
   Future<void> competenceChecks(
     _i1.Session session,
     PupilData pupilData,
-    _i16.CompetenceCheck competenceCheck, {
+    _i17.CompetenceCheck competenceCheck, {
     _i1.Transaction? transaction,
   }) async {
     if (competenceCheck.id == null) {
@@ -3133,9 +3135,9 @@ class PupilDataAttachRowRepository {
     }
 
     var $competenceCheck = competenceCheck.copyWith(pupilId: pupilData.id);
-    await session.db.updateRow<_i16.CompetenceCheck>(
+    await session.db.updateRow<_i17.CompetenceCheck>(
       $competenceCheck,
-      columns: [_i16.CompetenceCheck.t.pupilId],
+      columns: [_i17.CompetenceCheck.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3145,7 +3147,7 @@ class PupilDataAttachRowRepository {
   Future<void> competenceReports(
     _i1.Session session,
     PupilData pupilData,
-    _i17.CompetenceReport competenceReport, {
+    _i18.CompetenceReport competenceReport, {
     _i1.Transaction? transaction,
   }) async {
     if (competenceReport.id == null) {
@@ -3156,9 +3158,9 @@ class PupilDataAttachRowRepository {
     }
 
     var $competenceReport = competenceReport.copyWith(pupilId: pupilData.id);
-    await session.db.updateRow<_i17.CompetenceReport>(
+    await session.db.updateRow<_i18.CompetenceReport>(
       $competenceReport,
-      columns: [_i17.CompetenceReport.t.pupilId],
+      columns: [_i18.CompetenceReport.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3168,7 +3170,7 @@ class PupilDataAttachRowRepository {
   Future<void> competenceReportChecks(
     _i1.Session session,
     PupilData pupilData,
-    _i18.CompetenceReportCheck competenceReportCheck, {
+    _i19.CompetenceReportCheck competenceReportCheck, {
     _i1.Transaction? transaction,
   }) async {
     if (competenceReportCheck.id == null) {
@@ -3180,9 +3182,9 @@ class PupilDataAttachRowRepository {
 
     var $competenceReportCheck =
         competenceReportCheck.copyWith(pupilId: pupilData.id);
-    await session.db.updateRow<_i18.CompetenceReportCheck>(
+    await session.db.updateRow<_i19.CompetenceReportCheck>(
       $competenceReportCheck,
-      columns: [_i18.CompetenceReportCheck.t.pupilId],
+      columns: [_i19.CompetenceReportCheck.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3192,7 +3194,7 @@ class PupilDataAttachRowRepository {
   Future<void> pupilWorkbooks(
     _i1.Session session,
     PupilData pupilData,
-    _i19.PupilWorkbook pupilWorkbook, {
+    _i20.PupilWorkbook pupilWorkbook, {
     _i1.Transaction? transaction,
   }) async {
     if (pupilWorkbook.id == null) {
@@ -3203,9 +3205,9 @@ class PupilDataAttachRowRepository {
     }
 
     var $pupilWorkbook = pupilWorkbook.copyWith(pupilId: pupilData.id);
-    await session.db.updateRow<_i19.PupilWorkbook>(
+    await session.db.updateRow<_i20.PupilWorkbook>(
       $pupilWorkbook,
-      columns: [_i19.PupilWorkbook.t.pupilId],
+      columns: [_i20.PupilWorkbook.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3215,7 +3217,7 @@ class PupilDataAttachRowRepository {
   Future<void> pupilBookLendings(
     _i1.Session session,
     PupilData pupilData,
-    _i20.PupilBookLending pupilBookLending, {
+    _i21.PupilBookLending pupilBookLending, {
     _i1.Transaction? transaction,
   }) async {
     if (pupilBookLending.id == null) {
@@ -3226,9 +3228,9 @@ class PupilDataAttachRowRepository {
     }
 
     var $pupilBookLending = pupilBookLending.copyWith(pupilId: pupilData.id);
-    await session.db.updateRow<_i20.PupilBookLending>(
+    await session.db.updateRow<_i21.PupilBookLending>(
       $pupilBookLending,
-      columns: [_i20.PupilBookLending.t.pupilId],
+      columns: [_i21.PupilBookLending.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3238,7 +3240,7 @@ class PupilDataAttachRowRepository {
   Future<void> supportLevelHistory(
     _i1.Session session,
     PupilData pupilData,
-    _i21.SupportLevel supportLevel, {
+    _i22.SupportLevel supportLevel, {
     _i1.Transaction? transaction,
   }) async {
     if (supportLevel.id == null) {
@@ -3249,9 +3251,9 @@ class PupilDataAttachRowRepository {
     }
 
     var $supportLevel = supportLevel.copyWith(pupilId: pupilData.id);
-    await session.db.updateRow<_i21.SupportLevel>(
+    await session.db.updateRow<_i22.SupportLevel>(
       $supportLevel,
-      columns: [_i21.SupportLevel.t.pupilId],
+      columns: [_i22.SupportLevel.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3261,7 +3263,7 @@ class PupilDataAttachRowRepository {
   Future<void> supportCategoryStatuses(
     _i1.Session session,
     PupilData pupilData,
-    _i22.SupportCategoryStatus supportCategoryStatus, {
+    _i23.SupportCategoryStatus supportCategoryStatus, {
     _i1.Transaction? transaction,
   }) async {
     if (supportCategoryStatus.id == null) {
@@ -3271,14 +3273,14 @@ class PupilDataAttachRowRepository {
       throw ArgumentError.notNull('pupilData.id');
     }
 
-    var $supportCategoryStatus = _i22.SupportCategoryStatusImplicit(
+    var $supportCategoryStatus = _i23.SupportCategoryStatusImplicit(
       supportCategoryStatus,
       $_pupilDataSupportcategorystatusesPupilDataId: pupilData.id,
     );
-    await session.db.updateRow<_i22.SupportCategoryStatus>(
+    await session.db.updateRow<_i23.SupportCategoryStatus>(
       $supportCategoryStatus,
       columns: [
-        _i22.SupportCategoryStatus.t
+        _i23.SupportCategoryStatus.t
             .$_pupilDataSupportcategorystatusesPupilDataId
       ],
       transaction: transaction,
@@ -3290,7 +3292,7 @@ class PupilDataAttachRowRepository {
   Future<void> supportGoals(
     _i1.Session session,
     PupilData pupilData,
-    _i23.SupportGoal supportGoal, {
+    _i24.SupportGoal supportGoal, {
     _i1.Transaction? transaction,
   }) async {
     if (supportGoal.id == null) {
@@ -3300,13 +3302,13 @@ class PupilDataAttachRowRepository {
       throw ArgumentError.notNull('pupilData.id');
     }
 
-    var $supportGoal = _i23.SupportGoalImplicit(
+    var $supportGoal = _i24.SupportGoalImplicit(
       supportGoal,
       $_pupilDataSupportgoalsPupilDataId: pupilData.id,
     );
-    await session.db.updateRow<_i23.SupportGoal>(
+    await session.db.updateRow<_i24.SupportGoal>(
       $supportGoal,
-      columns: [_i23.SupportGoal.t.$_pupilDataSupportgoalsPupilDataId],
+      columns: [_i24.SupportGoal.t.$_pupilDataSupportgoalsPupilDataId],
       transaction: transaction,
     );
   }
@@ -3316,7 +3318,7 @@ class PupilDataAttachRowRepository {
   Future<void> learningSupportPlans(
     _i1.Session session,
     PupilData pupilData,
-    _i24.LearningSupportPlan learningSupportPlan, {
+    _i25.LearningSupportPlan learningSupportPlan, {
     _i1.Transaction? transaction,
   }) async {
     if (learningSupportPlan.id == null) {
@@ -3328,9 +3330,9 @@ class PupilDataAttachRowRepository {
 
     var $learningSupportPlan =
         learningSupportPlan.copyWith(pupilId: pupilData.id);
-    await session.db.updateRow<_i24.LearningSupportPlan>(
+    await session.db.updateRow<_i25.LearningSupportPlan>(
       $learningSupportPlan,
-      columns: [_i24.LearningSupportPlan.t.pupilId],
+      columns: [_i25.LearningSupportPlan.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3340,7 +3342,7 @@ class PupilDataAttachRowRepository {
   Future<void> missedSchooldays(
     _i1.Session session,
     PupilData pupilData,
-    _i25.MissedSchoolday missedSchoolday, {
+    _i26.MissedSchoolday missedSchoolday, {
     _i1.Transaction? transaction,
   }) async {
     if (missedSchoolday.id == null) {
@@ -3351,9 +3353,9 @@ class PupilDataAttachRowRepository {
     }
 
     var $missedSchoolday = missedSchoolday.copyWith(pupilId: pupilData.id);
-    await session.db.updateRow<_i25.MissedSchoolday>(
+    await session.db.updateRow<_i26.MissedSchoolday>(
       $missedSchoolday,
-      columns: [_i25.MissedSchoolday.t.pupilId],
+      columns: [_i26.MissedSchoolday.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3363,7 +3365,7 @@ class PupilDataAttachRowRepository {
   Future<void> schooldayEvents(
     _i1.Session session,
     PupilData pupilData,
-    _i26.SchooldayEvent schooldayEvent, {
+    _i27.SchooldayEvent schooldayEvent, {
     _i1.Transaction? transaction,
   }) async {
     if (schooldayEvent.id == null) {
@@ -3374,9 +3376,9 @@ class PupilDataAttachRowRepository {
     }
 
     var $schooldayEvent = schooldayEvent.copyWith(pupilId: pupilData.id);
-    await session.db.updateRow<_i26.SchooldayEvent>(
+    await session.db.updateRow<_i27.SchooldayEvent>(
       $schooldayEvent,
-      columns: [_i26.SchooldayEvent.t.pupilId],
+      columns: [_i27.SchooldayEvent.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3386,7 +3388,7 @@ class PupilDataAttachRowRepository {
   Future<void> pupilListEntries(
     _i1.Session session,
     PupilData pupilData,
-    _i27.PupilListEntry pupilListEntry, {
+    _i28.PupilListEntry pupilListEntry, {
     _i1.Transaction? transaction,
   }) async {
     if (pupilListEntry.id == null) {
@@ -3397,9 +3399,9 @@ class PupilDataAttachRowRepository {
     }
 
     var $pupilListEntry = pupilListEntry.copyWith(pupilId: pupilData.id);
-    await session.db.updateRow<_i27.PupilListEntry>(
+    await session.db.updateRow<_i28.PupilListEntry>(
       $pupilListEntry,
-      columns: [_i27.PupilListEntry.t.pupilId],
+      columns: [_i28.PupilListEntry.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3415,7 +3417,7 @@ class PupilDataDetachRepository {
   /// the related record.
   Future<void> creditTransactions(
     _i1.Session session,
-    List<_i12.CreditTransaction> creditTransaction, {
+    List<_i13.CreditTransaction> creditTransaction, {
     _i1.Transaction? transaction,
   }) async {
     if (creditTransaction.any((e) => e.id == null)) {
@@ -3423,15 +3425,15 @@ class PupilDataDetachRepository {
     }
 
     var $creditTransaction = creditTransaction
-        .map((e) => _i12.CreditTransactionImplicit(
+        .map((e) => _i13.CreditTransactionImplicit(
               e,
               $_pupilDataCredittransactionsPupilDataId: null,
             ))
         .toList();
-    await session.db.update<_i12.CreditTransaction>(
+    await session.db.update<_i13.CreditTransaction>(
       $creditTransaction,
       columns: [
-        _i12.CreditTransaction.t.$_pupilDataCredittransactionsPupilDataId
+        _i13.CreditTransaction.t.$_pupilDataCredittransactionsPupilDataId
       ],
       transaction: transaction,
     );
@@ -3444,7 +3446,7 @@ class PupilDataDetachRepository {
   /// the related record.
   Future<void> lessonGroupMemberships(
     _i1.Session session,
-    List<_i13.ScheduledLessonGroupMembership> scheduledLessonGroupMembership, {
+    List<_i14.ScheduledLessonGroupMembership> scheduledLessonGroupMembership, {
     _i1.Transaction? transaction,
   }) async {
     if (scheduledLessonGroupMembership.any((e) => e.id == null)) {
@@ -3454,9 +3456,9 @@ class PupilDataDetachRepository {
     var $scheduledLessonGroupMembership = scheduledLessonGroupMembership
         .map((e) => e.copyWith(pupilDataId: null))
         .toList();
-    await session.db.update<_i13.ScheduledLessonGroupMembership>(
+    await session.db.update<_i14.ScheduledLessonGroupMembership>(
       $scheduledLessonGroupMembership,
-      columns: [_i13.ScheduledLessonGroupMembership.t.pupilDataId],
+      columns: [_i14.ScheduledLessonGroupMembership.t.pupilDataId],
       transaction: transaction,
     );
   }
@@ -3468,7 +3470,7 @@ class PupilDataDetachRepository {
   /// the related record.
   Future<void> lessonsAttended(
     _i1.Session session,
-    List<_i14.LessonAttendance> lessonAttendance, {
+    List<_i15.LessonAttendance> lessonAttendance, {
     _i1.Transaction? transaction,
   }) async {
     if (lessonAttendance.any((e) => e.id == null)) {
@@ -3477,9 +3479,9 @@ class PupilDataDetachRepository {
 
     var $lessonAttendance =
         lessonAttendance.map((e) => e.copyWith(pupilId: null)).toList();
-    await session.db.update<_i14.LessonAttendance>(
+    await session.db.update<_i15.LessonAttendance>(
       $lessonAttendance,
-      columns: [_i14.LessonAttendance.t.pupilId],
+      columns: [_i15.LessonAttendance.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3491,7 +3493,7 @@ class PupilDataDetachRepository {
   /// the related record.
   Future<void> pupilWorkbooks(
     _i1.Session session,
-    List<_i19.PupilWorkbook> pupilWorkbook, {
+    List<_i20.PupilWorkbook> pupilWorkbook, {
     _i1.Transaction? transaction,
   }) async {
     if (pupilWorkbook.any((e) => e.id == null)) {
@@ -3500,9 +3502,9 @@ class PupilDataDetachRepository {
 
     var $pupilWorkbook =
         pupilWorkbook.map((e) => e.copyWith(pupilId: null)).toList();
-    await session.db.update<_i19.PupilWorkbook>(
+    await session.db.update<_i20.PupilWorkbook>(
       $pupilWorkbook,
-      columns: [_i19.PupilWorkbook.t.pupilId],
+      columns: [_i20.PupilWorkbook.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3514,7 +3516,7 @@ class PupilDataDetachRepository {
   /// the related record.
   Future<void> supportCategoryStatuses(
     _i1.Session session,
-    List<_i22.SupportCategoryStatus> supportCategoryStatus, {
+    List<_i23.SupportCategoryStatus> supportCategoryStatus, {
     _i1.Transaction? transaction,
   }) async {
     if (supportCategoryStatus.any((e) => e.id == null)) {
@@ -3522,15 +3524,15 @@ class PupilDataDetachRepository {
     }
 
     var $supportCategoryStatus = supportCategoryStatus
-        .map((e) => _i22.SupportCategoryStatusImplicit(
+        .map((e) => _i23.SupportCategoryStatusImplicit(
               e,
               $_pupilDataSupportcategorystatusesPupilDataId: null,
             ))
         .toList();
-    await session.db.update<_i22.SupportCategoryStatus>(
+    await session.db.update<_i23.SupportCategoryStatus>(
       $supportCategoryStatus,
       columns: [
-        _i22.SupportCategoryStatus.t
+        _i23.SupportCategoryStatus.t
             .$_pupilDataSupportcategorystatusesPupilDataId
       ],
       transaction: transaction,
@@ -3544,7 +3546,7 @@ class PupilDataDetachRepository {
   /// the related record.
   Future<void> supportGoals(
     _i1.Session session,
-    List<_i23.SupportGoal> supportGoal, {
+    List<_i24.SupportGoal> supportGoal, {
     _i1.Transaction? transaction,
   }) async {
     if (supportGoal.any((e) => e.id == null)) {
@@ -3552,14 +3554,14 @@ class PupilDataDetachRepository {
     }
 
     var $supportGoal = supportGoal
-        .map((e) => _i23.SupportGoalImplicit(
+        .map((e) => _i24.SupportGoalImplicit(
               e,
               $_pupilDataSupportgoalsPupilDataId: null,
             ))
         .toList();
-    await session.db.update<_i23.SupportGoal>(
+    await session.db.update<_i24.SupportGoal>(
       $supportGoal,
-      columns: [_i23.SupportGoal.t.$_pupilDataSupportgoalsPupilDataId],
+      columns: [_i24.SupportGoal.t.$_pupilDataSupportgoalsPupilDataId],
       transaction: transaction,
     );
   }
@@ -3571,7 +3573,7 @@ class PupilDataDetachRepository {
   /// the related record.
   Future<void> schooldayEvents(
     _i1.Session session,
-    List<_i26.SchooldayEvent> schooldayEvent, {
+    List<_i27.SchooldayEvent> schooldayEvent, {
     _i1.Transaction? transaction,
   }) async {
     if (schooldayEvent.any((e) => e.id == null)) {
@@ -3580,9 +3582,9 @@ class PupilDataDetachRepository {
 
     var $schooldayEvent =
         schooldayEvent.map((e) => e.copyWith(pupilId: null)).toList();
-    await session.db.update<_i26.SchooldayEvent>(
+    await session.db.update<_i27.SchooldayEvent>(
       $schooldayEvent,
-      columns: [_i26.SchooldayEvent.t.pupilId],
+      columns: [_i27.SchooldayEvent.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3594,7 +3596,7 @@ class PupilDataDetachRepository {
   /// the related record.
   Future<void> pupilListEntries(
     _i1.Session session,
-    List<_i27.PupilListEntry> pupilListEntry, {
+    List<_i28.PupilListEntry> pupilListEntry, {
     _i1.Transaction? transaction,
   }) async {
     if (pupilListEntry.any((e) => e.id == null)) {
@@ -3603,9 +3605,9 @@ class PupilDataDetachRepository {
 
     var $pupilListEntry =
         pupilListEntry.map((e) => e.copyWith(pupilId: null)).toList();
-    await session.db.update<_i27.PupilListEntry>(
+    await session.db.update<_i28.PupilListEntry>(
       $pupilListEntry,
-      columns: [_i27.PupilListEntry.t.pupilId],
+      columns: [_i28.PupilListEntry.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3753,21 +3755,21 @@ class PupilDataDetachRowRepository {
   /// the related record.
   Future<void> creditTransactions(
     _i1.Session session,
-    _i12.CreditTransaction creditTransaction, {
+    _i13.CreditTransaction creditTransaction, {
     _i1.Transaction? transaction,
   }) async {
     if (creditTransaction.id == null) {
       throw ArgumentError.notNull('creditTransaction.id');
     }
 
-    var $creditTransaction = _i12.CreditTransactionImplicit(
+    var $creditTransaction = _i13.CreditTransactionImplicit(
       creditTransaction,
       $_pupilDataCredittransactionsPupilDataId: null,
     );
-    await session.db.updateRow<_i12.CreditTransaction>(
+    await session.db.updateRow<_i13.CreditTransaction>(
       $creditTransaction,
       columns: [
-        _i12.CreditTransaction.t.$_pupilDataCredittransactionsPupilDataId
+        _i13.CreditTransaction.t.$_pupilDataCredittransactionsPupilDataId
       ],
       transaction: transaction,
     );
@@ -3780,7 +3782,7 @@ class PupilDataDetachRowRepository {
   /// the related record.
   Future<void> lessonGroupMemberships(
     _i1.Session session,
-    _i13.ScheduledLessonGroupMembership scheduledLessonGroupMembership, {
+    _i14.ScheduledLessonGroupMembership scheduledLessonGroupMembership, {
     _i1.Transaction? transaction,
   }) async {
     if (scheduledLessonGroupMembership.id == null) {
@@ -3789,9 +3791,9 @@ class PupilDataDetachRowRepository {
 
     var $scheduledLessonGroupMembership =
         scheduledLessonGroupMembership.copyWith(pupilDataId: null);
-    await session.db.updateRow<_i13.ScheduledLessonGroupMembership>(
+    await session.db.updateRow<_i14.ScheduledLessonGroupMembership>(
       $scheduledLessonGroupMembership,
-      columns: [_i13.ScheduledLessonGroupMembership.t.pupilDataId],
+      columns: [_i14.ScheduledLessonGroupMembership.t.pupilDataId],
       transaction: transaction,
     );
   }
@@ -3803,7 +3805,7 @@ class PupilDataDetachRowRepository {
   /// the related record.
   Future<void> lessonsAttended(
     _i1.Session session,
-    _i14.LessonAttendance lessonAttendance, {
+    _i15.LessonAttendance lessonAttendance, {
     _i1.Transaction? transaction,
   }) async {
     if (lessonAttendance.id == null) {
@@ -3811,9 +3813,9 @@ class PupilDataDetachRowRepository {
     }
 
     var $lessonAttendance = lessonAttendance.copyWith(pupilId: null);
-    await session.db.updateRow<_i14.LessonAttendance>(
+    await session.db.updateRow<_i15.LessonAttendance>(
       $lessonAttendance,
-      columns: [_i14.LessonAttendance.t.pupilId],
+      columns: [_i15.LessonAttendance.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3825,7 +3827,7 @@ class PupilDataDetachRowRepository {
   /// the related record.
   Future<void> pupilWorkbooks(
     _i1.Session session,
-    _i19.PupilWorkbook pupilWorkbook, {
+    _i20.PupilWorkbook pupilWorkbook, {
     _i1.Transaction? transaction,
   }) async {
     if (pupilWorkbook.id == null) {
@@ -3833,9 +3835,9 @@ class PupilDataDetachRowRepository {
     }
 
     var $pupilWorkbook = pupilWorkbook.copyWith(pupilId: null);
-    await session.db.updateRow<_i19.PupilWorkbook>(
+    await session.db.updateRow<_i20.PupilWorkbook>(
       $pupilWorkbook,
-      columns: [_i19.PupilWorkbook.t.pupilId],
+      columns: [_i20.PupilWorkbook.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3847,21 +3849,21 @@ class PupilDataDetachRowRepository {
   /// the related record.
   Future<void> supportCategoryStatuses(
     _i1.Session session,
-    _i22.SupportCategoryStatus supportCategoryStatus, {
+    _i23.SupportCategoryStatus supportCategoryStatus, {
     _i1.Transaction? transaction,
   }) async {
     if (supportCategoryStatus.id == null) {
       throw ArgumentError.notNull('supportCategoryStatus.id');
     }
 
-    var $supportCategoryStatus = _i22.SupportCategoryStatusImplicit(
+    var $supportCategoryStatus = _i23.SupportCategoryStatusImplicit(
       supportCategoryStatus,
       $_pupilDataSupportcategorystatusesPupilDataId: null,
     );
-    await session.db.updateRow<_i22.SupportCategoryStatus>(
+    await session.db.updateRow<_i23.SupportCategoryStatus>(
       $supportCategoryStatus,
       columns: [
-        _i22.SupportCategoryStatus.t
+        _i23.SupportCategoryStatus.t
             .$_pupilDataSupportcategorystatusesPupilDataId
       ],
       transaction: transaction,
@@ -3875,20 +3877,20 @@ class PupilDataDetachRowRepository {
   /// the related record.
   Future<void> supportGoals(
     _i1.Session session,
-    _i23.SupportGoal supportGoal, {
+    _i24.SupportGoal supportGoal, {
     _i1.Transaction? transaction,
   }) async {
     if (supportGoal.id == null) {
       throw ArgumentError.notNull('supportGoal.id');
     }
 
-    var $supportGoal = _i23.SupportGoalImplicit(
+    var $supportGoal = _i24.SupportGoalImplicit(
       supportGoal,
       $_pupilDataSupportgoalsPupilDataId: null,
     );
-    await session.db.updateRow<_i23.SupportGoal>(
+    await session.db.updateRow<_i24.SupportGoal>(
       $supportGoal,
-      columns: [_i23.SupportGoal.t.$_pupilDataSupportgoalsPupilDataId],
+      columns: [_i24.SupportGoal.t.$_pupilDataSupportgoalsPupilDataId],
       transaction: transaction,
     );
   }
@@ -3900,7 +3902,7 @@ class PupilDataDetachRowRepository {
   /// the related record.
   Future<void> schooldayEvents(
     _i1.Session session,
-    _i26.SchooldayEvent schooldayEvent, {
+    _i27.SchooldayEvent schooldayEvent, {
     _i1.Transaction? transaction,
   }) async {
     if (schooldayEvent.id == null) {
@@ -3908,9 +3910,9 @@ class PupilDataDetachRowRepository {
     }
 
     var $schooldayEvent = schooldayEvent.copyWith(pupilId: null);
-    await session.db.updateRow<_i26.SchooldayEvent>(
+    await session.db.updateRow<_i27.SchooldayEvent>(
       $schooldayEvent,
-      columns: [_i26.SchooldayEvent.t.pupilId],
+      columns: [_i27.SchooldayEvent.t.pupilId],
       transaction: transaction,
     );
   }
@@ -3922,7 +3924,7 @@ class PupilDataDetachRowRepository {
   /// the related record.
   Future<void> pupilListEntries(
     _i1.Session session,
-    _i27.PupilListEntry pupilListEntry, {
+    _i28.PupilListEntry pupilListEntry, {
     _i1.Transaction? transaction,
   }) async {
     if (pupilListEntry.id == null) {
@@ -3930,9 +3932,9 @@ class PupilDataDetachRowRepository {
     }
 
     var $pupilListEntry = pupilListEntry.copyWith(pupilId: null);
-    await session.db.updateRow<_i27.PupilListEntry>(
+    await session.db.updateRow<_i28.PupilListEntry>(
       $pupilListEntry,
-      columns: [_i27.PupilListEntry.t.pupilId],
+      columns: [_i28.PupilListEntry.t.pupilId],
       transaction: transaction,
     );
   }

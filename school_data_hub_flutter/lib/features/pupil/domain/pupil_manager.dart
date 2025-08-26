@@ -59,8 +59,9 @@ class PupilManager extends ChangeNotifier {
     List<PupilProxy> pupilsfromPupilIds = [];
 
     for (int pupilId in pupilIds) {
-      final PupilProxy? pupil = _pupilIdPupilsMap.values
-          .firstWhereOrNull((pupil) => pupil.pupilId == pupilId);
+      final PupilProxy? pupil = _pupilIdPupilsMap.values.firstWhereOrNull(
+        (pupil) => pupil.pupilId == pupilId,
+      );
       if (pupil != null) {
         pupilsfromPupilIds.add(pupil);
       }
@@ -73,8 +74,9 @@ class PupilManager extends ChangeNotifier {
     List<PupilProxy> pupilsfromInternalIds = [];
 
     for (int internalId in internalIds) {
-      final PupilProxy? pupil = _pupilIdPupilsMap.values
-          .firstWhereOrNull((pupil) => pupil.internalId == internalId);
+      final PupilProxy? pupil = _pupilIdPupilsMap.values.firstWhereOrNull(
+        (pupil) => pupil.internalId == internalId,
+      );
       if (pupil != null) {
         pupilsfromInternalIds.add(pupil);
       }
@@ -103,8 +105,9 @@ class PupilManager extends ChangeNotifier {
   }
 
   List<PupilProxy> getPupilsNotListed(List<int> pupilIds) {
-    Map<int, PupilProxy> allPupilsMap =
-        Map<int, PupilProxy>.of(_pupilIdPupilsMap);
+    Map<int, PupilProxy> allPupilsMap = Map<int, PupilProxy>.of(
+      _pupilIdPupilsMap,
+    );
     allPupilsMap.removeWhere((key, value) => pupilIds.contains(key));
     return allPupilsMap.values.toList();
   }
@@ -114,8 +117,9 @@ class PupilManager extends ChangeNotifier {
       return [];
     }
 
-    Map<int, PupilProxy> allPupilsMap =
-        Map<int, PupilProxy>.of(_pupilIdPupilsMap);
+    Map<int, PupilProxy> allPupilsMap = Map<int, PupilProxy>.of(
+      _pupilIdPupilsMap,
+    );
 
     // Filter by family value of the pupil
     allPupilsMap.removeWhere((key, value) => value.family != pupil.family);
@@ -134,8 +138,11 @@ class PupilManager extends ChangeNotifier {
     final DateTime now = DateTime.now().toUtc();
 
     allPupils.removeWhere((key, pupil) {
-      final birthdayThisYear =
-          DateTime(now.year, pupil.birthday.month, pupil.birthday.day);
+      final birthdayThisYear = DateTime(
+        now.year,
+        pupil.birthday.month,
+        pupil.birthday.day,
+      );
 
       // Ensure the birthday this year is not before the specified date and not after today.
       return !(birthdayThisYear.isAtSameMomentAs(date) ||
@@ -145,11 +152,17 @@ class PupilManager extends ChangeNotifier {
     final pupilsWithBirthdaySinceDate = allPupils.values.toList();
 
     pupilsWithBirthdaySinceDate.sort((b, a) {
-      final birthdayA =
-          DateTime(DateTime.now().year, a.birthday.month, a.birthday.day);
+      final birthdayA = DateTime(
+        DateTime.now().year,
+        a.birthday.month,
+        a.birthday.day,
+      );
 
-      final birthdayB =
-          DateTime(DateTime.now().year, b.birthday.month, b.birthday.day);
+      final birthdayB = DateTime(
+        DateTime.now().year,
+        b.birthday.month,
+        b.birthday.day,
+      );
 
       return birthdayA.compareTo(birthdayB);
     });
@@ -182,8 +195,9 @@ class PupilManager extends ChangeNotifier {
   }
 
   Future<void> updatePupilData(int pupilId) async {
-    final fetchedPupil = await _pupilDataApiService
-        .fetchListOfPupils(pupilInternalIds: [pupilId]);
+    final fetchedPupil = await _pupilDataApiService.fetchListOfPupils(
+      pupilInternalIds: [pupilId],
+    );
     if (fetchedPupil == null) {
       return;
     }
@@ -195,20 +209,26 @@ class PupilManager extends ChangeNotifier {
 
   Future<void> fetchPupilsByInternalId(List<int> pupilInternalIds) async {
     _notificationService.showSnackBar(
-        NotificationType.info, 'Lade Schülerdaten vom Server. Bitte warten...');
+      NotificationType.info,
+      'Lade Schülerdaten vom Server. Bitte warten...',
+    );
 
     // fetch the pupils from the backend
     final fetchedPupils = await _pupilDataApiService.fetchListOfPupils(
-        pupilInternalIds: pupilInternalIds);
+      pupilInternalIds: pupilInternalIds,
+    );
     if (fetchedPupils == null) {
       return;
     }
     // check if we did not get a pupil response for some ids
     // if so, we will delete the personal data for those ids later
-    final List<int> outdatedPupilIdentitiesIds = pupilInternalIds
-        .where((element) =>
-            !fetchedPupils.any((pupil) => pupil.internalId == element))
-        .toList();
+    final List<int> outdatedPupilIdentitiesIds =
+        pupilInternalIds
+            .where(
+              (element) =>
+                  !fetchedPupils.any((pupil) => pupil.internalId == element),
+            )
+            .toList();
 
     // now we match the pupils from the response with their personal data
 
@@ -223,8 +243,10 @@ class PupilManager extends ChangeNotifier {
         final pupilIdentity = di<PupilIdentityManager>()
             .getPupilIdentityByInternalId(fetchedPupil.internalId);
 
-        _pupilIdPupilsMap[fetchedPupil.id!] =
-            PupilProxy(pupilData: fetchedPupil, pupilIdentity: pupilIdentity!);
+        _pupilIdPupilsMap[fetchedPupil.id!] = PupilProxy(
+          pupilData: fetchedPupil,
+          pupilIdentity: pupilIdentity!,
+        );
       }
     }
 
@@ -237,10 +259,13 @@ class PupilManager extends ChangeNotifier {
       final deletedPupilIdentities = await di<PupilIdentityManager>()
           .deleteOrphanPupilIdentities(outdatedPupilIdentitiesIds);
       _notificationService.showInformationDialog(
-          'Diese Schüler_innen existieren nicht mehr in der Datenbank, Ihre Ids wurden aus dem Gerät gelöscht:\n\n$deletedPupilIdentities');
+        'Diese Schüler_innen existieren nicht mehr in der Datenbank, Ihre Ids wurden aus dem Gerät gelöscht:\n\n$deletedPupilIdentities',
+      );
     }
     _notificationService.showSnackBar(
-        NotificationType.success, 'Schülerdaten geladen!');
+      NotificationType.success,
+      'Schülerdaten geladen!',
+    );
 
     notifyListeners();
   }
@@ -249,7 +274,7 @@ class PupilManager extends ChangeNotifier {
     final proxy = _pupilIdPupilsMap[pupilData.id!];
     if (proxy != null) {
       proxy.updatePupil(pupilData);
-      //- TODO: Is this true: No need to call notifyListeners here, because the proxy will notify the listeners itself
+      //- TODO ADVICE: Is this true? No need to call notifyListeners here, because the proxy will notify the listeners itself
       notifyListeners();
     }
   }
@@ -278,11 +303,12 @@ class PupilManager extends ChangeNotifier {
 
     // send the Api request
 
-    final PupilData? pupilUpdate =
-        await _pupilDataApiService.updatePupilDocument(
-            pupilId: pupilProxy.pupilId,
-            file: encryptedFile,
-            documentType: documentType);
+    final PupilData? pupilUpdate = await _pupilDataApiService
+        .updatePupilDocument(
+          pupilId: pupilProxy.pupilId,
+          file: encryptedFile,
+          documentType: documentType,
+        );
     if (pupilUpdate == null) {
       return;
     }
@@ -292,7 +318,10 @@ class PupilManager extends ChangeNotifier {
   }
 
   Future<void> deletePupilDocument(
-      int pupilId, String cacheKey, PupilDocumentType documentType) async {
+    int pupilId,
+    String cacheKey,
+    PupilDocumentType documentType,
+  ) async {
     // send the Api request
     final pupilUpdate = await _pupilDataApiService.deletePupilDocument(
       pupilId: pupilId,
@@ -310,16 +339,18 @@ class PupilManager extends ChangeNotifier {
     // _pupils[pupilId]!.clearAvatar();
   }
 
-  Future<void> updatePreSchoolMedicalStatus(
-      {required int pupilId,
-      required PreSchoolMedicalStatus preSchoolMedicalStatus,
-      required String createdBy}) async {
+  Future<void> updatePreSchoolMedicalStatus({
+    required int pupilId,
+    required PreSchoolMedicalStatus preSchoolMedicalStatus,
+    required String createdBy,
+  }) async {
     // send the Api request
-    final PupilData? pupilUpdate =
-        await _pupilDataApiService.updatePreSchoolMedicalStatus(
-            pupilId: pupilId,
-            preSchoolMedical: preSchoolMedicalStatus,
-            createdBy: createdBy);
+    final PupilData? pupilUpdate = await _pupilDataApiService
+        .updatePreSchoolMedicalStatus(
+          pupilId: pupilId,
+          preSchoolMedical: preSchoolMedicalStatus,
+          createdBy: createdBy,
+        );
     if (pupilUpdate == null) {
       return;
     }
@@ -339,13 +370,16 @@ class PupilManager extends ChangeNotifier {
     bool? videoInPress,
   }) async {
     final PublicMediaAuth authToUpdate = pupil.publicMediaAuth.copyWith(
-      groupPicturesOnWebsite: groupPicturesOnWebsite ??
+      groupPicturesOnWebsite:
+          groupPicturesOnWebsite ??
           pupil.publicMediaAuth.groupPicturesOnWebsite,
       groupPicturesInPress:
           groupPicturesInPress ?? pupil.publicMediaAuth.groupPicturesInPress,
-      portraitPicturesOnWebsite: portraitPicturesOnWebsite ??
+      portraitPicturesOnWebsite:
+          portraitPicturesOnWebsite ??
           pupil.publicMediaAuth.portraitPicturesOnWebsite,
-      portraitPicturesInPress: portraitPicturesInPress ??
+      portraitPicturesInPress:
+          portraitPicturesInPress ??
           pupil.publicMediaAuth.portraitPicturesInPress,
       nameOnWebsite: nameOnWebsite ?? pupil.publicMediaAuth.nameOnWebsite,
       nameInPress: nameInPress ?? pupil.publicMediaAuth.nameInPress,
@@ -354,7 +388,9 @@ class PupilManager extends ChangeNotifier {
     );
 
     final updatedPupil = await _pupilDataApiService.updatePublicMediaAuth(
-        pupil.pupilId, authToUpdate);
+      pupil.pupilId,
+      authToUpdate,
+    );
     if (updatedPupil == null) {
       return;
     }
@@ -385,8 +421,10 @@ class PupilManager extends ChangeNotifier {
     updatePupilProxyWithPupilData(pupilUpdate);
   }
 
-  Future<void> updateTutorInfo(
-      {required int pupilId, required TutorInfo? tutorInfo}) async {
+  Future<void> updateTutorInfo({
+    required int pupilId,
+    required TutorInfo? tutorInfo,
+  }) async {
     // check if the pupil is a sibling and handle them if true
     final pupilSiblings = getSiblings(getPupilByPupilId(pupilId)!);
     if (pupilSiblings.isNotEmpty) {
@@ -397,7 +435,9 @@ class PupilManager extends ChangeNotifier {
 
       final List<PupilData>? siblingsUpdate = await _pupilDataApiService
           .updateSiblingsTutorInfo(
-              tutorInfo: tutorInfo, siblingsIds: [...siblingIds, pupilId]);
+            tutorInfo: tutorInfo,
+            siblingsIds: [...siblingIds, pupilId],
+          );
 
       if (siblingsUpdate == null) {
         return;
@@ -409,7 +449,9 @@ class PupilManager extends ChangeNotifier {
       }
 
       _notificationService.showSnackBar(
-          NotificationType.success, 'Geschwister erfolgreich aktualisiert!');
+        NotificationType.success,
+        'Geschwister erfolgreich aktualisiert!',
+      );
 
       return;
     }
@@ -417,7 +459,9 @@ class PupilManager extends ChangeNotifier {
     final pupilToUpdate = getPupilByPupilId(pupilId)!;
 
     final PupilData? pupilUpdate = await _pupilDataApiService.updateTutorInfo(
-        pupilId: pupilToUpdate.pupilId, tutorInfo: tutorInfo);
+      pupilId: pupilToUpdate.pupilId,
+      tutorInfo: tutorInfo,
+    );
 
     if (pupilUpdate == null) {
       return;
@@ -426,14 +470,15 @@ class PupilManager extends ChangeNotifier {
     updatePupilProxyWithPupilData(pupilUpdate);
   }
 
-  Future<void> updatePupilCommunicationSkills(
-      {required int pupilId,
-      required CommunicationSkills? communicationSkills}) async {
-    final PupilData? pupilData =
-        await _pupilDataApiService.updateCommunicationSkills(
-      pupilId: pupilId,
-      communicationSkills: communicationSkills,
-    );
+  Future<void> updatePupilCommunicationSkills({
+    required int pupilId,
+    required CommunicationSkills? communicationSkills,
+  }) async {
+    final PupilData? pupilData = await _pupilDataApiService
+        .updateCommunicationSkills(
+          pupilId: pupilId,
+          communicationSkills: communicationSkills,
+        );
     if (pupilData == null) {
       return;
     }
@@ -452,88 +497,98 @@ class PupilManager extends ChangeNotifier {
     updatePupilProxyWithPupilData(pupilUpdate);
   }
 
-  Future<void> updateStringProperty(
-      {required int pupilId,
-      required String property,
-      required String? value}) async {
-    final PupilData? pupilData =
-        await _pupilDataApiService.updateStringProperty(
-      pupilId: pupilId,
-      property: property,
-      value: value,
-    );
+  Future<void> updateStringProperty({
+    required int pupilId,
+    required String property,
+    required String? value,
+  }) async {
+    final PupilData? pupilData = await _pupilDataApiService
+        .updateStringProperty(
+          pupilId: pupilId,
+          property: property,
+          value: value,
+        );
     if (pupilData == null) {
       return;
     }
     updatePupilProxyWithPupilData(pupilData);
   }
 
-  Future<void> updateCommunicationSkills(
-      {required int pupilId, required CommunicationSkills? skills}) async {
-    final PupilData? pupilData =
-        await _pupilDataApiService.updateCommunicationSkills(
-      pupilId: pupilId,
-      communicationSkills: skills,
-    );
+  Future<void> updateCommunicationSkills({
+    required int pupilId,
+    required CommunicationSkills? skills,
+  }) async {
+    final PupilData? pupilData = await _pupilDataApiService
+        .updateCommunicationSkills(
+          pupilId: pupilId,
+          communicationSkills: skills,
+        );
     if (pupilData == null) {
       return;
     }
     updatePupilProxyWithPupilData(pupilData);
   }
 
-  Future<void> updatePupilSupportLevel(
-      {required int pupilId,
-      required int level,
-      required DateTime createdAt,
-      required String createdBy,
-      required String comment}) async {
-    final PupilData? updatedPupil =
-        await _pupilDataApiService.updateSupportLevel(
-      pupilId: pupilId,
-      supportLevelValue: level,
-      createdAt: createdAt,
-      createdBy: createdBy,
-      comment: comment,
-    );
+  Future<void> updatePupilSupportLevel({
+    required int pupilId,
+    required int level,
+    required DateTime createdAt,
+    required String createdBy,
+    required String comment,
+  }) async {
+    final PupilData? updatedPupil = await _pupilDataApiService
+        .updateSupportLevel(
+          pupilId: pupilId,
+          supportLevelValue: level,
+          createdAt: createdAt,
+          createdBy: createdBy,
+          comment: comment,
+        );
     if (updatedPupil == null) {
       return;
     }
     _pupilIdPupilsMap[pupilId]!.updatePupil(updatedPupil);
   }
 
-  Future<void> deleteSupportLevelHistoryItem(
-      {required int pupilId, required int supportLevelId}) async {
-    final PupilData? updatedPupil =
-        await _pupilDataApiService.deleteSupportLevelHistoryItem(
-      pupilId: pupilId,
-      supportLevelId: supportLevelId,
-    );
+  Future<void> deleteSupportLevelHistoryItem({
+    required int pupilId,
+    required int supportLevelId,
+  }) async {
+    final PupilData? updatedPupil = await _pupilDataApiService
+        .deleteSupportLevelHistoryItem(
+          pupilId: pupilId,
+          supportLevelId: supportLevelId,
+        );
     if (updatedPupil == null) {
       return;
     }
     _pupilIdPupilsMap[pupilId]!.updatePupil(updatedPupil);
   }
 
-  Future<void> updateSchoolyearHeldBackDate(
-      {required int pupilId, required ({DateTime? value}) date}) async {
-    final PupilData? updatedPupil =
-        await _pupilDataApiService.updateSchoolyearHeldBackDate(
-      pupilId: pupilId,
-      date: date,
-    );
+  Future<void> updateSchoolyearHeldBackDate({
+    required int pupilId,
+    required ({DateTime? value}) date,
+  }) async {
+    final PupilData? updatedPupil = await _pupilDataApiService
+        .updateSchoolyearHeldBackDate(pupilId: pupilId, date: date);
     if (updatedPupil == null) {
       return;
     }
     updatePupilProxyWithPupilData(updatedPupil);
   }
 
-  Future<void> postPupilBookLending(
-      {required int pupilId, required String libraryId}) async {
+  Future<void> postPupilBookLending({
+    required int pupilId,
+    required String libraryId,
+  }) async {
     final userName = _hubSessionManager.userName;
 
-    final PupilData? updatedPupil =
-        await _pupilBookApiService.postPupilBookLending(
-            pupilId: pupilId, libraryId: libraryId, lentBy: userName!);
+    final PupilData? updatedPupil = await _pupilBookApiService
+        .postPupilBookLending(
+          pupilId: pupilId,
+          libraryId: libraryId,
+          lentBy: userName!,
+        );
     if (updatedPupil == null) {
       return;
     }
@@ -552,8 +607,9 @@ class PupilManager extends ChangeNotifier {
     return;
   }
 
-  Future<void> returnLibraryBook(
-      {required PupilBookLending pupilBookLending}) async {
+  Future<void> returnLibraryBook({
+    required PupilBookLending pupilBookLending,
+  }) async {
     final updatedBookLending = pupilBookLending.copyWith(
       returnedAt: DateTime.now().toUtc(),
       receivedBy: _hubSessionManager.userName,
@@ -570,14 +626,15 @@ class PupilManager extends ChangeNotifier {
     return;
   }
 
-  Future<void> updatePupilBook(
-      {required PupilBookLending pupilBookLending,
-      DateTime? lentAt,
-      String? lentBy,
-      ({String? value})? status,
-      ({int? value})? score,
-      ({DateTime? value})? returnedAt,
-      ({String? value})? receivedBy}) async {
+  Future<void> updatePupilBook({
+    required PupilBookLending pupilBookLending,
+    DateTime? lentAt,
+    String? lentBy,
+    ({String? value})? status,
+    ({int? value})? score,
+    ({DateTime? value})? returnedAt,
+    ({String? value})? receivedBy,
+  }) async {
     final updatedBookLending = pupilBookLending.copyWith(
       lentAt: lentAt ?? pupilBookLending.lentAt,
       lentBy: lentBy ?? pupilBookLending.lentBy,

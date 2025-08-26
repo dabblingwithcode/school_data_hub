@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_plan_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/new_support_category_status_page.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _learningSupportPlanManager = di<LearningSupportPlanManager>();
+final _learningSupportPlanManager = di<LearningSupportManager>();
 
 class NewSupportCategoryStatus extends StatefulWidget {
   final String appBarTitle;
@@ -11,12 +11,13 @@ class NewSupportCategoryStatus extends StatefulWidget {
   final int goalCategoryId;
   final String elementType;
 
-  const NewSupportCategoryStatus(
-      {super.key,
-      required this.appBarTitle,
-      required this.pupilId,
-      required this.goalCategoryId,
-      required this.elementType});
+  const NewSupportCategoryStatus({
+    super.key,
+    required this.appBarTitle,
+    required this.pupilId,
+    required this.goalCategoryId,
+    required this.elementType,
+  });
 
   @override
   NewSupportCategoryStatusController createState() =>
@@ -49,8 +50,10 @@ class NewSupportCategoryStatusController
     });
   }
 
-  void setTextFieldControllerValues(
-      {required String description, required String strategies}) {
+  void setTextFieldControllerValues({
+    required String description,
+    required String strategies,
+  }) {
     descriptionTextFieldController.text = description;
     strategiesTextField2Controller.text = strategies;
   }
@@ -61,10 +64,11 @@ class NewSupportCategoryStatusController
     }
 
     await _learningSupportPlanManager.postNewSupportCategoryGoal(
-        goalCategoryId: goalCategoryId!,
-        pupilId: widget.pupilId,
-        description: descriptionTextFieldController.text,
-        strategies: strategiesTextField2Controller.text);
+      goalCategoryId: goalCategoryId!,
+      pupilId: widget.pupilId,
+      description: descriptionTextFieldController.text,
+      strategies: strategiesTextField2Controller.text,
+    );
   }
 
   @override

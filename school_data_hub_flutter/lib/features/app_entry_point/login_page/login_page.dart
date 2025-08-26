@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
@@ -14,6 +13,7 @@ import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/widgets/environments_dropdown.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/landing_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
 
 class LoginPage extends WatchingWidget {
@@ -27,10 +27,9 @@ class LoginPage extends WatchingWidget {
     // There is already one in MainMenuBottomNavigation
     registerHandler(
       select: (NotificationService x) => x.notification,
-      handler: (context, value, cancel) =>
-          value.type == NotificationType.infoDialog
-              ? informationDialog(context, 'Info', value.message)
-              : snackbar(context, value.type, value.message),
+      handler: (context, value, cancel) => value.type == NotificationType.dialog
+          ? informationDialog(context, 'Info', value.message)
+          : snackbar(context, value.type, value.message),
     );
 
     final bool isAuthenticated =

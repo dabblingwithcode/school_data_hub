@@ -8,19 +8,22 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialo
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_plan_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_symbol.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _learningSupportPlanManager = di<LearningSupportPlanManager>();
+final _learningSupportPlanManager = di<LearningSupportManager>();
 
 class SupportCategoryStatusEntry extends StatelessWidget {
   final PupilProxy pupil;
   final SupportCategoryStatus status;
 
-  const SupportCategoryStatusEntry(
-      {required this.pupil, required this.status, super.key});
+  const SupportCategoryStatusEntry({
+    required this.pupil,
+    required this.status,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,18 +34,24 @@ class SupportCategoryStatusEntry extends StatelessWidget {
       child: InkWell(
         onLongPress: () async {
           if (!authorizedToChangeStatus) {
-            informationDialog(context, 'Keine Berechtigung',
-                'Keine Berechtigung für das Löschen des Status!');
+            informationDialog(
+              context,
+              'Keine Berechtigung',
+              'Keine Berechtigung für das Löschen des Status!',
+            );
             return;
           }
           bool? confirm = await confirmationDialog(
-              context: context,
-              title: 'Status löschen?',
-              message: 'Status löschen?');
+            context: context,
+            title: 'Status löschen?',
+            message: 'Status löschen?',
+          );
           if (confirm != true) return;
 
           _learningSupportPlanManager.deleteSupportCategoryStatus(
-              pupil.pupilId, status.id!);
+            pupil.pupilId,
+            status.id!,
+          );
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,7 +59,10 @@ class SupportCategoryStatusEntry extends StatelessWidget {
             Column(
               children: [
                 getSupportCategoryStatusSymbol(
-                    pupil, status.supportCategoryId, status.id!),
+                  pupil,
+                  status.supportCategoryId,
+                  status.id!,
+                ),
               ],
             ),
             const Gap(10),
@@ -60,65 +72,69 @@ class SupportCategoryStatusEntry extends StatelessWidget {
                 children: [
                   authorizedToChangeStatus
                       ? InkWell(
-                          onTap: () async {
-                            final DateTime? correctedCreatedAt =
-                                await showDatePicker(
-                              context: context,
-                              initialDate: status.createdAt,
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime.now().toUtc(),
-                            );
-                            if (correctedCreatedAt != null) {
-                              // TODO: uncomment when ready
-                              // _learningSupportManager
-                              //     .updateSupportCategoryStatusProperty(
-                              //   pupil: pupil,
-                              //   statusId: status.statusId,
-                              //   createdAt: correctedCreatedAt.formatForJson(),
-                              // );
-                            }
-                          },
-                          child: Text(
-                            status.createdAt.formatForUser(),
-                            style: const TextStyle(
-                              color: AppColors.interactiveColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                        )
-                      : Text(
+                        onTap: () async {
+                          final DateTime? correctedCreatedAt =
+                              await showDatePicker(
+                                context: context,
+                                initialDate: status.createdAt,
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime.now().toUtc(),
+                              );
+                          if (correctedCreatedAt != null) {
+                            // TODO: uncomment when ready
+                            // _learningSupportManager
+                            //     .updateSupportCategoryStatusProperty(
+                            //   pupil: pupil,
+                            //   statusId: status.statusId,
+                            //   createdAt: correctedCreatedAt.formatForJson(),
+                            // );
+                          }
+                        },
+                        child: Text(
                           status.createdAt.formatForUser(),
                           style: const TextStyle(
+                            color: AppColors.interactiveColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                           ),
                         ),
+                      )
+                      : Text(
+                        status.createdAt.formatForUser(),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
                   const Gap(5),
                   authorizedToChangeStatus
                       ? InkWell(
-                          onTap: () async {
-                            final String? correctedComment =
-                                await longTextFieldDialog(
-                                    title: 'Status korrigieren',
-                                    labelText: 'Status',
-                                    initialValue: status.comment,
-                                    parentContext: context);
-                            if (correctedComment != null) {
-                              // TODO: uncomment when ready
-                              //  _learningSupportManager
-                              //       .updateSupportCategoryStatusProperty(
-                              //     pupil: pupil,
-                              //     statusId: status.statusId,
-                              //     comment: correctedComment,
-                              //   );
-                            }
-                          },
-                          child: Text(status.comment,
-                              style: const TextStyle(
-                                color: AppColors.interactiveColor,
-                                fontWeight: FontWeight.bold,
-                              )))
+                        onTap: () async {
+                          final String? correctedComment =
+                              await longTextFieldDialog(
+                                title: 'Status korrigieren',
+                                labelText: 'Status',
+                                initialValue: status.comment,
+                                parentContext: context,
+                              );
+                          if (correctedComment != null) {
+                            // TODO: uncomment when ready
+                            //  _learningSupportManager
+                            //       .updateSupportCategoryStatusProperty(
+                            //     pupil: pupil,
+                            //     statusId: status.statusId,
+                            //     comment: correctedComment,
+                            //   );
+                          }
+                        },
+                        child: Text(
+                          status.comment,
+                          style: const TextStyle(
+                            color: AppColors.interactiveColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      )
                       : Text(status.comment),
                   const Gap(5),
                   Wrap(
@@ -127,38 +143,37 @@ class SupportCategoryStatusEntry extends StatelessWidget {
                       const Gap(5),
                       authorizedToChangeStatus
                           ? InkWell(
-                              onTap: () async {
-                                final String? correctedCreatedBy =
-                                    await shortTextfieldDialog(
-                                        title: 'Ersteller ändern',
-                                        obscureText: false,
-                                        hintText: 'Kürzel eintragen',
-                                        labelText: status.createdBy,
-                                        context: context);
-                                if (correctedCreatedBy != null) {
-                                  // TODO: uncomment when ready
-                                  //  _learningSupportManager
-                                  //       .updateSupportCategoryStatusProperty(
-                                  //     pupil: pupil,
-                                  //     statusId: status.statusId,
-                                  //     createdBy: correctedCreatedBy,
-                                  //   );
-                                }
-                              },
-                              child: Text(
-                                status.createdBy,
-                                style: const TextStyle(
-                                  color: AppColors.interactiveColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            )
-                          : Text(
+                            onTap: () async {
+                              final String? correctedCreatedBy =
+                                  await shortTextfieldDialog(
+                                    title: 'Ersteller ändern',
+                                    obscureText: false,
+                                    hintText: 'Kürzel eintragen',
+                                    labelText: status.createdBy,
+                                    context: context,
+                                  );
+                              if (correctedCreatedBy != null) {
+                                // TODO: uncomment when ready
+                                //  _learningSupportManager
+                                //       .updateSupportCategoryStatusProperty(
+                                //     pupil: pupil,
+                                //     statusId: status.statusId,
+                                //     createdBy: correctedCreatedBy,
+                                //   );
+                              }
+                            },
+                            child: Text(
                               status.createdBy,
                               style: const TextStyle(
+                                color: AppColors.interactiveColor,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
+                          )
+                          : Text(
+                            status.createdBy,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
                     ],
                   ),
                 ],

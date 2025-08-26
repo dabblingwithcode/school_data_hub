@@ -35,14 +35,18 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
 
   Future<void> createRoom() async {
     if (nameController.text.trim().isEmpty) {
-      _notificationService.showSnackBar(NotificationType.error,
-          'Bitte geben Sie einen Namen für den Raum ein');
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Bitte geben Sie einen Namen für den Raum ein',
+      );
       return;
     }
 
     if (topicController.text.trim().isEmpty) {
       _notificationService.showSnackBar(
-          NotificationType.error, 'Bitte geben Sie ein Thema für den Raum ein');
+        NotificationType.error,
+        'Bitte geben Sie ein Thema für den Raum ein',
+      );
       return;
     }
 
@@ -54,9 +58,10 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
       await _matrixPolicyManager.rooms.createNewRoom(
         name: nameController.text.trim(),
         topic: topicController.text.trim(),
-        aliasName: aliasController.text.trim().isEmpty
-            ? null
-            : aliasController.text.trim(),
+        aliasName:
+            aliasController.text.trim().isEmpty
+                ? null
+                : aliasController.text.trim(),
         chatTypePreset: selectedRoomType,
       );
 
@@ -64,11 +69,11 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
         Navigator.of(context).pop(true);
       }
     } catch (e) {
-      _notificationService.showInformationDialog(
-        e.toString(),
+      _notificationService.showInformationDialog(e.toString());
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Erstellen des Raums: ${e.toString()}',
       );
-      _notificationService.showSnackBar(NotificationType.error,
-          'Fehler beim Erstellen des Raums: ${e.toString()}');
     } finally {
       if (mounted) {
         setState(() {
@@ -89,16 +94,9 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
         title: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.meeting_room_rounded,
-              size: 25,
-              color: Colors.white,
-            ),
+            Icon(Icons.meeting_room_rounded, size: 25, color: Colors.white),
             Gap(10),
-            Text(
-              'Neuer Matrix-Raum',
-              style: AppStyles.appBarTextStyle,
-            ),
+            Text('Neuer Matrix-Raum', style: AppStyles.appBarTextStyle),
           ],
         ),
       ),
@@ -236,18 +234,19 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
                                     border: OutlineInputBorder(),
                                   ),
                                   items: [
-                                    DropdownMenuItem(
+                                    const DropdownMenuItem(
                                       value: ChatTypePreset.private,
                                       child: const Text('Privat'),
                                     ),
-                                    DropdownMenuItem(
+                                    const DropdownMenuItem(
                                       value: ChatTypePreset.public,
                                       child: const Text('Öffentlich'),
                                     ),
-                                    DropdownMenuItem(
+                                    const DropdownMenuItem(
                                       value: ChatTypePreset.trustedPrivate,
-                                      child:
-                                          const Text('Vertrauenswürdig Privat'),
+                                      child: const Text(
+                                        'Vertrauenswürdig Privat',
+                                      ),
                                     ),
                                   ],
                                   onChanged: (value) {
@@ -280,9 +279,10 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
                         width: 150, // Fixed width
                         child: ElevatedButton(
                           style: AppStyles.cancelButtonStyle,
-                          onPressed: isProcessing
-                              ? null
-                              : () => Navigator.of(context).pop(),
+                          onPressed:
+                              isProcessing
+                                  ? null
+                                  : () => Navigator.of(context).pop(),
                           child: const Text(
                             'ABBRECHEN',
                             style: AppStyles.buttonTextStyle,
@@ -296,19 +296,20 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
                         child: ElevatedButton(
                           style: AppStyles.successButtonStyle,
                           onPressed: isProcessing ? null : createRoom,
-                          child: isProcessing
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
+                          child:
+                              isProcessing
+                                  ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                  : const Text(
+                                    'RAUM ERSTELLEN',
+                                    style: AppStyles.buttonTextStyle,
                                   ),
-                                )
-                              : const Text(
-                                  'RAUM ERSTELLEN',
-                                  style: AppStyles.buttonTextStyle,
-                                ),
                         ),
                       ),
                     ],
@@ -342,10 +343,7 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
 
     return Text(
       description,
-      style: const TextStyle(
-        fontSize: 12,
-        color: Colors.grey,
-      ),
+      style: const TextStyle(fontSize: 12, color: Colors.grey),
     );
   }
 }

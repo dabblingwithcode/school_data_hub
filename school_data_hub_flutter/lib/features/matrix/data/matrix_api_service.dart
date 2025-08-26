@@ -30,13 +30,17 @@ class MatrixApiService {
     required String matrixUrl,
     required String matrixToken,
     required String corporalToken,
-  })  : _matrixUrl = matrixUrl,
-        _matrixToken = matrixToken,
-        _corporalToken = corporalToken {
+  }) : _matrixUrl = matrixUrl,
+       _matrixToken = matrixToken,
+       _corporalToken = corporalToken {
     _apiClient.setApiOptions(
-        tokenKey: Token.matrix, token: 'Bearer $_matrixToken');
+      tokenKey: Token.matrix,
+      token: 'Bearer $_matrixToken',
+    );
     _apiClient.setApiOptions(
-        tokenKey: Token.corporal, token: 'Bearer $_corporalToken');
+      tokenKey: Token.corporal,
+      token: 'Bearer $_corporalToken',
+    );
 
     // Initialize sub-services with shared ApiClient
     _userApiService = MatrixUserApiService(
@@ -90,10 +94,12 @@ class MatrixApiService {
 
     if (response.statusCode != 200) {
       _notificationService.showSnackBar(
-          NotificationType.error, 'Fehler: status code ${response.statusCode}');
+        NotificationType.error,
+        'Fehler: status code ${response.statusCode}',
+      );
       throw ApiException('Fehler beim Laden der Policy', response.statusCode);
     }
-     final File file = File('matrix-fetched-policy.json');
+    final File file = File('matrix-fetched-policy.json');
     if (file.existsSync()) {
       file.deleteSync();
     }
@@ -101,7 +107,9 @@ class MatrixApiService {
 
     final Policy policy = Policy.fromJson(response.data['policy']);
     _notificationService.showSnackBar(
-        NotificationType.success, 'Matrix-Räumeverwaltung geladen');
+      NotificationType.success,
+      'Matrix-Räumeverwaltung geladen',
+    );
 
     return policy;
   }
@@ -110,24 +118,30 @@ class MatrixApiService {
 
   Future<void> putMatrixPolicy() async {
     final File policyFile = await MatrixPolicyHelper.generatePolicyJsonFile(
-        filename: 'matrix-policy');
-    final bytes = policyFile.readAsBytesSync();
-
-    final Response response = await _apiClient.put(
-      '$_matrixUrl$_putMatrixPolicy',
-      data: bytes,
-      options: _apiClient.corporalOptions,
+      filename: 'matrix-policy',
     );
+    // final bytes = policyFile.readAsBytesSync();
+
+    // final Response response = await _apiClient.put(
+    //   '$_matrixUrl$_putMatrixPolicy',
+    //   data: bytes,
+    //   options: _apiClient.corporalOptions,
+    // );
+    //- TODO URGENT: uncomment this when the backend is ready
     //delete file, we don't need it anymore
     // policyFile.deleteSync();
-    if (response.statusCode != 200) {
-      _notificationService.showSnackBar(
-          NotificationType.error, 'Fehler: status code ${response.statusCode}');
-      throw ApiException('Fehler beim Setzen der Policy', response.statusCode);
-    }
+    // if (response.statusCode != 200) {
+    //   _notificationService.showSnackBar(
+    //     NotificationType.error,
+    //     'Fehler: status code ${response.statusCode}',
+    //   );
+    //   throw ApiException('Fehler beim Setzen der Policy', response.statusCode);
+    // }
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Policy erfolgreich gesetzt');
+      NotificationType.success,
+      'Policy erfolgreich gesetzt',
+    );
 
     return;
   }

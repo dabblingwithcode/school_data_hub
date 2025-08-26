@@ -111,7 +111,7 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                         const Gap(5),
                         competenceCheck != null
                             ? GrowthDropdown(
-                                dropdownValue: competenceCheck.score ?? 0,
+                                dropdownValue: competenceCheck.score,
                                 onChangedFunction: (int? value) async {
                                   if (value == competenceCheck.score) {
                                     return;

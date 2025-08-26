@@ -30,7 +30,9 @@ class AuthorizationManager with ChangeNotifier {
 
   Future<AuthorizationManager> init() async {
     _notificationService.showSnackBar(
-        NotificationType.success, 'Einwilligungen werden geladen');
+      NotificationType.success,
+      'Einwilligungen werden geladen',
+    );
     await fetchAuthorizations();
     return this;
   }
@@ -50,17 +52,20 @@ class AuthorizationManager with ChangeNotifier {
   void _updatePupilAuthInCollections(PupilAuthorization pupilAuth) {
     final authId = pupilAuth.authorizationId;
     final authorization = _authorizationsMap[authId]!;
-    final List<PupilAuthorization> pupilAuths =
-        List.from(authorization.authorizedPupils!);
-    final index = pupilAuths
-        .indexWhere((element) => element.pupilId == pupilAuth.pupilId);
+    final List<PupilAuthorization> pupilAuths = List.from(
+      authorization.authorizedPupils!,
+    );
+    final index = pupilAuths.indexWhere(
+      (element) => element.pupilId == pupilAuth.pupilId,
+    );
     if (index != -1) {
       pupilAuths[index] = pupilAuth;
     } else {
       pupilAuths.add(pupilAuth);
     }
-    _authorizationsMap[authId] =
-        authorization.copyWith(authorizedPupils: pupilAuths);
+    _authorizationsMap[authId] = authorization.copyWith(
+      authorizedPupils: pupilAuths,
+    );
     _authorizations.value = _authorizationsMap.values.toList();
   }
 
@@ -70,8 +75,10 @@ class AuthorizationManager with ChangeNotifier {
       return;
     }
     _updateAuthsInCollections(authorizations);
-    _notificationService.showSnackBar(NotificationType.success,
-        '${authorizations.length} Einwilligungen geladen');
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      '${authorizations.length} Einwilligungen geladen',
+    );
 
     return;
   }
@@ -91,28 +98,36 @@ class AuthorizationManager with ChangeNotifier {
     _authorizations.value = _authorizationsMap.values.toList();
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Einwilligung erstellt');
+      NotificationType.success,
+      'Einwilligung erstellt',
+    );
 
     return;
   }
 
-  Future<void> updateAuthorization(
-      {required int authId,
-      String? name,
-      String? description,
-      ({
-        MemberOperation operation,
-        List<int> pupilIds
-      })? membersToUpdate}) async {
+  Future<void> updateAuthorization({
+    required int authId,
+    String? name,
+    String? description,
+    ({MemberOperation operation, List<int> pupilIds})? membersToUpdate,
+  }) async {
     final updatedAuth = await ClientHelper.apiCall(
-        call: () => _authorizationApiService.updateAuthorization(
-            authId, name, description, membersToUpdate));
+      call:
+          () => _authorizationApiService.updateAuthorization(
+            authId,
+            name,
+            description,
+            membersToUpdate,
+          ),
+    );
     if (updatedAuth == null) {
       return;
     }
     _updateAuthsInCollections([updatedAuth]);
     _notificationService.showSnackBar(
-        NotificationType.success, 'Einwilligung geändert');
+      NotificationType.success,
+      'Einwilligung geändert',
+    );
 
     return;
   }
@@ -127,19 +142,25 @@ class AuthorizationManager with ChangeNotifier {
     _authorizations.value = _authorizationsMap.values.toList();
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Einwilligung gelöscht');
+      NotificationType.success,
+      'Einwilligung gelöscht',
+    );
 
     return;
   }
 
-  Future<void> updatePupilAuthorization(
-      int pupilId, int authorizationId, bool? status, String? comment) async {
-    final pupilAuth = _authorizationsMap[authorizationId]!
-        .authorizedPupils!
-        .where((element) => element.pupilId == pupilId)
-        .first;
+  Future<void> updatePupilAuthorization({
+    required int pupilId,
+    required int authorizationId,
+    ({bool? value})? status,
+    String? comment,
+  }) async {
+    final pupilAuth =
+        _authorizationsMap[authorizationId]!.authorizedPupils!
+            .where((element) => element.pupilId == pupilId)
+            .first;
     final pupilAuthUpdate = pupilAuth.copyWith(
-      status: status ?? pupilAuth.status,
+      status: status != null ? status.value : pupilAuth.status,
       comment: comment ?? pupilAuth.comment,
     );
     final updatedPupilAuth = await _authorizationApiService
@@ -150,15 +171,14 @@ class AuthorizationManager with ChangeNotifier {
     _updatePupilAuthInCollections(updatedPupilAuth);
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Einwilligung geändert');
+      NotificationType.success,
+      'Einwilligung geändert',
+    );
 
     return;
   }
 
-  Future<void> addFileToPupilAuthorization(
-    File file,
-    int pupilAuthId,
-  ) async {
+  Future<void> addFileToPupilAuthorization(File file, int pupilAuthId) async {
     final encryptedFile = await customEncrypter.encryptFile(file);
     final createdBy = _hubSessionManager.userName;
     final pupilAuth = await _authorizationApiService
@@ -175,8 +195,8 @@ class AuthorizationManager with ChangeNotifier {
     int authId,
     String cacheKey,
   ) async {
-    final pupilAuth =
-        await _authorizationApiService.removeFileFromPupilAuthorization(authId);
+    final pupilAuth = await _authorizationApiService
+        .removeFileFromPupilAuthorization(authId);
     if (pupilAuth == null) {
       return;
     }
@@ -187,9 +207,7 @@ class AuthorizationManager with ChangeNotifier {
   }
 
   //- diese Funktion hat keinen API-Call
-  Authorization getAuthorization(
-    int authId,
-  ) {
+  Authorization getAuthorization(int authId) {
     final Authorization authorizations =
         _authorizations.value.where((element) => element.id == authId).first;
 
@@ -228,10 +246,15 @@ class AuthorizationManager with ChangeNotifier {
     List<PupilProxy> filteredPupils,
   ) {
     final Authorization authorization = _authorizationsMap[authorizationId]!;
-    final List<PupilProxy> listedPupils = filteredPupils
-        .where((pupil) => authorization.authorizedPupils!.any((authorization) =>
-            authorization.authorizationId == authorizationId))
-        .toList();
+    final List<PupilProxy> listedPupils =
+        filteredPupils
+            .where(
+              (pupil) => authorization.authorizedPupils!.any(
+                (authorization) =>
+                    authorization.authorizationId == authorizationId,
+              ),
+            )
+            .toList();
 
     return listedPupils;
   }

@@ -14,14 +14,17 @@ class PupilEndpoint extends Endpoint {
   // }
 
   Stream<List<PupilData>> fetchPupilsAsStream(Session session) async* {
-    final pupils = await PupilData.db.find(session);
+    final pupils = await PupilData.db.find(session,
+        where: (t) => t.status.equals(PupilStatus.active),
+        include: PupilSchemas.allInclude);
 
     yield pupils;
   }
 
   Future<List<PupilData>> fetchPupils(Session session) async {
-    final pupils =
-        await PupilData.db.find(session, include: PupilSchemas.allInclude);
+    final pupils = await PupilData.db.find(session,
+        where: (t) => t.status.equals(PupilStatus.active),
+        include: PupilSchemas.allInclude);
 
     return pupils;
   }
@@ -30,7 +33,8 @@ class PupilEndpoint extends Endpoint {
       Session session, Set<int> internalIds) async {
     final pupils = await PupilData.db.find(
       session,
-      where: (t) => t.internalId.inSet(internalIds),
+      where: (t) =>
+          t.internalId.inSet(internalIds) & t.status.equals(PupilStatus.active),
       include: PupilSchemas.allInclude,
     );
 

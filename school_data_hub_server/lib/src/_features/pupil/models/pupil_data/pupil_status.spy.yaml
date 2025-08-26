@@ -1,0 +1,6 @@
+enum: PupilStatus
+serialized: byName
+values:
+  - inactive
+  - active
+  - prospective

@@ -71,6 +71,18 @@ class EnvUtils {
         deviceName: iosInfo.name,
         deviceId: iosInfo.modelName,
       );
+    } else if (Platform.isLinux) {
+      final linuxInfo = await deviceInfo.linuxInfo;
+      return (
+        deviceName: linuxInfo.prettyName,
+        deviceId: linuxInfo.id,
+      );
+    } else if (Platform.isMacOS) {
+      final macOsInfo = await deviceInfo.macOsInfo;
+      return (
+        deviceName: macOsInfo.computerName,
+        deviceId: macOsInfo.systemGUID ?? 'Unknown Device',
+      );
     } else {
       return (
         deviceId: 'Unknown Device',

@@ -18,10 +18,11 @@ final _attendanceManager = di<AttendanceManager>();
 class AttendancePupilFilterManager {
   final _attendancePupilFilterState =
       ValueNotifier<Map<AttendancePupilFilter, bool>>(
-          initialAttendancePupilFilterValues);
+        initialAttendancePupilFilterValues,
+      );
 
   ValueListenable<Map<AttendancePupilFilter, bool>>
-      get attendancePupilFilterState => _attendancePupilFilterState;
+  get attendancePupilFilterState => _attendancePupilFilterState;
 
   AttendancePupilFilterManager init() {
     _attendanceManager.missedSchooldays.addListener(refreshPupilsFilter);
@@ -38,9 +39,9 @@ class AttendancePupilFilterManager {
     _attendanceManager.missedSchooldays.removeListener(refreshPupilsFilter);
   }
 
-  void setAttendancePupilFilter(
-      {required List<AttendancePupilFilterRecord>
-          attendancePupilFilterRecords}) {
+  void setAttendancePupilFilter({
+    required List<AttendancePupilFilterRecord> attendancePupilFilterRecords,
+  }) {
     for (final record in attendancePupilFilterRecords) {
       _attendancePupilFilterState.value = {
         ..._attendancePupilFilterState.value,
@@ -49,19 +50,24 @@ class AttendancePupilFilterManager {
     }
 
     final bool attendanceFilterStateEqualsInitialState = const MapEquality()
-        .equals(_attendancePupilFilterState.value,
-            initialAttendancePupilFilterValues);
+        .equals(
+          _attendancePupilFilterState.value,
+          initialAttendancePupilFilterValues,
+        );
 
     _filterStateManager.setFilterState(
-        filterState: FilterState.attendance,
-        value: !attendanceFilterStateEqualsInitialState);
+      filterState: FilterState.attendance,
+      value: !attendanceFilterStateEqualsInitialState,
+    );
     _pupilsFilter.refreshs();
   }
 
   void resetFilters() {
     _attendancePupilFilterState.value = {...initialAttendancePupilFilterValues};
     _filterStateManager.setFilterState(
-        filterState: FilterState.attendance, value: false);
+      filterState: FilterState.attendance,
+      value: false,
+    );
   }
 
   bool isMatchedByAttendanceFilters(PupilProxy pupil) {
@@ -71,10 +77,12 @@ class AttendancePupilFilterManager {
         _attendancePupilFilterState.value;
 
     final MissedSchoolday? attendanceEventThisDate = _attendanceManager
-        .getPupilMissedSchooldayesProxy(pupil.pupilId)
+        .getPupilMissedSchooldaysProxy(pupil.pupilId)
         .missedSchooldays
-        .firstWhereOrNull((missedSchoolday) =>
-            missedSchoolday.schoolday!.schoolday.isSameDate(thisDate));
+        .firstWhereOrNull(
+          (missedSchoolday) =>
+              missedSchoolday.schoolday!.schoolday.isSameDate(thisDate),
+        );
 
     bool isMatched = true;
     //- Filter pupils present
@@ -106,7 +114,9 @@ class AttendancePupilFilterManager {
       return true;
     }
     _filterStateManager.setFilterState(
-        filterState: FilterState.attendance, value: true);
+      filterState: FilterState.attendance,
+      value: true,
+    );
     return false;
   }
 }

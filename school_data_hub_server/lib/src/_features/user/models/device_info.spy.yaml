@@ -1,4 +1,0 @@
-class: DeviceInfo
-fields:
-  deviceId: String
-  deviceName: String

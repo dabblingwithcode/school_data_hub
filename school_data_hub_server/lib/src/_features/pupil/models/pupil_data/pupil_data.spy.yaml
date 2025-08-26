@@ -1,7 +1,7 @@
 class: PupilData
 table: pupil_data
 fields:
-  active: bool
+  status: PupilStatus
   internalId: int
   ## preschool related
   preSchoolMedical: PreSchoolMedical?, relation(optional)
@@ -49,8 +49,8 @@ fields:
   swimmer: String?
   pupilListEntries: List<PupilListEntry>?, relation(name=pupil_list_entry_pupil)
 indexes:
-  pupil_data_active_idx:
-    fields: active, internalId
+  pupil_data_status_idx:
+    fields: status, internalId
   pupil_data_internal_id_idx:
     fields: internalId
     unique: true

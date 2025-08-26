@@ -3,6 +3,7 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/data/school_list_api_service.dart';
@@ -43,7 +44,8 @@ class SchoolListManager with ChangeNotifier {
   //- Getters
 
   SchoolListPupilEntriesProxyMap getPupilEntriesProxyFromSchoolList(
-      int listId) {
+    int listId,
+  ) {
     if (!_schoolListIdPupilEntriesMap.containsKey(listId)) {
       return SchoolListPupilEntriesProxyMap();
     }
@@ -54,8 +56,10 @@ class SchoolListManager with ChangeNotifier {
     return _schoolListMap[listId]!;
   }
 
-  PupilListEntryProxy? getPupilSchoolListEntryProxy(
-      {required int pupilId, required int listId}) {
+  PupilListEntryProxy? getPupilSchoolListEntryProxy({
+    required int pupilId,
+    required int listId,
+  }) {
     if (!_schoolListIdPupilEntriesMap.containsKey(listId)) {
       return null;
     }
@@ -63,8 +67,9 @@ class SchoolListManager with ChangeNotifier {
     if (pupilEntries.isEmpty) {
       return null;
     }
-    return pupilEntries.values
-        .firstWhere((element) => element.pupilEntry.pupilId == pupilId);
+    return pupilEntries.values.firstWhere(
+      (element) => element.pupilEntry.pupilId == pupilId,
+    );
   }
 
   List<PupilProxy> getPupilsinSchoolList(int listId) {
@@ -94,22 +99,27 @@ class SchoolListManager with ChangeNotifier {
     // Next, we update the pupil entries map for the school list
     // with the key being the pupilId
     if (_schoolListIdPupilEntriesMap.containsKey(schoolList.id!)) {
-      _schoolListIdPupilEntriesMap[schoolList.id!]!
-          .setPupilEntries(pupilEntries);
+      _schoolListIdPupilEntriesMap[schoolList.id!]!.setPupilEntries(
+        pupilEntries,
+      );
       _log.fine(
-          'Updated pupil entries map for school list number ${schoolList.id!}');
+        'Updated pupil entries map for school list number ${schoolList.id!}',
+      );
     } else {
       _schoolListIdPupilEntriesMap[schoolList.id!] =
           SchoolListPupilEntriesProxyMap();
-      _schoolListIdPupilEntriesMap[schoolList.id!]!
-          .setPupilEntries(pupilEntries);
+      _schoolListIdPupilEntriesMap[schoolList.id!]!.setPupilEntries(
+        pupilEntries,
+      );
       _log.fine(
-          'Created new pupil entries map for school list number ${schoolList.id!}');
+        'Created new pupil entries map for school list number ${schoolList.id!}',
+      );
     }
 
     notifyListeners();
     _log.fine(
-        'Finished updating School list number ${schoolList.id!} with ${pupilEntries.length} pupil entries');
+      'Finished updating School list number ${schoolList.id!} with ${pupilEntries.length} pupil entries',
+    );
   }
 
   //- API calls
@@ -119,8 +129,10 @@ class SchoolListManager with ChangeNotifier {
     if (responseSchoolLists == null) {
       return;
     }
-    _notificationService.showSnackBar(NotificationType.success,
-        '${responseSchoolLists.length} Schullisten geladen!');
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      '${responseSchoolLists.length} Schullisten geladen!',
+    );
 
     for (final schoolList in responseSchoolLists) {
       _schoolListMap[schoolList.id!] = schoolList;
@@ -133,26 +145,32 @@ class SchoolListManager with ChangeNotifier {
     return;
   }
 
-  Future updateSchoolListProperty(
-      {required int listId,
-      String? name,
-      String? description,
-      bool? public,
-      ({List<int> pupilIds, MemberOperation operation})? operation}) async {
-    final SchoolList? updatedSchoolList =
-        await _apiSchoolListService.updateSchoolListProperty(
-            listId: listId,
-            name: name,
-            description: description,
-            public: public,
-            updateMembers: operation);
+  Future<void> updateSchoolListProperty({
+    required int listId,
+    String? name,
+    String? description,
+    bool? public,
+    ({String? value})? authorizedUsers,
+    ({List<int> pupilIds, MemberOperation operation})? operation,
+  }) async {
+    final SchoolList? updatedSchoolList = await _apiSchoolListService
+        .updateSchoolListProperty(
+          listId: listId,
+          name: name,
+          description: description,
+          public: public,
+          authorizedUsers: authorizedUsers,
+          updateMembers: operation,
+        );
     if (updatedSchoolList == null) {
       return;
     }
     _updateCollectionsFromSchoolList(updatedSchoolList);
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Schulliste erfolgreich aktualisiert');
+      NotificationType.success,
+      'Schulliste erfolgreich aktualisiert',
+    );
 
     return;
   }
@@ -163,19 +181,19 @@ class SchoolListManager with ChangeNotifier {
     ({String? value})? comment,
   }) async {
     final entryToUpdate = entry.copyWith(
-      status: status?.value != null ? status!.value : entry.status,
-      comment: comment?.value != null ? comment!.value : entry.comment,
+      status: status != null ? status.value : entry.status,
+      comment: comment != null ? comment.value : entry.comment,
+      entryBy: di<HubSessionManager>().userName,
     );
 
-    final PupilListEntry? updatedEntry =
-        await _apiSchoolListService.updatePupilEntry(entry: entryToUpdate);
+    final PupilListEntry? updatedEntry = await _apiSchoolListService
+        .updatePupilEntry(entry: entryToUpdate);
     if (updatedEntry == null) {
       return;
     }
-    _schoolListIdPupilEntriesMap[updatedEntry.schoolListId]!
-        .updatePupilEntry(updatedEntry);
-    _notificationService.showSnackBar(
-        NotificationType.success, 'Eintrag erfolgreich aktualisiert');
+    _schoolListIdPupilEntriesMap[updatedEntry.schoolListId]!.updatePupilEntry(
+      updatedEntry,
+    );
 
     return;
   }
@@ -188,49 +206,29 @@ class SchoolListManager with ChangeNotifier {
     _schoolListMap.remove(listId);
     _schoolListIdPupilEntriesMap.remove(listId);
     _notificationService.showSnackBar(
-        NotificationType.success, 'Schulliste erfolgreich gelöscht');
+      NotificationType.success,
+      'Schulliste erfolgreich gelöscht',
+    );
 
     notifyListeners();
   }
-// Future<void> deleteSchoolList(String listId) async {
-//   final List<SchoolList> updatedSchoolLists =
-//       await _apiSchoolListService.deleteSchoolList(listId);
 
-//   // first delete the pupil lists from the map
-//   for (final pupilList in _schoolListMap[listId]!.pupilEntries) {
-//     _pupilListMap.value[pupilList.listedPupilId]!.remove(pupilList);
-//     _pupilSchoolLists.value =
-//         _pupilListMap.value.values.expand((list) => list).toList();
-//   }
-//   _schoolListMap.clear();
-//   for (final schoolList in updatedSchoolLists) {
-//     _schoolListMap[schoolList.listId] = schoolList;
-//     _schoolLists.value = _schoolListMap.values.toList();
-//     // go through the pupil lists and add them to the map
-//     // with the key being the pupilId
-//     _updatePupilListsFromSchoolList(schoolList);
-//   }
-
-//   _updateRepositories();
-
-//   _notificationService.showSnackBar(
-//       NotificationType.success, 'Schulliste erfolgreich gelöscht');
-
-//   return;
-// }
-
-  Future<void> postSchoolListWithGroup(
-      {required String name,
-      required String description,
-      required List<int> pupilIds,
-      required bool public}) async {
+  Future<void> postSchoolListWithGroup({
+    required String name,
+    required String description,
+    required List<int> pupilIds,
+    required bool public,
+  }) async {
     final schoolList = await ClientHelper.apiCall(
-        call: () => _apiSchoolListService.postSchoolListWithGroup(
+      call:
+          () => _apiSchoolListService.postSchoolListWithGroup(
             name: name,
             description: description,
             pupilIds: pupilIds,
-            public: public),
-        errorMessage: 'Fehler beim Erstellen der Schulliste');
+            public: public,
+          ),
+      errorMessage: 'Fehler beim Erstellen der Schulliste',
+    );
     if (schoolList == null) {
       return;
     }
@@ -238,58 +236,10 @@ class SchoolListManager with ChangeNotifier {
     _updateCollectionsFromSchoolList(schoolList);
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Schulliste erfolgreich erstellt');
+      NotificationType.success,
+      'Schulliste erfolgreich erstellt',
+    );
 
     return;
   }
-
-// Future<void> addPupilsToSchoolList(String listId, List<int> pupilIds) async {
-//   final SchoolList updatedSchoolList = await _apiSchoolListService
-//       .addPupilsToSchoolList(listId: listId, pupilIds: pupilIds);
-
-//   _schoolListMap[updatedSchoolList.listId] = updatedSchoolList;
-//   _updateRepositories();
-//   _updatePupilListsFromSchoolList(updatedSchoolList);
-
-//   _notificationService.showSnackBar(
-//       NotificationType.success, 'Schüler erfolgreich hinzugefügt');
-
-//   return;
-// }
-
-// Future<void> deletePupilsFromSchoolList(
-//   List<int> pupilIds,
-//   String listId,
-// ) async {
-//   // The response are the updated pupils whose pupil list was deleted
-
-//   final SchoolList updatedSchoolList =
-//       await _apiSchoolListService.deletePupilsFromSchoolList(
-//     pupilIds: pupilIds,
-//     listId: listId,
-//   );
-//   _schoolListMap[updatedSchoolList.listId] = updatedSchoolList;
-//   _updateRepositories();
-//   _updatePupilListsFromSchoolList(updatedSchoolList);
-
-//   _notificationService.showSnackBar(
-//       NotificationType.success, 'Schülereinträge erfolgreich gelöscht');
-
-//   return;
-// }
-
-// Future<void> patchPupilList(
-//     int pupilId, String listId, bool? value, String? comment) async {
-//   final SchoolList updatedSchoolList =
-//       await _apiSchoolListService.patchSchoolListPupil(
-//           pupilId: pupilId, listId: listId, value: value, comment: comment);
-//   _schoolListMap[updatedSchoolList.listId] = updatedSchoolList;
-//   _updateRepositories();
-//   _updatePupilListsFromSchoolList(updatedSchoolList);
-
-//   _notificationService.showSnackBar(
-//       NotificationType.success, 'Eintrag erfolgreich aktualisiert');
-
-  //   return;
-  // }
 }

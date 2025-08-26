@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_checkbox_either_or.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/document_image.dart';
@@ -27,9 +28,9 @@ class AuthorizationPupilCard extends WatchingWidget {
   Widget build(BuildContext context) {
     final PupilProxy pupil = _pupilManager.getPupilByPupilId(pupilId)!;
 
-    final thisAuthorization =
-        watchValue((AuthorizationManager x) => x.authorizations).firstWhere(
-            (authorization) => authorization.id == this.authorization.id);
+    final thisAuthorization = watchValue(
+      (AuthorizationManager x) => x.authorizations,
+    ).firstWhere((authorization) => authorization.id == this.authorization.id);
 
     final PupilAuthorization pupilAuthorization = thisAuthorization
         .authorizedPupils!
@@ -57,25 +58,28 @@ class AuthorizationPupilCard extends WatchingWidget {
                         InkWell(
                           onTap: () {
                             di<BottomNavManager>().setPupilProfileNavPage(7);
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (ctx) => PupilProfilePage(
-                                pupil: pupil,
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder:
+                                    (ctx) => PupilProfilePage(pupil: pupil),
                               ),
-                            ));
+                            );
                           },
                           onLongPress: () async {
                             final bool? confirmation = await confirmationDialog(
-                                context: context,
-                                title: 'Kind aus der Liste löschen',
-                                message:
-                                    'Die Einwilligung von ${pupil.firstName} löschen?');
+                              context: context,
+                              title: 'Kind aus der Liste löschen',
+                              message:
+                                  'Die Einwilligung von ${pupil.firstName} löschen?',
+                            );
                             if (confirmation == true) {
                               _authorizationManager.updateAuthorization(
-                                  authId: authorization.id!,
-                                  membersToUpdate: (
-                                    operation: MemberOperation.remove,
-                                    pupilIds: [pupil.pupilId],
-                                  ));
+                                authId: authorization.id!,
+                                membersToUpdate: (
+                                  operation: MemberOperation.remove,
+                                  pupilIds: [pupil.pupilId],
+                                ),
+                              );
                             }
                             return;
                           },
@@ -106,61 +110,45 @@ class AuthorizationPupilCard extends WatchingWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            const Icon(
-                              Icons.close,
-                              color: Colors.red,
-                            ),
-                            SizedBox(
-                              width: 25,
-                              height: 25,
-                              child: Checkbox(
-                                activeColor: Colors.red,
-                                value: (pupilAuthorization.status == null ||
-                                        pupilAuthorization.status == true)
-                                    ? false
-                                    : true,
-                                onChanged: (value) async {
-                                  await _authorizationManager
-                                      .updatePupilAuthorization(
-                                    pupil.pupilId,
-                                    authorization.id!,
-                                    false,
-                                    null,
-                                  );
-                                },
-                              ),
+                            const Icon(Icons.close, color: Colors.red),
+                            CustomCheckboxEitherOr(
+                              representedBoolValue:
+                                  false, // Red/negative checkbox
+                              currentStatus: pupilAuthorization.status,
+                              onStatusChanged: (newStatus) async {
+                                await _authorizationManager
+                                    .updatePupilAuthorization(
+                                      pupilId: pupil.pupilId,
+                                      authorizationId: authorization.id!,
+                                      status: (value: newStatus),
+                                      comment: null,
+                                    );
+                              },
                             ),
                             const Gap(10),
-                            const Icon(
-                              Icons.done,
-                              color: Colors.green,
-                            ),
-                            SizedBox(
-                              width: 25,
-                              height: 25,
-                              child: Checkbox(
-                                activeColor: Colors.green,
-                                value: (pupilAuthorization.status != true ||
-                                        pupilAuthorization.status == null)
-                                    ? false
-                                    : true,
-                                onChanged: (value) async {
-                                  await _authorizationManager
-                                      .updatePupilAuthorization(
-                                    pupil.pupilId,
-                                    authorization.id!,
-                                    true,
-                                    null,
-                                  );
-                                },
-                              ),
+                            const Icon(Icons.done, color: Colors.green),
+                            CustomCheckboxEitherOr(
+                              representedBoolValue:
+                                  true, // Green/positive checkbox
+                              currentStatus: pupilAuthorization.status,
+                              onStatusChanged: (newStatus) async {
+                                await _authorizationManager
+                                    .updatePupilAuthorization(
+                                      pupilId: pupil.pupilId,
+                                      authorizationId: authorization.id!,
+                                      status: (value: newStatus),
+                                      comment: null,
+                                    );
+                              },
                             ),
                             const Gap(15),
                             if (pupilAuthorization.createdBy != null)
                               Text(
                                 pupilAuthorization.createdBy!,
                                 style: const TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                           ],
                         ),
@@ -177,36 +165,42 @@ class AuthorizationPupilCard extends WatchingWidget {
                         final File? file = await createImageFile(context);
                         if (file == null) return;
                         await _authorizationManager.addFileToPupilAuthorization(
-                            file, pupilAuthorization.id!);
+                          file,
+                          pupilAuthorization.id!,
+                        );
                       },
                       onLongPress: () async {
                         if (pupilAuthorization.fileId == null) return;
                         final bool? result = await confirmationDialog(
-                            context: context,
-                            title: 'Dokument löschen',
-                            message:
-                                'Dokument für die Einwilligung von ${pupil.firstName} ${pupil.lastName} löschen?');
+                          context: context,
+                          title: 'Dokument löschen',
+                          message:
+                              'Dokument für die Einwilligung von ${pupil.firstName} ${pupil.lastName} löschen?',
+                        );
                         if (result != true) return;
 
                         await _authorizationManager
                             .removeFileFromPupilAuthorization(
-                          pupilAuthorization.id!,
-                          pupilAuthorization.file!.documentId,
-                        );
+                              pupilAuthorization.id!,
+                              pupilAuthorization.file!.documentId,
+                            );
                       },
-                      child: pupilAuthorization.fileId != null
-                          ? DocumentImage(
-                              documentId: pupilAuthorization.file!.documentId,
-                              size: 70)
-                          : SizedBox(
-                              height: 70,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(5),
-                                child:
-                                    Image.asset('assets/document_camera.png'),
+                      child:
+                          pupilAuthorization.fileId != null
+                              ? DocumentImage(
+                                documentId: pupilAuthorization.file!.documentId,
+                                size: 70,
+                              )
+                              : SizedBox(
+                                height: 70,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(5),
+                                  child: Image.asset(
+                                    'assets/document_camera.png',
+                                  ),
+                                ),
                               ),
-                            ),
-                    )
+                    ),
                   ],
                 ),
               ],
@@ -215,8 +209,10 @@ class AuthorizationPupilCard extends WatchingWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Gap(10),
-                Text('Kommentar: ',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  'Kommentar: ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 Gap(5),
               ],
             ),
@@ -230,19 +226,21 @@ class AuthorizationPupilCard extends WatchingWidget {
                     onTap: () async {
                       final String? authorizationComment =
                           await longTextFieldDialog(
-                              title: 'Kommentar ändern',
-                              labelText: 'Kommentar',
-                              initialValue: pupilAuthorization.comment,
-                              parentContext: context);
+                            title: 'Kommentar ändern',
+                            labelText: 'Kommentar',
+                            initialValue: pupilAuthorization.comment,
+                            parentContext: context,
+                          );
                       if (authorizationComment == null) return;
                       if (authorizationComment == '') return;
                       await di<AuthorizationManager>().updatePupilAuthorization(
-                        pupil.pupilId,
-                        authorization.id!,
-                        null,
-                        authorizationComment == ''
-                            ? null
-                            : authorizationComment,
+                        pupilId: pupil.pupilId,
+                        authorizationId: authorization.id!,
+                        status: null,
+                        comment:
+                            authorizationComment == ''
+                                ? null
+                                : authorizationComment,
                       );
                     },
                     child: Text(

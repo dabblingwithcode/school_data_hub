@@ -33,9 +33,6 @@ class WorkbooksEndpoint extends Endpoint {
       final IsbnApiData isbnApiData =
           await IsbnApi.fetchIsbnApiData(session, isbn);
 
-      if (isbnApiData == null) {
-        throw Exception('Workbook with isbn $isbn does not exist.');
-      }
       final workbook = Workbook(
         isbn: isbn,
         name: isbnApiData.title,

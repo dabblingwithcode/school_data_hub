@@ -12,22 +12,34 @@
 import 'package:serverpod/serverpod.dart' as _i1;
 
 enum Role implements _i1.SerializableModel {
-  technical,
+  admin,
   teacher,
+  specialEducatorE,
+  specialEducatorK,
   educator,
-  pupil,
+  trainee,
+  afterSchoolCare,
+  socialWorker,
   notAssigned;
 
   static Role fromJson(String name) {
     switch (name) {
-      case 'technical':
-        return Role.technical;
+      case 'admin':
+        return Role.admin;
       case 'teacher':
         return Role.teacher;
+      case 'specialEducatorE':
+        return Role.specialEducatorE;
+      case 'specialEducatorK':
+        return Role.specialEducatorK;
       case 'educator':
         return Role.educator;
-      case 'pupil':
-        return Role.pupil;
+      case 'trainee':
+        return Role.trainee;
+      case 'afterSchoolCare':
+        return Role.afterSchoolCare;
+      case 'socialWorker':
+        return Role.socialWorker;
       case 'notAssigned':
         return Role.notAssigned;
       default:

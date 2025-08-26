@@ -30,13 +30,15 @@ class BookCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<int, List<LibraryBookProxy>> isbnBooks =
-        watchValue((BookManager x) => x.isbnLibraryBooksMap);
+    final Map<int, List<LibraryBookProxy>> isbnBooks = watchValue(
+      (BookManager x) => x.isbnLibraryBooksMap,
+    );
     final List<LibraryBookProxy> bookProxies = isbnBooks[isbn] ?? [];
     final tileController = createOnce<CustomExpansionTileController>(
-        () => CustomExpansionTileController());
-    final descriptionTileController = createOnce<ExpansionTileController>(
-      () => ExpansionTileController(),
+      () => CustomExpansionTileController(),
+    );
+    final descriptionTileController = createOnce<ExpansibleController>(
+      () => ExpansibleController(),
     );
     final LibraryBookProxy bookProxy = bookProxies.first;
 
@@ -54,35 +56,40 @@ class BookCard extends WatchingWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Card(
-          color: Colors.white,
-          surfaceTintColor: Colors.white,
-          child: InkWell(
-            onLongPress: () async {
-              if (!di<HubSessionManager>().isAdmin) {
-                informationDialog(context, 'Keine Berechtigung',
-                    'Bücher können nur von Admins bearbeitet werden!');
-                return;
-              }
-              final bool? result = await confirmationDialog(
-                  context: context,
-                  title: 'Buch löschen',
-                  message:
-                      'Buch "${bookProxy.title}" wirklich löschen? ACHTUNG: Alle Ausleihen dieses Buchs werden werden ebenfalls gelöscht!');
-              if (result == true) {
-                await di<BookManager>().deleteLibraryBook(bookProxy);
-              }
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(top: 10, left: 15, right: 15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: InkWell(
-                      onLongPress: (di<HubSessionManager>().isAdmin)
-                          ? () {
+        color: Colors.white,
+        surfaceTintColor: Colors.white,
+        child: InkWell(
+          onLongPress: () async {
+            if (!di<HubSessionManager>().isAdmin) {
+              informationDialog(
+                context,
+                'Keine Berechtigung',
+                'Bücher können nur von Admins bearbeitet werden!',
+              );
+              return;
+            }
+            final bool? result = await confirmationDialog(
+              context: context,
+              title: 'Buch löschen',
+              message:
+                  'Buch "${bookProxy.title}" wirklich löschen? ACHTUNG: Alle Ausleihen dieses Buchs werden werden ebenfalls gelöscht!',
+            );
+            if (result == true) {
+              await di<BookManager>().deleteLibraryBook(bookProxy);
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.only(top: 10, left: 15, right: 15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: InkWell(
+                    onLongPress:
+                        (di<HubSessionManager>().isAdmin)
+                            ? () {
                               // Navigator.of(context).push(MaterialPageRoute(
                               //   builder: (ctx) => NewBook(
                               //     isEdit: true,
@@ -97,163 +104,169 @@ class BookCard extends WatchingWidget {
                               //   ),
                               // ));
                             }
-                          : () {},
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                            bookProxy.title,
-                            style: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
+                            : () {},
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(
-                          bookProxy.author,
+                          bookProxy.title,
                           style: const TextStyle(
-                              fontSize: 13, fontWeight: FontWeight.normal),
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  const Gap(5),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                ),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Column(
-                        children: [
-                          InkWell(
-                            onTap: () async {
-                              final File? file = await createImageFile(context);
-                              if (file == null) return;
-                              // TODO: Uncomment this when the API is ready ?
-                              // await di<BookManager>()
-                              //     .patchBookImage(file, bookProxy.isbn);
-                            },
-                            child: UnencryptedImageInCard(
-                              cacheKey: bookProxy.isbn.toString(),
-                              path: bookProxy.imagePath,
-                              size: 100,
-                            ),
-                          ),
-                          const Gap(10),
-                        ],
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 15, bottom: 8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  const Text('ISBN:'),
-                                  const Gap(10),
-                                  Text(
-                                    bookProxy.isbn.displayAsIsbn(),
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  const Text('LeseStufe:'),
-                                  const Gap(10),
-                                  Text(
-                                    bookProxy.readingLevel ??
-                                        ReadingLevel.notSet.value,
-                                    overflow: TextOverflow.fade,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Wrap(
-                                spacing: 2,
-                                children: [
-                                  const Text('Tags: '),
-                                  for (final tag in bookProxy.bookTags) ...[
-                                    const Gap(5),
-                                    Chip(
-                                      padding: const EdgeInsets.all(2),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      labelStyle:
-                                          AppStyles.filterItemsTextStyle,
-                                      label: Text(tag.name),
-                                      backgroundColor:
-                                          AppColors.backgroundColor,
-                                    ),
-                                  ],
-                                ],
-                              ),
-                              const Gap(10),
-                            ],
-                          ),
+                      Text(
+                        bookProxy.author,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.normal,
                         ),
                       ),
                     ],
                   ),
-                  ExpansionTile(
-                    tilePadding: const EdgeInsets.all(0),
-                    controller: descriptionTileController,
-                    title: const Text(
-                      'Beschreibung:',
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                ),
+                const Gap(5),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      children: [
+                        InkWell(
+                          onTap: () async {
+                            final File? file = await createImageFile(context);
+                            if (file == null) return;
+                            // TODO: Uncomment this when the API is ready ?
+                            // await di<BookManager>()
+                            //     .patchBookImage(file, bookProxy.isbn);
+                          },
+                          child: UnencryptedImageInCard(
+                            cacheKey: bookProxy.isbn.toString(),
+                            path: bookProxy.imagePath,
+                            size: 100,
+                          ),
+                        ),
+                        const Gap(10),
+                      ],
                     ),
-                    children: [
-                      InkWell(
-                        onTap: () async {
-                          final String? description = await longTextFieldDialog(
-                              title: 'Beschreibung',
-                              labelText: 'Beschreibung',
-                              initialValue: bookProxy.description,
-                              parentContext: context);
-                          di<BookManager>().updateBookProperty(
-                            isbn: bookProxy.isbn,
-                            libraryId: bookProxy.libraryId,
-                            description: description,
-                          );
-                        },
-                        child: Text(
-                          bookProxy.description,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.interactiveColor,
-                          ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 15, bottom: 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Text('ISBN:'),
+                                const Gap(10),
+                                Text(
+                                  bookProxy.isbn.displayAsIsbn(),
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                const Text('LeseStufe:'),
+                                const Gap(10),
+                                Text(
+                                  bookProxy.readingLevel ??
+                                      ReadingLevel.notSet.value,
+                                  overflow: TextOverflow.fade,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Wrap(
+                              spacing: 2,
+                              children: [
+                                const Text('Tags: '),
+                                for (final tag in bookProxy.bookTags) ...[
+                                  const Gap(5),
+                                  Chip(
+                                    padding: const EdgeInsets.all(2),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    labelStyle: AppStyles.filterItemsTextStyle,
+                                    label: Text(tag.name),
+                                    backgroundColor: AppColors.backgroundColor,
+                                  ),
+                                ],
+                              ],
+                            ),
+                            const Gap(10),
+                          ],
                         ),
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+                ExpansionTile(
+                  tilePadding: const EdgeInsets.all(0),
+                  controller: descriptionTileController,
+                  title: const Text(
+                    'Beschreibung:',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
-                  Column(
-                    children: bookProxies.map((book) {
-                      return LibraryBookCard(bookProxy: book);
-                    }).toList(),
-                  ),
-                  const Gap(10),
-                ],
-              ),
+                  children: [
+                    InkWell(
+                      onTap: () async {
+                        final String? description = await longTextFieldDialog(
+                          title: 'Beschreibung',
+                          labelText: 'Beschreibung',
+                          initialValue: bookProxy.description,
+                          parentContext: context,
+                        );
+                        di<BookManager>().updateBookProperty(
+                          isbn: bookProxy.isbn,
+                          libraryId: bookProxy.libraryId,
+                          description: description,
+                        );
+                      },
+                      child: Text(
+                        bookProxy.description,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: AppColors.interactiveColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  children:
+                      bookProxies.map((book) {
+                        return LibraryBookCard(bookProxy: book);
+                      }).toList(),
+                ),
+                const Gap(10),
+              ],
             ),
-          )),
+          ),
+        ),
+      ),
     );
   }
 }
