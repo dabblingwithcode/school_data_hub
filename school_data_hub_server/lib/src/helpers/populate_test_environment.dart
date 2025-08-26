@@ -80,23 +80,3 @@ Future<void> populateTestEnvironment(Session session) async {
     _log.severe('Error populating test environment: $e');
   }
 }
-
-List<DateTime> generateWeekdays(DateTime start, DateTime end) {
-  final List<DateTime> weekdays = [];
-
-  // Create a new DateTime starting at the first date
-  DateTime current = start;
-
-  // Loop until we reach or pass the end date
-  while (!current.isAfter(end)) {
-    // Check if it's a weekday (1-5 are Monday to Friday)
-    if (current.weekday >= 1 && current.weekday <= 5) {
-      weekdays.add(DateTime(current.year, current.month, current.day));
-    }
-
-    // Move to next day
-    current = current.add(const Duration(days: 1));
-  }
-
-  return weekdays;
-}

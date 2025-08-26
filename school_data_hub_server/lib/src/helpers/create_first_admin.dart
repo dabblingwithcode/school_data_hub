@@ -10,9 +10,8 @@ Future<User?> createFirstAdmin(
 ) async {
   //- Create test admin
 
+  // For email authentication, we need to create a user with email/password
   final adminEmail = 'admin';
-
-  // For email authentication, you need to create a user with email/password
   final adminPassword = 'admin'; // Set a secure password in production
 
   // Create the userinfo

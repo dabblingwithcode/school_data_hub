@@ -49,7 +49,7 @@ class AdminEndpoint extends Endpoint {
     bool isAdmin = false;
 
     for (final scope in scopeNames) {
-      if (scope == 'admin') {
+      if (scope.contains('admin')) {
         isAdmin = true;
       }
     }
