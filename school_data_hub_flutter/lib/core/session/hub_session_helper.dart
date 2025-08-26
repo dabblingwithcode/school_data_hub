@@ -25,7 +25,7 @@ class SessionHelper {
     return;
   }
 
-  static void logoutAndDeleteAllInstanceData() async {
+  static Future<void> logoutAndDeleteAllInstanceData() async {
     // TODO: Check if we really considered everything here
     _log.info('Deleting all instance data...');
     await di<PupilIdentityManager>().deleteAllPupilIdentities();
@@ -38,8 +38,10 @@ class SessionHelper {
 
     await cacheManager.emptyCache();
 
-    di<NotificationService>()
-        .showSnackBar(NotificationType.success, 'Alle Daten gelöscht!');
+    di<NotificationService>().showSnackBar(
+      NotificationType.success,
+      'Alle Daten gelöscht!',
+    );
   }
 
   static bool isAuthorized(String createdBy) {

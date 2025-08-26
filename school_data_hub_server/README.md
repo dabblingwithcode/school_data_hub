@@ -13,3 +13,7 @@ Then you can start the Serverpod server.
 When you are finished, you can shut down Serverpod with `Ctrl-C`, then stop Postgres and Redis.
 
     docker compose stop
+
+#### Reach docker container from the cli
+list containers: docker ps
+docker exec -it <mycontainer> ash

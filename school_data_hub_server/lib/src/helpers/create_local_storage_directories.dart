@@ -8,10 +8,9 @@ final _log = Logger('CreateLocalStorageDirectories');
 void createLocalStorageDirectories() {
   // Get the current working directory
   final serverDirPath = Directory.current.path;
-  // Assuming the project root is one level up from the server directory
-  final projectRootPath = p.dirname(serverDirPath);
+
   // Create the directories for local storage
-  final storageDir = Directory(p.join(projectRootPath, 'storage'));
+  final storageDir = Directory(p.join(serverDirPath, 'storage'));
 
   // If the storage directory does not exist,
   // the subdirectories do not exist either
@@ -19,7 +18,8 @@ void createLocalStorageDirectories() {
     _log.fine('Storage directory [${storageDir.path}] already exists.');
   } else {
     _log.warning(
-        'Storage directory not found in [${storageDir.path}] - creating...');
+      'Storage directory not found in [${storageDir.path}] - creating...',
+    );
     storageDir.createSync(recursive: true);
     final publicDir = Directory(p.join(storageDir.path, 'public'));
     final serverpodDir = Directory(p.join(publicDir.path, 'serverpod'));
@@ -40,6 +40,7 @@ void createLocalStorageDirectories() {
     documentsDir.createSync(recursive: true);
     evertsDir.createSync(recursive: true);
     _log.fine(
-        'Storage directories created successfully in [${storageDir.path}]');
+      'Storage directories created successfully in [${storageDir.path}]',
+    );
   }
 }

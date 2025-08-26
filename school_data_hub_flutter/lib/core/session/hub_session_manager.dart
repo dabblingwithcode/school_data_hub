@@ -122,8 +122,8 @@ class HubSessionManager with ChangeNotifier {
     _log.info(' Running in mode: ${_envManager.activeEnv!.runMode.name}');
 
     await _loadUserInfoFromStorage();
-
-    return refreshSession();
+    final sessionRefreshed = await refreshSession();
+    return sessionRefreshed;
   }
 
   /// Signs the user out from their devices.
@@ -305,13 +305,13 @@ class HubSessionManager with ChangeNotifier {
         SerializationManager.encode(signedInUser),
       );
 
-      // We can start now the managers dependent on authentication
       _user = await _client.user.getCurrentUser();
 
       notifyListeners();
       _log.fine(
         'User fetched in _handleAuthCallResultInStorage: ${_user?.toJson()}',
       );
+      // We can start now the managers dependent on authentication
       await DiManager.registerManagersDependingOnAuthedSession();
     }
   }

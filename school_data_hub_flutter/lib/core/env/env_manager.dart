@@ -86,26 +86,28 @@ class EnvManager with ChangeNotifier {
   /// We nag with a notification until all data is populated.
   PopulatedServerSessionData _populatedEnvServerData =
       PopulatedServerSessionData(
-          schoolSemester: false,
-          schooldays: false,
-          competences: false,
-          supportCategories: false);
+        schoolSemester: false,
+        schooldays: false,
+        competences: false,
+        supportCategories: false,
+      );
 
   PopulatedServerSessionData get populatedEnvServerData =>
       _populatedEnvServerData;
 
-  void setPopulatedEnvServerData(
-      {bool? schoolSemester,
-      bool? schooldays,
-      bool? competences,
-      bool? supportCategories}) {
+  void setPopulatedEnvServerData({
+    bool? schoolSemester,
+    bool? schooldays,
+    bool? competences,
+    bool? supportCategories,
+  }) {
     final data = _populatedEnvServerData.copyWith(
-        schoolSemester:
-            schoolSemester ?? _populatedEnvServerData.schoolSemester,
-        schooldays: schooldays ?? _populatedEnvServerData.schooldays,
-        competences: competences ?? _populatedEnvServerData.competences,
-        supportCategories:
-            supportCategories ?? _populatedEnvServerData.supportCategories);
+      schoolSemester: schoolSemester ?? _populatedEnvServerData.schoolSemester,
+      schooldays: schooldays ?? _populatedEnvServerData.schooldays,
+      competences: competences ?? _populatedEnvServerData.competences,
+      supportCategories:
+          supportCategories ?? _populatedEnvServerData.supportCategories,
+    );
     _populatedEnvServerData = data;
   }
 
@@ -140,19 +142,19 @@ class EnvManager with ChangeNotifier {
     _activeEnv =
         environmentsMapWithDefaultServerEnv.environmentsMap[_defaultEnv];
     notifyListeners();
-    _log.info(
-      'Default Environment set: $_defaultEnv',
-    );
+    _log.info('Default Environment set: $_defaultEnv');
 
     _envIsReady.value = true;
     await DiManager.registerManagersDependingOnActiveEnv();
     setDependentManagersRegistered(true);
 
     if (await HubSecureStorage().containsKey(storageKeyForMatrixCredentials)) {
-      final matrixCredentialsJson =
-          await HubSecureStorage().getString(storageKeyForMatrixCredentials);
+      final matrixCredentialsJson = await HubSecureStorage().getString(
+        storageKeyForMatrixCredentials,
+      );
       final matrixCredentials = MatrixCredentials.fromJson(
-          json.decode(matrixCredentialsJson!) as Map<String, dynamic>);
+        json.decode(matrixCredentialsJson!) as Map<String, dynamic>,
+      );
       DiManager.registerMatrixManagers(matrixCredentials);
     }
     return;
@@ -168,27 +170,29 @@ class EnvManager with ChangeNotifier {
 
   void setDependentManagersRegistered(bool value) {
     _dependentMangagersRegistered = value;
-    _log.info(
-      'dependentManagersRegistered: $value',
-    );
+    _log.info('dependentManagersRegistered: $value');
   }
 
   Future<EnvsInStorage?> _environmentsInStorage() async {
-    bool environmentsInStorage =
-        await HubSecureStorage().containsKey(_storageKeyForEnvironments);
+    bool environmentsInStorage = await HubSecureStorage().containsKey(
+      _storageKeyForEnvironments,
+    );
 
     if (environmentsInStorage == true) {
-      final String? storedEnvironmentsAsString =
-          await HubSecureStorage().getString(_storageKeyForEnvironments);
+      final String? storedEnvironmentsAsString = await HubSecureStorage()
+          .getString(_storageKeyForEnvironments);
 
       try {
         final environmentsInStorage = EnvsInStorage.fromJson(
-            json.decode(storedEnvironmentsAsString!) as Map<String, dynamic>);
+          json.decode(storedEnvironmentsAsString!) as Map<String, dynamic>,
+        );
 
         return environmentsInStorage;
       } catch (e) {
         _log.severe(
-            'Error reading env from secureStorage: $e', StackTrace.current);
+          'Error reading env from secureStorage: $e',
+          StackTrace.current,
+        );
 
         _log.warning('deleting faulty environments from secure storage');
 
@@ -204,14 +208,16 @@ class EnvManager with ChangeNotifier {
   // set the environment from a string
   void importNewEnv(String envAsString) async {
     // decode the json string to an Env object
-    final Env env =
-        Env.fromJson(json.decode(envAsString) as Map<String, dynamic>);
+    final Env env = Env.fromJson(
+      json.decode(envAsString) as Map<String, dynamic>,
+    );
 
     // add the env to the environments map
     _environments = {..._environments, env.serverName: env};
 
     _log.info(
-        'Environment ${env.serverName} added to environments map in memory');
+      'Environment ${env.serverName} added to environments map in memory',
+    );
 
     // the modified environments map will be stored
     // in the [activateEnv] method
@@ -244,7 +250,9 @@ class EnvManager with ChangeNotifier {
     // The active environment changed, we need to update
     // this information in storage
     final updatedEnvsForStorage = EnvsInStorage(
-        defaultEnv: _activeEnv!.serverName, environmentsMap: _environments);
+      defaultEnv: _activeEnv!.serverName,
+      environmentsMap: _environments,
+    );
 
     final String jsonEnvs = jsonEncode(updatedEnvsForStorage.toJson());
 
@@ -261,7 +269,9 @@ class EnvManager with ChangeNotifier {
     // The active environment changed, we need to update
     // this information in storage
     final updatedEnvsForStorage = EnvsInStorage(
-        defaultEnv: _activeEnv!.serverName, environmentsMap: _environments);
+      defaultEnv: _activeEnv!.serverName,
+      environmentsMap: _environments,
+    );
 
     final String jsonEnvs = jsonEncode(updatedEnvsForStorage);
 
@@ -292,8 +302,15 @@ class EnvManager with ChangeNotifier {
     // await propagateNewEnv();
 
     // notify the user that the environment has been activated
-    _notificationService.showSnackBar(NotificationType.success,
-        'Umgebung ${_activeEnv!.serverName} aktiviert!');
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Umgebung ${_activeEnv!.serverName} aktiviert!',
+    );
+  }
+
+  Future<void> deleteNotActivatedEnv(Env env) async {
+    await _environments.remove(env.serverName);
+    return;
   }
 
   Future<void> deleteEnv() async {
@@ -301,7 +318,7 @@ class EnvManager with ChangeNotifier {
 
     // delete _env.value from _envs
 
-    _environments.remove(_activeEnv!.serverName);
+    await _environments.remove(_activeEnv!.serverName);
 
     // write _envs to secure storage
 
@@ -317,8 +334,10 @@ class EnvManager with ChangeNotifier {
       _defaultEnv = _environments.keys.last;
       _log.info('Env $deletedEnvironment New defaultEnv: $_defaultEnv');
 
-      _notificationService.showSnackBar(NotificationType.success,
-          'Schulschlüssel für $deletedEnvironment gelöscht!');
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Schulschlüssel für $deletedEnvironment gelöscht!',
+      );
 
       // reset the managers depending on the active environment
       DiManager.resetActiveEnvDependentManagers();
@@ -336,9 +355,9 @@ class EnvManager with ChangeNotifier {
     }
   }
 
-//   Future<void> propagateNewEnv() async {
-//     final _pupilIdentityManager = di<PupilIdentityManager>();
-//     // TODO: implement this if needed
-//     await _pupilIdentityManager.getPupilIdentitiesForEnv();
-//   }
+  //   Future<void> propagateNewEnv() async {
+  //     final _pupilIdentityManager = di<PupilIdentityManager>();
+  //     // TODO: implement this if needed
+  //     await _pupilIdentityManager.getPupilIdentitiesForEnv();
+  //   }
 }
