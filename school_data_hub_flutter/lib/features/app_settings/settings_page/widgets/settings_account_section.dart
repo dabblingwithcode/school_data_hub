@@ -45,6 +45,10 @@ class SettingsAccountSection extends AbstractSettingsSection with WatchItMixin {
           ),
           trailing: null,
         ),
+        SettingsTile(
+          leading: const Icon(Icons.build_rounded),
+          title: Text('Ist Tester: ${isTester ? "Ja" : "Nein"}'),
+        ),
         if (isTester)
           SettingsTile.navigation(
             // onPressed: (context) {

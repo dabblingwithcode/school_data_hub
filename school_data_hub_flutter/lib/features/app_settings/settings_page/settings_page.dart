@@ -5,6 +5,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:school_data_hub_flutter/core/updater/shorebird_update_manager.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/widgets/settings_account_section.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/widgets/settings_admin_section.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/widgets/settings_session_section.dart';
@@ -58,6 +59,12 @@ class SettingsPage extends StatelessWidget {
                   SettingsTile(
                     leading: const Icon(Icons.build_rounded),
                     title: Text('Build: ${envManager.packageInfo.buildNumber}'),
+                  ),
+                  SettingsTile(
+                    leading: const Icon(Icons.build_rounded),
+                    title: Text(
+                      'Patch level: ${di<ShorebirdUpdateManager>().currentPatch}',
+                    ),
                   ),
                   SettingsTile.navigation(
                     leading: const Icon(Icons.info_rounded),

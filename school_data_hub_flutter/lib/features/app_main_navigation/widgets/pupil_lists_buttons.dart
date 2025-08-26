@@ -92,18 +92,19 @@ class PupilListButtons extends WatchingWidget {
           ),
           buttonText: locale.specialInfo,
         ),
-        MainMenuButton(
-          destinationPage: const OgsListPage(),
-          buttonIcon: Text(
-            locale.allDayCare,
-            style: const TextStyle(
-              fontSize: 35,
-              color: AppColors.gridViewColor,
-              fontWeight: FontWeight.bold,
+        if (di<HubSessionManager>().user!.userFlags.isTester)
+          MainMenuButton(
+            destinationPage: const OgsListPage(),
+            buttonIcon: Text(
+              locale.allDayCare,
+              style: const TextStyle(
+                fontSize: 35,
+                color: AppColors.gridViewColor,
+                fontWeight: FontWeight.bold,
+              ),
             ),
+            buttonText: locale.allDayCare,
           ),
-          buttonText: locale.allDayCare,
-        ),
         if (matrixSessionConfigured)
           MainMenuButton(
             destinationPage: const MatrixUsersListPage(),
