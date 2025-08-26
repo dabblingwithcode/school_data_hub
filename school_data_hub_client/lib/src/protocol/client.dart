@@ -106,7 +106,9 @@ class EndpointAdmin extends _i1.EndpointRef {
     required String password,
     required _i4.Role role,
     required int timeUnits,
+    required int reliefTimeUnits,
     required List<String> scopeNames,
+    required bool isTester,
   }) =>
       caller.callServerEndpoint<_i3.User>(
         'admin',
@@ -118,7 +120,9 @@ class EndpointAdmin extends _i1.EndpointRef {
           'password': password,
           'role': role,
           'timeUnits': timeUnits,
+          'reliefTimeUnits': reliefTimeUnits,
           'scopeNames': scopeNames,
+          'isTester': isTester,
         },
       );
 

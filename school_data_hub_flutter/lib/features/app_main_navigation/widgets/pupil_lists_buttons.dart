@@ -63,24 +63,26 @@ class PupilListButtons extends WatchingWidget {
           ),
           buttonText: locale.pupilCredit,
         ),
-        MainMenuButton(
-          destinationPage: const LearningPupilListPage(),
-          buttonIcon: const Icon(
-            Icons.lightbulb,
-            size: 50,
-            color: AppColors.gridViewColor,
+        if (di<HubSessionManager>().user!.userFlags.isTester)
+          MainMenuButton(
+            destinationPage: const LearningPupilListPage(),
+            buttonIcon: const Icon(
+              Icons.lightbulb,
+              size: 50,
+              color: AppColors.gridViewColor,
+            ),
+            buttonText: locale.learningLists,
           ),
-          buttonText: locale.learningLists,
-        ),
-        MainMenuButton(
-          destinationPage: const LearningSupportListPage(),
-          buttonIcon: const Icon(
-            Icons.support_rounded,
-            size: 50,
-            color: AppColors.gridViewColor,
+        if (di<HubSessionManager>().user!.userFlags.isTester)
+          MainMenuButton(
+            destinationPage: const LearningSupportListPage(),
+            buttonIcon: const Icon(
+              Icons.support_rounded,
+              size: 50,
+              color: AppColors.gridViewColor,
+            ),
+            buttonText: locale.supportLists,
           ),
-          buttonText: locale.supportLists,
-        ),
         MainMenuButton(
           destinationPage: const SpecialInfoListPage(),
           buttonIcon: const Icon(

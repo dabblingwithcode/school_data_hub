@@ -11,7 +11,7 @@ PupilData generatePupilfromExternalAdminConsoleData(String importedLine) {
   }
   // Create a PupilData object from the data
   return PupilData(
-      active: true,
+      status: PupilStatus.active,
       internalId: int.parse(data[0]),
       preSchoolMedical: _defaultPreSchoolMedical,
       publicMediaAuth: _publicMediaAuth,

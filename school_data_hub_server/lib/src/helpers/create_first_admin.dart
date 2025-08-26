@@ -34,8 +34,10 @@ Future<User?> createFirstAdmin(
       userInfoId: adminUser.id!,
       role: Role.admin,
       timeUnits: 28,
+      reliefTimeUnits: 0,
       credit: 50,
       userFlags: UserFlags(
+          isTester: true,
           confirmedTermsOfUse: false,
           confirmedPrivacyPolicy: false,
           changedPassword: false,

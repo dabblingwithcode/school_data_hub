@@ -373,7 +373,7 @@ CREATE TABLE "pupil_book_lending" (
 --
 CREATE TABLE "pupil_data" (
     "id" bigserial PRIMARY KEY,
-    "active" boolean NOT NULL,
+    "status" text NOT NULL,
     "internalId" bigint NOT NULL,
     "preSchoolMedicalId" bigint,
     "kindergardenId" bigint,
@@ -396,7 +396,7 @@ CREATE TABLE "pupil_data" (
 );
 
 -- Indexes
-CREATE INDEX "pupil_data_active_idx" ON "pupil_data" USING btree ("active", "internalId");
+CREATE INDEX "pupil_data_status_idx" ON "pupil_data" USING btree ("status", "internalId");
 CREATE UNIQUE INDEX "pupil_data_internal_id_idx" ON "pupil_data" USING btree ("internalId");
 
 --
@@ -453,6 +453,22 @@ CREATE TABLE "scheduled_lesson" (
     "modifiedAt" timestamp without time zone NOT NULL,
     "recordtest" json,
     "_roomScheduledlessonsRoomId" bigint
+);
+
+--
+-- ACTION CREATE TABLE
+--
+CREATE TABLE "school_data" (
+    "id" bigserial PRIMARY KEY,
+    "name" text NOT NULL,
+    "officialName" text NOT NULL,
+    "address" text NOT NULL,
+    "schoolNumber" text NOT NULL,
+    "telephoneNumber" text NOT NULL,
+    "email" text NOT NULL,
+    "website" text NOT NULL,
+    "logoId" bigint,
+    "officialSealId" bigint
 );
 
 --
@@ -615,6 +631,7 @@ CREATE TABLE "user" (
     "userInfoId" bigint NOT NULL,
     "role" text NOT NULL,
     "timeUnits" bigint NOT NULL,
+    "reliefTimeUnits" bigint NOT NULL,
     "pupilsAuth" json,
     "credit" bigint NOT NULL,
     "userFlags" json NOT NULL
@@ -1361,6 +1378,22 @@ ALTER TABLE ONLY "scheduled_lesson"
 --
 -- ACTION CREATE FOREIGN KEY
 --
+ALTER TABLE ONLY "school_data"
+    ADD CONSTRAINT "school_data_fk_0"
+    FOREIGN KEY("logoId")
+    REFERENCES "hub_document"("id")
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+ALTER TABLE ONLY "school_data"
+    ADD CONSTRAINT "school_data_fk_1"
+    FOREIGN KEY("officialSealId")
+    REFERENCES "hub_document"("id")
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+
+--
+-- ACTION CREATE FOREIGN KEY
+--
 ALTER TABLE ONLY "schoolday"
     ADD CONSTRAINT "schoolday_fk_0"
     FOREIGN KEY("schoolSemesterId")
@@ -1557,9 +1590,9 @@ ALTER TABLE ONLY "serverpod_query_log"
 -- MIGRATION VERSION FOR school_data_hub
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('school_data_hub', '20250822190759616', now())
+    VALUES ('school_data_hub', '20250826100459046', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20250822190759616', "timestamp" = now();
+    DO UPDATE SET "version" = '20250826100459046', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

@@ -304,9 +304,19 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<int>(),
               nullable: false,
             ),
+            'reliefTimeUnits': _i1.ParameterDescription(
+              name: 'reliefTimeUnits',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
             'scopeNames': _i1.ParameterDescription(
               name: 'scopeNames',
               type: _i1.getType<List<String>>(),
+              nullable: false,
+            ),
+            'isTester': _i1.ParameterDescription(
+              name: 'isTester',
+              type: _i1.getType<bool>(),
               nullable: false,
             ),
           },
@@ -322,7 +332,9 @@ class Endpoints extends _i1.EndpointDispatch {
             password: params['password'],
             role: params['role'],
             timeUnits: params['timeUnits'],
+            reliefTimeUnits: params['reliefTimeUnits'],
             scopeNames: params['scopeNames'],
+            isTester: params['isTester'],
           ),
         ),
         'deleteUser': _i1.MethodConnector(

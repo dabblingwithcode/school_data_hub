@@ -47,20 +47,24 @@ class UserManager {
     required String email,
 
     required int timeUnits,
+    required int reliefTimeUnits,
     required int credit,
     required String contact,
     required List<String> scopeNames,
     required Role role,
+    required bool isTester,
     String? tutoring,
   }) async {
-    final User user = await _client.admin.createUser(
+    await _client.admin.createUser(
       userName: userName,
       fullName: fullName,
       email: email,
       password: password,
       role: role,
       timeUnits: timeUnits,
+      reliefTimeUnits: 0,
       scopeNames: scopeNames,
+      isTester: isTester,
     );
     final userWithDetails = await _client.user.getCurrentUser();
 

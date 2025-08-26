@@ -1,0 +1,13 @@
+class: SchoolData
+table: school_data
+fields:
+  name: String
+  officialName: String
+  address: String
+  schoolNumber: String
+  telephoneNumber: String
+  email: String
+  website: String
+  logo: HubDocument?, relation(optional)
+  officialSeal: HubDocument?, relation(optional)
+  

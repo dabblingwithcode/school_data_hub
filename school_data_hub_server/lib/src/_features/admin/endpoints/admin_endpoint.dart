@@ -27,7 +27,9 @@ class AdminEndpoint extends Endpoint {
     required String password,
     required Role role,
     required int timeUnits,
+    required int reliefTimeUnits,
     required List<String> scopeNames,
+    required bool isTester,
   }) async {
     session.log('Creating user: $userName, $email');
     final UserInfo? userInfo =
@@ -43,12 +45,22 @@ class AdminEndpoint extends Endpoint {
     await auth.UserInfo.db.updateRow(session, userInfo);
 
     // Convert string scopes to Scope objects
-    final scopes = scopeNames.map((name) => Scope(name)).toSet();
+    // TODO: fix this when we use more scopes
+    bool isAdmin = false;
 
+    for (final scope in scopeNames) {
+      if (scope == 'admin') {
+        isAdmin = true;
+      }
+    }
+    // Update scopes if provided
+    await auth.Users.updateUserScopes(
+        session, userInfo.id!, isAdmin ? {Scope.admin} : {});
     // Create a new User object and insert it into the database
     final newUser = User(
       userInfoId: userInfo.id!,
       userFlags: UserFlags(
+        isTester: isTester,
         confirmedTermsOfUse: false,
         confirmedPrivacyPolicy: false,
         changedPassword: false,
@@ -57,13 +69,11 @@ class AdminEndpoint extends Endpoint {
       pupilsAuth: {},
       role: role,
       timeUnits: timeUnits,
+      reliefTimeUnits: reliefTimeUnits,
       credit: 50,
     );
 
     await User.db.insertRow(session, newUser);
-
-    // Update scopes if provided
-    await auth.Users.updateUserScopes(session, userInfo.id!, scopes);
 
     return newUser;
   }
@@ -75,7 +85,7 @@ class AdminEndpoint extends Endpoint {
       throw Exception('User not found.');
     }
 
-    // TODO; for now no easy way to delete user from all tables, so just set blocked to true
+    // TODO; for now no flow to delete user from all tables, so just set blocked to true
     // await session.db.deleteRow(user);
     user.blocked = true;
   }
@@ -127,13 +137,12 @@ class AdminEndpoint extends Endpoint {
     if (extension != 'txt' && extension != 'csv') {
       throw Exception('File is not a compatible format!');
     }
-
-    // Decode bytes to string (UTF-8 is common, but you can use other encodings)
+    // read the file content
     final content = await convertFileToContentString(session, filePath);
 
     // get all active pupils from the database and create a list
-    final activePupils =
-        await PupilData.db.find(session, where: (t) => t.active.equals(true));
+    final activePupils = await PupilData.db
+        .find(session, where: (t) => t.status.equals(PupilStatus.active));
 
     // we monitor the pupils that we haven't processed yet
     final List<PupilData> unprocessedPupilsList = List.from(activePupils);
@@ -180,7 +189,7 @@ class AdminEndpoint extends Endpoint {
         );
         if (inactivePupil != null) {
           // If the pupil exists, we just activate it and update the after school care status
-          inactivePupil.active = true;
+          inactivePupil.status = PupilStatus.active;
           inactivePupil.afterSchoolCare =
               line.split(',')[1] == 'true' ? AfterSchoolCare() : null;
           await session.db.updateRow(inactivePupil);
@@ -194,7 +203,7 @@ class AdminEndpoint extends Endpoint {
     // if there are unprocessed pupils, they are not active in the school data system
     // we set them to inactive
     for (final pupil in unprocessedPupilsList) {
-      pupil.active = false;
+      pupil.status = PupilStatus.inactive;
       await session.db.updateRow(pupil);
     }
 

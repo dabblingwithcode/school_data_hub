@@ -5,6 +5,7 @@ fields:
   userInfo: module:auth:UserInfo?, relation(onDelete=Cascade)
   role: Role
   timeUnits: int
+  reliefTimeUnits: int  
   pupilsAuth: Set<int>?
   credit: int
   userFlags: UserFlags

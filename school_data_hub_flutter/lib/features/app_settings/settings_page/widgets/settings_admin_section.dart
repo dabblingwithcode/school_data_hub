@@ -17,7 +17,7 @@ import 'package:school_data_hub_flutter/features/matrix/users/presentation/pupil
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_page/new_school_semester_page.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_page/schooldays_calendar_page/schooldays_calendar_page.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/create_user_page.dart';
+import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_page.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/user_list/user_list_page.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -177,15 +177,7 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
             );
           },
         ),
-        SettingsTile.navigation(
-          leading: const Icon(Icons.bug_report_rounded),
-          title: const Text('App Updates überprüfen'),
-          onPressed: (context) {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (ctx) => const CheckForUpdatesPage()),
-            );
-          },
-        ),
+
         SettingsTile.navigation(
           onPressed: (context) async {
             final confirm = await confirmationDialog(

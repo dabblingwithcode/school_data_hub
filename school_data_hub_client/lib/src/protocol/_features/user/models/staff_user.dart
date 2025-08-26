@@ -21,6 +21,7 @@ abstract class User implements _i1.SerializableModel {
     this.userInfo,
     required this.role,
     required this.timeUnits,
+    required this.reliefTimeUnits,
     this.pupilsAuth,
     required this.credit,
     required this.userFlags,
@@ -32,6 +33,7 @@ abstract class User implements _i1.SerializableModel {
     _i2.UserInfo? userInfo,
     required _i3.Role role,
     required int timeUnits,
+    required int reliefTimeUnits,
     Set<int>? pupilsAuth,
     required int credit,
     required _i4.UserFlags userFlags,
@@ -47,6 +49,7 @@ abstract class User implements _i1.SerializableModel {
               (jsonSerialization['userInfo'] as Map<String, dynamic>)),
       role: _i3.Role.fromJson((jsonSerialization['role'] as String)),
       timeUnits: jsonSerialization['timeUnits'] as int,
+      reliefTimeUnits: jsonSerialization['reliefTimeUnits'] as int,
       pupilsAuth: jsonSerialization['pupilsAuth'] == null
           ? null
           : _i1.SetJsonExtension.fromJson(
@@ -71,6 +74,8 @@ abstract class User implements _i1.SerializableModel {
 
   int timeUnits;
 
+  int reliefTimeUnits;
+
   Set<int>? pupilsAuth;
 
   int credit;
@@ -86,6 +91,7 @@ abstract class User implements _i1.SerializableModel {
     _i2.UserInfo? userInfo,
     _i3.Role? role,
     int? timeUnits,
+    int? reliefTimeUnits,
     Set<int>? pupilsAuth,
     int? credit,
     _i4.UserFlags? userFlags,
@@ -98,6 +104,7 @@ abstract class User implements _i1.SerializableModel {
       if (userInfo != null) 'userInfo': userInfo?.toJson(),
       'role': role.toJson(),
       'timeUnits': timeUnits,
+      'reliefTimeUnits': reliefTimeUnits,
       if (pupilsAuth != null) 'pupilsAuth': pupilsAuth?.toJson(),
       'credit': credit,
       'userFlags': userFlags.toJson(),
@@ -119,6 +126,7 @@ class _UserImpl extends User {
     _i2.UserInfo? userInfo,
     required _i3.Role role,
     required int timeUnits,
+    required int reliefTimeUnits,
     Set<int>? pupilsAuth,
     required int credit,
     required _i4.UserFlags userFlags,
@@ -128,6 +136,7 @@ class _UserImpl extends User {
           userInfo: userInfo,
           role: role,
           timeUnits: timeUnits,
+          reliefTimeUnits: reliefTimeUnits,
           pupilsAuth: pupilsAuth,
           credit: credit,
           userFlags: userFlags,
@@ -143,6 +152,7 @@ class _UserImpl extends User {
     Object? userInfo = _Undefined,
     _i3.Role? role,
     int? timeUnits,
+    int? reliefTimeUnits,
     Object? pupilsAuth = _Undefined,
     int? credit,
     _i4.UserFlags? userFlags,
@@ -154,6 +164,7 @@ class _UserImpl extends User {
           userInfo is _i2.UserInfo? ? userInfo : this.userInfo?.copyWith(),
       role: role ?? this.role,
       timeUnits: timeUnits ?? this.timeUnits,
+      reliefTimeUnits: reliefTimeUnits ?? this.reliefTimeUnits,
       pupilsAuth: pupilsAuth is Set<int>?
           ? pupilsAuth
           : this.pupilsAuth?.map((e0) => e0).toSet(),

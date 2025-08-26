@@ -8,8 +8,6 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profil
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/communication_content/pupil_profile_communication_content.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/credit/pupil_profile_credit_content.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/infos_content/pupil_profile_infos_content.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_content/pupil_profile_learning_content.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/pupil_profile_learning_support_content.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/school_list_content/pupil_school_lists_content_card.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/schoolday_events_content/pupil_profile_schoolday_events_content.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_profile_attendance_content.dart';
@@ -104,10 +102,10 @@ class PupilProfilePageContent extends WatchingWidget {
       return PupilSchoolListsContentCard(pupil: pupil);
     } else if (navState == ProfileNavigationState.authorization.value) {
       return PupilProfileAuthorizationContent(pupil: pupil);
-    } else if (navState == ProfileNavigationState.learningSupport.value) {
-      return PupilProfileLearningSupportContent(pupil: pupil);
-    } else if (navState == ProfileNavigationState.learning.value) {
-      return PupilLearningContent(pupil: pupil);
+      // } else if (navState == ProfileNavigationState.learningSupport.value) {
+      //   return PupilProfileLearningSupportContent(pupil: pupil);
+      // } else if (navState == ProfileNavigationState.learning.value) {
+      //   return PupilLearningContent(pupil: pupil);
     } else {
       return PupilProfileInfosContent(pupil: pupil);
     }

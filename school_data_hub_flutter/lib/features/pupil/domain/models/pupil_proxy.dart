@@ -117,7 +117,7 @@ class PupilProxy with ChangeNotifier {
   //- PUPIL DATA GETTERS
 
   int get pupilId => _pupilData.id!;
-  bool get active => _pupilData.active;
+  PupilStatus get active => _pupilData.status;
   int get internalId => _pupilData.internalId;
 
   // preschool related

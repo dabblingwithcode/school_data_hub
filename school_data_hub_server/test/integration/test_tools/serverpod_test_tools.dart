@@ -362,7 +362,9 @@ class _AdminEndpoint {
     required String password,
     required _i5.Role role,
     required int timeUnits,
+    required int reliefTimeUnits,
     required List<String> scopeNames,
+    required bool isTester,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -382,7 +384,9 @@ class _AdminEndpoint {
             'password': password,
             'role': role,
             'timeUnits': timeUnits,
+            'reliefTimeUnits': reliefTimeUnits,
             'scopeNames': scopeNames,
+            'isTester': isTester,
           }),
           serializationManager: _serializationManager,
         );

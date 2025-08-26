@@ -32,12 +32,16 @@ class CreateUserPage extends WatchingWidget {
       () => TextEditingController(),
     );
     final setAsAdmin = createOnce(() => ValueNotifier<bool>(false));
+    final setAsTester = createOnce(() => ValueNotifier<bool>(false));
     final role = createOnce(() => ValueNotifier<Role>(Role.notAssigned));
     void changeRole(Role? newRole) {
       role.value = newRole!;
     }
 
     final TextEditingController timeUnitsController = createOnce(
+      () => TextEditingController(),
+    );
+    final TextEditingController reliefTimeUnitsController = createOnce(
       () => TextEditingController(),
     );
     final TextEditingController creditController = createOnce(
@@ -47,6 +51,7 @@ class CreateUserPage extends WatchingWidget {
     //     createOnce(() => TextEditingController());
 
     final watchedSetAsAdmin = watch(setAsAdmin).value;
+    final watchedSetAsTester = watch(setAsTester).value;
     final watchedRole = watch(role).value;
     return Scaffold(
       appBar: AppBar(
@@ -128,6 +133,19 @@ class CreateUserPage extends WatchingWidget {
                       value: watchedSetAsAdmin,
                       onChanged: (bool? newValue) {
                         setAsAdmin.value = newValue ?? false;
+                      },
+                    ),
+                    const Text(
+                      'Ist Tester*in:',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Checkbox(
+                      value: watchedSetAsTester,
+                      onChanged: (bool? newValue) {
+                        setAsTester.value = newValue ?? false;
                       },
                     ),
                     const Gap(5),
@@ -250,6 +268,24 @@ class CreateUserPage extends WatchingWidget {
                         ),
                       ),
                     ),
+                    const Text(
+                      'EntlastungsStunden:',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Gap(5),
+                    Expanded(
+                      child: TextField(
+                        minLines: 1,
+                        maxLines: 1,
+                        controller: reliefTimeUnitsController,
+                        decoration: AppStyles.textFieldDecoration(
+                          labelText: 'EntlastungsStunden',
+                        ),
+                      ),
+                    ),
                   ],
                 ),
                 const Spacer(),
@@ -274,8 +310,11 @@ class CreateUserPage extends WatchingWidget {
                       password: passwordController.text,
                       role: watchedSetAsAdmin ? Role.admin : watchedRole,
                       timeUnits: int.tryParse(timeUnitsController.text) ?? 0,
+                      reliefTimeUnits:
+                          int.tryParse(reliefTimeUnitsController.text) ?? 0,
                       credit: int.tryParse(creditController.text) ?? 0,
                       contact: contactController.text,
+                      isTester: setAsTester.value,
                       scopeNames: watchedSetAsAdmin ? ['admin'] : ['standard'],
                     );
 
