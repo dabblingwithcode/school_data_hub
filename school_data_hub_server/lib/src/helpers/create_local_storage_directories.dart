@@ -6,10 +6,7 @@ import 'package:path/path.dart' as p;
 final _log = Logger('CreateLocalStorageDirectories');
 
 void createLocalStorageDirectories() {
-  IOSink? logSink;
-  // Configure file logging
   try {
-    logSink = _setupFileLogging();
     // Get the current working directory
     final serverDirPath = Directory.current.path;
     _log.fine('Current path is [$serverDirPath] .');
@@ -47,24 +44,20 @@ void createLocalStorageDirectories() {
         'Storage directories created successfully in [${storageDir.path}]',
       );
     }
-  } finally {
-    // Dispose of the log file stream
-    logSink?.flush();
-    logSink?.close();
-  }
+  } finally {}
 }
 
-IOSink _setupFileLogging() {
-  final logFile = File('storage_directories.log');
-  final logSink = logFile.openWrite(mode: FileMode.append);
+// IOSink _setupFileLogging() {
+//   final logFile = File('storage_directories.log');
+//   final logSink = logFile.openWrite(mode: FileMode.append);
 
-  Logger.root.onRecord.listen((record) {
-    if (record.loggerName == 'CreateLocalStorageDirectories') {
-      final logEntry =
-          '${record.time}: ${record.level.name}: ${record.message}\n';
-      logSink.write(logEntry);
-    }
-  });
+//   Logger.root.onRecord.listen((record) {
+//     if (record.loggerName == 'CreateLocalStorageDirectories') {
+//       final logEntry =
+//           '${record.time}: ${record.level.name}: ${record.message}\n';
+//       logSink.write(logEntry);
+//     }
+//   });
 
-  return logSink;
-}
+//   return logSink;
+// }
