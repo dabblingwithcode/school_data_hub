@@ -11,7 +11,7 @@
 # Configuration for the main API server.
 apiServer:
   port: 8080
-  publicHost: stagingdatahubserverpod.hermannschule.de
+  publicHost: stagingdatahub.hermannschule.de
   publicPort: 443
   publicScheme: https
   maxRequestSize: 10485760 # 10 MB in bytes
@@ -19,7 +19,7 @@ apiServer:
 # Configuration for the Insights server.
 insightsServer:
   port: 8081
-  publicHost: stagingdatahubinsights.hermannschule.de
+  publicHost: staginginsights.hermannschule.de
   publicPort: 443
   publicScheme: https
 
@@ -37,7 +37,7 @@ webServer:
 database:
   host: database.private-staging.examplepod.com
   port: 5432
-  name: serverpod
+  name: serverpodstaging
   user: postgres
   requireSsl: true
 
