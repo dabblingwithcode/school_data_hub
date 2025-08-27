@@ -22,7 +22,7 @@ env:
   # organization. Maybe this part "../../../../../../templates/serverpod_templates/github/workflows"could be included in the make file and asked
   # the user what they want to use.
   # TODO Update with your GitHub username or organization
-  GHCR_ORG: "<ORGANIZATION>"
+  GHCR_ORG: "dabblingwithcode"
 
 jobs:
   build-and-push-image:
