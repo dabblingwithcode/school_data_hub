@@ -37,6 +37,10 @@ class PupilIdentityManager {
 
   Map<int, PupilIdentity> _pupilIdentities = {};
 
+  //-TODO URGENT: add a value notifier for the last update value
+  //- add endpoint to get the value from the server
+  //- compare values and notify if the local value is older than the server value
+
   final _groups = ValueNotifier<Set<String>>({});
   ValueListenable<Set<String>> get groups => _groups;
 

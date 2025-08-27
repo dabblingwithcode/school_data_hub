@@ -53,6 +53,7 @@ To reduce the workload on the machine, we do not use Redis in this deployment.
 - [Using the Serverpod Insights app](#using-the-serverpod-insights-app)
 - [Connecting your Flutter client](#connecting-your-flutter-client)
 - [Connecting to the Database using DBeaver](#connecting-to-the-database-using-dbeaver)
+- [Multi-Environment Setup (Staging + Production)](#multi-environment-setup-staging--production)
 
 ## Preparing the server
 
@@ -370,3 +371,192 @@ following example:
    - **User name:** The database user you set in the [repository secrets](#adding-the-secrets-to-the-repository)
    - **Password:** The database password you set in the [repository secrets](#adding-the-secrets-to-the-repository)
 9. Test the connection and save it.
+
+---
+
+## Multi-Environment Setup (Staging + Production)
+
+The Serverpod VPS generator now supports multiple deployment environments for a **omplete Development Pipeline**.
+
+### Overview
+
+- **Production Environment**: For live production deployments (main branch)
+- **Staging Environment**: For testing and staging deployments (develop/staging branch)
+
+### Commands
+
+#### Production Environment
+```bash
+serverpod_vps_production
+```
+or
+```bash
+serverpod_vps  # Default behavior
+```
+
+#### Staging Environment
+```bash
+serverpod_vps_staging
+```
+
+### Generated Files
+
+#### Production Environment
+- `.github/workflows/deployment-docker-production.yml`
+- `{{school_data_hub}}_server/docker-compose.production.yaml`
+- `{{school_data_hub}}_server/Dockerfile.prod`
+
+#### Staging Environment
+- `.github/workflows/deployment-docker-staging.yml`
+- `{{school_data_hub}}_server/docker-compose.staging.yaml`
+- `{{school_data_hub}}_server/Dockerfile.prod` (shared)
+
+### GitHub Secrets Configuration for Multi-Environment
+
+You'll need to configure the following secrets in your GitHub repository:
+
+#### Shared Secrets
+- `SSH_PRIVATE_KEY`: SSH private key for connecting to both VPS servers
+- `SSH_USER`: SSH username for connecting to VPS servers
+- `PAT_GITHUB`: GitHub personal access token
+- `PAT_USER_GITHUB`: GitHub username for the PAT
+
+#### Production Secrets (Legacy Names - No Prefix)
+- `SSH_HOST`: Production VPS hostname/IP (for backward compatibility)
+- `SERVERPOD_DATABASE_NAME`: Production database name
+- `SERVERPOD_DATABASE_USER`: Production database username
+- `SERVERPOD_DATABASE_PASSWORD`: Production database password
+- `SERVERPOD_API_SERVER_PUBLIC_HOST`: Production API server hostname
+- `SERVERPOD_INSIGHTS_SERVER_PUBLIC_HOST`: Production Insights server hostname
+- `SERVERPOD_WEB_SERVER_PUBLIC_HOST`: Production Web server hostname
+- `SERVERPOD_MAX_REQUEST_SIZE`: Production max request size
+- `SERVERPOD_SERVICE_SECRET`: Production service secret (min 20 chars)
+
+#### Staging Secrets
+- `SSH_STAGING_HOST`: Staging VPS hostname/IP
+- `SERVERPOD_STAGING_DATABASE_NAME`: Staging database name
+- `SERVERPOD_STAGING_DATABASE_USER`: Staging database username
+- `SERVERPOD_STAGING_DATABASE_PASSWORD`: Staging database password
+- `SERVERPOD_STAGING_API_SERVER_PUBLIC_HOST`: Staging API server hostname
+- `SERVERPOD_STAGING_INSIGHTS_SERVER_PUBLIC_HOST`: Staging Insights server hostname
+- `SERVERPOD_STAGING_WEB_SERVER_PUBLIC_HOST`: Staging Web server hostname
+- `SERVERPOD_STAGING_MAX_REQUEST_SIZE`: Staging max request size
+- `SERVERPOD_STAGING_SERVICE_SECRET`: Staging service secret (min 20 chars)
+
+### Branch Strategy
+
+#### Production Deployment
+- Triggered by pushes to the `main` branch
+- Uses the `latest` Docker image tag
+- Deploys to production VPS
+
+#### Staging Deployment
+- Triggered by pushes to `develop` or `staging` branches
+- Uses the `staging` Docker image tag
+- Deploys to staging VPS
+
+### VPS Setup Requirements
+
+You'll need two VPS servers:
+
+1. **Production VPS**: For live production environment
+2. **Staging VPS**: For testing and staging environment
+
+Both servers should be configured with:
+- Docker and Docker Compose installed
+- SSH access configured
+- Same SSH key for GitHub Actions access
+- Appropriate firewall rules for ports 80 and 443
+
+### Setting Up Both Servers with Shared SSH Key
+
+#### Step 1: Set Up Your First Server (Production)
+
+Follow the complete server setup steps described in the main guide above for your production server, including:
+- Creating the `github-actions` user
+- Setting up Docker permissions
+- Generating the SSH keypair
+- Configuring SSH access
+
+#### Step 2: Copy SSH Key to Second Server (Staging)
+
+After setting up your first server, you'll use the same SSH key for your staging server:
+
+1. **Get the public key from your production server:**
+   ```bash
+   # SSH into your production server
+   ssh github-actions@your-production-server-ip
+   
+   # Display and copy the public key
+   cat ~/.ssh/id_rsa.pub
+   ```
+   Copy the entire public key output to your clipboard.
+
+2. **Set up the staging server:**
+   ```bash
+   # SSH into your staging server as root
+   ssh root@your-staging-server-ip
+   
+   # Create the github-actions user
+   sudo adduser github-actions
+   sudo usermod -aG docker github-actions
+   
+   # Configure SSH access (add to /etc/ssh/sshd_config if needed)
+   # AllowUsers root github-actions
+   
+   # Switch to the github-actions user
+   su - github-actions
+   
+   # Create the .ssh directory with proper permissions
+   mkdir -p ~/.ssh
+   chmod 700 ~/.ssh
+   
+   # Add the public key from your production server
+   echo "paste-your-public-key-here" >> ~/.ssh/authorized_keys
+   chmod 600 ~/.ssh/authorized_keys
+   
+   # Exit back to root
+   exit
+   
+   # Restart SSH service
+   sudo systemctl restart ssh
+   ```
+
+3. **Test SSH access to both servers:**
+   ```bash
+   # Test production server
+   ssh github-actions@your-production-server-ip "echo Production SSH working"
+   
+   # Test staging server  
+   ssh github-actions@your-staging-server-ip "echo Staging SSH working"
+   ```
+
+4. **Get the private key for GitHub secrets:**
+   ```bash
+   # From your production server, display the private key
+   ssh github-actions@your-production-server-ip "cat ~/.ssh/id_rsa"
+   ```
+   Copy the entire private key (including `-----BEGIN OPENSSH PRIVATE KEY-----` and `-----END OPENSSH PRIVATE KEY-----` lines) and use this as your `SSH_PRIVATE_KEY` secret in GitHub.
+
+#### Step 3: Configure GitHub Secrets
+
+With the shared SSH key approach, your GitHub secrets will be:
+
+**Shared Secrets:**
+- `SSH_PRIVATE_KEY`: The private key from your production server
+- `SSH_USER`: `github-actions` (same username for both servers)
+- `PAT_GITHUB` and `PAT_USER_GITHUB`: GitHub access tokens
+
+**Production Secrets:**
+- `SSH_HOST`: Your production server IP
+- All other `SERVERPOD_*` secrets (without prefix)
+
+**Staging Secrets:**
+- `SSH_STAGING_HOST`: Your staging server IP  
+- All `SERVERPOD_STAGING_*` secrets
+
+> **💡 Workflow Implementation**: The generated GitHub Actions workflows are already configured to use the shared SSH key approach. Both workflows use the same `SSH_PRIVATE_KEY` and `SSH_USER` secrets, differing only in the target server (`SSH_HOST` vs `SSH_STAGING_HOST`).
+
+This approach simplifies key management while maintaining security isolation between environments.
+
+
