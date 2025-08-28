@@ -17,6 +17,7 @@ fields:
   ## communication and tutor related
   contact: String?
   communicationPupil: CommunicationSkills?
+  ##- TODO: specialInformation should be an object with createdBy and createdAt
   specialInformation: String?
   ## - Beware: This object is used in siblings parent info
   tutorInfo: TutorInfo?

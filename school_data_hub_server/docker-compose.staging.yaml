@@ -41,7 +41,7 @@ services:
       - POSTGRES_DB
       - POSTGRES_PASSWORD
     volumes:
-      - school_data_hub_data:/var/lib/postgresql/data
+      - school_data_hub_staging_data:/var/lib/postgresql/data
     networks:
       - serverpod-network
 
@@ -51,20 +51,20 @@ services:
     environment:
       - SERVERPOD_DATABASE_PASSWORD
       - SERVERPOD_DATABASE_HOST
-      - SERVERPOD_STAGING_DATABASE_NAME
-      - SERVERPOD_STAGING_DATABASE_USER
+      - SERVERPOD_DATABASE_NAME
+      - SERVERPOD_DATABASE_USER
       - SERVERPOD_DATABASE_PORT
       - SERVERPOD_DATABASE_REQUIRE_SSL
       - SERVERPOD_DATABASE_IS_UNIX_SOCKET
-      - SERVERPOD_STAGING_API_SERVER_PUBLIC_HOST
+      - SERVERPOD_API_SERVER_PUBLIC_HOST
       - SERVERPOD_API_SERVER_PUBLIC_PORT
       - SERVERPOD_API_SERVER_PUBLIC_SCHEME
       - SERVERPOD_API_SERVER_PORT
-      - SERVERPOD_STAGING_INSIGHTS_SERVER_PUBLIC_HOST
+      - SERVERPOD_INSIGHTS_SERVER_PUBLIC_HOST
       - SERVERPOD_INSIGHTS_SERVER_PUBLIC_PORT
       - SERVERPOD_INSIGHTS_SERVER_PUBLIC_SCHEME
       - SERVERPOD_INSIGHTS_SERVER_PORT
-      - SERVERPOD_STAGING_WEB_SERVER_PUBLIC_HOST
+      - SERVERPOD_WEB_SERVER_PUBLIC_HOST
       - SERVERPOD_WEB_SERVER_PUBLIC_PORT
       - SERVERPOD_WEB_SERVER_PUBLIC_SCHEME
       - SERVERPOD_WEB_SERVER_PORT
@@ -84,13 +84,13 @@ services:
       ]
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=Host(`${SERVERPOD_STAGING_API_SERVER_PUBLIC_HOST}`)"
+      - "traefik.http.routers.api.rule=Host(`${SERVERPOD_API_SERVER_PUBLIC_HOST}`)"
       - "traefik.http.routers.api.entrypoints=websecure"
       - "traefik.http.routers.api.service=api-service"
       - "traefik.http.routers.api.tls.certresolver=myresolver"
       - "traefik.http.services.api-service.loadbalancer.server.port=${SERVERPOD_API_SERVER_PORT}"
 
-      - "traefik.http.routers.insights.rule=Host(`${SERVERPOD_STAGING_INSIGHTS_SERVER_PUBLIC_HOST}`)"
+      - "traefik.http.routers.insights.rule=Host(`${SERVERPOD_INSIGHTS_SERVER_PUBLIC_HOST}`)"
       - "traefik.http.routers.insights.entrypoints=websecure"
       - "traefik.http.routers.insights.service=insights-service"
       - "traefik.http.routers.insights.tls.certresolver=myresolver"

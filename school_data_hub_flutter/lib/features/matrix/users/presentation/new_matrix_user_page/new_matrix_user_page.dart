@@ -11,6 +11,7 @@ import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/selec
 import 'package:school_data_hub_flutter/features/matrix/services/matrix_credentials_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager_operations.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _matrixPolicyManager = di<MatrixPolicyManager>();
@@ -84,7 +85,7 @@ class NewMatrixUserPageState extends State<NewMatrixUserPage> {
     );
     // if it is a pupil realated matrix account, we update the corresponding pupil contact field with matrix id
     if (file != null && widget.pupil != null) {
-      await _pupilManager.updateStringProperty(
+      await PupilManagerOperations().updateStringProperty(
         pupilId: widget.pupil!.pupilId,
         property: 'contact',
         value: matrixId,

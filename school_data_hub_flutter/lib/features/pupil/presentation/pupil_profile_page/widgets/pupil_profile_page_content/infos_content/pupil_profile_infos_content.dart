@@ -15,6 +15,7 @@ import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_page/new_matrix_user_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager_operations.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/infos_content/widgets/avatar_auth_values.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/infos_content/widgets/pupil_media_auth_values.dart';
@@ -90,7 +91,7 @@ class PupilProfileInfosContent extends StatelessWidget {
                   parentContext: context,
                 );
                 if (specialInformation == null) return;
-                await _pupilManager.updateStringProperty(
+                await PupilManagerOperations().updateStringProperty(
                   pupilId: pupil.pupilId,
                   property: 'specialInformation',
                   value: specialInformation,
@@ -104,7 +105,7 @@ class PupilProfileInfosContent extends StatelessWidget {
                   message: 'Besondere Informationen für dieses Kind löschen?',
                 );
                 if (confirm == false || confirm == null) return;
-                await _pupilManager.updateStringProperty(
+                await PupilManagerOperations().updateStringProperty(
                   pupilId: pupil.pupilId,
                   property: 'specialInformation',
                   value: null,
@@ -207,7 +208,7 @@ class PupilProfileInfosContent extends StatelessWidget {
                       context: context,
                     );
                     if (contact == null) return;
-                    await _pupilManager.updateStringProperty(
+                    await PupilManagerOperations().updateStringProperty(
                       pupilId: pupil.pupilId,
                       property: 'contact',
                       value: contact,
@@ -304,7 +305,7 @@ class PupilProfileInfosContent extends StatelessWidget {
                       context: context,
                     );
                     if (parentsContact == null) return;
-                    await _pupilManager.updateTutorInfo(
+                    await PupilManagerOperations().updateTutorInfo(
                       pupilId: pupil.pupilId,
                       tutorInfo:
                           pupil.tutorInfo != null

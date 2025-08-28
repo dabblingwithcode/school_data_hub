@@ -10,12 +10,10 @@ import 'package:school_data_hub_flutter/common/widgets/document_image.dart';
 import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager_operations.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _hubSessionManager = di<HubSessionManager>();
-
-final _pupilManager = di<PupilManager>();
 
 final _notificationService = di<NotificationService>();
 
@@ -66,7 +64,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Veröffentlichungseinwilligung',
                       style: TextStyle(
                         fontSize: 14,
@@ -89,10 +87,10 @@ class PublicMediaAuthValues extends WatchingWidget {
                 onTap: () async {
                   final File? file = await createImageFile(context);
                   if (file == null) return;
-                  await _pupilManager.updatePupilDocument(
-                    file,
-                    pupil,
-                    PupilDocumentType.publicMediaAuth,
+                  await PupilManagerOperations().updatePupilDocument(
+                    imageFile: file,
+                    pupilProxy: pupil,
+                    documentType: PupilDocumentType.publicMediaAuth,
                   );
                 },
                 onLongPress: () async {
@@ -105,7 +103,9 @@ class PublicMediaAuthValues extends WatchingWidget {
                         'Dokument für die Einwilligung in Veröffentlichungen von ${pupil.firstName} ${pupil.lastName} löschen?\nDie Werte werden zurückgesetzt! ',
                   );
                   if (result != true) return;
-                  await _pupilManager.resetPublicMediaAuth(pupil.pupilId);
+                  await PupilManagerOperations().resetPublicMediaAuth(
+                    pupil.pupilId,
+                  );
                   _notificationService.showSnackBar(
                     NotificationType.success,
                     'Die Einwilligung wurde geändert!',
@@ -168,7 +168,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                   'Gruppenfotos Presse',
                   publicMediaAuth.groupPicturesInPress,
                   publicMediaAuthDocumentId != null,
-                  (value) => _pupilManager.updatePublicMediaAuth(
+                  (value) => PupilManagerOperations().updatePublicMediaAuth(
                     pupil: pupil,
                     groupPicturesInPress: value,
                   ),
@@ -177,7 +177,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                   'Gruppenfotos Website',
                   publicMediaAuth.groupPicturesOnWebsite,
                   publicMediaAuthDocumentId != null,
-                  (value) => _pupilManager.updatePublicMediaAuth(
+                  (value) => PupilManagerOperations().updatePublicMediaAuth(
                     pupil: pupil,
                     groupPicturesOnWebsite: value,
                   ),
@@ -186,7 +186,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                   'Name in Presse',
                   publicMediaAuth.nameInPress,
                   publicMediaAuthDocumentId != null,
-                  (value) => _pupilManager.updatePublicMediaAuth(
+                  (value) => PupilManagerOperations().updatePublicMediaAuth(
                     pupil: pupil,
                     nameInPress: value,
                   ),
@@ -195,7 +195,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                   'Name auf Website',
                   publicMediaAuth.nameOnWebsite,
                   publicMediaAuthDocumentId != null,
-                  (value) => _pupilManager.updatePublicMediaAuth(
+                  (value) => PupilManagerOperations().updatePublicMediaAuth(
                     pupil: pupil,
                     nameOnWebsite: value,
                   ),
@@ -204,7 +204,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                   'Porträtfoto Presse',
                   publicMediaAuth.portraitPicturesInPress,
                   publicMediaAuthDocumentId != null,
-                  (value) => _pupilManager.updatePublicMediaAuth(
+                  (value) => PupilManagerOperations().updatePublicMediaAuth(
                     pupil: pupil,
                     portraitPicturesInPress: value,
                   ),
@@ -213,7 +213,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                   'Porträtfoto Website',
                   publicMediaAuth.portraitPicturesOnWebsite,
                   publicMediaAuthDocumentId != null,
-                  (value) => _pupilManager.updatePublicMediaAuth(
+                  (value) => PupilManagerOperations().updatePublicMediaAuth(
                     pupil: pupil,
                     portraitPicturesOnWebsite: value,
                   ),
@@ -241,7 +241,7 @@ class PublicMediaAuthValues extends WatchingWidget {
             Expanded(
               child: Text(
                 label,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                   color: AppColors.backgroundColor,

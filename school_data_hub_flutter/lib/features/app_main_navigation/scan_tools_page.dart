@@ -12,6 +12,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_d
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_image_picker.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identity_stream_page/pupil_identity_stream_page.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -160,6 +161,34 @@ class ScanToolsPage extends WatchingWidget {
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    backgroundColor: Colors.amber[800],
+                    minimumSize: const Size.fromHeight(90),
+                  ),
+                  onPressed: () async {
+                    final bool? confirm = await confirmationDialog(
+                      context: context,
+                      title: 'Datenbank aus json importieren',
+                      message: 'Json importieren?',
+                    );
+                    if (confirm == true) {
+                      di<PupilManager>().importPupilDataFromJson();
+                    }
+                  },
+                  child: const Text(
+                    'Daten aus json importieren',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.white,
                     ),
                   ),
                 ),

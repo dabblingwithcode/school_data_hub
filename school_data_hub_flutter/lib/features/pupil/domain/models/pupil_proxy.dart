@@ -114,6 +114,8 @@ class PupilProxy with ChangeNotifier {
   DateTime? get migrationSupportEnds => _pupilIdentity.migrationSupportEnds;
   DateTime get pupilSince => _pupilIdentity.pupilSince;
 
+  DateTime? get familyLanguageLessonsSince =>
+      _pupilIdentity.familyLanguageLessonsSince;
   //- PUPIL DATA GETTERS
 
   int get pupilId => _pupilData.id!;

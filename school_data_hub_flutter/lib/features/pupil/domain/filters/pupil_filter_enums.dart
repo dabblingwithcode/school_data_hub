@@ -23,6 +23,11 @@ enum PupilFilter {
   authorizationNoValue,
   authorizationComment,
   authorizationNoFile,
+  catholicReligion,
+  muslimReligion,
+  turkishClass,
+  arabicClass,
+  albanianClass,
 }
 
 Map<PupilFilter, bool> initialPupilFilterValues = {
@@ -49,4 +54,8 @@ Map<PupilFilter, bool> initialPupilFilterValues = {
   PupilFilter.authorizationNoValue: false,
   PupilFilter.authorizationComment: false,
   PupilFilter.authorizationNoFile: false,
+  PupilFilter.catholicReligion: false,
+  PupilFilter.muslimReligion: false,
+  PupilFilter.turkishClass: false,
+  PupilFilter.arabicClass: false,
 };

@@ -8,6 +8,7 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/support_level_dialog.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager_operations.dart';
 import 'package:watch_it/watch_it.dart';
 
 class SupportLevelHistoryExpansionTile extends StatefulWidget {
@@ -96,10 +97,11 @@ class _SupportLevelHistoryExpansionTileState
                           );
                           if (confirmation != true) return;
                           if (_hubSessionManager.isAdmin) {
-                            _pupilManager.deleteSupportLevelHistoryItem(
-                              pupilId: pupil.pupilId,
-                              supportLevelId: plans[index].id!,
-                            );
+                            PupilManagerOperations()
+                                .deleteSupportLevelHistoryItem(
+                                  pupilId: pupil.pupilId,
+                                  supportLevelId: plans[index].id!,
+                                );
                           }
                         },
                         child: Row(

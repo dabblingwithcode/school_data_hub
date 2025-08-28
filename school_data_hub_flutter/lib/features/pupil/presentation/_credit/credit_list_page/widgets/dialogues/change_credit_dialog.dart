@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager_operations.dart';
 import 'package:watch_it/watch_it.dart';
 
 Future<void> changeCreditDialog(BuildContext context, PupilProxy pupil) async {
   int credit = 0;
   return await showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(builder: (context, setState) {
+    context: context,
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
           return AlertDialog(
             content: Column(
               mainAxisSize: MainAxisSize.min,
@@ -21,13 +22,15 @@ Future<void> changeCreditDialog(BuildContext context, PupilProxy pupil) async {
                     credit > 0 ? '+$credit' : credit.toString(),
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontSize: 40,
-                        fontWeight: FontWeight.bold,
-                        color: credit < 0
-                            ? Colors.red
-                            : credit > 0
-                                ? Colors.green
-                                : Colors.black),
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                      color:
+                          credit < 0
+                              ? Colors.red
+                              : credit > 0
+                              ? Colors.green
+                              : Colors.black,
+                    ),
                   ),
                 ),
               ],
@@ -135,21 +138,22 @@ Future<void> changeCreditDialog(BuildContext context, PupilProxy pupil) async {
                 style: AppStyles.successButtonStyle,
                 onPressed: () {
                   if (credit != 0) {
-                    di<PupilManager>()
-                        .updateCredit(pupilId: pupil.pupilId, credit: credit);
+                    PupilManagerOperations().updateCredit(
+                      pupilId: pupil.pupilId,
+                      credit: credit,
+                    );
 
                     di<HubSessionManager>().changeUserCredit(credit);
 
                     Navigator.of(context).pop();
                   }
                 },
-                child: const Text(
-                  "SENDEN",
-                  style: AppStyles.buttonTextStyle,
-                ),
+                child: const Text("SENDEN", style: AppStyles.buttonTextStyle),
               ),
             ],
           );
-        });
-      });
+        },
+      );
+    },
+  );
 }

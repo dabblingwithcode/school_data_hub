@@ -1,12 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/data/pupil_book_api_service.dart';
@@ -15,14 +15,13 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_fil
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter_impl.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager_operations.dart';
 import 'package:watch_it/watch_it.dart';
 
 class PupilManager extends ChangeNotifier {
   final _log = Logger('PupilManager');
 
   final _notificationService = di<NotificationService>();
-
-  final _cacheManager = di<DefaultCacheManager>();
 
   final _hubSessionManager = di<HubSessionManager>();
 
@@ -49,7 +48,7 @@ class PupilManager extends ChangeNotifier {
 
   PupilProxy? getPupilByPupilId(int pupilId) {
     if (!_pupilIdPupilsMap.containsKey(pupilId)) {
-      _log.severe('Pupil $pupilId not found', StackTrace.current);
+      _log.warning('Pupil $pupilId not found');
       return null;
     }
     return _pupilIdPupilsMap[pupilId];
@@ -285,285 +284,7 @@ class PupilManager extends ChangeNotifier {
     }
   }
 
-  Future<void> updatePupilDocument(
-    File imageFile,
-    PupilProxy pupilProxy,
-    PupilDocumentType documentType,
-  ) async {
-    // first we encrypt the file
-
-    final encryptedFile = await customEncrypter.encryptFile(imageFile);
-
-    // if the pupil already has an avatar, we need to get the old documentId
-    // and delete the old avatar from the cache
-    if (pupilProxy.avatar != null) {
-      final cacheKey = pupilProxy.avatar!.documentId;
-      _cacheManager.removeFile(cacheKey.toString());
-    }
-
-    // send the Api request
-
-    final PupilData? pupilUpdate = await _pupilDataApiService
-        .updatePupilDocument(
-          pupilId: pupilProxy.pupilId,
-          file: encryptedFile,
-          documentType: documentType,
-        );
-    if (pupilUpdate == null) {
-      return;
-    }
-    // update the pupil in the repository
-    updatePupilProxyWithPupilData(pupilUpdate);
-    //  pupilProxy.updatePupil(pupilUpdate);
-  }
-
-  Future<void> deletePupilDocument(
-    int pupilId,
-    String cacheKey,
-    PupilDocumentType documentType,
-  ) async {
-    // send the Api request
-    final pupilUpdate = await _pupilDataApiService.deletePupilDocument(
-      pupilId: pupilId,
-      documentType: documentType,
-    );
-    if (pupilUpdate == null) {
-      return;
-    }
-    // Delete the outdated encrypted file in the cache.
-
-    await _cacheManager.removeFile(cacheKey);
-
-    // and update the repository
-    updatePupilProxyWithPupilData(pupilUpdate);
-    // _pupils[pupilId]!.clearAvatar();
-  }
-
-  Future<void> updatePreSchoolMedicalStatus({
-    required int pupilId,
-    required PreSchoolMedicalStatus preSchoolMedicalStatus,
-    required String createdBy,
-  }) async {
-    // send the Api request
-    final PupilData? pupilUpdate = await _pupilDataApiService
-        .updatePreSchoolMedicalStatus(
-          pupilId: pupilId,
-          preSchoolMedical: preSchoolMedicalStatus,
-          createdBy: createdBy,
-        );
-    if (pupilUpdate == null) {
-      return;
-    }
-    // update the pupil in the repository
-    updatePupilProxyWithPupilData(pupilUpdate);
-  }
-
-  Future<void> updatePublicMediaAuth({
-    required PupilProxy pupil,
-    bool? groupPicturesOnWebsite,
-    bool? groupPicturesInPress,
-    bool? portraitPicturesOnWebsite,
-    bool? portraitPicturesInPress,
-    bool? nameOnWebsite,
-    bool? nameInPress,
-    bool? videoOnWebsite,
-    bool? videoInPress,
-  }) async {
-    final PublicMediaAuth authToUpdate = pupil.publicMediaAuth.copyWith(
-      groupPicturesOnWebsite:
-          groupPicturesOnWebsite ??
-          pupil.publicMediaAuth.groupPicturesOnWebsite,
-      groupPicturesInPress:
-          groupPicturesInPress ?? pupil.publicMediaAuth.groupPicturesInPress,
-      portraitPicturesOnWebsite:
-          portraitPicturesOnWebsite ??
-          pupil.publicMediaAuth.portraitPicturesOnWebsite,
-      portraitPicturesInPress:
-          portraitPicturesInPress ??
-          pupil.publicMediaAuth.portraitPicturesInPress,
-      nameOnWebsite: nameOnWebsite ?? pupil.publicMediaAuth.nameOnWebsite,
-      nameInPress: nameInPress ?? pupil.publicMediaAuth.nameInPress,
-      videoOnWebsite: videoOnWebsite ?? pupil.publicMediaAuth.videoOnWebsite,
-      videoInPress: videoInPress ?? pupil.publicMediaAuth.videoInPress,
-    );
-
-    final updatedPupil = await _pupilDataApiService.updatePublicMediaAuth(
-      pupil.pupilId,
-      authToUpdate,
-    );
-    if (updatedPupil == null) {
-      return;
-    }
-    updatePupilProxyWithPupilData(updatedPupil);
-  }
-
-  Future<void> resetPublicMediaAuth(int pupilId) async {
-    // we need the cacheKey if the api request is successful
-    // to delete the old image from the cache
-    final pupil = allPupils.firstWhere(
-      (pupil) => pupil.pupilId == pupilId,
-      orElse: () => throw Exception('Pupil not found'),
-    );
-    final cacheKey = pupil.publicMediaAuthDocument?.documentId;
-
-    // send the Api request
-    final pupilUpdate = await _pupilDataApiService.resetPublicMediaAuth(
-      pupilId: pupilId,
-    );
-    if (pupilUpdate == null) {
-      return;
-    }
-    if (cacheKey != null) {
-      // Delete the outdated encrypted file in the cache.
-      await _cacheManager.removeFile(cacheKey.toString());
-    }
-    // and update the repository
-    updatePupilProxyWithPupilData(pupilUpdate);
-  }
-
-  Future<void> updateTutorInfo({
-    required int pupilId,
-    required TutorInfo? tutorInfo,
-  }) async {
-    // check if the pupil is a sibling and handle them if true
-    final pupilSiblings = getSiblings(getPupilByPupilId(pupilId)!);
-    if (pupilSiblings.isNotEmpty) {
-      // create list with ids of all pupils with the same family value
-      final List<int> siblingIds = pupilSiblings.map((p) => p.pupilId).toList();
-
-      // call the endpoint to update the siblings
-
-      final List<PupilData>? siblingsUpdate = await _pupilDataApiService
-          .updateSiblingsTutorInfo(
-            tutorInfo: tutorInfo,
-            siblingsIds: [...siblingIds, pupilId],
-          );
-
-      if (siblingsUpdate == null) {
-        return;
-      }
-      // now update the siblings with the new data
-
-      for (PupilData sibling in siblingsUpdate) {
-        updatePupilProxyWithPupilData(sibling);
-      }
-
-      _notificationService.showSnackBar(
-        NotificationType.success,
-        'Geschwister erfolgreich aktualisiert!',
-      );
-
-      return;
-    }
-    // send the Api request
-    final pupilToUpdate = getPupilByPupilId(pupilId)!;
-
-    final PupilData? pupilUpdate = await _pupilDataApiService.updateTutorInfo(
-      pupilId: pupilToUpdate.pupilId,
-      tutorInfo: tutorInfo,
-    );
-
-    if (pupilUpdate == null) {
-      return;
-    }
-    // update the pupil in the repository
-    updatePupilProxyWithPupilData(pupilUpdate);
-  }
-
-  Future<void> updatePupilCommunicationSkills({
-    required int pupilId,
-    required CommunicationSkills? communicationSkills,
-  }) async {
-    final PupilData? pupilData = await _pupilDataApiService
-        .updateCommunicationSkills(
-          pupilId: pupilId,
-          communicationSkills: communicationSkills,
-        );
-    if (pupilData == null) {
-      return;
-    }
-    updatePupilProxyWithPupilData(pupilData);
-  }
-
-  Future<void> updateCredit({required int pupilId, required int credit}) async {
-    final PupilData? pupilUpdate = await _pupilDataApiService.updateCredit(
-      pupilId: pupilId,
-      credit: credit,
-    );
-    if (pupilUpdate == null) {
-      return;
-    }
-
-    updatePupilProxyWithPupilData(pupilUpdate);
-  }
-
-  Future<void> updateStringProperty({
-    required int pupilId,
-    required String property,
-    required String? value,
-  }) async {
-    final PupilData? pupilData = await _pupilDataApiService
-        .updateStringProperty(
-          pupilId: pupilId,
-          property: property,
-          value: value,
-        );
-    if (pupilData == null) {
-      return;
-    }
-    updatePupilProxyWithPupilData(pupilData);
-  }
-
-  Future<void> updateCommunicationSkills({
-    required int pupilId,
-    required CommunicationSkills? skills,
-  }) async {
-    final PupilData? pupilData = await _pupilDataApiService
-        .updateCommunicationSkills(
-          pupilId: pupilId,
-          communicationSkills: skills,
-        );
-    if (pupilData == null) {
-      return;
-    }
-    updatePupilProxyWithPupilData(pupilData);
-  }
-
-  Future<void> updatePupilSupportLevel({
-    required int pupilId,
-    required int level,
-    required DateTime createdAt,
-    required String createdBy,
-    required String comment,
-  }) async {
-    final PupilData? updatedPupil = await _pupilDataApiService
-        .updateSupportLevel(
-          pupilId: pupilId,
-          supportLevelValue: level,
-          createdAt: createdAt,
-          createdBy: createdBy,
-          comment: comment,
-        );
-    if (updatedPupil == null) {
-      return;
-    }
-    _pupilIdPupilsMap[pupilId]!.updatePupil(updatedPupil);
-  }
-
-  Future<void> deleteSupportLevelHistoryItem({
-    required int pupilId,
-    required int supportLevelId,
-  }) async {
-    final PupilData? updatedPupil = await _pupilDataApiService
-        .deleteSupportLevelHistoryItem(
-          pupilId: pupilId,
-          supportLevelId: supportLevelId,
-        );
-    if (updatedPupil == null) {
-      return;
-    }
-    _pupilIdPupilsMap[pupilId]!.updatePupil(updatedPupil);
-  }
+  //-TODO: These functions should be somewhere else
 
   Future<void> updateSchoolyearHeldBackDate({
     required int pupilId,
@@ -654,5 +375,140 @@ class PupilManager extends ChangeNotifier {
     _pupilIdPupilsMap[pupil.id!]!.updatePupil(pupil);
 
     return;
+  }
+
+  //- IMPORT FUNCTIONS
+
+  /// Import pupil data from a JSON file
+  /// Maps contact and parents_contact fields to existing pupils
+  /// Uses array index to match pupils since JSON doesn't contain internal_id
+  Future<void> importPupilDataFromJson() async {
+    final jsonFilePath = await FilePicker.platform
+        .pickFiles(type: FileType.custom, allowedExtensions: ['json'])
+        .then((result) => result?.files.single.path);
+
+    int totalRecords = 0;
+
+    int successCount = 0;
+    int notMatchedCount = 0;
+
+    _log.info('Starting pupil data import from: $jsonFilePath');
+
+    // Read and parse JSON file
+    final file = File(jsonFilePath!);
+    if (!await file.exists()) {
+      throw Exception('File not found: $jsonFilePath');
+    }
+
+    final jsonString = await file.readAsString();
+    final List<dynamic> jsonData = json.decode(jsonString);
+    for (var entry in jsonData) {
+      totalRecords++;
+      final int internalId = entry['internal_id'] as int;
+
+      final result = await _updatePupilWithJsonRecord(internalId, entry);
+
+      if (result == true) {
+        successCount++;
+      } else if (result == false) {
+        notMatchedCount++;
+      } else {
+        // result is null, indicating an error during import
+        _log.warning('Failed to import data for pupil ID $internalId');
+      }
+    }
+
+    _log.info(
+      'Import completed. Total records: $totalRecords, Successfully updated: $successCount, Not matched: $notMatchedCount',
+    );
+  }
+
+  /// Process the import data and update pupils
+
+  /// Import individual pupil record
+  Future<bool?> _updatePupilWithJsonRecord(
+    int internalId,
+    Map<String, dynamic> data,
+  ) async {
+    bool hasUpdates = false;
+    final pupil = getPupilsFromInternalIds([internalId]).firstOrNull;
+
+    if (pupil == null) {
+      return false;
+    }
+
+    try {
+      // Update contact field
+      final String? contact = data['contact'] as String?;
+      if (contact != null && contact.isNotEmpty && contact != pupil.contact) {
+        await PupilManagerOperations().updateStringProperty(
+          pupilId: pupil.pupilId,
+          property: 'contact',
+          value: contact,
+        );
+        hasUpdates = true;
+        _log.fine('Updated contact for pupil ${pupil.internalId}: $contact');
+      }
+
+      // Update special information
+      final String? specialInfo = data['special_information'] as String?;
+      if (specialInfo != null &&
+          specialInfo.isNotEmpty &&
+          specialInfo != pupil.specialInformation) {
+        await PupilManagerOperations().updateStringProperty(
+          pupilId: pupil.pupilId,
+          property: 'specialInformation',
+          value: specialInfo,
+        );
+        hasUpdates = true;
+        _log.fine(
+          'Updated special info for pupil ${pupil.internalId}: $specialInfo',
+        );
+      }
+
+      // Update parents_contact in tutorInfo
+      final String? parentsContact = data['parents_contact'] as String?;
+      if (parentsContact != null && parentsContact.isNotEmpty) {
+        final currentTutorInfo = pupil.tutorInfo;
+        if (pupil.tutorInfo == null) {
+          final TutorInfo newTutorInfo = TutorInfo(
+            parentsContact: parentsContact,
+            createdBy: _hubSessionManager.userName!,
+          );
+          await PupilManagerOperations().updateTutorInfo(
+            pupilId: pupil.pupilId,
+            tutorInfo: newTutorInfo,
+          );
+          hasUpdates = true;
+          _log.fine(
+            'Created new tutor info for pupil ${pupil.pupilId}: $parentsContact',
+          );
+          hasUpdates = true;
+        } else {
+          final updatedTutorInfo = currentTutorInfo?.copyWith(
+            parentsContact: parentsContact,
+          );
+
+          if (currentTutorInfo?.parentsContact != parentsContact) {
+            await PupilManagerOperations().updateTutorInfo(
+              pupilId: pupil.pupilId,
+              tutorInfo: updatedTutorInfo,
+            );
+            hasUpdates = true;
+            _log.fine(
+              'Updated parents contact for pupil ${pupil.internalId}: $parentsContact',
+            );
+          }
+        }
+      }
+
+      if (hasUpdates) {
+        return true;
+      }
+    } catch (e, stackTrace) {
+      _log.severe('Error importing data for pupil $internalId', e, stackTrace);
+      return null;
+    }
+    return false;
   }
 }

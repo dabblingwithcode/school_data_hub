@@ -9,6 +9,7 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager_operations.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/communication_content/communication_values.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/communication_content/dialogs/language_dialog.dart';
 import 'package:watch_it/watch_it.dart';
@@ -55,7 +56,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                 ),
                 Gap(12),
                 Text(
-                  'Kommunikation & Sprache',
+                  'Sprachen',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -85,6 +86,15 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                       pupil.migrationSupportEnds != null
                           ? 'bis : ${pupil.migrationSupportEnds!.formatForUser()}'
                           : 'keine',
+                ),
+                const Gap(8),
+                _buildInfoRow(
+                  icon: Icons.support_outlined,
+                  label: 'HKU',
+                  value:
+                      pupil.familyLanguageLessonsSince != null
+                          ? 'seit ${pupil.familyLanguageLessonsSince!.formatForUser()}'
+                          : 'nein',
                 ),
               ],
             ),
@@ -120,7 +130,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                       message: 'Eintrag zurücksetzen?',
                     );
                     if (confirm == true) {
-                      _pupilManager.updatePupilCommunicationSkills(
+                      PupilManagerOperations().updatePupilCommunicationSkills(
                         pupilId: pupil.pupilId,
                         communicationSkills: null,
                       );
@@ -153,7 +163,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                       message: 'Eintrag zurücksetzen?',
                     );
                     if (success == true) {
-                      _pupilManager.updateTutorInfo(
+                      PupilManagerOperations().updateTutorInfo(
                         pupilId: pupil.pupilId,
                         tutorInfo: tutorInfo?.copyWith(
                           communicationTutor1: null,
@@ -188,7 +198,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                       message: 'Eintrag zurücksetzen?',
                     );
                     if (success == true) {
-                      _pupilManager.updateTutorInfo(
+                      PupilManagerOperations().updateTutorInfo(
                         pupilId: pupil.pupilId,
                         tutorInfo:
                             tutorInfo != null
