@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_h
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_helper_functions.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager_operations.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_set_avatar.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:widget_zoom/widget_zoom.dart';
@@ -141,7 +141,7 @@ class AvatarWithBadges extends WatchingWidget {
                           message: 'Möchten Sie wirklich das Foto löschen?',
                         );
                         if (confirm != true) return;
-                        await PupilManagerOperations().deletePupilDocument(
+                        await PupilMutator().deletePupilDocument(
                           pupil.pupilId,
                           pupil.avatar!.documentId,
                           PupilDocumentType.avatar,

@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 
 class PupilMissedSchooldaysProxy with ChangeNotifier {
   List<MissedSchoolday> missedSchooldays = [];
@@ -12,8 +11,9 @@ class PupilMissedSchooldaysProxy with ChangeNotifier {
   }
 
   void updateMissedSchoolday(MissedSchoolday value) {
-    int index =
-        missedSchooldays.indexWhere((element) => element.id == value.id);
+    int index = missedSchooldays.indexWhere(
+      (element) => element.id == value.id,
+    );
     if (index != -1) {
       missedSchooldays[index] = value;
     } else {
@@ -28,9 +28,11 @@ class PupilMissedSchooldaysProxy with ChangeNotifier {
   }
 
   void removeMissedSchoolday(int pupilId, DateTime date) {
-    missedSchooldays.removeWhere((element) =>
-        element.pupilId == pupilId &&
-        element.schoolday!.schoolday.formatForJson() == date.formatForJson());
+    missedSchooldays.removeWhere(
+      (element) =>
+          element.pupilId == pupilId &&
+          element.schoolday!.schoolday.toLocal() == date.toLocal(),
+    );
 
     notifyListeners();
   }

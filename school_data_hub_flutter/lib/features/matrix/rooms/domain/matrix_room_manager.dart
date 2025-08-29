@@ -14,7 +14,10 @@ class MatrixRoomManager extends ChangeNotifier {
   final void Function(bool) _onPolicyChanges;
 
   MatrixRoomManager(
-      this._matrixAdminId, this._matrixApiService, this._onPolicyChanges);
+    this._matrixAdminId,
+    this._matrixApiService,
+    this._onPolicyChanges,
+  );
 
   final _matrixRooms = ValueNotifier<List<MatrixRoom>>([]);
   ValueListenable<List<MatrixRoom>> get matrixRooms => _matrixRooms;
@@ -44,8 +47,8 @@ class MatrixRoomManager extends ChangeNotifier {
     if (room == null) {
       return null;
     }
-    MatrixRoom namedRoom =
-        await _matrixApiService.roomApi.fetchAdditionalRoomInfos(room.id);
+    MatrixRoom namedRoom = await _matrixApiService.roomApi
+        .fetchAdditionalRoomInfos(room.id);
     await addManagedRoom(namedRoom);
 
     return;
@@ -58,20 +61,27 @@ class MatrixRoomManager extends ChangeNotifier {
     // _onPolicyChanges(true);
     notifyListeners();
     _notificationService.showSnackBar(
-        NotificationType.success, 'Raum ${newRoom.name} erstellt');
+      NotificationType.success,
+      'Raum ${newRoom.name} erstellt',
+    );
   }
 
   Future<void> removeManagedRoom(MatrixRoom room) async {
+    final _matrixPolicyManager = di<MatrixPolicyManager>();
     final matrixRooms =
         _matrixRooms.value.where((r) => r.id != room.id).toList();
-    _matrixRooms.value = matrixRooms;
-    di<MatrixPolicyManager>().users.removeRoomFromUsers(room);
 
-    di<MatrixPolicyManager>().applyPolicyChanges();
-    // _onPolicyChanges(true);
+    _matrixRooms.value = matrixRooms;
+
+    _matrixPolicyManager.users.removeRoomFromUsers(room);
+
+    _matrixPolicyManager.pendingChangesHandler(true);
+
     notifyListeners();
     _notificationService.showSnackBar(
-        NotificationType.success, 'Raum ${room.name} entfernt');
+      NotificationType.success,
+      'Raum ${room.name} von der Verwaltung entfernt.',
+    );
   }
 
   Future<void> changeRoomPowerLevels({
@@ -82,15 +92,17 @@ class MatrixRoomManager extends ChangeNotifier {
     int? reactions,
   }) async {
     final currentRoom = getRoomById(roomId);
+
     final MatrixRoom room = await _matrixApiService.roomApi
         .changeRoomPowerLevels(
-            currentRoom: currentRoom,
-            roomId: roomId,
-            newRoomAdmin: roomAdmin,
-            adminIdToRemove: removeAdminWithId,
-            eventsDefault: eventsDefault,
-            reactions: reactions,
-            matrixAdmin: _matrixAdminId);
+          currentRoom: currentRoom,
+          roomId: roomId,
+          newRoomAdmin: roomAdmin,
+          adminIdToRemove: removeAdminWithId,
+          eventsDefault: eventsDefault,
+          reactions: reactions,
+          matrixAdmin: _matrixAdminId,
+        );
     if (currentRoom.roomAdmins != null)
       currentRoom.roomAdmins = room.roomAdmins;
     if (currentRoom.eventsDefault != null)
@@ -99,7 +111,9 @@ class MatrixRoomManager extends ChangeNotifier {
       currentRoom.powerLevelReactions = room.powerLevelReactions;
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Power Levels gesetzt');
+      NotificationType.success,
+      'Power Levels gesetzt',
+    );
     notifyListeners();
   }
 
@@ -110,8 +124,8 @@ class MatrixRoomManager extends ChangeNotifier {
     final List<String> roomIds = managedRoomIds.toSet().toList();
 
     for (String roomId in roomIds) {
-      MatrixRoom namedRoom =
-          await _matrixApiService.roomApi.fetchAdditionalRoomInfos(roomId);
+      MatrixRoom namedRoom = await _matrixApiService.roomApi
+          .fetchAdditionalRoomInfos(roomId);
       rooms.add(namedRoom);
     }
 
@@ -120,6 +134,8 @@ class MatrixRoomManager extends ChangeNotifier {
     setRooms(rooms);
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Räume geladen');
+      NotificationType.success,
+      'Räume geladen',
+    );
   }
 }

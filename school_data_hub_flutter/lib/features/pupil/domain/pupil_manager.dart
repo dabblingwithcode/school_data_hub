@@ -15,7 +15,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_fil
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter_impl.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager_operations.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:watch_it/watch_it.dart';
 
 class PupilManager extends ChangeNotifier {
@@ -379,6 +379,67 @@ class PupilManager extends ChangeNotifier {
 
   //- IMPORT FUNCTIONS
 
+  Future<void> importSupportLevelsFromJson() async {
+    final jsonFilePath = await FilePicker.platform
+        .pickFiles(type: FileType.custom, allowedExtensions: ['json'])
+        .then((result) => result?.files.single.path);
+
+    int totalRecords = 0;
+
+    int successCount = 0;
+    int notMatchedCount = 0;
+
+    _log.info('Starting support level import from: $jsonFilePath');
+
+    // Read and parse JSON file
+    final file = File(jsonFilePath!);
+    if (!await file.exists()) {
+      throw Exception('File not found: $jsonFilePath');
+    }
+
+    final jsonString = await file.readAsString();
+    final List<dynamic> jsonData = json.decode(jsonString);
+    for (var entry in jsonData) {
+      totalRecords++;
+      final int internalId = entry['pupil_id'] as int;
+      final level = entry['level'] as String;
+      final String comment = entry['comment'] as String? ?? '';
+      final DateTime createdAt = DateTime.parse(entry['created_at'] as String);
+      final String createdBy = entry['created_by'] as String;
+
+      final pupil = getPupilsFromInternalIds([internalId]).firstOrNull;
+      if (pupil == null) {
+        notMatchedCount++;
+        _log.warning(
+          'No pupil found for internal ID $internalId - skipping...',
+        );
+        continue;
+      }
+      await PupilMutator().updatePupilSupportLevel(
+        pupilId: pupil.pupilId,
+        level: int.parse(level),
+        comment: comment.isEmpty ? 'Kein Eintrag gefunden' : comment,
+        createdAt: createdAt,
+        createdBy: createdBy,
+      );
+      _log.warning('Imported support level for pupil ID $internalId');
+      // final result = await _updateSupportLevelWithJsonRecord(internalId, entry);
+
+      // if (result == true) {
+      //   successCount++;
+      // } else if (result == false) {
+      //   notMatchedCount++;
+      // } else {
+      //   // result is null, indicating an error during import
+      //   _log.warning('Failed to import support level for pupil ID $internalId');
+      // }
+    }
+
+    _log.info(
+      'Import completed. Total records: $totalRecords, Successfully updated: $successCount, Not matched: $notMatchedCount',
+    );
+  }
+
   /// Import pupil data from a JSON file
   /// Maps contact and parents_contact fields to existing pupils
   /// Uses array index to match pupils since JSON doesn't contain internal_id
@@ -441,7 +502,7 @@ class PupilManager extends ChangeNotifier {
       // Update contact field
       final String? contact = data['contact'] as String?;
       if (contact != null && contact.isNotEmpty && contact != pupil.contact) {
-        await PupilManagerOperations().updateStringProperty(
+        await PupilMutator().updateStringProperty(
           pupilId: pupil.pupilId,
           property: 'contact',
           value: contact,
@@ -455,7 +516,7 @@ class PupilManager extends ChangeNotifier {
       if (specialInfo != null &&
           specialInfo.isNotEmpty &&
           specialInfo != pupil.specialInformation) {
-        await PupilManagerOperations().updateStringProperty(
+        await PupilMutator().updateStringProperty(
           pupilId: pupil.pupilId,
           property: 'specialInformation',
           value: specialInfo,
@@ -475,7 +536,7 @@ class PupilManager extends ChangeNotifier {
             parentsContact: parentsContact,
             createdBy: _hubSessionManager.userName!,
           );
-          await PupilManagerOperations().updateTutorInfo(
+          await PupilMutator().updateTutorInfo(
             pupilId: pupil.pupilId,
             tutorInfo: newTutorInfo,
           );
@@ -490,7 +551,7 @@ class PupilManager extends ChangeNotifier {
           );
 
           if (currentTutorInfo?.parentsContact != parentsContact) {
-            await PupilManagerOperations().updateTutorInfo(
+            await PupilMutator().updateTutorInfo(
               pupilId: pupil.pupilId,
               tutorInfo: updatedTutorInfo,
             );

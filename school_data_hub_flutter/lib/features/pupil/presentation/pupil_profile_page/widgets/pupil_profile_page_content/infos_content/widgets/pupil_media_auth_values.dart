@@ -10,7 +10,7 @@ import 'package:school_data_hub_flutter/common/widgets/document_image.dart';
 import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager_operations.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _hubSessionManager = di<HubSessionManager>();
@@ -87,7 +87,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                 onTap: () async {
                   final File? file = await createImageFile(context);
                   if (file == null) return;
-                  await PupilManagerOperations().updatePupilDocument(
+                  await PupilMutator().updatePupilDocument(
                     imageFile: file,
                     pupilProxy: pupil,
                     documentType: PupilDocumentType.publicMediaAuth,
@@ -103,9 +103,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                         'Dokument für die Einwilligung in Veröffentlichungen von ${pupil.firstName} ${pupil.lastName} löschen?\nDie Werte werden zurückgesetzt! ',
                   );
                   if (result != true) return;
-                  await PupilManagerOperations().resetPublicMediaAuth(
-                    pupil.pupilId,
-                  );
+                  await PupilMutator().resetPublicMediaAuth(pupil.pupilId);
                   _notificationService.showSnackBar(
                     NotificationType.success,
                     'Die Einwilligung wurde geändert!',
@@ -168,7 +166,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                   'Gruppenfotos Presse',
                   publicMediaAuth.groupPicturesInPress,
                   publicMediaAuthDocumentId != null,
-                  (value) => PupilManagerOperations().updatePublicMediaAuth(
+                  (value) => PupilMutator().updatePublicMediaAuth(
                     pupil: pupil,
                     groupPicturesInPress: value,
                   ),
@@ -177,7 +175,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                   'Gruppenfotos Website',
                   publicMediaAuth.groupPicturesOnWebsite,
                   publicMediaAuthDocumentId != null,
-                  (value) => PupilManagerOperations().updatePublicMediaAuth(
+                  (value) => PupilMutator().updatePublicMediaAuth(
                     pupil: pupil,
                     groupPicturesOnWebsite: value,
                   ),
@@ -186,7 +184,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                   'Name in Presse',
                   publicMediaAuth.nameInPress,
                   publicMediaAuthDocumentId != null,
-                  (value) => PupilManagerOperations().updatePublicMediaAuth(
+                  (value) => PupilMutator().updatePublicMediaAuth(
                     pupil: pupil,
                     nameInPress: value,
                   ),
@@ -195,7 +193,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                   'Name auf Website',
                   publicMediaAuth.nameOnWebsite,
                   publicMediaAuthDocumentId != null,
-                  (value) => PupilManagerOperations().updatePublicMediaAuth(
+                  (value) => PupilMutator().updatePublicMediaAuth(
                     pupil: pupil,
                     nameOnWebsite: value,
                   ),
@@ -204,7 +202,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                   'Porträtfoto Presse',
                   publicMediaAuth.portraitPicturesInPress,
                   publicMediaAuthDocumentId != null,
-                  (value) => PupilManagerOperations().updatePublicMediaAuth(
+                  (value) => PupilMutator().updatePublicMediaAuth(
                     pupil: pupil,
                     portraitPicturesInPress: value,
                   ),
@@ -213,7 +211,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                   'Porträtfoto Website',
                   publicMediaAuth.portraitPicturesOnWebsite,
                   publicMediaAuthDocumentId != null,
-                  (value) => PupilManagerOperations().updatePublicMediaAuth(
+                  (value) => PupilMutator().updatePublicMediaAuth(
                     pupil: pupil,
                     portraitPicturesOnWebsite: value,
                   ),

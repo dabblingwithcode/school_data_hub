@@ -10,7 +10,7 @@ import 'package:school_data_hub_flutter/common/widgets/document_image.dart';
 import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager_operations.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _hubSessionManager = di<HubSessionManager>();
@@ -103,7 +103,7 @@ class AvatarAuthValues extends WatchingWidget {
             onTap: () async {
               final File? file = await createImageFile(context);
               if (file == null) return;
-              await PupilManagerOperations().updatePupilDocument(
+              await PupilMutator().updatePupilDocument(
                 imageFile: file,
                 pupilProxy: pupil,
                 documentType: PupilDocumentType.avatarAuth,
@@ -119,7 +119,7 @@ class AvatarAuthValues extends WatchingWidget {
                     'Dokument für die Einwilligung von ${pupil.firstName} ${pupil.lastName} löschen?',
               );
               if (result != true) return;
-              await PupilManagerOperations().deletePupilDocument(
+              await PupilMutator().deletePupilDocument(
                 pupil.pupilId,
                 avatarAuth.documentId,
                 PupilDocumentType.avatarAuth,

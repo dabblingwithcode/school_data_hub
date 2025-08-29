@@ -65,9 +65,7 @@ class AttendanceManager with ChangeNotifier {
   MissedSchoolday? getPupilMissedSchooldayOnDate(int pupilId, DateTime date) {
     return _pupilMissedSchooldayesMap[pupilId]!.missedSchooldays
         .firstWhereOrNull(
-          (element) =>
-              element.schoolday!.schoolday.formatForJson() ==
-              date.formatForJson(),
+          (element) => element.schoolday!.schoolday.toLocal() == date.toLocal(),
         );
   }
 

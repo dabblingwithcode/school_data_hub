@@ -8,6 +8,7 @@ import 'package:school_data_hub_flutter/core/di/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/data/matrix_api_service.dart';
+import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
@@ -179,8 +180,8 @@ class MatrixPolicyManager extends ChangeNotifier {
     final updatedPolicy = MatrixPolicyHelper.refreshMatrixPolicy();
     _matrixPolicy = updatedPolicy;
 
-    //- TODO URGENT: uncomment this when the backend is ready
     await _matrixApiService.putMatrixPolicy();
+    di<MatrixPolicyFilterManager>().resetAllMatrixFilters();
     _policyPendingChanges.value = false;
   }
 }

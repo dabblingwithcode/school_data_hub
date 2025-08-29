@@ -4,20 +4,24 @@ import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
+import 'package:school_data_hub_flutter/features/matrix/presentation/widgets/matrix_search_text_field.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/controller/select_matrix_users_list_controller.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_search_text_field.dart';
 import 'package:watch_it/watch_it.dart';
 
 class SelectUserListSearchBar extends WatchingWidget {
   final List<MatrixUser> matrixUsers;
   final SelectMatrixUsersListController controller;
-  const SelectUserListSearchBar(
-      {required this.matrixUsers, required this.controller, super.key});
+  const SelectUserListSearchBar({
+    required this.matrixUsers,
+    required this.controller,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final bool filtersOn =
-        watchValue((MatrixPolicyFilterManager x) => x.filtersOn);
+    final bool filtersOn = watchValue(
+      (MatrixPolicyFilterManager x) => x.filtersOn,
+    );
     return Container(
       decoration: BoxDecoration(
         color: AppColors.canvasColor,
@@ -46,12 +50,7 @@ class SelectUserListSearchBar extends WatchingWidget {
                     ),
                   ),
                   const Gap(10),
-                  const Text(
-                    'Ausgewählt:',
-                    style: TextStyle(
-                      fontSize: 13,
-                    ),
-                  ),
+                  const Text('Ausgewählt:', style: TextStyle(fontSize: 13)),
                   const Gap(10),
                   Text(
                     controller.selectedUsers.length.toString(),
@@ -70,15 +69,19 @@ class SelectUserListSearchBar extends WatchingWidget {
             child: Row(
               children: [
                 Expanded(
-                    child: PupilSearchTextField(
-                        searchType: SearchType.room,
-                        hintText: 'Matrix-Konto suchen',
-                        refreshFunction: di<MatrixPolicyFilterManager>()
-                            .setUsersFilterText)),
+                  child: MatrixSearchTextField(
+                    searchType: SearchType.matrixUser,
+                    hintText: 'Konten suchen',
+                    refreshFunction:
+                        di<MatrixPolicyFilterManager>().setUsersFilterText,
+                  ),
+                ),
                 InkWell(
                   onTap: () => {},
-                  onLongPress: () =>
-                      di<MatrixPolicyFilterManager>().resetAllMatrixFilters(),
+                  onLongPress:
+                      () =>
+                          di<MatrixPolicyFilterManager>()
+                              .resetAllMatrixFilters(),
                   // onPressed: () => showBottomSheetFilters(context),
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),

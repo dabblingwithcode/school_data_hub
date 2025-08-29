@@ -5,16 +5,17 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager_operations.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/widgets/credit_list_searchbar.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
-import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
 import 'package:watch_it/watch_it.dart';
 
 class PupilsMatrixContactsListPage extends WatchingWidget {
@@ -24,7 +25,10 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
   Widget build(BuildContext context) {
     List<PupilProxy> pupils = watchValue((PupilsFilter x) => x.filteredPupils);
     return Scaffold(
-      appBar: AppBar(title: const Text('Kontakte')),
+      appBar: const GenericAppBar(
+        iconData: Icons.contact_mail_rounded,
+        title: 'Matrix Kontakte',
+      ),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
@@ -120,7 +124,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                                 );
                                             if (contact == null) return;
 
-                                            await PupilManagerOperations()
+                                            await PupilMutator()
                                                 .updateStringProperty(
                                                   pupilId: pupil.pupilId,
                                                   property: 'contact',
@@ -157,7 +161,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                             ).showSnackBar(
                                               const SnackBar(
                                                 content: Text(
-                                                  'Copied to clipboard',
+                                                  'In die Zwischenablage kopiert',
                                                 ),
                                               ),
                                             );
@@ -206,7 +210,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                                       parentsContact:
                                                           '@$tutorContact',
                                                       createdBy:
-                                                          di<SessionManager>()
+                                                          di<HubSessionManager>()
                                                               .signedInUser!
                                                               .userName!,
                                                     )
@@ -214,7 +218,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                                       parentsContact:
                                                           '@$tutorContact',
                                                     );
-                                            await PupilManagerOperations()
+                                            await PupilMutator()
                                                 .updateTutorInfo(
                                                   pupilId: pupil.pupilId,
                                                   tutorInfo: tutorInfo,
@@ -242,6 +246,30 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                             ),
                                           ),
                                         ),
+                                        const Gap(10),
+                                        IconButton(
+                                          icon: const Icon(Icons.copy),
+                                          onPressed: () {
+                                            Clipboard.setData(
+                                              ClipboardData(
+                                                text:
+                                                    pupil
+                                                        .tutorInfo
+                                                        ?.parentsContact ??
+                                                    'Kein Elternkontakt vorhanden!',
+                                              ),
+                                            );
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                  'In die Zwischenablage kopiert',
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
                                       ],
                                     ),
                                     const Gap(10),
@@ -258,6 +286,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
           ),
         ),
       ),
+      bottomNavigationBar: const PupilsMatrixContactsListPage(),
     );
   }
 }

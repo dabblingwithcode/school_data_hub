@@ -13,28 +13,33 @@ import 'package:watch_it/watch_it.dart';
 class SelectMatrixUsersListPage extends WatchingWidget {
   final SelectMatrixUsersListController controller;
   final List<MatrixUser> filteredPupilsInLIst;
-  const SelectMatrixUsersListPage(this.controller, this.filteredPupilsInLIst,
-      {super.key});
+  const SelectMatrixUsersListPage(
+    this.controller,
+    this.filteredPupilsInLIst, {
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
       appBar: AppBar(
-        leading: controller.isSelectMode
-            ? IconButton(
-                onPressed: () {
-                  controller.cancelSelect();
-                },
-                icon: const Icon(Icons.close))
-            : null,
+        leading:
+            controller.isSelectMode
+                ? IconButton(
+                  onPressed: () {
+                    controller.cancelSelect();
+                  },
+                  icon: const Icon(Icons.close),
+                )
+                : null,
         automaticallyImplyLeading: false,
         centerTitle: true,
         backgroundColor: AppColors.backgroundColor,
         title: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Kind/Kinder auswählen', style: AppStyles.appBarTextStyle),
+            Text('Konten auswählen', style: AppStyles.appBarTextStyle),
           ],
         ),
       ),
@@ -63,40 +68,44 @@ class SelectMatrixUsersListPage extends WatchingWidget {
                       background: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: SelectUserListSearchBar(
-                            matrixUsers: filteredPupilsInLIst,
-                            controller: controller),
+                          matrixUsers: filteredPupilsInLIst,
+                          controller: controller,
+                        ),
                       ),
                     ),
                   ),
                   filteredPupilsInLIst.isEmpty
                       ? const SliverToBoxAdapter(
-                          child: Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                'Keine Ergebnisse',
-                                style: TextStyle(fontSize: 18),
-                              ),
+                        child: Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'Keine Ergebnisse',
+                              style: TextStyle(fontSize: 18),
                             ),
                           ),
-                        )
-                      : SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (BuildContext context, int index) {
-                              return SelectMatrixUserCard(
-                                  controller, filteredPupilsInLIst[index]);
-                            },
-                            childCount: filteredPupilsInLIst.length,
-                          ),
                         ),
+                      )
+                      : SliverList(
+                        delegate: SliverChildBuilderDelegate((
+                          BuildContext context,
+                          int index,
+                        ) {
+                          return SelectMatrixUserCard(
+                            controller,
+                            filteredPupilsInLIst[index],
+                          );
+                        }, childCount: filteredPupilsInLIst.length),
+                      ),
                 ],
               ),
             ),
           ),
         ),
       ),
-      bottomNavigationBar:
-          SelectMatrixUsersListPageBottomNavBar(controller: controller),
+      bottomNavigationBar: SelectMatrixUsersListPageBottomNavBar(
+        controller: controller,
+      ),
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/core/di/dependency_injection.dart';
@@ -26,8 +27,8 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
     final _notificationService = di<NotificationService>();
 
     final locale = AppLocalizations.of(context)!;
-
-    final int userCredit = di<HubSessionManager>().userCredit ?? 0;
+    final _hubSessionManager = di<HubSessionManager>();
+    final int userCredit = _hubSessionManager.userCredit ?? 0;
     final String username =
         watchPropertyValue(
           (HubSessionManager x) => x.user,
@@ -46,17 +47,35 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           value: Text(serverName!.serverName),
           trailing: null,
         ),
+        if (_hubSessionManager.isAdmin)
+          SettingsTile.navigation(
+            onPressed: (context) => changeEnvironmentDialog(context: context),
+            leading: const Icon(Icons.http),
+            title: const Text('URL:'),
+            value: Text(serverName.serverUrl),
+            trailing: null,
+          ),
+
         SettingsTile.navigation(
-          // onPressed: (context) =>
-          //     di<PupilManager>().cleanPupilsAvatarIds(),
-          leading: const Icon(Icons.account_circle_rounded),
-          title: const Text('Benutzername'),
+          // onPressed: (context) {
+          //   Navigator.of(context).push(MaterialPageRoute(
+          //     builder: (ctx) => const UserChangePasswordPage(),
+          //   ));
+          // },
+          leading: const Icon(Icons.password_rounded),
+          title: const Text('Passwort ändern'),
+          trailing: null,
+        ),
+        SettingsTile.navigation(
+          leading: const Icon(Icons.perm_identity_rounded),
+          title: const Text('Personenbezogene Daten vom:'),
           value: Text(
-            username,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            di<EnvManager>().activeEnv?.lastIdentitiesUpdate?.formatForUser() ??
+                'unbekannt',
           ),
           trailing: null,
         ),
+
         SettingsTile.navigation(
           // onPressed: (context) {
           //   Navigator.of(context).push(MaterialPageRoute(

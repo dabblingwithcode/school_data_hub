@@ -54,12 +54,12 @@ class MatrixUserManager extends ChangeNotifier {
   }) async {
     final password = MatrixPolicyHelper.generatePassword();
 
-    final MatrixUser? newUser =
-        await _matrixApiService.userApi.createNewMatrixUser(
-      matrixId: matrixId,
-      displayName: displayName,
-      password: password,
-    );
+    final MatrixUser? newUser = await _matrixApiService.userApi
+        .createNewMatrixUser(
+          matrixId: matrixId,
+          displayName: displayName,
+          password: password,
+        );
 
     if (newUser == null) {
       return null;
@@ -89,15 +89,21 @@ class MatrixUserManager extends ChangeNotifier {
   /// 3. Then the policy is updated.
   Future<void> deleteUser({required String userId}) async {
     _notificationService.setHeavyLoadingValue(true);
-
-    final bool success =
-        await _matrixApiService.userApi.deleteMatrixUser(userId);
+    bool success = false;
+    try {
+      success = await _matrixApiService.userApi.deleteMatrixUser(userId);
+    } catch (e) {
+      _notificationService.showInformationDialog(
+        'Fehler beim Löschen vom Konto: $e',
+      );
+    }
 
     _notificationService.setHeavyLoadingValue(false);
 
     if (!success) {
-      _notificationService
-          .showInformationDialog('Fehler beim Löschen vom Konto!');
+      _notificationService.showInformationDialog(
+        'Fehler beim Löschen vom Konto!',
+      );
       return;
     }
 
@@ -113,7 +119,9 @@ class MatrixUserManager extends ChangeNotifier {
     await _applyPolicyChanges();
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Benutzer gelöscht');
+      NotificationType.success,
+      'Benutzer gelöscht',
+    );
     notifyListeners();
   }
 
@@ -132,8 +140,9 @@ class MatrixUserManager extends ChangeNotifier {
     );
 
     if (!success) {
-      _notificationService
-          .showInformationDialog('Fehler beim Zurücksetzen des Passworts!');
+      _notificationService.showInformationDialog(
+        'Fehler beim Zurücksetzen des Passworts!',
+      );
       return null;
     }
 
@@ -145,20 +154,24 @@ class MatrixUserManager extends ChangeNotifier {
     );
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Passwort zurückgesetzt');
+      NotificationType.success,
+      'Passwort zurückgesetzt',
+    );
 
     return file;
   }
 
   void addMatrixUserToRooms(String matrixUserId, List<String> roomIds) {
-    final user =
-        _matrixUsers.value.firstWhere((element) => element.id == matrixUserId);
+    final user = _matrixUsers.value.firstWhere(
+      (element) => element.id == matrixUserId,
+    );
 
     for (String roomId in roomIds) {
       user.joinRoom(MatrixRoom(id: roomId));
-      final updatedUsers = _matrixUsers.value
-          .map((e) => e.id == matrixUserId ? user : e)
-          .toList();
+      final updatedUsers =
+          _matrixUsers.value
+              .map((e) => e.id == matrixUserId ? user : e)
+              .toList();
       _matrixUsers.value = updatedUsers;
     }
 

@@ -9,16 +9,15 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-class PupilManagerOperations {
+class PupilMutator {
   // Private constructor
-  PupilManagerOperations._internal();
+  PupilMutator._internal();
 
   // The single instance
-  static final PupilManagerOperations _instance =
-      PupilManagerOperations._internal();
+  static final PupilMutator _instance = PupilMutator._internal();
 
   // Factory constructor returns the same instance
-  factory PupilManagerOperations() => _instance;
+  factory PupilMutator() => _instance;
 
   final _cacheManager = di<DefaultCacheManager>();
   final _pupilDataApiService = PupilDataApiService();
@@ -300,7 +299,7 @@ class PupilManagerOperations {
           supportLevelValue: level,
           createdAt: createdAt,
           createdBy: createdBy,
-          comment: comment,
+          comment: customEncrypter.encryptString(comment),
         );
     if (updatedPupil == null) {
       return;

@@ -4,7 +4,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
@@ -40,9 +39,7 @@ class AttendanceCard extends WatchingWidget {
     final MissedSchoolday? missedSchoolday = watch(
       missedSchooldaysList,
     ).missedSchooldays.firstWhereOrNull(
-      (element) =>
-          element.schoolday?.schoolday.formatForJson() ==
-          thisDate.formatForJson(),
+      (element) => element.schoolday?.schoolday.toLocal() == thisDate.toLocal(),
     );
 
     AttendanceValues attendanceInfo = AttendanceHelper.getAttendanceValues(

@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager_operations.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/communication_content/dialogs/language_dialog_dropdown.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -121,7 +121,7 @@ Future<void> languageDialog(
                     );
                     switch (subject) {
                       case CommunicationSubject.pupil:
-                        PupilManagerOperations().updateCommunicationSkills(
+                        PupilMutator().updateCommunicationSkills(
                           pupilId: pupil.pupilId,
                           skills: languageValue,
                         );
@@ -136,7 +136,7 @@ Future<void> languageDialog(
                                   communicationTutor1: languageValue,
                                   createdBy: _hubSessionManager.userName!,
                                 );
-                        PupilManagerOperations().updateTutorInfo(
+                        PupilMutator().updateTutorInfo(
                           pupilId: pupil.pupilId,
                           tutorInfo: tutorInfo,
                         );
@@ -151,7 +151,7 @@ Future<void> languageDialog(
                                   communicationTutor2: languageValue,
                                   createdBy: _hubSessionManager.userName!,
                                 );
-                        PupilManagerOperations().updateTutorInfo(
+                        PupilMutator().updateTutorInfo(
                           pupilId: pupil.pupilId,
                           tutorInfo: tutorInfo,
                         );

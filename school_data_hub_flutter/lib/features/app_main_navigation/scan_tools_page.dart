@@ -179,7 +179,7 @@ class ScanToolsPage extends WatchingWidget {
                       message: 'Json importieren?',
                     );
                     if (confirm == true) {
-                      di<PupilManager>().importPupilDataFromJson();
+                      di<PupilManager>().importSupportLevelsFromJson();
                     }
                   },
                   child: const Text(
