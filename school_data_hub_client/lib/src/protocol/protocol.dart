@@ -143,12 +143,26 @@ import 'package:school_data_hub_client/src/protocol/_features/schoolday/models/s
     as _i96;
 import 'package:school_data_hub_client/src/protocol/_features/schoolday_events/models/schoolday_event.dart'
     as _i97;
-import 'package:school_data_hub_client/src/protocol/_features/user/models/staff_user.dart'
+import 'package:school_data_hub_client/src/protocol/_features/timetable/models/classroom.dart'
     as _i98;
-import 'package:school_data_hub_client/src/protocol/_features/workbooks/models/pupil_workbook.dart'
+import 'package:school_data_hub_client/src/protocol/_features/timetable/models/lesson/lesson_group.dart'
     as _i99;
-import 'package:school_data_hub_client/src/protocol/_features/workbooks/models/workbook.dart'
+import 'package:school_data_hub_client/src/protocol/_features/timetable/models/scheduled_lesson/scheduled_lesson.dart'
     as _i100;
+import 'package:school_data_hub_client/src/protocol/_features/timetable/models/scheduled_lesson/lesson_group_membership.dart'
+    as _i101;
+import 'package:school_data_hub_client/src/protocol/_features/timetable/models/scheduled_lesson/subject.dart'
+    as _i102;
+import 'package:school_data_hub_client/src/protocol/_features/timetable/models/timetable.dart'
+    as _i103;
+import 'package:school_data_hub_client/src/protocol/_features/timetable/models/scheduled_lesson/timetable_slot.dart'
+    as _i104;
+import 'package:school_data_hub_client/src/protocol/_features/user/models/staff_user.dart'
+    as _i105;
+import 'package:school_data_hub_client/src/protocol/_features/workbooks/models/pupil_workbook.dart'
+    as _i106;
+import 'package:school_data_hub_client/src/protocol/_features/workbooks/models/workbook.dart'
+    as _i107;
 export '_features/attendance/models/contacted_type.dart';
 export '_features/attendance/models/missed_schoolday.dart';
 export '_features/attendance/models/missed_schoolday_dto.dart';
@@ -1299,16 +1313,49 @@ class Protocol extends _i1.SerializationManager {
           .map((e) => deserialize<_i97.SchooldayEvent>(e))
           .toList() as T;
     }
-    if (t == List<_i98.User>) {
-      return (data as List).map((e) => deserialize<_i98.User>(e)).toList() as T;
+    if (t == List<_i98.Classroom>) {
+      return (data as List).map((e) => deserialize<_i98.Classroom>(e)).toList()
+          as T;
     }
-    if (t == List<_i99.PupilWorkbook>) {
+    if (t == List<_i99.LessonGroup>) {
       return (data as List)
-          .map((e) => deserialize<_i99.PupilWorkbook>(e))
+          .map((e) => deserialize<_i99.LessonGroup>(e))
           .toList() as T;
     }
-    if (t == List<_i100.Workbook>) {
-      return (data as List).map((e) => deserialize<_i100.Workbook>(e)).toList()
+    if (t == List<_i100.ScheduledLesson>) {
+      return (data as List)
+          .map((e) => deserialize<_i100.ScheduledLesson>(e))
+          .toList() as T;
+    }
+    if (t == List<_i101.ScheduledLessonGroupMembership>) {
+      return (data as List)
+          .map((e) => deserialize<_i101.ScheduledLessonGroupMembership>(e))
+          .toList() as T;
+    }
+    if (t == List<_i102.Subject>) {
+      return (data as List).map((e) => deserialize<_i102.Subject>(e)).toList()
+          as T;
+    }
+    if (t == List<_i103.Timetable>) {
+      return (data as List).map((e) => deserialize<_i103.Timetable>(e)).toList()
+          as T;
+    }
+    if (t == List<_i104.TimetableSlot>) {
+      return (data as List)
+          .map((e) => deserialize<_i104.TimetableSlot>(e))
+          .toList() as T;
+    }
+    if (t == List<_i105.User>) {
+      return (data as List).map((e) => deserialize<_i105.User>(e)).toList()
+          as T;
+    }
+    if (t == List<_i106.PupilWorkbook>) {
+      return (data as List)
+          .map((e) => deserialize<_i106.PupilWorkbook>(e))
+          .toList() as T;
+    }
+    if (t == List<_i107.Workbook>) {
+      return (data as List).map((e) => deserialize<_i107.Workbook>(e)).toList()
           as T;
     }
     if (t == _i1.getType<({int testint, String testString})?>()) {
