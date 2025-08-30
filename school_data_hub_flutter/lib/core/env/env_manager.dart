@@ -23,7 +23,11 @@ class EnvManager with ChangeNotifier {
 
   final _isAuthenticated = ValueNotifier<bool>(false);
 
-  /// TODO: is this proxy authentication flag a hack or is this acceptable?
+  // TODO ADVICE: Decouple encryption key for allowing login
+  // - And transfer encryption keys over stream as with the pupil identities
+  // - with additional one-time password to access the stream
+
+  /// TODO ADVICE: is this proxy authentication flag a hack or is this acceptable?
   /// We need to observe in [MaterialApp] if a user is authenticated
   /// without accessing [HubSessionManager], because if there is not
   // an active env yet, it will still be unregistered.
@@ -145,7 +149,7 @@ class EnvManager with ChangeNotifier {
     _log.info('Default Environment set: $_defaultEnv');
 
     _envIsReady.value = true;
-    await DiManager.registerManagersDependingOnActiveEnv();
+    await DiManager.registerManagersOnActiveEnvScope();
     setDependentManagersRegistered(true);
 
     if (await HubSecureStorage().containsKey(storageKeyForMatrixCredentials)) {
@@ -265,13 +269,15 @@ class EnvManager with ChangeNotifier {
     _activeEnv = _environments[envName]!;
 
     _defaultEnv = envName;
-    notifyListeners();
+
     // The active environment changed, we need to update
     // this information in storage
     final updatedEnvsForStorage = EnvsInStorage(
       defaultEnv: _activeEnv!.serverName,
       environmentsMap: _environments,
     );
+    notifyListeners();
+    firstRun();
 
     final String jsonEnvs = jsonEncode(updatedEnvsForStorage);
 
@@ -292,14 +298,17 @@ class EnvManager with ChangeNotifier {
     // and we need to show the login screen again then
 
     _isAuthenticated.value = false;
-    await DiManager.resetActiveEnvDependentManagers();
-    await di.allReady();
+    _log.info(
+      '[DI] EnvManager set isAuthenticated to false, resetting dependent managers',
+    );
+
+    DiManager.dropOnLoggedInUserScope();
+    // await DiManager.resetActiveEnvDependentManagers();
+    // _log.info('[DI] waiting for allReady...');
+    // await di.allReady();
     _notificationService.showInformationDialog(
       'Die Umgebung ${_activeEnv!.serverName} wurde aktiviert.',
     );
-
-    // propagate the new environment to the pupil identity manager
-    // await propagateNewEnv();
 
     // notify the user that the environment has been activated
     _notificationService.showSnackBar(
@@ -340,12 +349,17 @@ class EnvManager with ChangeNotifier {
       );
 
       // reset the managers depending on the active environment
+      _log.info(
+        '[DI] Resetting active environment dependent managers after deleting environment $deletedEnvironment',
+      );
       DiManager.resetActiveEnvDependentManagers();
     } else {
       // if there are no environments left, delete the environments from secure storage
 
       await HubSecureStorage().remove(_storageKeyForEnvironments);
-
+      _log.info(
+        '[DDI]Env $deletedEnvironment deleted. No environments left. Unregistering dependent managers.',
+      );
       DiManager.unregisterManagersDependentOnEnv();
       _activeEnv = null;
 

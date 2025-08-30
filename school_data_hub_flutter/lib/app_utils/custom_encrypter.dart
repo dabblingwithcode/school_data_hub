@@ -13,11 +13,14 @@ final customEncrypter = CustomEncrypter();
 final _envManager = di<EnvManager>();
 
 class CustomEncrypter {
-  final encrypter = enc.Encrypter(enc.AES(
-      enc.Key.fromUtf8(_envManager.activeEnv!.key),
-      mode: enc.AESMode.cbc));
+  final encrypter = enc.Encrypter(
+    enc.AES(
+      enc.Key.fromUtf8(_envManager.activeEnv!.key!),
+      mode: enc.AESMode.cbc,
+    ),
+  );
 
-  final iv = enc.IV.fromUtf8(_envManager.activeEnv!.iv);
+  final iv = enc.IV.fromUtf8(_envManager.activeEnv!.iv!);
 
   String encryptString(String nonEncryptedString) {
     final encryptedString =
@@ -37,8 +40,9 @@ class CustomEncrypter {
     final Directory tempDir = await getTemporaryDirectory();
     final Uri uri = Uri.parse(file.path);
     final String extension = uri.pathSegments.last.split('.').last;
-    final File tempFile =
-        File(p.join(tempDir.path, 'encrypted_file.$extension'));
+    final File tempFile = File(
+      p.join(tempDir.path, 'encrypted_file.$extension'),
+    );
     await tempFile.writeAsBytes(encrypted.bytes);
     return tempFile;
   }
@@ -48,15 +52,18 @@ class CustomEncrypter {
     final encryptedBytes = await file.readAsBytes();
 
     // Decrypt the bytes
-    final decryptedBytes = (kReleaseMode || kProfileMode)
-        ? await compute(customEncrypter.decryptTheseBytes, encryptedBytes)
-        : customEncrypter.decryptTheseBytes(encryptedBytes);
+    final decryptedBytes =
+        (kReleaseMode || kProfileMode)
+            ? await compute(customEncrypter.decryptTheseBytes, encryptedBytes)
+            : customEncrypter.decryptTheseBytes(encryptedBytes);
     return Image.memory(decryptedBytes);
   }
 
   Uint8List decryptTheseBytes(Uint8List encryptedBytes) {
-    final List<int> decrypted =
-        encrypter.decryptBytes(enc.Encrypted(encryptedBytes), iv: iv);
+    final List<int> decrypted = encrypter.decryptBytes(
+      enc.Encrypted(encryptedBytes),
+      iv: iv,
+    );
 
     final Uint8List decryptedBytes = Uint8List.fromList(decrypted);
     return decryptedBytes;

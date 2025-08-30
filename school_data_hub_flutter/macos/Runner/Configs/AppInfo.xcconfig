@@ -8,7 +8,7 @@
 PRODUCT_NAME = school_data_hub_flutter
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.schoolDataHubFlutter
+PRODUCT_BUNDLE_IDENTIFIER = de.mediensandkasten.schoolDataHubFlutter
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2025 com.example. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2025 de.mediensandkasten. All rights reserved.

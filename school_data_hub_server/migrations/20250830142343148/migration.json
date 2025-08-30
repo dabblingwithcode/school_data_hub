@@ -1,0 +1,229 @@
+{
+  "actions": [
+    {
+      "type": "deleteTable",
+      "deleteTable": "scheduled_lesson"
+    },
+    {
+      "type": "createTable",
+      "createTable": {
+        "name": "scheduled_lesson",
+        "dartName": "ScheduledLesson",
+        "module": "school_data_hub",
+        "schema": "public",
+        "columns": [
+          {
+            "name": "id",
+            "columnType": 6,
+            "isNullable": false,
+            "columnDefault": "nextval('scheduled_lesson_id_seq'::regclass)",
+            "dartType": "int?"
+          },
+          {
+            "name": "active",
+            "columnType": 1,
+            "isNullable": false,
+            "dartType": "bool"
+          },
+          {
+            "name": "publicId",
+            "columnType": 0,
+            "isNullable": false,
+            "dartType": "String"
+          },
+          {
+            "name": "subjectId",
+            "columnType": 6,
+            "isNullable": false,
+            "dartType": "int"
+          },
+          {
+            "name": "scheduledAtId",
+            "columnType": 6,
+            "isNullable": false,
+            "dartType": "int"
+          },
+          {
+            "name": "timetableSlotOrder",
+            "columnType": 6,
+            "isNullable": false,
+            "dartType": "int"
+          },
+          {
+            "name": "timetableId",
+            "columnType": 6,
+            "isNullable": false,
+            "dartType": "int"
+          },
+          {
+            "name": "mainTeacherId",
+            "columnType": 6,
+            "isNullable": false,
+            "dartType": "int"
+          },
+          {
+            "name": "lessonId",
+            "columnType": 0,
+            "isNullable": false,
+            "dartType": "String"
+          },
+          {
+            "name": "roomId",
+            "columnType": 6,
+            "isNullable": false,
+            "dartType": "int"
+          },
+          {
+            "name": "lessonGroupId",
+            "columnType": 6,
+            "isNullable": false,
+            "dartType": "int"
+          },
+          {
+            "name": "createdBy",
+            "columnType": 0,
+            "isNullable": false,
+            "dartType": "String"
+          },
+          {
+            "name": "createdAt",
+            "columnType": 4,
+            "isNullable": false,
+            "dartType": "DateTime"
+          },
+          {
+            "name": "modifiedBy",
+            "columnType": 0,
+            "isNullable": false,
+            "dartType": "String"
+          },
+          {
+            "name": "modifiedAt",
+            "columnType": 4,
+            "isNullable": false,
+            "dartType": "DateTime"
+          },
+          {
+            "name": "recordtest",
+            "columnType": 8,
+            "isNullable": true,
+            "dartType": "( {int testint, String testString})?"
+          },
+          {
+            "name": "_roomScheduledlessonsRoomId",
+            "columnType": 6,
+            "isNullable": true,
+            "dartType": "int?"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "constraintName": "scheduled_lesson_fk_0",
+            "columns": [
+              "subjectId"
+            ],
+            "referenceTable": "subject",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          },
+          {
+            "constraintName": "scheduled_lesson_fk_1",
+            "columns": [
+              "scheduledAtId"
+            ],
+            "referenceTable": "timetable_slot",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          },
+          {
+            "constraintName": "scheduled_lesson_fk_2",
+            "columns": [
+              "timetableId"
+            ],
+            "referenceTable": "timetable",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          },
+          {
+            "constraintName": "scheduled_lesson_fk_3",
+            "columns": [
+              "roomId"
+            ],
+            "referenceTable": "room",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          },
+          {
+            "constraintName": "scheduled_lesson_fk_4",
+            "columns": [
+              "lessonGroupId"
+            ],
+            "referenceTable": "lesson_group",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          },
+          {
+            "constraintName": "scheduled_lesson_fk_5",
+            "columns": [
+              "_roomScheduledlessonsRoomId"
+            ],
+            "referenceTable": "room",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          }
+        ],
+        "indexes": [
+          {
+            "indexName": "scheduled_lesson_pkey",
+            "elements": [
+              {
+                "type": 0,
+                "definition": "id"
+              }
+            ],
+            "type": "btree",
+            "isUnique": true,
+            "isPrimary": true
+          }
+        ],
+        "managed": true
+      }
+    }
+  ],
+  "warnings": [
+    {
+      "type": "tableDropped",
+      "message": "One or more columns are added to table \"scheduled_lesson\" which cannot be added in a table migration. The complete table will be deleted and recreated.",
+      "table": "scheduled_lesson",
+      "columns": [
+        "timetableSlotOrder"
+      ],
+      "destrucive": true
+    }
+  ],
+  "migrationApiVersion": 1
+}

@@ -112,6 +112,9 @@ pupilUpdate:
   - updatePublicMediaAuth:
   - updateSupportLevel:
   - updateSchoolyearHeldBackDate:
+schoolData:
+  - postSchoolData:
+  - getSchoolData:
 schoolList:
   - fetchSchoolLists:
   - postSchoolList:

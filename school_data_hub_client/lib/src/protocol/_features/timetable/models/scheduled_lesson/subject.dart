@@ -10,7 +10,9 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import '../../../../_features/timetable/models/scheduled_lesson.dart' as _i2;
+import '../../../../_features/timetable/models/scheduled_lesson/scheduled_lesson.dart'
+    as _i2;
+import '../../../../_features/timetable/models/lesson/lesson.dart' as _i3;
 
 abstract class Subject implements _i1.SerializableModel {
   Subject._({
@@ -23,6 +25,7 @@ abstract class Subject implements _i1.SerializableModel {
     required this.createdAt,
     required this.modifiedBy,
     this.scheduledLessons,
+    this.lessons,
   });
 
   factory Subject({
@@ -35,6 +38,7 @@ abstract class Subject implements _i1.SerializableModel {
     required DateTime createdAt,
     required String modifiedBy,
     List<_i2.ScheduledLesson>? scheduledLessons,
+    List<_i3.Lesson>? lessons,
   }) = _SubjectImpl;
 
   factory Subject.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -51,6 +55,9 @@ abstract class Subject implements _i1.SerializableModel {
       scheduledLessons: (jsonSerialization['scheduledLessons'] as List?)
           ?.map(
               (e) => _i2.ScheduledLesson.fromJson((e as Map<String, dynamic>)))
+          .toList(),
+      lessons: (jsonSerialization['lessons'] as List?)
+          ?.map((e) => _i3.Lesson.fromJson((e as Map<String, dynamic>)))
           .toList(),
     );
   }
@@ -76,6 +83,8 @@ abstract class Subject implements _i1.SerializableModel {
 
   List<_i2.ScheduledLesson>? scheduledLessons;
 
+  List<_i3.Lesson>? lessons;
+
   /// Returns a shallow copy of this [Subject]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
@@ -89,6 +98,7 @@ abstract class Subject implements _i1.SerializableModel {
     DateTime? createdAt,
     String? modifiedBy,
     List<_i2.ScheduledLesson>? scheduledLessons,
+    List<_i3.Lesson>? lessons,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -104,6 +114,8 @@ abstract class Subject implements _i1.SerializableModel {
       if (scheduledLessons != null)
         'scheduledLessons':
             scheduledLessons?.toJson(valueToJson: (v) => v.toJson()),
+      if (lessons != null)
+        'lessons': lessons?.toJson(valueToJson: (v) => v.toJson()),
     };
   }
 
@@ -126,6 +138,7 @@ class _SubjectImpl extends Subject {
     required DateTime createdAt,
     required String modifiedBy,
     List<_i2.ScheduledLesson>? scheduledLessons,
+    List<_i3.Lesson>? lessons,
   }) : super._(
           id: id,
           publicId: publicId,
@@ -136,6 +149,7 @@ class _SubjectImpl extends Subject {
           createdAt: createdAt,
           modifiedBy: modifiedBy,
           scheduledLessons: scheduledLessons,
+          lessons: lessons,
         );
 
   /// Returns a shallow copy of this [Subject]
@@ -152,6 +166,7 @@ class _SubjectImpl extends Subject {
     DateTime? createdAt,
     String? modifiedBy,
     Object? scheduledLessons = _Undefined,
+    Object? lessons = _Undefined,
   }) {
     return Subject(
       id: id is int? ? id : this.id,
@@ -165,6 +180,9 @@ class _SubjectImpl extends Subject {
       scheduledLessons: scheduledLessons is List<_i2.ScheduledLesson>?
           ? scheduledLessons
           : this.scheduledLessons?.map((e0) => e0.copyWith()).toList(),
+      lessons: lessons is List<_i3.Lesson>?
+          ? lessons
+          : this.lessons?.map((e0) => e0.copyWith()).toList(),
     );
   }
 }

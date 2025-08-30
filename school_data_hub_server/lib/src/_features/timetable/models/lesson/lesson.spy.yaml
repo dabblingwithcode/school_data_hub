@@ -4,4 +4,5 @@ fields:
   publicId: String
   ## TODO: should relate with schoolday
   attendedPupils: List<LessonAttendance>?, relation(name=lesson_attendance_lessons)
-  subject: LessonSubject?, relation(name=lesson_subject_lessons)
+  subject: Subject?, relation(name=subject_lesson)
+  lessonTeachers: List<LessonTeacher>?, relation(name=lesson_teachers)

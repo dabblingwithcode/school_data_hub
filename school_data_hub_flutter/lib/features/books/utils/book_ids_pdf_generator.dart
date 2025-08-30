@@ -9,7 +9,7 @@ final _notificationService = di<NotificationService>();
 List<String> generateBookIds({required int startAtIdNr, required int count}) {
   List<String> bookIds = [];
   for (int index = startAtIdNr; index <= count + startAtIdNr; index++) {
-    String bookId = 'Buch ID: ${index.toString().padLeft(5, '0')}';
+    String bookId = 'LI ${index.toString().padLeft(5, '0')}';
     bookIds.add(bookId);
   }
   return bookIds;
@@ -25,8 +25,10 @@ pw.Widget buildBarcodePage(List<String> bookIds, int startIndex) {
           if (index < bookIds.length) {
             return pw.Column(
               children: [
-                pw.Text(bookIds[index],
-                    style: const pw.TextStyle(fontSize: 10)),
+                pw.Text(
+                  bookIds[index],
+                  style: const pw.TextStyle(fontSize: 10),
+                ),
                 pw.SizedBox(height: 3),
                 pw.BarcodeWidget(
                   data: bookIds[index],

@@ -1,6 +1,0 @@
-class: LessonSubject
-table: lesson_subject
-fields:
-  name: String
-  description: String?
-  lessons: List<Lesson>?, relation(name=lesson_subject_lessons)

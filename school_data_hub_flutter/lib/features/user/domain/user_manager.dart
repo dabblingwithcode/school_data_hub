@@ -55,6 +55,7 @@ class UserManager {
     required bool isTester,
     String? tutoring,
   }) async {
+    //- TODO: Mover to an api service in data folder!
     await _client.admin.createUser(
       userName: userName,
       fullName: fullName,
@@ -94,30 +95,7 @@ class UserManager {
     return;
   }
 
-  // Future<void> updateUserProperties({
-  //   required User user,
-  //   bool? admin,
-  //   String? contact,
-  //   int? credit,
-  //   String? name,
-  //   String? role,
-  //   int? timeUnits,
-  //   String? tutoring,
-  // }) async {
-  //   final User updatedUser = await userApiService.patchUser(
-  //       publicId: user.publicId,
-  //       admin: admin,
-  //       contact: contact,
-  //       credit: credit,
-  //       name: name,
-  //       role: role,
-  //       timeUnits: timeUnits,
-  //       tutoring: tutoring);
-  //   updateUser(updatedUser);
-  //   notificationService.showSnackBar(
-  //       NotificationType.success, 'User aktualisiert!');
-  //   return;
-  // }
+  //- TODO: Implement updateUserProperties
 
   Future<void> blockUser(User user) async {
     if (!_sessionManager.isAdmin) {

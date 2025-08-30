@@ -10,11 +10,16 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import '../../../_features/timetable/models/lesson/subject.dart' as _i2;
-import '../../../_features/timetable/models/timetable_slot.dart' as _i3;
-import '../../../_features/timetable/models/classroom.dart' as _i4;
-import '../../../_features/timetable/models/lesson/lesson_group.dart' as _i5;
-import 'package:school_data_hub_client/src/protocol/protocol.dart' as _i6;
+import '../../../../_features/timetable/models/scheduled_lesson/subject.dart'
+    as _i2;
+import '../../../../_features/timetable/models/scheduled_lesson/timetable_slot.dart'
+    as _i3;
+import '../../../../_features/timetable/models/timetable.dart' as _i4;
+import '../../../../_features/timetable/models/junction_models/scheduled_lesson_teacher.dart'
+    as _i5;
+import '../../../../_features/timetable/models/classroom.dart' as _i6;
+import '../../../../_features/timetable/models/lesson/lesson_group.dart' as _i7;
+import 'package:school_data_hub_client/src/protocol/protocol.dart' as _i8;
 
 abstract class ScheduledLesson implements _i1.SerializableModel {
   ScheduledLesson._({
@@ -25,6 +30,11 @@ abstract class ScheduledLesson implements _i1.SerializableModel {
     this.subject,
     required this.scheduledAtId,
     this.scheduledAt,
+    required this.timetableSlotOrder,
+    required this.timetableId,
+    this.timetable,
+    this.lessonTeachers,
+    required this.mainTeacherId,
     required this.lessonId,
     required this.roomId,
     this.room,
@@ -45,11 +55,16 @@ abstract class ScheduledLesson implements _i1.SerializableModel {
     _i2.Subject? subject,
     required int scheduledAtId,
     _i3.TimetableSlot? scheduledAt,
+    required int timetableSlotOrder,
+    required int timetableId,
+    _i4.Timetable? timetable,
+    List<_i5.ScheduledLessonTeacher>? lessonTeachers,
+    required int mainTeacherId,
     required String lessonId,
     required int roomId,
-    _i4.Classroom? room,
+    _i6.Classroom? room,
     required int lessonGroupId,
-    _i5.LessonGroup? lessonGroup,
+    _i7.LessonGroup? lessonGroup,
     required String createdBy,
     required DateTime createdAt,
     required String modifiedBy,
@@ -72,16 +87,27 @@ abstract class ScheduledLesson implements _i1.SerializableModel {
           ? null
           : _i3.TimetableSlot.fromJson(
               (jsonSerialization['scheduledAt'] as Map<String, dynamic>)),
+      timetableSlotOrder: jsonSerialization['timetableSlotOrder'] as int,
+      timetableId: jsonSerialization['timetableId'] as int,
+      timetable: jsonSerialization['timetable'] == null
+          ? null
+          : _i4.Timetable.fromJson(
+              (jsonSerialization['timetable'] as Map<String, dynamic>)),
+      lessonTeachers: (jsonSerialization['lessonTeachers'] as List?)
+          ?.map((e) =>
+              _i5.ScheduledLessonTeacher.fromJson((e as Map<String, dynamic>)))
+          .toList(),
+      mainTeacherId: jsonSerialization['mainTeacherId'] as int,
       lessonId: jsonSerialization['lessonId'] as String,
       roomId: jsonSerialization['roomId'] as int,
       room: jsonSerialization['room'] == null
           ? null
-          : _i4.Classroom.fromJson(
+          : _i6.Classroom.fromJson(
               (jsonSerialization['room'] as Map<String, dynamic>)),
       lessonGroupId: jsonSerialization['lessonGroupId'] as int,
       lessonGroup: jsonSerialization['lessonGroup'] == null
           ? null
-          : _i5.LessonGroup.fromJson(
+          : _i7.LessonGroup.fromJson(
               (jsonSerialization['lessonGroup'] as Map<String, dynamic>)),
       createdBy: jsonSerialization['createdBy'] as String,
       createdAt:
@@ -91,7 +117,7 @@ abstract class ScheduledLesson implements _i1.SerializableModel {
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['modifiedAt']),
       recordtest: jsonSerialization['recordtest'] == null
           ? null
-          : _i6.Protocol().deserialize<({int testint, String testString})?>(
+          : _i8.Protocol().deserialize<({int testint, String testString})?>(
               (jsonSerialization['recordtest'] as Map<String, dynamic>)),
     );
   }
@@ -113,15 +139,25 @@ abstract class ScheduledLesson implements _i1.SerializableModel {
 
   _i3.TimetableSlot? scheduledAt;
 
+  int timetableSlotOrder;
+
+  int timetableId;
+
+  _i4.Timetable? timetable;
+
+  List<_i5.ScheduledLessonTeacher>? lessonTeachers;
+
+  int mainTeacherId;
+
   String lessonId;
 
   int roomId;
 
-  _i4.Classroom? room;
+  _i6.Classroom? room;
 
   int lessonGroupId;
 
-  _i5.LessonGroup? lessonGroup;
+  _i7.LessonGroup? lessonGroup;
 
   String createdBy;
 
@@ -144,11 +180,16 @@ abstract class ScheduledLesson implements _i1.SerializableModel {
     _i2.Subject? subject,
     int? scheduledAtId,
     _i3.TimetableSlot? scheduledAt,
+    int? timetableSlotOrder,
+    int? timetableId,
+    _i4.Timetable? timetable,
+    List<_i5.ScheduledLessonTeacher>? lessonTeachers,
+    int? mainTeacherId,
     String? lessonId,
     int? roomId,
-    _i4.Classroom? room,
+    _i6.Classroom? room,
     int? lessonGroupId,
-    _i5.LessonGroup? lessonGroup,
+    _i7.LessonGroup? lessonGroup,
     String? createdBy,
     DateTime? createdAt,
     String? modifiedBy,
@@ -165,6 +206,13 @@ abstract class ScheduledLesson implements _i1.SerializableModel {
       if (subject != null) 'subject': subject?.toJson(),
       'scheduledAtId': scheduledAtId,
       if (scheduledAt != null) 'scheduledAt': scheduledAt?.toJson(),
+      'timetableSlotOrder': timetableSlotOrder,
+      'timetableId': timetableId,
+      if (timetable != null) 'timetable': timetable?.toJson(),
+      if (lessonTeachers != null)
+        'lessonTeachers':
+            lessonTeachers?.toJson(valueToJson: (v) => v.toJson()),
+      'mainTeacherId': mainTeacherId,
       'lessonId': lessonId,
       'roomId': roomId,
       if (room != null) 'room': room?.toJson(),
@@ -174,7 +222,7 @@ abstract class ScheduledLesson implements _i1.SerializableModel {
       'createdAt': createdAt.toJson(),
       'modifiedBy': modifiedBy,
       'modifiedAt': modifiedAt.toJson(),
-      if (recordtest != null) 'recordtest': _i6.mapRecordToJson(recordtest),
+      if (recordtest != null) 'recordtest': _i8.mapRecordToJson(recordtest),
     };
   }
 
@@ -195,11 +243,16 @@ class _ScheduledLessonImpl extends ScheduledLesson {
     _i2.Subject? subject,
     required int scheduledAtId,
     _i3.TimetableSlot? scheduledAt,
+    required int timetableSlotOrder,
+    required int timetableId,
+    _i4.Timetable? timetable,
+    List<_i5.ScheduledLessonTeacher>? lessonTeachers,
+    required int mainTeacherId,
     required String lessonId,
     required int roomId,
-    _i4.Classroom? room,
+    _i6.Classroom? room,
     required int lessonGroupId,
-    _i5.LessonGroup? lessonGroup,
+    _i7.LessonGroup? lessonGroup,
     required String createdBy,
     required DateTime createdAt,
     required String modifiedBy,
@@ -213,6 +266,11 @@ class _ScheduledLessonImpl extends ScheduledLesson {
           subject: subject,
           scheduledAtId: scheduledAtId,
           scheduledAt: scheduledAt,
+          timetableSlotOrder: timetableSlotOrder,
+          timetableId: timetableId,
+          timetable: timetable,
+          lessonTeachers: lessonTeachers,
+          mainTeacherId: mainTeacherId,
           lessonId: lessonId,
           roomId: roomId,
           room: room,
@@ -237,6 +295,11 @@ class _ScheduledLessonImpl extends ScheduledLesson {
     Object? subject = _Undefined,
     int? scheduledAtId,
     Object? scheduledAt = _Undefined,
+    int? timetableSlotOrder,
+    int? timetableId,
+    Object? timetable = _Undefined,
+    Object? lessonTeachers = _Undefined,
+    int? mainTeacherId,
     String? lessonId,
     int? roomId,
     Object? room = _Undefined,
@@ -258,11 +321,19 @@ class _ScheduledLessonImpl extends ScheduledLesson {
       scheduledAt: scheduledAt is _i3.TimetableSlot?
           ? scheduledAt
           : this.scheduledAt?.copyWith(),
+      timetableSlotOrder: timetableSlotOrder ?? this.timetableSlotOrder,
+      timetableId: timetableId ?? this.timetableId,
+      timetable:
+          timetable is _i4.Timetable? ? timetable : this.timetable?.copyWith(),
+      lessonTeachers: lessonTeachers is List<_i5.ScheduledLessonTeacher>?
+          ? lessonTeachers
+          : this.lessonTeachers?.map((e0) => e0.copyWith()).toList(),
+      mainTeacherId: mainTeacherId ?? this.mainTeacherId,
       lessonId: lessonId ?? this.lessonId,
       roomId: roomId ?? this.roomId,
-      room: room is _i4.Classroom? ? room : this.room?.copyWith(),
+      room: room is _i6.Classroom? ? room : this.room?.copyWith(),
       lessonGroupId: lessonGroupId ?? this.lessonGroupId,
-      lessonGroup: lessonGroup is _i5.LessonGroup?
+      lessonGroup: lessonGroup is _i7.LessonGroup?
           ? lessonGroup
           : this.lessonGroup?.copyWith(),
       createdBy: createdBy ?? this.createdBy,

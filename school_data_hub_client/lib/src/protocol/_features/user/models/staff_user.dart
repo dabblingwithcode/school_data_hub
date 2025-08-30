@@ -12,7 +12,11 @@
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'package:serverpod_auth_client/serverpod_auth_client.dart' as _i2;
 import '../../../_features/user/models/roles.dart' as _i3;
-import '../../../_features/user/models/user_flags.dart' as _i4;
+import '../../../_features/timetable/models/junction_models/scheduled_lesson_teacher.dart'
+    as _i4;
+import '../../../_features/timetable/models/junction_models/lesson_teacher.dart'
+    as _i5;
+import '../../../_features/user/models/user_flags.dart' as _i6;
 
 abstract class User implements _i1.SerializableModel {
   User._({
@@ -22,6 +26,8 @@ abstract class User implements _i1.SerializableModel {
     required this.role,
     required this.timeUnits,
     required this.reliefTimeUnits,
+    this.scheduledLessonsTeacher,
+    this.lessonsTeacher,
     this.pupilsAuth,
     required this.credit,
     required this.userFlags,
@@ -34,9 +40,11 @@ abstract class User implements _i1.SerializableModel {
     required _i3.Role role,
     required int timeUnits,
     required int reliefTimeUnits,
+    List<_i4.ScheduledLessonTeacher>? scheduledLessonsTeacher,
+    List<_i5.LessonTeacher>? lessonsTeacher,
     Set<int>? pupilsAuth,
     required int credit,
-    required _i4.UserFlags userFlags,
+    required _i6.UserFlags userFlags,
   }) = _UserImpl;
 
   factory User.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -50,13 +58,21 @@ abstract class User implements _i1.SerializableModel {
       role: _i3.Role.fromJson((jsonSerialization['role'] as String)),
       timeUnits: jsonSerialization['timeUnits'] as int,
       reliefTimeUnits: jsonSerialization['reliefTimeUnits'] as int,
+      scheduledLessonsTeacher: (jsonSerialization['scheduledLessonsTeacher']
+              as List?)
+          ?.map((e) =>
+              _i4.ScheduledLessonTeacher.fromJson((e as Map<String, dynamic>)))
+          .toList(),
+      lessonsTeacher: (jsonSerialization['lessonsTeacher'] as List?)
+          ?.map((e) => _i5.LessonTeacher.fromJson((e as Map<String, dynamic>)))
+          .toList(),
       pupilsAuth: jsonSerialization['pupilsAuth'] == null
           ? null
           : _i1.SetJsonExtension.fromJson(
               (jsonSerialization['pupilsAuth'] as List),
               itemFromJson: (e) => e as int),
       credit: jsonSerialization['credit'] as int,
-      userFlags: _i4.UserFlags.fromJson(
+      userFlags: _i6.UserFlags.fromJson(
           (jsonSerialization['userFlags'] as Map<String, dynamic>)),
     );
   }
@@ -76,11 +92,15 @@ abstract class User implements _i1.SerializableModel {
 
   int reliefTimeUnits;
 
+  List<_i4.ScheduledLessonTeacher>? scheduledLessonsTeacher;
+
+  List<_i5.LessonTeacher>? lessonsTeacher;
+
   Set<int>? pupilsAuth;
 
   int credit;
 
-  _i4.UserFlags userFlags;
+  _i6.UserFlags userFlags;
 
   /// Returns a shallow copy of this [User]
   /// with some or all fields replaced by the given arguments.
@@ -92,9 +112,11 @@ abstract class User implements _i1.SerializableModel {
     _i3.Role? role,
     int? timeUnits,
     int? reliefTimeUnits,
+    List<_i4.ScheduledLessonTeacher>? scheduledLessonsTeacher,
+    List<_i5.LessonTeacher>? lessonsTeacher,
     Set<int>? pupilsAuth,
     int? credit,
-    _i4.UserFlags? userFlags,
+    _i6.UserFlags? userFlags,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -105,6 +127,12 @@ abstract class User implements _i1.SerializableModel {
       'role': role.toJson(),
       'timeUnits': timeUnits,
       'reliefTimeUnits': reliefTimeUnits,
+      if (scheduledLessonsTeacher != null)
+        'scheduledLessonsTeacher':
+            scheduledLessonsTeacher?.toJson(valueToJson: (v) => v.toJson()),
+      if (lessonsTeacher != null)
+        'lessonsTeacher':
+            lessonsTeacher?.toJson(valueToJson: (v) => v.toJson()),
       if (pupilsAuth != null) 'pupilsAuth': pupilsAuth?.toJson(),
       'credit': credit,
       'userFlags': userFlags.toJson(),
@@ -127,9 +155,11 @@ class _UserImpl extends User {
     required _i3.Role role,
     required int timeUnits,
     required int reliefTimeUnits,
+    List<_i4.ScheduledLessonTeacher>? scheduledLessonsTeacher,
+    List<_i5.LessonTeacher>? lessonsTeacher,
     Set<int>? pupilsAuth,
     required int credit,
-    required _i4.UserFlags userFlags,
+    required _i6.UserFlags userFlags,
   }) : super._(
           id: id,
           userInfoId: userInfoId,
@@ -137,6 +167,8 @@ class _UserImpl extends User {
           role: role,
           timeUnits: timeUnits,
           reliefTimeUnits: reliefTimeUnits,
+          scheduledLessonsTeacher: scheduledLessonsTeacher,
+          lessonsTeacher: lessonsTeacher,
           pupilsAuth: pupilsAuth,
           credit: credit,
           userFlags: userFlags,
@@ -153,9 +185,11 @@ class _UserImpl extends User {
     _i3.Role? role,
     int? timeUnits,
     int? reliefTimeUnits,
+    Object? scheduledLessonsTeacher = _Undefined,
+    Object? lessonsTeacher = _Undefined,
     Object? pupilsAuth = _Undefined,
     int? credit,
-    _i4.UserFlags? userFlags,
+    _i6.UserFlags? userFlags,
   }) {
     return User(
       id: id is int? ? id : this.id,
@@ -165,6 +199,13 @@ class _UserImpl extends User {
       role: role ?? this.role,
       timeUnits: timeUnits ?? this.timeUnits,
       reliefTimeUnits: reliefTimeUnits ?? this.reliefTimeUnits,
+      scheduledLessonsTeacher: scheduledLessonsTeacher
+              is List<_i4.ScheduledLessonTeacher>?
+          ? scheduledLessonsTeacher
+          : this.scheduledLessonsTeacher?.map((e0) => e0.copyWith()).toList(),
+      lessonsTeacher: lessonsTeacher is List<_i5.LessonTeacher>?
+          ? lessonsTeacher
+          : this.lessonsTeacher?.map((e0) => e0.copyWith()).toList(),
       pupilsAuth: pupilsAuth is Set<int>?
           ? pupilsAuth
           : this.pupilsAuth?.map((e0) => e0).toSet(),

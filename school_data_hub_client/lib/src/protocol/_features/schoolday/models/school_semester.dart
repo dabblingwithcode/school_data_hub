@@ -10,10 +10,11 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import '../../../_features/schoolday/models/schoolday.dart' as _i2;
-import '../../../_features/learning/models/competence_report.dart' as _i3;
+import '../../../_features/timetable/models/timetable.dart' as _i2;
+import '../../../_features/schoolday/models/schoolday.dart' as _i3;
+import '../../../_features/learning/models/competence_report.dart' as _i4;
 import '../../../_features/learning_support/models/learning_support_plan.dart'
-    as _i4;
+    as _i5;
 
 abstract class SchoolSemester implements _i1.SerializableModel {
   SchoolSemester._({
@@ -26,6 +27,7 @@ abstract class SchoolSemester implements _i1.SerializableModel {
     this.supportConferenceDate,
     this.reportConferenceDate,
     this.reportSignedDate,
+    this.timetables,
     this.schooldays,
     this.competenceReports,
     this.learningSupportPlans,
@@ -41,9 +43,10 @@ abstract class SchoolSemester implements _i1.SerializableModel {
     DateTime? supportConferenceDate,
     DateTime? reportConferenceDate,
     DateTime? reportSignedDate,
-    List<_i2.Schoolday>? schooldays,
-    List<_i3.CompetenceReport>? competenceReports,
-    List<_i4.LearningSupportPlan>? learningSupportPlans,
+    List<_i2.Timetable>? timetables,
+    List<_i3.Schoolday>? schooldays,
+    List<_i4.CompetenceReport>? competenceReports,
+    List<_i5.LearningSupportPlan>? learningSupportPlans,
   }) = _SchoolSemesterImpl;
 
   factory SchoolSemester.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -70,16 +73,19 @@ abstract class SchoolSemester implements _i1.SerializableModel {
           ? null
           : _i1.DateTimeJsonExtension.fromJson(
               jsonSerialization['reportSignedDate']),
+      timetables: (jsonSerialization['timetables'] as List?)
+          ?.map((e) => _i2.Timetable.fromJson((e as Map<String, dynamic>)))
+          .toList(),
       schooldays: (jsonSerialization['schooldays'] as List?)
-          ?.map((e) => _i2.Schoolday.fromJson((e as Map<String, dynamic>)))
+          ?.map((e) => _i3.Schoolday.fromJson((e as Map<String, dynamic>)))
           .toList(),
       competenceReports: (jsonSerialization['competenceReports'] as List?)
           ?.map(
-              (e) => _i3.CompetenceReport.fromJson((e as Map<String, dynamic>)))
+              (e) => _i4.CompetenceReport.fromJson((e as Map<String, dynamic>)))
           .toList(),
       learningSupportPlans: (jsonSerialization['learningSupportPlans'] as List?)
           ?.map((e) =>
-              _i4.LearningSupportPlan.fromJson((e as Map<String, dynamic>)))
+              _i5.LearningSupportPlan.fromJson((e as Map<String, dynamic>)))
           .toList(),
     );
   }
@@ -105,11 +111,13 @@ abstract class SchoolSemester implements _i1.SerializableModel {
 
   DateTime? reportSignedDate;
 
-  List<_i2.Schoolday>? schooldays;
+  List<_i2.Timetable>? timetables;
 
-  List<_i3.CompetenceReport>? competenceReports;
+  List<_i3.Schoolday>? schooldays;
 
-  List<_i4.LearningSupportPlan>? learningSupportPlans;
+  List<_i4.CompetenceReport>? competenceReports;
+
+  List<_i5.LearningSupportPlan>? learningSupportPlans;
 
   /// Returns a shallow copy of this [SchoolSemester]
   /// with some or all fields replaced by the given arguments.
@@ -124,9 +132,10 @@ abstract class SchoolSemester implements _i1.SerializableModel {
     DateTime? supportConferenceDate,
     DateTime? reportConferenceDate,
     DateTime? reportSignedDate,
-    List<_i2.Schoolday>? schooldays,
-    List<_i3.CompetenceReport>? competenceReports,
-    List<_i4.LearningSupportPlan>? learningSupportPlans,
+    List<_i2.Timetable>? timetables,
+    List<_i3.Schoolday>? schooldays,
+    List<_i4.CompetenceReport>? competenceReports,
+    List<_i5.LearningSupportPlan>? learningSupportPlans,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -144,6 +153,8 @@ abstract class SchoolSemester implements _i1.SerializableModel {
         'reportConferenceDate': reportConferenceDate?.toJson(),
       if (reportSignedDate != null)
         'reportSignedDate': reportSignedDate?.toJson(),
+      if (timetables != null)
+        'timetables': timetables?.toJson(valueToJson: (v) => v.toJson()),
       if (schooldays != null)
         'schooldays': schooldays?.toJson(valueToJson: (v) => v.toJson()),
       if (competenceReports != null)
@@ -174,9 +185,10 @@ class _SchoolSemesterImpl extends SchoolSemester {
     DateTime? supportConferenceDate,
     DateTime? reportConferenceDate,
     DateTime? reportSignedDate,
-    List<_i2.Schoolday>? schooldays,
-    List<_i3.CompetenceReport>? competenceReports,
-    List<_i4.LearningSupportPlan>? learningSupportPlans,
+    List<_i2.Timetable>? timetables,
+    List<_i3.Schoolday>? schooldays,
+    List<_i4.CompetenceReport>? competenceReports,
+    List<_i5.LearningSupportPlan>? learningSupportPlans,
   }) : super._(
           id: id,
           schoolYear: schoolYear,
@@ -187,6 +199,7 @@ class _SchoolSemesterImpl extends SchoolSemester {
           supportConferenceDate: supportConferenceDate,
           reportConferenceDate: reportConferenceDate,
           reportSignedDate: reportSignedDate,
+          timetables: timetables,
           schooldays: schooldays,
           competenceReports: competenceReports,
           learningSupportPlans: learningSupportPlans,
@@ -206,6 +219,7 @@ class _SchoolSemesterImpl extends SchoolSemester {
     Object? supportConferenceDate = _Undefined,
     Object? reportConferenceDate = _Undefined,
     Object? reportSignedDate = _Undefined,
+    Object? timetables = _Undefined,
     Object? schooldays = _Undefined,
     Object? competenceReports = _Undefined,
     Object? learningSupportPlans = _Undefined,
@@ -228,14 +242,17 @@ class _SchoolSemesterImpl extends SchoolSemester {
       reportSignedDate: reportSignedDate is DateTime?
           ? reportSignedDate
           : this.reportSignedDate,
-      schooldays: schooldays is List<_i2.Schoolday>?
+      timetables: timetables is List<_i2.Timetable>?
+          ? timetables
+          : this.timetables?.map((e0) => e0.copyWith()).toList(),
+      schooldays: schooldays is List<_i3.Schoolday>?
           ? schooldays
           : this.schooldays?.map((e0) => e0.copyWith()).toList(),
-      competenceReports: competenceReports is List<_i3.CompetenceReport>?
+      competenceReports: competenceReports is List<_i4.CompetenceReport>?
           ? competenceReports
           : this.competenceReports?.map((e0) => e0.copyWith()).toList(),
       learningSupportPlans:
-          learningSupportPlans is List<_i4.LearningSupportPlan>?
+          learningSupportPlans is List<_i5.LearningSupportPlan>?
               ? learningSupportPlans
               : this.learningSupportPlans?.map((e0) => e0.copyWith()).toList(),
     );

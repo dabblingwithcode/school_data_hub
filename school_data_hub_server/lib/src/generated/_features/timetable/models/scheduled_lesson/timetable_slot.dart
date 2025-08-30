@@ -8,34 +8,45 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 
+// ignore_for_file: unnecessary_null_comparison
+
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import '../../../_features/timetable/models/weekday_enum.dart' as _i2;
+import '../../../../_features/timetable/models/scheduled_lesson/weekday_enum.dart'
+    as _i2;
+import '../../../../_features/timetable/models/timetable.dart' as _i3;
 
 abstract class TimetableSlot
     implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   TimetableSlot._({
     this.id,
-    this.day,
-    this.startTime,
-    this.endTime,
+    required this.day,
+    required this.startTime,
+    required this.endTime,
+    required this.timetableId,
+    this.timetable,
   });
 
   factory TimetableSlot({
     int? id,
-    _i2.Weekday? day,
-    String? startTime,
-    String? endTime,
+    required _i2.Weekday day,
+    required String startTime,
+    required String endTime,
+    required int timetableId,
+    _i3.Timetable? timetable,
   }) = _TimetableSlotImpl;
 
   factory TimetableSlot.fromJson(Map<String, dynamic> jsonSerialization) {
     return TimetableSlot(
       id: jsonSerialization['id'] as int?,
-      day: jsonSerialization['day'] == null
+      day: _i2.Weekday.fromJson((jsonSerialization['day'] as String)),
+      startTime: jsonSerialization['startTime'] as String,
+      endTime: jsonSerialization['endTime'] as String,
+      timetableId: jsonSerialization['timetableId'] as int,
+      timetable: jsonSerialization['timetable'] == null
           ? null
-          : _i2.Weekday.fromJson((jsonSerialization['day'] as String)),
-      startTime: jsonSerialization['startTime'] as String?,
-      endTime: jsonSerialization['endTime'] as String?,
+          : _i3.Timetable.fromJson(
+              (jsonSerialization['timetable'] as Map<String, dynamic>)),
     );
   }
 
@@ -46,11 +57,15 @@ abstract class TimetableSlot
   @override
   int? id;
 
-  _i2.Weekday? day;
+  _i2.Weekday day;
 
-  String? startTime;
+  String startTime;
 
-  String? endTime;
+  String endTime;
+
+  int timetableId;
+
+  _i3.Timetable? timetable;
 
   @override
   _i1.Table<int?> get table => t;
@@ -63,14 +78,18 @@ abstract class TimetableSlot
     _i2.Weekday? day,
     String? startTime,
     String? endTime,
+    int? timetableId,
+    _i3.Timetable? timetable,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
-      if (day != null) 'day': day?.toJson(),
-      if (startTime != null) 'startTime': startTime,
-      if (endTime != null) 'endTime': endTime,
+      'day': day.toJson(),
+      'startTime': startTime,
+      'endTime': endTime,
+      'timetableId': timetableId,
+      if (timetable != null) 'timetable': timetable?.toJson(),
     };
   }
 
@@ -78,14 +97,16 @@ abstract class TimetableSlot
   Map<String, dynamic> toJsonForProtocol() {
     return {
       if (id != null) 'id': id,
-      if (day != null) 'day': day?.toJson(),
-      if (startTime != null) 'startTime': startTime,
-      if (endTime != null) 'endTime': endTime,
+      'day': day.toJson(),
+      'startTime': startTime,
+      'endTime': endTime,
+      'timetableId': timetableId,
+      if (timetable != null) 'timetable': timetable?.toJsonForProtocol(),
     };
   }
 
-  static TimetableSlotInclude include() {
-    return TimetableSlotInclude._();
+  static TimetableSlotInclude include({_i3.TimetableInclude? timetable}) {
+    return TimetableSlotInclude._(timetable: timetable);
   }
 
   static TimetableSlotIncludeList includeList({
@@ -119,14 +140,18 @@ class _Undefined {}
 class _TimetableSlotImpl extends TimetableSlot {
   _TimetableSlotImpl({
     int? id,
-    _i2.Weekday? day,
-    String? startTime,
-    String? endTime,
+    required _i2.Weekday day,
+    required String startTime,
+    required String endTime,
+    required int timetableId,
+    _i3.Timetable? timetable,
   }) : super._(
           id: id,
           day: day,
           startTime: startTime,
           endTime: endTime,
+          timetableId: timetableId,
+          timetable: timetable,
         );
 
   /// Returns a shallow copy of this [TimetableSlot]
@@ -135,15 +160,20 @@ class _TimetableSlotImpl extends TimetableSlot {
   @override
   TimetableSlot copyWith({
     Object? id = _Undefined,
-    Object? day = _Undefined,
-    Object? startTime = _Undefined,
-    Object? endTime = _Undefined,
+    _i2.Weekday? day,
+    String? startTime,
+    String? endTime,
+    int? timetableId,
+    Object? timetable = _Undefined,
   }) {
     return TimetableSlot(
       id: id is int? ? id : this.id,
-      day: day is _i2.Weekday? ? day : this.day,
-      startTime: startTime is String? ? startTime : this.startTime,
-      endTime: endTime is String? ? endTime : this.endTime,
+      day: day ?? this.day,
+      startTime: startTime ?? this.startTime,
+      endTime: endTime ?? this.endTime,
+      timetableId: timetableId ?? this.timetableId,
+      timetable:
+          timetable is _i3.Timetable? ? timetable : this.timetable?.copyWith(),
     );
   }
 }
@@ -164,6 +194,10 @@ class TimetableSlotTable extends _i1.Table<int?> {
       'endTime',
       this,
     );
+    timetableId = _i1.ColumnInt(
+      'timetableId',
+      this,
+    );
   }
 
   late final _i1.ColumnEnum<_i2.Weekday> day;
@@ -172,20 +206,50 @@ class TimetableSlotTable extends _i1.Table<int?> {
 
   late final _i1.ColumnString endTime;
 
+  late final _i1.ColumnInt timetableId;
+
+  _i3.TimetableTable? _timetable;
+
+  _i3.TimetableTable get timetable {
+    if (_timetable != null) return _timetable!;
+    _timetable = _i1.createRelationTable(
+      relationFieldName: 'timetable',
+      field: TimetableSlot.t.timetableId,
+      foreignField: _i3.Timetable.t.id,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i3.TimetableTable(tableRelation: foreignTableRelation),
+    );
+    return _timetable!;
+  }
+
   @override
   List<_i1.Column> get columns => [
         id,
         day,
         startTime,
         endTime,
+        timetableId,
       ];
+
+  @override
+  _i1.Table? getRelationTable(String relationField) {
+    if (relationField == 'timetable') {
+      return timetable;
+    }
+    return null;
+  }
 }
 
 class TimetableSlotInclude extends _i1.IncludeObject {
-  TimetableSlotInclude._();
+  TimetableSlotInclude._({_i3.TimetableInclude? timetable}) {
+    _timetable = timetable;
+  }
+
+  _i3.TimetableInclude? _timetable;
 
   @override
-  Map<String, _i1.Include?> get includes => {};
+  Map<String, _i1.Include?> get includes => {'timetable': _timetable};
 
   @override
   _i1.Table<int?> get table => TimetableSlot.t;
@@ -213,6 +277,8 @@ class TimetableSlotIncludeList extends _i1.IncludeList {
 
 class TimetableSlotRepository {
   const TimetableSlotRepository._();
+
+  final attachRow = const TimetableSlotAttachRowRepository._();
 
   /// Returns a list of [TimetableSlot]s matching the given query parameters.
   ///
@@ -245,6 +311,7 @@ class TimetableSlotRepository {
     bool orderDescending = false,
     _i1.OrderByListBuilder<TimetableSlotTable>? orderByList,
     _i1.Transaction? transaction,
+    TimetableSlotInclude? include,
   }) async {
     return session.db.find<TimetableSlot>(
       where: where?.call(TimetableSlot.t),
@@ -254,6 +321,7 @@ class TimetableSlotRepository {
       limit: limit,
       offset: offset,
       transaction: transaction,
+      include: include,
     );
   }
 
@@ -282,6 +350,7 @@ class TimetableSlotRepository {
     bool orderDescending = false,
     _i1.OrderByListBuilder<TimetableSlotTable>? orderByList,
     _i1.Transaction? transaction,
+    TimetableSlotInclude? include,
   }) async {
     return session.db.findFirstRow<TimetableSlot>(
       where: where?.call(TimetableSlot.t),
@@ -290,6 +359,7 @@ class TimetableSlotRepository {
       orderDescending: orderDescending,
       offset: offset,
       transaction: transaction,
+      include: include,
     );
   }
 
@@ -298,10 +368,12 @@ class TimetableSlotRepository {
     _i1.Session session,
     int id, {
     _i1.Transaction? transaction,
+    TimetableSlotInclude? include,
   }) async {
     return session.db.findById<TimetableSlot>(
       id,
       transaction: transaction,
+      include: include,
     );
   }
 
@@ -419,6 +491,33 @@ class TimetableSlotRepository {
     return session.db.count<TimetableSlot>(
       where: where?.call(TimetableSlot.t),
       limit: limit,
+      transaction: transaction,
+    );
+  }
+}
+
+class TimetableSlotAttachRowRepository {
+  const TimetableSlotAttachRowRepository._();
+
+  /// Creates a relation between the given [TimetableSlot] and [Timetable]
+  /// by setting the [TimetableSlot]'s foreign key `timetableId` to refer to the [Timetable].
+  Future<void> timetable(
+    _i1.Session session,
+    TimetableSlot timetableSlot,
+    _i3.Timetable timetable, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (timetableSlot.id == null) {
+      throw ArgumentError.notNull('timetableSlot.id');
+    }
+    if (timetable.id == null) {
+      throw ArgumentError.notNull('timetable.id');
+    }
+
+    var $timetableSlot = timetableSlot.copyWith(timetableId: timetable.id);
+    await session.db.updateRow<TimetableSlot>(
+      $timetableSlot,
+      columns: [TimetableSlot.t.timetableId],
       transaction: transaction,
     );
   }

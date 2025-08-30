@@ -14,10 +14,11 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identity_stream_page/pupil_identity_stream_page.dart';
+import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_page/timetable_page.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _pupilIdentityManager = di<PupilIdentityManager>();
-final _sessionManager = di<HubSessionManager>();
+final _hubSessionManager = di<HubSessionManager>();
 
 class ScanToolsPage extends WatchingWidget {
   const ScanToolsPage({super.key});
@@ -164,34 +165,61 @@ class ScanToolsPage extends WatchingWidget {
                     ),
                   ),
                 ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
+                if (_hubSessionManager.isAdmin) ...[
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      backgroundColor: Colors.amber[800],
+                      minimumSize: const Size.fromHeight(90),
                     ),
-                    backgroundColor: Colors.amber[800],
-                    minimumSize: const Size.fromHeight(90),
-                  ),
-                  onPressed: () async {
-                    final bool? confirm = await confirmationDialog(
-                      context: context,
-                      title: 'Datenbank aus json importieren',
-                      message: 'Json importieren?',
-                    );
-                    if (confirm == true) {
-                      di<PupilManager>().importSupportLevelsFromJson();
-                    }
-                  },
-                  child: const Text(
-                    'Daten aus json importieren',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.white,
+                    onPressed: () async {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const TimetablePage(),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      'Stundenplan verwalten',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      backgroundColor: Colors.amber[800],
+                      minimumSize: const Size.fromHeight(90),
+                    ),
+                    onPressed: () async {
+                      final bool? confirm = await confirmationDialog(
+                        context: context,
+                        title: 'Datenbank aus json importieren',
+                        message: 'Json importieren?',
+                      );
+                      if (confirm == true) {
+                        di<PupilManager>().importSupportLevelsFromJson();
+                      }
+                    },
+                    child: const Text(
+                      'Daten aus json importieren',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
                 const Gap(20),
                 (Platform.isWindows || Platform.isMacOS)
                     // &&                        _sessionManager.isAdmin

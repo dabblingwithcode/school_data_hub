@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:gap/gap.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
@@ -14,6 +15,8 @@ import 'package:school_data_hub_flutter/features/app_settings/settings_page/dial
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _log = Logger('EnvManager');
 
 class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
   const SettingsSessionSection({super.key});
@@ -155,8 +158,13 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
               message: 'Instanz-ID-Schlüssel löschen?',
             );
             if (confirm == true && context.mounted) {
+              // TODO: move this logic to a
+              _log.warning('[DI] Hang on tight, signing out! ');
               await di<EnvManager>().deleteEnv();
               di<HubSessionManager>().signOutDevice();
+              _log.warning(
+                '[DI] Env deleted, calling [unregisterMaagersDependentOnEnv] from the settings section!',
+              );
               DiManager.unregisterManagersDependentOnEnv();
               _notificationService.showSnackBar(
                 NotificationType.success,

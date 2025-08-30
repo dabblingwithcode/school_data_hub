@@ -63,7 +63,7 @@ class SettingsPage extends StatelessWidget {
                   SettingsTile(
                     leading: const Icon(Icons.build_rounded),
                     title: Text(
-                      'Patch level: ${di<ShorebirdUpdateManager>().currentPatch}',
+                      'Patch level: ${di<ShorebirdUpdateManager>().currentPatch?.number.toString() ?? '0'}',
                     ),
                   ),
                   SettingsTile.navigation(

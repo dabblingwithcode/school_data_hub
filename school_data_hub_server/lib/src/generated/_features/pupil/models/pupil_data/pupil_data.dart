@@ -34,7 +34,7 @@ import '../../../../_features/pupil/models/pupil_data/after_school_care/after_sc
     as _i12;
 import '../../../../_features/pupil/models/pupil_data/credit_transaction.dart'
     as _i13;
-import '../../../../_features/timetable/models/lesson/lesson_group_membership.dart'
+import '../../../../_features/timetable/models/scheduled_lesson/lesson_group_membership.dart'
     as _i14;
 import '../../../../_features/timetable/models/lesson/lesson_attendance.dart'
     as _i15;

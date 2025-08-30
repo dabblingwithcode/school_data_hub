@@ -5,7 +5,9 @@ fields:
   userInfo: module:auth:UserInfo?, relation(onDelete=Cascade)
   role: Role
   timeUnits: int
-  reliefTimeUnits: int  
+  reliefTimeUnits: int
+  scheduledLessonsTeacher: List<ScheduledLessonTeacher>?, relation(name=user_scheduled_lesson)
+  lessonsTeacher: List<LessonTeacher>?, relation(name=user_lesson)
   pupilsAuth: Set<int>?
   credit: int
   userFlags: UserFlags

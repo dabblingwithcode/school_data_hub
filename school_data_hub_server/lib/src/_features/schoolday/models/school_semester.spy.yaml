@@ -10,6 +10,7 @@ fields:
   supportConferenceDate: DateTime?
   reportConferenceDate: DateTime?
   reportSignedDate: DateTime?
+  timetables: List<Timetable>?, relation(name=schoolsemester_timetables)
   schooldays: List<Schoolday>?, relation(name=schoolday_school_semester)
   competenceReports: List<CompetenceReport>?, relation(name=competence_report_semester)
   learningSupportPlans: List<LearningSupportPlan>?, relation(name=learning_support_plan_semester)

@@ -1,0 +1,10 @@
+# scheduled_lesson_teacher.spy.yaml
+class: ScheduledLessonTeacher
+table: scheduled_lesson_teacher
+fields:
+  user: User?, relation(name=user_scheduled_lesson)
+  scheduledLesson: ScheduledLesson?, relation(name=scheduled_lesson_teachers)
+indexes:
+  scheduled_lesson_teacher_unique_idx:
+    fields: userId, scheduledLessonId
+    unique: true

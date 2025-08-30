@@ -12,8 +12,9 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import '../../../../_features/timetable/models/scheduled_lesson.dart' as _i2;
-import '../../../../_features/timetable/models/lesson/lesson_group_membership.dart'
+import '../../../../_features/timetable/models/scheduled_lesson/scheduled_lesson.dart'
+    as _i2;
+import '../../../../_features/timetable/models/scheduled_lesson/lesson_group_membership.dart'
     as _i3;
 
 abstract class LessonGroup

@@ -14,7 +14,11 @@
 import 'package:serverpod/serverpod.dart' as _i1;
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i2;
 import '../../../_features/user/models/roles.dart' as _i3;
-import '../../../_features/user/models/user_flags.dart' as _i4;
+import '../../../_features/timetable/models/junction_models/scheduled_lesson_teacher.dart'
+    as _i4;
+import '../../../_features/timetable/models/junction_models/lesson_teacher.dart'
+    as _i5;
+import '../../../_features/user/models/user_flags.dart' as _i6;
 
 abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   User._({
@@ -24,6 +28,8 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     required this.role,
     required this.timeUnits,
     required this.reliefTimeUnits,
+    this.scheduledLessonsTeacher,
+    this.lessonsTeacher,
     this.pupilsAuth,
     required this.credit,
     required this.userFlags,
@@ -36,9 +42,11 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     required _i3.Role role,
     required int timeUnits,
     required int reliefTimeUnits,
+    List<_i4.ScheduledLessonTeacher>? scheduledLessonsTeacher,
+    List<_i5.LessonTeacher>? lessonsTeacher,
     Set<int>? pupilsAuth,
     required int credit,
-    required _i4.UserFlags userFlags,
+    required _i6.UserFlags userFlags,
   }) = _UserImpl;
 
   factory User.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -52,13 +60,21 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
       role: _i3.Role.fromJson((jsonSerialization['role'] as String)),
       timeUnits: jsonSerialization['timeUnits'] as int,
       reliefTimeUnits: jsonSerialization['reliefTimeUnits'] as int,
+      scheduledLessonsTeacher: (jsonSerialization['scheduledLessonsTeacher']
+              as List?)
+          ?.map((e) =>
+              _i4.ScheduledLessonTeacher.fromJson((e as Map<String, dynamic>)))
+          .toList(),
+      lessonsTeacher: (jsonSerialization['lessonsTeacher'] as List?)
+          ?.map((e) => _i5.LessonTeacher.fromJson((e as Map<String, dynamic>)))
+          .toList(),
       pupilsAuth: jsonSerialization['pupilsAuth'] == null
           ? null
           : _i1.SetJsonExtension.fromJson(
               (jsonSerialization['pupilsAuth'] as List),
               itemFromJson: (e) => e as int),
       credit: jsonSerialization['credit'] as int,
-      userFlags: _i4.UserFlags.fromJson(
+      userFlags: _i6.UserFlags.fromJson(
           (jsonSerialization['userFlags'] as Map<String, dynamic>)),
     );
   }
@@ -80,11 +96,15 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
 
   int reliefTimeUnits;
 
+  List<_i4.ScheduledLessonTeacher>? scheduledLessonsTeacher;
+
+  List<_i5.LessonTeacher>? lessonsTeacher;
+
   Set<int>? pupilsAuth;
 
   int credit;
 
-  _i4.UserFlags userFlags;
+  _i6.UserFlags userFlags;
 
   @override
   _i1.Table<int?> get table => t;
@@ -99,9 +119,11 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     _i3.Role? role,
     int? timeUnits,
     int? reliefTimeUnits,
+    List<_i4.ScheduledLessonTeacher>? scheduledLessonsTeacher,
+    List<_i5.LessonTeacher>? lessonsTeacher,
     Set<int>? pupilsAuth,
     int? credit,
-    _i4.UserFlags? userFlags,
+    _i6.UserFlags? userFlags,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -112,6 +134,12 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
       'role': role.toJson(),
       'timeUnits': timeUnits,
       'reliefTimeUnits': reliefTimeUnits,
+      if (scheduledLessonsTeacher != null)
+        'scheduledLessonsTeacher':
+            scheduledLessonsTeacher?.toJson(valueToJson: (v) => v.toJson()),
+      if (lessonsTeacher != null)
+        'lessonsTeacher':
+            lessonsTeacher?.toJson(valueToJson: (v) => v.toJson()),
       if (pupilsAuth != null) 'pupilsAuth': pupilsAuth?.toJson(),
       'credit': credit,
       'userFlags': userFlags.toJson(),
@@ -127,14 +155,28 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
       'role': role.toJson(),
       'timeUnits': timeUnits,
       'reliefTimeUnits': reliefTimeUnits,
+      if (scheduledLessonsTeacher != null)
+        'scheduledLessonsTeacher': scheduledLessonsTeacher?.toJson(
+            valueToJson: (v) => v.toJsonForProtocol()),
+      if (lessonsTeacher != null)
+        'lessonsTeacher':
+            lessonsTeacher?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
       if (pupilsAuth != null) 'pupilsAuth': pupilsAuth?.toJson(),
       'credit': credit,
       'userFlags': userFlags.toJsonForProtocol(),
     };
   }
 
-  static UserInclude include({_i2.UserInfoInclude? userInfo}) {
-    return UserInclude._(userInfo: userInfo);
+  static UserInclude include({
+    _i2.UserInfoInclude? userInfo,
+    _i4.ScheduledLessonTeacherIncludeList? scheduledLessonsTeacher,
+    _i5.LessonTeacherIncludeList? lessonsTeacher,
+  }) {
+    return UserInclude._(
+      userInfo: userInfo,
+      scheduledLessonsTeacher: scheduledLessonsTeacher,
+      lessonsTeacher: lessonsTeacher,
+    );
   }
 
   static UserIncludeList includeList({
@@ -173,9 +215,11 @@ class _UserImpl extends User {
     required _i3.Role role,
     required int timeUnits,
     required int reliefTimeUnits,
+    List<_i4.ScheduledLessonTeacher>? scheduledLessonsTeacher,
+    List<_i5.LessonTeacher>? lessonsTeacher,
     Set<int>? pupilsAuth,
     required int credit,
-    required _i4.UserFlags userFlags,
+    required _i6.UserFlags userFlags,
   }) : super._(
           id: id,
           userInfoId: userInfoId,
@@ -183,6 +227,8 @@ class _UserImpl extends User {
           role: role,
           timeUnits: timeUnits,
           reliefTimeUnits: reliefTimeUnits,
+          scheduledLessonsTeacher: scheduledLessonsTeacher,
+          lessonsTeacher: lessonsTeacher,
           pupilsAuth: pupilsAuth,
           credit: credit,
           userFlags: userFlags,
@@ -199,9 +245,11 @@ class _UserImpl extends User {
     _i3.Role? role,
     int? timeUnits,
     int? reliefTimeUnits,
+    Object? scheduledLessonsTeacher = _Undefined,
+    Object? lessonsTeacher = _Undefined,
     Object? pupilsAuth = _Undefined,
     int? credit,
-    _i4.UserFlags? userFlags,
+    _i6.UserFlags? userFlags,
   }) {
     return User(
       id: id is int? ? id : this.id,
@@ -211,6 +259,13 @@ class _UserImpl extends User {
       role: role ?? this.role,
       timeUnits: timeUnits ?? this.timeUnits,
       reliefTimeUnits: reliefTimeUnits ?? this.reliefTimeUnits,
+      scheduledLessonsTeacher: scheduledLessonsTeacher
+              is List<_i4.ScheduledLessonTeacher>?
+          ? scheduledLessonsTeacher
+          : this.scheduledLessonsTeacher?.map((e0) => e0.copyWith()).toList(),
+      lessonsTeacher: lessonsTeacher is List<_i5.LessonTeacher>?
+          ? lessonsTeacher
+          : this.lessonsTeacher?.map((e0) => e0.copyWith()).toList(),
       pupilsAuth: pupilsAuth is Set<int>?
           ? pupilsAuth
           : this.pupilsAuth?.map((e0) => e0).toSet(),
@@ -263,6 +318,14 @@ class UserTable extends _i1.Table<int?> {
 
   late final _i1.ColumnInt reliefTimeUnits;
 
+  _i4.ScheduledLessonTeacherTable? ___scheduledLessonsTeacher;
+
+  _i1.ManyRelation<_i4.ScheduledLessonTeacherTable>? _scheduledLessonsTeacher;
+
+  _i5.LessonTeacherTable? ___lessonsTeacher;
+
+  _i1.ManyRelation<_i5.LessonTeacherTable>? _lessonsTeacher;
+
   late final _i1.ColumnSerializable pupilsAuth;
 
   late final _i1.ColumnInt credit;
@@ -282,6 +345,70 @@ class UserTable extends _i1.Table<int?> {
     return _userInfo!;
   }
 
+  _i4.ScheduledLessonTeacherTable get __scheduledLessonsTeacher {
+    if (___scheduledLessonsTeacher != null) return ___scheduledLessonsTeacher!;
+    ___scheduledLessonsTeacher = _i1.createRelationTable(
+      relationFieldName: '__scheduledLessonsTeacher',
+      field: User.t.id,
+      foreignField: _i4.ScheduledLessonTeacher.t.userId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i4.ScheduledLessonTeacherTable(tableRelation: foreignTableRelation),
+    );
+    return ___scheduledLessonsTeacher!;
+  }
+
+  _i5.LessonTeacherTable get __lessonsTeacher {
+    if (___lessonsTeacher != null) return ___lessonsTeacher!;
+    ___lessonsTeacher = _i1.createRelationTable(
+      relationFieldName: '__lessonsTeacher',
+      field: User.t.id,
+      foreignField: _i5.LessonTeacher.t.userId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i5.LessonTeacherTable(tableRelation: foreignTableRelation),
+    );
+    return ___lessonsTeacher!;
+  }
+
+  _i1.ManyRelation<_i4.ScheduledLessonTeacherTable>
+      get scheduledLessonsTeacher {
+    if (_scheduledLessonsTeacher != null) return _scheduledLessonsTeacher!;
+    var relationTable = _i1.createRelationTable(
+      relationFieldName: 'scheduledLessonsTeacher',
+      field: User.t.id,
+      foreignField: _i4.ScheduledLessonTeacher.t.userId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i4.ScheduledLessonTeacherTable(tableRelation: foreignTableRelation),
+    );
+    _scheduledLessonsTeacher =
+        _i1.ManyRelation<_i4.ScheduledLessonTeacherTable>(
+      tableWithRelations: relationTable,
+      table: _i4.ScheduledLessonTeacherTable(
+          tableRelation: relationTable.tableRelation!.lastRelation),
+    );
+    return _scheduledLessonsTeacher!;
+  }
+
+  _i1.ManyRelation<_i5.LessonTeacherTable> get lessonsTeacher {
+    if (_lessonsTeacher != null) return _lessonsTeacher!;
+    var relationTable = _i1.createRelationTable(
+      relationFieldName: 'lessonsTeacher',
+      field: User.t.id,
+      foreignField: _i5.LessonTeacher.t.userId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i5.LessonTeacherTable(tableRelation: foreignTableRelation),
+    );
+    _lessonsTeacher = _i1.ManyRelation<_i5.LessonTeacherTable>(
+      tableWithRelations: relationTable,
+      table: _i5.LessonTeacherTable(
+          tableRelation: relationTable.tableRelation!.lastRelation),
+    );
+    return _lessonsTeacher!;
+  }
+
   @override
   List<_i1.Column> get columns => [
         id,
@@ -299,19 +426,39 @@ class UserTable extends _i1.Table<int?> {
     if (relationField == 'userInfo') {
       return userInfo;
     }
+    if (relationField == 'scheduledLessonsTeacher') {
+      return __scheduledLessonsTeacher;
+    }
+    if (relationField == 'lessonsTeacher') {
+      return __lessonsTeacher;
+    }
     return null;
   }
 }
 
 class UserInclude extends _i1.IncludeObject {
-  UserInclude._({_i2.UserInfoInclude? userInfo}) {
+  UserInclude._({
+    _i2.UserInfoInclude? userInfo,
+    _i4.ScheduledLessonTeacherIncludeList? scheduledLessonsTeacher,
+    _i5.LessonTeacherIncludeList? lessonsTeacher,
+  }) {
     _userInfo = userInfo;
+    _scheduledLessonsTeacher = scheduledLessonsTeacher;
+    _lessonsTeacher = lessonsTeacher;
   }
 
   _i2.UserInfoInclude? _userInfo;
 
+  _i4.ScheduledLessonTeacherIncludeList? _scheduledLessonsTeacher;
+
+  _i5.LessonTeacherIncludeList? _lessonsTeacher;
+
   @override
-  Map<String, _i1.Include?> get includes => {'userInfo': _userInfo};
+  Map<String, _i1.Include?> get includes => {
+        'userInfo': _userInfo,
+        'scheduledLessonsTeacher': _scheduledLessonsTeacher,
+        'lessonsTeacher': _lessonsTeacher,
+      };
 
   @override
   _i1.Table<int?> get table => User.t;
@@ -339,6 +486,8 @@ class UserIncludeList extends _i1.IncludeList {
 
 class UserRepository {
   const UserRepository._();
+
+  final attach = const UserAttachRepository._();
 
   final attachRow = const UserAttachRowRepository._();
 
@@ -558,6 +707,58 @@ class UserRepository {
   }
 }
 
+class UserAttachRepository {
+  const UserAttachRepository._();
+
+  /// Creates a relation between this [User] and the given [ScheduledLessonTeacher]s
+  /// by setting each [ScheduledLessonTeacher]'s foreign key `userId` to refer to this [User].
+  Future<void> scheduledLessonsTeacher(
+    _i1.Session session,
+    User user,
+    List<_i4.ScheduledLessonTeacher> scheduledLessonTeacher, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (scheduledLessonTeacher.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('scheduledLessonTeacher.id');
+    }
+    if (user.id == null) {
+      throw ArgumentError.notNull('user.id');
+    }
+
+    var $scheduledLessonTeacher =
+        scheduledLessonTeacher.map((e) => e.copyWith(userId: user.id)).toList();
+    await session.db.update<_i4.ScheduledLessonTeacher>(
+      $scheduledLessonTeacher,
+      columns: [_i4.ScheduledLessonTeacher.t.userId],
+      transaction: transaction,
+    );
+  }
+
+  /// Creates a relation between this [User] and the given [LessonTeacher]s
+  /// by setting each [LessonTeacher]'s foreign key `userId` to refer to this [User].
+  Future<void> lessonsTeacher(
+    _i1.Session session,
+    User user,
+    List<_i5.LessonTeacher> lessonTeacher, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (lessonTeacher.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('lessonTeacher.id');
+    }
+    if (user.id == null) {
+      throw ArgumentError.notNull('user.id');
+    }
+
+    var $lessonTeacher =
+        lessonTeacher.map((e) => e.copyWith(userId: user.id)).toList();
+    await session.db.update<_i5.LessonTeacher>(
+      $lessonTeacher,
+      columns: [_i5.LessonTeacher.t.userId],
+      transaction: transaction,
+    );
+  }
+}
+
 class UserAttachRowRepository {
   const UserAttachRowRepository._();
 
@@ -580,6 +781,53 @@ class UserAttachRowRepository {
     await session.db.updateRow<User>(
       $user,
       columns: [User.t.userInfoId],
+      transaction: transaction,
+    );
+  }
+
+  /// Creates a relation between this [User] and the given [ScheduledLessonTeacher]
+  /// by setting the [ScheduledLessonTeacher]'s foreign key `userId` to refer to this [User].
+  Future<void> scheduledLessonsTeacher(
+    _i1.Session session,
+    User user,
+    _i4.ScheduledLessonTeacher scheduledLessonTeacher, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (scheduledLessonTeacher.id == null) {
+      throw ArgumentError.notNull('scheduledLessonTeacher.id');
+    }
+    if (user.id == null) {
+      throw ArgumentError.notNull('user.id');
+    }
+
+    var $scheduledLessonTeacher =
+        scheduledLessonTeacher.copyWith(userId: user.id);
+    await session.db.updateRow<_i4.ScheduledLessonTeacher>(
+      $scheduledLessonTeacher,
+      columns: [_i4.ScheduledLessonTeacher.t.userId],
+      transaction: transaction,
+    );
+  }
+
+  /// Creates a relation between this [User] and the given [LessonTeacher]
+  /// by setting the [LessonTeacher]'s foreign key `userId` to refer to this [User].
+  Future<void> lessonsTeacher(
+    _i1.Session session,
+    User user,
+    _i5.LessonTeacher lessonTeacher, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (lessonTeacher.id == null) {
+      throw ArgumentError.notNull('lessonTeacher.id');
+    }
+    if (user.id == null) {
+      throw ArgumentError.notNull('user.id');
+    }
+
+    var $lessonTeacher = lessonTeacher.copyWith(userId: user.id);
+    await session.db.updateRow<_i5.LessonTeacher>(
+      $lessonTeacher,
+      columns: [_i5.LessonTeacher.t.userId],
       transaction: transaction,
     );
   }

@@ -12,7 +12,9 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import '../../../../_features/timetable/models/scheduled_lesson.dart' as _i2;
+import '../../../../_features/timetable/models/scheduled_lesson/scheduled_lesson.dart'
+    as _i2;
+import '../../../../_features/timetable/models/lesson/lesson.dart' as _i3;
 
 abstract class Subject
     implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
@@ -26,6 +28,7 @@ abstract class Subject
     required this.createdAt,
     required this.modifiedBy,
     this.scheduledLessons,
+    this.lessons,
   });
 
   factory Subject({
@@ -38,6 +41,7 @@ abstract class Subject
     required DateTime createdAt,
     required String modifiedBy,
     List<_i2.ScheduledLesson>? scheduledLessons,
+    List<_i3.Lesson>? lessons,
   }) = _SubjectImpl;
 
   factory Subject.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -54,6 +58,9 @@ abstract class Subject
       scheduledLessons: (jsonSerialization['scheduledLessons'] as List?)
           ?.map(
               (e) => _i2.ScheduledLesson.fromJson((e as Map<String, dynamic>)))
+          .toList(),
+      lessons: (jsonSerialization['lessons'] as List?)
+          ?.map((e) => _i3.Lesson.fromJson((e as Map<String, dynamic>)))
           .toList(),
     );
   }
@@ -81,6 +88,8 @@ abstract class Subject
 
   List<_i2.ScheduledLesson>? scheduledLessons;
 
+  List<_i3.Lesson>? lessons;
+
   @override
   _i1.Table<int?> get table => t;
 
@@ -97,6 +106,7 @@ abstract class Subject
     DateTime? createdAt,
     String? modifiedBy,
     List<_i2.ScheduledLesson>? scheduledLessons,
+    List<_i3.Lesson>? lessons,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -112,6 +122,8 @@ abstract class Subject
       if (scheduledLessons != null)
         'scheduledLessons':
             scheduledLessons?.toJson(valueToJson: (v) => v.toJson()),
+      if (lessons != null)
+        'lessons': lessons?.toJson(valueToJson: (v) => v.toJson()),
     };
   }
 
@@ -129,12 +141,19 @@ abstract class Subject
       if (scheduledLessons != null)
         'scheduledLessons':
             scheduledLessons?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
+      if (lessons != null)
+        'lessons': lessons?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
     };
   }
 
-  static SubjectInclude include(
-      {_i2.ScheduledLessonIncludeList? scheduledLessons}) {
-    return SubjectInclude._(scheduledLessons: scheduledLessons);
+  static SubjectInclude include({
+    _i2.ScheduledLessonIncludeList? scheduledLessons,
+    _i3.LessonIncludeList? lessons,
+  }) {
+    return SubjectInclude._(
+      scheduledLessons: scheduledLessons,
+      lessons: lessons,
+    );
   }
 
   static SubjectIncludeList includeList({
@@ -176,6 +195,7 @@ class _SubjectImpl extends Subject {
     required DateTime createdAt,
     required String modifiedBy,
     List<_i2.ScheduledLesson>? scheduledLessons,
+    List<_i3.Lesson>? lessons,
   }) : super._(
           id: id,
           publicId: publicId,
@@ -186,6 +206,7 @@ class _SubjectImpl extends Subject {
           createdAt: createdAt,
           modifiedBy: modifiedBy,
           scheduledLessons: scheduledLessons,
+          lessons: lessons,
         );
 
   /// Returns a shallow copy of this [Subject]
@@ -202,6 +223,7 @@ class _SubjectImpl extends Subject {
     DateTime? createdAt,
     String? modifiedBy,
     Object? scheduledLessons = _Undefined,
+    Object? lessons = _Undefined,
   }) {
     return Subject(
       id: id is int? ? id : this.id,
@@ -215,6 +237,9 @@ class _SubjectImpl extends Subject {
       scheduledLessons: scheduledLessons is List<_i2.ScheduledLesson>?
           ? scheduledLessons
           : this.scheduledLessons?.map((e0) => e0.copyWith()).toList(),
+      lessons: lessons is List<_i3.Lesson>?
+          ? lessons
+          : this.lessons?.map((e0) => e0.copyWith()).toList(),
     );
   }
 }
@@ -269,6 +294,10 @@ class SubjectTable extends _i1.Table<int?> {
 
   _i1.ManyRelation<_i2.ScheduledLessonTable>? _scheduledLessons;
 
+  _i3.LessonTable? ___lessons;
+
+  _i1.ManyRelation<_i3.LessonTable>? _lessons;
+
   _i2.ScheduledLessonTable get __scheduledLessons {
     if (___scheduledLessons != null) return ___scheduledLessons!;
     ___scheduledLessons = _i1.createRelationTable(
@@ -280,6 +309,19 @@ class SubjectTable extends _i1.Table<int?> {
           _i2.ScheduledLessonTable(tableRelation: foreignTableRelation),
     );
     return ___scheduledLessons!;
+  }
+
+  _i3.LessonTable get __lessons {
+    if (___lessons != null) return ___lessons!;
+    ___lessons = _i1.createRelationTable(
+      relationFieldName: '__lessons',
+      field: Subject.t.id,
+      foreignField: _i3.Lesson.t.subjectId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i3.LessonTable(tableRelation: foreignTableRelation),
+    );
+    return ___lessons!;
   }
 
   _i1.ManyRelation<_i2.ScheduledLessonTable> get scheduledLessons {
@@ -300,6 +342,24 @@ class SubjectTable extends _i1.Table<int?> {
     return _scheduledLessons!;
   }
 
+  _i1.ManyRelation<_i3.LessonTable> get lessons {
+    if (_lessons != null) return _lessons!;
+    var relationTable = _i1.createRelationTable(
+      relationFieldName: 'lessons',
+      field: Subject.t.id,
+      foreignField: _i3.Lesson.t.subjectId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i3.LessonTable(tableRelation: foreignTableRelation),
+    );
+    _lessons = _i1.ManyRelation<_i3.LessonTable>(
+      tableWithRelations: relationTable,
+      table: _i3.LessonTable(
+          tableRelation: relationTable.tableRelation!.lastRelation),
+    );
+    return _lessons!;
+  }
+
   @override
   List<_i1.Column> get columns => [
         id,
@@ -317,20 +377,31 @@ class SubjectTable extends _i1.Table<int?> {
     if (relationField == 'scheduledLessons') {
       return __scheduledLessons;
     }
+    if (relationField == 'lessons') {
+      return __lessons;
+    }
     return null;
   }
 }
 
 class SubjectInclude extends _i1.IncludeObject {
-  SubjectInclude._({_i2.ScheduledLessonIncludeList? scheduledLessons}) {
+  SubjectInclude._({
+    _i2.ScheduledLessonIncludeList? scheduledLessons,
+    _i3.LessonIncludeList? lessons,
+  }) {
     _scheduledLessons = scheduledLessons;
+    _lessons = lessons;
   }
 
   _i2.ScheduledLessonIncludeList? _scheduledLessons;
 
+  _i3.LessonIncludeList? _lessons;
+
   @override
-  Map<String, _i1.Include?> get includes =>
-      {'scheduledLessons': _scheduledLessons};
+  Map<String, _i1.Include?> get includes => {
+        'scheduledLessons': _scheduledLessons,
+        'lessons': _lessons,
+      };
 
   @override
   _i1.Table<int?> get table => Subject.t;
@@ -362,10 +433,6 @@ class SubjectRepository {
   final attach = const SubjectAttachRepository._();
 
   final attachRow = const SubjectAttachRowRepository._();
-
-  final detach = const SubjectDetachRepository._();
-
-  final detachRow = const SubjectDetachRowRepository._();
 
   /// Returns a list of [Subject]s matching the given query parameters.
   ///
@@ -609,6 +676,29 @@ class SubjectAttachRepository {
       transaction: transaction,
     );
   }
+
+  /// Creates a relation between this [Subject] and the given [Lesson]s
+  /// by setting each [Lesson]'s foreign key `subjectId` to refer to this [Subject].
+  Future<void> lessons(
+    _i1.Session session,
+    Subject subject,
+    List<_i3.Lesson> lesson, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (lesson.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('lesson.id');
+    }
+    if (subject.id == null) {
+      throw ArgumentError.notNull('subject.id');
+    }
+
+    var $lesson = lesson.map((e) => e.copyWith(subjectId: subject.id)).toList();
+    await session.db.update<_i3.Lesson>(
+      $lesson,
+      columns: [_i3.Lesson.t.subjectId],
+      transaction: transaction,
+    );
+  }
 }
 
 class SubjectAttachRowRepository {
@@ -636,56 +726,26 @@ class SubjectAttachRowRepository {
       transaction: transaction,
     );
   }
-}
 
-class SubjectDetachRepository {
-  const SubjectDetachRepository._();
-
-  /// Detaches the relation between this [Subject] and the given [ScheduledLesson]
-  /// by setting the [ScheduledLesson]'s foreign key `subjectId` to `null`.
-  ///
-  /// This removes the association between the two models without deleting
-  /// the related record.
-  Future<void> scheduledLessons(
+  /// Creates a relation between this [Subject] and the given [Lesson]
+  /// by setting the [Lesson]'s foreign key `subjectId` to refer to this [Subject].
+  Future<void> lessons(
     _i1.Session session,
-    List<_i2.ScheduledLesson> scheduledLesson, {
+    Subject subject,
+    _i3.Lesson lesson, {
     _i1.Transaction? transaction,
   }) async {
-    if (scheduledLesson.any((e) => e.id == null)) {
-      throw ArgumentError.notNull('scheduledLesson.id');
+    if (lesson.id == null) {
+      throw ArgumentError.notNull('lesson.id');
+    }
+    if (subject.id == null) {
+      throw ArgumentError.notNull('subject.id');
     }
 
-    var $scheduledLesson =
-        scheduledLesson.map((e) => e.copyWith(subjectId: null)).toList();
-    await session.db.update<_i2.ScheduledLesson>(
-      $scheduledLesson,
-      columns: [_i2.ScheduledLesson.t.subjectId],
-      transaction: transaction,
-    );
-  }
-}
-
-class SubjectDetachRowRepository {
-  const SubjectDetachRowRepository._();
-
-  /// Detaches the relation between this [Subject] and the given [ScheduledLesson]
-  /// by setting the [ScheduledLesson]'s foreign key `subjectId` to `null`.
-  ///
-  /// This removes the association between the two models without deleting
-  /// the related record.
-  Future<void> scheduledLessons(
-    _i1.Session session,
-    _i2.ScheduledLesson scheduledLesson, {
-    _i1.Transaction? transaction,
-  }) async {
-    if (scheduledLesson.id == null) {
-      throw ArgumentError.notNull('scheduledLesson.id');
-    }
-
-    var $scheduledLesson = scheduledLesson.copyWith(subjectId: null);
-    await session.db.updateRow<_i2.ScheduledLesson>(
-      $scheduledLesson,
-      columns: [_i2.ScheduledLesson.t.subjectId],
+    var $lesson = lesson.copyWith(subjectId: subject.id);
+    await session.db.updateRow<_i3.Lesson>(
+      $lesson,
+      columns: [_i3.Lesson.t.subjectId],
       transaction: transaction,
     );
   }

@@ -10,31 +10,40 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import '../../../_features/timetable/models/weekday_enum.dart' as _i2;
+import '../../../../_features/timetable/models/scheduled_lesson/weekday_enum.dart'
+    as _i2;
+import '../../../../_features/timetable/models/timetable.dart' as _i3;
 
 abstract class TimetableSlot implements _i1.SerializableModel {
   TimetableSlot._({
     this.id,
-    this.day,
-    this.startTime,
-    this.endTime,
+    required this.day,
+    required this.startTime,
+    required this.endTime,
+    required this.timetableId,
+    this.timetable,
   });
 
   factory TimetableSlot({
     int? id,
-    _i2.Weekday? day,
-    String? startTime,
-    String? endTime,
+    required _i2.Weekday day,
+    required String startTime,
+    required String endTime,
+    required int timetableId,
+    _i3.Timetable? timetable,
   }) = _TimetableSlotImpl;
 
   factory TimetableSlot.fromJson(Map<String, dynamic> jsonSerialization) {
     return TimetableSlot(
       id: jsonSerialization['id'] as int?,
-      day: jsonSerialization['day'] == null
+      day: _i2.Weekday.fromJson((jsonSerialization['day'] as String)),
+      startTime: jsonSerialization['startTime'] as String,
+      endTime: jsonSerialization['endTime'] as String,
+      timetableId: jsonSerialization['timetableId'] as int,
+      timetable: jsonSerialization['timetable'] == null
           ? null
-          : _i2.Weekday.fromJson((jsonSerialization['day'] as String)),
-      startTime: jsonSerialization['startTime'] as String?,
-      endTime: jsonSerialization['endTime'] as String?,
+          : _i3.Timetable.fromJson(
+              (jsonSerialization['timetable'] as Map<String, dynamic>)),
     );
   }
 
@@ -43,11 +52,15 @@ abstract class TimetableSlot implements _i1.SerializableModel {
   /// the id will be null.
   int? id;
 
-  _i2.Weekday? day;
+  _i2.Weekday day;
 
-  String? startTime;
+  String startTime;
 
-  String? endTime;
+  String endTime;
+
+  int timetableId;
+
+  _i3.Timetable? timetable;
 
   /// Returns a shallow copy of this [TimetableSlot]
   /// with some or all fields replaced by the given arguments.
@@ -57,14 +70,18 @@ abstract class TimetableSlot implements _i1.SerializableModel {
     _i2.Weekday? day,
     String? startTime,
     String? endTime,
+    int? timetableId,
+    _i3.Timetable? timetable,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
-      if (day != null) 'day': day?.toJson(),
-      if (startTime != null) 'startTime': startTime,
-      if (endTime != null) 'endTime': endTime,
+      'day': day.toJson(),
+      'startTime': startTime,
+      'endTime': endTime,
+      'timetableId': timetableId,
+      if (timetable != null) 'timetable': timetable?.toJson(),
     };
   }
 
@@ -79,14 +96,18 @@ class _Undefined {}
 class _TimetableSlotImpl extends TimetableSlot {
   _TimetableSlotImpl({
     int? id,
-    _i2.Weekday? day,
-    String? startTime,
-    String? endTime,
+    required _i2.Weekday day,
+    required String startTime,
+    required String endTime,
+    required int timetableId,
+    _i3.Timetable? timetable,
   }) : super._(
           id: id,
           day: day,
           startTime: startTime,
           endTime: endTime,
+          timetableId: timetableId,
+          timetable: timetable,
         );
 
   /// Returns a shallow copy of this [TimetableSlot]
@@ -95,15 +116,20 @@ class _TimetableSlotImpl extends TimetableSlot {
   @override
   TimetableSlot copyWith({
     Object? id = _Undefined,
-    Object? day = _Undefined,
-    Object? startTime = _Undefined,
-    Object? endTime = _Undefined,
+    _i2.Weekday? day,
+    String? startTime,
+    String? endTime,
+    int? timetableId,
+    Object? timetable = _Undefined,
   }) {
     return TimetableSlot(
       id: id is int? ? id : this.id,
-      day: day is _i2.Weekday? ? day : this.day,
-      startTime: startTime is String? ? startTime : this.startTime,
-      endTime: endTime is String? ? endTime : this.endTime,
+      day: day ?? this.day,
+      startTime: startTime ?? this.startTime,
+      endTime: endTime ?? this.endTime,
+      timetableId: timetableId ?? this.timetableId,
+      timetable:
+          timetable is _i3.Timetable? ? timetable : this.timetable?.copyWith(),
     );
   }
 }

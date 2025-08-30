@@ -37,7 +37,7 @@ class SelectUserListSearchBar extends WatchingWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(
-                    Icons.meeting_room_rounded,
+                    Icons.group_rounded,
                     color: AppColors.backgroundColor,
                   ),
                   const Gap(10),

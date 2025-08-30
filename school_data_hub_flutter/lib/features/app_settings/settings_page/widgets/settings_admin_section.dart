@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:school_data_hub_flutter/app_utils/app_helpers.dart';
-import 'package:school_data_hub_flutter/app_utils/shorebird_code_push.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_utilites.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:school_data_hub_flutter/features/books/utils/book_ids_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
@@ -66,7 +66,7 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
           title: const Text('Buch IDs generieren'),
           leading: const Icon(Icons.qr_code_rounded),
           onPressed: (context) {
-            //    generateBookIdsPdf();
+            generateBookIdsPdf();
           },
         ),
         SettingsTile.navigation(

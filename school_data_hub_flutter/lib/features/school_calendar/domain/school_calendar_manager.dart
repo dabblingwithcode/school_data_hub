@@ -235,13 +235,13 @@ class SchoolCalendarManager {
       call:
           () => _client.schooldayAdmin.createSchoolSemester(
             schoolYearName,
-            startDate,
-            endDate,
+            startDate.toUtc(),
+            endDate.toUtc(),
             isFirst,
-            classConferenceDate,
-            supportConferenceDate,
-            reportConferenceDate,
-            reportSignedDate,
+            classConferenceDate?.toUtc(),
+            supportConferenceDate?.toUtc(),
+            reportConferenceDate?.toUtc(),
+            reportSignedDate?.toUtc(),
           ),
     );
     if (newSemester == null) {

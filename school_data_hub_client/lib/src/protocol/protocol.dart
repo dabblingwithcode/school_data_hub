@@ -10,7 +10,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import '_features/learning_support/models/support_goal/support_goal.dart'
+import '_features/learning_support/models/support_goal/support_goal_check.dart'
     as _i2;
 import '_features/attendance/models/missed_schoolday.dart' as _i3;
 import '_features/attendance/models/missed_schoolday_dto.dart' as _i4;
@@ -35,9 +35,9 @@ import '_features/learning/models/competence_report_item.dart' as _i22;
 import '_features/learning_support/models/learning_support_plan.dart' as _i23;
 import '_features/learning_support/models/support_category.dart' as _i24;
 import '_features/learning_support/models/support_category_status.dart' as _i25;
-import '_features/attendance/models/contacted_type.dart' as _i26;
-import '_features/learning_support/models/support_goal/support_goal_check.dart'
-    as _i27;
+import '_features/learning_support/models/support_goal/support_goal.dart'
+    as _i26;
+import '_features/attendance/models/contacted_type.dart' as _i27;
 import '_features/learning_support/models/support_level.dart' as _i28;
 import '_features/matrix/compulsory_room.dart' as _i29;
 import '_features/matrix/matrix_room_type.dart' as _i30;
@@ -72,8 +72,8 @@ import '_features/pupil/models/pupil_identity/last_pupil_identities_update.dart'
     as _i47;
 import '_features/pupil/models/pupil_identity/pupil_identity.dart' as _i48;
 import '_features/pupil/models/pupil_identity/pupil_identity_dto.dart' as _i49;
-import '_shared/models/member_operation.dart' as _i50;
-import '_features/school_data/models/school_data.dart' as _i51;
+import '_features/pupil/models/pupil_identity/school_grade.dart' as _i50;
+import '_shared/models/member_operation.dart' as _i51;
 import '_features/school_lists/models/pupil_entry.dart' as _i52;
 import '_features/school_lists/models/school_list.dart' as _i53;
 import '_features/schoolday/models/school_semester.dart' as _i54;
@@ -81,68 +81,74 @@ import '_features/schoolday/models/schoolday.dart' as _i55;
 import '_features/schoolday_events/models/schoolday_event.dart' as _i56;
 import '_features/schoolday_events/models/schoolday_event_type.dart' as _i57;
 import '_features/timetable/models/classroom.dart' as _i58;
-import '_features/timetable/models/lesson/lesson.dart' as _i59;
-import '_features/timetable/models/lesson/lesson_attendance.dart' as _i60;
-import '_features/timetable/models/lesson/lesson_group.dart' as _i61;
-import '_features/timetable/models/lesson/lesson_group_membership.dart' as _i62;
-import '_features/timetable/models/lesson/lesson_subject.dart' as _i63;
-import '_features/timetable/models/lesson/subject.dart' as _i64;
-import '_features/timetable/models/scheduled_lesson.dart' as _i65;
-import '_features/timetable/models/timetable_slot.dart' as _i66;
-import '_features/timetable/models/weekday_enum.dart' as _i67;
-import '_features/user/models/roles.dart' as _i68;
-import '_features/user/models/staff_user.dart' as _i69;
-import '_features/user/models/user_flags.dart' as _i70;
-import '_features/workbooks/models/pupil_workbook.dart' as _i71;
-import '_features/workbooks/models/workbook.dart' as _i72;
-import '_shared/models/exceptions/test_exception.dart' as _i73;
-import '_shared/models/hub_document.dart' as _i74;
-import '_features/pupil/models/pupil_identity/school_grade.dart' as _i75;
+import '_features/timetable/models/junction_models/lesson_teacher.dart' as _i59;
+import '_features/timetable/models/junction_models/scheduled_lesson_teacher.dart'
+    as _i60;
+import '_features/timetable/models/lesson/lesson.dart' as _i61;
+import '_features/timetable/models/lesson/lesson_attendance.dart' as _i62;
+import '_features/timetable/models/lesson/lesson_group.dart' as _i63;
+import '_features/timetable/models/scheduled_lesson/lesson_group_membership.dart'
+    as _i64;
+import '_features/timetable/models/scheduled_lesson/scheduled_lesson.dart'
+    as _i65;
+import '_features/timetable/models/scheduled_lesson/subject.dart' as _i66;
+import '_features/timetable/models/scheduled_lesson/timetable_slot.dart'
+    as _i67;
+import '_features/timetable/models/scheduled_lesson/weekday_enum.dart' as _i68;
+import '_features/timetable/models/timetable.dart' as _i69;
+import '_features/user/models/roles.dart' as _i70;
+import '_features/user/models/staff_user.dart' as _i71;
+import '_features/user/models/user_flags.dart' as _i72;
+import '_features/workbooks/models/pupil_workbook.dart' as _i73;
+import '_features/workbooks/models/workbook.dart' as _i74;
+import '_shared/models/exceptions/test_exception.dart' as _i75;
+import '_shared/models/hub_document.dart' as _i76;
+import '_features/school_data/models/school_data.dart' as _i77;
 import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_data/pupil_data.dart'
-    as _i76;
-import 'package:school_data_hub_client/src/protocol/_features/learning/models/competence.dart'
-    as _i77;
-import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/support_category.dart'
     as _i78;
-import 'package:school_data_hub_client/src/protocol/_features/attendance/models/missed_schoolday.dart'
+import 'package:school_data_hub_client/src/protocol/_features/learning/models/competence.dart'
     as _i79;
-import 'package:serverpod_auth_client/serverpod_auth_client.dart' as _i80;
-import 'package:school_data_hub_client/src/protocol/_features/auth/models/user_device.dart'
+import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/support_category.dart'
+    as _i80;
+import 'package:school_data_hub_client/src/protocol/_features/attendance/models/missed_schoolday.dart'
     as _i81;
-import 'package:school_data_hub_client/src/protocol/_features/authorizations/models/authorization.dart'
-    as _i82;
-import 'package:school_data_hub_client/src/protocol/_shared/models/member_operation.dart'
+import 'package:serverpod_auth_client/serverpod_auth_client.dart' as _i82;
+import 'package:school_data_hub_client/src/protocol/_features/auth/models/user_device.dart'
     as _i83;
-import 'package:school_data_hub_client/src/protocol/_features/books/models/book_tagging/book_tag.dart'
+import 'package:school_data_hub_client/src/protocol/_features/authorizations/models/authorization.dart'
     as _i84;
-import 'package:school_data_hub_client/src/protocol/_features/books/models/book.dart'
+import 'package:school_data_hub_client/src/protocol/_shared/models/member_operation.dart'
     as _i85;
-import 'package:school_data_hub_client/src/protocol/_features/books/models/library_book_location.dart'
+import 'package:school_data_hub_client/src/protocol/_features/books/models/book_tagging/book_tag.dart'
     as _i86;
-import 'package:school_data_hub_client/src/protocol/_features/books/models/library_book.dart'
+import 'package:school_data_hub_client/src/protocol/_features/books/models/book.dart'
     as _i87;
-import 'package:school_data_hub_client/src/protocol/_features/books/models/pupil_book_lending.dart'
+import 'package:school_data_hub_client/src/protocol/_features/books/models/library_book_location.dart'
     as _i88;
-import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/learning_support_plan.dart'
+import 'package:school_data_hub_client/src/protocol/_features/books/models/library_book.dart'
     as _i89;
-import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/support_category_status.dart'
+import 'package:school_data_hub_client/src/protocol/_features/books/models/pupil_book_lending.dart'
     as _i90;
-import 'package:school_data_hub_client/src/protocol/_features/matrix/compulsory_room.dart'
+import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/learning_support_plan.dart'
     as _i91;
-import 'package:school_data_hub_client/src/protocol/_features/school_lists/models/school_list.dart'
+import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/support_category_status.dart'
     as _i92;
-import 'package:school_data_hub_client/src/protocol/_features/schoolday/models/school_semester.dart'
+import 'package:school_data_hub_client/src/protocol/_features/matrix/compulsory_room.dart'
     as _i93;
-import 'package:school_data_hub_client/src/protocol/_features/schoolday/models/schoolday.dart'
+import 'package:school_data_hub_client/src/protocol/_features/school_lists/models/school_list.dart'
     as _i94;
-import 'package:school_data_hub_client/src/protocol/_features/schoolday_events/models/schoolday_event.dart'
+import 'package:school_data_hub_client/src/protocol/_features/schoolday/models/school_semester.dart'
     as _i95;
-import 'package:school_data_hub_client/src/protocol/_features/user/models/staff_user.dart'
+import 'package:school_data_hub_client/src/protocol/_features/schoolday/models/schoolday.dart'
     as _i96;
-import 'package:school_data_hub_client/src/protocol/_features/workbooks/models/pupil_workbook.dart'
+import 'package:school_data_hub_client/src/protocol/_features/schoolday_events/models/schoolday_event.dart'
     as _i97;
-import 'package:school_data_hub_client/src/protocol/_features/workbooks/models/workbook.dart'
+import 'package:school_data_hub_client/src/protocol/_features/user/models/staff_user.dart'
     as _i98;
+import 'package:school_data_hub_client/src/protocol/_features/workbooks/models/pupil_workbook.dart'
+    as _i99;
+import 'package:school_data_hub_client/src/protocol/_features/workbooks/models/workbook.dart'
+    as _i100;
 export '_features/attendance/models/contacted_type.dart';
 export '_features/attendance/models/missed_schoolday.dart';
 export '_features/attendance/models/missed_schoolday_dto.dart';
@@ -200,15 +206,17 @@ export '_features/schoolday/models/schoolday.dart';
 export '_features/schoolday_events/models/schoolday_event.dart';
 export '_features/schoolday_events/models/schoolday_event_type.dart';
 export '_features/timetable/models/classroom.dart';
+export '_features/timetable/models/junction_models/lesson_teacher.dart';
+export '_features/timetable/models/junction_models/scheduled_lesson_teacher.dart';
 export '_features/timetable/models/lesson/lesson.dart';
 export '_features/timetable/models/lesson/lesson_attendance.dart';
 export '_features/timetable/models/lesson/lesson_group.dart';
-export '_features/timetable/models/lesson/lesson_group_membership.dart';
-export '_features/timetable/models/lesson/lesson_subject.dart';
-export '_features/timetable/models/lesson/subject.dart';
-export '_features/timetable/models/scheduled_lesson.dart';
-export '_features/timetable/models/timetable_slot.dart';
-export '_features/timetable/models/weekday_enum.dart';
+export '_features/timetable/models/scheduled_lesson/lesson_group_membership.dart';
+export '_features/timetable/models/scheduled_lesson/scheduled_lesson.dart';
+export '_features/timetable/models/scheduled_lesson/subject.dart';
+export '_features/timetable/models/scheduled_lesson/timetable_slot.dart';
+export '_features/timetable/models/scheduled_lesson/weekday_enum.dart';
+export '_features/timetable/models/timetable.dart';
 export '_features/user/models/roles.dart';
 export '_features/user/models/staff_user.dart';
 export '_features/user/models/user_flags.dart';
@@ -232,8 +240,8 @@ class Protocol extends _i1.SerializationManager {
     Type? t,
   ]) {
     t ??= T;
-    if (t == _i2.SupportGoal) {
-      return _i2.SupportGoal.fromJson(data) as T;
+    if (t == _i2.SupportGoalCheck) {
+      return _i2.SupportGoalCheck.fromJson(data) as T;
     }
     if (t == _i3.MissedSchoolday) {
       return _i3.MissedSchoolday.fromJson(data) as T;
@@ -304,11 +312,11 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i25.SupportCategoryStatus) {
       return _i25.SupportCategoryStatus.fromJson(data) as T;
     }
-    if (t == _i26.ContactedType) {
-      return _i26.ContactedType.fromJson(data) as T;
+    if (t == _i26.SupportGoal) {
+      return _i26.SupportGoal.fromJson(data) as T;
     }
-    if (t == _i27.SupportGoalCheck) {
-      return _i27.SupportGoalCheck.fromJson(data) as T;
+    if (t == _i27.ContactedType) {
+      return _i27.ContactedType.fromJson(data) as T;
     }
     if (t == _i28.SupportLevel) {
       return _i28.SupportLevel.fromJson(data) as T;
@@ -376,11 +384,11 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i49.PupilIdentityDto) {
       return _i49.PupilIdentityDto.fromJson(data) as T;
     }
-    if (t == _i50.MemberOperation) {
-      return _i50.MemberOperation.fromJson(data) as T;
+    if (t == _i50.SchoolGrade) {
+      return _i50.SchoolGrade.fromJson(data) as T;
     }
-    if (t == _i51.SchoolData) {
-      return _i51.SchoolData.fromJson(data) as T;
+    if (t == _i51.MemberOperation) {
+      return _i51.MemberOperation.fromJson(data) as T;
     }
     if (t == _i52.PupilListEntry) {
       return _i52.PupilListEntry.fromJson(data) as T;
@@ -403,59 +411,65 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i58.Classroom) {
       return _i58.Classroom.fromJson(data) as T;
     }
-    if (t == _i59.Lesson) {
-      return _i59.Lesson.fromJson(data) as T;
+    if (t == _i59.LessonTeacher) {
+      return _i59.LessonTeacher.fromJson(data) as T;
     }
-    if (t == _i60.LessonAttendance) {
-      return _i60.LessonAttendance.fromJson(data) as T;
+    if (t == _i60.ScheduledLessonTeacher) {
+      return _i60.ScheduledLessonTeacher.fromJson(data) as T;
     }
-    if (t == _i61.LessonGroup) {
-      return _i61.LessonGroup.fromJson(data) as T;
+    if (t == _i61.Lesson) {
+      return _i61.Lesson.fromJson(data) as T;
     }
-    if (t == _i62.ScheduledLessonGroupMembership) {
-      return _i62.ScheduledLessonGroupMembership.fromJson(data) as T;
+    if (t == _i62.LessonAttendance) {
+      return _i62.LessonAttendance.fromJson(data) as T;
     }
-    if (t == _i63.LessonSubject) {
-      return _i63.LessonSubject.fromJson(data) as T;
+    if (t == _i63.LessonGroup) {
+      return _i63.LessonGroup.fromJson(data) as T;
     }
-    if (t == _i64.Subject) {
-      return _i64.Subject.fromJson(data) as T;
+    if (t == _i64.ScheduledLessonGroupMembership) {
+      return _i64.ScheduledLessonGroupMembership.fromJson(data) as T;
     }
     if (t == _i65.ScheduledLesson) {
       return _i65.ScheduledLesson.fromJson(data) as T;
     }
-    if (t == _i66.TimetableSlot) {
-      return _i66.TimetableSlot.fromJson(data) as T;
+    if (t == _i66.Subject) {
+      return _i66.Subject.fromJson(data) as T;
     }
-    if (t == _i67.Weekday) {
-      return _i67.Weekday.fromJson(data) as T;
+    if (t == _i67.TimetableSlot) {
+      return _i67.TimetableSlot.fromJson(data) as T;
     }
-    if (t == _i68.Role) {
-      return _i68.Role.fromJson(data) as T;
+    if (t == _i68.Weekday) {
+      return _i68.Weekday.fromJson(data) as T;
     }
-    if (t == _i69.User) {
-      return _i69.User.fromJson(data) as T;
+    if (t == _i69.Timetable) {
+      return _i69.Timetable.fromJson(data) as T;
     }
-    if (t == _i70.UserFlags) {
-      return _i70.UserFlags.fromJson(data) as T;
+    if (t == _i70.Role) {
+      return _i70.Role.fromJson(data) as T;
     }
-    if (t == _i71.PupilWorkbook) {
-      return _i71.PupilWorkbook.fromJson(data) as T;
+    if (t == _i71.User) {
+      return _i71.User.fromJson(data) as T;
     }
-    if (t == _i72.Workbook) {
-      return _i72.Workbook.fromJson(data) as T;
+    if (t == _i72.UserFlags) {
+      return _i72.UserFlags.fromJson(data) as T;
     }
-    if (t == _i73.MyException) {
-      return _i73.MyException.fromJson(data) as T;
+    if (t == _i73.PupilWorkbook) {
+      return _i73.PupilWorkbook.fromJson(data) as T;
     }
-    if (t == _i74.HubDocument) {
-      return _i74.HubDocument.fromJson(data) as T;
+    if (t == _i74.Workbook) {
+      return _i74.Workbook.fromJson(data) as T;
     }
-    if (t == _i75.SchoolGrade) {
-      return _i75.SchoolGrade.fromJson(data) as T;
+    if (t == _i75.MyException) {
+      return _i75.MyException.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i2.SupportGoal?>()) {
-      return (data != null ? _i2.SupportGoal.fromJson(data) : null) as T;
+    if (t == _i76.HubDocument) {
+      return _i76.HubDocument.fromJson(data) as T;
+    }
+    if (t == _i77.SchoolData) {
+      return _i77.SchoolData.fromJson(data) as T;
+    }
+    if (t == _i1.getType<_i2.SupportGoalCheck?>()) {
+      return (data != null ? _i2.SupportGoalCheck.fromJson(data) : null) as T;
     }
     if (t == _i1.getType<_i3.MissedSchoolday?>()) {
       return (data != null ? _i3.MissedSchoolday.fromJson(data) : null) as T;
@@ -531,11 +545,11 @@ class Protocol extends _i1.SerializationManager {
       return (data != null ? _i25.SupportCategoryStatus.fromJson(data) : null)
           as T;
     }
-    if (t == _i1.getType<_i26.ContactedType?>()) {
-      return (data != null ? _i26.ContactedType.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i26.SupportGoal?>()) {
+      return (data != null ? _i26.SupportGoal.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i27.SupportGoalCheck?>()) {
-      return (data != null ? _i27.SupportGoalCheck.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i27.ContactedType?>()) {
+      return (data != null ? _i27.ContactedType.fromJson(data) : null) as T;
     }
     if (t == _i1.getType<_i28.SupportLevel?>()) {
       return (data != null ? _i28.SupportLevel.fromJson(data) : null) as T;
@@ -608,11 +622,11 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i1.getType<_i49.PupilIdentityDto?>()) {
       return (data != null ? _i49.PupilIdentityDto.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i50.MemberOperation?>()) {
-      return (data != null ? _i50.MemberOperation.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i50.SchoolGrade?>()) {
+      return (data != null ? _i50.SchoolGrade.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i51.SchoolData?>()) {
-      return (data != null ? _i51.SchoolData.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i51.MemberOperation?>()) {
+      return (data != null ? _i51.MemberOperation.fromJson(data) : null) as T;
     }
     if (t == _i1.getType<_i52.PupilListEntry?>()) {
       return (data != null ? _i52.PupilListEntry.fromJson(data) : null) as T;
@@ -636,64 +650,69 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i1.getType<_i58.Classroom?>()) {
       return (data != null ? _i58.Classroom.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i59.Lesson?>()) {
-      return (data != null ? _i59.Lesson.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i59.LessonTeacher?>()) {
+      return (data != null ? _i59.LessonTeacher.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i60.LessonAttendance?>()) {
-      return (data != null ? _i60.LessonAttendance.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i60.ScheduledLessonTeacher?>()) {
+      return (data != null ? _i60.ScheduledLessonTeacher.fromJson(data) : null)
+          as T;
     }
-    if (t == _i1.getType<_i61.LessonGroup?>()) {
-      return (data != null ? _i61.LessonGroup.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i61.Lesson?>()) {
+      return (data != null ? _i61.Lesson.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i62.ScheduledLessonGroupMembership?>()) {
+    if (t == _i1.getType<_i62.LessonAttendance?>()) {
+      return (data != null ? _i62.LessonAttendance.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i63.LessonGroup?>()) {
+      return (data != null ? _i63.LessonGroup.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i64.ScheduledLessonGroupMembership?>()) {
       return (data != null
-          ? _i62.ScheduledLessonGroupMembership.fromJson(data)
+          ? _i64.ScheduledLessonGroupMembership.fromJson(data)
           : null) as T;
-    }
-    if (t == _i1.getType<_i63.LessonSubject?>()) {
-      return (data != null ? _i63.LessonSubject.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i64.Subject?>()) {
-      return (data != null ? _i64.Subject.fromJson(data) : null) as T;
     }
     if (t == _i1.getType<_i65.ScheduledLesson?>()) {
       return (data != null ? _i65.ScheduledLesson.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i66.TimetableSlot?>()) {
-      return (data != null ? _i66.TimetableSlot.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i66.Subject?>()) {
+      return (data != null ? _i66.Subject.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i67.Weekday?>()) {
-      return (data != null ? _i67.Weekday.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i67.TimetableSlot?>()) {
+      return (data != null ? _i67.TimetableSlot.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i68.Role?>()) {
-      return (data != null ? _i68.Role.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i68.Weekday?>()) {
+      return (data != null ? _i68.Weekday.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i69.User?>()) {
-      return (data != null ? _i69.User.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i69.Timetable?>()) {
+      return (data != null ? _i69.Timetable.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i70.UserFlags?>()) {
-      return (data != null ? _i70.UserFlags.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i70.Role?>()) {
+      return (data != null ? _i70.Role.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i71.PupilWorkbook?>()) {
-      return (data != null ? _i71.PupilWorkbook.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i71.User?>()) {
+      return (data != null ? _i71.User.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i72.Workbook?>()) {
-      return (data != null ? _i72.Workbook.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i72.UserFlags?>()) {
+      return (data != null ? _i72.UserFlags.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i73.MyException?>()) {
-      return (data != null ? _i73.MyException.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i73.PupilWorkbook?>()) {
+      return (data != null ? _i73.PupilWorkbook.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i74.HubDocument?>()) {
-      return (data != null ? _i74.HubDocument.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i74.Workbook?>()) {
+      return (data != null ? _i74.Workbook.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i75.SchoolGrade?>()) {
-      return (data != null ? _i75.SchoolGrade.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i75.MyException?>()) {
+      return (data != null ? _i75.MyException.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<List<_i27.SupportGoalCheck>?>()) {
+    if (t == _i1.getType<_i76.HubDocument?>()) {
+      return (data != null ? _i76.HubDocument.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i77.SchoolData?>()) {
+      return (data != null ? _i77.SchoolData.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<List<_i76.HubDocument>?>()) {
       return (data != null
-          ? (data as List)
-              .map((e) => deserialize<_i27.SupportGoalCheck>(e))
-              .toList()
+          ? (data as List).map((e) => deserialize<_i76.HubDocument>(e)).toList()
           : null) as T;
     }
     if (t == _i1.getType<List<_i9.PupilAuthorization>?>()) {
@@ -735,9 +754,9 @@ class Protocol extends _i1.SerializationManager {
           ? (data as List).map((e) => deserialize<_i12.BookTagging>(e)).toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i74.HubDocument>?>()) {
+    if (t == _i1.getType<List<_i76.HubDocument>?>()) {
       return (data != null
-          ? (data as List).map((e) => deserialize<_i74.HubDocument>(e)).toList()
+          ? (data as List).map((e) => deserialize<_i76.HubDocument>(e)).toList()
           : null) as T;
     }
     if (t == _i1.getType<List<String>?>()) {
@@ -764,9 +783,9 @@ class Protocol extends _i1.SerializationManager {
               .toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i74.HubDocument>?>()) {
+    if (t == _i1.getType<List<_i76.HubDocument>?>()) {
       return (data != null
-          ? (data as List).map((e) => deserialize<_i74.HubDocument>(e)).toList()
+          ? (data as List).map((e) => deserialize<_i76.HubDocument>(e)).toList()
           : null) as T;
     }
     if (t == _i1.getType<List<String>?>()) {
@@ -774,9 +793,9 @@ class Protocol extends _i1.SerializationManager {
           ? (data as List).map((e) => deserialize<String>(e)).toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i74.HubDocument>?>()) {
+    if (t == _i1.getType<List<_i76.HubDocument>?>()) {
       return (data != null
-          ? (data as List).map((e) => deserialize<_i74.HubDocument>(e)).toList()
+          ? (data as List).map((e) => deserialize<_i76.HubDocument>(e)).toList()
           : null) as T;
     }
     if (t == _i1.getType<List<_i21.CompetenceReportCheck>?>()) {
@@ -805,14 +824,14 @@ class Protocol extends _i1.SerializationManager {
               .toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i2.SupportGoal>?>()) {
+    if (t == _i1.getType<List<_i26.SupportGoal>?>()) {
       return (data != null
-          ? (data as List).map((e) => deserialize<_i2.SupportGoal>(e)).toList()
+          ? (data as List).map((e) => deserialize<_i26.SupportGoal>(e)).toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i2.SupportGoal>?>()) {
+    if (t == _i1.getType<List<_i26.SupportGoal>?>()) {
       return (data != null
-          ? (data as List).map((e) => deserialize<_i2.SupportGoal>(e)).toList()
+          ? (data as List).map((e) => deserialize<_i26.SupportGoal>(e)).toList()
           : null) as T;
     }
     if (t == _i1.getType<List<_i25.SupportCategoryStatus>?>()) {
@@ -822,14 +841,16 @@ class Protocol extends _i1.SerializationManager {
               .toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i74.HubDocument>?>()) {
+    if (t == _i1.getType<List<_i76.HubDocument>?>()) {
       return (data != null
-          ? (data as List).map((e) => deserialize<_i74.HubDocument>(e)).toList()
+          ? (data as List).map((e) => deserialize<_i76.HubDocument>(e)).toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i74.HubDocument>?>()) {
+    if (t == _i1.getType<List<_i2.SupportGoalCheck>?>()) {
       return (data != null
-          ? (data as List).map((e) => deserialize<_i74.HubDocument>(e)).toList()
+          ? (data as List)
+              .map((e) => deserialize<_i2.SupportGoalCheck>(e))
+              .toList()
           : null) as T;
     }
     if (t == _i1.getType<List<_i23.LearningSupportPlan>?>()) {
@@ -847,14 +868,14 @@ class Protocol extends _i1.SerializationManager {
           ? (data as List).map((e) => deserialize<_i45.PupilData>(e)).toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i74.HubDocument>?>()) {
+    if (t == _i1.getType<List<_i76.HubDocument>?>()) {
       return (data != null
-          ? (data as List).map((e) => deserialize<_i74.HubDocument>(e)).toList()
+          ? (data as List).map((e) => deserialize<_i76.HubDocument>(e)).toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i74.HubDocument>?>()) {
+    if (t == _i1.getType<List<_i76.HubDocument>?>()) {
       return (data != null
-          ? (data as List).map((e) => deserialize<_i74.HubDocument>(e)).toList()
+          ? (data as List).map((e) => deserialize<_i76.HubDocument>(e)).toList()
           : null) as T;
     }
     if (t == _i1.getType<List<_i9.PupilAuthorization>?>()) {
@@ -871,17 +892,17 @@ class Protocol extends _i1.SerializationManager {
               .toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i62.ScheduledLessonGroupMembership>?>()) {
+    if (t == _i1.getType<List<_i64.ScheduledLessonGroupMembership>?>()) {
       return (data != null
           ? (data as List)
-              .map((e) => deserialize<_i62.ScheduledLessonGroupMembership>(e))
+              .map((e) => deserialize<_i64.ScheduledLessonGroupMembership>(e))
               .toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i60.LessonAttendance>?>()) {
+    if (t == _i1.getType<List<_i62.LessonAttendance>?>()) {
       return (data != null
           ? (data as List)
-              .map((e) => deserialize<_i60.LessonAttendance>(e))
+              .map((e) => deserialize<_i62.LessonAttendance>(e))
               .toList()
           : null) as T;
     }
@@ -913,10 +934,10 @@ class Protocol extends _i1.SerializationManager {
               .toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i71.PupilWorkbook>?>()) {
+    if (t == _i1.getType<List<_i73.PupilWorkbook>?>()) {
       return (data != null
           ? (data as List)
-              .map((e) => deserialize<_i71.PupilWorkbook>(e))
+              .map((e) => deserialize<_i73.PupilWorkbook>(e))
               .toList()
           : null) as T;
     }
@@ -941,9 +962,9 @@ class Protocol extends _i1.SerializationManager {
               .toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i2.SupportGoal>?>()) {
+    if (t == _i1.getType<List<_i26.SupportGoal>?>()) {
       return (data != null
-          ? (data as List).map((e) => deserialize<_i2.SupportGoal>(e)).toList()
+          ? (data as List).map((e) => deserialize<_i26.SupportGoal>(e)).toList()
           : null) as T;
     }
     if (t == _i1.getType<List<_i23.LearningSupportPlan>?>()) {
@@ -979,6 +1000,11 @@ class Protocol extends _i1.SerializationManager {
           ? (data as List)
               .map((e) => deserialize<_i52.PupilListEntry>(e))
               .toList()
+          : null) as T;
+    }
+    if (t == _i1.getType<List<_i69.Timetable>?>()) {
+      return (data != null
+          ? (data as List).map((e) => deserialize<_i69.Timetable>(e)).toList()
           : null) as T;
     }
     if (t == _i1.getType<List<_i55.Schoolday>?>()) {
@@ -1021,10 +1047,17 @@ class Protocol extends _i1.SerializationManager {
               .toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i60.LessonAttendance>?>()) {
+    if (t == _i1.getType<List<_i62.LessonAttendance>?>()) {
       return (data != null
           ? (data as List)
-              .map((e) => deserialize<_i60.LessonAttendance>(e))
+              .map((e) => deserialize<_i62.LessonAttendance>(e))
+              .toList()
+          : null) as T;
+    }
+    if (t == _i1.getType<List<_i59.LessonTeacher>?>()) {
+      return (data != null
+          ? (data as List)
+              .map((e) => deserialize<_i59.LessonTeacher>(e))
               .toList()
           : null) as T;
     }
@@ -1035,22 +1068,17 @@ class Protocol extends _i1.SerializationManager {
               .toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i62.ScheduledLessonGroupMembership>?>()) {
+    if (t == _i1.getType<List<_i64.ScheduledLessonGroupMembership>?>()) {
       return (data != null
           ? (data as List)
-              .map((e) => deserialize<_i62.ScheduledLessonGroupMembership>(e))
+              .map((e) => deserialize<_i64.ScheduledLessonGroupMembership>(e))
               .toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i59.Lesson>?>()) {
-      return (data != null
-          ? (data as List).map((e) => deserialize<_i59.Lesson>(e)).toList()
-          : null) as T;
-    }
-    if (t == _i1.getType<List<_i65.ScheduledLesson>?>()) {
+    if (t == _i1.getType<List<_i60.ScheduledLessonTeacher>?>()) {
       return (data != null
           ? (data as List)
-              .map((e) => deserialize<_i65.ScheduledLesson>(e))
+              .map((e) => deserialize<_i60.ScheduledLessonTeacher>(e))
               .toList()
           : null) as T;
     }
@@ -1062,56 +1090,111 @@ class Protocol extends _i1.SerializationManager {
               testString: deserialize<String>(data['n']['testString']),
             ) as T;
     }
+    if (t == _i1.getType<List<_i65.ScheduledLesson>?>()) {
+      return (data != null
+          ? (data as List)
+              .map((e) => deserialize<_i65.ScheduledLesson>(e))
+              .toList()
+          : null) as T;
+    }
+    if (t == _i1.getType<List<_i61.Lesson>?>()) {
+      return (data != null
+          ? (data as List).map((e) => deserialize<_i61.Lesson>(e)).toList()
+          : null) as T;
+    }
+    if (t == _i1.getType<List<_i65.ScheduledLesson>?>()) {
+      return (data != null
+          ? (data as List)
+              .map((e) => deserialize<_i65.ScheduledLesson>(e))
+              .toList()
+          : null) as T;
+    }
+    if (t == _i1.getType<List<_i67.TimetableSlot>?>()) {
+      return (data != null
+          ? (data as List)
+              .map((e) => deserialize<_i67.TimetableSlot>(e))
+              .toList()
+          : null) as T;
+    }
+    if (t == _i1.getType<List<({String modifiedBy, DateTime modifiedAt})>?>()) {
+      return (data != null
+          ? (data as List)
+              .map((e) =>
+                  deserialize<({String modifiedBy, DateTime modifiedAt})>(e))
+              .toList()
+          : null) as T;
+    }
+    if (t == _i1.getType<({String modifiedBy, DateTime modifiedAt})>()) {
+      return (
+        modifiedBy:
+            deserialize<String>(((data as Map)['n'] as Map)['modifiedBy']),
+        modifiedAt: deserialize<DateTime>(data['n']['modifiedAt']),
+      ) as T;
+    }
+    if (t == _i1.getType<List<_i60.ScheduledLessonTeacher>?>()) {
+      return (data != null
+          ? (data as List)
+              .map((e) => deserialize<_i60.ScheduledLessonTeacher>(e))
+              .toList()
+          : null) as T;
+    }
+    if (t == _i1.getType<List<_i59.LessonTeacher>?>()) {
+      return (data != null
+          ? (data as List)
+              .map((e) => deserialize<_i59.LessonTeacher>(e))
+              .toList()
+          : null) as T;
+    }
     if (t == _i1.getType<Set<int>?>()) {
       return (data != null
           ? (data as List).map((e) => deserialize<int>(e)).toSet()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i71.PupilWorkbook>?>()) {
+    if (t == _i1.getType<List<_i73.PupilWorkbook>?>()) {
       return (data != null
           ? (data as List)
-              .map((e) => deserialize<_i71.PupilWorkbook>(e))
+              .map((e) => deserialize<_i73.PupilWorkbook>(e))
               .toList()
           : null) as T;
     }
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
     }
-    if (t == Set<_i76.PupilData>) {
-      return (data as List).map((e) => deserialize<_i76.PupilData>(e)).toSet()
+    if (t == Set<_i78.PupilData>) {
+      return (data as List).map((e) => deserialize<_i78.PupilData>(e)).toSet()
           as T;
     }
-    if (t == List<_i77.Competence>) {
-      return (data as List).map((e) => deserialize<_i77.Competence>(e)).toList()
+    if (t == List<_i79.Competence>) {
+      return (data as List).map((e) => deserialize<_i79.Competence>(e)).toList()
           as T;
     }
-    if (t == List<_i78.SupportCategory>) {
+    if (t == List<_i80.SupportCategory>) {
       return (data as List)
-          .map((e) => deserialize<_i78.SupportCategory>(e))
+          .map((e) => deserialize<_i80.SupportCategory>(e))
           .toList() as T;
     }
-    if (t == List<_i79.MissedSchoolday>) {
+    if (t == List<_i81.MissedSchoolday>) {
       return (data as List)
-          .map((e) => deserialize<_i79.MissedSchoolday>(e))
+          .map((e) => deserialize<_i81.MissedSchoolday>(e))
           .toList() as T;
     }
     if (t ==
         _i1.getType<
             ({
-              _i80.AuthenticationResponse response,
-              _i81.UserDevice? userDevice
+              _i82.AuthenticationResponse response,
+              _i83.UserDevice? userDevice
             })>()) {
       return (
-        response: deserialize<_i80.AuthenticationResponse>(
+        response: deserialize<_i82.AuthenticationResponse>(
             ((data as Map)['n'] as Map)['response']),
         userDevice: ((data)['n'] as Map)['userDevice'] == null
             ? null
-            : deserialize<_i81.UserDevice>(data['n']['userDevice']),
+            : deserialize<_i83.UserDevice>(data['n']['userDevice']),
       ) as T;
     }
-    if (t == List<_i82.Authorization>) {
+    if (t == List<_i84.Authorization>) {
       return (data as List)
-          .map((e) => deserialize<_i82.Authorization>(e))
+          .map((e) => deserialize<_i84.Authorization>(e))
           .toList() as T;
     }
     if (t == List<int>) {
@@ -1119,61 +1202,61 @@ class Protocol extends _i1.SerializationManager {
     }
     if (t ==
         _i1.getType<
-            ({_i83.MemberOperation operation, List<int> pupilIds})?>()) {
+            ({_i85.MemberOperation operation, List<int> pupilIds})?>()) {
       return (data == null)
           ? null as T
           : (
-              operation: deserialize<_i83.MemberOperation>(
+              operation: deserialize<_i85.MemberOperation>(
                   ((data as Map)['n'] as Map)['operation']),
               pupilIds: deserialize<List<int>>(data['n']['pupilIds']),
             ) as T;
     }
-    if (t == List<_i84.BookTag>) {
-      return (data as List).map((e) => deserialize<_i84.BookTag>(e)).toList()
+    if (t == List<_i86.BookTag>) {
+      return (data as List).map((e) => deserialize<_i86.BookTag>(e)).toList()
           as T;
     }
-    if (t == List<_i85.Book>) {
-      return (data as List).map((e) => deserialize<_i85.Book>(e)).toList() as T;
+    if (t == List<_i87.Book>) {
+      return (data as List).map((e) => deserialize<_i87.Book>(e)).toList() as T;
     }
-    if (t == List<_i86.LibraryBookLocation>) {
+    if (t == List<_i88.LibraryBookLocation>) {
       return (data as List)
-          .map((e) => deserialize<_i86.LibraryBookLocation>(e))
+          .map((e) => deserialize<_i88.LibraryBookLocation>(e))
           .toList() as T;
     }
-    if (t == List<_i87.LibraryBook>) {
+    if (t == List<_i89.LibraryBook>) {
       return (data as List)
-          .map((e) => deserialize<_i87.LibraryBook>(e))
+          .map((e) => deserialize<_i89.LibraryBook>(e))
           .toList() as T;
     }
-    if (t == List<_i88.PupilBookLending>) {
+    if (t == List<_i90.PupilBookLending>) {
       return (data as List)
-          .map((e) => deserialize<_i88.PupilBookLending>(e))
+          .map((e) => deserialize<_i90.PupilBookLending>(e))
           .toList() as T;
     }
-    if (t == List<_i89.LearningSupportPlan>) {
+    if (t == List<_i91.LearningSupportPlan>) {
       return (data as List)
-          .map((e) => deserialize<_i89.LearningSupportPlan>(e))
+          .map((e) => deserialize<_i91.LearningSupportPlan>(e))
           .toList() as T;
     }
-    if (t == List<_i90.SupportCategoryStatus>) {
+    if (t == List<_i92.SupportCategoryStatus>) {
       return (data as List)
-          .map((e) => deserialize<_i90.SupportCategoryStatus>(e))
+          .map((e) => deserialize<_i92.SupportCategoryStatus>(e))
           .toList() as T;
     }
-    if (t == _i1.getType<List<_i91.CompulsoryRoom>?>()) {
+    if (t == _i1.getType<List<_i93.CompulsoryRoom>?>()) {
       return (data != null
           ? (data as List)
-              .map((e) => deserialize<_i91.CompulsoryRoom>(e))
+              .map((e) => deserialize<_i93.CompulsoryRoom>(e))
               .toList()
           : null) as T;
     }
-    if (t == List<_i91.CompulsoryRoom>) {
+    if (t == List<_i93.CompulsoryRoom>) {
       return (data as List)
-          .map((e) => deserialize<_i91.CompulsoryRoom>(e))
+          .map((e) => deserialize<_i93.CompulsoryRoom>(e))
           .toList() as T;
     }
-    if (t == List<_i76.PupilData>) {
-      return (data as List).map((e) => deserialize<_i76.PupilData>(e)).toList()
+    if (t == List<_i78.PupilData>) {
+      return (data as List).map((e) => deserialize<_i78.PupilData>(e)).toList()
           as T;
     }
     if (t == Set<int>) {
@@ -1186,8 +1269,8 @@ class Protocol extends _i1.SerializationManager {
             : deserialize<DateTime>(data['n']['value']),
       ) as T;
     }
-    if (t == List<_i92.SchoolList>) {
-      return (data as List).map((e) => deserialize<_i92.SchoolList>(e)).toList()
+    if (t == List<_i94.SchoolList>) {
+      return (data as List).map((e) => deserialize<_i94.SchoolList>(e)).toList()
           as T;
     }
     if (t == _i1.getType<({String? value})?>()) {
@@ -1199,33 +1282,33 @@ class Protocol extends _i1.SerializationManager {
                   : deserialize<String>(data['n']['value']),
             ) as T;
     }
-    if (t == List<_i93.SchoolSemester>) {
+    if (t == List<_i95.SchoolSemester>) {
       return (data as List)
-          .map((e) => deserialize<_i93.SchoolSemester>(e))
+          .map((e) => deserialize<_i95.SchoolSemester>(e))
           .toList() as T;
     }
-    if (t == List<_i94.Schoolday>) {
-      return (data as List).map((e) => deserialize<_i94.Schoolday>(e)).toList()
+    if (t == List<_i96.Schoolday>) {
+      return (data as List).map((e) => deserialize<_i96.Schoolday>(e)).toList()
           as T;
     }
     if (t == List<DateTime>) {
       return (data as List).map((e) => deserialize<DateTime>(e)).toList() as T;
     }
-    if (t == List<_i95.SchooldayEvent>) {
+    if (t == List<_i97.SchooldayEvent>) {
       return (data as List)
-          .map((e) => deserialize<_i95.SchooldayEvent>(e))
+          .map((e) => deserialize<_i97.SchooldayEvent>(e))
           .toList() as T;
     }
-    if (t == List<_i96.User>) {
-      return (data as List).map((e) => deserialize<_i96.User>(e)).toList() as T;
+    if (t == List<_i98.User>) {
+      return (data as List).map((e) => deserialize<_i98.User>(e)).toList() as T;
     }
-    if (t == List<_i97.PupilWorkbook>) {
+    if (t == List<_i99.PupilWorkbook>) {
       return (data as List)
-          .map((e) => deserialize<_i97.PupilWorkbook>(e))
+          .map((e) => deserialize<_i99.PupilWorkbook>(e))
           .toList() as T;
     }
-    if (t == List<_i98.Workbook>) {
-      return (data as List).map((e) => deserialize<_i98.Workbook>(e)).toList()
+    if (t == List<_i100.Workbook>) {
+      return (data as List).map((e) => deserialize<_i100.Workbook>(e)).toList()
           as T;
     }
     if (t == _i1.getType<({int testint, String testString})?>()) {
@@ -1236,8 +1319,30 @@ class Protocol extends _i1.SerializationManager {
               testString: deserialize<String>(data['n']['testString']),
             ) as T;
     }
+    if (t == _i1.getType<List<({String modifiedBy, DateTime modifiedAt})>?>()) {
+      return (data != null
+          ? (data as List)
+              .map((e) =>
+                  deserialize<({String modifiedBy, DateTime modifiedAt})>(e))
+              .toList()
+          : null) as T;
+    }
+    if (t == _i1.getType<({String modifiedBy, DateTime modifiedAt})>()) {
+      return (
+        modifiedBy:
+            deserialize<String>(((data as Map)['n'] as Map)['modifiedBy']),
+        modifiedAt: deserialize<DateTime>(data['n']['modifiedAt']),
+      ) as T;
+    }
+    if (t == _i1.getType<({String modifiedBy, DateTime modifiedAt})>()) {
+      return (
+        modifiedBy:
+            deserialize<String>(((data as Map)['n'] as Map)['modifiedBy']),
+        modifiedAt: deserialize<DateTime>(data['n']['modifiedAt']),
+      ) as T;
+    }
     try {
-      return _i80.Protocol().deserialize<T>(data, t);
+      return _i82.Protocol().deserialize<T>(data, t);
     } on _i1.DeserializationTypeNotFoundException catch (_) {}
     return super.deserialize<T>(data, t);
   }
@@ -1246,8 +1351,8 @@ class Protocol extends _i1.SerializationManager {
   String? getClassNameForObject(Object? data) {
     String? className = super.getClassNameForObject(data);
     if (className != null) return className;
-    if (data is _i2.SupportGoal) {
-      return 'SupportGoal';
+    if (data is _i2.SupportGoalCheck) {
+      return 'SupportGoalCheck';
     }
     if (data is _i3.MissedSchoolday) {
       return 'MissedSchoolday';
@@ -1318,11 +1423,11 @@ class Protocol extends _i1.SerializationManager {
     if (data is _i25.SupportCategoryStatus) {
       return 'SupportCategoryStatus';
     }
-    if (data is _i26.ContactedType) {
-      return 'ContactedType';
+    if (data is _i26.SupportGoal) {
+      return 'SupportGoal';
     }
-    if (data is _i27.SupportGoalCheck) {
-      return 'SupportGoalCheck';
+    if (data is _i27.ContactedType) {
+      return 'ContactedType';
     }
     if (data is _i28.SupportLevel) {
       return 'SupportLevel';
@@ -1390,11 +1495,11 @@ class Protocol extends _i1.SerializationManager {
     if (data is _i49.PupilIdentityDto) {
       return 'PupilIdentityDto';
     }
-    if (data is _i50.MemberOperation) {
-      return 'MemberOperation';
+    if (data is _i50.SchoolGrade) {
+      return 'SchoolGrade';
     }
-    if (data is _i51.SchoolData) {
-      return 'SchoolData';
+    if (data is _i51.MemberOperation) {
+      return 'MemberOperation';
     }
     if (data is _i52.PupilListEntry) {
       return 'PupilListEntry';
@@ -1417,62 +1522,68 @@ class Protocol extends _i1.SerializationManager {
     if (data is _i58.Classroom) {
       return 'Classroom';
     }
-    if (data is _i59.Lesson) {
+    if (data is _i59.LessonTeacher) {
+      return 'LessonTeacher';
+    }
+    if (data is _i60.ScheduledLessonTeacher) {
+      return 'ScheduledLessonTeacher';
+    }
+    if (data is _i61.Lesson) {
       return 'Lesson';
     }
-    if (data is _i60.LessonAttendance) {
+    if (data is _i62.LessonAttendance) {
       return 'LessonAttendance';
     }
-    if (data is _i61.LessonGroup) {
+    if (data is _i63.LessonGroup) {
       return 'LessonGroup';
     }
-    if (data is _i62.ScheduledLessonGroupMembership) {
+    if (data is _i64.ScheduledLessonGroupMembership) {
       return 'ScheduledLessonGroupMembership';
-    }
-    if (data is _i63.LessonSubject) {
-      return 'LessonSubject';
-    }
-    if (data is _i64.Subject) {
-      return 'Subject';
     }
     if (data is _i65.ScheduledLesson) {
       return 'ScheduledLesson';
     }
-    if (data is _i66.TimetableSlot) {
+    if (data is _i66.Subject) {
+      return 'Subject';
+    }
+    if (data is _i67.TimetableSlot) {
       return 'TimetableSlot';
     }
-    if (data is _i67.Weekday) {
+    if (data is _i68.Weekday) {
       return 'Weekday';
     }
-    if (data is _i68.Role) {
+    if (data is _i69.Timetable) {
+      return 'Timetable';
+    }
+    if (data is _i70.Role) {
       return 'Role';
     }
-    if (data is _i69.User) {
+    if (data is _i71.User) {
       return 'User';
     }
-    if (data is _i70.UserFlags) {
+    if (data is _i72.UserFlags) {
       return 'UserFlags';
     }
-    if (data is _i71.PupilWorkbook) {
+    if (data is _i73.PupilWorkbook) {
       return 'PupilWorkbook';
     }
-    if (data is _i72.Workbook) {
+    if (data is _i74.Workbook) {
       return 'Workbook';
     }
-    if (data is _i73.MyException) {
+    if (data is _i75.MyException) {
       return 'MyException';
     }
-    if (data is _i74.HubDocument) {
+    if (data is _i76.HubDocument) {
       return 'HubDocument';
     }
-    if (data is _i75.SchoolGrade) {
-      return 'SchoolGrade';
+    if (data is _i77.SchoolData) {
+      return 'SchoolData';
     }
-    className = _i80.Protocol().getClassNameForObject(data);
+    className = _i82.Protocol().getClassNameForObject(data);
     if (className != null) {
       return 'serverpod_auth.$className';
     }
-    if (data is List<_i76.PupilData>) {
+    if (data is List<_i78.PupilData>) {
       return 'List<PupilData>';
     }
     return null;
@@ -1484,8 +1595,8 @@ class Protocol extends _i1.SerializationManager {
     if (dataClassName is! String) {
       return super.deserializeByClassName(data);
     }
-    if (dataClassName == 'SupportGoal') {
-      return deserialize<_i2.SupportGoal>(data['data']);
+    if (dataClassName == 'SupportGoalCheck') {
+      return deserialize<_i2.SupportGoalCheck>(data['data']);
     }
     if (dataClassName == 'MissedSchoolday') {
       return deserialize<_i3.MissedSchoolday>(data['data']);
@@ -1556,11 +1667,11 @@ class Protocol extends _i1.SerializationManager {
     if (dataClassName == 'SupportCategoryStatus') {
       return deserialize<_i25.SupportCategoryStatus>(data['data']);
     }
-    if (dataClassName == 'ContactedType') {
-      return deserialize<_i26.ContactedType>(data['data']);
+    if (dataClassName == 'SupportGoal') {
+      return deserialize<_i26.SupportGoal>(data['data']);
     }
-    if (dataClassName == 'SupportGoalCheck') {
-      return deserialize<_i27.SupportGoalCheck>(data['data']);
+    if (dataClassName == 'ContactedType') {
+      return deserialize<_i27.ContactedType>(data['data']);
     }
     if (dataClassName == 'SupportLevel') {
       return deserialize<_i28.SupportLevel>(data['data']);
@@ -1628,11 +1739,11 @@ class Protocol extends _i1.SerializationManager {
     if (dataClassName == 'PupilIdentityDto') {
       return deserialize<_i49.PupilIdentityDto>(data['data']);
     }
-    if (dataClassName == 'MemberOperation') {
-      return deserialize<_i50.MemberOperation>(data['data']);
+    if (dataClassName == 'SchoolGrade') {
+      return deserialize<_i50.SchoolGrade>(data['data']);
     }
-    if (dataClassName == 'SchoolData') {
-      return deserialize<_i51.SchoolData>(data['data']);
+    if (dataClassName == 'MemberOperation') {
+      return deserialize<_i51.MemberOperation>(data['data']);
     }
     if (dataClassName == 'PupilListEntry') {
       return deserialize<_i52.PupilListEntry>(data['data']);
@@ -1655,63 +1766,69 @@ class Protocol extends _i1.SerializationManager {
     if (dataClassName == 'Classroom') {
       return deserialize<_i58.Classroom>(data['data']);
     }
+    if (dataClassName == 'LessonTeacher') {
+      return deserialize<_i59.LessonTeacher>(data['data']);
+    }
+    if (dataClassName == 'ScheduledLessonTeacher') {
+      return deserialize<_i60.ScheduledLessonTeacher>(data['data']);
+    }
     if (dataClassName == 'Lesson') {
-      return deserialize<_i59.Lesson>(data['data']);
+      return deserialize<_i61.Lesson>(data['data']);
     }
     if (dataClassName == 'LessonAttendance') {
-      return deserialize<_i60.LessonAttendance>(data['data']);
+      return deserialize<_i62.LessonAttendance>(data['data']);
     }
     if (dataClassName == 'LessonGroup') {
-      return deserialize<_i61.LessonGroup>(data['data']);
+      return deserialize<_i63.LessonGroup>(data['data']);
     }
     if (dataClassName == 'ScheduledLessonGroupMembership') {
-      return deserialize<_i62.ScheduledLessonGroupMembership>(data['data']);
-    }
-    if (dataClassName == 'LessonSubject') {
-      return deserialize<_i63.LessonSubject>(data['data']);
-    }
-    if (dataClassName == 'Subject') {
-      return deserialize<_i64.Subject>(data['data']);
+      return deserialize<_i64.ScheduledLessonGroupMembership>(data['data']);
     }
     if (dataClassName == 'ScheduledLesson') {
       return deserialize<_i65.ScheduledLesson>(data['data']);
     }
+    if (dataClassName == 'Subject') {
+      return deserialize<_i66.Subject>(data['data']);
+    }
     if (dataClassName == 'TimetableSlot') {
-      return deserialize<_i66.TimetableSlot>(data['data']);
+      return deserialize<_i67.TimetableSlot>(data['data']);
     }
     if (dataClassName == 'Weekday') {
-      return deserialize<_i67.Weekday>(data['data']);
+      return deserialize<_i68.Weekday>(data['data']);
+    }
+    if (dataClassName == 'Timetable') {
+      return deserialize<_i69.Timetable>(data['data']);
     }
     if (dataClassName == 'Role') {
-      return deserialize<_i68.Role>(data['data']);
+      return deserialize<_i70.Role>(data['data']);
     }
     if (dataClassName == 'User') {
-      return deserialize<_i69.User>(data['data']);
+      return deserialize<_i71.User>(data['data']);
     }
     if (dataClassName == 'UserFlags') {
-      return deserialize<_i70.UserFlags>(data['data']);
+      return deserialize<_i72.UserFlags>(data['data']);
     }
     if (dataClassName == 'PupilWorkbook') {
-      return deserialize<_i71.PupilWorkbook>(data['data']);
+      return deserialize<_i73.PupilWorkbook>(data['data']);
     }
     if (dataClassName == 'Workbook') {
-      return deserialize<_i72.Workbook>(data['data']);
+      return deserialize<_i74.Workbook>(data['data']);
     }
     if (dataClassName == 'MyException') {
-      return deserialize<_i73.MyException>(data['data']);
+      return deserialize<_i75.MyException>(data['data']);
     }
     if (dataClassName == 'HubDocument') {
-      return deserialize<_i74.HubDocument>(data['data']);
+      return deserialize<_i76.HubDocument>(data['data']);
     }
-    if (dataClassName == 'SchoolGrade') {
-      return deserialize<_i75.SchoolGrade>(data['data']);
+    if (dataClassName == 'SchoolData') {
+      return deserialize<_i77.SchoolData>(data['data']);
     }
     if (dataClassName.startsWith('serverpod_auth.')) {
       data['className'] = dataClassName.substring(15);
-      return _i80.Protocol().deserializeByClassName(data);
+      return _i82.Protocol().deserializeByClassName(data);
     }
     if (dataClassName == 'List<PupilData>') {
-      return deserialize<List<_i76.PupilData>>(data['data']);
+      return deserialize<List<_i78.PupilData>>(data['data']);
     }
     return super.deserializeByClassName(data);
   }
@@ -1727,8 +1844,8 @@ Map<String, dynamic>? mapRecordToJson(Record? record) {
     return null;
   }
   if (record is ({
-    _i80.AuthenticationResponse response,
-    _i81.UserDevice? userDevice
+    _i82.AuthenticationResponse response,
+    _i83.UserDevice? userDevice
   })) {
     return {
       "n": {
@@ -1737,7 +1854,7 @@ Map<String, dynamic>? mapRecordToJson(Record? record) {
       },
     };
   }
-  if (record is ({_i83.MemberOperation operation, List<int> pupilIds})) {
+  if (record is ({_i85.MemberOperation operation, List<int> pupilIds})) {
     return {
       "n": {
         "operation": record.operation,
@@ -1764,6 +1881,14 @@ Map<String, dynamic>? mapRecordToJson(Record? record) {
       "n": {
         "testint": record.testint,
         "testString": record.testString,
+      },
+    };
+  }
+  if (record is ({String modifiedBy, DateTime modifiedAt})) {
+    return {
+      "n": {
+        "modifiedBy": record.modifiedBy,
+        "modifiedAt": record.modifiedAt,
       },
     };
   }

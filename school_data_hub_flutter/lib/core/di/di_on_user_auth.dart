@@ -7,6 +7,7 @@ import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_m
 import 'package:school_data_hub_flutter/features/_attendance/domain/filters/attendance_pupil_filter.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/filters/authorization_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/filters/pupil_authorization_filter_manager.dart';
@@ -24,14 +25,17 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/filters/school_list_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
+import 'package:school_data_hub_flutter/features/timetable/timetable.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('DiOnUserAuth');
 
-class DiOnUserAuth {
+class DiInitOnUserAuth {
   static Future<void> registerManagers() async {
+    di.registerSingleton<BottomNavManager>(BottomNavManager());
+
     di.registerSingletonAsync<PupilIdentityManager>(() async {
       final pupilIdentityManager = PupilIdentityManager();
 
@@ -193,6 +197,14 @@ class DiOnUserAuth {
       await userManager.init();
       _log.info('UserManager initialized');
       return userManager;
+    }, dependsOn: [HubSessionManager]);
+
+    di.registerSingletonAsync<TimetableManager>(() async {
+      _log.info('Registering UserManager');
+      final timetableManager = TimetableManager();
+      await timetableManager.init();
+      _log.info('UserManager initialized');
+      return timetableManager;
     }, dependsOn: [HubSessionManager]);
   }
 }

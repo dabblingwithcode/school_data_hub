@@ -12,8 +12,10 @@
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import '../../../../_features/timetable/models/lesson/lesson_attendance.dart'
     as _i2;
-import '../../../../_features/timetable/models/lesson/lesson_subject.dart'
+import '../../../../_features/timetable/models/scheduled_lesson/subject.dart'
     as _i3;
+import '../../../../_features/timetable/models/junction_models/lesson_teacher.dart'
+    as _i4;
 
 abstract class Lesson implements _i1.SerializableModel {
   Lesson._({
@@ -22,6 +24,7 @@ abstract class Lesson implements _i1.SerializableModel {
     this.attendedPupils,
     required this.subjectId,
     this.subject,
+    this.lessonTeachers,
   });
 
   factory Lesson({
@@ -29,7 +32,8 @@ abstract class Lesson implements _i1.SerializableModel {
     required String publicId,
     List<_i2.LessonAttendance>? attendedPupils,
     required int subjectId,
-    _i3.LessonSubject? subject,
+    _i3.Subject? subject,
+    List<_i4.LessonTeacher>? lessonTeachers,
   }) = _LessonImpl;
 
   factory Lesson.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -43,8 +47,11 @@ abstract class Lesson implements _i1.SerializableModel {
       subjectId: jsonSerialization['subjectId'] as int,
       subject: jsonSerialization['subject'] == null
           ? null
-          : _i3.LessonSubject.fromJson(
+          : _i3.Subject.fromJson(
               (jsonSerialization['subject'] as Map<String, dynamic>)),
+      lessonTeachers: (jsonSerialization['lessonTeachers'] as List?)
+          ?.map((e) => _i4.LessonTeacher.fromJson((e as Map<String, dynamic>)))
+          .toList(),
     );
   }
 
@@ -59,7 +66,9 @@ abstract class Lesson implements _i1.SerializableModel {
 
   int subjectId;
 
-  _i3.LessonSubject? subject;
+  _i3.Subject? subject;
+
+  List<_i4.LessonTeacher>? lessonTeachers;
 
   /// Returns a shallow copy of this [Lesson]
   /// with some or all fields replaced by the given arguments.
@@ -69,7 +78,8 @@ abstract class Lesson implements _i1.SerializableModel {
     String? publicId,
     List<_i2.LessonAttendance>? attendedPupils,
     int? subjectId,
-    _i3.LessonSubject? subject,
+    _i3.Subject? subject,
+    List<_i4.LessonTeacher>? lessonTeachers,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -81,6 +91,9 @@ abstract class Lesson implements _i1.SerializableModel {
             attendedPupils?.toJson(valueToJson: (v) => v.toJson()),
       'subjectId': subjectId,
       if (subject != null) 'subject': subject?.toJson(),
+      if (lessonTeachers != null)
+        'lessonTeachers':
+            lessonTeachers?.toJson(valueToJson: (v) => v.toJson()),
     };
   }
 
@@ -98,13 +111,15 @@ class _LessonImpl extends Lesson {
     required String publicId,
     List<_i2.LessonAttendance>? attendedPupils,
     required int subjectId,
-    _i3.LessonSubject? subject,
+    _i3.Subject? subject,
+    List<_i4.LessonTeacher>? lessonTeachers,
   }) : super._(
           id: id,
           publicId: publicId,
           attendedPupils: attendedPupils,
           subjectId: subjectId,
           subject: subject,
+          lessonTeachers: lessonTeachers,
         );
 
   /// Returns a shallow copy of this [Lesson]
@@ -117,6 +132,7 @@ class _LessonImpl extends Lesson {
     Object? attendedPupils = _Undefined,
     int? subjectId,
     Object? subject = _Undefined,
+    Object? lessonTeachers = _Undefined,
   }) {
     return Lesson(
       id: id is int? ? id : this.id,
@@ -125,8 +141,10 @@ class _LessonImpl extends Lesson {
           ? attendedPupils
           : this.attendedPupils?.map((e0) => e0.copyWith()).toList(),
       subjectId: subjectId ?? this.subjectId,
-      subject:
-          subject is _i3.LessonSubject? ? subject : this.subject?.copyWith(),
+      subject: subject is _i3.Subject? ? subject : this.subject?.copyWith(),
+      lessonTeachers: lessonTeachers is List<_i4.LessonTeacher>?
+          ? lessonTeachers
+          : this.lessonTeachers?.map((e0) => e0.copyWith()).toList(),
     );
   }
 }
