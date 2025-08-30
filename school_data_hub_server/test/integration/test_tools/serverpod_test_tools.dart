@@ -4868,7 +4868,7 @@ class _ScheduledLessonEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i44.ScheduledLesson> createScheduledLesson(
+  _i3.Future<_i44.ScheduledLesson?> createScheduledLesson(
     _i1.TestSessionBuilder sessionBuilder,
     _i44.ScheduledLesson scheduledLesson,
   ) async {
@@ -4890,7 +4890,7 @@ class _ScheduledLessonEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i44.ScheduledLesson>);
+        ) as _i3.Future<_i44.ScheduledLesson?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5097,7 +5097,7 @@ class _ScheduledLessonEndpoint {
     });
   }
 
-  _i3.Future<_i44.ScheduledLesson> updateScheduledLesson(
+  _i3.Future<_i44.ScheduledLesson?> updateScheduledLesson(
     _i1.TestSessionBuilder sessionBuilder,
     _i44.ScheduledLesson scheduledLesson,
   ) async {
@@ -5119,7 +5119,7 @@ class _ScheduledLessonEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i44.ScheduledLesson>);
+        ) as _i3.Future<_i44.ScheduledLesson?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5127,7 +5127,7 @@ class _ScheduledLessonEndpoint {
     });
   }
 
-  _i3.Future<_i44.ScheduledLesson> deactivateScheduledLesson(
+  _i3.Future<_i44.ScheduledLesson?> deactivateScheduledLesson(
     _i1.TestSessionBuilder sessionBuilder,
     int id,
   ) async {
@@ -5148,7 +5148,7 @@ class _ScheduledLessonEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i44.ScheduledLesson>);
+        ) as _i3.Future<_i44.ScheduledLesson?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

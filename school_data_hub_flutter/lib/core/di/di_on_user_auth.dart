@@ -25,6 +25,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/filters/school_list_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
+import 'package:school_data_hub_flutter/features/timetable/data/timetable_api_service.dart';
 import 'package:school_data_hub_flutter/features/timetable/timetable.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
@@ -199,12 +200,14 @@ class DiInitOnUserAuth {
       return userManager;
     }, dependsOn: [HubSessionManager]);
 
+    di.registerSingleton<TimetableApiService>(TimetableApiService());
+
     di.registerSingletonAsync<TimetableManager>(() async {
-      _log.info('Registering UserManager');
+      _log.info('Registering TimetableManager');
       final timetableManager = TimetableManager();
       await timetableManager.init();
-      _log.info('UserManager initialized');
+      _log.info('TimetableManager initialized');
       return timetableManager;
-    }, dependsOn: [HubSessionManager]);
+    }, dependsOn: [HubSessionManager, TimetableApiService]);
   }
 }

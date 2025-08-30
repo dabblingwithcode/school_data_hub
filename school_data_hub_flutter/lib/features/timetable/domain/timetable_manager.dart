@@ -1,10 +1,14 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/features/timetable/data/timetable_api_service.dart';
 import 'package:school_data_hub_flutter/features/timetable/data/timetable_mock_data.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/models/timetable_proxy_models.dart';
+import 'package:watch_it/watch_it.dart';
 
 class TimetableManager extends ChangeNotifier {
+  final _apiService = di<TimetableApiService>();
+
   // Main timetable container
   final _timetable = ValueNotifier<Timetable?>(null);
   ValueListenable<Timetable?> get timetable => _timetable;
@@ -58,7 +62,7 @@ class TimetableManager extends ChangeNotifier {
   TimetableManager();
 
   Future<TimetableManager> init() async {
-    await _loadMockData();
+    await _loadData();
     _buildWeekdayProxies();
     return this;
   }
@@ -78,6 +82,110 @@ class TimetableManager extends ChangeNotifier {
     _subjectIdMap.clear();
     _classroomIdMap.clear();
     _lessonGroupIdMap.clear();
+  }
+
+  // Load data from API with fallback to mock data
+  Future<void> _loadData() async {
+    try {
+      // Try to load from API first
+      await _loadFromApi();
+    } catch (e) {
+      // Fallback to mock data if API fails
+      await _loadMockData();
+    }
+  }
+
+  // Load data from API
+  Future<void> _loadFromApi() async {
+    // Load complete timetable data
+    final timetable = await _apiService.fetchCompleteTimetableData();
+    if (timetable != null) {
+      _timetable.value = timetable;
+      _timetableSlots.value = timetable.timetableSlots ?? [];
+      _scheduledLessons.value = timetable.scheduledLessons ?? [];
+    }
+
+    // Load additional data if not included in timetable
+    await _loadAdditionalDataFromApi();
+
+    // Extract related data from lessons and slots
+    _extractRelatedDataFromLessons();
+  }
+
+  // Load additional data from API
+  Future<void> _loadAdditionalDataFromApi() async {
+    // Load subjects if not already loaded
+    if (_subjects.value.isEmpty) {
+      final subjects = await _apiService.fetchSubjects();
+      if (subjects != null) {
+        _subjects.value = subjects;
+      }
+    }
+
+    // Load classrooms if not already loaded
+    if (_classrooms.value.isEmpty) {
+      final classrooms = await _apiService.fetchClassrooms();
+      if (classrooms != null) {
+        _classrooms.value = classrooms;
+      }
+    }
+
+    // Load lesson groups if not already loaded
+    if (_lessonGroups.value.isEmpty) {
+      final lessonGroups = await _apiService.fetchLessonGroups();
+      if (lessonGroups != null) {
+        _lessonGroups.value = lessonGroups;
+      }
+    }
+
+    // Load scheduled lesson group memberships
+    final memberships =
+        await _apiService.fetchScheduledLessonGroupMemberships();
+    if (memberships != null) {
+      _scheduledLessonGroupMemberships.value = memberships;
+    }
+  }
+
+  // Extract related data from lessons
+  void _extractRelatedDataFromLessons() {
+    final subjects = <Subject>[];
+    final classrooms = <Classroom>[];
+    final lessonGroups = <LessonGroup>[];
+
+    for (final lesson in _scheduledLessons.value) {
+      if (lesson.subject != null &&
+          !subjects.any((s) => s.id == lesson.subject!.id)) {
+        subjects.add(lesson.subject!);
+      }
+      if (lesson.room != null &&
+          !classrooms.any((c) => c.id == lesson.room!.id)) {
+        classrooms.add(lesson.room!);
+      }
+      if (lesson.lessonGroup != null &&
+          !lessonGroups.any((lg) => lg.id == lesson.lessonGroup!.id)) {
+        lessonGroups.add(lesson.lessonGroup!);
+      }
+    }
+
+    // Update collections if we found additional data
+    if (subjects.isNotEmpty) {
+      _subjects.value = subjects;
+    }
+    if (classrooms.isNotEmpty) {
+      _classrooms.value = classrooms;
+    }
+    if (lessonGroups.isNotEmpty) {
+      _lessonGroups.value = lessonGroups;
+    }
+
+    // Set default selected lesson group
+    if (_lessonGroups.value.isNotEmpty && _selectedLessonGroup.value == null) {
+      _selectedLessonGroup.value = _lessonGroups.value.first;
+      _selectedLessonGroupIds.value = {_lessonGroups.value.first.id!};
+    }
+
+    // Build lookup maps
+    _buildLookupMaps();
   }
 
   // Load mock data
@@ -295,17 +403,26 @@ class TimetableManager extends ChangeNotifier {
   }
 
   // CRUD operations for scheduled lessons
-  void addScheduledLesson(ScheduledLesson lesson) {
-    final lessons = List<ScheduledLesson>.from(_scheduledLessons.value);
-
-    // Assign an ID if the lesson doesn't have one
-    final lessonWithId =
-        lesson.id == null ? lesson.copyWith(id: _getNextLessonId()) : lesson;
-
-    lessons.add(lessonWithId);
-    _scheduledLessons.value = lessons;
-    _buildWeekdayProxies();
-    notifyListeners();
+  Future<void> addScheduledLesson(ScheduledLesson lesson) async {
+    try {
+      final createdLesson = await _apiService.createScheduledLesson(lesson);
+      if (createdLesson != null) {
+        final lessons = List<ScheduledLesson>.from(_scheduledLessons.value);
+        lessons.add(createdLesson);
+        _scheduledLessons.value = lessons;
+        _buildWeekdayProxies();
+        notifyListeners();
+      }
+    } catch (e) {
+      // Fallback to local operation if API fails
+      final lessons = List<ScheduledLesson>.from(_scheduledLessons.value);
+      final lessonWithId =
+          lesson.id == null ? lesson.copyWith(id: _getNextLessonId()) : lesson;
+      lessons.add(lessonWithId);
+      _scheduledLessons.value = lessons;
+      _buildWeekdayProxies();
+      notifyListeners();
+    }
   }
 
   int _getNextLessonId() {
@@ -316,23 +433,56 @@ class TimetableManager extends ChangeNotifier {
         1;
   }
 
-  void updateScheduledLesson(ScheduledLesson updatedLesson) {
-    final lessons = List<ScheduledLesson>.from(_scheduledLessons.value);
-    final index = lessons.indexWhere((lesson) => lesson.id == updatedLesson.id);
-    if (index != -1) {
-      lessons[index] = updatedLesson;
+  Future<void> updateScheduledLesson(ScheduledLesson updatedLesson) async {
+    try {
+      final updatedLessonFromApi = await _apiService.updateScheduledLesson(
+        updatedLesson,
+      );
+      if (updatedLessonFromApi != null) {
+        final lessons = List<ScheduledLesson>.from(_scheduledLessons.value);
+        final index = lessons.indexWhere(
+          (lesson) => lesson.id == updatedLesson.id,
+        );
+        if (index != -1) {
+          lessons[index] = updatedLessonFromApi;
+          _scheduledLessons.value = lessons;
+          _buildWeekdayProxies();
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      // Fallback to local operation if API fails
+      final lessons = List<ScheduledLesson>.from(_scheduledLessons.value);
+      final index = lessons.indexWhere(
+        (lesson) => lesson.id == updatedLesson.id,
+      );
+      if (index != -1) {
+        lessons[index] = updatedLesson;
+        _scheduledLessons.value = lessons;
+        _buildWeekdayProxies();
+        notifyListeners();
+      }
+    }
+  }
+
+  Future<void> removeScheduledLesson(int lessonId) async {
+    try {
+      final success = await _apiService.deleteScheduledLesson(lessonId);
+      if (success == true) {
+        final lessons = List<ScheduledLesson>.from(_scheduledLessons.value);
+        lessons.removeWhere((lesson) => lesson.id == lessonId);
+        _scheduledLessons.value = lessons;
+        _buildWeekdayProxies();
+        notifyListeners();
+      }
+    } catch (e) {
+      // Fallback to local operation if API fails
+      final lessons = List<ScheduledLesson>.from(_scheduledLessons.value);
+      lessons.removeWhere((lesson) => lesson.id == lessonId);
       _scheduledLessons.value = lessons;
       _buildWeekdayProxies();
       notifyListeners();
     }
-  }
-
-  void removeScheduledLesson(int lessonId) {
-    final lessons = List<ScheduledLesson>.from(_scheduledLessons.value);
-    lessons.removeWhere((lesson) => lesson.id == lessonId);
-    _scheduledLessons.value = lessons;
-    _buildWeekdayProxies();
-    notifyListeners();
   }
 
   // Helper methods for UI
@@ -620,44 +770,93 @@ class TimetableManager extends ChangeNotifier {
   // Lesson Group Management Methods
 
   /// Add a new lesson group
-  void addLessonGroup(LessonGroup lessonGroup) {
-    final newId =
-        _lessonGroups.value.isEmpty
-            ? 1
-            : _lessonGroups.value
-                    .map((g) => g.id ?? 0)
-                    .reduce((a, b) => a > b ? a : b) +
-                1;
+  Future<void> addLessonGroup(LessonGroup lessonGroup) async {
+    try {
+      final createdLessonGroup = await _apiService.createLessonGroup(
+        lessonGroup,
+      );
+      if (createdLessonGroup != null) {
+        final updatedGroups = List<LessonGroup>.from(_lessonGroups.value)
+          ..add(createdLessonGroup);
 
-    final newLessonGroup = lessonGroup.copyWith(id: newId);
-    final updatedGroups = List<LessonGroup>.from(_lessonGroups.value)
-      ..add(newLessonGroup);
+        _lessonGroups.value = updatedGroups;
+        _lessonGroupIdMap[createdLessonGroup.id!] = createdLessonGroup;
+        notifyListeners();
+      }
+    } catch (e) {
+      // Fallback to local operation if API fails
+      final newId =
+          _lessonGroups.value.isEmpty
+              ? 1
+              : _lessonGroups.value
+                      .map((g) => g.id ?? 0)
+                      .reduce((a, b) => a > b ? a : b) +
+                  1;
 
-    _lessonGroups.value = updatedGroups;
-    _lessonGroupIdMap[newId] = newLessonGroup;
-    notifyListeners();
-  }
-
-  /// Update an existing lesson group
-  void updateLessonGroup(LessonGroup lessonGroup) {
-    final index = _lessonGroups.value.indexWhere((g) => g.id == lessonGroup.id);
-    if (index != -1) {
-      final updatedGroups = List<LessonGroup>.from(_lessonGroups.value);
-      updatedGroups[index] = lessonGroup;
+      final newLessonGroup = lessonGroup.copyWith(id: newId);
+      final updatedGroups = List<LessonGroup>.from(_lessonGroups.value)
+        ..add(newLessonGroup);
 
       _lessonGroups.value = updatedGroups;
-      _lessonGroupIdMap[lessonGroup.id!] = lessonGroup;
+      _lessonGroupIdMap[newId] = newLessonGroup;
       notifyListeners();
     }
   }
 
+  /// Update an existing lesson group
+  Future<void> updateLessonGroup(LessonGroup lessonGroup) async {
+    try {
+      final updatedLessonGroup = await _apiService.updateLessonGroup(
+        lessonGroup,
+      );
+      if (updatedLessonGroup != null) {
+        final index = _lessonGroups.value.indexWhere(
+          (g) => g.id == lessonGroup.id,
+        );
+        if (index != -1) {
+          final updatedGroups = List<LessonGroup>.from(_lessonGroups.value);
+          updatedGroups[index] = updatedLessonGroup;
+
+          _lessonGroups.value = updatedGroups;
+          _lessonGroupIdMap[lessonGroup.id!] = updatedLessonGroup;
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      // Fallback to local operation if API fails
+      final index = _lessonGroups.value.indexWhere(
+        (g) => g.id == lessonGroup.id,
+      );
+      if (index != -1) {
+        final updatedGroups = List<LessonGroup>.from(_lessonGroups.value);
+        updatedGroups[index] = lessonGroup;
+
+        _lessonGroups.value = updatedGroups;
+        _lessonGroupIdMap[lessonGroup.id!] = lessonGroup;
+        notifyListeners();
+      }
+    }
+  }
+
   /// Remove a lesson group
-  void removeLessonGroup(int lessonGroupId) {
-    final updatedGroups =
-        _lessonGroups.value.where((g) => g.id != lessonGroupId).toList();
-    _lessonGroups.value = updatedGroups;
-    _lessonGroupIdMap.remove(lessonGroupId);
-    notifyListeners();
+  Future<void> removeLessonGroup(int lessonGroupId) async {
+    try {
+      final success = await _apiService.deleteLessonGroup(lessonGroupId);
+      if (success == true) {
+        final updatedGroups =
+            _lessonGroups.value.where((g) => g.id != lessonGroupId).toList();
+        _lessonGroups.value = updatedGroups;
+        _lessonGroupIdMap.remove(lessonGroupId);
+        notifyListeners();
+      }
+    } catch (e) {
+      // Fallback to local operation if API fails
+      final updatedGroups =
+          _lessonGroups.value.where((g) => g.id != lessonGroupId).toList();
+      _lessonGroups.value = updatedGroups;
+      _lessonGroupIdMap.remove(lessonGroupId);
+      notifyListeners();
+    }
   }
 
   // Scheduled Lesson Group Membership Management
@@ -781,43 +980,83 @@ class TimetableManager extends ChangeNotifier {
   // Classroom management methods
 
   /// Add a new classroom
-  void addClassroom(Classroom classroom) {
-    final newId =
-        _classrooms.value.isEmpty
-            ? 1
-            : _classrooms.value
-                    .map((c) => c.id ?? 0)
-                    .reduce((a, b) => a > b ? a : b) +
-                1;
+  Future<void> addClassroom(Classroom classroom) async {
+    try {
+      final createdClassroom = await _apiService.createClassroom(classroom);
+      if (createdClassroom != null) {
+        final updatedClassrooms = List<Classroom>.from(_classrooms.value)
+          ..add(createdClassroom);
 
-    final newClassroom = classroom.copyWith(id: newId);
-    final updatedClassrooms = List<Classroom>.from(_classrooms.value)
-      ..add(newClassroom);
+        _classrooms.value = updatedClassrooms;
+        _classroomIdMap[createdClassroom.id!] = createdClassroom;
+        notifyListeners();
+      }
+    } catch (e) {
+      // Fallback to local operation if API fails
+      final newId =
+          _classrooms.value.isEmpty
+              ? 1
+              : _classrooms.value
+                      .map((c) => c.id ?? 0)
+                      .reduce((a, b) => a > b ? a : b) +
+                  1;
 
-    _classrooms.value = updatedClassrooms;
-    _classroomIdMap[newId] = newClassroom;
-    notifyListeners();
-  }
+      final newClassroom = classroom.copyWith(id: newId);
+      final updatedClassrooms = List<Classroom>.from(_classrooms.value)
+        ..add(newClassroom);
 
-  /// Update an existing classroom
-  void updateClassroom(Classroom classroom) {
-    final index = _classrooms.value.indexWhere((c) => c.id == classroom.id);
-    if (index != -1) {
-      final updatedClassrooms = List<Classroom>.from(_classrooms.value);
-      updatedClassrooms[index] = classroom;
       _classrooms.value = updatedClassrooms;
-      _classroomIdMap[classroom.id!] = classroom;
+      _classroomIdMap[newId] = newClassroom;
       notifyListeners();
     }
   }
 
+  /// Update an existing classroom
+  Future<void> updateClassroom(Classroom classroom) async {
+    try {
+      final updatedClassroom = await _apiService.updateClassroom(classroom);
+      if (updatedClassroom != null) {
+        final index = _classrooms.value.indexWhere((c) => c.id == classroom.id);
+        if (index != -1) {
+          final updatedClassrooms = List<Classroom>.from(_classrooms.value);
+          updatedClassrooms[index] = updatedClassroom;
+          _classrooms.value = updatedClassrooms;
+          _classroomIdMap[classroom.id!] = updatedClassroom;
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      // Fallback to local operation if API fails
+      final index = _classrooms.value.indexWhere((c) => c.id == classroom.id);
+      if (index != -1) {
+        final updatedClassrooms = List<Classroom>.from(_classrooms.value);
+        updatedClassrooms[index] = classroom;
+        _classrooms.value = updatedClassrooms;
+        _classroomIdMap[classroom.id!] = classroom;
+        notifyListeners();
+      }
+    }
+  }
+
   /// Remove a classroom
-  void removeClassroom(int classroomId) {
-    final updatedClassrooms =
-        _classrooms.value.where((c) => c.id != classroomId).toList();
-    _classrooms.value = updatedClassrooms;
-    _classroomIdMap.remove(classroomId);
-    notifyListeners();
+  Future<void> removeClassroom(int classroomId) async {
+    try {
+      final success = await _apiService.deleteClassroom(classroomId);
+      if (success == true) {
+        final updatedClassrooms =
+            _classrooms.value.where((c) => c.id != classroomId).toList();
+        _classrooms.value = updatedClassrooms;
+        _classroomIdMap.remove(classroomId);
+        notifyListeners();
+      }
+    } catch (e) {
+      // Fallback to local operation if API fails
+      final updatedClassrooms =
+          _classrooms.value.where((c) => c.id != classroomId).toList();
+      _classrooms.value = updatedClassrooms;
+      _classroomIdMap.remove(classroomId);
+      notifyListeners();
+    }
   }
 
   /// Get next available classroom ID

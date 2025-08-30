@@ -14,10 +14,11 @@ class TimetableApiService {
 
   /// Fetch the main timetable with all related data
   Future<Timetable?> fetchTimetable() async {
-    return await ClientHelper.apiCall(
+    final timetable = await ClientHelper.apiCall(
       call: () => _client.timetable.fetchTimetable(),
       errorMessage: 'Fehler beim Laden des Stundenplans',
     );
+    return timetable;
   }
 
   /// Create a new timetable
@@ -46,10 +47,11 @@ class TimetableApiService {
 
   /// Fetch complete timetable data (timetable + slots + lessons + related data)
   Future<Timetable?> fetchCompleteTimetableData() async {
-    return await ClientHelper.apiCall(
+    final timetable = await ClientHelper.apiCall(
       call: () => _client.timetable.fetchCompleteTimetableData(),
       errorMessage: 'Fehler beim Laden der vollständigen Stundenplandaten',
     );
+    return timetable;
   }
 
   // ============================================================================
@@ -119,7 +121,7 @@ class TimetableApiService {
   ) async {
     return await ClientHelper.apiCall(
       call:
-          () => _client.scheduledLesson.fetchScheduledLessonsByTimetableId(
+          () => _client.scheduledLesson.fetchScheduledLessonsByTimetable(
             timetableId,
           ),
       errorMessage:
@@ -139,18 +141,20 @@ class TimetableApiService {
 
   /// Create a new scheduled lesson
   Future<ScheduledLesson?> createScheduledLesson(ScheduledLesson lesson) async {
-    return await ClientHelper.apiCall(
+    final scheduledLesson = await ClientHelper.apiCall(
       call: () => _client.scheduledLesson.createScheduledLesson(lesson),
       errorMessage: 'Fehler beim Erstellen der geplanten Stunde',
     );
+    return scheduledLesson;
   }
 
   /// Update an existing scheduled lesson
   Future<ScheduledLesson?> updateScheduledLesson(ScheduledLesson lesson) async {
-    return await ClientHelper.apiCall(
+    final scheduledLesson = await ClientHelper.apiCall(
       call: () => _client.scheduledLesson.updateScheduledLesson(lesson),
       errorMessage: 'Fehler beim Aktualisieren der geplanten Stunde',
     );
+    return scheduledLesson;
   }
 
   /// Delete a scheduled lesson
@@ -175,10 +179,11 @@ class TimetableApiService {
 
   /// Fetch a specific lesson group by ID
   Future<LessonGroup?> fetchLessonGroupById(int lessonGroupId) async {
-    return await ClientHelper.apiCall(
+    final lessonGroup = await ClientHelper.apiCall(
       call: () => _client.learningGroup.fetchLessonGroupById(lessonGroupId),
       errorMessage: 'Fehler beim Laden der Klasse',
     );
+    return lessonGroup;
   }
 
   /// Create a new lesson group
@@ -219,10 +224,11 @@ class TimetableApiService {
 
   /// Fetch a specific classroom by ID
   Future<Classroom?> fetchClassroomById(int classroomId) async {
-    return await ClientHelper.apiCall(
+    final classroom = await ClientHelper.apiCall(
       call: () => _client.classroom.fetchClassroomById(classroomId),
       errorMessage: 'Fehler beim Laden des Raums',
     );
+    return classroom;
   }
 
   /// Create a new classroom
@@ -263,10 +269,11 @@ class TimetableApiService {
 
   /// Fetch a specific subject by ID
   Future<Subject?> fetchSubjectById(int subjectId) async {
-    return await ClientHelper.apiCall(
+    final subject = await ClientHelper.apiCall(
       call: () => _client.subject.fetchSubjectById(subjectId),
       errorMessage: 'Fehler beim Laden des Fachs',
     );
+    return subject;
   }
 
   /// Create a new subject

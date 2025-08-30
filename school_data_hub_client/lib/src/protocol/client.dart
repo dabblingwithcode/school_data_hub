@@ -1647,9 +1647,9 @@ class EndpointScheduledLesson extends _i1.EndpointRef {
   @override
   String get name => 'scheduledLesson';
 
-  _i2.Future<_i43.ScheduledLesson> createScheduledLesson(
+  _i2.Future<_i43.ScheduledLesson?> createScheduledLesson(
           _i43.ScheduledLesson scheduledLesson) =>
-      caller.callServerEndpoint<_i43.ScheduledLesson>(
+      caller.callServerEndpoint<_i43.ScheduledLesson?>(
         'scheduledLesson',
         'createScheduledLesson',
         {'scheduledLesson': scheduledLesson},
@@ -1708,16 +1708,16 @@ class EndpointScheduledLesson extends _i1.EndpointRef {
         {},
       );
 
-  _i2.Future<_i43.ScheduledLesson> updateScheduledLesson(
+  _i2.Future<_i43.ScheduledLesson?> updateScheduledLesson(
           _i43.ScheduledLesson scheduledLesson) =>
-      caller.callServerEndpoint<_i43.ScheduledLesson>(
+      caller.callServerEndpoint<_i43.ScheduledLesson?>(
         'scheduledLesson',
         'updateScheduledLesson',
         {'scheduledLesson': scheduledLesson},
       );
 
-  _i2.Future<_i43.ScheduledLesson> deactivateScheduledLesson(int id) =>
-      caller.callServerEndpoint<_i43.ScheduledLesson>(
+  _i2.Future<_i43.ScheduledLesson?> deactivateScheduledLesson(int id) =>
+      caller.callServerEndpoint<_i43.ScheduledLesson?>(
         'scheduledLesson',
         'deactivateScheduledLesson',
         {'id': id},

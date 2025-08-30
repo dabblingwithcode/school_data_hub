@@ -7,7 +7,7 @@ class ScheduledLessonEndpoint extends Endpoint {
 
   //- create
 
-  Future<ScheduledLesson> createScheduledLesson(
+  Future<ScheduledLesson?> createScheduledLesson(
       Session session, ScheduledLesson scheduledLesson) async {
     final scheduledLessonInDatabase =
         await ScheduledLesson.db.insertRow(session, scheduledLesson);
@@ -135,14 +135,14 @@ class ScheduledLessonEndpoint extends Endpoint {
 
   //- update
 
-  Future<ScheduledLesson> updateScheduledLesson(
+  Future<ScheduledLesson?> updateScheduledLesson(
       Session session, ScheduledLesson scheduledLesson) async {
     final updatedScheduledLesson =
         await ScheduledLesson.db.updateRow(session, scheduledLesson);
     return updatedScheduledLesson;
   }
 
-  Future<ScheduledLesson> deactivateScheduledLesson(
+  Future<ScheduledLesson?> deactivateScheduledLesson(
       Session session, int id) async {
     final scheduledLesson = await ScheduledLesson.db.findById(session, id);
     if (scheduledLesson == null) {
