@@ -336,14 +336,18 @@ class TimetableManager extends ChangeNotifier {
   }
 
   /// Insert a lesson at a specific position within a time slot, shifting other lessons accordingly
-  void insertLessonAtPosition(ScheduledLesson lesson, int targetSlotId, int targetPosition) {
+  void insertLessonAtPosition(
+    ScheduledLesson lesson,
+    int targetSlotId,
+    int targetPosition,
+  ) {
     final lessonsInSlot = getAllLessonsForSlot(targetSlotId);
-    
+
     // If lesson is moving from the same slot, temporarily remove it from consideration
-    final otherLessonsInSlot = lessonsInSlot
-        .where((l) => l.id != lesson.id)
-        .toList()
-      ..sort((a, b) => a.timetableSlotOrder.compareTo(b.timetableSlotOrder));
+    final otherLessonsInSlot =
+        lessonsInSlot.where((l) => l.id != lesson.id).toList()..sort(
+          (a, b) => a.timetableSlotOrder.compareTo(b.timetableSlotOrder),
+        );
 
     // Update the dragged lesson to new slot and position
     final updatedLesson = lesson.copyWith(
@@ -378,7 +382,7 @@ class TimetableManager extends ChangeNotifier {
     for (int i = 0; i < lessonsInSlot.length; i++) {
       final lesson = lessonsInSlot[i];
       final expectedOrder = i + 1;
-      
+
       if (lesson.timetableSlotOrder != expectedOrder) {
         final compactedLesson = lesson.copyWith(
           timetableSlotOrder: expectedOrder,

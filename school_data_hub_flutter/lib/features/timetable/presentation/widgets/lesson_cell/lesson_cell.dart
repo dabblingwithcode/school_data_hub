@@ -525,7 +525,7 @@ void _swapLessonOrder(
       targetLesson.scheduledAtId,
       targetLesson.timetableSlotOrder,
     );
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Stunden-Reihenfolge erfolgreich geändert'),
@@ -539,7 +539,7 @@ void _swapLessonOrder(
       targetLesson.scheduledAtId,
       targetLesson.timetableSlotOrder,
     );
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Stunde erfolgreich in anderen Zeitslot verschoben'),
