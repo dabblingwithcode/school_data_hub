@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
+import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/timetable_utils.dart';
 import 'package:watch_it/watch_it.dart';
 
 class WeekdaySelector extends WatchingWidget {
@@ -20,37 +22,40 @@ class WeekdaySelector extends WatchingWidget {
             Weekday.values.map((weekday) {
               final isSelected = selectedWeekday == weekday;
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                padding: const EdgeInsets.symmetric(horizontal: 6.0),
                 child: FilterChip(
-                  label: Text(_getWeekdayName(weekday)),
+                  label: Text(
+                    TimetableUtils.getWeekdayName(weekday),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
+                      color: isSelected ? Colors.white : Colors.black,
+                    ),
+                  ),
                   selected: isSelected,
                   onSelected: (selected) {
                     if (selected) {
                       timetableManager.selectWeekday(weekday);
                     }
                   },
-                  selectedColor: Theme.of(context).colorScheme.primaryContainer,
-                  checkmarkColor:
-                      Theme.of(context).colorScheme.onPrimaryContainer,
+                  selectedColor: AppColors.accentColor,
+                  checkmarkColor: Theme.of(context).colorScheme.onPrimary,
+                  backgroundColor:
+                      isSelected
+                          ? Theme.of(
+                            context,
+                          ).colorScheme.primary.withValues(alpha: 0.1)
+                          : null,
+                  elevation: isSelected ? 4 : 1,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                 ),
               );
             }).toList(),
       ),
     );
-  }
-
-  String _getWeekdayName(Weekday weekday) {
-    switch (weekday) {
-      case Weekday.monday:
-        return 'Montag';
-      case Weekday.tuesday:
-        return 'Dienstag';
-      case Weekday.wednesday:
-        return 'Mittwoch';
-      case Weekday.thursday:
-        return 'Donnerstag';
-      case Weekday.friday:
-        return 'Freitag';
-    }
   }
 }

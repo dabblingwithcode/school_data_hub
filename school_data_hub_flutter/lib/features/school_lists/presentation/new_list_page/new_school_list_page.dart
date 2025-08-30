@@ -16,48 +16,51 @@ final _schoolListManager = di<SchoolListManager>();
 final _pupilManager = di<PupilManager>();
 final _hubSessionManager = di<HubSessionManager>();
 
-class NewSchoolListPage extends StatefulWidget {
+class NewSchoolListPage extends WatchingWidget {
   final SchoolList? initialSchoolList;
   const NewSchoolListPage({this.initialSchoolList, super.key});
-
-  @override
-  NewSchoolListPageState createState() => NewSchoolListPageState();
-}
-
-class NewSchoolListPageState extends State<NewSchoolListPage> {
-  final TextEditingController schoolListNameController =
-      TextEditingController();
-  final TextEditingController schoolListDescriptionController =
-      TextEditingController();
-  bool _isOn = false;
-  Set<int> pupilIds = {};
-  void postNewSchoolList() async {
-    await _schoolListManager.postSchoolListWithGroup(
-      name: schoolListNameController.text,
-      description: schoolListDescriptionController.text,
-      pupilIds: pupilIds.toList(),
-      public: _isOn,
-    );
-  }
-
-  @override
-  void initState() {
-    if (widget.initialSchoolList != null) {
-      setState(() {
-        pupilIds =
-            di<SchoolListManager>()
-                .getPupilsinSchoolList(widget.initialSchoolList!.id!)
-                .map((e) => e.pupilId)
-                .toSet();
-      });
-    }
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
+    // Create text editing controllers using createOnce
+    final schoolListNameController = createOnce<TextEditingController>(
+      () => TextEditingController(),
+    );
+    final schoolListDescriptionController = createOnce<TextEditingController>(
+      () => TextEditingController(),
+    );
+
+    // Create ValueListenable for state management
+    final isOn = createOnce<ValueNotifier<bool>>(
+      () => ValueNotifier<bool>(false),
+    );
+    final pupilIds = createOnce<ValueNotifier<Set<int>>>(() {
+      final initialPupilIds = <int>{};
+      if (initialSchoolList != null) {
+        initialPupilIds.addAll(
+          di<SchoolListManager>()
+              .getPupilsinSchoolList(initialSchoolList!.id!)
+              .map((e) => e.pupilId)
+              .toSet(),
+        );
+      }
+      return ValueNotifier<Set<int>>(initialPupilIds);
+    });
+
+    // Watch the state values
+    final isOnValue = watch(isOn).value;
+    final pupilIdsValue = watch(pupilIds).value;
+
+    void postNewSchoolList() async {
+      await _schoolListManager.postSchoolListWithGroup(
+        name: schoolListNameController.text,
+        description: schoolListDescriptionController.text,
+        pupilIds: pupilIdsValue.toList(),
+        public: isOnValue,
+      );
+    }
+
     List<PupilProxy> pupilsFromIds = _pupilManager.getPupilsFromPupilIds(
-      pupilIds.toList(),
+      pupilIdsValue.toList(),
     );
     return Scaffold(
       appBar: AppBar(
@@ -109,13 +112,12 @@ class NewSchoolListPageState extends State<NewSchoolListPage> {
                           ),
                         ),
                         const Gap(10),
+
                         Switch(
                           value:
-                              _isOn, // Boolean value representing the switch state
+                              isOnValue, // Boolean value representing the switch state
                           onChanged: (newValue) {
-                            setState(() {
-                              _isOn = newValue;
-                            });
+                            isOn.value = newValue;
                           },
                           activeColor: Colors.blue, // Change color if desired
                         ),
@@ -139,7 +141,7 @@ class NewSchoolListPageState extends State<NewSchoolListPage> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const Spacer(),
+                    /*      const Spacer(),
                     TextButton(
                       onPressed: () {},
                       child: const Text(
@@ -149,11 +151,11 @@ class NewSchoolListPageState extends State<NewSchoolListPage> {
                           color: AppColors.interactiveColor,
                         ),
                       ),
-                    ),
+                    ), */
                   ],
                 ),
-                if (pupilIds.isEmpty) const Gap(30),
-                pupilIds.isNotEmpty
+                if (pupilIdsValue.isEmpty) const Gap(30),
+                pupilIdsValue.isNotEmpty
                     ? Expanded(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -171,9 +173,13 @@ class NewSchoolListPageState extends State<NewSchoolListPage> {
                                   // const Gap(5),
                                   InkWell(
                                     onLongPress: () {
-                                      setState(() {
-                                        pupilIds.remove(listedPupil.internalId);
-                                      });
+                                      final currentPupilIds = Set<int>.from(
+                                        pupilIdsValue,
+                                      );
+                                      currentPupilIds.remove(
+                                        listedPupil.internalId,
+                                      );
+                                      pupilIds.value = currentPupilIds;
                                     },
                                     onTap: () {
                                       Navigator.of(context).push(
@@ -264,7 +270,7 @@ class NewSchoolListPageState extends State<NewSchoolListPage> {
                         ),
                       ],
                     ),
-                if (pupilIds.isEmpty) const Spacer(),
+                if (pupilIds.value.isEmpty) const Spacer(),
                 ElevatedButton(
                   style: AppStyles.actionButtonStyle,
                   onPressed: () async {
@@ -274,15 +280,17 @@ class NewSchoolListPageState extends State<NewSchoolListPage> {
                             builder:
                                 (ctx) => SelectPupilsListPage(
                                   selectablePupils: _pupilManager
-                                      .getPupilsNotListed(pupilIds.toList()),
+                                      .getPupilsNotListed(
+                                        pupilIdsValue.toList(),
+                                      ),
                                 ),
                           ),
                         ) ??
                         [];
                     if (selectedPupilIds.isNotEmpty) {
-                      setState(() {
-                        pupilIds.addAll(selectedPupilIds.toSet());
-                      });
+                      final currentPupilIds = Set<int>.from(pupilIdsValue);
+                      currentPupilIds.addAll(selectedPupilIds.toSet());
+                      pupilIds.value = currentPupilIds;
                     }
                   },
                   child: const Text(
@@ -316,13 +324,5 @@ class NewSchoolListPageState extends State<NewSchoolListPage> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is removed from the tree
-    schoolListNameController.dispose();
-    schoolListDescriptionController.dispose();
-    super.dispose();
   }
 }

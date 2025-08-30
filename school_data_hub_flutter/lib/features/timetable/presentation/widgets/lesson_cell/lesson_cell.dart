@@ -24,6 +24,11 @@ class LessonCell extends WatchingWidget {
     final _userManager = di<UserManager>();
     final _timetableManager = di<TimetableManager>();
 
+    // Watch scheduled lesson group memberships to update pupil count
+    final scheduledLessonGroupMemberships = watchValue(
+      (TimetableManager x) => x.scheduledLessonGroupMemberships,
+    );
+
     if (lesson != null) {
       return LongPressDraggable<ScheduledLesson>(
         data: lesson!,
@@ -122,6 +127,15 @@ class LessonCell extends WatchingWidget {
     final groupName = lesson!.lessonGroup?.name ?? 'Unbekannte Gruppe';
     final subjectColor = lesson!.subject?.color;
 
+    // Get pupil count for this lesson group
+    final timetableManager = di<TimetableManager>();
+    final pupilCount =
+        lesson!.lessonGroup?.id != null
+            ? timetableManager
+                .getPupilIdsForLessonGroup(lesson!.lessonGroup!.id!)
+                .length
+            : 0;
+
     return Container(
       decoration: BoxDecoration(
         color:
@@ -139,19 +153,20 @@ class LessonCell extends WatchingWidget {
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             subjectName,
-            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 1),
           Text(
             groupName,
             style: TextStyle(
-              fontSize: 9,
+              fontSize: 8,
               color: Colors.grey.shade700,
               fontWeight: FontWeight.w600,
             ),
@@ -159,17 +174,34 @@ class LessonCell extends WatchingWidget {
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 1),
           Text(
             roomCode,
-            style: TextStyle(fontSize: 9, color: Colors.grey.shade700),
+            style: TextStyle(fontSize: 8, color: Colors.grey.shade700),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 1),
+          // Show pupil count
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.people, size: 8, color: Colors.grey.shade600),
+              const SizedBox(width: 2),
+              Text(
+                '$pupilCount',
+                style: TextStyle(
+                  fontSize: 8,
+                  color: Colors.grey.shade600,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 1),
           // Show teachers
-          LessonCellTeacherInfo(lesson: lesson!),
+          Flexible(child: LessonCellTeacherInfo(lesson: lesson!)),
         ],
       ),
     );
@@ -517,15 +549,16 @@ void _swapLessonOrder(
   ScheduledLesson targetLesson,
   TimetableManager timetableManager,
 ) {
-  // Check if lessons are in the same time slot
-  if (draggedLesson.scheduledAtId == targetLesson.scheduledAtId) {
-    // Same slot: Insert at target position, shift others accordingly
-    timetableManager.insertLessonAtPosition(
-      draggedLesson,
-      targetLesson.scheduledAtId,
-      targetLesson.timetableSlotOrder,
-    );
+  // Always use insertLessonAtPosition for proper handling of all cases
+  // This method handles both same-slot reordering and cross-slot movement
+  timetableManager.insertLessonAtPosition(
+    draggedLesson,
+    targetLesson.scheduledAtId,
+    targetLesson.timetableSlotOrder,
+  );
 
+  // Show appropriate message based on whether it's same slot or different slot
+  if (draggedLesson.scheduledAtId == targetLesson.scheduledAtId) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Stunden-Reihenfolge erfolgreich geändert'),
@@ -533,13 +566,6 @@ void _swapLessonOrder(
       ),
     );
   } else {
-    // Different slots: Move to target slot and position
-    timetableManager.insertLessonAtPosition(
-      draggedLesson,
-      targetLesson.scheduledAtId,
-      targetLesson.timetableSlotOrder,
-    );
-
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Stunde erfolgreich in anderen Zeitslot verschoben'),

@@ -38,6 +38,17 @@ class TimetableManager extends ChangeNotifier {
   final _selectedLessonGroup = ValueNotifier<LessonGroup?>(null);
   ValueListenable<LessonGroup?> get selectedLessonGroup => _selectedLessonGroup;
 
+  // Current selected lesson groups for filtering (multiple selection)
+  final _selectedLessonGroupIds = ValueNotifier<Set<int>>({});
+  ValueListenable<Set<int>> get selectedLessonGroupIds =>
+      _selectedLessonGroupIds;
+
+  // Scheduled lesson group memberships
+  final _scheduledLessonGroupMemberships =
+      ValueNotifier<List<ScheduledLessonGroupMembership>>([]);
+  ValueListenable<List<ScheduledLessonGroupMembership>>
+  get scheduledLessonGroupMemberships => _scheduledLessonGroupMemberships;
+
   // Maps for quick lookups
   Map<int, TimetableSlot> _slotIdMap = {};
   Map<int, Subject> _subjectIdMap = {};
@@ -61,6 +72,7 @@ class TimetableManager extends ChangeNotifier {
     _weekdays.value = [];
     _selectedWeekday.value = Weekday.monday;
     _selectedLessonGroup.value = null;
+    _selectedLessonGroupIds.value = {};
 
     _slotIdMap.clear();
     _subjectIdMap.clear();
@@ -107,6 +119,7 @@ class TimetableManager extends ChangeNotifier {
     // Set default selected lesson group
     if (lessonGroups.isNotEmpty) {
       _selectedLessonGroup.value = lessonGroups.first;
+      _selectedLessonGroupIds.value = {lessonGroups.first.id!};
     }
 
     // Build lookup maps
@@ -133,10 +146,10 @@ class TimetableManager extends ChangeNotifier {
           _timetableSlots.value.where((slot) => slot.day == weekday).toList()
             ..sort((a, b) => a.startTime.compareTo(b.startTime));
 
-      // Get scheduled lessons for this weekday and selected lesson group
-      final lessonsForDay = _getScheduledLessonsForWeekdayAndGroup(
+      // Get scheduled lessons for this weekday and selected lesson groups
+      final lessonsForDay = _getScheduledLessonsForWeekdayAndGroups(
         weekday,
-        _selectedLessonGroup.value,
+        _selectedLessonGroupIds.value,
       );
 
       // Create map from slot ID to scheduled lesson
@@ -170,6 +183,26 @@ class TimetableManager extends ChangeNotifier {
     }).toList();
   }
 
+  /// Get scheduled lessons for a specific weekday and selected lesson groups
+  List<ScheduledLesson> _getScheduledLessonsForWeekdayAndGroups(
+    Weekday weekday,
+    Set<int> selectedGroupIds,
+  ) {
+    return _scheduledLessons.value.where((lesson) {
+      final lessonWeekday = _slotIdMap[lesson.scheduledAtId]?.day;
+      final matchesWeekday = lessonWeekday == weekday;
+
+      // If no groups selected, show all lessons
+      if (selectedGroupIds.isEmpty) {
+        return matchesWeekday;
+      }
+
+      // Show lessons that match any of the selected groups
+      final matchesGroup = selectedGroupIds.contains(lesson.lessonGroupId);
+      return matchesWeekday && matchesGroup;
+    }).toList();
+  }
+
   // Getters
   WeekdayProxy? getCurrentWeekdayProxy() {
     return _weekdays.value.firstWhereOrNull(
@@ -183,9 +216,9 @@ class TimetableManager extends ChangeNotifier {
   }
 
   List<ScheduledLesson> getScheduledLessonsForWeekday(Weekday weekday) {
-    return _getScheduledLessonsForWeekdayAndGroup(
+    return _getScheduledLessonsForWeekdayAndGroups(
       weekday,
-      _selectedLessonGroup.value,
+      _selectedLessonGroupIds.value,
     );
   }
 
@@ -228,18 +261,59 @@ class TimetableManager extends ChangeNotifier {
   void selectLessonGroup(LessonGroup? lessonGroup) {
     if (_selectedLessonGroup.value != lessonGroup) {
       _selectedLessonGroup.value = lessonGroup;
+      _selectedLessonGroupIds.value =
+          lessonGroup != null ? {lessonGroup.id!} : {};
       _buildWeekdayProxies(); // Rebuild with new filter
       notifyListeners();
     }
   }
 
+  /// Add a lesson group to the selection
+  void addLessonGroupToSelection(LessonGroup lessonGroup) {
+    final updatedSelection = Set<int>.from(_selectedLessonGroupIds.value);
+    updatedSelection.add(lessonGroup.id!);
+    _selectedLessonGroupIds.value = updatedSelection;
+    _buildWeekdayProxies(); // Rebuild with new filter
+    notifyListeners();
+  }
+
+  /// Remove a lesson group from the selection
+  void removeLessonGroupFromSelection(LessonGroup lessonGroup) {
+    final updatedSelection = Set<int>.from(_selectedLessonGroupIds.value);
+    updatedSelection.remove(lessonGroup.id!);
+    _selectedLessonGroupIds.value = updatedSelection;
+    _buildWeekdayProxies(); // Rebuild with new filter
+    notifyListeners();
+  }
+
+  /// Clear all selected lesson groups
+  void clearLessonGroupSelection() {
+    _selectedLessonGroupIds.value = {};
+    _selectedLessonGroup.value = null;
+    _buildWeekdayProxies(); // Rebuild with new filter
+    notifyListeners();
+  }
+
   // CRUD operations for scheduled lessons
   void addScheduledLesson(ScheduledLesson lesson) {
     final lessons = List<ScheduledLesson>.from(_scheduledLessons.value);
-    lessons.add(lesson);
+
+    // Assign an ID if the lesson doesn't have one
+    final lessonWithId =
+        lesson.id == null ? lesson.copyWith(id: _getNextLessonId()) : lesson;
+
+    lessons.add(lessonWithId);
     _scheduledLessons.value = lessons;
     _buildWeekdayProxies();
     notifyListeners();
+  }
+
+  int _getNextLessonId() {
+    if (_scheduledLessons.value.isEmpty) return 1;
+    return _scheduledLessons.value
+            .map((l) => l.id ?? 0)
+            .reduce((a, b) => a > b ? a : b) +
+        1;
   }
 
   void updateScheduledLesson(ScheduledLesson updatedLesson) {
@@ -342,34 +416,78 @@ class TimetableManager extends ChangeNotifier {
     int targetPosition,
   ) {
     final lessonsInSlot = getAllLessonsForSlot(targetSlotId);
+    final isSameSlot = lesson.scheduledAtId == targetSlotId;
 
-    // If lesson is moving from the same slot, temporarily remove it from consideration
-    final otherLessonsInSlot =
-        lessonsInSlot.where((l) => l.id != lesson.id).toList()..sort(
-          (a, b) => a.timetableSlotOrder.compareTo(b.timetableSlotOrder),
-        );
+    if (isSameSlot) {
+      // Same slot reordering: Use a more careful approach
+      final otherLessonsInSlot =
+          lessonsInSlot.where((l) => l.id != lesson.id).toList()..sort(
+            (a, b) => a.timetableSlotOrder.compareTo(b.timetableSlotOrder),
+          );
 
-    // Update the dragged lesson to new slot and position
-    final updatedLesson = lesson.copyWith(
-      scheduledAtId: targetSlotId,
-      scheduledAt: getTimetableSlotById(targetSlotId),
-      timetableSlotOrder: targetPosition,
-    );
-    updateScheduledLesson(updatedLesson);
-
-    // Shift all lessons at or after the target position to the right
-    for (int i = 0; i < otherLessonsInSlot.length; i++) {
-      final otherLesson = otherLessonsInSlot[i];
-      if (otherLesson.timetableSlotOrder >= targetPosition) {
-        final shiftedLesson = otherLesson.copyWith(
-          timetableSlotOrder: otherLesson.timetableSlotOrder + 1,
-        );
-        updateScheduledLesson(shiftedLesson);
+      // If the target position is the same as current position, do nothing
+      if (lesson.timetableSlotOrder == targetPosition) {
+        return;
       }
-    }
 
-    // Compact the orders in the original slot if the lesson moved from a different slot
-    if (lesson.scheduledAtId != targetSlotId) {
+      // Store the original order before updating
+      final originalOrder = lesson.timetableSlotOrder;
+
+      // Update the dragged lesson to the target position
+      final updatedLesson = lesson.copyWith(timetableSlotOrder: targetPosition);
+      updateScheduledLesson(updatedLesson);
+
+      // Shift other lessons appropriately
+      if (originalOrder < targetPosition) {
+        // Moving down: shift lessons between old and new position up
+        for (final otherLesson in otherLessonsInSlot) {
+          if (otherLesson.timetableSlotOrder > originalOrder &&
+              otherLesson.timetableSlotOrder <= targetPosition) {
+            final shiftedLesson = otherLesson.copyWith(
+              timetableSlotOrder: otherLesson.timetableSlotOrder - 1,
+            );
+            updateScheduledLesson(shiftedLesson);
+          }
+        }
+      } else {
+        // Moving up: shift lessons between new and old position down
+        for (final otherLesson in otherLessonsInSlot) {
+          if (otherLesson.timetableSlotOrder >= targetPosition &&
+              otherLesson.timetableSlotOrder < originalOrder) {
+            final shiftedLesson = otherLesson.copyWith(
+              timetableSlotOrder: otherLesson.timetableSlotOrder + 1,
+            );
+            updateScheduledLesson(shiftedLesson);
+          }
+        }
+      }
+    } else {
+      // Different slot: Use the original logic
+      final otherLessonsInSlot =
+          lessonsInSlot.where((l) => l.id != lesson.id).toList()..sort(
+            (a, b) => a.timetableSlotOrder.compareTo(b.timetableSlotOrder),
+          );
+
+      // Update the dragged lesson to new slot and position
+      final updatedLesson = lesson.copyWith(
+        scheduledAtId: targetSlotId,
+        scheduledAt: getTimetableSlotById(targetSlotId),
+        timetableSlotOrder: targetPosition,
+      );
+      updateScheduledLesson(updatedLesson);
+
+      // Shift all lessons at or after the target position to the right
+      for (int i = 0; i < otherLessonsInSlot.length; i++) {
+        final otherLesson = otherLessonsInSlot[i];
+        if (otherLesson.timetableSlotOrder >= targetPosition) {
+          final shiftedLesson = otherLesson.copyWith(
+            timetableSlotOrder: otherLesson.timetableSlotOrder + 1,
+          );
+          updateScheduledLesson(shiftedLesson);
+        }
+      }
+
+      // Compact the orders in the original slot
       _compactOrdersInSlot(lesson.scheduledAtId);
     }
   }
@@ -430,7 +548,18 @@ class TimetableManager extends ChangeNotifier {
       }
     }
 
-    // Return the lesson groups that have lessons on this weekday
+    // If specific lesson groups are selected, return those groups (even if they don't have lessons yet)
+    if (_selectedLessonGroupIds.value.isNotEmpty) {
+      final selectedGroups =
+          _lessonGroups.value
+              .where(
+                (group) => _selectedLessonGroupIds.value.contains(group.id),
+              )
+              .toList();
+      return selectedGroups;
+    }
+
+    // Return all lesson groups that have lessons on this weekday
     return _lessonGroups.value
         .where((group) => lessonGroupIds.contains(group.id))
         .toList();
@@ -465,17 +594,239 @@ class TimetableManager extends ChangeNotifier {
     return busyUserIds;
   }
 
-  /// Get the count of scheduled lessons for a specific user as main teacher
+  /// Get the count of scheduled lessons for a specific user (as main teacher or additional teacher)
   int getScheduledLessonsCountForUser(int userId) {
-    // Count how many lessons this user is assigned to as main teacher
-    return _scheduledLessons.value
-        .where((lesson) => lesson.mainTeacherId == userId)
-        .length;
+    return _scheduledLessons.value.where((lesson) {
+      // Count if user is main teacher
+      if (lesson.mainTeacherId == userId) return true;
+
+      // Count if user is additional teacher
+      if (lesson.lessonTeachers != null) {
+        return lesson.lessonTeachers!.any(
+          (teacher) => teacher.userId == userId,
+        );
+      }
+
+      return false;
+    }).length;
   }
 
   /// Get remaining time units for a user based on their timeUnits and scheduled lessons
   int getRemainingTimeUnitsForUser(int userId, int userTimeUnits) {
     final scheduledCount = getScheduledLessonsCountForUser(userId);
     return userTimeUnits - scheduledCount;
+  }
+
+  // Lesson Group Management Methods
+
+  /// Add a new lesson group
+  void addLessonGroup(LessonGroup lessonGroup) {
+    final newId =
+        _lessonGroups.value.isEmpty
+            ? 1
+            : _lessonGroups.value
+                    .map((g) => g.id ?? 0)
+                    .reduce((a, b) => a > b ? a : b) +
+                1;
+
+    final newLessonGroup = lessonGroup.copyWith(id: newId);
+    final updatedGroups = List<LessonGroup>.from(_lessonGroups.value)
+      ..add(newLessonGroup);
+
+    _lessonGroups.value = updatedGroups;
+    _lessonGroupIdMap[newId] = newLessonGroup;
+    notifyListeners();
+  }
+
+  /// Update an existing lesson group
+  void updateLessonGroup(LessonGroup lessonGroup) {
+    final index = _lessonGroups.value.indexWhere((g) => g.id == lessonGroup.id);
+    if (index != -1) {
+      final updatedGroups = List<LessonGroup>.from(_lessonGroups.value);
+      updatedGroups[index] = lessonGroup;
+
+      _lessonGroups.value = updatedGroups;
+      _lessonGroupIdMap[lessonGroup.id!] = lessonGroup;
+      notifyListeners();
+    }
+  }
+
+  /// Remove a lesson group
+  void removeLessonGroup(int lessonGroupId) {
+    final updatedGroups =
+        _lessonGroups.value.where((g) => g.id != lessonGroupId).toList();
+    _lessonGroups.value = updatedGroups;
+    _lessonGroupIdMap.remove(lessonGroupId);
+    notifyListeners();
+  }
+
+  // Scheduled Lesson Group Membership Management
+
+  /// Get all memberships for a specific lesson group
+  List<ScheduledLessonGroupMembership> getMembershipsForLessonGroup(
+    int lessonGroupId,
+  ) {
+    return _scheduledLessonGroupMemberships.value
+        .where((membership) => membership.lessonGroupId == lessonGroupId)
+        .toList();
+  }
+
+  /// Get all pupil IDs for a specific lesson group
+  List<int> getPupilIdsForLessonGroup(int lessonGroupId) {
+    return getMembershipsForLessonGroup(
+      lessonGroupId,
+    ).map((membership) => membership.pupilDataId).toList();
+  }
+
+  /// Add a pupil to a lesson group
+  void addPupilToLessonGroup(int lessonGroupId, int pupilDataId) {
+    // Check if membership already exists
+    final existingMembership =
+        _scheduledLessonGroupMemberships.value
+            .where(
+              (membership) =>
+                  membership.lessonGroupId == lessonGroupId &&
+                  membership.pupilDataId == pupilDataId,
+            )
+            .firstOrNull;
+
+    if (existingMembership != null) {
+      return; // Already exists
+    }
+
+    final newId =
+        _scheduledLessonGroupMemberships.value.isEmpty
+            ? 1
+            : _scheduledLessonGroupMemberships.value
+                    .map((m) => m.id ?? 0)
+                    .reduce((a, b) => a > b ? a : b) +
+                1;
+
+    final newMembership = ScheduledLessonGroupMembership(
+      id: newId,
+      lessonGroupId: lessonGroupId,
+      pupilDataId: pupilDataId,
+    );
+
+    final updatedMemberships = List<ScheduledLessonGroupMembership>.from(
+      _scheduledLessonGroupMemberships.value,
+    )..add(newMembership);
+
+    _scheduledLessonGroupMemberships.value = updatedMemberships;
+    notifyListeners();
+  }
+
+  /// Remove a pupil from a lesson group
+  void removePupilFromLessonGroup(int lessonGroupId, int pupilDataId) {
+    final updatedMemberships =
+        _scheduledLessonGroupMemberships.value
+            .where(
+              (membership) =>
+                  !(membership.lessonGroupId == lessonGroupId &&
+                      membership.pupilDataId == pupilDataId),
+            )
+            .toList();
+
+    _scheduledLessonGroupMemberships.value = updatedMemberships;
+    notifyListeners();
+  }
+
+  /// Update pupil memberships for a lesson group
+  void updatePupilMembershipsForLessonGroup(
+    int lessonGroupId,
+    List<int> pupilDataIds,
+  ) {
+    // Remove existing memberships for this lesson group
+    final otherMemberships =
+        _scheduledLessonGroupMemberships.value
+            .where((membership) => membership.lessonGroupId != lessonGroupId)
+            .toList();
+
+    // Create new memberships for the provided pupil IDs
+    final newMemberships = <ScheduledLessonGroupMembership>[];
+    int nextId =
+        _scheduledLessonGroupMemberships.value.isEmpty
+            ? 1
+            : _scheduledLessonGroupMemberships.value
+                    .map((m) => m.id ?? 0)
+                    .reduce((a, b) => a > b ? a : b) +
+                1;
+
+    for (final pupilDataId in pupilDataIds) {
+      newMemberships.add(
+        ScheduledLessonGroupMembership(
+          id: nextId++,
+          lessonGroupId: lessonGroupId,
+          pupilDataId: pupilDataId,
+        ),
+      );
+    }
+
+    _scheduledLessonGroupMemberships.value = [
+      ...otherMemberships,
+      ...newMemberships,
+    ];
+    notifyListeners();
+  }
+
+  /// Check if a pupil is a member of a lesson group
+  bool isPupilMemberOfLessonGroup(int lessonGroupId, int pupilDataId) {
+    return _scheduledLessonGroupMemberships.value.any(
+      (membership) =>
+          membership.lessonGroupId == lessonGroupId &&
+          membership.pupilDataId == pupilDataId,
+    );
+  }
+
+  // Classroom management methods
+
+  /// Add a new classroom
+  void addClassroom(Classroom classroom) {
+    final newId =
+        _classrooms.value.isEmpty
+            ? 1
+            : _classrooms.value
+                    .map((c) => c.id ?? 0)
+                    .reduce((a, b) => a > b ? a : b) +
+                1;
+
+    final newClassroom = classroom.copyWith(id: newId);
+    final updatedClassrooms = List<Classroom>.from(_classrooms.value)
+      ..add(newClassroom);
+
+    _classrooms.value = updatedClassrooms;
+    _classroomIdMap[newId] = newClassroom;
+    notifyListeners();
+  }
+
+  /// Update an existing classroom
+  void updateClassroom(Classroom classroom) {
+    final index = _classrooms.value.indexWhere((c) => c.id == classroom.id);
+    if (index != -1) {
+      final updatedClassrooms = List<Classroom>.from(_classrooms.value);
+      updatedClassrooms[index] = classroom;
+      _classrooms.value = updatedClassrooms;
+      _classroomIdMap[classroom.id!] = classroom;
+      notifyListeners();
+    }
+  }
+
+  /// Remove a classroom
+  void removeClassroom(int classroomId) {
+    final updatedClassrooms =
+        _classrooms.value.where((c) => c.id != classroomId).toList();
+    _classrooms.value = updatedClassrooms;
+    _classroomIdMap.remove(classroomId);
+    notifyListeners();
+  }
+
+  /// Get next available classroom ID
+  int _getNextClassroomId() {
+    return _classrooms.value.isEmpty
+        ? 1
+        : _classrooms.value
+                .map((c) => c.id ?? 0)
+                .reduce((a, b) => a > b ? a : b) +
+            1;
   }
 }

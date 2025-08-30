@@ -44,7 +44,7 @@ class LessonCellTeacherInfo extends WatchingWidget {
     // Return wrap of teacher chips
     return Wrap(
       spacing: 1,
-      runSpacing: 1,
+      runSpacing: 0,
       children:
           allLessonTeachers.map((teacher) {
             final isMainTeacher = teacher.id == lesson.mainTeacherId;
@@ -61,7 +61,7 @@ class LessonCellTeacherInfo extends WatchingWidget {
               label: Text(
                 userName,
                 style: const TextStyle(
-                  fontSize: 11,
+                  fontSize: 9,
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
@@ -71,7 +71,7 @@ class LessonCellTeacherInfo extends WatchingWidget {
               visualDensity: VisualDensity.compact,
               padding: EdgeInsets.zero,
               labelPadding: const EdgeInsets.symmetric(
-                horizontal: 6,
+                horizontal: 4,
                 vertical: 0,
               ),
             );

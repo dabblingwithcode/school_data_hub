@@ -1,0 +1,26 @@
+import 'package:flutter/material.dart';
+
+/// Text field widget for entering lesson group name
+class NameField extends StatelessWidget {
+  final TextEditingController controller;
+
+  const NameField({super.key, required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      decoration: const InputDecoration(
+        labelText: 'Klassenname *',
+        border: OutlineInputBorder(),
+        hintText: 'z.B. Klasse 5a',
+      ),
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return 'Bitte geben Sie einen Klassennamen ein';
+        }
+        return null;
+      },
+    );
+  }
+}
