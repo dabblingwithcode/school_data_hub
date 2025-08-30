@@ -1068,4 +1068,38 @@ class TimetableManager extends ChangeNotifier {
                 .reduce((a, b) => a > b ? a : b) +
             1;
   }
+
+  // Timetable management methods
+
+  /// Create a new timetable
+  Future<void> createTimetable(Timetable timetable) async {
+    try {
+      final createdTimetable = await _apiService.createTimetable(timetable);
+      if (createdTimetable != null) {
+        _timetable.value = createdTimetable;
+        notifyListeners();
+      }
+    } catch (e) {
+      // Fallback to local operation if API fails
+      final newId = _timetable.value?.id ?? 1;
+      final newTimetable = timetable.copyWith(id: newId);
+      _timetable.value = newTimetable;
+      notifyListeners();
+    }
+  }
+
+  /// Update an existing timetable
+  Future<void> updateTimetable(Timetable timetable) async {
+    try {
+      final updatedTimetable = await _apiService.updateTimetable(timetable);
+      if (updatedTimetable != null) {
+        _timetable.value = updatedTimetable;
+        notifyListeners();
+      }
+    } catch (e) {
+      // Fallback to local operation if API fails
+      _timetable.value = timetable;
+      notifyListeners();
+    }
+  }
 }
