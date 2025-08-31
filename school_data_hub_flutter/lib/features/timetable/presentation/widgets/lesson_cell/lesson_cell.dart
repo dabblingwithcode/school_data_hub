@@ -136,74 +136,82 @@ class LessonCell extends WatchingWidget {
                 .length
             : 0;
 
-    return Container(
-      decoration: BoxDecoration(
-        color:
-            _parseColor(subjectColor)?.withValues(alpha: 0.7) ??
-            Theme.of(
-              context,
-            ).colorScheme.primaryContainer.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(
-          color:
-              _parseColor(subjectColor) ??
-              Theme.of(context).colorScheme.primary,
-          width: 1,
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            subjectName,
-            style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 1),
-          Text(
-            groupName,
-            style: TextStyle(
-              fontSize: 8,
-              color: Colors.grey.shade700,
-              fontWeight: FontWeight.w600,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 1),
-          Text(
-            roomCode,
-            style: TextStyle(fontSize: 8, color: Colors.grey.shade700),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 1),
-          // Show pupil count
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.people, size: 8, color: Colors.grey.shade600),
-              const SizedBox(width: 2),
-              Text(
-                '$pupilCount',
-                style: TextStyle(
-                  fontSize: 8,
-                  color: Colors.grey.shade600,
-                  fontWeight: FontWeight.w500,
-                ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Flexible(child: LessonCellTeacherInfo(lesson: lesson!)),
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              color:
+                  _parseColor(subjectColor)?.withValues(alpha: 0.7) ??
+                  Theme.of(
+                    context,
+                  ).colorScheme.primaryContainer.withValues(alpha: 0.7),
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(
+                color:
+                    _parseColor(subjectColor) ??
+                    Theme.of(context).colorScheme.primary,
+                width: 1,
               ),
-            ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Text(
+                  subjectName,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 1),
-          // Show teachers
-          Flexible(child: LessonCellTeacherInfo(lesson: lesson!)),
-        ],
-      ),
+        ),
+        const SizedBox(height: 1),
+        Row(
+          children: [
+            Text(
+              groupName,
+              style: TextStyle(
+                fontSize: 8,
+                color: Colors.grey.shade700,
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
+            const Spacer(),
+            Icon(Icons.people, size: 8, color: Colors.grey.shade600),
+            const SizedBox(width: 2),
+            Text(
+              '$pupilCount',
+              style: TextStyle(
+                fontSize: 8,
+                color: Colors.grey.shade600,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 1),
+        Text(
+          '$roomCode (${lesson!.room?.roomName ?? 'Unbekannter Raum'})',
+          style: TextStyle(fontSize: 8, color: Colors.grey.shade700),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 1),
+      ],
     );
   }
 

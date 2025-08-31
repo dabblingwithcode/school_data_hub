@@ -3,6 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_scheduled_lesson_page/widgets/action_buttons.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_scheduled_lesson_page/widgets/classroom_dropdown.dart';
@@ -316,7 +317,8 @@ class NewScheduledLessonPage extends WatchingWidget {
                           scheduledAtId: selectedSlotValue.id!,
                           scheduledAt: selectedSlotValue,
                           timetableId:
-                              1, // TODO: Get from TimetableManager.timetable.id
+                              timetableManager.timetable.value?.id ??
+                              1, // Get from current timetable
                           lessonId: lessonIdController.text.trim(),
                           roomId: selectedClassroomValue.id!,
                           room: selectedClassroomValue,
@@ -324,10 +326,10 @@ class NewScheduledLessonPage extends WatchingWidget {
                           lessonGroup: selectedLessonGroupValue,
                           timetableSlotOrder: nextAvailableOrder,
                           mainTeacherId: selectedTeachersValue.first.id!,
-                          createdBy: 'user', // TODO: Get actual user
+                          createdBy:
+                              di<HubSessionManager>()
+                                  .userName!, // TODO: Get actual user
                           createdAt: now,
-                          modifiedBy: 'user',
-                          modifiedAt: now,
                         );
 
                         timetableManager.addScheduledLesson(newLesson);

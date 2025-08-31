@@ -9,6 +9,16 @@ class TimetableEndpoint extends Endpoint {
 
   Future<Timetable> createTimetable(
       Session session, Timetable timetable) async {
+    // Validate that the school semester exists if provided
+    if (timetable.schoolSemesterId != null) {
+      final schoolSemester = await SchoolSemester.db
+          .findById(session, timetable.schoolSemesterId!);
+      if (schoolSemester == null) {
+        throw Exception(
+            'School semester with id ${timetable.schoolSemesterId} does not exist.');
+      }
+    }
+
     final timetableInDatabase =
         await Timetable.db.insertRow(session, timetable);
     return timetableInDatabase;

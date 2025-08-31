@@ -14,6 +14,6 @@ fields:
   lessonGroup: LessonGroup?, relation(name=lesson_group_scheduled_lesson)
   createdBy: String
   createdAt: DateTime
-  modifiedBy: String
-  modifiedAt: DateTime
+  modifiedBy: String?
+  modifiedAt: DateTime?
   recordtest: ({int testint, String testString})?

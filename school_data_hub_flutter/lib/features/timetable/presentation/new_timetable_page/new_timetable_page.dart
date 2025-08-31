@@ -161,6 +161,7 @@ class NewTimetablePage extends WatchingWidget {
                           startsAt: startDate,
                           endsAt: endDate,
                           name: name,
+
                           schoolSemesterId: selectedSemester.value!.id!,
                           createdBy:
                               _isEditing

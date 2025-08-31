@@ -42,8 +42,8 @@ abstract class ScheduledLesson implements _i1.SerializableModel {
     this.lessonGroup,
     required this.createdBy,
     required this.createdAt,
-    required this.modifiedBy,
-    required this.modifiedAt,
+    this.modifiedBy,
+    this.modifiedAt,
     this.recordtest,
   });
 
@@ -67,8 +67,8 @@ abstract class ScheduledLesson implements _i1.SerializableModel {
     _i7.LessonGroup? lessonGroup,
     required String createdBy,
     required DateTime createdAt,
-    required String modifiedBy,
-    required DateTime modifiedAt,
+    String? modifiedBy,
+    DateTime? modifiedAt,
     ({int testint, String testString})? recordtest,
   }) = _ScheduledLessonImpl;
 
@@ -112,9 +112,10 @@ abstract class ScheduledLesson implements _i1.SerializableModel {
       createdBy: jsonSerialization['createdBy'] as String,
       createdAt:
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
-      modifiedBy: jsonSerialization['modifiedBy'] as String,
-      modifiedAt:
-          _i1.DateTimeJsonExtension.fromJson(jsonSerialization['modifiedAt']),
+      modifiedBy: jsonSerialization['modifiedBy'] as String?,
+      modifiedAt: jsonSerialization['modifiedAt'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['modifiedAt']),
       recordtest: jsonSerialization['recordtest'] == null
           ? null
           : _i8.Protocol().deserialize<({int testint, String testString})?>(
@@ -163,9 +164,9 @@ abstract class ScheduledLesson implements _i1.SerializableModel {
 
   DateTime createdAt;
 
-  String modifiedBy;
+  String? modifiedBy;
 
-  DateTime modifiedAt;
+  DateTime? modifiedAt;
 
   ({int testint, String testString})? recordtest;
 
@@ -220,8 +221,8 @@ abstract class ScheduledLesson implements _i1.SerializableModel {
       if (lessonGroup != null) 'lessonGroup': lessonGroup?.toJson(),
       'createdBy': createdBy,
       'createdAt': createdAt.toJson(),
-      'modifiedBy': modifiedBy,
-      'modifiedAt': modifiedAt.toJson(),
+      if (modifiedBy != null) 'modifiedBy': modifiedBy,
+      if (modifiedAt != null) 'modifiedAt': modifiedAt?.toJson(),
       if (recordtest != null) 'recordtest': _i8.mapRecordToJson(recordtest),
     };
   }
@@ -255,8 +256,8 @@ class _ScheduledLessonImpl extends ScheduledLesson {
     _i7.LessonGroup? lessonGroup,
     required String createdBy,
     required DateTime createdAt,
-    required String modifiedBy,
-    required DateTime modifiedAt,
+    String? modifiedBy,
+    DateTime? modifiedAt,
     ({int testint, String testString})? recordtest,
   }) : super._(
           id: id,
@@ -307,8 +308,8 @@ class _ScheduledLessonImpl extends ScheduledLesson {
     Object? lessonGroup = _Undefined,
     String? createdBy,
     DateTime? createdAt,
-    String? modifiedBy,
-    DateTime? modifiedAt,
+    Object? modifiedBy = _Undefined,
+    Object? modifiedAt = _Undefined,
     Object? recordtest = _Undefined,
   }) {
     return ScheduledLesson(
@@ -338,8 +339,8 @@ class _ScheduledLessonImpl extends ScheduledLesson {
           : this.lessonGroup?.copyWith(),
       createdBy: createdBy ?? this.createdBy,
       createdAt: createdAt ?? this.createdAt,
-      modifiedBy: modifiedBy ?? this.modifiedBy,
-      modifiedAt: modifiedAt ?? this.modifiedAt,
+      modifiedBy: modifiedBy is String? ? modifiedBy : this.modifiedBy,
+      modifiedAt: modifiedAt is DateTime? ? modifiedAt : this.modifiedAt,
       recordtest: recordtest is ({int testint, String testString})?
           ? recordtest
           : this.recordtest == null

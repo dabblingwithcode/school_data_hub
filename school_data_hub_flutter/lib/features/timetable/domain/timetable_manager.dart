@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/timetable/data/timetable_api_service.dart';
 import 'package:school_data_hub_flutter/features/timetable/data/timetable_mock_data.dart';
@@ -8,7 +9,7 @@ import 'package:watch_it/watch_it.dart';
 
 class TimetableManager extends ChangeNotifier {
   final _apiService = di<TimetableApiService>();
-
+  final _log = Logger('TimetableManager');
   // Main timetable container
   final _timetable = ValueNotifier<Timetable?>(null);
   ValueListenable<Timetable?> get timetable => _timetable;
@@ -63,8 +64,35 @@ class TimetableManager extends ChangeNotifier {
 
   Future<TimetableManager> init() async {
     await _loadData();
+
     _buildWeekdayProxies();
     return this;
+  }
+
+  /// Refresh all data from API
+  Future<void> refreshData() async {
+    print('Refreshing timetable data...');
+    await _loadData();
+    _buildWeekdayProxies();
+    print(
+      'Data refresh completed. Lesson groups: ${_lessonGroups.value.length}',
+    );
+    notifyListeners();
+  }
+
+  /// Debug method to print current state
+  void debugPrintState() {
+    _log.info('=== TimetableManager Debug State ===');
+    _log.info(
+      'Timetable: ${_timetable.value?.name} (ID: ${_timetable.value?.id})',
+    );
+    _log.info('TimetableSlots: ${_timetableSlots.value.length}');
+    _log.info('ScheduledLessons: ${_scheduledLessons.value.length}');
+    _log.info('Subjects: ${_subjects.value.length}');
+    _log.info('Classrooms: ${_classrooms.value.length}');
+    _log.info('LessonGroups: ${_lessonGroups.value.length}');
+    _log.info('Weekdays: ${_weekdays.value.length}');
+    _log.info('====================================');
   }
 
   void clearData() {
@@ -87,22 +115,34 @@ class TimetableManager extends ChangeNotifier {
   // Load data from API with fallback to mock data
   Future<void> _loadData() async {
     try {
+      print('Loading data from API...');
       // Try to load from API first
       await _loadFromApi();
+      print('Data loaded from API successfully');
+      debugPrintState();
     } catch (e) {
+      print('API failed, loading mock data: $e');
       // Fallback to mock data if API fails
       await _loadMockData();
+      debugPrintState();
     }
   }
 
   // Load data from API
   Future<void> _loadFromApi() async {
+    print('Loading complete timetable data from API...');
     // Load complete timetable data
     final timetable = await _apiService.fetchCompleteTimetableData();
+    print('API returned timetable: ${timetable?.name} (ID: ${timetable?.id})');
     if (timetable != null) {
       _timetable.value = timetable;
       _timetableSlots.value = timetable.timetableSlots ?? [];
       _scheduledLessons.value = timetable.scheduledLessons ?? [];
+      print(
+        'Set timetable data - slots: ${timetable.timetableSlots?.length ?? 0}, lessons: ${timetable.scheduledLessons?.length ?? 0}',
+      );
+    } else {
+      print('No timetable data returned from API');
     }
 
     // Load additional data if not included in timetable
@@ -130,11 +170,17 @@ class TimetableManager extends ChangeNotifier {
       }
     }
 
-    // Load lesson groups if not already loaded
-    if (_lessonGroups.value.isEmpty) {
-      final lessonGroups = await _apiService.fetchLessonGroups();
-      if (lessonGroups != null) {
-        _lessonGroups.value = lessonGroups;
+    // Load lesson groups
+    final lessonGroups = await _apiService.fetchLessonGroups();
+    if (lessonGroups != null) {
+      print('Loaded ${lessonGroups.length} lesson groups from API');
+      _lessonGroups.value = lessonGroups;
+      // Update the lesson group ID map
+      _lessonGroupIdMap.clear();
+      for (final group in lessonGroups) {
+        if (group.id != null) {
+          _lessonGroupIdMap[group.id!] = group;
+        }
       }
     }
 
@@ -405,6 +451,10 @@ class TimetableManager extends ChangeNotifier {
   // CRUD operations for scheduled lessons
   Future<void> addScheduledLesson(ScheduledLesson lesson) async {
     try {
+      print(
+        'Creating scheduled lesson with timetableId: ${lesson.timetableId}',
+      );
+      print('Current timetable ID: ${_timetable.value?.id}');
       final createdLesson = await _apiService.createScheduledLesson(lesson);
       if (createdLesson != null) {
         final lessons = List<ScheduledLesson>.from(_scheduledLessons.value);
@@ -772,15 +822,22 @@ class TimetableManager extends ChangeNotifier {
   /// Add a new lesson group
   Future<void> addLessonGroup(LessonGroup lessonGroup) async {
     try {
+      print('Creating lesson group: ${lessonGroup.name}');
       final createdLessonGroup = await _apiService.createLessonGroup(
         lessonGroup,
       );
       if (createdLessonGroup != null) {
+        print(
+          'Lesson group created successfully: ${createdLessonGroup.name} (ID: ${createdLessonGroup.id})',
+        );
         final updatedGroups = List<LessonGroup>.from(_lessonGroups.value)
           ..add(createdLessonGroup);
 
         _lessonGroups.value = updatedGroups;
         _lessonGroupIdMap[createdLessonGroup.id!] = createdLessonGroup;
+        print(
+          'Updated lesson groups list. Total groups: ${_lessonGroups.value.length}',
+        );
         notifyListeners();
       }
     } catch (e) {
@@ -1038,6 +1095,88 @@ class TimetableManager extends ChangeNotifier {
     }
   }
 
+  // Subject management methods
+
+  /// Add a new subject
+  Future<void> addSubject(Subject subject) async {
+    try {
+      final createdSubject = await _apiService.createSubject(subject);
+      if (createdSubject != null) {
+        final updatedSubjects = List<Subject>.from(_subjects.value)
+          ..add(createdSubject);
+
+        _subjects.value = updatedSubjects;
+        _subjectIdMap[createdSubject.id!] = createdSubject;
+        notifyListeners();
+      }
+    } catch (e) {
+      // Fallback to local operation if API fails
+      final newId =
+          _subjects.value.isEmpty
+              ? 1
+              : _subjects.value
+                      .map((s) => s.id ?? 0)
+                      .reduce((a, b) => a > b ? a : b) +
+                  1;
+
+      final newSubject = subject.copyWith(id: newId);
+      final updatedSubjects = List<Subject>.from(_subjects.value)
+        ..add(newSubject);
+
+      _subjects.value = updatedSubjects;
+      _subjectIdMap[newId] = newSubject;
+      notifyListeners();
+    }
+  }
+
+  /// Update an existing subject
+  Future<void> updateSubject(Subject subject) async {
+    try {
+      final updatedSubject = await _apiService.updateSubject(subject);
+      if (updatedSubject != null) {
+        final index = _subjects.value.indexWhere((s) => s.id == subject.id);
+        if (index != -1) {
+          final updatedSubjects = List<Subject>.from(_subjects.value);
+          updatedSubjects[index] = updatedSubject;
+          _subjects.value = updatedSubjects;
+          _subjectIdMap[subject.id!] = updatedSubject;
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      // Fallback to local operation if API fails
+      final index = _subjects.value.indexWhere((s) => s.id == subject.id);
+      if (index != -1) {
+        final updatedSubjects = List<Subject>.from(_subjects.value);
+        updatedSubjects[index] = subject;
+        _subjects.value = updatedSubjects;
+        _subjectIdMap[subject.id!] = subject;
+        notifyListeners();
+      }
+    }
+  }
+
+  /// Remove a subject
+  Future<void> removeSubject(int subjectId) async {
+    try {
+      final success = await _apiService.deleteSubject(subjectId);
+      if (success == true) {
+        final updatedSubjects =
+            _subjects.value.where((s) => s.id != subjectId).toList();
+        _subjects.value = updatedSubjects;
+        _subjectIdMap.remove(subjectId);
+        notifyListeners();
+      }
+    } catch (e) {
+      // Fallback to local operation if API fails
+      final updatedSubjects =
+          _subjects.value.where((s) => s.id != subjectId).toList();
+      _subjects.value = updatedSubjects;
+      _subjectIdMap.remove(subjectId);
+      notifyListeners();
+    }
+  }
+
   /// Remove a classroom
   Future<void> removeClassroom(int classroomId) async {
     try {
@@ -1074,12 +1213,26 @@ class TimetableManager extends ChangeNotifier {
   /// Create a new timetable
   Future<void> createTimetable(Timetable timetable) async {
     try {
+      print('Creating timetable: ${timetable.name}');
       final createdTimetable = await _apiService.createTimetable(timetable);
       if (createdTimetable != null) {
-        _timetable.value = createdTimetable;
+        print(
+          'Timetable created successfully: ${createdTimetable.name} (ID: ${createdTimetable.id})',
+        );
+
+        // Generate default timetable slots for the new timetable
+        await _generateDefaultTimetableSlots(createdTimetable.id!);
+
+        // Reload complete data to ensure UI is updated with all timetable information
+        await _loadData();
+        _buildWeekdayProxies();
         notifyListeners();
+        print(
+          'Timetable data reloaded. Current timetable: ${_timetable.value?.name}',
+        );
       }
     } catch (e) {
+      print('Error creating timetable: $e');
       // Fallback to local operation if API fails
       final newId = _timetable.value?.id ?? 1;
       final newTimetable = timetable.copyWith(id: newId);
@@ -1093,7 +1246,9 @@ class TimetableManager extends ChangeNotifier {
     try {
       final updatedTimetable = await _apiService.updateTimetable(timetable);
       if (updatedTimetable != null) {
-        _timetable.value = updatedTimetable;
+        // Reload complete data to ensure UI is updated with all timetable information
+        await _loadData();
+        _buildWeekdayProxies();
         notifyListeners();
       }
     } catch (e) {
@@ -1102,4 +1257,53 @@ class TimetableManager extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  /// Generate default timetable slots for a new timetable
+  Future<void> _generateDefaultTimetableSlots(int timetableId) async {
+    try {
+      // Default time slots (same as mock data)
+      final times = [
+        {'start': '07:50', 'end': '08:15'},
+        {'start': '08:15', 'end': '09:00'},
+        {'start': '09:00', 'end': '09:45'},
+        {'start': '09:45', 'end': '10:30'},
+        {'start': '10:30', 'end': '10:50'},
+        {'start': '10:50', 'end': '11:15'},
+        {'start': '11:15', 'end': '12:00'},
+        {'start': '12:00', 'end': '12:45'},
+        {'start': '12:45', 'end': '13:30'},
+      ];
+
+      // Generate slots for each weekday
+      for (final weekday in Weekday.values) {
+        for (final time in times) {
+          final slot = TimetableSlot(
+            day: weekday,
+            startTime: time['start']!,
+            endTime: time['end']!,
+            timetableId: timetableId,
+          );
+
+          try {
+            final createdSlot = await _apiService.createTimetableSlot(slot);
+            if (createdSlot != null) {
+              print(
+                'Created slot: ${createdSlot.day} ${createdSlot.startTime}-${createdSlot.endTime}',
+              );
+            }
+          } catch (e) {
+            print(
+              'Error creating slot for ${weekday} ${time['start']}-${time['end']}: $e',
+            );
+          }
+        }
+      }
+
+      print('Default timetable slots generation completed');
+    } catch (e) {
+      print('Error generating default timetable slots: $e');
+    }
+  }
+
+  /// Generate default data for a new timetable (subjects, classrooms, lesson groups)
 }

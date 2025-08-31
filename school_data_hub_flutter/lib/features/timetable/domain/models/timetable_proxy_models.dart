@@ -163,8 +163,8 @@ class ScheduledLessonProxy {
   LessonGroup? get lessonGroup => scheduledLesson.lessonGroup;
   String get createdBy => scheduledLesson.createdBy;
   DateTime get createdAt => scheduledLesson.createdAt;
-  String get modifiedBy => scheduledLesson.modifiedBy;
-  DateTime get modifiedAt => scheduledLesson.modifiedAt;
+  String? get modifiedBy => scheduledLesson.modifiedBy;
+  DateTime? get modifiedAt => scheduledLesson.modifiedAt;
 
   /// Get subject name
   String get subjectName => subject?.name ?? 'Unbekanntes Fach';

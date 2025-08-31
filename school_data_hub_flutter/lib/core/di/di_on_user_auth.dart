@@ -200,7 +200,12 @@ class DiInitOnUserAuth {
       return userManager;
     }, dependsOn: [HubSessionManager]);
 
-    di.registerSingleton<TimetableApiService>(TimetableApiService());
+    di.registerSingletonAsync<TimetableApiService>(() async {
+      _log.info('Registering TimetableApiService');
+      final timetableApiService = TimetableApiService();
+      _log.info('TimetableApiService initialized');
+      return timetableApiService;
+    });
 
     di.registerSingletonAsync<TimetableManager>(() async {
       _log.info('Registering TimetableManager');

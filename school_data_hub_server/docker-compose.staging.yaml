@@ -20,7 +20,7 @@ services:
       - postgres
       - serverpod
     networks:
-      - serverpod-network
+      - serverpod-staging-network
 
   postgres:
     healthcheck:
@@ -43,7 +43,7 @@ services:
     volumes:
       - school_data_hub_staging_data:/var/lib/postgresql/data
     networks:
-      - serverpod-network
+      - serverpod-staging-network
 
   serverpod:
     restart: on-failure
@@ -105,11 +105,11 @@ services:
       postgres:
         condition: service_healthy
     networks:
-      - serverpod-network
+      - serverpod-staging-network
 
 networks:
-  serverpod-network:
-    name: serverpod-network
+  serverpod-staging-network:
+    name: serverpod-staging-network
     driver: bridge
 
 volumes:
