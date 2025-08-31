@@ -57,7 +57,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           build-args: |
-            GITHUB_PAT=${{ secrets.PAT_GITHUB }}
+            GITHUB_PAT=${{ secrets.PAT_TOKEN }}
             GITHUB_USER=${{ secrets.PAT_USER_GITHUB }}
           context: ./school_data_hub_server
           file: ./school_data_hub_server/Dockerfile.prod
