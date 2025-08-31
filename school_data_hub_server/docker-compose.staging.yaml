@@ -48,6 +48,8 @@ services:
   serverpod:
     restart: on-failure
     image: ghcr.io/${GHCR_ORG}/school_data_hub_server:staging
+    volumes:
+      - ./storage:/app/storage
     environment:
       - SERVERPOD_DATABASE_PASSWORD
       - SERVERPOD_DATABASE_HOST
