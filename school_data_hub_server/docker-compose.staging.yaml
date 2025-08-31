@@ -73,7 +73,7 @@ services:
     command:
       [
         "--mode",
-        "production",
+        "staging",
         "--server-id",
         "default",
         "--logging",
