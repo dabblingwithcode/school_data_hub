@@ -28,6 +28,13 @@ void run(List<String> args) async {
     final colorFormatter = ColorFormatter();
     log(colorFormatter.format(record));
   });
+
+  // Also add a simple console output for Docker environments
+  // TODO ADVICE: Is this print bad in production?
+  Logger.root.onRecord.listen((record) {
+    print(
+        '${record.time}: ${record.level.name}: ${record.loggerName}: ${record.message}');
+  });
   // auth configuration
   auth.AuthConfig.set(auth.AuthConfig(
     enableUserImages: false,
@@ -73,13 +80,15 @@ void run(List<String> args) async {
   // Start the server.
   await pod.start();
 
+  // Create storage directories early
+  createLocalStorageDirectories();
+
   var session = await pod.createSession();
 
   // Check if there are any users in the database. If not, we can populate the test environment.
   if (await auth.UserInfo.db.count(session) == 0) {
     await populateTestEnvironment(session);
   }
-  createLocalStorageDirectories();
 
   // TODO: uncomment in production
   // Trigger the backup future call to generate database backups.

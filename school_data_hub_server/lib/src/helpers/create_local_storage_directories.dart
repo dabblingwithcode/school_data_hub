@@ -7,6 +7,8 @@ final _log = Logger('CreateLocalStorageDirectories');
 
 void createLocalStorageDirectories() {
   try {
+    _log.info('=== Starting storage directory creation ===');
+
     // Get the current working directory
     final serverDirPath = Directory.current.path;
     _log.info('Current working directory is [$serverDirPath]');
@@ -81,6 +83,7 @@ void createLocalStorageDirectories() {
     }
 
     _log.info('Storage directories setup completed successfully');
+    _log.info('=== Storage directory creation finished ===');
   } catch (e, stackTrace) {
     _log.severe('Error creating storage directories: $e\n$stackTrace');
   }
