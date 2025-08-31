@@ -15,8 +15,22 @@ class TimetableSlotListPage extends WatchingWidget {
     // Watch the timetable slots
     final timetableManager = di<TimetableManager>();
     final timetableSlots = watch(timetableManager.timetableSlots);
+    final activeTimetable = watch(timetableManager.timetable);
 
     Future<void> _navigateToNewTimetableSlot(BuildContext context) async {
+      // Check if there's an active timetable
+      if (!timetableManager.hasActiveTimetable) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Kein Stundenplan ausgewählt. Bitte erstellen Sie zuerst einen Stundenplan.',
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
       await Navigator.of(context).push(
         MaterialPageRoute(
           builder:
@@ -47,19 +61,45 @@ class TimetableSlotListPage extends WatchingWidget {
                     color: Colors.grey[100],
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.info_outline, color: Colors.blue[600]),
-                      const Gap(8),
-                      Expanded(
-                        child: Text(
-                          'Zeitslots definieren die verfügbaren Unterrichtszeiten für jeden Wochentag.',
+                      Row(
+                        children: [
+                          Icon(Icons.info_outline, color: Colors.blue[600]),
+                          const Gap(8),
+                          Expanded(
+                            child: Text(
+                              'Zeitslots definieren die verfügbaren Unterrichtszeiten für jeden Wochentag.',
+                              style: TextStyle(
+                                color: Colors.blue[800],
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (activeTimetable.value != null) ...[
+                        const Gap(8),
+                        Text(
+                          'Aktiver Stundenplan: ${activeTimetable.value!.name}',
                           style: TextStyle(
-                            color: Colors.blue[800],
-                            fontSize: 14,
+                            color: Colors.green[700],
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
+                      ] else ...[
+                        const Gap(8),
+                        Text(
+                          'Kein aktiver Stundenplan verfügbar',
+                          style: TextStyle(
+                            color: Colors.red[700],
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),

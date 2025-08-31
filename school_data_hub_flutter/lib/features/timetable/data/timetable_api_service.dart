@@ -23,10 +23,11 @@ class TimetableApiService {
 
   /// Create a new timetable
   Future<Timetable?> createTimetable(Timetable timetable) async {
-    return await ClientHelper.apiCall(
+    final createdTimetable = await ClientHelper.apiCall(
       call: () => _client.timetable.createTimetable(timetable),
       errorMessage: 'Fehler beim Erstellen des Stundenplans',
     );
+    return createdTimetable;
   }
 
   /// Update an existing timetable
@@ -47,11 +48,32 @@ class TimetableApiService {
 
   /// Fetch complete timetable data (timetable + slots + lessons + related data)
   Future<Timetable?> fetchCompleteTimetableData() async {
+    print('API: Calling fetchCompleteTimetableData...');
     final timetable = await ClientHelper.apiCall(
       call: () => _client.timetable.fetchCompleteTimetableData(),
       errorMessage: 'Fehler beim Laden der vollständigen Stundenplandaten',
     );
+    print(
+      'API: fetchCompleteTimetableData returned: ${timetable?.name} (ID: ${timetable?.id})',
+    );
+    print('API: Timetable is null: ${timetable == null}');
     return timetable;
+  }
+
+  /// Fetch all timetables
+  Future<List<Timetable>?> fetchTimetables() async {
+    print('API: Calling fetchTimetables...');
+    final timetables = await ClientHelper.apiCall(
+      call: () => _client.timetable.fetchTimetables(),
+      errorMessage: 'Fehler beim Laden der Stundenpläne',
+    );
+    print('API: fetchTimetables returned: ${timetables?.length} timetables');
+    if (timetables != null) {
+      for (final timetable in timetables) {
+        print('API: - Timetable: ${timetable.name} (ID: ${timetable.id})');
+      }
+    }
+    return timetables;
   }
 
   // ============================================================================

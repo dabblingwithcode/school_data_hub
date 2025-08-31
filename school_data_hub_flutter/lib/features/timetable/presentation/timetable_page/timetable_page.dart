@@ -64,6 +64,19 @@ class TimetablePage extends WatchingWidget {
                 },
                 child: const Text('Daten neu laden'),
               ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () async {
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const NewTimetablePage(),
+                    ),
+                  );
+                  // Refresh data when returning from NewTimetablePage
+                  await timetableManager.refreshData();
+                },
+                child: const Text('Neuen Stundenplan erstellen'),
+              ),
             ],
           ),
         ),

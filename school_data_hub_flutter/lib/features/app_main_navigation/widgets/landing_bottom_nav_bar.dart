@@ -11,8 +11,8 @@ import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/learn_resources_menu_page.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/pupil_lists_menu_page.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/scan_tools_page.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/school_lists_page.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/tools_page.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/settings_page.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
@@ -27,7 +27,7 @@ class MainMenuBottomNavigation extends WatchingWidget {
     const PupilListsMenuPage(),
     const SchoolListsMenuPage(),
     const LearnResourcesMenuPage(),
-    const ScanToolsPage(),
+    const ToolsPage(),
     const SettingsPage(),
   ];
 
@@ -206,7 +206,7 @@ class MainMenuBottomNavigation extends WatchingWidget {
           PupilListsMenuPage(),
           SchoolListsMenuPage(),
           LearnResourcesMenuPage(),
-          ScanToolsPage(),
+          ToolsPage(),
           SettingsPage(),
         ],
         onPageChanged: (index) => _bottomNavmanager.setBottomNavPage(index),

@@ -68,8 +68,7 @@ class LearningGroupListPage extends WatchingWidget {
       context,
       MaterialPageRoute(builder: (context) => const NewLessonGroupPage()),
     );
-    // Refresh data when returning from NewLessonGroupPage
-    await di<TimetableManager>().refreshData();
+    // No need to refresh data - lesson group operations use local updates
   }
 
   void _navigateToEditLessonGroup(
@@ -82,8 +81,7 @@ class LearningGroupListPage extends WatchingWidget {
         builder: (context) => NewLessonGroupPage(lessonGroup: group),
       ),
     );
-    // Refresh data when returning from NewLessonGroupPage
-    await di<TimetableManager>().refreshData();
+    // No need to refresh data - lesson group operations use local updates
   }
 
   void _showDeleteConfirmation(

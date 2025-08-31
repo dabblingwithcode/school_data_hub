@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -266,7 +267,7 @@ class NewScheduledLessonPage extends WatchingWidget {
                         return;
                       }
 
-                      final now = DateTime.now();
+                      final now = DateTime.now().toUtcForServer();
 
                       if (_isEditing) {
                         final editingLesson =

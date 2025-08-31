@@ -3094,12 +3094,6 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'bool',
         ),
         _i2.ColumnDefinition(
-          name: 'publicId',
-          columnType: _i2.ColumnType.text,
-          isNullable: false,
-          dartType: 'String',
-        ),
-        _i2.ColumnDefinition(
           name: 'subjectId',
           columnType: _i2.ColumnType.bigint,
           isNullable: false,

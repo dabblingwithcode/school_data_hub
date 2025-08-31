@@ -28,7 +28,6 @@ abstract class ScheduledLesson
   ScheduledLesson._({
     this.id,
     required this.active,
-    required this.publicId,
     required this.subjectId,
     this.subject,
     required this.scheduledAtId,
@@ -53,7 +52,6 @@ abstract class ScheduledLesson
   factory ScheduledLesson({
     int? id,
     required bool active,
-    required String publicId,
     required int subjectId,
     _i2.Subject? subject,
     required int scheduledAtId,
@@ -79,7 +77,6 @@ abstract class ScheduledLesson
     return ScheduledLessonImplicit._(
       id: jsonSerialization['id'] as int?,
       active: jsonSerialization['active'] as bool,
-      publicId: jsonSerialization['publicId'] as String,
       subjectId: jsonSerialization['subjectId'] as int,
       subject: jsonSerialization['subject'] == null
           ? null
@@ -137,8 +134,6 @@ abstract class ScheduledLesson
 
   bool active;
 
-  String publicId;
-
   int subjectId;
 
   _i2.Subject? subject;
@@ -188,7 +183,6 @@ abstract class ScheduledLesson
   ScheduledLesson copyWith({
     int? id,
     bool? active,
-    String? publicId,
     int? subjectId,
     _i2.Subject? subject,
     int? scheduledAtId,
@@ -214,7 +208,6 @@ abstract class ScheduledLesson
     return {
       if (id != null) 'id': id,
       'active': active,
-      'publicId': publicId,
       'subjectId': subjectId,
       if (subject != null) 'subject': subject?.toJson(),
       'scheduledAtId': scheduledAtId,
@@ -246,7 +239,6 @@ abstract class ScheduledLesson
     return {
       if (id != null) 'id': id,
       'active': active,
-      'publicId': publicId,
       'subjectId': subjectId,
       if (subject != null) 'subject': subject?.toJsonForProtocol(),
       'scheduledAtId': scheduledAtId,
@@ -321,7 +313,6 @@ class _ScheduledLessonImpl extends ScheduledLesson {
   _ScheduledLessonImpl({
     int? id,
     required bool active,
-    required String publicId,
     required int subjectId,
     _i2.Subject? subject,
     required int scheduledAtId,
@@ -344,7 +335,6 @@ class _ScheduledLessonImpl extends ScheduledLesson {
   }) : super._(
           id: id,
           active: active,
-          publicId: publicId,
           subjectId: subjectId,
           subject: subject,
           scheduledAtId: scheduledAtId,
@@ -373,7 +363,6 @@ class _ScheduledLessonImpl extends ScheduledLesson {
   ScheduledLesson copyWith({
     Object? id = _Undefined,
     bool? active,
-    String? publicId,
     int? subjectId,
     Object? subject = _Undefined,
     int? scheduledAtId,
@@ -397,7 +386,6 @@ class _ScheduledLessonImpl extends ScheduledLesson {
     return ScheduledLessonImplicit._(
       id: id is int? ? id : this.id,
       active: active ?? this.active,
-      publicId: publicId ?? this.publicId,
       subjectId: subjectId ?? this.subjectId,
       subject: subject is _i2.Subject? ? subject : this.subject?.copyWith(),
       scheduledAtId: scheduledAtId ?? this.scheduledAtId,
@@ -440,7 +428,6 @@ class ScheduledLessonImplicit extends _ScheduledLessonImpl {
   ScheduledLessonImplicit._({
     int? id,
     required bool active,
-    required String publicId,
     required int subjectId,
     _i2.Subject? subject,
     required int scheduledAtId,
@@ -465,7 +452,6 @@ class ScheduledLessonImplicit extends _ScheduledLessonImpl {
         super(
           id: id,
           active: active,
-          publicId: publicId,
           subjectId: subjectId,
           subject: subject,
           scheduledAtId: scheduledAtId,
@@ -494,7 +480,6 @@ class ScheduledLessonImplicit extends _ScheduledLessonImpl {
     return ScheduledLessonImplicit._(
       id: scheduledLesson.id,
       active: scheduledLesson.active,
-      publicId: scheduledLesson.publicId,
       subjectId: scheduledLesson.subjectId,
       subject: scheduledLesson.subject,
       scheduledAtId: scheduledLesson.scheduledAtId,
@@ -527,10 +512,6 @@ class ScheduledLessonTable extends _i1.Table<int?> {
       : super(tableName: 'scheduled_lesson') {
     active = _i1.ColumnBool(
       'active',
-      this,
-    );
-    publicId = _i1.ColumnString(
-      'publicId',
       this,
     );
     subjectId = _i1.ColumnInt(
@@ -592,8 +573,6 @@ class ScheduledLessonTable extends _i1.Table<int?> {
   }
 
   late final _i1.ColumnBool active;
-
-  late final _i1.ColumnString publicId;
 
   late final _i1.ColumnInt subjectId;
 
@@ -737,7 +716,6 @@ class ScheduledLessonTable extends _i1.Table<int?> {
   List<_i1.Column> get columns => [
         id,
         active,
-        publicId,
         subjectId,
         scheduledAtId,
         timetableSlotOrder,
@@ -758,7 +736,6 @@ class ScheduledLessonTable extends _i1.Table<int?> {
   List<_i1.Column> get managedColumns => [
         id,
         active,
-        publicId,
         subjectId,
         scheduledAtId,
         timetableSlotOrder,

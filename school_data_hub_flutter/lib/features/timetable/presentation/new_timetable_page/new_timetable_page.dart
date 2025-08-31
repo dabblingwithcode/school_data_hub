@@ -2,8 +2,10 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_timetable_page/widgets/action_buttons.dart';
@@ -50,7 +52,7 @@ class NewTimetablePage extends WatchingWidget {
     final startDateController = createOnce<TextEditingController>(() {
       final controller = TextEditingController();
       if (_isEditing && timetable != null) {
-        controller.text = _formatDate(timetable!.startsAt);
+        controller.text = timetable!.startsAt.formatForUser();
       }
       return controller;
     });
@@ -58,7 +60,7 @@ class NewTimetablePage extends WatchingWidget {
     final endDateController = createOnce<TextEditingController>(() {
       final controller = TextEditingController();
       if (_isEditing && timetable != null && timetable!.endsAt != null) {
-        controller.text = _formatDate(timetable!.endsAt!);
+        controller.text = timetable!.endsAt!.formatForUser();
       }
       return controller;
     });
@@ -72,9 +74,35 @@ class NewTimetablePage extends WatchingWidget {
             );
         return ValueNotifier<SchoolSemester?>(semester);
       }
-      return ValueNotifier<SchoolSemester?>(
-        schoolCalendarManager.currentSemester.value,
-      );
+
+      // For new timetables, try to get current semester, fallback to first available
+      final currentSemester = schoolCalendarManager.currentSemester.value;
+      final availableSemesters = schoolCalendarManager.schoolSemesters.value;
+
+      if (currentSemester != null) {
+        return ValueNotifier<SchoolSemester?>(currentSemester);
+      } else if (availableSemesters.isNotEmpty) {
+        // Fallback to the first available semester
+        return ValueNotifier<SchoolSemester?>(availableSemesters.first);
+      } else {
+        // No semesters available
+        return ValueNotifier<SchoolSemester?>(null);
+      }
+    });
+
+    // Create selected dates using createOnce
+    final selectedStartDate = createOnce<ValueNotifier<DateTime?>>(() {
+      if (_isEditing && timetable != null) {
+        return ValueNotifier<DateTime?>(timetable!.startsAt);
+      }
+      return ValueNotifier<DateTime?>(null);
+    });
+
+    final selectedEndDate = createOnce<ValueNotifier<DateTime?>>(() {
+      if (_isEditing && timetable != null && timetable!.endsAt != null) {
+        return ValueNotifier<DateTime?>(timetable!.endsAt);
+      }
+      return ValueNotifier<DateTime?>(null);
     });
 
     return Scaffold(
@@ -116,11 +144,17 @@ class NewTimetablePage extends WatchingWidget {
                   const Gap(20),
 
                   // Start date field
-                  StartDateField(controller: startDateController),
+                  StartDateField(
+                    controller: startDateController,
+                    selectedDate: selectedStartDate,
+                  ),
                   const Gap(20),
 
                   // End date field (optional)
-                  EndDateField(controller: endDateController),
+                  EndDateField(
+                    controller: endDateController,
+                    selectedDate: selectedEndDate,
+                  ),
                   const Gap(32),
 
                   // Action buttons
@@ -132,45 +166,64 @@ class NewTimetablePage extends WatchingWidget {
                       }
 
                       final name = nameController.text.trim();
-                      final startDateText = startDateController.text.trim();
-                      final endDateText = endDateController.text.trim();
 
-                      if (name.isEmpty ||
-                          startDateText.isEmpty ||
-                          selectedSemester.value == null) {
+                      if (name.isEmpty || selectedSemester.value == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
+                          SnackBar(
                             content: Text(
-                              'Bitte füllen Sie alle Pflichtfelder aus',
+                              selectedSemester.value == null
+                                  ? 'Bitte wählen Sie ein gültiges Schulsemester aus. Falls keine Semester verfügbar sind, erstellen Sie zuerst ein Schulhalbjahr.'
+                                  : 'Bitte füllen Sie alle Pflichtfelder aus',
                             ),
+                            backgroundColor: Colors.red,
                           ),
                         );
                         return;
                       }
 
                       try {
-                        final startDate = _parseDate(startDateText);
-                        DateTime? endDate;
-                        if (endDateText.isNotEmpty) {
-                          endDate = _parseDate(endDateText);
+                        final startDate = selectedStartDate.value;
+                        final endDate = selectedEndDate.value;
+
+                        if (startDate == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Bitte wählen Sie ein Startdatum aus',
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
                         }
+
+                        final sessionManager = di<HubSessionManager>();
+                        final userName =
+                            sessionManager.userName ?? 'unknown_user';
+
+                        print('Creating timetable with:');
+                        print('- Name: $name');
+                        print('- Start Date: $startDate');
+                        print('- End Date: $endDate');
+                        print(
+                          '- School Semester ID: ${selectedSemester.value!.id}',
+                        );
+                        print('- Created By: $userName');
+                        print('- Is Signed In: ${sessionManager.isSignedIn}');
 
                         final newTimetable = Timetable(
                           id: _isEditing ? timetable!.id : null,
                           active: _isEditing ? timetable!.active : true,
-                          startsAt: startDate,
-                          endsAt: endDate,
+                          startsAt: startDate.toUtcForServer(),
+                          endsAt: endDate?.toUtcForServer(),
                           name: name,
-
                           schoolSemesterId: selectedSemester.value!.id!,
                           createdBy:
-                              _isEditing
-                                  ? timetable!.createdBy
-                                  : 'current_user', // TODO: Get from session
+                              _isEditing ? timetable!.createdBy : userName,
                           createdAt:
                               _isEditing
                                   ? timetable!.createdAt
-                                  : DateTime.now(),
+                                  : DateTime.now().toUtcForServer(),
                         );
 
                         if (_isEditing) {
@@ -205,22 +258,5 @@ class NewTimetablePage extends WatchingWidget {
         ),
       ),
     );
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
-  }
-
-  DateTime _parseDate(String dateText) {
-    final parts = dateText.split('.');
-    if (parts.length != 3) {
-      throw FormatException('Invalid date format. Use DD.MM.YYYY');
-    }
-
-    final day = int.parse(parts[0]);
-    final month = int.parse(parts[1]);
-    final year = int.parse(parts[2]);
-
-    return DateTime(year, month, day);
   }
 }

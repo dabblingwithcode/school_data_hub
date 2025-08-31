@@ -91,18 +91,23 @@ class PupilManagementSection extends WatchingWidget {
                 ),
               )
             else
-              Column(
-                children: [
-                  ...selectedPupils.map(
-                    (pupil) => _buildPupilCard(context, pupil),
+              SizedBox(
+                height: 300, // Fixed height for the pupil list
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      ...selectedPupils.map(
+                        (pupil) => _buildPupilCard(context, pupil),
+                      ),
+                      const Gap(8),
+                      TextButton.icon(
+                        onPressed: () => _selectPupils(context),
+                        icon: const Icon(Icons.edit, size: 16),
+                        label: const Text('Schülerliste bearbeiten'),
+                      ),
+                    ],
                   ),
-                  const Gap(8),
-                  TextButton.icon(
-                    onPressed: () => _selectPupils(context),
-                    icon: const Icon(Icons.edit, size: 16),
-                    label: const Text('Schülerliste bearbeiten'),
-                  ),
-                ],
+                ),
               ),
           ],
         ),

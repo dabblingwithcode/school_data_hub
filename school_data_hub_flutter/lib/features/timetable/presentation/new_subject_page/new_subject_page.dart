@@ -91,7 +91,7 @@ class NewSubjectPage extends WatchingWidget {
                           : descriptionController.text.trim(),
                   color: selectedColor.value,
                   createdBy: subject?.createdBy ?? 'user',
-                  createdAt: subject?.createdAt ?? DateTime.now(),
+                  createdAt: subject?.createdAt ?? DateTime.now().toUtc(),
                   modifiedBy: 'user',
                 );
 

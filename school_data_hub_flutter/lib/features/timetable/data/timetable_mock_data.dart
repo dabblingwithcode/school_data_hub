@@ -1,7 +1,7 @@
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 
 class TimetableMockData {
-  static Timetable generateMockTimetable() {
+  static Timetable generateMockTimetable([int? schoolSemesterId]) {
     final timetableSlots = generateMockTimetableSlots();
     final subjects = generateMockSubjects();
     final classrooms = generateMockClassrooms();
@@ -17,14 +17,15 @@ class TimetableMockData {
     return Timetable(
       id: 1,
       active: true,
-      startsAt: DateTime(2025, 1, 1),
-      endsAt: DateTime(2025, 12, 31),
+      startsAt: DateTime(2025, 1, 1).toUtc(),
+      endsAt: DateTime(2025, 12, 31).toUtc(),
       name: 'Stundenplan 2025',
-      schoolSemesterId: 1,
+      schoolSemesterId:
+          schoolSemesterId ?? 1, // Use provided ID or default to 1
       timetableSlots: timetableSlots,
       scheduledLessons: scheduledLessons,
       createdBy: 'system',
-      createdAt: DateTime.now(),
+      createdAt: DateTime.now().toUtc(),
     );
   }
 
@@ -72,7 +73,7 @@ class TimetableMockData {
         description: 'Grundlegende Mathematik',
         color: '#FF5722',
         createdBy: 'system',
-        createdAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc(),
         modifiedBy: 'system',
       ),
       Subject(
@@ -82,7 +83,7 @@ class TimetableMockData {
         description: 'Deutsche Sprache und Literatur',
         color: '#2196F3',
         createdBy: 'system',
-        createdAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc(),
         modifiedBy: 'system',
       ),
       Subject(
@@ -92,7 +93,7 @@ class TimetableMockData {
         description: 'Englische Sprache',
         color: '#4CAF50',
         createdBy: 'system',
-        createdAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc(),
         modifiedBy: 'system',
       ),
       Subject(
@@ -102,7 +103,7 @@ class TimetableMockData {
         description: 'Grundlegende Naturwissenschaften',
         color: '#9C27B0',
         createdBy: 'system',
-        createdAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc(),
         modifiedBy: 'system',
       ),
       Subject(
@@ -112,7 +113,7 @@ class TimetableMockData {
         description: 'Körperliche Erziehung',
         color: '#FF9800',
         createdBy: 'system',
-        createdAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc(),
         modifiedBy: 'system',
       ),
     ];
@@ -147,9 +148,9 @@ class TimetableMockData {
         color: '#E3F2FD',
         timetableId: 1,
         createdBy: 'system',
-        createdAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc(),
         modifiedBy: 'system',
-        modifiedAt: DateTime.now(),
+        modifiedAt: DateTime.now().toUtc(),
       ),
       LessonGroup(
         id: 2,
@@ -158,9 +159,9 @@ class TimetableMockData {
         color: '#F3E5F5',
         timetableId: 1,
         createdBy: 'system',
-        createdAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc(),
         modifiedBy: 'system',
-        modifiedAt: DateTime.now(),
+        modifiedAt: DateTime.now().toUtc(),
       ),
       LessonGroup(
         id: 3,
@@ -169,9 +170,9 @@ class TimetableMockData {
         color: '#E8F5E8',
         timetableId: 1,
         createdBy: 'system',
-        createdAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc(),
         modifiedBy: 'system',
-        modifiedAt: DateTime.now(),
+        modifiedAt: DateTime.now().toUtc(),
       ),
       LessonGroup(
         id: 4,
@@ -180,9 +181,9 @@ class TimetableMockData {
         color: '#FFF3E0',
         timetableId: 1,
         createdBy: 'system',
-        createdAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc(),
         modifiedBy: 'system',
-        modifiedAt: DateTime.now(),
+        modifiedAt: DateTime.now().toUtc(),
       ),
       LessonGroup(
         id: 5,
@@ -191,9 +192,9 @@ class TimetableMockData {
         color: '#FCE4EC',
         timetableId: 1,
         createdBy: 'system',
-        createdAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc(),
         modifiedBy: 'system',
-        modifiedAt: DateTime.now(),
+        modifiedAt: DateTime.now().toUtc(),
       ),
       LessonGroup(
         id: 6,
@@ -202,9 +203,9 @@ class TimetableMockData {
         color: '#E0F2F1',
         timetableId: 1,
         createdBy: 'system',
-        createdAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc(),
         modifiedBy: 'system',
-        modifiedAt: DateTime.now(),
+        modifiedAt: DateTime.now().toUtc(),
       ),
       LessonGroup(
         id: 7,
@@ -213,9 +214,9 @@ class TimetableMockData {
         color: '#F1F8E9',
         timetableId: 1,
         createdBy: 'system',
-        createdAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc(),
         modifiedBy: 'system',
-        modifiedAt: DateTime.now(),
+        modifiedAt: DateTime.now().toUtc(),
       ),
       LessonGroup(
         id: 8,
@@ -224,9 +225,9 @@ class TimetableMockData {
         color: '#FFF8E1',
         timetableId: 1,
         createdBy: 'system',
-        createdAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc(),
         modifiedBy: 'system',
-        modifiedAt: DateTime.now(),
+        modifiedAt: DateTime.now().toUtc(),
       ),
       LessonGroup(
         id: 9,
@@ -235,9 +236,9 @@ class TimetableMockData {
         color: '#E8EAF6',
         timetableId: 1,
         createdBy: 'system',
-        createdAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc(),
         modifiedBy: 'system',
-        modifiedAt: DateTime.now(),
+        modifiedAt: DateTime.now().toUtc(),
       ),
       LessonGroup(
         id: 10,
@@ -246,9 +247,9 @@ class TimetableMockData {
         color: '#E1F5FE',
         timetableId: 1,
         createdBy: 'system',
-        createdAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc(),
         modifiedBy: 'system',
-        modifiedAt: DateTime.now(),
+        modifiedAt: DateTime.now().toUtc(),
       ),
       LessonGroup(
         id: 11,
@@ -257,9 +258,9 @@ class TimetableMockData {
         color: '#F9FBE7',
         timetableId: 1,
         createdBy: 'system',
-        createdAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc(),
         modifiedBy: 'system',
-        modifiedAt: DateTime.now(),
+        modifiedAt: DateTime.now().toUtc(),
       ),
       LessonGroup(
         id: 12,
@@ -268,9 +269,9 @@ class TimetableMockData {
         color: '#FFF3E0',
         timetableId: 1,
         createdBy: 'system',
-        createdAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc(),
         modifiedBy: 'system',
-        modifiedAt: DateTime.now(),
+        modifiedAt: DateTime.now().toUtc(),
       ),
       LessonGroup(
         id: 13,
@@ -279,9 +280,9 @@ class TimetableMockData {
         color: '#F3E5F5',
         timetableId: 1,
         createdBy: 'system',
-        createdAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc(),
         modifiedBy: 'system',
-        modifiedAt: DateTime.now(),
+        modifiedAt: DateTime.now().toUtc(),
       ),
       LessonGroup(
         id: 14,
@@ -290,9 +291,9 @@ class TimetableMockData {
         color: '#E0F7FA',
         timetableId: 1,
         createdBy: 'system',
-        createdAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc(),
         modifiedBy: 'system',
-        modifiedAt: DateTime.now(),
+        modifiedAt: DateTime.now().toUtc(),
       ),
       LessonGroup(
         id: 15,
@@ -301,9 +302,9 @@ class TimetableMockData {
         color: '#EFEBE9',
         timetableId: 1,
         createdBy: 'system',
-        createdAt: DateTime.now(),
+        createdAt: DateTime.now().toUtc(),
         modifiedBy: 'system',
-        modifiedAt: DateTime.now(),
+        modifiedAt: DateTime.now().toUtc(),
       ),
     ];
   }
@@ -348,9 +349,9 @@ class TimetableMockData {
           mainTeacherId:
               1, // Default teacher ID - will be managed by UserManager
           createdBy: 'system',
-          createdAt: DateTime.now(),
+          createdAt: DateTime.now().toUtc(),
           modifiedBy: 'system',
-          modifiedAt: DateTime.now(),
+          modifiedAt: DateTime.now().toUtc(),
         ),
       );
     }
@@ -438,9 +439,9 @@ class TimetableMockData {
           mainTeacherId:
               1, // Default teacher ID - will be managed by UserManager
           createdBy: 'system',
-          createdAt: DateTime.now(),
+          createdAt: DateTime.now().toUtc(),
           modifiedBy: 'system',
-          modifiedAt: DateTime.now(),
+          modifiedAt: DateTime.now().toUtc(),
         ),
       );
     }

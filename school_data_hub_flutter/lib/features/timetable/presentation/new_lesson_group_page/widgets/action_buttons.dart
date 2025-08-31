@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/common/theme/styles.dart';
 
-/// Action buttons widget for the lesson group form
 class ActionButtons extends StatelessWidget {
   final bool isEditing;
   final VoidCallback onSave;
@@ -19,44 +20,28 @@ class ActionButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: ElevatedButton(
-                onPressed: onSave,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: Text(isEditing ? 'Speichern' : 'Erstellen'),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: OutlinedButton(
-                onPressed: onCancel,
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Text('Abbrechen'),
-              ),
-            ),
-          ],
+        ElevatedButton(
+          style: AppStyles.successButtonStyle,
+          onPressed: onSave,
+          child: Text(
+            isEditing ? 'AKTUALISIEREN' : 'ERSTELLEN',
+            style: AppStyles.buttonTextStyle,
+          ),
+        ),
+        const Gap(15),
+        ElevatedButton(
+          style: AppStyles.cancelButtonStyle,
+          onPressed: onCancel,
+          child: const Text('ABBRECHEN', style: AppStyles.buttonTextStyle),
         ),
         if (isEditing && onDelete != null) ...[
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton(
-              onPressed: onDelete,
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.red,
-                side: const BorderSide(color: Colors.red),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-              child: const Text('Löschen'),
+          const Gap(15),
+          ElevatedButton(
+            style: AppStyles.cancelButtonStyle.copyWith(
+              backgroundColor: WidgetStateProperty.all(Colors.red),
             ),
+            onPressed: onDelete,
+            child: const Text('LÖSCHEN', style: AppStyles.buttonTextStyle),
           ),
         ],
       ],

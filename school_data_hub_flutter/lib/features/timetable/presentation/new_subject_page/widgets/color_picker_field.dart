@@ -1,3 +1,4 @@
+import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 
 class ColorPickerField extends StatelessWidget {
@@ -20,61 +21,59 @@ class ColorPickerField extends StatelessWidget {
           builder: (context, color, child) {
             return Row(
               children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: _parseColor(color),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey.shade300),
+                GestureDetector(
+                  onTap: () => _showColorPicker(context),
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: _parseColor(color),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey.shade300, width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.3),
+                          spreadRadius: 1,
+                          blurRadius: 3,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.color_lens,
+                      color: Colors.white,
+                      size: 24,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: DropdownButtonFormField<String>(
-                    value: color,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                    ),
-                    items:
-                        [
-                          {'name': 'Rot', 'value': '#FF5722'},
-                          {'name': 'Blau', 'value': '#2196F3'},
-                          {'name': 'Grün', 'value': '#4CAF50'},
-                          {'name': 'Gelb', 'value': '#FFC107'},
-                          {'name': 'Orange', 'value': '#FF9800'},
-                          {'name': 'Lila', 'value': '#9C27B0'},
-                          {'name': 'Pink', 'value': '#E91E63'},
-                          {'name': 'Türkis', 'value': '#00BCD4'},
-                          {'name': 'Braun', 'value': '#795548'},
-                          {'name': 'Grau', 'value': '#607D8B'},
-                        ].map((color) {
-                          return DropdownMenuItem<String>(
-                            value: color['value'],
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 20,
-                                  height: 20,
-                                  decoration: BoxDecoration(
-                                    color: _parseColor(color['value']!),
-                                    borderRadius: BorderRadius.circular(4),
-                                    border: Border.all(
-                                      color: Colors.grey.shade300,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Text(color['name']!),
-                              ],
+                  child: GestureDetector(
+                    onTap: () => _showColorPicker(context),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 16,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'Farbe auswählen',
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 16,
+                              ),
                             ),
-                          );
-                        }).toList(),
-                    onChanged: (String? newValue) {
-                      if (newValue != null) {
-                        selectedColor.value = newValue;
-                      }
-                    },
+                          ),
+                          const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -82,6 +81,61 @@ class ColorPickerField extends StatelessWidget {
           },
         ),
       ],
+    );
+  }
+
+  void _showColorPicker(BuildContext context) {
+    Color currentColor = _parseColor(selectedColor.value);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Farbe auswählen'),
+          content: SizedBox(
+            width: 300,
+            height: 400,
+            child: ColorPicker(
+              color: currentColor,
+              onColorChanged: (Color color) {
+                currentColor = color;
+              },
+              pickersEnabled: const <ColorPickerType, bool>{
+                ColorPickerType.both: false,
+                ColorPickerType.primary: false,
+                ColorPickerType.accent: false,
+                ColorPickerType.bw: false,
+                ColorPickerType.custom: false,
+                ColorPickerType.wheel: true,
+              },
+              wheelDiameter: 200,
+              wheelWidth: 20,
+              enableOpacity: false,
+              showMaterialName: false,
+              showColorName: false,
+              showColorCode: true,
+              colorCodeHasColor: true,
+              pickerTypeLabels: const <ColorPickerType, String>{
+                ColorPickerType.wheel: 'Farbspektrum',
+              },
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Abbrechen'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                selectedColor.value =
+                    '#${currentColor.value.toRadixString(16).substring(2)}';
+                Navigator.of(context).pop();
+              },
+              child: const Text('Bestätigen'),
+            ),
+          ],
+        );
+      },
     );
   }
 

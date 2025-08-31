@@ -177,6 +177,21 @@ class TimetableUiManager extends ChangeNotifier {
     List<LessonGroup> lessonGroups,
     Set<int> selectedGroupIds,
   ) {
+    // If specific lesson groups are selected, return those groups (even if they don't have lessons yet)
+    if (selectedGroupIds.isNotEmpty) {
+      final selectedGroups =
+          lessonGroups
+              .where((group) => selectedGroupIds.contains(group.id))
+              .toList();
+      return selectedGroups;
+    }
+
+    // If there are no scheduled lessons at all, return all lesson groups
+    // so users can see available groups to create lessons for
+    if (scheduledLessons.isEmpty) {
+      return lessonGroups;
+    }
+
     final lessonGroupIds = <int>{};
 
     // Get all slots for this weekday
@@ -192,15 +207,6 @@ class TimetableUiManager extends ChangeNotifier {
       for (final lesson in lessonsInSlot) {
         lessonGroupIds.add(lesson.lessonGroupId);
       }
-    }
-
-    // If specific lesson groups are selected, return those groups (even if they don't have lessons yet)
-    if (selectedGroupIds.isNotEmpty) {
-      final selectedGroups =
-          lessonGroups
-              .where((group) => selectedGroupIds.contains(group.id))
-              .toList();
-      return selectedGroups;
     }
 
     // Return all lesson groups that have lessons on this weekday

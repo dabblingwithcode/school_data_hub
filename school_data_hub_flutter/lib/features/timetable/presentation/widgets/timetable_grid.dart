@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
+import 'package:school_data_hub_flutter/features/timetable/presentation/classroom_list_page/classroom_list_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_lesson_group_page/new_lesson_group_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/lesson_cell/lesson_cell.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
@@ -39,6 +40,7 @@ class TimetableGrid extends WatchingWidget {
     final lessonGroupsForWeekday = watchValue(
       (TimetableManager x) => x.lessonGroups,
     );
+    final classrooms = watchValue((TimetableManager x) => x.classrooms);
     final allLessonGroupsForWeekday = timetableManager
         .getLessonGroupsForWeekday(selectedWeekday);
     final timeSlotPeriods = timetableManager.getTimeSlotPeriods();
@@ -49,10 +51,57 @@ class TimetableGrid extends WatchingWidget {
       'TimetableGrid - allLessonGroupsForWeekday: ${allLessonGroupsForWeekday.length}',
     );
     print('TimetableGrid - selectedWeekday: $selectedWeekday');
+    print(
+      'TimetableGrid - total lesson groups: ${lessonGroupsForWeekday.length}',
+    );
+    print(
+      'TimetableGrid - selected lesson group IDs: ${selectedLessonGroupIds}',
+    );
+    print(
+      'TimetableGrid - scheduled lessons count: ${scheduledLessons.length}',
+    );
+    print('TimetableGrid - classrooms count: ${classrooms.length}');
 
     // Handle empty states
     if (timeSlotPeriods.isEmpty) {
       return const Center(child: Text('Keine Stunden verfügbar'));
+    }
+
+    // Check if there are no classrooms defined
+    if (classrooms.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.door_front_door, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
+            const Text(
+              'Keine Räume verfügbar',
+              style: TextStyle(fontSize: 18, color: Colors.grey),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Erstellen Sie Räume um Stunden zu planen',
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ClassroomListPage(),
+                  ),
+                );
+                // Refresh data when returning from ClassroomListPage
+                // Note: This will trigger a rebuild of the TimetableGrid
+                // since it's watching the TimetableManager state
+              },
+              child: const Text('Raum erstellen'),
+            ),
+          ],
+        ),
+      );
     }
 
     if (allLessonGroupsForWeekday.isEmpty) {

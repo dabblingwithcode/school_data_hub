@@ -57,26 +57,28 @@ class TimetableCrudManager extends ChangeNotifier {
   }
 
   // Subject CRUD operations
-  Future<void> addSubject(Subject subject) async {
+  Future<Subject?> addSubject(Subject subject) async {
     try {
       final createdSubject = await _apiService.createSubject(subject);
       if (createdSubject != null) {
         print('Subject created successfully: ${createdSubject.name}');
         notifyListeners();
       }
+      return createdSubject;
     } catch (e) {
       print('Error creating subject: $e');
       rethrow;
     }
   }
 
-  Future<void> updateSubject(Subject subject) async {
+  Future<Subject?> updateSubject(Subject subject) async {
     try {
       final updatedSubject = await _apiService.updateSubject(subject);
       if (updatedSubject != null) {
         print('Subject updated successfully: ${updatedSubject.name}');
         notifyListeners();
       }
+      return updatedSubject;
     } catch (e) {
       print('Error updating subject: $e');
       rethrow;

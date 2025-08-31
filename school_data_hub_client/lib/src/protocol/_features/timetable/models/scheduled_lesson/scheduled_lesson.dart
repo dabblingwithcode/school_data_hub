@@ -25,7 +25,6 @@ abstract class ScheduledLesson implements _i1.SerializableModel {
   ScheduledLesson._({
     this.id,
     required this.active,
-    required this.publicId,
     required this.subjectId,
     this.subject,
     required this.scheduledAtId,
@@ -50,7 +49,6 @@ abstract class ScheduledLesson implements _i1.SerializableModel {
   factory ScheduledLesson({
     int? id,
     required bool active,
-    required String publicId,
     required int subjectId,
     _i2.Subject? subject,
     required int scheduledAtId,
@@ -76,7 +74,6 @@ abstract class ScheduledLesson implements _i1.SerializableModel {
     return ScheduledLesson(
       id: jsonSerialization['id'] as int?,
       active: jsonSerialization['active'] as bool,
-      publicId: jsonSerialization['publicId'] as String,
       subjectId: jsonSerialization['subjectId'] as int,
       subject: jsonSerialization['subject'] == null
           ? null
@@ -130,8 +127,6 @@ abstract class ScheduledLesson implements _i1.SerializableModel {
 
   bool active;
 
-  String publicId;
-
   int subjectId;
 
   _i2.Subject? subject;
@@ -176,7 +171,6 @@ abstract class ScheduledLesson implements _i1.SerializableModel {
   ScheduledLesson copyWith({
     int? id,
     bool? active,
-    String? publicId,
     int? subjectId,
     _i2.Subject? subject,
     int? scheduledAtId,
@@ -202,7 +196,6 @@ abstract class ScheduledLesson implements _i1.SerializableModel {
     return {
       if (id != null) 'id': id,
       'active': active,
-      'publicId': publicId,
       'subjectId': subjectId,
       if (subject != null) 'subject': subject?.toJson(),
       'scheduledAtId': scheduledAtId,
@@ -239,7 +232,6 @@ class _ScheduledLessonImpl extends ScheduledLesson {
   _ScheduledLessonImpl({
     int? id,
     required bool active,
-    required String publicId,
     required int subjectId,
     _i2.Subject? subject,
     required int scheduledAtId,
@@ -262,7 +254,6 @@ class _ScheduledLessonImpl extends ScheduledLesson {
   }) : super._(
           id: id,
           active: active,
-          publicId: publicId,
           subjectId: subjectId,
           subject: subject,
           scheduledAtId: scheduledAtId,
@@ -291,7 +282,6 @@ class _ScheduledLessonImpl extends ScheduledLesson {
   ScheduledLesson copyWith({
     Object? id = _Undefined,
     bool? active,
-    String? publicId,
     int? subjectId,
     Object? subject = _Undefined,
     int? scheduledAtId,
@@ -315,7 +305,6 @@ class _ScheduledLessonImpl extends ScheduledLesson {
     return ScheduledLesson(
       id: id is int? ? id : this.id,
       active: active ?? this.active,
-      publicId: publicId ?? this.publicId,
       subjectId: subjectId ?? this.subjectId,
       subject: subject is _i2.Subject? ? subject : this.subject?.copyWith(),
       scheduledAtId: scheduledAtId ?? this.scheduledAtId,

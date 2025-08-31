@@ -107,6 +107,7 @@ class TimetableDataManager extends ChangeNotifier {
     // Load complete timetable data
     final timetable = await _apiService.fetchCompleteTimetableData();
     print('API returned timetable: ${timetable?.name} (ID: ${timetable?.id})');
+
     if (timetable != null) {
       _timetable.value = timetable;
       _timetableSlots.value = timetable.timetableSlots ?? [];
@@ -115,7 +116,25 @@ class TimetableDataManager extends ChangeNotifier {
         'Set timetable data - slots: ${timetable.timetableSlots?.length ?? 0}, lessons: ${timetable.scheduledLessons?.length ?? 0}',
       );
     } else {
-      print('No timetable data returned from API');
+      print(
+        'No timetable data returned from fetchCompleteTimetableData, trying fetchTimetables...',
+      );
+      // Try to fetch all timetables and use the first one
+      final timetables = await _apiService.fetchTimetables();
+      if (timetables != null && timetables.isNotEmpty) {
+        final firstTimetable = timetables.first;
+        print(
+          'Using first timetable from fetchTimetables: ${firstTimetable.name} (ID: ${firstTimetable.id})',
+        );
+        _timetable.value = firstTimetable;
+        _timetableSlots.value = firstTimetable.timetableSlots ?? [];
+        _scheduledLessons.value = firstTimetable.scheduledLessons ?? [];
+        print(
+          'Set timetable data from fetchTimetables - slots: ${firstTimetable.timetableSlots?.length ?? 0}, lessons: ${firstTimetable.scheduledLessons?.length ?? 0}',
+        );
+      } else {
+        print('No timetables found in database');
+      }
     }
 
     // Load additional data if not included in timetable
@@ -321,11 +340,29 @@ class TimetableDataManager extends ChangeNotifier {
         print(
           'Timetable created successfully: ${createdTimetable.name} (ID: ${createdTimetable.id})',
         );
-        // Reload complete data to ensure UI is updated with all timetable information
-        await _loadData();
+
+        // Set the newly created timetable as the active one
+        _timetable.value = createdTimetable;
+
+        // Initialize empty collections for the new timetable
+        _timetableSlots.value = [];
+        _scheduledLessons.value = [];
+        _lessonGroups.value = [];
+        _scheduledLessonGroupMemberships.value = [];
+
+        // Clear lookup maps
+        _slotIdMap.clear();
+        _lessonGroupIdMap.clear();
+
+        // Generate default timetable slots for the new timetable
+        await generateDefaultTimetableSlots(createdTimetable.id!);
+
+        // Load additional data for the new timetable
+        await _loadAdditionalDataFromApi();
+
         notifyListeners();
         print(
-          'Timetable data reloaded. Current timetable: ${_timetable.value?.name}',
+          'Timetable set as active. Current timetable: ${_timetable.value?.name} (ID: ${_timetable.value?.id})',
         );
       }
     } catch (e) {
@@ -456,6 +493,10 @@ class TimetableDataManager extends ChangeNotifier {
 
   /// Add a new lesson group to the local data
   void addLessonGroup(LessonGroup lessonGroup) {
+    print(
+      'DEBUG: addLessonGroup called - timetableId: ${lessonGroup.timetableId}, current timetable: ${_timetable.value?.id}',
+    );
+
     // Only add lesson groups that belong to the current timetable
     if (lessonGroup.timetableId != _timetable.value?.id) {
       print(
@@ -516,6 +557,51 @@ class TimetableDataManager extends ChangeNotifier {
       _buildLookupMaps();
       notifyListeners();
       print('Removed lesson group from local data: $lessonGroupId');
+    }
+  }
+
+  /// Add a new subject to the local data
+  void addSubject(Subject subject) {
+    final currentSubjects = _subjects.value;
+    if (!currentSubjects.any((s) => s.id == subject.id)) {
+      final updatedSubjects = [...currentSubjects, subject];
+      // Sort subjects alphabetically by name
+      updatedSubjects.sort((a, b) => a.name.compareTo(b.name));
+      _subjects.value = updatedSubjects;
+      _buildLookupMaps();
+      notifyListeners();
+      print('Added subject to local data: ${subject.name} (ID: ${subject.id})');
+    }
+  }
+
+  /// Update an existing subject in the local data
+  void updateSubject(Subject subject) {
+    final currentSubjects = _subjects.value;
+    final index = currentSubjects.indexWhere((s) => s.id == subject.id);
+    if (index != -1) {
+      final updatedSubjects = [...currentSubjects];
+      updatedSubjects[index] = subject;
+      // Sort subjects alphabetically by name
+      updatedSubjects.sort((a, b) => a.name.compareTo(b.name));
+      _subjects.value = updatedSubjects;
+      _buildLookupMaps();
+      notifyListeners();
+      print(
+        'Updated subject in local data: ${subject.name} (ID: ${subject.id})',
+      );
+    }
+  }
+
+  /// Remove a subject from the local data
+  void removeSubject(int subjectId) {
+    final currentSubjects = _subjects.value;
+    final updatedSubjects =
+        currentSubjects.where((s) => s.id != subjectId).toList();
+    if (updatedSubjects.length != currentSubjects.length) {
+      _subjects.value = updatedSubjects;
+      _buildLookupMaps();
+      notifyListeners();
+      print('Removed subject from local data: $subjectId');
     }
   }
 }

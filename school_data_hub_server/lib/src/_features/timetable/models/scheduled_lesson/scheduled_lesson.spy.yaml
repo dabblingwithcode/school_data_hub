@@ -2,7 +2,6 @@ class: ScheduledLesson
 table: scheduled_lesson
 fields:
   active: bool
-  publicId: String
   subject: Subject?, relation(name=subject_scheduled_lesson)
   scheduledAt: TimetableSlot?, relation
   timetableSlotOrder: int

@@ -105,44 +105,6 @@ class _NotificationBannerState extends State<NotificationBanner>
     return Colors.grey[800]!;
   }
 
-  IconData _getIcon() {
-    if (widget.notifications.isEmpty) return Icons.notifications;
-
-    // Use the most recent notification type for the icon
-    final latestType = widget.notifications.last.type;
-    switch (latestType) {
-      case NotificationType.error:
-        return Icons.error_outline;
-      case NotificationType.warning:
-        return Icons.warning_amber_outlined;
-      case NotificationType.info:
-        return Icons.info_outline;
-      case NotificationType.success:
-        return Icons.check_circle_outline;
-      case NotificationType.dialog:
-        return Icons.chat_bubble_outline;
-    }
-  }
-
-  String _getEmoji() {
-    if (widget.notifications.isEmpty) return '📢';
-
-    // Use the most recent notification type for the emoji
-    final latestType = widget.notifications.last.type;
-    switch (latestType) {
-      case NotificationType.error:
-        return '❌';
-      case NotificationType.warning:
-        return '⚠️';
-      case NotificationType.info:
-        return 'ℹ️';
-      case NotificationType.success:
-        return '✅';
-      case NotificationType.dialog:
-        return '💬';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     if (widget.notifications.isEmpty) {
@@ -173,9 +135,6 @@ class _NotificationBannerState extends State<NotificationBanner>
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      //  Icon(_getIcon(), color: Colors.white, size: 24),
-                      // const SizedBox(width: 8),
-                      // Text(_getEmoji(), style: const TextStyle(fontSize: 20)),
                       const SizedBox(width: 12),
                       Expanded(
                         child: SingleChildScrollView(

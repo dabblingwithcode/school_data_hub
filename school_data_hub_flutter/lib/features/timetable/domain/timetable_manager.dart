@@ -71,6 +71,12 @@ class TimetableManager extends ChangeNotifier {
     _dataManager.debugPrintState();
   }
 
+  /// Check if there's an active timetable
+  bool get hasActiveTimetable => _dataManager.timetable.value != null;
+
+  /// Get the active timetable
+  Timetable? get activeTimetable => _dataManager.timetable.value;
+
   /// Build weekday proxies for UI display
   void _buildWeekdayProxies() {
     _uiManager.buildWeekdayProxies(
@@ -128,18 +134,25 @@ class TimetableManager extends ChangeNotifier {
 
   // CRUD Operations for Subjects
   Future<void> addSubject(Subject subject) async {
-    await _crudManager.addSubject(subject);
-    await refreshData();
+    final createdSubject = await _crudManager.addSubject(subject);
+    if (createdSubject != null) {
+      _dataManager.addSubject(createdSubject);
+      notifyListeners();
+    }
   }
 
   Future<void> updateSubject(Subject subject) async {
-    await _crudManager.updateSubject(subject);
-    await refreshData();
+    final updatedSubject = await _crudManager.updateSubject(subject);
+    if (updatedSubject != null) {
+      _dataManager.updateSubject(updatedSubject);
+      notifyListeners();
+    }
   }
 
   Future<void> removeSubject(int subjectId) async {
     await _crudManager.removeSubject(subjectId);
-    await refreshData();
+    _dataManager.removeSubject(subjectId);
+    notifyListeners();
   }
 
   // CRUD Operations for Classrooms

@@ -112,7 +112,7 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
     await PupilMutator().updatePupilSupportLevel(
       pupilId: pupil.pupilId,
       level: selectedSupportLevelNotifier.value!,
-      createdAt: DateTime.now(),
+      createdAt: DateTime.now().toUtc(),
       createdBy: _hubSessionManager.userName!,
       comment:
           'Förderstufe ${selectedSupportLevelNotifier.value} für Förderplan',
@@ -123,7 +123,7 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
       planId: planIdController.text.trim(),
       createdBy: _hubSessionManager.userName!,
       learningSupportLevelId: selectedSupportLevelNotifier.value!,
-      createdAt: DateTime.now(),
+      createdAt: DateTime.now().toUtc(),
       comment:
           commentController.text.trim().isEmpty
               ? null
