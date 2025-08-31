@@ -15,7 +15,8 @@ import '../../../_features/timetable/models/scheduled_lesson/scheduled_lesson.da
     as _i3;
 import '../../../_features/timetable/models/scheduled_lesson/timetable_slot.dart'
     as _i4;
-import 'package:school_data_hub_client/src/protocol/protocol.dart' as _i5;
+import '../../../_features/timetable/models/lesson/lesson_group.dart' as _i5;
+import 'package:school_data_hub_client/src/protocol/protocol.dart' as _i6;
 
 abstract class Timetable implements _i1.SerializableModel {
   Timetable._({
@@ -28,6 +29,7 @@ abstract class Timetable implements _i1.SerializableModel {
     this.schoolSemester,
     this.scheduledLessons,
     this.timetableSlots,
+    this.lessonGroups,
     required this.createdBy,
     required this.createdAt,
     this.modified,
@@ -43,6 +45,7 @@ abstract class Timetable implements _i1.SerializableModel {
     _i2.SchoolSemester? schoolSemester,
     List<_i3.ScheduledLesson>? scheduledLessons,
     List<_i4.TimetableSlot>? timetableSlots,
+    List<_i5.LessonGroup>? lessonGroups,
     required String createdBy,
     required DateTime createdAt,
     List<({String modifiedBy, DateTime modifiedAt})>? modified,
@@ -70,11 +73,14 @@ abstract class Timetable implements _i1.SerializableModel {
       timetableSlots: (jsonSerialization['timetableSlots'] as List?)
           ?.map((e) => _i4.TimetableSlot.fromJson((e as Map<String, dynamic>)))
           .toList(),
+      lessonGroups: (jsonSerialization['lessonGroups'] as List?)
+          ?.map((e) => _i5.LessonGroup.fromJson((e as Map<String, dynamic>)))
+          .toList(),
       createdBy: jsonSerialization['createdBy'] as String,
       createdAt:
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
       modified: (jsonSerialization['modified'] as List?)
-          ?.map((e) => _i5.Protocol()
+          ?.map((e) => _i6.Protocol()
               .deserialize<({String modifiedBy, DateTime modifiedAt})>(
                   (e as Map<String, dynamic>)))
           .toList(),
@@ -102,6 +108,8 @@ abstract class Timetable implements _i1.SerializableModel {
 
   List<_i4.TimetableSlot>? timetableSlots;
 
+  List<_i5.LessonGroup>? lessonGroups;
+
   String createdBy;
 
   DateTime createdAt;
@@ -121,6 +129,7 @@ abstract class Timetable implements _i1.SerializableModel {
     _i2.SchoolSemester? schoolSemester,
     List<_i3.ScheduledLesson>? scheduledLessons,
     List<_i4.TimetableSlot>? timetableSlots,
+    List<_i5.LessonGroup>? lessonGroups,
     String? createdBy,
     DateTime? createdAt,
     List<({String modifiedBy, DateTime modifiedAt})>? modified,
@@ -141,10 +150,12 @@ abstract class Timetable implements _i1.SerializableModel {
       if (timetableSlots != null)
         'timetableSlots':
             timetableSlots?.toJson(valueToJson: (v) => v.toJson()),
+      if (lessonGroups != null)
+        'lessonGroups': lessonGroups?.toJson(valueToJson: (v) => v.toJson()),
       'createdBy': createdBy,
       'createdAt': createdAt.toJson(),
       if (modified != null)
-        'modified': _i5.mapRecordContainingContainerToJson(modified!),
+        'modified': _i6.mapRecordContainingContainerToJson(modified!),
     };
   }
 
@@ -167,6 +178,7 @@ class _TimetableImpl extends Timetable {
     _i2.SchoolSemester? schoolSemester,
     List<_i3.ScheduledLesson>? scheduledLessons,
     List<_i4.TimetableSlot>? timetableSlots,
+    List<_i5.LessonGroup>? lessonGroups,
     required String createdBy,
     required DateTime createdAt,
     List<({String modifiedBy, DateTime modifiedAt})>? modified,
@@ -180,6 +192,7 @@ class _TimetableImpl extends Timetable {
           schoolSemester: schoolSemester,
           scheduledLessons: scheduledLessons,
           timetableSlots: timetableSlots,
+          lessonGroups: lessonGroups,
           createdBy: createdBy,
           createdAt: createdAt,
           modified: modified,
@@ -199,6 +212,7 @@ class _TimetableImpl extends Timetable {
     Object? schoolSemester = _Undefined,
     Object? scheduledLessons = _Undefined,
     Object? timetableSlots = _Undefined,
+    Object? lessonGroups = _Undefined,
     String? createdBy,
     DateTime? createdAt,
     Object? modified = _Undefined,
@@ -219,6 +233,9 @@ class _TimetableImpl extends Timetable {
       timetableSlots: timetableSlots is List<_i4.TimetableSlot>?
           ? timetableSlots
           : this.timetableSlots?.map((e0) => e0.copyWith()).toList(),
+      lessonGroups: lessonGroups is List<_i5.LessonGroup>?
+          ? lessonGroups
+          : this.lessonGroups?.map((e0) => e0.copyWith()).toList(),
       createdBy: createdBy ?? this.createdBy,
       createdAt: createdAt ?? this.createdAt,
       modified: modified is List<({String modifiedBy, DateTime modifiedAt})>?

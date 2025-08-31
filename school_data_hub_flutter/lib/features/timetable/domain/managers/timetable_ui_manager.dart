@@ -15,7 +15,8 @@ class TimetableUiManager extends ChangeNotifier {
 
   // Current selected lesson groups for filtering (multiple selection)
   final _selectedLessonGroupIds = ValueNotifier<Set<int>>({});
-  ValueListenable<Set<int>> get selectedLessonGroupIds => _selectedLessonGroupIds;
+  ValueListenable<Set<int>> get selectedLessonGroupIds =>
+      _selectedLessonGroupIds;
 
   // Weekday collections
   final _weekdays = ValueNotifier<List<WeekdayProxy>>([]);
@@ -35,7 +36,8 @@ class TimetableUiManager extends ChangeNotifier {
   void selectLessonGroup(LessonGroup? lessonGroup) {
     if (_selectedLessonGroup.value != lessonGroup) {
       _selectedLessonGroup.value = lessonGroup;
-      _selectedLessonGroupIds.value = lessonGroup != null ? {lessonGroup.id!} : {};
+      _selectedLessonGroupIds.value =
+          lessonGroup != null ? {lessonGroup.id!} : {};
       notifyListeners();
     }
   }
@@ -73,11 +75,12 @@ class TimetableUiManager extends ChangeNotifier {
 
     for (final weekday in Weekday.values) {
       // Get time slots for this weekday
-      final slotsForDay = timetableSlots.where((slot) => slot.day == weekday).toList()
-        ..sort((a, b) => a.startTime.compareTo(b.startTime));
+      final slotsForDay =
+          timetableSlots.where((slot) => slot.day == weekday).toList()
+            ..sort((a, b) => a.startTime.compareTo(b.startTime));
 
       // Get scheduled lessons for this weekday and selected lesson groups
-      final lessonsForDay = _getScheduledLessonsForWeekdayAndGroups(
+      final lessonsForDay = getScheduledLessonsForWeekdayAndGroups(
         weekday,
         selectedGroupIds,
         scheduledLessons,
@@ -103,7 +106,7 @@ class TimetableUiManager extends ChangeNotifier {
   }
 
   /// Get scheduled lessons for a specific weekday and selected lesson groups
-  List<ScheduledLesson> _getScheduledLessonsForWeekdayAndGroups(
+  List<ScheduledLesson> getScheduledLessonsForWeekdayAndGroups(
     Weekday weekday,
     Set<int> selectedGroupIds,
     List<ScheduledLesson> scheduledLessons,
@@ -151,7 +154,10 @@ class TimetableUiManager extends ChangeNotifier {
   }
 
   /// Get time slots by time period (same start/end times across weekdays)
-  List<TimetableSlot> getSlotsByTimePeriod(String period, List<TimetableSlot> timetableSlots) {
+  List<TimetableSlot> getSlotsByTimePeriod(
+    String period,
+    List<TimetableSlot> timetableSlots,
+  ) {
     final parts = period.split(' - ');
     if (parts.length != 2) return [];
 
@@ -174,11 +180,15 @@ class TimetableUiManager extends ChangeNotifier {
     final lessonGroupIds = <int>{};
 
     // Get all slots for this weekday
-    final slotsForWeekday = timetableSlots.where((slot) => slot.day == weekday).toList();
+    final slotsForWeekday =
+        timetableSlots.where((slot) => slot.day == weekday).toList();
 
     // Get all lessons in these slots
     for (final slot in slotsForWeekday) {
-      final lessonsInSlot = scheduledLessons.where((lesson) => lesson.scheduledAtId == slot.id).toList();
+      final lessonsInSlot =
+          scheduledLessons
+              .where((lesson) => lesson.scheduledAtId == slot.id)
+              .toList();
       for (final lesson in lessonsInSlot) {
         lessonGroupIds.add(lesson.lessonGroupId);
       }
@@ -186,12 +196,17 @@ class TimetableUiManager extends ChangeNotifier {
 
     // If specific lesson groups are selected, return those groups (even if they don't have lessons yet)
     if (selectedGroupIds.isNotEmpty) {
-      final selectedGroups = lessonGroups.where((group) => selectedGroupIds.contains(group.id)).toList();
+      final selectedGroups =
+          lessonGroups
+              .where((group) => selectedGroupIds.contains(group.id))
+              .toList();
       return selectedGroups;
     }
 
     // Return all lesson groups that have lessons on this weekday
-    return lessonGroups.where((group) => lessonGroupIds.contains(group.id)).toList();
+    return lessonGroups
+        .where((group) => lessonGroupIds.contains(group.id))
+        .toList();
   }
 
   /// Get users that are teaching in a specific time slot
@@ -205,11 +220,15 @@ class TimetableUiManager extends ChangeNotifier {
 
     // Get all slots for this time period
     final slotsForPeriod = getSlotsByTimePeriod(period, timetableSlots);
-    final slotForWeekday = slotsForPeriod.where((slot) => slot.day == weekday).firstOrNull;
+    final slotForWeekday =
+        slotsForPeriod.where((slot) => slot.day == weekday).firstOrNull;
 
     if (slotForWeekday != null) {
       // Get all lessons in this time slot
-      final lessonsInSlot = scheduledLessons.where((lesson) => lesson.scheduledAtId == slotForWeekday.id).toList();
+      final lessonsInSlot =
+          scheduledLessons
+              .where((lesson) => lesson.scheduledAtId == slotForWeekday.id)
+              .toList();
 
       // Add main teachers to busy list
       for (final lesson in lessonsInSlot) {
@@ -228,14 +247,19 @@ class TimetableUiManager extends ChangeNotifier {
   }
 
   /// Get the count of scheduled lessons for a specific user (as main teacher or additional teacher)
-  int getScheduledLessonsCountForUser(int userId, List<ScheduledLesson> scheduledLessons) {
+  int getScheduledLessonsCountForUser(
+    int userId,
+    List<ScheduledLesson> scheduledLessons,
+  ) {
     return scheduledLessons.where((lesson) {
       // Count if user is main teacher
       if (lesson.mainTeacherId == userId) return true;
 
       // Count if user is additional teacher
       if (lesson.lessonTeachers != null) {
-        return lesson.lessonTeachers!.any((teacher) => teacher.userId == userId);
+        return lesson.lessonTeachers!.any(
+          (teacher) => teacher.userId == userId,
+        );
       }
 
       return false;
@@ -243,8 +267,15 @@ class TimetableUiManager extends ChangeNotifier {
   }
 
   /// Get remaining time units for a user based on their timeUnits and scheduled lessons
-  int getRemainingTimeUnitsForUser(int userId, int userTimeUnits, List<ScheduledLesson> scheduledLessons) {
-    final scheduledCount = getScheduledLessonsCountForUser(userId, scheduledLessons);
+  int getRemainingTimeUnitsForUser(
+    int userId,
+    int userTimeUnits,
+    List<ScheduledLesson> scheduledLessons,
+  ) {
+    final scheduledCount = getScheduledLessonsCountForUser(
+      userId,
+      scheduledLessons,
+    );
     return userTimeUnits - scheduledCount;
   }
 }

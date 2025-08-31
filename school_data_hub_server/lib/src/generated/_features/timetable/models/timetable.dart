@@ -17,7 +17,8 @@ import '../../../_features/timetable/models/scheduled_lesson/scheduled_lesson.da
     as _i3;
 import '../../../_features/timetable/models/scheduled_lesson/timetable_slot.dart'
     as _i4;
-import 'package:school_data_hub_server/src/generated/protocol.dart' as _i5;
+import '../../../_features/timetable/models/lesson/lesson_group.dart' as _i5;
+import 'package:school_data_hub_server/src/generated/protocol.dart' as _i6;
 
 abstract class Timetable
     implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
@@ -31,6 +32,7 @@ abstract class Timetable
     this.schoolSemester,
     this.scheduledLessons,
     this.timetableSlots,
+    this.lessonGroups,
     required this.createdBy,
     required this.createdAt,
     this.modified,
@@ -46,6 +48,7 @@ abstract class Timetable
     _i2.SchoolSemester? schoolSemester,
     List<_i3.ScheduledLesson>? scheduledLessons,
     List<_i4.TimetableSlot>? timetableSlots,
+    List<_i5.LessonGroup>? lessonGroups,
     required String createdBy,
     required DateTime createdAt,
     List<({String modifiedBy, DateTime modifiedAt})>? modified,
@@ -73,11 +76,14 @@ abstract class Timetable
       timetableSlots: (jsonSerialization['timetableSlots'] as List?)
           ?.map((e) => _i4.TimetableSlot.fromJson((e as Map<String, dynamic>)))
           .toList(),
+      lessonGroups: (jsonSerialization['lessonGroups'] as List?)
+          ?.map((e) => _i5.LessonGroup.fromJson((e as Map<String, dynamic>)))
+          .toList(),
       createdBy: jsonSerialization['createdBy'] as String,
       createdAt:
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
       modified: (jsonSerialization['modified'] as List?)
-          ?.map((e) => _i5.Protocol()
+          ?.map((e) => _i6.Protocol()
               .deserialize<({String modifiedBy, DateTime modifiedAt})>(
                   (e as Map<String, dynamic>)))
           .toList(),
@@ -107,6 +113,8 @@ abstract class Timetable
 
   List<_i4.TimetableSlot>? timetableSlots;
 
+  List<_i5.LessonGroup>? lessonGroups;
+
   String createdBy;
 
   DateTime createdAt;
@@ -129,6 +137,7 @@ abstract class Timetable
     _i2.SchoolSemester? schoolSemester,
     List<_i3.ScheduledLesson>? scheduledLessons,
     List<_i4.TimetableSlot>? timetableSlots,
+    List<_i5.LessonGroup>? lessonGroups,
     String? createdBy,
     DateTime? createdAt,
     List<({String modifiedBy, DateTime modifiedAt})>? modified,
@@ -149,10 +158,12 @@ abstract class Timetable
       if (timetableSlots != null)
         'timetableSlots':
             timetableSlots?.toJson(valueToJson: (v) => v.toJson()),
+      if (lessonGroups != null)
+        'lessonGroups': lessonGroups?.toJson(valueToJson: (v) => v.toJson()),
       'createdBy': createdBy,
       'createdAt': createdAt.toJson(),
       if (modified != null)
-        'modified': _i5.mapRecordContainingContainerToJson(modified!),
+        'modified': _i6.mapRecordContainingContainerToJson(modified!),
     };
   }
 
@@ -173,10 +184,13 @@ abstract class Timetable
       if (timetableSlots != null)
         'timetableSlots':
             timetableSlots?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
+      if (lessonGroups != null)
+        'lessonGroups':
+            lessonGroups?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
       'createdBy': createdBy,
       'createdAt': createdAt.toJson(),
       if (modified != null)
-        'modified': _i5.mapRecordContainingContainerToJson(modified!),
+        'modified': _i6.mapRecordContainingContainerToJson(modified!),
     };
   }
 
@@ -184,11 +198,13 @@ abstract class Timetable
     _i2.SchoolSemesterInclude? schoolSemester,
     _i3.ScheduledLessonIncludeList? scheduledLessons,
     _i4.TimetableSlotIncludeList? timetableSlots,
+    _i5.LessonGroupIncludeList? lessonGroups,
   }) {
     return TimetableInclude._(
       schoolSemester: schoolSemester,
       scheduledLessons: scheduledLessons,
       timetableSlots: timetableSlots,
+      lessonGroups: lessonGroups,
     );
   }
 
@@ -231,6 +247,7 @@ class _TimetableImpl extends Timetable {
     _i2.SchoolSemester? schoolSemester,
     List<_i3.ScheduledLesson>? scheduledLessons,
     List<_i4.TimetableSlot>? timetableSlots,
+    List<_i5.LessonGroup>? lessonGroups,
     required String createdBy,
     required DateTime createdAt,
     List<({String modifiedBy, DateTime modifiedAt})>? modified,
@@ -244,6 +261,7 @@ class _TimetableImpl extends Timetable {
           schoolSemester: schoolSemester,
           scheduledLessons: scheduledLessons,
           timetableSlots: timetableSlots,
+          lessonGroups: lessonGroups,
           createdBy: createdBy,
           createdAt: createdAt,
           modified: modified,
@@ -263,6 +281,7 @@ class _TimetableImpl extends Timetable {
     Object? schoolSemester = _Undefined,
     Object? scheduledLessons = _Undefined,
     Object? timetableSlots = _Undefined,
+    Object? lessonGroups = _Undefined,
     String? createdBy,
     DateTime? createdAt,
     Object? modified = _Undefined,
@@ -283,6 +302,9 @@ class _TimetableImpl extends Timetable {
       timetableSlots: timetableSlots is List<_i4.TimetableSlot>?
           ? timetableSlots
           : this.timetableSlots?.map((e0) => e0.copyWith()).toList(),
+      lessonGroups: lessonGroups is List<_i5.LessonGroup>?
+          ? lessonGroups
+          : this.lessonGroups?.map((e0) => e0.copyWith()).toList(),
       createdBy: createdBy ?? this.createdBy,
       createdAt: createdAt ?? this.createdAt,
       modified: modified is List<({String modifiedBy, DateTime modifiedAt})>?
@@ -354,6 +376,10 @@ class TimetableTable extends _i1.Table<int?> {
 
   _i1.ManyRelation<_i4.TimetableSlotTable>? _timetableSlots;
 
+  _i5.LessonGroupTable? ___lessonGroups;
+
+  _i1.ManyRelation<_i5.LessonGroupTable>? _lessonGroups;
+
   late final _i1.ColumnString createdBy;
 
   late final _i1.ColumnDateTime createdAt;
@@ -399,6 +425,19 @@ class TimetableTable extends _i1.Table<int?> {
     return ___timetableSlots!;
   }
 
+  _i5.LessonGroupTable get __lessonGroups {
+    if (___lessonGroups != null) return ___lessonGroups!;
+    ___lessonGroups = _i1.createRelationTable(
+      relationFieldName: '__lessonGroups',
+      field: Timetable.t.id,
+      foreignField: _i5.LessonGroup.t.timetableId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i5.LessonGroupTable(tableRelation: foreignTableRelation),
+    );
+    return ___lessonGroups!;
+  }
+
   _i1.ManyRelation<_i3.ScheduledLessonTable> get scheduledLessons {
     if (_scheduledLessons != null) return _scheduledLessons!;
     var relationTable = _i1.createRelationTable(
@@ -435,6 +474,24 @@ class TimetableTable extends _i1.Table<int?> {
     return _timetableSlots!;
   }
 
+  _i1.ManyRelation<_i5.LessonGroupTable> get lessonGroups {
+    if (_lessonGroups != null) return _lessonGroups!;
+    var relationTable = _i1.createRelationTable(
+      relationFieldName: 'lessonGroups',
+      field: Timetable.t.id,
+      foreignField: _i5.LessonGroup.t.timetableId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i5.LessonGroupTable(tableRelation: foreignTableRelation),
+    );
+    _lessonGroups = _i1.ManyRelation<_i5.LessonGroupTable>(
+      tableWithRelations: relationTable,
+      table: _i5.LessonGroupTable(
+          tableRelation: relationTable.tableRelation!.lastRelation),
+    );
+    return _lessonGroups!;
+  }
+
   @override
   List<_i1.Column> get columns => [
         id,
@@ -459,6 +516,9 @@ class TimetableTable extends _i1.Table<int?> {
     if (relationField == 'timetableSlots') {
       return __timetableSlots;
     }
+    if (relationField == 'lessonGroups') {
+      return __lessonGroups;
+    }
     return null;
   }
 }
@@ -468,10 +528,12 @@ class TimetableInclude extends _i1.IncludeObject {
     _i2.SchoolSemesterInclude? schoolSemester,
     _i3.ScheduledLessonIncludeList? scheduledLessons,
     _i4.TimetableSlotIncludeList? timetableSlots,
+    _i5.LessonGroupIncludeList? lessonGroups,
   }) {
     _schoolSemester = schoolSemester;
     _scheduledLessons = scheduledLessons;
     _timetableSlots = timetableSlots;
+    _lessonGroups = lessonGroups;
   }
 
   _i2.SchoolSemesterInclude? _schoolSemester;
@@ -480,11 +542,14 @@ class TimetableInclude extends _i1.IncludeObject {
 
   _i4.TimetableSlotIncludeList? _timetableSlots;
 
+  _i5.LessonGroupIncludeList? _lessonGroups;
+
   @override
   Map<String, _i1.Include?> get includes => {
         'schoolSemester': _schoolSemester,
         'scheduledLessons': _scheduledLessons,
         'timetableSlots': _timetableSlots,
+        'lessonGroups': _lessonGroups,
       };
 
   @override
@@ -786,6 +851,30 @@ class TimetableAttachRepository {
       transaction: transaction,
     );
   }
+
+  /// Creates a relation between this [Timetable] and the given [LessonGroup]s
+  /// by setting each [LessonGroup]'s foreign key `timetableId` to refer to this [Timetable].
+  Future<void> lessonGroups(
+    _i1.Session session,
+    Timetable timetable,
+    List<_i5.LessonGroup> lessonGroup, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (lessonGroup.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('lessonGroup.id');
+    }
+    if (timetable.id == null) {
+      throw ArgumentError.notNull('timetable.id');
+    }
+
+    var $lessonGroup =
+        lessonGroup.map((e) => e.copyWith(timetableId: timetable.id)).toList();
+    await session.db.update<_i5.LessonGroup>(
+      $lessonGroup,
+      columns: [_i5.LessonGroup.t.timetableId],
+      transaction: transaction,
+    );
+  }
 }
 
 class TimetableAttachRowRepository {
@@ -856,6 +945,29 @@ class TimetableAttachRowRepository {
     await session.db.updateRow<_i4.TimetableSlot>(
       $timetableSlot,
       columns: [_i4.TimetableSlot.t.timetableId],
+      transaction: transaction,
+    );
+  }
+
+  /// Creates a relation between this [Timetable] and the given [LessonGroup]
+  /// by setting the [LessonGroup]'s foreign key `timetableId` to refer to this [Timetable].
+  Future<void> lessonGroups(
+    _i1.Session session,
+    Timetable timetable,
+    _i5.LessonGroup lessonGroup, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (lessonGroup.id == null) {
+      throw ArgumentError.notNull('lessonGroup.id');
+    }
+    if (timetable.id == null) {
+      throw ArgumentError.notNull('timetable.id');
+    }
+
+    var $lessonGroup = lessonGroup.copyWith(timetableId: timetable.id);
+    await session.db.updateRow<_i5.LessonGroup>(
+      $lessonGroup,
+      columns: [_i5.LessonGroup.t.timetableId],
       transaction: transaction,
     );
   }

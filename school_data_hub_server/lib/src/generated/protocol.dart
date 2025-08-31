@@ -1775,6 +1775,12 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'String?',
         ),
         _i2.ColumnDefinition(
+          name: 'timetableId',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _i2.ColumnDefinition(
           name: 'createdBy',
           columnType: _i2.ColumnType.text,
           isNullable: false,
@@ -1789,17 +1795,28 @@ class Protocol extends _i1.SerializationManagerServer {
         _i2.ColumnDefinition(
           name: 'modifiedBy',
           columnType: _i2.ColumnType.text,
-          isNullable: false,
-          dartType: 'String',
+          isNullable: true,
+          dartType: 'String?',
         ),
         _i2.ColumnDefinition(
           name: 'modifiedAt',
           columnType: _i2.ColumnType.timestampWithoutTimeZone,
-          isNullable: false,
-          dartType: 'DateTime',
+          isNullable: true,
+          dartType: 'DateTime?',
         ),
       ],
-      foreignKeys: [],
+      foreignKeys: [
+        _i2.ForeignKeyDefinition(
+          constraintName: 'lesson_group_fk_0',
+          columns: ['timetableId'],
+          referenceTable: 'timetable',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _i2.ForeignKeyAction.noAction,
+          onDelete: _i2.ForeignKeyAction.noAction,
+          matchType: null,
+        )
+      ],
       indexes: [
         _i2.IndexDefinition(
           indexName: 'lesson_group_pkey',
@@ -5714,6 +5731,11 @@ class Protocol extends _i1.SerializationManagerServer {
               .toList()
           : null) as T;
     }
+    if (t == _i1.getType<List<_i65.LessonGroup>?>()) {
+      return (data != null
+          ? (data as List).map((e) => deserialize<_i65.LessonGroup>(e)).toList()
+          : null) as T;
+    }
     if (t == _i1.getType<List<({String modifiedBy, DateTime modifiedAt})>?>()) {
       return (data != null
           ? (data as List)
@@ -5770,6 +5792,10 @@ class Protocol extends _i1.SerializationManagerServer {
       return (data as List)
           .map((e) => deserialize<_i82.SupportCategory>(e))
           .toList() as T;
+    }
+    if (t == Map<String, dynamic>) {
+      return (data as Map).map((k, v) =>
+          MapEntry(deserialize<String>(k), deserialize<dynamic>(v))) as T;
     }
     if (t == List<_i83.MissedSchoolday>) {
       return (data as List)

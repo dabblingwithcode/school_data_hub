@@ -131,8 +131,8 @@ class LessonGroupProxy {
   String? get color => lessonGroup.color;
   String get createdBy => lessonGroup.createdBy;
   DateTime get createdAt => lessonGroup.createdAt;
-  String get modifiedBy => lessonGroup.modifiedBy;
-  DateTime get modifiedAt => lessonGroup.modifiedAt;
+  String? get modifiedBy => lessonGroup.modifiedBy;
+  DateTime? get modifiedAt => lessonGroup.modifiedAt;
 
   /// Get color as a hex string with # prefix (if color exists)
   String? get colorHex =>

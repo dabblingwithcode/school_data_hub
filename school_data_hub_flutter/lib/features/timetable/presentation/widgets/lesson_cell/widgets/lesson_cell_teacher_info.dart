@@ -41,41 +41,73 @@ class LessonCellTeacherInfo extends WatchingWidget {
       }
     }
 
-    // Return wrap of teacher chips
-    return Wrap(
-      spacing: 1,
-      runSpacing: 0,
-      children:
-          allLessonTeachers.map((teacher) {
-            final isMainTeacher = teacher.id == lesson.mainTeacherId;
-            final userName =
-                teacher.userInfo?.userName?.isNotEmpty == true
-                    ? teacher.userInfo!.userName!.length >= 3
-                        ? teacher.userInfo!.userName!
-                            .substring(0, 3)
-                            .toUpperCase()
-                        : teacher.userInfo!.userName!.toUpperCase()
-                    : 'TEA';
+    // Limit to 3 teachers maximum
+    final displayTeachers = allLessonTeachers.take(3).toList();
 
-            return Chip(
-              label: Text(
-                userName,
-                style: const TextStyle(
-                  fontSize: 9,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+    // Return row of teacher containers - always show 3 containers
+    return Row(
+      children: List.generate(3, (index) {
+        if (index < displayTeachers.length) {
+          final teacher = displayTeachers[index];
+          final isMainTeacher = teacher.id == lesson.mainTeacherId;
+          final userName =
+              teacher.userInfo?.userName?.isNotEmpty == true
+                  ? teacher.userInfo!.userName!.length >= 3
+                      ? teacher.userInfo!.userName!
+                          .substring(0, 3)
+                          .toUpperCase()
+                      : teacher.userInfo!.userName!.toUpperCase()
+                  : 'TEA';
+
+          return Expanded(
+            child: SizedBox(
+              height: 20,
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 1),
+                decoration: BoxDecoration(
+                  color: isMainTeacher ? Colors.orange : Colors.blue,
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color:
+                        isMainTeacher
+                            ? Colors.orange.shade700
+                            : Colors.blue.shade700,
+                    width: 1,
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    userName,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
-              backgroundColor: isMainTeacher ? Colors.orange : Colors.blue,
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              visualDensity: VisualDensity.compact,
-              padding: EdgeInsets.zero,
-              labelPadding: const EdgeInsets.symmetric(
-                horizontal: 4,
-                vertical: 0,
+            ),
+          );
+        } else {
+          // Empty container to maintain equal spacing
+          return Expanded(
+            child: SizedBox(
+              height: 20, // Fixed height to match teacher containers
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 1),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: Colors.grey.shade300, width: 1),
+                ),
               ),
-            );
-          }).toList(),
+            ),
+          );
+        }
+      }),
     );
   }
 }

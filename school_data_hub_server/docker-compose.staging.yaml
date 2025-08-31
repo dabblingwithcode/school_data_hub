@@ -49,7 +49,8 @@ services:
     restart: on-failure
     image: ghcr.io/${GHCR_ORG}/school_data_hub_server:staging
     volumes:
-      - ./storage:/app/storage
+      - school_data_hub_storage:/app/storage
+      - ../test_data:/test_data
     environment:
       - SERVERPOD_DATABASE_PASSWORD
       - SERVERPOD_DATABASE_HOST
@@ -115,4 +116,7 @@ networks:
     driver: bridge
 
 volumes:
+  # Database data - persists across container restarts
   school_data_hub_staging_data:
+  # Application storage - persists uploaded files, user data, etc.
+  school_data_hub_storage:

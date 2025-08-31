@@ -7,6 +7,10 @@ admin:
   - updateBackendPupilDataState:
   - importCompetencesFromJsonFile:
   - importSupportCategoriesFromJsonFile:
+debug:
+  - debugUserScopes:
+  - fixUserScope:
+  - forceLogoutAllSessions:
 missedSchoolday:
   - streamMissedSchooldays:
   - postMissedSchoolday:
@@ -156,6 +160,7 @@ learningGroup:
   - fetchLessonGroupByPublicId:
   - fetchLessonGroupsByName:
   - fetchLessonGroupsByCreator:
+  - fetchLessonGroupsByTimetable:
   - updateLessonGroup:
   - deleteLessonGroup:
 scheduledLesson:

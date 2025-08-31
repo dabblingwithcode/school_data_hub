@@ -86,8 +86,14 @@ void run(List<String> args) async {
   var session = await pod.createSession();
 
   // Check if there are any users in the database. If not, we can populate the test environment.
-  if (await auth.UserInfo.db.count(session) == 0) {
+  final userCount = await auth.UserInfo.db.count(session);
+  print('Current user count in database: $userCount');
+
+  if (userCount == 0) {
+    print('No users found, populating test environment...');
     await populateTestEnvironment(session);
+  } else {
+    print('Users already exist, skipping test environment population');
   }
 
   // TODO: uncomment in production

@@ -26,7 +26,7 @@ class ClassroomListPage extends WatchingWidget {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          // Refresh data if needed in the future
+          await timetableManager.refreshData();
         },
         child: Center(
           child: ConstrainedBox(
@@ -60,20 +60,24 @@ class ClassroomListPage extends WatchingWidget {
     );
   }
 
-  void _navigateToNewClassroom(BuildContext context) {
-    Navigator.push(
+  void _navigateToNewClassroom(BuildContext context) async {
+    await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const NewClassroomPage()),
     );
+    // Refresh data when returning from NewClassroomPage
+    await di<TimetableManager>().refreshData();
   }
 
-  void _navigateToEditClassroom(BuildContext context, Classroom classroom) {
-    Navigator.push(
+  void _navigateToEditClassroom(BuildContext context, Classroom classroom) async {
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => NewClassroomPage(classroom: classroom),
       ),
     );
+    // Refresh data when returning from NewClassroomPage
+    await di<TimetableManager>().refreshData();
   }
 
   void _showDeleteConfirmation(

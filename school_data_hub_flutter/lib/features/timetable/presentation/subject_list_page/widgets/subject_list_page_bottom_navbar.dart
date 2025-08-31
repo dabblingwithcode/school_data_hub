@@ -20,7 +20,6 @@ class SubjectListPageBottomNavBar extends StatelessWidget {
           data: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
           child: Row(
             children: <Widget>[
-              const Spacer(),
               IconButton(
                 tooltip: 'zurück',
                 icon: const Icon(Icons.arrow_back, size: 35),

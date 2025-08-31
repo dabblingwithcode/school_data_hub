@@ -66,7 +66,13 @@ Future<bool?> changeEnvironmentDialog({required BuildContext context}) async {
                           message: 'Möchten Sie wirklich die Instanz löschen?',
                         );
                         if (confirmation != true) return;
-                        await _envManager.deleteNotActivatedEnv(envs[index]);
+                        Navigator.of(context).pop();
+                        if (envs[index].serverName ==
+                            _envManager.activeEnv?.serverName) {
+                          await _envManager.deleteEnv();
+                        } else {
+                          await _envManager.deleteNotActivatedEnv(envs[index]);
+                        }
                       },
                     ),
                     const Gap(10),
@@ -92,7 +98,7 @@ Future<bool?> changeEnvironmentDialog({required BuildContext context}) async {
               onPressed: () async {
                 Navigator.of(context).pop();
                 _log.info(
-                  '[DI] User wants to add a new environment frpm the dialog: signing out first',
+                  '[DI] User wants to add a new environment frpm the dialog: dropping logged in user scope first',
                 );
                 DiManager.dropOnLoggedInUserScope();
                 //  await di<HubSessionManager>().signOutDevice();

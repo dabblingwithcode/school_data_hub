@@ -33,6 +33,7 @@ class TimetableEndpoint extends Endpoint {
         schoolSemester: SchoolSemester.include(),
         scheduledLessons: ScheduledLesson.includeList(),
         timetableSlots: TimetableSlot.includeList(),
+        lessonGroups: LessonGroup.includeList(),
       ),
     );
     return timetables;
@@ -46,6 +47,7 @@ class TimetableEndpoint extends Endpoint {
         schoolSemester: SchoolSemester.include(),
         scheduledLessons: ScheduledLesson.includeList(),
         timetableSlots: TimetableSlot.includeList(),
+        lessonGroups: LessonGroup.includeList(),
       ),
     );
     return timetable;
@@ -60,6 +62,7 @@ class TimetableEndpoint extends Endpoint {
         schoolSemester: SchoolSemester.include(),
         scheduledLessons: ScheduledLesson.includeList(),
         timetableSlots: TimetableSlot.includeList(),
+        lessonGroups: LessonGroup.includeList(),
       ),
     );
     return timetables.isNotEmpty ? timetables.first : null;
@@ -82,6 +85,7 @@ class TimetableEndpoint extends Endpoint {
           ),
         ),
         timetableSlots: TimetableSlot.includeList(),
+        lessonGroups: LessonGroup.includeList(),
       ),
     );
     return timetables.isNotEmpty ? timetables.first : null;
@@ -95,6 +99,7 @@ class TimetableEndpoint extends Endpoint {
         schoolSemester: SchoolSemester.include(),
         scheduledLessons: ScheduledLesson.includeList(),
         timetableSlots: TimetableSlot.includeList(),
+        lessonGroups: LessonGroup.includeList(),
       ),
     );
     return timetables;
@@ -109,6 +114,7 @@ class TimetableEndpoint extends Endpoint {
         schoolSemester: SchoolSemester.include(),
         scheduledLessons: ScheduledLesson.includeList(),
         timetableSlots: TimetableSlot.includeList(),
+        lessonGroups: LessonGroup.includeList(),
       ),
     );
     return timetables;

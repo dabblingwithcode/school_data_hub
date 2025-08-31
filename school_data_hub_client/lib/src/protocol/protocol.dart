@@ -1130,6 +1130,11 @@ class Protocol extends _i1.SerializationManager {
               .toList()
           : null) as T;
     }
+    if (t == _i1.getType<List<_i63.LessonGroup>?>()) {
+      return (data != null
+          ? (data as List).map((e) => deserialize<_i63.LessonGroup>(e)).toList()
+          : null) as T;
+    }
     if (t == _i1.getType<List<({String modifiedBy, DateTime modifiedAt})>?>()) {
       return (data != null
           ? (data as List)
@@ -1186,6 +1191,10 @@ class Protocol extends _i1.SerializationManager {
       return (data as List)
           .map((e) => deserialize<_i80.SupportCategory>(e))
           .toList() as T;
+    }
+    if (t == Map<String, dynamic>) {
+      return (data as Map).map((k, v) =>
+          MapEntry(deserialize<String>(k), deserialize<dynamic>(v))) as T;
     }
     if (t == List<_i81.MissedSchoolday>) {
       return (data as List)

@@ -100,13 +100,19 @@ class DiManager {
   }
 
   static Future<void> dropOnLoggedInUserScope() async {
-    _log.severe(
-      '[DI] Unregistering managers depending on session - dropping [loggedInUserScope]',
-    );
+    if (di.hasScope(DiScope.onLoggedInUserScope.name)) {
+      _log.severe(
+        '[DI] Unregistering managers depending on session - dropping [loggedInUserScope]',
+      );
 
-    di.dropScope(
-      DiScope.onLoggedInUserScope.name,
-    ); // This will dispose the 'logged_in_user_scope'
+      di.dropScope(
+        DiScope.onLoggedInUserScope.name,
+      ); // This will dispose the 'logged_in_user_scope'
+    } else {
+      _log.info(
+        '[DI] [loggedInUserScope] does not exist, skipping drop operation',
+      );
+    }
   }
 
   static Future<void> resetActiveEnvDependentManagers() async {
@@ -135,13 +141,30 @@ class DiManager {
       await di.dropScope(DiScope.onLoggedInUserScope.name);
     }
 
-    await di.dropScope(DiScope.onActiveEnvScope.name);
-    _log.warning('[DI] dropped [activeEnvScope]');
+    if (di.hasScope(DiScope.onActiveEnvScope.name)) {
+      await di.dropScope(DiScope.onActiveEnvScope.name);
+      _log.warning('[DI] dropped [activeEnvScope]');
+    } else {
+      _log.info(
+        '[DI] [activeEnvScope] does not exist, skipping drop operation',
+      );
+    }
+
+    // Also drop matrix scope if it exists
+    await dropMatrixScope();
   }
 
   static Future<void> registerMatrixManagers(
     MatrixCredentials? matrixCredentials,
   ) async {
+    // Drop existing matrix scope if it exists
+    if (di.hasScope(DiScope.onMatrixEnvScope.name)) {
+      _log.info(
+        '[DI] Dropping existing matrix scope before registering new one',
+      );
+      di.dropScope(DiScope.onMatrixEnvScope.name);
+    }
+
     di.pushNewScopeAsync(
       scopeName: DiScope.onMatrixEnvScope.name,
       dispose: () {
@@ -182,5 +205,14 @@ class DiManager {
       NotificationType.success,
       '[DI] Matrix-Räumeverwaltung initialisiert',
     );
+  }
+
+  static Future<void> dropMatrixScope() async {
+    if (di.hasScope(DiScope.onMatrixEnvScope.name)) {
+      _log.info('[DI] Dropping matrix scope');
+      di.dropScope(DiScope.onMatrixEnvScope.name);
+    } else {
+      _log.info('[DI] Matrix scope does not exist, skipping drop operation');
+    }
   }
 }

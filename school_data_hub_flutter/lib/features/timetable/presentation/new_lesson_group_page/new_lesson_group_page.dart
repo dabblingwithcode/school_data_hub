@@ -100,6 +100,18 @@ class _NewLessonGroupPageState extends State<NewLessonGroupPage> {
   void _saveLessonGroup() {
     if (_formKey.currentState!.validate()) {
       final now = DateTime.now();
+      final currentTimetable = _timetableManager.timetable.value;
+
+      if (currentTimetable?.id == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Fehler: Kein Stundenplan ausgewählt'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
       final lessonGroup = LessonGroup(
         id: widget.lessonGroup?.id,
         publicId:
@@ -107,6 +119,7 @@ class _NewLessonGroupPageState extends State<NewLessonGroupPage> {
             'GROUP_${now.millisecondsSinceEpoch}',
         name: _nameController.text.trim(),
         color: _selectedColor,
+        timetableId: currentTimetable!.id!,
         createdBy: widget.lessonGroup?.createdBy ?? 'user',
         createdAt: widget.lessonGroup?.createdAt ?? now,
         modifiedBy: 'user',

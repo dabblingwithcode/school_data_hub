@@ -155,19 +155,11 @@ class _TimetableRow extends StatelessWidget {
     return Row(
       children: [
         // Time period cell
-        Container(
-          width: 120,
-          height: 80,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            color: Colors.grey.shade50,
-          ),
-          child: Center(
-            child: Text(
-              period,
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
+        Center(
+          child: Text(
+            period,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
           ),
         ),
         // Lesson cells for each group
@@ -187,7 +179,7 @@ class _TimetableRow extends StatelessWidget {
 
           return Container(
             width: 140,
-            height: 80,
+            constraints: const BoxConstraints(minHeight: 80),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey.shade300),
             ),
@@ -311,14 +303,14 @@ class _AvailableUsersCell extends WatchingWidget {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.blue.shade200,
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
                               '${user.userInfo?.fullName ?? 'unbekannt'} ($availableUnits)',
                               style: const TextStyle(
                                 fontSize: 8,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           );

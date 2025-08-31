@@ -7,7 +7,7 @@ The original `TimetableManager` class was a large monolithic class (1307 lines) 
 ## Architecture
 
 ### Main Manager
-- **`TimetableManager`** (`timetable_manager_refactored.dart`) - Orchestrates all sub-managers and provides a unified interface
+- **`TimetableManager`** (`timetable_manager.dart`) - Main manager that orchestrates all functionality and provides a unified interface
 
 ### Sub-Managers
 
@@ -134,6 +134,5 @@ lib/features/timetable/domain/
 │   ├── timetable_ui_manager.dart
 │   ├── timetable_lesson_manager.dart
 │   └── timetable_membership_manager.dart
-├── timetable_manager.dart (original)
-└── timetable_manager_refactored.dart (new)
+└── timetable_manager.dart (refactored to use sub-managers)
 ```

@@ -8,6 +8,7 @@ fields:
   schoolSemester: SchoolSemester?, relation(name=schoolsemester_timetables)
   scheduledLessons: List<ScheduledLesson>?, relation(name=scheduled_lesson_timetable)
   timetableSlots: List<TimetableSlot>?, relation(name=timetable_slot_timetable)
+  lessonGroups: List<LessonGroup>?, relation(name=lesson_group_timetable)
   createdBy: String
   createdAt: DateTime
   modified: List<({String modifiedBy, DateTime modifiedAt})>?

@@ -6,6 +6,7 @@ import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.da
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/classroom_list_page/classroom_list_page.dart';
+import 'package:school_data_hub_flutter/features/timetable/presentation/learning_group_list_page/learning_group_list_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_lesson_group_page/new_lesson_group_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_scheduled_lesson_page/new_scheduled_lesson_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_timetable_page/new_timetable_page.dart';
@@ -16,21 +17,21 @@ import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/weekday_selector.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _timetableManager = di<TimetableManager>();
-
 class TimetablePage extends WatchingWidget {
   // TODO: Implement a warning if there are no timetable slots created!
   const TimetablePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final timetableManager = di<TimetableManager>();
+
     // Debug the current state
-    _timetableManager.debugPrintState();
+    timetableManager.debugPrintState();
 
     // Watch the timetable data to make the page reactive
-    final timetable = watch(_timetableManager.timetable);
-    final timetableSlots = watch(_timetableManager.timetableSlots);
-    final scheduledLessons = watch(_timetableManager.scheduledLessons);
+    final timetable = watch(timetableManager.timetable);
+    final timetableSlots = watch(timetableManager.timetableSlots);
+    final scheduledLessons = watch(timetableManager.scheduledLessons);
 
     // Show loading or empty state if no timetable
     if (timetable == null) {
@@ -59,17 +60,14 @@ class TimetablePage extends WatchingWidget {
               ElevatedButton(
                 onPressed: () async {
                   print('Manual refresh triggered');
-                  await _timetableManager.refreshData();
+                  await timetableManager.refreshData();
                 },
                 child: const Text('Daten neu laden'),
               ),
             ],
           ),
         ),
-        bottomNavigationBar: TimetableBottomNavBar(
-          onAddLesson: () {},
-          onManageLessonGroups: () {},
-        ),
+        bottomNavigationBar: TimetableBottomNavBar(onManageLessonGroups: () {}),
       );
     }
     void _navigateToNewLesson() {
@@ -77,7 +75,7 @@ class TimetablePage extends WatchingWidget {
         MaterialPageRoute(
           builder:
               (context) =>
-                  NewScheduledLessonPage(timetableManager: _timetableManager),
+                  NewScheduledLessonPage(timetableManager: timetableManager),
         ),
       );
     }
@@ -87,7 +85,7 @@ class TimetablePage extends WatchingWidget {
         MaterialPageRoute(builder: (context) => const NewLessonGroupPage()),
       );
       // Refresh data when returning from NewLessonGroupPage
-      await _timetableManager.refreshData();
+      await timetableManager.refreshData();
     }
 
     void _onLessonTap(int lessonId) {
@@ -95,7 +93,7 @@ class TimetablePage extends WatchingWidget {
         MaterialPageRoute(
           builder:
               (context) => NewScheduledLessonPage(
-                timetableManager: _timetableManager,
+                timetableManager: timetableManager,
                 editingLessonId: lessonId,
               ),
         ),
@@ -107,7 +105,7 @@ class TimetablePage extends WatchingWidget {
         MaterialPageRoute(
           builder:
               (context) => NewScheduledLessonPage(
-                timetableManager: _timetableManager,
+                timetableManager: timetableManager,
                 preselectedSlotId: slotId,
               ),
         ),
@@ -132,7 +130,7 @@ class TimetablePage extends WatchingWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    WeekdaySelector(timetableManager: _timetableManager),
+                    WeekdaySelector(timetableManager: timetableManager),
                   ],
                 ),
               ),
@@ -142,7 +140,7 @@ class TimetablePage extends WatchingWidget {
           // Timetable Grid for selected weekday - takes full width
           Expanded(
             child: TimetableGrid(
-              timetableManager: _timetableManager,
+              timetableManager: timetableManager,
               onLessonTap: _onLessonTap,
               onEmptySlotTap: _onEmptySlotTap,
             ),
@@ -150,7 +148,6 @@ class TimetablePage extends WatchingWidget {
         ],
       ),
       bottomNavigationBar: TimetableBottomNavBar(
-        onAddLesson: _navigateToNewLesson,
         onManageLessonGroups: _navigateToNewLessonGroup,
       ),
     );
@@ -158,14 +155,9 @@ class TimetablePage extends WatchingWidget {
 }
 
 class TimetableBottomNavBar extends StatelessWidget {
-  final VoidCallback onAddLesson;
   final VoidCallback onManageLessonGroups;
 
-  const TimetableBottomNavBar({
-    super.key,
-    required this.onAddLesson,
-    required this.onManageLessonGroups,
-  });
+  const TimetableBottomNavBar({super.key, required this.onManageLessonGroups});
 
   @override
   Widget build(BuildContext context) {
@@ -198,7 +190,7 @@ class TimetableBottomNavBar extends StatelessWidget {
                     ),
                   );
                   // Refresh data when returning from NewTimetablePage
-                  await _timetableManager.refreshData();
+                  await di<TimetableManager>().refreshData();
                 },
               ),
               IconButton(
@@ -212,13 +204,20 @@ class TimetableBottomNavBar extends StatelessWidget {
                     ),
                   );
                   // Refresh data when returning from NewTimetablePage
-                  await _timetableManager.refreshData();
+                  await di<TimetableManager>().refreshData();
                 },
               ),
               IconButton(
-                tooltip: 'Neue Stunde',
-                icon: const Icon(Icons.add, size: 35),
-                onPressed: onAddLesson,
+                tooltip: 'Lerngruppen',
+                icon: const Icon(Icons.groups, size: 35),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LearningGroupListPage(),
+                    ),
+                  );
+                },
               ),
               IconButton(
                 tooltip: 'Räume verwalten',

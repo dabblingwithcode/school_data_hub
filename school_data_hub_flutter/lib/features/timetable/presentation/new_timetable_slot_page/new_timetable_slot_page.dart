@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager_refactored.dart';
+import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 import 'widgets/action_buttons.dart';
@@ -22,19 +22,21 @@ class NewTimetableSlotPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final startTimeController = createOnce(() => TextEditingController(
-          text: timetableSlot?.startTime ?? '',
-        ));
-    final endTimeController = createOnce(() => TextEditingController(
-          text: timetableSlot?.endTime ?? '',
-        ));
-    final selectedWeekday = createOnce(() => ValueNotifier<Weekday?>(
-          timetableSlot?.day,
-        ));
+    final startTimeController = createOnce(
+      () => TextEditingController(text: timetableSlot?.startTime ?? ''),
+    );
+    final endTimeController = createOnce(
+      () => TextEditingController(text: timetableSlot?.endTime ?? ''),
+    );
+    final selectedWeekday = createOnce(
+      () => ValueNotifier<Weekday?>(timetableSlot?.day),
+    );
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(timetableSlot == null ? 'Neuer Zeitslot' : 'Zeitslot bearbeiten'),
+        title: Text(
+          timetableSlot == null ? 'Neuer Zeitslot' : 'Zeitslot bearbeiten',
+        ),
         backgroundColor: AppColors.interactiveColor,
         foregroundColor: Colors.white,
       ),
@@ -59,7 +61,9 @@ class NewTimetableSlotPage extends WatchingWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        timetableSlot == null ? 'Neuen Zeitslot erstellen' : 'Zeitslot bearbeiten',
+                        timetableSlot == null
+                            ? 'Neuen Zeitslot erstellen'
+                            : 'Zeitslot bearbeiten',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -68,9 +72,7 @@ class NewTimetableSlotPage extends WatchingWidget {
                       const Gap(8),
                       Text(
                         'Definieren Sie die Zeiten und den Wochentag für diesen Zeitslot.',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                        ),
+                        style: TextStyle(color: Colors.grey[600]),
                       ),
                     ],
                   ),
@@ -81,32 +83,32 @@ class NewTimetableSlotPage extends WatchingWidget {
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(
-                                          children: [
-                      WeekdayDropdown(
-                        selectedWeekday: selectedWeekday,
-                      ),
-                      const Gap(16),
-                      StartTimeField(controller: startTimeController),
-                      const Gap(16),
-                      EndTimeField(controller: endTimeController),
-                      const Gap(32),
-                    ],
+                      children: [
+                        WeekdayDropdown(selectedWeekday: selectedWeekday),
+                        const Gap(16),
+                        StartTimeField(controller: startTimeController),
+                        const Gap(16),
+                        EndTimeField(controller: endTimeController),
+                        const Gap(32),
+                      ],
                     ),
                   ),
                 ),
 
                 // Action Buttons
                 ActionButtons(
-                  onSave: () => _saveTimetableSlot(
-                    context,
-                    startTimeController,
-                    endTimeController,
-                    selectedWeekday,
-                  ),
+                  onSave:
+                      () => _saveTimetableSlot(
+                        context,
+                        startTimeController,
+                        endTimeController,
+                        selectedWeekday,
+                      ),
                   onCancel: () => Navigator.of(context).pop(),
-                  onDelete: timetableSlot != null
-                      ? () => _deleteTimetableSlot(context)
-                      : null,
+                  onDelete:
+                      timetableSlot != null
+                          ? () => _deleteTimetableSlot(context)
+                          : null,
                 ),
               ],
             ),
@@ -217,21 +219,26 @@ class NewTimetableSlotPage extends WatchingWidget {
 
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Zeitslot löschen'),
-        content: const Text('Sind Sie sicher, dass Sie diesen Zeitslot löschen möchten?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Abbrechen'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Zeitslot löschen'),
+            content: const Text(
+              'Sind Sie sicher, dass Sie diesen Zeitslot löschen möchten?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Abbrechen'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                style: TextButton.styleFrom(
+                  foregroundColor: AppColors.dangerButtonColor,
+                ),
+                child: const Text('Löschen'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.dangerButtonColor),
-            child: const Text('Löschen'),
-          ),
-        ],
-      ),
     );
 
     if (confirmed == true && context.mounted) {

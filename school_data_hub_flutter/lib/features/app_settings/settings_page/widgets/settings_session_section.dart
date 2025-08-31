@@ -60,16 +60,6 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           ),
 
         SettingsTile.navigation(
-          // onPressed: (context) {
-          //   Navigator.of(context).push(MaterialPageRoute(
-          //     builder: (ctx) => const UserChangePasswordPage(),
-          //   ));
-          // },
-          leading: const Icon(Icons.password_rounded),
-          title: const Text('Passwort ändern'),
-          trailing: null,
-        ),
-        SettingsTile.navigation(
           leading: const Icon(Icons.perm_identity_rounded),
           title: const Text('Personenbezogene Daten vom:'),
           value: Text(
@@ -79,16 +69,6 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           trailing: null,
         ),
 
-        SettingsTile.navigation(
-          // onPressed: (context) {
-          //   Navigator.of(context).push(MaterialPageRoute(
-          //     builder: (ctx) => const UserChangePasswordPage(),
-          //   ));
-          // },
-          leading: const Icon(Icons.password_rounded),
-          title: const Text('Passwort ändern'),
-          trailing: null,
-        ),
         SettingsTile.navigation(
           leading: const Icon(Icons.attach_money_rounded),
           title: const Text('Guthaben'),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager_refactored.dart';
+import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 
 class TimetableSlotList extends StatelessWidget {
   final List<TimetableSlot> timetableSlots;

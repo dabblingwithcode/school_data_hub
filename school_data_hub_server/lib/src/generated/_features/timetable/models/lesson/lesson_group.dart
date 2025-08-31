@@ -12,10 +12,11 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
+import '../../../../_features/timetable/models/timetable.dart' as _i2;
 import '../../../../_features/timetable/models/scheduled_lesson/scheduled_lesson.dart'
-    as _i2;
-import '../../../../_features/timetable/models/scheduled_lesson/lesson_group_membership.dart'
     as _i3;
+import '../../../../_features/timetable/models/scheduled_lesson/lesson_group_membership.dart'
+    as _i4;
 
 abstract class LessonGroup
     implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
@@ -24,10 +25,12 @@ abstract class LessonGroup
     required this.publicId,
     required this.name,
     this.color,
+    required this.timetableId,
+    this.timetable,
     required this.createdBy,
     required this.createdAt,
-    required this.modifiedBy,
-    required this.modifiedAt,
+    this.modifiedBy,
+    this.modifiedAt,
     this.scheduledLessons,
     this.memberships,
   });
@@ -37,12 +40,14 @@ abstract class LessonGroup
     required String publicId,
     required String name,
     String? color,
+    required int timetableId,
+    _i2.Timetable? timetable,
     required String createdBy,
     required DateTime createdAt,
-    required String modifiedBy,
-    required DateTime modifiedAt,
-    List<_i2.ScheduledLesson>? scheduledLessons,
-    List<_i3.ScheduledLessonGroupMembership>? memberships,
+    String? modifiedBy,
+    DateTime? modifiedAt,
+    List<_i3.ScheduledLesson>? scheduledLessons,
+    List<_i4.ScheduledLessonGroupMembership>? memberships,
   }) = _LessonGroupImpl;
 
   factory LessonGroup.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -51,18 +56,24 @@ abstract class LessonGroup
       publicId: jsonSerialization['publicId'] as String,
       name: jsonSerialization['name'] as String,
       color: jsonSerialization['color'] as String?,
+      timetableId: jsonSerialization['timetableId'] as int,
+      timetable: jsonSerialization['timetable'] == null
+          ? null
+          : _i2.Timetable.fromJson(
+              (jsonSerialization['timetable'] as Map<String, dynamic>)),
       createdBy: jsonSerialization['createdBy'] as String,
       createdAt:
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
-      modifiedBy: jsonSerialization['modifiedBy'] as String,
-      modifiedAt:
-          _i1.DateTimeJsonExtension.fromJson(jsonSerialization['modifiedAt']),
+      modifiedBy: jsonSerialization['modifiedBy'] as String?,
+      modifiedAt: jsonSerialization['modifiedAt'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['modifiedAt']),
       scheduledLessons: (jsonSerialization['scheduledLessons'] as List?)
           ?.map(
-              (e) => _i2.ScheduledLesson.fromJson((e as Map<String, dynamic>)))
+              (e) => _i3.ScheduledLesson.fromJson((e as Map<String, dynamic>)))
           .toList(),
       memberships: (jsonSerialization['memberships'] as List?)
-          ?.map((e) => _i3.ScheduledLessonGroupMembership.fromJson(
+          ?.map((e) => _i4.ScheduledLessonGroupMembership.fromJson(
               (e as Map<String, dynamic>)))
           .toList(),
     );
@@ -81,17 +92,21 @@ abstract class LessonGroup
 
   String? color;
 
+  int timetableId;
+
+  _i2.Timetable? timetable;
+
   String createdBy;
 
   DateTime createdAt;
 
-  String modifiedBy;
+  String? modifiedBy;
 
-  DateTime modifiedAt;
+  DateTime? modifiedAt;
 
-  List<_i2.ScheduledLesson>? scheduledLessons;
+  List<_i3.ScheduledLesson>? scheduledLessons;
 
-  List<_i3.ScheduledLessonGroupMembership>? memberships;
+  List<_i4.ScheduledLessonGroupMembership>? memberships;
 
   @override
   _i1.Table<int?> get table => t;
@@ -104,12 +119,14 @@ abstract class LessonGroup
     String? publicId,
     String? name,
     String? color,
+    int? timetableId,
+    _i2.Timetable? timetable,
     String? createdBy,
     DateTime? createdAt,
     String? modifiedBy,
     DateTime? modifiedAt,
-    List<_i2.ScheduledLesson>? scheduledLessons,
-    List<_i3.ScheduledLessonGroupMembership>? memberships,
+    List<_i3.ScheduledLesson>? scheduledLessons,
+    List<_i4.ScheduledLessonGroupMembership>? memberships,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -118,10 +135,12 @@ abstract class LessonGroup
       'publicId': publicId,
       'name': name,
       if (color != null) 'color': color,
+      'timetableId': timetableId,
+      if (timetable != null) 'timetable': timetable?.toJson(),
       'createdBy': createdBy,
       'createdAt': createdAt.toJson(),
-      'modifiedBy': modifiedBy,
-      'modifiedAt': modifiedAt.toJson(),
+      if (modifiedBy != null) 'modifiedBy': modifiedBy,
+      if (modifiedAt != null) 'modifiedAt': modifiedAt?.toJson(),
       if (scheduledLessons != null)
         'scheduledLessons':
             scheduledLessons?.toJson(valueToJson: (v) => v.toJson()),
@@ -137,10 +156,12 @@ abstract class LessonGroup
       'publicId': publicId,
       'name': name,
       if (color != null) 'color': color,
+      'timetableId': timetableId,
+      if (timetable != null) 'timetable': timetable?.toJsonForProtocol(),
       'createdBy': createdBy,
       'createdAt': createdAt.toJson(),
-      'modifiedBy': modifiedBy,
-      'modifiedAt': modifiedAt.toJson(),
+      if (modifiedBy != null) 'modifiedBy': modifiedBy,
+      if (modifiedAt != null) 'modifiedAt': modifiedAt?.toJson(),
       if (scheduledLessons != null)
         'scheduledLessons':
             scheduledLessons?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
@@ -151,10 +172,12 @@ abstract class LessonGroup
   }
 
   static LessonGroupInclude include({
-    _i2.ScheduledLessonIncludeList? scheduledLessons,
-    _i3.ScheduledLessonGroupMembershipIncludeList? memberships,
+    _i2.TimetableInclude? timetable,
+    _i3.ScheduledLessonIncludeList? scheduledLessons,
+    _i4.ScheduledLessonGroupMembershipIncludeList? memberships,
   }) {
     return LessonGroupInclude._(
+      timetable: timetable,
       scheduledLessons: scheduledLessons,
       memberships: memberships,
     );
@@ -194,17 +217,21 @@ class _LessonGroupImpl extends LessonGroup {
     required String publicId,
     required String name,
     String? color,
+    required int timetableId,
+    _i2.Timetable? timetable,
     required String createdBy,
     required DateTime createdAt,
-    required String modifiedBy,
-    required DateTime modifiedAt,
-    List<_i2.ScheduledLesson>? scheduledLessons,
-    List<_i3.ScheduledLessonGroupMembership>? memberships,
+    String? modifiedBy,
+    DateTime? modifiedAt,
+    List<_i3.ScheduledLesson>? scheduledLessons,
+    List<_i4.ScheduledLessonGroupMembership>? memberships,
   }) : super._(
           id: id,
           publicId: publicId,
           name: name,
           color: color,
+          timetableId: timetableId,
+          timetable: timetable,
           createdBy: createdBy,
           createdAt: createdAt,
           modifiedBy: modifiedBy,
@@ -222,10 +249,12 @@ class _LessonGroupImpl extends LessonGroup {
     String? publicId,
     String? name,
     Object? color = _Undefined,
+    int? timetableId,
+    Object? timetable = _Undefined,
     String? createdBy,
     DateTime? createdAt,
-    String? modifiedBy,
-    DateTime? modifiedAt,
+    Object? modifiedBy = _Undefined,
+    Object? modifiedAt = _Undefined,
     Object? scheduledLessons = _Undefined,
     Object? memberships = _Undefined,
   }) {
@@ -234,14 +263,17 @@ class _LessonGroupImpl extends LessonGroup {
       publicId: publicId ?? this.publicId,
       name: name ?? this.name,
       color: color is String? ? color : this.color,
+      timetableId: timetableId ?? this.timetableId,
+      timetable:
+          timetable is _i2.Timetable? ? timetable : this.timetable?.copyWith(),
       createdBy: createdBy ?? this.createdBy,
       createdAt: createdAt ?? this.createdAt,
-      modifiedBy: modifiedBy ?? this.modifiedBy,
-      modifiedAt: modifiedAt ?? this.modifiedAt,
-      scheduledLessons: scheduledLessons is List<_i2.ScheduledLesson>?
+      modifiedBy: modifiedBy is String? ? modifiedBy : this.modifiedBy,
+      modifiedAt: modifiedAt is DateTime? ? modifiedAt : this.modifiedAt,
+      scheduledLessons: scheduledLessons is List<_i3.ScheduledLesson>?
           ? scheduledLessons
           : this.scheduledLessons?.map((e0) => e0.copyWith()).toList(),
-      memberships: memberships is List<_i3.ScheduledLessonGroupMembership>?
+      memberships: memberships is List<_i4.ScheduledLessonGroupMembership>?
           ? memberships
           : this.memberships?.map((e0) => e0.copyWith()).toList(),
     );
@@ -260,6 +292,10 @@ class LessonGroupTable extends _i1.Table<int?> {
     );
     color = _i1.ColumnString(
       'color',
+      this,
+    );
+    timetableId = _i1.ColumnInt(
+      'timetableId',
       this,
     );
     createdBy = _i1.ColumnString(
@@ -286,6 +322,10 @@ class LessonGroupTable extends _i1.Table<int?> {
 
   late final _i1.ColumnString color;
 
+  late final _i1.ColumnInt timetableId;
+
+  _i2.TimetableTable? _timetable;
+
   late final _i1.ColumnString createdBy;
 
   late final _i1.ColumnDateTime createdAt;
@@ -294,73 +334,86 @@ class LessonGroupTable extends _i1.Table<int?> {
 
   late final _i1.ColumnDateTime modifiedAt;
 
-  _i2.ScheduledLessonTable? ___scheduledLessons;
+  _i3.ScheduledLessonTable? ___scheduledLessons;
 
-  _i1.ManyRelation<_i2.ScheduledLessonTable>? _scheduledLessons;
+  _i1.ManyRelation<_i3.ScheduledLessonTable>? _scheduledLessons;
 
-  _i3.ScheduledLessonGroupMembershipTable? ___memberships;
+  _i4.ScheduledLessonGroupMembershipTable? ___memberships;
 
-  _i1.ManyRelation<_i3.ScheduledLessonGroupMembershipTable>? _memberships;
+  _i1.ManyRelation<_i4.ScheduledLessonGroupMembershipTable>? _memberships;
 
-  _i2.ScheduledLessonTable get __scheduledLessons {
+  _i2.TimetableTable get timetable {
+    if (_timetable != null) return _timetable!;
+    _timetable = _i1.createRelationTable(
+      relationFieldName: 'timetable',
+      field: LessonGroup.t.timetableId,
+      foreignField: _i2.Timetable.t.id,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i2.TimetableTable(tableRelation: foreignTableRelation),
+    );
+    return _timetable!;
+  }
+
+  _i3.ScheduledLessonTable get __scheduledLessons {
     if (___scheduledLessons != null) return ___scheduledLessons!;
     ___scheduledLessons = _i1.createRelationTable(
       relationFieldName: '__scheduledLessons',
       field: LessonGroup.t.id,
-      foreignField: _i2.ScheduledLesson.t.lessonGroupId,
+      foreignField: _i3.ScheduledLesson.t.lessonGroupId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.ScheduledLessonTable(tableRelation: foreignTableRelation),
+          _i3.ScheduledLessonTable(tableRelation: foreignTableRelation),
     );
     return ___scheduledLessons!;
   }
 
-  _i3.ScheduledLessonGroupMembershipTable get __memberships {
+  _i4.ScheduledLessonGroupMembershipTable get __memberships {
     if (___memberships != null) return ___memberships!;
     ___memberships = _i1.createRelationTable(
       relationFieldName: '__memberships',
       field: LessonGroup.t.id,
-      foreignField: _i3.ScheduledLessonGroupMembership.t.lessonGroupId,
+      foreignField: _i4.ScheduledLessonGroupMembership.t.lessonGroupId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i3.ScheduledLessonGroupMembershipTable(
+          _i4.ScheduledLessonGroupMembershipTable(
               tableRelation: foreignTableRelation),
     );
     return ___memberships!;
   }
 
-  _i1.ManyRelation<_i2.ScheduledLessonTable> get scheduledLessons {
+  _i1.ManyRelation<_i3.ScheduledLessonTable> get scheduledLessons {
     if (_scheduledLessons != null) return _scheduledLessons!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'scheduledLessons',
       field: LessonGroup.t.id,
-      foreignField: _i2.ScheduledLesson.t.lessonGroupId,
+      foreignField: _i3.ScheduledLesson.t.lessonGroupId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.ScheduledLessonTable(tableRelation: foreignTableRelation),
+          _i3.ScheduledLessonTable(tableRelation: foreignTableRelation),
     );
-    _scheduledLessons = _i1.ManyRelation<_i2.ScheduledLessonTable>(
+    _scheduledLessons = _i1.ManyRelation<_i3.ScheduledLessonTable>(
       tableWithRelations: relationTable,
-      table: _i2.ScheduledLessonTable(
+      table: _i3.ScheduledLessonTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
     return _scheduledLessons!;
   }
 
-  _i1.ManyRelation<_i3.ScheduledLessonGroupMembershipTable> get memberships {
+  _i1.ManyRelation<_i4.ScheduledLessonGroupMembershipTable> get memberships {
     if (_memberships != null) return _memberships!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'memberships',
       field: LessonGroup.t.id,
-      foreignField: _i3.ScheduledLessonGroupMembership.t.lessonGroupId,
+      foreignField: _i4.ScheduledLessonGroupMembership.t.lessonGroupId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i3.ScheduledLessonGroupMembershipTable(
+          _i4.ScheduledLessonGroupMembershipTable(
               tableRelation: foreignTableRelation),
     );
-    _memberships = _i1.ManyRelation<_i3.ScheduledLessonGroupMembershipTable>(
+    _memberships = _i1.ManyRelation<_i4.ScheduledLessonGroupMembershipTable>(
       tableWithRelations: relationTable,
-      table: _i3.ScheduledLessonGroupMembershipTable(
+      table: _i4.ScheduledLessonGroupMembershipTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
     return _memberships!;
@@ -372,6 +425,7 @@ class LessonGroupTable extends _i1.Table<int?> {
         publicId,
         name,
         color,
+        timetableId,
         createdBy,
         createdAt,
         modifiedBy,
@@ -380,6 +434,9 @@ class LessonGroupTable extends _i1.Table<int?> {
 
   @override
   _i1.Table? getRelationTable(String relationField) {
+    if (relationField == 'timetable') {
+      return timetable;
+    }
     if (relationField == 'scheduledLessons') {
       return __scheduledLessons;
     }
@@ -392,19 +449,24 @@ class LessonGroupTable extends _i1.Table<int?> {
 
 class LessonGroupInclude extends _i1.IncludeObject {
   LessonGroupInclude._({
-    _i2.ScheduledLessonIncludeList? scheduledLessons,
-    _i3.ScheduledLessonGroupMembershipIncludeList? memberships,
+    _i2.TimetableInclude? timetable,
+    _i3.ScheduledLessonIncludeList? scheduledLessons,
+    _i4.ScheduledLessonGroupMembershipIncludeList? memberships,
   }) {
+    _timetable = timetable;
     _scheduledLessons = scheduledLessons;
     _memberships = memberships;
   }
 
-  _i2.ScheduledLessonIncludeList? _scheduledLessons;
+  _i2.TimetableInclude? _timetable;
 
-  _i3.ScheduledLessonGroupMembershipIncludeList? _memberships;
+  _i3.ScheduledLessonIncludeList? _scheduledLessons;
+
+  _i4.ScheduledLessonGroupMembershipIncludeList? _memberships;
 
   @override
   Map<String, _i1.Include?> get includes => {
+        'timetable': _timetable,
         'scheduledLessons': _scheduledLessons,
         'memberships': _memberships,
       };
@@ -668,7 +730,7 @@ class LessonGroupAttachRepository {
   Future<void> scheduledLessons(
     _i1.Session session,
     LessonGroup lessonGroup,
-    List<_i2.ScheduledLesson> scheduledLesson, {
+    List<_i3.ScheduledLesson> scheduledLesson, {
     _i1.Transaction? transaction,
   }) async {
     if (scheduledLesson.any((e) => e.id == null)) {
@@ -681,9 +743,9 @@ class LessonGroupAttachRepository {
     var $scheduledLesson = scheduledLesson
         .map((e) => e.copyWith(lessonGroupId: lessonGroup.id))
         .toList();
-    await session.db.update<_i2.ScheduledLesson>(
+    await session.db.update<_i3.ScheduledLesson>(
       $scheduledLesson,
-      columns: [_i2.ScheduledLesson.t.lessonGroupId],
+      columns: [_i3.ScheduledLesson.t.lessonGroupId],
       transaction: transaction,
     );
   }
@@ -693,7 +755,7 @@ class LessonGroupAttachRepository {
   Future<void> memberships(
     _i1.Session session,
     LessonGroup lessonGroup,
-    List<_i3.ScheduledLessonGroupMembership> scheduledLessonGroupMembership, {
+    List<_i4.ScheduledLessonGroupMembership> scheduledLessonGroupMembership, {
     _i1.Transaction? transaction,
   }) async {
     if (scheduledLessonGroupMembership.any((e) => e.id == null)) {
@@ -706,9 +768,9 @@ class LessonGroupAttachRepository {
     var $scheduledLessonGroupMembership = scheduledLessonGroupMembership
         .map((e) => e.copyWith(lessonGroupId: lessonGroup.id))
         .toList();
-    await session.db.update<_i3.ScheduledLessonGroupMembership>(
+    await session.db.update<_i4.ScheduledLessonGroupMembership>(
       $scheduledLessonGroupMembership,
-      columns: [_i3.ScheduledLessonGroupMembership.t.lessonGroupId],
+      columns: [_i4.ScheduledLessonGroupMembership.t.lessonGroupId],
       transaction: transaction,
     );
   }
@@ -717,12 +779,35 @@ class LessonGroupAttachRepository {
 class LessonGroupAttachRowRepository {
   const LessonGroupAttachRowRepository._();
 
+  /// Creates a relation between the given [LessonGroup] and [Timetable]
+  /// by setting the [LessonGroup]'s foreign key `timetableId` to refer to the [Timetable].
+  Future<void> timetable(
+    _i1.Session session,
+    LessonGroup lessonGroup,
+    _i2.Timetable timetable, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (lessonGroup.id == null) {
+      throw ArgumentError.notNull('lessonGroup.id');
+    }
+    if (timetable.id == null) {
+      throw ArgumentError.notNull('timetable.id');
+    }
+
+    var $lessonGroup = lessonGroup.copyWith(timetableId: timetable.id);
+    await session.db.updateRow<LessonGroup>(
+      $lessonGroup,
+      columns: [LessonGroup.t.timetableId],
+      transaction: transaction,
+    );
+  }
+
   /// Creates a relation between this [LessonGroup] and the given [ScheduledLesson]
   /// by setting the [ScheduledLesson]'s foreign key `lessonGroupId` to refer to this [LessonGroup].
   Future<void> scheduledLessons(
     _i1.Session session,
     LessonGroup lessonGroup,
-    _i2.ScheduledLesson scheduledLesson, {
+    _i3.ScheduledLesson scheduledLesson, {
     _i1.Transaction? transaction,
   }) async {
     if (scheduledLesson.id == null) {
@@ -734,9 +819,9 @@ class LessonGroupAttachRowRepository {
 
     var $scheduledLesson =
         scheduledLesson.copyWith(lessonGroupId: lessonGroup.id);
-    await session.db.updateRow<_i2.ScheduledLesson>(
+    await session.db.updateRow<_i3.ScheduledLesson>(
       $scheduledLesson,
-      columns: [_i2.ScheduledLesson.t.lessonGroupId],
+      columns: [_i3.ScheduledLesson.t.lessonGroupId],
       transaction: transaction,
     );
   }
@@ -746,7 +831,7 @@ class LessonGroupAttachRowRepository {
   Future<void> memberships(
     _i1.Session session,
     LessonGroup lessonGroup,
-    _i3.ScheduledLessonGroupMembership scheduledLessonGroupMembership, {
+    _i4.ScheduledLessonGroupMembership scheduledLessonGroupMembership, {
     _i1.Transaction? transaction,
   }) async {
     if (scheduledLessonGroupMembership.id == null) {
@@ -758,9 +843,9 @@ class LessonGroupAttachRowRepository {
 
     var $scheduledLessonGroupMembership =
         scheduledLessonGroupMembership.copyWith(lessonGroupId: lessonGroup.id);
-    await session.db.updateRow<_i3.ScheduledLessonGroupMembership>(
+    await session.db.updateRow<_i4.ScheduledLessonGroupMembership>(
       $scheduledLessonGroupMembership,
-      columns: [_i3.ScheduledLessonGroupMembership.t.lessonGroupId],
+      columns: [_i4.ScheduledLessonGroupMembership.t.lessonGroupId],
       transaction: transaction,
     );
   }
@@ -776,7 +861,7 @@ class LessonGroupDetachRepository {
   /// the related record.
   Future<void> scheduledLessons(
     _i1.Session session,
-    List<_i2.ScheduledLesson> scheduledLesson, {
+    List<_i3.ScheduledLesson> scheduledLesson, {
     _i1.Transaction? transaction,
   }) async {
     if (scheduledLesson.any((e) => e.id == null)) {
@@ -785,9 +870,9 @@ class LessonGroupDetachRepository {
 
     var $scheduledLesson =
         scheduledLesson.map((e) => e.copyWith(lessonGroupId: null)).toList();
-    await session.db.update<_i2.ScheduledLesson>(
+    await session.db.update<_i3.ScheduledLesson>(
       $scheduledLesson,
-      columns: [_i2.ScheduledLesson.t.lessonGroupId],
+      columns: [_i3.ScheduledLesson.t.lessonGroupId],
       transaction: transaction,
     );
   }
@@ -799,7 +884,7 @@ class LessonGroupDetachRepository {
   /// the related record.
   Future<void> memberships(
     _i1.Session session,
-    List<_i3.ScheduledLessonGroupMembership> scheduledLessonGroupMembership, {
+    List<_i4.ScheduledLessonGroupMembership> scheduledLessonGroupMembership, {
     _i1.Transaction? transaction,
   }) async {
     if (scheduledLessonGroupMembership.any((e) => e.id == null)) {
@@ -809,9 +894,9 @@ class LessonGroupDetachRepository {
     var $scheduledLessonGroupMembership = scheduledLessonGroupMembership
         .map((e) => e.copyWith(lessonGroupId: null))
         .toList();
-    await session.db.update<_i3.ScheduledLessonGroupMembership>(
+    await session.db.update<_i4.ScheduledLessonGroupMembership>(
       $scheduledLessonGroupMembership,
-      columns: [_i3.ScheduledLessonGroupMembership.t.lessonGroupId],
+      columns: [_i4.ScheduledLessonGroupMembership.t.lessonGroupId],
       transaction: transaction,
     );
   }
@@ -827,7 +912,7 @@ class LessonGroupDetachRowRepository {
   /// the related record.
   Future<void> scheduledLessons(
     _i1.Session session,
-    _i2.ScheduledLesson scheduledLesson, {
+    _i3.ScheduledLesson scheduledLesson, {
     _i1.Transaction? transaction,
   }) async {
     if (scheduledLesson.id == null) {
@@ -835,9 +920,9 @@ class LessonGroupDetachRowRepository {
     }
 
     var $scheduledLesson = scheduledLesson.copyWith(lessonGroupId: null);
-    await session.db.updateRow<_i2.ScheduledLesson>(
+    await session.db.updateRow<_i3.ScheduledLesson>(
       $scheduledLesson,
-      columns: [_i2.ScheduledLesson.t.lessonGroupId],
+      columns: [_i3.ScheduledLesson.t.lessonGroupId],
       transaction: transaction,
     );
   }
@@ -849,7 +934,7 @@ class LessonGroupDetachRowRepository {
   /// the related record.
   Future<void> memberships(
     _i1.Session session,
-    _i3.ScheduledLessonGroupMembership scheduledLessonGroupMembership, {
+    _i4.ScheduledLessonGroupMembership scheduledLessonGroupMembership, {
     _i1.Transaction? transaction,
   }) async {
     if (scheduledLessonGroupMembership.id == null) {
@@ -858,9 +943,9 @@ class LessonGroupDetachRowRepository {
 
     var $scheduledLessonGroupMembership =
         scheduledLessonGroupMembership.copyWith(lessonGroupId: null);
-    await session.db.updateRow<_i3.ScheduledLessonGroupMembership>(
+    await session.db.updateRow<_i4.ScheduledLessonGroupMembership>(
       $scheduledLessonGroupMembership,
-      columns: [_i3.ScheduledLessonGroupMembership.t.lessonGroupId],
+      columns: [_i4.ScheduledLessonGroupMembership.t.lessonGroupId],
       transaction: transaction,
     );
   }

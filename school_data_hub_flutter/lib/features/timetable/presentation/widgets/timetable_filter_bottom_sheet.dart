@@ -75,39 +75,44 @@ class TimetableFilterBottomSheet extends WatchingWidget {
                 ],
               ),
               const Gap(16),
-              const Text('Klassen auswählen:', style: AppStyles.subtitle),
-              const Gap(8),
-              if (selectedGroupIds.isNotEmpty)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.shade100,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.blue.shade300),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.filter_list,
-                        size: 16,
-                        color: Colors.blue.shade700,
+              Row(
+                children: [
+                  const Text('Klassen auswählen:', style: AppStyles.subtitle),
+                  const Gap(8),
+                  if (selectedGroupIds.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
                       ),
-                      const Gap(6),
-                      Text(
-                        '${selectedGroupIds.length} ausgewählt',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.blue.shade700,
-                          fontWeight: FontWeight.w500,
-                        ),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.blue.shade300),
                       ),
-                    ],
-                  ),
-                ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.filter_list,
+                            size: 16,
+                            color: Colors.blue.shade700,
+                          ),
+                          const Gap(6),
+                          Text(
+                            '${selectedGroupIds.length} ausgewählt',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.blue.shade700,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+
               const Gap(12),
               if (lessonGroups.isEmpty)
                 Container(

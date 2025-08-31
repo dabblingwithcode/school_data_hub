@@ -46,8 +46,10 @@ class HubSessionManager with ChangeNotifier {
   final Storage _storage;
 
   User? _user;
+  bool _isReady = false;
 
   User? get user => _user;
+  bool get isReady => _isReady;
 
   String? get userName => _user?.userInfo?.userName;
 
@@ -121,8 +123,11 @@ class HubSessionManager with ChangeNotifier {
 
     _log.info(' Running in mode: ${_envManager.activeEnv!.runMode.name}');
 
+    _isReady = false;
     await _loadUserInfoFromStorage();
     final sessionRefreshed = await refreshSession();
+    _isReady = true;
+    notifyListeners();
     return sessionRefreshed;
   }
 

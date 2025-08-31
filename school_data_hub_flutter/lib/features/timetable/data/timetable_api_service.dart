@@ -177,6 +177,17 @@ class TimetableApiService {
     );
   }
 
+  /// Fetch lesson groups for a specific timetable
+  Future<List<LessonGroup>?> fetchLessonGroupsByTimetable(
+    int timetableId,
+  ) async {
+    return await ClientHelper.apiCall(
+      call:
+          () => _client.learningGroup.fetchLessonGroupsByTimetable(timetableId),
+      errorMessage: 'Fehler beim Laden der Klassen für den Stundenplan',
+    );
+  }
+
   /// Fetch a specific lesson group by ID
   Future<LessonGroup?> fetchLessonGroupById(int lessonGroupId) async {
     final lessonGroup = await ClientHelper.apiCall(

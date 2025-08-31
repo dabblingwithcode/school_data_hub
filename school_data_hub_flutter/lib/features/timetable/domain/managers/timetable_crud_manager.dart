@@ -12,10 +12,14 @@ class TimetableCrudManager extends ChangeNotifier {
   // Scheduled Lesson CRUD operations
   Future<void> addScheduledLesson(ScheduledLesson lesson) async {
     try {
-      print('Creating scheduled lesson with timetableId: ${lesson.timetableId}');
+      print(
+        'Creating scheduled lesson with timetableId: ${lesson.timetableId}',
+      );
       final createdLesson = await _apiService.createScheduledLesson(lesson);
       if (createdLesson != null) {
-        print('Scheduled lesson created successfully: ${createdLesson.lessonId}');
+        print(
+          'Scheduled lesson created successfully: ${createdLesson.lessonId}',
+        );
         notifyListeners();
       }
     } catch (e) {
@@ -28,7 +32,9 @@ class TimetableCrudManager extends ChangeNotifier {
     try {
       final updatedLesson = await _apiService.updateScheduledLesson(lesson);
       if (updatedLesson != null) {
-        print('Scheduled lesson updated successfully: ${updatedLesson.lessonId}');
+        print(
+          'Scheduled lesson updated successfully: ${updatedLesson.lessonId}',
+        );
         notifyListeners();
       }
     } catch (e) {
@@ -91,26 +97,28 @@ class TimetableCrudManager extends ChangeNotifier {
   }
 
   // Classroom CRUD operations
-  Future<void> addClassroom(Classroom classroom) async {
+  Future<Classroom?> addClassroom(Classroom classroom) async {
     try {
       final createdClassroom = await _apiService.createClassroom(classroom);
       if (createdClassroom != null) {
         print('Classroom created successfully: ${createdClassroom.roomName}');
         notifyListeners();
       }
+      return createdClassroom;
     } catch (e) {
       print('Error creating classroom: $e');
       rethrow;
     }
   }
 
-  Future<void> updateClassroom(Classroom classroom) async {
+  Future<Classroom?> updateClassroom(Classroom classroom) async {
     try {
       final updatedClassroom = await _apiService.updateClassroom(classroom);
       if (updatedClassroom != null) {
         print('Classroom updated successfully: ${updatedClassroom.roomName}');
         notifyListeners();
       }
+      return updatedClassroom;
     } catch (e) {
       print('Error updating classroom: $e');
       rethrow;
@@ -131,27 +139,35 @@ class TimetableCrudManager extends ChangeNotifier {
   }
 
   // Lesson Group CRUD operations
-  Future<void> addLessonGroup(LessonGroup lessonGroup) async {
+  Future<LessonGroup?> addLessonGroup(LessonGroup lessonGroup) async {
     try {
       print('Creating lesson group: ${lessonGroup.name}');
-      final createdLessonGroup = await _apiService.createLessonGroup(lessonGroup);
+      final createdLessonGroup = await _apiService.createLessonGroup(
+        lessonGroup,
+      );
       if (createdLessonGroup != null) {
-        print('Lesson group created successfully: ${createdLessonGroup.name} (ID: ${createdLessonGroup.id})');
+        print(
+          'Lesson group created successfully: ${createdLessonGroup.name} (ID: ${createdLessonGroup.id})',
+        );
         notifyListeners();
       }
+      return createdLessonGroup;
     } catch (e) {
       print('Error creating lesson group: $e');
       rethrow;
     }
   }
 
-  Future<void> updateLessonGroup(LessonGroup lessonGroup) async {
+  Future<LessonGroup?> updateLessonGroup(LessonGroup lessonGroup) async {
     try {
-      final updatedLessonGroup = await _apiService.updateLessonGroup(lessonGroup);
+      final updatedLessonGroup = await _apiService.updateLessonGroup(
+        lessonGroup,
+      );
       if (updatedLessonGroup != null) {
         print('Lesson group updated successfully: ${updatedLessonGroup.name}');
         notifyListeners();
       }
+      return updatedLessonGroup;
     } catch (e) {
       print('Error updating lesson group: $e');
       rethrow;
@@ -177,7 +193,9 @@ class TimetableCrudManager extends ChangeNotifier {
       print('Creating timetable: ${timetable.name}');
       final createdTimetable = await _apiService.createTimetable(timetable);
       if (createdTimetable != null) {
-        print('Timetable created successfully: ${createdTimetable.name} (ID: ${createdTimetable.id})');
+        print(
+          'Timetable created successfully: ${createdTimetable.name} (ID: ${createdTimetable.id})',
+        );
         notifyListeners();
       }
     } catch (e) {
@@ -217,7 +235,9 @@ class TimetableCrudManager extends ChangeNotifier {
     try {
       final createdSlot = await _apiService.createTimetableSlot(slot);
       if (createdSlot != null) {
-        print('Timetable slot created successfully: ${createdSlot.day} ${createdSlot.startTime}-${createdSlot.endTime}');
+        print(
+          'Timetable slot created successfully: ${createdSlot.day} ${createdSlot.startTime}-${createdSlot.endTime}',
+        );
         notifyListeners();
       }
     } catch (e) {
@@ -230,7 +250,9 @@ class TimetableCrudManager extends ChangeNotifier {
     try {
       final updatedSlot = await _apiService.updateTimetableSlot(slot);
       if (updatedSlot != null) {
-        print('Timetable slot updated successfully: ${updatedSlot.day} ${updatedSlot.startTime}-${updatedSlot.endTime}');
+        print(
+          'Timetable slot updated successfully: ${updatedSlot.day} ${updatedSlot.startTime}-${updatedSlot.endTime}',
+        );
         notifyListeners();
       }
     } catch (e) {

@@ -139,22 +139,38 @@ class TimetableDataManager extends ChangeNotifier {
     if (_classrooms.value.isEmpty) {
       final classrooms = await _apiService.fetchClassrooms();
       if (classrooms != null) {
-        _classrooms.value = classrooms;
+        // Sort classrooms alphabetically by room code
+        final sortedClassrooms = [...classrooms];
+        sortedClassrooms.sort((a, b) => a.roomCode.compareTo(b.roomCode));
+        _classrooms.value = sortedClassrooms;
       }
     }
 
-    // Load lesson groups
-    final lessonGroups = await _apiService.fetchLessonGroups();
-    if (lessonGroups != null) {
-      print('Loaded ${lessonGroups.length} lesson groups from API');
-      _lessonGroups.value = lessonGroups;
-      // Update the lesson group ID map
-      _lessonGroupIdMap.clear();
-      for (final group in lessonGroups) {
-        if (group.id != null) {
-          _lessonGroupIdMap[group.id!] = group;
+    // Load lesson groups for the current timetable
+    if (_timetable.value?.id != null) {
+      final lessonGroups = await _apiService.fetchLessonGroupsByTimetable(
+        _timetable.value!.id!,
+      );
+      if (lessonGroups != null) {
+        print(
+          'Loaded ${lessonGroups.length} lesson groups from API for timetable ${_timetable.value!.id}',
+        );
+        // Sort lesson groups alphabetically by name
+        final sortedLessonGroups = [...lessonGroups];
+        sortedLessonGroups.sort((a, b) => a.name.compareTo(b.name));
+        _lessonGroups.value = sortedLessonGroups;
+        // Update the lesson group ID map
+        _lessonGroupIdMap.clear();
+        for (final group in sortedLessonGroups) {
+          if (group.id != null) {
+            _lessonGroupIdMap[group.id!] = group;
+          }
         }
       }
+    } else {
+      print('No timetable loaded, skipping lesson groups fetch');
+      _lessonGroups.value = [];
+      _lessonGroupIdMap.clear();
     }
 
     // Load scheduled lesson group memberships
@@ -168,8 +184,8 @@ class TimetableDataManager extends ChangeNotifier {
   // Extract related data from lessons
   void _extractRelatedDataFromLessons() {
     final subjects = <Subject>[];
-    final classrooms = <Classroom>[];
-    final lessonGroups = <LessonGroup>[];
+    final classroomsFromLessons = <Classroom>[];
+    final lessonGroupsFromLessons = <LessonGroup>[];
 
     for (final lesson in _scheduledLessons.value) {
       if (lesson.subject != null &&
@@ -177,12 +193,14 @@ class TimetableDataManager extends ChangeNotifier {
         subjects.add(lesson.subject!);
       }
       if (lesson.room != null &&
-          !classrooms.any((c) => c.id == lesson.room!.id)) {
-        classrooms.add(lesson.room!);
+          !classroomsFromLessons.any((c) => c.id == lesson.room!.id)) {
+        classroomsFromLessons.add(lesson.room!);
       }
       if (lesson.lessonGroup != null &&
-          !lessonGroups.any((lg) => lg.id == lesson.lessonGroup!.id)) {
-        lessonGroups.add(lesson.lessonGroup!);
+          !lessonGroupsFromLessons.any(
+            (lg) => lg.id == lesson.lessonGroup!.id,
+          )) {
+        lessonGroupsFromLessons.add(lesson.lessonGroup!);
       }
     }
 
@@ -190,11 +208,47 @@ class TimetableDataManager extends ChangeNotifier {
     if (subjects.isNotEmpty) {
       _subjects.value = subjects;
     }
-    if (classrooms.isNotEmpty) {
-      _classrooms.value = classrooms;
+
+    // Merge classrooms from lessons with existing classrooms instead of overwriting
+    if (classroomsFromLessons.isNotEmpty) {
+      final existingClassrooms = _classrooms.value;
+      final mergedClassrooms = <Classroom>[];
+
+      // Add all existing classrooms
+      mergedClassrooms.addAll(existingClassrooms);
+
+      // Add classrooms from lessons that aren't already in the list
+      for (final classroom in classroomsFromLessons) {
+        if (!mergedClassrooms.any((c) => c.id == classroom.id)) {
+          mergedClassrooms.add(classroom);
+        }
+      }
+
+      // Sort classrooms alphabetically by room code
+      mergedClassrooms.sort((a, b) => a.roomCode.compareTo(b.roomCode));
+      _classrooms.value = mergedClassrooms;
     }
-    if (lessonGroups.isNotEmpty) {
-      _lessonGroups.value = lessonGroups;
+
+    // Merge lesson groups from lessons with existing lesson groups instead of overwriting
+    if (lessonGroupsFromLessons.isNotEmpty) {
+      final existingGroups = _lessonGroups.value;
+      final mergedGroups = <LessonGroup>[];
+
+      // Add all existing lesson groups
+      mergedGroups.addAll(existingGroups);
+
+      // Add lesson groups from lessons that aren't already in the list
+      // Only add lesson groups that belong to the current timetable
+      for (final lessonGroup in lessonGroupsFromLessons) {
+        if (!mergedGroups.any((lg) => lg.id == lessonGroup.id) &&
+            lessonGroup.timetableId == _timetable.value?.id) {
+          mergedGroups.add(lessonGroup);
+        }
+      }
+
+      // Sort lesson groups alphabetically by name
+      mergedGroups.sort((a, b) => a.name.compareTo(b.name));
+      _lessonGroups.value = mergedGroups;
     }
 
     // Build lookup maps
@@ -343,6 +397,125 @@ class TimetableDataManager extends ChangeNotifier {
       print('Default timetable slots generation completed');
     } catch (e) {
       print('Error generating default timetable slots: $e');
+    }
+  }
+
+  /// Update scheduled lesson group memberships
+  void updateScheduledLessonGroupMemberships(
+    List<ScheduledLessonGroupMembership> memberships,
+  ) {
+    _scheduledLessonGroupMemberships.value = memberships;
+  }
+
+  /// Add a new classroom to the local data
+  void addClassroom(Classroom classroom) {
+    final currentClassrooms = _classrooms.value;
+    if (!currentClassrooms.any((c) => c.id == classroom.id)) {
+      final updatedClassrooms = [...currentClassrooms, classroom];
+      // Sort classrooms alphabetically by room code
+      updatedClassrooms.sort((a, b) => a.roomCode.compareTo(b.roomCode));
+      _classrooms.value = updatedClassrooms;
+      _buildLookupMaps();
+      notifyListeners();
+      print(
+        'Added classroom to local data: ${classroom.roomName} (ID: ${classroom.id})',
+      );
+    }
+  }
+
+  /// Update an existing classroom in the local data
+  void updateClassroom(Classroom classroom) {
+    final currentClassrooms = _classrooms.value;
+    final index = currentClassrooms.indexWhere((c) => c.id == classroom.id);
+    if (index != -1) {
+      final updatedClassrooms = [...currentClassrooms];
+      updatedClassrooms[index] = classroom;
+      // Sort classrooms alphabetically by room code
+      updatedClassrooms.sort((a, b) => a.roomCode.compareTo(b.roomCode));
+      _classrooms.value = updatedClassrooms;
+      _buildLookupMaps();
+      notifyListeners();
+      print(
+        'Updated classroom in local data: ${classroom.roomName} (ID: ${classroom.id})',
+      );
+    }
+  }
+
+  /// Remove a classroom from the local data
+  void removeClassroom(int classroomId) {
+    final currentClassrooms = _classrooms.value;
+    final updatedClassrooms =
+        currentClassrooms.where((c) => c.id != classroomId).toList();
+    if (updatedClassrooms.length != currentClassrooms.length) {
+      _classrooms.value = updatedClassrooms;
+      _buildLookupMaps();
+      notifyListeners();
+      print('Removed classroom from local data: $classroomId');
+    }
+  }
+
+  /// Add a new lesson group to the local data
+  void addLessonGroup(LessonGroup lessonGroup) {
+    // Only add lesson groups that belong to the current timetable
+    if (lessonGroup.timetableId != _timetable.value?.id) {
+      print(
+        'Skipping lesson group ${lessonGroup.name} - belongs to different timetable (${lessonGroup.timetableId} vs ${_timetable.value?.id})',
+      );
+      return;
+    }
+
+    final currentLessonGroups = _lessonGroups.value;
+    if (!currentLessonGroups.any((lg) => lg.id == lessonGroup.id)) {
+      final updatedLessonGroups = [...currentLessonGroups, lessonGroup];
+      // Sort lesson groups alphabetically by name
+      updatedLessonGroups.sort((a, b) => a.name.compareTo(b.name));
+      _lessonGroups.value = updatedLessonGroups;
+      _buildLookupMaps();
+      notifyListeners();
+      print(
+        'Added lesson group to local data: ${lessonGroup.name} (ID: ${lessonGroup.id})',
+      );
+    }
+  }
+
+  /// Update an existing lesson group in the local data
+  void updateLessonGroup(LessonGroup lessonGroup) {
+    // Only update lesson groups that belong to the current timetable
+    if (lessonGroup.timetableId != _timetable.value?.id) {
+      print(
+        'Skipping lesson group update ${lessonGroup.name} - belongs to different timetable (${lessonGroup.timetableId} vs ${_timetable.value?.id})',
+      );
+      return;
+    }
+
+    final currentLessonGroups = _lessonGroups.value;
+    final index = currentLessonGroups.indexWhere(
+      (lg) => lg.id == lessonGroup.id,
+    );
+    if (index != -1) {
+      final updatedLessonGroups = [...currentLessonGroups];
+      updatedLessonGroups[index] = lessonGroup;
+      // Sort lesson groups alphabetically by name
+      updatedLessonGroups.sort((a, b) => a.name.compareTo(b.name));
+      _lessonGroups.value = updatedLessonGroups;
+      _buildLookupMaps();
+      notifyListeners();
+      print(
+        'Updated lesson group in local data: ${lessonGroup.name} (ID: ${lessonGroup.id})',
+      );
+    }
+  }
+
+  /// Remove a lesson group from the local data
+  void removeLessonGroup(int lessonGroupId) {
+    final currentLessonGroups = _lessonGroups.value;
+    final updatedLessonGroups =
+        currentLessonGroups.where((lg) => lg.id != lessonGroupId).toList();
+    if (updatedLessonGroups.length != currentLessonGroups.length) {
+      _lessonGroups.value = updatedLessonGroups;
+      _buildLookupMaps();
+      notifyListeners();
+      print('Removed lesson group from local data: $lessonGroupId');
     }
   }
 }

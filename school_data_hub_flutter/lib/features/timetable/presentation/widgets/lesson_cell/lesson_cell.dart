@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/lesson_cell/widgets/lesson_cell_teacher_info.dart';
@@ -36,13 +37,11 @@ class LessonCell extends WatchingWidget {
           elevation: 6.0,
           child: Container(
             width: 140,
-            height: 80,
             child: _buildLessonContent(context, _userManager),
           ),
         ),
         childWhenDragging: Container(
           width: double.infinity,
-          height: double.infinity,
           decoration: BoxDecoration(
             border: Border.all(
               color: Colors.grey.shade300,
@@ -72,7 +71,6 @@ class LessonCell extends WatchingWidget {
                 onTap: () => _showTeacherSelection(context, _timetableManager),
                 child: Container(
                   width: double.infinity,
-                  height: double.infinity,
                   padding: const EdgeInsets.all(4.0),
                   decoration:
                       candidateData.isNotEmpty
@@ -103,7 +101,6 @@ class LessonCell extends WatchingWidget {
               onTap: onTap,
               child: Container(
                 width: double.infinity,
-                height: double.infinity,
                 padding: const EdgeInsets.all(4.0),
                 decoration:
                     candidateData.isNotEmpty
@@ -136,82 +133,88 @@ class LessonCell extends WatchingWidget {
                 .length
             : 0;
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Flexible(child: LessonCellTeacherInfo(lesson: lesson!)),
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              color:
-                  _parseColor(subjectColor)?.withValues(alpha: 0.7) ??
-                  Theme.of(
-                    context,
-                  ).colorScheme.primaryContainer.withValues(alpha: 0.7),
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(
+    return Card(
+      margin: const EdgeInsets.all(0),
+      color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+      child: Padding(
+        padding: const EdgeInsets.all(3.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            LessonCellTeacherInfo(lesson: lesson!),
+            const Gap(2),
+            Container(
+              decoration: BoxDecoration(
                 color:
-                    _parseColor(subjectColor) ??
-                    Theme.of(context).colorScheme.primary,
-                width: 1,
+                    _parseColor(subjectColor)?.withValues(alpha: 0.7) ??
+                    Theme.of(
+                      context,
+                    ).colorScheme.primaryContainer.withValues(alpha: 0.7),
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(
+                  color:
+                      _parseColor(subjectColor) ??
+                      Theme.of(context).colorScheme.primary,
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Text(
+                    subjectName,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
+            const Gap(1),
+            Row(
               children: [
                 Text(
-                  subjectName,
-                  style: const TextStyle(
-                    fontSize: 11,
+                  groupName,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.grey.shade800,
                     fontWeight: FontWeight.bold,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
                 ),
+                const Spacer(),
+                Icon(Icons.people, size: 10, color: Colors.grey.shade600),
+                const Gap(2),
+                Text(
+                  '$pupilCount',
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ],
             ),
-          ),
-        ),
-        const SizedBox(height: 1),
-        Row(
-          children: [
+            const Gap(1),
             Text(
-              groupName,
-              style: TextStyle(
-                fontSize: 8,
-                color: Colors.grey.shade700,
-                fontWeight: FontWeight.w600,
-              ),
+              '$roomCode (${lesson!.room?.roomName ?? 'Unbekannter Raum'})',
+              style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
             ),
-            const Spacer(),
-            Icon(Icons.people, size: 8, color: Colors.grey.shade600),
-            const SizedBox(width: 2),
-            Text(
-              '$pupilCount',
-              style: TextStyle(
-                fontSize: 8,
-                color: Colors.grey.shade600,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
           ],
         ),
-        const SizedBox(height: 1),
-        Text(
-          '$roomCode (${lesson!.room?.roomName ?? 'Unbekannter Raum'})',
-          style: TextStyle(fontSize: 8, color: Colors.grey.shade700),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 1),
-      ],
+      ),
     );
   }
 

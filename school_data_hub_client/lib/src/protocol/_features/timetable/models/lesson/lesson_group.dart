@@ -10,10 +10,11 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
+import '../../../../_features/timetable/models/timetable.dart' as _i2;
 import '../../../../_features/timetable/models/scheduled_lesson/scheduled_lesson.dart'
-    as _i2;
-import '../../../../_features/timetable/models/scheduled_lesson/lesson_group_membership.dart'
     as _i3;
+import '../../../../_features/timetable/models/scheduled_lesson/lesson_group_membership.dart'
+    as _i4;
 
 abstract class LessonGroup implements _i1.SerializableModel {
   LessonGroup._({
@@ -21,10 +22,12 @@ abstract class LessonGroup implements _i1.SerializableModel {
     required this.publicId,
     required this.name,
     this.color,
+    required this.timetableId,
+    this.timetable,
     required this.createdBy,
     required this.createdAt,
-    required this.modifiedBy,
-    required this.modifiedAt,
+    this.modifiedBy,
+    this.modifiedAt,
     this.scheduledLessons,
     this.memberships,
   });
@@ -34,12 +37,14 @@ abstract class LessonGroup implements _i1.SerializableModel {
     required String publicId,
     required String name,
     String? color,
+    required int timetableId,
+    _i2.Timetable? timetable,
     required String createdBy,
     required DateTime createdAt,
-    required String modifiedBy,
-    required DateTime modifiedAt,
-    List<_i2.ScheduledLesson>? scheduledLessons,
-    List<_i3.ScheduledLessonGroupMembership>? memberships,
+    String? modifiedBy,
+    DateTime? modifiedAt,
+    List<_i3.ScheduledLesson>? scheduledLessons,
+    List<_i4.ScheduledLessonGroupMembership>? memberships,
   }) = _LessonGroupImpl;
 
   factory LessonGroup.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -48,18 +53,24 @@ abstract class LessonGroup implements _i1.SerializableModel {
       publicId: jsonSerialization['publicId'] as String,
       name: jsonSerialization['name'] as String,
       color: jsonSerialization['color'] as String?,
+      timetableId: jsonSerialization['timetableId'] as int,
+      timetable: jsonSerialization['timetable'] == null
+          ? null
+          : _i2.Timetable.fromJson(
+              (jsonSerialization['timetable'] as Map<String, dynamic>)),
       createdBy: jsonSerialization['createdBy'] as String,
       createdAt:
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
-      modifiedBy: jsonSerialization['modifiedBy'] as String,
-      modifiedAt:
-          _i1.DateTimeJsonExtension.fromJson(jsonSerialization['modifiedAt']),
+      modifiedBy: jsonSerialization['modifiedBy'] as String?,
+      modifiedAt: jsonSerialization['modifiedAt'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['modifiedAt']),
       scheduledLessons: (jsonSerialization['scheduledLessons'] as List?)
           ?.map(
-              (e) => _i2.ScheduledLesson.fromJson((e as Map<String, dynamic>)))
+              (e) => _i3.ScheduledLesson.fromJson((e as Map<String, dynamic>)))
           .toList(),
       memberships: (jsonSerialization['memberships'] as List?)
-          ?.map((e) => _i3.ScheduledLessonGroupMembership.fromJson(
+          ?.map((e) => _i4.ScheduledLessonGroupMembership.fromJson(
               (e as Map<String, dynamic>)))
           .toList(),
     );
@@ -76,17 +87,21 @@ abstract class LessonGroup implements _i1.SerializableModel {
 
   String? color;
 
+  int timetableId;
+
+  _i2.Timetable? timetable;
+
   String createdBy;
 
   DateTime createdAt;
 
-  String modifiedBy;
+  String? modifiedBy;
 
-  DateTime modifiedAt;
+  DateTime? modifiedAt;
 
-  List<_i2.ScheduledLesson>? scheduledLessons;
+  List<_i3.ScheduledLesson>? scheduledLessons;
 
-  List<_i3.ScheduledLessonGroupMembership>? memberships;
+  List<_i4.ScheduledLessonGroupMembership>? memberships;
 
   /// Returns a shallow copy of this [LessonGroup]
   /// with some or all fields replaced by the given arguments.
@@ -96,12 +111,14 @@ abstract class LessonGroup implements _i1.SerializableModel {
     String? publicId,
     String? name,
     String? color,
+    int? timetableId,
+    _i2.Timetable? timetable,
     String? createdBy,
     DateTime? createdAt,
     String? modifiedBy,
     DateTime? modifiedAt,
-    List<_i2.ScheduledLesson>? scheduledLessons,
-    List<_i3.ScheduledLessonGroupMembership>? memberships,
+    List<_i3.ScheduledLesson>? scheduledLessons,
+    List<_i4.ScheduledLessonGroupMembership>? memberships,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -110,10 +127,12 @@ abstract class LessonGroup implements _i1.SerializableModel {
       'publicId': publicId,
       'name': name,
       if (color != null) 'color': color,
+      'timetableId': timetableId,
+      if (timetable != null) 'timetable': timetable?.toJson(),
       'createdBy': createdBy,
       'createdAt': createdAt.toJson(),
-      'modifiedBy': modifiedBy,
-      'modifiedAt': modifiedAt.toJson(),
+      if (modifiedBy != null) 'modifiedBy': modifiedBy,
+      if (modifiedAt != null) 'modifiedAt': modifiedAt?.toJson(),
       if (scheduledLessons != null)
         'scheduledLessons':
             scheduledLessons?.toJson(valueToJson: (v) => v.toJson()),
@@ -136,17 +155,21 @@ class _LessonGroupImpl extends LessonGroup {
     required String publicId,
     required String name,
     String? color,
+    required int timetableId,
+    _i2.Timetable? timetable,
     required String createdBy,
     required DateTime createdAt,
-    required String modifiedBy,
-    required DateTime modifiedAt,
-    List<_i2.ScheduledLesson>? scheduledLessons,
-    List<_i3.ScheduledLessonGroupMembership>? memberships,
+    String? modifiedBy,
+    DateTime? modifiedAt,
+    List<_i3.ScheduledLesson>? scheduledLessons,
+    List<_i4.ScheduledLessonGroupMembership>? memberships,
   }) : super._(
           id: id,
           publicId: publicId,
           name: name,
           color: color,
+          timetableId: timetableId,
+          timetable: timetable,
           createdBy: createdBy,
           createdAt: createdAt,
           modifiedBy: modifiedBy,
@@ -164,10 +187,12 @@ class _LessonGroupImpl extends LessonGroup {
     String? publicId,
     String? name,
     Object? color = _Undefined,
+    int? timetableId,
+    Object? timetable = _Undefined,
     String? createdBy,
     DateTime? createdAt,
-    String? modifiedBy,
-    DateTime? modifiedAt,
+    Object? modifiedBy = _Undefined,
+    Object? modifiedAt = _Undefined,
     Object? scheduledLessons = _Undefined,
     Object? memberships = _Undefined,
   }) {
@@ -176,14 +201,17 @@ class _LessonGroupImpl extends LessonGroup {
       publicId: publicId ?? this.publicId,
       name: name ?? this.name,
       color: color is String? ? color : this.color,
+      timetableId: timetableId ?? this.timetableId,
+      timetable:
+          timetable is _i2.Timetable? ? timetable : this.timetable?.copyWith(),
       createdBy: createdBy ?? this.createdBy,
       createdAt: createdAt ?? this.createdAt,
-      modifiedBy: modifiedBy ?? this.modifiedBy,
-      modifiedAt: modifiedAt ?? this.modifiedAt,
-      scheduledLessons: scheduledLessons is List<_i2.ScheduledLesson>?
+      modifiedBy: modifiedBy is String? ? modifiedBy : this.modifiedBy,
+      modifiedAt: modifiedAt is DateTime? ? modifiedAt : this.modifiedAt,
+      scheduledLessons: scheduledLessons is List<_i3.ScheduledLesson>?
           ? scheduledLessons
           : this.scheduledLessons?.map((e0) => e0.copyWith()).toList(),
-      memberships: memberships is List<_i3.ScheduledLessonGroupMembership>?
+      memberships: memberships is List<_i4.ScheduledLessonGroupMembership>?
           ? memberships
           : this.memberships?.map((e0) => e0.copyWith()).toList(),
     );

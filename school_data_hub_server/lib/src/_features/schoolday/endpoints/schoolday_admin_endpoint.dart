@@ -7,7 +7,7 @@ class SchooldayAdminEndpoint extends Endpoint {
   bool get requireLogin => true;
 
   @override
-  Set<Scope> get requiredScopes => {Scope.admin};
+  Set<Scope> get requiredScopes => {Scope('serverpod.admin')};
 
   Future<SchoolSemester> createSchoolSemester(
       Session session,

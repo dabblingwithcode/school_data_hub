@@ -17,7 +17,7 @@ class AdminEndpoint extends Endpoint {
   bool get requireLogin => true;
 
   @override
-  Set<Scope> get requiredScopes => {Scope.admin};
+  Set<Scope> get requiredScopes => {Scope('serverpod.admin')};
 
   Future<User> createUser(
     Session session, {
@@ -55,7 +55,7 @@ class AdminEndpoint extends Endpoint {
     }
     // Update scopes if provided
     await auth.Users.updateUserScopes(
-        session, userInfo.id!, isAdmin ? {Scope.admin} : {});
+        session, userInfo.id!, isAdmin ? {Scope('serverpod.admin')} : {});
     // Create a new User object and insert it into the database
     final newUser = User(
       userInfoId: userInfo.id!,

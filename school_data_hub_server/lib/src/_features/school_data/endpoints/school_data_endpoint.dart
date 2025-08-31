@@ -6,7 +6,7 @@ class SchoolDataEndpoint extends Endpoint {
   bool get requireLogin => true;
 
   @override
-  Set<Scope> get requiredScopes => {Scope.admin};
+  Set<Scope> get requiredScopes => {Scope('serverpod.admin')};
 
   Future<SchoolData> postSchoolData(
       Session session, SchoolData schoolData) async {

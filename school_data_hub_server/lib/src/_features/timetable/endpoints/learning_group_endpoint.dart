@@ -9,6 +9,16 @@ class LearningGroupEndpoint extends Endpoint {
 
   Future<LessonGroup> createLessonGroup(
       Session session, LessonGroup lessonGroup) async {
+    // Validate that the timetable exists if provided
+    if (lessonGroup.timetableId != null) {
+      final timetable =
+          await Timetable.db.findById(session, lessonGroup.timetableId!);
+      if (timetable == null) {
+        throw Exception(
+            'Timetable with id ${lessonGroup.timetableId} does not exist.');
+      }
+    }
+
     final lessonGroupInDatabase =
         await LessonGroup.db.insertRow(session, lessonGroup);
     return lessonGroupInDatabase;
@@ -20,6 +30,7 @@ class LearningGroupEndpoint extends Endpoint {
     final lessonGroups = await LessonGroup.db.find(
       session,
       include: LessonGroup.include(
+        timetable: Timetable.include(),
         scheduledLessons: ScheduledLesson.includeList(),
         memberships: ScheduledLessonGroupMembership.includeList(),
       ),
@@ -32,6 +43,7 @@ class LearningGroupEndpoint extends Endpoint {
       session,
       id,
       include: LessonGroup.include(
+        timetable: Timetable.include(),
         scheduledLessons: ScheduledLesson.includeList(),
         memberships: ScheduledLessonGroupMembership.includeList(),
       ),
@@ -45,6 +57,7 @@ class LearningGroupEndpoint extends Endpoint {
       session,
       where: (t) => t.publicId.equals(publicId),
       include: LessonGroup.include(
+        timetable: Timetable.include(),
         scheduledLessons: ScheduledLesson.includeList(),
         memberships: ScheduledLessonGroupMembership.includeList(),
       ),
@@ -58,6 +71,7 @@ class LearningGroupEndpoint extends Endpoint {
       session,
       where: (t) => t.name.equals(name),
       include: LessonGroup.include(
+        timetable: Timetable.include(),
         scheduledLessons: ScheduledLesson.includeList(),
         memberships: ScheduledLessonGroupMembership.includeList(),
       ),
@@ -71,6 +85,21 @@ class LearningGroupEndpoint extends Endpoint {
       session,
       where: (t) => t.createdBy.equals(createdBy),
       include: LessonGroup.include(
+        timetable: Timetable.include(),
+        scheduledLessons: ScheduledLesson.includeList(),
+        memberships: ScheduledLessonGroupMembership.includeList(),
+      ),
+    );
+    return lessonGroups;
+  }
+
+  Future<List<LessonGroup>> fetchLessonGroupsByTimetable(
+      Session session, int timetableId) async {
+    final lessonGroups = await LessonGroup.db.find(
+      session,
+      where: (t) => t.timetableId.equals(timetableId),
+      include: LessonGroup.include(
+        timetable: Timetable.include(),
         scheduledLessons: ScheduledLesson.includeList(),
         memberships: ScheduledLessonGroupMembership.includeList(),
       ),

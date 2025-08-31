@@ -11,13 +11,13 @@ Future<User?> createFirstAdmin(
   //- Create test admin
 
   // For email authentication, we need to create a user with email/password
-  final adminEmail = 'admin';
-  final adminPassword = 'admin'; // Set a secure password in production
+  final adminEmail = 'test';
+  final adminPassword = 'test'; // Set a secure password in production
 
   // Create the userinfo
   var adminUser = await auth.Emails.createUser(
     session,
-    'ADM',
+    'TES',
     adminEmail,
     adminPassword,
   );
@@ -27,7 +27,8 @@ Future<User?> createFirstAdmin(
   }
 
   // Grant admin scope to the user
-  await auth.Users.updateUserScopes(session, adminUser!.id!, {Scope.admin});
+  await auth.Users.updateUserScopes(
+      session, adminUser!.id!, {Scope('serverpod.admin')});
 
   adminUser.fullName = 'Administrator';
   await auth.UserInfo.db.updateRow(session, adminUser);

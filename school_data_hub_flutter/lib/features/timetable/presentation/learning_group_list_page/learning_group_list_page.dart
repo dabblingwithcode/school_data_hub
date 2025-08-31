@@ -22,11 +22,11 @@ class LearningGroupListPage extends WatchingWidget {
       backgroundColor: AppColors.canvasColor,
       appBar: const GenericAppBar(
         iconData: Icons.group,
-        title: 'Klassen verwalten',
+        title: 'Lerngruppen verwalten',
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          // Refresh data if needed in the future
+          await timetableManager.refreshData();
         },
         child: Center(
           child: ConstrainedBox(
@@ -63,20 +63,27 @@ class LearningGroupListPage extends WatchingWidget {
     );
   }
 
-  void _navigateToNewLessonGroup(BuildContext context) {
-    Navigator.push(
+  void _navigateToNewLessonGroup(BuildContext context) async {
+    await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const NewLessonGroupPage()),
     );
+    // Refresh data when returning from NewLessonGroupPage
+    await di<TimetableManager>().refreshData();
   }
 
-  void _navigateToEditLessonGroup(BuildContext context, LessonGroup group) {
-    Navigator.push(
+  void _navigateToEditLessonGroup(
+    BuildContext context,
+    LessonGroup group,
+  ) async {
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => NewLessonGroupPage(lessonGroup: group),
       ),
     );
+    // Refresh data when returning from NewLessonGroupPage
+    await di<TimetableManager>().refreshData();
   }
 
   void _showDeleteConfirmation(
