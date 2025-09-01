@@ -151,7 +151,7 @@ class ScheduledLessonProxy {
 
   int? get id => scheduledLesson.id;
   bool get active => scheduledLesson.active;
-  String get publicId => scheduledLesson.publicId;
+
   int get subjectId => scheduledLesson.subjectId;
   Subject? get subject => scheduledLesson.subject;
   int get scheduledAtId => scheduledLesson.scheduledAtId;

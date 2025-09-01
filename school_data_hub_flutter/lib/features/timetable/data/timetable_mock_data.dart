@@ -333,7 +333,7 @@ class TimetableMockData {
         ScheduledLesson(
           id: lessonId++,
           active: true,
-          publicId: 'LESSON_${lessonId}_${mondaySlot815.id}',
+
           subjectId: subject.id!,
           subject: subject,
           scheduledAtId: mondaySlot815.id!,
@@ -422,7 +422,7 @@ class TimetableMockData {
         ScheduledLesson(
           id: lessonId++,
           active: true,
-          publicId: 'LESSON_${lessonId}_${slot.id}',
+
           subjectId: subject.id!,
           subject: subject,
           scheduledAtId: slot.id!,

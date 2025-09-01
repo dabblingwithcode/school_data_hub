@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:pdf/widgets.dart' as pw;
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _notificationService = di<NotificationService>();
@@ -9,13 +10,15 @@ final _notificationService = di<NotificationService>();
 List<String> generateBookIds({required int startAtIdNr, required int count}) {
   List<String> bookIds = [];
   for (int index = startAtIdNr; index <= count + startAtIdNr; index++) {
-    String bookId = 'LI ${index.toString().padLeft(5, '0')}';
+    String bookId = 'C3 ${index.toString().padLeft(5, '0')}';
     bookIds.add(bookId);
   }
   return bookIds;
 }
 
 pw.Widget buildBarcodePage(List<String> bookIds, int startIndex) {
+  final schoolData = di<SchoolDataMainManager>().schoolData.value;
+  final List<String> addressLines = schoolData?.address.split(', ') ?? [];
   return pw.Column(
     children: List.generate(9, (rowIndex) {
       return pw.Row(
@@ -25,18 +28,40 @@ pw.Widget buildBarcodePage(List<String> bookIds, int startIndex) {
           if (index < bookIds.length) {
             return pw.Column(
               children: [
+                pw.SizedBox(height: 7),
                 pw.Text(
                   bookIds[index],
-                  style: const pw.TextStyle(fontSize: 10),
+                  style: pw.TextStyle(
+                    fontSize: 10,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
                 ),
-                pw.SizedBox(height: 3),
+                pw.SizedBox(height: 1),
                 pw.BarcodeWidget(
                   data: bookIds[index],
                   width: 60,
                   height: 60,
                   barcode: pw.Barcode.qrCode(),
                 ),
-                pw.SizedBox(height: 12),
+                pw.SizedBox(height: 1),
+                pw.Text(
+                  di<SchoolDataMainManager>().schoolData.value?.officialName ??
+                      '',
+                  style: pw.TextStyle(
+                    fontSize: 7,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+
+                pw.Text(
+                  addressLines[0],
+                  style: const pw.TextStyle(fontSize: 6),
+                ),
+
+                pw.Text(
+                  addressLines[1],
+                  style: const pw.TextStyle(fontSize: 6),
+                ),
               ],
             );
           } else {
@@ -51,7 +76,7 @@ pw.Widget buildBarcodePage(List<String> bookIds, int startIndex) {
 void generateBookIdsPdf() async {
   _notificationService.setHeavyLoadingValue(true);
   final pdf = pw.Document();
-  List<String> bookIds = generateBookIds(startAtIdNr: 1, count: 5000);
+  List<String> bookIds = generateBookIds(startAtIdNr: 1, count: 200);
 
   int itemsPerPage = 9 * 6;
   int totalPages = (bookIds.length / itemsPerPage).ceil();

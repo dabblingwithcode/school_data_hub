@@ -21,6 +21,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_fil
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter_impl.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/filters/school_list_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
@@ -85,6 +86,14 @@ class DiInitOnUserAuth {
       await bookManager.init();
       log('BookManager initialized');
       return bookManager;
+    }, dependsOn: []);
+
+    di.registerSingletonAsync<SchoolDataMainManager>(() async {
+      log('Registering SchoolDataMainManager');
+      final schoolDataManager = SchoolDataMainManager();
+      await schoolDataManager.init();
+      log('SchoolDataMainManager initialized');
+      return schoolDataManager;
     }, dependsOn: []);
 
     di.registerSingletonAsync<WorkbookManager>(() async {

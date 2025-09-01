@@ -139,7 +139,7 @@ class SchoolCalendarManager {
   }
 
   Future<void> postMultipleSchooldays({required List<DateTime> dates}) async {
-    // we need to transform the dates to utc
+    // we need to transform the dates to utc for the server
     final List<DateTime> utcDates = dates.map((date) => date.toUtc()).toList();
     final List<Schoolday> newSchooldays = await _client.schooldayAdmin
         .createSchooldays(utcDates);

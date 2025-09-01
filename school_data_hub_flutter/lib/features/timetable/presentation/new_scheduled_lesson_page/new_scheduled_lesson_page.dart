@@ -312,7 +312,7 @@ class NewScheduledLessonPage extends WatchingWidget {
 
                         final newLesson = ScheduledLesson(
                           active: true,
-                          publicId: 'LESSON_${now.millisecondsSinceEpoch}',
+
                           subjectId: selectedSubjectValue.id!,
                           subject: selectedSubjectValue,
                           scheduledAtId: selectedSlotValue.id!,

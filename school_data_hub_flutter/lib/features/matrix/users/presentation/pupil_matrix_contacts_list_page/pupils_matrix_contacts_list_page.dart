@@ -13,6 +13,7 @@ import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_hel
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/widgets/credit_list_page_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/widgets/credit_list_searchbar.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
@@ -286,7 +287,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const PupilsMatrixContactsListPage(),
+      bottomNavigationBar: const CreditListPageBottomNavBar(),
     );
   }
 }

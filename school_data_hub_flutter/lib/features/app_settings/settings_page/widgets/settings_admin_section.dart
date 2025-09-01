@@ -14,6 +14,7 @@ import 'package:school_data_hub_flutter/features/learning_support/domain/support
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/set_matrix_environment_page/set_matrix_environment_controller.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/pupil_matrix_contacts_list_page/pupils_matrix_contacts_list_page.dart';
+import 'package:school_data_hub_flutter/features/school/presentation/edit_school_data_page/edit_school_data_page.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_page/new_school_semester_page.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_page/schooldays_calendar_page/schooldays_calendar_page.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
@@ -44,6 +45,15 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
         ),
       ),
       tiles: <SettingsTile>[
+        SettingsTile.navigation(
+          title: const Text('Schuldaten eintragen'),
+          leading: const Icon(Icons.account_circle_rounded),
+          onPressed: (context) {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (ctx) => const EditSchoolDataPage()),
+            );
+          },
+        ),
         SettingsTile.navigation(
           title: const Text('Neuen User erstellen'),
           leading: const Icon(Icons.account_circle_rounded),

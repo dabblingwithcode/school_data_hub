@@ -2,11 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/features/matrix/services/api/api_settings.dart';
 
-enum Token {
-  hub,
-  matrix,
-  corporal,
-}
+enum Token { hub, matrix, corporal }
 
 final _log = Logger('ApiClient');
 
@@ -67,10 +63,7 @@ class ApiClient {
     }
   }
 
-  Options apiOptions({
-    required Token tokenKey,
-    bool? isFile,
-  }) {
+  Options apiOptions({required Token tokenKey, bool? isFile}) {
     Options options;
     switch (tokenKey) {
       case Token.hub:
@@ -83,8 +76,10 @@ class ApiClient {
         options = _corporalOptions;
         break;
     }
-    if (isFile != null) {
-      options.contentType = isFile ? 'multipart/form-data' : 'application/json';
+    if (isFile == true) {
+      options.contentType = 'multipart/form-data';
+    } else if (isFile == false) {
+      options.contentType = 'application/json';
     }
 
     return options;
@@ -111,7 +106,7 @@ class ApiClient {
     return response;
   }
 
-//- PATCH:
+  //- PATCH:
 
   Future<Response> patch(
     String uri, {
@@ -159,9 +154,7 @@ class ApiClient {
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,
     );
-    _log.fine(
-      "Response[POST] ${response.statusCode} => PATH: $uri",
-    );
+    _log.fine("Response[POST] ${response.statusCode} => PATH: $uri");
     if (response.statusCode == 401) {
       // if (response.data['message'] == 'Token nicht (mehr) gültig!') {
       //   locator<SessionManager>().logout();
@@ -191,9 +184,7 @@ class ApiClient {
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,
     );
-    _log.fine(
-      "Response[PUT] ${response.statusCode} => PATH: $uri",
-    );
+    _log.fine("Response[PUT] ${response.statusCode} => PATH: $uri");
     if (response.statusCode == 401) {
       // if (response.data['message'] == 'Token nicht (mehr) gültig!') {
       //   locator<SessionManager>().logout();

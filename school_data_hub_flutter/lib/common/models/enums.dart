@@ -1,10 +1,4 @@
-enum NotificationType {
-  success,
-  error,
-  warning,
-  info,
-  dialog,
-}
+enum NotificationType { success, error, warning, info, dialog }
 
 enum ServerStorageFolder {
   avatars,
@@ -12,6 +6,8 @@ enum ServerStorageFolder {
   events,
   auths,
   temp,
+  schoolLogos,
+  schoolSeals,
 }
 
 enum StorageId { public, private }
