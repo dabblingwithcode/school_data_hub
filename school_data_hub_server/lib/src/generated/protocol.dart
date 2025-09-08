@@ -5787,10 +5787,6 @@ class Protocol extends _i1.SerializationManagerServer {
           .map((e) => deserialize<_i82.SupportCategory>(e))
           .toList() as T;
     }
-    if (t == Map<String, dynamic>) {
-      return (data as Map).map((k, v) =>
-          MapEntry(deserialize<String>(k), deserialize<dynamic>(v))) as T;
-    }
     if (t == List<_i83.MissedSchoolday>) {
       return (data as List)
           .map((e) => deserialize<_i83.MissedSchoolday>(e))

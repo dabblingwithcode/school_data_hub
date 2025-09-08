@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
@@ -10,6 +11,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
+import 'package:school_data_hub_flutter/features/matrix/presentation/widgets/dialogues/logout_devices_dialog.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/controller/select_matrix_rooms_list_controller.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helper.dart';
@@ -269,26 +271,28 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                                   'Möchten Sie das Passwort wirklich zurücksetzen?',
                             );
                             if (confirmation != true) return;
-                            // TODO: implement this
-                            // final logOutDevices =
-                            //     await logoutDevicesDialog(context);
-                            // if (logOutDevices == null) return;
-                            // final file = await _matrixPolicyManager
-                            //     .resetPassword(
-                            //         user: matrixUser,
-                            //         logoutDevices: logOutDevices,
-                            //         isStaff:
-                            //             userRelationship?.isTeacher == true
-                            //                 ? true
-                            //                 : false);
-                            // if (file != null) {
-                            //   Navigator.of(context).push(
-                            //     MaterialPageRoute(
-                            //       builder: (context) =>
-                            //           PdfViewPage(pdfFile: file),
-                            //     ),
-                            //   );
-                            // }
+
+                            final logOutDevices = await logoutDevicesDialog(
+                              context,
+                            );
+                            if (logOutDevices == null) return;
+                            final file = await _matrixPolicyManager.users
+                                .resetPasswordAndPrintCredentialsFile(
+                                  user: matrixUser,
+                                  logoutDevices: logOutDevices,
+                                  isStaff:
+                                      userRelationship?.isTeacher == true
+                                          ? true
+                                          : false,
+                                );
+                            if (file != null) {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => PdfViewerPage(pdfFile: file),
+                                ),
+                              );
+                            }
                           },
                           icon: const Icon(Icons.qr_code_2_rounded),
                         ),

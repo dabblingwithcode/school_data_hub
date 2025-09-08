@@ -3,6 +3,7 @@
 // TODO: these should be enums
 
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
 class PupilHelper {
   static String preschoolRevisionPredicate(PreSchoolMedical? preSchoolMedical) {
@@ -62,7 +63,7 @@ class PupilHelper {
     }
   }
 
-// TODO: Should these be getters in PupilProxy?
+  // TODO: Should these be getters in PupilProxy?
 
   static bool hasLanguageSupport(DateTime? endOfSupport) {
     if (endOfSupport != null) {
@@ -74,6 +75,30 @@ class PupilHelper {
   static bool hadLanguageSupport(DateTime? endOfSupport) {
     if (endOfSupport != null) {
       return endOfSupport.isBefore(DateTime.now().toUtc());
+    }
+    return false;
+  }
+
+  static bool hasTurkishLessions(PupilProxy pupil) {
+    if (pupil.language.toLowerCase() == "türkisch".toLowerCase() &&
+        pupil.familyLanguageLessonsSince != null) {
+      return true;
+    }
+    return false;
+  }
+
+  static bool hasArabicLessions(PupilProxy pupil) {
+    if ((pupil.language.toLowerCase() == "arabisch".toLowerCase() &&
+        pupil.familyLanguageLessonsSince != null)) {
+      return true;
+    }
+    return false;
+  }
+
+  static bool hasAlbanianLessions(PupilProxy pupil) {
+    if (pupil.language.toLowerCase() == "albanisch".toLowerCase() &&
+        pupil.familyLanguageLessonsSince != null) {
+      return true;
     }
     return false;
   }

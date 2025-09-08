@@ -160,7 +160,15 @@ class EnvManager with ChangeNotifier {
       final matrixCredentials = MatrixCredentials.fromJson(
         json.decode(matrixCredentialsJson!) as Map<String, dynamic>,
       );
-      DiManager.registerMatrixManagers(matrixCredentials);
+
+      // Only register matrix managers if they're not already registered
+      if (!di.hasScope(DiScope.onMatrixEnvScope.name)) {
+        await DiManager.registerMatrixManagers(matrixCredentials);
+      } else {
+        _log.info(
+          '[DI] Matrix managers already registered, skipping registration',
+        );
+      }
     }
     return;
   }
@@ -288,6 +296,10 @@ class EnvManager with ChangeNotifier {
   Future<void> activateEnv({required String envName}) async {
     _log.info('Activating environment: $envName');
 
+    // Mark environment as not ready during switch
+    _envIsReady.value = false;
+    notifyListeners();
+
     // 1. Reset or drop managers holding data from the old env
     _log.info(
       '[DI] Dropping logged in user scope to reset user-dependent managers',
@@ -295,14 +307,16 @@ class EnvManager with ChangeNotifier {
     await DiManager.dropOnLoggedInUserScope();
 
     // Reset environment-dependent managers
-    _log.info('[DI] Resetting active environment dependent managers');
-    await DiManager.resetActiveEnvDependentManagers();
+    _log.info('[DI] Switching environment managers');
+    await DiManager.switchEnvironmentAndReinitializeManagers();
+    // Note: switchEnvironmentAndReinitializeManagers already calls registerManagersOnActiveEnvScope()
 
     // 2. Set the selected env as active
     _activeEnv = _environments[envName]!;
     _defaultEnv = envName;
 
     _log.info('Environment set as active: ${_activeEnv!.serverName}');
+    // Don't notify listeners yet - wait until managers are read
 
     // Update storage with new environment configuration
     final updatedEnvsForStorage = EnvsInStorage(
@@ -313,20 +327,45 @@ class EnvManager with ChangeNotifier {
     final String jsonEnvs = jsonEncode(updatedEnvsForStorage);
     await HubSecureStorage().setString(_storageKeyForEnvironments, jsonEnvs);
 
-    // Register managers for the new environment
-    _log.info('[DI] Registering managers for new environment');
-    await DiManager.registerManagersOnActiveEnvScope();
+    // Managers are already registered by switchEnvironmentAndReinitializeManagers
+    // Just mark them as ready
     setDependentManagersRegistered(true);
+    _log.info(
+      '[DI] Environment-dependent managers are ready for: ${_activeEnv!.serverName}',
+    );
 
     // Handle matrix credentials if they exist
     if (await HubSecureStorage().containsKey(storageKeyForMatrixCredentials)) {
+      _log.info(
+        '[DI] Found matrix credentials for environment ${_activeEnv!.serverName}',
+      );
       final matrixCredentialsJson = await HubSecureStorage().getString(
         storageKeyForMatrixCredentials,
       );
       final matrixCredentials = MatrixCredentials.fromJson(
         json.decode(matrixCredentialsJson!) as Map<String, dynamic>,
       );
-      DiManager.registerMatrixManagers(matrixCredentials);
+
+      // Only register matrix managers if they're not already registered
+      final hasMatrixScope = di.hasScope(DiScope.onMatrixEnvScope.name);
+      _log.info(
+        '[DI] Environment ${_activeEnv!.serverName}: hasMatrixScope = $hasMatrixScope',
+      );
+
+      if (!hasMatrixScope) {
+        _log.info(
+          '[DI] Registering matrix managers for environment ${_activeEnv!.serverName}',
+        );
+        await DiManager.registerMatrixManagers(matrixCredentials);
+      } else {
+        _log.info(
+          '[DI] Matrix managers already registered, skipping registration',
+        );
+      }
+    } else {
+      _log.info(
+        '[DI] No matrix credentials found for environment ${_activeEnv!.serverName}',
+      );
     }
 
     // Wait for all DI registrations to be ready
@@ -335,6 +374,8 @@ class EnvManager with ChangeNotifier {
 
     // Set environment as ready
     _envIsReady.value = true;
+
+    // NOW notify listeners - all managers are ready
     notifyListeners();
 
     _log.info('Environment activated and ready: ${_activeEnv!.serverName}');
@@ -461,17 +502,17 @@ class EnvManager with ChangeNotifier {
 
       // reset the managers depending on the active environment
       _log.info(
-        '[DI] Resetting active environment dependent managers after deleting environment $deletedEnvironment',
+        '[DI] Switching environment managers after deleting environment $deletedEnvironment',
       );
-      DiManager.resetActiveEnvDependentManagers();
+      DiManager.switchEnvironmentAndReinitializeManagers();
     } else {
       // if there are no environments left, delete the environments from secure storage
 
       await HubSecureStorage().remove(_storageKeyForEnvironments);
       _log.info(
-        '[DDI]Env $deletedEnvironment deleted. No environments left. Unregistering dependent managers.',
+        '[DDI]Env $deletedEnvironment deleted. No environments left. Cleaning up all environment managers.',
       );
-      DiManager.unregisterManagersDependentOnEnv();
+      DiManager.cleanupAllEnvironmentManagers();
       _activeEnv = null;
 
       _defaultEnv = '';

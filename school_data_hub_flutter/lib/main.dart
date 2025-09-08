@@ -51,7 +51,8 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle().copyWith(
       statusBarColor: AppColors.backgroundColor,
-      statusBarBrightness: Brightness.light,
+      statusBarBrightness: Brightness.dark,
+      statusBarIconBrightness: Brightness.light,
     ),
   );
 
@@ -77,6 +78,11 @@ class MyApp extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final log = Logger('MyApp');
+
+    // Watch for environment changes - this will trigger rebuilds when EnvManager notifies
+    final envManager = watchIt<EnvManager>();
+    final String? currentEnv = envManager.activeEnv?.serverName;
+
     final bool envIsReady = watchValue((EnvManager x) => x.envIsReady);
     final bool userIsAuthenticated = watchValue(
       (EnvManager x) => x.isAuthenticated,

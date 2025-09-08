@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/features/matrix/data/matrix_api_service.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper.dart';
@@ -10,6 +11,7 @@ import 'package:school_data_hub_flutter/features/matrix/services/matrix_credenti
 import 'package:watch_it/watch_it.dart';
 
 class MatrixUserManager extends ChangeNotifier {
+  final _log = Logger('MatrixUserManager');
   final _notificationService = di<NotificationService>();
 
   final MatrixApiService _matrixApiService;
@@ -125,7 +127,24 @@ class MatrixUserManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<File?> resetPassword({
+  Future<String?> resetPassword(MatrixUser user) async {
+    final password = MatrixPolicyHelper.generatePassword();
+    try {
+      final bool success = await _matrixApiService.userApi.resetPassword(
+        userId: user.id!,
+        newPassword: password,
+      );
+      if (!success) {
+        return null;
+      }
+      return password;
+    } catch (e) {
+      _log.severe('Error resetting password for user ${user.displayName}: $e');
+      return null;
+    }
+  }
+
+  Future<File?> resetPasswordAndPrintCredentialsFile({
     required MatrixUser user,
     bool? logoutDevices,
     required bool isStaff,

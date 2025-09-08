@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final customEncrypter = CustomEncrypter();
@@ -20,7 +21,43 @@ class CustomEncrypter {
     ),
   );
 
+  // Lazy initialization for matrix encrypter
+  enc.Encrypter? _matrixCredentialsEncrypter;
+  enc.IV? _matrixIv;
+
+  enc.Encrypter get matrixCredentialsEncrypter {
+    _matrixCredentialsEncrypter ??= enc.Encrypter(
+      enc.AES(
+        enc.Key.fromUtf8(di<MatrixPolicyManager>().encryptionKey),
+        mode: enc.AESMode.cbc,
+      ),
+    );
+    return _matrixCredentialsEncrypter!;
+  }
+
+  enc.IV get matrixIv {
+    _matrixIv ??= enc.IV.fromUtf8(di<MatrixPolicyManager>().encryptionIv);
+    return _matrixIv!;
+  }
+
   final iv = enc.IV.fromUtf8(_envManager.activeEnv!.iv!);
+
+  String encryptMatrixString(String nonEncryptedString) {
+    final encryptedString =
+        matrixCredentialsEncrypter
+            .encrypt(nonEncryptedString, iv: matrixIv)
+            .base64;
+    return encryptedString;
+  }
+
+  String decryptMatrixString(String encryptedString) {
+    final thisEncryptedString = enc.Encrypted.fromBase64(encryptedString);
+    final decryptedString = matrixCredentialsEncrypter.decrypt(
+      thisEncryptedString,
+      iv: matrixIv,
+    );
+    return decryptedString;
+  }
 
   String encryptString(String nonEncryptedString) {
     final encryptedString =

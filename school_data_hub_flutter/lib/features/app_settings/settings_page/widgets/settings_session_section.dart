@@ -145,7 +145,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
               _log.warning(
                 '[DI] Env deleted, calling [unregisterMaagersDependentOnEnv] from the settings section!',
               );
-              DiManager.unregisterManagersDependentOnEnv();
+              DiManager.cleanupAllEnvironmentManagers();
               _notificationService.showSnackBar(
                 NotificationType.success,
                 'Instanz-ID-Schlüssel gelöscht',

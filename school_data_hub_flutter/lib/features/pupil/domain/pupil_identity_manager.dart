@@ -72,6 +72,28 @@ class PupilIdentityManager {
     return this;
   }
 
+  /// Re-initializes the manager for a new environment
+  /// This should be called when switching environments
+  Future<void> reinitializeForNewEnvironment() async {
+    _log.info('Re-initializing PupilIdentityManager for new environment');
+
+    // Clear old environment data
+    _pupilIdentities.clear();
+    _groups.value = {};
+
+    // Load data for the new environment
+    await getPupilIdentitiesForEnv();
+
+    _log.info(
+      'PupilIdentityManager re-initialized for environment: ${_envManager.activeEnv?.serverName}',
+    );
+  }
+
+  /// Checks if the manager is ready for the current environment
+  bool get isReadyForCurrentEnvironment {
+    return _envManager.activeEnv != null && _pupilIdentities.isNotEmpty;
+  }
+
   void dispose() {
     _groups.dispose();
     _pupilIdentities.clear();

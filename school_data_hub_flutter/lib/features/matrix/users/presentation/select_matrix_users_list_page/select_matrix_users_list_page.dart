@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/controller/select_matrix_users_list_controller.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/widgets/select_matrix_user_list_card.dart';
@@ -21,6 +22,13 @@ class SelectMatrixUsersListPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<MatrixUser> filteredUsers = watchValue(
+      (MatrixPolicyFilterManager x) => x.filteredMatrixUsers,
+    );
+    final selectableUsers =
+        filteredUsers
+            .where((user) => controller.users!.contains(user))
+            .toList();
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
       appBar: AppBar(
@@ -68,13 +76,13 @@ class SelectMatrixUsersListPage extends WatchingWidget {
                       background: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: SelectUserListSearchBar(
-                          matrixUsers: filteredPupilsInLIst,
+                          matrixUsers: selectableUsers,
                           controller: controller,
                         ),
                       ),
                     ),
                   ),
-                  filteredPupilsInLIst.isEmpty
+                  selectableUsers.isEmpty
                       ? const SliverToBoxAdapter(
                         child: Center(
                           child: Padding(
@@ -93,9 +101,9 @@ class SelectMatrixUsersListPage extends WatchingWidget {
                         ) {
                           return SelectMatrixUserCard(
                             controller,
-                            filteredPupilsInLIst[index],
+                            selectableUsers[index],
                           );
-                        }, childCount: filteredPupilsInLIst.length),
+                        }, childCount: selectableUsers.length),
                       ),
                 ],
               ),

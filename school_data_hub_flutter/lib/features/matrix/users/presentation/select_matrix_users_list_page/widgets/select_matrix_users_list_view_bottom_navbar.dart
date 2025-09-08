@@ -8,8 +8,10 @@ import 'package:watch_it/watch_it.dart';
 
 class SelectMatrixUsersListPageBottomNavBar extends WatchingWidget {
   final SelectMatrixUsersListController controller;
-  const SelectMatrixUsersListPageBottomNavBar(
-      {required this.controller, super.key});
+  const SelectMatrixUsersListPageBottomNavBar({
+    required this.controller,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +29,7 @@ class SelectMatrixUsersListPageBottomNavBar extends WatchingWidget {
               const Spacer(),
               IconButton(
                 tooltip: 'zurück',
-                icon: const Icon(
-                  Icons.arrow_back,
-                  size: 30,
-                ),
+                icon: const Icon(Icons.arrow_back, size: 30),
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -38,18 +37,20 @@ class SelectMatrixUsersListPageBottomNavBar extends WatchingWidget {
               const Gap(30),
               controller.isSelectMode
                   ? IconButton(
-                      onPressed: () {
-                        controller.cancelSelect();
-                      },
-                      icon: const Icon(Icons.close))
+                    onPressed: () {
+                      controller.cancelSelect();
+                    },
+                    icon: const Icon(Icons.close),
+                  )
                   : const SizedBox.shrink(),
               IconButton(
                 tooltip: 'alle auswählen',
                 icon: Icon(
                   Icons.select_all_rounded,
-                  color: controller.isSelectAllMode
-                      ? Colors.deepOrange
-                      : Colors.white,
+                  color:
+                      controller.isSelectAllMode
+                          ? Colors.deepOrange
+                          : Colors.white,
                   size: 30,
                 ),
                 onPressed: () {
@@ -67,10 +68,20 @@ class SelectMatrixUsersListPageBottomNavBar extends WatchingWidget {
                   Navigator.pop(context, controller.selectedUsers);
                 },
               ),
+              if (controller.isSelectMode &&
+                  controller.selectedUsers.isNotEmpty)
+                IconButton(
+                  tooltip: 'Bulk-Credentials generieren',
+                  icon: const Icon(Icons.print, color: Colors.orange, size: 30),
+                  onPressed: () {
+                    controller.generateBulkCredentials(context);
+                  },
+                ),
               InkWell(
                 onTap: () => showSelectPupilsFilterBottomSheet(context),
-                onLongPress: () =>
-                    di<MatrixPolicyFilterManager>().resetAllMatrixFilters(),
+                onLongPress:
+                    () =>
+                        di<MatrixPolicyFilterManager>().resetAllMatrixFilters(),
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Icon(
@@ -80,7 +91,7 @@ class SelectMatrixUsersListPageBottomNavBar extends WatchingWidget {
                   ),
                 ),
               ),
-              const Gap(10)
+              const Gap(10),
             ],
           ),
         ),

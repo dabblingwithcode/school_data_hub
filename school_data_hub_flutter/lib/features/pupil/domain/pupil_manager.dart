@@ -499,69 +499,79 @@ class PupilManager extends ChangeNotifier {
     }
 
     try {
-      // Update contact field
-      final String? contact = data['contact'] as String?;
-      if (contact != null && contact.isNotEmpty && contact != pupil.contact) {
-        await PupilMutator().updateStringProperty(
+      // // Update contact field
+      // final String? contact = data['contact'] as String?;
+      // if (contact != null && contact.isNotEmpty && contact != pupil.contact) {
+      //   await PupilMutator().updateStringProperty(
+      //     pupilId: pupil.pupilId,
+      //     property: 'contact',
+      //     value: contact,
+      //   );
+      //   hasUpdates = true;
+      //   _log.fine('Updated contact for pupil ${pupil.internalId}: $contact');
+      // }
+
+      // // Update special information
+      // final String? specialInfo = data['special_information'] as String?;
+      // if (specialInfo != null &&
+      //     specialInfo.isNotEmpty &&
+      //     specialInfo != pupil.specialInformation) {
+      //   await PupilMutator().updateStringProperty(
+      //     pupilId: pupil.pupilId,
+      //     property: 'specialInformation',
+      //     value: specialInfo,
+      //   );
+      //   hasUpdates = true;
+      //   _log.fine(
+      //     'Updated special info for pupil ${pupil.internalId}: $specialInfo',
+      //   );
+      // }
+      // Update credit
+      final int? credit = data['credit'] as int?;
+      if (credit != null && credit != pupil.credit) {
+        await PupilMutator().updateCredit(
           pupilId: pupil.pupilId,
-          property: 'contact',
-          value: contact,
+          credit: credit,
         );
         hasUpdates = true;
-        _log.fine('Updated contact for pupil ${pupil.internalId}: $contact');
+        _log.fine('Updated credit for pupil ${pupil.internalId}: $credit');
       }
 
-      // Update special information
-      final String? specialInfo = data['special_information'] as String?;
-      if (specialInfo != null &&
-          specialInfo.isNotEmpty &&
-          specialInfo != pupil.specialInformation) {
-        await PupilMutator().updateStringProperty(
-          pupilId: pupil.pupilId,
-          property: 'specialInformation',
-          value: specialInfo,
-        );
-        hasUpdates = true;
-        _log.fine(
-          'Updated special info for pupil ${pupil.internalId}: $specialInfo',
-        );
-      }
+      // // Update parents_contact in tutorInfo
+      // final String? parentsContact = data['parents_contact'] as String?;
+      // if (parentsContact != null && parentsContact.isNotEmpty) {
+      //   final currentTutorInfo = pupil.tutorInfo;
+      //   if (pupil.tutorInfo == null) {
+      //     final TutorInfo newTutorInfo = TutorInfo(
+      //       parentsContact: parentsContact,
+      //       createdBy: _hubSessionManager.userName!,
+      //     );
+      //     await PupilMutator().updateTutorInfo(
+      //       pupilId: pupil.pupilId,
+      //       tutorInfo: newTutorInfo,
+      //     );
+      //     hasUpdates = true;
+      //     _log.fine(
+      //       'Created new tutor info for pupil ${pupil.pupilId}: $parentsContact',
+      //     );
+      //     hasUpdates = true;
+      //   } else {
+      //     final updatedTutorInfo = currentTutorInfo?.copyWith(
+      //       parentsContact: parentsContact,
+      //     );
 
-      // Update parents_contact in tutorInfo
-      final String? parentsContact = data['parents_contact'] as String?;
-      if (parentsContact != null && parentsContact.isNotEmpty) {
-        final currentTutorInfo = pupil.tutorInfo;
-        if (pupil.tutorInfo == null) {
-          final TutorInfo newTutorInfo = TutorInfo(
-            parentsContact: parentsContact,
-            createdBy: _hubSessionManager.userName!,
-          );
-          await PupilMutator().updateTutorInfo(
-            pupilId: pupil.pupilId,
-            tutorInfo: newTutorInfo,
-          );
-          hasUpdates = true;
-          _log.fine(
-            'Created new tutor info for pupil ${pupil.pupilId}: $parentsContact',
-          );
-          hasUpdates = true;
-        } else {
-          final updatedTutorInfo = currentTutorInfo?.copyWith(
-            parentsContact: parentsContact,
-          );
-
-          if (currentTutorInfo?.parentsContact != parentsContact) {
-            await PupilMutator().updateTutorInfo(
-              pupilId: pupil.pupilId,
-              tutorInfo: updatedTutorInfo,
-            );
-            hasUpdates = true;
-            _log.fine(
-              'Updated parents contact for pupil ${pupil.internalId}: $parentsContact',
-            );
-          }
-        }
-      }
+      //     if (currentTutorInfo?.parentsContact != parentsContact) {
+      //       await PupilMutator().updateTutorInfo(
+      //         pupilId: pupil.pupilId,
+      //         tutorInfo: updatedTutorInfo,
+      //       );
+      //       hasUpdates = true;
+      //       _log.fine(
+      //         'Updated parents contact for pupil ${pupil.internalId}: $parentsContact',
+      //       );
+      //     }
+      //   }
+      // }
 
       if (hasUpdates) {
         return true;

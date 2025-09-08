@@ -239,6 +239,7 @@ class PupilMutator {
     PupilProxy pupil,
     ({String? value}) parentsContact,
   ) async {
+    final siblings = _pupilManager.getSiblings(pupil);
     if (pupil.tutorInfo == null) {
       // if there is no tutor info, we create a new one
       final newTutorInfo = TutorInfo(
@@ -248,6 +249,14 @@ class PupilMutator {
         createdBy: _hubSessionManager.userName!,
       );
       await updateTutorInfo(pupilId: pupil.pupilId, tutorInfo: newTutorInfo);
+      if (siblings.isNotEmpty) {
+        for (PupilProxy sibling in siblings) {
+          await updateTutorInfo(
+            pupilId: sibling.pupilId,
+            tutorInfo: newTutorInfo,
+          );
+        }
+      }
     } else {
       final updatedTutorInfo = pupil.tutorInfo!.copyWith(
         parentsContact: parentsContact.value,
@@ -256,6 +265,14 @@ class PupilMutator {
         pupilId: pupil.pupilId,
         tutorInfo: updatedTutorInfo,
       );
+      if (siblings.isNotEmpty) {
+        for (PupilProxy sibling in siblings) {
+          await updateTutorInfo(
+            pupilId: sibling.pupilId,
+            tutorInfo: updatedTutorInfo,
+          );
+        }
+      }
     }
   }
 

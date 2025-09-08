@@ -343,14 +343,23 @@ class HubSessionManager with ChangeNotifier {
     }
   }
 
+  // TODO URGENT DI REGISTRATION MATRIX COLD INIT
   void changeMatrixPolicyManagerRegistrationStatus(bool isRegistered) {
     if (_matrixPolicyManagerRegistrationStatus != isRegistered) {
+      _log.info(
+        'MatrixPolicyManager registration status changing from $_matrixPolicyManagerRegistrationStatus to $isRegistered',
+        [StackTrace.current],
+      );
       _matrixPolicyManagerRegistrationStatus = isRegistered;
 
       notifyListeners();
 
       _log.info(
         'MatrixPolicyManager registration status changed to $isRegistered',
+      );
+    } else {
+      _log.info(
+        'MatrixPolicyManager registration status already $isRegistered, no change needed',
       );
     }
   }

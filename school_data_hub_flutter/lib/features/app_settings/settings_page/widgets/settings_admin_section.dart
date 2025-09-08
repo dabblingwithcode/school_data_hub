@@ -14,6 +14,7 @@ import 'package:school_data_hub_flutter/features/learning_support/domain/support
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/set_matrix_environment_page/set_matrix_environment_controller.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/pupil_matrix_contacts_list_page/pupils_matrix_contacts_list_page.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/school/presentation/edit_school_data_page/edit_school_data_page.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_page/new_school_semester_page.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_page/schooldays_calendar_page/schooldays_calendar_page.dart';
@@ -219,6 +220,15 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
           },
           leading: const Icon(Icons.compare_arrows_rounded),
           title: const Text('Förderkategorien aus Datei importieren'),
+
+          //onPressed:
+        ),
+        SettingsTile.navigation(
+          onPressed: (context) async {
+            await di<PupilManager>().importPupilDataFromJson();
+          },
+          leading: const Icon(Icons.compare_arrows_rounded),
+          title: const Text('Kinderdaten aus Datei importieren'),
 
           //onPressed:
         ),

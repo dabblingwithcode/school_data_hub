@@ -32,6 +32,8 @@ class MatrixPolicyManager extends ChangeNotifier {
     this._corporalToken,
     this._matrixToken,
     this._matrixAdminId,
+    this._encryptionKey,
+    this._encryptionIv,
   ) : _matrixApiService = MatrixApiService(
         matrixUrl: _matrixUrl,
         corporalToken: _corporalToken,
@@ -51,6 +53,11 @@ class MatrixPolicyManager extends ChangeNotifier {
 
   String _corporalToken;
   String get corporalToken => 'Bearer $_corporalToken';
+
+  String _encryptionKey;
+  String get encryptionKey => _encryptionKey;
+  String _encryptionIv;
+  String get encryptionIv => _encryptionIv;
 
   // List<String> _compulsoryRooms;
   // List<String> get compulsoryRooms => _compulsoryRooms;
@@ -101,6 +108,16 @@ class MatrixPolicyManager extends ChangeNotifier {
     return this;
   }
 
+  void clearMatrixCredentials() {
+    _matrixUrl = '';
+    _corporalToken = '';
+    _matrixToken = '';
+    _matrixAdminId = null;
+    _matrixPolicy = null;
+    _encryptionKey = '';
+    _encryptionIv = '';
+  }
+
   void pendingChangesHandler(bool newValue) {
     if (newValue == _policyPendingChanges.value) return;
     _policyPendingChanges.value = newValue;
@@ -111,11 +128,15 @@ class MatrixPolicyManager extends ChangeNotifier {
     required String policyToken,
     required String matrixToken,
     required String matrixAdmin,
+    required String encryptionKey,
+    required String encryptionIv,
   }) async {
     _matrixUrl = url;
     _corporalToken = policyToken;
     _matrixToken = matrixToken;
     _matrixAdminId = matrixAdmin;
+    _encryptionKey = encryptionKey;
+    _encryptionIv = encryptionIv;
 
     _secureStorage.setString(
       _secureStorageKey,
@@ -125,6 +146,8 @@ class MatrixPolicyManager extends ChangeNotifier {
           matrixToken: matrixToken,
           policyToken: policyToken,
           matrixAdmin: matrixAdmin,
+          encryptionKey: encryptionKey,
+          encryptionIv: encryptionIv,
         ),
       ),
     );

@@ -207,34 +207,6 @@ class EndpointAdmin extends _i1.EndpointRef {
       );
 }
 
-/// Debug endpoint to check user scopes (no admin required)
-/// {@category Endpoint}
-class EndpointDebug extends _i1.EndpointRef {
-  EndpointDebug(_i1.EndpointCaller caller) : super(caller);
-
-  @override
-  String get name => 'debug';
-
-  _i2.Future<Map<String, dynamic>> debugUserScopes() =>
-      caller.callServerEndpoint<Map<String, dynamic>>(
-        'debug',
-        'debugUserScopes',
-        {},
-      );
-
-  _i2.Future<bool> fixUserScope() => caller.callServerEndpoint<bool>(
-        'debug',
-        'fixUserScope',
-        {},
-      );
-
-  _i2.Future<bool> forceLogoutAllSessions() => caller.callServerEndpoint<bool>(
-        'debug',
-        'forceLogoutAllSessions',
-        {},
-      );
-}
-
 /// {@category Endpoint}
 class EndpointMissedSchoolday extends _i1.EndpointRef {
   EndpointMissedSchoolday(_i1.EndpointCaller caller) : super(caller);
@@ -2299,7 +2271,6 @@ class Client extends _i1.ServerpodClientShared {
               disconnectStreamsOnLostInternetConnection,
         ) {
     admin = EndpointAdmin(this);
-    debug = EndpointDebug(this);
     missedSchoolday = EndpointMissedSchoolday(this);
     auth = EndpointAuth(this);
     authorization = EndpointAuthorization(this);
@@ -2338,8 +2309,6 @@ class Client extends _i1.ServerpodClientShared {
   }
 
   late final EndpointAdmin admin;
-
-  late final EndpointDebug debug;
 
   late final EndpointMissedSchoolday missedSchoolday;
 
@@ -2413,7 +2382,6 @@ class Client extends _i1.ServerpodClientShared {
   @override
   Map<String, _i1.EndpointRef> get endpointRefLookup => {
         'admin': admin,
-        'debug': debug,
         'missedSchoolday': missedSchoolday,
         'auth': auth,
         'authorization': authorization,

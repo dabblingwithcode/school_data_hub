@@ -23,8 +23,6 @@ class MatrixUsersInRoomList extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final List<MatrixUser> matrixUsersInRoom =
-    //     MatrixRoomHelper.usersInRoom(roomId);
     return Column(
       children: [
         Padding(
@@ -43,7 +41,10 @@ class MatrixUsersInRoomList extends WatchingWidget {
                 final List<String> selectedUserIds =
                     await Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (ctx) => SelectMatrixUsersList(availableUsers),
+                        builder:
+                            (ctx) => SelectMatrixUsersList(
+                              MatrixUserHelper.usersFromUserIds(availableUsers),
+                            ),
                       ),
                     ) ??
                     [];

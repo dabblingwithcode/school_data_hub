@@ -130,12 +130,17 @@ class SchooldayEventApiService {
     required bool isProcessed,
   }) async {
     final documentId = const Uuid().v4();
-    final path = p.join(ServerStorageFolder.events.name, '$documentId.jpg');
+    final path = p.posix.join(
+      ServerStorageFolder.events.name,
+      '$documentId.jpg',
+    );
     final uploadDescription = await _client.files.getUploadDescription(
       'private',
       path,
     );
     if (uploadDescription != null) {
+      _log.info('Upload description received for $path');
+      _log.fine('Upload description: $uploadDescription');
       // Create an uploader
       final uploader = FileUploader(uploadDescription);
 
@@ -143,6 +148,7 @@ class SchooldayEventApiService {
       final fileStream = file.openRead();
 
       final fileLength = await file.length();
+      _log.info('File length: $fileLength');
       _notificationService.apiRunning(true);
       try {
         await uploader.upload(fileStream, fileLength);
@@ -174,7 +180,7 @@ class SchooldayEventApiService {
           _notificationService.apiRunning(false);
 
           _log.severe(
-            'Error while updating pupil avatar',
+            'Error while updating schoolday event file',
             e,
             StackTrace.current,
           );
@@ -194,7 +200,7 @@ class SchooldayEventApiService {
 
       _notificationService.showSnackBar(
         NotificationType.error,
-        'Das Profilbild konnte nicht hochgeladen werden: ${uploadDescription.toString()}',
+        'Das Ereignisdokument konnte nicht hochgeladen werden: ${uploadDescription.toString()}',
       );
 
       throw Exception('Failed to upload file, $uploadDescription');

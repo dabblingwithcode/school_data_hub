@@ -2,13 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/controller/select_matrix_rooms_list_controller.dart';
-import 'package:school_data_hub_flutter/features/matrix/services/matrix_credentials_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
@@ -52,9 +52,9 @@ class NewMatrixUserPageState extends State<NewMatrixUserPage> {
     }
     Set<String> rooms = {};
     if (widget.displayName != null) {
-      rooms = MatrixRoomHelper.roomIdsForPupilOrParent(
-        widget.displayName!,
-        widget.isParent,
+      rooms = MatrixRoomHelper.setOfSchoolAssignedRoomIdsForPupilOrParent(
+        matrixUserDisplayName: widget.displayName!,
+        isParent: widget.isParent,
       );
     }
 
@@ -66,7 +66,7 @@ class NewMatrixUserPageState extends State<NewMatrixUserPage> {
   Set<String> roomIds = {};
 
   Future<File?> postNewMatrixUser() async {
-    //- TODO URGENT: add validation for the damian part
+    //- TODO URGENT: this is a hack for our school, add validation for the domain part
     String matrixId =
         '@${matrixIdController.text}:${_matrixPolicyManager.matrixUrl.split('://post.').last}';
 
@@ -83,13 +83,22 @@ class NewMatrixUserPageState extends State<NewMatrixUserPage> {
       displayName: displayName,
       isStaff: isStaff,
     );
-    // if it is a pupil realated matrix account, we update the corresponding pupil contact field with matrix id
+
+    // if it is a pupil realated matrix account
     if (file != null && widget.pupil != null) {
-      await PupilMutator().updateStringProperty(
-        pupilId: widget.pupil!.pupilId,
-        property: 'contact',
-        value: matrixId,
-      );
+      if (!isParent && !isStaff) {
+        // it's a pupil related matrix account
+        await PupilMutator().updateStringProperty(
+          pupilId: widget.pupil!.pupilId,
+          property: 'contact',
+          value: matrixId,
+        );
+      } else {
+        // it's a parent related matrix account
+        await PupilMutator().updateParentsContact(widget.pupil!, (
+          value: matrixId,
+        ));
+      }
     }
 
     _matrixPolicyManager.users.addMatrixUserToRooms(matrixId, roomIdsList);
@@ -325,7 +334,7 @@ class NewMatrixUserPageState extends State<NewMatrixUserPage> {
                     if (file != null && context.mounted) {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => PdfViewPage(pdfFile: file),
+                          builder: (context) => PdfViewerPage(pdfFile: file),
                         ),
                       );
                     }

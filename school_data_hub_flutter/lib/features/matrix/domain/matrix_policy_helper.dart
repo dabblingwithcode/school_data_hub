@@ -58,6 +58,8 @@ class MatrixPolicyHelper {
             matrixToken: passedCredentials.matrixToken,
             policyToken: passedCredentials.policyToken,
             matrixAdmin: passedCredentials.matrixAdmin,
+            encryptionKey: passedCredentials.encryptionKey,
+            encryptionIv: passedCredentials.encryptionIv,
           ),
         ),
       );

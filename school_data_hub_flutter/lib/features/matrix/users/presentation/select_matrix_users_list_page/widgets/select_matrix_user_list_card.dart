@@ -37,6 +37,10 @@ class SelectMatrixUserCard extends WatchingWidget {
         color:
             controller.selectedUsers.contains(matrixUser.id!)
                 ? AppColors.selectedCardColor
+                : userRelationship != null && userRelationship.isParent
+                ? const Color.fromARGB(255, 202, 252, 187)
+                : !matrixUser.id!.contains('_')
+                ? const Color.fromARGB(255, 219, 170, 211)
                 : Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         elevation: 1.0,
