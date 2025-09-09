@@ -136,11 +136,12 @@ CREATE TABLE "competence_report_item" (
 );
 
 --
--- Class CompulsoryRooms as table compulsory_room
+-- Class CompulsoryRoom as table compulsory_room
 --
 CREATE TABLE "compulsory_room" (
     "id" bigserial PRIMARY KEY,
-    "roomIds" json NOT NULL
+    "roomId" text NOT NULL,
+    "roomType" text NOT NULL
 );
 
 --
@@ -188,6 +189,14 @@ CREATE TABLE "kindergarden" (
     "address" text NOT NULL,
     "email" text NOT NULL,
     "contactPerson" text NOT NULL
+);
+
+--
+-- Class LastPupilIdentiesUpdate as table last_pupil_identities_update
+--
+CREATE TABLE "last_pupil_identities_update" (
+    "id" bigserial PRIMARY KEY,
+    "date" timestamp without time zone
 );
 
 --
@@ -254,13 +263,16 @@ CREATE TABLE "lesson_group_pupil" (
 CREATE UNIQUE INDEX "lesson_group_membership_index_idx" ON "lesson_group_pupil" USING btree ("lessonGroupId", "pupilDataId");
 
 --
--- Class LessonSubject as table lesson_subject
+-- Class LessonTeacher as table lesson_teacher
 --
-CREATE TABLE "lesson_subject" (
+CREATE TABLE "lesson_teacher" (
     "id" bigserial PRIMARY KEY,
-    "name" text NOT NULL,
-    "description" text
+    "userId" bigint NOT NULL,
+    "scheduledLessonId" bigint NOT NULL
 );
+
+-- Indexes
+CREATE UNIQUE INDEX "lesson_teacher_unique_idx" ON "lesson_teacher" USING btree ("userId", "scheduledLessonId");
 
 --
 -- Class LibraryBook as table library_book
@@ -364,7 +376,7 @@ CREATE TABLE "pupil_book_lending" (
 --
 CREATE TABLE "pupil_data" (
     "id" bigserial PRIMARY KEY,
-    "active" boolean NOT NULL,
+    "status" text NOT NULL,
     "internalId" bigint NOT NULL,
     "preSchoolMedicalId" bigint,
     "kindergardenId" bigint,
@@ -387,7 +399,7 @@ CREATE TABLE "pupil_data" (
 );
 
 -- Indexes
-CREATE INDEX "pupil_data_active_idx" ON "pupil_data" USING btree ("active", "internalId");
+CREATE INDEX "pupil_data_status_idx" ON "pupil_data" USING btree ("status", "internalId");
 CREATE UNIQUE INDEX "pupil_data_internal_id_idx" ON "pupil_data" USING btree ("internalId");
 
 --
@@ -435,6 +447,9 @@ CREATE TABLE "scheduled_lesson" (
     "publicId" text NOT NULL,
     "subjectId" bigint NOT NULL,
     "scheduledAtId" bigint NOT NULL,
+    "timetableSlotOrder" bigint NOT NULL,
+    "timetableId" bigint NOT NULL,
+    "mainTeacherId" bigint NOT NULL,
     "lessonId" text NOT NULL,
     "roomId" bigint NOT NULL,
     "lessonGroupId" bigint NOT NULL,
@@ -444,6 +459,34 @@ CREATE TABLE "scheduled_lesson" (
     "modifiedAt" timestamp without time zone NOT NULL,
     "recordtest" json,
     "_roomScheduledlessonsRoomId" bigint
+);
+
+--
+-- Class ScheduledLessonTeacher as table scheduled_lesson_teacher
+--
+CREATE TABLE "scheduled_lesson_teacher" (
+    "id" bigserial PRIMARY KEY,
+    "userId" bigint NOT NULL,
+    "scheduledLessonId" bigint NOT NULL
+);
+
+-- Indexes
+CREATE UNIQUE INDEX "scheduled_lesson_teacher_unique_idx" ON "scheduled_lesson_teacher" USING btree ("userId", "scheduledLessonId");
+
+--
+-- Class SchoolData as table school_data
+--
+CREATE TABLE "school_data" (
+    "id" bigserial PRIMARY KEY,
+    "name" text NOT NULL,
+    "officialName" text NOT NULL,
+    "address" text NOT NULL,
+    "schoolNumber" text NOT NULL,
+    "telephoneNumber" text NOT NULL,
+    "email" text NOT NULL,
+    "website" text NOT NULL,
+    "logoId" bigint,
+    "officialSealId" bigint
 );
 
 --
@@ -465,12 +508,14 @@ CREATE TABLE "school_list" (
 --
 CREATE TABLE "school_semester" (
     "id" bigserial PRIMARY KEY,
+    "schoolYear" text NOT NULL,
+    "isFirst" boolean NOT NULL,
     "startDate" timestamp without time zone NOT NULL,
     "endDate" timestamp without time zone NOT NULL,
-    "classConferenceDate" timestamp without time zone NOT NULL,
-    "supportConferenceDate" timestamp without time zone NOT NULL,
-    "isFirst" boolean NOT NULL,
-    "reportConferenceDate" timestamp without time zone NOT NULL
+    "classConferenceDate" timestamp without time zone,
+    "supportConferenceDate" timestamp without time zone,
+    "reportConferenceDate" timestamp without time zone,
+    "reportSignedDate" timestamp without time zone
 );
 
 --
@@ -587,13 +632,32 @@ CREATE TABLE "support_level" (
 );
 
 --
+-- Class Timetable as table timetable
+--
+CREATE TABLE "timetable" (
+    "id" bigserial PRIMARY KEY,
+    "active" boolean NOT NULL,
+    "startsAt" timestamp without time zone NOT NULL,
+    "endsAt" timestamp without time zone,
+    "name" text NOT NULL,
+    "schoolSemesterId" bigint NOT NULL,
+    "createdBy" text NOT NULL,
+    "createdAt" timestamp without time zone NOT NULL,
+    "modified" json
+);
+
+-- Indexes
+CREATE INDEX "timetable_school_semester_idx" ON "timetable" USING btree ("schoolSemesterId");
+
+--
 -- Class TimetableSlot as table timetable_slot
 --
 CREATE TABLE "timetable_slot" (
     "id" bigserial PRIMARY KEY,
-    "day" text,
-    "startTime" text,
-    "endTime" text
+    "day" text NOT NULL,
+    "startTime" text NOT NULL,
+    "endTime" text NOT NULL,
+    "timetableId" bigint NOT NULL
 );
 
 --
@@ -604,6 +668,7 @@ CREATE TABLE "user" (
     "userInfoId" bigint NOT NULL,
     "role" text NOT NULL,
     "timeUnits" bigint NOT NULL,
+    "reliefTimeUnits" bigint NOT NULL,
     "pupilsAuth" json,
     "credit" bigint NOT NULL,
     "userFlags" json NOT NULL
@@ -1129,7 +1194,7 @@ ALTER TABLE ONLY "learning_support_plan"
 ALTER TABLE ONLY "lesson"
     ADD CONSTRAINT "lesson_fk_0"
     FOREIGN KEY("subjectId")
-    REFERENCES "lesson_subject"("id")
+    REFERENCES "subject"("id")
     ON DELETE NO ACTION
     ON UPDATE NO ACTION;
 
@@ -1162,6 +1227,22 @@ ALTER TABLE ONLY "lesson_group_pupil"
     ADD CONSTRAINT "lesson_group_pupil_fk_1"
     FOREIGN KEY("pupilDataId")
     REFERENCES "pupil_data"("id")
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+
+--
+-- Foreign relations for "lesson_teacher" table
+--
+ALTER TABLE ONLY "lesson_teacher"
+    ADD CONSTRAINT "lesson_teacher_fk_0"
+    FOREIGN KEY("userId")
+    REFERENCES "user"("id")
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+ALTER TABLE ONLY "lesson_teacher"
+    ADD CONSTRAINT "lesson_teacher_fk_1"
+    FOREIGN KEY("scheduledLessonId")
+    REFERENCES "lesson"("id")
     ON DELETE NO ACTION
     ON UPDATE NO ACTION;
 
@@ -1330,20 +1411,58 @@ ALTER TABLE ONLY "scheduled_lesson"
     ON UPDATE NO ACTION;
 ALTER TABLE ONLY "scheduled_lesson"
     ADD CONSTRAINT "scheduled_lesson_fk_2"
+    FOREIGN KEY("timetableId")
+    REFERENCES "timetable"("id")
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+ALTER TABLE ONLY "scheduled_lesson"
+    ADD CONSTRAINT "scheduled_lesson_fk_3"
     FOREIGN KEY("roomId")
     REFERENCES "room"("id")
     ON DELETE NO ACTION
     ON UPDATE NO ACTION;
 ALTER TABLE ONLY "scheduled_lesson"
-    ADD CONSTRAINT "scheduled_lesson_fk_3"
+    ADD CONSTRAINT "scheduled_lesson_fk_4"
     FOREIGN KEY("lessonGroupId")
     REFERENCES "lesson_group"("id")
     ON DELETE NO ACTION
     ON UPDATE NO ACTION;
 ALTER TABLE ONLY "scheduled_lesson"
-    ADD CONSTRAINT "scheduled_lesson_fk_4"
+    ADD CONSTRAINT "scheduled_lesson_fk_5"
     FOREIGN KEY("_roomScheduledlessonsRoomId")
     REFERENCES "room"("id")
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+
+--
+-- Foreign relations for "scheduled_lesson_teacher" table
+--
+ALTER TABLE ONLY "scheduled_lesson_teacher"
+    ADD CONSTRAINT "scheduled_lesson_teacher_fk_0"
+    FOREIGN KEY("userId")
+    REFERENCES "user"("id")
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+ALTER TABLE ONLY "scheduled_lesson_teacher"
+    ADD CONSTRAINT "scheduled_lesson_teacher_fk_1"
+    FOREIGN KEY("scheduledLessonId")
+    REFERENCES "scheduled_lesson"("id")
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+
+--
+-- Foreign relations for "school_data" table
+--
+ALTER TABLE ONLY "school_data"
+    ADD CONSTRAINT "school_data_fk_0"
+    FOREIGN KEY("logoId")
+    REFERENCES "hub_document"("id")
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+ALTER TABLE ONLY "school_data"
+    ADD CONSTRAINT "school_data_fk_1"
+    FOREIGN KEY("officialSealId")
+    REFERENCES "hub_document"("id")
     ON DELETE NO ACTION
     ON UPDATE NO ACTION;
 
@@ -1486,6 +1605,26 @@ ALTER TABLE ONLY "support_level"
     ON UPDATE NO ACTION;
 
 --
+-- Foreign relations for "timetable" table
+--
+ALTER TABLE ONLY "timetable"
+    ADD CONSTRAINT "timetable_fk_0"
+    FOREIGN KEY("schoolSemesterId")
+    REFERENCES "school_semester"("id")
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+
+--
+-- Foreign relations for "timetable_slot" table
+--
+ALTER TABLE ONLY "timetable_slot"
+    ADD CONSTRAINT "timetable_slot_fk_0"
+    FOREIGN KEY("timetableId")
+    REFERENCES "timetable"("id")
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+
+--
 -- Foreign relations for "user" table
 --
 ALTER TABLE ONLY "user"
@@ -1546,9 +1685,9 @@ ALTER TABLE ONLY "serverpod_query_log"
 -- MIGRATION VERSION FOR school_data_hub
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('school_data_hub', '20250718143355126', now())
+    VALUES ('school_data_hub', '20250830142343148', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20250718143355126', "timestamp" = now();
+    DO UPDATE SET "version" = '20250830142343148', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

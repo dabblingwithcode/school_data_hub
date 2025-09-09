@@ -843,7 +843,7 @@
     },
     {
       "name": "compulsory_room",
-      "dartName": "CompulsoryRooms",
+      "dartName": "CompulsoryRoom",
       "module": "school_data_hub",
       "schema": "public",
       "columns": [
@@ -855,10 +855,16 @@
           "dartType": "int?"
         },
         {
-          "name": "roomIds",
-          "columnType": 8,
-          "isNullable": true,
-          "dartType": "Set<String>?"
+          "name": "roomId",
+          "columnType": 0,
+          "isNullable": false,
+          "dartType": "String"
+        },
+        {
+          "name": "roomType",
+          "columnType": 0,
+          "isNullable": false,
+          "dartType": "protocol:MatrixRoomType"
         }
       ],
       "foreignKeys": [],
@@ -1220,6 +1226,43 @@
       "indexes": [
         {
           "indexName": "kindergarden_pkey",
+          "elements": [
+            {
+              "type": 0,
+              "definition": "id"
+            }
+          ],
+          "type": "btree",
+          "isUnique": true,
+          "isPrimary": true
+        }
+      ],
+      "managed": true
+    },
+    {
+      "name": "last_pupil_identities_update",
+      "dartName": "LastPupilIdentiesUpdate",
+      "module": "school_data_hub",
+      "schema": "public",
+      "columns": [
+        {
+          "name": "id",
+          "columnType": 6,
+          "isNullable": false,
+          "columnDefault": "nextval('last_pupil_identities_update_id_seq'::regclass)",
+          "dartType": "int?"
+        },
+        {
+          "name": "date",
+          "columnType": 4,
+          "isNullable": true,
+          "dartType": "DateTime?"
+        }
+      ],
+      "foreignKeys": [],
+      "indexes": [
+        {
+          "indexName": "last_pupil_identities_update_pkey",
           "elements": [
             {
               "type": 0,
@@ -2331,10 +2374,10 @@
           "dartType": "int?"
         },
         {
-          "name": "active",
-          "columnType": 1,
+          "name": "status",
+          "columnType": 0,
           "isNullable": false,
-          "dartType": "bool"
+          "dartType": "protocol:PupilStatus"
         },
         {
           "name": "internalId",
@@ -2558,11 +2601,11 @@
           "isPrimary": true
         },
         {
-          "indexName": "pupil_data_active_idx",
+          "indexName": "pupil_data_status_idx",
           "elements": [
             {
               "type": 0,
-              "definition": "active"
+              "definition": "status"
             },
             {
               "type": 0,
@@ -3001,6 +3044,118 @@
       "managed": true
     },
     {
+      "name": "school_data",
+      "dartName": "SchoolData",
+      "module": "school_data_hub",
+      "schema": "public",
+      "columns": [
+        {
+          "name": "id",
+          "columnType": 6,
+          "isNullable": false,
+          "columnDefault": "nextval('school_data_id_seq'::regclass)",
+          "dartType": "int?"
+        },
+        {
+          "name": "name",
+          "columnType": 0,
+          "isNullable": false,
+          "dartType": "String"
+        },
+        {
+          "name": "officialName",
+          "columnType": 0,
+          "isNullable": false,
+          "dartType": "String"
+        },
+        {
+          "name": "address",
+          "columnType": 0,
+          "isNullable": false,
+          "dartType": "String"
+        },
+        {
+          "name": "schoolNumber",
+          "columnType": 0,
+          "isNullable": false,
+          "dartType": "String"
+        },
+        {
+          "name": "telephoneNumber",
+          "columnType": 0,
+          "isNullable": false,
+          "dartType": "String"
+        },
+        {
+          "name": "email",
+          "columnType": 0,
+          "isNullable": false,
+          "dartType": "String"
+        },
+        {
+          "name": "website",
+          "columnType": 0,
+          "isNullable": false,
+          "dartType": "String"
+        },
+        {
+          "name": "logoId",
+          "columnType": 6,
+          "isNullable": true,
+          "dartType": "int?"
+        },
+        {
+          "name": "officialSealId",
+          "columnType": 6,
+          "isNullable": true,
+          "dartType": "int?"
+        }
+      ],
+      "foreignKeys": [
+        {
+          "constraintName": "school_data_fk_0",
+          "columns": [
+            "logoId"
+          ],
+          "referenceTable": "hub_document",
+          "referenceTableSchema": "public",
+          "referenceColumns": [
+            "id"
+          ],
+          "onUpdate": 3,
+          "onDelete": 3
+        },
+        {
+          "constraintName": "school_data_fk_1",
+          "columns": [
+            "officialSealId"
+          ],
+          "referenceTable": "hub_document",
+          "referenceTableSchema": "public",
+          "referenceColumns": [
+            "id"
+          ],
+          "onUpdate": 3,
+          "onDelete": 3
+        }
+      ],
+      "indexes": [
+        {
+          "indexName": "school_data_pkey",
+          "elements": [
+            {
+              "type": 0,
+              "definition": "id"
+            }
+          ],
+          "type": "btree",
+          "isUnique": true,
+          "isPrimary": true
+        }
+      ],
+      "managed": true
+    },
+    {
       "name": "school_list",
       "dartName": "SchoolList",
       "module": "school_data_hub",
@@ -3087,6 +3242,18 @@
           "dartType": "int?"
         },
         {
+          "name": "schoolYear",
+          "columnType": 0,
+          "isNullable": false,
+          "dartType": "String"
+        },
+        {
+          "name": "isFirst",
+          "columnType": 1,
+          "isNullable": false,
+          "dartType": "bool"
+        },
+        {
           "name": "startDate",
           "columnType": 4,
           "isNullable": false,
@@ -3101,26 +3268,26 @@
         {
           "name": "classConferenceDate",
           "columnType": 4,
-          "isNullable": false,
-          "dartType": "DateTime"
+          "isNullable": true,
+          "dartType": "DateTime?"
         },
         {
           "name": "supportConferenceDate",
           "columnType": 4,
-          "isNullable": false,
-          "dartType": "DateTime"
-        },
-        {
-          "name": "isFirst",
-          "columnType": 1,
-          "isNullable": false,
-          "dartType": "bool"
+          "isNullable": true,
+          "dartType": "DateTime?"
         },
         {
           "name": "reportConferenceDate",
           "columnType": 4,
-          "isNullable": false,
-          "dartType": "DateTime"
+          "isNullable": true,
+          "dartType": "DateTime?"
+        },
+        {
+          "name": "reportSignedDate",
+          "columnType": 4,
+          "isNullable": true,
+          "dartType": "DateTime?"
         }
       ],
       "foreignKeys": [],
@@ -4059,6 +4226,12 @@
         },
         {
           "name": "timeUnits",
+          "columnType": 6,
+          "isNullable": false,
+          "dartType": "int"
+        },
+        {
+          "name": "reliefTimeUnits",
           "columnType": 6,
           "isNullable": false,
           "dartType": "int"
@@ -5991,7 +6164,7 @@
   "installedModules": [
     {
       "module": "school_data_hub",
-      "version": "20250718144721800"
+      "version": "20250826124122807"
     },
     {
       "module": "serverpod",

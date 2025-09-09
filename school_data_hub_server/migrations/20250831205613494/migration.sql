@@ -1,21 +1,17 @@
 BEGIN;
 
 --
--- ACTION CREATE TABLE
+-- ACTION ALTER TABLE
 --
-CREATE TABLE "compulsory_room" (
-    "id" bigserial PRIMARY KEY,
-    "roomIds" json NOT NULL
-);
-
+ALTER TABLE "scheduled_lesson" DROP COLUMN "publicId";
 
 --
 -- MIGRATION VERSION FOR school_data_hub
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('school_data_hub', '20250718143355126', now())
+    VALUES ('school_data_hub', '20250831205613494', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20250718143355126', "timestamp" = now();
+    DO UPDATE SET "version" = '20250831205613494', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

@@ -3,13 +3,19 @@
     {
       "type": "alterTable",
       "alterTable": {
-        "name": "compulsory_room",
+        "name": "scheduled_lesson",
         "schema": "public",
         "addColumns": [],
         "deleteColumns": [],
         "modifyColumns": [
           {
-            "columnName": "roomIds",
+            "columnName": "modifiedBy",
+            "addNullable": true,
+            "removeNullable": false,
+            "changeDefault": false
+          },
+          {
+            "columnName": "modifiedAt",
             "addNullable": true,
             "removeNullable": false,
             "changeDefault": false

@@ -3,15 +3,16 @@ BEGIN;
 --
 -- ACTION ALTER TABLE
 --
-ALTER TABLE "compulsory_room" ALTER COLUMN "roomIds" DROP NOT NULL;
+ALTER TABLE "scheduled_lesson" ALTER COLUMN "modifiedBy" DROP NOT NULL;
+ALTER TABLE "scheduled_lesson" ALTER COLUMN "modifiedAt" DROP NOT NULL;
 
 --
 -- MIGRATION VERSION FOR school_data_hub
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('school_data_hub', '20250718144721800', now())
+    VALUES ('school_data_hub', '20250831000217563', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20250718144721800', "timestamp" = now();
+    DO UPDATE SET "version" = '20250831000217563', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

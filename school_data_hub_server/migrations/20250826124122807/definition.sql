@@ -192,6 +192,14 @@ CREATE TABLE "kindergarden" (
 );
 
 --
+-- Class LastPupilIdentiesUpdate as table last_pupil_identities_update
+--
+CREATE TABLE "last_pupil_identities_update" (
+    "id" bigserial PRIMARY KEY,
+    "date" timestamp without time zone
+);
+
+--
 -- Class LearningSupportPlan as table learning_support_plan
 --
 CREATE TABLE "learning_support_plan" (
@@ -365,7 +373,7 @@ CREATE TABLE "pupil_book_lending" (
 --
 CREATE TABLE "pupil_data" (
     "id" bigserial PRIMARY KEY,
-    "active" boolean NOT NULL,
+    "status" text NOT NULL,
     "internalId" bigint NOT NULL,
     "preSchoolMedicalId" bigint,
     "kindergardenId" bigint,
@@ -388,7 +396,7 @@ CREATE TABLE "pupil_data" (
 );
 
 -- Indexes
-CREATE INDEX "pupil_data_active_idx" ON "pupil_data" USING btree ("active", "internalId");
+CREATE INDEX "pupil_data_status_idx" ON "pupil_data" USING btree ("status", "internalId");
 CREATE UNIQUE INDEX "pupil_data_internal_id_idx" ON "pupil_data" USING btree ("internalId");
 
 --
@@ -448,6 +456,22 @@ CREATE TABLE "scheduled_lesson" (
 );
 
 --
+-- Class SchoolData as table school_data
+--
+CREATE TABLE "school_data" (
+    "id" bigserial PRIMARY KEY,
+    "name" text NOT NULL,
+    "officialName" text NOT NULL,
+    "address" text NOT NULL,
+    "schoolNumber" text NOT NULL,
+    "telephoneNumber" text NOT NULL,
+    "email" text NOT NULL,
+    "website" text NOT NULL,
+    "logoId" bigint,
+    "officialSealId" bigint
+);
+
+--
 -- Class SchoolList as table school_list
 --
 CREATE TABLE "school_list" (
@@ -466,12 +490,14 @@ CREATE TABLE "school_list" (
 --
 CREATE TABLE "school_semester" (
     "id" bigserial PRIMARY KEY,
+    "schoolYear" text NOT NULL,
+    "isFirst" boolean NOT NULL,
     "startDate" timestamp without time zone NOT NULL,
     "endDate" timestamp without time zone NOT NULL,
-    "classConferenceDate" timestamp without time zone NOT NULL,
-    "supportConferenceDate" timestamp without time zone NOT NULL,
-    "isFirst" boolean NOT NULL,
-    "reportConferenceDate" timestamp without time zone NOT NULL
+    "classConferenceDate" timestamp without time zone,
+    "supportConferenceDate" timestamp without time zone,
+    "reportConferenceDate" timestamp without time zone,
+    "reportSignedDate" timestamp without time zone
 );
 
 --
@@ -605,6 +631,7 @@ CREATE TABLE "user" (
     "userInfoId" bigint NOT NULL,
     "role" text NOT NULL,
     "timeUnits" bigint NOT NULL,
+    "reliefTimeUnits" bigint NOT NULL,
     "pupilsAuth" json,
     "credit" bigint NOT NULL,
     "userFlags" json NOT NULL
@@ -1349,6 +1376,22 @@ ALTER TABLE ONLY "scheduled_lesson"
     ON UPDATE NO ACTION;
 
 --
+-- Foreign relations for "school_data" table
+--
+ALTER TABLE ONLY "school_data"
+    ADD CONSTRAINT "school_data_fk_0"
+    FOREIGN KEY("logoId")
+    REFERENCES "hub_document"("id")
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+ALTER TABLE ONLY "school_data"
+    ADD CONSTRAINT "school_data_fk_1"
+    FOREIGN KEY("officialSealId")
+    REFERENCES "hub_document"("id")
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+
+--
 -- Foreign relations for "schoolday" table
 --
 ALTER TABLE ONLY "schoolday"
@@ -1547,9 +1590,9 @@ ALTER TABLE ONLY "serverpod_query_log"
 -- MIGRATION VERSION FOR school_data_hub
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('school_data_hub', '20250718151055108', now())
+    VALUES ('school_data_hub', '20250826124122807', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20250718151055108', "timestamp" = now();
+    DO UPDATE SET "version" = '20250826124122807', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

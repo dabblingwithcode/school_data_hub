@@ -1,0 +1,43 @@
+{
+  "actions": [
+    {
+      "type": "alterTable",
+      "alterTable": {
+        "name": "scheduled_lesson",
+        "schema": "public",
+        "addColumns": [],
+        "deleteColumns": [
+          "publicId"
+        ],
+        "modifyColumns": [],
+        "addIndexes": [],
+        "deleteIndexes": [],
+        "addForeignKeys": [],
+        "deleteForeignKeys": [],
+        "warnings": [
+          {
+            "type": "columnDropped",
+            "message": "Column \"publicId\" of table \"scheduled_lesson\" will be dropped.",
+            "table": "scheduled_lesson",
+            "columns": [
+              "publicId"
+            ],
+            "destrucive": true
+          }
+        ]
+      }
+    }
+  ],
+  "warnings": [
+    {
+      "type": "columnDropped",
+      "message": "Column \"publicId\" of table \"scheduled_lesson\" will be dropped.",
+      "table": "scheduled_lesson",
+      "columns": [
+        "publicId"
+      ],
+      "destrucive": true
+    }
+  ],
+  "migrationApiVersion": 1
+}
