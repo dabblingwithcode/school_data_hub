@@ -83,7 +83,7 @@ services:
         "normal",
         "--role",
         "monolith",
-        "--apply-migrations --force",
+        "--apply-migrations",
       ]
     labels:
       - "traefik.enable=true"
@@ -118,7 +118,5 @@ networks:
 volumes:
   # Database data - persists across container restarts
   school_data_hub_data:
-  # Adding persistent storage volumes
-  school_data_hub_storage_public:
-  school_data_hub_storage_private:
-  school_data_hub_storage_temp:
+  # Application storage - persists uploaded files, user data, etc.
+  school_data_hub_storage:

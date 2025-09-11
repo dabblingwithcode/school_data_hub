@@ -3,6 +3,7 @@ table: pupil_data
 fields:
   status: PupilStatus
   internalId: int
+  password: String?
   ## preschool related
   preSchoolMedical: PreSchoolMedical?, relation(optional)
   kindergarden: Kindergarden?, relation(optional)

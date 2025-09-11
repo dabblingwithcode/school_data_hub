@@ -82,7 +82,7 @@ services:
         "normal",
         "--role",
         "monolith",
-        "--apply-migrations --force",
+        "--apply-migrations",
       ]
     labels:
       - "traefik.enable=true"
