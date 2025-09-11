@@ -7,17 +7,57 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final customEncrypter = CustomEncrypter();
 final _envManager = di<EnvManager>();
 
 class CustomEncrypter {
-  final encrypter = enc.Encrypter(enc.AES(
-      enc.Key.fromUtf8(_envManager.activeEnv!.key),
-      mode: enc.AESMode.cbc));
+  final encrypter = enc.Encrypter(
+    enc.AES(
+      enc.Key.fromUtf8(_envManager.activeEnv!.key!),
+      mode: enc.AESMode.cbc,
+    ),
+  );
 
-  final iv = enc.IV.fromUtf8(_envManager.activeEnv!.iv);
+  // Lazy initialization for matrix encrypter
+  enc.Encrypter? _matrixCredentialsEncrypter;
+  enc.IV? _matrixIv;
+
+  enc.Encrypter get matrixCredentialsEncrypter {
+    _matrixCredentialsEncrypter ??= enc.Encrypter(
+      enc.AES(
+        enc.Key.fromUtf8(di<MatrixPolicyManager>().encryptionKey),
+        mode: enc.AESMode.cbc,
+      ),
+    );
+    return _matrixCredentialsEncrypter!;
+  }
+
+  enc.IV get matrixIv {
+    _matrixIv ??= enc.IV.fromUtf8(di<MatrixPolicyManager>().encryptionIv);
+    return _matrixIv!;
+  }
+
+  final iv = enc.IV.fromUtf8(_envManager.activeEnv!.iv!);
+
+  String encryptMatrixString(String nonEncryptedString) {
+    final encryptedString =
+        matrixCredentialsEncrypter
+            .encrypt(nonEncryptedString, iv: matrixIv)
+            .base64;
+    return encryptedString;
+  }
+
+  String decryptMatrixString(String encryptedString) {
+    final thisEncryptedString = enc.Encrypted.fromBase64(encryptedString);
+    final decryptedString = matrixCredentialsEncrypter.decrypt(
+      thisEncryptedString,
+      iv: matrixIv,
+    );
+    return decryptedString;
+  }
 
   String encryptString(String nonEncryptedString) {
     final encryptedString =
@@ -37,8 +77,9 @@ class CustomEncrypter {
     final Directory tempDir = await getTemporaryDirectory();
     final Uri uri = Uri.parse(file.path);
     final String extension = uri.pathSegments.last.split('.').last;
-    final File tempFile =
-        File(p.join(tempDir.path, 'encrypted_file.$extension'));
+    final File tempFile = File(
+      p.join(tempDir.path, 'encrypted_file.$extension'),
+    );
     await tempFile.writeAsBytes(encrypted.bytes);
     return tempFile;
   }
@@ -48,15 +89,18 @@ class CustomEncrypter {
     final encryptedBytes = await file.readAsBytes();
 
     // Decrypt the bytes
-    final decryptedBytes = (kReleaseMode || kProfileMode)
-        ? await compute(customEncrypter.decryptTheseBytes, encryptedBytes)
-        : customEncrypter.decryptTheseBytes(encryptedBytes);
+    final decryptedBytes =
+        (kReleaseMode || kProfileMode)
+            ? await compute(customEncrypter.decryptTheseBytes, encryptedBytes)
+            : customEncrypter.decryptTheseBytes(encryptedBytes);
     return Image.memory(decryptedBytes);
   }
 
   Uint8List decryptTheseBytes(Uint8List encryptedBytes) {
-    final List<int> decrypted =
-        encrypter.decryptBytes(enc.Encrypted(encryptedBytes), iv: iv);
+    final List<int> decrypted = encrypter.decryptBytes(
+      enc.Encrypted(encryptedBytes),
+      iv: iv,
+    );
 
     final Uint8List decryptedBytes = Uint8List.fromList(decrypted);
     return decryptedBytes;

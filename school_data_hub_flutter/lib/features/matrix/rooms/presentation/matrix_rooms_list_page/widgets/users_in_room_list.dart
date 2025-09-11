@@ -3,7 +3,6 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helper.dart';
@@ -16,13 +15,14 @@ class MatrixUsersInRoomList extends WatchingWidget {
   final List<MatrixUser> matrixUsers;
   final String roomId;
 
-  const MatrixUsersInRoomList(
-      {required this.matrixUsers, required this.roomId, super.key});
+  const MatrixUsersInRoomList({
+    required this.matrixUsers,
+    required this.roomId,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // final List<MatrixUser> matrixUsersInRoom =
-    //     MatrixRoomHelper.usersInRoom(roomId);
     return Column(
       children: [
         Padding(
@@ -35,18 +35,24 @@ class MatrixUsersInRoomList extends WatchingWidget {
               style: AppStyles.successButtonStyle,
               onPressed: () async {
                 final availableUsers = MatrixUserHelper.restOfUsers(
-                    MatrixUserHelper.userIdsFromUsers(matrixUsers));
+                  MatrixUserHelper.userIdsFromUsers(matrixUsers),
+                );
 
                 final List<String> selectedUserIds =
-                    await Navigator.of(context).push(MaterialPageRoute(
-                          builder: (ctx) =>
-                              SelectMatrixUsersList(availableUsers),
-                        )) ??
-                        [];
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder:
+                            (ctx) => SelectMatrixUsersList(
+                              MatrixUserHelper.usersFromUserIds(availableUsers),
+                            ),
+                      ),
+                    ) ??
+                    [];
                 if (selectedUserIds.isNotEmpty) {
                   for (final String userId in selectedUserIds) {
-                    _matrixPolicyManager.users
-                        .addMatrixUserToRooms(userId, [roomId]);
+                    _matrixPolicyManager.users.addMatrixUserToRooms(userId, [
+                      roomId,
+                    ]);
                   }
                 }
               },
@@ -63,10 +69,7 @@ class MatrixUsersInRoomList extends WatchingWidget {
               padding: EdgeInsets.only(left: 22),
               child: Text(
                 'Konten:',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                ),
+                style: TextStyle(color: Colors.black, fontSize: 16),
               ),
             ),
           ],
@@ -94,14 +97,18 @@ class MatrixUsersInRoomList extends WatchingWidget {
 class MatrixUsersInRoomListItem extends WatchingWidget {
   final String roomId;
   final MatrixUser matrixUser;
-  const MatrixUsersInRoomListItem(
-      {required this.matrixUser, required this.roomId, super.key});
+  const MatrixUsersInRoomListItem({
+    required this.matrixUser,
+    required this.roomId,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     watch(matrixUser);
-    final MatrixRoom room =
-        watch(_matrixPolicyManager.rooms.getRoomById(roomId));
+    final MatrixRoom room = watch(
+      _matrixPolicyManager.rooms.getRoomById(roomId),
+    );
 
     return Padding(
       padding: const EdgeInsets.all(0.0),
@@ -118,15 +125,20 @@ class MatrixUsersInRoomListItem extends WatchingWidget {
                 InkWell(
                   onLongPress: () async {
                     final bool? result = await confirmationDialog(
-                        context: context,
-                        message:
-                            'Moderationsrechte für ${matrixUser.displayName} vergeben?',
-                        title: 'Moderationsrechte vergeben');
+                      context: context,
+                      message:
+                          'Moderationsrechte für ${matrixUser.displayName} vergeben?',
+                      title: 'Moderationsrechte vergeben',
+                    );
                     if (result == true) {
-                      _matrixPolicyManager.rooms.changeRoomPowerLevels(
-                          roomId: roomId,
-                          roomAdmin:
-                              RoomAdmin(id: matrixUser.id!, powerLevel: 50));
+                      matrixUser.setPowerLevel(roomId, 50);
+                      // _matrixPolicyManager.rooms.changeRoomPowerLevels(
+                      //   roomId: roomId,
+                      //   roomAdmin: RoomAdmin(
+                      //     id: matrixUser.id!,
+                      //     powerLevel: 50,
+                      //   ),
+                      // );
                     }
                   },
                   child: Text(
@@ -138,28 +150,28 @@ class MatrixUsersInRoomListItem extends WatchingWidget {
                     ),
                   ),
                 ),
-                if (MatrixRoomHelper.powerLevelInRoom(
-                        room: room, userId: matrixUser.id!) !=
-                    null)
+                if (matrixUser.joinedRooms
+                        .firstWhere((element) => element.roomId == roomId)
+                        .powerLevel ==
+                    50)
                   InkWell(
                     onLongPress: () async {
                       final confirmation = await confirmationDialog(
-                          context: context,
-                          title: 'Moderationsrechte entziehen',
-                          message:
-                              'Soll dem Konto die Moderationsrechte entzogen werden?');
+                        context: context,
+                        title: 'Moderationsrechte entziehen',
+                        message:
+                            'Soll dem Konto die Moderationsrechte entzogen werden?',
+                      );
                       if (confirmation == true) {
-                        _matrixPolicyManager.rooms.changeRoomPowerLevels(
-                          roomId: roomId,
-                          removeAdminWithId: matrixUser.id!,
-                        );
+                        matrixUser.setPowerLevel(roomId, 0);
+                        // _matrixPolicyManager.rooms.changeRoomPowerLevels(
+                        //   roomId: roomId,
+                        //   removeAdminWithId: matrixUser.id!,
+                        // );
                       }
                     },
-                    child: const Icon(
-                      Icons.check,
-                      color: Colors.green,
-                    ),
-                  )
+                    child: const Icon(Icons.check, color: Colors.green),
+                  ),
               ],
             ),
           ),

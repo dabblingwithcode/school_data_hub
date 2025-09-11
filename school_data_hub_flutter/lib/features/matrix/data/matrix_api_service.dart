@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -99,11 +98,13 @@ class MatrixApiService {
       );
       throw ApiException('Fehler beim Laden der Policy', response.statusCode);
     }
-    final File file = File('matrix-fetched-policy.json');
-    if (file.existsSync()) {
-      file.deleteSync();
-    }
-    file.writeAsStringSync(jsonEncode(response.data['policy']));
+
+    //-TODO URGENT: remove this debug code later
+    // final File file = File('matrix-fetched-policy.json');
+    // if (file.existsSync()) {
+    //   file.deleteSync();
+    // }
+    // file.writeAsStringSync(jsonEncode(response.data['policy']));
 
     final Policy policy = Policy.fromJson(response.data['policy']);
     _notificationService.showSnackBar(
@@ -118,25 +119,25 @@ class MatrixApiService {
 
   Future<void> putMatrixPolicy() async {
     final File policyFile = await MatrixPolicyHelper.generatePolicyJsonFile(
-      filename: 'matrix-policy',
+      filename: 'updated-policy',
     );
-    // final bytes = policyFile.readAsBytesSync();
+    final bytes = policyFile.readAsBytesSync();
 
-    // final Response response = await _apiClient.put(
-    //   '$_matrixUrl$_putMatrixPolicy',
-    //   data: bytes,
-    //   options: _apiClient.corporalOptions,
-    // );
+    final Response response = await _apiClient.put(
+      '$_matrixUrl$_putMatrixPolicy',
+      data: bytes,
+      options: _apiClient.corporalOptions,
+    );
     //- TODO URGENT: uncomment this when the backend is ready
     //delete file, we don't need it anymore
     // policyFile.deleteSync();
-    // if (response.statusCode != 200) {
-    //   _notificationService.showSnackBar(
-    //     NotificationType.error,
-    //     'Fehler: status code ${response.statusCode}',
-    //   );
-    //   throw ApiException('Fehler beim Setzen der Policy', response.statusCode);
-    // }
+    if (response.statusCode != 200) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler: status code ${response.statusCode}',
+      );
+      throw ApiException('Fehler beim Setzen der Policy', response.statusCode);
+    }
 
     _notificationService.showSnackBar(
       NotificationType.success,

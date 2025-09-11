@@ -11,8 +11,7 @@ import 'package:watch_it/watch_it.dart';
 enum ChatTypePreset {
   public('public_chat'),
   private('private_chat'),
-  trustedPrivate('trusted_private_chat'),
-  ;
+  trustedPrivate('trusted_private_chat');
 
   final String value;
   const ChatTypePreset(this.value);
@@ -29,8 +28,8 @@ class MatrixRoomApiService {
     required String matrixUrl,
     required String matrixToken, // Keep for potential future use
     required String corporalToken, // Keep for potential future use
-  })  : _apiClient = apiClient,
-        _matrixUrl = matrixUrl;
+  }) : _apiClient = apiClient,
+       _matrixUrl = matrixUrl;
 
   void setMatrixEnvironmentValues({
     required String url,
@@ -51,7 +50,11 @@ class MatrixRoomApiService {
     String? aliasName,
   }) async {
     MatrixRoom? room;
+
     //- API: https://spec.matrix.org/latest/client-server-api/#create-room
+
+    //- API power levels: https://spec.matrix.org/v1.15/client-server-api/#mroompower_levels
+
     final data = jsonEncode({
       "creation_content": {"m.federate": false},
       "is_direct": false,
@@ -69,8 +72,8 @@ class MatrixRoomApiService {
         "ban": 100,
         "kick": 100,
         "invite": 100,
-        "redact": 50
-      }
+        "redact": 50,
+      },
     });
 
     final Response response = await _apiClient.post(
@@ -117,10 +120,13 @@ class MatrixRoomApiService {
       if (responseRoomSPowerLevels.data['users'] is Map<String, dynamic>) {
         final usersMap =
             responseRoomSPowerLevels.data['users'] as Map<String, dynamic>;
-        roomAdmins = usersMap.keys
-            .map(
-                (userId) => RoomAdmin(id: userId, powerLevel: usersMap[userId]))
-            .toList();
+        roomAdmins =
+            usersMap.keys
+                .map(
+                  (userId) =>
+                      RoomAdmin(id: userId, powerLevel: usersMap[userId]),
+                )
+                .toList();
       }
     }
 
@@ -149,19 +155,16 @@ class MatrixRoomApiService {
   //- PUT ROOM POWER LEVELS
   String _putRoomPowerLevels(String roomId) {
     // ensure that ! and : are properly coded for the url
-    final roomIdforUrl = roomId.replaceAllMapped(
-      RegExp(r'[!:]'),
-      (match) {
-        switch (match.group(0)) {
-          case '!':
-            return '%21';
-          case ':':
-            return '%3A';
-          default:
-            return match.group(0)!;
-        }
-      },
-    );
+    final roomIdforUrl = roomId.replaceAllMapped(RegExp(r'[!:]'), (match) {
+      switch (match.group(0)) {
+        case '!':
+          return '%21';
+        case ':':
+          return '%3A';
+        default:
+          return match.group(0)!;
+      }
+    });
     return '/_matrix/client/v3/rooms/$roomIdforUrl/state/m.room.power_levels';
   }
 
@@ -212,7 +215,7 @@ class MatrixRoomApiService {
         "org.matrix.msc3401.call": 50,
         "org.matrix.msc3401.call.member": 50,
         "im.vector.modular.widgets": 50,
-        "io.element.voice_broadcast_info": 50
+        "io.element.voice_broadcast_info": 50,
       },
       "events_default": eventsDefault ?? currentRoom.eventsDefault,
       "invite": 50,
@@ -221,7 +224,7 @@ class MatrixRoomApiService {
       "redact": 50,
       "state_default": 50,
       "users": adminPowerLevelsMap,
-      "users_default": 0
+      "users_default": 0,
     });
 
     final Response response = await _apiClient.put(
@@ -232,9 +235,13 @@ class MatrixRoomApiService {
 
     if (response.statusCode != 200) {
       _notificationService.showSnackBar(
-          NotificationType.error, 'Fehler: status code ${response.statusCode}');
+        NotificationType.error,
+        'Fehler: status code ${response.statusCode}',
+      );
       throw ApiException(
-          'Fehler beim Setzen der Power Levels', response.statusCode);
+        'Fehler beim Setzen der Power Levels',
+        response.statusCode,
+      );
     }
 
     final MatrixRoom room = await fetchAdditionalRoomInfos(roomId);

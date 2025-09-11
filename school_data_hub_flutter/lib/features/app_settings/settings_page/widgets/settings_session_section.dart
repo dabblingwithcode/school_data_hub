@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:gap/gap.dart';
+import 'package:logging/logging.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/core/di/dependency_injection.dart';
@@ -13,6 +15,8 @@ import 'package:school_data_hub_flutter/features/app_settings/settings_page/dial
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _log = Logger('EnvManager');
 
 class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
   const SettingsSessionSection({super.key});
@@ -26,8 +30,8 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
     final _notificationService = di<NotificationService>();
 
     final locale = AppLocalizations.of(context)!;
-
-    final int userCredit = di<HubSessionManager>().userCredit ?? 0;
+    final _hubSessionManager = di<HubSessionManager>();
+    final int userCredit = _hubSessionManager.userCredit ?? 0;
     final String username =
         watchPropertyValue(
           (HubSessionManager x) => x.user,
@@ -46,27 +50,25 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           value: Text(serverName!.serverName),
           trailing: null,
         ),
+        if (_hubSessionManager.isAdmin)
+          SettingsTile.navigation(
+            onPressed: (context) => changeEnvironmentDialog(context: context),
+            leading: const Icon(Icons.http),
+            title: const Text('URL:'),
+            value: Text(serverName.serverUrl),
+            trailing: null,
+          ),
+
         SettingsTile.navigation(
-          // onPressed: (context) =>
-          //     di<PupilManager>().cleanPupilsAvatarIds(),
-          leading: const Icon(Icons.account_circle_rounded),
-          title: const Text('Benutzername'),
+          leading: const Icon(Icons.perm_identity_rounded),
+          title: const Text('Personenbezogene Daten vom:'),
           value: Text(
-            username,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            di<EnvManager>().activeEnv?.lastIdentitiesUpdate?.formatForUser() ??
+                'unbekannt',
           ),
           trailing: null,
         ),
-        SettingsTile.navigation(
-          // onPressed: (context) {
-          //   Navigator.of(context).push(MaterialPageRoute(
-          //     builder: (ctx) => const UserChangePasswordPage(),
-          //   ));
-          // },
-          leading: const Icon(Icons.password_rounded),
-          title: const Text('Passwort ändern'),
-          trailing: null,
-        ),
+
         SettingsTile.navigation(
           leading: const Icon(Icons.attach_money_rounded),
           title: const Text('Guthaben'),
@@ -136,9 +138,14 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
               message: 'Instanz-ID-Schlüssel löschen?',
             );
             if (confirm == true && context.mounted) {
+              // TODO: move this logic to a
+              _log.warning('[DI] Hang on tight, signing out! ');
               await di<EnvManager>().deleteEnv();
               di<HubSessionManager>().signOutDevice();
-              DiManager.unregisterManagersDependentOnEnv();
+              _log.warning(
+                '[DI] Env deleted, calling [unregisterMaagersDependentOnEnv] from the settings section!',
+              );
+              DiManager.cleanupAllEnvironmentManagers();
               _notificationService.showSnackBar(
                 NotificationType.success,
                 'Instanz-ID-Schlüssel gelöscht',

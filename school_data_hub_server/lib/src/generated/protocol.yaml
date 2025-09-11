@@ -112,6 +112,9 @@ pupilUpdate:
   - updatePublicMediaAuth:
   - updateSupportLevel:
   - updateSchoolyearHeldBackDate:
+schoolData:
+  - postSchoolData:
+  - getSchoolData:
 schoolList:
   - fetchSchoolLists:
   - postSchoolList:
@@ -138,6 +141,75 @@ schooldayEvent:
   - deleteSchooldayEvent:
   - updateSchooldayEventFile:
   - deleteSchooldayEventFile:
+classroom:
+  - createClassroom:
+  - fetchClassrooms:
+  - fetchClassroomById:
+  - fetchClassroomByRoomCode:
+  - fetchClassroomsByRoomName:
+  - updateClassroom:
+  - deleteClassroom:
+learningGroup:
+  - createLessonGroup:
+  - fetchLessonGroups:
+  - fetchLessonGroupById:
+  - fetchLessonGroupByPublicId:
+  - fetchLessonGroupsByName:
+  - fetchLessonGroupsByCreator:
+  - fetchLessonGroupsByTimetable:
+  - updateLessonGroup:
+  - deleteLessonGroup:
+scheduledLesson:
+  - createScheduledLesson:
+  - fetchScheduledLessons:
+  - fetchScheduledLessonById:
+  - fetchScheduledLessonsByTimetable:
+  - fetchScheduledLessonsBySubject:
+  - fetchScheduledLessonsByRoom:
+  - fetchScheduledLessonsBySlotId:
+  - fetchActiveScheduledLessons:
+  - updateScheduledLesson:
+  - deactivateScheduledLesson:
+  - deleteScheduledLesson:
+scheduledLessonGroupMembership:
+  - createScheduledLessonGroupMembership:
+  - fetchScheduledLessonGroupMemberships:
+  - fetchScheduledLessonGroupMembershipById:
+  - fetchMembershipsByLessonGroupId:
+  - fetchMembershipsByPupilDataId:
+  - fetchMembershipByLessonGroupAndPupil:
+  - updateScheduledLessonGroupMembership:
+  - deleteScheduledLessonGroupMembership:
+  - deletePupilFromLessonGroup:
+  - updatePupilMembershipsForLessonGroup:
+subject:
+  - createSubject:
+  - fetchSubjects:
+  - fetchSubjectById:
+  - fetchSubjectByPublicId:
+  - fetchSubjectsByName:
+  - fetchSubjectsByCreator:
+  - updateSubject:
+  - deleteSubject:
+timetable:
+  - createTimetable:
+  - fetchTimetables:
+  - fetchTimetableById:
+  - fetchTimetable:
+  - fetchCompleteTimetableData:
+  - fetchActiveTimetables:
+  - fetchTimetablesBySemester:
+  - updateTimetable:
+  - deactivateTimetable:
+  - deleteTimetable:
+timetableSlot:
+  - createTimetableSlot:
+  - fetchTimetableSlots:
+  - fetchTimetableSlotById:
+  - fetchTimetableSlotsByTimetableId:
+  - fetchTimetableSlotsByDay:
+  - updateTimetableSlot:
+  - deleteTimetableSlot:
 user:
   - getCurrentUser:
   - getAllUsers:

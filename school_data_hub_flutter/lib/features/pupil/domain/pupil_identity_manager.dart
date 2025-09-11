@@ -37,6 +37,10 @@ class PupilIdentityManager {
 
   Map<int, PupilIdentity> _pupilIdentities = {};
 
+  //-TODO URGENT: add a value notifier for the last update value
+  //- add endpoint to get the value from the server
+  //- compare values and notify if the local value is older than the server value
+
   final _groups = ValueNotifier<Set<String>>({});
   ValueListenable<Set<String>> get groups => _groups;
 
@@ -66,6 +70,28 @@ class PupilIdentityManager {
   Future<PupilIdentityManager> init() async {
     await getPupilIdentitiesForEnv();
     return this;
+  }
+
+  /// Re-initializes the manager for a new environment
+  /// This should be called when switching environments
+  Future<void> reinitializeForNewEnvironment() async {
+    _log.info('Re-initializing PupilIdentityManager for new environment');
+
+    // Clear old environment data
+    _pupilIdentities.clear();
+    _groups.value = {};
+
+    // Load data for the new environment
+    await getPupilIdentitiesForEnv();
+
+    _log.info(
+      'PupilIdentityManager re-initialized for environment: ${_envManager.activeEnv?.serverName}',
+    );
+  }
+
+  /// Checks if the manager is ready for the current environment
+  bool get isReadyForCurrentEnvironment {
+    return _envManager.activeEnv != null && _pupilIdentities.isNotEmpty;
   }
 
   void dispose() {

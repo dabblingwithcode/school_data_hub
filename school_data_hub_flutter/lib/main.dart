@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
@@ -18,6 +17,7 @@ import 'package:school_data_hub_flutter/features/app_entry_point/loading_page.da
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/no_connection_page.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/landing_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -28,16 +28,15 @@ void main() async {
 
   // Add your custom colored console listener
   Logger.root.onRecord.listen((record) {
-    final colorFormatter = ColorFormatter();
+    final colorFormatter = const ColorFormatter();
     log(colorFormatter.format(record));
   });
   // using package window_manager to set a default windows window size
   if (Platform.isWindows) {
     await windowManager.ensureInitialized();
     WindowOptions windowOptions = const WindowOptions(
-      // TODO: revert this for production
-      // size: Size(1200, 800),
-      size: Size(400, 800),
+      size: Size(1200, 800),
+
       center: true,
       backgroundColor: Colors.transparent,
       skipTaskbar: false,
@@ -52,7 +51,8 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle().copyWith(
       statusBarColor: AppColors.backgroundColor,
-      statusBarBrightness: Brightness.light,
+      statusBarBrightness: Brightness.dark,
+      statusBarIconBrightness: Brightness.light,
     ),
   );
 
@@ -65,8 +65,9 @@ void main() async {
   if (Platform.isAndroid) {
     final dir = await getApplicationDocumentsDirectory();
     final path = dir.parent.path;
-    final file =
-        File('$path/databases/com.google.android.datatransport.events');
+    final file = File(
+      '$path/databases/com.google.android.datatransport.events',
+    );
     await file.writeAsString('Fake');
   }
 }
@@ -77,11 +78,18 @@ class MyApp extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final log = Logger('MyApp');
+
+    // Watch for environment changes - this will trigger rebuilds when EnvManager notifies
+    final envManager = watchIt<EnvManager>();
+    final String? currentEnv = envManager.activeEnv?.serverName;
+
     final bool envIsReady = watchValue((EnvManager x) => x.envIsReady);
-    final bool userIsAuthenticated =
-        watchValue((EnvManager x) => x.isAuthenticated);
-    final bool isConnected =
-        watchValue((ServerpodConnectivityMonitor x) => x.isConnected);
+    final bool userIsAuthenticated = watchValue(
+      (EnvManager x) => x.isAuthenticated,
+    );
+    final bool isConnected = watchValue(
+      (ServerpodConnectivityMonitor x) => x.isConnected,
+    );
 
     return MaterialApp(
       localizationsDelegates: const <LocalizationsDelegate<Object>>[
@@ -97,28 +105,30 @@ class MyApp extends WatchingWidget {
       ],
       debugShowCheckedModeBanner: false,
       title: 'Schuldaten Hub',
-      home: !isConnected
-          ? const NoConnectionPage()
-          : envIsReady
+      home:
+          !isConnected
+              ? const NoConnectionPage()
+              : envIsReady
               ? FutureBuilder(
-                  future: di.allReady(timeout: const Duration(seconds: 30)),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      log.shout('Dependency Injection Error: ${snapshot.error}',
-                          snapshot.stackTrace);
-                      return ErrorPage(error: snapshot.error.toString());
-                    } else if (snapshot.connectionState ==
-                        ConnectionState.done) {
-                      if (userIsAuthenticated) {
-                        return MainMenuBottomNavigation();
-                      } else {
-                        return const Login();
-                      }
+                future: di.allReady(timeout: const Duration(seconds: 30)),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    log.shout(
+                      'Dependency Injection Error: ${snapshot.error}',
+                      snapshot.stackTrace,
+                    );
+                    return ErrorPage(error: snapshot.error.toString());
+                  } else if (snapshot.connectionState == ConnectionState.done) {
+                    if (userIsAuthenticated) {
+                      return MainMenuBottomNavigation();
                     } else {
-                      return const LoadingPage();
+                      return const Login();
                     }
-                  },
-                )
+                  } else {
+                    return const LoadingPage();
+                  }
+                },
+              )
               : const EntryPoint(),
     );
   }

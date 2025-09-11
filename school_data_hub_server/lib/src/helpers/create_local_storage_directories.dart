@@ -7,44 +7,75 @@ final _log = Logger('CreateLocalStorageDirectories');
 
 void createLocalStorageDirectories() {
   try {
+    _log.info('=== Starting storage directory creation ===');
+
     // Get the current working directory
     final serverDirPath = Directory.current.path;
-    _log.fine('Current path is [$serverDirPath] .');
-    // Create the directories for local storage
-    final storageDir = Directory(p.join(serverDirPath, 'storage'));
-    _log.fine('Storage path is [${storageDir.path}] .');
-    // If the storage directory does not exist,
-    // the subdirectories do not exist either
-    if (storageDir.existsSync()) {
-      _log.fine('Storage directory [${storageDir.path}] already exists.');
-    } else {
-      _log.warning(
-        'Storage directory not found in [${storageDir.path}] - creating...',
-      );
-      storageDir.createSync(recursive: true);
-      final publicDir = Directory(p.join(storageDir.path, 'public'));
-      final serverpodDir = Directory(p.join(publicDir.path, 'serverpod'));
-      final userImagesDir = Directory(p.join(serverpodDir.path, 'user_images'));
-      final privateDir = Directory(p.join(storageDir.path, 'private'));
-      final tempDir = Directory(p.join(storageDir.path, 'temp'));
-      final authsDir = Directory(p.join(privateDir.path, 'auths'));
-      final avatarsDir = Directory(p.join(privateDir.path, 'avatars'));
-      final documentsDir = Directory(p.join(privateDir.path, 'documents'));
-      final evertsDir = Directory(p.join(privateDir.path, 'events'));
+    _log.info('Current working directory is [$serverDirPath]');
 
-      publicDir.createSync(recursive: true);
-      serverpodDir.createSync(recursive: true);
-      userImagesDir.createSync(recursive: true);
-      tempDir.createSync(recursive: true);
-      authsDir.createSync(recursive: true);
-      avatarsDir.createSync(recursive: true);
-      documentsDir.createSync(recursive: true);
-      evertsDir.createSync(recursive: true);
-      _log.fine(
-        'Storage directories created successfully in [${storageDir.path}]',
-      );
+    // Determine storage path based on environment - same logic as server.dart
+    String storagePath;
+
+    if (Platform.isLinux && Directory('/app').existsSync()) {
+      // Docker container environment
+      storagePath = '/app/storage';
+      _log.info('Detected Docker container environment, using: [$storagePath]');
+    } else {
+      // Local development environment
+      storagePath = p.join(serverDirPath, 'storage');
+      _log.info(
+          'Detected local development environment, using: [$storagePath]');
     }
-  } finally {}
+
+    final storageDir = Directory(storagePath);
+
+    _log.info('Using storage directory: [$storagePath]');
+
+    // Create the main storage directory if it doesn't exist
+    if (!storageDir.existsSync()) {
+      try {
+        storageDir.createSync(recursive: true);
+        _log.info('Created storage directory: [$storagePath]');
+      } catch (e) {
+        _log.severe('Could not create storage directory at [$storagePath]: $e');
+        return;
+      }
+    } else {
+      _log.info('Storage directory already exists: [$storagePath]');
+    }
+
+    // Create all required subdirectories
+    final directories = [
+      p.join(storagePath, 'public'),
+      p.join(storagePath, 'public', 'serverpod'),
+      p.join(storagePath, 'public', 'serverpod', 'user_images'),
+      p.join(storagePath, 'private'),
+      p.join(storagePath, 'private', 'auths'),
+      p.join(storagePath, 'private', 'avatars'),
+      p.join(storagePath, 'private', 'documents'),
+      p.join(storagePath, 'private', 'events'),
+      p.join(storagePath, 'temp'),
+    ];
+
+    for (final dirPath in directories) {
+      final dir = Directory(dirPath);
+      if (!dir.existsSync()) {
+        try {
+          dir.createSync(recursive: true);
+          _log.fine('Created directory: [$dirPath]');
+        } catch (e) {
+          _log.warning('Could not create directory [$dirPath]: $e');
+        }
+      } else {
+        _log.fine('Directory already exists: [$dirPath]');
+      }
+    }
+
+    _log.info('Storage directories setup completed successfully');
+    _log.info('=== Storage directory creation finished ===');
+  } catch (e, stackTrace) {
+    _log.severe('Error creating storage directories: $e\n$stackTrace');
+  }
 }
 
 // IOSink _setupFileLogging() {

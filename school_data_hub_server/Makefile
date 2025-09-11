@@ -49,3 +49,6 @@ run:
 
 uml: ## generate UML diagram
 	dart run uml_for_serverpod --config=uml_config.yaml
+
+install: ## serverpod vps branch
+	dart pub global activate -sgit https://github.com/dart-lang/http.git --git-ref dart pub global activate -sgit https://github.com/dabblingwithcode/serverpod_vps.git --git-ref 36f98e900347335af2338a0e087538009b7de2f9

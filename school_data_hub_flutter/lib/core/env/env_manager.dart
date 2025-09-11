@@ -10,6 +10,7 @@ import 'package:school_data_hub_flutter/core/di/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/models/enums.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
 import 'package:school_data_hub_flutter/core/models/populated_server_session_data.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -23,7 +24,11 @@ class EnvManager with ChangeNotifier {
 
   final _isAuthenticated = ValueNotifier<bool>(false);
 
-  /// TODO: is this proxy authentication flag a hack or is this acceptable?
+  // TODO ADVICE: Decouple encryption key for allowing login
+  // - And transfer encryption keys over stream as with the pupil identities
+  // - with additional one-time password to access the stream
+
+  /// TODO ADVICE: is this proxy authentication flag a hack or is this acceptable?
   /// We need to observe in [MaterialApp] if a user is authenticated
   /// without accessing [HubSessionManager], because if there is not
   // an active env yet, it will still be unregistered.
@@ -145,7 +150,7 @@ class EnvManager with ChangeNotifier {
     _log.info('Default Environment set: $_defaultEnv');
 
     _envIsReady.value = true;
-    await DiManager.registerManagersDependingOnActiveEnv();
+    await DiManager.registerManagersOnActiveEnvScope();
     setDependentManagersRegistered(true);
 
     if (await HubSecureStorage().containsKey(storageKeyForMatrixCredentials)) {
@@ -155,7 +160,15 @@ class EnvManager with ChangeNotifier {
       final matrixCredentials = MatrixCredentials.fromJson(
         json.decode(matrixCredentialsJson!) as Map<String, dynamic>,
       );
-      DiManager.registerMatrixManagers(matrixCredentials);
+
+      // Only register matrix managers if they're not already registered
+      if (!di.hasScope(DiScope.onMatrixEnvScope.name)) {
+        await DiManager.registerMatrixManagers(matrixCredentials);
+      } else {
+        _log.info(
+          '[DI] Matrix managers already registered, skipping registration',
+        );
+      }
     }
     return;
   }
@@ -174,32 +187,51 @@ class EnvManager with ChangeNotifier {
   }
 
   Future<EnvsInStorage?> _environmentsInStorage() async {
-    bool environmentsInStorage = await HubSecureStorage().containsKey(
-      _storageKeyForEnvironments,
-    );
+    try {
+      bool environmentsInStorage = await HubSecureStorage().containsKey(
+        _storageKeyForEnvironments,
+      );
 
-    if (environmentsInStorage == true) {
-      final String? storedEnvironmentsAsString = await HubSecureStorage()
-          .getString(_storageKeyForEnvironments);
+      if (environmentsInStorage == true) {
+        final String? storedEnvironmentsAsString = await HubSecureStorage()
+            .getString(_storageKeyForEnvironments);
 
-      try {
-        final environmentsInStorage = EnvsInStorage.fromJson(
-          json.decode(storedEnvironmentsAsString!) as Map<String, dynamic>,
-        );
+        if (storedEnvironmentsAsString == null) {
+          _log.warning('No environments data found in storage');
+          return null;
+        }
 
-        return environmentsInStorage;
-      } catch (e) {
-        _log.severe(
-          'Error reading env from secureStorage: $e',
-          StackTrace.current,
-        );
+        try {
+          final environmentsInStorage = EnvsInStorage.fromJson(
+            json.decode(storedEnvironmentsAsString) as Map<String, dynamic>,
+          );
 
-        _log.warning('deleting faulty environments from secure storage');
+          return environmentsInStorage;
+        } catch (e) {
+          _log.severe(
+            'Error parsing environments from secureStorage: $e',
+            StackTrace.current,
+          );
 
-        await HubSecureStorage().remove(_storageKeyForEnvironments);
+          _log.warning('deleting faulty environments from secure storage');
 
-        return null;
+          try {
+            await HubSecureStorage().remove(_storageKeyForEnvironments);
+          } catch (removeError) {
+            _log.warning('Could not remove faulty environments: $removeError');
+          }
+
+          return null;
+        }
       }
+    } catch (e) {
+      _log.severe(
+        'Error accessing secure storage for environments: $e',
+        StackTrace.current,
+      );
+
+      // Don't throw the error, just return null to allow app to continue
+      return null;
     }
 
     return null;
@@ -262,50 +294,179 @@ class EnvManager with ChangeNotifier {
   }
 
   Future<void> activateEnv({required String envName}) async {
-    _activeEnv = _environments[envName]!;
+    _log.info('Activating environment: $envName');
 
-    _defaultEnv = envName;
+    // Mark environment as not ready during switch
+    _envIsReady.value = false;
     notifyListeners();
-    // The active environment changed, we need to update
-    // this information in storage
+
+    // 1. Reset or drop managers holding data from the old env
+    _log.info(
+      '[DI] Dropping logged in user scope to reset user-dependent managers',
+    );
+    await DiManager.dropOnLoggedInUserScope();
+
+    // Reset environment-dependent managers
+    _log.info('[DI] Switching environment managers');
+    await DiManager.switchEnvironmentAndReinitializeManagers();
+    // Note: switchEnvironmentAndReinitializeManagers already calls registerManagersOnActiveEnvScope()
+
+    // 2. Set the selected env as active
+    _activeEnv = _environments[envName]!;
+    _defaultEnv = envName;
+
+    _log.info('Environment set as active: ${_activeEnv!.serverName}');
+    // Don't notify listeners yet - wait until managers are read
+
+    // Update storage with new environment configuration
     final updatedEnvsForStorage = EnvsInStorage(
       defaultEnv: _activeEnv!.serverName,
       environmentsMap: _environments,
     );
 
     final String jsonEnvs = jsonEncode(updatedEnvsForStorage);
-
-    // write the updated environments to secure storage
     await HubSecureStorage().setString(_storageKeyForEnvironments, jsonEnvs);
 
-    _envIsReady.value = true;
-
-    _log.info('Activated Env: ${_activeEnv!.serverName}');
-    _log.info('Environments in storage: ${_environments.length}');
-
-    // Check if there are any dependent managers registered
-    // and if so, unregister them
-    // and register them again with the new environment
-
-    // Set the isAuthenticated flag to false
-    // because the user might not be authenticated in the new environment (yet)
-    // and we need to show the login screen again then
-
-    _isAuthenticated.value = false;
-    await DiManager.resetActiveEnvDependentManagers();
-    await di.allReady();
-    _notificationService.showInformationDialog(
-      'Die Umgebung ${_activeEnv!.serverName} wurde aktiviert.',
+    // Managers are already registered by switchEnvironmentAndReinitializeManagers
+    // Just mark them as ready
+    setDependentManagersRegistered(true);
+    _log.info(
+      '[DI] Environment-dependent managers are ready for: ${_activeEnv!.serverName}',
     );
 
-    // propagate the new environment to the pupil identity manager
-    // await propagateNewEnv();
+    // Handle matrix credentials if they exist
+    if (await HubSecureStorage().containsKey(storageKeyForMatrixCredentials)) {
+      _log.info(
+        '[DI] Found matrix credentials for environment ${_activeEnv!.serverName}',
+      );
+      final matrixCredentialsJson = await HubSecureStorage().getString(
+        storageKeyForMatrixCredentials,
+      );
+      final matrixCredentials = MatrixCredentials.fromJson(
+        json.decode(matrixCredentialsJson!) as Map<String, dynamic>,
+      );
 
-    // notify the user that the environment has been activated
+      // Only register matrix managers if they're not already registered
+      final hasMatrixScope = di.hasScope(DiScope.onMatrixEnvScope.name);
+      _log.info(
+        '[DI] Environment ${_activeEnv!.serverName}: hasMatrixScope = $hasMatrixScope',
+      );
+
+      if (!hasMatrixScope) {
+        _log.info(
+          '[DI] Registering matrix managers for environment ${_activeEnv!.serverName}',
+        );
+        await DiManager.registerMatrixManagers(matrixCredentials);
+      } else {
+        _log.info(
+          '[DI] Matrix managers already registered, skipping registration',
+        );
+      }
+    } else {
+      _log.info(
+        '[DI] No matrix credentials found for environment ${_activeEnv!.serverName}',
+      );
+    }
+
+    // Wait for all DI registrations to be ready
+    _log.info('[DI] Waiting for all managers to be ready...');
+    await di.allReady();
+
+    // Set environment as ready
+    _envIsReady.value = true;
+
+    // NOW notify listeners - all managers are ready
+    notifyListeners();
+
+    _log.info('Environment activated and ready: ${_activeEnv!.serverName}');
+
+    // 3. Check if credentials are stored - if so, log in
+    // Add a small delay to ensure everything is properly initialized
+    await Future.delayed(const Duration(milliseconds: 100));
+    await _checkAndAttemptAutoLogin();
+
+    // 4. Register user-dependent managers if auto-login was successful
+    // This ensures UI components can access auth-dependent managers like PupilsFilter
+    if (_isAuthenticated.value) {
+      _log.info(
+        '[DI] User is authenticated, registering user-dependent managers',
+      );
+      await DiManager.registerManagersDependingOnAuthedSession();
+    }
+
+    // Show success notification after everything is set up
     _notificationService.showSnackBar(
       NotificationType.success,
       'Umgebung ${_activeEnv!.serverName} aktiviert!',
     );
+  }
+
+  /// Check for stored credentials and attempt auto-login
+  Future<void> _checkAndAttemptAutoLogin() async {
+    try {
+      // Check if auth key exists for this environment
+      if (await HubSecureStorage().containsKey(storageKeyForAuthKey)) {
+        _log.info('Found stored auth key, attempting auto-login');
+
+        // Check if user info is also stored
+        if (await HubSecureStorage().containsKey(storageKeyForUserInfo)) {
+          _log.info('Found stored user info, attempting to restore session');
+
+          try {
+            // Check if session manager is available and ready
+            if (!di.isRegistered<HubSessionManager>()) {
+              _log.warning(
+                'Session manager not registered yet, skipping auto-login',
+              );
+              _isAuthenticated.value = false;
+              return;
+            }
+
+            // Try to get the session manager - this will throw if not ready
+            final sessionManager = di<HubSessionManager>();
+
+            // The session manager should handle the auto-login
+            // This will set the authentication status appropriately
+            await sessionManager.initialize();
+
+            _log.info('Auto-login completed successfully');
+          } catch (sessionError) {
+            if (sessionError.toString().contains('not ready yet')) {
+              _log.warning(
+                'Session manager not ready yet, skipping auto-login: $sessionError',
+              );
+            } else {
+              _log.warning(
+                'Session manager error, skipping auto-login: $sessionError',
+              );
+            }
+            // Ensure authentication status is false
+            _isAuthenticated.value = false;
+          }
+        } else {
+          _log.warning('Auth key found but no user info, clearing auth key');
+          await HubSecureStorage().remove(storageKeyForAuthKey);
+          _isAuthenticated.value = false;
+        }
+      } else {
+        _log.info(
+          'No stored credentials found, user will need to log in manually',
+        );
+        // Ensure authentication status is false
+        _isAuthenticated.value = false;
+      }
+    } catch (e) {
+      _log.severe('Error during auto-login attempt: $e', StackTrace.current);
+      // Clear potentially corrupted credentials
+      try {
+        await HubSecureStorage().remove(storageKeyForAuthKey);
+        await HubSecureStorage().remove(storageKeyForUserInfo);
+      } catch (clearError) {
+        _log.warning('Could not clear corrupted credentials: $clearError');
+      }
+      // Ensure authentication status is false
+      _isAuthenticated.value = false;
+    }
   }
 
   Future<void> deleteNotActivatedEnv(Env env) async {
@@ -340,13 +501,18 @@ class EnvManager with ChangeNotifier {
       );
 
       // reset the managers depending on the active environment
-      DiManager.resetActiveEnvDependentManagers();
+      _log.info(
+        '[DI] Switching environment managers after deleting environment $deletedEnvironment',
+      );
+      DiManager.switchEnvironmentAndReinitializeManagers();
     } else {
       // if there are no environments left, delete the environments from secure storage
 
       await HubSecureStorage().remove(_storageKeyForEnvironments);
-
-      DiManager.unregisterManagersDependentOnEnv();
+      _log.info(
+        '[DDI]Env $deletedEnvironment deleted. No environments left. Cleaning up all environment managers.',
+      );
+      DiManager.cleanupAllEnvironmentManagers();
       _activeEnv = null;
 
       _defaultEnv = '';

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
@@ -11,6 +12,7 @@ import 'package:watch_it/watch_it.dart';
 final _envManager = di<EnvManager>();
 
 Future<bool?> changeEnvironmentDialog({required BuildContext context}) async {
+  final _log = Logger('ChangeEnvDialog');
   return showDialog<bool>(
     context: context,
     builder: (BuildContext context) {
@@ -64,7 +66,13 @@ Future<bool?> changeEnvironmentDialog({required BuildContext context}) async {
                           message: 'Möchten Sie wirklich die Instanz löschen?',
                         );
                         if (confirmation != true) return;
-                        await _envManager.deleteNotActivatedEnv(envs[index]);
+                        Navigator.of(context).pop();
+                        if (envs[index].serverName ==
+                            _envManager.activeEnv?.serverName) {
+                          await _envManager.deleteEnv();
+                        } else {
+                          await _envManager.deleteNotActivatedEnv(envs[index]);
+                        }
                       },
                     ),
                     const Gap(10),
@@ -89,8 +97,14 @@ Future<bool?> changeEnvironmentDialog({required BuildContext context}) async {
               style: AppStyles.successButtonStyle,
               onPressed: () async {
                 Navigator.of(context).pop();
-                DiManager.unregisterManagersDependingOnSession();
+                _log.info(
+                  '[DI] User wants to add a new environment frpm the dialog: dropping logged in user scope first',
+                );
+                DiManager.dropOnLoggedInUserScope();
                 //  await di<HubSessionManager>().signOutDevice();
+                _log.warning(
+                  '[DI] User signed out, setting env not ready from the dialog',
+                );
                 _envManager.setEnvNotReady();
               }, // Add onPressed
               child: const Text(

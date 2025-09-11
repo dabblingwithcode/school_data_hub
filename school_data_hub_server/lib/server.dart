@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
@@ -28,6 +29,13 @@ void run(List<String> args) async {
     final colorFormatter = ColorFormatter();
     log(colorFormatter.format(record));
   });
+
+  // Also add a simple console output for Docker environments
+  // TODO ADVICE: Is this print bad in production?
+  Logger.root.onRecord.listen((record) {
+    print(
+        '${record.time}: ${record.level.name}: ${record.loggerName}: ${record.message}');
+  });
   // auth configuration
   auth.AuthConfig.set(auth.AuthConfig(
     enableUserImages: false,
@@ -43,16 +51,25 @@ void run(List<String> args) async {
     authenticationHandler: auth.authenticationHandler,
   );
 
-  // Configure storage.
-  // we use p.join to avoid issues with different OS path separators
+  // Configure storage with environment-aware paths
+  String storageBasePath;
+
+  // Determine storage path based on environment
+  if (Platform.isLinux && Directory('/app').existsSync()) {
+    // Docker container environment
+    storageBasePath = '/app/storage';
+  } else {
+    // Local development environment
+    storageBasePath = p.join(Directory.current.path, 'storage');
+  }
+
   pod.addCloudStorage(LocalStorage(
-    //publicStorageUrl: publicStorageUrl,
     storageId: 'private',
-    pathPrefix: p.join('storage', 'private').toString(),
+    pathPrefix: p.join(storageBasePath, 'private'),
   ));
   pod.addCloudStorage(LocalStorage(
     storageId: 'public',
-    pathPrefix: p.join('storage', 'public').toString(),
+    pathPrefix: p.join(storageBasePath, 'public'),
   ));
 
   // If you are using any future calls, they need to be registered here.
@@ -70,16 +87,37 @@ void run(List<String> args) async {
     '/*',
   );
 
+  String publicStoragePath;
+  if (Platform.isLinux && Directory('/app').existsSync()) {
+    publicStoragePath = '/app/storage/public';
+  } else {
+    publicStoragePath = p.join(Directory.current.path, 'storage', 'public');
+  }
+
+  pod.webServer.addRoute(
+    RouteStaticDirectory(
+        serverDirectory: publicStoragePath, basePath: '/files/public'),
+    '/files/public/*',
+  );
+
   // Start the server.
   await pod.start();
 
+  // Create storage directories early
+  createLocalStorageDirectories();
+
   var session = await pod.createSession();
 
-  // Check if there are any users in the database. If not, we can populate the test environment.
-  if (await auth.UserInfo.db.count(session) == 0) {
+  // Check if there are any users in the database. If not, we need to populate the test environment.
+  final userCount = await auth.UserInfo.db.count(session);
+  print('Current user count in database: $userCount');
+
+  if (userCount == 0) {
+    print('No users found, populating test environment...');
     await populateTestEnvironment(session);
+  } else {
+    print('Users already exist, skipping test environment population');
   }
-  createLocalStorageDirectories();
 
   // TODO: uncomment in production
   // Trigger the backup future call to generate database backups.

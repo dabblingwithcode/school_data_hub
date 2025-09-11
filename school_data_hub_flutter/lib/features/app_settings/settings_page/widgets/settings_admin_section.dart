@@ -3,17 +3,19 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:school_data_hub_flutter/app_utils/app_helpers.dart';
-import 'package:school_data_hub_flutter/app_utils/shorebird_code_push.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_utilites.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:school_data_hub_flutter/features/books/utils/book_ids_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/set_matrix_environment_page/set_matrix_environment_controller.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/pupil_matrix_contacts_list_page/pupils_matrix_contacts_list_page.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/school/presentation/edit_school_data_page/edit_school_data_page.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_page/new_school_semester_page.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_page/schooldays_calendar_page/schooldays_calendar_page.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
@@ -45,6 +47,15 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
       ),
       tiles: <SettingsTile>[
         SettingsTile.navigation(
+          title: const Text('Schuldaten eintragen'),
+          leading: const Icon(Icons.account_circle_rounded),
+          onPressed: (context) {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (ctx) => const EditSchoolDataPage()),
+            );
+          },
+        ),
+        SettingsTile.navigation(
           title: const Text('Neuen User erstellen'),
           leading: const Icon(Icons.account_circle_rounded),
           onPressed: (context) {
@@ -66,7 +77,7 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
           title: const Text('Buch IDs generieren'),
           leading: const Icon(Icons.qr_code_rounded),
           onPressed: (context) {
-            //    generateBookIdsPdf();
+            generateBookIdsPdf();
           },
         ),
         SettingsTile.navigation(
@@ -209,6 +220,15 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
           },
           leading: const Icon(Icons.compare_arrows_rounded),
           title: const Text('Förderkategorien aus Datei importieren'),
+
+          //onPressed:
+        ),
+        SettingsTile.navigation(
+          onPressed: (context) async {
+            await di<PupilManager>().importPupilDataFromJson();
+          },
+          leading: const Icon(Icons.compare_arrows_rounded),
+          title: const Text('Kinderdaten aus Datei importieren'),
 
           //onPressed:
         ),

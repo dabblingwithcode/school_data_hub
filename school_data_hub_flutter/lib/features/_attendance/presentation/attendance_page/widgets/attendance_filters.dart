@@ -8,17 +8,17 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filt
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _pupilFilterLocator = di<PupilFilterManager>();
-
-final _attendanceFilterLocator = di<AttendancePupilFilterManager>();
-
 class AttendanceFilters extends WatchingWidget {
   const AttendanceFilters({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _pupilFilterLocator = di<PupilFilterManager>();
+
+    final _attendanceFilterLocator = di<AttendancePupilFilterManager>();
     final Map<AttendancePupilFilter, bool> activeAttendanceFilters = watchValue(
-        (AttendancePupilFilterManager x) => x.attendancePupilFilterState);
+      (AttendancePupilFilterManager x) => x.attendancePupilFilterState,
+    );
 
     bool valuePresent = activeAttendanceFilters[AttendancePupilFilter.present]!;
 
@@ -28,8 +28,9 @@ class AttendanceFilters extends WatchingWidget {
     bool valueUnexcused =
         activeAttendanceFilters[AttendancePupilFilter.unexcused]!;
 
-    Map<PupilFilter, bool> activePupilFilters =
-        watchValue((PupilFilterManager x) => x.pupilFilterState);
+    Map<PupilFilter, bool> activePupilFilters = watchValue(
+      (PupilFilterManager x) => x.pupilFilterState,
+    );
 
     bool valueOgs = activePupilFilters[PupilFilter.ogs]!;
 
@@ -37,14 +38,7 @@ class AttendanceFilters extends WatchingWidget {
 
     return Column(
       children: [
-        const Row(
-          children: [
-            Text(
-              'Anwesenheit',
-              style: AppStyles.subtitle,
-            )
-          ],
-        ),
+        const Row(children: [Text('Anwesenheit', style: AppStyles.subtitle)]),
         const Gap(5),
         Wrap(
           spacing: 5,
@@ -58,30 +52,32 @@ class AttendanceFilters extends WatchingWidget {
                 // in case present is selected, not present and unexcused should be deselected
 
                 if (val) {
-                  _attendanceFilterLocator
-                      .setAttendancePupilFilter(attendancePupilFilterRecords: [
-                    (
-                      attendancePupilFilter: AttendancePupilFilter.notPresent,
-                      value: false
-                    ),
-                    (
-                      attendancePupilFilter: AttendancePupilFilter.unexcused,
-                      value: false
-                    ),
-                    (
-                      attendancePupilFilter: AttendancePupilFilter.present,
-                      value: val
-                    )
-                  ]);
+                  _attendanceFilterLocator.setAttendancePupilFilter(
+                    attendancePupilFilterRecords: [
+                      (
+                        attendancePupilFilter: AttendancePupilFilter.notPresent,
+                        value: false,
+                      ),
+                      (
+                        attendancePupilFilter: AttendancePupilFilter.unexcused,
+                        value: false,
+                      ),
+                      (
+                        attendancePupilFilter: AttendancePupilFilter.present,
+                        value: val,
+                      ),
+                    ],
+                  );
                   return;
                 }
                 _attendanceFilterLocator.setAttendancePupilFilter(
-                    attendancePupilFilterRecords: [
-                      (
-                        attendancePupilFilter: AttendancePupilFilter.present,
-                        value: val
-                      )
-                    ]);
+                  attendancePupilFilterRecords: [
+                    (
+                      attendancePupilFilter: AttendancePupilFilter.present,
+                      value: val,
+                    ),
+                  ],
+                );
               },
             ),
             ThemedFilterChip(
@@ -91,31 +87,33 @@ class AttendanceFilters extends WatchingWidget {
                 // in case not present is selected, present should be deselected
                 if (val) {
                   //_valuePresent = false;
-                  _attendanceFilterLocator
-                      .setAttendancePupilFilter(attendancePupilFilterRecords: [
-                    (
-                      attendancePupilFilter: AttendancePupilFilter.notPresent,
-                      value: val
-                    ),
-                    (
-                      attendancePupilFilter: AttendancePupilFilter.present,
-                      value: false
-                    ),
-                    (
-                      attendancePupilFilter: AttendancePupilFilter.unexcused,
-                      value: false
-                    )
-                  ]);
+                  _attendanceFilterLocator.setAttendancePupilFilter(
+                    attendancePupilFilterRecords: [
+                      (
+                        attendancePupilFilter: AttendancePupilFilter.notPresent,
+                        value: val,
+                      ),
+                      (
+                        attendancePupilFilter: AttendancePupilFilter.present,
+                        value: false,
+                      ),
+                      (
+                        attendancePupilFilter: AttendancePupilFilter.unexcused,
+                        value: false,
+                      ),
+                    ],
+                  );
                   return;
                 }
 
                 _attendanceFilterLocator.setAttendancePupilFilter(
-                    attendancePupilFilterRecords: [
-                      (
-                        attendancePupilFilter: AttendancePupilFilter.notPresent,
-                        value: val
-                      )
-                    ]);
+                  attendancePupilFilterRecords: [
+                    (
+                      attendancePupilFilter: AttendancePupilFilter.notPresent,
+                      value: val,
+                    ),
+                  ],
+                );
               },
             ),
             ThemedFilterChip(
@@ -124,30 +122,32 @@ class AttendanceFilters extends WatchingWidget {
               onSelected: (val) {
                 // in case unexcused is selected, present should be deselected
                 if (val) {
-                  _attendanceFilterLocator
-                      .setAttendancePupilFilter(attendancePupilFilterRecords: [
-                    (
-                      attendancePupilFilter: AttendancePupilFilter.unexcused,
-                      value: val
-                    ),
-                    (
-                      attendancePupilFilter: AttendancePupilFilter.notPresent,
-                      value: false
-                    ),
-                    (
-                      attendancePupilFilter: AttendancePupilFilter.present,
-                      value: false
-                    )
-                  ]);
-                  return;
-                }
-                _attendanceFilterLocator.setAttendancePupilFilter(
+                  _attendanceFilterLocator.setAttendancePupilFilter(
                     attendancePupilFilterRecords: [
                       (
                         attendancePupilFilter: AttendancePupilFilter.unexcused,
-                        value: val
-                      )
-                    ]);
+                        value: val,
+                      ),
+                      (
+                        attendancePupilFilter: AttendancePupilFilter.notPresent,
+                        value: false,
+                      ),
+                      (
+                        attendancePupilFilter: AttendancePupilFilter.present,
+                        value: false,
+                      ),
+                    ],
+                  );
+                  return;
+                }
+                _attendanceFilterLocator.setAttendancePupilFilter(
+                  attendancePupilFilterRecords: [
+                    (
+                      attendancePupilFilter: AttendancePupilFilter.unexcused,
+                      value: val,
+                    ),
+                  ],
+                );
               },
             ),
             ThemedFilterChip(
@@ -157,16 +157,18 @@ class AttendanceFilters extends WatchingWidget {
                 if (val == true) {
                   // in case ogs is selected, not ogs should be deselected
 
-                  _pupilFilterLocator.setPupilFilter(pupilFilterRecords: [
-                    (filter: PupilFilter.notOgs, value: false),
-                    (filter: PupilFilter.ogs, value: val)
-                  ]);
+                  _pupilFilterLocator.setPupilFilter(
+                    pupilFilterRecords: [
+                      (filter: PupilFilter.notOgs, value: false),
+                      (filter: PupilFilter.ogs, value: val),
+                    ],
+                  );
                   return;
                 }
 
-                _pupilFilterLocator.setPupilFilter(pupilFilterRecords: [
-                  (filter: PupilFilter.ogs, value: val)
-                ]);
+                _pupilFilterLocator.setPupilFilter(
+                  pupilFilterRecords: [(filter: PupilFilter.ogs, value: val)],
+                );
               },
             ),
             ThemedFilterChip(
@@ -175,15 +177,19 @@ class AttendanceFilters extends WatchingWidget {
               onSelected: (val) {
                 if (val == true) {
                   // in case not ogs is selected, ogs should be deselected
-                  _pupilFilterLocator.setPupilFilter(pupilFilterRecords: [
-                    (filter: PupilFilter.ogs, value: false),
-                    (filter: PupilFilter.notOgs, value: val)
-                  ]);
+                  _pupilFilterLocator.setPupilFilter(
+                    pupilFilterRecords: [
+                      (filter: PupilFilter.ogs, value: false),
+                      (filter: PupilFilter.notOgs, value: val),
+                    ],
+                  );
                   return;
                 }
-                _pupilFilterLocator.setPupilFilter(pupilFilterRecords: [
-                  (filter: PupilFilter.notOgs, value: val)
-                ]);
+                _pupilFilterLocator.setPupilFilter(
+                  pupilFilterRecords: [
+                    (filter: PupilFilter.notOgs, value: val),
+                  ],
+                );
               },
             ),
           ],

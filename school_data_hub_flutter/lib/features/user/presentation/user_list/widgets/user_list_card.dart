@@ -141,6 +141,28 @@ class UserListCard extends WatchingWidget {
                         ),
                       ],
                     ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                const Text('Entlastungseinheiten:'),
+                                const Gap(5),
+                                //- TODO: Implement update user properties
+                                Text(
+                                  user.reliefTimeUnits.toString(),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),

@@ -3,6 +3,7 @@ table: pupil_data
 fields:
   status: PupilStatus
   internalId: int
+  password: String?
   ## preschool related
   preSchoolMedical: PreSchoolMedical?, relation(optional)
   kindergarden: Kindergarden?, relation(optional)
@@ -17,6 +18,7 @@ fields:
   ## communication and tutor related
   contact: String?
   communicationPupil: CommunicationSkills?
+  ##- TODO: specialInformation should be an object with createdBy and createdAt
   specialInformation: String?
   ## - Beware: This object is used in siblings parent info
   tutorInfo: TutorInfo?

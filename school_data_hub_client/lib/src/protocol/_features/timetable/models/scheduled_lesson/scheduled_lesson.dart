@@ -1,0 +1,343 @@
+/* AUTOMATICALLY GENERATED CODE DO NOT MODIFY */
+/*   To generate run: "serverpod generate"    */
+
+// ignore_for_file: implementation_imports
+// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: public_member_api_docs
+// ignore_for_file: type_literal_in_constant_pattern
+// ignore_for_file: use_super_parameters
+
+// ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:serverpod_client/serverpod_client.dart' as _i1;
+import '../../../../_features/timetable/models/scheduled_lesson/subject.dart'
+    as _i2;
+import '../../../../_features/timetable/models/scheduled_lesson/timetable_slot.dart'
+    as _i3;
+import '../../../../_features/timetable/models/timetable.dart' as _i4;
+import '../../../../_features/timetable/models/junction_models/scheduled_lesson_teacher.dart'
+    as _i5;
+import '../../../../_features/timetable/models/classroom.dart' as _i6;
+import '../../../../_features/timetable/models/lesson/lesson_group.dart' as _i7;
+import 'package:school_data_hub_client/src/protocol/protocol.dart' as _i8;
+
+abstract class ScheduledLesson implements _i1.SerializableModel {
+  ScheduledLesson._({
+    this.id,
+    required this.active,
+    required this.subjectId,
+    this.subject,
+    required this.scheduledAtId,
+    this.scheduledAt,
+    required this.timetableSlotOrder,
+    required this.timetableId,
+    this.timetable,
+    this.lessonTeachers,
+    required this.mainTeacherId,
+    required this.lessonId,
+    required this.roomId,
+    this.room,
+    required this.lessonGroupId,
+    this.lessonGroup,
+    required this.createdBy,
+    required this.createdAt,
+    this.modifiedBy,
+    this.modifiedAt,
+    this.recordtest,
+  });
+
+  factory ScheduledLesson({
+    int? id,
+    required bool active,
+    required int subjectId,
+    _i2.Subject? subject,
+    required int scheduledAtId,
+    _i3.TimetableSlot? scheduledAt,
+    required int timetableSlotOrder,
+    required int timetableId,
+    _i4.Timetable? timetable,
+    List<_i5.ScheduledLessonTeacher>? lessonTeachers,
+    required int mainTeacherId,
+    required String lessonId,
+    required int roomId,
+    _i6.Classroom? room,
+    required int lessonGroupId,
+    _i7.LessonGroup? lessonGroup,
+    required String createdBy,
+    required DateTime createdAt,
+    String? modifiedBy,
+    DateTime? modifiedAt,
+    ({int testint, String testString})? recordtest,
+  }) = _ScheduledLessonImpl;
+
+  factory ScheduledLesson.fromJson(Map<String, dynamic> jsonSerialization) {
+    return ScheduledLesson(
+      id: jsonSerialization['id'] as int?,
+      active: jsonSerialization['active'] as bool,
+      subjectId: jsonSerialization['subjectId'] as int,
+      subject: jsonSerialization['subject'] == null
+          ? null
+          : _i2.Subject.fromJson(
+              (jsonSerialization['subject'] as Map<String, dynamic>)),
+      scheduledAtId: jsonSerialization['scheduledAtId'] as int,
+      scheduledAt: jsonSerialization['scheduledAt'] == null
+          ? null
+          : _i3.TimetableSlot.fromJson(
+              (jsonSerialization['scheduledAt'] as Map<String, dynamic>)),
+      timetableSlotOrder: jsonSerialization['timetableSlotOrder'] as int,
+      timetableId: jsonSerialization['timetableId'] as int,
+      timetable: jsonSerialization['timetable'] == null
+          ? null
+          : _i4.Timetable.fromJson(
+              (jsonSerialization['timetable'] as Map<String, dynamic>)),
+      lessonTeachers: (jsonSerialization['lessonTeachers'] as List?)
+          ?.map((e) =>
+              _i5.ScheduledLessonTeacher.fromJson((e as Map<String, dynamic>)))
+          .toList(),
+      mainTeacherId: jsonSerialization['mainTeacherId'] as int,
+      lessonId: jsonSerialization['lessonId'] as String,
+      roomId: jsonSerialization['roomId'] as int,
+      room: jsonSerialization['room'] == null
+          ? null
+          : _i6.Classroom.fromJson(
+              (jsonSerialization['room'] as Map<String, dynamic>)),
+      lessonGroupId: jsonSerialization['lessonGroupId'] as int,
+      lessonGroup: jsonSerialization['lessonGroup'] == null
+          ? null
+          : _i7.LessonGroup.fromJson(
+              (jsonSerialization['lessonGroup'] as Map<String, dynamic>)),
+      createdBy: jsonSerialization['createdBy'] as String,
+      createdAt:
+          _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
+      modifiedBy: jsonSerialization['modifiedBy'] as String?,
+      modifiedAt: jsonSerialization['modifiedAt'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['modifiedAt']),
+      recordtest: jsonSerialization['recordtest'] == null
+          ? null
+          : _i8.Protocol().deserialize<({int testint, String testString})?>(
+              (jsonSerialization['recordtest'] as Map<String, dynamic>)),
+    );
+  }
+
+  /// The database id, set if the object has been inserted into the
+  /// database or if it has been fetched from the database. Otherwise,
+  /// the id will be null.
+  int? id;
+
+  bool active;
+
+  int subjectId;
+
+  _i2.Subject? subject;
+
+  int scheduledAtId;
+
+  _i3.TimetableSlot? scheduledAt;
+
+  int timetableSlotOrder;
+
+  int timetableId;
+
+  _i4.Timetable? timetable;
+
+  List<_i5.ScheduledLessonTeacher>? lessonTeachers;
+
+  int mainTeacherId;
+
+  String lessonId;
+
+  int roomId;
+
+  _i6.Classroom? room;
+
+  int lessonGroupId;
+
+  _i7.LessonGroup? lessonGroup;
+
+  String createdBy;
+
+  DateTime createdAt;
+
+  String? modifiedBy;
+
+  DateTime? modifiedAt;
+
+  ({int testint, String testString})? recordtest;
+
+  /// Returns a shallow copy of this [ScheduledLesson]
+  /// with some or all fields replaced by the given arguments.
+  @_i1.useResult
+  ScheduledLesson copyWith({
+    int? id,
+    bool? active,
+    int? subjectId,
+    _i2.Subject? subject,
+    int? scheduledAtId,
+    _i3.TimetableSlot? scheduledAt,
+    int? timetableSlotOrder,
+    int? timetableId,
+    _i4.Timetable? timetable,
+    List<_i5.ScheduledLessonTeacher>? lessonTeachers,
+    int? mainTeacherId,
+    String? lessonId,
+    int? roomId,
+    _i6.Classroom? room,
+    int? lessonGroupId,
+    _i7.LessonGroup? lessonGroup,
+    String? createdBy,
+    DateTime? createdAt,
+    String? modifiedBy,
+    DateTime? modifiedAt,
+    ({int testint, String testString})? recordtest,
+  });
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      if (id != null) 'id': id,
+      'active': active,
+      'subjectId': subjectId,
+      if (subject != null) 'subject': subject?.toJson(),
+      'scheduledAtId': scheduledAtId,
+      if (scheduledAt != null) 'scheduledAt': scheduledAt?.toJson(),
+      'timetableSlotOrder': timetableSlotOrder,
+      'timetableId': timetableId,
+      if (timetable != null) 'timetable': timetable?.toJson(),
+      if (lessonTeachers != null)
+        'lessonTeachers':
+            lessonTeachers?.toJson(valueToJson: (v) => v.toJson()),
+      'mainTeacherId': mainTeacherId,
+      'lessonId': lessonId,
+      'roomId': roomId,
+      if (room != null) 'room': room?.toJson(),
+      'lessonGroupId': lessonGroupId,
+      if (lessonGroup != null) 'lessonGroup': lessonGroup?.toJson(),
+      'createdBy': createdBy,
+      'createdAt': createdAt.toJson(),
+      if (modifiedBy != null) 'modifiedBy': modifiedBy,
+      if (modifiedAt != null) 'modifiedAt': modifiedAt?.toJson(),
+      if (recordtest != null) 'recordtest': _i8.mapRecordToJson(recordtest),
+    };
+  }
+
+  @override
+  String toString() {
+    return _i1.SerializationManager.encode(this);
+  }
+}
+
+class _Undefined {}
+
+class _ScheduledLessonImpl extends ScheduledLesson {
+  _ScheduledLessonImpl({
+    int? id,
+    required bool active,
+    required int subjectId,
+    _i2.Subject? subject,
+    required int scheduledAtId,
+    _i3.TimetableSlot? scheduledAt,
+    required int timetableSlotOrder,
+    required int timetableId,
+    _i4.Timetable? timetable,
+    List<_i5.ScheduledLessonTeacher>? lessonTeachers,
+    required int mainTeacherId,
+    required String lessonId,
+    required int roomId,
+    _i6.Classroom? room,
+    required int lessonGroupId,
+    _i7.LessonGroup? lessonGroup,
+    required String createdBy,
+    required DateTime createdAt,
+    String? modifiedBy,
+    DateTime? modifiedAt,
+    ({int testint, String testString})? recordtest,
+  }) : super._(
+          id: id,
+          active: active,
+          subjectId: subjectId,
+          subject: subject,
+          scheduledAtId: scheduledAtId,
+          scheduledAt: scheduledAt,
+          timetableSlotOrder: timetableSlotOrder,
+          timetableId: timetableId,
+          timetable: timetable,
+          lessonTeachers: lessonTeachers,
+          mainTeacherId: mainTeacherId,
+          lessonId: lessonId,
+          roomId: roomId,
+          room: room,
+          lessonGroupId: lessonGroupId,
+          lessonGroup: lessonGroup,
+          createdBy: createdBy,
+          createdAt: createdAt,
+          modifiedBy: modifiedBy,
+          modifiedAt: modifiedAt,
+          recordtest: recordtest,
+        );
+
+  /// Returns a shallow copy of this [ScheduledLesson]
+  /// with some or all fields replaced by the given arguments.
+  @_i1.useResult
+  @override
+  ScheduledLesson copyWith({
+    Object? id = _Undefined,
+    bool? active,
+    int? subjectId,
+    Object? subject = _Undefined,
+    int? scheduledAtId,
+    Object? scheduledAt = _Undefined,
+    int? timetableSlotOrder,
+    int? timetableId,
+    Object? timetable = _Undefined,
+    Object? lessonTeachers = _Undefined,
+    int? mainTeacherId,
+    String? lessonId,
+    int? roomId,
+    Object? room = _Undefined,
+    int? lessonGroupId,
+    Object? lessonGroup = _Undefined,
+    String? createdBy,
+    DateTime? createdAt,
+    Object? modifiedBy = _Undefined,
+    Object? modifiedAt = _Undefined,
+    Object? recordtest = _Undefined,
+  }) {
+    return ScheduledLesson(
+      id: id is int? ? id : this.id,
+      active: active ?? this.active,
+      subjectId: subjectId ?? this.subjectId,
+      subject: subject is _i2.Subject? ? subject : this.subject?.copyWith(),
+      scheduledAtId: scheduledAtId ?? this.scheduledAtId,
+      scheduledAt: scheduledAt is _i3.TimetableSlot?
+          ? scheduledAt
+          : this.scheduledAt?.copyWith(),
+      timetableSlotOrder: timetableSlotOrder ?? this.timetableSlotOrder,
+      timetableId: timetableId ?? this.timetableId,
+      timetable:
+          timetable is _i4.Timetable? ? timetable : this.timetable?.copyWith(),
+      lessonTeachers: lessonTeachers is List<_i5.ScheduledLessonTeacher>?
+          ? lessonTeachers
+          : this.lessonTeachers?.map((e0) => e0.copyWith()).toList(),
+      mainTeacherId: mainTeacherId ?? this.mainTeacherId,
+      lessonId: lessonId ?? this.lessonId,
+      roomId: roomId ?? this.roomId,
+      room: room is _i6.Classroom? ? room : this.room?.copyWith(),
+      lessonGroupId: lessonGroupId ?? this.lessonGroupId,
+      lessonGroup: lessonGroup is _i7.LessonGroup?
+          ? lessonGroup
+          : this.lessonGroup?.copyWith(),
+      createdBy: createdBy ?? this.createdBy,
+      createdAt: createdAt ?? this.createdAt,
+      modifiedBy: modifiedBy is String? ? modifiedBy : this.modifiedBy,
+      modifiedAt: modifiedAt is DateTime? ? modifiedAt : this.modifiedAt,
+      recordtest: recordtest is ({int testint, String testString})?
+          ? recordtest
+          : this.recordtest == null
+              ? null
+              : (
+                  testint: this.recordtest!.testint,
+                  testString: this.recordtest!.testString,
+                ),
+    );
+  }
+}

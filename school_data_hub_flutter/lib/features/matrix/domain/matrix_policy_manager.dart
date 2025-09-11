@@ -8,6 +8,7 @@ import 'package:school_data_hub_flutter/core/di/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/data/matrix_api_service.dart';
+import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
@@ -31,6 +32,8 @@ class MatrixPolicyManager extends ChangeNotifier {
     this._corporalToken,
     this._matrixToken,
     this._matrixAdminId,
+    this._encryptionKey,
+    this._encryptionIv,
   ) : _matrixApiService = MatrixApiService(
         matrixUrl: _matrixUrl,
         corporalToken: _corporalToken,
@@ -50,6 +53,11 @@ class MatrixPolicyManager extends ChangeNotifier {
 
   String _corporalToken;
   String get corporalToken => 'Bearer $_corporalToken';
+
+  String _encryptionKey;
+  String get encryptionKey => _encryptionKey;
+  String _encryptionIv;
+  String get encryptionIv => _encryptionIv;
 
   // List<String> _compulsoryRooms;
   // List<String> get compulsoryRooms => _compulsoryRooms;
@@ -100,6 +108,16 @@ class MatrixPolicyManager extends ChangeNotifier {
     return this;
   }
 
+  void clearMatrixCredentials() {
+    _matrixUrl = '';
+    _corporalToken = '';
+    _matrixToken = '';
+    _matrixAdminId = null;
+    _matrixPolicy = null;
+    _encryptionKey = '';
+    _encryptionIv = '';
+  }
+
   void pendingChangesHandler(bool newValue) {
     if (newValue == _policyPendingChanges.value) return;
     _policyPendingChanges.value = newValue;
@@ -110,11 +128,15 @@ class MatrixPolicyManager extends ChangeNotifier {
     required String policyToken,
     required String matrixToken,
     required String matrixAdmin,
+    required String encryptionKey,
+    required String encryptionIv,
   }) async {
     _matrixUrl = url;
     _corporalToken = policyToken;
     _matrixToken = matrixToken;
     _matrixAdminId = matrixAdmin;
+    _encryptionKey = encryptionKey;
+    _encryptionIv = encryptionIv;
 
     _secureStorage.setString(
       _secureStorageKey,
@@ -124,6 +146,8 @@ class MatrixPolicyManager extends ChangeNotifier {
           matrixToken: matrixToken,
           policyToken: policyToken,
           matrixAdmin: matrixAdmin,
+          encryptionKey: encryptionKey,
+          encryptionIv: encryptionIv,
         ),
       ),
     );
@@ -133,7 +157,7 @@ class MatrixPolicyManager extends ChangeNotifier {
 
   Future<void> deleteAndDeregisterMatrixPolicyManager() async {
     await _secureStorage.remove(_secureStorageKey);
-    di.dropScope(DiScope.matrixScope.name);
+    di.dropScope(DiScope.onMatrixEnvScope.name);
 
     _sessionManager.changeMatrixPolicyManagerRegistrationStatus(false);
     _notificationService.showSnackBar(
@@ -179,8 +203,8 @@ class MatrixPolicyManager extends ChangeNotifier {
     final updatedPolicy = MatrixPolicyHelper.refreshMatrixPolicy();
     _matrixPolicy = updatedPolicy;
 
-    //- TODO URGENT: uncomment this when the backend is ready
     await _matrixApiService.putMatrixPolicy();
+    di<MatrixPolicyFilterManager>().resetAllMatrixFilters();
     _policyPendingChanges.value = false;
   }
 }

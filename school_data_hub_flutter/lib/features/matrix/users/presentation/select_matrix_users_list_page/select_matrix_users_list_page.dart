@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/controller/select_matrix_users_list_controller.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/widgets/select_matrix_user_list_card.dart';
@@ -13,28 +14,40 @@ import 'package:watch_it/watch_it.dart';
 class SelectMatrixUsersListPage extends WatchingWidget {
   final SelectMatrixUsersListController controller;
   final List<MatrixUser> filteredPupilsInLIst;
-  const SelectMatrixUsersListPage(this.controller, this.filteredPupilsInLIst,
-      {super.key});
+  const SelectMatrixUsersListPage(
+    this.controller,
+    this.filteredPupilsInLIst, {
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final List<MatrixUser> filteredUsers = watchValue(
+      (MatrixPolicyFilterManager x) => x.filteredMatrixUsers,
+    );
+    final selectableUsers =
+        filteredUsers
+            .where((user) => controller.users!.contains(user))
+            .toList();
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
       appBar: AppBar(
-        leading: controller.isSelectMode
-            ? IconButton(
-                onPressed: () {
-                  controller.cancelSelect();
-                },
-                icon: const Icon(Icons.close))
-            : null,
+        leading:
+            controller.isSelectMode
+                ? IconButton(
+                  onPressed: () {
+                    controller.cancelSelect();
+                  },
+                  icon: const Icon(Icons.close),
+                )
+                : null,
         automaticallyImplyLeading: false,
         centerTitle: true,
         backgroundColor: AppColors.backgroundColor,
         title: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Kind/Kinder auswählen', style: AppStyles.appBarTextStyle),
+            Text('Konten auswählen', style: AppStyles.appBarTextStyle),
           ],
         ),
       ),
@@ -63,40 +76,44 @@ class SelectMatrixUsersListPage extends WatchingWidget {
                       background: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: SelectUserListSearchBar(
-                            matrixUsers: filteredPupilsInLIst,
-                            controller: controller),
+                          matrixUsers: selectableUsers,
+                          controller: controller,
+                        ),
                       ),
                     ),
                   ),
-                  filteredPupilsInLIst.isEmpty
+                  selectableUsers.isEmpty
                       ? const SliverToBoxAdapter(
-                          child: Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                'Keine Ergebnisse',
-                                style: TextStyle(fontSize: 18),
-                              ),
+                        child: Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'Keine Ergebnisse',
+                              style: TextStyle(fontSize: 18),
                             ),
                           ),
-                        )
-                      : SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (BuildContext context, int index) {
-                              return SelectMatrixUserCard(
-                                  controller, filteredPupilsInLIst[index]);
-                            },
-                            childCount: filteredPupilsInLIst.length,
-                          ),
                         ),
+                      )
+                      : SliverList(
+                        delegate: SliverChildBuilderDelegate((
+                          BuildContext context,
+                          int index,
+                        ) {
+                          return SelectMatrixUserCard(
+                            controller,
+                            selectableUsers[index],
+                          );
+                        }, childCount: selectableUsers.length),
+                      ),
                 ],
               ),
             ),
           ),
         ),
       ),
-      bottomNavigationBar:
-          SelectMatrixUsersListPageBottomNavBar(controller: controller),
+      bottomNavigationBar: SelectMatrixUsersListPageBottomNavBar(
+        controller: controller,
+      ),
     );
   }
 }

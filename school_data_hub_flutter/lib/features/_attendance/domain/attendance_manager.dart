@@ -65,9 +65,7 @@ class AttendanceManager with ChangeNotifier {
   MissedSchoolday? getPupilMissedSchooldayOnDate(int pupilId, DateTime date) {
     return _pupilMissedSchooldayesMap[pupilId]!.missedSchooldays
         .firstWhereOrNull(
-          (element) =>
-              element.schoolday!.schoolday.formatForJson() ==
-              date.formatForJson(),
+          (element) => element.schoolday!.schoolday.isSameDate(date),
         );
   }
 
@@ -243,7 +241,7 @@ class AttendanceManager with ChangeNotifier {
   Future<void> fetchMissedSchooldayesOnASchoolday(DateTime schoolday) async {
     _log.info('fetchMissedSchooldayesOnASchoolday $schoolday');
     final List<MissedSchoolday>? missedSchooldays = await _attendanceApiService
-        .fetchMissedSchooldayesOnASchoolday(schoolday);
+        .fetchMissedSchooldayesOnASchoolday(schoolday.toUtc());
     if (missedSchooldays == null) return;
     _updateMissedSchooldayesInCollections(missedSchooldays);
 
@@ -284,7 +282,7 @@ class AttendanceManager with ChangeNotifier {
     );
 
     if (response == true) {
-      removeMissedSchooldayFromCollections(pupilId, date);
+      removeMissedSchooldayFromCollections(pupilId, date.toUtc());
       _notificationService.showSnackBar(
         NotificationType.success,
         'Fehlzeit erfolgreich gelöscht!',
@@ -324,7 +322,7 @@ class AttendanceManager with ChangeNotifier {
             unexcused: false,
             contactedType: ContactedType.notSet,
             returned: true,
-            returnedAt: returnedDateTime,
+            returnedAt: returnedDateTime?.toUtc(),
           );
       if (missedSchoolday == null) {
         return;
@@ -348,7 +346,7 @@ class AttendanceManager with ChangeNotifier {
         _schoolCalendarManager.getSchooldayByDate(date)!.id!,
       );
       if (success == true) {
-        removeMissedSchooldayFromCollections(pupilId, date);
+        removeMissedSchooldayFromCollections(pupilId, date.toUtc());
         _notificationService.showSnackBar(
           NotificationType.success,
           'Eintrag erfolgreich gelöscht!',
@@ -367,7 +365,7 @@ class AttendanceManager with ChangeNotifier {
     if (newValue == true) {
       final missedSchooldayToUpdate = missedSchoolday.copyWith(
         returned: newValue,
-        returnedAt: returnedDateTime,
+        returnedAt: returnedDateTime?.toUtc(),
         modifiedBy: _sessionManager.signedInUser!.userName!,
       );
       final MissedSchoolday? updatedMissedSchoolday =
@@ -500,10 +498,10 @@ class AttendanceManager with ChangeNotifier {
 
     for (DateTime validSchoolday in validSchooldays) {
       // if the date is the same as the startdate or enddate or in between
-      if (validSchoolday.isSameDate(startdate) ||
-          validSchoolday.isSameDate(enddate) ||
-          (validSchoolday.isAfterDate(startdate) &&
-              validSchoolday.isBeforeDate(enddate))) {
+      if (validSchoolday.isSameDate(startdate.toUtc()) ||
+          validSchoolday.isSameDate(enddate.toUtc()) ||
+          (validSchoolday.isAfterDate(startdate.toUtc()) &&
+              validSchoolday.isBeforeDate(enddate.toUtc()))) {
         final schoolday = _schoolCalendarManager.getSchooldayByDate(
           validSchoolday,
         );

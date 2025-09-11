@@ -1,0 +1,18 @@
+class: ScheduledLesson
+table: scheduled_lesson
+fields:
+  active: bool
+  subject: Subject?, relation(name=subject_scheduled_lesson)
+  scheduledAt: TimetableSlot?, relation
+  timetableSlotOrder: int
+  timetable: Timetable?, relation(name=scheduled_lesson_timetable)
+  lessonTeachers: List<ScheduledLessonTeacher>?, relation(name=scheduled_lesson_teachers)
+  mainTeacherId: int
+  lessonId: String
+  room: Classroom?, relation
+  lessonGroup: LessonGroup?, relation(name=lesson_group_scheduled_lesson)
+  createdBy: String
+  createdAt: DateTime
+  modifiedBy: String?
+  modifiedAt: DateTime?
+  recordtest: ({int testint, String testString})?

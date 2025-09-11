@@ -21,16 +21,19 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_fil
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter_impl.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/filters/school_list_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
+import 'package:school_data_hub_flutter/features/timetable/data/timetable_api_service.dart';
+import 'package:school_data_hub_flutter/features/timetable/timetable.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('DiOnUserAuth');
 
-class DiOnUserAuth {
+class DiInitOnUserAuth {
   static Future<void> registerManagers() async {
     di.registerSingletonAsync<PupilIdentityManager>(() async {
       final pupilIdentityManager = PupilIdentityManager();
@@ -83,6 +86,14 @@ class DiOnUserAuth {
       await bookManager.init();
       log('BookManager initialized');
       return bookManager;
+    }, dependsOn: []);
+
+    di.registerSingletonAsync<SchoolDataMainManager>(() async {
+      log('Registering SchoolDataMainManager');
+      final schoolDataManager = SchoolDataMainManager();
+      await schoolDataManager.init();
+      log('SchoolDataMainManager initialized');
+      return schoolDataManager;
     }, dependsOn: []);
 
     di.registerSingletonAsync<WorkbookManager>(() async {
@@ -194,5 +205,20 @@ class DiOnUserAuth {
       _log.info('UserManager initialized');
       return userManager;
     }, dependsOn: [HubSessionManager]);
+
+    di.registerSingletonAsync<TimetableApiService>(() async {
+      _log.info('Registering TimetableApiService');
+      final timetableApiService = TimetableApiService();
+      _log.info('TimetableApiService initialized');
+      return timetableApiService;
+    });
+
+    di.registerSingletonAsync<TimetableManager>(() async {
+      _log.info('Registering TimetableManager');
+      final timetableManager = TimetableManager();
+      await timetableManager.init();
+      _log.info('TimetableManager initialized');
+      return timetableManager;
+    }, dependsOn: [HubSessionManager, TimetableApiService]);
   }
 }

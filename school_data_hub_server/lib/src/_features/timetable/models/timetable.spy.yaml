@@ -1,0 +1,18 @@
+class: Timetable
+table: timetable
+fields:
+  active: bool
+  startsAt: DateTime
+  endsAt: DateTime?
+  name: String
+  schoolSemester: SchoolSemester?, relation(name=schoolsemester_timetables)
+  scheduledLessons: List<ScheduledLesson>?, relation(name=scheduled_lesson_timetable)
+  timetableSlots: List<TimetableSlot>?, relation(name=timetable_slot_timetable)
+  lessonGroups: List<LessonGroup>?, relation(name=lesson_group_timetable)
+  createdBy: String
+  createdAt: DateTime
+  modified: List<({String modifiedBy, DateTime modifiedAt})>?
+
+indexes:
+  timetable_school_semester_idx:
+    fields: schoolSemesterId

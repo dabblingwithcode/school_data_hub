@@ -11,26 +11,29 @@ class MatrixPolicyFilterManager {
   final _filtersOn = ValueNotifier<bool>(false);
   ValueListenable<bool> get filtersOn => _filtersOn;
 
-  final _filteredMatrixUsers =
-      ValueNotifier<List<MatrixUser>>(_matrixPolicyManager.matrixUsers.value);
+  final _filteredMatrixUsers = ValueNotifier<List<MatrixUser>>(
+    _matrixPolicyManager.matrixUsers.value,
+  );
   ValueListenable<List<MatrixUser>> get filteredMatrixUsers =>
       _filteredMatrixUsers;
 
-  final _filteredMatrixRooms =
-      ValueNotifier<List<MatrixRoom>>(_matrixPolicyManager.matrixRooms.value);
+  final _filteredMatrixRooms = ValueNotifier<List<MatrixRoom>>(
+    _matrixPolicyManager.matrixRooms.value,
+  );
   ValueListenable<List<MatrixRoom>> get filteredMatrixRooms =>
       _filteredMatrixRooms;
 
   final _searchText = ValueNotifier<String>('');
   ValueListenable<String> get searchText => _searchText;
 
-  final _searchController =
-      ValueNotifier<TextEditingController>(TextEditingController());
+  final _searchController = ValueNotifier<TextEditingController>(
+    TextEditingController(),
+  );
   ValueListenable<TextEditingController> get searchController =>
       _searchController;
 
   MatrixPolicyFilterManager(MatrixPolicyManager matrixPolicyManager)
-      : _policyManager = matrixPolicyManager {
+    : _policyManager = matrixPolicyManager {
     refreshFilteredMatrixUsers();
     _policyManager.addListener(refreshFilteredMatrixUsers);
     _policyManager.rooms.matrixRooms.addListener(reactWhenRoomListChanges);
@@ -71,14 +74,17 @@ class MatrixPolicyFilterManager {
       _filtersOn.value = false;
       return;
     }
-    List<MatrixUser> matrixUsers =
-        List.from(_matrixPolicyManager.matrixUsers.value);
+    List<MatrixUser> matrixUsers = List.from(
+      _matrixPolicyManager.matrixUsers.value,
+    );
     List<MatrixUser> filteredMatrixUsers = [];
-    filteredMatrixUsers = matrixUsers
-        .where((MatrixUser user) =>
-            user.displayName.toLowerCase().contains(text.toLowerCase()) ||
-            user.id!.toLowerCase().contains(text.toLowerCase()))
-        .toList();
+    filteredMatrixUsers =
+        matrixUsers
+            .where(
+              (MatrixUser user) =>
+                  user.displayName.toLowerCase().contains(text.toLowerCase()),
+            )
+            .toList();
     _filteredMatrixUsers.value = filteredMatrixUsers;
     _filtersOn.value = true;
   }
@@ -90,14 +96,18 @@ class MatrixPolicyFilterManager {
       _filtersOn.value = false;
       return;
     }
-    final List<MatrixRoom> matrixRooms =
-        List.from(_matrixPolicyManager.matrixRooms.value);
+    final List<MatrixRoom> matrixRooms = List.from(
+      _matrixPolicyManager.matrixRooms.value,
+    );
     List<MatrixRoom> filteredMatrixRooms = [];
-    filteredMatrixRooms = matrixRooms
-        .where((MatrixRoom room) =>
-            room.name!.toLowerCase().contains(text.toLowerCase()) ||
-            room.id.toLowerCase().contains(text.toLowerCase()))
-        .toList();
+    filteredMatrixRooms =
+        matrixRooms
+            .where(
+              (MatrixRoom room) =>
+                  room.name!.toLowerCase().contains(text.toLowerCase()) ||
+                  room.id.toLowerCase().contains(text.toLowerCase()),
+            )
+            .toList();
     _filteredMatrixRooms.value = filteredMatrixRooms;
     _filtersOn.value = true;
   }

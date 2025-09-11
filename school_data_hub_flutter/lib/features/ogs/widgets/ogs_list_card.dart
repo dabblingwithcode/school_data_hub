@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/features/ogs/widgets/dialogs/ogs_pickup_time_dialog.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -159,7 +159,7 @@ class OgsCard extends WatchingWidget {
                             parentContext: context,
                           );
                           if (ogsInfo == null) return;
-                          await di<PupilManager>().updateStringProperty(
+                          await PupilMutator().updateStringProperty(
                             pupilId: pupil.internalId,
                             property: 'afterSchoolCareInfo',
                             value: ogsInfo,
@@ -174,7 +174,7 @@ class OgsCard extends WatchingWidget {
                                 'OGS Informationen für dieses Kind löschen?',
                           );
                           if (confirm == false || confirm == null) return;
-                          await di<PupilManager>().updateStringProperty(
+                          await PupilMutator().updateStringProperty(
                             pupilId: pupil.internalId,
                             property: 'afterSchoolCareInfo',
                             value: null,

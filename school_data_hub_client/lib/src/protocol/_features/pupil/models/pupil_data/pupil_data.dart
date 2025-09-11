@@ -32,7 +32,7 @@ import '../../../../_features/pupil/models/pupil_data/after_school_care/after_sc
     as _i12;
 import '../../../../_features/pupil/models/pupil_data/credit_transaction.dart'
     as _i13;
-import '../../../../_features/timetable/models/lesson/lesson_group_membership.dart'
+import '../../../../_features/timetable/models/scheduled_lesson/lesson_group_membership.dart'
     as _i14;
 import '../../../../_features/timetable/models/lesson/lesson_attendance.dart'
     as _i15;
@@ -61,6 +61,7 @@ abstract class PupilData implements _i1.SerializableModel {
     this.id,
     required this.status,
     required this.internalId,
+    this.password,
     this.preSchoolMedicalId,
     this.preSchoolMedical,
     this.kindergardenId,
@@ -107,6 +108,7 @@ abstract class PupilData implements _i1.SerializableModel {
     int? id,
     required _i2.PupilStatus status,
     required int internalId,
+    String? password,
     int? preSchoolMedicalId,
     _i3.PreSchoolMedical? preSchoolMedical,
     int? kindergardenId,
@@ -154,6 +156,7 @@ abstract class PupilData implements _i1.SerializableModel {
       id: jsonSerialization['id'] as int?,
       status: _i2.PupilStatus.fromJson((jsonSerialization['status'] as String)),
       internalId: jsonSerialization['internalId'] as int,
+      password: jsonSerialization['password'] as String?,
       preSchoolMedicalId: jsonSerialization['preSchoolMedicalId'] as int?,
       preSchoolMedical: jsonSerialization['preSchoolMedical'] == null
           ? null
@@ -295,6 +298,8 @@ abstract class PupilData implements _i1.SerializableModel {
 
   int internalId;
 
+  String? password;
+
   int? preSchoolMedicalId;
 
   _i3.PreSchoolMedical? preSchoolMedical;
@@ -382,6 +387,7 @@ abstract class PupilData implements _i1.SerializableModel {
     int? id,
     _i2.PupilStatus? status,
     int? internalId,
+    String? password,
     int? preSchoolMedicalId,
     _i3.PreSchoolMedical? preSchoolMedical,
     int? kindergardenId,
@@ -429,6 +435,7 @@ abstract class PupilData implements _i1.SerializableModel {
       if (id != null) 'id': id,
       'status': status.toJson(),
       'internalId': internalId,
+      if (password != null) 'password': password,
       if (preSchoolMedicalId != null) 'preSchoolMedicalId': preSchoolMedicalId,
       if (preSchoolMedical != null)
         'preSchoolMedical': preSchoolMedical?.toJson(),
@@ -524,6 +531,7 @@ class _PupilDataImpl extends PupilData {
     int? id,
     required _i2.PupilStatus status,
     required int internalId,
+    String? password,
     int? preSchoolMedicalId,
     _i3.PreSchoolMedical? preSchoolMedical,
     int? kindergardenId,
@@ -568,6 +576,7 @@ class _PupilDataImpl extends PupilData {
           id: id,
           status: status,
           internalId: internalId,
+          password: password,
           preSchoolMedicalId: preSchoolMedicalId,
           preSchoolMedical: preSchoolMedical,
           kindergardenId: kindergardenId,
@@ -618,6 +627,7 @@ class _PupilDataImpl extends PupilData {
     Object? id = _Undefined,
     _i2.PupilStatus? status,
     int? internalId,
+    Object? password = _Undefined,
     Object? preSchoolMedicalId = _Undefined,
     Object? preSchoolMedical = _Undefined,
     Object? kindergardenId = _Undefined,
@@ -663,6 +673,7 @@ class _PupilDataImpl extends PupilData {
       id: id is int? ? id : this.id,
       status: status ?? this.status,
       internalId: internalId ?? this.internalId,
+      password: password is String? ? password : this.password,
       preSchoolMedicalId: preSchoolMedicalId is int?
           ? preSchoolMedicalId
           : this.preSchoolMedicalId,

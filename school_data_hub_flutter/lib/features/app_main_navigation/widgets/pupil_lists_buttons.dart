@@ -21,9 +21,22 @@ class PupilListButtons extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
-    bool matrixSessionConfigured = watchPropertyValue(
-      (HubSessionManager x) => x.matrixPolicyManagerRegistrationStatus,
-    );
+
+    // Always call watch methods at the top level, not conditionally
+    final sessionManager = di<HubSessionManager>();
+    final isReady =
+        watchPropertyValue((HubSessionManager x) => x.isReady) ?? false;
+    final isTester =
+        watchPropertyValue(
+          (HubSessionManager x) => x.user?.userFlags.isTester ?? false,
+        ) ??
+        false;
+    final matrixSessionConfigured =
+        watchPropertyValue(
+          (HubSessionManager x) => x.matrixPolicyManagerRegistrationStatus,
+        ) ??
+        false;
+
     return Wrap(
       alignment: WrapAlignment.center,
       children: [
@@ -63,7 +76,7 @@ class PupilListButtons extends WatchingWidget {
           ),
           buttonText: locale.pupilCredit,
         ),
-        if (di<HubSessionManager>().user!.userFlags.isTester)
+        if (isReady && isTester)
           MainMenuButton(
             destinationPage: const LearningPupilListPage(),
             buttonIcon: const Icon(
@@ -73,7 +86,7 @@ class PupilListButtons extends WatchingWidget {
             ),
             buttonText: locale.learningLists,
           ),
-        if (di<HubSessionManager>().user!.userFlags.isTester)
+        if (isReady && isTester)
           MainMenuButton(
             destinationPage: const LearningSupportListPage(),
             buttonIcon: const Icon(
@@ -92,7 +105,7 @@ class PupilListButtons extends WatchingWidget {
           ),
           buttonText: locale.specialInfo,
         ),
-        if (di<HubSessionManager>().user!.userFlags.isTester)
+        if (isReady && isTester)
           MainMenuButton(
             destinationPage: const OgsListPage(),
             buttonIcon: Text(

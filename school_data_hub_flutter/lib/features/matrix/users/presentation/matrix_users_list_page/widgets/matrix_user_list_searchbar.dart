@@ -54,16 +54,18 @@ class MatrixUsersListSearchBar extends WatchingWidget {
             child: Row(
               children: [
                 Expanded(
-                    child: MatrixSearchTextField(
-                        searchType: SearchType.matrixUser,
-                        hintText: 'Schüler/in suchen',
-                        refreshFunction: di<MatrixPolicyFilterManager>()
-                            .setUsersFilterText)),
+                  child: MatrixSearchTextField(
+                    searchType: SearchType.matrixUser,
+                    hintText: 'Konten suchen',
+                    refreshFunction:
+                        di<MatrixPolicyFilterManager>().setUsersFilterText,
+                  ),
+                ),
                 InkWell(
                   // TODO: implement this
                   // onTap: () => showCreditFilterBottomSheet(context),
-                  onLongPress: () =>
-                      _matrixPolicyFilterManager.resetAllMatrixFilters(),
+                  onLongPress:
+                      () => _matrixPolicyFilterManager.resetAllMatrixFilters(),
                   // onPressed: () => showBottomSheetFilters(context),
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),

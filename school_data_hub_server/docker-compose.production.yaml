@@ -42,12 +42,15 @@ services:
       - POSTGRES_PASSWORD
     volumes:
       - school_data_hub_data:/var/lib/postgresql/data
+
     networks:
       - serverpod-network
 
   serverpod:
     restart: on-failure
-    image: ghcr.io/${GHCR_ORG}/school_data_hub_server:latest
+    image: ghcr.io/${GHCR_ORG}/school_data_hub_server:production
+    volumes:
+      - school_data_hub_storage:/app/storage
     environment:
       - SERVERPOD_DATABASE_PASSWORD
       - SERVERPOD_DATABASE_HOST
@@ -113,4 +116,7 @@ networks:
     driver: bridge
 
 volumes:
+  # Database data - persists across container restarts
   school_data_hub_data:
+  # Application storage - persists uploaded files, user data, etc.
+  school_data_hub_storage:

@@ -41,8 +41,7 @@ class AttendanceCard extends WatchingWidget {
       missedSchooldaysList,
     ).missedSchooldays.firstWhereOrNull(
       (element) =>
-          element.schoolday?.schoolday.formatForJson() ==
-          thisDate.formatForJson(),
+          element.schoolday?.schoolday.isSameDate(thisDate.toLocal()) ?? false,
     );
 
     AttendanceValues attendanceInfo = AttendanceHelper.getAttendanceValues(
@@ -616,6 +615,7 @@ class AttendanceCard extends WatchingWidget {
                             const Gap(5),
                             Column(
                               children: [
+                                const Gap(8),
                                 (attendanceInfo.missedTypeValue ==
                                                 MissedType.missed &&
                                             attendanceInfo.unexcusedValue ==
@@ -721,12 +721,16 @@ class AttendanceCard extends WatchingWidget {
                                       );
                                       return;
                                     }
-                                    _attendanceManager.updateReturnedValue(
+                                    _attendanceManager.deleteMissedSchoolday(
                                       pupil.pupilId,
-                                      newValue!,
                                       thisDate,
-                                      null,
                                     );
+                                    // _attendanceManager.updateReturnedValue(
+                                    //   pupil.pupilId,
+                                    //   newValue!,
+                                    //   thisDate,
+                                    //   null,
+                                    // );
                                   },
                                 ),
                                 const Gap(8),

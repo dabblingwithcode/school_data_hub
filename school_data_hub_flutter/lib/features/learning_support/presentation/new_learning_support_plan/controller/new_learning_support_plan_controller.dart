@@ -6,6 +6,7 @@ import 'package:school_data_hub_flutter/features/learning_support/domain/learnin
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan/new_learning_support_plan_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -108,10 +109,10 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
     }
 
     // First create a support level entry for this pupil
-    await _pupilManager.updatePupilSupportLevel(
+    await PupilMutator().updatePupilSupportLevel(
       pupilId: pupil.pupilId,
       level: selectedSupportLevelNotifier.value!,
-      createdAt: DateTime.now(),
+      createdAt: DateTime.now().toUtc(),
       createdBy: _hubSessionManager.userName!,
       comment:
           'Förderstufe ${selectedSupportLevelNotifier.value} für Förderplan',
@@ -122,7 +123,7 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
       planId: planIdController.text.trim(),
       createdBy: _hubSessionManager.userName!,
       learningSupportLevelId: selectedSupportLevelNotifier.value!,
-      createdAt: DateTime.now(),
+      createdAt: DateTime.now().toUtc(),
       comment:
           commentController.text.trim().isEmpty
               ? null

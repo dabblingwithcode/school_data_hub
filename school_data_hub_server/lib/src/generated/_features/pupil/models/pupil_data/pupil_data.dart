@@ -34,7 +34,7 @@ import '../../../../_features/pupil/models/pupil_data/after_school_care/after_sc
     as _i12;
 import '../../../../_features/pupil/models/pupil_data/credit_transaction.dart'
     as _i13;
-import '../../../../_features/timetable/models/lesson/lesson_group_membership.dart'
+import '../../../../_features/timetable/models/scheduled_lesson/lesson_group_membership.dart'
     as _i14;
 import '../../../../_features/timetable/models/lesson/lesson_attendance.dart'
     as _i15;
@@ -64,6 +64,7 @@ abstract class PupilData
     this.id,
     required this.status,
     required this.internalId,
+    this.password,
     this.preSchoolMedicalId,
     this.preSchoolMedical,
     this.kindergardenId,
@@ -110,6 +111,7 @@ abstract class PupilData
     int? id,
     required _i2.PupilStatus status,
     required int internalId,
+    String? password,
     int? preSchoolMedicalId,
     _i3.PreSchoolMedical? preSchoolMedical,
     int? kindergardenId,
@@ -157,6 +159,7 @@ abstract class PupilData
       id: jsonSerialization['id'] as int?,
       status: _i2.PupilStatus.fromJson((jsonSerialization['status'] as String)),
       internalId: jsonSerialization['internalId'] as int,
+      password: jsonSerialization['password'] as String?,
       preSchoolMedicalId: jsonSerialization['preSchoolMedicalId'] as int?,
       preSchoolMedical: jsonSerialization['preSchoolMedical'] == null
           ? null
@@ -302,6 +305,8 @@ abstract class PupilData
 
   int internalId;
 
+  String? password;
+
   int? preSchoolMedicalId;
 
   _i3.PreSchoolMedical? preSchoolMedical;
@@ -394,6 +399,7 @@ abstract class PupilData
     int? id,
     _i2.PupilStatus? status,
     int? internalId,
+    String? password,
     int? preSchoolMedicalId,
     _i3.PreSchoolMedical? preSchoolMedical,
     int? kindergardenId,
@@ -441,6 +447,7 @@ abstract class PupilData
       if (id != null) 'id': id,
       'status': status.toJson(),
       'internalId': internalId,
+      if (password != null) 'password': password,
       if (preSchoolMedicalId != null) 'preSchoolMedicalId': preSchoolMedicalId,
       if (preSchoolMedical != null)
         'preSchoolMedical': preSchoolMedical?.toJson(),
@@ -531,6 +538,7 @@ abstract class PupilData
       if (id != null) 'id': id,
       'status': status.toJson(),
       'internalId': internalId,
+      if (password != null) 'password': password,
       if (preSchoolMedicalId != null) 'preSchoolMedicalId': preSchoolMedicalId,
       if (preSchoolMedical != null)
         'preSchoolMedical': preSchoolMedical?.toJsonForProtocol(),
@@ -702,6 +710,7 @@ class _PupilDataImpl extends PupilData {
     int? id,
     required _i2.PupilStatus status,
     required int internalId,
+    String? password,
     int? preSchoolMedicalId,
     _i3.PreSchoolMedical? preSchoolMedical,
     int? kindergardenId,
@@ -746,6 +755,7 @@ class _PupilDataImpl extends PupilData {
           id: id,
           status: status,
           internalId: internalId,
+          password: password,
           preSchoolMedicalId: preSchoolMedicalId,
           preSchoolMedical: preSchoolMedical,
           kindergardenId: kindergardenId,
@@ -796,6 +806,7 @@ class _PupilDataImpl extends PupilData {
     Object? id = _Undefined,
     _i2.PupilStatus? status,
     int? internalId,
+    Object? password = _Undefined,
     Object? preSchoolMedicalId = _Undefined,
     Object? preSchoolMedical = _Undefined,
     Object? kindergardenId = _Undefined,
@@ -841,6 +852,7 @@ class _PupilDataImpl extends PupilData {
       id: id is int? ? id : this.id,
       status: status ?? this.status,
       internalId: internalId ?? this.internalId,
+      password: password is String? ? password : this.password,
       preSchoolMedicalId: preSchoolMedicalId is int?
           ? preSchoolMedicalId
           : this.preSchoolMedicalId,
@@ -957,6 +969,7 @@ class PupilDataImplicit extends _PupilDataImpl {
     int? id,
     required _i2.PupilStatus status,
     required int internalId,
+    String? password,
     int? preSchoolMedicalId,
     _i3.PreSchoolMedical? preSchoolMedical,
     int? kindergardenId,
@@ -1003,6 +1016,7 @@ class PupilDataImplicit extends _PupilDataImpl {
           id: id,
           status: status,
           internalId: internalId,
+          password: password,
           preSchoolMedicalId: preSchoolMedicalId,
           preSchoolMedical: preSchoolMedical,
           kindergardenId: kindergardenId,
@@ -1053,6 +1067,7 @@ class PupilDataImplicit extends _PupilDataImpl {
       id: pupilData.id,
       status: pupilData.status,
       internalId: pupilData.internalId,
+      password: pupilData.password,
       preSchoolMedicalId: pupilData.preSchoolMedicalId,
       preSchoolMedical: pupilData.preSchoolMedical,
       kindergardenId: pupilData.kindergardenId,
@@ -1110,6 +1125,10 @@ class PupilDataTable extends _i1.Table<int?> {
     );
     internalId = _i1.ColumnInt(
       'internalId',
+      this,
+    );
+    password = _i1.ColumnString(
+      'password',
       this,
     );
     preSchoolMedicalId = _i1.ColumnInt(
@@ -1189,6 +1208,8 @@ class PupilDataTable extends _i1.Table<int?> {
   late final _i1.ColumnEnum<_i2.PupilStatus> status;
 
   late final _i1.ColumnInt internalId;
+
+  late final _i1.ColumnString password;
 
   late final _i1.ColumnInt preSchoolMedicalId;
 
@@ -1927,6 +1948,7 @@ class PupilDataTable extends _i1.Table<int?> {
         id,
         status,
         internalId,
+        password,
         preSchoolMedicalId,
         kindergardenId,
         kindergardenData,
@@ -1952,6 +1974,7 @@ class PupilDataTable extends _i1.Table<int?> {
         id,
         status,
         internalId,
+        password,
         preSchoolMedicalId,
         kindergardenId,
         kindergardenData,

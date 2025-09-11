@@ -3,12 +3,16 @@ class MatrixCredentials {
   final String matrixToken;
   final String policyToken;
   final String matrixAdmin;
+  final String encryptionKey;
+  final String encryptionIv;
 
   MatrixCredentials({
     required this.url,
     required this.matrixToken,
     required this.policyToken,
     required this.matrixAdmin,
+    required this.encryptionKey,
+    required this.encryptionIv,
   });
 
   Map<String, dynamic> toJson() {
@@ -17,6 +21,8 @@ class MatrixCredentials {
       'matrixToken': matrixToken,
       'policyToken': policyToken,
       'matrixAdmin': matrixAdmin,
+      'encryptionKey': encryptionKey,
+      'encryptionIv': encryptionIv,
     };
   }
 
@@ -26,6 +32,8 @@ class MatrixCredentials {
       matrixToken: json['matrixToken'],
       policyToken: json['policyToken'],
       matrixAdmin: json['matrixAdmin'],
+      encryptionKey: json['encryptionKey'],
+      encryptionIv: json['encryptionIv'],
     );
   }
 }

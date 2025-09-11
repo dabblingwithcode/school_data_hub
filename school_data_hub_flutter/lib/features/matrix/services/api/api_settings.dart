@@ -6,10 +6,10 @@ class ApiSettings {
   //static const baseUrl = 'http://127.0.0.1:5000/api'; //windows
 
   // receiveTimeout
-  static const Duration receiveTimeout = Duration(milliseconds: 15000);
+  static const Duration receiveTimeout = Duration(milliseconds: 120000);
 
   // connectTimeout
-  static const Duration connectionTimeout = Duration(milliseconds: 30000);
+  static const Duration connectionTimeout = Duration(milliseconds: 120000);
 }
 
 class ApiException implements Exception {

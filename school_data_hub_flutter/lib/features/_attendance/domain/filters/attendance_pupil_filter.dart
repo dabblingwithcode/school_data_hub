@@ -71,7 +71,7 @@ class AttendancePupilFilterManager {
   }
 
   bool isMatchedByAttendanceFilters(PupilProxy pupil) {
-    final thisDate = _schoolCalendarManager.thisDate.value;
+    final thisDate = _schoolCalendarManager.thisDate.value.toLocal();
 
     final Map<AttendancePupilFilter, bool> attendanceActiveFilters =
         _attendancePupilFilterState.value;
@@ -80,8 +80,9 @@ class AttendancePupilFilterManager {
         .getPupilMissedSchooldaysProxy(pupil.pupilId)
         .missedSchooldays
         .firstWhereOrNull(
-          (missedSchoolday) =>
-              missedSchoolday.schoolday!.schoolday.isSameDate(thisDate),
+          (missedSchoolday) => missedSchoolday.schoolday!.schoolday.isSameDate(
+            thisDate.toLocal(),
+          ),
         );
 
     bool isMatched = true;

@@ -12,10 +12,11 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import '../../../_features/schoolday/models/schoolday.dart' as _i2;
-import '../../../_features/learning/models/competence_report.dart' as _i3;
+import '../../../_features/timetable/models/timetable.dart' as _i2;
+import '../../../_features/schoolday/models/schoolday.dart' as _i3;
+import '../../../_features/learning/models/competence_report.dart' as _i4;
 import '../../../_features/learning_support/models/learning_support_plan.dart'
-    as _i4;
+    as _i5;
 
 abstract class SchoolSemester
     implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
@@ -29,6 +30,7 @@ abstract class SchoolSemester
     this.supportConferenceDate,
     this.reportConferenceDate,
     this.reportSignedDate,
+    this.timetables,
     this.schooldays,
     this.competenceReports,
     this.learningSupportPlans,
@@ -44,9 +46,10 @@ abstract class SchoolSemester
     DateTime? supportConferenceDate,
     DateTime? reportConferenceDate,
     DateTime? reportSignedDate,
-    List<_i2.Schoolday>? schooldays,
-    List<_i3.CompetenceReport>? competenceReports,
-    List<_i4.LearningSupportPlan>? learningSupportPlans,
+    List<_i2.Timetable>? timetables,
+    List<_i3.Schoolday>? schooldays,
+    List<_i4.CompetenceReport>? competenceReports,
+    List<_i5.LearningSupportPlan>? learningSupportPlans,
   }) = _SchoolSemesterImpl;
 
   factory SchoolSemester.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -73,16 +76,19 @@ abstract class SchoolSemester
           ? null
           : _i1.DateTimeJsonExtension.fromJson(
               jsonSerialization['reportSignedDate']),
+      timetables: (jsonSerialization['timetables'] as List?)
+          ?.map((e) => _i2.Timetable.fromJson((e as Map<String, dynamic>)))
+          .toList(),
       schooldays: (jsonSerialization['schooldays'] as List?)
-          ?.map((e) => _i2.Schoolday.fromJson((e as Map<String, dynamic>)))
+          ?.map((e) => _i3.Schoolday.fromJson((e as Map<String, dynamic>)))
           .toList(),
       competenceReports: (jsonSerialization['competenceReports'] as List?)
           ?.map(
-              (e) => _i3.CompetenceReport.fromJson((e as Map<String, dynamic>)))
+              (e) => _i4.CompetenceReport.fromJson((e as Map<String, dynamic>)))
           .toList(),
       learningSupportPlans: (jsonSerialization['learningSupportPlans'] as List?)
           ?.map((e) =>
-              _i4.LearningSupportPlan.fromJson((e as Map<String, dynamic>)))
+              _i5.LearningSupportPlan.fromJson((e as Map<String, dynamic>)))
           .toList(),
     );
   }
@@ -110,11 +116,13 @@ abstract class SchoolSemester
 
   DateTime? reportSignedDate;
 
-  List<_i2.Schoolday>? schooldays;
+  List<_i2.Timetable>? timetables;
 
-  List<_i3.CompetenceReport>? competenceReports;
+  List<_i3.Schoolday>? schooldays;
 
-  List<_i4.LearningSupportPlan>? learningSupportPlans;
+  List<_i4.CompetenceReport>? competenceReports;
+
+  List<_i5.LearningSupportPlan>? learningSupportPlans;
 
   @override
   _i1.Table<int?> get table => t;
@@ -132,9 +140,10 @@ abstract class SchoolSemester
     DateTime? supportConferenceDate,
     DateTime? reportConferenceDate,
     DateTime? reportSignedDate,
-    List<_i2.Schoolday>? schooldays,
-    List<_i3.CompetenceReport>? competenceReports,
-    List<_i4.LearningSupportPlan>? learningSupportPlans,
+    List<_i2.Timetable>? timetables,
+    List<_i3.Schoolday>? schooldays,
+    List<_i4.CompetenceReport>? competenceReports,
+    List<_i5.LearningSupportPlan>? learningSupportPlans,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -152,6 +161,8 @@ abstract class SchoolSemester
         'reportConferenceDate': reportConferenceDate?.toJson(),
       if (reportSignedDate != null)
         'reportSignedDate': reportSignedDate?.toJson(),
+      if (timetables != null)
+        'timetables': timetables?.toJson(valueToJson: (v) => v.toJson()),
       if (schooldays != null)
         'schooldays': schooldays?.toJson(valueToJson: (v) => v.toJson()),
       if (competenceReports != null)
@@ -179,6 +190,9 @@ abstract class SchoolSemester
         'reportConferenceDate': reportConferenceDate?.toJson(),
       if (reportSignedDate != null)
         'reportSignedDate': reportSignedDate?.toJson(),
+      if (timetables != null)
+        'timetables':
+            timetables?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
       if (schooldays != null)
         'schooldays':
             schooldays?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
@@ -192,11 +206,13 @@ abstract class SchoolSemester
   }
 
   static SchoolSemesterInclude include({
-    _i2.SchooldayIncludeList? schooldays,
-    _i3.CompetenceReportIncludeList? competenceReports,
-    _i4.LearningSupportPlanIncludeList? learningSupportPlans,
+    _i2.TimetableIncludeList? timetables,
+    _i3.SchooldayIncludeList? schooldays,
+    _i4.CompetenceReportIncludeList? competenceReports,
+    _i5.LearningSupportPlanIncludeList? learningSupportPlans,
   }) {
     return SchoolSemesterInclude._(
+      timetables: timetables,
       schooldays: schooldays,
       competenceReports: competenceReports,
       learningSupportPlans: learningSupportPlans,
@@ -242,9 +258,10 @@ class _SchoolSemesterImpl extends SchoolSemester {
     DateTime? supportConferenceDate,
     DateTime? reportConferenceDate,
     DateTime? reportSignedDate,
-    List<_i2.Schoolday>? schooldays,
-    List<_i3.CompetenceReport>? competenceReports,
-    List<_i4.LearningSupportPlan>? learningSupportPlans,
+    List<_i2.Timetable>? timetables,
+    List<_i3.Schoolday>? schooldays,
+    List<_i4.CompetenceReport>? competenceReports,
+    List<_i5.LearningSupportPlan>? learningSupportPlans,
   }) : super._(
           id: id,
           schoolYear: schoolYear,
@@ -255,6 +272,7 @@ class _SchoolSemesterImpl extends SchoolSemester {
           supportConferenceDate: supportConferenceDate,
           reportConferenceDate: reportConferenceDate,
           reportSignedDate: reportSignedDate,
+          timetables: timetables,
           schooldays: schooldays,
           competenceReports: competenceReports,
           learningSupportPlans: learningSupportPlans,
@@ -274,6 +292,7 @@ class _SchoolSemesterImpl extends SchoolSemester {
     Object? supportConferenceDate = _Undefined,
     Object? reportConferenceDate = _Undefined,
     Object? reportSignedDate = _Undefined,
+    Object? timetables = _Undefined,
     Object? schooldays = _Undefined,
     Object? competenceReports = _Undefined,
     Object? learningSupportPlans = _Undefined,
@@ -296,14 +315,17 @@ class _SchoolSemesterImpl extends SchoolSemester {
       reportSignedDate: reportSignedDate is DateTime?
           ? reportSignedDate
           : this.reportSignedDate,
-      schooldays: schooldays is List<_i2.Schoolday>?
+      timetables: timetables is List<_i2.Timetable>?
+          ? timetables
+          : this.timetables?.map((e0) => e0.copyWith()).toList(),
+      schooldays: schooldays is List<_i3.Schoolday>?
           ? schooldays
           : this.schooldays?.map((e0) => e0.copyWith()).toList(),
-      competenceReports: competenceReports is List<_i3.CompetenceReport>?
+      competenceReports: competenceReports is List<_i4.CompetenceReport>?
           ? competenceReports
           : this.competenceReports?.map((e0) => e0.copyWith()).toList(),
       learningSupportPlans:
-          learningSupportPlans is List<_i4.LearningSupportPlan>?
+          learningSupportPlans is List<_i5.LearningSupportPlan>?
               ? learningSupportPlans
               : this.learningSupportPlans?.map((e0) => e0.copyWith()).toList(),
     );
@@ -363,106 +385,141 @@ class SchoolSemesterTable extends _i1.Table<int?> {
 
   late final _i1.ColumnDateTime reportSignedDate;
 
-  _i2.SchooldayTable? ___schooldays;
+  _i2.TimetableTable? ___timetables;
 
-  _i1.ManyRelation<_i2.SchooldayTable>? _schooldays;
+  _i1.ManyRelation<_i2.TimetableTable>? _timetables;
 
-  _i3.CompetenceReportTable? ___competenceReports;
+  _i3.SchooldayTable? ___schooldays;
 
-  _i1.ManyRelation<_i3.CompetenceReportTable>? _competenceReports;
+  _i1.ManyRelation<_i3.SchooldayTable>? _schooldays;
 
-  _i4.LearningSupportPlanTable? ___learningSupportPlans;
+  _i4.CompetenceReportTable? ___competenceReports;
 
-  _i1.ManyRelation<_i4.LearningSupportPlanTable>? _learningSupportPlans;
+  _i1.ManyRelation<_i4.CompetenceReportTable>? _competenceReports;
 
-  _i2.SchooldayTable get __schooldays {
+  _i5.LearningSupportPlanTable? ___learningSupportPlans;
+
+  _i1.ManyRelation<_i5.LearningSupportPlanTable>? _learningSupportPlans;
+
+  _i2.TimetableTable get __timetables {
+    if (___timetables != null) return ___timetables!;
+    ___timetables = _i1.createRelationTable(
+      relationFieldName: '__timetables',
+      field: SchoolSemester.t.id,
+      foreignField: _i2.Timetable.t.schoolSemesterId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i2.TimetableTable(tableRelation: foreignTableRelation),
+    );
+    return ___timetables!;
+  }
+
+  _i3.SchooldayTable get __schooldays {
     if (___schooldays != null) return ___schooldays!;
     ___schooldays = _i1.createRelationTable(
       relationFieldName: '__schooldays',
       field: SchoolSemester.t.id,
-      foreignField: _i2.Schoolday.t.schoolSemesterId,
+      foreignField: _i3.Schoolday.t.schoolSemesterId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.SchooldayTable(tableRelation: foreignTableRelation),
+          _i3.SchooldayTable(tableRelation: foreignTableRelation),
     );
     return ___schooldays!;
   }
 
-  _i3.CompetenceReportTable get __competenceReports {
+  _i4.CompetenceReportTable get __competenceReports {
     if (___competenceReports != null) return ___competenceReports!;
     ___competenceReports = _i1.createRelationTable(
       relationFieldName: '__competenceReports',
       field: SchoolSemester.t.id,
-      foreignField: _i3.CompetenceReport.t.schoolSemesterId,
+      foreignField: _i4.CompetenceReport.t.schoolSemesterId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i3.CompetenceReportTable(tableRelation: foreignTableRelation),
+          _i4.CompetenceReportTable(tableRelation: foreignTableRelation),
     );
     return ___competenceReports!;
   }
 
-  _i4.LearningSupportPlanTable get __learningSupportPlans {
+  _i5.LearningSupportPlanTable get __learningSupportPlans {
     if (___learningSupportPlans != null) return ___learningSupportPlans!;
     ___learningSupportPlans = _i1.createRelationTable(
       relationFieldName: '__learningSupportPlans',
       field: SchoolSemester.t.id,
-      foreignField: _i4.LearningSupportPlan.t.schoolSemesterId,
+      foreignField: _i5.LearningSupportPlan.t.schoolSemesterId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i4.LearningSupportPlanTable(tableRelation: foreignTableRelation),
+          _i5.LearningSupportPlanTable(tableRelation: foreignTableRelation),
     );
     return ___learningSupportPlans!;
   }
 
-  _i1.ManyRelation<_i2.SchooldayTable> get schooldays {
+  _i1.ManyRelation<_i2.TimetableTable> get timetables {
+    if (_timetables != null) return _timetables!;
+    var relationTable = _i1.createRelationTable(
+      relationFieldName: 'timetables',
+      field: SchoolSemester.t.id,
+      foreignField: _i2.Timetable.t.schoolSemesterId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i2.TimetableTable(tableRelation: foreignTableRelation),
+    );
+    _timetables = _i1.ManyRelation<_i2.TimetableTable>(
+      tableWithRelations: relationTable,
+      table: _i2.TimetableTable(
+          tableRelation: relationTable.tableRelation!.lastRelation),
+    );
+    return _timetables!;
+  }
+
+  _i1.ManyRelation<_i3.SchooldayTable> get schooldays {
     if (_schooldays != null) return _schooldays!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'schooldays',
       field: SchoolSemester.t.id,
-      foreignField: _i2.Schoolday.t.schoolSemesterId,
+      foreignField: _i3.Schoolday.t.schoolSemesterId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.SchooldayTable(tableRelation: foreignTableRelation),
+          _i3.SchooldayTable(tableRelation: foreignTableRelation),
     );
-    _schooldays = _i1.ManyRelation<_i2.SchooldayTable>(
+    _schooldays = _i1.ManyRelation<_i3.SchooldayTable>(
       tableWithRelations: relationTable,
-      table: _i2.SchooldayTable(
+      table: _i3.SchooldayTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
     return _schooldays!;
   }
 
-  _i1.ManyRelation<_i3.CompetenceReportTable> get competenceReports {
+  _i1.ManyRelation<_i4.CompetenceReportTable> get competenceReports {
     if (_competenceReports != null) return _competenceReports!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'competenceReports',
       field: SchoolSemester.t.id,
-      foreignField: _i3.CompetenceReport.t.schoolSemesterId,
+      foreignField: _i4.CompetenceReport.t.schoolSemesterId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i3.CompetenceReportTable(tableRelation: foreignTableRelation),
+          _i4.CompetenceReportTable(tableRelation: foreignTableRelation),
     );
-    _competenceReports = _i1.ManyRelation<_i3.CompetenceReportTable>(
+    _competenceReports = _i1.ManyRelation<_i4.CompetenceReportTable>(
       tableWithRelations: relationTable,
-      table: _i3.CompetenceReportTable(
+      table: _i4.CompetenceReportTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
     return _competenceReports!;
   }
 
-  _i1.ManyRelation<_i4.LearningSupportPlanTable> get learningSupportPlans {
+  _i1.ManyRelation<_i5.LearningSupportPlanTable> get learningSupportPlans {
     if (_learningSupportPlans != null) return _learningSupportPlans!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'learningSupportPlans',
       field: SchoolSemester.t.id,
-      foreignField: _i4.LearningSupportPlan.t.schoolSemesterId,
+      foreignField: _i5.LearningSupportPlan.t.schoolSemesterId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i4.LearningSupportPlanTable(tableRelation: foreignTableRelation),
+          _i5.LearningSupportPlanTable(tableRelation: foreignTableRelation),
     );
-    _learningSupportPlans = _i1.ManyRelation<_i4.LearningSupportPlanTable>(
+    _learningSupportPlans = _i1.ManyRelation<_i5.LearningSupportPlanTable>(
       tableWithRelations: relationTable,
-      table: _i4.LearningSupportPlanTable(
+      table: _i5.LearningSupportPlanTable(
           tableRelation: relationTable.tableRelation!.lastRelation),
     );
     return _learningSupportPlans!;
@@ -483,6 +540,9 @@ class SchoolSemesterTable extends _i1.Table<int?> {
 
   @override
   _i1.Table? getRelationTable(String relationField) {
+    if (relationField == 'timetables') {
+      return __timetables;
+    }
     if (relationField == 'schooldays') {
       return __schooldays;
     }
@@ -498,23 +558,28 @@ class SchoolSemesterTable extends _i1.Table<int?> {
 
 class SchoolSemesterInclude extends _i1.IncludeObject {
   SchoolSemesterInclude._({
-    _i2.SchooldayIncludeList? schooldays,
-    _i3.CompetenceReportIncludeList? competenceReports,
-    _i4.LearningSupportPlanIncludeList? learningSupportPlans,
+    _i2.TimetableIncludeList? timetables,
+    _i3.SchooldayIncludeList? schooldays,
+    _i4.CompetenceReportIncludeList? competenceReports,
+    _i5.LearningSupportPlanIncludeList? learningSupportPlans,
   }) {
+    _timetables = timetables;
     _schooldays = schooldays;
     _competenceReports = competenceReports;
     _learningSupportPlans = learningSupportPlans;
   }
 
-  _i2.SchooldayIncludeList? _schooldays;
+  _i2.TimetableIncludeList? _timetables;
 
-  _i3.CompetenceReportIncludeList? _competenceReports;
+  _i3.SchooldayIncludeList? _schooldays;
 
-  _i4.LearningSupportPlanIncludeList? _learningSupportPlans;
+  _i4.CompetenceReportIncludeList? _competenceReports;
+
+  _i5.LearningSupportPlanIncludeList? _learningSupportPlans;
 
   @override
   Map<String, _i1.Include?> get includes => {
+        'timetables': _timetables,
         'schooldays': _schooldays,
         'competenceReports': _competenceReports,
         'learningSupportPlans': _learningSupportPlans,
@@ -774,12 +839,37 @@ class SchoolSemesterRepository {
 class SchoolSemesterAttachRepository {
   const SchoolSemesterAttachRepository._();
 
+  /// Creates a relation between this [SchoolSemester] and the given [Timetable]s
+  /// by setting each [Timetable]'s foreign key `schoolSemesterId` to refer to this [SchoolSemester].
+  Future<void> timetables(
+    _i1.Session session,
+    SchoolSemester schoolSemester,
+    List<_i2.Timetable> timetable, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (timetable.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('timetable.id');
+    }
+    if (schoolSemester.id == null) {
+      throw ArgumentError.notNull('schoolSemester.id');
+    }
+
+    var $timetable = timetable
+        .map((e) => e.copyWith(schoolSemesterId: schoolSemester.id))
+        .toList();
+    await session.db.update<_i2.Timetable>(
+      $timetable,
+      columns: [_i2.Timetable.t.schoolSemesterId],
+      transaction: transaction,
+    );
+  }
+
   /// Creates a relation between this [SchoolSemester] and the given [Schoolday]s
   /// by setting each [Schoolday]'s foreign key `schoolSemesterId` to refer to this [SchoolSemester].
   Future<void> schooldays(
     _i1.Session session,
     SchoolSemester schoolSemester,
-    List<_i2.Schoolday> schoolday, {
+    List<_i3.Schoolday> schoolday, {
     _i1.Transaction? transaction,
   }) async {
     if (schoolday.any((e) => e.id == null)) {
@@ -792,9 +882,9 @@ class SchoolSemesterAttachRepository {
     var $schoolday = schoolday
         .map((e) => e.copyWith(schoolSemesterId: schoolSemester.id))
         .toList();
-    await session.db.update<_i2.Schoolday>(
+    await session.db.update<_i3.Schoolday>(
       $schoolday,
-      columns: [_i2.Schoolday.t.schoolSemesterId],
+      columns: [_i3.Schoolday.t.schoolSemesterId],
       transaction: transaction,
     );
   }
@@ -804,7 +894,7 @@ class SchoolSemesterAttachRepository {
   Future<void> competenceReports(
     _i1.Session session,
     SchoolSemester schoolSemester,
-    List<_i3.CompetenceReport> competenceReport, {
+    List<_i4.CompetenceReport> competenceReport, {
     _i1.Transaction? transaction,
   }) async {
     if (competenceReport.any((e) => e.id == null)) {
@@ -817,9 +907,9 @@ class SchoolSemesterAttachRepository {
     var $competenceReport = competenceReport
         .map((e) => e.copyWith(schoolSemesterId: schoolSemester.id))
         .toList();
-    await session.db.update<_i3.CompetenceReport>(
+    await session.db.update<_i4.CompetenceReport>(
       $competenceReport,
-      columns: [_i3.CompetenceReport.t.schoolSemesterId],
+      columns: [_i4.CompetenceReport.t.schoolSemesterId],
       transaction: transaction,
     );
   }
@@ -829,7 +919,7 @@ class SchoolSemesterAttachRepository {
   Future<void> learningSupportPlans(
     _i1.Session session,
     SchoolSemester schoolSemester,
-    List<_i4.LearningSupportPlan> learningSupportPlan, {
+    List<_i5.LearningSupportPlan> learningSupportPlan, {
     _i1.Transaction? transaction,
   }) async {
     if (learningSupportPlan.any((e) => e.id == null)) {
@@ -842,9 +932,9 @@ class SchoolSemesterAttachRepository {
     var $learningSupportPlan = learningSupportPlan
         .map((e) => e.copyWith(schoolSemesterId: schoolSemester.id))
         .toList();
-    await session.db.update<_i4.LearningSupportPlan>(
+    await session.db.update<_i5.LearningSupportPlan>(
       $learningSupportPlan,
-      columns: [_i4.LearningSupportPlan.t.schoolSemesterId],
+      columns: [_i5.LearningSupportPlan.t.schoolSemesterId],
       transaction: transaction,
     );
   }
@@ -853,12 +943,35 @@ class SchoolSemesterAttachRepository {
 class SchoolSemesterAttachRowRepository {
   const SchoolSemesterAttachRowRepository._();
 
+  /// Creates a relation between this [SchoolSemester] and the given [Timetable]
+  /// by setting the [Timetable]'s foreign key `schoolSemesterId` to refer to this [SchoolSemester].
+  Future<void> timetables(
+    _i1.Session session,
+    SchoolSemester schoolSemester,
+    _i2.Timetable timetable, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (timetable.id == null) {
+      throw ArgumentError.notNull('timetable.id');
+    }
+    if (schoolSemester.id == null) {
+      throw ArgumentError.notNull('schoolSemester.id');
+    }
+
+    var $timetable = timetable.copyWith(schoolSemesterId: schoolSemester.id);
+    await session.db.updateRow<_i2.Timetable>(
+      $timetable,
+      columns: [_i2.Timetable.t.schoolSemesterId],
+      transaction: transaction,
+    );
+  }
+
   /// Creates a relation between this [SchoolSemester] and the given [Schoolday]
   /// by setting the [Schoolday]'s foreign key `schoolSemesterId` to refer to this [SchoolSemester].
   Future<void> schooldays(
     _i1.Session session,
     SchoolSemester schoolSemester,
-    _i2.Schoolday schoolday, {
+    _i3.Schoolday schoolday, {
     _i1.Transaction? transaction,
   }) async {
     if (schoolday.id == null) {
@@ -869,9 +982,9 @@ class SchoolSemesterAttachRowRepository {
     }
 
     var $schoolday = schoolday.copyWith(schoolSemesterId: schoolSemester.id);
-    await session.db.updateRow<_i2.Schoolday>(
+    await session.db.updateRow<_i3.Schoolday>(
       $schoolday,
-      columns: [_i2.Schoolday.t.schoolSemesterId],
+      columns: [_i3.Schoolday.t.schoolSemesterId],
       transaction: transaction,
     );
   }
@@ -881,7 +994,7 @@ class SchoolSemesterAttachRowRepository {
   Future<void> competenceReports(
     _i1.Session session,
     SchoolSemester schoolSemester,
-    _i3.CompetenceReport competenceReport, {
+    _i4.CompetenceReport competenceReport, {
     _i1.Transaction? transaction,
   }) async {
     if (competenceReport.id == null) {
@@ -893,9 +1006,9 @@ class SchoolSemesterAttachRowRepository {
 
     var $competenceReport =
         competenceReport.copyWith(schoolSemesterId: schoolSemester.id);
-    await session.db.updateRow<_i3.CompetenceReport>(
+    await session.db.updateRow<_i4.CompetenceReport>(
       $competenceReport,
-      columns: [_i3.CompetenceReport.t.schoolSemesterId],
+      columns: [_i4.CompetenceReport.t.schoolSemesterId],
       transaction: transaction,
     );
   }
@@ -905,7 +1018,7 @@ class SchoolSemesterAttachRowRepository {
   Future<void> learningSupportPlans(
     _i1.Session session,
     SchoolSemester schoolSemester,
-    _i4.LearningSupportPlan learningSupportPlan, {
+    _i5.LearningSupportPlan learningSupportPlan, {
     _i1.Transaction? transaction,
   }) async {
     if (learningSupportPlan.id == null) {
@@ -917,9 +1030,9 @@ class SchoolSemesterAttachRowRepository {
 
     var $learningSupportPlan =
         learningSupportPlan.copyWith(schoolSemesterId: schoolSemester.id);
-    await session.db.updateRow<_i4.LearningSupportPlan>(
+    await session.db.updateRow<_i5.LearningSupportPlan>(
       $learningSupportPlan,
-      columns: [_i4.LearningSupportPlan.t.schoolSemesterId],
+      columns: [_i5.LearningSupportPlan.t.schoolSemesterId],
       transaction: transaction,
     );
   }
@@ -928,6 +1041,29 @@ class SchoolSemesterAttachRowRepository {
 class SchoolSemesterDetachRepository {
   const SchoolSemesterDetachRepository._();
 
+  /// Detaches the relation between this [SchoolSemester] and the given [Timetable]
+  /// by setting the [Timetable]'s foreign key `schoolSemesterId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> timetables(
+    _i1.Session session,
+    List<_i2.Timetable> timetable, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (timetable.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('timetable.id');
+    }
+
+    var $timetable =
+        timetable.map((e) => e.copyWith(schoolSemesterId: null)).toList();
+    await session.db.update<_i2.Timetable>(
+      $timetable,
+      columns: [_i2.Timetable.t.schoolSemesterId],
+      transaction: transaction,
+    );
+  }
+
   /// Detaches the relation between this [SchoolSemester] and the given [Schoolday]
   /// by setting the [Schoolday]'s foreign key `schoolSemesterId` to `null`.
   ///
@@ -935,7 +1071,7 @@ class SchoolSemesterDetachRepository {
   /// the related record.
   Future<void> schooldays(
     _i1.Session session,
-    List<_i2.Schoolday> schoolday, {
+    List<_i3.Schoolday> schoolday, {
     _i1.Transaction? transaction,
   }) async {
     if (schoolday.any((e) => e.id == null)) {
@@ -944,9 +1080,9 @@ class SchoolSemesterDetachRepository {
 
     var $schoolday =
         schoolday.map((e) => e.copyWith(schoolSemesterId: null)).toList();
-    await session.db.update<_i2.Schoolday>(
+    await session.db.update<_i3.Schoolday>(
       $schoolday,
-      columns: [_i2.Schoolday.t.schoolSemesterId],
+      columns: [_i3.Schoolday.t.schoolSemesterId],
       transaction: transaction,
     );
   }
@@ -955,6 +1091,28 @@ class SchoolSemesterDetachRepository {
 class SchoolSemesterDetachRowRepository {
   const SchoolSemesterDetachRowRepository._();
 
+  /// Detaches the relation between this [SchoolSemester] and the given [Timetable]
+  /// by setting the [Timetable]'s foreign key `schoolSemesterId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> timetables(
+    _i1.Session session,
+    _i2.Timetable timetable, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (timetable.id == null) {
+      throw ArgumentError.notNull('timetable.id');
+    }
+
+    var $timetable = timetable.copyWith(schoolSemesterId: null);
+    await session.db.updateRow<_i2.Timetable>(
+      $timetable,
+      columns: [_i2.Timetable.t.schoolSemesterId],
+      transaction: transaction,
+    );
+  }
+
   /// Detaches the relation between this [SchoolSemester] and the given [Schoolday]
   /// by setting the [Schoolday]'s foreign key `schoolSemesterId` to `null`.
   ///
@@ -962,7 +1120,7 @@ class SchoolSemesterDetachRowRepository {
   /// the related record.
   Future<void> schooldays(
     _i1.Session session,
-    _i2.Schoolday schoolday, {
+    _i3.Schoolday schoolday, {
     _i1.Transaction? transaction,
   }) async {
     if (schoolday.id == null) {
@@ -970,9 +1128,9 @@ class SchoolSemesterDetachRowRepository {
     }
 
     var $schoolday = schoolday.copyWith(schoolSemesterId: null);
-    await session.db.updateRow<_i2.Schoolday>(
+    await session.db.updateRow<_i3.Schoolday>(
       $schoolday,
-      columns: [_i2.Schoolday.t.schoolSemesterId],
+      columns: [_i3.Schoolday.t.schoolSemesterId],
       transaction: transaction,
     );
   }

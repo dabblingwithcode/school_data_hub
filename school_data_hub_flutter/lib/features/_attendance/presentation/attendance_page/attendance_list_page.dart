@@ -31,8 +31,9 @@ class AttendanceListPage extends WatchingWidget {
   const AttendanceListPage({super.key});
   @override
   Widget build(BuildContext context) {
-    final bool isAuthenticated =
-        watchPropertyValue((HubSessionManager x) => x.isSignedIn);
+    final bool isAuthenticated = watchPropertyValue(
+      (HubSessionManager x) => x.isSignedIn,
+    );
 
     // If not authenticated, redirect to login page
     if (!isAuthenticated) {
@@ -42,18 +43,23 @@ class AttendanceListPage extends WatchingWidget {
       // Use Future.microtask to avoid build-phase navigation issues
       Future.microtask(() {
         Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const Login()));
+          MaterialPageRoute(builder: (context) => const Login()),
+        );
       });
       // Return an empty container or loading indicator while navigating
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-    createOnce<StreamSubscription<MissedSchooldayDto>>(() {
-      return _attendanceManager.missedSchooldayStreamSubscription();
-    }, dispose: (value) {
-      _log.info('Cancelling missed class stream subscription');
-      value.cancel();
-    });
-    DateTime thisDate = watchValue((SchoolCalendarManager x) => x.thisDate);
+    createOnce<StreamSubscription<MissedSchooldayDto>>(
+      () {
+        return _attendanceManager.missedSchooldayStreamSubscription();
+      },
+      dispose: (value) {
+        _log.info('Cancelling missed class stream subscription');
+        value.cancel();
+      },
+    );
+    DateTime thisDate =
+        watchValue((SchoolCalendarManager x) => x.thisDate).toLocal();
 
     callOnce((context) {
       _attendanceManager.fetchMissedSchooldayesOnASchoolday(thisDate);
@@ -74,18 +80,20 @@ class AttendanceListPage extends WatchingWidget {
             children: [
               Icon(
                 Icons.today_rounded,
-                color: AttendanceHelper.schooldayIsToday(thisDate)
-                    ? const Color.fromARGB(255, 83, 196, 55)
-                    : Colors.white,
+                color:
+                    AttendanceHelper.schooldayIsToday(thisDate)
+                        ? const Color.fromARGB(255, 83, 196, 55)
+                        : Colors.white,
                 size: 30,
               ),
               const Gap(10),
               Text(
                 '${thisDate.asWeekdayName(context)}, ${thisDate.formatForUser()}',
                 style: const TextStyle(
-                    fontSize: 25,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold),
+                  fontSize: 25,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -93,8 +101,9 @@ class AttendanceListPage extends WatchingWidget {
         automaticallyImplyLeading: false,
       ),
       body: RefreshIndicator(
-        onRefresh: () async =>
-            _attendanceManager.fetchMissedSchooldayesOnASchoolday(thisDate),
+        onRefresh:
+            () async =>
+                _attendanceManager.fetchMissedSchooldayesOnASchoolday(thisDate),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),
@@ -102,7 +111,9 @@ class AttendanceListPage extends WatchingWidget {
               slivers: [
                 const SliverGap(5),
                 const GenericSliverSearchAppBar(
-                    height: 110, title: AttendanceListSearchBar()),
+                  height: 110,
+                  title: AttendanceListSearchBar(),
+                ),
                 GenericSliverListWithEmptyListCheck(
                   items: pupils,
                   itemBuilder: (_, pupil) => AttendanceCard(pupil, thisDate),

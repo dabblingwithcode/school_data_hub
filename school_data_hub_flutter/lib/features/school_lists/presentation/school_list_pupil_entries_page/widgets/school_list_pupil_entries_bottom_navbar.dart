@@ -43,6 +43,7 @@ class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
         child: IconTheme(
           data: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               const Spacer(),
               IconButton(

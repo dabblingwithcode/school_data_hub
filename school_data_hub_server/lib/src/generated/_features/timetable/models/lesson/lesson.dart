@@ -14,8 +14,10 @@
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../../../../_features/timetable/models/lesson/lesson_attendance.dart'
     as _i2;
-import '../../../../_features/timetable/models/lesson/lesson_subject.dart'
+import '../../../../_features/timetable/models/scheduled_lesson/subject.dart'
     as _i3;
+import '../../../../_features/timetable/models/junction_models/lesson_teacher.dart'
+    as _i4;
 
 abstract class Lesson implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   Lesson._({
@@ -24,6 +26,7 @@ abstract class Lesson implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     this.attendedPupils,
     required this.subjectId,
     this.subject,
+    this.lessonTeachers,
   });
 
   factory Lesson({
@@ -31,7 +34,8 @@ abstract class Lesson implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     required String publicId,
     List<_i2.LessonAttendance>? attendedPupils,
     required int subjectId,
-    _i3.LessonSubject? subject,
+    _i3.Subject? subject,
+    List<_i4.LessonTeacher>? lessonTeachers,
   }) = _LessonImpl;
 
   factory Lesson.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -45,8 +49,11 @@ abstract class Lesson implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
       subjectId: jsonSerialization['subjectId'] as int,
       subject: jsonSerialization['subject'] == null
           ? null
-          : _i3.LessonSubject.fromJson(
+          : _i3.Subject.fromJson(
               (jsonSerialization['subject'] as Map<String, dynamic>)),
+      lessonTeachers: (jsonSerialization['lessonTeachers'] as List?)
+          ?.map((e) => _i4.LessonTeacher.fromJson((e as Map<String, dynamic>)))
+          .toList(),
     );
   }
 
@@ -63,7 +70,9 @@ abstract class Lesson implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
 
   int subjectId;
 
-  _i3.LessonSubject? subject;
+  _i3.Subject? subject;
+
+  List<_i4.LessonTeacher>? lessonTeachers;
 
   @override
   _i1.Table<int?> get table => t;
@@ -76,7 +85,8 @@ abstract class Lesson implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     String? publicId,
     List<_i2.LessonAttendance>? attendedPupils,
     int? subjectId,
-    _i3.LessonSubject? subject,
+    _i3.Subject? subject,
+    List<_i4.LessonTeacher>? lessonTeachers,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -88,6 +98,9 @@ abstract class Lesson implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
             attendedPupils?.toJson(valueToJson: (v) => v.toJson()),
       'subjectId': subjectId,
       if (subject != null) 'subject': subject?.toJson(),
+      if (lessonTeachers != null)
+        'lessonTeachers':
+            lessonTeachers?.toJson(valueToJson: (v) => v.toJson()),
     };
   }
 
@@ -101,16 +114,21 @@ abstract class Lesson implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
             attendedPupils?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
       'subjectId': subjectId,
       if (subject != null) 'subject': subject?.toJsonForProtocol(),
+      if (lessonTeachers != null)
+        'lessonTeachers':
+            lessonTeachers?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
     };
   }
 
   static LessonInclude include({
     _i2.LessonAttendanceIncludeList? attendedPupils,
-    _i3.LessonSubjectInclude? subject,
+    _i3.SubjectInclude? subject,
+    _i4.LessonTeacherIncludeList? lessonTeachers,
   }) {
     return LessonInclude._(
       attendedPupils: attendedPupils,
       subject: subject,
+      lessonTeachers: lessonTeachers,
     );
   }
 
@@ -148,13 +166,15 @@ class _LessonImpl extends Lesson {
     required String publicId,
     List<_i2.LessonAttendance>? attendedPupils,
     required int subjectId,
-    _i3.LessonSubject? subject,
+    _i3.Subject? subject,
+    List<_i4.LessonTeacher>? lessonTeachers,
   }) : super._(
           id: id,
           publicId: publicId,
           attendedPupils: attendedPupils,
           subjectId: subjectId,
           subject: subject,
+          lessonTeachers: lessonTeachers,
         );
 
   /// Returns a shallow copy of this [Lesson]
@@ -167,6 +187,7 @@ class _LessonImpl extends Lesson {
     Object? attendedPupils = _Undefined,
     int? subjectId,
     Object? subject = _Undefined,
+    Object? lessonTeachers = _Undefined,
   }) {
     return Lesson(
       id: id is int? ? id : this.id,
@@ -175,8 +196,10 @@ class _LessonImpl extends Lesson {
           ? attendedPupils
           : this.attendedPupils?.map((e0) => e0.copyWith()).toList(),
       subjectId: subjectId ?? this.subjectId,
-      subject:
-          subject is _i3.LessonSubject? ? subject : this.subject?.copyWith(),
+      subject: subject is _i3.Subject? ? subject : this.subject?.copyWith(),
+      lessonTeachers: lessonTeachers is List<_i4.LessonTeacher>?
+          ? lessonTeachers
+          : this.lessonTeachers?.map((e0) => e0.copyWith()).toList(),
     );
   }
 }
@@ -201,7 +224,11 @@ class LessonTable extends _i1.Table<int?> {
 
   late final _i1.ColumnInt subjectId;
 
-  _i3.LessonSubjectTable? _subject;
+  _i3.SubjectTable? _subject;
+
+  _i4.LessonTeacherTable? ___lessonTeachers;
+
+  _i1.ManyRelation<_i4.LessonTeacherTable>? _lessonTeachers;
 
   _i2.LessonAttendanceTable get __attendedPupils {
     if (___attendedPupils != null) return ___attendedPupils!;
@@ -216,17 +243,30 @@ class LessonTable extends _i1.Table<int?> {
     return ___attendedPupils!;
   }
 
-  _i3.LessonSubjectTable get subject {
+  _i3.SubjectTable get subject {
     if (_subject != null) return _subject!;
     _subject = _i1.createRelationTable(
       relationFieldName: 'subject',
       field: Lesson.t.subjectId,
-      foreignField: _i3.LessonSubject.t.id,
+      foreignField: _i3.Subject.t.id,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i3.LessonSubjectTable(tableRelation: foreignTableRelation),
+          _i3.SubjectTable(tableRelation: foreignTableRelation),
     );
     return _subject!;
+  }
+
+  _i4.LessonTeacherTable get __lessonTeachers {
+    if (___lessonTeachers != null) return ___lessonTeachers!;
+    ___lessonTeachers = _i1.createRelationTable(
+      relationFieldName: '__lessonTeachers',
+      field: Lesson.t.id,
+      foreignField: _i4.LessonTeacher.t.scheduledLessonId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i4.LessonTeacherTable(tableRelation: foreignTableRelation),
+    );
+    return ___lessonTeachers!;
   }
 
   _i1.ManyRelation<_i2.LessonAttendanceTable> get attendedPupils {
@@ -247,6 +287,24 @@ class LessonTable extends _i1.Table<int?> {
     return _attendedPupils!;
   }
 
+  _i1.ManyRelation<_i4.LessonTeacherTable> get lessonTeachers {
+    if (_lessonTeachers != null) return _lessonTeachers!;
+    var relationTable = _i1.createRelationTable(
+      relationFieldName: 'lessonTeachers',
+      field: Lesson.t.id,
+      foreignField: _i4.LessonTeacher.t.scheduledLessonId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i4.LessonTeacherTable(tableRelation: foreignTableRelation),
+    );
+    _lessonTeachers = _i1.ManyRelation<_i4.LessonTeacherTable>(
+      tableWithRelations: relationTable,
+      table: _i4.LessonTeacherTable(
+          tableRelation: relationTable.tableRelation!.lastRelation),
+    );
+    return _lessonTeachers!;
+  }
+
   @override
   List<_i1.Column> get columns => [
         id,
@@ -262,6 +320,9 @@ class LessonTable extends _i1.Table<int?> {
     if (relationField == 'subject') {
       return subject;
     }
+    if (relationField == 'lessonTeachers') {
+      return __lessonTeachers;
+    }
     return null;
   }
 }
@@ -269,20 +330,25 @@ class LessonTable extends _i1.Table<int?> {
 class LessonInclude extends _i1.IncludeObject {
   LessonInclude._({
     _i2.LessonAttendanceIncludeList? attendedPupils,
-    _i3.LessonSubjectInclude? subject,
+    _i3.SubjectInclude? subject,
+    _i4.LessonTeacherIncludeList? lessonTeachers,
   }) {
     _attendedPupils = attendedPupils;
     _subject = subject;
+    _lessonTeachers = lessonTeachers;
   }
 
   _i2.LessonAttendanceIncludeList? _attendedPupils;
 
-  _i3.LessonSubjectInclude? _subject;
+  _i3.SubjectInclude? _subject;
+
+  _i4.LessonTeacherIncludeList? _lessonTeachers;
 
   @override
   Map<String, _i1.Include?> get includes => {
         'attendedPupils': _attendedPupils,
         'subject': _subject,
+        'lessonTeachers': _lessonTeachers,
       };
 
   @override
@@ -562,17 +628,42 @@ class LessonAttachRepository {
       transaction: transaction,
     );
   }
+
+  /// Creates a relation between this [Lesson] and the given [LessonTeacher]s
+  /// by setting each [LessonTeacher]'s foreign key `scheduledLessonId` to refer to this [Lesson].
+  Future<void> lessonTeachers(
+    _i1.Session session,
+    Lesson lesson,
+    List<_i4.LessonTeacher> lessonTeacher, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (lessonTeacher.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('lessonTeacher.id');
+    }
+    if (lesson.id == null) {
+      throw ArgumentError.notNull('lesson.id');
+    }
+
+    var $lessonTeacher = lessonTeacher
+        .map((e) => e.copyWith(scheduledLessonId: lesson.id))
+        .toList();
+    await session.db.update<_i4.LessonTeacher>(
+      $lessonTeacher,
+      columns: [_i4.LessonTeacher.t.scheduledLessonId],
+      transaction: transaction,
+    );
+  }
 }
 
 class LessonAttachRowRepository {
   const LessonAttachRowRepository._();
 
-  /// Creates a relation between the given [Lesson] and [LessonSubject]
-  /// by setting the [Lesson]'s foreign key `subjectId` to refer to the [LessonSubject].
+  /// Creates a relation between the given [Lesson] and [Subject]
+  /// by setting the [Lesson]'s foreign key `subjectId` to refer to the [Subject].
   Future<void> subject(
     _i1.Session session,
     Lesson lesson,
-    _i3.LessonSubject subject, {
+    _i3.Subject subject, {
     _i1.Transaction? transaction,
   }) async {
     if (lesson.id == null) {
@@ -609,6 +700,29 @@ class LessonAttachRowRepository {
     await session.db.updateRow<_i2.LessonAttendance>(
       $lessonAttendance,
       columns: [_i2.LessonAttendance.t.lessonId],
+      transaction: transaction,
+    );
+  }
+
+  /// Creates a relation between this [Lesson] and the given [LessonTeacher]
+  /// by setting the [LessonTeacher]'s foreign key `scheduledLessonId` to refer to this [Lesson].
+  Future<void> lessonTeachers(
+    _i1.Session session,
+    Lesson lesson,
+    _i4.LessonTeacher lessonTeacher, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (lessonTeacher.id == null) {
+      throw ArgumentError.notNull('lessonTeacher.id');
+    }
+    if (lesson.id == null) {
+      throw ArgumentError.notNull('lesson.id');
+    }
+
+    var $lessonTeacher = lessonTeacher.copyWith(scheduledLessonId: lesson.id);
+    await session.db.updateRow<_i4.LessonTeacher>(
+      $lessonTeacher,
+      columns: [_i4.LessonTeacher.t.scheduledLessonId],
       transaction: transaction,
     );
   }

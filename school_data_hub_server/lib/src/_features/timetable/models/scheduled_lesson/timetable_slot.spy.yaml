@@ -1,0 +1,7 @@
+class: TimetableSlot
+table: timetable_slot
+fields:
+  day: Weekday
+  startTime: String
+  endTime: String
+  timetable: Timetable?, relation(name=timetable_slot_timetable)

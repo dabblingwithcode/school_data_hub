@@ -46,8 +46,10 @@ class HubSessionManager with ChangeNotifier {
   final Storage _storage;
 
   User? _user;
+  bool _isReady = false;
 
   User? get user => _user;
+  bool get isReady => _isReady;
 
   String? get userName => _user?.userInfo?.userName;
 
@@ -121,8 +123,11 @@ class HubSessionManager with ChangeNotifier {
 
     _log.info(' Running in mode: ${_envManager.activeEnv!.runMode.name}');
 
+    _isReady = false;
     await _loadUserInfoFromStorage();
     final sessionRefreshed = await refreshSession();
+    _isReady = true;
+    notifyListeners();
     return sessionRefreshed;
   }
 
@@ -338,14 +343,23 @@ class HubSessionManager with ChangeNotifier {
     }
   }
 
+  // TODO URGENT DI REGISTRATION MATRIX COLD INIT
   void changeMatrixPolicyManagerRegistrationStatus(bool isRegistered) {
     if (_matrixPolicyManagerRegistrationStatus != isRegistered) {
+      _log.info(
+        'MatrixPolicyManager registration status changing from $_matrixPolicyManagerRegistrationStatus to $isRegistered',
+        [StackTrace.current],
+      );
       _matrixPolicyManagerRegistrationStatus = isRegistered;
 
       notifyListeners();
 
       _log.info(
         'MatrixPolicyManager registration status changed to $isRegistered',
+      );
+    } else {
+      _log.info(
+        'MatrixPolicyManager registration status already $isRegistered, no change needed',
       );
     }
   }

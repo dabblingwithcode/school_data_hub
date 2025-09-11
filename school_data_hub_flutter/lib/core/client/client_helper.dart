@@ -12,8 +12,10 @@ class ClientHelper {
   factory ClientHelper() => _instance;
   ClientHelper._internal();
 
-  static Future<T?> apiCall<T>(
-      {required Future<T> Function() call, String? errorMessage}) async {
+  static Future<T?> apiCall<T>({
+    required Future<T> Function() call,
+    String? errorMessage,
+  }) async {
     try {
       _notificationService.apiRunning(true);
       final result = await call();
@@ -21,21 +23,25 @@ class ClientHelper {
       return result;
     } on ServerpodClientException catch (e) {
       _notificationService.apiRunning(false);
-      _notificationService.showInformationDialog('Client error: $e');
+      _notificationService.showInformationDialog(
+        'Client error calling $call: $e',
+      );
 
       if (e.toString().contains('Not authorized') ||
           e.toString().contains('401')) {
         // Handle authentication error specifically
         _notificationService.showInformationDialog(
-            'Authentication required. Please log in again.');
+          'Authentication required. Please log in again.',
+        );
         _hubSessionManager.signOutDevice();
         // Optionally, trigger a logout or redirect to login
       }
       return null;
     } catch (e) {
       _notificationService.apiRunning(false);
-      _notificationService
-          .showInformationDialog('API Fehler:\n $errorMessage: $e');
+      _notificationService.showInformationDialog(
+        'API Fehler:\n $errorMessage: $e',
+      );
 
       return null;
     }

@@ -92,20 +92,42 @@ class SchoolCalendarManager {
 
   void getThisDate() {
     final schooldays = _schooldays.value;
+    final now = DateTime.now().toUtc();
 
-    // we look for the closest schoolday to now and set it as thisDate
-
-    final closestSchooldayToNow = schooldays.reduce(
-      (value, element) =>
-          value.schoolday.difference(DateTime.now().toUtc()).abs() <
-                  element.schoolday.difference(DateTime.now()).abs()
-              ? value
-              : element,
+    _log.info('getThisDate called - Current UTC time: $now');
+    _log.info(
+      'Available schooldays: ${schooldays.map((s) => s.schoolday).toList()}',
     );
 
-    _thisDate.value = closestSchooldayToNow.schoolday;
+    // First, check if today is a schoolday
+    final todaySchoolday = schooldays.firstWhereOrNull((element) {
+      // Convert both dates to local date for comparison (ignoring time)
+      final elementLocal = element.schoolday.toLocal();
+      final nowLocal = now.toLocal();
 
-    return;
+      return elementLocal.year == nowLocal.year &&
+          elementLocal.month == nowLocal.month &&
+          elementLocal.day == nowLocal.day;
+    });
+
+    _log.info('Today schoolday found: $todaySchoolday');
+
+    if (todaySchoolday != null) {
+      // If today is a schoolday, use it
+      _log.info('Using today as schoolday: ${todaySchoolday.schoolday}');
+      _thisDate.value = todaySchoolday.schoolday;
+      return;
+    }
+
+    // If today is not a schoolday, find the closest one
+    final closestSchooldayToNow = schooldays.reduce((value, element) {
+      final valueDiff = (value.schoolday.difference(now)).abs();
+      final elementDiff = (element.schoolday.difference(now)).abs();
+      return valueDiff < elementDiff ? value : element;
+    });
+
+    _log.info('Using closest schoolday: ${closestSchooldayToNow.schoolday}');
+    _thisDate.value = closestSchooldayToNow.schoolday;
   }
 
   void setThisDate(DateTime date) {
@@ -139,7 +161,7 @@ class SchoolCalendarManager {
   }
 
   Future<void> postMultipleSchooldays({required List<DateTime> dates}) async {
-    // we need to transform the dates to utc
+    // we need to transform the dates to utc for the server
     final List<DateTime> utcDates = dates.map((date) => date.toUtc()).toList();
     final List<Schoolday> newSchooldays = await _client.schooldayAdmin
         .createSchooldays(utcDates);
@@ -235,13 +257,13 @@ class SchoolCalendarManager {
       call:
           () => _client.schooldayAdmin.createSchoolSemester(
             schoolYearName,
-            startDate,
-            endDate,
+            startDate.toUtc(),
+            endDate.toUtc(),
             isFirst,
-            classConferenceDate,
-            supportConferenceDate,
-            reportConferenceDate,
-            reportSignedDate,
+            classConferenceDate?.toUtc(),
+            supportConferenceDate?.toUtc(),
+            reportConferenceDate?.toUtc(),
+            reportSignedDate?.toUtc(),
           ),
     );
     if (newSemester == null) {

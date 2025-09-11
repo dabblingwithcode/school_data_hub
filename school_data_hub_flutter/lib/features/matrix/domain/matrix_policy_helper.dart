@@ -22,8 +22,9 @@ final _secureStorage = HubSecureStorage();
 final _envManager = di<EnvManager>();
 
 class MatrixPolicyHelper {
-  static Future<void> registerMatrixPolicyManager(
-      {MatrixCredentials? passedCredentials}) async {
+  static Future<void> registerMatrixPolicyManager({
+    MatrixCredentials? passedCredentials,
+  }) async {
     // We are passing the credentials here for convenience
     // when they come from the SetMatrixEnvironmentPage
     // (and they are not stored in secure storage yet)
@@ -33,26 +34,35 @@ class MatrixPolicyHelper {
     MatrixCredentials? storedCredentials;
     if (passedCredentials == null) {
       _log.warning(
-          'No matrix credentials passed, the app is initializing\nreading matrix credentials from secure storage');
-      final String? matrixStoredValues =
-          await _secureStorage.getString(_secureStorageKey);
+        'No matrix credentials passed, the app is initializing\nreading matrix credentials from secure storage',
+      );
+      final String? matrixStoredValues = await _secureStorage.getString(
+        _secureStorageKey,
+      );
 
       if (matrixStoredValues == null) {
         throw Exception('Matrix stored values are null');
       }
 
-      storedCredentials =
-          MatrixCredentials.fromJson(jsonDecode(matrixStoredValues));
+      storedCredentials = MatrixCredentials.fromJson(
+        jsonDecode(matrixStoredValues),
+      );
     } else {
       _log.info('Matrix credentials passed, storing them in secure storage');
 
       await _secureStorage.setString(
-          _secureStorageKey,
-          jsonEncode(MatrixCredentials(
-              url: passedCredentials.url,
-              matrixToken: passedCredentials.matrixToken,
-              policyToken: passedCredentials.policyToken,
-              matrixAdmin: passedCredentials.matrixAdmin)));
+        _secureStorageKey,
+        jsonEncode(
+          MatrixCredentials(
+            url: passedCredentials.url,
+            matrixToken: passedCredentials.matrixToken,
+            policyToken: passedCredentials.policyToken,
+            matrixAdmin: passedCredentials.matrixAdmin,
+            encryptionKey: passedCredentials.encryptionKey,
+            encryptionIv: passedCredentials.encryptionIv,
+          ),
+        ),
+      );
     }
 
     // if the MatrixPolicyManager is already registered, we will return
@@ -79,9 +89,9 @@ class MatrixPolicyHelper {
       file.deleteSync();
     }
     final Policy policy = _matrixPolicyManager.matrixPolicy!;
-    final Map<String, dynamic> jsonString = policy.toJson();
+    final Map<String, dynamic> jsonMap = policy.toJson();
     // transform the map into a json string
-    final String policyJson = jsonEncode(jsonString);
+    final String policyJson = jsonEncode(jsonMap);
 
     file.writeAsStringSync(policyJson);
 
@@ -96,8 +106,9 @@ class MatrixPolicyHelper {
     final List<String> roomIds = rooms.map((room) => room.id).toList();
 
     final refreshedPolicy = oldPolicy!.copyWith(
-        managedRoomIds: roomIds,
-        matrixUsers: _matrixPolicyManager.matrixUsers.value);
+      managedRoomIds: roomIds,
+      matrixUsers: _matrixPolicyManager.matrixUsers.value,
+    );
     return refreshedPolicy;
   }
 
@@ -140,7 +151,9 @@ class MatrixPolicyHelper {
   }
 
   static Future<void> launchMatrixUrl(
-      BuildContext context, String contact) async {
+    BuildContext context,
+    String contact,
+  ) async {
     final Uri matrixUrl = Uri.parse('https://matrix.to/#/$contact');
 
     try {

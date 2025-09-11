@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -14,10 +13,7 @@ class JoinedRoom {
   final String roomId;
   final int? powerLevel;
 
-  JoinedRoom({
-    required this.roomId,
-    this.powerLevel,
-  });
+  JoinedRoom({required this.roomId, this.powerLevel});
 
   factory JoinedRoom.fromJson(Map<String, dynamic> json) =>
       _$JoinedRoomFromJson(json);
@@ -42,12 +38,12 @@ class MatrixUser extends ChangeNotifier {
     String? authCredential,
     required String displayName,
     required List<JoinedRoom> joinedRooms,
-  })  : _id = id,
-        _active = active,
-        _authType = authType,
-        _authCredential = authCredential,
-        _displayName = displayName,
-        _joinedRooms = joinedRooms {
+  }) : _id = id,
+       _active = active,
+       _authType = authType,
+       _authCredential = authCredential,
+       _displayName = displayName,
+       _joinedRooms = joinedRooms {
     if (_joinedRooms.isNotEmpty) {
       for (var room in _joinedRooms) {
         if (_matrixRooms.any((x) => x.id == room.roomId)) continue;
@@ -74,31 +70,31 @@ class MatrixUser extends ChangeNotifier {
     }
   }
 
-  void joinRooms(List<JoinedRoom> roomIds) {
-    _matrixRooms.addAll(MatrixRoomHelper.roomsFromRoomJoinedRooms(roomIds));
+  void setPowerLevel(String roomId, int powerLevel) {
+    final index = _joinedRooms.indexWhere((room) => room.roomId == roomId);
+    if (index != -1) {
+      _joinedRooms[index] = JoinedRoom(roomId: roomId, powerLevel: powerLevel);
+      _matrixPolicyManager.pendingChangesHandler(true);
+      notifyListeners();
+    }
+  }
 
+  void joinRooms(List<JoinedRoom> roomIds) {
     _joinedRooms.addAll(roomIds);
     _matrixPolicyManager.pendingChangesHandler(true);
     notifyListeners();
   }
 
   void joinRoom(MatrixRoom room) {
-    _matrixRooms.add(room);
-    _joinedRooms.add(JoinedRoom(
-      roomId: room.id,
-      powerLevel: 0,
-    ));
+    _joinedRooms.add(JoinedRoom(roomId: room.id, powerLevel: 0));
     _matrixPolicyManager.pendingChangesHandler(true);
     notifyListeners();
   }
 
   void leaveRoom(MatrixRoom room) {
-    final roomIndex =
-        _matrixRooms.indexWhere((element) => element.id == room.id);
-    if (roomIndex == -1) return;
-    _matrixRooms.removeAt(roomIndex);
-
-    _joinedRooms.remove(room.id);
+    final List<JoinedRoom> joinedRooms = List.from(_joinedRooms)
+      ..removeWhere((joinedRoom) => joinedRoom.roomId == room.id);
+    _joinedRooms = joinedRooms;
     _matrixPolicyManager.pendingChangesHandler(true);
     notifyListeners();
   }
@@ -109,20 +105,23 @@ class MatrixUser extends ChangeNotifier {
     if (json.containsKey('joinedRoomIds')) {
       // Create a modified JSON for the old schema
       final Map<String, dynamic> modifiedJson = Map<String, dynamic>.from(json);
-      
+
       // Convert List<String> to List<JoinedRoom> format
       final List<String> roomIds = List<String>.from(json['joinedRoomIds']);
-      final List<Map<String, dynamic>> joinedRoomsJson = roomIds
-          .map((roomId) => {
-                'roomId': roomId,
-                'powerLevel': 0, // Default power level for legacy data
-              })
-          .toList();
-      
+      final List<Map<String, dynamic>> joinedRoomsJson =
+          roomIds
+              .map(
+                (roomId) => {
+                  'roomId': roomId,
+                  'powerLevel': 0, // Default power level for legacy data
+                },
+              )
+              .toList();
+
       // Replace joinedRoomIds with joinedRooms in the correct format
       modifiedJson['joinedRooms'] = joinedRoomsJson;
       modifiedJson.remove('joinedRoomIds');
-      
+
       // Now use the generated method with the modified JSON
       return _$MatrixUserFromJson(modifiedJson);
     } else {

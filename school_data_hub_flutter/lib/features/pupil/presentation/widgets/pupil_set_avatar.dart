@@ -9,10 +9,12 @@ import 'package:image_picker_platform_interface/image_picker_platform_interface.
 import 'package:path_provider/path_provider.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 
-setAvatar({required BuildContext context, required PupilProxy pupil}) async {
+void setAvatar({
+  required BuildContext context,
+  required PupilProxy pupil,
+}) async {
   XFile? image;
   if (Platform.isWindows) {
     ImageSource source =
@@ -31,9 +33,10 @@ setAvatar({required BuildContext context, required PupilProxy pupil}) async {
     }
   } else {
     image = await ImagePicker().pickImage(
-        source: ImageSource.camera,
-        preferredCameraDevice:
-            Platform.isWindows ? CameraDevice.front : CameraDevice.rear);
+      source: ImageSource.camera,
+      preferredCameraDevice:
+          Platform.isWindows ? CameraDevice.front : CameraDevice.rear,
+    );
     if (image == null) {
       return;
     }
@@ -43,8 +46,11 @@ setAvatar({required BuildContext context, required PupilProxy pupil}) async {
     context,
     MaterialPageRoute(builder: (context) => CropAvatarView(image: image!)),
   );
-  di<PupilManager>()
-      .updatePupilDocument(imageFile, pupil, PupilDocumentType.avatar);
+  PupilMutator().updatePupilDocument(
+    imageFile: imageFile,
+    pupilProxy: pupil,
+    documentType: PupilDocumentType.avatar,
+  );
 }
 
 class CropAvatarView extends StatefulWidget {
@@ -64,46 +70,41 @@ class _CropAvatarState extends State<CropAvatarView> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        // appBar: AppBar(
-        //   title: Text('Gesicht zentrieren'),
-        // ),
-        body: Center(
-          child: Container(
-            decoration: const BoxDecoration(
-              color: Colors.black,
-            ),
-            child: CropImage(
-              controller: controller,
-              image: Image.file(File(widget.image.path)),
-              paddingSize: 0,
-              alwaysMove: true,
-            ),
-          ),
+    // appBar: AppBar(
+    //   title: Text('Gesicht zentrieren'),
+    // ),
+    body: Center(
+      child: Container(
+        decoration: const BoxDecoration(color: Colors.black),
+        child: CropImage(
+          controller: controller,
+          image: Image.file(File(widget.image.path)),
+          paddingSize: 0,
+          alwaysMove: true,
         ),
-        bottomNavigationBar: _buildButtons(),
-      );
+      ),
+    ),
+    bottomNavigationBar: _buildButtons(),
+  );
 
   Widget _buildButtons() => SizedBox(
-        height: 60,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.rotate_90_degrees_ccw_outlined),
-              onPressed: _rotateLeft,
-            ),
-            IconButton(
-              icon: const Icon(Icons.rotate_90_degrees_cw_outlined),
-              onPressed: _rotateRight,
-            ),
-            TextButton(
-              onPressed: _finished,
-              child: const Text('Fertig'),
-            ),
-          ],
+    height: 60,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        IconButton(
+          icon: const Icon(Icons.rotate_90_degrees_ccw_outlined),
+          onPressed: _rotateLeft,
         ),
-      );
+        IconButton(
+          icon: const Icon(Icons.rotate_90_degrees_cw_outlined),
+          onPressed: _rotateRight,
+        ),
+        TextButton(onPressed: _finished, child: const Text('Fertig')),
+      ],
+    ),
+  );
 
   // Future<void> _aspectRatios() async {
   //   final value = await showDialog<double>(
@@ -190,7 +191,8 @@ class _CropAvatarState extends State<CropAvatarView> {
     String tempPath = (await getTemporaryDirectory()).path;
     File file = File('$tempPath/temporaryProfile.jpeg');
     await file.writeAsBytes(
-        bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
+      bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes),
+    );
     return file;
   }
 }

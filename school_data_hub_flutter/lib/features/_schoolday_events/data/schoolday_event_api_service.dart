@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/domain/models/nullable_records.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -16,8 +17,12 @@ final _log = Logger('SchooldayEventApiService');
 class SchooldayEventApiService {
   //- post schooldayEvent
 
-  Future<SchooldayEvent> postSchooldayEvent(int pupilId, int schooldayId,
-      SchooldayEventType type, String reason) async {
+  Future<SchooldayEvent> postSchooldayEvent(
+    int pupilId,
+    int schooldayId,
+    SchooldayEventType type,
+    String reason,
+  ) async {
     final userName = _hubSessionManager.userName!;
     _notificationService.apiRunning(true);
     try {
@@ -58,16 +63,17 @@ class SchooldayEventApiService {
 
   //- UPDATE
 
-  Future<SchooldayEvent> updateSchooldayEvent(
-      {required SchooldayEvent schooldayEvent,
-      String? createdBy,
-      SchooldayEventType? type,
-      String? reason,
-      bool? processed,
-      //String? file,
-      NullableStringRecord? processedBy,
-      NullableDateTimeRecord? processedAt,
-      int? schooldayId}) async {
+  Future<SchooldayEvent> updateSchooldayEvent({
+    required SchooldayEvent schooldayEvent,
+    String? createdBy,
+    SchooldayEventType? type,
+    String? reason,
+    bool? processed,
+    //String? file,
+    NullableStringRecord? processedBy,
+    NullableDateTimeRecord? processedAt,
+    int? schooldayId,
+  }) async {
     bool changedProcessedToFalse = false;
     // if the schooldayEvent is patched as processed,
     // processing user and processed date are automatically added
@@ -75,7 +81,7 @@ class SchooldayEventApiService {
     if (processed == true && processedBy == null && processedAt == null) {
       processedBy = (value: _hubSessionManager.user!.userInfo!.userName!);
 
-      processedAt = (value: DateTime.now());
+      processedAt = (value: DateTime.now().toUtcForServer());
     }
 
     // if the schooldayEvent is patched as not processed,
@@ -102,7 +108,9 @@ class SchooldayEventApiService {
       _notificationService.apiRunning(true);
       final updatedSchooldayEvent = await _client.schooldayEvent
           .updateSchooldayEvent(
-              schooldayEventToUpdate, changedProcessedToFalse);
+            schooldayEventToUpdate,
+            changedProcessedToFalse,
+          );
       _notificationService.apiRunning(false);
       return updatedSchooldayEvent;
     } catch (e) {
@@ -122,10 +130,17 @@ class SchooldayEventApiService {
     required bool isProcessed,
   }) async {
     final documentId = const Uuid().v4();
-    final path = p.join(ServerStorageFolder.events.name, '$documentId.jpg');
-    final uploadDescription =
-        await _client.files.getUploadDescription('private', path);
+    final path = p.posix.join(
+      ServerStorageFolder.events.name,
+      '$documentId.jpg',
+    );
+    final uploadDescription = await _client.files.getUploadDescription(
+      'private',
+      path,
+    );
     if (uploadDescription != null) {
+      _log.info('Upload description received for $path');
+      _log.fine('Upload description: $uploadDescription');
       // Create an uploader
       final uploader = FileUploader(uploadDescription);
 
@@ -133,6 +148,7 @@ class SchooldayEventApiService {
       final fileStream = file.openRead();
 
       final fileLength = await file.length();
+      _log.info('File length: $fileLength');
       _notificationService.apiRunning(true);
       try {
         await uploader.upload(fileStream, fileLength);
@@ -151,8 +167,12 @@ class SchooldayEventApiService {
       if (success) {
         try {
           final updatedSchooldayEvent = await _client.schooldayEvent
-              .updateSchooldayEventFile(schooldayEventId, path,
-                  _hubSessionManager.userName!, isProcessed);
+              .updateSchooldayEventFile(
+                schooldayEventId,
+                path,
+                _hubSessionManager.userName!,
+                isProcessed,
+              );
           _notificationService.apiRunning(false);
 
           return updatedSchooldayEvent;
@@ -160,10 +180,15 @@ class SchooldayEventApiService {
           _notificationService.apiRunning(false);
 
           _log.severe(
-              'Error while updating pupil avatar', e, StackTrace.current);
+            'Error while updating schoolday event file',
+            e,
+            StackTrace.current,
+          );
 
-          _notificationService.showSnackBar(NotificationType.error,
-              'Das Profilbild konnte nicht aktualisiert werden: ${e.toString()}');
+          _notificationService.showSnackBar(
+            NotificationType.error,
+            'Das Profilbild konnte nicht aktualisiert werden: ${e.toString()}',
+          );
 
           throw Exception('Failed to update schoolday event file, $e');
         }
@@ -173,8 +198,10 @@ class SchooldayEventApiService {
 
       _log.severe('Error while uploading file', null, StackTrace.current);
 
-      _notificationService.showSnackBar(NotificationType.error,
-          'Das Profilbild konnte nicht hochgeladen werden: ${uploadDescription.toString()}');
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Das Ereignisdokument konnte nicht hochgeladen werden: ${uploadDescription.toString()}',
+      );
 
       throw Exception('Failed to upload file, $uploadDescription');
     }
@@ -191,23 +218,29 @@ class SchooldayEventApiService {
       return success;
     } catch (e) {
       _notificationService.showSnackBar(
-          NotificationType.error, 'Fehler beim Löschen des Ereignisses!: $e');
+        NotificationType.error,
+        'Fehler beim Löschen des Ereignisses!: $e',
+      );
       return false;
     }
   }
 
-//- delete schooldayEvent file
-//- depending on isProcessed, there are two possible endpoints for the file deletion
+  //- delete schooldayEvent file
+  //- depending on isProcessed, there are two possible endpoints for the file deletion
 
   Future<SchooldayEvent> deleteSchooldayEventFile(
-      int schooldayEventId, bool isProcessed) async {
+    int schooldayEventId,
+    bool isProcessed,
+  ) async {
     try {
       final schooldayEvent = await _client.schooldayEvent
           .deleteSchooldayEventFile(schooldayEventId, isProcessed);
       return schooldayEvent;
     } catch (e) {
       _notificationService.showSnackBar(
-          NotificationType.error, 'Fehler beim Löschen der Datei!: $e');
+        NotificationType.error,
+        'Fehler beim Löschen der Datei!: $e',
+      );
       rethrow;
     }
   }

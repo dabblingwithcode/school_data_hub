@@ -23,11 +23,7 @@ class SetupMatrixEnvironmentPage extends StatelessWidget {
         title: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.settings,
-              size: 25,
-              color: Colors.white,
-            ),
+            Icon(Icons.settings, size: 25, color: Colors.white),
             Gap(10),
             Text(
               'Matrix-Umgebung einrichten',
@@ -64,7 +60,8 @@ class SetupMatrixEnvironmentPage extends StatelessWidget {
                         maxLines: 3,
                         controller: viewModel.urlTextFieldController,
                         decoration: AppStyles.textFieldDecoration(
-                            labelText: 'Matrix-URL'),
+                          labelText: 'Matrix-URL',
+                        ),
                       ),
                     ),
                   ],
@@ -75,7 +72,8 @@ class SetupMatrixEnvironmentPage extends StatelessWidget {
                   maxLines: 2,
                   controller: viewModel.matrixTokenTextFieldController,
                   decoration: AppStyles.textFieldDecoration(
-                      labelText: 'Matrix-Admin Token'),
+                    labelText: 'Matrix-Admin Token',
+                  ),
                 ),
                 const Gap(20),
                 TextField(
@@ -83,7 +81,8 @@ class SetupMatrixEnvironmentPage extends StatelessWidget {
                   maxLines: 2,
                   controller: viewModel.policyTokenTextFieldController,
                   decoration: AppStyles.textFieldDecoration(
-                      labelText: 'Matrix-Corporal Token'),
+                    labelText: 'Matrix-Corporal Token',
+                  ),
                 ),
                 const Gap(20),
                 TextField(
@@ -91,7 +90,24 @@ class SetupMatrixEnvironmentPage extends StatelessWidget {
                   maxLines: 2,
                   controller: viewModel.matrixAdminTextFieldController,
                   decoration: AppStyles.textFieldDecoration(
-                      labelText: 'Matrix-Admin ID'),
+                    labelText: 'Matrix-Admin ID',
+                  ),
+                ),
+                TextField(
+                  minLines: 1,
+                  maxLines: 2,
+                  controller: viewModel.encryptionKeyTextFieldController,
+                  decoration: AppStyles.textFieldDecoration(
+                    labelText: 'Encryption Key',
+                  ),
+                ),
+                TextField(
+                  minLines: 1,
+                  maxLines: 2,
+                  controller: viewModel.encryptionIvTextFieldController,
+                  decoration: AppStyles.textFieldDecoration(
+                    labelText: 'Encryption IV',
+                  ),
                 ),
                 const Spacer(),
                 const Gap(15),
@@ -101,10 +117,7 @@ class SetupMatrixEnvironmentPage extends StatelessWidget {
                     viewModel.setMatrixEnvironment();
                     Navigator.pop(context);
                   },
-                  child: const Text(
-                    'SENDEN',
-                    style: AppStyles.buttonTextStyle,
-                  ),
+                  child: const Text('SENDEN', style: AppStyles.buttonTextStyle),
                 ),
                 const Gap(15),
                 ElevatedButton(
@@ -113,8 +126,9 @@ class SetupMatrixEnvironmentPage extends StatelessWidget {
                     String? scanResult;
                     if (Platform.isAndroid || Platform.isIOS) {
                       scanResult = await qrScanner(
-                          context: context,
-                          overlayText: 'Matrix Zugangsdaten scannen');
+                        context: context,
+                        overlayText: 'Matrix Zugangsdaten scannen',
+                      );
                     }
                     if (Platform.isWindows ||
                         Platform.isLinux ||
@@ -136,6 +150,10 @@ class SetupMatrixEnvironmentPage extends StatelessWidget {
                           matrixCredentialsMap['policyToken'];
                       viewModel.matrixAdminTextFieldController.text =
                           matrixCredentialsMap['matrixAdmin'];
+                      viewModel.encryptionKeyTextFieldController.text =
+                          matrixCredentialsMap['encryptionKey'];
+                      viewModel.encryptionIvTextFieldController.text =
+                          matrixCredentialsMap['encryptionIv'];
 
                       viewModel.setMatrixEnvironment();
 

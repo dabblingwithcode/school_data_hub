@@ -6,6 +6,7 @@ import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_po
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/matrix_rooms_list_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_page/new_matrix_user_page.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/controller/select_matrix_users_list_controller.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _matrixPolicyManager = di<MatrixPolicyManager>();
@@ -16,10 +17,12 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool filtersOn =
-        watchValue((MatrixPolicyFilterManager x) => x.filtersOn);
-    final bool pendingChanges =
-        watchValue((MatrixPolicyManager x) => x.pendingChanges);
+    final bool filtersOn = watchValue(
+      (MatrixPolicyFilterManager x) => x.filtersOn,
+    );
+    final bool pendingChanges = watchValue(
+      (MatrixPolicyManager x) => x.pendingChanges,
+    );
     return BottomNavBarLayout(
       bottomNavBar: BottomAppBar(
         padding: const EdgeInsets.all(10),
@@ -34,10 +37,7 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                 const Spacer(),
                 IconButton(
                   tooltip: 'zurück',
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    size: 30,
-                  ),
+                  icon: const Icon(Icons.arrow_back, size: 30),
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -46,10 +46,7 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                   const Gap(30),
                   IconButton(
                     tooltip: 'Änderungen speichern',
-                    icon: const Icon(
-                      Icons.save,
-                      size: 30,
-                    ),
+                    icon: const Icon(Icons.save, size: 30),
                     onPressed: () {
                       _matrixPolicyManager.applyPolicyChanges();
                     },
@@ -58,52 +55,63 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                 const Gap(30),
                 IconButton(
                   tooltip: 'neues Matrix-Konto',
-                  icon: const Icon(
-                    Icons.add,
-                    size: 30,
-                  ),
+                  icon: const Icon(Icons.add, size: 30),
                   onPressed: () {
                     // TODo: implement this
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) => const NewMatrixUserPage(),
-                    ));
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (ctx) => const NewMatrixUserPage(),
+                      ),
+                    );
                   },
                 ),
                 const Gap(30),
                 IconButton(
                   tooltip: 'Matrix-Räume',
-                  icon: const Icon(
-                    Icons.meeting_room_rounded,
-                    size: 30,
-                  ),
+                  icon: const Icon(Icons.meeting_room_rounded, size: 30),
                   onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) => const MatrixRoomsListPage(),
-                    ));
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (ctx) => const MatrixRoomsListPage(),
+                      ),
+                    );
                   },
                 ),
                 const Gap(30),
                 IconButton(
-                    tooltip: 'Zur Startseite',
-                    onPressed: () =>
-                        Navigator.popUntil(context, (route) => route.isFirst),
-                    icon: const Icon(
-                      Icons.home,
-                      size: 35,
-                    )),
+                  tooltip: 'Zur Startseite',
+                  onPressed:
+                      () =>
+                          Navigator.popUntil(context, (route) => route.isFirst),
+                  icon: const Icon(Icons.home, size: 35),
+                ),
+                const Gap(30),
+                IconButton(
+                  tooltip: 'Mehrere neue Benutzer-Codes generieren',
+                  icon: const Icon(Icons.print, color: Colors.orange, size: 30),
+                  onPressed: () {
+                    final matrixUsers = _matrixPolicyManager.matrixUsers.value;
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder:
+                            (context) => SelectMatrixUsersList(matrixUsers),
+                      ),
+                    );
+                  },
+                ),
                 const Gap(30),
                 InkWell(
                   // TODO: this needs to be implemented
                   //   onTap: () => showCreditFilterBottomSheet(context),
-                  onLongPress: () =>
-                      _matrixPolicyFilterManager.resetAllMatrixFilters(),
+                  onLongPress:
+                      () => _matrixPolicyFilterManager.resetAllMatrixFilters(),
                   child: Icon(
                     Icons.filter_list,
                     color: filtersOn ? Colors.deepOrange : Colors.white,
                     size: 30,
                   ),
                 ),
-                const Gap(15)
+                const Gap(15),
               ],
             ),
           ),
@@ -111,4 +119,40 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
       ),
     );
   }
+
+  // void _showBulkCredentialsDialog(BuildContext context) {
+  //   final matrixUsers = _matrixPolicyManager.matrixUsers.value;
+
+  //   if (matrixUsers.isEmpty) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Keine Matrix-Benutzer verfügbar.')),
+  //     );
+  //     return;
+  //   }
+
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: const Text('Bulk-Credentials generieren'),
+  //         content: const Text(
+  //           'Möchten Sie neue Benutzer-Codes generieren?\n\n'
+  //           'Dies wird die Passwörter der Konten zurücksetzen und neue Credentials erstellen.',
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.of(context).pop(),
+  //             child: const Text('Abbrechen'),
+  //           ),
+  //           TextButton(
+  //             onPressed: () {
+
+  //             },
+  //             child: const Text('Bestätigen'),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 }
