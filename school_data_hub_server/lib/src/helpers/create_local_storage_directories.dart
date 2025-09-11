@@ -13,59 +13,48 @@ void createLocalStorageDirectories() {
     final serverDirPath = Directory.current.path;
     _log.info('Current working directory is [$serverDirPath]');
 
-    // Try multiple possible storage paths
-    final possiblePaths = [
-      p.join(serverDirPath, 'storage'),
-      '/app/storage', // Docker container path
-      'storage', // Relative path
-    ];
+    // Determine storage path based on environment - same logic as server.dart
+    String storagePath;
 
-    Directory? storageDir;
-    String? selectedPath;
+    if (Platform.isLinux && Directory('/app').existsSync()) {
+      // Docker container environment
+      storagePath = '/app/storage';
+      _log.info('Detected Docker container environment, using: [$storagePath]');
+    } else {
+      // Local development environment
+      storagePath = p.join(serverDirPath, 'storage');
+      _log.info(
+          'Detected local development environment, using: [$storagePath]');
+    }
 
-    // Find the first path that exists or can be created
-    for (final path in possiblePaths) {
-      final dir = Directory(path);
-      _log.fine('Checking storage path: [${dir.path}]');
+    final storageDir = Directory(storagePath);
 
-      if (dir.existsSync()) {
-        storageDir = dir;
-        selectedPath = path;
-        _log.info('Using existing storage directory: [${dir.path}]');
-        break;
-      }
+    _log.info('Using storage directory: [$storagePath]');
 
-      // Try to create the directory
+    // Create the main storage directory if it doesn't exist
+    if (!storageDir.existsSync()) {
       try {
-        dir.createSync(recursive: true);
-        storageDir = dir;
-        selectedPath = path;
-        _log.info('Created storage directory: [${dir.path}]');
-        break;
+        storageDir.createSync(recursive: true);
+        _log.info('Created storage directory: [$storagePath]');
       } catch (e) {
-        _log.warning('Could not create directory at [${dir.path}]: $e');
-        continue;
+        _log.severe('Could not create storage directory at [$storagePath]: $e');
+        return;
       }
+    } else {
+      _log.info('Storage directory already exists: [$storagePath]');
     }
-
-    if (storageDir == null) {
-      _log.severe('Could not create or find any storage directory!');
-      return;
-    }
-
-    _log.info('Using storage directory: [${storageDir.path}]');
 
     // Create all required subdirectories
     final directories = [
-      p.join(storageDir.path, 'public'),
-      p.join(storageDir.path, 'public', 'serverpod'),
-      p.join(storageDir.path, 'public', 'serverpod', 'user_images'),
-      p.join(storageDir.path, 'private'),
-      p.join(storageDir.path, 'private', 'auths'),
-      p.join(storageDir.path, 'private', 'avatars'),
-      p.join(storageDir.path, 'private', 'documents'),
-      p.join(storageDir.path, 'private', 'events'),
-      p.join(storageDir.path, 'temp'),
+      p.join(storagePath, 'public'),
+      p.join(storagePath, 'public', 'serverpod'),
+      p.join(storagePath, 'public', 'serverpod', 'user_images'),
+      p.join(storagePath, 'private'),
+      p.join(storagePath, 'private', 'auths'),
+      p.join(storagePath, 'private', 'avatars'),
+      p.join(storagePath, 'private', 'documents'),
+      p.join(storagePath, 'private', 'events'),
+      p.join(storagePath, 'temp'),
     ];
 
     for (final dirPath in directories) {

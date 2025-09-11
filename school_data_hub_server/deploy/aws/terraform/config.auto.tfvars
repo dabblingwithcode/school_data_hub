@@ -72,7 +72,7 @@ autoscaling_desired_capacity = 1
 # and edit the Terraform files.
 # Note: By turning this feature on, the server setup will no longer fit within
 # the AWS free tier as it will use multiple server instances and load balancers.
-enable_staging_server = false
+enable_staging_server = true
 
 staging_instance_type                = "t2.micro"
 staging_autoscaling_min_size         = 1

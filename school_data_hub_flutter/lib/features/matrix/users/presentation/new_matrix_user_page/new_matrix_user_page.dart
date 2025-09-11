@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
@@ -9,13 +7,9 @@ import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_man
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/controller/select_matrix_rooms_list_controller.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:watch_it/watch_it.dart';
-
-final _matrixPolicyManager = di<MatrixPolicyManager>();
-final _pupilManager = di<PupilManager>();
 
 class NewMatrixUserPage extends StatefulWidget {
   final String? matrixId;
@@ -35,10 +29,11 @@ class NewMatrixUserPage extends StatefulWidget {
 }
 
 class NewMatrixUserPageState extends State<NewMatrixUserPage> {
+  final _matrixUserManager = di<MatrixUserManager>();
   final TextEditingController matrixIdController = TextEditingController();
 
   final TextEditingController displayNameController = TextEditingController();
-  final allRooms = _matrixPolicyManager.matrixRooms.value;
+  final allRooms = di<MatrixPolicyManager>().matrixRooms.value;
 
   @override
   void initState() {
@@ -64,49 +59,6 @@ class NewMatrixUserPageState extends State<NewMatrixUserPage> {
   }
 
   Set<String> roomIds = {};
-
-  Future<File?> postNewMatrixUser() async {
-    //- TODO URGENT: this is a hack for our school, add validation for the domain part
-    String matrixId =
-        '@${matrixIdController.text}:${_matrixPolicyManager.matrixUrl.split('://post.').last}';
-
-    String displayName = displayNameController.text;
-
-    List<String> roomIdsList = roomIds.toList();
-    final isStaff = !matrixId.contains('_');
-    final isParent = matrixId.contains('_e');
-
-    // we are getting the credentials pdf file back if the user was created successfully
-    // the password is generated in the createNewMatrixUser method
-    final file = await _matrixPolicyManager.users.createNewMatrixUser(
-      matrixId: matrixId,
-      displayName: displayName,
-      isStaff: isStaff,
-    );
-
-    // if it is a pupil realated matrix account
-    if (file != null && widget.pupil != null) {
-      if (!isParent && !isStaff) {
-        // it's a pupil related matrix account
-        await PupilMutator().updateStringProperty(
-          pupilId: widget.pupil!.pupilId,
-          property: 'contact',
-          value: matrixId,
-        );
-      } else {
-        // it's a parent related matrix account
-        await PupilMutator().updateParentsContact(widget.pupil!, (
-          value: matrixId,
-        ));
-      }
-    }
-
-    _matrixPolicyManager.users.addMatrixUserToRooms(matrixId, roomIdsList);
-
-    await _matrixPolicyManager.applyPolicyChanges();
-
-    return file;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -329,7 +281,12 @@ class NewMatrixUserPageState extends State<NewMatrixUserPage> {
                 ElevatedButton(
                   style: AppStyles.successButtonStyle,
                   onPressed: () async {
-                    final file = await postNewMatrixUser();
+                    final file = await _matrixUserManager.postNewMatrixUser(
+                      pupil: widget.pupil,
+                      generatedMatrixId: matrixIdController.text,
+                      displayName: displayNameController.text,
+                      roomIds: roomIds.toList(),
+                    );
 
                     if (file != null && context.mounted) {
                       Navigator.of(context).push(

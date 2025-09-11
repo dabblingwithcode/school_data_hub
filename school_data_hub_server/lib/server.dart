@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
@@ -50,16 +51,25 @@ void run(List<String> args) async {
     authenticationHandler: auth.authenticationHandler,
   );
 
-  // Configure storage.
-  // we use p.join to avoid issues with different OS path separators
+  // Configure storage with environment-aware paths
+  String storageBasePath;
+
+  // Determine storage path based on environment
+  if (Platform.isLinux && Directory('/app').existsSync()) {
+    // Docker container environment
+    storageBasePath = '/app/storage';
+  } else {
+    // Local development environment
+    storageBasePath = p.join(Directory.current.path, 'storage');
+  }
+
   pod.addCloudStorage(LocalStorage(
-    //publicStorageUrl: publicStorageUrl,
     storageId: 'private',
-    pathPrefix: p.join('storage', 'private').toString(),
+    pathPrefix: p.join(storageBasePath, 'private'),
   ));
   pod.addCloudStorage(LocalStorage(
     storageId: 'public',
-    pathPrefix: p.join('storage', 'public').toString(),
+    pathPrefix: p.join(storageBasePath, 'public'),
   ));
 
   // If you are using any future calls, they need to be registered here.
@@ -77,6 +87,19 @@ void run(List<String> args) async {
     '/*',
   );
 
+  String publicStoragePath;
+  if (Platform.isLinux && Directory('/app').existsSync()) {
+    publicStoragePath = '/app/storage/public';
+  } else {
+    publicStoragePath = p.join(Directory.current.path, 'storage', 'public');
+  }
+
+  pod.webServer.addRoute(
+    RouteStaticDirectory(
+        serverDirectory: publicStoragePath, basePath: '/files/public'),
+    '/files/public/*',
+  );
+
   // Start the server.
   await pod.start();
 
@@ -85,7 +108,7 @@ void run(List<String> args) async {
 
   var session = await pod.createSession();
 
-  // Check if there are any users in the database. If not, we can populate the test environment.
+  // Check if there are any users in the database. If not, we need to populate the test environment.
   final userCount = await auth.UserInfo.db.count(session);
   print('Current user count in database: $userCount');
 

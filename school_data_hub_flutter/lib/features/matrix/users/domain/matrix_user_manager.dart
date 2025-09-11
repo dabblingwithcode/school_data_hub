@@ -5,9 +5,12 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/features/matrix/data/matrix_api_service.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper.dart';
+import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/services/matrix_credentials_pdf_generator.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:watch_it/watch_it.dart';
 
 class MatrixUserManager extends ChangeNotifier {
@@ -81,6 +84,50 @@ class MatrixUserManager extends ChangeNotifier {
 
     _onPolicyChanges(true);
     notifyListeners();
+    return file;
+  }
+
+  Future<File?> postNewMatrixUser({
+    required PupilProxy? pupil,
+    required String generatedMatrixId,
+    required String displayName,
+    required List<String> roomIds,
+  }) async {
+    //- TODO URGENT: this is a hack for our school, add validation for the domain part
+    String matrixId =
+        '@$generatedMatrixId:${di<MatrixPolicyManager>().matrixUrl.split('://post.').last}';
+
+    List<String> roomIdsList = roomIds.toList();
+    final isStaff = !matrixId.contains('_');
+    final isParent = matrixId.contains('_e');
+
+    // we are getting the credentials pdf file back if the user was created successfully
+    // the password is generated in the createNewMatrixUser method
+    final file = await createNewMatrixUser(
+      matrixId: matrixId,
+      displayName: displayName,
+      isStaff: isStaff,
+    );
+
+    // if it is a pupil realated matrix account
+    if (file != null && pupil != null) {
+      if (!isParent && !isStaff) {
+        // it's a pupil related matrix account
+        await PupilMutator().updateStringProperty(
+          pupilId: pupil.pupilId,
+          property: 'contact',
+          value: matrixId,
+        );
+      } else {
+        // it's a parent related matrix account
+        await PupilMutator().updateParentsContact(pupil, (value: matrixId));
+      }
+    }
+
+    addMatrixUserToRooms(matrixId, roomIdsList);
+
+    await di<MatrixPolicyManager>().applyPolicyChanges();
+
     return file;
   }
 

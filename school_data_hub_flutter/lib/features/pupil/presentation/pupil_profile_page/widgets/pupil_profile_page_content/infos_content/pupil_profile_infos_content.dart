@@ -365,7 +365,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                                     .resetPasswordAndPrintCredentialsFile(
                                       user:
                                           MatrixUserHelper.usersFromUserIds([
-                                            pupil.contact!,
+                                            pupil.tutorInfo!.parentsContact!,
                                           ]).first,
                                       logoutDevices: logOutDevices,
                                       isStaff: false,

@@ -50,7 +50,6 @@ services:
     image: ghcr.io/${GHCR_ORG}/school_data_hub_server:staging
     volumes:
       - school_data_hub_storage:/app/storage
-      - ../test_data:/test_data
     environment:
       - SERVERPOD_DATABASE_PASSWORD
       - SERVERPOD_DATABASE_HOST
