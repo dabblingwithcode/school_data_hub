@@ -7,6 +7,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:school_data_hub_flutter/features/user/presentation/change_password/change_password_page.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -51,11 +52,13 @@ class SettingsAccountSection extends AbstractSettingsSection with WatchItMixin {
         ),
         if (isTester)
           SettingsTile.navigation(
-            // onPressed: (context) {
-            //   Navigator.of(context).push(MaterialPageRoute(
-            //     builder: (ctx) => const UserChangePasswordPage(),
-            //   ));
-            // },
+            onPressed: (context) {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (ctx) => const UserChangePasswordPage(),
+                ),
+              );
+            },
             leading: const Icon(Icons.password_rounded),
             title: const Text('Passwort ändern (noch nicht freigeschaltet)'),
             trailing: null,

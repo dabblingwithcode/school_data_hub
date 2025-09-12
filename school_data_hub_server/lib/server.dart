@@ -112,7 +112,11 @@ void run(List<String> args) async {
   final userCount = await auth.UserInfo.db.count(session);
   print('Current user count in database: $userCount');
 
-  if (userCount == 0) {
+  final adminUser = await auth.UserInfo.db.findFirstRow(
+    session,
+    where: (t) => t.fullName.equals('Administrator'),
+  );
+  if (adminUser == null) {
     print('No users found, populating test environment...');
     await populateTestEnvironment(session);
   } else {

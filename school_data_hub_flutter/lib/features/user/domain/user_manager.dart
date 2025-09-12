@@ -55,7 +55,7 @@ class UserManager {
     required bool isTester,
     String? tutoring,
   }) async {
-    //- TODO: Mover to an api service in data folder!
+    //- TODO: Move to an api service in data folder!
     await _client.admin.createUser(
       userName: userName,
       fullName: fullName,
@@ -78,6 +78,24 @@ class UserManager {
     return;
   }
 
+  Future<void> resetPassword(String userEmail, String newPassword) async {
+    final success = await _client.admin.resetPassword(userEmail, newPassword);
+    if (!success) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Passwort konnte nicht zurückgesetzt werden!',
+      );
+      return;
+    }
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Passwort erfolgreich zurückgesetzt!',
+    );
+    return;
+  }
+
+  //- CHANGE PASSWORD
   Future<void> changePassword(String oldPassword, String newPassword) async {
     final success = await _client.user.changePassword(oldPassword, newPassword);
     if (!success) {

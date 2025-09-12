@@ -1,8 +1,10 @@
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart';
 
 class UserEndpoint extends Endpoint {
+  final _log = Logger('UserEndpoint');
   @override
   bool get requireLogin => true;
 
@@ -107,36 +109,46 @@ class UserEndpoint extends Endpoint {
 
   Future<bool> changePassword(
       Session session, String oldPassword, String newPassword) async {
+    _log.info('oldPassword: $oldPassword');
+    _log.info('newPassword: $newPassword');
     // Get the authenticated user
     final authenticationInfo = await session.authenticated;
     if (authenticationInfo == null) {
+      _log.severe('User is not authenticated');
       return false; // User is not authenticated
     }
+    final result = await Emails.changePassword(
+        session, authenticationInfo.userId, oldPassword, newPassword);
+    // // Find the user's email auth entry
+    // var emailAuth = await EmailAuth.db.findFirstRow(session, where: (t) {
+    //   return t.userId.equals(authenticationInfo.userId);
+    // });
 
-    // Find the user's email auth entry
-    var emailAuth = await EmailAuth.db.findFirstRow(session, where: (t) {
-      return t.userId.equals(authenticationInfo.userId);
-    });
+    // if (emailAuth == null) {
+    //   _log.severe('User doesn\'t have email authentication');
+    //   return false; // User doesn't have email authentication
+    // }
 
-    if (emailAuth == null) {
-      return false; // User doesn't have email authentication
-    }
+    // // Generate hash for the old password and compare with stored hash
+    // String oldPasswordHash = await Emails.generatePasswordHash(oldPassword);
+    // bool isValid = (oldPasswordHash == emailAuth.hash);
+    // _log.info('oldPasswordHash: $oldPasswordHash');
+    // _log.info('emailAuth.hash: ${emailAuth.hash}');
+    // _log.info('isValid: $isValid');
+    // if (!isValid) {
+    //   _log.severe('Old password is incorrect');
+    //   return false; // Old password is incorrect
+    // }
 
-    // Generate hash for the old password and compare with stored hash
-    String oldPasswordHash = await Emails.generatePasswordHash(oldPassword);
-    bool isValid = (oldPasswordHash == emailAuth.hash);
+    // // Generate hash for the new password
+    // emailAuth.hash = await Emails.generatePasswordHash(newPassword);
+    // _log.info('newPasswordHash: ${emailAuth.hash}');
 
-    if (!isValid) {
-      return false; // Old password is incorrect
-    }
+    // // Update the password in the database
+    // await EmailAuth.db.updateRow(session, emailAuth);
+    // _log.info('Password changed successfully');
 
-    // Generate hash for the new password
-    emailAuth.hash = await Emails.generatePasswordHash(newPassword);
-
-    // Update the password in the database
-    await EmailAuth.db.updateRow(session, emailAuth);
-
-    return true;
+    return result;
   }
 
   Future<bool> increaseStaffCredit(Session session) async {

@@ -144,6 +144,19 @@ class EndpointAdmin extends _i1.EndpointRef {
         },
       );
 
+  _i2.Future<bool> resetPassword(
+    String userEmail,
+    String newPassword,
+  ) =>
+      caller.callServerEndpoint<bool>(
+        'admin',
+        'resetPassword',
+        {
+          'userEmail': userEmail,
+          'newPassword': newPassword,
+        },
+      );
+
   _i2.Future<void> deleteUser(int userId) => caller.callServerEndpoint<void>(
         'admin',
         'deleteUser',

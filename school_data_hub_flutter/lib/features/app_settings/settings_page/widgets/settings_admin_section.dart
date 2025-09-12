@@ -20,6 +20,7 @@ import 'package:school_data_hub_flutter/features/school_calendar/presentation/ne
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_page/schooldays_calendar_page/schooldays_calendar_page.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_page.dart';
+import 'package:school_data_hub_flutter/features/user/presentation/reset_password/reset_user_password_page.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/user_list/user_list_page.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -71,6 +72,17 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
             Navigator.of(
               context,
             ).push(MaterialPageRoute(builder: (ctx) => const UserListPage()));
+          },
+        ),
+        SettingsTile.navigation(
+          title: const Text('User-Passwort zurücksetzen'),
+          leading: const Icon(Icons.lock_reset),
+          onPressed: (context) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (ctx) => const ResetUserPasswordPage(),
+              ),
+            );
           },
         ),
         SettingsTile.navigation(

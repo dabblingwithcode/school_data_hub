@@ -78,6 +78,23 @@ class AdminEndpoint extends Endpoint {
     return newUser;
   }
 
+  Future<bool> resetPassword(
+      Session session, String userEmail, String newPassword) async {
+    final emailAuth = await EmailAuth.db.findFirstRow(
+      session,
+      where: (t) => t.email.equals(userEmail),
+    );
+    if (emailAuth == null) throw Exception('EmailAuth not found');
+    emailAuth.hash = await auth.Emails.generatePasswordHash(newPassword);
+    await auth.EmailAuth.db.updateRow(session, emailAuth);
+    final user = await User.db.findFirstRow(session,
+        where: (t) => t.userInfoId.equals(emailAuth.userId));
+    if (user == null) throw Exception('User not found');
+    user.userFlags = user.userFlags.copyWith(changedPassword: true);
+    await User.db.updateRow(session, user);
+    return true;
+  }
+
   Future<void> deleteUser(Session session, int userId) async {
     // Find the user by ID
     final user = await auth.Users.findUserByUserId(session, userId);

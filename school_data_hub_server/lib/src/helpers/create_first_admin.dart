@@ -11,13 +11,13 @@ Future<User?> createFirstAdmin(
   //- Create test admin
 
   // For email authentication, we need to create a user with email/password
-  final adminEmail = 'test';
-  final adminPassword = 'test'; // Set a secure password in production
+  final adminEmail = 'admin';
+  final adminPassword = 'admin'; // Set a secure password in production
 
   // Create the userinfo
   var adminUser = await auth.Emails.createUser(
     session,
-    'TES',
+    'ADM',
     adminEmail,
     adminPassword,
   );
