@@ -70,21 +70,25 @@ class PupilEndpoint extends Endpoint {
         await PupilData.db.detachRow.avatar(session, pupil);
 
         await HubDocument.db.deleteRow(session, pupil.avatar!);
+        _logger.info('Deleted avatar for pupil ${pupil.id}');
         break;
       case PupilDocumentType.avatarAuth:
         path = pupil.avatarAuth!.documentPath!;
 
         await PupilData.db.detachRow.avatarAuth(session, pupil);
         await HubDocument.db.deleteRow(session, pupil.avatarAuth!);
+        _logger.info('Deleted avatar auth for pupil ${pupil.id}');
         // if the avatar auth is revoked, we need to delete the avatar as well
         if (pupil.avatar != null) {
           await PupilData.db.detachRow.avatar(session, pupil);
           await HubDocument.db.deleteRow(session, pupil.avatar!);
+          _logger.info('Deleted avatar for pupil ${pupil.id}');
         }
         await session.storage.deleteFile(
           storageId: 'private',
           path: pupil.avatar!.documentPath!,
         );
+        _logger.info('Deleted avatar auth file for pupil ${pupil.id}');
         //await PupilData.db.updateRow(session, pupil);
         break;
       case PupilDocumentType.publicMediaAuth:
@@ -92,14 +96,14 @@ class PupilEndpoint extends Endpoint {
 
         await PupilData.db.detachRow.publicMediaAuthDocument(session, pupil);
         await HubDocument.db.deleteRow(session, pupil.publicMediaAuthDocument!);
+        _logger.info('Deleted public media auth for pupil ${pupil.id}');
         //await PupilData.db.updateRow(session, pupil);
         break;
     }
 
-    // First update the pupil record to remove the relationship
-
     // Then delete the file and document
     await session.storage.deleteFile(storageId: 'private', path: path);
+    _logger.info('Deleted file for pupil ${pupil.id}');
     // await HubDocument.db.deleteRow(session, documentToDelete!);
 
     // Get the updated pupil
