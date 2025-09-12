@@ -61,7 +61,7 @@ jobs:
           push: true
           # TODO This same value is used in docker-compose.production.yaml too,
           #  maybe it should be an environment variable
-          tags: ghcr.io/${{ env.GHCR_ORG }}/school_data_hub_server:latest
+          tags: ghcr.io/${{ env.GHCR_ORG }}/school_data_hub_server:production
           labels: ${{ steps.meta.outputs.labels }}
           # This determines which hardware platforms the image will run on
           # further details: https://docs.docker.com/build/building/multi-platform/
