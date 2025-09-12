@@ -60,7 +60,7 @@ class SettingsAccountSection extends AbstractSettingsSection with WatchItMixin {
               );
             },
             leading: const Icon(Icons.password_rounded),
-            title: const Text('Passwort ändern (noch nicht freigeschaltet)'),
+            title: const Text('Passwort ändern'),
             trailing: null,
           ),
 
