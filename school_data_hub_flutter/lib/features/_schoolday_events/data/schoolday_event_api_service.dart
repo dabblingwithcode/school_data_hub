@@ -124,88 +124,105 @@ class SchooldayEventApiService {
   //- an schooldayEvent can be documented with an image file of a document
   //- the file is encrypted before it is uploaded
   //- there are two possible endpoints for the file upload, depending on whether the schooldayEvent is processed or not
-  Future<SchooldayEvent> updateSchooldayEventFile({
+  Future<SchooldayEvent?> updateSchooldayEventFile({
     required int schooldayEventId,
     required File file,
     required bool isProcessed,
   }) async {
-    final documentId = const Uuid().v4();
-    final path = p.posix.join(
-      ServerStorageFolder.events.name,
-      '$documentId.jpg',
-    );
-    final uploadDescription = await _client.files.getUploadDescription(
-      'private',
-      path,
-    );
-    if (uploadDescription != null) {
-      _log.info('Upload description received for $path');
-      _log.fine('Upload description: $uploadDescription');
-      // Create an uploader
-      final uploader = FileUploader(uploadDescription);
-
-      // Upload the file
-      final fileStream = file.openRead();
-
-      final fileLength = await file.length();
-      _log.info('File length: $fileLength');
-      _notificationService.apiRunning(true);
+    try {
+      final documentId = const Uuid().v4();
+      final path = p.posix.join(
+        ServerStorageFolder.events.name,
+        '$documentId.jpg',
+      );
+      String? uploadDescription;
       try {
-        await uploader.upload(fileStream, fileLength);
+        uploadDescription = await _client.files.getUploadDescription(
+          'private',
+          path,
+        );
       } catch (e) {
         _notificationService.apiRunning(false);
-        _log.severe('Error while uploading file', e, StackTrace.current);
+        throw Exception('Failed to get upload description, $e');
+      }
+
+      if (uploadDescription != null) {
+        _log.info('Upload description received for $path');
+        _log.fine('Upload description: $uploadDescription');
+        // Create an uploader
+        final uploader = FileUploader(uploadDescription);
+
+        // Upload the file
+        final fileStream = file.openRead();
+
+        final fileLength = await file.length();
+        _log.info('File length: $fileLength');
+        _notificationService.apiRunning(true);
+        try {
+          await uploader.upload(fileStream, fileLength);
+        } catch (e) {
+          _notificationService.apiRunning(false);
+          _log.severe('Error while uploading file', e, StackTrace.current);
+
+          throw Exception('Failed to upload file, $uploadDescription');
+        }
+
+        _notificationService.apiRunning(false);
+        bool success = false;
+        try {
+          // Verify the upload
+          success = await _client.files.verifyUpload('private', path);
+        } catch (e) {
+          _notificationService.apiRunning(false);
+          throw Exception('Failed to verify upload, $e');
+        }
+
+        if (success) {
+          try {
+            final updatedSchooldayEvent = await _client.schooldayEvent
+                .updateSchooldayEventFile(
+                  schooldayEventId,
+                  path,
+                  _hubSessionManager.userName!,
+                  isProcessed,
+                );
+            _notificationService.apiRunning(false);
+
+            return updatedSchooldayEvent;
+          } catch (e) {
+            _notificationService.apiRunning(false);
+
+            _log.severe(
+              'Error while updating schoolday event file',
+              e,
+              StackTrace.current,
+            );
+
+            _notificationService.showSnackBar(
+              NotificationType.error,
+              'Das Dokument konnte nicht aktualisiert werden: ${e.toString()}',
+            );
+
+            throw Exception('Failed to update schoolday event file, $e');
+          }
+        }
+      } else {
+        _notificationService.apiRunning(false);
+
+        _log.severe('Error while uploading file', null, StackTrace.current);
+
+        _notificationService.showSnackBar(
+          NotificationType.error,
+          'Das Ereignisdokument konnte nicht hochgeladen werden: ${uploadDescription.toString()}',
+        );
 
         throw Exception('Failed to upload file, $uploadDescription');
       }
-
+    } catch (e) {
       _notificationService.apiRunning(false);
-
-      // Verify the upload
-      final success = await _client.files.verifyUpload('private', path);
-
-      if (success) {
-        try {
-          final updatedSchooldayEvent = await _client.schooldayEvent
-              .updateSchooldayEventFile(
-                schooldayEventId,
-                path,
-                _hubSessionManager.userName!,
-                isProcessed,
-              );
-          _notificationService.apiRunning(false);
-
-          return updatedSchooldayEvent;
-        } catch (e) {
-          _notificationService.apiRunning(false);
-
-          _log.severe(
-            'Error while updating schoolday event file',
-            e,
-            StackTrace.current,
-          );
-
-          _notificationService.showSnackBar(
-            NotificationType.error,
-            'Das Profilbild konnte nicht aktualisiert werden: ${e.toString()}',
-          );
-
-          throw Exception('Failed to update schoolday event file, $e');
-        }
-      }
-    } else {
-      _notificationService.apiRunning(false);
-
-      _log.severe('Error while uploading file', null, StackTrace.current);
-
-      _notificationService.showSnackBar(
-        NotificationType.error,
-        'Das Ereignisdokument konnte nicht hochgeladen werden: ${uploadDescription.toString()}',
-      );
-
-      throw Exception('Failed to upload file, $uploadDescription');
+      throw Exception('Failed to upload file, $e');
     }
-    throw Exception('Failed to upload file, $uploadDescription');
+    return null;
   }
 
   //- delete schooldayEvent

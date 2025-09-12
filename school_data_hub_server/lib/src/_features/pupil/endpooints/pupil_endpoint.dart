@@ -34,7 +34,7 @@ class PupilEndpoint extends Endpoint {
 
   Future<List<PupilData>> fetchPupilsById(
       Session session, Set<int> internalIds) async {
-    _logger.info('Fetching pupils by internal IDs: $internalIds');
+    _logger.info('Fetching pupils by internal IDs');
     try {
       final pupils = await PupilData.db.find(
         session,

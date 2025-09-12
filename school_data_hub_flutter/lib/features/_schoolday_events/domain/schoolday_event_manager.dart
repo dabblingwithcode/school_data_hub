@@ -95,7 +95,7 @@ class SchooldayEventManager with ChangeNotifier {
     }
   }
 
-//- CRUD operantions
+  //- CRUD operantions
 
   //- post schoolday event
 
@@ -110,7 +110,9 @@ class SchooldayEventManager with ChangeNotifier {
 
     _updateSchooldayEventCollections(schooldayEvent);
     _notificationService.showSnackBar(
-        NotificationType.success, 'Eintrag erfolgreich!');
+      NotificationType.success,
+      'Eintrag erfolgreich!',
+    );
 
     return;
   }
@@ -125,7 +127,9 @@ class SchooldayEventManager with ChangeNotifier {
       updateSchooldayEventsBatchInCollections(events);
     } catch (e) {
       _notificationService.showSnackBar(
-          NotificationType.error, 'Fehler beim Laden der Einträge: $e');
+        NotificationType.error,
+        'Fehler beim Laden der Einträge: $e',
+      );
     }
   }
 
@@ -145,54 +149,73 @@ class SchooldayEventManager with ChangeNotifier {
     if (processed == false && eventToUpdate.processedDocumentId != null) {
       cacheKey = eventToUpdate.processedDocument!.documentId;
     }
-    final SchooldayEvent schooldayEvent =
-        await _schooldayEventApiService.updateSchooldayEvent(
-            schooldayEvent: eventToUpdate,
-            createdBy: createdBy,
-            reason: reason,
-            processed: processed,
-            processedBy: processedBy,
-            processedAt: processedAt,
-            schooldayId: schooldayId,
-            type: schoolEventType);
+    final SchooldayEvent schooldayEvent = await _schooldayEventApiService
+        .updateSchooldayEvent(
+          schooldayEvent: eventToUpdate,
+          createdBy: createdBy,
+          reason: reason,
+          processed: processed,
+          processedBy: processedBy,
+          processedAt: processedAt,
+          schooldayId: schooldayId,
+          type: schoolEventType,
+        );
 
     _updateSchooldayEventCollections(schooldayEvent);
     if (cacheKey != null) {
       await _cacheManager.removeFile(cacheKey);
     }
     _notificationService.showSnackBar(
-        NotificationType.success, 'Eintrag erfolgreich geändert!');
+      NotificationType.success,
+      'Eintrag erfolgreich geändert!',
+    );
 
     return;
   }
 
-  Future<void> updateSchooldayEventFile(
-      {required File imageFile,
-      required int schooldayEventId,
-      required bool isProcessed}) async {
+  Future<void> updateSchooldayEventFile({
+    required File imageFile,
+    required int schooldayEventId,
+    required bool isProcessed,
+  }) async {
     final encryptedFile = await customEncrypter.encryptFile(imageFile);
-    final SchooldayEvent responseEvent =
-        await _schooldayEventApiService.updateSchooldayEventFile(
-            schooldayEventId: schooldayEventId,
-            file: encryptedFile,
-            isProcessed: isProcessed);
+    final SchooldayEvent? responseEvent = await _schooldayEventApiService
+        .updateSchooldayEventFile(
+          schooldayEventId: schooldayEventId,
+          file: encryptedFile,
+          isProcessed: isProcessed,
+        );
+    if (responseEvent == null) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Datei konnte nicht hochgeladen werden!',
+      );
+      return;
+    }
     _updateSchooldayEventCollections(responseEvent);
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Datei erfolgreich hochgeladen!');
+      NotificationType.success,
+      'Datei erfolgreich hochgeladen!',
+    );
 
     return;
   }
 
   Future<void> deleteSchooldayEventFile(
-      int schooldayEventId, String cacheKey, bool isProcessed) async {
+    int schooldayEventId,
+    String cacheKey,
+    bool isProcessed,
+  ) async {
     final SchooldayEvent schooldayEvent = await _schooldayEventApiService
         .deleteSchooldayEventFile(schooldayEventId, isProcessed);
     await _cacheManager.removeFile(cacheKey);
     _updateSchooldayEventCollections(schooldayEvent);
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Datei erfolgreich gelöscht!');
+      NotificationType.success,
+      'Datei erfolgreich gelöscht!',
+    );
 
     return;
   }
@@ -210,7 +233,9 @@ class SchooldayEventManager with ChangeNotifier {
       removeSchooldayEventFromCollections(eventToDelete!);
     } catch (e) {
       _notificationService.showSnackBar(
-          NotificationType.error, 'Fehler beim Löschen des Eintrags: $e');
+        NotificationType.error,
+        'Fehler beim Löschen des Eintrags: $e',
+      );
 
       return;
     }

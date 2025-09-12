@@ -3,7 +3,7 @@
 # which adds SSL security through https. If you use Serverpod's standard
 # Terraform scripts to deploy your server, all you need to change in
 # this file is the examplepod.com domain name.
-maxRequestSize: 10485760
+
 # Configuration for the main API server.
 apiServer:
   port: 8080
@@ -45,3 +45,5 @@ redis:
   enabled: false
   host: redis.private-production.examplepod.com
   port: 6379
+
+maxRequestSize: 10485760
