@@ -1,9 +1,12 @@
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/helpers/hub_document_helper.dart';
 import 'package:school_data_hub_server/src/schemas/pupil_schemas.dart';
 import 'package:serverpod/serverpod.dart';
 
 class PupilEndpoint extends Endpoint {
+  final _logger = Logger('PupilEndpoint');
+
   @override
   bool get requireLogin => true;
 
@@ -31,14 +34,21 @@ class PupilEndpoint extends Endpoint {
 
   Future<List<PupilData>> fetchPupilsById(
       Session session, Set<int> internalIds) async {
-    final pupils = await PupilData.db.find(
-      session,
-      where: (t) =>
-          t.internalId.inSet(internalIds) & t.status.equals(PupilStatus.active),
-      include: PupilSchemas.allInclude,
-    );
+    _logger.info('Fetching pupils by internal IDs: $internalIds');
+    try {
+      final pupils = await PupilData.db.find(
+        session,
+        where: (t) =>
+            t.internalId.inSet(internalIds) &
+            t.status.equals(PupilStatus.active),
+        include: PupilSchemas.allInclude,
+      );
 
-    return pupils;
+      return pupils;
+    } catch (e, stackTrace) {
+      _logger.severe('Error fetching pupils by internal IDs: $e', stackTrace);
+      throw Exception('Error fetching pupils by internal IDs: $e');
+    }
   }
 
   Future<PupilData> deletePupilDocument(
