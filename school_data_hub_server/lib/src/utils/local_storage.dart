@@ -36,18 +36,6 @@ class LocalStorage extends DatabaseCloudStorage {
   // We sanitize the path for different platforms
   File _getFileByPath(String path) => File(p.join(pathPrefix, path));
 
-  // File _getFileByPath(String filePath) {
-  //   final fileName = p.basename(filePath);
-  //   final parentDirectoryPath = p.dirname(filePath);
-  //   final directoryPath = p.join(pathPrefix, parentDirectoryPath);
-  //   // final directory = Directory(directoryPath);
-  //   // if (!directory.existsSync()) {
-  //   //   directory.createSync(recursive: true);
-  //   // }
-  //   log('Getting file: ${p.join(directoryPath, fileName)}');
-  //   return File(p.join(directoryPath, fileName));
-  // }
-
   @override
   Future<void> deleteFile({
     required Session session,

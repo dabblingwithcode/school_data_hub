@@ -87,19 +87,6 @@ void run(List<String> args) async {
     '/*',
   );
 
-  String publicStoragePath;
-  if (Platform.isLinux && Directory('/app').existsSync()) {
-    publicStoragePath = '/app/storage/public';
-  } else {
-    publicStoragePath = p.join(Directory.current.path, 'storage', 'public');
-  }
-
-  pod.webServer.addRoute(
-    RouteStaticDirectory(
-        serverDirectory: publicStoragePath, basePath: '/files/public'),
-    '/files/public/*',
-  );
-
   // Start the server.
   await pod.start();
 
