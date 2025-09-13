@@ -21,22 +21,28 @@ import 'src/generated/protocol.dart';
 // configuring Relic (Serverpod's web-server), or need custom setup work.
 
 void run(List<String> args) async {
-  // Set the global logging level
-  Logger.root.level = Level.ALL;
+  // Enable hierarchical logging to allow setting levels on non-root loggers
+  Logger.root.level = Level.INFO;
+  hierarchicalLoggingEnabled = true;
+
+  // Reduce noise from mailer package SMTP connections
+  Logger('Connection').level = Level.WARNING;
 
   // Add your custom colored console listener
   Logger.root.onRecord.listen((record) {
     final colorFormatter = ColorFormatter();
     log(colorFormatter.format(record));
   });
-
+  final _logger = Logger('ServerpodInit');
   // Also add a simple console output for Docker environments
-  // TODO ADVICE: Is this print bad in production?
-  Logger.root.onRecord.listen((record) {
-    print(
-        '${record.time}: ${record.level.name}: ${record.loggerName}: ${record.message}');
-  });
+
+  // Logger.root.onRecord.listen((record) {
+  //   print(
+  //       '${record.time}: ${record.level.name}: ${record.loggerName}: ${record.message}');
+  // });
+
   // auth configuration
+  // TODO: configure this properly
   auth.AuthConfig.set(auth.AuthConfig(
     enableUserImages: false,
     userCanEditUserName: false,
@@ -97,17 +103,17 @@ void run(List<String> args) async {
 
   // Check if there are any users in the database. If not, we need to populate the test environment.
   final userCount = await auth.UserInfo.db.count(session);
-  print('Current user count in database: $userCount');
+  _logger.info('Current user count in database: $userCount');
 
   final adminUser = await auth.UserInfo.db.findFirstRow(
     session,
     where: (t) => t.fullName.equals('Administrator'),
   );
   if (adminUser == null) {
-    print('No users found, populating test environment...');
+    _logger.warning('No users found, populating test environment...');
     await populateTestEnvironment(session);
   } else {
-    print('Users already exist, skipping test environment population');
+    _logger.info('Users already exist, skipping test environment population');
   }
 
   // TODO: uncomment in production
@@ -124,4 +130,24 @@ void run(List<String> args) async {
     null,
     const Duration(seconds: 1),
   );
+
+  // Send startup notification email
+  // try {
+  //   MailerService.instance.initializeFromSession(session);
+  //   final success = await MailerService.instance.sendNotification(
+  //     recipient: '',
+  //     subject: 'Server Started',
+  //     message: 'School Data Hub Server has started successfully.\n\n'
+  //         'Timestamp: ${DateTime.now().toIso8601String()}\n'
+  //         'User count: $userCount',
+  //   );
+
+  //   if (success) {
+  //     _logger.info('Startup notification email sent successfully');
+  //   } else {
+  //     _logger.severe('Failed to send startup notification email');
+  //   }
+  // } catch (e) {
+  //   _logger.severe('Error sending startup notification email: $e');
+  // }
 }

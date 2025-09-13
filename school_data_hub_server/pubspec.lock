@@ -265,6 +265,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.5.4"
+  intl:
+    dependency: transitive
+    description:
+      name: intl
+      sha256: "910f85bce16fb5c6f614e117efa303e85a1731bb0081edf3604a2ae6e9a3cc91"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.17.0"
   io:
     dependency: transitive
     description:
@@ -305,6 +313,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.0"
+  mailer:
+    dependency: "direct main"
+    description:
+      name: mailer
+      sha256: db61f51ea301e8dcbfe5894e037ccd30a6246eb0a7bcfa007aefa2fc11a8f96e
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.5.0"
   matcher:
     dependency: transitive
     description:
@@ -325,10 +341,10 @@ packages:
     dependency: transitive
     description:
       name: mime
-      sha256: "41a20518f0cb1256669420fdba0cd90d21561e560ac240f26ef8322e45bb7ed6"
+      sha256: "801fd0b26f14a4a58ccb09d5892c3fbdeff209594300a542492cf13fba9d247a"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.0"
+    version: "1.0.6"
   mustache_template:
     dependency: transitive
     description:

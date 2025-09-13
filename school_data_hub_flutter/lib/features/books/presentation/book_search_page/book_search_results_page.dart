@@ -43,9 +43,10 @@ class BookSearchResultsPage extends WatchingWidget {
           keywords: keywords,
           location: location,
           readingLevel: readingLevel,
-          available: borrowStatus == BorrowedStatus.available
-              ? true
-              : borrowStatus == BorrowedStatus.borrowed
+          available:
+              borrowStatus == BorrowedStatus.available
+                  ? true
+                  : borrowStatus == BorrowedStatus.borrowed
                   ? false
                   : null,
         );
@@ -53,8 +54,10 @@ class BookSearchResultsPage extends WatchingWidget {
     });
 
     return Scaffold(
-      appBar:
-          const GenericAppBar(iconData: Icons.search, title: 'Suchergebnisse'),
+      appBar: const GenericAppBar(
+        iconData: Icons.search,
+        title: 'Suchergebnisse',
+      ),
       body: ValueListenableBuilder<List<LibraryBookProxy>>(
         valueListenable: bookManager.searchResults,
         builder: (context, searchResults, _) {
@@ -62,8 +65,10 @@ class BookSearchResultsPage extends WatchingWidget {
             return const Center(child: Text("Keine Ergebnisse"));
           }
 
-          final groupedMap =
-              groupBy(searchResults, (LibraryBookProxy book) => book.isbn);
+          final groupedMap = groupBy(
+            searchResults,
+            (LibraryBookProxy book) => book.isbn,
+          );
           final groups = groupedMap.values.toList();
 
           return Center(

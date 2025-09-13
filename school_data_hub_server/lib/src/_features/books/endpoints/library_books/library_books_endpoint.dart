@@ -17,17 +17,24 @@ class LibraryBooksEndpoint extends Endpoint {
         where: (t) => t.isbn.equals(isbn),
         transaction: transaction,
       );
+      if (book == null) {
+        throw Exception('Book with ISBN $isbn not found.');
+      }
       final libraryBookLocation = await LibraryBookLocation.db.findFirstRow(
           session,
           where: (t) => t.location.equals(location.location),
           transaction: transaction);
+      if (libraryBookLocation == null) {
+        throw Exception(
+            'Library book location "${location.location}" not found.');
+      }
       final libraryBook = LibraryBook(
         id: null,
-        bookId: book!.id!,
+        bookId: book.id!,
         libraryId: libraryId,
         available: true,
         book: book,
-        location: libraryBookLocation!,
+        location: libraryBookLocation,
         locationId: libraryBookLocation.id!,
       );
 
@@ -39,13 +46,19 @@ class LibraryBooksEndpoint extends Endpoint {
           session, libraryBookInDatabase, libraryBookLocation,
           transaction: transaction);
 
+      if (libraryBookInDatabase.id == null) {
+        throw Exception('Failed to create library book - no ID assigned.');
+      }
       final attachedLibraryBookInDatabase = await LibraryBook.db.findById(
           session, libraryBookInDatabase.id!,
           include: LibraryBookSchemas.allInclude, transaction: transaction);
+      if (attachedLibraryBookInDatabase == null) {
+        throw Exception('Failed to retrieve created library book.');
+      }
       return attachedLibraryBookInDatabase;
     });
 
-    return libraryBookResponse!;
+    return libraryBookResponse;
   }
 
   //- read
@@ -134,7 +147,7 @@ class LibraryBooksEndpoint extends Endpoint {
 
     final libraryBooks = await LibraryBook.db.find(
       session,
-      where: (_) => query!,
+      where: query != null ? (_) => query! : null,
       include: LibraryBookSchemas.allInclude,
       // limit: libraryBookQuery.perPage,
       // offset: libraryBookQuery.page * libraryBookQuery.perPage,
@@ -256,7 +269,11 @@ class LibraryBooksEndpoint extends Endpoint {
       where: (t) => t.libraryId.equals(libraryId),
       include: LibraryBookSchemas.allInclude,
     );
-    return updatedLibraryBook!;
+    if (updatedLibraryBook == null) {
+      throw Exception(
+          'Library book with id $libraryId not found after update.');
+    }
+    return updatedLibraryBook;
   }
 
   //- delete

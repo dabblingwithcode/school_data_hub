@@ -182,9 +182,24 @@ class SearchResultBookCard extends WatchingWidget {
                 ),
                 Column(
                   children:
-                      books.map((book) {
-                        return LibraryBookCard(bookProxy: book);
-                      }).toList(),
+                      books
+                          .fold<List<LibraryBookProxy>>([], (
+                            uniqueBooks,
+                            book,
+                          ) {
+                            // Only add if libraryId is not already in the list
+                            if (!uniqueBooks.any(
+                              (existing) =>
+                                  existing.libraryId == book.libraryId,
+                            )) {
+                              uniqueBooks.add(book);
+                            }
+                            return uniqueBooks;
+                          })
+                          .map((book) {
+                            return LibraryBookCard(bookProxy: book);
+                          })
+                          .toList(),
                 ),
                 const Gap(10),
               ],

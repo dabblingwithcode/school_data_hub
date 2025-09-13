@@ -15,8 +15,9 @@ class BookManager {
   ValueListenable<List<LibraryBookProxy>> get libraryBookProxies =>
       _libraryBookProxies;
 
-  final _isbnLibraryBooksMap =
-      ValueNotifier<Map<int, List<LibraryBookProxy>>>({});
+  final _isbnLibraryBooksMap = ValueNotifier<Map<int, List<LibraryBookProxy>>>(
+    {},
+  );
   ValueListenable<Map<int, List<LibraryBookProxy>>> get isbnLibraryBooksMap =>
       _isbnLibraryBooksMap;
 
@@ -29,9 +30,7 @@ class BookManager {
   List<BookTag> selectedTags = []; // Liste für ausgewählte Buch-Tags
 
   final _lastSelectedLocation = ValueNotifier<LibraryBookLocation>(
-    LibraryBookLocation(
-      location: 'Bitte auswählen',
-    ),
+    LibraryBookLocation(location: 'Bitte auswählen'),
   );
   ValueListenable<LibraryBookLocation> get lastLocationValue =>
       _lastSelectedLocation;
@@ -41,7 +40,7 @@ class BookManager {
 
   BookManager();
 
-//  final session = di<HubSessionManager>().credentials.value;
+  //  final session = di<HubSessionManager>().credentials.value;
 
   int _currentPage = 1;
   final int _perPage = 30;
@@ -72,13 +71,12 @@ class BookManager {
 
   // - manage collections
 
-  void _refreshLibraryBookProxyCollections(
-    List<LibraryBook> libraryBooks,
-  ) {
+  void _refreshLibraryBookProxyCollections(List<LibraryBook> libraryBooks) {
     final List<LibraryBookProxy> libraryBookProxies = [];
     for (LibraryBook libraryBook in libraryBooks) {
-      LibraryBookProxy libraryBookProxy =
-          LibraryBookProxy(librarybook: libraryBook);
+      LibraryBookProxy libraryBookProxy = LibraryBookProxy(
+        librarybook: libraryBook,
+      );
       // 1. Add the libraryBookProxy to the collection
 
       libraryBookProxies.add(libraryBookProxy);
@@ -90,12 +88,14 @@ class BookManager {
             .where((p) => p.libraryId == libraryBookProxy.libraryId);
         if (existingLibraryBookProxy.isNotEmpty) {
           // If it exists, remove it from the list
-          _isbnLibraryBooksMap.value[libraryBook.book!.isbn]!
-              .removeWhere((p) => p.libraryId == libraryBookProxy.libraryId);
+          _isbnLibraryBooksMap.value[libraryBook.book!.isbn]!.removeWhere(
+            (p) => p.libraryId == libraryBookProxy.libraryId,
+          );
         }
         // Add the new libraryBookProxy to the list
-        _isbnLibraryBooksMap.value[libraryBook.book!.isbn]!
-            .add(libraryBookProxy);
+        _isbnLibraryBooksMap.value[libraryBook.book!.isbn]!.add(
+          libraryBookProxy,
+        );
       } else {
         _isbnLibraryBooksMap.value[libraryBook.book!.isbn] = [libraryBookProxy];
       }
@@ -107,8 +107,9 @@ class BookManager {
   }
 
   void _addLibraryBookProxyToCollections(LibraryBook libraryBook) {
-    final LibraryBookProxy libraryBookProxy =
-        LibraryBookProxy(librarybook: libraryBook);
+    final LibraryBookProxy libraryBookProxy = LibraryBookProxy(
+      librarybook: libraryBook,
+    );
     final List<LibraryBookProxy> libraryBookProxies =
         _libraryBookProxies.value.toList();
     libraryBookProxies.add(libraryBookProxy);
@@ -116,11 +117,10 @@ class BookManager {
     _isbnLibraryBooksMap.value[libraryBook.book!.isbn] = libraryBookProxies;
   }
 
-  void _updateLibraryBookProxyInCollections(
-    LibraryBook libraryBook,
-  ) {
-    final LibraryBookProxy libraryBookProxy =
-        LibraryBookProxy(librarybook: libraryBook);
+  void _updateLibraryBookProxyInCollections(LibraryBook libraryBook) {
+    final LibraryBookProxy libraryBookProxy = LibraryBookProxy(
+      librarybook: libraryBook,
+    );
     final List<LibraryBookProxy> libraryBookProxies =
         _libraryBookProxies.value.toList();
     int index = libraryBookProxies.indexWhere(
@@ -139,11 +139,13 @@ class BookManager {
   }
 
   void _removeLibraryBookProxyFromCollection(
-      LibraryBookProxy libraryBookProxy) {
+    LibraryBookProxy libraryBookProxy,
+  ) {
     final List<LibraryBookProxy> libraryBookProxies =
         _libraryBookProxies.value.toList();
-    libraryBookProxies
-        .removeWhere((p) => p.libraryId == libraryBookProxy.libraryId);
+    libraryBookProxies.removeWhere(
+      (p) => p.libraryId == libraryBookProxy.libraryId,
+    );
     _libraryBookProxies.value = libraryBookProxies;
     // Remove from the isbnLibraryBooksMap
     final isbnLibraryBookProxyList =
@@ -165,8 +167,9 @@ class BookManager {
 
   LibraryBookProxy? getLibraryBookByLibraryBookId(int? libraryBookId) {
     if (libraryBookId == null) return null;
-    return _libraryBookProxies.value
-        .firstWhereOrNull((element) => element.libraryBookId == libraryBookId);
+    return _libraryBookProxies.value.firstWhereOrNull(
+      (element) => element.libraryBookId == libraryBookId,
+    );
   }
 
   List<LibraryBookProxy> getLibraryBooksByIsbn(int isbn) {
@@ -213,11 +216,9 @@ class BookManager {
   }
 
   Future<void> postLocation(String locationName) async {
-    final newLocation = LibraryBookLocation(
-      location: locationName,
-    );
-    final LibraryBookLocation? responseLocation =
-        await _bookApiService.postBookLocation(newLocation);
+    final newLocation = LibraryBookLocation(location: locationName);
+    final LibraryBookLocation? responseLocation = await _bookApiService
+        .postBookLocation(newLocation);
     if (responseLocation == null) {
       return;
     }
@@ -230,9 +231,10 @@ class BookManager {
       return;
     }
 
-    _locations.value = _locations.value
-        .where((loc) => loc.location != location.location)
-        .toList();
+    _locations.value =
+        _locations.value
+            .where((loc) => loc.location != location.location)
+            .toList();
   }
 
   void setLastLocationValue(LibraryBookLocation location) {
@@ -250,7 +252,9 @@ class BookManager {
     _refreshLibraryBookProxyCollections(responseBooks);
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Bücher erfolgreich geladen');
+      NotificationType.success,
+      'Bücher erfolgreich geladen',
+    );
   }
 
   Future<void> postLibraryBook({
@@ -269,7 +273,9 @@ class BookManager {
     _addLibraryBookProxyToCollections(responseBook);
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Arbeitsheft erfolgreich erstellt');
+      NotificationType.success,
+      'Arbeitsheft erfolgreich erstellt',
+    );
   }
 
   Future<void> updateBookProperty({
@@ -280,27 +286,30 @@ class BookManager {
     String? description,
     String? readingLevel,
   }) async {
-    final LibraryBook? updatedbook =
-        await _bookApiService.updateLibraryBookOrBook(
-      isbn: isbn,
-      libraryId: libraryId,
-      title: title,
-      author: author,
-      description: description,
-      readingLevel: readingLevel,
-    );
+    final LibraryBook? updatedbook = await _bookApiService
+        .updateLibraryBookOrBook(
+          isbn: isbn,
+          libraryId: libraryId,
+          title: title,
+          author: author,
+          description: description,
+          readingLevel: readingLevel,
+        );
     if (updatedbook == null) {
       return;
     }
     _updateLibraryBookProxyInCollections(updatedbook);
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Arbeitsheft erfolgreich aktualisiert');
+      NotificationType.success,
+      'Arbeitsheft erfolgreich aktualisiert',
+    );
   }
 
   Future<void> deleteLibraryBook(LibraryBookProxy libraryBookProxy) async {
-    final bool? success =
-        await _bookApiService.deleteLibraryBook(libraryBookProxy.libraryBookId);
+    final bool? success = await _bookApiService.deleteLibraryBook(
+      libraryBookProxy.libraryBookId,
+    );
     if (success == null) {
       return;
     }
@@ -334,17 +343,27 @@ class BookManager {
       }
       final searchResults = <LibraryBookProxy>[];
       for (final result in results) {
-        final LibraryBookProxy libraryBookProxy =
-            LibraryBookProxy(librarybook: result);
-        searchResults.add(libraryBookProxy);
+        final LibraryBookProxy libraryBookProxy = LibraryBookProxy(
+          librarybook: result,
+        );
+        // Check if this libraryId already exists to prevent duplicates
+        if (!searchResults.any(
+          (existing) => existing.libraryId == libraryBookProxy.libraryId,
+        )) {
+          searchResults.add(libraryBookProxy);
+        }
       }
       _searchResults.value = searchResults;
 
       _notificationService.showSnackBar(
-          NotificationType.success, 'Suchergebnisse aktualisiert');
+        NotificationType.success,
+        'Suchergebnisse aktualisiert',
+      );
     } catch (e) {
       _notificationService.showSnackBar(
-          NotificationType.error, 'Fehler bei der Suche: $e');
+        NotificationType.error,
+        'Fehler bei der Suche: $e',
+      );
     }
   }
 
@@ -380,13 +399,19 @@ class BookManager {
         _hasMorePages = false;
       } else {
         final List<LibraryBookProxy> searchResultsToUpdate =
-            searchResults.value;
+            _searchResults.value.toList(); // Create a copy
         for (final result in newPageResults) {
-          final LibraryBookProxy libraryBookProxy =
-              LibraryBookProxy(librarybook: result);
-          searchResultsToUpdate.add(libraryBookProxy);
+          final LibraryBookProxy libraryBookProxy = LibraryBookProxy(
+            librarybook: result,
+          );
+          // Check if this libraryId already exists to prevent duplicates
+          if (!searchResultsToUpdate.any(
+            (existing) => existing.libraryId == libraryBookProxy.libraryId,
+          )) {
+            searchResultsToUpdate.add(libraryBookProxy);
+          }
         }
-        _searchResults.value = [...searchResultsToUpdate];
+        _searchResults.value = searchResultsToUpdate;
         if (newPageResults.length < _perPage) {
           _hasMorePages = false;
         }

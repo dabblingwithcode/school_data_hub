@@ -12,16 +12,18 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profil
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:watch_it/watch_it.dart';
 
-class BookPupilCard extends WatchingWidget {
+class BookLendingPupilCard extends WatchingWidget {
   final PupilBookLending passedPupilBook;
-  const BookPupilCard({required this.passedPupilBook, super.key});
+  const BookLendingPupilCard({required this.passedPupilBook, super.key});
 
   @override
   Widget build(BuildContext context) {
     final pupil = watch<PupilProxy>(
-        di<PupilManager>().getPupilByPupilId(passedPupilBook.pupilId)!);
+      di<PupilManager>().getPupilByPupilId(passedPupilBook.pupilId)!,
+    );
     final watchedPupilBook = pupil.pupilBooks?.firstWhere(
-        (element) => element.lendingId == passedPupilBook.lendingId);
+      (element) => element.lendingId == passedPupilBook.lendingId,
+    );
     void updatepupilBookRating(int rating) {
       // TODO: Uncomment this when the API is ready
       // di<PupilManager>()
@@ -33,8 +35,12 @@ class BookPupilCard extends WatchingWidget {
       surfaceTintColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       elevation: 1.0,
-      margin:
-          const EdgeInsets.only(left: 4.0, right: 4.0, top: 4.0, bottom: 4.0),
+      margin: const EdgeInsets.only(
+        left: 4.0,
+        right: 4.0,
+        top: 4.0,
+        bottom: 4.0,
+      ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -59,13 +65,16 @@ class BookPupilCard extends WatchingWidget {
                               scrollDirection: Axis.horizontal,
                               child: InkWell(
                                 onTap: () {
-                                  di<BottomNavManager>()
-                                      .setPupilProfileNavPage(9);
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (ctx) => PupilProfilePage(
-                                      pupil: pupil,
+                                  di<BottomNavManager>().setPupilProfileNavPage(
+                                    9,
+                                  );
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder:
+                                          (ctx) =>
+                                              PupilProfilePage(pupil: pupil),
                                     ),
-                                  ));
+                                  );
                                 },
                                 child: Row(
                                   children: [
@@ -104,9 +113,7 @@ class BookPupilCard extends WatchingWidget {
                         children: [
                           Text(
                             watchedPupilBook!.lentBy,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           const Gap(2),
                           const Icon(
@@ -116,9 +123,7 @@ class BookPupilCard extends WatchingWidget {
                           const Gap(2),
                           Text(
                             watchedPupilBook.lentAt.formatForUser(),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -153,23 +158,27 @@ class BookPupilCard extends WatchingWidget {
                   children: [
                     const Gap(20),
                     GrowthDropdown(
-                        dropdownValue: watchedPupilBook.score,
-                        onChangedFunction: updatepupilBookRating),
+                      dropdownValue: watchedPupilBook.score,
+                      onChangedFunction: updatepupilBookRating,
+                    ),
                   ],
                 ),
                 const Gap(5),
               ],
             ),
-            const Text('Status:',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              'Status:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             const Gap(2),
             InkWell(
               onLongPress: () async {
                 final status = await longTextFieldDialog(
-                    title: 'Status',
-                    labelText: 'Status',
-                    initialValue: watchedPupilBook.status ?? '',
-                    parentContext: context);
+                  title: 'Status',
+                  labelText: 'Status',
+                  initialValue: watchedPupilBook.status ?? '',
+                  parentContext: context,
+                );
                 if (status == null) return;
                 // TODO: Uncomment this when the API is ready
                 // await di<PupilManager>().patchPupilBook(
@@ -177,9 +186,7 @@ class BookPupilCard extends WatchingWidget {
               },
               child: Text(
                 watchedPupilBook.status ?? 'Keine Einträge',
-                style: const TextStyle(
-                  fontSize: 16,
-                ),
+                style: const TextStyle(fontSize: 16),
               ),
             ),
             const Gap(10),

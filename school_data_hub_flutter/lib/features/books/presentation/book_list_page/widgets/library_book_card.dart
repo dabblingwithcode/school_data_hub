@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
@@ -11,25 +10,25 @@ import 'package:school_data_hub_flutter/features/books/presentation/book_list_pa
 class LibraryBookCard extends StatelessWidget {
   final LibraryBookProxy bookProxy;
   const LibraryBookCard({required this.bookProxy, super.key});
-  List<PupilBookLending> libraryBookPupilBooks(int bookId) {
-    return BookHelpers.pupilBooksLinkedToBook(libraryId: bookProxy.libraryId);
-  }
 
   @override
   Widget build(BuildContext context) {
     final tileController = CustomExpansionTileController();
-    final bookPupilBooks =
-        BookHelpers.pupilBooksLinkedToBook(libraryId: bookProxy.libraryId);
-    BookBorrowStatus? bookBorrowStatus = bookPupilBooks.isEmpty
-        ? null
-        : BookHelpers.getBorrowedStatus(bookPupilBooks.first);
-    final Color borrowedColor = bookProxy.available
-        ? Colors.green
-        : bookBorrowStatus == BookBorrowStatus.since2Weeks
+    final bookPupilLendings = BookHelpers.pupilBooksLinkedToBook(
+      libraryId: bookProxy.libraryId,
+    );
+    BookBorrowStatus? bookBorrowStatus =
+        bookPupilLendings.isEmpty
+            ? null
+            : BookHelpers.getBorrowedStatus(bookPupilLendings.first);
+    final Color borrowedColor =
+        bookProxy.available
+            ? Colors.green
+            : bookBorrowStatus == BookBorrowStatus.since2Weeks
             ? Colors.yellow
             : bookBorrowStatus == BookBorrowStatus.since3Weeks
-                ? Colors.orange
-                : Colors.red;
+            ? Colors.orange
+            : Colors.red;
     return Column(
       children: [
         Row(
@@ -75,9 +74,10 @@ class LibraryBookCard extends StatelessWidget {
         CustomExpansionTileContent(
           title: null,
           tileController: tileController,
-          widgetList: bookPupilBooks.isEmpty
-              ? [
-                  const Padding(
+          widgetList:
+              bookPupilLendings.isEmpty
+                  ? [
+                    const Padding(
                       padding: EdgeInsets.all(15.0),
                       child: Text(
                         'Keine Ausleihen',
@@ -86,11 +86,12 @@ class LibraryBookCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
-                      ))
-                ]
-              : bookPupilBooks.map((pupilBook) {
-                  return BookPupilCard(passedPupilBook: pupilBook);
-                }).toList(),
+                      ),
+                    ),
+                  ]
+                  : bookPupilLendings.map((pupilBook) {
+                    return BookLendingPupilCard(passedPupilBook: pupilBook);
+                  }).toList(),
         ),
         const Gap(5),
       ],
