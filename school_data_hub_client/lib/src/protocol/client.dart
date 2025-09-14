@@ -720,6 +720,60 @@ class EndpointCompetenceCheck extends _i1.EndpointRef {
           'createdBy': createdBy,
         },
       );
+
+  _i2.Future<_i5.PupilData> updateCompetenceCheck(
+    String checkId, {
+    ({int value})? score,
+    ({double value})? valueFactor,
+    ({String value})? createdBy,
+    ({String? value})? comment,
+  }) =>
+      caller.callServerEndpoint<_i5.PupilData>(
+        'competenceCheck',
+        'updateCompetenceCheck',
+        {
+          'checkId': checkId,
+          'score': _i15.mapRecordToJson(score),
+          'valueFactor': _i15.mapRecordToJson(valueFactor),
+          'createdBy': _i15.mapRecordToJson(createdBy),
+          'comment': _i15.mapRecordToJson(comment),
+        },
+      );
+
+  _i2.Future<_i5.PupilData> deleteCompetenceCheck(String checkId) =>
+      caller.callServerEndpoint<_i5.PupilData>(
+        'competenceCheck',
+        'deleteCompetenceCheck',
+        {'checkId': checkId},
+      );
+
+  _i2.Future<_i5.PupilData> addFileToCompetenceCheck(
+    String checkId,
+    String filePath,
+    String createdBy,
+  ) =>
+      caller.callServerEndpoint<_i5.PupilData>(
+        'competenceCheck',
+        'addFileToCompetenceCheck',
+        {
+          'checkId': checkId,
+          'filePath': filePath,
+          'createdBy': createdBy,
+        },
+      );
+
+  _i2.Future<_i5.PupilData> removeFileFromCompetenceCheck(
+    String checkId,
+    String documentId,
+  ) =>
+      caller.callServerEndpoint<_i5.PupilData>(
+        'competenceCheck',
+        'removeFileFromCompetenceCheck',
+        {
+          'checkId': checkId,
+          'documentId': documentId,
+        },
+      );
 }
 
 /// {@category Endpoint}

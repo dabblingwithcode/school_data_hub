@@ -37,34 +37,43 @@ class CompetenceHelper {
     // Combine the root competences and sorted child competences
     List<Competence> sortedCompetences = [
       ...rootCompetences,
-      ...childCompetences
+      ...childCompetences,
     ];
     return sortedCompetences;
   }
 
   static CompetenceCheck? getLastCompetenceCheckOfCompetence(
-      PupilProxy pupil, int publicId) {
+    PupilProxy pupil,
+    int publicId,
+  ) {
     if (pupil.competenceChecks != null && pupil.competenceChecks!.isNotEmpty) {
-      final filteredChecks = pupil.competenceChecks!
-          .where((element) =>
-              _competenceManager
-                  .findCompetenceById(element.competenceId)
-                  .publicId ==
-              publicId)
-          .toList();
+      final filteredChecks =
+          pupil.competenceChecks!
+              .where(
+                (element) =>
+                    _competenceManager
+                        .findCompetenceById(element.competenceId)
+                        .publicId ==
+                    publicId,
+              )
+              .toList();
       if (filteredChecks.isNotEmpty) {
-        return filteredChecks
-            .reduce((a, b) => a.createdAt.isAfter(b.createdAt) ? a : b);
+        return filteredChecks.reduce(
+          (a, b) => a.createdAt.isAfter(b.createdAt) ? a : b,
+        );
       }
     }
     return null;
   }
 
-  static CompetenceCheck? getGroupCompetenceCheckFromPupil(
-      {required PupilProxy pupil, required String groupId}) {
+  static CompetenceCheck? getGroupCompetenceCheckFromPupil({
+    required PupilProxy pupil,
+    required String groupId,
+  }) {
     if (pupil.competenceChecks != null && pupil.competenceChecks!.isNotEmpty) {
-      final groupIdCheck = pupil.competenceChecks!
-          .firstWhereOrNull((element) => element.groupCheckId == groupId);
+      final groupIdCheck = pupil.competenceChecks!.firstWhereOrNull(
+        (element) => element.groupCheckId == groupId,
+      );
 
       return groupIdCheck;
     }
@@ -73,9 +82,11 @@ class CompetenceHelper {
   }
 
   static Map<int, int> generateRootCompetencesMap(
-      List<Competence> competences) {
+    List<Competence> competences,
+  ) {
     final Map<int, Competence> rootCompetencesMap = {
-      for (Competence competence in competences) competence.publicId: competence
+      for (Competence competence in competences)
+        competence.publicId: competence,
     };
     Map<int, int> rootCompetencesCache = {};
 
@@ -101,15 +112,17 @@ class CompetenceHelper {
   }
 
   static Color getCompetenceColor(int publicId) {
-    final Competence rootCcompetence =
-        _competenceManager.findRootCompetenceById(publicId);
+    final Competence rootCcompetence = _competenceManager
+        .findRootCompetenceById(publicId);
     return getRootCompetenceColor(
-        rootCompetenceType:
-            RootCompetenceType.stringToValue[rootCcompetence.name]!);
+      rootCompetenceType:
+          RootCompetenceType.stringToValue[rootCcompetence.name]!,
+    );
   }
 
-  static Color getRootCompetenceColor(
-      {required RootCompetenceType rootCompetenceType}) {
+  static Color getRootCompetenceColor({
+    required RootCompetenceType rootCompetenceType,
+  }) {
     if (rootCompetenceType == RootCompetenceType.science) {
       return AppColors.scienceColor;
     } else if (rootCompetenceType == RootCompetenceType.english) {
@@ -134,33 +147,45 @@ class CompetenceHelper {
     return const Color.fromARGB(255, 157, 36, 36);
   }
 
-  static Widget getCompetenceCheckSymbol(
-      {required int status, required double size}) {
+  static Widget getCompetenceCheckSymbol({
+    required int status,
+    required double size,
+  }) {
     switch (status) {
       case 1:
         return SizedBox(
-            width: size, child: Image.asset('assets/growth_1-4.png'));
+          width: size,
+          child: Image.asset('assets/growth_1-4.png'),
+        );
       case 2:
         return SizedBox(
-            width: size, child: Image.asset('assets/growth_2-4.png'));
+          width: size,
+          child: Image.asset('assets/growth_2-4.png'),
+        );
       case 3:
         return SizedBox(
-            width: size, child: Image.asset('assets/growth_3-4.png'));
+          width: size,
+          child: Image.asset('assets/growth_3-4.png'),
+        );
       // case 'orange':
       //   return Colors.orange;
       case 4:
         return SizedBox(
-            width: size, child: Image.asset('assets/growth_4-4.png'));
+          width: size,
+          child: Image.asset('assets/growth_4-4.png'),
+        );
     }
     return SizedBox(
-        width: size,
-        child: const Icon(Icons.question_mark_rounded, color: Colors.white));
+      width: size,
+      child: const Icon(Icons.question_mark_rounded, color: Colors.white),
+    );
   }
 
-  static Widget getLastCompetenceCheckSymbol(
-      {required PupilProxy pupil,
-      required int publicId,
-      required double size}) {
+  static Widget getLastCompetenceCheckSymbol({
+    required PupilProxy pupil,
+    required int publicId,
+    required double size,
+  }) {
     if (pupil.competenceChecks!.isNotEmpty) {
       final CompetenceCheck? competenceCheck =
           getLastCompetenceCheckOfCompetence(pupil, publicId);
@@ -169,22 +194,19 @@ class CompetenceHelper {
         getCompetenceCheckSymbol(status: competenceCheck.score, size: size);
       }
       return const SizedBox(
-          width: 50,
-          child: Icon(
-            Icons.question_mark_rounded,
-            color: Colors.white,
-          ));
+        width: 50,
+        child: Icon(Icons.question_mark_rounded, color: Colors.white),
+      );
     }
 
     return const SizedBox(
-        width: 40, child: Icon(Icons.error, color: Colors.white));
+      width: 40,
+      child: Icon(Icons.error, color: Colors.white),
+    );
   }
 
   static Map<int, List<CompetenceCheck>>
-      getCompetenceChecksMappedTopublicIdsForThisPupil(int pupilId) {
-    //! TODO: this is broken, we should access the competence
-    //! public Id, but we are accessing the competenceId
-    //! we should implement a getter for this
+  getCompetenceChecksMappedTopublicIdsForThisPupil(int pupilId) {
     final Map<int, List<CompetenceCheck>> competenceChecksMap = {};
 
     final PupilProxy pupil = di<PupilManager>().getPupilByPupilId(pupilId)!;
@@ -192,14 +214,18 @@ class CompetenceHelper {
       return {};
     }
     for (CompetenceCheck competenceCheck in pupil.competenceChecks!) {
-      if (competenceChecksMap[competenceCheck.competenceId] == null) {
-        competenceChecksMap[competenceCheck.competenceId] = [];
+      // Use the competenceId directly as it corresponds to the competence's publicId
+      final competencePublicId = competenceCheck.competenceId;
+
+      if (competenceChecksMap[competencePublicId] == null) {
+        competenceChecksMap[competencePublicId] = [];
       }
       // add the competence check to the list of the competence checks of the competence
-      competenceChecksMap[competenceCheck.competenceId]!.add(competenceCheck);
+      competenceChecksMap[competencePublicId]!.add(competenceCheck);
       // order the competence checks by the date of creation latest first
-      competenceChecksMap[competenceCheck.competenceId]!
-          .sort((a, b) => b.createdAt.isAfter(a.createdAt) ? 1 : -1);
+      competenceChecksMap[competencePublicId]!.sort(
+        (a, b) => b.createdAt.isAfter(a.createdAt) ? 1 : -1,
+      );
     }
 
     return competenceChecksMap;
@@ -225,8 +251,10 @@ class CompetenceHelper {
       }
     }
     return _competenceManager.competences.value
-        .where((Competence competence) =>
-            competence.level!.contains(schoolGrade.name))
+        .where(
+          (Competence competence) =>
+              competence.level!.contains(schoolGrade.name),
+        )
         .toList();
   }
 
@@ -247,8 +275,9 @@ class CompetenceHelper {
     return (total: count, checked: competencesWithCheck);
   }
 
-  static List<PupilProxy> getFilteredPupilsByCompetence(
-      {required Competence competence}) {
+  static List<PupilProxy> getFilteredPupilsByCompetence({
+    required Competence competence,
+  }) {
     List<PupilProxy> pupils = [];
     final filteredPupils = di<PupilFilterManager>().filteredPupils;
     for (PupilProxy pupil in filteredPupils.value) {

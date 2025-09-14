@@ -31,7 +31,7 @@ class SubjectDropdown extends WatchingWidget {
       children: [
         Expanded(
           child: DropdownButtonFormField<Subject>(
-            initialValue: validSelectedSubject,
+            value: validSelectedSubject,
             decoration: const InputDecoration(
               labelText: 'Fach *',
               border: OutlineInputBorder(),

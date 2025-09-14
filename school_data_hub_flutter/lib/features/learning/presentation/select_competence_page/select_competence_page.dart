@@ -15,18 +15,21 @@ class SelectCompetencePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Theme(
       data: ThemeData(
-          unselectedWidgetColor: Colors.white,
-          radioTheme: RadioThemeData(
-            fillColor: WidgetStateProperty.all(Colors.white),
-            // overlayColor: MaterialStateProperty.all(Colors.green),
-          )),
+        unselectedWidgetColor: Colors.white,
+        radioTheme: RadioThemeData(
+          fillColor: WidgetStateProperty.all(Colors.white),
+          // overlayColor: MaterialStateProperty.all(Colors.green),
+        ),
+      ),
       child: Scaffold(
         appBar: AppBar(
           foregroundColor: Colors.white,
           centerTitle: true,
           backgroundColor: AppColors.backgroundColor,
-          title: const Text('Kompetenz auswählen',
-              style: AppStyles.appBarTextStyle),
+          title: const Text(
+            'Kompetenz auswählen',
+            style: AppStyles.appBarTextStyle,
+          ),
           // automaticallyImplyLeading: false,
         ),
         body: Center(
@@ -36,48 +39,58 @@ class SelectCompetencePage extends StatelessWidget {
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Column(children: [
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text('Bitte eine Kompetenz auswählen!',
+                child: Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Bitte eine Kompetenz auswählen!',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                            )),
-                      ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  ...selectableCompetenceTree(
-                    indentation: 0,
-                    viewModel: viewModel,
-                    //elementType: controller.widget.elementType
-                  ),
-                  const Gap(20),
-                ]),
+                    ...selectableCompetenceTree(
+                      indentation: 0,
+                      viewModel: viewModel,
+                      //elementType: controller.widget.elementType
+                    ),
+                    const Gap(20),
+                  ],
+                ),
               ),
             ),
           ),
         ),
-        floatingActionButton: viewModel.selectedCompetenceId != null
-            ? FloatingActionButton(
-                backgroundColor: AppColors.backgroundColor,
-                child: const Icon(
-                  Icons.check,
-                  color: Colors.white,
-                  size: 35,
-                ),
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (ctx) => MultiPupilCompetenceCheck(
-                        competence: viewModel.selectedCompetence!),
-                  ));
-                })
-            : const SizedBox.shrink(),
-        bottomNavigationBar:
-            CompetenceListPageBottomNavBar(competences: viewModel.competences),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor:
+              viewModel.selectedCompetenceId != null
+                  ? AppColors.backgroundColor
+                  : Colors.grey,
+          child: const Icon(Icons.check, color: Colors.white, size: 35),
+          onPressed:
+              viewModel.selectedCompetenceId != null
+                  ? () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder:
+                            (ctx) => MultiPupilCompetenceCheck(
+                              competence: viewModel.selectedCompetence!,
+                            ),
+                      ),
+                    );
+                  }
+                  : null,
+        ),
+        bottomNavigationBar: CompetenceListPageBottomNavBar(
+          competences: viewModel.competences,
+        ),
       ),
     );
   }

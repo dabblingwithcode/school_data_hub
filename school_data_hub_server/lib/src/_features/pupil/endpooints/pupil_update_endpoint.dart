@@ -18,7 +18,8 @@ class PupilUpdateEndpoint extends Endpoint {
   Future<PupilData> updateCommunicationSkills(Session session,
       {required int pupilId,
       required CommunicationSkills? communicationSkills}) async {
-    final pupil = await PupilData.db.findById(session, pupilId);
+    final pupil = await PupilData.db
+        .findById(session, pupilId, include: PupilSchemas.allInclude);
     if (pupil == null) {
       throw Exception('Pupil not found');
     }
@@ -37,7 +38,8 @@ class PupilUpdateEndpoint extends Endpoint {
 
   Future<PupilData> updateTutorInfo(
       Session session, int pupilId, TutorInfo? tutorInfo) async {
-    final pupil = await PupilData.db.findById(session, pupilId);
+    final pupil = await PupilData.db
+        .findById(session, pupilId, include: PupilSchemas.allInclude);
     if (pupil == null) {
       throw Exception('Pupil not found');
     }
@@ -61,6 +63,7 @@ class PupilUpdateEndpoint extends Endpoint {
       final pupil = await PupilData.db.findById(
         session,
         pupilId,
+        include: PupilSchemas.allInclude,
       );
       if (pupil == null) {
         throw Exception('Pupil not found');
@@ -220,7 +223,8 @@ class PupilUpdateEndpoint extends Endpoint {
 
   Future<PupilData> updateStringProperty(
       Session session, int pupilId, String property, String? value) async {
-    final pupil = await PupilData.db.findById(session, pupilId);
+    final pupil = await PupilData.db
+        .findById(session, pupilId, include: PupilSchemas.allInclude);
     if (pupil == null) {
       throw Exception('Pupil not found');
     }
@@ -249,7 +253,8 @@ class PupilUpdateEndpoint extends Endpoint {
 
   Future<PupilData> updateCredit(Session session, int pupilId, int value,
       String? description, String sender) async {
-    final pupil = await PupilData.db.findById(session, pupilId);
+    final pupil = await PupilData.db
+        .findById(session, pupilId, include: PupilSchemas.allInclude);
     if (pupil == null) {
       throw Exception('Pupil not found');
     }
@@ -326,7 +331,8 @@ class PupilUpdateEndpoint extends Endpoint {
 
   Future<PupilData> updatePublicMediaAuth(
       Session session, int pupilId, PublicMediaAuth publicMediaAuth) async {
-    final pupil = await PupilData.db.findById(session, pupilId);
+    final pupil = await PupilData.db
+        .findById(session, pupilId, include: PupilSchemas.allInclude);
 
     if (pupil == null) {
       throw Exception('Pupil not found');
@@ -344,7 +350,8 @@ class PupilUpdateEndpoint extends Endpoint {
 
   Future<PupilData> updateSupportLevel(
       Session session, SupportLevel supportLevel, int pupilId) async {
-    final pupil = await PupilData.db.findById(session, pupilId);
+    final pupil = await PupilData.db
+        .findById(session, pupilId, include: PupilSchemas.allInclude);
 
     if (pupil == null) {
       throw Exception('Pupil not found');
@@ -368,7 +375,8 @@ class PupilUpdateEndpoint extends Endpoint {
 
   Future<PupilData> updateSchoolyearHeldBackDate(Session session, int pupilId,
       ({DateTime? value}) schoolyearHeldBackDate) async {
-    final pupil = await PupilData.db.findById(session, pupilId);
+    final pupil = await PupilData.db
+        .findById(session, pupilId, include: PupilSchemas.allInclude);
 
     if (pupil == null) {
       throw Exception('Pupil not found');

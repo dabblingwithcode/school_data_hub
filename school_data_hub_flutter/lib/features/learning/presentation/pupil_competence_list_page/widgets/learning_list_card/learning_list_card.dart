@@ -204,7 +204,7 @@ class LearningListCard extends WatchingWidget {
                                 ),
                               ],
                             ),
-                            const Gap(10),
+                            const Gap(15),
                           ],
                         ),
                       ),

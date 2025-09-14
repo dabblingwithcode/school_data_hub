@@ -22,26 +22,33 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
   final String groupId;
   final int competenceId;
   final PupilProxy passedPupil;
-  const MultiPupilCompetenceCheckCard(
-      {required this.passedPupil,
-      required this.groupId,
-      required this.competenceId,
-      super.key});
+  const MultiPupilCompetenceCheckCard({
+    required this.passedPupil,
+    required this.groupId,
+    required this.competenceId,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     final pupil = watch(passedPupil);
     CompetenceCheck? competenceCheck =
         CompetenceHelper.getGroupCompetenceCheckFromPupil(
-            pupil: pupil, groupId: groupId);
+          pupil: pupil,
+          groupId: groupId,
+        );
 
     return Card(
       color: Colors.white,
       surfaceTintColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       elevation: 1.0,
-      margin:
-          const EdgeInsets.only(left: 4.0, right: 4.0, top: 4.0, bottom: 4.0),
+      margin: const EdgeInsets.only(
+        left: 4.0,
+        right: 4.0,
+        top: 4.0,
+        bottom: 4.0,
+      ),
       child: Column(
         children: [
           Row(
@@ -63,13 +70,15 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                             scrollDirection: Axis.horizontal,
                             child: InkWell(
                               onTap: () {
-                                di<BottomNavManager>()
-                                    .setPupilProfileNavPage(9);
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (ctx) => PupilProfilePage(
-                                    pupil: pupil,
+                                di<BottomNavManager>().setPupilProfileNavPage(
+                                  9,
+                                );
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder:
+                                        (ctx) => PupilProfilePage(pupil: pupil),
                                   ),
-                                ));
+                                );
                               },
                               child: Row(
                                 children: [
@@ -111,33 +120,35 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                         const Gap(5),
                         competenceCheck != null
                             ? GrowthDropdown(
-                                dropdownValue: competenceCheck.score,
-                                onChangedFunction: (int? value) async {
-                                  if (value == competenceCheck.score) {
-                                    return;
-                                  }
-                                  await di<CompetenceManager>()
-                                      .updateCompetenceCheck(
-                                          competenceCheckId:
-                                              competenceCheck.checkId,
-                                          competenceStatus: value);
-                                },
-                              )
+                              dropdownValue: competenceCheck.score,
+                              onChangedFunction: (int value) async {
+                                if (value == competenceCheck.score) {
+                                  return;
+                                }
+                                await di<CompetenceManager>()
+                                    .updateCompetenceCheck(
+                                      competenceCheckId:
+                                          competenceCheck.checkId,
+                                      score: (value: value),
+                                    );
+                              },
+                            )
                             : GrowthDropdown(
-                                dropdownValue: 0,
-                                onChangedFunction: (int? value) async {
-                                  if (value == 0) {
-                                    return;
-                                  }
-                                  await di<CompetenceManager>()
-                                      .postCompetenceCheck(
-                                          pupilId: pupil.internalId,
-                                          competenceId: competenceId,
-                                          competenceComment: '',
-                                          groupId: groupId,
-                                          score: value!);
-                                },
-                              ),
+                              dropdownValue: 0,
+                              onChangedFunction: (int? value) async {
+                                if (value == 0) {
+                                  return;
+                                }
+                                await di<CompetenceManager>()
+                                    .postCompetenceCheck(
+                                      pupilId: pupil.internalId,
+                                      competenceId: competenceId,
+                                      competenceComment: '',
+                                      groupId: groupId,
+                                      score: value!,
+                                    );
+                              },
+                            ),
                         const Spacer(),
                         //- Take picture button only visible if there are less than 4 pictures
                         if (competenceCheck != null &&
@@ -147,14 +158,16 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                             children: [
                               InkWell(
                                 onTap: () async {
-                                  final File? file =
-                                      await createImageFile(context);
+                                  final File? file = await createImageFile(
+                                    context,
+                                  );
                                   if (file == null) return;
                                   await di<CompetenceManager>()
-                                      .postCompetenceCheckFile(
-                                          competenceCheckId:
-                                              competenceCheck.checkId,
-                                          file: file);
+                                      .addFileToCompetenceCheck(
+                                        competenceCheckId:
+                                            competenceCheck.checkId,
+                                        file: file,
+                                      );
                                 },
                                 onLongPress: () async {
                                   // bool? confirm = await confirmationDialog(
@@ -176,10 +189,11 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(5),
                                     child: Image.asset(
-                                        'assets/document_camera.png'),
+                                      'assets/document_camera.png',
+                                    ),
                                   ),
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         if (competenceCheck != null &&
@@ -203,9 +217,10 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                                   },
                                   onLongPress: () async {
                                     bool? confirm = await confirmationDialog(
-                                        context: context,
-                                        title: 'Dokument löschen',
-                                        message: 'Dokument löschen?');
+                                      context: context,
+                                      title: 'Dokument löschen',
+                                      message: 'Dokument löschen?',
+                                    );
                                     if (confirm != true) {
                                       return;
                                     }
@@ -220,7 +235,7 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                                     documentId: file.documentId,
                                     size: 70,
                                   ),
-                                )
+                                ),
                               ],
                             ),
                           ],
@@ -230,8 +245,9 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                             children: [
                               InkWell(
                                 onTap: () async {
-                                  final File? file =
-                                      await createImageFile(context);
+                                  final File? file = await createImageFile(
+                                    context,
+                                  );
 
                                   if (file == null) return;
                                   // TODO: Uncomment this when postCompetenceCheckWithFile is implemented
@@ -249,10 +265,11 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(5),
                                     child: Image.asset(
-                                        'assets/document_camera.png'),
+                                      'assets/document_camera.png',
+                                    ),
                                   ),
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         const Gap(5),
@@ -281,8 +298,9 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                       );
                       if (comment != null) {
                         await di<CompetenceManager>().updateCompetenceCheck(
-                            competenceCheckId: competenceCheck.checkId,
-                            competenceComment: comment);
+                          competenceCheckId: competenceCheck.checkId,
+                          competenceComment: (value: comment),
+                        );
                       }
                     }
                   },
@@ -300,16 +318,19 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                   child: InkWell(
                     onTap: () async {
                       if (SessionHelper.isAuthorized(
-                          competenceCheck.createdBy)) {
+                        competenceCheck.createdBy,
+                      )) {
                         final String? comment = await longTextFieldDialog(
-                            parentContext: context,
-                            title: 'Kommentar',
-                            labelText: 'Kommentar eingeben',
-                            initialValue: competenceCheck.comment);
+                          parentContext: context,
+                          title: 'Kommentar',
+                          labelText: 'Kommentar eingeben',
+                          initialValue: competenceCheck.comment,
+                        );
                         if (comment != null) {
                           await di<CompetenceManager>().updateCompetenceCheck(
-                              competenceCheckId: competenceCheck.checkId,
-                              competenceComment: comment);
+                            competenceCheckId: competenceCheck.checkId,
+                            competenceComment: (value: comment),
+                          );
                         }
                       }
                     },
@@ -318,16 +339,14 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                               competenceCheck.comment!.isEmpty)
                           ? 'Kein Kommentar'
                           : competenceCheck.comment!,
-                      style: const TextStyle(
-                        fontSize: 16,
-                      ),
+                      style: const TextStyle(fontSize: 16),
                     ),
                   ),
                 ),
               ],
             ),
             const Gap(10),
-          ]
+          ],
         ],
       ),
     );

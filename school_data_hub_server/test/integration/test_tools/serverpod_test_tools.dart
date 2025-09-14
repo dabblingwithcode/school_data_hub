@@ -2174,6 +2174,142 @@ class _CompetenceCheckEndpoint {
       }
     });
   }
+
+  _i3.Future<_i6.PupilData> updateCompetenceCheck(
+    _i1.TestSessionBuilder sessionBuilder,
+    String checkId, {
+    ({int value})? score,
+    ({double value})? valueFactor,
+    ({String value})? createdBy,
+    ({String? value})? comment,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'competenceCheck',
+        method: 'updateCompetenceCheck',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'competenceCheck',
+          methodName: 'updateCompetenceCheck',
+          parameters: _i1.testObjectToJson({
+            'checkId': checkId,
+            'score': _i14.mapRecordToJson(score),
+            'valueFactor': _i14.mapRecordToJson(valueFactor),
+            'createdBy': _i14.mapRecordToJson(createdBy),
+            'comment': _i14.mapRecordToJson(comment),
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i6.PupilData>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i6.PupilData> deleteCompetenceCheck(
+    _i1.TestSessionBuilder sessionBuilder,
+    String checkId,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'competenceCheck',
+        method: 'deleteCompetenceCheck',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'competenceCheck',
+          methodName: 'deleteCompetenceCheck',
+          parameters: _i1.testObjectToJson({'checkId': checkId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i6.PupilData>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i6.PupilData> addFileToCompetenceCheck(
+    _i1.TestSessionBuilder sessionBuilder,
+    String checkId,
+    String filePath,
+    String createdBy,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'competenceCheck',
+        method: 'addFileToCompetenceCheck',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'competenceCheck',
+          methodName: 'addFileToCompetenceCheck',
+          parameters: _i1.testObjectToJson({
+            'checkId': checkId,
+            'filePath': filePath,
+            'createdBy': createdBy,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i6.PupilData>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i6.PupilData> removeFileFromCompetenceCheck(
+    _i1.TestSessionBuilder sessionBuilder,
+    String checkId,
+    String documentId,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'competenceCheck',
+        method: 'removeFileFromCompetenceCheck',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'competenceCheck',
+          methodName: 'removeFileFromCompetenceCheck',
+          parameters: _i1.testObjectToJson({
+            'checkId': checkId,
+            'documentId': documentId,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i6.PupilData>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
 }
 
 class _CompetenceEndpoint {

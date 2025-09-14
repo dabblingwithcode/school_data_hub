@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
@@ -25,9 +26,6 @@ class CompetenceManager {
 
   final _competences = ValueNotifier<List<Competence>>([]);
   ValueListenable<List<Competence>> get competences => _competences;
-
-  final _isRunning = ValueNotifier<bool>(false);
-  ValueListenable<bool> get isRunning => _isRunning;
 
   Map<int, int> _rootCompetencesMap = {};
   Map<int, int> get rootCompetencesMap => _rootCompetencesMap;
@@ -278,48 +276,25 @@ class CompetenceManager {
     return;
   }
 
-  Future<void> postCompetenceCheckWithFile({
-    required int pupilId,
-    required int publicId,
-    required int competenceStatus,
-    required String competenceComment,
-    required String? groupId,
-    required File file,
-  }) async {
-    // final PupilData updatedPupilData =
-    //     await _competenceCheckApiService.postCompetenceCheckWithFile(
-    //   pupilId: pupilId,
-    //   publicId: publicId,
-    //   groupId: groupId,
-    //   file: file,
-    // );
-    // di<PupilManager>().updatePupilProxyWithPupilData(updatedPupilData);
-
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Kompetenzcheck erstellt',
-    );
-
-    return;
-  }
-
   Future<void> updateCompetenceCheck({
     required String competenceCheckId,
-    int? competenceStatus,
-    String? competenceComment,
-    DateTime? createdAt,
-    String? createdBy,
-    bool? isReport,
+    ({int value})? score,
+    ({String? value})? competenceComment,
+    ({DateTime? value})? createdAt,
+    ({String value})? createdBy,
+    ({bool? value})? isReport,
+    ({double value})? valueFactor,
   }) async {
-    // final PupilData updatedPupilData =
-    //     await _competenceCheckApiService.patchCompetenceCheck(
-    //   competenceCheckId: competenceCheckId,
-    //   competenceStatus: competenceStatus,
-    //   createdAt: createdAt,
-    //   createdBy: createdBy,
-    //   comment: competenceComment,
-    // );
-    //   di<PupilManager>().updatePupilProxyWithPupilData(updatedPupilData);
+    final updatedPupilData = await _competenceCheckApiService
+        .updateCompetenceCheck(
+          competenceCheckId: competenceCheckId,
+          score: score,
+          createdAt: createdAt,
+          createdBy: createdBy,
+          competenceComment: competenceComment,
+          valueFactor: valueFactor,
+        );
+    di<PupilManager>().updatePupilProxyWithPupilData(updatedPupilData);
 
     _notificationService.showSnackBar(
       NotificationType.success,
@@ -330,48 +305,44 @@ class CompetenceManager {
   }
 
   Future<void> deleteCompetenceCheck(String competenceCheckId) async {
-    // final PupilData pupilData = await _competenceCheckApiService
-    //     .deleteCompetenceCheck(competenceCheckId);
+    final PupilData pupilData = await _competenceCheckApiService
+        .deleteCompetenceCheck(competenceCheckId);
 
-    // _notificationService.showSnackBar(
-    //     NotificationType.success, 'Kompetenzcheck gelöscht');
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Kompetenzcheck gelöscht',
+    );
 
-    // di<PupilManager>().updatePupilProxyWithPupilData(pupilData);
+    di<PupilManager>().updatePupilProxyWithPupilData(pupilData);
 
     return;
   }
 
-  Future<void> postCompetenceCheckFile({
+  Future<void> addFileToCompetenceCheck({
     required String competenceCheckId,
     required File file,
   }) async {
-    // final PupilData updatedPupilData =
-    //     await _competenceCheckApiService.postCompetenceCheckFile(
-    //   competenceCheckId: competenceCheckId,
-    //   file: file,
-    // );
+    final encryptedFile = await customEncrypter.encryptFile(file);
+    final createdBy = di<HubSessionManager>().userName;
+    final updatedPupilData = await _competenceCheckApiService
+        .addFileToCompetenceCheck(competenceCheckId, encryptedFile, createdBy!);
+    di<PupilManager>().updatePupilProxyWithPupilData(updatedPupilData);
 
-    // di<PupilManager>().updatePupilProxyWithPupilData(updatedPupilData);
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Datei zum Kompetenzcheck hinzugefügt',
+    );
 
-    // _notificationService.showSnackBar(
-    //     NotificationType.success, 'Datei zum Kompetenzcheck hinzugefügt');
-
-    // return;
+    return;
   }
 
-  Future<void> deleteCompetenceCheckFile({
+  Future<void> removeFileFromCompetenceCheck({
     required String competenceCheckId,
     required String fileId,
   }) async {
-    // final PupilData updatedPupilData =
-    //     await _competenceCheckApiService.deleteCompetenceCheckFile(fileId);
-
-    // di<PupilManager>().updatePupilProxyWithPupilData(updatedPupilData);
-
-    // _notificationService.showSnackBar(
-    //     NotificationType.success, 'Datei vom Kompetenzcheck gelöscht');
-
-    // return;
+    final updatedPupilData = await _competenceCheckApiService
+        .removeFileFromCompetenceCheck(competenceCheckId, fileId);
+    di<PupilManager>().updatePupilProxyWithPupilData(updatedPupilData);
   }
 
   Competence findCompetenceById(int competenceId) {

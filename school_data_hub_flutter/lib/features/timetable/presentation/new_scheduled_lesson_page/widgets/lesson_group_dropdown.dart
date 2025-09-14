@@ -42,7 +42,7 @@ class LessonGroupDropdown extends WatchingWidget {
       children: [
         Expanded(
           child: DropdownButtonFormField<LessonGroup>(
-            initialValue: validInitialValue,
+            value: validInitialValue,
             decoration: InputDecoration(
               labelText: 'Klasse *',
               border: const OutlineInputBorder(),

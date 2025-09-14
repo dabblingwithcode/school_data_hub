@@ -42,7 +42,7 @@ class ClassroomDropdown extends WatchingWidget {
       children: [
         Expanded(
           child: DropdownButtonFormField<Classroom>(
-            initialValue: validInitialValue,
+            value: validInitialValue,
             decoration: InputDecoration(
               labelText: 'Raum *',
               border: const OutlineInputBorder(),

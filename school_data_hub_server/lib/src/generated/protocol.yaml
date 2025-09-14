@@ -62,6 +62,10 @@ pupilBookLending:
   - deletePupilBookLending:
 competenceCheck:
   - postCompetenceCheck:
+  - updateCompetenceCheck:
+  - deleteCompetenceCheck:
+  - addFileToCompetenceCheck:
+  - removeFileFromCompetenceCheck:
 competence:
   - postCompetence:
   - getAllCompetences:

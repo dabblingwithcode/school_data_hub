@@ -1572,7 +1572,125 @@ class Endpoints extends _i1.EndpointDispatch {
             valueFactor: params['valueFactor'],
             createdBy: params['createdBy'],
           ),
-        )
+        ),
+        'updateCompetenceCheck': _i1.MethodConnector(
+          name: 'updateCompetenceCheck',
+          params: {
+            'checkId': _i1.ParameterDescription(
+              name: 'checkId',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'score': _i1.ParameterDescription(
+              name: 'score',
+              type: _i1.getType<({int value})?>(),
+              nullable: true,
+            ),
+            'valueFactor': _i1.ParameterDescription(
+              name: 'valueFactor',
+              type: _i1.getType<({double value})?>(),
+              nullable: true,
+            ),
+            'createdBy': _i1.ParameterDescription(
+              name: 'createdBy',
+              type: _i1.getType<({String value})?>(),
+              nullable: true,
+            ),
+            'comment': _i1.ParameterDescription(
+              name: 'comment',
+              type: _i1.getType<({String? value})?>(),
+              nullable: true,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['competenceCheck'] as _i12.CompetenceCheckEndpoint)
+                  .updateCompetenceCheck(
+            session,
+            params['checkId'],
+            score: params['score'],
+            valueFactor: params['valueFactor'],
+            createdBy: params['createdBy'],
+            comment: params['comment'],
+          ),
+        ),
+        'deleteCompetenceCheck': _i1.MethodConnector(
+          name: 'deleteCompetenceCheck',
+          params: {
+            'checkId': _i1.ParameterDescription(
+              name: 'checkId',
+              type: _i1.getType<String>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['competenceCheck'] as _i12.CompetenceCheckEndpoint)
+                  .deleteCompetenceCheck(
+            session,
+            params['checkId'],
+          ),
+        ),
+        'addFileToCompetenceCheck': _i1.MethodConnector(
+          name: 'addFileToCompetenceCheck',
+          params: {
+            'checkId': _i1.ParameterDescription(
+              name: 'checkId',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'filePath': _i1.ParameterDescription(
+              name: 'filePath',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'createdBy': _i1.ParameterDescription(
+              name: 'createdBy',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['competenceCheck'] as _i12.CompetenceCheckEndpoint)
+                  .addFileToCompetenceCheck(
+            session,
+            params['checkId'],
+            params['filePath'],
+            params['createdBy'],
+          ),
+        ),
+        'removeFileFromCompetenceCheck': _i1.MethodConnector(
+          name: 'removeFileFromCompetenceCheck',
+          params: {
+            'checkId': _i1.ParameterDescription(
+              name: 'checkId',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'documentId': _i1.ParameterDescription(
+              name: 'documentId',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['competenceCheck'] as _i12.CompetenceCheckEndpoint)
+                  .removeFileFromCompetenceCheck(
+            session,
+            params['checkId'],
+            params['documentId'],
+          ),
+        ),
       },
     );
     connectors['competence'] = _i1.EndpointConnector(
