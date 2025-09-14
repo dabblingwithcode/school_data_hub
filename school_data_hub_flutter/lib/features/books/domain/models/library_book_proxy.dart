@@ -5,7 +5,7 @@ class LibraryBookProxy with ChangeNotifier {
   LibraryBook _librarybook;
 
   LibraryBookProxy({required LibraryBook librarybook})
-      : _librarybook = librarybook;
+    : _librarybook = librarybook;
 
   void updateLibraryBook(LibraryBook librarybook) {
     _librarybook = librarybook;
@@ -20,7 +20,7 @@ class LibraryBookProxy with ChangeNotifier {
 
   String get libraryId => _librarybook.libraryId;
 
-  int get libraryBookId => _librarybook.id!;
+  int get id => _librarybook.id!;
 
   LibraryBookLocation get location => _librarybook.location!;
 

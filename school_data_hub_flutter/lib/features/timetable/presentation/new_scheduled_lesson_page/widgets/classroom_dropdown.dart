@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
+import 'package:school_data_hub_flutter/features/timetable/presentation/new_classroom_page/new_classroom_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/timetable_utils.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -37,36 +38,55 @@ class ClassroomDropdown extends WatchingWidget {
             ? selectedClassroom
             : null;
 
-    return DropdownButtonFormField<Classroom>(
-      value: validInitialValue,
-      decoration: InputDecoration(
-        labelText: 'Raum *',
-        border: const OutlineInputBorder(),
-        helperText:
-            selectedSlot != null
-                ? 'Nur verfügbare Räume für ${TimetableUtils.getWeekdayName(selectedSlot)}'
-                : 'Wählen Sie zuerst einen Zeitslot aus',
-      ),
-      items:
-          availableClassrooms.map((classroom) {
-            return DropdownMenuItem<Classroom>(
-              value: classroom,
-              child: Text('${classroom.roomCode} - ${classroom.roomName}'),
+    return Row(
+      children: [
+        Expanded(
+          child: DropdownButtonFormField<Classroom>(
+            initialValue: validInitialValue,
+            decoration: InputDecoration(
+              labelText: 'Raum *',
+              border: const OutlineInputBorder(),
+              helperText:
+                  'Nur verfügbare Räume für ${TimetableUtils.getWeekdayName(selectedSlot)}',
+            ),
+            items:
+                availableClassrooms.map((classroom) {
+                  return DropdownMenuItem<Classroom>(
+                    value: classroom,
+                    child: Text(
+                      '${classroom.roomCode} - ${classroom.roomName}',
+                    ),
+                  );
+                }).toList(),
+            onChanged: onClassroomChanged,
+            validator: (value) {
+              if (value == null) {
+                return 'Bitte wählen Sie einen Raum aus';
+              }
+
+              // Additional validation: check for conflicts
+              if (hasClassroomConflict(value)) {
+                return 'Dieser Raum ist bereits zu dieser Zeit belegt';
+              }
+
+              return null;
+            },
+          ),
+        ),
+        const SizedBox(width: 10),
+        InkWell(
+          onTap: () async {
+            final result = await Navigator.of(context).push<Classroom>(
+              MaterialPageRoute(builder: (context) => const NewClassroomPage()),
             );
-          }).toList(),
-      onChanged: onClassroomChanged,
-      validator: (value) {
-        if (value == null) {
-          return 'Bitte wählen Sie einen Raum aus';
-        }
 
-        // Additional validation: check for conflicts
-        if (hasClassroomConflict(value)) {
-          return 'Dieser Raum ist bereits zu dieser Zeit belegt';
-        }
-
-        return null;
-      },
+            if (result != null && context.mounted) {
+              onClassroomChanged(result);
+            }
+          },
+          child: const Icon(Icons.add, color: Colors.blue),
+        ),
+      ],
     );
   }
 }

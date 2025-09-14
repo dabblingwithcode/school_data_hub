@@ -119,6 +119,8 @@ class NewClassroomPage extends WatchingWidget {
                             backgroundColor: Colors.green,
                           ),
                         );
+
+                        Navigator.of(context).pop();
                       } else {
                         // Create new classroom
                         final newClassroom = Classroom(
@@ -134,9 +136,9 @@ class NewClassroomPage extends WatchingWidget {
                             backgroundColor: Colors.green,
                           ),
                         );
-                      }
 
-                      Navigator.of(context).pop();
+                        Navigator.of(context).pop(newClassroom);
+                      }
                     },
                     onCancel: () => Navigator.of(context).pop(),
                     onDelete:

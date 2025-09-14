@@ -193,7 +193,7 @@ class PupilProxy with ChangeNotifier {
 
   List<PupilWorkbook>? get pupilWorkbooks => _pupilData.pupilWorkbooks;
 
-  List<PupilBookLending>? get pupilBooks => _pupilData.pupilBookLendings;
+  List<PupilBookLending>? get pupilBookLendings => _pupilData.pupilBookLendings;
 
   // learning support related
 

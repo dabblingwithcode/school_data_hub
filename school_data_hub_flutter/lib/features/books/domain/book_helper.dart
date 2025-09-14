@@ -5,18 +5,28 @@ import 'package:watch_it/watch_it.dart';
 enum BookBorrowStatus { since2Weeks, since3Weeks, since5weeks }
 
 class BookHelpers {
-  static List<PupilBookLending> pupilBooksLinkedToBook(
-      {required String libraryId}) {
-    // returned starting with the most recent
-    final pupilBooks = di<PupilManager>()
-        .allPupils
-        .map((pupil) => pupil.pupilBooks)
-        .expand((element) => element as Iterable<PupilBookLending>)
-        .where((pupilBook) => pupilBook.libraryBook?.libraryId == libraryId)
-        .toList();
+  static List<PupilBookLending> pupilBookLendingsLinkedToLibraryBook({
+    required int libraryBookId,
+  }) {
+    // Get all pupil book lendings
+    final allPupilBookLendings =
+        di<PupilManager>().allPupils
+            .map((pupil) => pupil.pupilBookLendings ?? <PupilBookLending>[])
+            .expand((element) => element)
+            .toList();
 
-    pupilBooks.sort((a, b) => b.lentAt.compareTo(a.lentAt));
-    return pupilBooks;
+    // Filter by libraryId
+    final pupilBookLendingsLinkedToLibraryBook =
+        allPupilBookLendings.where((pupilBook) {
+          final match = pupilBook.libraryBookId == libraryBookId;
+
+          return match;
+        }).toList();
+
+    pupilBookLendingsLinkedToLibraryBook.sort(
+      (a, b) => b.lentAt.compareTo(a.lentAt),
+    );
+    return pupilBookLendingsLinkedToLibraryBook;
   }
 
   static BookBorrowStatus getBorrowedStatus(PupilBookLending book) {

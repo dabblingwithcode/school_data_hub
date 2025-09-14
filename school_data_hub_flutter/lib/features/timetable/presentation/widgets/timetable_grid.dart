@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/classroom_list_page/classroom_list_page.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/new_lesson_group_page/new_lesson_group_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/lesson_cell/lesson_cell.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:watch_it/watch_it.dart';
@@ -104,41 +103,41 @@ class TimetableGrid extends WatchingWidget {
       );
     }
 
-    if (allLessonGroupsForWeekday.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.group, size: 64, color: Colors.grey),
-            const SizedBox(height: 16),
-            const Text(
-              'Keine Klassen verfügbar',
-              style: TextStyle(fontSize: 18, color: Colors.grey),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Erstellen Sie Klassen um Stunden zu planen',
-              style: TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const NewLessonGroupPage(),
-                  ),
-                );
-                // Refresh data when returning from NewLessonGroupPage
-                // Note: This will trigger a rebuild of the TimetableGrid
-                // since it's watching the TimetableManager state
-              },
-              child: const Text('Klasse erstellen'),
-            ),
-          ],
-        ),
-      );
-    }
+    // if (allLessonGroupsForWeekday.isEmpty) {
+    //   return Center(
+    //     child: Column(
+    //       mainAxisAlignment: MainAxisAlignment.center,
+    //       children: [
+    //         const Icon(Icons.group, size: 64, color: Colors.grey),
+    //         const SizedBox(height: 16),
+    //         const Text(
+    //           'Keine Klassen verfügbar',
+    //           style: TextStyle(fontSize: 18, color: Colors.grey),
+    //         ),
+    //         const SizedBox(height: 8),
+    //         const Text(
+    //           'Erstellen Sie Klassen um Stunden zu planen',
+    //           style: TextStyle(fontSize: 14, color: Colors.grey),
+    //         ),
+    //         const SizedBox(height: 16),
+    //         ElevatedButton(
+    //           onPressed: () async {
+    //             await Navigator.push(
+    //               context,
+    //               MaterialPageRoute(
+    //                 builder: (context) => const NewLessonGroupPage(),
+    //               ),
+    //             );
+    //             // Refresh data when returning from NewLessonGroupPage
+    //             // Note: This will trigger a rebuild of the TimetableGrid
+    //             // since it's watching the TimetableManager state
+    //           },
+    //           child: const Text('Klasse erstellen'),
+    //         ),
+    //       ],
+    //     ),
+    //   );
+    // }
 
     return Scrollbar(
       controller: horizontalScrollController,

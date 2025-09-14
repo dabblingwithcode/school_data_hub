@@ -318,7 +318,7 @@ class PupilManager extends ChangeNotifier {
     return;
   }
 
-  Future<void> deletePupilBook({required int lendingId}) async {
+  Future<void> deletePupilBook({required String lendingId}) async {
     final pupil = await _pupilBookApiService.deletePupilBook(lendingId);
     if (pupil == null) {
       return;
@@ -347,7 +347,7 @@ class PupilManager extends ChangeNotifier {
     return;
   }
 
-  Future<void> updatePupilBook({
+  Future<void> updatePupilBookLending({
     required PupilBookLending pupilBookLending,
     DateTime? lentAt,
     String? lentBy,

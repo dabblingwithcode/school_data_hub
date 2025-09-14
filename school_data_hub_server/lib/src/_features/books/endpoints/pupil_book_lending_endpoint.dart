@@ -42,6 +42,9 @@ class PupilBookLendingEndpoint extends Endpoint {
       await PupilBookLending.db.attachRow.libraryBook(
           session, pupilBookLendingInDatabase, libraryBook,
           transaction: transaction);
+      libraryBook.available = false;
+      await LibraryBook.db
+          .updateRow(session, libraryBook, transaction: transaction);
 
       final updatedPupil = await PupilData.db.findFirstRow(session,
           where: (t) => t.id.equals(pupilBookLending.pupilId),
@@ -62,13 +65,13 @@ class PupilBookLendingEndpoint extends Endpoint {
     return pupilBookLendings;
   }
 
-  Future<PupilBookLending?> fetchPupilBookLendingById(
+  Future<PupilBookLending?> fetchPupilBookLendingByLendingId(
     Session session,
-    int id,
+    String lendingId,
   ) async {
     final pupilBookLending = await PupilBookLending.db.findFirstRow(
       session,
-      where: (t) => t.id.equals(id),
+      where: (t) => t.lendingId.equals(lendingId),
     );
     return pupilBookLending;
   }
@@ -79,6 +82,14 @@ class PupilBookLendingEndpoint extends Endpoint {
     final updatedPupilBookLending =
         await PupilBookLending.db.updateRow(session, pupilBookLending);
 
+    // if the book was returned, set the library book available to true
+    if (pupilBookLending.returnedAt != null) {
+      final libraryBook = await LibraryBook.db.findFirstRow(session,
+          where: (t) => t.id.equals(updatedPupilBookLending.libraryBookId));
+      libraryBook!.available = true;
+      await LibraryBook.db.updateRow(session, libraryBook);
+    }
+
     final pupil = await PupilData.db.findFirstRow(session,
         where: (t) => t.id.equals(updatedPupilBookLending.pupilId),
         include: PupilSchemas.allInclude);
@@ -86,14 +97,15 @@ class PupilBookLendingEndpoint extends Endpoint {
   }
 
   //- delete
-  Future<PupilData> deletePupilBookLending(Session session, int id) async {
+  Future<PupilData> deletePupilBookLending(
+      Session session, String lendingId) async {
     // Check if the pupil book lending exists
     final pupilBookLending = await PupilBookLending.db.findFirstRow(
       session,
-      where: (t) => t.id.equals(id),
+      where: (t) => t.lendingId.equals(lendingId),
     );
     if (pupilBookLending == null) {
-      throw Exception('Pupil book lending with id $id does not exist.');
+      throw Exception('Pupil book lending with id $lendingId does not exist.');
     }
 
     await PupilBookLending.db.deleteRow(session, pupilBookLending);

@@ -4,6 +4,7 @@ import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
@@ -74,30 +75,16 @@ class SearchResultBookCard extends WatchingWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Column(
-                      children: [SizedBox(height: 10), const Gap(10)],
-
-                      // TODOD: Repair when image loading is implemented
-                      //  InkWell(
-                      //   onTap: () async {
-                      //     final File? file = await uploadImageFile(context);
-                      //     if (file == null) return;
-                      //     await locator<BookManager>()
-                      //         .patchBookImage(file, book.isbn);
-                      //   },
-                      //   child: UnencryptedImageInCard(
-                      //     documentImageData: DocumentImageData(
-                      //       documentTag: book.imageId,
-                      //       documentUrl:
-                      //           '${locator<EnvManager>().env!.serverUrl}${BookApiService.getBookImageUrl(book.isbn)}',
-                      //       size: 140,
-                      //     ),
-                      //   ),
-                      // ),
+                    // Book image on the left side
+                    UnencryptedImageInCard(
+                      cacheKey: bookProxy.isbn.toString(),
+                      path: bookProxy.imagePath,
+                      size: 100,
                     ),
+                    const Gap(15),
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 15, bottom: 8),
+                        padding: const EdgeInsets.only(bottom: 8),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -195,9 +182,24 @@ class SearchResultBookCard extends WatchingWidget {
                 ),
                 Column(
                   children:
-                      books.map((book) {
-                        return LibraryBookCard(bookProxy: book);
-                      }).toList(),
+                      books
+                          .fold<List<LibraryBookProxy>>([], (
+                            uniqueBooks,
+                            book,
+                          ) {
+                            // Only add if libraryId is not already in the list
+                            if (!uniqueBooks.any(
+                              (existing) =>
+                                  existing.libraryId == book.libraryId,
+                            )) {
+                              uniqueBooks.add(book);
+                            }
+                            return uniqueBooks;
+                          })
+                          .map((book) {
+                            return LibraryBookCard(libraryBookProxy: book);
+                          })
+                          .toList(),
                 ),
                 const Gap(10),
               ],

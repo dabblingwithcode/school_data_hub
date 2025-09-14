@@ -7,13 +7,18 @@ final _client = di<Client>();
 class PupilBookApiService {
   //- create pupil book lending
 
-  Future<PupilData?> postPupilBookLending(
-      {required int pupilId,
-      required String libraryId,
-      required String lentBy}) async {
+  Future<PupilData?> postPupilBookLending({
+    required int pupilId,
+    required String libraryId,
+    required String lentBy,
+  }) async {
     final pupil = await ClientHelper.apiCall(
-      call: () => _client.pupilBookLending
-          .postPupilBookLending(pupilId, libraryId, lentBy),
+      call:
+          () => _client.pupilBookLending.postPupilBookLending(
+            pupilId,
+            libraryId,
+            lentBy,
+          ),
       errorMessage: 'Fehler beim Erstellen des Leihvorgangs',
     );
     return pupil;
@@ -33,7 +38,7 @@ class PupilBookApiService {
 
   //- delete pupil book
 
-  Future<PupilData?> deletePupilBook(int lendingId) async {
+  Future<PupilData?> deletePupilBook(String lendingId) async {
     final pupil = await ClientHelper.apiCall(
       call: () => _client.pupilBookLending.deletePupilBookLending(lendingId),
       errorMessage: 'Fehler beim Löschen des Leihvorgangs',

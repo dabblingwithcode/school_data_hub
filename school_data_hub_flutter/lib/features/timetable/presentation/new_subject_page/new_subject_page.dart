@@ -97,12 +97,14 @@ class NewSubjectPage extends WatchingWidget {
 
                 if (_isEditing) {
                   await timetableManager.updateSubject(newSubject);
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                  }
                 } else {
                   await timetableManager.addSubject(newSubject);
-                }
-
-                if (context.mounted) {
-                  Navigator.pop(context);
+                  if (context.mounted) {
+                    Navigator.pop(context, newSubject);
+                  }
                 }
               },
               onCancel: () {

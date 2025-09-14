@@ -24,8 +24,10 @@ class BookCard extends WatchingWidget {
   const BookCard({required this.isbn, super.key});
   final int isbn;
 
-  List<PupilBookLending> libraryBookPupilBooks(String libraryId) {
-    return BookHelpers.pupilBooksLinkedToBook(libraryId: libraryId);
+  List<PupilBookLending> libraryBookPupilBookLendings(int libraryBookId) {
+    return BookHelpers.pupilBookLendingsLinkedToLibraryBook(
+      libraryBookId: libraryBookId,
+    );
   }
 
   @override
@@ -258,7 +260,7 @@ class BookCard extends WatchingWidget {
                 Column(
                   children:
                       bookProxies.map((book) {
-                        return LibraryBookCard(bookProxy: book);
+                        return LibraryBookCard(libraryBookProxy: book);
                       }).toList(),
                 ),
                 const Gap(10),

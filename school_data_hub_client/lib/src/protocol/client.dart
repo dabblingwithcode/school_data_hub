@@ -669,11 +669,12 @@ class EndpointPupilBookLending extends _i1.EndpointRef {
         {},
       );
 
-  _i2.Future<_i22.PupilBookLending?> fetchPupilBookLendingById(int id) =>
+  _i2.Future<_i22.PupilBookLending?> fetchPupilBookLendingByLendingId(
+          String lendingId) =>
       caller.callServerEndpoint<_i22.PupilBookLending?>(
         'pupilBookLending',
-        'fetchPupilBookLendingById',
-        {'id': id},
+        'fetchPupilBookLendingByLendingId',
+        {'lendingId': lendingId},
       );
 
   _i2.Future<_i5.PupilData> updatePupilBookLending(
@@ -684,11 +685,11 @@ class EndpointPupilBookLending extends _i1.EndpointRef {
         {'pupilBookLending': pupilBookLending},
       );
 
-  _i2.Future<_i5.PupilData> deletePupilBookLending(int id) =>
+  _i2.Future<_i5.PupilData> deletePupilBookLending(String lendingId) =>
       caller.callServerEndpoint<_i5.PupilData>(
         'pupilBookLending',
         'deletePupilBookLending',
-        {'id': id},
+        {'lendingId': lendingId},
       );
 }
 

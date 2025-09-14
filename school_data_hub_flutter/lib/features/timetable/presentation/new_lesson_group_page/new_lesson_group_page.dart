@@ -85,225 +85,236 @@ class NewLessonGroupPage extends WatchingWidget {
             constraints: const BoxConstraints(maxWidth: 800),
             child: Form(
               key: formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  // Name field
-                  NameField(controller: nameController),
-                  const Gap(20),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    // Name field
+                    NameField(controller: nameController),
+                    const Gap(20),
 
-                  // Color picker field
-                  ValueListenableBuilder<String>(
-                    valueListenable: selectedColor,
-                    builder: (context, color, child) {
-                      return ColorPickerField(
-                        selectedColor: color,
-                        onColorChanged: (newColor) {
-                          selectedColor.value = newColor;
-                        },
-                      );
-                    },
-                  ),
-                  const Gap(20),
-
-                  // Pupil Management Section
-                  ValueListenableBuilder<List<int>>(
-                    valueListenable: selectedPupilIds,
-                    builder: (context, pupilIds, child) {
-                      return PupilManagementSection(
-                        timetableManager: timetableManager,
-                        lessonGroupId: lessonGroup?.id,
-                        selectedPupilIds: pupilIds,
-                        onPupilIdsChanged: (newPupilIds) {
-                          selectedPupilIds.value = newPupilIds;
-                        },
-                      );
-                    },
-                  ),
-                  const Gap(32),
-
-                  // Action buttons
-                  ActionButtons(
-                    isEditing: _isEditing,
-                    onSave: () {
-                      if (!formKey.currentState!.validate()) {
-                        return;
-                      }
-
-                      final name = nameController.text.trim();
-                      final color = selectedColor.value;
-
-                      if (name.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Bitte füllen Sie alle Pflichtfelder aus',
-                            ),
-                            backgroundColor: Colors.red,
-                          ),
+                    // Color picker field
+                    ValueListenableBuilder<String>(
+                      valueListenable: selectedColor,
+                      builder: (context, color, child) {
+                        return ColorPickerField(
+                          selectedColor: color,
+                          onColorChanged: (newColor) {
+                            selectedColor.value = newColor;
+                          },
                         );
-                        return;
-                      }
+                      },
+                    ),
+                    const Gap(20),
 
-                      final currentTimetable = timetableManager.timetable.value;
-                      if (currentTimetable?.id == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Fehler: Kein Stundenplan ausgewählt',
-                            ),
-                            backgroundColor: Colors.red,
-                          ),
+                    // Pupil Management Section
+                    ValueListenableBuilder<List<int>>(
+                      valueListenable: selectedPupilIds,
+                      builder: (context, pupilIds, child) {
+                        return PupilManagementSection(
+                          timetableManager: timetableManager,
+                          lessonGroupId: lessonGroup?.id,
+                          selectedPupilIds: pupilIds,
+                          onPupilIdsChanged: (newPupilIds) {
+                            selectedPupilIds.value = newPupilIds;
+                          },
                         );
-                        return;
-                      }
+                      },
+                    ),
+                    const Gap(32),
 
-                      final now = DateTime.now().toUtcForServer();
-                      final lessonGroupData = LessonGroup(
-                        id: lessonGroup?.id,
-                        publicId:
-                            lessonGroup?.publicId ??
-                            'GROUP_${now.millisecondsSinceEpoch}',
-                        name: name,
-                        color: color,
-                        timetableId: currentTimetable!.id!,
-                        createdBy: lessonGroup?.createdBy ?? 'user',
-                        createdAt: lessonGroup?.createdAt ?? now,
-                        modifiedBy: 'user',
-                        modifiedAt: now,
-                      );
-
-                      if (_isEditing) {
-                        // Update existing lesson group
-                        timetableManager.updateLessonGroup(lessonGroupData);
-
-                        // Update pupil memberships for existing lesson group
-                        if (lessonGroup?.id != null) {
-                          timetableManager.updatePupilMembershipsForLessonGroup(
-                            lessonGroup!.id!,
-                            selectedPupilIds.value,
-                          );
+                    // Action buttons
+                    ActionButtons(
+                      isEditing: _isEditing,
+                      onSave: () {
+                        if (!formKey.currentState!.validate()) {
+                          return;
                         }
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Klasse erfolgreich aktualisiert'),
-                            backgroundColor: Colors.green,
-                          ),
-                        );
-                      } else {
-                        // Create new lesson group
-                        timetableManager.addLessonGroup(lessonGroupData);
+                        final name = nameController.text.trim();
+                        final color = selectedColor.value;
 
-                        // Add pupil memberships for new lesson group
-                        if (lessonGroupData.id != null &&
-                            selectedPupilIds.value.isNotEmpty) {
-                          timetableManager.updatePupilMembershipsForLessonGroup(
-                            lessonGroupData.id!,
-                            selectedPupilIds.value,
+                        if (name.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Bitte füllen Sie alle Pflichtfelder aus',
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
                           );
+                          return;
                         }
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Klasse erfolgreich erstellt'),
-                            backgroundColor: Colors.green,
-                          ),
+                        final currentTimetable =
+                            timetableManager.timetable.value;
+                        if (currentTimetable?.id == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Fehler: Kein Stundenplan ausgewählt',
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+
+                        final now = DateTime.now().toUtcForServer();
+                        final lessonGroupData = LessonGroup(
+                          id: lessonGroup?.id,
+                          publicId:
+                              lessonGroup?.publicId ??
+                              'GROUP_${now.millisecondsSinceEpoch}',
+                          name: name,
+                          color: color,
+                          timetableId: currentTimetable!.id!,
+                          createdBy: lessonGroup?.createdBy ?? 'user',
+                          createdAt: lessonGroup?.createdAt ?? now,
+                          modifiedBy: 'user',
+                          modifiedAt: now,
                         );
-                      }
 
-                      Navigator.of(context).pop();
-                    },
-                    onCancel: () => Navigator.of(context).pop(),
-                    onDelete:
-                        _isEditing
-                            ? () {
-                              if (lessonGroup?.id == null) return;
+                        if (_isEditing) {
+                          // Update existing lesson group
+                          timetableManager.updateLessonGroup(lessonGroupData);
 
-                              // Check if the lesson group is used in any scheduled lessons
-                              final scheduledLessons =
-                                  timetableManager.scheduledLessons.value
-                                      .where(
-                                        (lesson) =>
-                                            lesson.lessonGroupId ==
-                                            lessonGroup!.id,
-                                      )
-                                      .toList();
+                          // Update pupil memberships for existing lesson group
+                          if (lessonGroup?.id != null) {
+                            timetableManager
+                                .updatePupilMembershipsForLessonGroup(
+                                  lessonGroup!.id!,
+                                  selectedPupilIds.value,
+                                );
+                          }
 
-                              if (scheduledLessons.isNotEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Klasse erfolgreich aktualisiert'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+
+                          Navigator.of(context).pop();
+                        } else {
+                          // Create new lesson group
+                          timetableManager.addLessonGroup(lessonGroupData);
+
+                          // Add pupil memberships for new lesson group
+                          if (lessonGroupData.id != null &&
+                              selectedPupilIds.value.isNotEmpty) {
+                            timetableManager
+                                .updatePupilMembershipsForLessonGroup(
+                                  lessonGroupData.id!,
+                                  selectedPupilIds.value,
+                                );
+                          }
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Klasse erfolgreich erstellt'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+
+                          Navigator.of(context).pop(lessonGroupData);
+                        }
+                      },
+                      onCancel: () => Navigator.of(context).pop(),
+                      onDelete:
+                          _isEditing
+                              ? () {
+                                if (lessonGroup?.id == null) return;
+
+                                // Check if the lesson group is used in any scheduled lessons
+                                final scheduledLessons =
+                                    timetableManager.scheduledLessons.value
+                                        .where(
+                                          (lesson) =>
+                                              lesson.lessonGroupId ==
+                                              lessonGroup!.id,
+                                        )
+                                        .toList();
+
+                                if (scheduledLessons.isNotEmpty) {
+                                  showDialog(
+                                    context: context,
+                                    builder:
+                                        (context) => AlertDialog(
+                                          title: const Text(
+                                            'Klasse kann nicht gelöscht werden',
+                                          ),
+                                          content: Text(
+                                            'Diese Klasse wird in ${scheduledLessons.length} geplanten Stunden verwendet und kann nicht gelöscht werden.',
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed:
+                                                  () =>
+                                                      Navigator.of(
+                                                        context,
+                                                      ).pop(),
+                                              child: const Text('OK'),
+                                            ),
+                                          ],
+                                        ),
+                                  );
+                                  return;
+                                }
+
                                 showDialog(
                                   context: context,
                                   builder:
                                       (context) => AlertDialog(
-                                        title: const Text(
-                                          'Klasse kann nicht gelöscht werden',
-                                        ),
+                                        title: const Text('Klasse löschen'),
                                         content: Text(
-                                          'Diese Klasse wird in ${scheduledLessons.length} geplanten Stunden verwendet und kann nicht gelöscht werden.',
+                                          'Sind Sie sicher, dass Sie die Klasse "${lessonGroup!.name}" löschen möchten?\n\n'
+                                          'Diese Aktion kann nicht rückgängig gemacht werden.',
                                         ),
                                         actions: [
                                           TextButton(
                                             onPressed:
                                                 () =>
                                                     Navigator.of(context).pop(),
-                                            child: const Text('OK'),
+                                            child: const Text('Abbrechen'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              timetableManager
+                                                  .removeLessonGroup(
+                                                    lessonGroup!.id!,
+                                                  );
+                                              Navigator.of(
+                                                context,
+                                              ).pop(); // Close dialog
+                                              Navigator.of(
+                                                context,
+                                              ).pop(); // Close page
+
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    'Klasse "${lessonGroup!.name}" wurde gelöscht',
+                                                  ),
+                                                  backgroundColor: Colors.red,
+                                                ),
+                                              );
+                                            },
+                                            style: TextButton.styleFrom(
+                                              foregroundColor: Colors.red,
+                                            ),
+                                            child: const Text('Löschen'),
                                           ),
                                         ],
                                       ),
                                 );
-                                return;
                               }
-
-                              showDialog(
-                                context: context,
-                                builder:
-                                    (context) => AlertDialog(
-                                      title: const Text('Klasse löschen'),
-                                      content: Text(
-                                        'Sind Sie sicher, dass Sie die Klasse "${lessonGroup!.name}" löschen möchten?\n\n'
-                                        'Diese Aktion kann nicht rückgängig gemacht werden.',
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed:
-                                              () => Navigator.of(context).pop(),
-                                          child: const Text('Abbrechen'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            timetableManager.removeLessonGroup(
-                                              lessonGroup!.id!,
-                                            );
-                                            Navigator.of(
-                                              context,
-                                            ).pop(); // Close dialog
-                                            Navigator.of(
-                                              context,
-                                            ).pop(); // Close page
-
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                  'Klasse "${lessonGroup!.name}" wurde gelöscht',
-                                                ),
-                                                backgroundColor: Colors.red,
-                                              ),
-                                            );
-                                          },
-                                          style: TextButton.styleFrom(
-                                            foregroundColor: Colors.red,
-                                          ),
-                                          child: const Text('Löschen'),
-                                        ),
-                                      ],
-                                    ),
-                              );
-                            }
-                            : null,
-                  ),
-                ],
+                              : null,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

@@ -159,255 +159,267 @@ class NewScheduledLessonPage extends WatchingWidget {
             constraints: const BoxConstraints(maxWidth: 800),
             child: Form(
               key: formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  // Subject selection
-                  SubjectDropdown(
-                    selectedSubject: selectedSubjectValue,
-                    onSubjectChanged: (subject) {
-                      selectedSubject.value = subject;
-                    },
-                  ),
-                  const Gap(20),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    // Subject selection
+                    SubjectDropdown(
+                      selectedSubject: selectedSubjectValue,
+                      onSubjectChanged: (subject) {
+                        selectedSubject.value = subject;
+                      },
+                    ),
+                    const Gap(20),
 
-                  // Time slot selection
-                  TimeSlotDropdown(
-                    selectedSlot: selectedSlotValue,
-                    onSlotChanged: (slot) {
-                      selectedSlot.value = slot;
+                    // Time slot selection
+                    TimeSlotDropdown(
+                      selectedSlot: selectedSlotValue,
+                      onSlotChanged: (slot) {
+                        selectedSlot.value = slot;
 
-                      // Reset lesson group if it conflicts with the new time slot
-                      if (selectedLessonGroupValue != null &&
-                          _hasLessonGroupConflict(
-                            selectedLessonGroupValue,
+                        // Reset lesson group if it conflicts with the new time slot
+                        if (selectedLessonGroupValue != null &&
+                            _hasLessonGroupConflict(
+                              selectedLessonGroupValue,
+                              selectedSlotValue,
+                            )) {
+                          selectedLessonGroup.value = null;
+                        }
+
+                        // Reset classroom if it conflicts with the new time slot
+                        if (selectedClassroomValue != null &&
+                            _hasClassroomConflict(
+                              selectedClassroomValue,
+                              selectedSlotValue,
+                            )) {
+                          selectedClassroom.value = null;
+                        }
+                      },
+                      hasLessonGroupConflict:
+                          (group) =>
+                              _hasLessonGroupConflict(group, selectedSlotValue),
+                      hasClassroomConflict:
+                          (classroom) => _hasClassroomConflict(
+                            classroom,
                             selectedSlotValue,
-                          )) {
-                        selectedLessonGroup.value = null;
-                      }
-
-                      // Reset classroom if it conflicts with the new time slot
-                      if (selectedClassroomValue != null &&
-                          _hasClassroomConflict(
-                            selectedClassroomValue,
-                            selectedSlotValue,
-                          )) {
-                        selectedClassroom.value = null;
-                      }
-                    },
-                    hasLessonGroupConflict:
-                        (group) =>
-                            _hasLessonGroupConflict(group, selectedSlotValue),
-                    hasClassroomConflict:
-                        (classroom) =>
-                            _hasClassroomConflict(classroom, selectedSlotValue),
-                  ),
-                  const Gap(20),
-
-                  // Classroom selection
-                  ClassroomDropdown(
-                    selectedClassroom: selectedClassroomValue,
-                    onClassroomChanged: (classroom) {
-                      selectedClassroom.value = classroom;
-                    },
-                    hasClassroomConflict:
-                        (classroom) =>
-                            _hasClassroomConflict(classroom, selectedSlotValue),
-                  ),
-                  const Gap(20),
-
-                  // Lesson group selection
-                  LessonGroupDropdown(
-                    selectedLessonGroup: selectedLessonGroupValue,
-                    onLessonGroupChanged: (group) {
-                      selectedLessonGroup.value = group;
-                    },
-                    hasLessonGroupConflict:
-                        (group) =>
-                            _hasLessonGroupConflict(group, selectedSlotValue),
-                  ),
-                  const Gap(20),
-
-                  // Teacher selection
-                  TeacherSelection(
-                    selectedTeachers: selectedTeachersValue,
-                    onTeachersChanged: (teachers) {
-                      selectedTeachers.value = teachers;
-                      dropdownKey.value++; // Force dropdown rebuild
-                    },
-                    dropdownKey: dropdownKeyValue,
-                  ),
-                  const Gap(20),
-
-                  // Lesson ID field
-                  LessonIdField(controller: lessonIdController),
-                  const Gap(32),
-
-                  // Action buttons
-                  ActionButtons(
-                    isEditing: _isEditing,
-                    onSave: () {
-                      if (!formKey.currentState!.validate()) {
-                        return;
-                      }
-
-                      if (selectedSubjectValue == null ||
-                          selectedSlotValue == null ||
-                          selectedClassroomValue == null ||
-                          selectedLessonGroupValue == null ||
-                          selectedTeachersValue.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Bitte füllen Sie alle Pflichtfelder aus',
-                            ),
-                            backgroundColor: Colors.red,
                           ),
-                        );
-                        return;
-                      }
+                    ),
+                    const Gap(20),
 
-                      final now = DateTime.now().toUtcForServer();
+                    // Classroom selection
+                    ClassroomDropdown(
+                      selectedClassroom: selectedClassroomValue,
+                      onClassroomChanged: (classroom) {
+                        selectedClassroom.value = classroom;
+                      },
+                      hasClassroomConflict:
+                          (classroom) => _hasClassroomConflict(
+                            classroom,
+                            selectedSlotValue,
+                          ),
+                    ),
+                    const Gap(20),
 
-                      if (_isEditing) {
-                        final editingLesson =
-                            timetableManager.scheduledLessons.value
-                                .where((lesson) => lesson.id == editingLessonId)
-                                .firstOrNull;
+                    // Lesson group selection
+                    LessonGroupDropdown(
+                      selectedLessonGroup: selectedLessonGroupValue,
+                      onLessonGroupChanged: (group) {
+                        selectedLessonGroup.value = group;
+                      },
+                      hasLessonGroupConflict:
+                          (group) =>
+                              _hasLessonGroupConflict(group, selectedSlotValue),
+                    ),
+                    const Gap(20),
 
-                        if (editingLesson != null) {
-                          // Update existing lesson
-                          final updatedLesson = editingLesson.copyWith(
+                    // Teacher selection
+                    TeacherSelection(
+                      selectedTeachers: selectedTeachersValue,
+                      onTeachersChanged: (teachers) {
+                        selectedTeachers.value = teachers;
+                        dropdownKey.value++; // Force dropdown rebuild
+                      },
+                      dropdownKey: dropdownKeyValue,
+                    ),
+                    const Gap(20),
+
+                    // Lesson ID field
+                    LessonIdField(controller: lessonIdController),
+                    const Gap(32),
+
+                    // Action buttons
+                    ActionButtons(
+                      isEditing: _isEditing,
+                      onSave: () {
+                        if (!formKey.currentState!.validate()) {
+                          return;
+                        }
+
+                        if (selectedSubjectValue == null ||
+                            selectedSlotValue == null ||
+                            selectedClassroomValue == null ||
+                            selectedLessonGroupValue == null ||
+                            selectedTeachersValue.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Bitte füllen Sie alle Pflichtfelder aus',
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+
+                        final now = DateTime.now().toUtcForServer();
+
+                        if (_isEditing) {
+                          final editingLesson =
+                              timetableManager.scheduledLessons.value
+                                  .where(
+                                    (lesson) => lesson.id == editingLessonId,
+                                  )
+                                  .firstOrNull;
+
+                          if (editingLesson != null) {
+                            // Update existing lesson
+                            final updatedLesson = editingLesson.copyWith(
+                              subjectId: selectedSubjectValue.id!,
+                              subject: selectedSubjectValue,
+                              scheduledAtId: selectedSlotValue.id!,
+                              scheduledAt: selectedSlotValue,
+                              lessonId: lessonIdController.text.trim(),
+                              roomId: selectedClassroomValue.id!,
+                              room: selectedClassroomValue,
+                              lessonGroupId: selectedLessonGroupValue.id!,
+                              lessonGroup: selectedLessonGroupValue,
+                              mainTeacherId: selectedTeachersValue.first.id!,
+                              modifiedBy: 'user', // TODO: Get actual user
+                              modifiedAt: now,
+                            );
+
+                            timetableManager.updateScheduledLesson(
+                              updatedLesson,
+                            );
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Stunde erfolgreich aktualisiert mit ${selectedTeachersValue.length} Lehrer(n)',
+                                ),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                          }
+                        } else {
+                          // Create new lesson
+                          final nextAvailableOrder = timetableManager
+                              .getNextAvailableOrderForSlot(
+                                selectedSlotValue.id!,
+                              );
+
+                          final newLesson = ScheduledLesson(
+                            active: true,
+
                             subjectId: selectedSubjectValue.id!,
                             subject: selectedSubjectValue,
                             scheduledAtId: selectedSlotValue.id!,
                             scheduledAt: selectedSlotValue,
+                            timetableId:
+                                timetableManager.timetable.value?.id ??
+                                1, // Get from current timetable
                             lessonId: lessonIdController.text.trim(),
                             roomId: selectedClassroomValue.id!,
                             room: selectedClassroomValue,
                             lessonGroupId: selectedLessonGroupValue.id!,
                             lessonGroup: selectedLessonGroupValue,
+                            timetableSlotOrder: nextAvailableOrder,
                             mainTeacherId: selectedTeachersValue.first.id!,
-                            modifiedBy: 'user', // TODO: Get actual user
-                            modifiedAt: now,
+                            createdBy:
+                                di<HubSessionManager>()
+                                    .userName!, // TODO: Get actual user
+                            createdAt: now,
                           );
 
-                          timetableManager.updateScheduledLesson(updatedLesson);
+                          timetableManager.addScheduledLesson(newLesson);
 
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                'Stunde erfolgreich aktualisiert mit ${selectedTeachersValue.length} Lehrer(n)',
+                                'Stunde erfolgreich erstellt mit ${selectedTeachersValue.length} Lehrer(n)',
                               ),
                               backgroundColor: Colors.green,
                             ),
                           );
                         }
-                      } else {
-                        // Create new lesson
-                        final nextAvailableOrder = timetableManager
-                            .getNextAvailableOrderForSlot(
-                              selectedSlotValue.id!,
-                            );
 
-                        final newLesson = ScheduledLesson(
-                          active: true,
+                        Navigator.of(context).pop();
+                      },
+                      onCancel: () => Navigator.of(context).pop(),
+                      onDelete:
+                          _isEditing
+                              ? () {
+                                final editingLesson =
+                                    timetableManager.scheduledLessons.value
+                                        .where(
+                                          (lesson) =>
+                                              lesson.id == editingLessonId,
+                                        )
+                                        .firstOrNull;
 
-                          subjectId: selectedSubjectValue.id!,
-                          subject: selectedSubjectValue,
-                          scheduledAtId: selectedSlotValue.id!,
-                          scheduledAt: selectedSlotValue,
-                          timetableId:
-                              timetableManager.timetable.value?.id ??
-                              1, // Get from current timetable
-                          lessonId: lessonIdController.text.trim(),
-                          roomId: selectedClassroomValue.id!,
-                          room: selectedClassroomValue,
-                          lessonGroupId: selectedLessonGroupValue.id!,
-                          lessonGroup: selectedLessonGroupValue,
-                          timetableSlotOrder: nextAvailableOrder,
-                          mainTeacherId: selectedTeachersValue.first.id!,
-                          createdBy:
-                              di<HubSessionManager>()
-                                  .userName!, // TODO: Get actual user
-                          createdAt: now,
-                        );
+                                if (editingLesson?.id == null) return;
 
-                        timetableManager.addScheduledLesson(newLesson);
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Stunde erfolgreich erstellt mit ${selectedTeachersValue.length} Lehrer(n)',
-                            ),
-                            backgroundColor: Colors.green,
-                          ),
-                        );
-                      }
-
-                      Navigator.of(context).pop();
-                    },
-                    onCancel: () => Navigator.of(context).pop(),
-                    onDelete:
-                        _isEditing
-                            ? () {
-                              final editingLesson =
-                                  timetableManager.scheduledLessons.value
-                                      .where(
-                                        (lesson) =>
-                                            lesson.id == editingLessonId,
-                                      )
-                                      .firstOrNull;
-
-                              if (editingLesson?.id == null) return;
-
-                              showDialog(
-                                context: context,
-                                builder:
-                                    (context) => AlertDialog(
-                                      title: const Text('Stunde löschen'),
-                                      content: const Text(
-                                        'Sind Sie sicher, dass Sie diese Stunde löschen möchten?',
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed:
-                                              () => Navigator.of(context).pop(),
-                                          child: const Text('Abbrechen'),
+                                showDialog(
+                                  context: context,
+                                  builder:
+                                      (context) => AlertDialog(
+                                        title: const Text('Stunde löschen'),
+                                        content: const Text(
+                                          'Sind Sie sicher, dass Sie diese Stunde löschen möchten?',
                                         ),
-                                        TextButton(
-                                          onPressed: () {
-                                            timetableManager
-                                                .removeScheduledLesson(
-                                                  editingLesson!.id!,
-                                                );
-                                            Navigator.of(
-                                              context,
-                                            ).pop(); // Close dialog
-                                            Navigator.of(
-                                              context,
-                                            ).pop(); // Close page
+                                        actions: [
+                                          TextButton(
+                                            onPressed:
+                                                () =>
+                                                    Navigator.of(context).pop(),
+                                            child: const Text('Abbrechen'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              timetableManager
+                                                  .removeScheduledLesson(
+                                                    editingLesson!.id!,
+                                                  );
+                                              Navigator.of(
+                                                context,
+                                              ).pop(); // Close dialog
+                                              Navigator.of(
+                                                context,
+                                              ).pop(); // Close page
 
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              const SnackBar(
-                                                content: Text(
-                                                  'Stunde erfolgreich gelöscht',
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                    'Stunde erfolgreich gelöscht',
+                                                  ),
+                                                  backgroundColor:
+                                                      Colors.orange,
                                                 ),
-                                                backgroundColor: Colors.orange,
-                                              ),
-                                            );
-                                          },
-                                          child: const Text('Löschen'),
-                                        ),
-                                      ],
-                                    ),
-                              );
-                            }
-                            : null,
-                  ),
-                ],
+                                              );
+                                            },
+                                            child: const Text('Löschen'),
+                                          ),
+                                        ],
+                                      ),
+                                );
+                              }
+                              : null,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
