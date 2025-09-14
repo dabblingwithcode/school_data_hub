@@ -28,21 +28,34 @@ class LearningListCard extends WatchingWidget {
     watch(pupil);
 
     final expansionTileController = createOnce<CustomExpansionTileController>(
-        () => CustomExpansionTileController());
+      () => CustomExpansionTileController(),
+    );
     final selectedContentNotifier = SelectedLearningContentNotifier();
-    final selectedContent = watchPropertyValue((m) => m.selectedContent,
-        target: selectedContentNotifier);
+    final selectedContent = watchPropertyValue(
+      (m) => m.selectedContent,
+      target: selectedContentNotifier,
+    );
     final competenceCheckstats = CompetenceHelper.competenceChecksStats(pupil);
     final totalCompetencesToReport = competenceCheckstats.total;
     final totalCompetencesChecked = competenceCheckstats.checked;
+
+    // Calculate book lending statistics for this pupil
+    final pupilBookLendings = pupil.pupilBookLendings ?? [];
+    final totalLendings = pupilBookLendings.length;
+    final notReturnedLendings =
+        pupilBookLendings.where((lending) => lending.returnedAt == null).length;
 
     return Card(
       color: Colors.white,
       surfaceTintColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       elevation: 1.0,
-      margin:
-          const EdgeInsets.only(left: 4.0, right: 4.0, top: 4.0, bottom: 4.0),
+      margin: const EdgeInsets.only(
+        left: 4.0,
+        right: 4.0,
+        top: 4.0,
+        bottom: 4.0,
+      ),
       child: Column(
         children: [
           Row(
@@ -65,12 +78,14 @@ class LearningListCard extends WatchingWidget {
                             child: InkWell(
                               onTap: () {
                                 di<BottomNavManager>().setPupilProfileNavPage(
-                                    ProfileNavigationState.learning.value);
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (ctx) => PupilProfilePage(
-                                    pupil: pupil,
+                                  ProfileNavigationState.learning.value,
+                                );
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder:
+                                        (ctx) => PupilProfilePage(pupil: pupil),
                                   ),
-                                ));
+                                );
                               },
                               child: Row(
                                 children: [
@@ -111,8 +126,9 @@ class LearningListCard extends WatchingWidget {
                         includeSwitch: true,
                         switchColor: AppColors.interactiveColor,
                         customExpansionTileController: expansionTileController,
-                        expansionSwitchWidget:
-                            CompetenceChecksBadges(pupil: pupil),
+                        expansionSwitchWidget: CompetenceChecksBadges(
+                          pupil: pupil,
+                        ),
                       ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -134,14 +150,16 @@ class LearningListCard extends WatchingWidget {
                       CustomExpansionTileSwitch(
                         customExpansionTileController: expansionTileController,
                         expansionSwitchWidget: const Text(
-                            'Lernziele sind noch nicht implementiert'),
+                          'Lernziele sind noch nicht implementiert',
+                        ),
                       ),
                     ],
                     if (selectedContent == SelectedContent.workbooks) ...[
                       CustomExpansionTileSwitch(
                         customExpansionTileController: expansionTileController,
-                        expansionSwitchWidget:
-                            WorkbooksInfoSwitch(pupil: pupil),
+                        expansionSwitchWidget: WorkbooksInfoSwitch(
+                          pupil: pupil,
+                        ),
                         includeSwitch: true,
                         switchColor: AppColors.interactiveColor,
                       ),
@@ -149,7 +167,46 @@ class LearningListCard extends WatchingWidget {
                     if (selectedContent == SelectedContent.books) ...[
                       CustomExpansionTileSwitch(
                         customExpansionTileController: expansionTileController,
-                        expansionSwitchWidget: const Text('Bücher'),
+                        expansionSwitchWidget: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Gap(10),
+                            Column(
+                              children: [
+                                Text(
+                                  totalLendings.toString(),
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                                const Text(
+                                  'gesamt',
+                                  style: TextStyle(fontSize: 10),
+                                ),
+                              ],
+                            ),
+                            const Gap(10),
+                            Column(
+                              children: [
+                                Text(
+                                  notReturnedLendings.toString(),
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.orange,
+                                  ),
+                                ),
+                                const Text(
+                                  'aktiv',
+                                  style: TextStyle(fontSize: 10),
+                                ),
+                              ],
+                            ),
+                            const Gap(10),
+                          ],
+                        ),
                       ),
                     ],
                   ],
@@ -167,19 +224,20 @@ class LearningListCard extends WatchingWidget {
           Padding(
             padding: const EdgeInsets.only(top: 5, left: 5, right: 5),
             child: CustomExpansionTileContent(
-                title: null,
-                tileController: expansionTileController,
-                widgetList: [
-                  if (selectedContent == SelectedContent.competenceStatuses)
-                    PupilLearningContentCompetenceStatuses(pupil: pupil),
-                  if (selectedContent == SelectedContent.competenceGoals)
-                    PupilLearningContentCompetenceGoals(pupil: pupil),
-                  if (selectedContent == SelectedContent.workbooks)
-                    PupilLearningContentWorkbooks(pupil: pupil),
-                  if (selectedContent == SelectedContent.books)
-                    PupilLearningContentBooks(pupil: pupil)
-                ]),
-          )
+              title: null,
+              tileController: expansionTileController,
+              widgetList: [
+                if (selectedContent == SelectedContent.competenceStatuses)
+                  PupilLearningContentCompetenceStatuses(pupil: pupil),
+                if (selectedContent == SelectedContent.competenceGoals)
+                  PupilLearningContentCompetenceGoals(pupil: pupil),
+                if (selectedContent == SelectedContent.workbooks)
+                  PupilLearningContentWorkbooks(pupil: pupil),
+                if (selectedContent == SelectedContent.books)
+                  PupilLearningContentBooks(pupil: pupil),
+              ],
+            ),
+          ),
         ],
       ),
     );

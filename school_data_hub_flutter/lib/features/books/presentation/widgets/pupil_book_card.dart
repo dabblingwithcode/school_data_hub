@@ -27,7 +27,7 @@ class PupilBookLendingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final LibraryBookProxy book =
-        di<BookManager>().getLibraryBookById(pupilBookLending.id!)!;
+        di<BookManager>().getLibraryBookById(pupilBookLending.libraryBookId)!;
     void updatepupilBookRating(int rating) {
       di<PupilManager>().updatePupilBookLending(
         pupilBookLending: pupilBookLending,
