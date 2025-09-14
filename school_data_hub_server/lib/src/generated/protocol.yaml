@@ -57,7 +57,7 @@ libraryBooks:
 pupilBookLending:
   - postPupilBookLending:
   - fetchPupilBookLendings:
-  - fetchPupilBookLendingById:
+  - fetchPupilBookLendingByLendingId:
   - updatePupilBookLending:
   - deletePupilBookLending:
 competenceCheck:

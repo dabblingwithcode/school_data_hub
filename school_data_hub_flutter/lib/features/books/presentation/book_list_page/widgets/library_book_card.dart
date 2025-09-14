@@ -8,21 +8,21 @@ import 'package:school_data_hub_flutter/features/books/domain/models/library_boo
 import 'package:school_data_hub_flutter/features/books/presentation/book_list_page/widgets/book_pupil_card.dart';
 
 class LibraryBookCard extends StatelessWidget {
-  final LibraryBookProxy bookProxy;
-  const LibraryBookCard({required this.bookProxy, super.key});
+  final LibraryBookProxy libraryBookProxy;
+  const LibraryBookCard({required this.libraryBookProxy, super.key});
 
   @override
   Widget build(BuildContext context) {
     final tileController = CustomExpansionTileController();
-    final bookPupilLendings = BookHelpers.pupilBooksLinkedToBook(
-      libraryId: bookProxy.libraryId,
+    final bookPupilLendings = BookHelpers.pupilBookLendingsLinkedToLibraryBook(
+      libraryBookId: libraryBookProxy.id,
     );
     BookBorrowStatus? bookBorrowStatus =
         bookPupilLendings.isEmpty
             ? null
             : BookHelpers.getBorrowedStatus(bookPupilLendings.first);
     final Color borrowedColor =
-        bookProxy.available
+        libraryBookProxy.available
             ? Colors.green
             : bookBorrowStatus == BookBorrowStatus.since2Weeks
             ? Colors.yellow
@@ -37,7 +37,7 @@ class LibraryBookCard extends StatelessWidget {
             const Text('Buch-ID:'),
             const Gap(10),
             Text(
-              bookProxy.libraryId,
+              libraryBookProxy.libraryId,
               overflow: TextOverflow.fade,
               style: const TextStyle(
                 fontSize: 16,
@@ -49,7 +49,7 @@ class LibraryBookCard extends StatelessWidget {
             const Text('Ablageort:'),
             const Gap(10),
             Text(
-              bookProxy.location.location,
+              libraryBookProxy.location.location,
               overflow: TextOverflow.fade,
               style: const TextStyle(
                 fontSize: 16,

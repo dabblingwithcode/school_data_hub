@@ -1461,12 +1461,12 @@ class Endpoints extends _i1.EndpointDispatch {
               (endpoints['pupilBookLending'] as _i11.PupilBookLendingEndpoint)
                   .fetchPupilBookLendings(session),
         ),
-        'fetchPupilBookLendingById': _i1.MethodConnector(
-          name: 'fetchPupilBookLendingById',
+        'fetchPupilBookLendingByLendingId': _i1.MethodConnector(
+          name: 'fetchPupilBookLendingByLendingId',
           params: {
-            'id': _i1.ParameterDescription(
-              name: 'id',
-              type: _i1.getType<int>(),
+            'lendingId': _i1.ParameterDescription(
+              name: 'lendingId',
+              type: _i1.getType<String>(),
               nullable: false,
             )
           },
@@ -1475,9 +1475,9 @@ class Endpoints extends _i1.EndpointDispatch {
             Map<String, dynamic> params,
           ) async =>
               (endpoints['pupilBookLending'] as _i11.PupilBookLendingEndpoint)
-                  .fetchPupilBookLendingById(
+                  .fetchPupilBookLendingByLendingId(
             session,
-            params['id'],
+            params['lendingId'],
           ),
         ),
         'updatePupilBookLending': _i1.MethodConnector(
@@ -1502,9 +1502,9 @@ class Endpoints extends _i1.EndpointDispatch {
         'deletePupilBookLending': _i1.MethodConnector(
           name: 'deletePupilBookLending',
           params: {
-            'id': _i1.ParameterDescription(
-              name: 'id',
-              type: _i1.getType<int>(),
+            'lendingId': _i1.ParameterDescription(
+              name: 'lendingId',
+              type: _i1.getType<String>(),
               nullable: false,
             )
           },
@@ -1515,7 +1515,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (endpoints['pupilBookLending'] as _i11.PupilBookLendingEndpoint)
                   .deletePupilBookLending(
             session,
-            params['id'],
+            params['lendingId'],
           ),
         ),
       },

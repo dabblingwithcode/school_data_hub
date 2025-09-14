@@ -165,15 +165,21 @@ class BookManager {
 
   //- get functions
 
-  LibraryBookProxy? getLibraryBookByLibraryBookId(int? libraryBookId) {
+  LibraryBookProxy? getLibraryBookById(int? libraryBookId) {
     if (libraryBookId == null) return null;
     return _libraryBookProxies.value.firstWhereOrNull(
-      (element) => element.libraryBookId == libraryBookId,
+      (element) => element.id == libraryBookId,
     );
   }
 
   List<LibraryBookProxy> getLibraryBooksByIsbn(int isbn) {
     return _isbnLibraryBooksMap.value[isbn] ?? [];
+  }
+
+  LibraryBookProxy? getLibraryBookByLibraryId(int id) {
+    return _libraryBookProxies.value.firstWhereOrNull(
+      (element) => element.id == id,
+    );
   }
 
   //- Repository calls
@@ -308,7 +314,7 @@ class BookManager {
 
   Future<void> deleteLibraryBook(LibraryBookProxy libraryBookProxy) async {
     final bool? success = await _bookApiService.deleteLibraryBook(
-      libraryBookProxy.libraryBookId,
+      libraryBookProxy.id,
     );
     if (success == null) {
       return;

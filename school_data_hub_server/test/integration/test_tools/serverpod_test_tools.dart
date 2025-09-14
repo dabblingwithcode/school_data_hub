@@ -2035,22 +2035,22 @@ class _PupilBookLendingEndpoint {
     });
   }
 
-  _i3.Future<_i23.PupilBookLending?> fetchPupilBookLendingById(
+  _i3.Future<_i23.PupilBookLending?> fetchPupilBookLendingByLendingId(
     _i1.TestSessionBuilder sessionBuilder,
-    int id,
+    String lendingId,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
         endpoint: 'pupilBookLending',
-        method: 'fetchPupilBookLendingById',
+        method: 'fetchPupilBookLendingByLendingId',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'pupilBookLending',
-          methodName: 'fetchPupilBookLendingById',
-          parameters: _i1.testObjectToJson({'id': id}),
+          methodName: 'fetchPupilBookLendingByLendingId',
+          parameters: _i1.testObjectToJson({'lendingId': lendingId}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
@@ -2096,7 +2096,7 @@ class _PupilBookLendingEndpoint {
 
   _i3.Future<_i6.PupilData> deletePupilBookLending(
     _i1.TestSessionBuilder sessionBuilder,
-    int id,
+    String lendingId,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -2109,7 +2109,7 @@ class _PupilBookLendingEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'pupilBookLending',
           methodName: 'deletePupilBookLending',
-          parameters: _i1.testObjectToJson({'id': id}),
+          parameters: _i1.testObjectToJson({'lendingId': lendingId}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(

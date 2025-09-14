@@ -197,7 +197,7 @@ class SearchResultBookCard extends WatchingWidget {
                             return uniqueBooks;
                           })
                           .map((book) {
-                            return LibraryBookCard(bookProxy: book);
+                            return LibraryBookCard(libraryBookProxy: book);
                           })
                           .toList(),
                 ),
