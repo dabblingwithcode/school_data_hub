@@ -1093,36 +1093,18 @@ class Endpoints extends _i1.EndpointDispatch {
             params['isbn'],
           ),
         ),
-        'updateBook': _i1.MethodConnector(
-          name: 'updateBook',
-          params: {
-            'book': _i1.ParameterDescription(
-              name: 'book',
-              type: _i1.getType<_i42.Book>(),
-              nullable: false,
-            )
-          },
-          call: (
-            _i1.Session session,
-            Map<String, dynamic> params,
-          ) async =>
-              (endpoints['books'] as _i8.BooksEndpoint).updateBook(
-            session,
-            params['book'],
-          ),
-        ),
         'updateBookTags': _i1.MethodConnector(
           name: 'updateBookTags',
           params: {
-            'book': _i1.ParameterDescription(
-              name: 'book',
-              type: _i1.getType<_i42.Book>(),
+            'isbn': _i1.ParameterDescription(
+              name: 'isbn',
+              type: _i1.getType<int>(),
               nullable: false,
             ),
             'tags': _i1.ParameterDescription(
               name: 'tags',
-              type: _i1.getType<List<_i41.BookTag>>(),
-              nullable: false,
+              type: _i1.getType<List<_i41.BookTag>?>(),
+              nullable: true,
             ),
           },
           call: (
@@ -1131,8 +1113,8 @@ class Endpoints extends _i1.EndpointDispatch {
           ) async =>
               (endpoints['books'] as _i8.BooksEndpoint).updateBookTags(
             session,
-            params['book'],
-            params['tags'],
+            params['isbn'],
+            tags: params['tags'],
           ),
         ),
         'deleteBook': _i1.MethodConnector(
@@ -1334,8 +1316,8 @@ class Endpoints extends _i1.EndpointDispatch {
             params['libraryBookQuery'],
           ),
         ),
-        'updateLibraryBook': _i1.MethodConnector(
-          name: 'updateLibraryBook',
+        'updateLibraryBookAndRelatedBook': _i1.MethodConnector(
+          name: 'updateLibraryBookAndRelatedBook',
           params: {
             'isbn': _i1.ParameterDescription(
               name: 'isbn',
@@ -1377,13 +1359,18 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<String?>(),
               nullable: true,
             ),
+            'tags': _i1.ParameterDescription(
+              name: 'tags',
+              type: _i1.getType<List<_i41.BookTag>?>(),
+              nullable: true,
+            ),
           },
           call: (
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
               (endpoints['libraryBooks'] as _i10.LibraryBooksEndpoint)
-                  .updateLibraryBook(
+                  .updateLibraryBookAndRelatedBook(
             session,
             params['isbn'],
             params['libraryId'],
@@ -1393,6 +1380,7 @@ class Endpoints extends _i1.EndpointDispatch {
             params['author'],
             params['description'],
             params['readingLevel'],
+            params['tags'],
           ),
         ),
         'deleteLibraryBook': _i1.MethodConnector(

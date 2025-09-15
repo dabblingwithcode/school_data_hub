@@ -38,7 +38,6 @@ books:
   - postBook:
   - fetchBooks:
   - fetchBookByIsbn:
-  - updateBook:
   - updateBookTags:
   - deleteBook:
 libraryBookLocations:
@@ -52,7 +51,7 @@ libraryBooks:
   - fetchLibraryBookByIsbn:
   - fetchLibraryBookByLibraryId:
   - fetchLibraryBooksMatchingQuery:
-  - updateLibraryBook:
+  - updateLibraryBookAndRelatedBook:
   - deleteLibraryBook:
 pupilBookLending:
   - postPupilBookLending:

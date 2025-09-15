@@ -1509,40 +1509,11 @@ class _BooksEndpoint {
     });
   }
 
-  _i3.Future<_i19.Book> updateBook(
-    _i1.TestSessionBuilder sessionBuilder,
-    _i19.Book book,
-  ) async {
-    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
-      var _localUniqueSession =
-          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'books',
-        method: 'updateBook',
-      );
-      try {
-        var _localCallContext = await _endpointDispatch.getMethodCallContext(
-          createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'books',
-          methodName: 'updateBook',
-          parameters: _i1.testObjectToJson({'book': book}),
-          serializationManager: _serializationManager,
-        );
-        var _localReturnValue = await (_localCallContext.method.call(
-          _localUniqueSession,
-          _localCallContext.arguments,
-        ) as _i3.Future<_i19.Book>);
-        return _localReturnValue;
-      } finally {
-        await _localUniqueSession.close();
-      }
-    });
-  }
-
   _i3.Future<_i19.Book> updateBookTags(
     _i1.TestSessionBuilder sessionBuilder,
-    _i19.Book book,
-    List<_i18.BookTag> tags,
-  ) async {
+    int isbn, {
+    List<_i18.BookTag>? tags,
+  }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
@@ -1555,7 +1526,7 @@ class _BooksEndpoint {
           endpointPath: 'books',
           methodName: 'updateBookTags',
           parameters: _i1.testObjectToJson({
-            'book': book,
+            'isbn': isbn,
             'tags': tags,
           }),
           serializationManager: _serializationManager,
@@ -1888,7 +1859,7 @@ class _LibraryBooksEndpoint {
     });
   }
 
-  _i3.Future<_i21.LibraryBook> updateLibraryBook(
+  _i3.Future<_i21.LibraryBook> updateLibraryBookAndRelatedBook(
     _i1.TestSessionBuilder sessionBuilder,
     int isbn,
     String libraryId,
@@ -1898,18 +1869,19 @@ class _LibraryBooksEndpoint {
     String? author,
     String? description,
     String? readingLevel,
+    List<_i18.BookTag>? tags,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
         endpoint: 'libraryBooks',
-        method: 'updateLibraryBook',
+        method: 'updateLibraryBookAndRelatedBook',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'libraryBooks',
-          methodName: 'updateLibraryBook',
+          methodName: 'updateLibraryBookAndRelatedBook',
           parameters: _i1.testObjectToJson({
             'isbn': isbn,
             'libraryId': libraryId,
@@ -1919,6 +1891,7 @@ class _LibraryBooksEndpoint {
             'author': author,
             'description': description,
             'readingLevel': readingLevel,
+            'tags': tags,
           }),
           serializationManager: _serializationManager,
         );

@@ -5,7 +5,7 @@ fields:
   location: LibraryBookLocation?
   keywords: String?
   readingLevel: String?
-  tags: List<BookTagging>?
+  tags: List<BookTag>?
   borrowStatus: bool?
   page: int
   perPage: int

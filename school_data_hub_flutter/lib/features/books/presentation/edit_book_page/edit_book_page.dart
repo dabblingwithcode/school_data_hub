@@ -7,27 +7,23 @@ import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
-import 'package:school_data_hub_flutter/features/books/presentation/new_book_page/new_book_controller.dart';
+import 'package:school_data_hub_flutter/features/books/presentation/edit_book_page/edit_book_controller.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _hubSessionManager = di<HubSessionManager>();
 
-class NewBookPage extends StatelessWidget {
-  final NewBookController controller;
+class EditBookPage extends StatelessWidget {
+  final EditBookController controller;
 
-  const NewBookPage(this.controller, {super.key});
+  const EditBookPage(this.controller, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         backgroundColor: AppColors.backgroundColor,
-        title: Center(
-          child: Text(
-            (controller.widget.isEdit) ? 'Buch bearbeiten' : 'Neues Buch',
-            style: AppStyles.appBarTextStyle,
-          ),
+        title: const Center(
+          child: Text('Buch bearbeiten', style: AppStyles.appBarTextStyle),
         ),
       ),
       body: Center(
@@ -51,11 +47,10 @@ class NewBookPage extends StatelessWidget {
                             children: [
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(10.0),
-                                child:
-                                // TODO: Repair when image loading is implemented
-                                UnencryptedImageInCard(
+                                child: UnencryptedImageInCard(
                                   path: controller.imagePath!,
-                                  cacheKey: controller.widget.isbn.toString(),
+                                  cacheKey:
+                                      controller.libraryBook.isbn.toString(),
                                   size: 220,
                                 ),
                               ),
@@ -76,21 +71,19 @@ class NewBookPage extends StatelessWidget {
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 const Gap(5),
-                                Text(controller.widget.isbn.toString()),
+                                Text(controller.libraryBook.isbn.toString()),
                               ],
                             ),
                             const Gap(20),
-                            TextField(
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              minLines: 1,
-                              maxLines: 1,
-                              controller: controller.bookIdTextFieldController,
-                              decoration: AppStyles.textFieldDecoration(
-                                labelText: 'Bücherei-ID',
-                              ),
+                            Row(
+                              children: [
+                                const Text(
+                                  'Bücherei-ID:',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                const Gap(5),
+                                Text(controller.libraryBook.libraryId),
+                              ],
                             ),
                             const Gap(20),
                             DropdownButtonFormField<ReadingLevel>(
@@ -98,7 +91,7 @@ class NewBookPage extends StatelessWidget {
                                 labelText: 'Lesestufe',
                               ),
                               items: controller.readingLevelDropdownItems,
-                              value: ReadingLevel.fromString(
+                              initialValue: ReadingLevel.fromString(
                                 controller.readingLevel,
                               ),
                               onChanged:
@@ -116,7 +109,7 @@ class NewBookPage extends StatelessWidget {
                                       labelText: 'Ablageort',
                                     ),
                                     items: controller.locationDropdownItems,
-                                    value: controller.lastLocationValue,
+                                    initialValue: controller.selectedLocation,
                                     onChanged:
                                         (value) => controller
                                             .onChangedLocationDropDown(value!),
@@ -223,38 +216,28 @@ class NewBookPage extends StatelessWidget {
                         }).toList(),
                   ),
                   const Gap(30),
-                  ...<Widget>[
-                    if (!controller.widget.isEdit) ...<Widget>[
-                      ElevatedButton(
-                        style: AppStyles.actionButtonStyle,
-                        onPressed: () async => controller.scanBookId(),
-                        child: const Text(
-                          'BÜCHEREI-ID SCANNEN',
-                          style: AppStyles.buttonTextStyle,
-                        ),
-                      ),
-                      const Gap(15),
-                    ],
-                    ElevatedButton(
-                      style: AppStyles.successButtonStyle,
-                      onPressed: () => controller.submitBook(),
-                      child: const Text(
-                        'SENDEN',
-                        style: AppStyles.buttonTextStyle,
-                      ),
+                  ElevatedButton(
+                    style: AppStyles.successButtonStyle,
+                    onPressed: () async {
+                      await controller.submitBook();
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                      'ÄNDERUNGEN SPEICHERN',
+                      style: AppStyles.buttonTextStyle,
                     ),
-                    const Gap(15),
-                    ElevatedButton(
-                      style: AppStyles.cancelButtonStyle,
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text(
-                        'ABBRECHEN',
-                        style: AppStyles.buttonTextStyle,
-                      ),
+                  ),
+                  const Gap(15),
+                  ElevatedButton(
+                    style: AppStyles.cancelButtonStyle,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                      'ABBRECHEN',
+                      style: AppStyles.buttonTextStyle,
                     ),
-                  ],
+                  ),
                 ],
               ),
             ),

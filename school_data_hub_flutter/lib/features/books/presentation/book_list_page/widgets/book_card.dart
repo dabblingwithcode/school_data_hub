@@ -241,7 +241,7 @@ class BookCard extends WatchingWidget {
                           initialValue: bookProxy.description,
                           parentContext: context,
                         );
-                        di<BookManager>().updateBookProperty(
+                        di<BookManager>().updateLibraryBookProperty(
                           isbn: bookProxy.isbn,
                           libraryId: bookProxy.libraryId,
                           description: description,

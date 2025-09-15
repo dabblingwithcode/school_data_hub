@@ -58,9 +58,9 @@ class SchoolCalendarManager {
   Schoolday? getSchooldayByDate(DateTime date) {
     final Schoolday? schoolday = _schooldays.value.firstWhereOrNull(
       (element) =>
-          element.schoolday.year == date.year &&
-          element.schoolday.month == date.month &&
-          element.schoolday.day == date.day,
+          element.schoolday.year == date.toLocal().year &&
+          element.schoolday.month == date.toLocal().month &&
+          element.schoolday.day == date.toLocal().day,
     );
 
     return schoolday;

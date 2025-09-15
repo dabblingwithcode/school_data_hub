@@ -11,7 +11,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../../../_features/books/models/library_book_location.dart' as _i2;
-import '../../../_features/books/models/book_tagging/book_tagging.dart' as _i3;
+import '../../../_features/books/models/book_tagging/book_tag.dart' as _i3;
 
 abstract class LibraryBookQuery
     implements _i1.SerializableModel, _i1.ProtocolSerialization {
@@ -33,7 +33,7 @@ abstract class LibraryBookQuery
     _i2.LibraryBookLocation? location,
     String? keywords,
     String? readingLevel,
-    List<_i3.BookTagging>? tags,
+    List<_i3.BookTag>? tags,
     bool? borrowStatus,
     required int page,
     required int perPage,
@@ -50,7 +50,7 @@ abstract class LibraryBookQuery
       keywords: jsonSerialization['keywords'] as String?,
       readingLevel: jsonSerialization['readingLevel'] as String?,
       tags: (jsonSerialization['tags'] as List?)
-          ?.map((e) => _i3.BookTagging.fromJson((e as Map<String, dynamic>)))
+          ?.map((e) => _i3.BookTag.fromJson((e as Map<String, dynamic>)))
           .toList(),
       borrowStatus: jsonSerialization['borrowStatus'] as bool?,
       page: jsonSerialization['page'] as int,
@@ -68,7 +68,7 @@ abstract class LibraryBookQuery
 
   String? readingLevel;
 
-  List<_i3.BookTagging>? tags;
+  List<_i3.BookTag>? tags;
 
   bool? borrowStatus;
 
@@ -85,7 +85,7 @@ abstract class LibraryBookQuery
     _i2.LibraryBookLocation? location,
     String? keywords,
     String? readingLevel,
-    List<_i3.BookTagging>? tags,
+    List<_i3.BookTag>? tags,
     bool? borrowStatus,
     int? page,
     int? perPage,
@@ -136,7 +136,7 @@ class _LibraryBookQueryImpl extends LibraryBookQuery {
     _i2.LibraryBookLocation? location,
     String? keywords,
     String? readingLevel,
-    List<_i3.BookTagging>? tags,
+    List<_i3.BookTag>? tags,
     bool? borrowStatus,
     required int page,
     required int perPage,
@@ -175,7 +175,7 @@ class _LibraryBookQueryImpl extends LibraryBookQuery {
           : this.location?.copyWith(),
       keywords: keywords is String? ? keywords : this.keywords,
       readingLevel: readingLevel is String? ? readingLevel : this.readingLevel,
-      tags: tags is List<_i3.BookTagging>?
+      tags: tags is List<_i3.BookTag>?
           ? tags
           : this.tags?.map((e0) => e0.copyWith()).toList(),
       borrowStatus: borrowStatus is bool? ? borrowStatus : this.borrowStatus,

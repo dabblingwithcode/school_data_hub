@@ -6,31 +6,44 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_list_page/widgets/book_list_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/features/books/presentation/book_search_form/select_book_tags_page.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_search_page/book_search_results_page.dart';
 import 'package:watch_it/watch_it.dart';
 
-class BookSearchFormPage extends WatchingWidget {
+class BookSearchFormPage extends StatefulWidget {
   const BookSearchFormPage({super.key});
 
   @override
+  State<BookSearchFormPage> createState() => _BookSearchFormPageState();
+}
+
+class _BookSearchFormPageState extends State<BookSearchFormPage> {
+  final titleSearchController = TextEditingController();
+  final authorSearchController = TextEditingController();
+  final keywordsSearchController = TextEditingController();
+  final levelSearchController = TextEditingController();
+
+  BorrowedStatus? selectedBorrowStatus;
+  LibraryBookLocation? selectedLocation;
+  List<BookTag> selectedBookTags = [];
+  final BookManager bookManager = di<BookManager>();
+
+  @override
+  void dispose() {
+    titleSearchController.dispose();
+    authorSearchController.dispose();
+    keywordsSearchController.dispose();
+    levelSearchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final titleSearchController =
-        createOnce<TextEditingController>(() => TextEditingController());
-    final authorSearchController =
-        createOnce<TextEditingController>(() => TextEditingController());
-    final keywordsSearchController =
-        createOnce<TextEditingController>(() => TextEditingController());
-    final levelSearchController =
-        createOnce<TextEditingController>(() => TextEditingController());
-
-    BorrowedStatus? selectedBorrowStatus;
-
-    LibraryBookLocation? selectedLocation;
-    final bookManager = di<BookManager>();
-
     return Scaffold(
-      appBar:
-          const GenericAppBar(iconData: Icons.search, title: 'Bücher suchen'),
+      appBar: const GenericAppBar(
+        iconData: Icons.search,
+        title: 'Bücher suchen',
+      ),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
@@ -90,12 +103,141 @@ class BookSearchFormPage extends WatchingWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                selectedBookTags.isEmpty
+                                    ? 'Keine Schlagwörter ausgewählt!'
+                                    : 'Ausgewählte Schlagwörter:',
+                                style: TextStyle(
+                                  color:
+                                      selectedBookTags.isEmpty
+                                          ? Colors.grey[600]
+                                          : AppColors.interactiveColor,
+                                  fontWeight:
+                                      selectedBookTags.isEmpty
+                                          ? FontWeight.normal
+                                          : FontWeight.w500,
+                                ),
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (selectedBookTags.isNotEmpty)
+                                    IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          selectedBookTags = [];
+                                        });
+                                      },
+                                      icon: const Icon(
+                                        Icons.clear,
+                                        color: Colors.red,
+                                      ),
+                                      tooltip: 'Alle Schlagwörter entfernen',
+                                    ),
+                                  IconButton(
+                                    onPressed: () async {
+                                      final result = await Navigator.of(
+                                        context,
+                                      ).push<List<BookTag>>(
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) => SelectBookTagsPage(
+                                                initialSelectedTags:
+                                                    selectedBookTags,
+                                              ),
+                                        ),
+                                      );
+                                      if (result != null) {
+                                        setState(() {
+                                          selectedBookTags = result;
+                                        });
+                                      }
+                                    },
+                                    icon: const Icon(
+                                      Icons.add,
+                                      color: AppColors.interactiveColor,
+                                    ),
+                                    tooltip: 'Schlagwörter auswählen',
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          if (selectedBookTags.isNotEmpty) ...[
+                            const SizedBox(height: 8),
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children:
+                                  selectedBookTags.map((tag) {
+                                    return FilterChip(
+                                      label: Text(tag.name),
+                                      selected: true,
+                                      onSelected: (bool selected) {
+                                        setState(() {
+                                          selectedBookTags =
+                                              selectedBookTags
+                                                  .where(
+                                                    (selectedTag) =>
+                                                        selectedTag.id !=
+                                                        tag.id,
+                                                  )
+                                                  .toList();
+                                        });
+                                      },
+                                      selectedColor: AppColors.interactiveColor
+                                          .withValues(alpha: 0.2),
+                                      checkmarkColor:
+                                          AppColors.interactiveColor,
+                                      deleteIcon: const Icon(
+                                        Icons.close,
+                                        size: 18,
+                                        color: AppColors.interactiveColor,
+                                      ),
+                                      onDeleted: () {
+                                        setState(() {
+                                          selectedBookTags =
+                                              selectedBookTags
+                                                  .where(
+                                                    (selectedTag) =>
+                                                        selectedTag.id !=
+                                                        tag.id,
+                                                  )
+                                                  .toList();
+                                        });
+                                      },
+                                    );
+                                  }).toList(),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: ValueListenableBuilder<List<LibraryBookLocation>>(
                     valueListenable: bookManager.locations,
                     builder: (context, locations, _) {
                       final List<LibraryBookLocation> locationItems = [
                         LibraryBookLocation(location: "Alle Räume"),
-                        ...locations
+                        ...locations.where(
+                          (loc) => loc.location != "Alle Räume",
+                        ),
                       ];
                       selectedLocation ??= locationItems.first;
 
@@ -109,17 +251,20 @@ class BookSearchFormPage extends WatchingWidget {
                           ),
                           labelText: 'Ablageort',
                         ),
-                        value: selectedLocation,
-                        items: locationItems
-                            .map(
-                              (loc) => DropdownMenuItem<LibraryBookLocation>(
-                                value: loc,
-                                child: Text(loc.location),
-                              ),
-                            )
-                            .toList(),
+                        items:
+                            locationItems
+                                .map(
+                                  (loc) =>
+                                      DropdownMenuItem<LibraryBookLocation>(
+                                        value: loc,
+                                        child: Text(loc.location),
+                                      ),
+                                )
+                                .toList(),
                         onChanged: (value) {
-                          selectedLocation = value;
+                          setState(() {
+                            selectedLocation = value;
+                          });
                         },
                       );
                     },
@@ -145,7 +290,7 @@ class BookSearchFormPage extends WatchingWidget {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: DropdownButtonFormField<BorrowedStatus>(
-                    value: BorrowedStatus.all,
+                    initialValue: BorrowedStatus.all,
                     decoration: InputDecoration(
                       fillColor: Colors.white,
                       filled: true,
@@ -155,14 +300,15 @@ class BookSearchFormPage extends WatchingWidget {
                       ),
                       labelText: 'Status',
                     ),
-                    items: BorrowedStatus.values
-                        .map(
-                          (status) => DropdownMenuItem<BorrowedStatus>(
-                            value: status,
-                            child: Text(status.value),
-                          ),
-                        )
-                        .toList(),
+                    items:
+                        BorrowedStatus.values
+                            .map(
+                              (status) => DropdownMenuItem<BorrowedStatus>(
+                                value: status,
+                                child: Text(status.value),
+                              ),
+                            )
+                            .toList(),
                     onChanged: (value) {
                       selectedBorrowStatus = value;
                     },
@@ -187,33 +333,39 @@ class BookSearchFormPage extends WatchingWidget {
                       title: title,
                       author: author,
                       keywords: keywords,
-                      location: selectedLocation?.location == "Alle Räume"
-                          ? null
-                          : selectedLocation!,
+                      location:
+                          selectedLocation?.location == "Alle Räume"
+                              ? null
+                              : selectedLocation!,
                       readingLevel: readingLevel,
                       available:
                           selectedBorrowStatus == BorrowedStatus.available
                               ? true
                               : selectedBorrowStatus == BorrowedStatus.borrowed
-                                  ? false
-                                  : null,
+                              ? false
+                              : null,
+                      tags:
+                          selectedBookTags.isNotEmpty ? selectedBookTags : null,
                     );
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => BookSearchResultsPage(
-                          title: title,
-                          author: author,
-                          keywords: keywords,
-                          location: selectedLocation?.location == "Alle Räume"
-                              ? null
-                              : selectedLocation!,
-                          readingLevel: readingLevel,
-                          borrowStatus: selectedBorrowStatus),
-                    ));
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder:
+                            (context) => BookSearchResultsPage(
+                              title: title,
+                              author: author,
+                              keywords: keywords,
+                              location:
+                                  selectedLocation?.location == "Alle Räume"
+                                      ? null
+                                      : selectedLocation!,
+                              readingLevel: readingLevel,
+                              borrowStatus: selectedBorrowStatus,
+                              selectedTags: selectedBookTags,
+                            ),
+                      ),
+                    );
                   },
-                  child: const Text(
-                    'SUCHEN',
-                    style: AppStyles.buttonTextStyle,
-                  ),
+                  child: const Text('SUCHEN', style: AppStyles.buttonTextStyle),
                 ),
                 const SizedBox(height: 10),
               ],

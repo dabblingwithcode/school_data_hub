@@ -6,6 +6,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_d
 import 'package:school_data_hub_flutter/features/books/data/book_api_service.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/features/books/presentation/book_tag_management_page/book_tag_management_controller.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/new_book_page/new_book_page.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -21,19 +22,20 @@ class NewBook extends WatchingStatefulWidget {
   final bool? bookAvailable;
   final String? imageId;
   final bool isEdit;
-  const NewBook(
-      {required this.isEdit,
-      this.bookTitle,
-      required this.isbn,
-      this.libraryId,
-      this.bookAuthor,
-      this.bookDescription,
-      this.bookImageId,
-      this.bookReadingLevel,
-      this.location,
-      this.bookAvailable,
-      this.imageId,
-      super.key});
+  const NewBook({
+    required this.isEdit,
+    this.bookTitle,
+    required this.isbn,
+    this.libraryId,
+    this.bookAuthor,
+    this.bookDescription,
+    this.bookImageId,
+    this.bookReadingLevel,
+    this.location,
+    this.bookAvailable,
+    this.imageId,
+    super.key,
+  });
 
   @override
   NewBookController createState() => NewBookController();
@@ -142,12 +144,16 @@ class NewBookController extends State<NewBook> {
   }
 
   Future<void> scanBookId() async {
-    final String? scannedBookId =
-        await qrScanner(context: context, overlayText: 'Bücherei-Id scannen');
+    final String? scannedBookId = await qrScanner(
+      context: context,
+      overlayText: 'Bücherei-Id scannen',
+    );
 
     if (scannedBookId == null) {
-      di<NotificationService>()
-          .showSnackBar(NotificationType.error, 'Fehler beim Scannen');
+      di<NotificationService>().showSnackBar(
+        NotificationType.error,
+        'Fehler beim Scannen',
+      );
       return;
     }
     final bookId = scannedBookId.replaceFirst('Buch ID: ', '').trim();
@@ -157,28 +163,42 @@ class NewBookController extends State<NewBook> {
   final List<DropdownMenuItem<LibraryBookLocation>> locationDropdownItems = [];
 
   void _createDropdownItems() {
-    for (final location in di<BookManager>().locations.value) {
-      locationDropdownItems.add(DropdownMenuItem(
-        value: location,
-        child: Text(location.location),
-      ));
+    final allLocations = di<BookManager>().locations.value.toList();
+    final lastLocation = di<BookManager>().lastLocationValue.value;
+
+    // Check if lastLocation is already in the list to avoid duplicates
+    final isLastLocationInList = allLocations.any(
+      (location) => location.id == lastLocation.id,
+    );
+
+    // Add all locations from the list
+    for (final location in allLocations) {
+      locationDropdownItems.add(
+        DropdownMenuItem(value: location, child: Text(location.location)),
+      );
     }
 
-    locationDropdownItems.add(DropdownMenuItem(
-      value: di<BookManager>().lastLocationValue.value,
-      child: Text(
-        di<BookManager>().lastLocationValue.value.location,
-        style: const TextStyle(color: Colors.red),
-      ),
-    ));
+    // Only add lastLocation if it's not already in the list
+    if (!isLastLocationInList) {
+      locationDropdownItems.add(
+        DropdownMenuItem(
+          value: lastLocation,
+          child: Text(
+            lastLocation.location,
+            style: const TextStyle(color: Colors.red),
+          ),
+        ),
+      );
+    }
   }
 
   void addLocation() async {
     final String? newLocation = await shortTextfieldDialog(
-        context: context,
-        title: 'Neuer Ablageort',
-        labelText: 'Ablageort hinzufügen',
-        hintText: 'Name des Ablageorts');
+      context: context,
+      title: 'Neuer Ablageort',
+      labelText: 'Ablageort hinzufügen',
+      hintText: 'Name des Ablageorts',
+    );
     if (newLocation != null) {
       await di<BookManager>().postLocation(newLocation);
     }
@@ -190,48 +210,100 @@ class NewBookController extends State<NewBook> {
     });
   }
 
-  void submitBook() {
+  void createNewTag(BuildContext context) async {
+    final String? newTagName = await shortTextfieldDialog(
+      context: context,
+      title: 'Neues Buch-Tag erstellen',
+      labelText: 'Tag-Name',
+      hintText: 'Name des neuen Tags eingeben',
+    );
+
+    if (newTagName != null && newTagName.trim().isNotEmpty) {
+      await di<BookManager>().postBookTag(newTagName.trim());
+      di<NotificationService>().showSnackBar(
+        NotificationType.success,
+        'Tag "$newTagName" wurde erfolgreich erstellt',
+      );
+
+      // Refresh the book tags
+      await di<BookManager>().fetchBookTags();
+      setState(() {
+        bookTagSelection.clear();
+        for (var tag in di<BookManager>().bookTags.value) {
+          bookTagSelection[tag] = false;
+        }
+      });
+    }
+  }
+
+  void openTagManagement(BuildContext context) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const BookTagManagement()),
+    );
+
+    // Refresh the book tags after returning from tag management
+    if (result == true || result == null) {
+      await di<BookManager>().fetchBookTags();
+      setState(() {
+        bookTagSelection.clear();
+        for (var tag in di<BookManager>().bookTags.value) {
+          bookTagSelection[tag] = false;
+        }
+      });
+    }
+  }
+
+  Future<void> submitBook() async {
     if (!validateRequestDataPayload()) {
       return;
     }
 
-    if (widget.isEdit) {
-      // Update the book
-      di<BookManager>().updateBookProperty(
-        isbn: widget.isbn,
-        libraryId: widget.libraryId!,
-        title: bookTitleTextFieldController.text,
-        description: bookDescriptionTextFieldController.text,
-        readingLevel: readingLevel,
-        author: authorTextFieldController.text,
-      );
-    } else {
-      // Create a new book
-      di<BookManager>().postLibraryBook(
+    if (!widget.isEdit) {
+      await di<BookManager>().postLibraryBook(
         isbn: widget.isbn,
         libraryId: bookIdTextFieldController.text,
         location: lastLocationValue,
       );
     }
+    // Update the book
+    // di<BookManager>().updateLibraryBookProperty(
+    //   isbn: widget.isbn,
+    //   libraryId: widget.libraryId!,
+    //   title: bookTitleTextFieldController.text,
+    //   description: bookDescriptionTextFieldController.text,
+    //   readingLevel: readingLevel,
+    //   author: authorTextFieldController.text,
+    // );
+    if (bookTags.isNotEmpty) {
+      await di<BookManager>().updateBookTags(widget.isbn, bookTags);
+    }
+
     Navigator.pop(context);
   }
 
   bool validateRequestDataPayload() {
     if (bookIdTextFieldController.text.isEmpty) {
-      di<NotificationService>().showSnackBar(NotificationType.error,
-          'Bitte scannen Sie die Bücherei-Id oder tippen Sie sie ein!');
+      di<NotificationService>().showSnackBar(
+        NotificationType.error,
+        'Bitte scannen Sie die Bücherei-Id oder tippen Sie sie ein!',
+      );
 
       return false;
     }
     if (bookTitleTextFieldController.text.isEmpty) {
       di<NotificationService>().showSnackBar(
-          NotificationType.error, 'Bitte geben Sie den Buchtitel ein!');
+        NotificationType.error,
+        'Bitte geben Sie den Buchtitel ein!',
+      );
 
       return false;
     }
     if (lastLocationValue == 'Bitte auswählen') {
       di<NotificationService>().showSnackBar(
-          NotificationType.error, 'Bitte wählen Sie den Ablageort aus!');
+        NotificationType.error,
+        'Bitte wählen Sie den Ablageort aus!',
+      );
 
       return false;
     }

@@ -17,6 +17,7 @@ class BookSearchResultsPage extends WatchingWidget {
   final LibraryBookLocation? location;
   final String? readingLevel;
   final BorrowedStatus? borrowStatus;
+  final List<BookTag> selectedTags;
 
   const BookSearchResultsPage({
     super.key,
@@ -26,6 +27,7 @@ class BookSearchResultsPage extends WatchingWidget {
     this.location,
     this.readingLevel,
     this.borrowStatus,
+    this.selectedTags = const [],
   });
 
   @override
@@ -49,6 +51,7 @@ class BookSearchResultsPage extends WatchingWidget {
                   : borrowStatus == BorrowedStatus.borrowed
                   ? false
                   : null,
+          tags: selectedTags.isNotEmpty ? selectedTags : null,
         );
       }
     });

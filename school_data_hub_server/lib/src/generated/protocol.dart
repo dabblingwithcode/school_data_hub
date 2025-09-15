@@ -5364,9 +5364,9 @@ class Protocol extends _i1.SerializationManagerServer {
           ? (data as List).map((e) => deserialize<_i15.LibraryBook>(e)).toList()
           : null) as T;
     }
-    if (t == _i1.getType<List<_i14.BookTagging>?>()) {
+    if (t == _i1.getType<List<_i13.BookTag>?>()) {
       return (data != null
-          ? (data as List).map((e) => deserialize<_i14.BookTagging>(e)).toList()
+          ? (data as List).map((e) => deserialize<_i13.BookTag>(e)).toList()
           : null) as T;
     }
     if (t == _i1.getType<List<_i78.HubDocument>?>()) {
@@ -5837,6 +5837,11 @@ class Protocol extends _i1.SerializationManagerServer {
     }
     if (t == List<_i88.Book>) {
       return (data as List).map((e) => deserialize<_i88.Book>(e)).toList() as T;
+    }
+    if (t == _i1.getType<List<_i87.BookTag>?>()) {
+      return (data != null
+          ? (data as List).map((e) => deserialize<_i87.BookTag>(e)).toList()
+          : null) as T;
     }
     if (t == List<_i89.LibraryBookLocation>) {
       return (data as List)

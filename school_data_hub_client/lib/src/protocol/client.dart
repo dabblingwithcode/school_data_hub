@@ -490,22 +490,15 @@ class EndpointBooks extends _i1.EndpointRef {
         {'isbn': isbn},
       );
 
-  _i2.Future<_i18.Book> updateBook(_i18.Book book) =>
-      caller.callServerEndpoint<_i18.Book>(
-        'books',
-        'updateBook',
-        {'book': book},
-      );
-
   _i2.Future<_i18.Book> updateBookTags(
-    _i18.Book book,
-    List<_i17.BookTag> tags,
-  ) =>
+    int isbn, {
+    List<_i17.BookTag>? tags,
+  }) =>
       caller.callServerEndpoint<_i18.Book>(
         'books',
         'updateBookTags',
         {
-          'book': book,
+          'isbn': isbn,
           'tags': tags,
         },
       );
@@ -607,7 +600,7 @@ class EndpointLibraryBooks extends _i1.EndpointRef {
         {'libraryBookQuery': libraryBookQuery},
       );
 
-  _i2.Future<_i20.LibraryBook> updateLibraryBook(
+  _i2.Future<_i20.LibraryBook> updateLibraryBookAndRelatedBook(
     int isbn,
     String libraryId,
     bool? available,
@@ -616,10 +609,11 @@ class EndpointLibraryBooks extends _i1.EndpointRef {
     String? author,
     String? description,
     String? readingLevel,
+    List<_i17.BookTag>? tags,
   ) =>
       caller.callServerEndpoint<_i20.LibraryBook>(
         'libraryBooks',
-        'updateLibraryBook',
+        'updateLibraryBookAndRelatedBook',
         {
           'isbn': isbn,
           'libraryId': libraryId,
@@ -629,6 +623,7 @@ class EndpointLibraryBooks extends _i1.EndpointRef {
           'author': author,
           'description': description,
           'readingLevel': readingLevel,
+          'tags': tags,
         },
       );
 

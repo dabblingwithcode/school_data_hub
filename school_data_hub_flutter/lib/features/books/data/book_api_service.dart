@@ -8,9 +8,7 @@ class BookApiService {
   // - BOOK TAGS - //
 
   Future<BookTag?> postBookTag(String name) async {
-    final bookTag = BookTag(
-      name: name,
-    );
+    final bookTag = BookTag(name: name);
 
     final bookTagInServer = await ClientHelper.apiCall(
       call: () => _client.bookTags.postBookTag(bookTag),
@@ -29,6 +27,14 @@ class BookApiService {
     return bookTags;
   }
 
+  Future<BookTag?> updateBookTag(BookTag bookTag) async {
+    final updatedBookTag = await ClientHelper.apiCall(
+      call: () => _client.bookTags.updateBookTag(bookTag),
+      errorMessage: 'Fehler beim Aktualisieren des Buchtags',
+    );
+    return updatedBookTag;
+  }
+
   Future<bool?> deleteBookTag(BookTag bookTag) async {
     final success = await ClientHelper.apiCall(
       call: () => _client.bookTags.deleteBookTag(bookTag),
@@ -40,10 +46,11 @@ class BookApiService {
   // - BOOK LOCATIONS - //
 
   Future<LibraryBookLocation?> postBookLocation(
-      LibraryBookLocation location) async {
+    LibraryBookLocation location,
+  ) async {
     final bookLocationInServer = await ClientHelper.apiCall(
-      call: () =>
-          _client.libraryBookLocations.postLibraryBookLocation(location),
+      call:
+          () => _client.libraryBookLocations.postLibraryBookLocation(location),
       errorMessage: 'Fehler beim Erstellen des Buchstandorts',
     );
     return bookLocationInServer;
@@ -59,8 +66,9 @@ class BookApiService {
 
   Future<bool?> deleteBookLocation(LibraryBookLocation location) async {
     final success = await ClientHelper.apiCall(
-      call: () =>
-          _client.libraryBookLocations.deleteLibraryBookLocation(location),
+      call:
+          () =>
+              _client.libraryBookLocations.deleteLibraryBookLocation(location),
       errorMessage: 'Fehler beim Löschen des Buchstandorts',
     );
     return success;
@@ -74,6 +82,14 @@ class BookApiService {
       errorMessage: 'Fehler beim Laden des Buches',
     );
     return book;
+  }
+
+  Future<Book?> updateBookTags(int isbn, List<BookTag> tags) async {
+    final updatedBook = await ClientHelper.apiCall(
+      call: () => _client.books.updateBookTags(isbn, tags: tags),
+      errorMessage: 'Fehler beim Aktualisieren der Buchtags',
+    );
+    return updatedBook;
   }
 
   // - LIBRARY BOOKS - //
@@ -100,17 +116,13 @@ class BookApiService {
     required LibraryBookLocation location,
   }) async {
     final returnedLibraryBook = await ClientHelper.apiCall(
-      call: () => _client.libraryBooks.postLibraryBook(
-        isbn,
-        bookId,
-        location,
-      ),
+      call: () => _client.libraryBooks.postLibraryBook(isbn, bookId, location),
       errorMessage: 'Fehler beim Erstellen des Buches',
     );
     return returnedLibraryBook;
   }
 
-  Future<LibraryBook?> updateLibraryBookOrBook({
+  Future<LibraryBook?> updateLibraryBookAndRelatedBook({
     required int isbn,
     required String libraryId,
     bool? available,
@@ -119,18 +131,21 @@ class BookApiService {
     String? author,
     String? description,
     String? readingLevel,
+    List<BookTag>? tags,
   }) async {
     final updatedLibraryBook = await ClientHelper.apiCall(
-      call: () => _client.libraryBooks.updateLibraryBook(
-        isbn,
-        libraryId,
-        available,
-        location,
-        title,
-        author,
-        description,
-        readingLevel,
-      ),
+      call:
+          () => _client.libraryBooks.updateLibraryBookAndRelatedBook(
+            isbn,
+            libraryId,
+            available,
+            location,
+            title,
+            author,
+            description,
+            readingLevel,
+            tags,
+          ),
       errorMessage: 'Fehler beim Aktualisieren des Buches',
     );
     return updatedLibraryBook;
@@ -228,6 +243,7 @@ class BookApiService {
     String? author,
     String? keywords,
     LibraryBookLocation? location,
+    List<BookTag>? tags,
     String? readingLevel,
     bool? available,
     required int page,
@@ -238,6 +254,7 @@ class BookApiService {
       author: author,
       keywords: keywords,
       location: location,
+      tags: tags,
       readingLevel: readingLevel,
       borrowStatus: available,
       page: page,

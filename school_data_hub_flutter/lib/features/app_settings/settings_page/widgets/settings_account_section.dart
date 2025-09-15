@@ -50,19 +50,19 @@ class SettingsAccountSection extends AbstractSettingsSection with WatchItMixin {
           leading: const Icon(Icons.build_rounded),
           title: Text('Ist Tester: ${isTester ? "Ja" : "Nein"}'),
         ),
-        if (isTester)
-          SettingsTile.navigation(
-            onPressed: (context) {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (ctx) => const UserChangePasswordPage(),
-                ),
-              );
-            },
-            leading: const Icon(Icons.password_rounded),
-            title: const Text('Passwort ändern'),
-            trailing: null,
-          ),
+
+        SettingsTile.navigation(
+          onPressed: (context) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (ctx) => const UserChangePasswordPage(),
+              ),
+            );
+          },
+          leading: const Icon(Icons.password_rounded),
+          title: const Text('Passwort ändern'),
+          trailing: null,
+        ),
 
         SettingsTile.navigation(
           leading: GestureDetector(

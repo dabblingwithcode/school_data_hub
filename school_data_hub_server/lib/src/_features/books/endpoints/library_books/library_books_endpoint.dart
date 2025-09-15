@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/books/endpoints/books/book_tagging_helper.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/schemas/pupil_schemas.dart';
 import 'package:serverpod/serverpod.dart';
@@ -135,8 +136,8 @@ class LibraryBooksEndpoint extends Endpoint {
     if (libraryBookQuery.tags != null) {
       final tagIds = libraryBookQuery.tags!.map((tag) => tag.id!).toSet();
       query = (query == null)
-          ? t.book.tags.any((tag) => tag.id.inSet(tagIds))
-          : (query & t.book.tags.any((tag) => tag.id.inSet(tagIds)));
+          ? t.book.tags.any((tag) => tag.bookTagId.inSet(tagIds))
+          : (query & t.book.tags.any((tag) => tag.bookTagId.inSet(tagIds)));
     }
     // query borrow status
     if (libraryBookQuery.borrowStatus != null) {
@@ -156,7 +157,7 @@ class LibraryBooksEndpoint extends Endpoint {
   }
 
   //-update
-  Future<LibraryBook> updateLibraryBook(
+  Future<LibraryBook> updateLibraryBookAndRelatedBook(
     Session session,
     int isbn,
     String libraryId,
@@ -166,43 +167,51 @@ class LibraryBooksEndpoint extends Endpoint {
     String? author,
     String? description,
     String? readingLevel,
+    List<BookTag>? tags,
   ) async {
     await session.db.transaction((transaction) async {
-      if (available != null || location != null) {
-        final libraryBook = await LibraryBook.db.findFirstRow(
-          session,
-          where: (t) => t.libraryId.equals(libraryId),
-          include: LibraryBookSchemas.allInclude,
-          transaction: transaction,
-        );
-        if (libraryBook == null) {
-          throw Exception('Library book with id $libraryId does not exist.');
-        }
-        if (available != null) {
-          libraryBook.available = available;
-        }
-        if (location != null) {
-          final libraryBookLocation = await LibraryBookLocation.db.findFirstRow(
-              session,
-              where: (t) => t.location.equals(location.location),
-              transaction: transaction);
-          if (libraryBookLocation == null) {
-            throw Exception(
-                'Library book location with id ${location.id} does not exist.');
-          }
-          libraryBook.location = libraryBookLocation;
-          libraryBook.locationId = libraryBookLocation.id!;
-          await LibraryBook.db.attachRow.location(
-              session, libraryBook, libraryBookLocation,
-              transaction: transaction);
-        }
-        await LibraryBook.db.updateRow(session, libraryBook);
+      final libraryBook = await LibraryBook.db.findFirstRow(
+        session,
+        where: (t) => t.libraryId.equals(libraryId),
+        include: LibraryBookSchemas.allInclude,
+        transaction: transaction,
+      );
+      if (libraryBook == null) {
+        throw Exception('Library book with id $libraryId does not exist.');
       }
+      // We have the library book
+      // update the available status if needed
+      if (available != null) {
+        libraryBook.available = available;
+      }
+
+      // update the location if needed
+      if (location != null) {
+        final libraryBookLocation = await LibraryBookLocation.db.findFirstRow(
+            session,
+            where: (t) => t.location.equals(location.location),
+            transaction: transaction);
+        if (libraryBookLocation == null) {
+          throw Exception(
+              'Library book location with id ${location.id} does not exist.');
+        }
+        libraryBook.locationId = libraryBookLocation.id!;
+        libraryBook.location = libraryBookLocation;
+
+        await LibraryBook.db.attachRow.location(
+            session, libraryBook, libraryBookLocation,
+            transaction: transaction);
+      }
+
+      await LibraryBook.db
+          .updateRow(session, libraryBook, transaction: transaction);
+
       // check if the book object needs to be updated
       if (title != null ||
           author != null ||
           description != null ||
-          readingLevel != null) {
+          readingLevel != null ||
+          tags != null) {
         final book = await Book.db.findFirstRow(
           session,
           where: (t) => t.isbn.equals(isbn),
@@ -223,44 +232,14 @@ class LibraryBooksEndpoint extends Endpoint {
         if (readingLevel != null) {
           book.readingLevel = readingLevel;
         }
-
+        if (tags != null) {
+          final bookWithTags = await BookTaggingHelper.updateBookWithTags(
+              session, book, tags,
+              transaction: transaction);
+          book.tags = bookWithTags.tags;
+        }
         await Book.db.updateRow(session, book, transaction: transaction);
       }
-
-      // check if the library book needs to be updated
-
-      final libraryBook = await LibraryBook.db.findFirstRow(
-        session,
-        where: (t) => t.libraryId.equals(libraryId),
-        include: LibraryBookSchemas.allInclude,
-        transaction: transaction,
-      );
-      if (libraryBook == null) {
-        throw Exception('Library book with id $libraryId does not exist.');
-      }
-      libraryBook.available = available ?? libraryBook.available;
-
-      // check if the location needs to be updated
-      if (location != null) {
-        final libraryBookLocation = await LibraryBookLocation.db.findFirstRow(
-            session,
-            where: (t) => t.location.equals(location.location),
-            transaction: transaction);
-        if (libraryBookLocation == null) {
-          throw Exception(
-              'Library book location with id ${location.id} does not exist.');
-        }
-
-        await LibraryBook.db.attachRow.location(
-            session, libraryBook, libraryBookLocation,
-            transaction: transaction);
-      }
-
-      if (available != null) {
-        libraryBook.available = available;
-      }
-
-      await LibraryBook.db.updateRow(session, libraryBook);
 
       return libraryBook;
     });

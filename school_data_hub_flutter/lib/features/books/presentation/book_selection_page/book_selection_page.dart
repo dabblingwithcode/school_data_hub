@@ -6,6 +6,7 @@ import 'package:isbn/isbn.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_search_form/book_search_form_page.dart';
+import 'package:school_data_hub_flutter/features/books/presentation/book_tag_management_page/book_tag_management_controller.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -43,9 +44,11 @@ class BookSelectionPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildButton(context, "WIP", () {
+              _buildButton(context, "Schlagwörter verwalten", () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (ctx) => const Placeholder()),
+                  MaterialPageRoute(
+                    builder: (ctx) => const BookTagManagement(),
+                  ),
                 );
               }),
               const SizedBox(height: 20),

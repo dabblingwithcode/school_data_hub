@@ -202,6 +202,19 @@ class BookManager {
     _bookTags.value = [..._bookTags.value, responseTag];
   }
 
+  Future<void> updateBookTag(BookTag tag) async {
+    final BookTag? updatedTag = await _bookApiService.updateBookTag(tag);
+    if (updatedTag == null) {
+      return;
+    }
+    final List<BookTag> updatedTags = _bookTags.value.toList();
+    final index = updatedTags.indexWhere((t) => t.id == tag.id);
+    if (index != -1) {
+      updatedTags[index] = updatedTag;
+      _bookTags.value = updatedTags;
+    }
+  }
+
   Future<void> deleteBookTag(BookTag tag) async {
     final success = await _bookApiService.deleteBookTag(tag);
     if (success == null) {
@@ -280,26 +293,30 @@ class BookManager {
 
     _notificationService.showSnackBar(
       NotificationType.success,
-      'Arbeitsheft erfolgreich erstellt',
+      'Buch erfolgreich zur Bibliothek hinzugefügt',
     );
   }
 
-  Future<void> updateBookProperty({
+  Future<void> updateLibraryBookProperty({
     required int isbn,
     required String libraryId,
     String? title,
     String? author,
     String? description,
     String? readingLevel,
+    LibraryBookLocation? location,
+    List<BookTag>? tags,
   }) async {
     final LibraryBook? updatedbook = await _bookApiService
-        .updateLibraryBookOrBook(
+        .updateLibraryBookAndRelatedBook(
           isbn: isbn,
           libraryId: libraryId,
           title: title,
           author: author,
           description: description,
           readingLevel: readingLevel,
+          location: location,
+          tags: tags,
         );
     if (updatedbook == null) {
       return;
@@ -322,6 +339,27 @@ class BookManager {
     _removeLibraryBookProxyFromCollection(libraryBookProxy);
   }
 
+  //- BOOKS
+
+  Future<void> updateBookTags(int isbn, List<BookTag> tags) async {
+    final Book? updatedBook = await _bookApiService.updateBookTags(isbn, tags);
+    if (updatedBook == null) {
+      return;
+    }
+    List<LibraryBook> updatedLibraryBooks = [];
+    for (final libraryBookProxy in _libraryBookProxies.value) {
+      if (libraryBookProxy.isbn == isbn) {
+        final taggedLibraryBook = libraryBookProxy.librarybook.copyWith(
+          book: updatedBook,
+        );
+        updatedLibraryBooks.add(taggedLibraryBook);
+      }
+    }
+    for (final updatedLibraryBook in updatedLibraryBooks) {
+      _updateLibraryBookProxyInCollections(updatedLibraryBook);
+    }
+  }
+
   Future<void> searchBooks({
     String? title,
     String? author,
@@ -329,6 +367,7 @@ class BookManager {
     LibraryBookLocation? location,
     String? readingLevel,
     bool? available,
+    List<BookTag>? tags,
   }) async {
     _currentPage = 1;
     _isLoadingMore = false;
@@ -341,6 +380,7 @@ class BookManager {
         location: location ?? null,
         readingLevel: readingLevel?.isNotEmpty == true ? readingLevel : null,
         available: available ?? null,
+        tags: tags,
         page: _currentPage,
         perPage: _perPage,
       );
@@ -380,6 +420,7 @@ class BookManager {
     LibraryBookLocation? location,
     String? readingLevel,
     bool? available,
+    List<BookTag>? tags,
   }) async {
     if (_isLoadingMore) return;
     if (!_hasMorePages) return;
@@ -395,6 +436,7 @@ class BookManager {
         location: location ?? null,
         readingLevel: readingLevel?.isNotEmpty == true ? readingLevel : null,
         available: available ?? null,
+        tags: tags,
         page: _currentPage,
         perPage: _perPage,
       );

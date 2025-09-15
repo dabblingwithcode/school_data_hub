@@ -76,6 +76,7 @@ dependencies:
   cristalyse: ^1.2.3
   shorebird_code_push: ^2.0.4
   flex_color_picker: ^3.7.1
+  msix: ^3.16.12
 
 
 dev_dependencies:
@@ -107,8 +108,9 @@ dependency_overrides:
 msix_config:
   display_name: Schuldaten Hub
   publisher_display_name: Medien-Sandkasten
+  build_windows: false
   identity_name: de.medien-sandkasten.schuldaten-hub
-  msix_version: 0.4.53.1
+  msix_version: 0.5.1.1
   app_installer: #<-- app installer configuration
     publish_folder_path: V:\
   logo_path: V:\schuldaten_hub_logo.png

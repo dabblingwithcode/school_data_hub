@@ -18,6 +18,10 @@ class LibraryBookProxy with ChangeNotifier {
 
   // librarybook properties
 
+  LibraryBook get librarybook => _librarybook;
+
+  Book get book => _librarybook.book!;
+
   String get libraryId => _librarybook.libraryId;
 
   int get id => _librarybook.id!;

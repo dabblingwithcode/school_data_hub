@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_list_page/widgets/library_book_card.dart';
+import 'package:school_data_hub_flutter/features/books/presentation/edit_book_page/edit_book_controller.dart';
 import 'package:watch_it/watch_it.dart';
 
 class SearchResultBookCard extends WatchingWidget {
@@ -42,6 +42,15 @@ class SearchResultBookCard extends WatchingWidget {
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => EditBook(libraryBook: bookProxy),
+                        ),
+                      );
+                    },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -119,22 +128,38 @@ class SearchResultBookCard extends WatchingWidget {
                                 ),
                               ],
                             ),
+                            const Gap(5),
                             Wrap(
                               spacing: 2,
                               children: [
                                 const Text('Tags: '),
-                                for (final tag in bookProxy.bookTags) ...[
-                                  const Gap(5),
-                                  Chip(
-                                    padding: const EdgeInsets.all(2),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
+                                if (bookProxy.bookTags.isEmpty)
+                                  const Text(
+                                    'Keine Tags',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                      fontStyle: FontStyle.italic,
                                     ),
-                                    labelStyle: AppStyles.filterItemsTextStyle,
-                                    label: Text(tag.name),
-                                    backgroundColor: AppColors.backgroundColor,
-                                  ),
-                                ],
+                                  )
+                                else
+                                  for (final tag in bookProxy.bookTags) ...[
+                                    const Gap(5),
+                                    Chip(
+                                      padding: const EdgeInsets.all(4),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      labelStyle: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white,
+                                      ),
+                                      label: Text(tag.name),
+                                      backgroundColor:
+                                          AppColors.interactiveColor,
+                                    ),
+                                  ],
                               ],
                             ),
                             const Gap(10),
@@ -164,7 +189,7 @@ class SearchResultBookCard extends WatchingWidget {
                           initialValue: bookProxy.description,
                           parentContext: context,
                         );
-                        di<BookManager>().updateBookProperty(
+                        di<BookManager>().updateLibraryBookProperty(
                           isbn: bookProxy.isbn,
                           libraryId: bookProxy.libraryId,
                           description: description,

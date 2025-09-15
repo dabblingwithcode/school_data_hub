@@ -1,5 +1,6 @@
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
+import 'package:school_data_hub_server/src/utils/mailer.dart';
 import 'package:serverpod/serverpod.dart';
 
 final _log = Logger('SchooldayEventEndpoint');
@@ -45,6 +46,28 @@ class SchooldayEventEndpoint extends Endpoint {
         processedDocument: HubDocument.include(),
       ),
     );
+    // TODO: Need to implement the mail secrets in the github actions secrets
+    try {
+      final pupil = await PupilData.db.findFirstRow(session,
+          where: (t) => t.id.equals(eventWithSchoolday!.pupilId));
+
+      MailerService.instance.initializeFromSession(session);
+      final success = await MailerService.instance.sendNotification(
+        recipient: session.passwords['schoolEmail'] ?? '',
+        subject: 'Neues Schulereignis',
+        message: 'Es wurde ein neues Schulereignis erstellt.\n\n'
+            'Es ist das Schulereignis Nummer ${pupil?.schooldayEvents?.length}',
+      );
+
+      if (success) {
+        _log.info('Startup notification email sent successfully');
+      } else {
+        _log.severe('Failed to send startup notification email');
+      }
+    } catch (e) {
+      _log.severe('Error sending startup notification email: $e');
+    }
+
     return eventWithSchoolday!;
   }
 
