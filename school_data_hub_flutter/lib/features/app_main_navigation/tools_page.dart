@@ -12,7 +12,6 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_image_picker.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identity_stream_page/pupil_identity_stream_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_page/timetable_page.dart';
 import 'package:watch_it/watch_it.dart';
@@ -162,24 +161,24 @@ class ToolsPage extends WatchingWidget {
 
                     const Gap(16),
 
-                    _buildToolButton(
-                      onPressed: () async {
-                        final bool? confirm = await confirmationDialog(
-                          context: context,
-                          title: 'Datenbank aus json importieren',
-                          message: 'Json importieren?',
-                        );
-                        if (confirm == true) {
-                          di<PupilManager>().importSupportLevelsFromJson();
-                        }
-                      },
-                      icon: Icons.file_upload,
-                      title: 'Daten aus JSON importieren',
-                      subtitle: 'Support-Levels und andere Daten importieren',
-                      color: Colors.orange[700]!,
-                    ),
+                    // _buildToolButton(
+                    //   onPressed: () async {
+                    //     final bool? confirm = await confirmationDialog(
+                    //       context: context,
+                    //       title: 'Datenbank aus json importieren',
+                    //       message: 'Json importieren?',
+                    //     );
+                    //     if (confirm == true) {
+                    //       di<PupilManager>().importSupportLevelsFromJson();
+                    //     }
+                    //   },
+                    //   icon: Icons.file_upload,
+                    //   title: 'Daten aus JSON importieren',
+                    //   subtitle: 'Support-Levels und andere Daten importieren',
+                    //   color: Colors.orange[700]!,
+                    // ),
 
-                    const Gap(16),
+                    // const Gap(16),
                   ],
 
                   // Desktop-only section

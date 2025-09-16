@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -283,7 +284,12 @@ class LearningSupportManager with ChangeNotifier {
                 (e) => SupportLevelLegacyDto(
                   pupilId: e['pupil_id'] as int,
                   level: int.parse(e['level'] as String),
-                  comment: e['comment'] as String? ?? '',
+                  comment:
+                      e['comment'] != ''
+                          ? customEncrypter.encryptString(
+                            e['comment'] as String,
+                          )
+                          : '',
                   createdAt: DateTime.parse(e['created_at'] as String),
                   createdBy: e['created_by'] as String? ?? 'ADM',
                 ),

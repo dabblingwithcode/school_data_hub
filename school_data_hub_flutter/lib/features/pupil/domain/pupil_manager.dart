@@ -379,66 +379,69 @@ class PupilManager extends ChangeNotifier {
 
   //- IMPORT FUNCTIONS
 
-  Future<void> importSupportLevelsFromJson() async {
-    final jsonFilePath = await FilePicker.platform
-        .pickFiles(type: FileType.custom, allowedExtensions: ['json'])
-        .then((result) => result?.files.single.path);
+  // Future<void> importSupportLevelsFromJson() async {
+  //   final jsonFilePath = await FilePicker.platform
+  //       .pickFiles(type: FileType.custom, allowedExtensions: ['json'])
+  //       .then((result) => result?.files.single.path);
 
-    int totalRecords = 0;
+  //   int totalRecords = 0;
 
-    int successCount = 0;
-    int notMatchedCount = 0;
+  //   int successCount = 0;
+  //   int notMatchedCount = 0;
 
-    _log.info('Starting support level import from: $jsonFilePath');
+  //   _log.info('Starting support level import from: $jsonFilePath');
 
-    // Read and parse JSON file
-    final file = File(jsonFilePath!);
-    if (!await file.exists()) {
-      throw Exception('File not found: $jsonFilePath');
-    }
+  //   // Read and parse JSON file
+  //   final file = File(jsonFilePath!);
+  //   if (!await file.exists()) {
+  //     throw Exception('File not found: $jsonFilePath');
+  //   }
 
-    final jsonString = await file.readAsString();
-    final List<dynamic> jsonData = json.decode(jsonString);
-    for (var entry in jsonData) {
-      totalRecords++;
-      final int internalId = entry['pupil_id'] as int;
-      final level = entry['level'] as String;
-      final String comment = entry['comment'] as String? ?? '';
-      final DateTime createdAt = DateTime.parse(entry['created_at'] as String);
-      final String createdBy = entry['created_by'] as String;
+  //   final jsonString = await file.readAsString();
+  //   final List<dynamic> jsonData = json.decode(jsonString);
+  //   for (var entry in jsonData) {
+  //     totalRecords++;
+  //     final int internalId = entry['pupil_id'] as int;
+  //     final level = entry['level'] as String;
+  //     final String comment =
+  //         entry['comment'] != ''
+  //             ? customEncrypter.encryptString(entry['comment'] as String)
+  //             : '';
+  //     final DateTime createdAt = DateTime.parse(entry['created_at'] as String);
+  //     final String createdBy = entry['created_by'] as String;
 
-      final pupil = getPupilsFromInternalIds([internalId]).firstOrNull;
-      if (pupil == null) {
-        notMatchedCount++;
-        _log.warning(
-          'No pupil found for internal ID $internalId - skipping...',
-        );
-        continue;
-      }
-      await PupilMutator().updatePupilSupportLevel(
-        pupilId: pupil.pupilId,
-        level: int.parse(level),
-        comment: comment.isEmpty ? 'Kein Eintrag gefunden' : comment,
-        createdAt: createdAt,
-        createdBy: createdBy,
-      );
-      _log.warning('Imported support level for pupil ID $internalId');
-      // final result = await _updateSupportLevelWithJsonRecord(internalId, entry);
+  //     final pupil = getPupilsFromInternalIds([internalId]).firstOrNull;
+  //     if (pupil == null) {
+  //       notMatchedCount++;
+  //       _log.warning(
+  //         'No pupil found for internal ID $internalId - skipping...',
+  //       );
+  //       continue;
+  //     }
+  //     await PupilMutator().updatePupilSupportLevel(
+  //       pupilId: pupil.pupilId,
+  //       level: int.parse(level),
+  //       comment: comment.isEmpty ? 'Kein Eintrag gefunden' : comment,
+  //       createdAt: createdAt,
+  //       createdBy: createdBy,
+  //     );
+  //     _log.warning('Imported support level for pupil ID $internalId');
+  //     // final result = await _updateSupportLevelWithJsonRecord(internalId, entry);
 
-      // if (result == true) {
-      //   successCount++;
-      // } else if (result == false) {
-      //   notMatchedCount++;
-      // } else {
-      //   // result is null, indicating an error during import
-      //   _log.warning('Failed to import support level for pupil ID $internalId');
-      // }
-    }
+  //     // if (result == true) {
+  //     //   successCount++;
+  //     // } else if (result == false) {
+  //     //   notMatchedCount++;
+  //     // } else {
+  //     //   // result is null, indicating an error during import
+  //     //   _log.warning('Failed to import support level for pupil ID $internalId');
+  //     // }
+  //   }
 
-    _log.info(
-      'Import completed. Total records: $totalRecords, Successfully updated: $successCount, Not matched: $notMatchedCount',
-    );
-  }
+  //   _log.info(
+  //     'Import completed. Total records: $totalRecords, Successfully updated: $successCount, Not matched: $notMatchedCount',
+  //   );
+  // }
 
   /// Import pupil data from a JSON file
   /// Maps contact and parents_contact fields to existing pupils

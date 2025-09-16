@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
@@ -146,7 +147,16 @@ class _SupportLevelHistoryExpansionTileState
                                 Row(
                                   children: [
                                     Text(
-                                      pupil.supportLevelHistory![index].comment,
+                                      pupil
+                                                  .supportLevelHistory![index]
+                                                  .comment !=
+                                              ''
+                                          ? customEncrypter.decryptString(
+                                            pupil
+                                                .supportLevelHistory![index]
+                                                .comment,
+                                          )
+                                          : '',
                                       style: const TextStyle(fontSize: 14),
                                     ),
                                   ],
