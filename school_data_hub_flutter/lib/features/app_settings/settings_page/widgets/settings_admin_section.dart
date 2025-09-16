@@ -10,6 +10,7 @@ import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/utils/book_ids_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/set_matrix_environment_page/set_matrix_environment_controller.dart';
@@ -209,6 +210,9 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
               message:
                   'Wirklich alles löschen?\n\nAlle Informationen im Server werden gelöscht!',
             );
+            if (confirm == true) {
+              // TODO: Implement delete all functionality
+            }
           },
           leading: const Icon(Icons.logout),
           title: const Text('Alles löschen und ausloggen'),
@@ -232,6 +236,15 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
           },
           leading: const Icon(Icons.compare_arrows_rounded),
           title: const Text('Förderkategorien aus Datei importieren'),
+
+          //onPressed:
+        ),
+        SettingsTile.navigation(
+          onPressed: (context) async {
+            await di<LearningSupportManager>().importSupportLevelsFromFile();
+          },
+          leading: const Icon(Icons.compare_arrows_rounded),
+          title: const Text('Förderstufen aus Datei importieren'),
 
           //onPressed:
         ),

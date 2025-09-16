@@ -189,7 +189,7 @@ class NewSchooldayEventPage extends WatchingWidget {
                   isDense: true,
                   underline: Container(),
                   style: AppStyles.subtitle,
-                  value: watch(schooldayEventTypeDropdown).value,
+                  value: schooldayEventType,
                   onChanged: (SchooldayEventType? newValue) {
                     schooldayEventTypeDropdown.value = newValue!;
                   },

@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
+import 'package:school_data_hub_flutter/common/services/pdf_generation_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_picker.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/attendance_filters.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/missed_classes_badges_info_dialog.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _schoolCalendarManager = di<SchoolCalendarManager>();
-
 final _filterStateManager = di<FiltersStateManager>();
 
 class AttendanceListPageBottomNavBar extends WatchingWidget {
@@ -22,6 +23,7 @@ class AttendanceListPageBottomNavBar extends WatchingWidget {
   Widget build(BuildContext context) {
     DateTime thisDate = watchValue((SchoolCalendarManager x) => x.thisDate);
     bool filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);
+    final pupils = watchValue((PupilsFilter x) => x.filteredPupils);
     return BottomNavBarLayout(
       bottomNavBar: BottomAppBar(
         height: 60,
@@ -35,10 +37,7 @@ class AttendanceListPageBottomNavBar extends WatchingWidget {
               const Spacer(),
               IconButton(
                 tooltip: 'zurück',
-                icon: const Icon(
-                  Icons.arrow_back,
-                  size: 30,
-                ),
+                icon: const Icon(Icons.arrow_back, size: 30),
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -49,14 +48,18 @@ class AttendanceListPageBottomNavBar extends WatchingWidget {
                 icon: const Icon(Icons.info, size: 30),
                 onPressed: () async {
                   missedSchooldaysBadgesInformationDialog(
-                      context: context, isAttendancePage: true);
+                    context: context,
+                    isAttendancePage: true,
+                  );
                 },
               ),
               const Gap(30),
               InkWell(
                 onTap: () async {
-                  final DateTime? newDate =
-                      await selectSchooldayDate(context, thisDate);
+                  final DateTime? newDate = await selectSchooldayDate(
+                    context,
+                    thisDate,
+                  );
                   if (newDate != null) {
                     _schoolCalendarManager.setThisDate(newDate);
                   }
@@ -70,11 +73,14 @@ class AttendanceListPageBottomNavBar extends WatchingWidget {
               ),
               const Gap(30),
               InkWell(
-                onTap: () =>
-                    showGenericFilterBottomSheet(context: context, filterList: [
-                  const CommonPupilFiltersWidget(),
-                  const AttendanceFilters(),
-                ]),
+                onTap:
+                    () => showGenericFilterBottomSheet(
+                      context: context,
+                      filterList: [
+                        const CommonPupilFiltersWidget(),
+                        const AttendanceFilters(),
+                      ],
+                    ),
                 onLongPress: () => _filterStateManager.resetFilters(),
                 child: Icon(
                   Icons.filter_list,
@@ -82,7 +88,39 @@ class AttendanceListPageBottomNavBar extends WatchingWidget {
                   size: 30,
                 ),
               ),
-              const Gap(15)
+              const Gap(30),
+              IconButton(
+                tooltip: 'PDF drucken',
+                icon: const Icon(Icons.print_rounded, size: 30),
+                onPressed: () async {
+                  try {
+                    final pdfFile =
+                        await AttendancePdfGenerator.generateAttendancePdf(
+                          date: thisDate,
+                          pupils: pupils,
+                        );
+                    if (context.mounted) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder:
+                              (context) =>
+                                  AttendancePdfViewPage(pdfFile: pdfFile),
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Fehler beim Erstellen der PDF: $e'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
+                },
+              ),
+              const Gap(15),
             ],
           ),
         ),

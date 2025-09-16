@@ -14,13 +14,15 @@ Widget contactedBadge(contacted) {
           shape: BoxShape.circle,
         ),
         child: const Center(
-          child: Text("K",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              )),
+          child: Text(
+            "K",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
         ),
       ),
     );
@@ -30,34 +32,34 @@ Widget contactedBadge(contacted) {
 }
 
 Widget contactedDayBadge(contacted) {
-  return (contacted == '1' || contacted == '2' || contacted == '3')
+  return (contacted != ContactedType.notSet)
       ? Padding(
-          padding: const EdgeInsets.all(1),
-          child: Container(
-            width: 25.0,
-            height: 25.0,
-            decoration: BoxDecoration(
-              color: contacted == '1'
-                  ? AppColors.contactedSuccessColor
-                  : contacted == '2'
-                      ? AppColors.contactedCalledBackColor
-                      : contacted == '3'
-                          ? AppColors.contactedFailedColor
-                          : AppColors.contactedFailedColor,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: contacted == '1'
-                  ? const Icon(Icons.local_phone_rounded)
-                  : contacted == '2'
-                      ? const Icon(
-                          Icons.phone_callback_rounded,
-                        )
-                      : const Icon(Icons.phone_disabled_rounded),
-            ),
+        padding: const EdgeInsets.all(1),
+        child: Container(
+          width: 25.0,
+          height: 25.0,
+          decoration: BoxDecoration(
+            color:
+                contacted == ContactedType.contacted
+                    ? AppColors.contactedSuccessColor
+                    : contacted == ContactedType.calledBack
+                    ? AppColors.contactedCalledBackColor
+                    : contacted == ContactedType.notReached
+                    ? AppColors.contactedFailedColor
+                    : AppColors.contactedFailedColor,
+            shape: BoxShape.circle,
           ),
-        )
-      : Container();
+          child: Center(
+            child:
+                contacted == ContactedType.contacted
+                    ? const Icon(Icons.local_phone_rounded)
+                    : contacted == ContactedType.calledBack
+                    ? const Icon(Icons.phone_callback_rounded)
+                    : const Icon(Icons.phone_disabled_rounded),
+          ),
+        ),
+      )
+      : const SizedBox.shrink();
 }
 
 Widget returnedBadge(returned) {
@@ -72,13 +74,15 @@ Widget returnedBadge(returned) {
           shape: BoxShape.circle,
         ),
         child: const Center(
-          child: Text("H",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              )),
+          child: Text(
+            "H",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
         ),
       ),
     );
@@ -99,13 +103,15 @@ Widget excusedBadge(excused) {
           shape: BoxShape.circle,
         ),
         child: const Center(
-          child: Text("U",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              )),
+          child: Text(
+            "U",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
         ),
       ),
     );
@@ -120,13 +126,15 @@ Widget excusedBadge(excused) {
           shape: BoxShape.circle,
         ),
         child: const Center(
-          child: Text("E",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              )),
+          child: Text(
+            "E",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
         ),
       ),
     );
@@ -145,13 +153,15 @@ Widget missedTypeBadge(missedtype) {
           shape: BoxShape.circle,
         ),
         child: const Center(
-          child: Text("F",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              )),
+          child: Text(
+            "F",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
         ),
       ),
     );
@@ -166,13 +176,15 @@ Widget missedTypeBadge(missedtype) {
           shape: BoxShape.circle,
         ),
         child: const Center(
-          child: Text("V",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              )),
+          child: Text(
+            "V",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
         ),
       ),
     );
@@ -187,13 +199,15 @@ Widget missedTypeBadge(missedtype) {
           shape: BoxShape.circle,
         ),
         child: const Center(
-          child: Text("A",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              )),
+          child: Text(
+            "A",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
         ),
       ),
     );
@@ -208,13 +222,15 @@ Widget missedTypeBadge(missedtype) {
           shape: BoxShape.circle,
         ),
         child: const Center(
-          child: Text("H",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              )),
+          child: Text(
+            "H",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
         ),
       ),
     );

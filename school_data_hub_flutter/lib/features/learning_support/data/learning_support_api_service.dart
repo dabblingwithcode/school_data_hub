@@ -151,6 +151,19 @@ class LearningSupportApiService {
   //   return pupil;
   // }
 
+  //- BULK IMPORT SUPPORT LEVELS ------------------------------------------
+
+  Future<bool> bulkImportSupportLevels(
+    List<SupportLevelLegacyDto> supportLevelData,
+  ) async {
+    final response = await ClientHelper.apiCall(
+      call: () => _client.pupil.bulkAddSupportLevels(supportLevelData),
+
+      errorMessage: 'Fehler beim Importieren der Förderstufen',
+    );
+    return response ?? false;
+  }
+
   //- NOT IMPLEMENTED ------------------------------------------------------
 
   // Future<SupportGoalCheck> postGoalCheck(int goalId) async {

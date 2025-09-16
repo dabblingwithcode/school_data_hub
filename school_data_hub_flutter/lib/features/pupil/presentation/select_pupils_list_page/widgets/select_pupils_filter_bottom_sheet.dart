@@ -10,8 +10,6 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_fil
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _pupilsFilter = di<PupilsFilter>();
-
 class SelectPupilsFilterBottomSheet extends WatchingWidget {
   const SelectPupilsFilterBottomSheet({super.key});
 
@@ -59,253 +57,248 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
 
     return Padding(
       padding: const EdgeInsets.only(left: 20.0, right: 20, top: 8),
-      child: Expanded(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  const Text('Filter', style: AppStyles.title),
-                  const Spacer(),
-                  IconButton.filled(
-                    iconSize: 35,
-                    color: Colors.amber,
-                    onPressed: () {
-                      _pupilsFilter.resetFilters();
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Row(
+              children: [
+                const Text('Filter', style: AppStyles.title),
+                const Spacer(),
+                IconButton.filled(
+                  iconSize: 35,
+                  color: Colors.amber,
+                  onPressed: () {
+                    di<PupilsFilter>().resetFilters();
 
-                      //Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.restart_alt_rounded),
-                  ),
-                ],
-              ),
-              const CommonPupilFiltersWidget(),
-              const Row(children: [Text('OGS', style: AppStyles.subtitle)]),
-              const Gap(5),
-              Wrap(
-                spacing: 5,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                alignment: WrapAlignment.center,
-                children: [
-                  ThemedFilterChip(
-                    label: 'OGS',
-                    selected: valueOgs,
-                    onSelected: (val) {
-                      if (val == true) {
-                        // in case ogs is selected, not ogs should be deselected
-
-                        _pupilFilterLocator.setPupilFilter(
-                          pupilFilterRecords: [
-                            (filter: PupilFilter.notOgs, value: false),
-                            (filter: PupilFilter.ogs, value: val),
-                          ],
-                        );
-                        return;
-                      }
+                    //Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.restart_alt_rounded),
+                ),
+              ],
+            ),
+            const CommonPupilFiltersWidget(),
+            const Row(children: [Text('OGS', style: AppStyles.subtitle)]),
+            const Gap(5),
+            Wrap(
+              spacing: 5,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              alignment: WrapAlignment.center,
+              children: [
+                ThemedFilterChip(
+                  label: 'OGS',
+                  selected: valueOgs,
+                  onSelected: (val) {
+                    if (val == true) {
+                      // in case ogs is selected, not ogs should be deselected
 
                       _pupilFilterLocator.setPupilFilter(
                         pupilFilterRecords: [
+                          (filter: PupilFilter.notOgs, value: false),
                           (filter: PupilFilter.ogs, value: val),
                         ],
                       );
-                    },
-                  ),
-                  ThemedFilterChip(
-                    label: 'nicht OGS',
-                    selected: valueNotOgs,
-                    onSelected: (val) {
-                      if (val == true) {
-                        // in case not ogs is selected, ogs should be deselected
-                        _pupilFilterLocator.setPupilFilter(
-                          pupilFilterRecords: [
-                            (filter: PupilFilter.ogs, value: false),
-                            (filter: PupilFilter.notOgs, value: val),
-                          ],
-                        );
-                        return;
-                      }
+                      return;
+                    }
+
+                    _pupilFilterLocator.setPupilFilter(
+                      pupilFilterRecords: [
+                        (filter: PupilFilter.ogs, value: val),
+                      ],
+                    );
+                  },
+                ),
+                ThemedFilterChip(
+                  label: 'nicht OGS',
+                  selected: valueNotOgs,
+                  onSelected: (val) {
+                    if (val == true) {
+                      // in case not ogs is selected, ogs should be deselected
                       _pupilFilterLocator.setPupilFilter(
                         pupilFilterRecords: [
+                          (filter: PupilFilter.ogs, value: false),
                           (filter: PupilFilter.notOgs, value: val),
                         ],
                       );
-                    },
-                  ),
-                ],
-              ),
-              const Row(
-                children: [Text('Förderebene', style: AppStyles.subtitle)],
-              ),
-              const Gap(5),
-              Wrap(
-                spacing: 5,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                alignment: WrapAlignment.center,
-                children: [
-                  ThemedFilterChip(
-                    label: 'Ebene 1',
-                    selected: valueSupportLevel1,
-                    onSelected: (val) {
-                      _learningSupportFilterManager.setSupportLevelFilter(
-                        supportLevelFilterRecords: [
-                          (filter: SupportLevelType.supportLevel1, value: val),
-                        ],
-                      );
-                    },
-                  ),
-                  ThemedFilterChip(
-                    label: 'Ebene 2',
-                    selected: valueSupportLevel2,
-                    onSelected: (val) {
-                      _learningSupportFilterManager.setSupportLevelFilter(
-                        supportLevelFilterRecords: [
-                          (filter: SupportLevelType.supportLevel2, value: val),
-                        ],
-                      );
-                    },
-                  ),
-                  ThemedFilterChip(
-                    label: 'Ebene 3',
-                    selected: valueSupportLevel3,
-                    onSelected: (val) {
-                      _learningSupportFilterManager.setSupportLevelFilter(
-                        supportLevelFilterRecords: [
-                          (filter: SupportLevelType.supportLevel3, value: val),
-                        ],
-                      );
-                    },
-                  ),
-                  ThemedFilterChip(
-                    label: 'Regenbogen',
-                    selected: valueSupportLevel4,
-                    onSelected: (val) {
-                      _learningSupportFilterManager.setSupportLevelFilter(
-                        supportLevelFilterRecords: [
-                          (filter: SupportLevelType.supportLevel4, value: val),
-                        ],
-                      );
-                    },
-                  ),
-                ],
-              ),
-              const Row(
-                children: [Text('Förderbereich', style: AppStyles.subtitle)],
-              ),
-              const Gap(5),
-              Wrap(
-                spacing: 5,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                alignment: WrapAlignment.center,
-                children: [
-                  ThemedFilterChip(
-                    label: 'Motorik',
-                    selected: valueSupportAreaMotorics,
-                    onSelected: (val) {
-                      _learningSupportFilterManager.setSupportAreaFilter(
-                        supportAreaFilterRecords: [
-                          (filter: SupportArea.motorics, value: val),
-                        ],
-                      );
-                    },
-                  ),
-                  ThemedFilterChip(
-                    label: 'ES',
-                    selected: valueSupportAreaEmotions,
-                    onSelected: (val) {
-                      _learningSupportFilterManager.setSupportAreaFilter(
-                        supportAreaFilterRecords: [
-                          (filter: SupportArea.emotions, value: val),
-                        ],
-                      );
-                    },
-                  ),
-                  ThemedFilterChip(
-                    label: 'Mathe',
-                    selected: valueSupportAreaMath,
-                    onSelected: (val) {
-                      _learningSupportFilterManager.setSupportAreaFilter(
-                        supportAreaFilterRecords: [
-                          (filter: SupportArea.math, value: val),
-                        ],
-                      );
-                    },
-                  ),
-                  ThemedFilterChip(
-                    label: 'Lernen',
-                    selected: valueSupportAreaLearning,
-                    onSelected: (val) {
-                      _learningSupportFilterManager.setSupportAreaFilter(
-                        supportAreaFilterRecords: [
-                          (filter: SupportArea.learning, value: val),
-                        ],
-                      );
-                    },
-                  ),
-                  ThemedFilterChip(
-                    label: 'Deutsch',
-                    selected: valueSupportAreaGerman,
-                    onSelected: (val) {
-                      _learningSupportFilterManager.setSupportAreaFilter(
-                        supportAreaFilterRecords: [
-                          (filter: SupportArea.german, value: val),
-                        ],
-                      );
-                    },
-                  ),
-                  ThemedFilterChip(
-                    label: 'Sprache',
-                    selected: valueSupportAreaLanguage,
-                    onSelected: (val) {
-                      _learningSupportFilterManager.setSupportAreaFilter(
-                        supportAreaFilterRecords: [
-                          (filter: SupportArea.language, value: val),
-                        ],
-                      );
-                    },
-                  ),
-                ],
-              ),
-              const Row(
-                children: [
-                  Text('Besondere Förderung', style: AppStyles.subtitle),
-                ],
-              ),
-              const Gap(5),
-              Wrap(
-                spacing: 5,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                alignment: WrapAlignment.center,
-                children: [
-                  ThemedFilterChip(
-                    label: 'Erstförderung',
-                    selected: valueMigrationSupport,
-                    onSelected: (val) {
-                      _learningSupportFilterManager.setSupportLevelFilter(
-                        supportLevelFilterRecords: [
-                          (
-                            filter: SupportLevelType.migrationSupport,
-                            value: val,
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                  ThemedFilterChip(
-                    label: 'AO-SF',
-                    selected: valueSpecialNeeds,
-                    onSelected: (val) {
-                      _learningSupportFilterManager.setSupportLevelFilter(
-                        supportLevelFilterRecords: [
-                          (filter: SupportLevelType.specialNeeds, value: val),
-                        ],
-                      );
-                    },
-                  ),
-                ],
-              ),
-              const Gap(20),
-            ],
-          ),
+                      return;
+                    }
+                    _pupilFilterLocator.setPupilFilter(
+                      pupilFilterRecords: [
+                        (filter: PupilFilter.notOgs, value: val),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
+            const Row(
+              children: [Text('Förderebene', style: AppStyles.subtitle)],
+            ),
+            const Gap(5),
+            Wrap(
+              spacing: 5,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              alignment: WrapAlignment.center,
+              children: [
+                ThemedFilterChip(
+                  label: 'Ebene 1',
+                  selected: valueSupportLevel1,
+                  onSelected: (val) {
+                    _learningSupportFilterManager.setSupportLevelFilter(
+                      supportLevelFilterRecords: [
+                        (filter: SupportLevelType.supportLevel1, value: val),
+                      ],
+                    );
+                  },
+                ),
+                ThemedFilterChip(
+                  label: 'Ebene 2',
+                  selected: valueSupportLevel2,
+                  onSelected: (val) {
+                    _learningSupportFilterManager.setSupportLevelFilter(
+                      supportLevelFilterRecords: [
+                        (filter: SupportLevelType.supportLevel2, value: val),
+                      ],
+                    );
+                  },
+                ),
+                ThemedFilterChip(
+                  label: 'Ebene 3',
+                  selected: valueSupportLevel3,
+                  onSelected: (val) {
+                    _learningSupportFilterManager.setSupportLevelFilter(
+                      supportLevelFilterRecords: [
+                        (filter: SupportLevelType.supportLevel3, value: val),
+                      ],
+                    );
+                  },
+                ),
+                ThemedFilterChip(
+                  label: 'Regenbogen',
+                  selected: valueSupportLevel4,
+                  onSelected: (val) {
+                    _learningSupportFilterManager.setSupportLevelFilter(
+                      supportLevelFilterRecords: [
+                        (filter: SupportLevelType.supportLevel4, value: val),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
+            const Row(
+              children: [Text('Förderbereich', style: AppStyles.subtitle)],
+            ),
+            const Gap(5),
+            Wrap(
+              spacing: 5,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              alignment: WrapAlignment.center,
+              children: [
+                ThemedFilterChip(
+                  label: 'Motorik',
+                  selected: valueSupportAreaMotorics,
+                  onSelected: (val) {
+                    _learningSupportFilterManager.setSupportAreaFilter(
+                      supportAreaFilterRecords: [
+                        (filter: SupportArea.motorics, value: val),
+                      ],
+                    );
+                  },
+                ),
+                ThemedFilterChip(
+                  label: 'ES',
+                  selected: valueSupportAreaEmotions,
+                  onSelected: (val) {
+                    _learningSupportFilterManager.setSupportAreaFilter(
+                      supportAreaFilterRecords: [
+                        (filter: SupportArea.emotions, value: val),
+                      ],
+                    );
+                  },
+                ),
+                ThemedFilterChip(
+                  label: 'Mathe',
+                  selected: valueSupportAreaMath,
+                  onSelected: (val) {
+                    _learningSupportFilterManager.setSupportAreaFilter(
+                      supportAreaFilterRecords: [
+                        (filter: SupportArea.math, value: val),
+                      ],
+                    );
+                  },
+                ),
+                ThemedFilterChip(
+                  label: 'Lernen',
+                  selected: valueSupportAreaLearning,
+                  onSelected: (val) {
+                    _learningSupportFilterManager.setSupportAreaFilter(
+                      supportAreaFilterRecords: [
+                        (filter: SupportArea.learning, value: val),
+                      ],
+                    );
+                  },
+                ),
+                ThemedFilterChip(
+                  label: 'Deutsch',
+                  selected: valueSupportAreaGerman,
+                  onSelected: (val) {
+                    _learningSupportFilterManager.setSupportAreaFilter(
+                      supportAreaFilterRecords: [
+                        (filter: SupportArea.german, value: val),
+                      ],
+                    );
+                  },
+                ),
+                ThemedFilterChip(
+                  label: 'Sprache',
+                  selected: valueSupportAreaLanguage,
+                  onSelected: (val) {
+                    _learningSupportFilterManager.setSupportAreaFilter(
+                      supportAreaFilterRecords: [
+                        (filter: SupportArea.language, value: val),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
+            const Row(
+              children: [
+                Text('Besondere Förderung', style: AppStyles.subtitle),
+              ],
+            ),
+            const Gap(5),
+            Wrap(
+              spacing: 5,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              alignment: WrapAlignment.center,
+              children: [
+                ThemedFilterChip(
+                  label: 'Erstförderung',
+                  selected: valueMigrationSupport,
+                  onSelected: (val) {
+                    _learningSupportFilterManager.setSupportLevelFilter(
+                      supportLevelFilterRecords: [
+                        (filter: SupportLevelType.migrationSupport, value: val),
+                      ],
+                    );
+                  },
+                ),
+                ThemedFilterChip(
+                  label: 'AO-SF',
+                  selected: valueSpecialNeeds,
+                  onSelected: (val) {
+                    _learningSupportFilterManager.setSupportLevelFilter(
+                      supportLevelFilterRecords: [
+                        (filter: SupportLevelType.specialNeeds, value: val),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
+            const Gap(20),
+          ],
         ),
       ),
     );

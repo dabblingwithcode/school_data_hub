@@ -231,4 +231,63 @@ class PupilEndpoint extends Endpoint {
     );
     return updatedPupilWithHistory!;
   }
+
+  Future<bool> bulkAddSupportLevels(
+      Session session, List<SupportLevelLegacyDto> supportLevelData) async {
+    _logger
+        .info('Bulk adding support levels: ${supportLevelData.length} items');
+
+    if (supportLevelData.isEmpty) {
+      _logger.warning('No support level data provided');
+      return false;
+    }
+
+    try {
+      final List<SupportLevel> createdSupportLevels = [];
+      int skippedCount = 0;
+
+      // Use transaction for data consistency
+      await session.db.transaction((transaction) async {
+        // Process each support level entry
+        for (final data in supportLevelData) {
+          // Find the pupil by internalId
+          final pupil = await PupilData.db.findFirstRow(
+            session,
+            where: (t) => t.internalId.equals(data.pupilId),
+          );
+
+          if (pupil == null) {
+            _logger.warning('Pupil not found for internalId: ${data.pupilId}');
+            skippedCount++;
+            continue;
+          }
+
+          // Create the support level
+          final supportLevel = SupportLevel(
+            level: data.level,
+            comment: data.comment ?? '',
+            createdAt: data.createdAt ?? DateTime.now().toUtc(),
+            createdBy: data.createdBy ?? 'ADM',
+            pupilId: pupil.id!,
+            pupil: pupil,
+          );
+
+          // Insert the support level
+          final createdSupportLevel =
+              await SupportLevel.db.insertRow(session, supportLevel);
+          createdSupportLevels.add(createdSupportLevel);
+
+          _logger.info(
+              'Created support level for pupil ${pupil.id} (internalId: ${pupil.internalId})');
+        }
+      });
+
+      _logger.info(
+          'Successfully created ${createdSupportLevels.length} support levels, skipped $skippedCount entries');
+      return true;
+    } catch (e, stackTrace) {
+      _logger.severe('Error bulk adding support levels: $e', stackTrace);
+      throw Exception('Error bulk adding support levels: $e');
+    }
+  }
 }

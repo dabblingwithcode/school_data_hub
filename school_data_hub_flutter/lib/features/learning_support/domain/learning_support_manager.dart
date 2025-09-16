@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:collection/collection.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
@@ -233,4 +237,77 @@ class LearningSupportManager with ChangeNotifier {
 
   //   return;
   // }
+
+  //- BULK IMPORT SUPPORT LEVELS ------------------------------------------
+
+  Future<void> importSupportLevelsFromFile() async {
+    try {
+      _notificationService.showSnackBar(
+        NotificationType.info,
+        'Förderstufen werden importiert...',
+      );
+
+      // Let user pick the JSON file
+      final FilePickerResult? pickedFile = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+      );
+
+      if (pickedFile == null) {
+        _notificationService.showSnackBar(
+          NotificationType.info,
+          'Import abgebrochen',
+        );
+        return;
+      }
+
+      final File file = File(pickedFile.files.single.path!);
+
+      if (!await file.exists()) {
+        _notificationService.showSnackBar(
+          NotificationType.error,
+          'Datei nicht gefunden',
+        );
+        return;
+      }
+
+      // Read and parse the JSON file
+      final String jsonString = await file.readAsString();
+      final List<dynamic> jsonList = json.decode(jsonString);
+      final List<Map<String, dynamic>> supportLevelData =
+          jsonList.cast<Map<String, dynamic>>();
+
+      List<SupportLevelLegacyDto> supportLevelDataDtos =
+          supportLevelData
+              .map(
+                (e) => SupportLevelLegacyDto(
+                  pupilId: e['pupil_id'] as int,
+                  level: int.parse(e['level'] as String),
+                  comment: e['comment'] as String? ?? '',
+                  createdAt: DateTime.parse(e['created_at'] as String),
+                  createdBy: e['created_by'] as String? ?? 'ADM',
+                ),
+              )
+              .toList();
+      // Call the API service
+      final bool importedSupportLevels = await _learningSupportApiService
+          .bulkImportSupportLevels(supportLevelDataDtos);
+
+      if (importedSupportLevels) {
+        _notificationService.showSnackBar(
+          NotificationType.success,
+          '${importedSupportLevels} Förderstufen erfolgreich importiert',
+        );
+      } else {
+        _notificationService.showSnackBar(
+          NotificationType.warning,
+          'Keine Förderstufen importiert',
+        );
+      }
+    } catch (e) {
+      _notificationService.showInformationDialog(
+        'Fehler beim Importieren der Förderstufen: $e',
+      );
+    }
+  }
 }

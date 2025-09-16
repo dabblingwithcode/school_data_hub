@@ -98,6 +98,7 @@ pupil:
   - deletePupilDocument:
   - resetPublicMediaAuth:
   - deleteSupportLevelHistoryItem:
+  - bulkAddSupportLevels:
 pupilIdentity:
   - streamEncryptedPupilIds:
   - sendPupilIdentityMessage:

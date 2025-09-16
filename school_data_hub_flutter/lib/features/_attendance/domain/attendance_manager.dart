@@ -42,7 +42,7 @@ class AttendanceManager with ChangeNotifier {
   // with a change notifier
   // it is used to observe the missed classes of a pupil in the UI
 
-  final Map<int, PupilMissedSchooldaysProxy> _pupilMissedSchooldayesMap = {};
+  final Map<int, PupilMissedSchooldaysProxy> _pupilMissedSchooldaysMap = {};
 
   AttendanceManager() {
     init();
@@ -53,7 +53,7 @@ class AttendanceManager with ChangeNotifier {
     // watch them in the UI unconditionally (even if there are no entries)
     final pupilIds = _pupilManager.allPupils.map((e) => e.pupilId).toList();
     for (final pupilId in pupilIds) {
-      _pupilMissedSchooldayesMap[pupilId] = PupilMissedSchooldaysProxy();
+      _pupilMissedSchooldaysMap[pupilId] = PupilMissedSchooldaysProxy();
     }
     // await fetchMissedSchooldayesOnASchoolday(schoolCalendarManager.thisDate.value);
     fetchAllPupilMissedSchooldayes();
@@ -63,25 +63,25 @@ class AttendanceManager with ChangeNotifier {
   //- Getters
 
   MissedSchoolday? getPupilMissedSchooldayOnDate(int pupilId, DateTime date) {
-    return _pupilMissedSchooldayesMap[pupilId]!.missedSchooldays
+    return _pupilMissedSchooldaysMap[pupilId]!.missedSchooldays
         .firstWhereOrNull(
           (element) => element.schoolday!.schoolday.isSameDate(date),
         );
   }
 
   List<MissedSchoolday> getAllPupilMissedSchooldays(int pupilId) {
-    return _pupilMissedSchooldayesMap[pupilId]!.missedSchooldays;
+    return _pupilMissedSchooldaysMap[pupilId]!.missedSchooldays;
   }
 
   // TODO ADVICE: This is bad - need help to review
   PupilMissedSchooldaysProxy getPupilMissedSchooldaysProxy(int pupilId) {
-    if (!_pupilMissedSchooldayesMap.containsKey(pupilId)) {
+    if (!_pupilMissedSchooldaysMap.containsKey(pupilId)) {
       _log.warning(
         'No PupilMissedSchooldaysProxy found for pupilId: $pupilId - creating a new one',
       );
-      _pupilMissedSchooldayesMap[pupilId] = PupilMissedSchooldaysProxy();
+      _pupilMissedSchooldaysMap[pupilId] = PupilMissedSchooldaysProxy();
     }
-    return _pupilMissedSchooldayesMap[pupilId]!;
+    return _pupilMissedSchooldaysMap[pupilId]!;
   }
 
   // - Handle collections -
@@ -101,12 +101,12 @@ class AttendanceManager with ChangeNotifier {
 
     final pupilId = responseMissedSchoolday.pupilId;
 
-    if (!_pupilMissedSchooldayesMap.containsKey(pupilId)) {
+    if (!_pupilMissedSchooldaysMap.containsKey(pupilId)) {
       // If the pupil is not in the map, we need to create a new proxy for them
-      _pupilMissedSchooldayesMap[pupilId] = PupilMissedSchooldaysProxy();
+      _pupilMissedSchooldaysMap[pupilId] = PupilMissedSchooldaysProxy();
     }
     // 1. Update pupil map
-    final pupilMissedSchooldayProxy = _pupilMissedSchooldayesMap[pupilId];
+    final pupilMissedSchooldayProxy = _pupilMissedSchooldaysMap[pupilId];
 
     pupilMissedSchooldayProxy!.updateMissedSchoolday(responseMissedSchoolday);
 
@@ -133,7 +133,7 @@ class AttendanceManager with ChangeNotifier {
   void removeMissedSchooldayFromCollections(int pupilId, DateTime date) {
     // 1. Remove from pupil map
 
-    final pupilMissedSchooldayesProxy = _pupilMissedSchooldayesMap[pupilId]!;
+    final pupilMissedSchooldayesProxy = _pupilMissedSchooldaysMap[pupilId]!;
 
     pupilMissedSchooldayesProxy.removeMissedSchoolday(pupilId, date);
 

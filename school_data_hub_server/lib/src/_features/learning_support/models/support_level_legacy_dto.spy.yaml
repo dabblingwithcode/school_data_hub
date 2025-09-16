@@ -1,0 +1,7 @@
+class: SupportLevelLegacyDto
+fields:
+  pupilId: int
+  level: int
+  comment: String?
+  createdAt: DateTime?
+  createdBy: String?

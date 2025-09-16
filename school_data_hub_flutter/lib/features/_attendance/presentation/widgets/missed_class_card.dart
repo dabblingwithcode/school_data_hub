@@ -13,15 +13,16 @@ import 'package:watch_it/watch_it.dart';
 class MissedSchooldayCard extends StatelessWidget {
   final PupilProxy pupil;
   final MissedSchoolday missedSchoolday;
-  const MissedSchooldayCard(
-      {required this.pupil, required this.missedSchoolday, super.key});
+  const MissedSchooldayCard({
+    required this.pupil,
+    required this.missedSchoolday,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       color: AppColors.cardInCardColor,
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -31,15 +32,20 @@ class MissedSchooldayCard extends StatelessWidget {
           },
           onLongPress: () async {
             bool? confirm = await confirmationDialog(
-                context: context,
-                title: 'Fehlzeit löschen',
-                message: 'Die Fehlzeit löschen?');
+              context: context,
+              title: 'Fehlzeit löschen',
+              message: 'Die Fehlzeit löschen?',
+            );
             if (confirm != true) return;
             await di<AttendanceManager>().deleteMissedSchoolday(
-                pupil.pupilId, missedSchoolday.schoolday!.schoolday);
+              pupil.pupilId,
+              missedSchoolday.schoolday!.schoolday,
+            );
 
-            di<NotificationService>()
-                .showSnackBar(NotificationType.success, 'Fehlzeit gelöscht!');
+            di<NotificationService>().showSnackBar(
+              NotificationType.success,
+              'Fehlzeit gelöscht!',
+            );
           },
           child: Column(
             children: [
@@ -47,9 +53,9 @@ class MissedSchooldayCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
-                    DateFormat('dd.MM.yyyy')
-                        .format(missedSchoolday.schoolday!.schoolday)
-                        .toString(),
+                    DateFormat(
+                      'dd.MM.yyyy',
+                    ).format(missedSchoolday.schoolday!.schoolday).toString(),
                     style: const TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
@@ -65,10 +71,15 @@ class MissedSchooldayCard extends StatelessWidget {
                   const Gap(3),
                   returnedBadge(missedSchoolday.returned),
                   const Spacer(),
-                  Text(
-                    missedSchoolday.createdBy,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16),
+                  Flexible(
+                    child: Text(
+                      missedSchoolday.createdBy,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ],
               ),
@@ -81,29 +92,32 @@ class MissedSchooldayCard extends StatelessWidget {
                       children: [
                         const Text('Verspätung:'),
                         const Gap(5),
-                        Text('${missedSchoolday.minutesLate ?? 0} min',
-                            style:
-                                const TextStyle(fontWeight: FontWeight.bold)),
+                        Text(
+                          '${missedSchoolday.minutesLate ?? 0} min',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                         const Gap(5),
                       ],
                     ),
                   if (missedSchoolday.returned == true) ...[
                     RichText(
-                        text: TextSpan(
-                      text: 'abgeholt um: ',
-                      style: DefaultTextStyle.of(context).style,
-                      children: <TextSpan>[
-                        TextSpan(
-                            text: missedSchoolday.returnedAt != null
-                                ? DateFormat('HH:mm')
-                                    .format(missedSchoolday.returnedAt!)
-                                    .toString()
-                                : 'kein Eintrag',
-                            style:
-                                const TextStyle(fontWeight: FontWeight.bold)),
-                      ],
-                    )),
-                  ]
+                      text: TextSpan(
+                        text: 'abgeholt um: ',
+                        style: DefaultTextStyle.of(context).style,
+                        children: <TextSpan>[
+                          TextSpan(
+                            text:
+                                missedSchoolday.returnedAt != null
+                                    ? DateFormat('HH:mm')
+                                        .format(missedSchoolday.returnedAt!)
+                                        .toString()
+                                    : 'kein Eintrag',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ],
               ),
               const Gap(5),
@@ -112,9 +126,13 @@ class MissedSchooldayCard extends StatelessWidget {
                 children: [
                   const Text('Kommentar:'),
                   const Gap(5),
-                  Text(
-                    missedSchoolday.comment ?? 'kein Eintrag',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  Expanded(
+                    child: Text(
+                      missedSchoolday.comment ?? 'kein Eintrag',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.visible,
+                      softWrap: true,
+                    ),
                   ),
 
                   // TODO: check why no modifiedBy values are stored
@@ -126,13 +144,16 @@ class MissedSchooldayCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     const Text('zuletzt geändert von: '),
-                    Text(
-                      missedSchoolday.modifiedBy!,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    Expanded(
+                      child: Text(
+                        missedSchoolday.modifiedBy!,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ],
                 ),
-              ]
+              ],
             ],
           ),
         ),
