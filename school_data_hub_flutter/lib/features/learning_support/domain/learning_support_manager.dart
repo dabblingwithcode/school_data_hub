@@ -290,7 +290,7 @@ class LearningSupportManager with ChangeNotifier {
                             e['comment'] as String,
                           )
                           : '',
-                  createdAt: DateTime.parse(e['created_at'] as String),
+                  createdAt: DateTime.parse(e['created_at'] as String).toUtc(),
                   createdBy: e['created_by'] as String? ?? 'ADM',
                 ),
               )

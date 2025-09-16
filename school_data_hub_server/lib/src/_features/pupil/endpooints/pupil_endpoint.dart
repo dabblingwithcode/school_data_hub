@@ -266,7 +266,7 @@ class PupilEndpoint extends Endpoint {
           final supportLevel = SupportLevel(
             level: data.level,
             comment: data.comment ?? '',
-            createdAt: data.createdAt ?? DateTime.now().toUtc(),
+            createdAt: data.createdAt!.toUtc(),
             createdBy: data.createdBy ?? 'ADM',
             pupilId: pupil.id!,
             pupil: pupil,
