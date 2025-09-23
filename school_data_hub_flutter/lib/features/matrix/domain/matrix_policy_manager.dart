@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
@@ -102,6 +103,10 @@ class MatrixPolicyManager extends ChangeNotifier {
       _matrixUrl,
       applyPolicyChanges,
     );
+
+    // Register MatrixUserManager in DI container for direct access
+    di.registerSingleton<MatrixUserManager>(_userManager);
+
     await fetchMatrixPolicy();
     // Initialize the sub-managers with callback functions instead of direct ValueNotifier access
 
@@ -207,4 +212,53 @@ class MatrixPolicyManager extends ChangeNotifier {
     di<MatrixPolicyFilterManager>().resetAllMatrixFilters();
     _policyPendingChanges.value = false;
   }
+
+  // Message API methods
+  Future<Map<String, String>> sendDirectTextMessage({
+    required String targetUserId,
+    required String text,
+    String? transactionId,
+  }) async {
+    log('MatrixPolicyManager.sendDirectTextMessage called');
+    log('targetUserId: $targetUserId');
+    log('text: $text');
+    log('transactionId: $transactionId');
+
+    try {
+      final result = await _matrixApiService.sendDirectTextMessage(
+        targetUserId: targetUserId,
+        text: text,
+        transactionId: transactionId,
+      );
+
+      log('MatrixPolicyManager.sendDirectTextMessage result: $result');
+      return result;
+    } catch (e, stackTrace) {
+      log('MatrixPolicyManager.sendDirectTextMessage error: $e');
+      log('MatrixPolicyManager.sendDirectTextMessage stackTrace: $stackTrace');
+      rethrow;
+    }
+  }
+
+  Future<void> sendTextMessageToRoom({
+    required String roomId,
+    required String text,
+    String? transactionId,
+  }) => _matrixApiService.sendTextMessage(
+    roomId: roomId,
+    text: text,
+    transactionId: transactionId,
+  );
+
+  Future<List<dynamic>> getRoomMessages({
+    required String roomId,
+    String? from,
+    int limit = 10,
+    String dir = 'b',
+  }) => _matrixApiService.getRoomMessages(
+    roomId: roomId,
+    from: from,
+    limit: limit,
+    dir: dir,
+  );
 }

@@ -23,19 +23,14 @@ class PupilListButtons extends WatchingWidget {
     final locale = AppLocalizations.of(context)!;
 
     // Always call watch methods at the top level, not conditionally
-    final sessionManager = di<HubSessionManager>();
-    final isReady =
-        watchPropertyValue((HubSessionManager x) => x.isReady) ?? false;
-    final isTester =
-        watchPropertyValue(
-          (HubSessionManager x) => x.user?.userFlags.isTester ?? false,
-        ) ??
-        false;
-    final matrixSessionConfigured =
-        watchPropertyValue(
-          (HubSessionManager x) => x.matrixPolicyManagerRegistrationStatus,
-        ) ??
-        false;
+
+    final isReady = watchPropertyValue((HubSessionManager x) => x.isReady);
+    final isTester = watchPropertyValue(
+      (HubSessionManager x) => x.user?.userFlags.isTester ?? false,
+    );
+    final matrixSessionConfigured = watchPropertyValue(
+      (HubSessionManager x) => x.matrixPolicyManagerRegistrationStatus,
+    );
 
     return Wrap(
       alignment: WrapAlignment.center,
@@ -86,16 +81,15 @@ class PupilListButtons extends WatchingWidget {
             ),
             buttonText: locale.learningLists,
           ),
-        if (isReady && isTester)
-          MainMenuButton(
-            destinationPage: const LearningSupportListPage(),
-            buttonIcon: const Icon(
-              Icons.support_rounded,
-              size: 50,
-              color: AppColors.gridViewColor,
-            ),
-            buttonText: locale.supportLists,
+        MainMenuButton(
+          destinationPage: const LearningSupportListPage(),
+          buttonIcon: const Icon(
+            Icons.support_rounded,
+            size: 50,
+            color: AppColors.gridViewColor,
           ),
+          buttonText: locale.supportLists,
+        ),
         MainMenuButton(
           destinationPage: const SpecialInfoListPage(),
           buttonIcon: const Icon(

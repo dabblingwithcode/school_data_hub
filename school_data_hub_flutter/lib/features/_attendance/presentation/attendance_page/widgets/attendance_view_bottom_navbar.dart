@@ -6,6 +6,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_picker.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/attendance_filters.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/missed_classes_badges_info_dialog.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
@@ -21,7 +22,8 @@ class AttendanceListPageBottomNavBar extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    DateTime thisDate = watchValue((SchoolCalendarManager x) => x.thisDate);
+    DateTime thisDate =
+        watchValue((SchoolCalendarManager x) => x.thisDate).toLocal();
     bool filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);
     final pupils = watchValue((PupilsFilter x) => x.filteredPupils);
     return BottomNavBarLayout(
@@ -89,37 +91,38 @@ class AttendanceListPageBottomNavBar extends WatchingWidget {
                 ),
               ),
               const Gap(30),
-              IconButton(
-                tooltip: 'PDF drucken',
-                icon: const Icon(Icons.print_rounded, size: 30),
-                onPressed: () async {
-                  try {
-                    final pdfFile =
-                        await AttendancePdfGenerator.generateAttendancePdf(
-                          date: thisDate,
-                          pupils: pupils,
+              if (di<HubSessionManager>().isAdmin)
+                IconButton(
+                  tooltip: 'PDF drucken',
+                  icon: const Icon(Icons.print_rounded, size: 30),
+                  onPressed: () async {
+                    try {
+                      final pdfFile =
+                          await AttendancePdfGenerator.generateAttendancePdf(
+                            date: thisDate,
+                            pupils: pupils,
+                          );
+                      if (context.mounted) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder:
+                                (context) =>
+                                    AttendancePdfViewPage(pdfFile: pdfFile),
+                          ),
                         );
-                    if (context.mounted) {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder:
-                              (context) =>
-                                  AttendancePdfViewPage(pdfFile: pdfFile),
-                        ),
-                      );
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Fehler beim Erstellen der PDF: $e'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
                     }
-                  } catch (e) {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Fehler beim Erstellen der PDF: $e'),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                    }
-                  }
-                },
-              ),
+                  },
+                ),
               const Gap(15),
             ],
           ),

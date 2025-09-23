@@ -6,7 +6,6 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
@@ -36,9 +35,7 @@ class BookCard extends WatchingWidget {
       (BookManager x) => x.isbnLibraryBooksMap,
     );
     final List<LibraryBookProxy> bookProxies = isbnBooks[isbn] ?? [];
-    final tileController = createOnce<CustomExpansionTileController>(
-      () => CustomExpansionTileController(),
-    );
+
     final descriptionTileController = createOnce<ExpansibleController>(
       () => ExpansibleController(),
     );
@@ -241,7 +238,7 @@ class BookCard extends WatchingWidget {
                           initialValue: bookProxy.description,
                           parentContext: context,
                         );
-                        di<BookManager>().updateLibraryBookProperty(
+                        di<BookManager>().updateLibraryBookAndBookProperties(
                           isbn: bookProxy.isbn,
                           libraryId: bookProxy.libraryId,
                           description: description,

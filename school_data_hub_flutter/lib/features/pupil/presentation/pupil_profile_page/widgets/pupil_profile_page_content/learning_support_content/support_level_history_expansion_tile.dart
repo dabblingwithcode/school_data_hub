@@ -69,7 +69,7 @@ class _SupportLevelHistoryExpansionTileState
                       ? 'Förderebene 2'
                       : pupil.latestSupportLevel!.level == 3
                       ? 'Förderebene 3'
-                      : 'Regenbogenförderung',
+                      : '🌈-Förderung',
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,

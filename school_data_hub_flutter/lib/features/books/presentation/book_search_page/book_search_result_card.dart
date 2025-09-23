@@ -189,7 +189,7 @@ class SearchResultBookCard extends WatchingWidget {
                           initialValue: bookProxy.description,
                           parentContext: context,
                         );
-                        di<BookManager>().updateLibraryBookProperty(
+                        di<BookManager>().updateLibraryBookAndBookProperties(
                           isbn: bookProxy.isbn,
                           libraryId: bookProxy.libraryId,
                           description: description,

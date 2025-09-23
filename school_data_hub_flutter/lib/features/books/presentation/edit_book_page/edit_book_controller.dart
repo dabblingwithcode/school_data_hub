@@ -246,7 +246,7 @@ class EditBookController extends State<EditBook> {
             .toList();
 
     // Update the book properties
-    await di<BookManager>().updateLibraryBookProperty(
+    await di<BookManager>().updateLibraryBookAndBookProperties(
       isbn: libraryBook.isbn,
       libraryId: libraryBook.libraryId,
       title: bookTitleTextFieldController.text,

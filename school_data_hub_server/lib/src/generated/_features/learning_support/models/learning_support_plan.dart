@@ -25,7 +25,12 @@ abstract class LearningSupportPlan
   LearningSupportPlan._({
     this.id,
     required this.planId,
+    this.number,
     required this.createdBy,
+    this.socialPedagogue,
+    this.proffesionalsInvolved,
+    this.strengthsDescription,
+    this.problemsDescription,
     required this.learningSupportLevelId,
     this.learningSupportLevel,
     required this.createdAt,
@@ -41,7 +46,12 @@ abstract class LearningSupportPlan
   factory LearningSupportPlan({
     int? id,
     required String planId,
+    int? number,
     required String createdBy,
+    String? socialPedagogue,
+    String? proffesionalsInvolved,
+    String? strengthsDescription,
+    String? problemsDescription,
     required int learningSupportLevelId,
     _i2.SupportLevel? learningSupportLevel,
     required DateTime createdAt,
@@ -58,7 +68,14 @@ abstract class LearningSupportPlan
     return LearningSupportPlan(
       id: jsonSerialization['id'] as int?,
       planId: jsonSerialization['planId'] as String,
+      number: jsonSerialization['number'] as int?,
       createdBy: jsonSerialization['createdBy'] as String,
+      socialPedagogue: jsonSerialization['socialPedagogue'] as String?,
+      proffesionalsInvolved:
+          jsonSerialization['proffesionalsInvolved'] as String?,
+      strengthsDescription:
+          jsonSerialization['strengthsDescription'] as String?,
+      problemsDescription: jsonSerialization['problemsDescription'] as String?,
       learningSupportLevelId:
           jsonSerialization['learningSupportLevelId'] as int,
       learningSupportLevel: jsonSerialization['learningSupportLevel'] == null
@@ -98,7 +115,17 @@ abstract class LearningSupportPlan
 
   String planId;
 
+  int? number;
+
   String createdBy;
+
+  String? socialPedagogue;
+
+  String? proffesionalsInvolved;
+
+  String? strengthsDescription;
+
+  String? problemsDescription;
 
   int learningSupportLevelId;
 
@@ -129,7 +156,12 @@ abstract class LearningSupportPlan
   LearningSupportPlan copyWith({
     int? id,
     String? planId,
+    int? number,
     String? createdBy,
+    String? socialPedagogue,
+    String? proffesionalsInvolved,
+    String? strengthsDescription,
+    String? problemsDescription,
     int? learningSupportLevelId,
     _i2.SupportLevel? learningSupportLevel,
     DateTime? createdAt,
@@ -146,7 +178,15 @@ abstract class LearningSupportPlan
     return {
       if (id != null) 'id': id,
       'planId': planId,
+      if (number != null) 'number': number,
       'createdBy': createdBy,
+      if (socialPedagogue != null) 'socialPedagogue': socialPedagogue,
+      if (proffesionalsInvolved != null)
+        'proffesionalsInvolved': proffesionalsInvolved,
+      if (strengthsDescription != null)
+        'strengthsDescription': strengthsDescription,
+      if (problemsDescription != null)
+        'problemsDescription': problemsDescription,
       'learningSupportLevelId': learningSupportLevelId,
       if (learningSupportLevel != null)
         'learningSupportLevel': learningSupportLevel?.toJson(),
@@ -169,7 +209,15 @@ abstract class LearningSupportPlan
     return {
       if (id != null) 'id': id,
       'planId': planId,
+      if (number != null) 'number': number,
       'createdBy': createdBy,
+      if (socialPedagogue != null) 'socialPedagogue': socialPedagogue,
+      if (proffesionalsInvolved != null)
+        'proffesionalsInvolved': proffesionalsInvolved,
+      if (strengthsDescription != null)
+        'strengthsDescription': strengthsDescription,
+      if (problemsDescription != null)
+        'problemsDescription': problemsDescription,
       'learningSupportLevelId': learningSupportLevelId,
       if (learningSupportLevel != null)
         'learningSupportLevel': learningSupportLevel?.toJsonForProtocol(),
@@ -237,7 +285,12 @@ class _LearningSupportPlanImpl extends LearningSupportPlan {
   _LearningSupportPlanImpl({
     int? id,
     required String planId,
+    int? number,
     required String createdBy,
+    String? socialPedagogue,
+    String? proffesionalsInvolved,
+    String? strengthsDescription,
+    String? problemsDescription,
     required int learningSupportLevelId,
     _i2.SupportLevel? learningSupportLevel,
     required DateTime createdAt,
@@ -251,7 +304,12 @@ class _LearningSupportPlanImpl extends LearningSupportPlan {
   }) : super._(
           id: id,
           planId: planId,
+          number: number,
           createdBy: createdBy,
+          socialPedagogue: socialPedagogue,
+          proffesionalsInvolved: proffesionalsInvolved,
+          strengthsDescription: strengthsDescription,
+          problemsDescription: problemsDescription,
           learningSupportLevelId: learningSupportLevelId,
           learningSupportLevel: learningSupportLevel,
           createdAt: createdAt,
@@ -271,7 +329,12 @@ class _LearningSupportPlanImpl extends LearningSupportPlan {
   LearningSupportPlan copyWith({
     Object? id = _Undefined,
     String? planId,
+    Object? number = _Undefined,
     String? createdBy,
+    Object? socialPedagogue = _Undefined,
+    Object? proffesionalsInvolved = _Undefined,
+    Object? strengthsDescription = _Undefined,
+    Object? problemsDescription = _Undefined,
     int? learningSupportLevelId,
     Object? learningSupportLevel = _Undefined,
     DateTime? createdAt,
@@ -286,7 +349,19 @@ class _LearningSupportPlanImpl extends LearningSupportPlan {
     return LearningSupportPlan(
       id: id is int? ? id : this.id,
       planId: planId ?? this.planId,
+      number: number is int? ? number : this.number,
       createdBy: createdBy ?? this.createdBy,
+      socialPedagogue:
+          socialPedagogue is String? ? socialPedagogue : this.socialPedagogue,
+      proffesionalsInvolved: proffesionalsInvolved is String?
+          ? proffesionalsInvolved
+          : this.proffesionalsInvolved,
+      strengthsDescription: strengthsDescription is String?
+          ? strengthsDescription
+          : this.strengthsDescription,
+      problemsDescription: problemsDescription is String?
+          ? problemsDescription
+          : this.problemsDescription,
       learningSupportLevelId:
           learningSupportLevelId ?? this.learningSupportLevelId,
       learningSupportLevel: learningSupportLevel is _i2.SupportLevel?
@@ -318,8 +393,28 @@ class LearningSupportPlanTable extends _i1.Table<int?> {
       'planId',
       this,
     );
+    number = _i1.ColumnInt(
+      'number',
+      this,
+    );
     createdBy = _i1.ColumnString(
       'createdBy',
+      this,
+    );
+    socialPedagogue = _i1.ColumnString(
+      'socialPedagogue',
+      this,
+    );
+    proffesionalsInvolved = _i1.ColumnString(
+      'proffesionalsInvolved',
+      this,
+    );
+    strengthsDescription = _i1.ColumnString(
+      'strengthsDescription',
+      this,
+    );
+    problemsDescription = _i1.ColumnString(
+      'problemsDescription',
       this,
     );
     learningSupportLevelId = _i1.ColumnInt(
@@ -346,7 +441,17 @@ class LearningSupportPlanTable extends _i1.Table<int?> {
 
   late final _i1.ColumnString planId;
 
+  late final _i1.ColumnInt number;
+
   late final _i1.ColumnString createdBy;
+
+  late final _i1.ColumnString socialPedagogue;
+
+  late final _i1.ColumnString proffesionalsInvolved;
+
+  late final _i1.ColumnString strengthsDescription;
+
+  late final _i1.ColumnString problemsDescription;
 
   late final _i1.ColumnInt learningSupportLevelId;
 
@@ -481,7 +586,12 @@ class LearningSupportPlanTable extends _i1.Table<int?> {
   List<_i1.Column> get columns => [
         id,
         planId,
+        number,
         createdBy,
+        socialPedagogue,
+        proffesionalsInvolved,
+        strengthsDescription,
+        problemsDescription,
         learningSupportLevelId,
         createdAt,
         comment,

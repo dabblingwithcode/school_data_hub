@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/change_password/change_password_page.dart';
-import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
 
 class SettingsAccountSection extends AbstractSettingsSection with WatchItMixin {
@@ -17,12 +13,6 @@ class SettingsAccountSection extends AbstractSettingsSection with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     di.allReady();
-    final serverName = watchPropertyValue((EnvManager x) => x.activeEnv);
-    final _cacheManager = di<DefaultCacheManager>();
-
-    final _notificationService = di<NotificationService>();
-
-    final locale = AppLocalizations.of(context)!;
 
     final String username =
         watchPropertyValue(

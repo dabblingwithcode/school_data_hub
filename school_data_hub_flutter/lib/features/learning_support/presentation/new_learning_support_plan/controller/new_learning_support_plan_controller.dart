@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan/new_learning_support_plan_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
+import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _learningSupportPlanManager = di<LearningSupportManager>();
 final _schoolCalendarManager = di<SchoolCalendarManager>();
 final _hubSessionManager = di<HubSessionManager>();
 final _notificationService = di<NotificationService>();
-
-final _pupilManager = di<PupilManager>();
+final _userManager = di<UserManager>();
 
 /// StatefulWidget for creating a new learning support plan for a pupil.
 ///
@@ -41,9 +39,8 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
   late final TextEditingController planIdController;
   late final TextEditingController commentController;
 
-  final ValueNotifier<int?> selectedSupportLevelNotifier = ValueNotifier<int?>(
-    null,
-  );
+  // Fixed support level - not selectable
+  late final int fixedSupportLevel;
   final ValueNotifier<bool> isValidNotifier = ValueNotifier<bool>(false);
   final ValueNotifier<String> semesterInfoNotifier = ValueNotifier<String>(
     'Lädt...',
@@ -57,6 +54,9 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
     planIdController = TextEditingController();
     commentController = TextEditingController();
 
+    // Initialize fixed support level from pupil's history
+    fixedSupportLevel = pupil.supportLevelHistory?.last.level ?? 1;
+
     // Generate default plan ID
     final currentSemester = _schoolCalendarManager.currentSemester.value;
     if (currentSemester != null) {
@@ -67,15 +67,12 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
     }
 
     planIdController.addListener(validateForm);
-    selectedSupportLevelNotifier.addListener(validateForm);
 
     _updateSemesterInfo();
   }
 
   void validateForm() {
-    final isValid =
-        planIdController.text.trim().isNotEmpty &&
-        selectedSupportLevelNotifier.value != null;
+    final isValid = planIdController.text.trim().isNotEmpty;
     isValidNotifier.value = isValid;
   }
 
@@ -92,8 +89,25 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
     }
   }
 
-  void setSupportLevel(int? level) {
-    selectedSupportLevelNotifier.value = level;
+  String? get groupTutorDisplayName {
+    final groupTutorUsername = pupil.groupTutor;
+    if (groupTutorUsername != null && groupTutorUsername.isNotEmpty) {
+      // Find user by username in the UserManager's user list
+      final users = _userManager.users.value;
+      try {
+        final user = users.firstWhere(
+          (u) => u.userInfo?.userName == groupTutorUsername,
+        );
+
+        // Get the full name from userInfo
+        final fullName = user.userInfo?.fullName;
+        return fullName ?? groupTutorUsername;
+      } catch (e) {
+        // User not found, fall back to username
+        return groupTutorUsername;
+      }
+    }
+    return null;
   }
 
   Future<void> createPlan() async {
@@ -111,34 +125,18 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
     // First create a support level entry for this pupil
     await PupilMutator().updatePupilSupportLevel(
       pupilId: pupil.pupilId,
-      level: selectedSupportLevelNotifier.value!,
+      level: fixedSupportLevel,
       createdAt: DateTime.now().toUtc(),
       createdBy: _hubSessionManager.userName!,
-      comment:
-          'Förderstufe ${selectedSupportLevelNotifier.value} für Förderplan',
+      comment: 'Förderstufe $fixedSupportLevel für Förderplan',
     );
 
-    // Now create the learning support plan
-    final plan = LearningSupportPlan(
-      planId: planIdController.text.trim(),
-      createdBy: _hubSessionManager.userName!,
-      learningSupportLevelId: selectedSupportLevelNotifier.value!,
-      createdAt: DateTime.now().toUtc(),
-      comment:
-          commentController.text.trim().isEmpty
-              ? null
-              : commentController.text.trim(),
-      pupilId: pupil.pupilId,
-      schoolSemesterId: currentSemester.id!,
-    );
+    // Create the learning support plan (plan object is created internally by the manager)
 
     await _learningSupportPlanManager.postNewLearningSupportPlan(
       pupilId: pupil.pupilId,
       planId: planIdController.text.trim(),
-      supportLevelId:
-          pupil.supportLevelHistory!.isNotEmpty
-              ? pupil.supportLevelHistory!.last.level
-              : selectedSupportLevelNotifier.value!,
+      supportLevelId: fixedSupportLevel,
     );
 
     if (mounted) {
@@ -155,7 +153,6 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
   void dispose() {
     planIdController.dispose();
     commentController.dispose();
-    selectedSupportLevelNotifier.dispose();
     isValidNotifier.dispose();
     semesterInfoNotifier.dispose();
     super.dispose();

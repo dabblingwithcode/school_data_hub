@@ -297,7 +297,7 @@ class BookManager {
     );
   }
 
-  Future<void> updateLibraryBookProperty({
+  Future<void> updateLibraryBookAndBookProperties({
     required int isbn,
     required String libraryId,
     String? title,

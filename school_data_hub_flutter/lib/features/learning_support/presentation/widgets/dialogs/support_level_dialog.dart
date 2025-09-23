@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:watch_it/watch_it.dart';
 
 // based on https://mobikul.com/creating-stateful-dialog-form-in-flutter/
-
-final _pupilManager = di<PupilManager>();
-final _hubSessionManager = di<HubSessionManager>();
 
 Future<void> supportLevelDialog(
   BuildContext context,
@@ -27,6 +24,8 @@ Future<void> supportLevelDialog(
       String textValue = '';
       return StatefulBuilder(
         builder: (context, setState) {
+          final _hubSessionManager = di<HubSessionManager>();
+          final _notificationService = di<NotificationService>();
           return AlertDialog(
             content: Form(
               child: Column(
@@ -45,7 +44,7 @@ Future<void> supportLevelDialog(
                             value: 0,
                             child: Center(
                               child: Text(
-                                "kein Eintrag",
+                                "Förderebene 0",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: Colors.black,
@@ -196,6 +195,12 @@ Future<void> supportLevelDialog(
                     ),
                   ),
                   onTap: () {
+                    if (textValue.isEmpty) {
+                      _notificationService.showInformationDialog(
+                        'Das Kommentarfeld darf nicht leer sein.',
+                      );
+                      return;
+                    }
                     PupilMutator().updatePupilSupportLevel(
                       pupilId: pupil.pupilId,
                       comment: textValue,

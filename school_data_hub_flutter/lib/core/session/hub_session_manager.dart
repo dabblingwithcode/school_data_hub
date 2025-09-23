@@ -348,7 +348,6 @@ class HubSessionManager with ChangeNotifier {
     if (_matrixPolicyManagerRegistrationStatus != isRegistered) {
       _log.info(
         'MatrixPolicyManager registration status changing from $_matrixPolicyManagerRegistrationStatus to $isRegistered',
-        [StackTrace.current],
       );
       _matrixPolicyManagerRegistrationStatus = isRegistered;
 

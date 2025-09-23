@@ -267,14 +267,14 @@ class NewBookController extends State<NewBook> {
       );
     }
     // Update the book
-    // di<BookManager>().updateLibraryBookProperty(
-    //   isbn: widget.isbn,
-    //   libraryId: widget.libraryId!,
-    //   title: bookTitleTextFieldController.text,
-    //   description: bookDescriptionTextFieldController.text,
-    //   readingLevel: readingLevel,
-    //   author: authorTextFieldController.text,
-    // );
+    di<BookManager>().updateLibraryBookAndBookProperties(
+      isbn: widget.isbn,
+      libraryId: bookIdTextFieldController.text,
+      title: bookTitleTextFieldController.text,
+      description: bookDescriptionTextFieldController.text,
+      readingLevel: readingLevel,
+      author: authorTextFieldController.text,
+    );
     if (bookTags.isNotEmpty) {
       await di<BookManager>().updateBookTags(widget.isbn, bookTags);
     }

@@ -2,7 +2,12 @@ class: LearningSupportPlan
 table: learning_support_plan
 fields:
   planId: String
+  number: int?
   createdBy: String
+  socialPedagogue: String?
+  proffesionalsInvolved: String?
+  strengthsDescription: String?
+  problemsDescription: String?
   learningSupportLevel: SupportLevel?, relation(name=support_level_plans)
   createdAt: DateTime
   comment: String?

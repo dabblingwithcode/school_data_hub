@@ -7,9 +7,9 @@ part of 'matrix_user.dart';
 // **************************************************************************
 
 JoinedRoom _$JoinedRoomFromJson(Map<String, dynamic> json) => JoinedRoom(
-      roomId: json['roomId'] as String,
-      powerLevel: (json['powerLevel'] as num?)?.toInt(),
-    );
+  roomId: json['roomId'] as String,
+  powerLevel: (json['powerLevel'] as num?)?.toInt(),
+);
 
 Map<String, dynamic> _$JoinedRoomToJson(JoinedRoom instance) =>
     <String, dynamic>{
@@ -18,15 +18,15 @@ Map<String, dynamic> _$JoinedRoomToJson(JoinedRoom instance) =>
     };
 
 MatrixUser _$MatrixUserFromJson(Map<String, dynamic> json) => MatrixUser(
-      id: json['id'] as String,
-      active: json['active'] as bool?,
-      authType: json['authType'] as String?,
-      authCredential: json['authCredential'] as String?,
-      displayName: json['displayName'] as String,
-      joinedRooms: (json['joinedRooms'] as List<dynamic>)
-          .map((e) => JoinedRoom.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
+  id: json['id'] as String,
+  active: json['active'] as bool?,
+  authType: json['authType'] as String?,
+  authCredential: json['authCredential'] as String?,
+  displayName: json['displayName'] as String,
+  joinedRooms: (json['joinedRooms'] as List<dynamic>)
+      .map((e) => JoinedRoom.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
 
 Map<String, dynamic> _$MatrixUserToJson(MatrixUser instance) =>
     <String, dynamic>{

@@ -4,7 +4,6 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan/controller/new_learning_support_plan_controller.dart';
-import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class NewLearningSupportPlanPage extends WatchingWidget {
@@ -12,14 +11,21 @@ class NewLearningSupportPlanPage extends WatchingWidget {
 
   const NewLearningSupportPlanPage(this.controller, {super.key});
 
+  String _getSupportLevelDescription(int level) {
+    switch (level) {
+      case 1:
+        return 'Präventive Förderung';
+      case 2:
+        return 'Erweiterte Förderung';
+      case 3:
+        return 'Intensive Förderung';
+      default:
+        return 'Unbekannte Förderebene';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final currentSemester = di<SchoolCalendarManager>().currentSemester;
-    // final currentSemester =
-    //     watchPropertyValue(
-    //       (SchoolCalendarManager m) => m.currentSemester,
-    //     ).value;
-
     return Theme(
       data: ThemeData(
         unselectedWidgetColor: Colors.white,
@@ -58,7 +64,7 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Schüler/in', style: AppStyles.title),
+                        const Text('Schüler/in', style: AppStyles.title),
                         const Gap(8),
                         Text(
                           '${controller.pupil.firstName} ${controller.pupil.lastName}',
@@ -68,155 +74,77 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                           ),
                         ),
                         const Gap(4),
-                        Text(
-                          'Klasse: ${controller.pupil.schoolGrade}',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey,
-                          ),
+                        Row(
+                          children: [
+                            Text(
+                              'Klasse: ${controller.pupil.group}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const Spacer(),
+                            Text(
+                              'Jahrgang: ${controller.pupil.schoolGrade.name}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
                         ),
+                        if (controller.groupTutorDisplayName != null) ...[
+                          const Gap(4),
+                          Text(
+                            'Klassenlehrer: ${controller.groupTutorDisplayName}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
 
-                  const Gap(20),
+                  const Gap(15),
 
-                  // Support Level Selection
-                  Text('Förderstufe *', style: AppStyles.title),
-                  const Gap(10),
-                  ValueListenableBuilder<int?>(
-                    valueListenable: controller.selectedSupportLevelNotifier,
-                    builder: (context, selectedLevel, child) {
+                  // Semester Information
+                  ValueListenableBuilder<String>(
+                    valueListenable: controller.semesterInfoNotifier,
+                    builder: (context, currentSemester, child) {
                       return Container(
                         width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 12.0,
+                        ),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: AppColors.backgroundColor.withValues(
+                            alpha: 0.1,
+                          ),
                           borderRadius: BorderRadius.circular(10.0),
                           border: Border.all(
-                            color:
-                                selectedLevel == null
-                                    ? Colors.red.withValues(alpha: 0.5)
-                                    : AppColors.backgroundColor.withValues(
-                                      alpha: 0.3,
-                                    ),
-                            width: 2,
+                            color: AppColors.backgroundColor.withValues(
+                              alpha: 0.3,
+                            ),
+                            width: 1,
                           ),
                         ),
-                        child: Column(
+                        child: Row(
                           children: [
-                            InkWell(
-                              onTap: () => controller.setSupportLevel(1),
-                              child: Container(
-                                padding: const EdgeInsets.all(16),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      selectedLevel == 1
-                                          ? Icons.radio_button_checked
-                                          : Icons.radio_button_unchecked,
-                                      color: AppColors.backgroundColor,
-                                    ),
-                                    const Gap(10),
-                                    const Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            'Stufe 1 - Präventive Förderung',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          const Text(
-                                            'Grundlegende Unterstützung im Regelunterricht',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            const Icon(
+                              Icons.info_outline,
+                              color: AppColors.backgroundColor,
+                              size: 16,
                             ),
-                            const Divider(height: 1),
-                            InkWell(
-                              onTap: () => controller.setSupportLevel(2),
-                              child: Container(
-                                padding: const EdgeInsets.all(16),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      selectedLevel == 2
-                                          ? Icons.radio_button_checked
-                                          : Icons.radio_button_unchecked,
-                                      color: AppColors.backgroundColor,
-                                    ),
-                                    const Gap(10),
-                                    const Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            'Stufe 2 - Erweiterte Förderung',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          const Text(
-                                            'Zusätzliche individuelle Fördermaßnahmen',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const Divider(height: 1),
-                            InkWell(
-                              onTap: () => controller.setSupportLevel(3),
-                              child: Container(
-                                padding: const EdgeInsets.all(16),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      selectedLevel == 3
-                                          ? Icons.radio_button_checked
-                                          : Icons.radio_button_unchecked,
-                                      color: AppColors.backgroundColor,
-                                    ),
-                                    const Gap(10),
-                                    const Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            'Stufe 3 - Intensive Förderung',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          const Text(
-                                            'Umfassende sonderpädagogische Unterstützung',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
+                            const Gap(8),
+                            Expanded(
+                              child: Text(
+                                currentSemester,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
                                 ),
                               ),
                             ),
@@ -224,6 +152,55 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                         ),
                       );
                     },
+                  ),
+
+                  const Gap(20),
+
+                  // Support Level Display (Read-only)
+                  const Text('Förderebene', style: AppStyles.title),
+                  const Gap(10),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                      border: Border.all(
+                        color: AppColors.backgroundColor.withValues(alpha: 0.3),
+                        width: 2,
+                      ),
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.check_circle,
+                            color: AppColors.backgroundColor,
+                          ),
+                          const Gap(10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${controller.fixedSupportLevel} - ${_getSupportLevelDescription(controller.fixedSupportLevel)}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const Text(
+                                  'Aktuelle Förderebene des Schülers',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
 
                   const Gap(20),
@@ -254,54 +231,6 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                   ),
 
                   const Gap(30),
-
-                  // Semester Information
-                  ValueListenableBuilder<String>(
-                    valueListenable: controller.semesterInfoNotifier,
-                    builder: (context, currentSemester, child) {
-                      return Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16.0),
-                        decoration: BoxDecoration(
-                          color: AppColors.backgroundColor.withValues(
-                            alpha: 0.1,
-                          ),
-                          borderRadius: BorderRadius.circular(10.0),
-                          border: Border.all(
-                            color: AppColors.backgroundColor.withValues(
-                              alpha: 0.3,
-                            ),
-                            width: 1,
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Icon(
-                              Icons.info_outline,
-                              color: AppColors.backgroundColor,
-                              size: 20,
-                            ),
-                            const Gap(8),
-                            const Text(
-                              'Semesterinformation',
-                              style: AppStyles.subtitle,
-                            ),
-                            const Gap(4),
-                            Text(
-                              currentSemester,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-
-                  const Gap(40),
 
                   // Action Buttons
                   ValueListenableBuilder<bool>(

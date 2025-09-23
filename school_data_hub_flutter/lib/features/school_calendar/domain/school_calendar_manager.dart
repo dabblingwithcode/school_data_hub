@@ -94,11 +94,6 @@ class SchoolCalendarManager {
     final schooldays = _schooldays.value;
     final now = DateTime.now().toUtc();
 
-    _log.info('getThisDate called - Current UTC time: $now');
-    _log.info(
-      'Available schooldays: ${schooldays.map((s) => s.schoolday).toList()}',
-    );
-
     // First, check if today is a schoolday
     final todaySchoolday = schooldays.firstWhereOrNull((element) {
       // Convert both dates to local date for comparison (ignoring time)

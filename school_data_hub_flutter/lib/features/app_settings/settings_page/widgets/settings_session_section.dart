@@ -32,10 +32,6 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
     final locale = AppLocalizations.of(context)!;
     final _hubSessionManager = di<HubSessionManager>();
     final int userCredit = _hubSessionManager.userCredit ?? 0;
-    final String username =
-        watchPropertyValue(
-          (HubSessionManager x) => x.user,
-        )!.userInfo!.userName!;
 
     return SettingsSection(
       title: Text(

@@ -81,6 +81,16 @@ learningSupportPlan:
   - updateCategoryStatus:
   - deleteSupportCategoryStatus:
   - postCategoryGoal:
+preSchoolMedical:
+  - createPreSchoolMedical:
+  - updatePreSchoolMedical:
+  - getPreSchoolMedical:
+  - getPreSchoolMedicalByPupilId:
+  - deletePreSchoolMedical:
+  - addFileToPreSchoolMedical:
+  - removeFileFromPreSchoolMedical:
+  - getAllPreSchoolMedicalRecords:
+  - getPreSchoolMedicalByStatus:
 supportCategory:
   - fetchSupportCategories:
   - importSupportCategoriesFromJsonFile:

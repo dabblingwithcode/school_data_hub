@@ -56,8 +56,46 @@ class MatrixEndpoints {
   String setRoomPowerLevels(String roomId) {
     return '_matrix/client/v3/rooms/$roomId/state/m.room.power_levels';
   }
+
+  //- SEND MESSAGE
+  // https://spec.matrix.org/v1.16/client-server-api/#put_matrixclientv3roomsroomidsendeventtypetxnid
+  String sendMessage(String roomId, String eventType, String txnId) {
+    final encodedRoomId = roomId.replaceAllMapped(RegExp(r'[!:]'), (match) {
+      switch (match.group(0)) {
+        case '!':
+          return '%21';
+        case ':':
+          return '%3A';
+        default:
+          return match.group(0)!;
+      }
+    });
+    return '_matrix/client/v3/rooms/$encodedRoomId/send/$eventType/$txnId';
+  }
+
+  //- GET ROOM MESSAGES
+  // https://spec.matrix.org/v1.16/client-server-api/#get_matrixclientv3roomsroomidmessages
+  String getRoomMessages(String roomId) {
+    final encodedRoomId = roomId.replaceAllMapped(RegExp(r'[!:]'), (match) {
+      switch (match.group(0)) {
+        case '!':
+          return '%21';
+        case ':':
+          return '%3A';
+        default:
+          return match.group(0)!;
+      }
+    });
+    return '_matrix/client/v3/rooms/$encodedRoomId/messages';
+  }
+
 //- curl --header "Authorization: Bearer $accessToken"
 //-X PUT -d '{"ban": 50,"events":
 // - {"m.room.name":50,"m.room.power_levels":100,"m.room.history_visibility":100,"m.room.canonical_alias":50,"m.room.avatar":50,"m.room.tombstone":100,"m.room.server_acl":100,"m.room.encryption":100,"m.space.child":50,"m.room.topic":50,"m.room.pinned_events":50,"m.reaction":50,"m.room.redaction":0,"org.matrix.msc3401.call":50,"org.matrix.msc3401.call.member":50,"im.vector.modular.widgets":50,"io.element.voice_broadcast_info":50},"events_default": 50,"invite": 50,"kick": 50,"notifications": {"room": 20},"redact": 50,"state_default": 50,"users": {"@mxcorporal:hermannschule.de": 100},"users_default": 0}'
 // - "https://post.hermannschule.de/_matrix/client/v3/rooms/%21hcFshNfUbzzoRDXmKe%3Ahermannschule.de/state/m.room.power_levels/"
+
+//- Example message sending:
+// curl --header "Authorization: Bearer $accessToken" \
+// -X PUT -d '{"msgtype": "m.text", "body": "Hello, this is a test message!"}' \
+// "https://post.hermannschule.de/_matrix/client/v3/rooms/%21roomId%3Ahermannschule.de/send/m.room.message/1234567890"
 }

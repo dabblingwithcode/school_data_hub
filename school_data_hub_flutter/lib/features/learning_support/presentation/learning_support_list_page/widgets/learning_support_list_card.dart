@@ -35,8 +35,12 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
       surfaceTintColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       elevation: 1.0,
-      margin:
-          const EdgeInsets.only(left: 4.0, right: 4.0, top: 4.0, bottom: 4.0),
+      margin: const EdgeInsets.only(
+        left: 4.0,
+        right: 4.0,
+        top: 4.0,
+        bottom: 4.0,
+      ),
       child: Column(
         children: [
           Row(
@@ -60,13 +64,16 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                               onTap: () {
                                 _mainMenuBottomNavManager
                                     .setPupilProfileNavPage(
-                                        ProfileNavigationState
-                                            .learningSupport.value);
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (ctx) => PupilProfilePage(
-                                    pupil: pupil,
+                                      ProfileNavigationState
+                                          .learningSupport
+                                          .value,
+                                    );
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder:
+                                        (ctx) => PupilProfilePage(pupil: pupil),
                                   ),
-                                ));
+                                );
                               },
                               child: Row(
                                 children: [
@@ -106,7 +113,8 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                         const Text('ärztl. U.: '),
                         Text(
                           LearningSupportHelper.preschoolRevision(
-                              pupil.preSchoolMedical?.preschoolMedicalStatus),
+                            pupil.preSchoolMedical?.preschoolMedicalStatus,
+                          ),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
@@ -160,7 +168,7 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                       child: Text(
                         pupil.latestSupportLevel != null
                             ? pupil.latestSupportLevel!.level == 4
-                                ? 'RB'
+                                ? '🌈'
                                 : pupil.latestSupportLevel!.level.toString()
                             : '0',
                         style: const TextStyle(
@@ -191,14 +199,11 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
           Padding(
             padding: const EdgeInsets.all(5),
             child: CustomExpansionTileContent(
-                title: null,
-                tileController: _tileController,
-                widgetList: [
-                  SupportGoalsList(
-                    pupil: pupil,
-                  )
-                ]),
-          )
+              title: null,
+              tileController: _tileController,
+              widgetList: [SupportGoalsList(pupil: pupil)],
+            ),
+          ),
         ],
       ),
     );

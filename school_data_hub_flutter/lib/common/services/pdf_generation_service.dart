@@ -41,7 +41,7 @@ class AttendancePdfGenerator {
     _notificationService.setHeavyLoadingValue(true);
 
     // Configuration for pagination
-    const int maxPupilsPerPage = 25;
+    const int maxPupilsPerPage = 24;
     final int totalPages = (pupils.length / maxPupilsPerPage).ceil();
 
     if (pupils.isEmpty) {
@@ -144,15 +144,17 @@ class AttendancePdfGenerator {
                 ],
 
                 // Pupils table
-                _buildAttendanceTable(
-                  pupils,
-                  startIndex,
-                  fontRegular,
-                  fontBold,
+                pw.Expanded(
+                  child: _buildAttendanceTable(
+                    pupils,
+                    startIndex,
+                    date,
+                    fontRegular,
+                    fontBold,
+                  ),
                 ),
 
                 // Footer
-                pw.Spacer(),
                 _buildFooter(date, fontRegular),
               ],
             );
@@ -310,6 +312,7 @@ class AttendancePdfGenerator {
   static pw.Widget _buildAttendanceTable(
     List<PupilProxy> pupils,
     int startIndex,
+    DateTime targetDate,
     pw.Font fontRegular,
     pw.Font fontBold,
   ) {
@@ -370,7 +373,7 @@ class AttendancePdfGenerator {
           ...pupils.asMap().entries.map((entry) {
             final index = startIndex + entry.key + 1;
             final pupil = entry.value;
-            final attendanceInfo = _getAttendanceInfo(pupil);
+            final attendanceInfo = _getAttendanceInfo(pupil, targetDate);
 
             try {
               return pw.TableRow(
@@ -387,9 +390,10 @@ class AttendancePdfGenerator {
                     fontBold,
                   ),
                   _buildTableCell(
-                    attendanceInfo.unexcusedValue ? 'Nein' : 'Ja',
+                    attendanceInfo.unexcusedValue ? 'Ja' : 'Nein',
                     fontRegular,
                     fontBold,
+                    isBold: attendanceInfo.unexcusedValue,
                   ),
                   _buildTableCell(
                     _getContactedText(attendanceInfo),
@@ -445,6 +449,7 @@ class AttendancePdfGenerator {
     pw.Font fontRegular,
     pw.Font fontBold, {
     bool isHeader = false,
+    bool isBold = false,
   }) {
     // Truncate text if it's too long to prevent overflow issues
     String displayText = text;
@@ -453,12 +458,12 @@ class AttendancePdfGenerator {
     }
 
     return pw.Container(
-      padding: const pw.EdgeInsets.all(6),
+      padding: const pw.EdgeInsets.all(4),
       child: pw.Text(
         displayText,
         style: pw.TextStyle(
-          fontSize: isHeader ? 11 : 10,
-          font: isHeader ? fontBold : fontRegular,
+          fontSize: isHeader ? 10 : 9,
+          font: isHeader || isBold ? fontBold : fontRegular,
         ),
         textAlign: isHeader ? pw.TextAlign.center : pw.TextAlign.left,
         overflow: pw.TextOverflow.clip, // Clip text that's still too long
@@ -467,24 +472,25 @@ class AttendancePdfGenerator {
   }
 
   /// Gets attendance information for a pupil
-  static AttendanceValues _getAttendanceInfo(PupilProxy pupil) {
+  static AttendanceValues _getAttendanceInfo(
+    PupilProxy pupil,
+    DateTime targetDate,
+  ) {
     final missedSchooldaysList = _attendanceManager
         .getPupilMissedSchooldaysProxy(pupil.pupilId);
     final missedSchoolday = missedSchooldaysList.missedSchooldays.firstWhere(
-      (element) =>
-          element.schoolday?.schoolday.isSameDate(DateTime.now().toUtc()) ??
-          false,
-      // orElse:
-      //     () => MissedSchoolday(
-      //       missedType: MissedType.notSet,
-      //       unexcused: false,
-      //       contacted: ContactedType.notSet,
-      //       returned: false,
-      //       writtenExcuse: false,
-      //       createdBy: '',
-      //       schooldayId: 0,
-      //       pupilId: pupil.pupilId,
-      //     ),
+      (element) => element.schoolday?.schoolday.isSameDate(targetDate) ?? false,
+      orElse:
+          () => MissedSchoolday(
+            missedType: MissedType.notSet,
+            unexcused: false,
+            contacted: ContactedType.notSet,
+            returned: false,
+            writtenExcuse: false,
+            createdBy: '',
+            schooldayId: 0,
+            pupilId: pupil.pupilId,
+          ),
     );
 
     return AttendanceHelper.getAttendanceValues(missedSchoolday);

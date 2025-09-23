@@ -1,43 +1,28 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:isbn/isbn.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_search_form/book_search_form_page.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_tag_management_page/book_tag_management_controller.dart';
-import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../../../common/theme/app_colors.dart';
-import '../../../../common/theme/styles.dart';
 import '../../../../common/widgets/dialogs/short_textfield_dialog.dart';
 import '../book_list_page/book_list_page.dart';
+import '../book_list_page/widgets/book_list_bottom_navbar.dart';
 import '../new_book_page/new_book_controller.dart';
 
-class BookSelectionPage extends StatelessWidget {
-  const BookSelectionPage({super.key});
+class BooksMainMenuPage extends StatelessWidget {
+  const BooksMainMenuPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final locale = AppLocalizations.of(context)!;
-
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
-      appBar: AppBar(
-        foregroundColor: Colors.white,
-        centerTitle: true,
-        backgroundColor: AppColors.backgroundColor,
-        title: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.lightbulb, size: 25, color: Colors.white),
-            Gap(10),
-            Text('Bücher', style: AppStyles.appBarTextStyle),
-          ],
-        ),
-      ),
+      appBar: const GenericAppBar(iconData: Icons.lightbulb, title: 'Bücher'),
       body: Center(
         child: SizedBox(
           width: 380,
@@ -73,6 +58,7 @@ class BookSelectionPage extends StatelessWidget {
           ),
         ),
       ),
+      bottomNavigationBar: const BookListBottomNavBar(),
     );
   }
 

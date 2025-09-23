@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper.dart';
+import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_message.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/policy.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/data/matrix_room_api_service.dart'
     as room_api;
@@ -59,6 +60,68 @@ class MatrixApiService {
   // Getters to access sub-services
   MatrixUserApiService get userApi => _userApiService;
   room_api.MatrixRoomApiService get roomApi => _roomApiService;
+
+  // Message API delegation methods
+  Future<MatrixMessageResponse> sendTextMessage({
+    required String roomId,
+    required String text,
+    String? transactionId,
+  }) => _roomApiService.sendTextMessage(
+    roomId: roomId,
+    text: text,
+    transactionId: transactionId,
+  );
+
+  Future<MatrixMessageResponse> sendEmoteMessage({
+    required String roomId,
+    required String emote,
+    String? transactionId,
+  }) => _roomApiService.sendEmoteMessage(
+    roomId: roomId,
+    emote: emote,
+    transactionId: transactionId,
+  );
+
+  Future<MatrixMessageResponse> sendNoticeMessage({
+    required String roomId,
+    required String notice,
+    String? transactionId,
+  }) => _roomApiService.sendNoticeMessage(
+    roomId: roomId,
+    notice: notice,
+    transactionId: transactionId,
+  );
+
+  Future<List<MatrixMessageEvent>> getRoomMessages({
+    required String roomId,
+    String? from,
+    int limit = 10,
+    String dir = 'b',
+  }) => _roomApiService.getRoomMessages(
+    roomId: roomId,
+    from: from,
+    limit: limit,
+    dir: dir,
+  );
+
+  // Direct messaging methods
+  Future<Map<String, String>> sendDirectTextMessage({
+    required String targetUserId,
+    required String text,
+    String? transactionId,
+  }) => _roomApiService.sendDirectTextMessage(
+    targetUserId: targetUserId,
+    text: text,
+    transactionId: transactionId,
+  );
+
+  Future<void> inviteUserToRoom({
+    required String roomId,
+    required String userId,
+  }) => _roomApiService.inviteUserToRoom(roomId: roomId, userId: userId);
+
+  Future<String> getOrCreateDirectMessageRoom(String targetUserId) =>
+      _roomApiService.getOrCreateDirectMessageRoom(targetUserId);
 
   void setMatrixEnvironmentValues({
     required String url,
@@ -146,72 +209,4 @@ class MatrixApiService {
 
     return;
   }
-
-  // //- DELEGATION METHODS FOR BACKWARD COMPATIBILITY
-  // // These methods delegate to the appropriate sub-services to maintain existing API
-
-  // // User API delegation
-  // Future<MatrixUser?> createNewMatrixUser({
-  //   required String matrixId,
-  //   required String displayName,
-  //   required String password,
-  // }) =>
-  //     _userApiService.createNewMatrixUser(
-  //       matrixId: matrixId,
-  //       displayName: displayName,
-  //       password: password,
-  //     );
-
-  // Future<bool> deleteMatrixUser(String userId) =>
-  //     _userApiService.deleteMatrixUser(userId);
-
-  // Future<bool> resetPassword({
-  //   required String userId,
-  //   required String newPassword,
-  //   bool? logoutDevices,
-  // }) =>
-  //     _userApiService.resetPassword(
-  //       userId: userId,
-  //       newPassword: newPassword,
-  //       logoutDevices: logoutDevices,
-  //     );
-
-  // Future<MatrixUser?> fetchMatrixUserById(String userId) =>
-  //     _userApiService.fetchMatrixUserById(userId);
-
-  // // Room API delegation
-  // Future<MatrixRoom?> createMatrixRoom({
-  //   required String name,
-  //   required String topic,
-  //   required room_api.ChatTypePreset chatTypePreset,
-  //   String? aliasName,
-  // }) =>
-  //     _roomApiService.createMatrixRoom(
-  //       name: name,
-  //       topic: topic,
-  //       chatTypePreset: chatTypePreset,
-  //       aliasName: aliasName,
-  //     );
-
-  // Future<MatrixRoom> fetchAdditionalRoomInfos(String roomId) =>
-  //     _roomApiService.fetchAdditionalRoomInfos(roomId);
-
-  // Future<MatrixRoom> changeRoomPowerLevels({
-  //   required String roomId,
-  //   RoomAdmin? newRoomAdmin,
-  //   String? removeAdminWithId,
-  //   int? eventsDefault,
-  //   int? reactions,
-  //   required MatrixRoom currentRoom,
-  //   required String matrixAdmin,
-  // }) =>
-  //     _roomApiService.changeRoomPowerLevels(
-  //       roomId: roomId,
-  //       newRoomAdmin: newRoomAdmin,
-  //       removeAdminWithId: removeAdminWithId,
-  //       eventsDefault: eventsDefault,
-  //       reactions: reactions,
-  //       currentRoom: currentRoom,
-  //       matrixAdmin: matrixAdmin,
-  //     );
 }

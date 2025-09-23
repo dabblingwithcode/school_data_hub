@@ -451,6 +451,10 @@ class PupilManager extends ChangeNotifier {
         .pickFiles(type: FileType.custom, allowedExtensions: ['json'])
         .then((result) => result?.files.single.path);
 
+    if (jsonFilePath == null) {
+      return;
+    }
+
     int totalRecords = 0;
 
     int successCount = 0;
@@ -459,7 +463,7 @@ class PupilManager extends ChangeNotifier {
     _log.info('Starting pupil data import from: $jsonFilePath');
 
     // Read and parse JSON file
-    final file = File(jsonFilePath!);
+    final file = File(jsonFilePath);
     if (!await file.exists()) {
       throw Exception('File not found: $jsonFilePath');
     }
@@ -495,86 +499,45 @@ class PupilManager extends ChangeNotifier {
     Map<String, dynamic> data,
   ) async {
     bool hasUpdates = false;
+    _log.info('Querying internal ID: $internalId');
     final pupil = getPupilsFromInternalIds([internalId]).firstOrNull;
 
     if (pupil == null) {
+      _log.warning('Pupil not found for internal ID: $internalId');
       return false;
     }
 
     try {
-      // // Update contact field
-      // final String? contact = data['contact'] as String?;
-      // if (contact != null && contact.isNotEmpty && contact != pupil.contact) {
-      //   await PupilMutator().updateStringProperty(
-      //     pupilId: pupil.pupilId,
-      //     property: 'contact',
-      //     value: contact,
-      //   );
-      //   hasUpdates = true;
-      //   _log.fine('Updated contact for pupil ${pupil.internalId}: $contact');
-      // }
+      final avatarAuthId = data['avatar_auth_id'] as String?;
+      if (avatarAuthId != null) {
+        // Find the avatar file in the decrypted folder
+        final decryptedFolderPath =
+            'H:/code/dabblingwithcode/school_data_hub/private/old_instance/media_upload/auth/decrypted';
+        final avatarFileName = '_${avatarAuthId}.jpg';
+        final avatarFile = File('$decryptedFolderPath/$avatarFileName');
 
-      // // Update special information
-      // final String? specialInfo = data['special_information'] as String?;
-      // if (specialInfo != null &&
-      //     specialInfo.isNotEmpty &&
-      //     specialInfo != pupil.specialInformation) {
-      //   await PupilMutator().updateStringProperty(
-      //     pupilId: pupil.pupilId,
-      //     property: 'specialInformation',
-      //     value: specialInfo,
-      //   );
-      //   hasUpdates = true;
-      //   _log.fine(
-      //     'Updated special info for pupil ${pupil.internalId}: $specialInfo',
-      //   );
-      // }
-      // Update credit
-      final int? credit = data['credit'] as int?;
-      if (credit != null && credit != pupil.credit) {
-        await PupilMutator().updateCredit(
-          pupilId: pupil.pupilId,
-          credit: credit,
-        );
-        hasUpdates = true;
-        _log.fine('Updated credit for pupil ${pupil.internalId}: $credit');
+        if (await avatarFile.exists()) {
+          _log.info('Avatar file found: $avatarFileName');
+          try {
+            // Update the pupil with the avatar file
+            await PupilMutator().updatePupilDocument(
+              imageFile: avatarFile,
+              pupilProxy: pupil,
+              documentType: PupilDocumentType.avatarAuth,
+            );
+            hasUpdates = true;
+            _log.info(
+              'Updated avatar auth for pupil ${pupil.internalId} with file: $avatarFileName',
+            );
+          } catch (e) {
+            _log.warning(
+              'Failed to update avatar auth for pupil ${pupil.internalId}: $e',
+            );
+          }
+        } else {
+          _log.warning('Avatar file not found: $avatarFileName');
+        }
       }
-
-      // // Update parents_contact in tutorInfo
-      // final String? parentsContact = data['parents_contact'] as String?;
-      // if (parentsContact != null && parentsContact.isNotEmpty) {
-      //   final currentTutorInfo = pupil.tutorInfo;
-      //   if (pupil.tutorInfo == null) {
-      //     final TutorInfo newTutorInfo = TutorInfo(
-      //       parentsContact: parentsContact,
-      //       createdBy: _hubSessionManager.userName!,
-      //     );
-      //     await PupilMutator().updateTutorInfo(
-      //       pupilId: pupil.pupilId,
-      //       tutorInfo: newTutorInfo,
-      //     );
-      //     hasUpdates = true;
-      //     _log.fine(
-      //       'Created new tutor info for pupil ${pupil.pupilId}: $parentsContact',
-      //     );
-      //     hasUpdates = true;
-      //   } else {
-      //     final updatedTutorInfo = currentTutorInfo?.copyWith(
-      //       parentsContact: parentsContact,
-      //     );
-
-      //     if (currentTutorInfo?.parentsContact != parentsContact) {
-      //       await PupilMutator().updateTutorInfo(
-      //         pupilId: pupil.pupilId,
-      //         tutorInfo: updatedTutorInfo,
-      //       );
-      //       hasUpdates = true;
-      //       _log.fine(
-      //         'Updated parents contact for pupil ${pupil.internalId}: $parentsContact',
-      //       );
-      //     }
-      //   }
-      // }
 
       if (hasUpdates) {
         return true;

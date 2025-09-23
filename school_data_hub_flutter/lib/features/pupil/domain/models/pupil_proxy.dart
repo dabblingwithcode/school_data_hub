@@ -56,37 +56,6 @@ class PupilProxy with ChangeNotifier {
     }
   }
 
-  // void updateFromMissedSchooldayesOnASchoolday(
-  //     List<MissedSchoolday> allMissedSchooldayesThisDay) {
-  //   pupilIsDirty = false;
-
-  //   if (allMissedSchooldayesThisDay
-  //       .any((missedSchoolday) => missedSchoolday.pupilId == _pupilData.internalId)) {
-  //     final missedSchoolday = allMissedSchooldayesThisDay.firstWhere(
-  //         (missedSchoolday) => missedSchoolday.pupilId == _pupilData.internalId);
-  //     // if the missed class is not already in the missed classes
-  //     // or if the missed class is different from the one in the missed classes
-  //     // write it
-  //     if (!_missedSchooldays.containsKey(missedSchoolday.schoolday!.schoolday) ||
-  //         !(_missedSchooldays[missedSchoolday.schoolday!.schoolday] == missedSchoolday)) {
-  //       _missedSchooldays[missedSchoolday.schoolday!.schoolday] = missedSchoolday;
-  //       pupilIsDirty = true;
-  //     }
-  //   } else {
-  //     // there is no missed class for this pupil on this date
-  //     // if there is a missed class for this date in the pupil's missed classes in memory
-  //     // remove it
-  //     if (_missedSchooldays.containsKey(_schoolCalendarManager.thisDate.value)) {
-  //       _missedSchooldays.remove(di<SchooldayManager>().thisDate.value);
-  //       pupilIsDirty = true;
-  //     }
-  //   }
-
-  //   if (pupilIsDirty) {
-  //     notifyListeners();
-  //   }
-  // }
-
   String get firstName => _pupilIdentity.firstName;
   String get lastName => _pupilIdentity.lastName;
 
@@ -110,6 +79,8 @@ class PupilProxy with ChangeNotifier {
     }
     return age;
   }
+
+  String? get groupTutor => _pupilIdentity.groupTutor;
 
   DateTime? get migrationSupportEnds => _pupilIdentity.migrationSupportEnds;
   DateTime get pupilSince => _pupilIdentity.pupilSince;
@@ -215,7 +186,7 @@ class PupilProxy with ChangeNotifier {
 
   List<SupportGoal>? get supportGoals => _pupilData.supportGoals;
 
-  List<LearningSupportPlan>? get individualLearningPlans =>
+  List<LearningSupportPlan>? get learningSupportPlans =>
       _pupilData.learningSupportPlans;
 
   // schoolday related

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
@@ -39,6 +41,116 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
   }
 
   PupilProxy? pupil;
+
+  Future<void> _showMessageDialog(
+    BuildContext context,
+    MatrixUser matrixUser,
+  ) async {
+    final TextEditingController messageController = TextEditingController();
+    bool isSending = false;
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text('Nachricht senden an ${matrixUser.displayName}'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Matrix ID: ${matrixUser.id}',
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: messageController,
+                    decoration: const InputDecoration(
+                      hintText: 'Nachricht eingeben...',
+                      border: OutlineInputBorder(),
+                    ),
+                    maxLines: 3,
+                    enabled: !isSending,
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed:
+                      isSending ? null : () => Navigator.of(context).pop(),
+                  child: const Text('Abbrechen'),
+                ),
+                ElevatedButton(
+                  onPressed:
+                      isSending
+                          ? null
+                          : () async {
+                            if (messageController.text.trim().isEmpty) return;
+
+                            setState(() => isSending = true);
+
+                            try {
+                              log('Sending direct message to ${matrixUser.id}');
+                              log(
+                                'Message text: ${messageController.text.trim()}',
+                              );
+
+                              final result = await _matrixPolicyManager
+                                  .sendDirectTextMessage(
+                                    targetUserId: matrixUser.id!,
+                                    text: messageController.text.trim(),
+                                  );
+
+                              log('Message sent successfully: $result');
+
+                              if (context.mounted) {
+                                Navigator.of(context).pop();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Nachricht an ${matrixUser.displayName} gesendet!',
+                                    ),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                              }
+                            } catch (e, stackTrace) {
+                              log('Error sending message: $e');
+                              log('Stack trace: $stackTrace');
+
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Fehler beim Senden: $e'),
+                                    backgroundColor: Colors.red,
+                                    duration: const Duration(seconds: 5),
+                                  ),
+                                );
+                              }
+                            } finally {
+                              if (context.mounted) {
+                                setState(() => isSending = false);
+                              }
+                            }
+                          },
+                  child:
+                      isSending
+                          ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                          : const Text('Senden'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final matrixUser = watch<MatrixUser>(widget.matrixUser);
@@ -295,6 +407,11 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                             }
                           },
                           icon: const Icon(Icons.qr_code_2_rounded),
+                        ),
+                        IconButton(
+                          onPressed:
+                              () => _showMessageDialog(context, matrixUser),
+                          icon: const Icon(Icons.message, color: Colors.blue),
                         ),
                       ],
                     ),

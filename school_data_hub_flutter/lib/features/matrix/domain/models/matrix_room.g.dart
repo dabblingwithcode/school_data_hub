@@ -7,14 +7,14 @@ part of 'matrix_room.dart';
 // **************************************************************************
 
 MatrixRoom _$MatrixRoomFromJson(Map<String, dynamic> json) => MatrixRoom(
-      id: json['id'] as String,
-      name: json['name'] as String?,
-      powerLevelReactions: (json['powerLevelReactions'] as num?)?.toInt(),
-      eventsDefault: (json['eventsDefault'] as num?)?.toInt(),
-      roomAdmins: (json['roomAdmins'] as List<dynamic>?)
-          ?.map((e) => RoomAdmin.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
+  id: json['id'] as String,
+  name: json['name'] as String?,
+  powerLevelReactions: (json['powerLevelReactions'] as num?)?.toInt(),
+  eventsDefault: (json['eventsDefault'] as num?)?.toInt(),
+  roomAdmins: (json['roomAdmins'] as List<dynamic>?)
+      ?.map((e) => RoomAdmin.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
 
 Map<String, dynamic> _$MatrixRoomToJson(MatrixRoom instance) =>
     <String, dynamic>{
@@ -26,11 +26,11 @@ Map<String, dynamic> _$MatrixRoomToJson(MatrixRoom instance) =>
     };
 
 RoomAdmin _$RoomAdminFromJson(Map<String, dynamic> json) => RoomAdmin(
-      id: json['id'] as String,
-      powerLevel: (json['powerLevel'] as num).toInt(),
-    );
+  id: json['id'] as String,
+  powerLevel: (json['powerLevel'] as num).toInt(),
+);
 
 Map<String, dynamic> _$RoomAdminToJson(RoomAdmin instance) => <String, dynamic>{
-      'id': instance.id,
-      'powerLevel': instance.powerLevel,
-    };
+  'id': instance.id,
+  'powerLevel': instance.powerLevel,
+};
