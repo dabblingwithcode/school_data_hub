@@ -7,9 +7,8 @@ PupilData generatePupilfromExternalAdminConsoleData(String importedLine) {
   bool afterSchoolCare = false;
   if (data[1] == 'OFFGANZ' || data[1] == 'true') {
     afterSchoolCare = true;
-    print('After school care: $afterSchoolCare');
   }
-  // Create a PupilData object from the data
+
   return PupilData(
       status: PupilStatus.active,
       internalId: int.parse(data[0]),

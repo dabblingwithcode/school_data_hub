@@ -58,6 +58,19 @@ class NewSupportCategoryStatusController
     strategiesTextField2Controller.text = strategies;
   }
 
+  Future postCategoryStatus() async {
+    if (goalCategoryId == null) {
+      return;
+    }
+
+    await _learningSupportPlanManager.postSupportCategoryStatus(
+      supportCategoryId: goalCategoryId!,
+      pupilId: widget.pupilId,
+      status: categoryStatusValue,
+      comment: strategiesTextField2Controller.text,
+    );
+  }
+
   Future postCategoryGoal() async {
     if (goalCategoryId == null) {
       return;

@@ -102,7 +102,6 @@ class UserDevice <<table: <b>user_device</b>>> #e2f0fb##[bold] {
   <i>deviceId</i>: <b><color:#ff962f>String</color></b>
   <i>deviceName</i>: <b><color:#ff962f>String</color></b>
   <i>lastLogin</i>: <b><color:#ff962f>DateTime</color></b>
-  <i>lastIdentitiesUpdate</i>: <b><color:#ff962f>DateTime?</color></b>
   <i>isActive</i>: <b><color:#ff962f>bool</color></b>
  ➡️ <i>authId</i> : <b><color:#ff962f>int</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color>parent<color:#ff962f>=</color>serverpod_auth_key
 <b><color:#0164aa>indexes:</color></b>
@@ -203,7 +202,7 @@ class LibraryBookQuery ##[bold]  {
   <i>location</i>: <b><color:#ff962f>LibraryBookLocation?</color></b>
   <i>keywords</i>: <b><color:#ff962f>String?</color></b>
   <i>readingLevel</i>: <b><color:#ff962f>String?</color></b>
-  <i>tags</i>: <b><color:#ff962f>List<BookTagging>?</color></b>
+  <i>tags</i>: <b><color:#ff962f>List<BookTag>?</color></b>
   <i>borrowStatus</i>: <b><color:#ff962f>bool?</color></b>
   <i>page</i>: <b><color:#ff962f>int</color></b>
   <i>perPage</i>: <b><color:#ff962f>int</color></b>
@@ -320,7 +319,12 @@ class LearningSupportPlan <<table: <b>learning_support_plan</b>>> #e2f0fb##[bold
 <size:14>📁</size> <b><size:12> /_features/learning_support/models/learning_support_plan.spy.yaml</size></b>
 --
   <i>planId</i>: <b><color:#ff962f>String</color></b>
+  <i>number</i>: <b><color:#ff962f>int?</color></b>
   <i>createdBy</i>: <b><color:#ff962f>String</color></b>
+  <i>socialPedagogue</i>: <b><color:#ff962f>String?</color></b>
+  <i>proffesionalsInvolved</i>: <b><color:#ff962f>String?</color></b>
+  <i>strengthsDescription</i>: <b><color:#ff962f>String?</color></b>
+  <i>problemsDescription</i>: <b><color:#ff962f>String?</color></b>
  ➡️ <i>learningSupportLevel</i> : <b><color:#ff962f>SupportLevel?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>support_level_plans<color:#ff962f>)</color>
   <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
   <i>comment</i>: <b><color:#ff962f>String?</color></b>
@@ -394,6 +398,17 @@ class SupportLevel <<table: <b>support_level</b>>> #e2f0fb##[bold] {
   <i>createdBy</i>: <b><color:#ff962f>String</color></b>
  ➡️ <i>pupil</i> : <b><color:#ff962f>PupilData?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>support_level_pupil
  ➡️ <i>learningSupportPlans</i> : <b><color:#ff962f>List<LearningSupportPlan>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>support_level_plans<color:#ff962f>)</color>
+
+}
+
+class SupportLevelLegacyDto ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/learning_support/models/support_level_legacy_dto.spy.yaml</size></b>
+--
+  <i>pupilId</i>: <b><color:#ff962f>int</color></b>
+  <i>level</i>: <b><color:#ff962f>int</color></b>
+  <i>comment</i>: <b><color:#ff962f>String?</color></b>
+  <i>createdAt</i>: <b><color:#ff962f>DateTime?</color></b>
+  <i>createdBy</i>: <b><color:#ff962f>String?</color></b>
 
 }
 
@@ -567,8 +582,9 @@ class PreSchoolTest <<table: <b>pre_school_test</b>>> #e2f0fb##[bold] {
 class PupilData <<table: <b>pupil_data</b>>> #e2f0fb##[bold] {
 <size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/pupil_data.spy.yaml</size></b>
 --
-  <i>active</i>: <b><color:#ff962f>bool</color></b>
+  <i>status</i>: <b><color:#ff962f>PupilStatus</color></b>
   <i>internalId</i>: <b><color:#ff962f>int</color></b>
+  <i>password</i>: <b><color:#ff962f>String?</color></b>
 <color:#93c47d>## preschool related</color>
  ➡️ <i>preSchoolMedical</i> : <b><color:#ff962f>PreSchoolMedical?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
  ➡️ <i>kindergarden</i> : <b><color:#ff962f>Kindergarden?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
@@ -583,6 +599,7 @@ class PupilData <<table: <b>pupil_data</b>>> #e2f0fb##[bold] {
 <color:#93c47d>## communication and tutor related</color>
   <i>contact</i>: <b><color:#ff962f>String?</color></b>
   <i>communicationPupil</i>: <b><color:#ff962f>CommunicationSkills?</color></b>
+<color:#93c47d>##- TODO: specialInformation should be an object with createdBy and createdAt</color>
   <i>specialInformation</i>: <b><color:#ff962f>String?</color></b>
 <color:#93c47d>## - Beware: This object is used in siblings parent info</color>
   <i>tutorInfo</i>: <b><color:#ff962f>TutorInfo?</color></b>
@@ -615,9 +632,24 @@ class PupilData <<table: <b>pupil_data</b>>> #e2f0fb##[bold] {
   <i>swimmer</i>: <b><color:#ff962f>String?</color></b>
  ➡️ <i>pupilListEntries</i> : <b><color:#ff962f>List<PupilListEntry>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>pupil_list_entry_pupil<color:#ff962f>)</color>
 <b><color:#0164aa>indexes:</color></b>
-<b><color:#0164aa>pupil_data_active_idx:</color></b>
+<b><color:#0164aa>pupil_data_status_idx:</color></b>
 <b><color:#0164aa>pupil_data_internal_id_idx:</color></b>
 <b><color:#0164aa>unique</color></b>: <b><color:#ff962f>true</color></b>
+
+}
+
+enum PupilStatus #ece4ff ##[bold] {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/pupil_status.spy.yaml</size></b>
+--
+  serialized: byName
+  values: inactive, active, prospective
+
+}
+
+class LastPupilIdentiesUpdate <<table: <b>last_pupil_identities_update</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_identity/last_pupil_identities_update.spy.yaml</size></b>
+--
+  <i>date</i>: <b><color:#ff962f>DateTime?</color></b>
 
 }
 
@@ -674,12 +706,15 @@ class Schoolday <<table: <b>schoolday</b>>> #e2f0fb##[bold] {
 class SchoolSemester <<table: <b>school_semester</b>>> #e2f0fb##[bold] {
 <size:14>📁</size> <b><size:12> /_features/schoolday/models/school_semester.spy.yaml</size></b>
 --
+  <i>schoolYear</i>: <b><color:#ff962f>String</color></b>
+  <i>isFirst</i>: <b><color:#ff962f>bool</color></b>
   <i>startDate</i>: <b><color:#ff962f>DateTime</color></b>
   <i>endDate</i>: <b><color:#ff962f>DateTime</color></b>
-  <i>classConferenceDate</i>: <b><color:#ff962f>DateTime</color></b>
-  <i>supportConferenceDate</i>: <b><color:#ff962f>DateTime</color></b>
-  <i>isFirst</i>: <b><color:#ff962f>bool</color></b>
-  <i>reportConferenceDate</i>: <b><color:#ff962f>DateTime</color></b>
+  <i>classConferenceDate</i>: <b><color:#ff962f>DateTime?</color></b>
+  <i>supportConferenceDate</i>: <b><color:#ff962f>DateTime?</color></b>
+  <i>reportConferenceDate</i>: <b><color:#ff962f>DateTime?</color></b>
+  <i>reportSignedDate</i>: <b><color:#ff962f>DateTime?</color></b>
+ ➡️ <i>timetables</i> : <b><color:#ff962f>List<Timetable>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>schoolsemester_timetables<color:#ff962f>)</color>
  ➡️ <i>schooldays</i> : <b><color:#ff962f>List<Schoolday>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>schoolday_school_semester<color:#ff962f>)</color>
  ➡️ <i>competenceReports</i> : <b><color:#ff962f>List<CompetenceReport>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_report_semester<color:#ff962f>)</color>
  ➡️ <i>learningSupportPlans</i> : <b><color:#ff962f>List<LearningSupportPlan>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>learning_support_plan_semester<color:#ff962f>)</color>
@@ -708,6 +743,21 @@ enum SchooldayEventType #ece4ff ##[bold] {
 --
   serialized: byName
   values: notSet, parentsMeeting, admonition, afternoonCareAdmonition, admonitionAndBanned, otherEvent
+
+}
+
+class SchoolData <<table: <b>school_data</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/school_data/models/school_data.spy.yaml</size></b>
+--
+  <i>name</i>: <b><color:#ff962f>String</color></b>
+  <i>officialName</i>: <b><color:#ff962f>String</color></b>
+  <i>address</i>: <b><color:#ff962f>String</color></b>
+  <i>schoolNumber</i>: <b><color:#ff962f>String</color></b>
+  <i>telephoneNumber</i>: <b><color:#ff962f>String</color></b>
+  <i>email</i>: <b><color:#ff962f>String</color></b>
+  <i>website</i>: <b><color:#ff962f>String</color></b>
+ ➡️ <i>logo</i> : <b><color:#ff962f>HubDocument?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
+ ➡️ <i>officialSeal</i> : <b><color:#ff962f>HubDocument?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
 
 }
 
@@ -745,13 +795,36 @@ class Classroom <<table: <b>room</b>>> #e2f0fb##[bold] {
 
 }
 
+class LessonTeacher <<table: <b>lesson_teacher</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/timetable/models/junction_models/lesson_teacher.spy.yaml</size></b>
+--
+ ➡️ <i>user</i> : <b><color:#ff962f>User?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>user_lesson<color:#ff962f>)</color>
+ ➡️ <i>scheduledLesson</i> : <b><color:#ff962f>Lesson?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_teachers<color:#ff962f>)</color>
+<b><color:#0164aa>indexes:</color></b>
+<b><color:#0164aa>lesson_teacher_unique_idx:</color></b>
+<b><color:#0164aa>unique</color></b>: <b><color:#ff962f>true</color></b>
+
+}
+
+class ScheduledLessonTeacher <<table: <b>scheduled_lesson_teacher</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/timetable/models/junction_models/scheduled_lesson_teacher.spy.yaml</size></b>
+--
+ ➡️ <i>user</i> : <b><color:#ff962f>User?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>user_scheduled_lesson<color:#ff962f>)</color>
+ ➡️ <i>scheduledLesson</i> : <b><color:#ff962f>ScheduledLesson?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>scheduled_lesson_teachers<color:#ff962f>)</color>
+<b><color:#0164aa>indexes:</color></b>
+<b><color:#0164aa>scheduled_lesson_teacher_unique_idx:</color></b>
+<b><color:#0164aa>unique</color></b>: <b><color:#ff962f>true</color></b>
+
+}
+
 class Lesson <<table: <b>lesson</b>>> #e2f0fb##[bold] {
 <size:14>📁</size> <b><size:12> /_features/timetable/models/lesson/lesson.spy.yaml</size></b>
 --
   <i>publicId</i>: <b><color:#ff962f>String</color></b>
 <color:#93c47d>## TODO: should relate with schoolday</color>
  ➡️ <i>attendedPupils</i> : <b><color:#ff962f>List<LessonAttendance>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_attendance_lessons<color:#ff962f>)</color>
- ➡️ <i>subject</i> : <b><color:#ff962f>LessonSubject?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_subject_lessons<color:#ff962f>)</color>
+ ➡️ <i>subject</i> : <b><color:#ff962f>Subject?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>subject_lesson<color:#ff962f>)</color>
+ ➡️ <i>lessonTeachers</i> : <b><color:#ff962f>List<LessonTeacher>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_teachers<color:#ff962f>)</color>
 
 }
 
@@ -775,17 +848,18 @@ class LessonGroup <<table: <b>lesson_group</b>>> #e2f0fb##[bold] {
   <i>publicId</i>: <b><color:#ff962f>String</color></b>
   <i>name</i>: <b><color:#ff962f>String</color></b>
   <i>color</i>: <b><color:#ff962f>String?</color></b>
+ ➡️ <i>timetable</i> : <b><color:#ff962f>Timetable?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_group_timetable<color:#ff962f>)</color>
   <i>createdBy</i>: <b><color:#ff962f>String</color></b>
   <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
-  <i>modifiedBy</i>: <b><color:#ff962f>String</color></b>
-  <i>modifiedAt</i>: <b><color:#ff962f>DateTime</color></b>
+  <i>modifiedBy</i>: <b><color:#ff962f>String?</color></b>
+  <i>modifiedAt</i>: <b><color:#ff962f>DateTime?</color></b>
  ➡️ <i>scheduledLessons</i> : <b><color:#ff962f>List<ScheduledLesson>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_group_scheduled_lesson<color:#ff962f>)</color>
  ➡️ <i>memberships</i> : <b><color:#ff962f>List<ScheduledLessonGroupMembership>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>group_scheduled_lesson_memberships<color:#ff962f>)</color>
 
 }
 
 class ScheduledLessonGroupMembership <<table: <b>lesson_group_pupil</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/timetable/models/lesson/lesson_group_membership.spy.yaml</size></b>
+<size:14>📁</size> <b><size:12> /_features/timetable/models/scheduled_lesson/lesson_group_membership.spy.yaml</size></b>
 --
 <color:#93c47d>## Junction table for lessongroup and pupil</color>
  ➡️ <i>lessonGroup</i> : <b><color:#ff962f>LessonGroup?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>group_scheduled_lesson_memberships<color:#ff962f>)</color>
@@ -796,17 +870,29 @@ class ScheduledLessonGroupMembership <<table: <b>lesson_group_pupil</b>>> #e2f0f
 
 }
 
-class LessonSubject <<table: <b>lesson_subject</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/timetable/models/lesson/lesson_subject.spy.yaml</size></b>
+class ScheduledLesson <<table: <b>scheduled_lesson</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/timetable/models/scheduled_lesson/scheduled_lesson.spy.yaml</size></b>
 --
-  <i>name</i>: <b><color:#ff962f>String</color></b>
-  <i>description</i>: <b><color:#ff962f>String?</color></b>
- ➡️ <i>lessons</i> : <b><color:#ff962f>List<Lesson>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_subject_lessons<color:#ff962f>)</color>
+  <i>active</i>: <b><color:#ff962f>bool</color></b>
+ ➡️ <i>subject</i> : <b><color:#ff962f>Subject?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>subject_scheduled_lesson<color:#ff962f>)</color>
+ ➡️ <i>scheduledAt</i> : <b><color:#ff962f>TimetableSlot?</color></b>,  <b><color:#0164aa>relation</color></b>
+  <i>timetableSlotOrder</i>: <b><color:#ff962f>int</color></b>
+ ➡️ <i>timetable</i> : <b><color:#ff962f>Timetable?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>scheduled_lesson_timetable<color:#ff962f>)</color>
+ ➡️ <i>lessonTeachers</i> : <b><color:#ff962f>List<ScheduledLessonTeacher>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>scheduled_lesson_teachers<color:#ff962f>)</color>
+  <i>mainTeacherId</i>: <b><color:#ff962f>int</color></b>
+  <i>lessonId</i>: <b><color:#ff962f>String</color></b>
+ ➡️ <i>room</i> : <b><color:#ff962f>Classroom?</color></b>,  <b><color:#0164aa>relation</color></b>
+ ➡️ <i>lessonGroup</i> : <b><color:#ff962f>LessonGroup?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_group_scheduled_lesson<color:#ff962f>)</color>
+  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
+  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
+  <i>modifiedBy</i>: <b><color:#ff962f>String?</color></b>
+  <i>modifiedAt</i>: <b><color:#ff962f>DateTime?</color></b>
+  <i>recordtest</i>: <b><color:#ff962f>({int testint, String testString})?</color></b>
 
 }
 
 class Subject <<table: <b>subject</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/timetable/models/lesson/subject.spy.yaml</size></b>
+<size:14>📁</size> <b><size:12> /_features/timetable/models/scheduled_lesson/subject.spy.yaml</size></b>
 --
   <i>publicId</i>: <b><color:#ff962f>String</color></b>
   <i>name</i>: <b><color:#ff962f>String</color></b>
@@ -816,41 +902,44 @@ class Subject <<table: <b>subject</b>>> #e2f0fb##[bold] {
   <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
   <i>modifiedBy</i>: <b><color:#ff962f>String</color></b>
  ➡️ <i>scheduledLessons</i> : <b><color:#ff962f>List<ScheduledLesson>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>subject_scheduled_lesson<color:#ff962f>)</color>
-
-}
-
-class ScheduledLesson <<table: <b>scheduled_lesson</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/timetable/models/scheduled_lesson.spy.yaml</size></b>
---
-  <i>active</i>: <b><color:#ff962f>bool</color></b>
-  <i>publicId</i>: <b><color:#ff962f>String</color></b>
- ➡️ <i>subject</i> : <b><color:#ff962f>Subject?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>subject_scheduled_lesson<color:#ff962f>)</color>
- ➡️ <i>scheduledAt</i> : <b><color:#ff962f>TimetableSlot?</color></b>,  <b><color:#0164aa>relation</color></b>
-  <i>lessonId</i>: <b><color:#ff962f>String</color></b>
- ➡️ <i>room</i> : <b><color:#ff962f>Classroom?</color></b>,  <b><color:#0164aa>relation</color></b>
- ➡️ <i>lessonGroup</i> : <b><color:#ff962f>LessonGroup?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_group_scheduled_lesson<color:#ff962f>)</color>
-  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
-  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
-  <i>modifiedBy</i>: <b><color:#ff962f>String</color></b>
-  <i>modifiedAt</i>: <b><color:#ff962f>DateTime</color></b>
-  <i>recordtest</i>: <b><color:#ff962f>({int testint, String testString})?</color></b>
+ ➡️ <i>lessons</i> : <b><color:#ff962f>List<Lesson>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>subject_lesson<color:#ff962f>)</color>
 
 }
 
 class TimetableSlot <<table: <b>timetable_slot</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/timetable/models/timetable_slot.spy.yaml</size></b>
+<size:14>📁</size> <b><size:12> /_features/timetable/models/scheduled_lesson/timetable_slot.spy.yaml</size></b>
 --
-  <i>day</i>: <b><color:#ff962f>Weekday?</color></b>
-  <i>startTime</i>: <b><color:#ff962f>String?</color></b>
-  <i>endTime</i>: <b><color:#ff962f>String?</color></b>
+  <i>day</i>: <b><color:#ff962f>Weekday</color></b>
+  <i>startTime</i>: <b><color:#ff962f>String</color></b>
+  <i>endTime</i>: <b><color:#ff962f>String</color></b>
+ ➡️ <i>timetable</i> : <b><color:#ff962f>Timetable?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>timetable_slot_timetable<color:#ff962f>)</color>
 
 }
 
 enum Weekday #ece4ff ##[bold] {
-<size:14>📁</size> <b><size:12> /_features/timetable/models/weekday_enum.spy.yaml</size></b>
+<size:14>📁</size> <b><size:12> /_features/timetable/models/scheduled_lesson/weekday_enum.spy.yaml</size></b>
 --
   serialized: byName
   values: monday, tuesday, wednesday, thursday, friday
+
+}
+
+class Timetable <<table: <b>timetable</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/timetable/models/timetable.spy.yaml</size></b>
+--
+  <i>active</i>: <b><color:#ff962f>bool</color></b>
+  <i>startsAt</i>: <b><color:#ff962f>DateTime</color></b>
+  <i>endsAt</i>: <b><color:#ff962f>DateTime?</color></b>
+  <i>name</i>: <b><color:#ff962f>String</color></b>
+ ➡️ <i>schoolSemester</i> : <b><color:#ff962f>SchoolSemester?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>schoolsemester_timetables<color:#ff962f>)</color>
+ ➡️ <i>scheduledLessons</i> : <b><color:#ff962f>List<ScheduledLesson>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>scheduled_lesson_timetable<color:#ff962f>)</color>
+ ➡️ <i>timetableSlots</i> : <b><color:#ff962f>List<TimetableSlot>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>timetable_slot_timetable<color:#ff962f>)</color>
+ ➡️ <i>lessonGroups</i> : <b><color:#ff962f>List<LessonGroup>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>lesson_group_timetable<color:#ff962f>)</color>
+  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
+  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
+  <i>modified</i>: <b><color:#ff962f>List<({String modifiedBy, DateTime modifiedAt})>?</color></b>
+<b><color:#0164aa>indexes:</color></b>
+<b><color:#0164aa>timetable_school_semester_idx:</color></b>
 
 }
 
@@ -858,7 +947,7 @@ enum Role #ece4ff ##[bold] {
 <size:14>📁</size> <b><size:12> /_features/user/models/roles.spy.yaml</size></b>
 --
   serialized: byName
-  values: technical, teacher, educator, pupil, notAssigned
+  values: admin, teacher, specialEducatorE, specialEducatorK, educator, trainee, afterSchoolCare, socialWorker, notAssigned
 
 }
 
@@ -869,6 +958,9 @@ class User <<table: <b>user</b>>> #e2f0fb##[bold] {
  ➡️ <i>userInfo</i> : <b><color:#ff962f>module:auth:UserInfo?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>onDelete</color></b><color:#ff962f>=</color>Cascade<color:#ff962f>)</color>
   <i>role</i>: <b><color:#ff962f>Role</color></b>
   <i>timeUnits</i>: <b><color:#ff962f>int</color></b>
+  <i>reliefTimeUnits</i>: <b><color:#ff962f>int</color></b>
+ ➡️ <i>scheduledLessonsTeacher</i> : <b><color:#ff962f>List<ScheduledLessonTeacher>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>user_scheduled_lesson<color:#ff962f>)</color>
+ ➡️ <i>lessonsTeacher</i> : <b><color:#ff962f>List<LessonTeacher>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>user_lesson<color:#ff962f>)</color>
   <i>pupilsAuth</i>: <b><color:#ff962f>Set<int>?</color></b>
   <i>credit</i>: <b><color:#ff962f>int</color></b>
   <i>userFlags</i>: <b><color:#ff962f>UserFlags</color></b>
@@ -885,6 +977,7 @@ class UserFlags ##[bold]  {
   <i>confirmedPrivacyPolicy</i>: <b><color:#ff962f>bool</color></b>
   <i>changedPassword</i>: <b><color:#ff962f>bool</color></b>
   <i>madeFirstSteps</i>: <b><color:#ff962f>bool</color></b>
+  <i>isTester</i>: <b><color:#ff962f>bool</color></b>
 
 }
 
@@ -996,18 +1089,28 @@ enum MemberOperation #ece4ff ##[bold] {
  PupilData::pupilListEntries "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#FFD700,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilListEntry 
  Schoolday::schooldayEvents "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#8A2BE2,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" SchooldayEvent 
  Schoolday::schoolSemester "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4682B4,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" SchoolSemester 
- SchooldayEvent::document "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FF4500,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
- SchooldayEvent::processedDocument "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#008000,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
- PupilListEntry::schoolList "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4169E1,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" SchoolList 
- Classroom::scheduledLessons "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#FFD700,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" ScheduledLesson 
- Lesson::attendedPupils "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#8A2BE2,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" LessonAttendance 
- Lesson::subject "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4682B4,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" LessonSubject 
- LessonGroup::scheduledLessons "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#FF4500,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" ScheduledLesson 
- LessonGroup::memberships "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#008000,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" ScheduledLessonGroupMembership 
- Subject::scheduledLessons "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#4169E1,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" ScheduledLesson 
- ScheduledLesson::scheduledAt "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FFD700,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" TimetableSlot 
- User::userInfo "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#8A2BE2,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" module 
- PupilWorkbook::workbook "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4682B4,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Workbook 
+ SchoolSemester::timetables "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#FF4500,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Timetable 
+ SchooldayEvent::document "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#008000,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
+ SchooldayEvent::processedDocument "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4169E1,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
+ SchoolData::logo "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FFD700,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
+ SchoolData::officialSeal "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#8A2BE2,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
+ PupilListEntry::schoolList "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4682B4,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" SchoolList 
+ Classroom::scheduledLessons "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#FF4500,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" ScheduledLesson 
+ LessonTeacher::user "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#008000,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" User 
+ LessonTeacher::scheduledLesson "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4169E1,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Lesson 
+ ScheduledLessonTeacher::user "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FFD700,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" User 
+ ScheduledLessonTeacher::scheduledLesson "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#8A2BE2,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" ScheduledLesson 
+ Lesson::attendedPupils "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#4682B4,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" LessonAttendance 
+ Lesson::subject "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FF4500,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Subject 
+ LessonGroup::timetable "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#008000,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Timetable 
+ LessonGroup::scheduledLessons "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#4169E1,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" ScheduledLesson 
+ LessonGroup::memberships "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#FFD700,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" ScheduledLessonGroupMembership 
+ ScheduledLesson::subject "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#8A2BE2,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Subject 
+ ScheduledLesson::scheduledAt "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4682B4,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" TimetableSlot 
+ ScheduledLesson::timetable "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FF4500,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Timetable 
+ TimetableSlot::timetable "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#008000,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Timetable 
+ User::userInfo "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4169E1,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" module 
+ PupilWorkbook::workbook "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FFD700,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Workbook 
 
 MissedSchoolday - ContactedType
 MissedSchoolday - MissedType
@@ -1015,7 +1118,6 @@ MissedSchooldayDto - MissedSchoolday
 MissedSchooldayDto - Schoolday
 LibraryBookQuery - Book
 LibraryBookQuery - BookTag
-LibraryBookQuery - BookTagging
 LibraryBookQuery - LibraryBook
 LibraryBookQuery - LibraryBookLocation
 CompulsoryRoom - MatrixRoomType
@@ -1030,6 +1132,7 @@ PupilData - PublicMediaAuth
 PupilData - TutorInfo
 PupilData - Kindergarden
 PupilData - KindergardenInfo
+PupilData - PupilStatus
 PupilIdentity - SchoolGrade
 SchooldayEvent - Schoolday
 SchooldayEvent - SchooldayEventType

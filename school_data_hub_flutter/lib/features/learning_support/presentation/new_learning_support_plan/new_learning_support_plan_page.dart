@@ -64,7 +64,10 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Schüler/in', style: AppStyles.title),
+                        const Text(
+                          'Name des Kindes',
+                          style: AppStyles.textLabel,
+                        ),
                         const Gap(8),
                         Text(
                           '${controller.pupil.firstName} ${controller.pupil.lastName}',
@@ -224,9 +227,147 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                   TextField(
                     controller: controller.commentController,
                     maxLines: 4,
-                    decoration: AppStyles.textFieldDecoration(
-                      labelText:
-                          'Zusätzliche Bemerkungen zum Förderplan (optional)',
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.all(10),
+                      border: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.backgroundColor,
+                          width: 2,
+                        ),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.backgroundColor,
+                          width: 2,
+                        ),
+                      ),
+                      labelStyle: const TextStyle(
+                        color: AppColors.backgroundColor,
+                      ),
+                      labelText: 'Kommentar',
+                      hintText:
+                          'Zusätzliche Bemerkungen zum Förderplan (Kann später ausgefüllt werden)',
+                    ),
+                  ),
+
+                  const Gap(20),
+
+                  // Social Pedagogue Field
+                  Text('Sozialpädagoge', style: AppStyles.title),
+                  const Gap(10),
+                  TextField(
+                    controller: controller.socialPedagogueController,
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.all(10),
+                      border: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.backgroundColor,
+                          width: 2,
+                        ),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.backgroundColor,
+                          width: 2,
+                        ),
+                      ),
+                      labelStyle: const TextStyle(
+                        color: AppColors.backgroundColor,
+                      ),
+                      labelText: 'Sozialpädagoge',
+                      hintText:
+                          'Name des Sozialpädagogen (Kann später ausgefüllt werden)',
+                    ),
+                  ),
+
+                  const Gap(20),
+
+                  // Professionals Involved Field
+                  Text('Beteiligte Fachkräfte', style: AppStyles.title),
+                  const Gap(10),
+                  TextField(
+                    controller: controller.proffesionalsInvolvedController,
+                    maxLines: 3,
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.all(10),
+                      border: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.backgroundColor,
+                          width: 2,
+                        ),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.backgroundColor,
+                          width: 2,
+                        ),
+                      ),
+                      labelStyle: TextStyle(color: AppColors.backgroundColor),
+                      labelText: '(Kann später ausgefüllt werden)',
+                      hintText:
+                          'Liste der beteiligten Fachkräfte (Kann später ausgefüllt werden)',
+                    ),
+                  ),
+
+                  const Gap(20),
+
+                  // Strengths Description Field
+                  Text('Stärkenbeschreibung', style: AppStyles.title),
+                  const Gap(10),
+                  TextField(
+                    controller: controller.strengthsDescriptionController,
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.all(10),
+                      border: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.backgroundColor,
+                          width: 2,
+                        ),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.backgroundColor,
+                          width: 2,
+                        ),
+                      ),
+                      labelStyle: const TextStyle(
+                        color: AppColors.backgroundColor,
+                      ),
+                      labelText: 'Stärkenbeschreibung',
+                      hintText:
+                          'Beschreibung der Stärken des Schülers (Kann später ausgefüllt werden)',
+                    ),
+                  ),
+
+                  const Gap(20),
+
+                  // Problems Description Field
+                  Text('Problembeschreibung', style: AppStyles.title),
+                  const Gap(10),
+                  TextField(
+                    controller: controller.problemsDescriptionController,
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.all(10),
+                      border: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.backgroundColor,
+                          width: 2,
+                        ),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.backgroundColor,
+                          width: 2,
+                        ),
+                      ),
+                      labelStyle: const TextStyle(
+                        color: AppColors.backgroundColor,
+                      ),
+                      labelText: 'Problembeschreibung',
+                      hintText:
+                          'Beschreibung der Probleme und Herausforderungen (Kann später ausgefüllt werden)',
                     ),
                   ),
 
@@ -241,18 +382,17 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              style:
-                                  isValid
-                                      ? AppStyles.actionButtonStyle
-                                      : ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.grey,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            10.0,
-                                          ),
+                              style: isValid
+                                  ? AppStyles.actionButtonStyle
+                                  : ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.grey,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          10.0,
                                         ),
-                                        minimumSize: const Size.fromHeight(50),
                                       ),
+                                      minimumSize: const Size.fromHeight(50),
+                                    ),
                               onPressed: isValid ? controller.createPlan : null,
                               child: const Text(
                                 'FÖRDERPLAN ERSTELLEN',

@@ -48,31 +48,37 @@ class AppStyles {
     fontSize: 16,
   );
 
+  static const TextStyle textLabel = TextStyle(
+    color: Colors.black,
+    fontWeight: FontWeight.normal,
+    fontSize: 12,
+  );
+
   static ButtonStyle actionButtonStyle = ElevatedButton.styleFrom(
-      textStyle:
-          const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      backgroundColor: AppColors.accentColor,
-      minimumSize: const Size.fromHeight(50));
+    textStyle: const TextStyle(
+      color: Colors.white,
+      fontWeight: FontWeight.bold,
+    ),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+    backgroundColor: AppColors.accentColor,
+    minimumSize: const Size.fromHeight(50),
+  );
 
   static ButtonStyle cancelButtonStyle = ElevatedButton.styleFrom(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      backgroundColor: AppColors.cancelButtonColor,
-      minimumSize: const Size.fromHeight(50));
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+    backgroundColor: AppColors.cancelButtonColor,
+    minimumSize: const Size.fromHeight(50),
+  );
 
   static ButtonStyle successButtonStyle = ElevatedButton.styleFrom(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      backgroundColor: AppColors.groupColor,
-      minimumSize: const Size.fromHeight(50));
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+    backgroundColor: AppColors.groupColor,
+    minimumSize: const Size.fromHeight(50),
+  );
 
-//- FILTER CHIP STYLES
+  //- FILTER CHIP STYLES
 
   static const filterChipShape = RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(20)));
+    borderRadius: BorderRadius.all(Radius.circular(20)),
+  );
 }

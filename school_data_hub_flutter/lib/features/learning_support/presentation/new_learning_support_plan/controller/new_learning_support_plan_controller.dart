@@ -38,6 +38,10 @@ class NewLearningSupportPlan extends StatefulWidget {
 class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
   late final TextEditingController planIdController;
   late final TextEditingController commentController;
+  late final TextEditingController socialPedagogueController;
+  late final TextEditingController proffesionalsInvolvedController;
+  late final TextEditingController strengthsDescriptionController;
+  late final TextEditingController problemsDescriptionController;
 
   // Fixed support level - not selectable
   late final int fixedSupportLevel;
@@ -53,6 +57,10 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
     super.initState();
     planIdController = TextEditingController();
     commentController = TextEditingController();
+    socialPedagogueController = TextEditingController();
+    proffesionalsInvolvedController = TextEditingController();
+    strengthsDescriptionController = TextEditingController();
+    problemsDescriptionController = TextEditingController();
 
     // Initialize fixed support level from pupil's history
     fixedSupportLevel = pupil.supportLevelHistory?.last.level ?? 1;
@@ -79,8 +87,9 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
   void _updateSemesterInfo() {
     final currentSemester = _schoolCalendarManager.currentSemester.value;
     if (currentSemester != null) {
-      final semesterName =
-          currentSemester.isFirst ? '1. Halbjahr' : '2. Halbjahr';
+      final semesterName = currentSemester.isFirst
+          ? '1. Halbjahr'
+          : '2. Halbjahr';
       semesterInfoNotifier.value =
           'Der Förderplan wird für das $semesterName ${currentSemester.schoolYear} erstellt.';
     } else {
@@ -137,6 +146,21 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
       pupilId: pupil.pupilId,
       planId: planIdController.text.trim(),
       supportLevelId: fixedSupportLevel,
+      comment: commentController.text.trim().isEmpty
+          ? null
+          : commentController.text.trim(),
+      socialPedagogue: socialPedagogueController.text.trim().isEmpty
+          ? null
+          : socialPedagogueController.text.trim(),
+      proffesionalsInvolved: proffesionalsInvolvedController.text.trim().isEmpty
+          ? null
+          : proffesionalsInvolvedController.text.trim(),
+      strengthsDescription: strengthsDescriptionController.text.trim().isEmpty
+          ? null
+          : strengthsDescriptionController.text.trim(),
+      problemsDescription: problemsDescriptionController.text.trim().isEmpty
+          ? null
+          : problemsDescriptionController.text.trim(),
     );
 
     if (mounted) {
@@ -153,6 +177,10 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
   void dispose() {
     planIdController.dispose();
     commentController.dispose();
+    socialPedagogueController.dispose();
+    proffesionalsInvolvedController.dispose();
+    strengthsDescriptionController.dispose();
+    problemsDescriptionController.dispose();
     isValidNotifier.dispose();
     semesterInfoNotifier.dispose();
     super.dispose();

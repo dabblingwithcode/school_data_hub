@@ -11,10 +11,10 @@ class NameField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      decoration: AppStyles.textFieldDecoration(labelText: 'Klassenname'),
+      decoration: AppStyles.textFieldDecoration(labelText: 'Gruppenname'),
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
-          return 'Bitte geben Sie einen Klassennamen ein';
+          return 'Bitte geben Sie einen Gruppenamen ein';
         }
         return null;
       },

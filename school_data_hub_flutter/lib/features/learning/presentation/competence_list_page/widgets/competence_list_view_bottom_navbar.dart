@@ -6,6 +6,7 @@ import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.da
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/competence_list_page/widgets/competence_filters_widget.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/competence_list_sortable_page/competence_list_sortable_page.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _competenceFilterManager = di<CompetenceFilterManager>();
@@ -29,10 +30,7 @@ class CompetenceListPageBottomNavBar extends StatelessWidget {
               const Spacer(),
               IconButton(
                 tooltip: 'zurück',
-                icon: const Icon(
-                  Icons.arrow_back,
-                  size: 30,
-                ),
+                icon: const Icon(Icons.arrow_back, size: 30),
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -42,9 +40,11 @@ class CompetenceListPageBottomNavBar extends StatelessWidget {
                 tooltip: 'Reihenfolge ändern',
                 icon: const Icon(Icons.sort_rounded),
                 onPressed: () {
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //   builder: (ctx) => const CompetenceListSortablePage(),
-                  // ));
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (ctx) => const CompetenceListSortablePage(),
+                    ),
+                  );
                 },
               ),
               const Gap(30),
@@ -52,8 +52,9 @@ class CompetenceListPageBottomNavBar extends StatelessWidget {
                 tooltip: 'aktualisieren',
                 icon: const Icon(Icons.update_rounded),
                 onPressed: () {
-                  _competenceFilterManager
-                      .refreshFilteredCompetences(competences);
+                  _competenceFilterManager.refreshFilteredCompetences(
+                    competences,
+                  );
                 },
               ),
               const Gap(30),
@@ -61,9 +62,11 @@ class CompetenceListPageBottomNavBar extends StatelessWidget {
                 tooltip: 'Filter',
                 icon: const Icon(Icons.filter_list_rounded),
                 onPressed: () => showGenericFilterBottomSheet(
-                    context: context, filterList: [const CompetenceFilters()]),
+                  context: context,
+                  filterList: [const CompetenceFilters()],
+                ),
               ),
-              const Gap(10)
+              const Gap(10),
             ],
           ),
         ),

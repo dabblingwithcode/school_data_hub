@@ -12,38 +12,58 @@ class RolesDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButton<Role>(
-      value: selectedRole,
-      hint: const Text(
-        'Rolle auswählen',
-        style: TextStyle(color: Colors.white),
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        border: Border.all(color: colorScheme.outline),
+        borderRadius: BorderRadius.circular(8),
       ),
-      dropdownColor: Colors.grey[800],
-      icon: const Icon(Icons.arrow_downward, color: Colors.white),
-      iconSize: 24,
-      elevation: 16,
-      style: const TextStyle(color: Colors.white),
-      underline: const SizedBox.shrink(),
-      onChanged: (Role? newValue) {
-        changeRole(newValue);
-      },
-      items:
-          Role.values.map<DropdownMenuItem<Role>>((Role role) {
-            return DropdownMenuItem<Role>(
-              value: role,
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Text(
-                  role.name,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
+      child: DropdownButton<Role>(
+        value: selectedRole,
+        hint: Text(
+          'Rolle auswählen',
+          style: TextStyle(
+            color: colorScheme.onSurface.withValues(alpha: 0.6),
+            fontSize: 16,
+          ),
+        ),
+        dropdownColor: colorScheme.surface,
+        icon: Icon(
+          Icons.arrow_drop_down,
+          color: colorScheme.onSurface,
+          size: 24,
+        ),
+        elevation: 8,
+        style: TextStyle(
+          color: colorScheme.onSurface,
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
+        underline: const SizedBox.shrink(),
+        onChanged: (Role? newValue) {
+          changeRole(newValue);
+        },
+        items: Role.values.map<DropdownMenuItem<Role>>((Role role) {
+          return DropdownMenuItem<Role>(
+            value: role,
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+              child: Text(
+                role.name,
+                style: TextStyle(
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
                 ),
               ),
-            );
-          }).toList(),
+            ),
+          );
+        }).toList(),
+      ),
     );
   }
 }

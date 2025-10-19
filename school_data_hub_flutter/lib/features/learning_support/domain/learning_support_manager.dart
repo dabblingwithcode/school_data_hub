@@ -40,6 +40,10 @@ class LearningSupportManager with ChangeNotifier {
     required int supportLevelId,
     required String planId,
     String? comment,
+    String? socialPedagogue,
+    String? proffesionalsInvolved,
+    String? strengthsDescription,
+    String? problemsDescription,
   }) async {
     // First check if we have a current semester
     final currentSemester = _schoolCalendarManager.currentSemester.value;
@@ -70,6 +74,10 @@ class LearningSupportManager with ChangeNotifier {
         learningSupportLevelId: supportLevelId,
         planId: planId,
         comment: comment,
+        socialPedagogue: socialPedagogue,
+        proffesionalsInvolved: proffesionalsInvolved,
+        strengthsDescription: strengthsDescription,
+        problemsDescription: problemsDescription,
         schoolSemesterId: currentSemester.id!,
         createdBy: _hubSessionManager.userName!,
         createdAt: DateTime.now(),
@@ -97,11 +105,14 @@ class LearningSupportManager with ChangeNotifier {
   }
 
   LearningSupportPlan? getCurrentLearningSupportPlan(int pupilId) {
-    return _learningSupportPlans.value[pupilId]?.firstWhereOrNull(
-      (plan) =>
-          plan.schoolSemesterId ==
-          _schoolCalendarManager.currentSemester.value!.id,
-    );
+    return di<PupilManager>()
+        .getPupilByPupilId(pupilId)!
+        .learningSupportPlans
+        ?.firstWhereOrNull(
+          (plan) =>
+              plan.schoolSemesterId ==
+              _schoolCalendarManager.currentSemester.value!.id,
+        );
   }
 
   List<LearningSupportPlan> getLearningSupportPlans(int pupilId) {
@@ -124,15 +135,14 @@ class LearningSupportManager with ChangeNotifier {
       return;
     }
     final updatedPupil = await ClientHelper.apiCall(
-      call:
-          () => _learningSupportApiService.postSupportCategoryStatus(
-            pupilId: pupilId,
-            supportCategoryId: supportCategoryId,
-            learningSupportPlanId: learningSupportPlan.id!,
-            status: status,
-            comment: comment,
-            createdBy: _hubSessionManager.userName!,
-          ),
+      call: () => _learningSupportApiService.postSupportCategoryStatus(
+        pupilId: pupilId,
+        supportCategoryId: supportCategoryId,
+        learningSupportPlanId: learningSupportPlan.id!,
+        status: status,
+        comment: comment,
+        createdBy: _hubSessionManager.userName!,
+      ),
     );
     if (updatedPupil == null) {
       return;
@@ -275,26 +285,22 @@ class LearningSupportManager with ChangeNotifier {
       // Read and parse the JSON file
       final String jsonString = await file.readAsString();
       final List<dynamic> jsonList = json.decode(jsonString);
-      final List<Map<String, dynamic>> supportLevelData =
-          jsonList.cast<Map<String, dynamic>>();
+      final List<Map<String, dynamic>> supportLevelData = jsonList
+          .cast<Map<String, dynamic>>();
 
-      List<SupportLevelLegacyDto> supportLevelDataDtos =
-          supportLevelData
-              .map(
-                (e) => SupportLevelLegacyDto(
-                  pupilId: e['pupil_id'] as int,
-                  level: int.parse(e['level'] as String),
-                  comment:
-                      e['comment'] != ''
-                          ? customEncrypter.encryptString(
-                            e['comment'] as String,
-                          )
-                          : '',
-                  createdAt: DateTime.parse(e['created_at'] as String).toUtc(),
-                  createdBy: e['created_by'] as String? ?? 'ADM',
-                ),
-              )
-              .toList();
+      List<SupportLevelLegacyDto> supportLevelDataDtos = supportLevelData
+          .map(
+            (e) => SupportLevelLegacyDto(
+              pupilId: e['pupil_id'] as int,
+              level: int.parse(e['level'] as String),
+              comment: e['comment'] != ''
+                  ? customEncrypter.encryptString(e['comment'] as String)
+                  : '',
+              createdAt: DateTime.parse(e['created_at'] as String).toUtc(),
+              createdBy: e['created_by'] as String? ?? 'ADM',
+            ),
+          )
+          .toList();
       // Call the API service
       final bool importedSupportLevels = await _learningSupportApiService
           .bulkImportSupportLevels(supportLevelDataDtos);
