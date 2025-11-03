@@ -164,7 +164,7 @@ void run(List<String> args) async {
 
   // Send startup notification email
   try {
-    MailerService.instance.initializeFromSession(session);
+    // MailerService.instance.initializeFromSession(session);
     final success = await MailerService.instance.sendNotification(
       recipient: '',
       subject: 'Server Started',
