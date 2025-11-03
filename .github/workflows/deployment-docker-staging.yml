@@ -172,6 +172,7 @@ jobs:
           SERVERPOD_MAIL_USERNAME: ${{ secrets.SERVERPOD_MAIL_USERNAME }}
           SERVERPOD_MAIL_PASSWORD: ${{ secrets.SERVERPOD_MAIL_PASSWORD }}
           SERVERPOD_MAIL_SMTP_HOST: ${{ secrets.SERVERPOD_MAIL_SMTP_HOST }}
+          SERVERPOD_MAIL_ADMIN: ${{ secrets.SERVERPOD_MAIL_ADMIN }}
 
       - name: cleanup
         run: rm -rf ~/.ssh

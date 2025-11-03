@@ -4715,6 +4715,7 @@ class _SchooldayEventEndpoint {
     required _i43.SchooldayEventType type,
     required String reason,
     required String createdBy,
+    required String tutor,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -4733,6 +4734,7 @@ class _SchooldayEventEndpoint {
             'type': type,
             'reason': reason,
             'createdBy': createdBy,
+            'tutor': tutor,
           }),
           serializationManager: _serializationManager,
         );

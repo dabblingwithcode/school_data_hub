@@ -1642,6 +1642,7 @@ class EndpointSchooldayEvent extends _i1.EndpointRef {
     required _i42.SchooldayEventType type,
     required String reason,
     required String createdBy,
+    required String tutor,
   }) =>
       caller.callServerEndpoint<_i41.SchooldayEvent>(
         'schooldayEvent',
@@ -1652,6 +1653,7 @@ class EndpointSchooldayEvent extends _i1.EndpointRef {
           'type': type,
           'reason': reason,
           'createdBy': createdBy,
+          'tutor': tutor,
         },
       );
 

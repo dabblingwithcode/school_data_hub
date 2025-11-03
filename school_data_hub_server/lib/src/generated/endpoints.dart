@@ -3417,6 +3417,11 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<String>(),
               nullable: false,
             ),
+            'tutor': _i1.ParameterDescription(
+              name: 'tutor',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
           },
           call: (
             _i1.Session session,
@@ -3430,6 +3435,7 @@ class Endpoints extends _i1.EndpointDispatch {
             type: params['type'],
             reason: params['reason'],
             createdBy: params['createdBy'],
+            tutor: params['tutor'],
           ),
         ),
         'updateSchooldayEvent': _i1.MethodConnector(

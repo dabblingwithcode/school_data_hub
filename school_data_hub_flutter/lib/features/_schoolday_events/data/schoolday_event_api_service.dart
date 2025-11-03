@@ -7,6 +7,7 @@ import 'package:school_data_hub_flutter/app_utils/extensions.dart';
 import 'package:school_data_hub_flutter/common/domain/models/nullable_records.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _client = di<Client>();
@@ -25,6 +26,8 @@ class SchooldayEventApiService {
   ) async {
     final userName = _hubSessionManager.userName!;
     _notificationService.apiRunning(true);
+    final pupil = di<PupilManager>().getPupilByPupilId(pupilId);
+    final tutor = pupil?.groupTutor;
     try {
       final event = await _client.schooldayEvent.createSchooldayEvent(
         pupilId: pupilId,
@@ -32,6 +35,7 @@ class SchooldayEventApiService {
         type: type,
         reason: reason,
         createdBy: userName,
+        tutor: tutor ?? '',
       );
 
       _notificationService.apiRunning(false);
@@ -98,10 +102,12 @@ class SchooldayEventApiService {
       eventReason: reason ?? schooldayEvent.eventReason,
       schooldayId: schooldayId ?? schooldayEvent.schooldayId,
       processed: processed ?? schooldayEvent.processed,
-      processedBy:
-          processedBy != null ? processedBy.value : schooldayEvent.processedBy,
-      processedAt:
-          processedAt != null ? processedAt.value : schooldayEvent.processedAt,
+      processedBy: processedBy != null
+          ? processedBy.value
+          : schooldayEvent.processedBy,
+      processedAt: processedAt != null
+          ? processedAt.value
+          : schooldayEvent.processedAt,
     );
 
     try {

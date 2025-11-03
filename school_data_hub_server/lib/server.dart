@@ -166,7 +166,7 @@ void run(List<String> args) async {
   try {
     // MailerService.instance.initializeFromSession(session);
     final success = await MailerService.instance.sendNotification(
-      recipient: '',
+      recipient: Platform.environment['SERVERPOD_MAIL_ADMIN']!,
       subject: 'Server Started',
       message: 'School Data Hub Server has started successfully.\n\n'
           'Timestamp: ${DateTime.now().toIso8601String()}\n'

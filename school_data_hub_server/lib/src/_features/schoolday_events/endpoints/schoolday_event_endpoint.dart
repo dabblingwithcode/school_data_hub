@@ -23,9 +23,11 @@ class SchooldayEventEndpoint extends Endpoint {
       required int schooldayId,
       required SchooldayEventType type,
       required String reason,
-      required String createdBy}) async {
+      required String createdBy,
+      required String tutor}) async {
     final eventId = Uuid().v4();
-
+    final recipient = await User.db
+        .findFirstRow(session, where: (t) => t.userInfo.userName.equals(tutor));
     final schooldayEvent = SchooldayEvent(
       eventId: eventId,
       pupilId: pupilId,
@@ -51,19 +53,13 @@ class SchooldayEventEndpoint extends Endpoint {
       final pupil = await PupilData.db.findFirstRow(session,
           where: (t) => t.id.equals(eventWithSchoolday!.pupilId));
 
-      MailerService.instance.initializeFromSession(session);
-      final success = await MailerService.instance.sendNotification(
-        recipient: session.passwords['schoolEmail'] ?? '',
-        subject: 'Neues Schulereignis',
-        message: 'Es wurde ein neues Schulereignis erstellt.\n\n'
-            'Es ist das Schulereignis Nummer ${pupil?.schooldayEvents?.length}',
-      );
+      // MailerService.instance.initializeFromSession(session);
 
-      if (success) {
-        _log.info('Startup notification email sent successfully');
-      } else {
-        _log.severe('Failed to send startup notification email');
-      }
+      final success = await MailerService.instance.sendNotification(
+          recipient: recipient?.userInfo?.email ?? '',
+          subject: 'Neues Schulereignis',
+          message: 'Es wurde ein neues Schulereignis erstellt.\n\n'
+              'Es ist das Schulereignis Nummer ${pupil?.schooldayEvents?.length}');
     } catch (e) {
       _log.severe('Error sending startup notification email: $e');
     }
