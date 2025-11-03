@@ -72,6 +72,9 @@ services:
       - SERVERPOD_WEB_SERVER_PORT
       - SERVERPOD_SERVICE_SECRET
       - SERVERPOD_MAX_REQUEST_SIZE
+      - SERVERPOD_MAIL_USERNAME
+      - SERVERPOD_MAIL_PASSWORD
+      - SERVERPOD_MAIL_SMTP_HOST
     command:
       [
         "--mode",

@@ -168,6 +168,10 @@ jobs:
           SERVERPOD_MAX_REQUEST_SIZE: ${{ secrets.SERVERPOD_STAGING_MAX_REQUEST_SIZE }}
           # The token used to connect with insights must be at least 20 chars
           SERVERPOD_SERVICE_SECRET: ${{ secrets.SERVERPOD_STAGING_SERVICE_SECRET }}
+          # Mail configuration for sending emails
+          SERVERPOD_MAIL_USERNAME: ${{ secrets.SERVERPOD_MAIL_USERNAME }}
+          SERVERPOD_MAIL_PASSWORD: ${{ secrets.SERVERPOD_MAIL_PASSWORD }}
+          SERVERPOD_MAIL_SMTP_HOST: ${{ secrets.SERVERPOD_MAIL_SMTP_HOST }}
 
       - name: cleanup
         run: rm -rf ~/.ssh

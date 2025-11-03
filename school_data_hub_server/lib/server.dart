@@ -9,6 +9,7 @@ import 'package:school_data_hub_server/src/helpers/create_local_storage_director
 import 'package:school_data_hub_server/src/helpers/populate_test_environment.dart';
 import 'package:school_data_hub_server/src/utils/local_storage.dart';
 import 'package:school_data_hub_server/src/utils/logger/logrecord_formatter.dart';
+import 'package:school_data_hub_server/src/utils/mailer.dart';
 import 'package:school_data_hub_server/src/web/routes/root.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
@@ -101,6 +102,36 @@ void run(List<String> args) async {
 
   var session = await pod.createSession();
 
+  // Initialize MailerService from environment variables if available
+  final mailUsername = Platform.environment['SERVERPOD_MAIL_USERNAME'];
+  final mailPassword = Platform.environment['SERVERPOD_MAIL_PASSWORD'];
+  final mailSmtpHost = Platform.environment['SERVERPOD_MAIL_SMTP_HOST'];
+
+  if (mailUsername != null &&
+      mailPassword != null &&
+      mailSmtpHost != null &&
+      mailUsername.isNotEmpty &&
+      mailPassword.isNotEmpty &&
+      mailSmtpHost.isNotEmpty) {
+    try {
+      MailerService.instance.initialize(
+        username: mailUsername,
+        password: mailPassword,
+        smtpHost: mailSmtpHost,
+        smtpPort: 587, // Hardcoded as per requirements
+        fromName: 'Schuldaten Benachrichtigungen',
+        defaultRecipient: '',
+      );
+      _logger.info(
+          'MailerService initialized successfully from environment variables');
+    } catch (e) {
+      _logger.severe('Failed to initialize MailerService: $e');
+    }
+  } else {
+    _logger.warning(
+        'Mail configuration not found in environment variables. Email functionality will not be available.');
+  }
+
   // Check if there are any users in the database. If not, we need to populate the test environment.
   final userCount = await auth.UserInfo.db.count(session);
   _logger.info('Current user count in database: $userCount');
@@ -132,22 +163,22 @@ void run(List<String> args) async {
   );
 
   // Send startup notification email
-  // try {
-  //   MailerService.instance.initializeFromSession(session);
-  //   final success = await MailerService.instance.sendNotification(
-  //     recipient: '',
-  //     subject: 'Server Started',
-  //     message: 'School Data Hub Server has started successfully.\n\n'
-  //         'Timestamp: ${DateTime.now().toIso8601String()}\n'
-  //         'User count: $userCount',
-  //   );
+  try {
+    MailerService.instance.initializeFromSession(session);
+    final success = await MailerService.instance.sendNotification(
+      recipient: '',
+      subject: 'Server Started',
+      message: 'School Data Hub Server has started successfully.\n\n'
+          'Timestamp: ${DateTime.now().toIso8601String()}\n'
+          'User count: $userCount',
+    );
 
-  //   if (success) {
-  //     _logger.info('Startup notification email sent successfully');
-  //   } else {
-  //     _logger.severe('Failed to send startup notification email');
-  //   }
-  // } catch (e) {
-  //   _logger.severe('Error sending startup notification email: $e');
-  // }
+    if (success) {
+      _logger.info('Startup notification email sent successfully');
+    } else {
+      _logger.severe('Failed to send startup notification email');
+    }
+  } catch (e) {
+    _logger.severe('Error sending startup notification email: $e');
+  }
 }
