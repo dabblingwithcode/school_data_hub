@@ -25,8 +25,9 @@ class PupilDataApiService {
 
   // - update backend pupil database
 
-  Future<List<PupilData>?> updateBackendPupilsDatabase(
-      {required String filePath}) async {
+  Future<List<PupilData>?> updateBackendPupilsDatabase({
+    required String filePath,
+  }) async {
     final pupils = await ClientHelper.apiCall(
       call: () => _client.admin.updateBackendPupilDataState(filePath),
       errorMessage: 'Die Schüler konnten nicht aktualisiert werden',
@@ -71,8 +72,12 @@ class PupilDataApiService {
     String? comment,
   }) async {
     final updatedPupil = await ClientHelper.apiCall(
-      call: () => _client.pupilUpdate
-          .updateCredit(pupilId, credit, comment, _hubSessionManager.userName!),
+      call: () => _client.pupilUpdate.updateCredit(
+        pupilId,
+        credit,
+        comment,
+        _hubSessionManager.userName!,
+      ),
       errorMessage: 'Die Schüler konnten nicht aktualisiert werden',
     );
     return updatedPupil;
@@ -80,10 +85,11 @@ class PupilDataApiService {
 
   //- update pupil one of the pupil properties being a string
 
-  Future<PupilData?> updateStringProperty(
-      {required int pupilId,
-      required String property,
-      required String? value}) async {
+  Future<PupilData?> updateStringProperty({
+    required int pupilId,
+    required String property,
+    required String? value,
+  }) async {
     final updatedPupil = await ClientHelper.apiCall(
       call: () =>
           _client.pupilUpdate.updateStringProperty(pupilId, property, value),
@@ -92,8 +98,10 @@ class PupilDataApiService {
     return updatedPupil;
   }
 
-  Future<PupilData?> updateSchoolyearHeldBackDate(
-      {required int pupilId, required ({DateTime? value}) date}) async {
+  Future<PupilData?> updateSchoolyearHeldBackDate({
+    required int pupilId,
+    required ({DateTime? value}) date,
+  }) async {
     final updatedPupil = await ClientHelper.apiCall(
       call: () =>
           _client.pupilUpdate.updateSchoolyearHeldBackDate(pupilId, date),
@@ -147,6 +155,19 @@ class PupilDataApiService {
     );
     return updatedPupil;
   }
+
+  Future<PupilData?> updateAfterSchoolCare({
+    required int pupilId,
+    required AfterSchoolCare afterSchoolCare,
+  }) async {
+    final updatedPupil = await ClientHelper.apiCall(
+      call: () =>
+          _client.pupilUpdate.updateAfterSchoolCare(pupilId, afterSchoolCare),
+      errorMessage: 'Die Schüler konnten nicht aktualisiert werden',
+    );
+    return updatedPupil;
+  }
+
   //- hub document
 
   Future<PupilData?> updatePupilDocument({
@@ -155,22 +176,29 @@ class PupilDataApiService {
     required PupilDocumentType documentType,
   }) async {
     final result = await ClientFileUpload.uploadFile(
-        file,
-        documentType == PupilDocumentType.avatar
-            ? ServerStorageFolder.avatars
-            : ServerStorageFolder.documents);
+      file,
+      documentType == PupilDocumentType.avatar
+          ? ServerStorageFolder.avatars
+          : ServerStorageFolder.documents,
+    );
     final updatedPupil = await ClientHelper.apiCall(
       call: () => _client.pupilUpdate.updatePupilDocument(
-          pupilId, result.path!, _hubSessionManager.userName!, documentType),
+        pupilId,
+        result.path!,
+        _hubSessionManager.userName!,
+        documentType,
+      ),
       errorMessage: 'Das Profilbild konnte nicht aktualisiert werden',
     );
     return updatedPupil;
   }
 
-//- delete pupil document
+  //- delete pupil document
 
-  Future<PupilData?> deletePupilDocument(
-      {required int pupilId, required PupilDocumentType documentType}) async {
+  Future<PupilData?> deletePupilDocument({
+    required int pupilId,
+    required PupilDocumentType documentType,
+  }) async {
     _notificationService.apiRunning(true);
     final updatedPupil = await ClientHelper.apiCall(
       call: () => _client.pupil.deletePupilDocument(pupilId, documentType),
@@ -179,12 +207,14 @@ class PupilDataApiService {
     return updatedPupil;
   }
 
-//- public media auth
+  //- public media auth
 
   Future<PupilData?> resetPublicMediaAuth({required int pupilId}) async {
     final updatedPupil = await ClientHelper.apiCall(
-      call: () => _client.pupil
-          .resetPublicMediaAuth(pupilId, _hubSessionManager.userName!),
+      call: () => _client.pupil.resetPublicMediaAuth(
+        pupilId,
+        _hubSessionManager.userName!,
+      ),
       errorMessage:
           'Die Einwilligung für öffentliche Medien konnte nicht gelöscht werden',
     );
@@ -192,12 +222,12 @@ class PupilDataApiService {
   }
 
   Future<PupilData?> updatePublicMediaAuth(
-      int pupilId, PublicMediaAuth publicMediaAuth) async {
+    int pupilId,
+    PublicMediaAuth publicMediaAuth,
+  ) async {
     final updatedPupil = await ClientHelper.apiCall(
-      call: () => _client.pupilUpdate.updatePublicMediaAuth(
-        pupilId,
-        publicMediaAuth,
-      ),
+      call: () =>
+          _client.pupilUpdate.updatePublicMediaAuth(pupilId, publicMediaAuth),
       errorMessage:
           'Die Einwilligung für öffentliche Medien konnte nicht aktualisiert werden',
     );
@@ -214,11 +244,12 @@ class PupilDataApiService {
     required String comment,
   }) async {
     final supportLevel = SupportLevel(
-        level: supportLevelValue,
-        comment: comment,
-        createdAt: createdAt,
-        createdBy: createdBy,
-        pupilId: pupilId);
+      level: supportLevelValue,
+      comment: comment,
+      createdAt: createdAt,
+      createdBy: createdBy,
+      pupilId: pupilId,
+    );
     final updatedPupil = await ClientHelper.apiCall(
       call: () => _client.pupilUpdate.updateSupportLevel(supportLevel, pupilId),
       errorMessage: 'Die Förderebene konnte nicht aktualisiert werden',

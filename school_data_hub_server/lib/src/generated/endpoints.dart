@@ -104,39 +104,41 @@ import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupi
     as _i59;
 import 'package:school_data_hub_server/src/generated/_features/learning_support/models/support_level.dart'
     as _i60;
-import 'package:school_data_hub_server/src/generated/_features/school_data/models/school_data.dart'
+import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/after_school_care/after_school_care.dart'
     as _i61;
-import 'package:school_data_hub_server/src/generated/_features/school_lists/models/pupil_entry.dart'
+import 'package:school_data_hub_server/src/generated/_features/school_data/models/school_data.dart'
     as _i62;
-import 'package:school_data_hub_server/src/generated/_features/schoolday/models/school_semester.dart'
+import 'package:school_data_hub_server/src/generated/_features/school_lists/models/pupil_entry.dart'
     as _i63;
-import 'package:school_data_hub_server/src/generated/_features/schoolday/models/schoolday.dart'
+import 'package:school_data_hub_server/src/generated/_features/schoolday/models/school_semester.dart'
     as _i64;
-import 'package:school_data_hub_server/src/generated/_features/schoolday_events/models/schoolday_event_type.dart'
+import 'package:school_data_hub_server/src/generated/_features/schoolday/models/schoolday.dart'
     as _i65;
-import 'package:school_data_hub_server/src/generated/_features/schoolday_events/models/schoolday_event.dart'
+import 'package:school_data_hub_server/src/generated/_features/schoolday_events/models/schoolday_event_type.dart'
     as _i66;
-import 'package:school_data_hub_server/src/generated/_features/timetable/models/classroom.dart'
+import 'package:school_data_hub_server/src/generated/_features/schoolday_events/models/schoolday_event.dart'
     as _i67;
-import 'package:school_data_hub_server/src/generated/_features/timetable/models/lesson/lesson_group.dart'
+import 'package:school_data_hub_server/src/generated/_features/timetable/models/classroom.dart'
     as _i68;
-import 'package:school_data_hub_server/src/generated/_features/timetable/models/scheduled_lesson/scheduled_lesson.dart'
+import 'package:school_data_hub_server/src/generated/_features/timetable/models/lesson/lesson_group.dart'
     as _i69;
-import 'package:school_data_hub_server/src/generated/_features/timetable/models/scheduled_lesson/lesson_group_membership.dart'
+import 'package:school_data_hub_server/src/generated/_features/timetable/models/scheduled_lesson/scheduled_lesson.dart'
     as _i70;
-import 'package:school_data_hub_server/src/generated/_features/timetable/models/scheduled_lesson/subject.dart'
+import 'package:school_data_hub_server/src/generated/_features/timetable/models/scheduled_lesson/lesson_group_membership.dart'
     as _i71;
-import 'package:school_data_hub_server/src/generated/_features/timetable/models/timetable.dart'
+import 'package:school_data_hub_server/src/generated/_features/timetable/models/scheduled_lesson/subject.dart'
     as _i72;
-import 'package:school_data_hub_server/src/generated/_features/timetable/models/scheduled_lesson/timetable_slot.dart'
+import 'package:school_data_hub_server/src/generated/_features/timetable/models/timetable.dart'
     as _i73;
-import 'package:school_data_hub_server/src/generated/_features/timetable/models/scheduled_lesson/weekday_enum.dart'
+import 'package:school_data_hub_server/src/generated/_features/timetable/models/scheduled_lesson/timetable_slot.dart'
     as _i74;
-import 'package:school_data_hub_server/src/generated/_features/workbooks/models/pupil_workbook.dart'
+import 'package:school_data_hub_server/src/generated/_features/timetable/models/scheduled_lesson/weekday_enum.dart'
     as _i75;
-import 'package:school_data_hub_server/src/generated/_features/workbooks/models/workbook.dart'
+import 'package:school_data_hub_server/src/generated/_features/workbooks/models/pupil_workbook.dart'
     as _i76;
-import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i77;
+import 'package:school_data_hub_server/src/generated/_features/workbooks/models/workbook.dart'
+    as _i77;
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i78;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -406,6 +408,21 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<bool>(),
               nullable: false,
             ),
+            'schooldayEventsProcessingTeam': _i1.ParameterDescription(
+              name: 'schooldayEventsProcessingTeam',
+              type: _i1.getType<String?>(),
+              nullable: true,
+            ),
+            'matrixUserId': _i1.ParameterDescription(
+              name: 'matrixUserId',
+              type: _i1.getType<String?>(),
+              nullable: true,
+            ),
+            'credit': _i1.ParameterDescription(
+              name: 'credit',
+              type: _i1.getType<int?>(),
+              nullable: true,
+            ),
           },
           call: (
             _i1.Session session,
@@ -422,6 +439,10 @@ class Endpoints extends _i1.EndpointDispatch {
             reliefTimeUnits: params['reliefTimeUnits'],
             scopeNames: params['scopeNames'],
             isTester: params['isTester'],
+            schooldayEventsProcessingTeam:
+                params['schooldayEventsProcessingTeam'],
+            matrixUserId: params['matrixUserId'],
+            credit: params['credit'],
           ),
         ),
         'resetPassword': _i1.MethodConnector(
@@ -2955,6 +2976,31 @@ class Endpoints extends _i1.EndpointDispatch {
             params['schoolyearHeldBackDate'],
           ),
         ),
+        'updateAfterSchoolCare': _i1.MethodConnector(
+          name: 'updateAfterSchoolCare',
+          params: {
+            'pupilId': _i1.ParameterDescription(
+              name: 'pupilId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'afterSchoolCare': _i1.ParameterDescription(
+              name: 'afterSchoolCare',
+              type: _i1.getType<_i61.AfterSchoolCare>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['pupilUpdate'] as _i20.PupilUpdateEndpoint)
+                  .updateAfterSchoolCare(
+            session,
+            params['pupilId'],
+            params['afterSchoolCare'],
+          ),
+        ),
       },
     );
     connectors['schoolData'] = _i1.EndpointConnector(
@@ -2966,7 +3012,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'schoolData': _i1.ParameterDescription(
               name: 'schoolData',
-              type: _i1.getType<_i61.SchoolData>(),
+              type: _i1.getType<_i62.SchoolData>(),
               nullable: false,
             )
           },
@@ -3132,7 +3178,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'entry': _i1.ParameterDescription(
               name: 'entry',
-              type: _i1.getType<_i62.PupilListEntry>(),
+              type: _i1.getType<_i63.PupilListEntry>(),
               nullable: false,
             )
           },
@@ -3238,7 +3284,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'schoolSemester': _i1.ParameterDescription(
               name: 'schoolSemester',
-              type: _i1.getType<_i63.SchoolSemester>(),
+              type: _i1.getType<_i64.SchoolSemester>(),
               nullable: false,
             )
           },
@@ -3257,7 +3303,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'semester': _i1.ParameterDescription(
               name: 'semester',
-              type: _i1.getType<_i63.SchoolSemester>(),
+              type: _i1.getType<_i64.SchoolSemester>(),
               nullable: false,
             )
           },
@@ -3333,7 +3379,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'schoolday': _i1.ParameterDescription(
               name: 'schoolday',
-              type: _i1.getType<_i64.Schoolday>(),
+              type: _i1.getType<_i65.Schoolday>(),
               nullable: false,
             )
           },
@@ -3397,6 +3443,16 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<int>(),
               nullable: false,
             ),
+            'pupilNameAndGroup': _i1.ParameterDescription(
+              name: 'pupilNameAndGroup',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'dateTimeAsString': _i1.ParameterDescription(
+              name: 'dateTimeAsString',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
             'schooldayId': _i1.ParameterDescription(
               name: 'schooldayId',
               type: _i1.getType<int>(),
@@ -3404,7 +3460,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'type': _i1.ParameterDescription(
               name: 'type',
-              type: _i1.getType<_i65.SchooldayEventType>(),
+              type: _i1.getType<_i66.SchooldayEventType>(),
               nullable: false,
             ),
             'reason': _i1.ParameterDescription(
@@ -3431,6 +3487,8 @@ class Endpoints extends _i1.EndpointDispatch {
                   .createSchooldayEvent(
             session,
             pupilId: params['pupilId'],
+            pupilNameAndGroup: params['pupilNameAndGroup'],
+            dateTimeAsString: params['dateTimeAsString'],
             schooldayId: params['schooldayId'],
             type: params['type'],
             reason: params['reason'],
@@ -3443,7 +3501,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'schooldayEvent': _i1.ParameterDescription(
               name: 'schooldayEvent',
-              type: _i1.getType<_i66.SchooldayEvent>(),
+              type: _i1.getType<_i67.SchooldayEvent>(),
               nullable: false,
             ),
             'changedProcessedToFalse': _i1.ParameterDescription(
@@ -3555,7 +3613,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'classroom': _i1.ParameterDescription(
               name: 'classroom',
-              type: _i1.getType<_i67.Classroom>(),
+              type: _i1.getType<_i68.Classroom>(),
               nullable: false,
             )
           },
@@ -3641,7 +3699,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'classroom': _i1.ParameterDescription(
               name: 'classroom',
-              type: _i1.getType<_i67.Classroom>(),
+              type: _i1.getType<_i68.Classroom>(),
               nullable: false,
             )
           },
@@ -3685,7 +3743,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'lessonGroup': _i1.ParameterDescription(
               name: 'lessonGroup',
-              type: _i1.getType<_i68.LessonGroup>(),
+              type: _i1.getType<_i69.LessonGroup>(),
               nullable: false,
             )
           },
@@ -3809,7 +3867,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'lessonGroup': _i1.ParameterDescription(
               name: 'lessonGroup',
-              type: _i1.getType<_i68.LessonGroup>(),
+              type: _i1.getType<_i69.LessonGroup>(),
               nullable: false,
             )
           },
@@ -3853,7 +3911,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'scheduledLesson': _i1.ParameterDescription(
               name: 'scheduledLesson',
-              type: _i1.getType<_i69.ScheduledLesson>(),
+              type: _i1.getType<_i70.ScheduledLesson>(),
               nullable: false,
             )
           },
@@ -3987,7 +4045,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'scheduledLesson': _i1.ParameterDescription(
               name: 'scheduledLesson',
-              type: _i1.getType<_i69.ScheduledLesson>(),
+              type: _i1.getType<_i70.ScheduledLesson>(),
               nullable: false,
             )
           },
@@ -4050,7 +4108,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'membership': _i1.ParameterDescription(
               name: 'membership',
-              type: _i1.getType<_i70.ScheduledLessonGroupMembership>(),
+              type: _i1.getType<_i71.ScheduledLessonGroupMembership>(),
               nullable: false,
             )
           },
@@ -4167,7 +4225,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'membership': _i1.ParameterDescription(
               name: 'membership',
-              type: _i1.getType<_i70.ScheduledLessonGroupMembership>(),
+              type: _i1.getType<_i71.ScheduledLessonGroupMembership>(),
               nullable: false,
             )
           },
@@ -4265,7 +4323,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'subject': _i1.ParameterDescription(
               name: 'subject',
-              type: _i1.getType<_i71.Subject>(),
+              type: _i1.getType<_i72.Subject>(),
               nullable: false,
             )
           },
@@ -4368,7 +4426,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'subject': _i1.ParameterDescription(
               name: 'subject',
-              type: _i1.getType<_i71.Subject>(),
+              type: _i1.getType<_i72.Subject>(),
               nullable: false,
             )
           },
@@ -4410,7 +4468,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'timetable': _i1.ParameterDescription(
               name: 'timetable',
-              type: _i1.getType<_i72.Timetable>(),
+              type: _i1.getType<_i73.Timetable>(),
               nullable: false,
             )
           },
@@ -4507,7 +4565,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'timetable': _i1.ParameterDescription(
               name: 'timetable',
-              type: _i1.getType<_i72.Timetable>(),
+              type: _i1.getType<_i73.Timetable>(),
               nullable: false,
             )
           },
@@ -4570,7 +4628,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'timetableSlot': _i1.ParameterDescription(
               name: 'timetableSlot',
-              type: _i1.getType<_i73.TimetableSlot>(),
+              type: _i1.getType<_i74.TimetableSlot>(),
               nullable: false,
             )
           },
@@ -4637,7 +4695,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'day': _i1.ParameterDescription(
               name: 'day',
-              type: _i1.getType<_i74.Weekday>(),
+              type: _i1.getType<_i75.Weekday>(),
               nullable: false,
             )
           },
@@ -4656,7 +4714,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'timetableSlot': _i1.ParameterDescription(
               name: 'timetableSlot',
-              type: _i1.getType<_i73.TimetableSlot>(),
+              type: _i1.getType<_i74.TimetableSlot>(),
               nullable: false,
             )
           },
@@ -4818,7 +4876,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'pupilWorkbook': _i1.ParameterDescription(
               name: 'pupilWorkbook',
-              type: _i1.getType<_i75.PupilWorkbook>(),
+              type: _i1.getType<_i76.PupilWorkbook>(),
               nullable: false,
             )
           },
@@ -4862,7 +4920,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'workbook': _i1.ParameterDescription(
               name: 'workbook',
-              type: _i1.getType<_i76.Workbook>(),
+              type: _i1.getType<_i77.Workbook>(),
               nullable: false,
             )
           },
@@ -4909,7 +4967,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'workbook': _i1.ParameterDescription(
               name: 'workbook',
-              type: _i1.getType<_i76.Workbook>(),
+              type: _i1.getType<_i77.Workbook>(),
               nullable: false,
             )
           },
@@ -5032,6 +5090,6 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
-    modules['serverpod_auth'] = _i77.Endpoints()..initializeEndpoints(server);
+    modules['serverpod_auth'] = _i78.Endpoints()..initializeEndpoints(server);
   }
 }

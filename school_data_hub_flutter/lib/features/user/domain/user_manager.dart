@@ -45,11 +45,10 @@ class UserManager {
     required String fullName,
     required String password,
     required String email,
-
+    required String matrixUserId,
     required int timeUnits,
     required int reliefTimeUnits,
     required int credit,
-    required String contact,
     required List<String> scopeNames,
     required Role role,
     required bool isTester,
@@ -60,6 +59,7 @@ class UserManager {
       userName: userName,
       fullName: fullName,
       email: email,
+      matrixUserId: matrixUserId,
       password: password,
       role: role,
       timeUnits: timeUnits,
@@ -147,8 +147,9 @@ class UserManager {
   }
 
   void removeUser(User user) {
-    _users.value =
-        _users.value.where((element) => element.id != user.id).toList();
+    _users.value = _users.value
+        .where((element) => element.id != user.id)
+        .toList();
   }
 
   // void updateUser(User user) {
@@ -162,8 +163,9 @@ class UserManager {
   }
 
   void removeUsers(List<User> users) {
-    _users.value =
-        _users.value.where((element) => !users.contains(element)).toList();
+    _users.value = _users.value
+        .where((element) => !users.contains(element))
+        .toList();
   }
 
   void addUsers(List<User> users) {

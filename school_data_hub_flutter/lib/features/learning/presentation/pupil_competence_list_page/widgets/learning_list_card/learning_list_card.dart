@@ -42,8 +42,9 @@ class LearningListCard extends WatchingWidget {
     // Calculate book lending statistics for this pupil
     final pupilBookLendings = pupil.pupilBookLendings ?? [];
     final totalLendings = pupilBookLendings.length;
-    final notReturnedLendings =
-        pupilBookLendings.where((lending) => lending.returnedAt == null).length;
+    final notReturnedLendings = pupilBookLendings
+        .where((lending) => lending.returnedAt == null)
+        .length;
 
     return Card(
       color: Colors.white,
@@ -82,8 +83,8 @@ class LearningListCard extends WatchingWidget {
                                 );
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder:
-                                        (ctx) => PupilProfilePage(pupil: pupil),
+                                    builder: (ctx) =>
+                                        PupilProfilePage(pupil: pupil),
                                   ),
                                 );
                               },
@@ -119,6 +120,7 @@ class LearningListCard extends WatchingWidget {
                         ),
                       ],
                     ),
+
                     const Gap(5),
                     if (selectedContent ==
                         SelectedContent.competenceStatuses) ...[

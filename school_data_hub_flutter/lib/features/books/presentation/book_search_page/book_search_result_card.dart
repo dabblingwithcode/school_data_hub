@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/isbn_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
@@ -46,8 +46,8 @@ class SearchResultBookCard extends WatchingWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder:
-                              (context) => EditBook(libraryBook: bookProxy),
+                          builder: (context) =>
+                              EditBook(libraryBook: bookProxy),
                         ),
                       );
                     },
@@ -206,25 +206,20 @@ class SearchResultBookCard extends WatchingWidget {
                   ],
                 ),
                 Column(
-                  children:
-                      books
-                          .fold<List<LibraryBookProxy>>([], (
-                            uniqueBooks,
-                            book,
-                          ) {
-                            // Only add if libraryId is not already in the list
-                            if (!uniqueBooks.any(
-                              (existing) =>
-                                  existing.libraryId == book.libraryId,
-                            )) {
-                              uniqueBooks.add(book);
-                            }
-                            return uniqueBooks;
-                          })
-                          .map((book) {
-                            return LibraryBookCard(libraryBookProxy: book);
-                          })
-                          .toList(),
+                  children: books
+                      .fold<List<LibraryBookProxy>>([], (uniqueBooks, book) {
+                        // Only add if libraryId is not already in the list
+                        if (!uniqueBooks.any(
+                          (existing) => existing.libraryId == book.libraryId,
+                        )) {
+                          uniqueBooks.add(book);
+                        }
+                        return uniqueBooks;
+                      })
+                      .map((book) {
+                        return LibraryBookCard(libraryBookProxy: book);
+                      })
+                      .toList(),
                 ),
                 const Gap(10),
               ],

@@ -14,16 +14,17 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avat
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_profile_attendance_content.dart';
 import 'package:watch_it/watch_it.dart';
 
-class AttendanceRankingListCard extends WatchingStatefulWidget {
+class MissedClassesPupilListCard extends WatchingStatefulWidget {
   final PupilProxy pupil;
-  const AttendanceRankingListCard(this.pupil, {super.key});
+  const MissedClassesPupilListCard(this.pupil, {super.key});
 
   @override
-  State<AttendanceRankingListCard> createState() =>
+  State<MissedClassesPupilListCard> createState() =>
       _AttendanceRankingListCardState();
 }
 
-class _AttendanceRankingListCardState extends State<AttendanceRankingListCard> {
+class _AttendanceRankingListCardState
+    extends State<MissedClassesPupilListCard> {
   late CustomExpansionTileController _tileController;
   @override
   void initState() {
@@ -41,8 +42,12 @@ class _AttendanceRankingListCardState extends State<AttendanceRankingListCard> {
       surfaceTintColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       elevation: 1.0,
-      margin:
-          const EdgeInsets.only(left: 4.0, right: 4.0, top: 4.0, bottom: 4.0),
+      margin: const EdgeInsets.only(
+        left: 4.0,
+        right: 4.0,
+        top: 4.0,
+        bottom: 4.0,
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -69,14 +74,16 @@ class _AttendanceRankingListCardState extends State<AttendanceRankingListCard> {
                                   onTap: () {
                                     di<BottomNavManager>()
                                         .setPupilProfileNavPage(
-                                            ProfileNavigationState
-                                                .attendance.value);
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                      builder: (ctx) => PupilProfilePage(
-                                        pupil: pupil,
+                                          ProfileNavigationState
+                                              .attendance
+                                              .value,
+                                        );
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (ctx) =>
+                                            PupilProfilePage(pupil: pupil),
                                       ),
-                                    ));
+                                    );
                                   },
                                   child: Row(
                                     children: [
@@ -119,12 +126,12 @@ class _AttendanceRankingListCardState extends State<AttendanceRankingListCard> {
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: CustomExpansionTileSwitch(
-                                    customExpansionTileController:
-                                        _tileController,
-                                    includeSwitch: true,
-                                    switchColor: AppColors.interactiveColor,
-                                    expansionSwitchWidget:
-                                        attendanceStats(pupil)),
+                                  customExpansionTileController:
+                                      _tileController,
+                                  includeSwitch: true,
+                                  switchColor: AppColors.interactiveColor,
+                                  expansionSwitchWidget: attendanceStats(pupil),
+                                ),
                               ),
                             ),
                             const Gap(10),
@@ -174,9 +181,10 @@ class _AttendanceRankingListCardState extends State<AttendanceRankingListCard> {
             ],
           ),
           CustomExpansionTileContent(
-              title: null,
-              tileController: _tileController,
-              widgetList: [PupilAttendanceContent(pupil: pupil)]),
+            title: null,
+            tileController: _tileController,
+            widgetList: [PupilAttendanceContent(pupil: pupil)],
+          ),
         ],
       ),
     );

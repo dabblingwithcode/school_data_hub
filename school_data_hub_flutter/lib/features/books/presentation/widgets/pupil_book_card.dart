@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
@@ -26,8 +26,9 @@ class PupilBookLendingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final LibraryBookProxy book =
-        di<BookManager>().getLibraryBookById(pupilBookLending.libraryBookId)!;
+    final LibraryBookProxy book = di<BookManager>().getLibraryBookById(
+      pupilBookLending.libraryBookId,
+    )!;
     void updatepupilBookRating(int rating) {
       di<PupilManager>().updatePupilBookLending(
         pupilBookLending: pupilBookLending,
@@ -129,7 +130,7 @@ class PupilBookLendingCard extends StatelessWidget {
                                 Text(
                                   pupilBookLending.lentAt
                                       .toLocal()
-                                      .formatForUser(),
+                                      .formatDateForUser(),
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -153,7 +154,7 @@ class PupilBookLendingCard extends StatelessWidget {
                                   const Gap(2),
                                   Text(
                                     pupilBookLending.returnedAt!
-                                        .formatForUser(),
+                                        .formatDateForUser(),
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),

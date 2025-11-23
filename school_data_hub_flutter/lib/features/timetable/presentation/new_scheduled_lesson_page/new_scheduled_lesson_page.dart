@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -44,10 +44,9 @@ class NewScheduledLessonPage extends WatchingWidget {
     // Create ValueListenable for state management
     final selectedSubject = createOnce<ValueNotifier<Subject?>>(() {
       if (_isEditing) {
-        final editingLesson =
-            timetableManager.scheduledLessons.value
-                .where((lesson) => lesson.id == editingLessonId)
-                .firstOrNull;
+        final editingLesson = timetableManager.scheduledLessons.value
+            .where((lesson) => lesson.id == editingLessonId)
+            .firstOrNull;
         if (editingLesson != null) {
           return ValueNotifier<Subject?>(
             timetableManager.getSubjectById(editingLesson.subjectId),
@@ -59,10 +58,9 @@ class NewScheduledLessonPage extends WatchingWidget {
 
     final selectedSlot = createOnce<ValueNotifier<TimetableSlot?>>(() {
       if (_isEditing) {
-        final editingLesson =
-            timetableManager.scheduledLessons.value
-                .where((lesson) => lesson.id == editingLessonId)
-                .firstOrNull;
+        final editingLesson = timetableManager.scheduledLessons.value
+            .where((lesson) => lesson.id == editingLessonId)
+            .firstOrNull;
         if (editingLesson != null) {
           return ValueNotifier<TimetableSlot?>(
             timetableManager.getTimetableSlotById(editingLesson.scheduledAtId),
@@ -78,10 +76,9 @@ class NewScheduledLessonPage extends WatchingWidget {
 
     final selectedClassroom = createOnce<ValueNotifier<Classroom?>>(() {
       if (_isEditing) {
-        final editingLesson =
-            timetableManager.scheduledLessons.value
-                .where((lesson) => lesson.id == editingLessonId)
-                .firstOrNull;
+        final editingLesson = timetableManager.scheduledLessons.value
+            .where((lesson) => lesson.id == editingLessonId)
+            .firstOrNull;
         if (editingLesson != null) {
           return ValueNotifier<Classroom?>(
             timetableManager.getClassroomById(editingLesson.roomId),
@@ -93,10 +90,9 @@ class NewScheduledLessonPage extends WatchingWidget {
 
     final selectedLessonGroup = createOnce<ValueNotifier<LessonGroup?>>(() {
       if (_isEditing) {
-        final editingLesson =
-            timetableManager.scheduledLessons.value
-                .where((lesson) => lesson.id == editingLessonId)
-                .firstOrNull;
+        final editingLesson = timetableManager.scheduledLessons.value
+            .where((lesson) => lesson.id == editingLessonId)
+            .firstOrNull;
         if (editingLesson != null) {
           return ValueNotifier<LessonGroup?>(
             timetableManager.getLessonGroupById(editingLesson.lessonGroupId),
@@ -119,10 +115,9 @@ class NewScheduledLessonPage extends WatchingWidget {
 
     // Initialize lesson ID controller if editing
     if (_isEditing) {
-      final editingLesson =
-          timetableManager.scheduledLessons.value
-              .where((lesson) => lesson.id == editingLessonId)
-              .firstOrNull;
+      final editingLesson = timetableManager.scheduledLessons.value
+          .where((lesson) => lesson.id == editingLessonId)
+          .firstOrNull;
       if (editingLesson != null) {
         lessonIdController.text = editingLesson.lessonId;
       }
@@ -196,14 +191,10 @@ class NewScheduledLessonPage extends WatchingWidget {
                           selectedClassroom.value = null;
                         }
                       },
-                      hasLessonGroupConflict:
-                          (group) =>
-                              _hasLessonGroupConflict(group, selectedSlotValue),
-                      hasClassroomConflict:
-                          (classroom) => _hasClassroomConflict(
-                            classroom,
-                            selectedSlotValue,
-                          ),
+                      hasLessonGroupConflict: (group) =>
+                          _hasLessonGroupConflict(group, selectedSlotValue),
+                      hasClassroomConflict: (classroom) =>
+                          _hasClassroomConflict(classroom, selectedSlotValue),
                     ),
                     const Gap(20),
 
@@ -213,11 +204,8 @@ class NewScheduledLessonPage extends WatchingWidget {
                       onClassroomChanged: (classroom) {
                         selectedClassroom.value = classroom;
                       },
-                      hasClassroomConflict:
-                          (classroom) => _hasClassroomConflict(
-                            classroom,
-                            selectedSlotValue,
-                          ),
+                      hasClassroomConflict: (classroom) =>
+                          _hasClassroomConflict(classroom, selectedSlotValue),
                     ),
                     const Gap(20),
 
@@ -227,9 +215,8 @@ class NewScheduledLessonPage extends WatchingWidget {
                       onLessonGroupChanged: (group) {
                         selectedLessonGroup.value = group;
                       },
-                      hasLessonGroupConflict:
-                          (group) =>
-                              _hasLessonGroupConflict(group, selectedSlotValue),
+                      hasLessonGroupConflict: (group) =>
+                          _hasLessonGroupConflict(group, selectedSlotValue),
                     ),
                     const Gap(20),
 
@@ -272,15 +259,14 @@ class NewScheduledLessonPage extends WatchingWidget {
                           return;
                         }
 
-                        final now = DateTime.now().toUtcForServer();
+                        final now = DateTime.now().formatToUtcForServer();
 
                         if (_isEditing) {
-                          final editingLesson =
-                              timetableManager.scheduledLessons.value
-                                  .where(
-                                    (lesson) => lesson.id == editingLessonId,
-                                  )
-                                  .firstOrNull;
+                          final editingLesson = timetableManager
+                              .scheduledLessons
+                              .value
+                              .where((lesson) => lesson.id == editingLessonId)
+                              .firstOrNull;
 
                           if (editingLesson != null) {
                             // Update existing lesson
@@ -336,9 +322,8 @@ class NewScheduledLessonPage extends WatchingWidget {
                             lessonGroup: selectedLessonGroupValue,
                             timetableSlotOrder: nextAvailableOrder,
                             mainTeacherId: selectedTeachersValue.first.id!,
-                            createdBy:
-                                di<HubSessionManager>()
-                                    .userName!, // TODO: Get actual user
+                            createdBy: di<HubSessionManager>()
+                                .userName!, // TODO: Get actual user
                             createdAt: now,
                           );
 
@@ -357,66 +342,61 @@ class NewScheduledLessonPage extends WatchingWidget {
                         Navigator.of(context).pop();
                       },
                       onCancel: () => Navigator.of(context).pop(),
-                      onDelete:
-                          _isEditing
-                              ? () {
-                                final editingLesson =
-                                    timetableManager.scheduledLessons.value
-                                        .where(
-                                          (lesson) =>
-                                              lesson.id == editingLessonId,
-                                        )
-                                        .firstOrNull;
+                      onDelete: _isEditing
+                          ? () {
+                              final editingLesson = timetableManager
+                                  .scheduledLessons
+                                  .value
+                                  .where(
+                                    (lesson) => lesson.id == editingLessonId,
+                                  )
+                                  .firstOrNull;
 
-                                if (editingLesson?.id == null) return;
+                              if (editingLesson?.id == null) return;
 
-                                showDialog(
-                                  context: context,
-                                  builder:
-                                      (context) => AlertDialog(
-                                        title: const Text('Stunde löschen'),
-                                        content: const Text(
-                                          'Sind Sie sicher, dass Sie diese Stunde löschen möchten?',
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed:
-                                                () =>
-                                                    Navigator.of(context).pop(),
-                                            child: const Text('Abbrechen'),
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Stunde löschen'),
+                                  content: const Text(
+                                    'Sind Sie sicher, dass Sie diese Stunde löschen möchten?',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
+                                      child: const Text('Abbrechen'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        timetableManager.removeScheduledLesson(
+                                          editingLesson!.id!,
+                                        );
+                                        Navigator.of(
+                                          context,
+                                        ).pop(); // Close dialog
+                                        Navigator.of(
+                                          context,
+                                        ).pop(); // Close page
+
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              'Stunde erfolgreich gelöscht',
+                                            ),
+                                            backgroundColor: Colors.orange,
                                           ),
-                                          TextButton(
-                                            onPressed: () {
-                                              timetableManager
-                                                  .removeScheduledLesson(
-                                                    editingLesson!.id!,
-                                                  );
-                                              Navigator.of(
-                                                context,
-                                              ).pop(); // Close dialog
-                                              Navigator.of(
-                                                context,
-                                              ).pop(); // Close page
-
-                                              ScaffoldMessenger.of(
-                                                context,
-                                              ).showSnackBar(
-                                                const SnackBar(
-                                                  content: Text(
-                                                    'Stunde erfolgreich gelöscht',
-                                                  ),
-                                                  backgroundColor:
-                                                      Colors.orange,
-                                                ),
-                                              );
-                                            },
-                                            child: const Text('Löschen'),
-                                          ),
-                                        ],
-                                      ),
-                                );
-                              }
-                              : null,
+                                        );
+                                      },
+                                      child: const Text('Löschen'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          : null,
                     ),
                   ],
                 ),

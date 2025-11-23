@@ -1,6 +1,7 @@
 enum PupilFilter {
-  ogs,
-  notOgs,
+  afterSchoolCare,
+  noAfterSchoolCare,
+  entitledToEmergencyCare,
   specialInfo,
   migrationSupport,
   preSchoolRevision0,
@@ -31,8 +32,9 @@ enum PupilFilter {
 }
 
 Map<PupilFilter, bool> initialPupilFilterValues = {
-  PupilFilter.ogs: false,
-  PupilFilter.notOgs: false,
+  PupilFilter.afterSchoolCare: false,
+  PupilFilter.noAfterSchoolCare: false,
+  PupilFilter.entitledToEmergencyCare: false,
   PupilFilter.specialInfo: false,
   PupilFilter.migrationSupport: false,
   PupilFilter.preSchoolRevision0: false,

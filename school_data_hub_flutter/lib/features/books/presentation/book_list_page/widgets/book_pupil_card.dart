@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
@@ -70,9 +70,8 @@ class BookLendingPupilCard extends WatchingWidget {
                                   );
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
-                                      builder:
-                                          (ctx) =>
-                                              PupilProfilePage(pupil: pupil),
+                                      builder: (ctx) =>
+                                          PupilProfilePage(pupil: pupil),
                                     ),
                                   );
                                 },
@@ -122,7 +121,7 @@ class BookLendingPupilCard extends WatchingWidget {
                           ),
                           const Gap(2),
                           Text(
-                            watchedPupilBook.lentAt.formatForUser(),
+                            watchedPupilBook.lentAt.formatDateForUser(),
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -143,7 +142,7 @@ class BookLendingPupilCard extends WatchingWidget {
                             ),
                             const Gap(2),
                             Text(
-                              watchedPupilBook.returnedAt!.formatForUser(),
+                              watchedPupilBook.returnedAt!.formatDateForUser(),
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),

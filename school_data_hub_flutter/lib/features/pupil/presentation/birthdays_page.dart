@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -15,8 +15,8 @@ class BirthdaysView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Set<DateTime> seenBirthdays = {};
-    final List<PupilProxy> pupils =
-        di<PupilManager>().getPupilsWithBirthdaySinceDate(selectedDate);
+    final List<PupilProxy> pupils = di<PupilManager>()
+        .getPupilsWithBirthdaySinceDate(selectedDate);
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
@@ -27,58 +27,71 @@ class BirthdaysView extends StatelessWidget {
         title: const Text('Geburtstage', style: AppStyles.appBarTextStyle),
       ),
       body: Center(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Expanded(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 800),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                            'Geburtstage seit dem ${selectedDate.formatForUser()}',
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 800),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Geburtstage seit dem ${selectedDate.formatDateForUser()}',
                             style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20)),
-                        ListView.builder(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                          ),
+                          ListView.builder(
                             padding: const EdgeInsets.only(top: 10, bottom: 10),
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: pupils.length,
                             itemBuilder: (context, int index) {
                               PupilProxy listedPupil = pupils[index];
-                              final bool isBirthdayPrinted =
-                                  seenBirthdays.contains(DateTime(
+                              final bool isBirthdayPrinted = seenBirthdays
+                                  .contains(
+                                    DateTime(
                                       DateTime.now().year,
                                       listedPupil.birthday.month,
-                                      listedPupil.birthday.day));
+                                      listedPupil.birthday.day,
+                                    ),
+                                  );
                               if (!isBirthdayPrinted) {
-                                seenBirthdays.add(DateTime(
+                                seenBirthdays.add(
+                                  DateTime(
                                     DateTime.now().year,
                                     listedPupil.birthday.month,
-                                    listedPupil.birthday.day));
+                                    listedPupil.birthday.day,
+                                  ),
+                                );
                               }
                               return Column(
                                 children: [
                                   !isBirthdayPrinted
                                       ? Padding(
                                           padding: const EdgeInsets.symmetric(
-                                              vertical: 5.0),
+                                            vertical: 5.0,
+                                          ),
                                           child: Row(
                                             children: [
                                               const Gap(5),
                                               Text(
-                                                '${DateTime(DateTime.now().year, listedPupil.birthday.month, listedPupil.birthday.day).asWeekdayName(context)}, ${listedPupil.birthday.formatForUser()}',
+                                                '${DateTime(DateTime.now().year, listedPupil.birthday.month, listedPupil.birthday.day).asWeekdayName(context)}, ${listedPupil.birthday.formatDateForUser()}',
                                                 style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: AppColors
-                                                        .backgroundColor,
-                                                    fontSize: 18),
-                                              )
+                                                  fontWeight: FontWeight.bold,
+                                                  color:
+                                                      AppColors.backgroundColor,
+                                                  fontSize: 18,
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         )
@@ -99,7 +112,9 @@ class BirthdaysView extends StatelessWidget {
                                         child: Row(
                                           children: [
                                             AvatarWithBadges(
-                                                pupil: listedPupil, size: 80),
+                                              pupil: listedPupil,
+                                              size: 80,
+                                            ),
                                             const Gap(10),
                                             Column(
                                               crossAxisAlignment:
@@ -108,14 +123,15 @@ class BirthdaysView extends StatelessWidget {
                                                 Text(
                                                   listedPupil.firstName,
                                                   style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 18),
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 18,
+                                                  ),
                                                 ),
                                                 Text(
                                                   listedPupil.lastName,
                                                   style: const TextStyle(
-                                                      fontSize: 18),
+                                                    fontSize: 18,
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -127,19 +143,19 @@ class BirthdaysView extends StatelessWidget {
                                                 Text(
                                                   listedPupil.age.toString(),
                                                   style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black,
-                                                      fontSize: 24),
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black,
+                                                    fontSize: 24,
+                                                  ),
                                                 ),
                                                 const Gap(5),
                                                 const Text(
                                                   'Jahre alt',
                                                   style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black,
-                                                      fontSize: 18),
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black,
+                                                    fontSize: 18,
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -149,18 +165,20 @@ class BirthdaysView extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  const Gap(5)
+                                  const Gap(5),
                                 ],
                               );
-                            }),
-                      ],
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          )
-        ]),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

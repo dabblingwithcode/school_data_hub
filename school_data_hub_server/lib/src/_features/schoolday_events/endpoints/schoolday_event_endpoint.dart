@@ -1,6 +1,7 @@
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
-import 'package:school_data_hub_server/src/utils/mailer.dart';
+import 'package:school_data_hub_server/src/utils/matrix_notifications/matrix_notifications.dart';
+import 'package:school_data_hub_server/src/utils/matrix_notifications/schoolday_event_notification_text.dart';
 import 'package:serverpod/serverpod.dart';
 
 final _log = Logger('SchooldayEventEndpoint');
@@ -20,14 +21,15 @@ class SchooldayEventEndpoint extends Endpoint {
 
   Future<SchooldayEvent> createSchooldayEvent(Session session,
       {required int pupilId,
+      required String pupilNameAndGroup,
+      required String dateTimeAsString,
       required int schooldayId,
       required SchooldayEventType type,
       required String reason,
       required String createdBy,
       required String tutor}) async {
     final eventId = Uuid().v4();
-    final recipient = await User.db
-        .findFirstRow(session, where: (t) => t.userInfo.userName.equals(tutor));
+
     final schooldayEvent = SchooldayEvent(
       eventId: eventId,
       pupilId: pupilId,
@@ -48,20 +50,51 @@ class SchooldayEventEndpoint extends Endpoint {
         processedDocument: HubDocument.include(),
       ),
     );
-    // TODO: Need to implement the mail secrets in the github actions secrets
+
     try {
       final pupil = await PupilData.db.findFirstRow(session,
-          where: (t) => t.id.equals(eventWithSchoolday!.pupilId));
+          where: (t) => t.id.equals(eventWithSchoolday!.pupilId),
+          include:
+              PupilData.include(schooldayEvents: SchooldayEvent.includeList()));
+      final numberOfEventsOfTheSameType = pupil?.schooldayEvents
+              ?.where((event) => event.eventType == type)
+              .length ??
+          0;
+      final matrixNotifications = MatrixNotifications();
+      final recipients = await matrixNotifications.findNotificationRecipients(
+        session: session,
+        pupilNameAndGroup: pupilNameAndGroup,
+        tutor: tutor,
+      );
 
-      // MailerService.instance.initializeFromSession(session);
+      // Send notification to all recipients
+      if (recipients.isEmpty) {
+        // Fallback to default recipient if no matches found
+        _log.warning('No recipients found for schoolday event $eventId');
+        return eventWithSchoolday!;
+      }
 
-      final success = await MailerService.instance.sendNotification(
-          recipient: recipient?.userInfo?.email ?? '',
-          subject: 'Neues Schulereignis',
-          message: 'Es wurde ein neues Schulereignis erstellt.\n\n'
-              'Es ist das Schulereignis Nummer ${pupil?.schooldayEvents?.length}');
+      await matrixNotifications.sendDirectTextMessage(
+        session: session,
+        recipients: recipients,
+        text: getSchooldayEventNotificationMarkdown(
+            eventcreator: createdBy,
+            pupilName: pupilNameAndGroup,
+            schooldayEvent: eventWithSchoolday!,
+            numberOfEvents: numberOfEventsOfTheSameType),
+        html: getSchooldayEventNotificationHtml(
+            eventcreator: createdBy,
+            pupilName: pupilNameAndGroup,
+            schooldayEvent: eventWithSchoolday,
+            numberOfEvents: numberOfEventsOfTheSameType),
+      );
+      // final success = await MailerService.instance.sendNotification(
+      //     recipient: recipient?.userInfo?.email ?? '',
+      //     subject: 'Neues Schulereignis',
+      //     message: 'Es wurde ein neues Schulereignis erstellt.\n\n'
+      //         'Es ist das Schulereignis Nummer ${pupil?.schooldayEvents?.length}');
     } catch (e) {
-      _log.severe('Error sending startup notification email: $e');
+      _log.severe('Error sending matrix notification: $e');
     }
 
     return eventWithSchoolday!;

@@ -31,6 +31,11 @@ class PupilProxy with ChangeNotifier {
     GenderFilter(Gender.female),
   ];
 
+  static List<ReligionCourseFilter> religionCourseFilters = [
+    ReligionCourseFilter(ReligionCourse.islam),
+    ReligionCourseFilter(ReligionCourse.catholic),
+  ];
+
   late PupilData _pupilData;
   PupilIdentity _pupilIdentity;
 
@@ -55,6 +60,8 @@ class PupilProxy with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  //- PupilIdentity GETTERS
 
   String get firstName => _pupilIdentity.firstName;
   String get lastName => _pupilIdentity.lastName;
@@ -87,6 +94,9 @@ class PupilProxy with ChangeNotifier {
 
   DateTime? get familyLanguageLessonsSince =>
       _pupilIdentity.familyLanguageLessonsSince;
+  DateTime? get religionLessonsSince => _pupilIdentity.religionLessonsSince;
+
+  String? get religion => _pupilIdentity.religion;
   //- PUPIL DATA GETTERS
 
   int get pupilId => _pupilData.id!;
@@ -131,16 +141,22 @@ class PupilProxy with ChangeNotifier {
   // TODO URGENT: Remove these after migrating all OGS code to use proper afterSchoolCare model
   bool get ogs => afterSchoolCare != null;
 
-  String? get pickUpTime {
-    // For now, return a simplified representation
-    // This would need to be updated based on business logic for which day to show
+  String? pickUpTime(AfterSchoolCareWeekday weekday) {
     final pickUpTimes = afterSchoolCare?.pickUpTimes;
-    if (pickUpTimes?.monday != null) return pickUpTimes!.monday!.time;
-    if (pickUpTimes?.tuesday != null) return pickUpTimes!.tuesday!.time;
-    if (pickUpTimes?.wednesday != null) return pickUpTimes!.wednesday!.time;
-    if (pickUpTimes?.thursday != null) return pickUpTimes!.thursday!.time;
-    if (pickUpTimes?.friday != null) return pickUpTimes!.friday!.time;
-    return null;
+    if (pickUpTimes == null) return null;
+
+    switch (weekday) {
+      case AfterSchoolCareWeekday.monday:
+        return pickUpTimes.monday?.time;
+      case AfterSchoolCareWeekday.tuesday:
+        return pickUpTimes.tuesday?.time;
+      case AfterSchoolCareWeekday.wednesday:
+        return pickUpTimes.wednesday?.time;
+      case AfterSchoolCareWeekday.thursday:
+        return pickUpTimes.thursday?.time;
+      case AfterSchoolCareWeekday.friday:
+        return pickUpTimes.friday?.time;
+    }
   }
 
   String? get ogsInfo => afterSchoolCare?.afterSchoolCareInfo;

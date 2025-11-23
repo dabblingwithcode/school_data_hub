@@ -3,7 +3,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/core/di/dependency_injection.dart';
@@ -59,7 +59,8 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           leading: const Icon(Icons.perm_identity_rounded),
           title: const Text('Personenbezogene Daten vom:'),
           value: Text(
-            di<EnvManager>().activeEnv?.lastIdentitiesUpdate?.formatForUser() ??
+            di<EnvManager>().activeEnv?.lastIdentitiesUpdate
+                    ?.formatDateForUser() ??
                 'unbekannt',
           ),
           trailing: null,

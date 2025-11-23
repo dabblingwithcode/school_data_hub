@@ -102,11 +102,19 @@ class SchooldayEventManager with ChangeNotifier {
   Future<void> postSchooldayEvent(
     int pupilId,
     int schooldayId,
+    DateTime dateTime,
     SchooldayEventType type,
     String reason,
   ) async {
-    final SchooldayEvent schooldayEvent = await _schooldayEventApiService
-        .postSchooldayEvent(pupilId, schooldayId, type, reason);
+    final SchooldayEvent
+    schooldayEvent = await _schooldayEventApiService.postSchooldayEvent(
+      '${di<PupilManager>().getPupilByPupilId(pupilId)!.firstName} (${di<PupilManager>().getPupilByPupilId(pupilId)!.group})',
+      pupilId,
+      schooldayId,
+      dateTime,
+      type,
+      reason,
+    );
 
     _updateSchooldayEventCollections(schooldayEvent);
     _notificationService.showSnackBar(
@@ -121,8 +129,8 @@ class SchooldayEventManager with ChangeNotifier {
 
   Future<void> fetchSchooldayEvents() async {
     try {
-      final List<SchooldayEvent> events =
-          await _schooldayEventApiService.fetchSchooldayEvents();
+      final List<SchooldayEvent> events = await _schooldayEventApiService
+          .fetchSchooldayEvents();
 
       updateSchooldayEventsBatchInCollections(events);
     } catch (e) {

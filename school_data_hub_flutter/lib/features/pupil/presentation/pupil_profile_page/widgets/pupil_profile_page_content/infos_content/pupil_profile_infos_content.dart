@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
@@ -108,16 +108,14 @@ class PupilProfileInfosContent extends WatchingWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color:
-                      pupil.specialInformation != null
-                          ? AppColors.backgroundColor.withValues(alpha: 0.05)
-                          : AppColors.interactiveColor.withValues(alpha: 0.05),
+                  color: pupil.specialInformation != null
+                      ? AppColors.backgroundColor.withValues(alpha: 0.05)
+                      : AppColors.interactiveColor.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color:
-                        pupil.specialInformation != null
-                            ? AppColors.backgroundColor.withValues(alpha: 0.2)
-                            : AppColors.interactiveColor.withValues(alpha: 0.2),
+                    color: pupil.specialInformation != null
+                        ? AppColors.backgroundColor.withValues(alpha: 0.2)
+                        : AppColors.interactiveColor.withValues(alpha: 0.2),
                     width: 1,
                   ),
                 ),
@@ -126,18 +124,15 @@ class PupilProfileInfosContent extends WatchingWidget {
                       'Tippen Sie hier, um besondere Informationen hinzuzufügen',
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight:
-                        pupil.specialInformation != null
-                            ? FontWeight.w500
-                            : FontWeight.normal,
-                    color:
-                        pupil.specialInformation != null
-                            ? AppColors.backgroundColor
-                            : AppColors.interactiveColor,
-                    fontStyle:
-                        pupil.specialInformation == null
-                            ? FontStyle.italic
-                            : FontStyle.normal,
+                    fontWeight: pupil.specialInformation != null
+                        ? FontWeight.w500
+                        : FontWeight.normal,
+                    color: pupil.specialInformation != null
+                        ? AppColors.backgroundColor
+                        : AppColors.interactiveColor,
+                    fontStyle: pupil.specialInformation == null
+                        ? FontStyle.italic
+                        : FontStyle.normal,
                   ),
                 ),
               ),
@@ -159,13 +154,13 @@ class PupilProfileInfosContent extends WatchingWidget {
                 _buildInfoRow(
                   icon: Icons.cake_outlined,
                   label: 'Geburtsdatum',
-                  value: pupil.birthday.formatForUser(),
+                  value: pupil.birthday.formatDateForUser(),
                 ),
                 const Gap(8), // Reduced from 12 to 8
                 _buildInfoRow(
                   icon: Icons.school_outlined,
                   label: 'Aufnahmedatum',
-                  value: pupil.pupilSince.formatForUser(),
+                  value: pupil.pupilSince.formatDateForUser(),
                 ),
               ],
             ),
@@ -180,10 +175,9 @@ class PupilProfileInfosContent extends WatchingWidget {
                 _buildContactRow(
                   icon: Icons.person_outline,
                   label: 'Schüler/in Kontakt',
-                  value:
-                      pupil.contact?.isNotEmpty == true
-                          ? pupil.contact!
-                          : 'keine Angabe',
+                  value: pupil.contact?.isNotEmpty == true
+                      ? pupil.contact!
+                      : 'keine Angabe',
                   onTap: () {
                     if (pupil.contact != null && pupil.contact!.isNotEmpty) {
                       MatrixPolicyHelper.launchMatrixUrl(
@@ -207,71 +201,66 @@ class PupilProfileInfosContent extends WatchingWidget {
                       value: contact,
                     );
                   },
-                  actionButton:
-                      pupil.contact == null || pupil.contact!.isEmpty
-                          ? IconButton(
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder:
-                                      (ctx) => NewMatrixUserPage(
-                                        pupil: pupil,
-                                        matrixId:
-                                            MatrixPolicyHelper.generateMatrixId(
-                                              isParent: false,
-                                            ),
-                                        displayName:
-                                            '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (${pupil.group})',
-                                      ),
+                  actionButton: pupil.contact == null || pupil.contact!.isEmpty
+                      ? IconButton(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (ctx) => NewMatrixUserPage(
+                                  pupil: pupil,
+                                  matrixId: MatrixPolicyHelper.generateMatrixId(
+                                    isParent: false,
+                                  ),
+                                  displayName:
+                                      '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (${pupil.group})',
                                 ),
-                              );
-                            },
-                            icon: const Icon(
-                              Icons.add_circle_outline,
-                              size: 24,
-                              color: AppColors.interactiveColor,
-                            ),
-                          )
-                          : IconButton(
-                            onPressed: () async {
-                              final confirmation = await confirmationDialog(
-                                context: context,
-                                title: 'Passwort zurücksetzen',
-                                message:
-                                    'Möchten Sie das Passwort wirklich zurücksetzen?',
-                              );
-                              if (confirmation != true) return;
-                              if (context.mounted) {
-                                final logOutDevices = await logoutDevicesDialog(
-                                  context,
-                                );
-                                if (logOutDevices == null) return;
-                                final file = await _matrixPolicyManager.users
-                                    .resetPasswordAndPrintCredentialsFile(
-                                      user:
-                                          MatrixUserHelper.usersFromUserIds([
-                                            pupil.contact!,
-                                          ]).first,
-                                      logoutDevices: logOutDevices,
-                                      isStaff: false,
-                                    );
-                                if (file != null && context.mounted) {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              PdfViewerPage(pdfFile: file),
-                                    ),
-                                  );
-                                }
-                              }
-                            },
-                            icon: const Icon(
-                              Icons.qr_code_2_rounded,
-                              size: 24,
-                              color: AppColors.backgroundColor,
-                            ),
+                              ),
+                            );
+                          },
+                          icon: const Icon(
+                            Icons.add_circle_outline,
+                            size: 24,
+                            color: AppColors.interactiveColor,
                           ),
+                        )
+                      : IconButton(
+                          onPressed: () async {
+                            final confirmation = await confirmationDialog(
+                              context: context,
+                              title: 'Passwort zurücksetzen',
+                              message:
+                                  'Möchten Sie das Passwort wirklich zurücksetzen?',
+                            );
+                            if (confirmation != true) return;
+                            if (context.mounted) {
+                              final logOutDevices = await logoutDevicesDialog(
+                                context,
+                              );
+                              if (logOutDevices == null) return;
+                              final file = await _matrixPolicyManager.users
+                                  .resetPasswordAndPrintCredentialsFile(
+                                    user: MatrixUserHelper.usersFromUserIds([
+                                      pupil.contact!,
+                                    ]).first,
+                                    logoutDevices: logOutDevices,
+                                    isStaff: false,
+                                  );
+                              if (file != null && context.mounted) {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        PdfViewerPage(pdfFile: file),
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                          icon: const Icon(
+                            Icons.qr_code_2_rounded,
+                            size: 24,
+                            color: AppColors.backgroundColor,
+                          ),
+                        ),
                 ),
                 const Gap(10), // Reduced from 16 to 10
                 _buildContactRow(
@@ -300,93 +289,85 @@ class PupilProfileInfosContent extends WatchingWidget {
                     if (parentsContact == null) return;
                     await PupilMutator().updateTutorInfo(
                       pupilId: pupil.pupilId,
-                      tutorInfo:
-                          pupil.tutorInfo != null
-                              ? pupil.tutorInfo!.copyWith(
-                                parentsContact: parentsContact,
-                              )
-                              : TutorInfo(
-                                parentsContact: parentsContact,
-                                createdBy: _hubSessionManager.userName!,
-                              ),
+                      tutorInfo: pupil.tutorInfo != null
+                          ? pupil.tutorInfo!.copyWith(
+                              parentsContact: parentsContact,
+                            )
+                          : TutorInfo(
+                              parentsContact: parentsContact,
+                              createdBy: _hubSessionManager.userName!,
+                            ),
                     );
                   },
-                  actionButton:
-                      pupil.tutorInfo?.parentsContact == null
-                          ? IconButton(
-                            onPressed: () {
-                              String? pupilSiblingsGroups;
-                              if (pupil.family != null) {
-                                pupilSiblingsGroups =
-                                    [
-                                      ..._pupilManager.getSiblings(pupil),
-                                      pupil,
-                                    ].map((e) => e.group).toList().join();
-                              }
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder:
-                                      (ctx) => NewMatrixUserPage(
-                                        pupil: pupil,
-                                        matrixId:
-                                            MatrixPolicyHelper.generateMatrixId(
-                                              isParent: true,
-                                            ),
-                                        displayName:
-                                            pupilSiblingsGroups != null
-                                                ? 'Fa. ${pupil.lastName} (E) $pupilSiblingsGroups'
-                                                : '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (E) ${pupil.group}',
-                                        isParent: true,
-                                      ),
+                  actionButton: pupil.tutorInfo?.parentsContact == null
+                      ? IconButton(
+                          onPressed: () {
+                            String? pupilSiblingsGroups;
+                            if (pupil.family != null) {
+                              pupilSiblingsGroups = [
+                                ..._pupilManager.getSiblings(pupil),
+                                pupil,
+                              ].map((e) => e.group).toList().join();
+                            }
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (ctx) => NewMatrixUserPage(
+                                  pupil: pupil,
+                                  matrixId: MatrixPolicyHelper.generateMatrixId(
+                                    isParent: true,
+                                  ),
+                                  displayName: pupilSiblingsGroups != null
+                                      ? 'Fa. ${pupil.lastName} (E) $pupilSiblingsGroups'
+                                      : '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (E) ${pupil.group}',
+                                  isParent: true,
                                 ),
-                              );
-                            },
-                            icon: const Icon(
-                              Icons.add_circle_outline,
-                              size: 24,
-                              color: AppColors.interactiveColor,
-                            ),
-                          )
-                          : IconButton(
-                            onPressed: () async {
-                              final confirmation = await confirmationDialog(
-                                context: context,
-                                title: 'Passwort zurücksetzen',
-                                message:
-                                    'Möchten Sie das Passwort wirklich zurücksetzen?',
-                              );
-                              if (confirmation != true) return;
-                              if (context.mounted) {
-                                final logOutDevices = await logoutDevicesDialog(
-                                  context,
-                                );
-                                if (logOutDevices == null) return;
-                                final file = await _matrixPolicyManager.users
-                                    .resetPasswordAndPrintCredentialsFile(
-                                      user:
-                                          MatrixUserHelper.usersFromUserIds([
-                                            pupil.tutorInfo!.parentsContact!,
-                                          ]).first,
-                                      logoutDevices: logOutDevices,
-                                      isStaff: false,
-                                    );
-                                if (file != null && context.mounted) {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              PdfViewerPage(pdfFile: file),
-                                    ),
-                                  );
-                                }
-                              }
-                            },
-                            icon: const Icon(
-                              Icons.qr_code_2_rounded,
-                              size: 24,
-                              color: AppColors.backgroundColor,
-                            ),
+                              ),
+                            );
+                          },
+                          icon: const Icon(
+                            Icons.add_circle_outline,
+                            size: 24,
+                            color: AppColors.interactiveColor,
                           ),
+                        )
+                      : IconButton(
+                          onPressed: () async {
+                            final confirmation = await confirmationDialog(
+                              context: context,
+                              title: 'Passwort zurücksetzen',
+                              message:
+                                  'Möchten Sie das Passwort wirklich zurücksetzen?',
+                            );
+                            if (confirmation != true) return;
+                            if (context.mounted) {
+                              final logOutDevices = await logoutDevicesDialog(
+                                context,
+                              );
+                              if (logOutDevices == null) return;
+                              final file = await _matrixPolicyManager.users
+                                  .resetPasswordAndPrintCredentialsFile(
+                                    user: MatrixUserHelper.usersFromUserIds([
+                                      pupil.tutorInfo!.parentsContact!,
+                                    ]).first,
+                                    logoutDevices: logOutDevices,
+                                    isStaff: false,
+                                  );
+                              if (file != null && context.mounted) {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        PdfViewerPage(pdfFile: file),
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                          icon: const Icon(
+                            Icons.qr_code_2_rounded,
+                            size: 24,
+                            color: AppColors.backgroundColor,
+                          ),
+                        ),
                 ),
               ],
             ),
@@ -409,108 +390,106 @@ class PupilProfileInfosContent extends WatchingWidget {
           _buildInfoSection(
             icon: Icons.family_restroom_outlined,
             title: 'Geschwister',
-            child:
-                pupilSiblings.isNotEmpty
-                    ? ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: pupilSiblings.length,
-                      itemBuilder: (context, int index) {
-                        PupilProxy sibling = pupilSiblings[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12.0),
-                          child: Card(
-                            color: AppColors.pupilProfileCardColor,
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder:
-                                        (ctx) =>
-                                            PupilProfilePage(pupil: sibling),
-                                  ),
-                                );
-                              },
-                              borderRadius: BorderRadius.circular(12),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    AvatarWithBadges(pupil: sibling, size: 60),
-                                    const Gap(16),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            '${sibling.firstName} ${sibling.lastName}',
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18,
-                                              color: AppColors.backgroundColor,
-                                            ),
-                                          ),
-                                          const Gap(4),
-                                          Text(
-                                            'Klasse ${sibling.group}',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.grey.withValues(
-                                                alpha: 0.8,
-                                              ),
-                                            ),
-                                          ),
-                                          const Gap(4),
-                                          Text(
-                                            'Geburtsdatum: ${sibling.birthday.formatForUser()}',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.grey.withValues(
-                                                alpha: 0.7,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Icon(
-                                      Icons.arrow_forward_ios,
-                                      color: AppColors.interactiveColor,
-                                      size: 18,
-                                    ),
-                                  ],
+            child: pupilSiblings.isNotEmpty
+                ? ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: pupilSiblings.length,
+                    itemBuilder: (context, int index) {
+                      PupilProxy sibling = pupilSiblings[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12.0),
+                        child: Card(
+                          color: AppColors.pupilProfileCardColor,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (ctx) =>
+                                      PupilProfilePage(pupil: sibling),
                                 ),
+                              );
+                            },
+                            borderRadius: BorderRadius.circular(12),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  AvatarWithBadges(pupil: sibling, size: 60),
+                                  const Gap(16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '${sibling.firstName} ${sibling.lastName}',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                            color: AppColors.backgroundColor,
+                                          ),
+                                        ),
+                                        const Gap(4),
+                                        Text(
+                                          'Klasse ${sibling.group}',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.grey.withValues(
+                                              alpha: 0.8,
+                                            ),
+                                          ),
+                                        ),
+                                        const Gap(4),
+                                        Text(
+                                          'Geburtsdatum: ${sibling.birthday.formatDateForUser()}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.grey.withValues(
+                                              alpha: 0.7,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: AppColors.interactiveColor,
+                                    size: 18,
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                        );
-                      },
-                    )
-                    : Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.info_outline,
-                              color: Colors.grey.withValues(alpha: 0.6),
-                              size: 24,
-                            ),
-                            const Gap(12),
-                            Text(
-                              'Keine Geschwister erfasst',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey.withValues(alpha: 0.7),
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                          ],
                         ),
+                      );
+                    },
+                  )
+                : Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.info_outline,
+                            color: Colors.grey.withValues(alpha: 0.6),
+                            size: 24,
+                          ),
+                          const Gap(12),
+                          Text(
+                            'Keine Geschwister erfasst',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey.withValues(alpha: 0.7),
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+                  ),
           ),
           const Gap(20), // Extra spacing at the bottom
         ],
@@ -590,10 +569,9 @@ class PupilProfileInfosContent extends WatchingWidget {
                   horizontal: 12,
                 ),
                 decoration: BoxDecoration(
-                  color:
-                      onTap != null
-                          ? AppColors.interactiveColor.withValues(alpha: 0.1)
-                          : Colors.transparent,
+                  color: onTap != null
+                      ? AppColors.interactiveColor.withValues(alpha: 0.1)
+                      : Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -601,12 +579,11 @@ class PupilProfileInfosContent extends WatchingWidget {
                   style: TextStyle(
                     fontSize: 14, // Reduced from 16 to 14
                     fontWeight: FontWeight.w600,
-                    color:
-                        onTap != null
-                            ? AppColors
-                                .interactiveColor // Keep blue for interactive elements
-                            : Colors
-                                .black87, // Changed from AppColors.backgroundColor to black for non-interactive
+                    color: onTap != null
+                        ? AppColors
+                              .interactiveColor // Keep blue for interactive elements
+                        : Colors
+                              .black87, // Changed from AppColors.backgroundColor to black for non-interactive
                   ),
                 ),
               ),
@@ -668,12 +645,9 @@ class PupilProfileInfosContent extends WatchingWidget {
                         horizontal: 12,
                       ),
                       decoration: BoxDecoration(
-                        color:
-                            onTap != null
-                                ? AppColors.interactiveColor.withValues(
-                                  alpha: 0.1,
-                                )
-                                : Colors.transparent,
+                        color: onTap != null
+                            ? AppColors.interactiveColor.withValues(alpha: 0.1)
+                            : Colors.transparent,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -681,12 +655,11 @@ class PupilProfileInfosContent extends WatchingWidget {
                         style: TextStyle(
                           fontSize: 14, // Reduced from 16 to 14
                           fontWeight: FontWeight.w600,
-                          color:
-                              onTap != null
-                                  ? AppColors
-                                      .interactiveColor // Keep blue for interactive elements
-                                  : Colors
-                                      .black87, // Changed from AppColors.backgroundColor to black for non-interactive
+                          color: onTap != null
+                              ? AppColors
+                                    .interactiveColor // Keep blue for interactive elements
+                              : Colors
+                                    .black87, // Changed from AppColors.backgroundColor to black for non-interactive
                         ),
                       ),
                     ),

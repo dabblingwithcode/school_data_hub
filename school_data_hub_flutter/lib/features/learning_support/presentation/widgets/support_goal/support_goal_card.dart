@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
@@ -15,8 +15,11 @@ final _learningSupportManager = di<SupportCategoryManager>();
 class SupportGoalCard extends StatelessWidget {
   final PupilProxy pupil;
   final int goalIndex;
-  const SupportGoalCard(
-      {required this.pupil, required this.goalIndex, super.key});
+  const SupportGoalCard({
+    required this.pupil,
+    required this.goalIndex,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +30,10 @@ class SupportGoalCard extends StatelessWidget {
         child: InkWell(
           onLongPress: () async {
             final bool? delete = await confirmationDialog(
-                context: context,
-                title: 'Förderziel löschen',
-                message: 'Förderziel löschen?');
+              context: context,
+              title: 'Förderziel löschen',
+              message: 'Förderziel löschen?',
+            );
             if (delete == true) {
               // TODO: uncomment when ready
               // await _learningSupportManager
@@ -42,7 +46,9 @@ class SupportGoalCard extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0),
               side: const BorderSide(
-                  color: AppColors.cardInCardBorderColor, width: 2),
+                color: AppColors.cardInCardBorderColor,
+                width: 2,
+              ),
             ),
             color: AppColors.cardInCardColor,
             child: Column(
@@ -50,17 +56,24 @@ class SupportGoalCard extends StatelessWidget {
                 const Gap(5),
                 Padding(
                   padding: const EdgeInsets.only(
-                      top: 8.0, bottom: 8, left: 10, right: 10),
+                    top: 8.0,
+                    bottom: 8,
+                    left: 10,
+                    right: 10,
+                  ),
                   child: Container(
                     decoration: BoxDecoration(
                       color: LearningSupportHelper.getRootSupportCategoryColor(
-                          _learningSupportManager.getRootSupportCategory(pupil
-                              .supportGoals![goalIndex].supportCategoryId)),
+                        _learningSupportManager.getRootSupportCategory(
+                          pupil.supportGoals![goalIndex].supportCategoryId,
+                        ),
+                      ),
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                     child: SupportCategoryCardBanner(
-                        categoryId:
-                            pupil.supportGoals![goalIndex].supportCategoryId),
+                      categoryId:
+                          pupil.supportGoals![goalIndex].supportCategoryId,
+                    ),
                   ),
                 ),
                 Padding(
@@ -70,15 +83,20 @@ class SupportGoalCard extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
-                        child: getLastCategoryStatusSymbol(pupil,
-                            pupil.supportGoals![goalIndex].supportCategoryId),
+                        child: getLastCategoryStatusSymbol(
+                          pupil,
+                          pupil.supportGoals![goalIndex].supportCategoryId,
+                        ),
                       ),
                       const Gap(10),
                       Flexible(
                         child: Text(
                           _learningSupportManager
-                              .getSupportCategory(pupil
-                                  .supportGoals![goalIndex].supportCategoryId)
+                              .getSupportCategory(
+                                pupil
+                                    .supportGoals![goalIndex]
+                                    .supportCategoryId,
+                              )
                               .name,
                           style: const TextStyle(
                             fontSize: 20,
@@ -97,23 +115,26 @@ class SupportGoalCard extends StatelessWidget {
                       child: Text(
                         pupil.supportGoals![goalIndex].description,
                         style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.groupColor),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.groupColor,
+                        ),
                       ),
                     ),
-                    const Gap(10)
+                    const Gap(10),
                   ],
                 ),
                 const Gap(5),
                 const Row(
                   children: [
                     Gap(15),
-                    Text('Strategien:',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        )),
+                    Text(
+                      'Strategien:',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ],
                 ),
                 const Gap(5),
@@ -123,9 +144,7 @@ class SupportGoalCard extends StatelessWidget {
                     Flexible(
                       child: Text(
                         pupil.supportGoals![goalIndex].strategies,
-                        style: const TextStyle(
-                          fontSize: 16,
-                        ),
+                        style: const TextStyle(fontSize: 16),
                       ),
                     ),
                     const Gap(10),
@@ -147,7 +166,7 @@ class SupportGoalCard extends StatelessWidget {
                     Text(
                       pupil.supportGoals![goalIndex].createdAt
                           .toLocal()
-                          .formatForUser(),
+                          .formatDateForUser(),
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],

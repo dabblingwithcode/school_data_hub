@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
@@ -207,7 +207,7 @@ class UserListCard extends WatchingWidget {
                     Text('User Info ID: ${user.userInfoId}'),
                     const Gap(5),
                     Text(
-                      'Erstellt: ${user.userInfo?.created != null ? user.userInfo!.created.formatForUser() : 'N/A'}',
+                      'Erstellt: ${user.userInfo?.created != null ? user.userInfo!.created.formatDateForUser() : 'N/A'}',
                     ),
                     const Gap(5),
                     Text(

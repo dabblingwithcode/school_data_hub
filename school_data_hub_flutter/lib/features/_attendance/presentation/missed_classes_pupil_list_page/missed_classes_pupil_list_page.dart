@@ -22,7 +22,9 @@ class MissedSchooldayesPupilListPage extends WatchingWidget {
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
       appBar: const GenericAppBar(
-          iconData: Icons.calendar_month_rounded, title: 'Fehlzeiten'),
+        iconData: Icons.calendar_month_rounded,
+        title: 'Fehlzeiten',
+      ),
       body: RefreshIndicator(
         onRefresh: () async => di<PupilManager>().fetchAllPupils(),
         child: Center(
@@ -36,9 +38,9 @@ class MissedSchooldayesPupilListPage extends WatchingWidget {
                   title: AttendanceRankingListSearchbar(pupils: pupils),
                 ),
                 GenericSliverListWithEmptyListCheck(
-                    items: pupils,
-                    itemBuilder: (_, pupil) =>
-                        AttendanceRankingListCard(pupil)),
+                  items: pupils,
+                  itemBuilder: (_, pupil) => MissedClassesPupilListCard(pupil),
+                ),
               ],
             ),
           ),

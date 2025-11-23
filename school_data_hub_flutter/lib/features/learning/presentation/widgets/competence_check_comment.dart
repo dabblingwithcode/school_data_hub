@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
@@ -9,7 +9,9 @@ Widget getCompetenceCheckComment(PupilProxy pupil, int competenceId) {
   if (pupil.competenceChecks!.isNotEmpty) {
     final CompetenceCheck? competenceCheck =
         CompetenceHelper.getLastCompetenceCheckOfCompetence(
-            pupil, competenceId);
+          pupil,
+          competenceId,
+        );
     if (competenceCheck != null) {
       return Padding(
         padding: const EdgeInsets.only(left: 35),
@@ -22,10 +24,7 @@ Widget getCompetenceCheckComment(PupilProxy pupil, int competenceId) {
                   competenceCheck.comment ?? 'Kein Kommentar vorhanden',
                   maxLines: 2,
                   textAlign: TextAlign.start,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                  ),
+                  style: const TextStyle(color: Colors.white, fontSize: 15),
                 ),
               ],
             ),
@@ -35,36 +34,32 @@ Widget getCompetenceCheckComment(PupilProxy pupil, int competenceId) {
               children: [
                 const Text(
                   'eingetragen von ',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 12),
                 ),
                 Text(
                   competenceCheck.createdBy,
                   style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold),
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const Gap(5),
                 const Text(
                   'am',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 12),
                 ),
                 const Gap(5),
                 Text(
-                  competenceCheck.createdAt.toLocal().formatForUser(),
+                  competenceCheck.createdAt.toLocal().formatDateForUser(),
                   style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold),
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       );

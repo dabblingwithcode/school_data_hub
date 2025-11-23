@@ -96,6 +96,7 @@ abstract class PupilsFilter implements Listenable {
   //List<Filter> get groupFilters;
   List<Filter> get schoolGradeFilters;
   List<Filter> get genderFilters;
+  List<Filter> get religionCourseFilters;
   PupilTextFilter get textFilter;
 
   /// must be called when this object is no longer needed

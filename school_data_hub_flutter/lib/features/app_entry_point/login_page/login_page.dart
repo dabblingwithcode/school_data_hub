@@ -32,8 +32,9 @@ class LoginPage extends WatchingWidget {
           : snackbar(context, value.type, value.message),
     );
 
-    final bool isAuthenticated =
-        watchValue((EnvManager x) => x.isAuthenticated);
+    final bool isAuthenticated = watchValue(
+      (EnvManager x) => x.isAuthenticated,
+    );
 
     final locale = AppLocalizations.of(context)!;
     log.info('isAuthenticated: $isAuthenticated');
@@ -54,19 +55,21 @@ class LoginPage extends WatchingWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Padding(
-                          padding: keyboardOn
-                              ? const EdgeInsets.only(top: 70)
-                              : Platform.isWindows
-                                  ? const EdgeInsets.only(top: 0)
-                                  : const EdgeInsets.only(top: 0)),
+                        padding: keyboardOn
+                            ? const EdgeInsets.only(top: 70)
+                            : Platform.isWindows
+                            ? const EdgeInsets.only(top: 0)
+                            : const EdgeInsets.only(top: 0),
+                      ),
                       keyboardOn
                           ? const SizedBox.shrink()
                           : const SizedBox(
                               height: 250,
                               width: 250,
                               child: Image(
-                                image:
-                                    AssetImage('assets/foreground_windows.png'),
+                                image: AssetImage(
+                                  'assets/schuldaten_hub_logo.png',
+                                ),
                               ),
                             ),
                       const Gap(20),
@@ -94,25 +97,26 @@ class LoginPage extends WatchingWidget {
                                 ),
                               ),
                       keyboardOn
-                          ? const SizedBox(
-                              height: 15,
-                            )
-                          : const SizedBox(
-                              height: 15,
-                            ),
+                          ? const SizedBox(height: 15)
+                          : const SizedBox(height: 15),
                       ...<Widget>[
                         ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 380),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 25.0, vertical: 8),
+                              horizontal: 25.0,
+                              vertical: 8,
+                            ),
                             child: TextField(
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                               controller: controller.usernameController,
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 15, vertical: 5),
+                                  horizontal: 15,
+                                  vertical: 5,
+                                ),
                                 filled: true,
                                 fillColor: Colors.white,
                                 labelText: locale.userName,
@@ -128,7 +132,9 @@ class LoginPage extends WatchingWidget {
                           constraints: const BoxConstraints(maxWidth: 380),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 25.0, vertical: 8),
+                              horizontal: 25.0,
+                              vertical: 8,
+                            ),
                             child: TextField(
                               textDirection: null,
                               controller: controller.passwordController,
@@ -136,7 +142,9 @@ class LoginPage extends WatchingWidget {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 15, vertical: 5),
+                                  horizontal: 15,
+                                  vertical: 5,
+                                ),
                                 filled: true,
                                 fillColor: Colors.white,
                                 labelText: locale.password,
@@ -147,9 +155,7 @@ class LoginPage extends WatchingWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(
-                          height: 40,
-                        ),
+                        const SizedBox(height: 40),
                         Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: Container(
@@ -165,9 +171,10 @@ class LoginPage extends WatchingWidget {
                               child: Text(
                                 locale.logInButtonText,
                                 style: const TextStyle(
-                                    fontSize: 17.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
+                                  fontSize: 17.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
@@ -182,18 +189,20 @@ class LoginPage extends WatchingWidget {
                               style: AppStyles.actionButtonStyle,
                               onPressed: () async {
                                 await confirmationDialog(
-                                    context: context,
-                                    title: locale.deleteKeyPrompt,
-                                    message: locale
-                                        .areYouSureYouWantToDeleteSchoolKey);
+                                  context: context,
+                                  title: locale.deleteKeyPrompt,
+                                  message:
+                                      locale.areYouSureYouWantToDeleteSchoolKey,
+                                );
                                 controller.deleteEnv();
                               },
                               child: Text(
                                 locale.deleteKeyButtonText,
                                 style: const TextStyle(
-                                    fontSize: 17.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
+                                  fontSize: 17.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
@@ -206,19 +215,22 @@ class LoginPage extends WatchingWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           //margin: const EdgeInsets.only(bottom: 16),
                           child: ElevatedButton(
-                              style: AppStyles.actionButtonStyle,
-                              onPressed: () async {
-                                Platform.isWindows
-                                    ? controller.importEnvFromTxt()
-                                    : controller.scanEnv(context);
-                              },
-                              child: Platform.isWindows
-                                  ? const Text('SCHULSCHLÜSSEL IMPORTIEREN',
-                                      style: AppStyles.buttonTextStyle)
-                                  : Text(
-                                      locale.scanButton,
-                                      style: AppStyles.buttonTextStyle,
-                                    )),
+                            style: AppStyles.actionButtonStyle,
+                            onPressed: () async {
+                              Platform.isWindows
+                                  ? controller.importEnvFromTxt()
+                                  : controller.scanEnv(context);
+                            },
+                            child: Platform.isWindows
+                                ? const Text(
+                                    'SCHULSCHLÜSSEL IMPORTIEREN',
+                                    style: AppStyles.buttonTextStyle,
+                                  )
+                                : Text(
+                                    locale.scanButton,
+                                    style: AppStyles.buttonTextStyle,
+                                  ),
+                          ),
                         ),
                       ),
                     ],

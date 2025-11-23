@@ -2,7 +2,7 @@ import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
@@ -43,8 +43,9 @@ class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
   @override
   Widget build(BuildContext context) {
     final schooldays = watchValue((SchoolCalendarManager x) => x.schooldays);
-    final schooldayDates =
-        schooldays.map((e) => e.schoolday.toLocal()).toList();
+    final schooldayDates = schooldays
+        .map((e) => e.schoolday.toLocal())
+        .toList();
     // List<MissedSchoolday> missedSchooldays =
     //     di<AttendanceManager>().getMissedSchooldayesOnADay(_selectedDay!);
     return Scaffold(
@@ -79,11 +80,8 @@ class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
               var results = await showCalendarDatePicker2Dialog(
                 context: context,
                 config: CalendarDatePicker2WithActionButtonsConfig(
-                  selectableDayPredicate:
-                      (day) =>
-                          !schooldayDates.any(
-                            (element) => element.isSameDate(day),
-                          ),
+                  selectableDayPredicate: (day) =>
+                      !schooldayDates.any((element) => element.isSameDate(day)),
                   calendarType: CalendarDatePicker2Type.multi,
                 ),
                 dialogSize: const Size(325, 400),
@@ -145,10 +143,9 @@ class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
                     availableCalendarFormats: const {
                       CalendarFormat.month: 'Month',
                     },
-                    enabledDayPredicate:
-                        (day) => schooldayDates.any(
-                          (element) => element.isSameDate(day),
-                        ),
+                    enabledDayPredicate: (day) => schooldayDates.any(
+                      (element) => element.isSameDate(day),
+                    ),
                     calendarBuilders: CalendarBuilders(
                       singleMarkerBuilder: null,
                       // singleMarkerBuilder: (context, date, events) =>
@@ -173,19 +170,18 @@ class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
                       //       day.day.toString(),
                       //       style: TextStyle(color: Colors.white),
                       //     )),
-                      todayBuilder:
-                          (context, date, events) => Container(
-                            margin: const EdgeInsets.all(4.0),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).highlightColor,
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            child: Text(
-                              date.day.toString(),
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ),
+                      todayBuilder: (context, date, events) => Container(
+                        margin: const EdgeInsets.all(4.0),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).highlightColor,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Text(
+                          date.day.toString(),
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
                     ),
                     firstDay: kFirstDay,
                     lastDay: kLastDay,
@@ -206,7 +202,7 @@ class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
                         context: context,
                         title: 'Schultag löschen',
                         message:
-                            'Möchtest du den Schultag ${selectedDay.formatForUser()} wirklich löschen?',
+                            'Möchtest du den Schultag ${selectedDay.formatDateForUser()} wirklich löschen?',
                       );
                       if (confirm == null || !confirm) return;
                       await _schoolCalendarManager.deleteSchoolday(selectedDay);
@@ -227,53 +223,52 @@ class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
                 ),
               ),
               SliverToBoxAdapter(
-                child:
-                    _selectedDay != null
-                        ? Row(
-                          children: [
-                            const Gap(15),
-                            Text(
-                              DateFormat(
-                                'EEEE',
-                                Localizations.localeOf(context).toString(),
-                              ).format(_selectedDay!),
-                              style: const TextStyle(
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.bold,
-                              ),
+                child: _selectedDay != null
+                    ? Row(
+                        children: [
+                          const Gap(15),
+                          Text(
+                            DateFormat(
+                              'EEEE',
+                              Localizations.localeOf(context).toString(),
+                            ).format(_selectedDay!),
+                            style: const TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
                             ),
-                            const Gap(5),
-                            Text(
-                              ' ${_selectedDay?.formatForUser()}',
-                              style: const TextStyle(
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.bold,
-                              ),
+                          ),
+                          const Gap(5),
+                          Text(
+                            ' ${_selectedDay?.formatDateForUser()}',
+                            style: const TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
                             ),
-                            const Gap(40),
-                            // Text(
-                            //     missedSchooldays
-                            //         .where((missedSchoolday) =>
-                            //             missedSchoolday.missedType == 'missed')
-                            //         .length
-                            //         .toString(),
-                            //     style: const TextStyle(
-                            //         fontSize: 28.0, fontWeight: FontWeight.bold)),
-                            // const Gap(20)
-                          ],
-                        )
-                        : const Row(
-                          children: [
-                            Gap(15),
-                            Text(
-                              'Kein Tag ausgewählt',
-                              style: TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.bold,
-                              ),
+                          ),
+                          const Gap(40),
+                          // Text(
+                          //     missedSchooldays
+                          //         .where((missedSchoolday) =>
+                          //             missedSchoolday.missedType == 'missed')
+                          //         .length
+                          //         .toString(),
+                          //     style: const TextStyle(
+                          //         fontSize: 28.0, fontWeight: FontWeight.bold)),
+                          // const Gap(20)
+                        ],
+                      )
+                    : const Row(
+                        children: [
+                          Gap(15),
+                          Text(
+                            'Kein Tag ausgewählt',
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
+                      ),
               ),
               // SliverList(
               //   delegate: SliverChildBuilderDelegate(

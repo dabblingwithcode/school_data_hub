@@ -183,7 +183,9 @@ class PupilManager extends ChangeNotifier {
     final pupilsToFetch = di<PupilIdentityManager>().availablePupilIds;
 
     if (pupilsToFetch.isEmpty) {
-      _log.info('No pupil identities to fetch data from the backend');
+      _log.info(
+        'No pupil identities available, canot fetch pupils without ids',
+      );
       return;
     }
     await fetchPupilsByInternalId(pupilsToFetch);
@@ -221,13 +223,12 @@ class PupilManager extends ChangeNotifier {
     }
     // check if we did not get a pupil response for some ids
     // if so, we will delete the personal data for those ids later
-    final List<int> outdatedPupilIdentitiesIds =
-        pupilInternalIds
-            .where(
-              (element) =>
-                  !fetchedPupils.any((pupil) => pupil.internalId == element),
-            )
-            .toList();
+    final List<int> outdatedPupilIdentitiesIds = pupilInternalIds
+        .where(
+          (element) =>
+              !fetchedPupils.any((pupil) => pupil.internalId == element),
+        )
+        .toList();
 
     // now we match the pupils from the response with their personal data
 
@@ -361,10 +362,12 @@ class PupilManager extends ChangeNotifier {
       lentBy: lentBy ?? pupilBookLending.lentBy,
       status: status != null ? status.value : pupilBookLending.status,
       score: score != null ? score.value : pupilBookLending.score,
-      returnedAt:
-          returnedAt != null ? returnedAt.value : pupilBookLending.returnedAt,
-      receivedBy:
-          receivedBy != null ? receivedBy.value : pupilBookLending.receivedBy,
+      returnedAt: returnedAt != null
+          ? returnedAt.value
+          : pupilBookLending.returnedAt,
+      receivedBy: receivedBy != null
+          ? receivedBy.value
+          : pupilBookLending.receivedBy,
     );
     final pupil = await _pupilBookApiService.updatePupilBookLending(
       bookLending: updatedBookLending,

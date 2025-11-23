@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 
 class DatePickerButton extends StatelessWidget {
   final DateTime? dateToSelect;
@@ -26,7 +26,7 @@ class DatePickerButton extends StatelessWidget {
       },
       child: Text(
         dateToSelect != null
-            ? dateToSelect!.formatForUser()
+            ? dateToSelect!.formatDateForUser()
             : 'Bitte auswählen',
         style: const TextStyle(
           color: Colors.black,

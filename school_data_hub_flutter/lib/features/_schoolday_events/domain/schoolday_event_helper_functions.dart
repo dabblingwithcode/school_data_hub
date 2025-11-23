@@ -1,5 +1,5 @@
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -21,12 +21,13 @@ class SchooldayEventsCounts {
   final int totalSentHomeSchooldayEvents;
   final int totalParentsMeetingSchooldayEvents;
 
-  SchooldayEventsCounts(
-      {required this.totalSchooldayEvents,
-      required this.totalLessonSchooldayEvents,
-      required this.totalOgsSchooldayEvents,
-      required this.totalSentHomeSchooldayEvents,
-      required this.totalParentsMeetingSchooldayEvents});
+  SchooldayEventsCounts({
+    required this.totalSchooldayEvents,
+    required this.totalLessonSchooldayEvents,
+    required this.totalOgsSchooldayEvents,
+    required this.totalSentHomeSchooldayEvents,
+    required this.totalParentsMeetingSchooldayEvents,
+  });
 }
 
 class SchoolDayEventHelper {
@@ -35,11 +36,13 @@ class SchoolDayEventHelper {
     int pupilsWithEvents = 0;
     for (PupilProxy pupil in pupils) {
       if (_schooldayEventFilterManager
-          .filteredSchooldayEvents(_schooldayEventManager
-              .getPupilSchooldayEventsProxy(pupil.pupilId)
-              .schooldayEvents
-              .values
-              .toList())
+          .filteredSchooldayEvents(
+            _schooldayEventManager
+                .getPupilSchooldayEventsProxy(pupil.pupilId)
+                .schooldayEvents
+                .values
+                .toList(),
+          )
           .isNotEmpty) {
         pupilsWithEvents++;
       }
@@ -49,11 +52,13 @@ class SchoolDayEventHelper {
 
   static int schooldayEventSum(PupilProxy pupil) {
     return _schooldayEventFilterManager
-        .filteredSchooldayEvents(_schooldayEventManager
-            .getPupilSchooldayEventsProxy(pupil.pupilId)
-            .schooldayEvents
-            .values
-            .toList())
+        .filteredSchooldayEvents(
+          _schooldayEventManager
+              .getPupilSchooldayEventsProxy(pupil.pupilId)
+              .schooldayEvents
+              .values
+              .toList(),
+        )
         .length;
   }
 
@@ -68,11 +73,13 @@ class SchoolDayEventHelper {
 
   static DateTime getPupilLastSchooldayEventDate(PupilProxy pupil) {
     final List<SchooldayEvent> schooldayEvents = _schooldayEventFilterManager
-        .filteredSchooldayEvents(_schooldayEventManager
-            .getPupilSchooldayEventsProxy(pupil.pupilId)
-            .schooldayEvents
-            .values
-            .toList());
+        .filteredSchooldayEvents(
+          _schooldayEventManager
+              .getPupilSchooldayEventsProxy(pupil.pupilId)
+              .schooldayEvents
+              .values
+              .toList(),
+        );
     if (schooldayEvents.isEmpty) {
       // TODO: Watch out - why did we use this date?
       // if schoolday events is empty, we return a mock date
@@ -83,7 +90,8 @@ class SchoolDayEventHelper {
 
   static int? findSchooldayEventIndex(PupilProxy pupil, DateTime date) {
     final int? foundSchooldayEventIndex = pupil.schooldayEvents?.indexWhere(
-        (datematch) => (datematch.schoolday!.schoolday.isSameDate(date)));
+      (datematch) => (datematch.schoolday!.schoolday.isSameDate(date)),
+    );
     if (foundSchooldayEventIndex == null) {
       return null;
     }
@@ -95,18 +103,21 @@ class SchoolDayEventHelper {
         .getPupilSchooldayEventsProxy(pupil.pupilId)
         .schooldayEvents;
     if (pupilSchooldayEvents.isEmpty) return false;
-    if (pupilSchooldayEvents.values.any((element) =>
-        element.schoolday!.schoolday.isSameDate(DateTime.now()) &&
-        (element.eventType == SchooldayEventType.admonition ||
-            element.eventType == SchooldayEventType.afternoonCareAdmonition ||
-            element.eventType == SchooldayEventType.admonitionAndBanned))) {
+    if (pupilSchooldayEvents.values.any(
+      (element) =>
+          element.schoolday!.schoolday.isSameDate(DateTime.now()) &&
+          (element.eventType == SchooldayEventType.admonition ||
+              element.eventType == SchooldayEventType.afternoonCareAdmonition ||
+              element.eventType == SchooldayEventType.admonitionAndBanned),
+    )) {
       return true;
     }
     return false;
   }
 
   static SchooldayEventsCounts getSchooldayEventsCounts(
-      List<PupilProxy> pupils) {
+    List<PupilProxy> pupils,
+  ) {
     int totalSchooldayEvents = 0;
     int teachingSchooldayEvents = 0;
     int ogsSchooldayEvents = 0;
@@ -115,47 +126,62 @@ class SchoolDayEventHelper {
 
     for (PupilProxy pupil in pupils) {
       final pupilSchooldayEvents = _schooldayEventFilterManager
-          .filteredSchooldayEvents(_schooldayEventManager
-              .getPupilSchooldayEventsProxy(pupil.pupilId)
-              .schooldayEvents
-              .values
-              .toList());
+          .filteredSchooldayEvents(
+            _schooldayEventManager
+                .getPupilSchooldayEventsProxy(pupil.pupilId)
+                .schooldayEvents
+                .values
+                .toList(),
+          );
 
       totalSchooldayEvents = totalSchooldayEvents + pupilSchooldayEvents.length;
-      teachingSchooldayEvents = teachingSchooldayEvents +
+      teachingSchooldayEvents =
+          teachingSchooldayEvents +
           pupilSchooldayEvents
-              .where((element) =>
-                  element.eventType == SchooldayEventType.admonition)
+              .where(
+                (element) => element.eventType == SchooldayEventType.admonition,
+              )
               .length;
-      ogsSchooldayEvents = ogsSchooldayEvents +
+      ogsSchooldayEvents =
+          ogsSchooldayEvents +
           pupilSchooldayEvents
-              .where((element) =>
-                  element.eventType ==
-                  SchooldayEventType.afternoonCareAdmonition)
+              .where(
+                (element) =>
+                    element.eventType ==
+                    SchooldayEventType.afternoonCareAdmonition,
+              )
               .length;
-      sentHomeSchooldayEvents = sentHomeSchooldayEvents +
+      sentHomeSchooldayEvents =
+          sentHomeSchooldayEvents +
           pupilSchooldayEvents
-              .where((element) =>
-                  element.eventType == SchooldayEventType.admonitionAndBanned)
+              .where(
+                (element) =>
+                    element.eventType == SchooldayEventType.admonitionAndBanned,
+              )
               .length;
-      parentsMeetingSchooldayEvents = parentsMeetingSchooldayEvents +
+      parentsMeetingSchooldayEvents =
+          parentsMeetingSchooldayEvents +
           pupilSchooldayEvents
-              .where((element) =>
-                  element.eventType == SchooldayEventType.parentsMeeting)
+              .where(
+                (element) =>
+                    element.eventType == SchooldayEventType.parentsMeeting,
+              )
               .length;
     }
 
     return SchooldayEventsCounts(
-        totalSchooldayEvents: totalSchooldayEvents,
-        totalLessonSchooldayEvents: teachingSchooldayEvents,
-        totalOgsSchooldayEvents: ogsSchooldayEvents,
-        totalSentHomeSchooldayEvents: sentHomeSchooldayEvents,
-        totalParentsMeetingSchooldayEvents: parentsMeetingSchooldayEvents);
+      totalSchooldayEvents: totalSchooldayEvents,
+      totalLessonSchooldayEvents: teachingSchooldayEvents,
+      totalOgsSchooldayEvents: ogsSchooldayEvents,
+      totalSentHomeSchooldayEvents: sentHomeSchooldayEvents,
+      totalParentsMeetingSchooldayEvents: parentsMeetingSchooldayEvents,
+    );
   }
 
   static DateTime getLastSchoolEventDate(List<SchooldayEvent> schooldayEvents) {
     schooldayEvents.sort(
-        (a, b) => b.schoolday!.schoolday.compareTo(a.schoolday!.schoolday));
+      (a, b) => b.schoolday!.schoolday.compareTo(a.schoolday!.schoolday),
+    );
     return schooldayEvents.first.schoolday!.schoolday;
   }
 
@@ -174,7 +200,7 @@ class SchoolDayEventHelper {
     return schooldayEvents;
   }
 
-//- TODO: this should use  SchooldavEventType enum
+  //- TODO: this should use  SchooldavEventType enum
 
   static String getSchooldayEventTypeText(SchooldayEventType value) {
     switch (value) {
@@ -258,19 +284,21 @@ class SchoolDayEventHelper {
             (b.schooldayEvents?.isEmpty ?? true)
         ? compareLastSchooldayEventDates(a, b) // Handle empty or both empty
         : (a.schooldayEvents?.isEmpty ?? true)
-            ? 1
-            : -1; // Place empty after non-empty
+        ? 1
+        : -1; // Place empty after non-empty
   }
 
   static int comparePupilsByLastNonProcessedSchooldayEvent(
-      PupilProxy a, PupilProxy b) {
+    PupilProxy a,
+    PupilProxy b,
+  ) {
     // Handle potential null cases with null-aware operators
     return (a.schooldayEvents?.isEmpty ?? true) ==
             (b.schooldayEvents?.isEmpty ?? true)
         ? compareLastSchooldayEventDates(a, b) // Handle empty or both empty
         : (a.schooldayEvents?.isEmpty ?? true)
-            ? 1
-            : -1; // Place empty after non-empty
+        ? 1
+        : -1; // Place empty after non-empty
   }
 
   static int compareLastSchooldayEventDates(PupilProxy a, PupilProxy b) {
@@ -278,8 +306,9 @@ class SchoolDayEventHelper {
     if (a.schooldayEvents!.isNotEmpty && b.schooldayEvents!.isNotEmpty) {
       final schooldayEventA = a.schooldayEvents!.last.schoolday!.schoolday;
       final schooldayEventB = b.schooldayEvents!.last.schoolday!.schoolday;
-      return schooldayEventB
-          .compareTo(schooldayEventA); // Reversed for descending order
+      return schooldayEventB.compareTo(
+        schooldayEventA,
+      ); // Reversed for descending order
     } else {
       return 0;
     }

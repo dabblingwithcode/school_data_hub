@@ -61,9 +61,10 @@ class OgsListSearchBar extends StatelessWidget {
                   ),
                 ),
                 const Gap(5),
-                const FilterButton(
+                FilterButton(
                   isSearchBar: true,
-                  showBottomSheetFunction: showOgsFilterBottomSheet,
+                  showBottomSheetFunction: () =>
+                      showOgsFilterBottomSheet(context),
                 ),
               ],
             ),

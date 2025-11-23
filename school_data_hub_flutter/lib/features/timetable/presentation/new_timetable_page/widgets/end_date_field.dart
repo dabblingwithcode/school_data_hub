@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
@@ -35,7 +35,7 @@ class EndDateField extends StatelessWidget {
             );
             if (pickedDate != null) {
               selectedDate.value = pickedDate;
-              controller.text = pickedDate.formatForUser();
+              controller.text = pickedDate.formatDateForUser();
             }
           },
           child: Container(
@@ -53,10 +53,9 @@ class EndDateField extends StatelessWidget {
                         ? controller.text
                         : 'Bitte auswählen',
                     style: TextStyle(
-                      color:
-                          controller.text.isNotEmpty
-                              ? Colors.black
-                              : Colors.grey.shade600,
+                      color: controller.text.isNotEmpty
+                          ? Colors.black
+                          : Colors.grey.shade600,
                       fontSize: 16,
                     ),
                   ),

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
@@ -26,8 +26,9 @@ class PupilBookCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final LibraryBookProxy bookProxy =
-        di<BookManager>().getLibraryBookById(pupilBook.libraryBookId)!;
+    final LibraryBookProxy bookProxy = di<BookManager>().getLibraryBookById(
+      pupilBook.libraryBookId,
+    )!;
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Card(
@@ -185,7 +186,7 @@ class PupilBookCard extends WatchingWidget {
                             const Text('am'),
                             const Gap(5),
                             Text(
-                              pupilBook.lentAt.formatForUser(),
+                              pupilBook.lentAt.formatDateForUser(),
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),

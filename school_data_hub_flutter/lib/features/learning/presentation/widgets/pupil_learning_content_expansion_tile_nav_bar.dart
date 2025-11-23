@@ -41,8 +41,10 @@ class SelectedLearningContentNotifier extends ChangeNotifier {
 class PupilLearningContentExpansionTileNavBar extends WatchingWidget {
   final PupilProxy pupil;
 
-  const PupilLearningContentExpansionTileNavBar(
-      {required this.pupil, super.key});
+  const PupilLearningContentExpansionTileNavBar({
+    required this.pupil,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -53,16 +55,17 @@ class PupilLearningContentExpansionTileNavBar extends WatchingWidget {
       children: [
         const PupilLearningContentNavBar(),
         Padding(
-            padding: const EdgeInsets.only(top: 5),
-            child: (selectedContent == SelectedContent.competenceStatuses)
-                ? PupilLearningContentCompetenceStatuses(pupil: pupil)
-                : (selectedContent == SelectedContent.competenceGoals)
-                    ? PupilLearningContentCompetenceGoals(pupil: pupil)
-                    : (selectedContent == SelectedContent.workbooks)
-                        ? PupilLearningContentWorkbooks(pupil: pupil)
-                        :
-                        //  (selectedContent == SelectedContent.books):
-                        PupilLearningContentBooks(pupil: pupil))
+          padding: const EdgeInsets.only(top: 5),
+          child: (selectedContent == SelectedContent.competenceStatuses)
+              ? PupilLearningContentCompetenceStatuses(pupil: pupil)
+              : (selectedContent == SelectedContent.competenceGoals)
+              ? PupilLearningContentCompetenceGoals(pupil: pupil)
+              : (selectedContent == SelectedContent.workbooks)
+              ? PupilLearningContentWorkbooks(pupil: pupil)
+              :
+                //  (selectedContent == SelectedContent.books):
+                PupilLearningContentBooks(pupil: pupil),
+        ),
       ],
     );
   }
@@ -95,32 +98,35 @@ class PupilLearningContentNavBar extends WatchingWidget {
               ),
               onPressed: () {
                 if (selectedContent != SelectedContent.competenceStatuses) {
-                  selectedContentNotifier
-                      .select(SelectedContent.competenceStatuses);
+                  selectedContentNotifier.select(
+                    SelectedContent.competenceStatuses,
+                  );
 
                   return;
                 }
               },
             ),
-            IconButton(
-              isSelected: selectedContent == SelectedContent.competenceGoals,
-              icon: const Icon(
-                Icons.emoji_nature_rounded,
-                color: AppColors.interactiveColor,
-              ),
-              selectedIcon: const Icon(
-                Icons.emoji_nature_rounded,
-                color: AppColors.accentColor,
-              ),
-              onPressed: () {
-                if (selectedContent != SelectedContent.competenceGoals) {
-                  selectedContentNotifier
-                      .select(SelectedContent.competenceGoals);
+            // if (di<HubSessionManager>().isTester)
+            //   IconButton(
+            //     isSelected: selectedContent == SelectedContent.competenceGoals,
+            //     icon: const Icon(
+            //       Icons.emoji_nature_rounded,
+            //       color: AppColors.interactiveColor,
+            //     ),
+            //     selectedIcon: const Icon(
+            //       Icons.emoji_nature_rounded,
+            //       color: AppColors.accentColor,
+            //     ),
+            //     onPressed: () {
+            //       if (selectedContent != SelectedContent.competenceGoals) {
+            //         selectedContentNotifier.select(
+            //           SelectedContent.competenceGoals,
+            //         );
 
-                  return;
-                }
-              },
-            ),
+            //         return;
+            //       }
+            //     },
+            //   ),
             IconButton(
               isSelected: selectedContent == SelectedContent.workbooks,
               icon: const Icon(
@@ -141,10 +147,7 @@ class PupilLearningContentNavBar extends WatchingWidget {
             ),
             IconButton(
               isSelected: selectedContent == SelectedContent.books,
-              icon: const Icon(
-                Icons.book,
-                color: AppColors.interactiveColor,
-              ),
+              icon: const Icon(Icons.book, color: AppColors.interactiveColor),
               selectedIcon: const Icon(
                 Icons.book,
                 color: AppColors.accentColor,

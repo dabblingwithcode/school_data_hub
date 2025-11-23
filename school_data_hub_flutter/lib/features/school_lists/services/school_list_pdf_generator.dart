@@ -8,7 +8,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
@@ -95,8 +95,9 @@ class SchoolListPdfGenerator {
       int currentIndex = 0;
 
       for (int page = 1; page <= totalPages; page++) {
-        final int pupilsOnThisPage =
-            page == 1 ? maxPupilsFirstPage : maxPupilsPerPage;
+        final int pupilsOnThisPage = page == 1
+            ? maxPupilsFirstPage
+            : maxPupilsPerPage;
         final endIndex = (currentIndex + pupilsOnThisPage).clamp(
           0,
           pupilEntries.length,
@@ -131,7 +132,7 @@ class SchoolListPdfGenerator {
     // Get the proper directory for saving files
     final directory = await getApplicationDocumentsDirectory();
     final fileName =
-        "Schulliste_${schoolList.name}_${DateTime.now().formatForUser()}.pdf";
+        "Schulliste_${schoolList.name}_${DateTime.now().formatDateForUser()}.pdf";
     final file = File('${directory.path}/$fileName');
 
     await file.writeAsBytes(await pdf.save());
@@ -199,9 +200,8 @@ class SchoolListPdfGenerator {
     } catch (e) {
       // Return a minimal page
       return pw.Page(
-        build:
-            (context) =>
-                pw.Center(child: pw.Text('Error on page $pageNumber: $e')),
+        build: (context) =>
+            pw.Center(child: pw.Text('Error on page $pageNumber: $e')),
       );
     }
   }
@@ -546,7 +546,7 @@ class SchoolListPdfGenerator {
               style: pw.TextStyle(fontSize: 8, font: fontRegular),
             ),
             pw.Text(
-              'Erstellt am: ${DateTime.now().formatForUser()}',
+              'Erstellt am: ${DateTime.now().formatDateForUser()}',
               style: pw.TextStyle(fontSize: 8, font: fontRegular),
             ),
           ],

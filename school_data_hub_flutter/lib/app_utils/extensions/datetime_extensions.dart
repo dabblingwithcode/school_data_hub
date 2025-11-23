@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-extension DateOnlyCompare on DateTime {
+extension DateHubExtension on DateTime {
   bool isSameDate(DateTime other) {
     if (year == other.year && month == other.month && day == other.day) {
       return true;
@@ -22,28 +22,21 @@ extension DateOnlyCompare on DateTime {
         year > other.year;
   }
 
-  String formatForUser() {
-    final date = this;
+  String formatDateForUser() {
+    final date = this.isUtc ? this.toLocal() : this;
     final DateFormat dateFormat = DateFormat("dd.MM.yyyy");
     return dateFormat.format(date).toString();
   }
 
-  String formatForJson() {
+  String formatDateForJson() {
     final DateFormat dateFormat = DateFormat("yyyy-MM-dd");
     return dateFormat.format(this).toString();
   }
 
   /// Format DateTime with time for UI display
-  String formatWithTimeForUser() {
+  String formatDateAndTimeForUser() {
     final date = this.isUtc ? this.toLocal() : this;
     final DateFormat dateFormat = DateFormat("dd.MM.yyyy HH:mm");
-    return dateFormat.format(date).toString();
-  }
-
-  /// Format DateTime with time for server communication
-  String formatWithTimeForJson() {
-    final date = this.isUtc ? this : this.toUtc();
-    final DateFormat dateFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
     return dateFormat.format(date).toString();
   }
 
@@ -61,13 +54,8 @@ extension DateOnlyCompare on DateTime {
     return dateFormat.format(date).toString();
   }
 
-  /// Convert to local time for UI display
-  DateTime toLocalForUI() {
-    return this.isUtc ? this.toLocal() : this;
-  }
-
   /// Convert to UTC for server communication
-  DateTime toUtcForServer() {
+  DateTime formatToUtcForServer() {
     return this.isUtc ? this : this.toUtc();
   }
 
@@ -87,17 +75,6 @@ extension DateOnlyCompare on DateTime {
     final locale = Localizations.localeOf(context).toString();
     final DateFormat dateFormat = DateFormat("EEEE", locale);
     return dateFormat.format(this);
-  }
-}
-
-extension DisplayAsIsbn on int {
-  String displayAsIsbn() {
-    final String isbn = toString();
-    return isbn.length == 13
-        ? "${isbn.substring(0, 3)}-${isbn.substring(3, 4)}-${isbn.substring(4, 6)}-${isbn.substring(6, 12)}-${isbn.substring(12, 13)}"
-        : isbn.length == 10
-        ? "${isbn.substring(0, 1)}-${isbn.substring(1, 5)}-${isbn.substring(5, 9)}-${isbn.substring(9, 10)}"
-        : isbn;
   }
 }
 

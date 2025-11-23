@@ -8,7 +8,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
@@ -80,7 +80,7 @@ class LearningSupportPlanPdfGenerator {
     // Get the proper directory for saving files
     final directory = await getApplicationDocumentsDirectory();
     final fileName =
-        "Förderplan_${pupil.firstName}_${pupil.lastName}_${DateTime.now().formatForUser()}.pdf";
+        "Förderplan_${pupil.firstName}_${pupil.lastName}_${DateTime.now().formatDateForUser()}.pdf";
     final file = File('${directory.path}/$fileName');
 
     await file.writeAsBytes(await pdf.save());

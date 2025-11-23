@@ -1,5 +1,5 @@
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 
 extension PupilIdentityExtensions on PupilIdentity {
   bool isEqualTo(PupilIdentity other) {
@@ -17,21 +17,24 @@ extension PupilIdentityExtensions on PupilIdentity {
         (migrationSupportEnds == other.migrationSupportEnds ||
             (migrationSupportEnds != null &&
                 other.migrationSupportEnds != null &&
-                migrationSupportEnds!
-                    .isSameDate(other.migrationSupportEnds!))) &&
+                migrationSupportEnds!.isSameDate(
+                  other.migrationSupportEnds!,
+                ))) &&
         pupilSince.isSameDate(other.pupilSince) &&
         afterSchoolCare == other.afterSchoolCare &&
         religion == other.religion &&
         (religionLessonsSince == other.religionLessonsSince ||
             (religionLessonsSince != null &&
                 other.religionLessonsSince != null &&
-                religionLessonsSince!
-                    .isSameDate(other.religionLessonsSince!))) &&
+                religionLessonsSince!.isSameDate(
+                  other.religionLessonsSince!,
+                ))) &&
         (familyLanguageLessonsSince == other.familyLanguageLessonsSince ||
             (familyLanguageLessonsSince != null &&
                 other.familyLanguageLessonsSince != null &&
-                familyLanguageLessonsSince!
-                    .isSameDate(other.familyLanguageLessonsSince!))) &&
+                familyLanguageLessonsSince!.isSameDate(
+                  other.familyLanguageLessonsSince!,
+                ))) &&
         (leavingDate == other.leavingDate ||
             (leavingDate != null &&
                 other.leavingDate != null &&

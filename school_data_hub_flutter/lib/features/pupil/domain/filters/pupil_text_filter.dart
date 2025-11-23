@@ -5,9 +5,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 final _log = Logger('PupilTextFilter');
 
 class PupilTextFilter extends Filter<PupilProxy> {
-  PupilTextFilter({
-    required super.name,
-  });
+  PupilTextFilter({required super.name});
 
   String _text = '';
   String get text => _text;
@@ -20,7 +18,7 @@ class PupilTextFilter extends Filter<PupilProxy> {
       return;
     }
     toggle(true);
-    _log.finer('Setting filter text: $text');
+    _log.finer('Setting pupil filter text: $text');
     notifyListeners();
     return;
   }

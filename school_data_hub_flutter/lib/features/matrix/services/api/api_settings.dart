@@ -1,5 +1,3 @@
-export '../../data/matrix_api_service_old.dart';
-
 class ApiSettings {
   // dev environment urls:
   //static const baseUrl = 'http://10.0.2.2:5000/api'; // android VM

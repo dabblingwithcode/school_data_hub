@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
@@ -70,8 +71,8 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                                     );
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder:
-                                        (ctx) => PupilProfilePage(pupil: pupil),
+                                    builder: (ctx) =>
+                                        PupilProfilePage(pupil: pupil),
                                   ),
                                 );
                               },
@@ -135,6 +136,25 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                         ),
                       ],
                     ),
+                    if (pupil.migrationSupportEnds != null)
+                      Wrap(
+                        children: [
+                          const Text('Ende der Erstförderung: '),
+                          Text(
+                            pupil.migrationSupportEnds!.formatDateForUser(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color:
+                                  pupil.migrationSupportEnds!.isAfter(
+                                    DateTime(2026, 08, 01),
+                                  )
+                                  ? Colors.red
+                                  : Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
                     const Gap(15),
                     if (pupil.supportCategoryStatuses != null)
                       if (pupil.supportCategoryStatuses!.isNotEmpty)
@@ -168,8 +188,8 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                       child: Text(
                         pupil.latestSupportLevel != null
                             ? pupil.latestSupportLevel!.level == 4
-                                ? '🌈'
-                                : pupil.latestSupportLevel!.level.toString()
+                                  ? '🌈'
+                                  : pupil.latestSupportLevel!.level.toString()
                             : '0',
                         style: const TextStyle(
                           fontSize: 23,
@@ -181,8 +201,8 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                     Text(
                       pupil.specialNeeds != null
                           ? pupil.specialNeeds!.length == 4
-                              ? '${pupil.specialNeeds!.substring(0, 2)} ${pupil.specialNeeds!.substring(2, 4)}'
-                              : pupil.specialNeeds!.substring(0, 2)
+                                ? '${pupil.specialNeeds!.substring(0, 2)} ${pupil.specialNeeds!.substring(2, 4)}'
+                                : pupil.specialNeeds!.substring(0, 2)
                           : '',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,

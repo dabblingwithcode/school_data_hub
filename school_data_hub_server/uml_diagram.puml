@@ -957,11 +957,13 @@ class User <<table: <b>user</b>>> #e2f0fb##[bold] {
 <color:#93c47d>## Staff model</color>
  ➡️ <i>userInfo</i> : <b><color:#ff962f>module:auth:UserInfo?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>onDelete</color></b><color:#ff962f>=</color>Cascade<color:#ff962f>)</color>
   <i>role</i>: <b><color:#ff962f>Role</color></b>
+  <i>matrixUserId</i>: <b><color:#ff962f>String?</color></b>
   <i>timeUnits</i>: <b><color:#ff962f>int</color></b>
   <i>reliefTimeUnits</i>: <b><color:#ff962f>int</color></b>
  ➡️ <i>scheduledLessonsTeacher</i> : <b><color:#ff962f>List<ScheduledLessonTeacher>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>user_scheduled_lesson<color:#ff962f>)</color>
  ➡️ <i>lessonsTeacher</i> : <b><color:#ff962f>List<LessonTeacher>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>user_lesson<color:#ff962f>)</color>
   <i>pupilsAuth</i>: <b><color:#ff962f>Set<int>?</color></b>
+  <i>schooldayEventsProcessingTeam</i>: <b><color:#ff962f>String?</color></b>
   <i>credit</i>: <b><color:#ff962f>int</color></b>
   <i>userFlags</i>: <b><color:#ff962f>UserFlags</color></b>
 <b><color:#0164aa>indexes:</color></b>

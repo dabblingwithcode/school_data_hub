@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -10,8 +10,11 @@ import 'package:watch_it/watch_it.dart';
 class CompetenceGoalCard extends StatelessWidget {
   final CompetenceGoal pupilGoal;
   final PupilProxy pupil;
-  const CompetenceGoalCard(
-      {required this.pupilGoal, required this.pupil, super.key});
+  const CompetenceGoalCard({
+    required this.pupilGoal,
+    required this.pupil,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +29,8 @@ class CompetenceGoalCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
                   color: CompetenceHelper.getCompetenceColor(
-                      pupilGoal.competenceId),
+                    pupilGoal.competenceId,
+                  ),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 5.0),
@@ -38,9 +42,10 @@ class CompetenceGoalCard extends StatelessWidget {
                             .findRootCompetenceById(pupilGoal.competenceId)
                             .name,
                         style: const TextStyle(
-                            fontSize: 19,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
+                          fontSize: 19,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ],
                   ),
@@ -50,7 +55,9 @@ class CompetenceGoalCard extends StatelessWidget {
               Row(
                 children: [
                   CompetenceHelper.getCompetenceCheckSymbol(
-                      status: pupilGoal.score ?? 0, size: 50),
+                    status: pupilGoal.score ?? 0,
+                    size: 50,
+                  ),
                   const Gap(10),
                   Flexible(
                     child: Text(
@@ -58,7 +65,9 @@ class CompetenceGoalCard extends StatelessWidget {
                           .findCompetenceById(pupilGoal.competenceId)
                           .name,
                       style: const TextStyle(
-                          fontSize: 17, fontWeight: FontWeight.bold),
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -72,9 +81,11 @@ class CompetenceGoalCard extends StatelessWidget {
                     child: Text(
                       pupilGoal.description,
                       style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  )
+                  ),
                 ],
               ),
               const Gap(5),
@@ -101,11 +112,11 @@ class CompetenceGoalCard extends StatelessWidget {
                   const Text('am'),
                   const Gap(10),
                   Text(
-                    pupilGoal.createdAt.formatForUser(),
+                    pupilGoal.createdAt.formatDateForUser(),
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),

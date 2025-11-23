@@ -21,9 +21,9 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
       (PupilFilterManager x) => x.pupilFilterState,
     );
 
-    bool valueOgs = activePupilFilters[PupilFilter.ogs]!;
+    bool valueOgs = activePupilFilters[PupilFilter.afterSchoolCare]!;
 
-    bool valueNotOgs = activePupilFilters[PupilFilter.notOgs]!;
+    bool valueNotOgs = activePupilFilters[PupilFilter.noAfterSchoolCare]!;
 
     //- LEARNING SUPPORT FILTERS
     Map<SupportLevelType, bool> supportLevelFilters = watchValue(
@@ -50,6 +50,7 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
     bool valueSupportAreaLearning = supportAreaFilters[SupportArea.learning]!;
     bool valueSupportAreaGerman = supportAreaFilters[SupportArea.german]!;
     bool valueSupportAreaLanguage = supportAreaFilters[SupportArea.language]!;
+    final religionCourseFilters = di<PupilsFilter>().religionCourseFilters;
     // bool valueSupportAreaTurkish = supportAreaFilters[PupilFilter.turkishClass];
     // bool valueSupportAreaArabic = supportAreaFilters[PupilFilter.arabicClass]!;
     // bool valueSupportAreaAlbanian =
@@ -93,8 +94,8 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
 
                       _pupilFilterLocator.setPupilFilter(
                         pupilFilterRecords: [
-                          (filter: PupilFilter.notOgs, value: false),
-                          (filter: PupilFilter.ogs, value: val),
+                          (filter: PupilFilter.noAfterSchoolCare, value: false),
+                          (filter: PupilFilter.afterSchoolCare, value: val),
                         ],
                       );
                       return;
@@ -102,7 +103,7 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
 
                     _pupilFilterLocator.setPupilFilter(
                       pupilFilterRecords: [
-                        (filter: PupilFilter.ogs, value: val),
+                        (filter: PupilFilter.afterSchoolCare, value: val),
                       ],
                     );
                   },
@@ -115,15 +116,15 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                       // in case not ogs is selected, ogs should be deselected
                       _pupilFilterLocator.setPupilFilter(
                         pupilFilterRecords: [
-                          (filter: PupilFilter.ogs, value: false),
-                          (filter: PupilFilter.notOgs, value: val),
+                          (filter: PupilFilter.afterSchoolCare, value: false),
+                          (filter: PupilFilter.noAfterSchoolCare, value: val),
                         ],
                       );
                       return;
                     }
                     _pupilFilterLocator.setPupilFilter(
                       pupilFilterRecords: [
-                        (filter: PupilFilter.notOgs, value: val),
+                        (filter: PupilFilter.noAfterSchoolCare, value: val),
                       ],
                     );
                   },
@@ -295,6 +296,23 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                     );
                   },
                 ),
+              ],
+            ),
+            const Row(children: [Text('Jahrgang', style: AppStyles.subtitle)]),
+            const Gap(5),
+            Wrap(
+              spacing: 5,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              alignment: WrapAlignment.center,
+              children: [
+                for (final religionCourseFilter in religionCourseFilters)
+                  ThemedFilterChip(
+                    label: religionCourseFilter.displayName,
+                    selected: watch(religionCourseFilter).isActive,
+                    onSelected: (val) {
+                      religionCourseFilter.toggle(val);
+                    },
+                  ),
               ],
             ),
             const Gap(20),

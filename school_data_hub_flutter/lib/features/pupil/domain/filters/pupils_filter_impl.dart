@@ -87,6 +87,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
     ...schoolGradeFilters,
     ..._groupFilters,
     ...genderFilters,
+    ...religionCourseFilters,
     _textFilter,
   ];
 
@@ -163,6 +164,10 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
       (filter) => filter.isActive,
     );
 
+    bool isAnyReligionCourseFilterActive = religionCourseFilters.any(
+      (filter) => filter.isActive,
+    );
+
     bool isTextFilterActive = _textFilter.isActive;
 
     for (final pupil in allPupils) {
@@ -205,6 +210,18 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
         if (filtersOn == false) filtersOn = true;
         continue;
       }
+
+      bool isMatchedByReligionCourseFilter =
+          !isAnyReligionCourseFilterActive ||
+          religionCourseFilters.any(
+            (filter) => filter.isActive && filter.matches(pupil),
+          );
+
+      if (!isMatchedByReligionCourseFilter) {
+        if (filtersOn == false) filtersOn = true;
+        continue;
+      }
+
       // if the pupil is not matched by the text filter, skip it
 
       if (_textFilter.isActive && !_textFilter.matches(pupil)) {
@@ -239,9 +256,11 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
 
       // after school care filters
 
-      if (_pupilFilterManager.pupilFilterState.value[PupilFilter.ogs]! &&
+      if (_pupilFilterManager.pupilFilterState.value[PupilFilter
+                  .afterSchoolCare]! &&
               pupil.afterSchoolCare == null ||
-          _pupilFilterManager.pupilFilterState.value[PupilFilter.notOgs]! &&
+          _pupilFilterManager.pupilFilterState.value[PupilFilter
+                  .noAfterSchoolCare]! &&
               pupil.afterSchoolCare != null) {
         if (filtersOn == false) filtersOn = true;
         continue;
@@ -293,6 +312,9 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
   // Set modified filter value
   @override
   void setSortMode(PupilSortMode sortMode) {
+    if (sortMode == _sortMode.value) {
+      return;
+    }
     _sortMode.value = sortMode;
     refreshs();
     notifyListeners();
@@ -394,6 +416,9 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
 
   @override
   List<Filter> get genderFilters => PupilProxy.genderFilters;
+
+  @override
+  List<Filter> get religionCourseFilters => PupilProxy.religionCourseFilters;
 
   @override
   void populateGroupFilters(List<String> groupIds) {

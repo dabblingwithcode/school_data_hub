@@ -8,7 +8,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
@@ -99,7 +99,7 @@ class AttendancePdfGenerator {
     // Get the proper directory for saving files
     final directory = await getApplicationDocumentsDirectory();
     final fileName =
-        "Anwesenheitsliste_${date.formatForUser().replaceAll(' ', '_')}.pdf";
+        "Anwesenheitsliste_${date.formatDateForUser().replaceAll(' ', '_')}.pdf";
     final file = File('${directory.path}/$fileName');
 
     await file.writeAsBytes(await pdf.save());
@@ -239,7 +239,7 @@ class AttendancePdfGenerator {
                   ),
                   pw.SizedBox(height: 5),
                   pw.Text(
-                    '${_getWeekdayName(date)}, ${date.formatForUser()}',
+                    '${_getWeekdayName(date)}, ${date.formatDateForUser()}',
                     style: pw.TextStyle(fontSize: 12, font: fontRegular),
                   ),
                 ],
@@ -249,7 +249,7 @@ class AttendancePdfGenerator {
               crossAxisAlignment: pw.CrossAxisAlignment.end,
               children: [
                 pw.Text(
-                  'Erstellt am: ${DateTime.now().formatForUser()}',
+                  'Erstellt am: ${DateTime.now().formatDateForUser()}',
                   style: pw.TextStyle(fontSize: 10, font: fontRegular),
                 ),
               ],
@@ -548,11 +548,11 @@ class AttendancePdfGenerator {
           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
           children: [
             pw.Text(
-              'Datum: ${date.formatForUser()}',
+              'Datum: ${date.formatDateForUser()}',
               style: pw.TextStyle(fontSize: 8, font: fontRegular),
             ),
             pw.Text(
-              'Erstellt am: ${DateTime.now().formatForUser()}',
+              'Erstellt am: ${DateTime.now().formatDateForUser()}',
               style: pw.TextStyle(fontSize: 8, font: fontRegular),
             ),
           ],
@@ -661,7 +661,7 @@ class MissedSchooldaysPdfGenerator {
     // Get the proper directory for saving files
     final directory = await getApplicationDocumentsDirectory();
     final fileName =
-        "Fehlzeitenliste_Detail_${DateTime.now().formatForUser().replaceAll(' ', '_')}.pdf";
+        "Fehlzeitenliste_Detail_${DateTime.now().formatDateForUser().replaceAll(' ', '_')}.pdf";
     final file = File('${directory.path}/$fileName');
 
     await file.writeAsBytes(await pdf.save());
@@ -980,7 +980,7 @@ class MissedSchooldaysPdfGenerator {
               ),
             ),
             pw.Text(
-              'Erstellt am: ${DateTime.now().formatForUser()}',
+              'Erstellt am: ${DateTime.now().formatDateForUser()}',
               style: pw.TextStyle(fontSize: 10, font: fontRegular),
             ),
           ],
@@ -1097,7 +1097,7 @@ class MissedSchooldaysPdfGenerator {
             children: [
               _buildTableCell(index.toString(), fontRegular, fontBold),
               _buildTableCell(
-                date != null ? date.formatForUser() : '-',
+                date != null ? date.formatDateForUser() : '-',
                 fontRegular,
                 fontBold,
               ),
@@ -1272,7 +1272,7 @@ class MissedSchooldaysPdfGenerator {
               crossAxisAlignment: pw.CrossAxisAlignment.end,
               children: [
                 pw.Text(
-                  'Erstellt am: ${DateTime.now().formatForUser()}',
+                  'Erstellt am: ${DateTime.now().formatDateForUser()}',
                   style: pw.TextStyle(fontSize: 10, font: fontRegular),
                 ),
               ],
@@ -1300,7 +1300,7 @@ class MissedSchooldaysPdfGenerator {
               style: pw.TextStyle(fontSize: 8, font: fontRegular),
             ),
             pw.Text(
-              'Erstellt am: ${DateTime.now().formatForUser()}',
+              'Erstellt am: ${DateTime.now().formatDateForUser()}',
               style: pw.TextStyle(fontSize: 8, font: fontRegular),
             ),
           ],

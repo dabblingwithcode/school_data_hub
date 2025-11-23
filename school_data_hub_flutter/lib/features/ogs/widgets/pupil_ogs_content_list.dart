@@ -4,19 +4,27 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/features/ogs/widgets/dialogs/ogs_pickup_time_dialog.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
+import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
+import 'package:watch_it/watch_it.dart';
 
 List<Widget> pupilOgsContentList(PupilProxy pupil, BuildContext context) {
+  final schoolCalendarManager = di<SchoolCalendarManager>();
+  final thisDate = schoolCalendarManager.thisDate.value;
+  final weekday = dateTimeToAfterSchoolCareWeekday(thisDate);
+  final pickUpTime = weekday != null ? pupil.pickUpTime(weekday) : null;
+
   return [
     Row(
       children: [
         const Text('Abholzeit:', style: TextStyle(fontSize: 18.0)),
         const Gap(10),
         InkWell(
-          onTap: () => pickUpTimeDialog(context, pupil, pupil.pickUpTime),
+          onTap: () => pickUpTimeDialog(context, pupil, pickUpTime),
           child: Text(
-            pupil.pickUpTime ?? 'keine',
+            pickUpTime ?? 'keine',
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
