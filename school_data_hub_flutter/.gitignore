@@ -23,7 +23,11 @@
 # debug related files
 matrix-policy.json
 matrix-fetched-policy.json
+updated-policy.json
+rooms.json
 test_enc.dart
+decrypt_files.dart
+**/scripts/
 
 # Flutter/Dart/Pub related
 **/doc/api/
