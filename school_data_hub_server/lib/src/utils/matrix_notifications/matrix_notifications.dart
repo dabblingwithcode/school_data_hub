@@ -9,7 +9,13 @@ import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart';
 
 class MatrixNotifications {
-  MatrixNotifications();
+  static MatrixNotifications? _instance;
+  static MatrixNotifications get instance {
+    _instance ??= MatrixNotifications._internal();
+    return _instance!;
+  }
+
+  MatrixNotifications._internal();
 
   final _currentUserId = '@schuldaten-hub:hermannschule.de';
   final MatrixClient _matrixClient = MatrixClient();

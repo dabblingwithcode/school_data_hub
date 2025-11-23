@@ -82,7 +82,7 @@ class SchooldayEventApiService {
     NullableDateTimeRecord? processedAt,
     int? schooldayId,
   }) async {
-    bool changedProcessedToFalse = false;
+    bool changedProcessedStatus = false;
     // if the schooldayEvent is patched as processed,
     // processing user and processed date are automatically added
 
@@ -90,6 +90,7 @@ class SchooldayEventApiService {
       processedBy = (value: _hubSessionManager.user!.userInfo!.userName!);
 
       processedAt = (value: DateTime.now().formatToUtcForServer());
+      changedProcessedStatus = true;
     }
 
     // if the schooldayEvent is patched as not processed,
@@ -98,7 +99,7 @@ class SchooldayEventApiService {
     if (processed == false) {
       processedBy = (value: null);
       processedAt = (value: null);
-      changedProcessedToFalse = true;
+      changedProcessedStatus = true;
     }
     final schooldayEventToUpdate = schooldayEvent.copyWith(
       createdBy: createdBy ?? schooldayEvent.createdBy,
@@ -113,13 +114,17 @@ class SchooldayEventApiService {
           ? processedAt.value
           : schooldayEvent.processedAt,
     );
-
+    final pupil = di<PupilManager>().getPupilByPupilId(schooldayEvent.pupilId)!;
     try {
       _notificationService.apiRunning(true);
       final updatedSchooldayEvent = await _client.schooldayEvent
           .updateSchooldayEvent(
             schooldayEventToUpdate,
-            changedProcessedToFalse,
+            changedProcessedStatus,
+            '${pupil.firstName} (${pupil.group})',
+            '${pupil.groupTutor}',
+            '${di<HubSessionManager>().userName!}',
+            '${DateTime.now().formatDateAndTimeForUser()}',
           );
       _notificationService.apiRunning(false);
       return updatedSchooldayEvent;

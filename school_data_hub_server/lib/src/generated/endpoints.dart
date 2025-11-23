@@ -3504,9 +3504,29 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<_i67.SchooldayEvent>(),
               nullable: false,
             ),
-            'changedProcessedToFalse': _i1.ParameterDescription(
-              name: 'changedProcessedToFalse',
+            'changedProcessedStatus': _i1.ParameterDescription(
+              name: 'changedProcessedStatus',
               type: _i1.getType<bool>(),
+              nullable: false,
+            ),
+            'pupilNameAndGroup': _i1.ParameterDescription(
+              name: 'pupilNameAndGroup',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'tutor': _i1.ParameterDescription(
+              name: 'tutor',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'modifiedBy': _i1.ParameterDescription(
+              name: 'modifiedBy',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'dateTimeAsString': _i1.ParameterDescription(
+              name: 'dateTimeAsString',
+              type: _i1.getType<String>(),
               nullable: false,
             ),
           },
@@ -3518,7 +3538,11 @@ class Endpoints extends _i1.EndpointDispatch {
                   .updateSchooldayEvent(
             session,
             params['schooldayEvent'],
-            params['changedProcessedToFalse'],
+            params['changedProcessedStatus'],
+            params['pupilNameAndGroup'],
+            params['tutor'],
+            params['modifiedBy'],
+            params['dateTimeAsString'],
           ),
         ),
         'deleteSchooldayEvent': _i1.MethodConnector(

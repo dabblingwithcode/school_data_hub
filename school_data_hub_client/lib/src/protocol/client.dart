@@ -1684,14 +1684,22 @@ class EndpointSchooldayEvent extends _i1.EndpointRef {
 
   _i2.Future<_i42.SchooldayEvent> updateSchooldayEvent(
     _i42.SchooldayEvent schooldayEvent,
-    bool changedProcessedToFalse,
+    bool changedProcessedStatus,
+    String pupilNameAndGroup,
+    String tutor,
+    String modifiedBy,
+    String dateTimeAsString,
   ) =>
       caller.callServerEndpoint<_i42.SchooldayEvent>(
         'schooldayEvent',
         'updateSchooldayEvent',
         {
           'schooldayEvent': schooldayEvent,
-          'changedProcessedToFalse': changedProcessedToFalse,
+          'changedProcessedStatus': changedProcessedStatus,
+          'pupilNameAndGroup': pupilNameAndGroup,
+          'tutor': tutor,
+          'modifiedBy': modifiedBy,
+          'dateTimeAsString': dateTimeAsString,
         },
       );
 

@@ -4797,7 +4797,11 @@ class _SchooldayEventEndpoint {
   _i3.Future<_i43.SchooldayEvent> updateSchooldayEvent(
     _i1.TestSessionBuilder sessionBuilder,
     _i43.SchooldayEvent schooldayEvent,
-    bool changedProcessedToFalse,
+    bool changedProcessedStatus,
+    String pupilNameAndGroup,
+    String tutor,
+    String modifiedBy,
+    String dateTimeAsString,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -4812,7 +4816,11 @@ class _SchooldayEventEndpoint {
           methodName: 'updateSchooldayEvent',
           parameters: _i1.testObjectToJson({
             'schooldayEvent': schooldayEvent,
-            'changedProcessedToFalse': changedProcessedToFalse,
+            'changedProcessedStatus': changedProcessedStatus,
+            'pupilNameAndGroup': pupilNameAndGroup,
+            'tutor': tutor,
+            'modifiedBy': modifiedBy,
+            'dateTimeAsString': dateTimeAsString,
           }),
           serializationManager: _serializationManager,
         );

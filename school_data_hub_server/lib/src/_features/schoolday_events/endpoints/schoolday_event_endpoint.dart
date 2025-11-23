@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/utils/matrix_notifications/matrix_notifications.dart';
@@ -60,8 +62,8 @@ class SchooldayEventEndpoint extends Endpoint {
               ?.where((event) => event.eventType == type)
               .length ??
           0;
-      final matrixNotifications = MatrixNotifications();
-      final recipients = await matrixNotifications.findNotificationRecipients(
+      final recipients =
+          await MatrixNotifications.instance.findNotificationRecipients(
         session: session,
         pupilNameAndGroup: pupilNameAndGroup,
         tutor: tutor,
@@ -74,7 +76,7 @@ class SchooldayEventEndpoint extends Endpoint {
         return eventWithSchoolday!;
       }
 
-      await matrixNotifications.sendDirectTextMessage(
+      unawaited(MatrixNotifications.instance.sendDirectTextMessage(
         session: session,
         recipients: recipients.toList(),
         text: getSchooldayEventNotificationText(
@@ -89,7 +91,7 @@ class SchooldayEventEndpoint extends Endpoint {
             dateTimeAsString: dateTimeAsString,
             schooldayEvent: eventWithSchoolday,
             numberOfEvents: numberOfEventsOfTheSameType),
-      );
+      ));
       // final success = await MailerService.instance.sendNotification(
       //     recipient: recipient?.userInfo?.email ?? '',
       //     subject: 'Neues Schulereignis',
@@ -102,10 +104,42 @@ class SchooldayEventEndpoint extends Endpoint {
     return eventWithSchoolday!;
   }
 
-  Future<SchooldayEvent> updateSchooldayEvent(Session session,
-      SchooldayEvent schooldayEvent, bool changedProcessedToFalse) async {
+  Future<SchooldayEvent> updateSchooldayEvent(
+    Session session,
+    SchooldayEvent schooldayEvent,
+    bool changedProcessedStatus,
+    String pupilNameAndGroup,
+    String tutor,
+    String modifiedBy,
+    String dateTimeAsString,
+  ) async {
+    if (changedProcessedStatus) {
+      final recipients =
+          await MatrixNotifications.instance.findNotificationRecipients(
+        session: session,
+        pupilNameAndGroup: pupilNameAndGroup,
+        tutor: tutor,
+      );
+      unawaited(MatrixNotifications.instance.sendDirectTextMessage(
+        session: session,
+        recipients: recipients.toList(),
+        text: getSchooldayEventNotificationText(
+          eventcreator: modifiedBy,
+          pupilName: pupilNameAndGroup,
+          dateTimeAsString: dateTimeAsString,
+          schooldayEvent: schooldayEvent,
+          processedStatusChange: changedProcessedStatus,
+        ),
+        html: getSchooldayEventNotificationHtml(
+            eventcreator: modifiedBy,
+            pupilName: pupilNameAndGroup,
+            dateTimeAsString: dateTimeAsString,
+            schooldayEvent: schooldayEvent,
+            processedStatusChange: changedProcessedStatus),
+      ));
+    }
     // If processed is false We need to detach and delete the processed document if it exists
-    if (changedProcessedToFalse) {
+    if (changedProcessedStatus && schooldayEvent.processed == false) {
       if (schooldayEvent.processedDocumentId != null) {
         final file = await HubDocument.db
             .findById(session, schooldayEvent.processedDocumentId!);

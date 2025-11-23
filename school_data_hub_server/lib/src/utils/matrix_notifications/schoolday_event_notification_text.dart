@@ -6,7 +6,8 @@ String getSchooldayEventNotificationText(
     required String pupilName,
     required String dateTimeAsString,
     required SchooldayEvent schooldayEvent,
-    required int numberOfEvents}) {
+    bool? processedStatusChange,
+    int? numberOfEvents}) {
   final String eventType = switch (schooldayEvent.eventType) {
     SchooldayEventType.admonition => 'Rote Karte 🚫',
     SchooldayEventType.admonitionAndBanned => 'Rote Karte und Abholen 🚫🏠️',
@@ -37,7 +38,7 @@ $eventReason
 
 von $eventcreator am $dateTimeAsString
 
-Das ist die $numberOfEvents. Schulereignis für $pupilName.
+${numberOfEvents != null ? 'Das ist die $numberOfEvents. Schulereignis für $pupilName.' : ''}
 ''';
 }
 
@@ -47,7 +48,8 @@ String getSchooldayEventNotificationHtml({
   required String pupilName,
   required String dateTimeAsString,
   required SchooldayEvent schooldayEvent,
-  required int numberOfEvents,
+  int? numberOfEvents,
+  bool? processedStatusChange,
 }) {
   final String eventType = switch (schooldayEvent.eventType) {
     SchooldayEventType.admonition => 'Rote Karte 🚫',
@@ -87,7 +89,8 @@ String getSchooldayEventNotificationHtml({
 <h3><strong>${escapeHtml(pupilName)}</strong></h3>
 <h4>Grund:</h4>
 <p><strong>${escapeHtml(eventReason).replaceAll('*', '<br>')}</strong></p>
-<p>Eingetragen von <strong>${escapeHtml(eventcreator)}</strong> am <strong>${escapeHtml(dateTimeAsString)}</strong></p>
-<p>Das ist das <strong>$numberOfEvents</strong>. Schulereignis dieser Art für <strong>${escapeHtml(pupilName)}</strong>.</p>
+  ${processedStatusChange != null ? schooldayEvent.processed == true ? '<h3>Status: <strong>Bearbeitet von ${escapeHtml(eventcreator)} am ${escapeHtml(dateTimeAsString)}' : '<h3>Status: <strong>Nicht bearbeitet' : '<p>Eingetragen von <strong>${escapeHtml(eventcreator)}</strong> am <strong>${escapeHtml(dateTimeAsString)}</strong></p>'}
+
+${numberOfEvents != null ? '<p>Das ist das <strong>$numberOfEvents</strong>. Schulereignis dieser Art für <strong>${escapeHtml(pupilName)}</strong>.</p>' : ''}
 ''';
 }
