@@ -173,6 +173,9 @@ jobs:
           SERVERPOD_MAIL_PASSWORD: ${{ secrets.SERVERPOD_MAIL_PASSWORD }}
           SERVERPOD_MAIL_SMTP_HOST: ${{ secrets.SERVERPOD_MAIL_SMTP_HOST }}
           SERVERPOD_MAIL_ADMIN: ${{ secrets.SERVERPOD_MAIL_ADMIN }}
+          # Matrix configuration for sending emails
+          MATRIX_SERVER_URL: ${{ secrets.MATRIX_SERVER_URL }}
+          MATRIX_AUTH_TOKEN: ${{ secrets.MATRIX_AUTH_TOKEN }}
 
       - name: cleanup
         run: rm -rf ~/.ssh

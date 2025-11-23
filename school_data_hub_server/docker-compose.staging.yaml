@@ -75,6 +75,9 @@ services:
       - SERVERPOD_MAIL_USERNAME
       - SERVERPOD_MAIL_PASSWORD
       - SERVERPOD_MAIL_SMTP_HOST
+      - SERVERPOD_MAIL_ADMIN
+      - MATRIX_SERVER_URL
+      - MATRIX_AUTH_TOKEN
     command:
       [
         "--mode",
