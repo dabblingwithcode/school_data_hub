@@ -76,7 +76,7 @@ class SchooldayEventEndpoint extends Endpoint {
 
       await matrixNotifications.sendDirectTextMessage(
         session: session,
-        recipients: recipients,
+        recipients: recipients.toList(),
         text: getSchooldayEventNotificationText(
             eventcreator: createdBy,
             pupilName: pupilNameAndGroup,

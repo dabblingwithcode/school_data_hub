@@ -92,7 +92,7 @@ class MatrixNotifications {
 
   /// Finds notification recipients based on tutor and team name from pupil name
   /// Returns list of Matrix user IDs (usernames) that should receive notifications
-  Future<List<String>> findNotificationRecipients({
+  Future<Set<String>> findNotificationRecipients({
     required Session session,
     required String pupilNameAndGroup,
     required String tutor,
@@ -123,7 +123,7 @@ class MatrixNotifications {
     return notificationRecipients
         .map((user) => user.matrixUserId!)
         .whereType<String>()
-        .toList();
+        .toSet();
   }
 
   /// Internal method to send a direct text message to a single user
