@@ -13,6 +13,7 @@ class MailerService {
 
   MailerService._internal();
   final _logger = Logger('MailerService');
+  bool _isInitialized = false;
   late final String _username;
   late final String _password;
   late final String _smtpHost;
@@ -35,20 +36,32 @@ class MailerService {
     _smtpPort = smtpPort;
     _fromName = fromName;
     _defaultRecipient = defaultRecipient;
+    _isInitialized = true;
   }
 
   /// Initialize from Serverpod session (recommended approach)
-  void initializeFromSession(Session session) {
+  /// Returns true if initialization was successful, false otherwise
+  bool initializeFromSession(Session session) {
     final passwords = session.passwords;
 
+    final username = passwords['emailUsername'] ?? '';
+    final password = passwords['emailPassword'] ?? '';
+    final smtpHost = passwords['emailSmtpHost'] ?? '';
+
+    // Validate that required fields are present
+    if (username.isEmpty || password.isEmpty || smtpHost.isEmpty) {
+      return false;
+    }
+
     initialize(
-      username: passwords['emailUsername'] ?? '',
-      password: passwords['emailPassword'] ?? '',
-      smtpHost: passwords['emailSmtpHost'] ?? '',
+      username: username,
+      password: password,
+      smtpHost: smtpHost,
       smtpPort: int.tryParse(passwords['emailSmtpPort'] ?? '0') ?? 587,
       fromName: 'Schuldaten Benachrichtigungen',
       defaultRecipient: '',
     );
+    return true;
   }
 
   /// Send an email with the specified parameters
@@ -61,6 +74,13 @@ class MailerService {
     List<String>? bccRecipients,
     List<Attachment>? attachments,
   }) async {
+    if (!_isInitialized) {
+      _logger.severe(
+        'MailerService has not been initialized. Call initialize() or initializeFromSession() first.',
+      );
+      return false;
+    }
+
     try {
       final smtpServer = SmtpServer(
         _smtpHost,

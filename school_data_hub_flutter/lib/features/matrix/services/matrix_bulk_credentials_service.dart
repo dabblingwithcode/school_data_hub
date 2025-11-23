@@ -4,7 +4,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:logging/logging.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
 import 'package:watch_it/watch_it.dart';
@@ -106,8 +106,8 @@ class MatrixBulkCredentialsService {
 
       // Calculate how many pages we need
       final int credentialsPerPage = 18;
-      final int totalPages =
-          (userCredentials.length / credentialsPerPage).ceil();
+      final int totalPages = (userCredentials.length / credentialsPerPage)
+          .ceil();
 
       _log.info(
         'Creating $totalPages pages with $credentialsPerPage credentials per page',
@@ -132,15 +132,14 @@ class MatrixBulkCredentialsService {
               horizontal: 15,
               vertical: 10,
             ), // Reduced horizontal margins for bigger cards
-            build:
-                (pw.Context context) => _buildCredentialsPage(
-                  image: image,
-                  pageCredentials: pageCredentials,
-                  domain: domain,
-                  isStaff: isStaff,
-                  pageNumber: pageIndex + 1,
-                  totalPages: totalPages,
-                ),
+            build: (pw.Context context) => _buildCredentialsPage(
+              image: image,
+              pageCredentials: pageCredentials,
+              domain: domain,
+              isStaff: isStaff,
+              pageNumber: pageIndex + 1,
+              totalPages: totalPages,
+            ),
           ),
         );
       }
@@ -352,7 +351,7 @@ class MatrixBulkCredentialsService {
               // Creation date inside the card
               pw.Center(
                 child: pw.Text(
-                  'Erstellt: ${DateTime.now().formatForUser()}',
+                  'Erstellt: ${DateTime.now().formatDateForUser()}',
                   style: const pw.TextStyle(fontSize: 9),
                 ),
               ),

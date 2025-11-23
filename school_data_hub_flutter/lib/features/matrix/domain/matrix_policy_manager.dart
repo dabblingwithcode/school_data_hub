@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
@@ -219,23 +218,41 @@ class MatrixPolicyManager extends ChangeNotifier {
     required String text,
     String? transactionId,
   }) async {
-    log('MatrixPolicyManager.sendDirectTextMessage called');
-    log('targetUserId: $targetUserId');
-    log('text: $text');
-    log('transactionId: $transactionId');
+    _log.info('Sending direct text message to $targetUserId');
+    _log.info('targetUserId: $targetUserId');
+    _log.info('text: $text');
+    _log.info('transactionId: $transactionId');
 
     try {
-      final result = await _matrixApiService.sendDirectTextMessage(
+      // First, check if there's already an existing direct message room
+      // This checks both the sender's and receiver's account data
+      _log.info('Checking for existing direct message room...');
+      final roomId = await _matrixApiService.getOrCreateDirectMessageRoom(
         targetUserId: targetUserId,
+        currentUserId: _matrixAdminId!,
+      );
+      _log.info('Using room ID: $roomId');
+
+      // Ensure admin is in the room before sending
+      // (This is handled internally by the API service, but we log it here for clarity)
+      _log.info('Sending message to existing/created room: $roomId');
+
+      // Send the message to the room
+      final response = await _matrixApiService.sendTextMessage(
+        roomId: roomId,
         text: text,
         transactionId: transactionId,
       );
 
-      log('MatrixPolicyManager.sendDirectTextMessage result: $result');
+      final result = {'eventId': response.eventId, 'roomId': roomId};
+
+      _log.info('MatrixPolicyManager.sendDirectTextMessage result: $result');
       return result;
     } catch (e, stackTrace) {
-      log('MatrixPolicyManager.sendDirectTextMessage error: $e');
-      log('MatrixPolicyManager.sendDirectTextMessage stackTrace: $stackTrace');
+      _log.severe('MatrixPolicyManager.sendDirectTextMessage error: $e');
+      _log.severe(
+        'MatrixPolicyManager.sendDirectTextMessage stackTrace: $stackTrace',
+      );
       rethrow;
     }
   }
