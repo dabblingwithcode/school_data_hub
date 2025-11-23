@@ -77,14 +77,16 @@ class SchooldayEventEndpoint extends Endpoint {
       await matrixNotifications.sendDirectTextMessage(
         session: session,
         recipients: recipients,
-        text: getSchooldayEventNotificationMarkdown(
+        text: getSchooldayEventNotificationText(
             eventcreator: createdBy,
             pupilName: pupilNameAndGroup,
+            dateTimeAsString: dateTimeAsString,
             schooldayEvent: eventWithSchoolday!,
             numberOfEvents: numberOfEventsOfTheSameType),
         html: getSchooldayEventNotificationHtml(
             eventcreator: createdBy,
             pupilName: pupilNameAndGroup,
+            dateTimeAsString: dateTimeAsString,
             schooldayEvent: eventWithSchoolday,
             numberOfEvents: numberOfEventsOfTheSameType),
       );

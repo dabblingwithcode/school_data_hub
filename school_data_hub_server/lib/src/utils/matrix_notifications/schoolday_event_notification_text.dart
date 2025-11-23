@@ -1,9 +1,10 @@
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 
 /// Returns plain text notification message
-String getSchooldayEventNotificationMarkdown(
+String getSchooldayEventNotificationText(
     {required String eventcreator,
     required String pupilName,
+    required String dateTimeAsString,
     required SchooldayEvent schooldayEvent,
     required int numberOfEvents}) {
   final String eventType = switch (schooldayEvent.eventType) {
@@ -11,7 +12,7 @@ String getSchooldayEventNotificationMarkdown(
     SchooldayEventType.admonitionAndBanned => 'Rote Karte und Abholen 🚫🏠️',
     SchooldayEventType.afternoonCareAdmonition => 'Rote Karte OGS ⚠️🍽️',
     SchooldayEventType.parentsMeeting => 'Elterngespräch 👪💬',
-    SchooldayEventType.otherEvent => 'Sonstiged 🗒️',
+    SchooldayEventType.otherEvent => 'Sonstiges 🗒️',
     // TODO: Handle this case.
     SchooldayEventType.notSet => '❓️',
   };
@@ -34,7 +35,7 @@ $eventType
 für $pupilName
 $eventReason
 
-von $eventcreator
+von $eventcreator am $dateTimeAsString
 
 Das ist die $numberOfEvents. Schulereignis für $pupilName.
 ''';
@@ -44,6 +45,7 @@ Das ist die $numberOfEvents. Schulereignis für $pupilName.
 String getSchooldayEventNotificationHtml({
   required String eventcreator,
   required String pupilName,
+  required String dateTimeAsString,
   required SchooldayEvent schooldayEvent,
   required int numberOfEvents,
 }) {
@@ -85,7 +87,7 @@ String getSchooldayEventNotificationHtml({
 <h3><strong>${escapeHtml(pupilName)}</strong></h3>
 <h4>Grund:</h4>
 <p><strong>${escapeHtml(eventReason).replaceAll('*', '<br>')}</strong></p>
-<p>Eingetragen von <strong>${escapeHtml(eventcreator)}</strong></p>
-<p>Das ist das <strong>$numberOfEvents</strong>. Schulereignis für <strong>${escapeHtml(pupilName)}</strong>.</p>
+<p>Eingetragen von <strong>${escapeHtml(eventcreator)}</strong> am <strong>${escapeHtml(dateTimeAsString)}</strong></p>
+<p>Das ist das <strong>$numberOfEvents</strong>. Schulereignis dieser Art für <strong>${escapeHtml(pupilName)}</strong>.</p>
 ''';
 }
