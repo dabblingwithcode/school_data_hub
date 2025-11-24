@@ -1,4 +1,4 @@
-generate: ## generate updated models and create migrations
+migration: ## generate updated models and create migrations
 	serverpod generate
 	serverpod create-migration
 	dart run bin/main.dart --role maintenance --apply-migrations
@@ -8,6 +8,7 @@ docker: ## run docker container
 	
 
 reset: ## reset the server
+	@powershell -NoProfile -Command "$$bold = [char]27 + '[1m'; $$reset = [char]27 + '[0m'; Write-Host \"$${bold}WARNING: This will reset the server and delete all data. Continue? (y/n)$${reset}\" -ForegroundColor Red -NoNewline; $$r = Read-Host; if ($$r -ne 'y' -and $$r -ne 'Y') { Write-Host 'Cancelled.' -ForegroundColor Yellow; exit 1 } else { Write-Host 'Resetting server...' -ForegroundColor Green }"
 	cmd /c rmdir /Q /S migrations
 	cmd /c mkdir migrations
 	cmd /c rmdir /Q /S storage\private
@@ -52,3 +53,7 @@ uml: ## generate UML diagram
 
 install: ## serverpod vps branch
 	dart pub global activate -sgit https://github.com/dart-lang/http.git --git-ref dart pub global activate -sgit https://github.com/dabblingwithcode/serverpod_vps.git --git-ref 36f98e900347335af2338a0e087538009b7de2f9
+
+confirm: ## yes/no prompt (Windows compatible)
+	@powershell -NoProfile -Command "$$bold = [char]27 + '[1m'; $$reset = [char]27 + '[0m'; Write-Host \"$${bold}WARNING: This will create a migration. Continue? (y/n)$${reset}\" -ForegroundColor Red -NoNewline; $$r = Read-Host; if ($$r -ne 'y' -and $$r -ne 'Y') { Write-Host 'Cancelled.' -ForegroundColor Yellow; exit 1 } else { Write-Host 'Proceeding...' -ForegroundColor Green }"
+	serverpod create-migration

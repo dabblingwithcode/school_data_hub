@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
@@ -160,7 +160,7 @@ class NewLessonGroupPage extends WatchingWidget {
                           return;
                         }
 
-                        final now = DateTime.now().toUtcForServer();
+                        final now = DateTime.now().formatToUtcForServer();
                         final lessonGroupData = LessonGroup(
                           id: lessonGroup?.id,
                           publicId:
@@ -221,97 +221,89 @@ class NewLessonGroupPage extends WatchingWidget {
                         }
                       },
                       onCancel: () => Navigator.of(context).pop(),
-                      onDelete:
-                          _isEditing
-                              ? () {
-                                if (lessonGroup?.id == null) return;
+                      onDelete: _isEditing
+                          ? () {
+                              if (lessonGroup?.id == null) return;
 
-                                // Check if the lesson group is used in any scheduled lessons
-                                final scheduledLessons =
-                                    timetableManager.scheduledLessons.value
-                                        .where(
-                                          (lesson) =>
-                                              lesson.lessonGroupId ==
-                                              lessonGroup!.id,
-                                        )
-                                        .toList();
+                              // Check if the lesson group is used in any scheduled lessons
+                              final scheduledLessons = timetableManager
+                                  .scheduledLessons
+                                  .value
+                                  .where(
+                                    (lesson) =>
+                                        lesson.lessonGroupId == lessonGroup!.id,
+                                  )
+                                  .toList();
 
-                                if (scheduledLessons.isNotEmpty) {
-                                  showDialog(
-                                    context: context,
-                                    builder:
-                                        (context) => AlertDialog(
-                                          title: const Text(
-                                            'Klasse kann nicht gelöscht werden',
-                                          ),
-                                          content: Text(
-                                            'Diese Klasse wird in ${scheduledLessons.length} geplanten Stunden verwendet und kann nicht gelöscht werden.',
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed:
-                                                  () =>
-                                                      Navigator.of(
-                                                        context,
-                                                      ).pop(),
-                                              child: const Text('OK'),
-                                            ),
-                                          ],
-                                        ),
-                                  );
-                                  return;
-                                }
-
+                              if (scheduledLessons.isNotEmpty) {
                                 showDialog(
                                   context: context,
-                                  builder:
-                                      (context) => AlertDialog(
-                                        title: const Text('Klasse löschen'),
-                                        content: Text(
-                                          'Sind Sie sicher, dass Sie die Klasse "${lessonGroup!.name}" löschen möchten?\n\n'
-                                          'Diese Aktion kann nicht rückgängig gemacht werden.',
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed:
-                                                () =>
-                                                    Navigator.of(context).pop(),
-                                            child: const Text('Abbrechen'),
-                                          ),
-                                          TextButton(
-                                            onPressed: () {
-                                              timetableManager
-                                                  .removeLessonGroup(
-                                                    lessonGroup!.id!,
-                                                  );
-                                              Navigator.of(
-                                                context,
-                                              ).pop(); // Close dialog
-                                              Navigator.of(
-                                                context,
-                                              ).pop(); // Close page
-
-                                              ScaffoldMessenger.of(
-                                                context,
-                                              ).showSnackBar(
-                                                SnackBar(
-                                                  content: Text(
-                                                    'Klasse "${lessonGroup!.name}" wurde gelöscht',
-                                                  ),
-                                                  backgroundColor: Colors.red,
-                                                ),
-                                              );
-                                            },
-                                            style: TextButton.styleFrom(
-                                              foregroundColor: Colors.red,
-                                            ),
-                                            child: const Text('Löschen'),
-                                          ),
-                                        ],
+                                  builder: (context) => AlertDialog(
+                                    title: const Text(
+                                      'Klasse kann nicht gelöscht werden',
+                                    ),
+                                    content: Text(
+                                      'Diese Klasse wird in ${scheduledLessons.length} geplanten Stunden verwendet und kann nicht gelöscht werden.',
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                        child: const Text('OK'),
                                       ),
+                                    ],
+                                  ),
                                 );
+                                return;
                               }
-                              : null,
+
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Klasse löschen'),
+                                  content: Text(
+                                    'Sind Sie sicher, dass Sie die Klasse "${lessonGroup!.name}" löschen möchten?\n\n'
+                                    'Diese Aktion kann nicht rückgängig gemacht werden.',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
+                                      child: const Text('Abbrechen'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        timetableManager.removeLessonGroup(
+                                          lessonGroup!.id!,
+                                        );
+                                        Navigator.of(
+                                          context,
+                                        ).pop(); // Close dialog
+                                        Navigator.of(
+                                          context,
+                                        ).pop(); // Close page
+
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'Klasse "${lessonGroup!.name}" wurde gelöscht',
+                                            ),
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        );
+                                      },
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: Colors.red,
+                                      ),
+                                      child: const Text('Löschen'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          : null,
                     ),
                   ],
                 ),

@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
-import 'package:school_data_hub_server/src/utils/mailer.dart';
+import 'package:school_data_hub_server/src/utils/matrix_notifications/matrix_notifications.dart';
+import 'package:school_data_hub_server/src/utils/matrix_notifications/schoolday_event_notification_text.dart';
 import 'package:serverpod/serverpod.dart';
 
 final _log = Logger('SchooldayEventEndpoint');
@@ -20,10 +23,13 @@ class SchooldayEventEndpoint extends Endpoint {
 
   Future<SchooldayEvent> createSchooldayEvent(Session session,
       {required int pupilId,
+      required String pupilNameAndGroup,
+      required String dateTimeAsString,
       required int schooldayId,
       required SchooldayEventType type,
       required String reason,
-      required String createdBy}) async {
+      required String createdBy,
+      required String tutor}) async {
     final eventId = Uuid().v4();
 
     final schooldayEvent = SchooldayEvent(
@@ -46,35 +52,94 @@ class SchooldayEventEndpoint extends Endpoint {
         processedDocument: HubDocument.include(),
       ),
     );
-    // TODO: Need to implement the mail secrets in the github actions secrets
+
     try {
       final pupil = await PupilData.db.findFirstRow(session,
-          where: (t) => t.id.equals(eventWithSchoolday!.pupilId));
-
-      MailerService.instance.initializeFromSession(session);
-      final success = await MailerService.instance.sendNotification(
-        recipient: session.passwords['schoolEmail'] ?? '',
-        subject: 'Neues Schulereignis',
-        message: 'Es wurde ein neues Schulereignis erstellt.\n\n'
-            'Es ist das Schulereignis Nummer ${pupil?.schooldayEvents?.length}',
+          where: (t) => t.id.equals(eventWithSchoolday!.pupilId),
+          include:
+              PupilData.include(schooldayEvents: SchooldayEvent.includeList()));
+      final numberOfEventsOfTheSameType = pupil?.schooldayEvents
+              ?.where((event) => event.eventType == type)
+              .length ??
+          0;
+      final recipients =
+          await MatrixNotifications.instance.findNotificationRecipients(
+        session: session,
+        pupilNameAndGroup: pupilNameAndGroup,
+        tutor: tutor,
       );
 
-      if (success) {
-        _log.info('Startup notification email sent successfully');
-      } else {
-        _log.severe('Failed to send startup notification email');
+      // Send notification to all recipients
+      if (recipients.isEmpty) {
+        // Fallback to default recipient if no matches found
+        _log.warning('No recipients found for schoolday event $eventId');
+        return eventWithSchoolday!;
       }
+
+      unawaited(MatrixNotifications.instance.sendDirectTextMessage(
+        session: session,
+        recipients: recipients.toList(),
+        text: getSchooldayEventNotificationText(
+            eventcreator: createdBy,
+            pupilName: pupilNameAndGroup,
+            dateTimeAsString: dateTimeAsString,
+            schooldayEvent: eventWithSchoolday!,
+            numberOfEvents: numberOfEventsOfTheSameType),
+        html: getSchooldayEventNotificationHtml(
+            eventcreator: createdBy,
+            pupilName: pupilNameAndGroup,
+            dateTimeAsString: dateTimeAsString,
+            schooldayEvent: eventWithSchoolday,
+            numberOfEvents: numberOfEventsOfTheSameType),
+      ));
+      // final success = await MailerService.instance.sendNotification(
+      //     recipient: recipient?.userInfo?.email ?? '',
+      //     subject: 'Neues Schulereignis',
+      //     message: 'Es wurde ein neues Schulereignis erstellt.\n\n'
+      //         'Es ist das Schulereignis Nummer ${pupil?.schooldayEvents?.length}');
     } catch (e) {
-      _log.severe('Error sending startup notification email: $e');
+      _log.severe('Error sending matrix notification: $e');
     }
 
     return eventWithSchoolday!;
   }
 
-  Future<SchooldayEvent> updateSchooldayEvent(Session session,
-      SchooldayEvent schooldayEvent, bool changedProcessedToFalse) async {
+  Future<SchooldayEvent> updateSchooldayEvent(
+    Session session,
+    SchooldayEvent schooldayEvent,
+    bool changedProcessedStatus,
+    String pupilNameAndGroup,
+    String tutor,
+    String modifiedBy,
+    String dateTimeAsString,
+  ) async {
+    if (changedProcessedStatus) {
+      final recipients =
+          await MatrixNotifications.instance.findNotificationRecipients(
+        session: session,
+        pupilNameAndGroup: pupilNameAndGroup,
+        tutor: tutor,
+      );
+      unawaited(MatrixNotifications.instance.sendDirectTextMessage(
+        session: session,
+        recipients: recipients.toList(),
+        text: getSchooldayEventNotificationText(
+          eventcreator: modifiedBy,
+          pupilName: pupilNameAndGroup,
+          dateTimeAsString: dateTimeAsString,
+          schooldayEvent: schooldayEvent,
+          processedStatusChange: changedProcessedStatus,
+        ),
+        html: getSchooldayEventNotificationHtml(
+            eventcreator: modifiedBy,
+            pupilName: pupilNameAndGroup,
+            dateTimeAsString: dateTimeAsString,
+            schooldayEvent: schooldayEvent,
+            processedStatusChange: changedProcessedStatus),
+      ));
+    }
     // If processed is false We need to detach and delete the processed document if it exists
-    if (changedProcessedToFalse) {
+    if (changedProcessedStatus && schooldayEvent.processed == false) {
       if (schooldayEvent.processedDocumentId != null) {
         final file = await HubDocument.db
             .findById(session, schooldayEvent.processedDocumentId!);

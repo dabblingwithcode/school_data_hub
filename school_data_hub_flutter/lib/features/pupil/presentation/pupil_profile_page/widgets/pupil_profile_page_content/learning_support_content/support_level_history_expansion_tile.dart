@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -54,12 +54,11 @@ class _SupportLevelHistoryExpansionTileState
               const Text('Förderebene:', style: TextStyle(fontSize: 15.0)),
               const Gap(10),
               InkWell(
-                onTap:
-                    () => supportLevelDialog(
-                      context,
-                      pupil,
-                      pupil.latestSupportLevel!.level,
-                    ),
+                onTap: () => supportLevelDialog(
+                  context,
+                  pupil,
+                  pupil.latestSupportLevel!.level,
+                ),
                 child: Text(
                   pupil.latestSupportLevel == null
                       ? 'kein Eintrag'
@@ -83,102 +82,105 @@ class _SupportLevelHistoryExpansionTileState
           children: [
             pupil.supportLevelHistory != null
                 ? ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: widget.pupil.supportLevelHistory!.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4.0),
-                      child: GestureDetector(
-                        onLongPress: () async {
-                          final confirmation = await confirmationDialog(
-                            context: context,
-                            title: 'Eintrag löschen',
-                            message: 'Eintrag wirklich löschen?',
-                          );
-                          if (confirmation != true) return;
-                          if (_hubSessionManager.isAdmin) {
-                            PupilMutator().deleteSupportLevelHistoryItem(
-                              pupilId: pupil.pupilId,
-                              supportLevelId: plans[index].id!,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: widget.pupil.supportLevelHistory!.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: GestureDetector(
+                          onLongPress: () async {
+                            final confirmation = await confirmationDialog(
+                              context: context,
+                              title: 'Eintrag löschen',
+                              message: 'Eintrag wirklich löschen?',
                             );
-                          }
-                        },
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.pupil.supportLevelHistory![index].createdAt
-                                  .formatForUser(),
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-                            const Gap(20),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    const Text(
-                                      'Förderebene ',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                    Text(
-                                      widget
-                                          .pupil
-                                          .supportLevelHistory![index]
-                                          .level
-                                          .toString(),
-                                      style: const TextStyle(
-                                        color: AppColors.backgroundColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                  ],
+                            if (confirmation != true) return;
+                            if (_hubSessionManager.isAdmin) {
+                              PupilMutator().deleteSupportLevelHistoryItem(
+                                pupilId: pupil.pupilId,
+                                supportLevelId: plans[index].id!,
+                              );
+                            }
+                          },
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget
+                                    .pupil
+                                    .supportLevelHistory![index]
+                                    .createdAt
+                                    .formatDateForUser(),
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
                                 ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      pupil
-                                                  .supportLevelHistory![index]
-                                                  .comment !=
-                                              ''
-                                          ? customEncrypter.decryptString(
-                                            pupil
-                                                .supportLevelHistory![index]
-                                                .comment,
-                                          )
-                                          : '',
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            const Spacer(),
-                            Text(
-                              pupil.supportLevelHistory![index].createdBy,
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
                               ),
-                            ),
-                            const Gap(10),
-                          ],
+                              const Gap(20),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Text(
+                                        'Förderebene ',
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                      Text(
+                                        widget
+                                            .pupil
+                                            .supportLevelHistory![index]
+                                            .level
+                                            .toString(),
+                                        style: const TextStyle(
+                                          color: AppColors.backgroundColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        pupil
+                                                    .supportLevelHistory![index]
+                                                    .comment !=
+                                                ''
+                                            ? customEncrypter.decryptString(
+                                                pupil
+                                                    .supportLevelHistory![index]
+                                                    .comment,
+                                              )
+                                            : '',
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const Spacer(),
+                              Text(
+                                pupil.supportLevelHistory![index].createdBy,
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              const Gap(10),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                )
+                      );
+                    },
+                  )
                 : const Text('keine Einträge'),
           ],
         ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
@@ -7,7 +7,9 @@ import 'package:watch_it/watch_it.dart';
 final _schoolCalendarManager = di<SchoolCalendarManager>();
 
 Future<DateTime?> selectSchooldayDate(
-    BuildContext context, DateTime thisDate) async {
+  BuildContext context,
+  DateTime thisDate,
+) async {
   List<DateTime> availableDates = _schoolCalendarManager.availableDates.value;
 
   bool isSelectableSchoolday(DateTime day) {
@@ -23,19 +25,20 @@ Future<DateTime?> selectSchooldayDate(
     lastDate: DateTime.now().toUtc().toUtc().add(const Duration(days: 365)),
     builder: (context, child) {
       return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.backgroundColor,
-              onPrimary: Color.fromARGB(255, 241, 241, 241),
-              onSurface: Colors.deepPurple,
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.accentColor, // button text color
-              ),
+        data: Theme.of(context).copyWith(
+          colorScheme: const ColorScheme.light(
+            primary: AppColors.backgroundColor,
+            onPrimary: Color.fromARGB(255, 241, 241, 241),
+            onSurface: Colors.deepPurple,
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.accentColor, // button text color
             ),
           ),
-          child: child!);
+        ),
+        child: child!,
+      );
     },
   );
   if (pickedDate != null) {

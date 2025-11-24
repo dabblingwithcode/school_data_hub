@@ -32,9 +32,9 @@ class AttendanceFilters extends WatchingWidget {
       (PupilFilterManager x) => x.pupilFilterState,
     );
 
-    bool valueOgs = activePupilFilters[PupilFilter.ogs]!;
+    bool valueOgs = activePupilFilters[PupilFilter.afterSchoolCare]!;
 
-    bool valueNotOgs = activePupilFilters[PupilFilter.notOgs]!;
+    bool valueNotOgs = activePupilFilters[PupilFilter.noAfterSchoolCare]!;
 
     return Column(
       children: [
@@ -159,15 +159,17 @@ class AttendanceFilters extends WatchingWidget {
 
                   _pupilFilterLocator.setPupilFilter(
                     pupilFilterRecords: [
-                      (filter: PupilFilter.notOgs, value: false),
-                      (filter: PupilFilter.ogs, value: val),
+                      (filter: PupilFilter.noAfterSchoolCare, value: false),
+                      (filter: PupilFilter.afterSchoolCare, value: val),
                     ],
                   );
                   return;
                 }
 
                 _pupilFilterLocator.setPupilFilter(
-                  pupilFilterRecords: [(filter: PupilFilter.ogs, value: val)],
+                  pupilFilterRecords: [
+                    (filter: PupilFilter.afterSchoolCare, value: val),
+                  ],
                 );
               },
             ),
@@ -179,15 +181,15 @@ class AttendanceFilters extends WatchingWidget {
                   // in case not ogs is selected, ogs should be deselected
                   _pupilFilterLocator.setPupilFilter(
                     pupilFilterRecords: [
-                      (filter: PupilFilter.ogs, value: false),
-                      (filter: PupilFilter.notOgs, value: val),
+                      (filter: PupilFilter.afterSchoolCare, value: false),
+                      (filter: PupilFilter.noAfterSchoolCare, value: val),
                     ],
                   );
                   return;
                 }
                 _pupilFilterLocator.setPupilFilter(
                   pupilFilterRecords: [
-                    (filter: PupilFilter.notOgs, value: val),
+                    (filter: PupilFilter.noAfterSchoolCare, value: val),
                   ],
                 );
               },

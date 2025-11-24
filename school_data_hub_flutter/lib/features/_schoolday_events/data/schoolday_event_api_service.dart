@@ -3,10 +3,11 @@ import 'dart:io';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/domain/models/nullable_records.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _client = di<Client>();
@@ -18,20 +19,27 @@ class SchooldayEventApiService {
   //- post schooldayEvent
 
   Future<SchooldayEvent> postSchooldayEvent(
+    String pupilName,
     int pupilId,
     int schooldayId,
+    DateTime dateTime,
     SchooldayEventType type,
     String reason,
   ) async {
     final userName = _hubSessionManager.userName!;
     _notificationService.apiRunning(true);
+    final pupil = di<PupilManager>().getPupilByPupilId(pupilId);
+    final tutor = pupil?.groupTutor;
     try {
       final event = await _client.schooldayEvent.createSchooldayEvent(
+        pupilNameAndGroup: pupilName,
+        dateTimeAsString: dateTime.formatDateAndTimeForUser(),
         pupilId: pupilId,
         schooldayId: schooldayId,
         type: type,
         reason: reason,
         createdBy: userName,
+        tutor: tutor ?? '',
       );
 
       _notificationService.apiRunning(false);
@@ -74,14 +82,15 @@ class SchooldayEventApiService {
     NullableDateTimeRecord? processedAt,
     int? schooldayId,
   }) async {
-    bool changedProcessedToFalse = false;
+    bool changedProcessedStatus = false;
     // if the schooldayEvent is patched as processed,
     // processing user and processed date are automatically added
 
     if (processed == true && processedBy == null && processedAt == null) {
       processedBy = (value: _hubSessionManager.user!.userInfo!.userName!);
 
-      processedAt = (value: DateTime.now().toUtcForServer());
+      processedAt = (value: DateTime.now().formatToUtcForServer());
+      changedProcessedStatus = true;
     }
 
     // if the schooldayEvent is patched as not processed,
@@ -90,7 +99,7 @@ class SchooldayEventApiService {
     if (processed == false) {
       processedBy = (value: null);
       processedAt = (value: null);
-      changedProcessedToFalse = true;
+      changedProcessedStatus = true;
     }
     final schooldayEventToUpdate = schooldayEvent.copyWith(
       createdBy: createdBy ?? schooldayEvent.createdBy,
@@ -98,18 +107,24 @@ class SchooldayEventApiService {
       eventReason: reason ?? schooldayEvent.eventReason,
       schooldayId: schooldayId ?? schooldayEvent.schooldayId,
       processed: processed ?? schooldayEvent.processed,
-      processedBy:
-          processedBy != null ? processedBy.value : schooldayEvent.processedBy,
-      processedAt:
-          processedAt != null ? processedAt.value : schooldayEvent.processedAt,
+      processedBy: processedBy != null
+          ? processedBy.value
+          : schooldayEvent.processedBy,
+      processedAt: processedAt != null
+          ? processedAt.value
+          : schooldayEvent.processedAt,
     );
-
+    final pupil = di<PupilManager>().getPupilByPupilId(schooldayEvent.pupilId)!;
     try {
       _notificationService.apiRunning(true);
       final updatedSchooldayEvent = await _client.schooldayEvent
           .updateSchooldayEvent(
             schooldayEventToUpdate,
-            changedProcessedToFalse,
+            changedProcessedStatus,
+            '${pupil.firstName} (${pupil.group})',
+            '${pupil.groupTutor}',
+            '${di<HubSessionManager>().userName!}',
+            '${DateTime.now().formatDateAndTimeForUser()}',
           );
       _notificationService.apiRunning(false);
       return updatedSchooldayEvent;

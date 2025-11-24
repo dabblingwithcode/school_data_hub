@@ -30,6 +30,9 @@ class AdminEndpoint extends Endpoint {
     required int reliefTimeUnits,
     required List<String> scopeNames,
     required bool isTester,
+    String? schooldayEventsProcessingTeam,
+    String? matrixUserId,
+    int? credit,
   }) async {
     session.log('Creating user: $userName, $email');
     final UserInfo? userInfo =
@@ -45,17 +48,17 @@ class AdminEndpoint extends Endpoint {
     await auth.UserInfo.db.updateRow(session, userInfo);
 
     // Convert string scopes to Scope objects
-    // TODO: fix this when we use more scopes
-    bool isAdmin = false;
+    Set<Scope> scopes = {};
 
     for (final scope in scopeNames) {
-      if (scope.contains('admin')) {
-        isAdmin = true;
+      if (scope == 'admin') {
+        scopes.add(Scope('serverpod.admin'));
+      } else {
+        scopes.add(Scope(scope));
       }
     }
     // Update scopes if provided
-    await auth.Users.updateUserScopes(
-        session, userInfo.id!, isAdmin ? {Scope('serverpod.admin')} : {});
+    await auth.Users.updateUserScopes(session, userInfo.id!, scopes);
     // Create a new User object and insert it into the database
     final newUser = User(
       userInfoId: userInfo.id!,
@@ -70,7 +73,8 @@ class AdminEndpoint extends Endpoint {
       role: role,
       timeUnits: timeUnits,
       reliefTimeUnits: reliefTimeUnits,
-      credit: 50,
+      credit: credit ?? 50,
+      matrixUserId: matrixUserId,
     );
 
     await User.db.insertRow(session, newUser);

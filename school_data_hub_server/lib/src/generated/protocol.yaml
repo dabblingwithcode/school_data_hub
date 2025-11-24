@@ -127,6 +127,7 @@ pupilUpdate:
   - updatePublicMediaAuth:
   - updateSupportLevel:
   - updateSchoolyearHeldBackDate:
+  - updateAfterSchoolCare:
 schoolData:
   - postSchoolData:
   - getSchoolData:

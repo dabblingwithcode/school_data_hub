@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
@@ -58,8 +58,9 @@ class AttendanceListPage extends WatchingWidget {
         value.cancel();
       },
     );
-    DateTime thisDate =
-        watchValue((SchoolCalendarManager x) => x.thisDate).toLocal();
+    DateTime thisDate = watchValue(
+      (SchoolCalendarManager x) => x.thisDate,
+    ).toLocal();
 
     callOnce((context) {
       _attendanceManager.fetchMissedSchooldayesOnASchoolday(thisDate);
@@ -80,15 +81,14 @@ class AttendanceListPage extends WatchingWidget {
             children: [
               Icon(
                 Icons.today_rounded,
-                color:
-                    AttendanceHelper.schooldayIsToday(thisDate)
-                        ? const Color.fromARGB(255, 83, 196, 55)
-                        : Colors.white,
+                color: AttendanceHelper.schooldayIsToday(thisDate)
+                    ? const Color.fromARGB(255, 83, 196, 55)
+                    : Colors.white,
                 size: 30,
               ),
               const Gap(10),
               Text(
-                '${thisDate.asWeekdayName(context)}, ${thisDate.formatForUser()}',
+                '${thisDate.asWeekdayName(context)}, ${thisDate.formatDateForUser()}',
                 style: const TextStyle(
                   fontSize: 25,
                   color: Colors.white,
@@ -101,9 +101,8 @@ class AttendanceListPage extends WatchingWidget {
         automaticallyImplyLeading: false,
       ),
       body: RefreshIndicator(
-        onRefresh:
-            () async =>
-                _attendanceManager.fetchMissedSchooldayesOnASchoolday(thisDate),
+        onRefresh: () async =>
+            _attendanceManager.fetchMissedSchooldayesOnASchoolday(thisDate),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),

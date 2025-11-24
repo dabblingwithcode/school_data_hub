@@ -105,23 +105,28 @@ class MatrixApiService {
   );
 
   // Direct messaging methods
-  Future<Map<String, String>> sendDirectTextMessage({
-    required String targetUserId,
-    required String text,
-    String? transactionId,
-  }) => _roomApiService.sendDirectTextMessage(
-    targetUserId: targetUserId,
-    text: text,
-    transactionId: transactionId,
-  );
+  // Future<Map<String, String>> sendDirectTextMessage({
+  //   required String targetUserId,
+  //   required String text,
+  //   String? transactionId,
+  // }) => _roomApiService.sendDirectTextMessage(
+  //   targetUserId: targetUserId,
+  //   text: text,
+  //   transactionId: transactionId,
+  // );
 
   Future<void> inviteUserToRoom({
     required String roomId,
     required String userId,
   }) => _roomApiService.inviteUserToRoom(roomId: roomId, userId: userId);
 
-  Future<String> getOrCreateDirectMessageRoom(String targetUserId) =>
-      _roomApiService.getOrCreateDirectMessageRoom(targetUserId);
+  Future<String> getOrCreateDirectMessageRoom({
+    required String targetUserId,
+    required String currentUserId,
+  }) => _roomApiService.findOrCreateDirectMessageRoom(
+    targetUserId: targetUserId,
+    currentUserId: currentUserId,
+  );
 
   void setMatrixEnvironmentValues({
     required String url,

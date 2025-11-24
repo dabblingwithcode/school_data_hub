@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
@@ -126,6 +126,7 @@ class NewSchooldayEventPage extends WatchingWidget {
     await _schooldayEventManager.postSchooldayEvent(
       pupilId,
       schoolday!.id!,
+      thisDate,
       schooldayEventType,
       schooldayEventReasons,
     );
@@ -193,26 +194,24 @@ class NewSchooldayEventPage extends WatchingWidget {
                   onChanged: (SchooldayEventType? newValue) {
                     schooldayEventTypeDropdown.value = newValue!;
                   },
-                  items:
-                      SchooldayEventType.values
-                          .map<DropdownMenuItem<SchooldayEventType>>((
-                            SchooldayEventType value,
-                          ) {
-                            return DropdownMenuItem<SchooldayEventType>(
-                              value: value,
-                              child: Text(
-                                _getDropdownItemText(value),
-                                style: TextStyle(
-                                  color:
-                                      value == SchooldayEventType.notSet
-                                          ? Colors.red
-                                          : AppColors.backgroundColor,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            );
-                          })
-                          .toList(),
+                  items: SchooldayEventType.values
+                      .map<DropdownMenuItem<SchooldayEventType>>((
+                        SchooldayEventType value,
+                      ) {
+                        return DropdownMenuItem<SchooldayEventType>(
+                          value: value,
+                          child: Text(
+                            _getDropdownItemText(value),
+                            style: TextStyle(
+                              color: value == SchooldayEventType.notSet
+                                  ? Colors.red
+                                  : AppColors.backgroundColor,
+                              fontSize: 20,
+                            ),
+                          ),
+                        );
+                      })
+                      .toList(),
                 ),
                 const Gap(10),
                 const Row(
@@ -255,7 +254,7 @@ class NewSchooldayEventPage extends WatchingWidget {
                         }
                       },
                       child: Text(
-                        thisDate.value.formatForUser(),
+                        watch(thisDate).value.formatDateForUser(),
                         style: AppStyles.title.copyWith(
                           color: AppColors.interactiveColor,
                         ),
@@ -270,170 +269,170 @@ class NewSchooldayEventPage extends WatchingWidget {
                 ),
                 const Gap(5),
                 Expanded(
-                  child:
-                      schooldayEventType == SchooldayEventType.notSet
-                          ? const Center(
-                            child: Text(
-                              'Bitte eine Ereignis-Art auswählen!',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
+                  child: schooldayEventType == SchooldayEventType.notSet
+                      ? const Center(
+                          child: Text(
+                            'Bitte eine Ereignis-Art auswählen!',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
-                          )
-                          : schooldayEventType ==
-                              SchooldayEventType.parentsMeeting
-                          ? SingleChildScrollView(
-                            scrollDirection: Axis.vertical,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Wrap(
-                                  children: [
-                                    SchooldayEventReasonFilterChip(
-                                      isReason:
-                                          watch(learningDevelopmentInfo).value,
-                                      onSelected: (value) {
-                                        learningDevelopmentInfo.value = value;
-                                      },
-                                      emojis: '💡🧠',
-                                      text: 'Lernentwicklung',
-                                    ),
-                                    const Gap(5),
-                                    SchooldayEventReasonFilterChip(
-                                      isReason:
-                                          watch(learningSupportInfo).value,
-                                      onSelected: (value) {
-                                        learningSupportInfo.value = value;
-                                      },
-                                      emojis: '🛟🧠',
-                                      text: 'Förderung',
-                                    ),
-                                    const Gap(5),
-                                    SchooldayEventReasonFilterChip(
-                                      isReason: watch(admonitionInfo).value,
-                                      onSelected: (value) {
-                                        admonitionInfo.value = value;
-                                      },
-                                      emojis: '⚠️ℹ️',
-                                      text: 'Regelverstoß',
-                                    ),
-                                    const Gap(5),
-                                    SchooldayEventReasonFilterChip(
-                                      isReason: watch(other).value,
-                                      onSelected: (value) {
-                                        other.value = value;
-                                      },
-                                      emojis: '📝',
-                                      text: 'Sonstiges',
-                                    ),
-                                    const Gap(5),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          )
-                          : SingleChildScrollView(
-                            scrollDirection: Axis.vertical,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Wrap(
-                                  children: [
-                                    const Gap(5),
-                                    SchooldayEventReasonFilterChip(
-                                      isReason:
-                                          watch(violenceAgainstPupils).value,
-                                      onSelected: (value) {
-                                        violenceAgainstPupils.value = value;
-                                      },
-                                      emojis: '🤜🤕',
-                                      text: 'Gewalt gegen Kinder',
-                                    ),
-                                    const Gap(5),
-                                    SchooldayEventReasonFilterChip(
-                                      isReason:
-                                          watch(violenceAgainstTeacher).value,
-                                      onSelected: (value) {
-                                        violenceAgainstTeacher.value = value;
-                                      },
-                                      emojis: '🤜🎓️',
-                                      text: 'Gewalt gegen Erwachsene',
-                                    ),
-                                    const Gap(5),
-                                    SchooldayEventReasonFilterChip(
-                                      isReason:
-                                          watch(violenceAgainstThings).value,
-                                      onSelected: (value) {
-                                        violenceAgainstThings.value = value;
-                                      },
-                                      emojis: '🤜🏫',
-                                      text: 'Gewalt gegen Sachen',
-                                    ),
-                                    const Gap(5),
-                                    SchooldayEventReasonFilterChip(
-                                      isReason: watch(insultOthers).value,
-                                      onSelected: (value) {
-                                        insultOthers.value = value;
-                                      },
-                                      emojis: '🤬💔',
-                                      text: 'Beleidigen',
-                                    ),
-                                    const Gap(5),
-                                    SchooldayEventReasonFilterChip(
-                                      isReason: watch(annoyOthers).value,
-                                      onSelected: (value) {
-                                        annoyOthers.value = value;
-                                      },
-                                      emojis: '😈😖',
-                                      text: 'Ärgern',
-                                    ),
-                                    const Gap(5),
-                                    SchooldayEventReasonFilterChip(
-                                      isReason: watch(imminentDanger).value,
-                                      onSelected: (value) {
-                                        imminentDanger.value = value;
-                                      },
-                                      emojis: '🚨😱',
-                                      text: 'Gefahr für sich/andere',
-                                    ),
-                                    const Gap(5),
-                                    SchooldayEventReasonFilterChip(
-                                      isReason:
-                                          watch(
-                                            ignoreTeacherInstructions,
-                                          ).value,
-                                      onSelected: (value) {
-                                        ignoreTeacherInstructions.value = value;
-                                      },
-                                      emojis: '🎓️🙉',
-                                      text: 'Anweisungen ignorieren',
-                                    ),
-                                    const Gap(5),
-                                    SchooldayEventReasonFilterChip(
-                                      isReason: watch(disturbLesson).value,
-                                      onSelected: (value) {
-                                        disturbLesson.value = value;
-                                      },
-                                      emojis: '🛑🎓️',
-                                      text: 'Unterricht stören',
-                                    ),
-                                    const Gap(5),
-                                    SchooldayEventReasonFilterChip(
-                                      isReason: watch(other).value,
-                                      onSelected: (value) {
-                                        other.value = value;
-                                      },
-                                      emojis: '📝',
-                                      text: 'Sonstiges',
-                                    ),
-                                    const Gap(5),
-                                  ],
-                                ),
-                              ],
-                            ),
+                            textAlign: TextAlign.center,
                           ),
+                        )
+                      : schooldayEventType == SchooldayEventType.parentsMeeting
+                      ? SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Wrap(
+                                children: [
+                                  SchooldayEventReasonFilterChip(
+                                    isReason: watch(
+                                      learningDevelopmentInfo,
+                                    ).value,
+                                    onSelected: (value) {
+                                      learningDevelopmentInfo.value = value;
+                                    },
+                                    emojis: '💡🧠',
+                                    text: 'Lernentwicklung',
+                                  ),
+                                  const Gap(5),
+                                  SchooldayEventReasonFilterChip(
+                                    isReason: watch(learningSupportInfo).value,
+                                    onSelected: (value) {
+                                      learningSupportInfo.value = value;
+                                    },
+                                    emojis: '🛟🧠',
+                                    text: 'Förderung',
+                                  ),
+                                  const Gap(5),
+                                  SchooldayEventReasonFilterChip(
+                                    isReason: watch(admonitionInfo).value,
+                                    onSelected: (value) {
+                                      admonitionInfo.value = value;
+                                    },
+                                    emojis: '⚠️ℹ️',
+                                    text: 'Regelverstoß',
+                                  ),
+                                  const Gap(5),
+                                  SchooldayEventReasonFilterChip(
+                                    isReason: watch(other).value,
+                                    onSelected: (value) {
+                                      other.value = value;
+                                    },
+                                    emojis: '📝',
+                                    text: 'Sonstiges',
+                                  ),
+                                  const Gap(5),
+                                ],
+                              ),
+                            ],
+                          ),
+                        )
+                      : SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Wrap(
+                                children: [
+                                  const Gap(5),
+                                  SchooldayEventReasonFilterChip(
+                                    isReason: watch(
+                                      violenceAgainstPupils,
+                                    ).value,
+                                    onSelected: (value) {
+                                      violenceAgainstPupils.value = value;
+                                    },
+                                    emojis: '🤜🤕',
+                                    text: 'Gewalt gegen Kinder',
+                                  ),
+                                  const Gap(5),
+                                  SchooldayEventReasonFilterChip(
+                                    isReason: watch(
+                                      violenceAgainstTeacher,
+                                    ).value,
+                                    onSelected: (value) {
+                                      violenceAgainstTeacher.value = value;
+                                    },
+                                    emojis: '🤜🎓️',
+                                    text: 'Gewalt gegen Erwachsene',
+                                  ),
+                                  const Gap(5),
+                                  SchooldayEventReasonFilterChip(
+                                    isReason: watch(
+                                      violenceAgainstThings,
+                                    ).value,
+                                    onSelected: (value) {
+                                      violenceAgainstThings.value = value;
+                                    },
+                                    emojis: '🤜🏫',
+                                    text: 'Gewalt gegen Sachen',
+                                  ),
+                                  const Gap(5),
+                                  SchooldayEventReasonFilterChip(
+                                    isReason: watch(insultOthers).value,
+                                    onSelected: (value) {
+                                      insultOthers.value = value;
+                                    },
+                                    emojis: '🤬💔',
+                                    text: 'Beleidigen',
+                                  ),
+                                  const Gap(5),
+                                  SchooldayEventReasonFilterChip(
+                                    isReason: watch(annoyOthers).value,
+                                    onSelected: (value) {
+                                      annoyOthers.value = value;
+                                    },
+                                    emojis: '😈😖',
+                                    text: 'Ärgern',
+                                  ),
+                                  const Gap(5),
+                                  SchooldayEventReasonFilterChip(
+                                    isReason: watch(imminentDanger).value,
+                                    onSelected: (value) {
+                                      imminentDanger.value = value;
+                                    },
+                                    emojis: '🚨😱',
+                                    text: 'Gefahr für sich/andere',
+                                  ),
+                                  const Gap(5),
+                                  SchooldayEventReasonFilterChip(
+                                    isReason: watch(
+                                      ignoreTeacherInstructions,
+                                    ).value,
+                                    onSelected: (value) {
+                                      ignoreTeacherInstructions.value = value;
+                                    },
+                                    emojis: '🎓️🙉',
+                                    text: 'Anweisungen ignorieren',
+                                  ),
+                                  const Gap(5),
+                                  SchooldayEventReasonFilterChip(
+                                    isReason: watch(disturbLesson).value,
+                                    onSelected: (value) {
+                                      disturbLesson.value = value;
+                                    },
+                                    emojis: '🛑🎓️',
+                                    text: 'Unterricht stören',
+                                  ),
+                                  const Gap(5),
+                                  SchooldayEventReasonFilterChip(
+                                    isReason: watch(other).value,
+                                    onSelected: (value) {
+                                      other.value = value;
+                                    },
+                                    emojis: '📝',
+                                    text: 'Sonstiges',
+                                  ),
+                                  const Gap(5),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                 ),
                 const Gap(10),
                 ElevatedButton(

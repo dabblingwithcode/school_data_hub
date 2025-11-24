@@ -4,7 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/data/attendance_api_service.dart';
@@ -15,19 +15,16 @@ import 'package:school_data_hub_flutter/features/school_calendar/domain/school_c
 import 'package:watch_it/watch_it.dart';
 
 class AttendanceManager with ChangeNotifier {
-  final _pupilManager = di<PupilManager>();
-
-  final _schoolCalendarManager = di<SchoolCalendarManager>();
-
-  final _notificationService = di<NotificationService>();
-
-  final _sessionManager = di<HubSessionManager>();
+  // Lazy getters to avoid accessing dependencies during construction
+  PupilManager get _pupilManager => di<PupilManager>();
+  SchoolCalendarManager get _schoolCalendarManager =>
+      di<SchoolCalendarManager>();
+  NotificationService get _notificationService => di<NotificationService>();
+  HubSessionManager get _sessionManager => di<HubSessionManager>();
+  Client get _client => di<Client>();
 
   final _log = Logger('AttendanceManager');
-
   final _attendanceApiService = AttendanceApiService();
-
-  final _client = di<Client>();
 
   StreamSubscription<MissedSchooldayDto>? _missedSchooldaySubscription;
 
@@ -65,7 +62,9 @@ class AttendanceManager with ChangeNotifier {
   MissedSchoolday? getPupilMissedSchooldayOnDate(int pupilId, DateTime date) {
     return _pupilMissedSchooldaysMap[pupilId]!.missedSchooldays
         .firstWhereOrNull(
-          (element) => element.schoolday!.schoolday.isSameDate(date),
+          (element) => element.schoolday!.schoolday.isSameDate(
+            date.formatToUtcForServer(),
+          ),
         );
   }
 
@@ -232,8 +231,8 @@ class AttendanceManager with ChangeNotifier {
   //- CRUD operantions
 
   void fetchAllPupilMissedSchooldayes() async {
-    final fetchedMissedSchooldayes =
-        await _attendanceApiService.fetchAllMissedSchooldayes();
+    final fetchedMissedSchooldayes = await _attendanceApiService
+        .fetchAllMissedSchooldayes();
     if (fetchedMissedSchooldayes == null) return;
     _updateMissedSchooldayesInCollections(fetchedMissedSchooldayes);
   }

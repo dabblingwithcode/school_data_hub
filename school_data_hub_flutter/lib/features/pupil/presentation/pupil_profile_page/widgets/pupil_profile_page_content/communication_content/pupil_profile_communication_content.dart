@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
@@ -82,19 +82,17 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                 _buildInfoRow(
                   icon: Icons.support_outlined,
                   label: 'Erstförderung',
-                  value:
-                      pupil.migrationSupportEnds != null
-                          ? 'bis : ${pupil.migrationSupportEnds!.formatForUser()}'
-                          : 'keine',
+                  value: pupil.migrationSupportEnds != null
+                      ? 'bis : ${pupil.migrationSupportEnds!.formatDateForUser()}'
+                      : 'keine',
                 ),
                 const Gap(8),
                 _buildInfoRow(
                   icon: Icons.support_outlined,
                   label: 'HKU',
-                  value:
-                      pupil.familyLanguageLessonsSince != null
-                          ? 'seit ${pupil.familyLanguageLessonsSince!.formatForUser()}'
-                          : 'nein',
+                  value: pupil.familyLanguageLessonsSince != null
+                      ? 'seit ${pupil.familyLanguageLessonsSince!.formatDateForUser()}'
+                      : 'nein',
                 ),
               ],
             ),
@@ -109,12 +107,11 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                 _buildCommunicationRow(
                   label: 'Kind',
                   communicationSkills: communicationPupil,
-                  onTap:
-                      () => languageDialog(
-                        context,
-                        pupil,
-                        CommunicationSubject.pupil,
-                      ),
+                  onTap: () => languageDialog(
+                    context,
+                    pupil,
+                    CommunicationSubject.pupil,
+                  ),
                   onLongPress: () async {
                     if (_hubSessionManager.isAdmin == false) {
                       informationDialog(
@@ -141,12 +138,11 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                 _buildCommunicationRow(
                   label: 'Mutter / TutorIn 1',
                   communicationSkills: tutorInfo?.communicationTutor1,
-                  onTap:
-                      () => languageDialog(
-                        context,
-                        pupil,
-                        CommunicationSubject.tutor1,
-                      ),
+                  onTap: () => languageDialog(
+                    context,
+                    pupil,
+                    CommunicationSubject.tutor1,
+                  ),
                   onLongPress: () async {
                     final isAdmin = _hubSessionManager.isAdmin;
                     if (!isAdmin) {
@@ -176,12 +172,11 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                 _buildCommunicationRow(
                   label: 'Vater / TutorIn 2',
                   communicationSkills: tutorInfo?.communicationTutor2,
-                  onTap:
-                      () => languageDialog(
-                        context,
-                        pupil,
-                        CommunicationSubject.tutor2,
-                      ),
+                  onTap: () => languageDialog(
+                    context,
+                    pupil,
+                    CommunicationSubject.tutor2,
+                  ),
                   onLongPress: () async {
                     final isAdmin = _hubSessionManager.isAdmin;
                     if (!isAdmin) {
@@ -200,12 +195,11 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                     if (success == true) {
                       PupilMutator().updateTutorInfo(
                         pupilId: pupil.pupilId,
-                        tutorInfo:
-                            tutorInfo != null
-                                ? tutorInfo.copyWith(communicationTutor2: null)
-                                : TutorInfo(
-                                  createdBy: _hubSessionManager.userName!,
-                                ),
+                        tutorInfo: tutorInfo != null
+                            ? tutorInfo.copyWith(communicationTutor2: null)
+                            : TutorInfo(
+                                createdBy: _hubSessionManager.userName!,
+                              ),
                       );
                     }
                   },
@@ -306,10 +300,9 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                   horizontal: 12,
                 ),
                 decoration: BoxDecoration(
-                  color:
-                      onTap != null
-                          ? AppColors.interactiveColor.withValues(alpha: 0.1)
-                          : Colors.transparent,
+                  color: onTap != null
+                      ? AppColors.interactiveColor.withValues(alpha: 0.1)
+                      : Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -317,10 +310,9 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color:
-                        onTap != null
-                            ? AppColors.interactiveColor
-                            : Colors.black87,
+                    color: onTap != null
+                        ? AppColors.interactiveColor
+                        : Colors.black87,
                   ),
                 ),
               ),
@@ -393,19 +385,18 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                   width: 1,
                 ),
               ),
-              child:
-                  communicationSkills == null
-                      ? const Text(
-                        'kein Eintrag - tippen zum Hinzufügen',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontStyle: FontStyle.italic,
-                          color: AppColors.interactiveColor,
-                        ),
-                      )
-                      : CommunicationValues(
-                        communicationSkills: communicationSkills,
+              child: communicationSkills == null
+                  ? const Text(
+                      'kein Eintrag - tippen zum Hinzufügen',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontStyle: FontStyle.italic,
+                        color: AppColors.interactiveColor,
                       ),
+                    )
+                  : CommunicationValues(
+                      communicationSkills: communicationSkills,
+                    ),
             ),
           ),
         ],

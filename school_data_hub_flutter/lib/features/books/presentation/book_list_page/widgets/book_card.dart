@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/isbn_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
@@ -86,24 +86,23 @@ class BookCard extends WatchingWidget {
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: InkWell(
-                    onLongPress:
-                        (di<HubSessionManager>().isAdmin)
-                            ? () {
-                              // Navigator.of(context).push(MaterialPageRoute(
-                              //   builder: (ctx) => NewBook(
-                              //     isEdit: true,
-                              //     bookAuthor: books.first.author,
-                              //     bookId: book.bookId,
-                              //     isbn: book.isbn,
-                              //     bookReadingLevel: book.readingLevel,
-                              //     bookTitle: book.title,
-                              //     bookDescription: book.description,
-                              //     bookImageId: book.imageId,
-                              //     location: book.location,
-                              //   ),
-                              // ));
-                            }
-                            : () {},
+                    onLongPress: (di<HubSessionManager>().isAdmin)
+                        ? () {
+                            // Navigator.of(context).push(MaterialPageRoute(
+                            //   builder: (ctx) => NewBook(
+                            //     isEdit: true,
+                            //     bookAuthor: books.first.author,
+                            //     bookId: book.bookId,
+                            //     isbn: book.isbn,
+                            //     bookReadingLevel: book.readingLevel,
+                            //     bookTitle: book.title,
+                            //     bookDescription: book.description,
+                            //     bookImageId: book.imageId,
+                            //     location: book.location,
+                            //   ),
+                            // ));
+                          }
+                        : () {},
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -255,10 +254,9 @@ class BookCard extends WatchingWidget {
                   ],
                 ),
                 Column(
-                  children:
-                      bookProxies.map((book) {
-                        return LibraryBookCard(libraryBookProxy: book);
-                      }).toList(),
+                  children: bookProxies.map((book) {
+                    return LibraryBookCard(libraryBookProxy: book);
+                  }).toList(),
                 ),
                 const Gap(10),
               ],

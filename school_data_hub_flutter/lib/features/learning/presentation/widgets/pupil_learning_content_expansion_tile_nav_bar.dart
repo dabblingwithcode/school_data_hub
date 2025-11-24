@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_competence_list_page/widgets/pupil_learning_content/pupil_learning_content_books.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_competence_list_page/widgets/pupil_learning_content/pupil_learning_content_competence_goals.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_competence_list_page/widgets/pupil_learning_content/pupil_learning_content_competence_statuses.dart';
@@ -41,8 +42,10 @@ class SelectedLearningContentNotifier extends ChangeNotifier {
 class PupilLearningContentExpansionTileNavBar extends WatchingWidget {
   final PupilProxy pupil;
 
-  const PupilLearningContentExpansionTileNavBar(
-      {required this.pupil, super.key});
+  const PupilLearningContentExpansionTileNavBar({
+    required this.pupil,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -53,16 +56,17 @@ class PupilLearningContentExpansionTileNavBar extends WatchingWidget {
       children: [
         const PupilLearningContentNavBar(),
         Padding(
-            padding: const EdgeInsets.only(top: 5),
-            child: (selectedContent == SelectedContent.competenceStatuses)
-                ? PupilLearningContentCompetenceStatuses(pupil: pupil)
-                : (selectedContent == SelectedContent.competenceGoals)
-                    ? PupilLearningContentCompetenceGoals(pupil: pupil)
-                    : (selectedContent == SelectedContent.workbooks)
-                        ? PupilLearningContentWorkbooks(pupil: pupil)
-                        :
-                        //  (selectedContent == SelectedContent.books):
-                        PupilLearningContentBooks(pupil: pupil))
+          padding: const EdgeInsets.only(top: 5),
+          child: (selectedContent == SelectedContent.competenceStatuses)
+              ? PupilLearningContentCompetenceStatuses(pupil: pupil)
+              : (selectedContent == SelectedContent.competenceGoals)
+              ? PupilLearningContentCompetenceGoals(pupil: pupil)
+              : (selectedContent == SelectedContent.workbooks)
+              ? PupilLearningContentWorkbooks(pupil: pupil)
+              :
+                //  (selectedContent == SelectedContent.books):
+                PupilLearningContentBooks(pupil: pupil),
+        ),
       ],
     );
   }
@@ -83,79 +87,146 @@ class PupilLearningContentNavBar extends WatchingWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            IconButton(
-              isSelected: selectedContent == SelectedContent.competenceStatuses,
-              icon: const Icon(
-                Icons.lightbulb,
-                color: AppColors.interactiveColor,
-              ),
-              selectedIcon: const Icon(
-                Icons.lightbulb,
-                color: AppColors.accentColor,
-              ),
-              onPressed: () {
-                if (selectedContent != SelectedContent.competenceStatuses) {
-                  selectedContentNotifier
-                      .select(SelectedContent.competenceStatuses);
+            if (di<HubSessionManager>().isTester)
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    isSelected:
+                        selectedContent == SelectedContent.competenceStatuses,
+                    icon: const Icon(
+                      Icons.lightbulb,
+                      color: AppColors.interactiveColor,
+                    ),
+                    selectedIcon: const Icon(
+                      Icons.lightbulb,
+                      color: AppColors.accentColor,
+                    ),
+                    onPressed: () {
+                      if (selectedContent !=
+                          SelectedContent.competenceStatuses) {
+                        selectedContentNotifier.select(
+                          SelectedContent.competenceStatuses,
+                        );
 
-                  return;
-                }
-              },
-            ),
-            IconButton(
-              isSelected: selectedContent == SelectedContent.competenceGoals,
-              icon: const Icon(
-                Icons.emoji_nature_rounded,
-                color: AppColors.interactiveColor,
+                        return;
+                      }
+                    },
+                  ),
+                  Text(
+                    'Lernspuren',
+                    style: TextStyle(
+                      color:
+                          selectedContent == SelectedContent.competenceStatuses
+                          ? AppColors.accentColor
+                          : AppColors.interactiveColor,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
               ),
-              selectedIcon: const Icon(
-                Icons.emoji_nature_rounded,
-                color: AppColors.accentColor,
-              ),
-              onPressed: () {
-                if (selectedContent != SelectedContent.competenceGoals) {
-                  selectedContentNotifier
-                      .select(SelectedContent.competenceGoals);
+            if (di<HubSessionManager>().isTester)
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    isSelected:
+                        selectedContent == SelectedContent.competenceGoals,
+                    icon: const Icon(
+                      Icons.emoji_nature_rounded,
+                      color: AppColors.interactiveColor,
+                    ),
+                    selectedIcon: const Icon(
+                      Icons.emoji_nature_rounded,
+                      color: AppColors.accentColor,
+                    ),
+                    onPressed: () {
+                      if (selectedContent != SelectedContent.competenceGoals) {
+                        selectedContentNotifier.select(
+                          SelectedContent.competenceGoals,
+                        );
 
-                  return;
-                }
-              },
-            ),
-            IconButton(
-              isSelected: selectedContent == SelectedContent.workbooks,
-              icon: const Icon(
-                Icons.note_alt,
-                color: AppColors.interactiveColor,
+                        return;
+                      }
+                    },
+                  ),
+                  Text(
+                    'Ziele',
+                    style: TextStyle(
+                      color: selectedContent == SelectedContent.competenceGoals
+                          ? AppColors.accentColor
+                          : AppColors.interactiveColor,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
               ),
-              selectedIcon: const Icon(
-                Icons.note_alt,
-                color: AppColors.accentColor,
-              ),
-              onPressed: () {
-                if (selectedContent != SelectedContent.workbooks) {
-                  selectedContentNotifier.select(SelectedContent.workbooks);
+            if (di<HubSessionManager>().isTester)
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    isSelected: selectedContent == SelectedContent.workbooks,
+                    icon: const Icon(
+                      Icons.note_alt,
+                      color: AppColors.interactiveColor,
+                    ),
+                    selectedIcon: const Icon(
+                      Icons.note_alt,
+                      color: AppColors.accentColor,
+                    ),
+                    onPressed: () {
+                      if (selectedContent != SelectedContent.workbooks) {
+                        selectedContentNotifier.select(
+                          SelectedContent.workbooks,
+                        );
 
-                  return;
-                }
-              },
-            ),
-            IconButton(
-              isSelected: selectedContent == SelectedContent.books,
-              icon: const Icon(
-                Icons.book,
-                color: AppColors.interactiveColor,
+                        return;
+                      }
+                    },
+                  ),
+                  Text(
+                    'Arbeitshefte',
+                    style: TextStyle(
+                      color: selectedContent == SelectedContent.workbooks
+                          ? AppColors.accentColor
+                          : AppColors.interactiveColor,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
               ),
-              selectedIcon: const Icon(
-                Icons.book,
-                color: AppColors.accentColor,
-              ),
-              onPressed: () {
-                if (selectedContent != SelectedContent.books) {
-                  selectedContentNotifier.select(SelectedContent.books);
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  isSelected: selectedContent == SelectedContent.books,
+                  icon: const Icon(
+                    Icons.book,
+                    color: AppColors.interactiveColor,
+                  ),
+                  selectedIcon: const Icon(
+                    Icons.book,
+                    color: AppColors.accentColor,
+                  ),
+                  onPressed: () {
+                    if (selectedContent != SelectedContent.books) {
+                      selectedContentNotifier.select(SelectedContent.books);
 
-                  return;
-                }
-              },
+                      return;
+                    }
+                  },
+                ),
+                Text(
+                  'Bücher',
+                  style: TextStyle(
+                    color: selectedContent == SelectedContent.books
+                        ? AppColors.accentColor
+                        : AppColors.interactiveColor,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
             ),
           ],
         ),

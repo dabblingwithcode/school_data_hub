@@ -52,6 +52,7 @@ class HubSessionManager with ChangeNotifier {
   bool get isReady => _isReady;
 
   String? get userName => _user?.userInfo?.userName;
+  bool get isTester => _user?.userFlags.isTester ?? false;
 
   int? get userCredit => _user?.credit;
 

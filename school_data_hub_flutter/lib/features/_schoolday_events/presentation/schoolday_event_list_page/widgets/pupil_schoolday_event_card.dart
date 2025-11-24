@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
@@ -38,27 +38,23 @@ class PupilSchooldayEventCard extends StatelessWidget {
     final isAdmin = _hubSessionManager.isAdmin;
 
     return Card(
-      color:
-          !schooldayEvent.processed
-              ? AppColors.notProcessedColor
-              : AppColors.cardInCardColor,
+      color: !schooldayEvent.processed
+          ? AppColors.notProcessedColor
+          : AppColors.cardInCardColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Container(
         decoration: BoxDecoration(
-          border:
-              !schooldayEvent.processed
-                  ? Border.all(
-                    color:
-                        Colors
-                            .orangeAccent, // Specify the color of the border here
-                    width: 3, // Specify the width of the border here
-                  )
-                  : Border.all(
-                    color:
-                        AppColors
-                            .cardInCardBorderColor, // Specify the color of the border here
-                    width: 2,
-                  ),
+          border: !schooldayEvent.processed
+              ? Border.all(
+                  color: Colors
+                      .orangeAccent, // Specify the color of the border here
+                  width: 3, // Specify the width of the border here
+                )
+              : Border.all(
+                  color: AppColors
+                      .cardInCardBorderColor, // Specify the color of the border here
+                  width: 2,
+                ),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Padding(
@@ -78,52 +74,49 @@ class PupilSchooldayEventCard extends StatelessWidget {
                             children: [
                               isAuthorized
                                   ? InkWell(
-                                    onTap: () async {
-                                      DateTime? date =
-                                          await selectSchooldayDate(
-                                            context,
+                                      onTap: () async {
+                                        DateTime?
+                                        date = await selectSchooldayDate(
+                                          context,
+                                          _schoolCalendarManager.thisDate.value,
+                                        );
+                                        if (date == null) return;
+                                        final schooldayId =
                                             _schoolCalendarManager
-                                                .thisDate
-                                                .value,
-                                          );
-                                      if (date == null) return;
-                                      final schooldayId =
-                                          _schoolCalendarManager
-                                              .getSchooldayByDate(date)
-                                              ?.id;
+                                                .getSchooldayByDate(date)
+                                                ?.id;
 
-                                      await _schooldayEventManager
-                                          .updateSchooldayEvent(
-                                            eventToUpdate: schooldayEvent,
+                                        await _schooldayEventManager
+                                            .updateSchooldayEvent(
+                                              eventToUpdate: schooldayEvent,
 
-                                            schooldayId: schooldayId,
-                                          );
-                                      _notificationService.showSnackBar(
-                                        NotificationType.success,
-                                        'Ereignis als bearbeitet markiert!',
-                                      );
-                                    },
-                                    child: Text(
+                                              schooldayId: schooldayId,
+                                            );
+                                        _notificationService.showSnackBar(
+                                          NotificationType.success,
+                                          'Ereignis als bearbeitet markiert!',
+                                        );
+                                      },
+                                      child: Text(
+                                        schooldayEvent.schoolday!.schoolday
+                                            .formatDateForUser(),
+
+                                        style: const TextStyle(
+                                          color: AppColors.interactiveColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    )
+                                  : Text(
                                       schooldayEvent.schoolday!.schoolday
-                                          .formatForUser(),
-
+                                          .formatDateForUser(),
                                       style: const TextStyle(
-                                        color: AppColors.interactiveColor,
+                                        color: Colors.black,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 20,
                                       ),
                                     ),
-                                  )
-                                  : Text(
-                                    schooldayEvent.schoolday!.schoolday
-                                        .toLocalForUI()
-                                        .formatForUser(),
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                    ),
-                                  ),
                               const Gap(5),
                               InkWell(
                                 onLongPress: () {
@@ -175,40 +168,40 @@ class PupilSchooldayEventCard extends StatelessWidget {
                             // only admin can change the admonishing user
                             isAdmin
                                 ? InkWell(
-                                  onTap: () async {
-                                    final String? createdBy =
-                                        await shortTextfieldDialog(
-                                          context: context,
-                                          title: 'Erstellt von:',
-                                          labelText: 'Kürzel eingeben',
-                                          hintText: 'Kürzel eingeben',
-                                          obscureText: false,
-                                        );
-                                    if (createdBy != null) {
-                                      await _schooldayEventManager
-                                          .updateSchooldayEvent(
-                                            eventToUpdate: schooldayEvent,
-                                            createdBy: createdBy,
-                                            processed: false,
+                                    onTap: () async {
+                                      final String? createdBy =
+                                          await shortTextfieldDialog(
+                                            context: context,
+                                            title: 'Erstellt von:',
+                                            labelText: 'Kürzel eingeben',
+                                            hintText: 'Kürzel eingeben',
+                                            obscureText: false,
                                           );
-                                    }
-                                  },
-                                  child: Text(
+                                      if (createdBy != null) {
+                                        await _schooldayEventManager
+                                            .updateSchooldayEvent(
+                                              eventToUpdate: schooldayEvent,
+                                              createdBy: createdBy,
+                                              processed: false,
+                                            );
+                                      }
+                                    },
+                                    child: Text(
+                                      schooldayEvent.createdBy,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: AppColors.backgroundColor,
+                                      ),
+                                    ),
+                                  )
+                                : Text(
                                     schooldayEvent.createdBy,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18,
-                                      color: AppColors.backgroundColor,
                                     ),
                                   ),
-                                )
-                                : Text(
-                                  schooldayEvent.createdBy,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
-                                ),
                             const Gap(10),
                           ],
                         ),
@@ -260,24 +253,22 @@ class PupilSchooldayEventCard extends StatelessWidget {
                               'Dokument gelöscht!',
                             );
                           },
-                          child:
-                              schooldayEvent.processedDocumentId != null
-                                  ? DocumentImage(
-                                    documentId:
-                                        schooldayEvent
-                                            .processedDocument!
-                                            .documentId,
-                                    size: 70,
-                                  )
-                                  : SizedBox(
-                                    height: 70,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(5),
-                                      child: Image.asset(
-                                        'assets/document_camera.png',
-                                      ),
+                          child: schooldayEvent.processedDocumentId != null
+                              ? DocumentImage(
+                                  documentId: schooldayEvent
+                                      .processedDocument!
+                                      .documentId,
+                                  size: 70,
+                                )
+                              : SizedBox(
+                                  height: 70,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(5),
+                                    child: Image.asset(
+                                      'assets/document_camera.png',
                                     ),
                                   ),
+                                ),
                         ),
                       ],
                     ),
@@ -322,22 +313,20 @@ class PupilSchooldayEventCard extends StatelessWidget {
                             'Dokument gelöscht!',
                           );
                         },
-                        child:
-                            schooldayEvent.document != null
-                                ? DocumentImage(
-                                  documentId:
-                                      schooldayEvent.document!.documentId,
-                                  size: 70,
-                                )
-                                : SizedBox(
-                                  height: 70,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(5),
-                                    child: Image.asset(
-                                      'assets/document_camera.png',
-                                    ),
+                        child: schooldayEvent.document != null
+                            ? DocumentImage(
+                                documentId: schooldayEvent.document!.documentId,
+                                size: 70,
+                              )
+                            : SizedBox(
+                                height: 70,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(5),
+                                  child: Image.asset(
+                                    'assets/document_camera.png',
                                   ),
                                 ),
+                              ),
                       ),
                     ],
                   ),
@@ -395,77 +384,77 @@ class PupilSchooldayEventCard extends StatelessWidget {
                           if (schooldayEvent.processedBy != null)
                             isAdmin
                                 ? InkWell(
-                                  onTap: () async {
-                                    //-TODO: get the user from select user page
-                                    final String? processingUser =
-                                        await shortTextfieldDialog(
-                                          context: context,
-                                          title: 'Bearbeitet von:',
-                                          labelText: 'Kürzel eingeben',
-                                          hintText: 'Kürzel eingeben',
-                                          obscureText: false,
-                                        );
-                                    if (processingUser != null) {
-                                      await _schooldayEventManager
-                                          .updateSchooldayEvent(
-                                            eventToUpdate: schooldayEvent,
-                                            processedBy: (
-                                              value: processingUser,
-                                            ),
+                                    onTap: () async {
+                                      //-TODO: get the user from select user page
+                                      final String? processingUser =
+                                          await shortTextfieldDialog(
+                                            context: context,
+                                            title: 'Bearbeitet von:',
+                                            labelText: 'Kürzel eingeben',
+                                            hintText: 'Kürzel eingeben',
+                                            obscureText: false,
                                           );
-                                    }
-                                  },
-                                  child: Text(
+                                      if (processingUser != null) {
+                                        await _schooldayEventManager
+                                            .updateSchooldayEvent(
+                                              eventToUpdate: schooldayEvent,
+                                              processedBy: (
+                                                value: processingUser,
+                                              ),
+                                            );
+                                      }
+                                    },
+                                    child: Text(
+                                      schooldayEvent.processedBy!,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.interactiveColor,
+                                      ),
+                                    ),
+                                  )
+                                : Text(
                                     schooldayEvent.processedBy!,
                                     style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
-                                      color: AppColors.interactiveColor,
                                     ),
                                   ),
-                                )
-                                : Text(
-                                  schooldayEvent.processedBy!,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
                           if (schooldayEvent.processedAt != null) const Gap(10),
                           if (schooldayEvent.processedAt != null)
                             _hubSessionManager.isAdmin
                                 ? InkWell(
-                                  onTap: () async {
-                                    final DateTime? newDate =
-                                        await selectSchooldayDate(
-                                          context,
-                                          DateTime.now(),
-                                        );
-
-                                    if (newDate != null) {
-                                      await _schooldayEventManager
-                                          .updateSchooldayEvent(
-                                            eventToUpdate: schooldayEvent,
-                                            processedAt: (value: newDate),
+                                    onTap: () async {
+                                      final DateTime? newDate =
+                                          await selectSchooldayDate(
+                                            context,
+                                            DateTime.now(),
                                           );
-                                    }
-                                  },
-                                  child: Text(
-                                    'am ${schooldayEvent.processedAt!.toLocalForUI().formatForUser()}',
+
+                                      if (newDate != null) {
+                                        await _schooldayEventManager
+                                            .updateSchooldayEvent(
+                                              eventToUpdate: schooldayEvent,
+                                              processedAt: (value: newDate),
+                                            );
+                                      }
+                                    },
+                                    child: Text(
+                                      'am ${schooldayEvent.processedAt!.formatDateForUser()}',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: AppColors.interactiveColor,
+                                      ),
+                                    ),
+                                  )
+                                : Text(
+                                    'am ${schooldayEvent.processedAt!.formatDateForUser()}',
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18,
-                                      color: AppColors.interactiveColor,
                                     ),
                                   ),
-                                )
-                                : Text(
-                                  'am ${schooldayEvent.processedAt!.toLocalForUI().formatForUser()}',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
-                                ),
                         ],
                       ),
                     ),

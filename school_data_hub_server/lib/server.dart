@@ -5,16 +5,17 @@ import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:school_data_hub_server/src/future_calls/database_backup_future_call.dart';
 import 'package:school_data_hub_server/src/future_calls/increase_credit_future_call.dart';
+import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/helpers/create_local_storage_directories.dart';
 import 'package:school_data_hub_server/src/helpers/populate_test_environment.dart';
 import 'package:school_data_hub_server/src/utils/local_storage.dart';
 import 'package:school_data_hub_server/src/utils/logger/logrecord_formatter.dart';
+import 'package:school_data_hub_server/src/utils/mailer.dart';
 import 'package:school_data_hub_server/src/web/routes/root.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
 
 import 'src/generated/endpoints.dart';
-import 'src/generated/protocol.dart';
 
 // This is the starting point of your Serverpod server. In most cases, you will
 // only need to make additions to this file if you add future calls,  are
@@ -56,7 +57,14 @@ void run(List<String> args) async {
     Endpoints(),
     authenticationHandler: auth.authenticationHandler,
   );
-
+  pod.loadCustomPasswords([
+    (envName: 'MATRIX_SERVER_URL', alias: 'matrixServerUrl'),
+    (envName: 'MATRIX_AUTH_TOKEN', alias: 'matrixAuthToken'),
+    (envName: 'SERVERPOD_MAIL_USERNAME', alias: 'emailUsername'),
+    (envName: 'SERVERPOD_MAIL_PASSWORD', alias: 'emailPassword'),
+    (envName: 'SERVERPOD_MAIL_SMTP_HOST', alias: 'emailSmtpHost'),
+    (envName: 'SERVERPOD_MAIL_ADMIN', alias: 'emailAdmin'),
+  ]);
   // Configure storage with environment-aware paths
   String storageBasePath;
 
@@ -101,8 +109,51 @@ void run(List<String> args) async {
 
   var session = await pod.createSession();
 
+  // Initialize MailerService from environment variables if available
+  final mailUsername = Serverpod.instance.getPassword('emailUsername');
+  final mailPassword = Serverpod.instance.getPassword('emailPassword');
+  final mailSmtpHost = Serverpod.instance.getPassword('emailSmtpHost');
+
+  bool mailerInitialized = false;
+
+  if (mailUsername != null &&
+      mailPassword != null &&
+      mailSmtpHost != null &&
+      mailUsername.isNotEmpty &&
+      mailPassword.isNotEmpty &&
+      mailSmtpHost.isNotEmpty) {
+    try {
+      MailerService.instance.initialize(
+        username: mailUsername,
+        password: mailPassword,
+        smtpHost: mailSmtpHost,
+        smtpPort: 587, // Hardcoded as per requirements
+        fromName: 'Schuldaten Benachrichtigungen',
+        defaultRecipient: '',
+      );
+      mailerInitialized = true;
+      _logger.info(
+          'MailerService initialized successfully from environment variables');
+    } catch (e) {
+      _logger.severe('Failed to initialize MailerService: $e');
+    }
+  }
+
+  // Try to initialize from session passwords as fallback
+  if (!mailerInitialized) {
+    final initialized = MailerService.instance.initializeFromSession(session);
+    if (initialized) {
+      mailerInitialized = true;
+      _logger.info(
+          'MailerService initialized successfully from session passwords');
+    } else {
+      _logger.warning(
+          'Mail configuration not found in session passwords. Email functionality will not be available.');
+    }
+  }
+
   // Check if there are any users in the database. If not, we need to populate the test environment.
-  final userCount = await auth.UserInfo.db.count(session);
+  final userCount = await session.db.count<User>();
   _logger.info('Current user count in database: $userCount');
 
   final adminUser = await auth.UserInfo.db.findFirstRow(
@@ -132,22 +183,28 @@ void run(List<String> args) async {
   );
 
   // Send startup notification email
-  // try {
-  //   MailerService.instance.initializeFromSession(session);
-  //   final success = await MailerService.instance.sendNotification(
-  //     recipient: '',
-  //     subject: 'Server Started',
-  //     message: 'School Data Hub Server has started successfully.\n\n'
-  //         'Timestamp: ${DateTime.now().toIso8601String()}\n'
-  //         'User count: $userCount',
-  //   );
+  try {
+    final emailAdmin = Serverpod.instance.getPassword('emailAdmin');
+    if (emailAdmin != null && emailAdmin.isNotEmpty) {
+      final success = await MailerService.instance.sendNotification(
+        recipient: emailAdmin,
+        subject: 'Server Started',
+        message: 'School Data Hub Server has started successfully.\n\n'
+            'Timestamp: ${DateTime.now().toIso8601String()}\n'
+            'User count: $userCount',
+      );
 
-  //   if (success) {
-  //     _logger.info('Startup notification email sent successfully');
-  //   } else {
-  //     _logger.severe('Failed to send startup notification email');
-  //   }
-  // } catch (e) {
-  //   _logger.severe('Error sending startup notification email: $e');
-  // }
+      if (success) {
+        _logger.info('Startup notification email sent successfully');
+      } else {
+        _logger.warning(
+            'Failed to send startup notification email (service may not be initialized)');
+      }
+    } else {
+      _logger.info(
+          'Email admin address not configured, skipping startup notification');
+    }
+  } catch (e) {
+    _logger.severe('Error sending startup notification email: $e');
+  }
 }

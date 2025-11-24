@@ -21,10 +21,10 @@ class PupilProfileAttendanceContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final missedHoursForActualReport =
         AttendanceHelper.missedHoursforSemesterOrSchoolyear(pupil);
-    List<MissedSchoolday> missedSchooldays =
-        _attendanceManager
-            .getPupilMissedSchooldaysProxy(pupil.pupilId)
-            .missedSchooldays;
+
+    List<MissedSchoolday> missedSchooldays = _attendanceManager
+        .getPupilMissedSchooldaysProxy(pupil.pupilId)
+        .missedSchooldays;
     // sort by missedDay
     missedSchooldays.sort(
       (b, a) => a.schoolday!.schoolday.compareTo(b.schoolday!.schoolday),
@@ -49,8 +49,8 @@ class PupilProfileAttendanceContent extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder:
-                            (ctx) => const MissedSchooldayesPupilListPage(),
+                        builder: (ctx) =>
+                            const MissedSchooldayesPupilListPage(),
                       ),
                     );
                   },

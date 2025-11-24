@@ -10,13 +10,11 @@ class TimetableSlotEndpoint extends Endpoint {
   Future<TimetableSlot> createTimetableSlot(
       Session session, TimetableSlot timetableSlot) async {
     // Validate that the timetable exists
-    if (timetableSlot.timetableId != null) {
-      final timetable =
-          await Timetable.db.findById(session, timetableSlot.timetableId!);
-      if (timetable == null) {
-        throw Exception(
-            'Timetable with id ${timetableSlot.timetableId} does not exist.');
-      }
+    final timetable =
+        await Timetable.db.findById(session, timetableSlot.timetableId);
+    if (timetable == null) {
+      throw Exception(
+          'Timetable with id ${timetableSlot.timetableId} does not exist.');
     }
 
     final timetableSlotInDatabase =

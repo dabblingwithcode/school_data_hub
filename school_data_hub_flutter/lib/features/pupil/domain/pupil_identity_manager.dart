@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
@@ -137,8 +137,8 @@ class PupilIdentityManager {
 
     // We check now if the identities are outdated
 
-    final lastIdentitiesUpdate =
-        await PupilDataApiService().fetchLastIdentitiesUpdate();
+    final lastIdentitiesUpdate = await PupilDataApiService()
+        .fetchLastIdentitiesUpdate();
     if (lastIdentitiesUpdate != null &&
         activeEnv.lastIdentitiesUpdate != null) {
       if (lastIdentitiesUpdate.isAfter(activeEnv.lastIdentitiesUpdate!)) {
@@ -209,8 +209,9 @@ class PupilIdentityManager {
     await writePupilIdentitiesToStorage();
 
     if (updateGroupFilters) {
-      final availableGroups =
-          _pupilIdentities.values.map((e) => e.group).toSet();
+      final availableGroups = _pupilIdentities.values
+          .map((e) => e.group)
+          .toSet();
       _groups.value = availableGroups;
       di<PupilsFilter>().populateGroupFilters(availableGroups.toList());
     }
@@ -257,8 +258,9 @@ class PupilIdentityManager {
 
         importedPupilIdentityList.add(pupilIdentity);
 
-        final bool ogsStatus =
-            pupilIdentityValues[14] == 'OFFGANZ' ? true : false;
+        final bool ogsStatus = pupilIdentityValues[14] == 'OFFGANZ'
+            ? true
+            : false;
 
         final idAndOgsStatus =
             '${int.parse(pupilIdentityValues[0])},$ogsStatus';
@@ -310,10 +312,9 @@ class PupilIdentityManager {
     );
 
     await ClientHelper.apiCall(
-      call:
-          () => di<Client>().pupilIdentity.updateLastPupilIdentitiesUpdate(
-            DateTime.now().toUtc(),
-          ),
+      call: () => di<Client>().pupilIdentity.updateLastPupilIdentitiesUpdate(
+        DateTime.now().toUtc(),
+      ),
       errorMessage: 'Die letzte Aktualisierung konnte nicht gespeichert werden',
     );
 
@@ -340,21 +341,19 @@ class PupilIdentityManager {
     }
     _notificationService.showSnackBar(
       NotificationType.success,
-      'Letzte Aktualisierung: ${lastUpdate.formatForJson()}',
+      'Letzte Aktualisierung: ${lastUpdate.formatDateForUser()}',
     );
   }
 
   Future<String> generatePupilIdentitiesQrData(List<int> internalIds) async {
     String qrString = '';
     for (int internalId in internalIds) {
-      PupilIdentity pupilIdentity =
-          _pupilIdentities.values
-              .where((element) => element.id == internalId)
-              .single;
-      final migrationSupportEnds =
-          pupilIdentity.migrationSupportEnds != null
-              ? pupilIdentity.migrationSupportEnds!.formatForJson()
-              : '';
+      PupilIdentity pupilIdentity = _pupilIdentities.values
+          .where((element) => element.id == internalId)
+          .single;
+      final migrationSupportEnds = pupilIdentity.migrationSupportEnds != null
+          ? pupilIdentity.migrationSupportEnds!.formatDateForJson()
+          : '';
       // We need
       final specialNeeds = pupilIdentity.specialNeeds ?? '';
       final family = pupilIdentity.family ?? '';
@@ -372,13 +371,13 @@ class PupilIdentityManager {
             pupilIdentity.gender,
             pupilIdentity.language,
             family,
-            pupilIdentity.birthday.formatForJson(),
+            pupilIdentity.birthday.formatDateForJson(),
             migrationSupportEnds,
-            pupilIdentity.pupilSince.formatForJson(),
+            pupilIdentity.pupilSince.formatDateForJson(),
             pupilIdentity.afterSchoolCare,
             pupilIdentity.religion ?? '',
-            pupilIdentity.religionLessonsSince?.formatForJson() ?? '',
-            pupilIdentity.leavingDate?.formatForJson() ?? '',
+            pupilIdentity.religionLessonsSince?.formatDateForJson() ?? '',
+            pupilIdentity.leavingDate?.formatDateForJson() ?? '',
           ].join(',') +
           ',\n';
       qrString = qrString + pupilIdentityString;
@@ -469,8 +468,9 @@ class PupilIdentityManager {
                     break;
                   case 'confirmed':
                     // Check if confirmation is for a specific user
-                    final targetUser =
-                        event.value.isNotEmpty ? event.value : null;
+                    final targetUser = event.value.isNotEmpty
+                        ? event.value
+                        : null;
                     if (targetUser == null) {
                       // Legacy: no targeting, proceed for any receiver
                       if (onRequestConfirmed != null) {

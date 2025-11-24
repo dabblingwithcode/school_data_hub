@@ -2,26 +2,30 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/models/schoolday_event_enums.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:watch_it/watch_it.dart';
-
-final _filtersStateManager = di<FiltersStateManager>();
-
-final _pupilsFilter = di<PupilsFilter>();
 
 typedef SchooldayEventFilterRecord = ({
   SchooldayEventFilter filter,
-  bool value
+  bool value,
 });
 
 class SchooldayEventFilterManager {
+  // Lazy getters to avoid circular dependency issues during initialization
+  FiltersStateManager get _filtersStateManager => di<FiltersStateManager>();
+  PupilsFilter get _pupilsFilter => di<PupilsFilter>();
+  SchooldayEventManager get _schooldayEventManager =>
+      di<SchooldayEventManager>();
+
   final _schooldayEventsFilterState =
       ValueNotifier<Map<SchooldayEventFilter, bool>>(
-          initialSchooldayEventFilterValues);
+        initialSchooldayEventFilterValues,
+      );
 
   ValueListenable<Map<SchooldayEventFilter, bool>>
-      get schooldayEventsFilterState => _schooldayEventsFilterState;
+  get schooldayEventsFilterState => _schooldayEventsFilterState;
 
   final _pupilIdsWithFilteredSchooldayEvents = ValueNotifier<Set<int>>({});
   ValueListenable<Set<int>> get pupilIdsWithFilteredSchooldayEvents =>
@@ -29,14 +33,17 @@ class SchooldayEventFilterManager {
 
   SchooldayEventFilterManager();
 
-  resetFilters() {
+  void resetFilters() {
     _schooldayEventsFilterState.value = {...initialSchooldayEventFilterValues};
     _filtersStateManager.setFilterState(
-        filterState: FilterState.schooldayEvent, value: false);
+      filterState: FilterState.schooldayEvent,
+      value: false,
+    );
   }
 
-  void setFilter(
-      {required List<SchooldayEventFilterRecord> schooldayEventFilters}) {
+  void setFilter({
+    required List<SchooldayEventFilterRecord> schooldayEventFilters,
+  }) {
     for (SchooldayEventFilterRecord record in schooldayEventFilters) {
       _schooldayEventsFilterState.value = {
         ..._schooldayEventsFilterState.value,
@@ -45,18 +52,25 @@ class SchooldayEventFilterManager {
     }
 
     final schooldayEventFiltesStateEqualsInitialValues = const MapEquality()
-        .equals(_schooldayEventsFilterState.value,
-            initialSchooldayEventFilterValues);
+        .equals(
+          _schooldayEventsFilterState.value,
+          initialSchooldayEventFilterValues,
+        );
 
     _filtersStateManager.setFilterState(
-        filterState: FilterState.schooldayEvent,
-        value: !schooldayEventFiltesStateEqualsInitialValues);
+      filterState: FilterState.schooldayEvent,
+      value: !schooldayEventFiltesStateEqualsInitialValues,
+    );
+
+    // Filter the schoolday events and populate the pupil IDs set
+    filteredSchooldayEvents(_schooldayEventManager.schooldayEvents);
 
     _pupilsFilter.refreshs();
   }
 
   List<SchooldayEvent> filteredSchooldayEvents(
-      List<SchooldayEvent> schooldayEvents) {
+    List<SchooldayEvent> schooldayEvents,
+  ) {
     List<SchooldayEvent> filteredSchooldayEvents = [];
     Set<int> filteredPupilIds = {};
 
@@ -152,8 +166,9 @@ class SchooldayEventFilterManager {
       complementaryFilter = false;
 
       if (activeFilters[SchooldayEventFilter.violenceAgainstPupils]!) {
-        if (schooldayEvent.eventReason
-            .contains(SchooldayEventReason.violenceAgainstPupils.value)) {
+        if (schooldayEvent.eventReason.contains(
+          SchooldayEventReason.violenceAgainstPupils.value,
+        )) {
           isMatched = true;
           complementaryFilter = true;
         } else if (!complementaryFilter) {
@@ -162,8 +177,9 @@ class SchooldayEventFilterManager {
       }
 
       if (activeFilters[SchooldayEventFilter.violenceAgainstAdults]!) {
-        if (schooldayEvent.eventReason
-            .contains(SchooldayEventReason.violenceAgainstTeachers.value)) {
+        if (schooldayEvent.eventReason.contains(
+          SchooldayEventReason.violenceAgainstTeachers.value,
+        )) {
           isMatched = true;
           complementaryFilter = true;
         } else if (!complementaryFilter) {
@@ -171,8 +187,9 @@ class SchooldayEventFilterManager {
         }
       }
       if (activeFilters[SchooldayEventFilter.violenceAgainstThings]!) {
-        if (schooldayEvent.eventReason
-            .contains(SchooldayEventReason.violenceAgainstThings.value)) {
+        if (schooldayEvent.eventReason.contains(
+          SchooldayEventReason.violenceAgainstThings.value,
+        )) {
           isMatched = true;
           complementaryFilter = true;
         } else if (!complementaryFilter) {
@@ -180,8 +197,9 @@ class SchooldayEventFilterManager {
         }
       }
       if (activeFilters[SchooldayEventFilter.insultOthers]!) {
-        if (schooldayEvent.eventReason
-            .contains(SchooldayEventReason.insultOthers.value)) {
+        if (schooldayEvent.eventReason.contains(
+          SchooldayEventReason.insultOthers.value,
+        )) {
           isMatched = true;
           complementaryFilter = true;
         } else if (!complementaryFilter) {
@@ -189,8 +207,9 @@ class SchooldayEventFilterManager {
         }
       }
       if (activeFilters[SchooldayEventFilter.annoy]!) {
-        if (schooldayEvent.eventReason
-            .contains(SchooldayEventReason.annoyOthers.value)) {
+        if (schooldayEvent.eventReason.contains(
+          SchooldayEventReason.annoyOthers.value,
+        )) {
           isMatched = true;
           complementaryFilter = true;
         } else if (!complementaryFilter) {
@@ -198,8 +217,9 @@ class SchooldayEventFilterManager {
         }
       }
       if (activeFilters[SchooldayEventFilter.dangerousBehaviour]!) {
-        if (schooldayEvent.eventReason
-            .contains(SchooldayEventReason.dangerousBehaviour.value)) {
+        if (schooldayEvent.eventReason.contains(
+          SchooldayEventReason.dangerousBehaviour.value,
+        )) {
           isMatched = true;
           complementaryFilter = true;
         } else if (!complementaryFilter) {
@@ -207,8 +227,9 @@ class SchooldayEventFilterManager {
         }
       }
       if (activeFilters[SchooldayEventFilter.disturbLesson]!) {
-        if (schooldayEvent.eventReason
-            .contains(SchooldayEventReason.disturbLesson.value)) {
+        if (schooldayEvent.eventReason.contains(
+          SchooldayEventReason.disturbLesson.value,
+        )) {
           isMatched = true;
           complementaryFilter = true;
         } else if (!complementaryFilter) {
@@ -216,8 +237,9 @@ class SchooldayEventFilterManager {
         }
       }
       if (activeFilters[SchooldayEventFilter.ignoreInstructions]!) {
-        if (schooldayEvent.eventReason
-            .contains(SchooldayEventReason.ignoreInstructions.value)) {
+        if (schooldayEvent.eventReason.contains(
+          SchooldayEventReason.ignoreInstructions.value,
+        )) {
           isMatched = true;
           complementaryFilter = true;
         } else if (!complementaryFilter) {
@@ -225,8 +247,9 @@ class SchooldayEventFilterManager {
         }
       }
       if (activeFilters[SchooldayEventFilter.learningDevelopmentInfo]!) {
-        if (schooldayEvent.eventReason
-            .contains(SchooldayEventReason.learningDevelopmentInfo.value)) {
+        if (schooldayEvent.eventReason.contains(
+          SchooldayEventReason.learningDevelopmentInfo.value,
+        )) {
           isMatched = true;
           complementaryFilter = true;
         } else if (!complementaryFilter) {
@@ -234,8 +257,9 @@ class SchooldayEventFilterManager {
         }
       }
       if (activeFilters[SchooldayEventFilter.learningSupportInfo]!) {
-        if (schooldayEvent.eventReason
-            .contains(SchooldayEventReason.learningSupportInfo.value)) {
+        if (schooldayEvent.eventReason.contains(
+          SchooldayEventReason.learningSupportInfo.value,
+        )) {
           isMatched = true;
           complementaryFilter = true;
         } else if (!complementaryFilter) {
@@ -243,8 +267,9 @@ class SchooldayEventFilterManager {
         }
       }
       if (activeFilters[SchooldayEventFilter.admonitionInfo]!) {
-        if (schooldayEvent.eventReason
-            .contains(SchooldayEventReason.admonitionInfo.value)) {
+        if (schooldayEvent.eventReason.contains(
+          SchooldayEventReason.admonitionInfo.value,
+        )) {
           isMatched = true;
           complementaryFilter = true;
         } else if (!complementaryFilter) {
@@ -252,8 +277,9 @@ class SchooldayEventFilterManager {
         }
       }
       if (activeFilters[SchooldayEventFilter.other]!) {
-        if (schooldayEvent.eventReason
-            .contains(SchooldayEventReason.other.value)) {
+        if (schooldayEvent.eventReason.contains(
+          SchooldayEventReason.other.value,
+        )) {
           isMatched = true;
           complementaryFilter = true;
         } else if (!complementaryFilter) {
@@ -271,11 +297,14 @@ class SchooldayEventFilterManager {
 
     if (filterIsActive) {
       _filtersStateManager.setFilterState(
-          filterState: FilterState.schooldayEvent, value: true);
+        filterState: FilterState.schooldayEvent,
+        value: true,
+      );
     }
     // sort schooldayEvents, latest first
     filteredSchooldayEvents.sort(
-        (a, b) => b.schoolday!.schoolday.compareTo(a.schoolday!.schoolday));
+      (a, b) => b.schoolday!.schoolday.compareTo(a.schoolday!.schoolday),
+    );
     _pupilIdsWithFilteredSchooldayEvents.value = filteredPupilIds;
     return filteredSchooldayEvents;
   }

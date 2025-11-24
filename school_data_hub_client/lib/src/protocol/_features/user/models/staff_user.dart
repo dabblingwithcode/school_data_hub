@@ -24,11 +24,13 @@ abstract class User implements _i1.SerializableModel {
     required this.userInfoId,
     this.userInfo,
     required this.role,
+    this.matrixUserId,
     required this.timeUnits,
     required this.reliefTimeUnits,
     this.scheduledLessonsTeacher,
     this.lessonsTeacher,
     this.pupilsAuth,
+    this.schooldayEventsProcessingTeam,
     required this.credit,
     required this.userFlags,
   });
@@ -38,11 +40,13 @@ abstract class User implements _i1.SerializableModel {
     required int userInfoId,
     _i2.UserInfo? userInfo,
     required _i3.Role role,
+    String? matrixUserId,
     required int timeUnits,
     required int reliefTimeUnits,
     List<_i4.ScheduledLessonTeacher>? scheduledLessonsTeacher,
     List<_i5.LessonTeacher>? lessonsTeacher,
     Set<int>? pupilsAuth,
+    String? schooldayEventsProcessingTeam,
     required int credit,
     required _i6.UserFlags userFlags,
   }) = _UserImpl;
@@ -56,6 +60,7 @@ abstract class User implements _i1.SerializableModel {
           : _i2.UserInfo.fromJson(
               (jsonSerialization['userInfo'] as Map<String, dynamic>)),
       role: _i3.Role.fromJson((jsonSerialization['role'] as String)),
+      matrixUserId: jsonSerialization['matrixUserId'] as String?,
       timeUnits: jsonSerialization['timeUnits'] as int,
       reliefTimeUnits: jsonSerialization['reliefTimeUnits'] as int,
       scheduledLessonsTeacher: (jsonSerialization['scheduledLessonsTeacher']
@@ -71,6 +76,8 @@ abstract class User implements _i1.SerializableModel {
           : _i1.SetJsonExtension.fromJson(
               (jsonSerialization['pupilsAuth'] as List),
               itemFromJson: (e) => e as int),
+      schooldayEventsProcessingTeam:
+          jsonSerialization['schooldayEventsProcessingTeam'] as String?,
       credit: jsonSerialization['credit'] as int,
       userFlags: _i6.UserFlags.fromJson(
           (jsonSerialization['userFlags'] as Map<String, dynamic>)),
@@ -88,6 +95,8 @@ abstract class User implements _i1.SerializableModel {
 
   _i3.Role role;
 
+  String? matrixUserId;
+
   int timeUnits;
 
   int reliefTimeUnits;
@@ -97,6 +106,8 @@ abstract class User implements _i1.SerializableModel {
   List<_i5.LessonTeacher>? lessonsTeacher;
 
   Set<int>? pupilsAuth;
+
+  String? schooldayEventsProcessingTeam;
 
   int credit;
 
@@ -110,11 +121,13 @@ abstract class User implements _i1.SerializableModel {
     int? userInfoId,
     _i2.UserInfo? userInfo,
     _i3.Role? role,
+    String? matrixUserId,
     int? timeUnits,
     int? reliefTimeUnits,
     List<_i4.ScheduledLessonTeacher>? scheduledLessonsTeacher,
     List<_i5.LessonTeacher>? lessonsTeacher,
     Set<int>? pupilsAuth,
+    String? schooldayEventsProcessingTeam,
     int? credit,
     _i6.UserFlags? userFlags,
   });
@@ -125,6 +138,7 @@ abstract class User implements _i1.SerializableModel {
       'userInfoId': userInfoId,
       if (userInfo != null) 'userInfo': userInfo?.toJson(),
       'role': role.toJson(),
+      if (matrixUserId != null) 'matrixUserId': matrixUserId,
       'timeUnits': timeUnits,
       'reliefTimeUnits': reliefTimeUnits,
       if (scheduledLessonsTeacher != null)
@@ -134,6 +148,8 @@ abstract class User implements _i1.SerializableModel {
         'lessonsTeacher':
             lessonsTeacher?.toJson(valueToJson: (v) => v.toJson()),
       if (pupilsAuth != null) 'pupilsAuth': pupilsAuth?.toJson(),
+      if (schooldayEventsProcessingTeam != null)
+        'schooldayEventsProcessingTeam': schooldayEventsProcessingTeam,
       'credit': credit,
       'userFlags': userFlags.toJson(),
     };
@@ -153,11 +169,13 @@ class _UserImpl extends User {
     required int userInfoId,
     _i2.UserInfo? userInfo,
     required _i3.Role role,
+    String? matrixUserId,
     required int timeUnits,
     required int reliefTimeUnits,
     List<_i4.ScheduledLessonTeacher>? scheduledLessonsTeacher,
     List<_i5.LessonTeacher>? lessonsTeacher,
     Set<int>? pupilsAuth,
+    String? schooldayEventsProcessingTeam,
     required int credit,
     required _i6.UserFlags userFlags,
   }) : super._(
@@ -165,11 +183,13 @@ class _UserImpl extends User {
           userInfoId: userInfoId,
           userInfo: userInfo,
           role: role,
+          matrixUserId: matrixUserId,
           timeUnits: timeUnits,
           reliefTimeUnits: reliefTimeUnits,
           scheduledLessonsTeacher: scheduledLessonsTeacher,
           lessonsTeacher: lessonsTeacher,
           pupilsAuth: pupilsAuth,
+          schooldayEventsProcessingTeam: schooldayEventsProcessingTeam,
           credit: credit,
           userFlags: userFlags,
         );
@@ -183,11 +203,13 @@ class _UserImpl extends User {
     int? userInfoId,
     Object? userInfo = _Undefined,
     _i3.Role? role,
+    Object? matrixUserId = _Undefined,
     int? timeUnits,
     int? reliefTimeUnits,
     Object? scheduledLessonsTeacher = _Undefined,
     Object? lessonsTeacher = _Undefined,
     Object? pupilsAuth = _Undefined,
+    Object? schooldayEventsProcessingTeam = _Undefined,
     int? credit,
     _i6.UserFlags? userFlags,
   }) {
@@ -197,6 +219,7 @@ class _UserImpl extends User {
       userInfo:
           userInfo is _i2.UserInfo? ? userInfo : this.userInfo?.copyWith(),
       role: role ?? this.role,
+      matrixUserId: matrixUserId is String? ? matrixUserId : this.matrixUserId,
       timeUnits: timeUnits ?? this.timeUnits,
       reliefTimeUnits: reliefTimeUnits ?? this.reliefTimeUnits,
       scheduledLessonsTeacher: scheduledLessonsTeacher
@@ -209,6 +232,9 @@ class _UserImpl extends User {
       pupilsAuth: pupilsAuth is Set<int>?
           ? pupilsAuth
           : this.pupilsAuth?.map((e0) => e0).toSet(),
+      schooldayEventsProcessingTeam: schooldayEventsProcessingTeam is String?
+          ? schooldayEventsProcessingTeam
+          : this.schooldayEventsProcessingTeam,
       credit: credit ?? this.credit,
       userFlags: userFlags ?? this.userFlags.copyWith(),
     );

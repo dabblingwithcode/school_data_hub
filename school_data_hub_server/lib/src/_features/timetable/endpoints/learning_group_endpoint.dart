@@ -10,13 +10,11 @@ class LearningGroupEndpoint extends Endpoint {
   Future<LessonGroup> createLessonGroup(
       Session session, LessonGroup lessonGroup) async {
     // Validate that the timetable exists if provided
-    if (lessonGroup.timetableId != null) {
-      final timetable =
-          await Timetable.db.findById(session, lessonGroup.timetableId!);
-      if (timetable == null) {
-        throw Exception(
-            'Timetable with id ${lessonGroup.timetableId} does not exist.');
-      }
+    final timetable =
+        await Timetable.db.findById(session, lessonGroup.timetableId);
+    if (timetable == null) {
+      throw Exception(
+          'Timetable with id ${lessonGroup.timetableId} does not exist.');
     }
 
     final lessonGroupInDatabase =

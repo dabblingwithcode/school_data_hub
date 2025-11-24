@@ -10,6 +10,8 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/l
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/matrix_users_list_page.dart';
 import 'package:school_data_hub_flutter/features/ogs/ogs_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/credit_list_page.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/family_language_lessons_page/family_language_lessons_list_page.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/religion_page/religion_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/special_info_page/special_info_list_page.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
@@ -71,7 +73,7 @@ class PupilListButtons extends WatchingWidget {
           ),
           buttonText: locale.pupilCredit,
         ),
-        if (isReady && isTester)
+        if (isReady)
           MainMenuButton(
             destinationPage: const LearningPupilListPage(),
             buttonIcon: const Icon(
@@ -99,19 +101,53 @@ class PupilListButtons extends WatchingWidget {
           ),
           buttonText: locale.specialInfo,
         ),
-        if (isReady && isTester)
-          MainMenuButton(
-            destinationPage: const OgsListPage(),
-            buttonIcon: Text(
-              locale.allDayCare,
-              style: const TextStyle(
-                fontSize: 35,
+        const MainMenuButton(
+          destinationPage: const ReligionListPage(),
+          buttonIcon: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Icon(
+                Icons.mosque_rounded,
+                size: 50,
                 color: AppColors.gridViewColor,
-                fontWeight: FontWeight.bold,
               ),
-            ),
-            buttonText: locale.allDayCare,
+              Icon(
+                Icons.church_rounded,
+                size: 50,
+                color: AppColors.gridViewColor,
+              ),
+            ],
           ),
+          buttonText: 'Reli-Unterricht',
+        ),
+        const MainMenuButton(
+          destinationPage: const FamilyLanguageLessonsListPage(),
+          buttonIcon: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Icon(
+                Icons.translate_rounded,
+                size: 50,
+                color: AppColors.gridViewColor,
+              ),
+            ],
+          ),
+          buttonText: 'HSU',
+        ),
+        MainMenuButton(
+          destinationPage: const OgsListPage(),
+          buttonIcon: Text(
+            locale.allDayCare,
+            style: const TextStyle(
+              fontSize: 35,
+              color: AppColors.gridViewColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          buttonText: locale.allDayCare,
+        ),
         if (matrixSessionConfigured)
           MainMenuButton(
             destinationPage: const MatrixUsersListPage(),

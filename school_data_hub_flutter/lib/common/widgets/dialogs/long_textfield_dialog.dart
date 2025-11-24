@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 
-Future<String?> longTextFieldDialog(
-    {required String title,
-    required String? initialValue,
-    required String labelText,
-    required BuildContext parentContext}) async {
+Future<String?> longTextFieldDialog({
+  required String title,
+  required String? initialValue,
+  required String labelText,
+  required BuildContext parentContext,
+}) async {
   return await showDialog(
-      context: parentContext,
-      builder: (context) {
-        return StatefulBuilder(builder: (statefulContext, setState) {
+    context: parentContext,
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (statefulContext, setState) {
           final TextEditingController textEditingController =
               TextEditingController();
           setState(() {
@@ -30,18 +32,19 @@ Future<String?> longTextFieldDialog(
                       style: const TextStyle(fontSize: 17),
                       keyboardType: TextInputType.multiline,
                       controller: textEditingController,
-                      decoration:
-                          AppStyles.textFieldDecoration(labelText: labelText),
+                      decoration: AppStyles.textFieldDecoration(
+                        labelText: labelText,
+                      ),
                     ),
                   ),
                 ),
               ],
             ),
-            title: Text(title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                )),
+            title: Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
             actions: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(5.0),
@@ -58,23 +61,23 @@ Future<String?> longTextFieldDialog(
                   ),
                 ),
               ),
-              initialValue != null
-                  ? Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: ElevatedButton(
-                        style: AppStyles.actionButtonStyle,
-                        onPressed: () {
-                          textEditingController.dispose();
-                          Navigator.of(parentContext).pop(null);
-                          return;
-                        }, // Add onPressed
-                        child: const Text(
-                          "LÖSCHEN",
-                          style: AppStyles.buttonTextStyle,
-                        ),
-                      ),
-                    )
-                  : const SizedBox.shrink(),
+              // initialValue != null
+              //     ? Padding(
+              //         padding: const EdgeInsets.all(5.0),
+              //         child: ElevatedButton(
+              //           style: AppStyles.actionButtonStyle,
+              //           onPressed: () {
+              //             textEditingController.dispose();
+              //             Navigator.of(parentContext).pop(null);
+              //             return;
+              //           }, // Add onPressed
+              //           child: const Text(
+              //             "LÖSCHEN",
+              //             style: AppStyles.buttonTextStyle,
+              //           ),
+              //         ),
+              //       )
+              //     : const SizedBox.shrink(),
               Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: ElevatedButton(
@@ -89,14 +92,13 @@ Future<String?> longTextFieldDialog(
                     textEditingController.dispose();
                     Navigator.of(parentContext).pop(newSpecialInformation);
                   }, // Add onPressed
-                  child: const Text(
-                    "OK",
-                    style: AppStyles.buttonTextStyle,
-                  ),
+                  child: const Text("OK", style: AppStyles.buttonTextStyle),
                 ),
               ),
             ],
           );
-        });
-      });
+        },
+      );
+    },
+  );
 }

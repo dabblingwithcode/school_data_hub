@@ -7,8 +7,6 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _pupilIdentityManager = di<PupilIdentityManager>();
-
 class BarcodeStreamScanner extends StatefulWidget {
   const BarcodeStreamScanner({super.key});
 
@@ -20,6 +18,7 @@ class _BarcodeStreamScannerState extends State<BarcodeStreamScanner> {
   final MobileScannerController controller = MobileScannerController(
     torchEnabled: false,
   );
+  final _pupilIdentityManager = di<PupilIdentityManager>();
 
   int _counter = 0;
   final List<String> _scannedQrCodes = [];

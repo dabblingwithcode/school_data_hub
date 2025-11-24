@@ -4,11 +4,15 @@ table: user
 fields:
   userInfo: module:auth:UserInfo?, relation(onDelete=Cascade)
   role: Role
+  matrixUserId: String?
   timeUnits: int
   reliefTimeUnits: int
   scheduledLessonsTeacher: List<ScheduledLessonTeacher>?, relation(name=user_scheduled_lesson)
   lessonsTeacher: List<LessonTeacher>?, relation(name=user_lesson)
   pupilsAuth: Set<int>?
+  ## DEPRECATED: schoolday events processing team is deprecated and will be removed in the future
+  ## Use scopes instead
+  schooldayEventsProcessingTeam: String?
   credit: int
   userFlags: UserFlags
 indexes:

@@ -5,6 +5,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/data/pupil_data_api_service.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
@@ -337,6 +338,77 @@ class PupilMutator {
       return;
     }
 
+    _pupilManager.updatePupilProxyWithPupilData(updatedPupil);
+  }
+
+  Future<void> updateAfterSchoolCare({
+    required int pupilId,
+    ({String? value})? afterSchoolCareInfo,
+    ({bool? value})? emergencyCare,
+    ({AfterSchoolCareWeekday? value})? weekday,
+    String? time,
+    String? modality,
+  }) async {
+    // first we get the current after school care value or create a new one if it is null
+    final afterSchoolCarePupilValue =
+        di<PupilManager>().getPupilByPupilId(pupilId)!.afterSchoolCare ??
+        AfterSchoolCare();
+    AfterSchoolCarePickUpTimes? pickUpTimes =
+        afterSchoolCarePupilValue.pickUpTimes ?? AfterSchoolCarePickUpTimes();
+
+    if (weekday != null) {
+      switch (weekday.value!) {
+        case AfterSchoolCareWeekday.monday:
+          pickUpTimes.monday = PickUpInfo(
+            modality: modality ?? pickUpTimes.monday?.modality ?? '',
+            time: time ?? pickUpTimes.monday?.time ?? '',
+          );
+          break;
+        case AfterSchoolCareWeekday.tuesday:
+          pickUpTimes.tuesday = PickUpInfo(
+            modality: modality ?? pickUpTimes.tuesday?.modality ?? '',
+            time: time ?? pickUpTimes.tuesday?.time ?? '',
+          );
+          break;
+        case AfterSchoolCareWeekday.wednesday:
+          pickUpTimes.wednesday = PickUpInfo(
+            modality: modality ?? pickUpTimes.wednesday?.modality ?? '',
+            time: time ?? pickUpTimes.wednesday?.time ?? '',
+          );
+          break;
+        case AfterSchoolCareWeekday.thursday:
+          pickUpTimes.thursday = PickUpInfo(
+            modality: modality ?? pickUpTimes.thursday?.modality ?? '',
+            time: time ?? pickUpTimes.thursday?.time ?? '',
+          );
+          break;
+        case AfterSchoolCareWeekday.friday:
+          pickUpTimes.friday = PickUpInfo(
+            modality: modality ?? pickUpTimes.friday?.modality ?? '',
+            time: time ?? pickUpTimes.friday?.time ?? '',
+          );
+          break;
+      }
+    }
+
+    final afterSchoolCareToUpdate = afterSchoolCarePupilValue.copyWith(
+      afterSchoolCareInfo: afterSchoolCareInfo != null
+          ? afterSchoolCareInfo.value
+          : afterSchoolCarePupilValue.afterSchoolCareInfo,
+      emergencyCare: emergencyCare != null
+          ? emergencyCare.value
+          : afterSchoolCarePupilValue.emergencyCare,
+      pickUpTimes: pickUpTimes,
+    );
+
+    final PupilData? updatedPupil = await _pupilDataApiService
+        .updateAfterSchoolCare(
+          pupilId: pupilId,
+          afterSchoolCare: afterSchoolCareToUpdate,
+        );
+    if (updatedPupil == null) {
+      return;
+    }
     _pupilManager.updatePupilProxyWithPupilData(updatedPupil);
   }
 }

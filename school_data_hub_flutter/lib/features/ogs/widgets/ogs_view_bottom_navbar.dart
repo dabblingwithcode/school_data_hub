@@ -24,19 +24,18 @@ class OgsListPageBottomNavBar extends StatelessWidget {
               const Spacer(),
               IconButton(
                 tooltip: 'zurück',
-                icon: const Icon(
-                  Icons.arrow_back,
-                  size: 30,
-                ),
+                icon: const Icon(Icons.arrow_back, size: 30),
                 onPressed: () {
                   Navigator.pop(context);
                 },
               ),
               const Gap(30),
-              const FilterButton(
-                  isSearchBar: true,
-                  showBottomSheetFunction: showOgsFilterBottomSheet),
-              const Gap(15)
+              FilterButton(
+                isSearchBar: true,
+                showBottomSheetFunction: () =>
+                    showOgsFilterBottomSheet(context),
+              ),
+              const Gap(15),
             ],
           ),
         ),
