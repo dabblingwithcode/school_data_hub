@@ -23,7 +23,7 @@ extension DateHubExtension on DateTime {
   }
 
   String formatDateForUser() {
-    final date = this.isUtc ? this.toLocal() : this;
+    final date = this.toLocal().add(const Duration(hours: 2));
     final DateFormat dateFormat = DateFormat("dd.MM.yyyy");
     return dateFormat.format(date).toString();
   }
