@@ -134,7 +134,7 @@ class PupilListButtons extends WatchingWidget {
               ),
             ],
           ),
-          buttonText: 'HKU',
+          buttonText: 'HSU',
         ),
         MainMenuButton(
           destinationPage: const OgsListPage(),

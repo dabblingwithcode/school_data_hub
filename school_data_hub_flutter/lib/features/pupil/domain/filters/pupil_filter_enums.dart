@@ -29,6 +29,7 @@ enum PupilFilter {
   turkishClass,
   arabicClass,
   albanianClass,
+  otherLanguageClass,
 }
 
 Map<PupilFilter, bool> initialPupilFilterValues = {
@@ -60,4 +61,6 @@ Map<PupilFilter, bool> initialPupilFilterValues = {
   PupilFilter.muslimReligion: false,
   PupilFilter.turkishClass: false,
   PupilFilter.arabicClass: false,
+  PupilFilter.albanianClass: false,
+  PupilFilter.otherLanguageClass: false,
 };

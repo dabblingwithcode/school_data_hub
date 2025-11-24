@@ -34,6 +34,7 @@ class PupilProxy with ChangeNotifier {
   static List<ReligionCourseFilter> religionCourseFilters = [
     ReligionCourseFilter(ReligionCourse.islam),
     ReligionCourseFilter(ReligionCourse.catholic),
+    ReligionCourseFilter(ReligionCourse.none),
   ];
 
   late PupilData _pupilData;

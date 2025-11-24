@@ -50,12 +50,12 @@ Map<PupilSortMode, bool> initialSortModeValues = {
 enum ReligionCourse {
   islam('isl.'),
   catholic('kath.'),
-  none('ohne B.');
+  none('andere');
 
   static const stringToValue = {
     'isl.': ReligionCourse.islam,
     'röm.kath.': ReligionCourse.catholic,
-    'ohne B.': ReligionCourse.none,
+    'andere': ReligionCourse.none,
   };
 
   final String value;
@@ -80,7 +80,7 @@ enum AfterSchoolCareWeekday { monday, tuesday, wednesday, thursday, friday }
 AfterSchoolCareWeekday? dateTimeToAfterSchoolCareWeekday(DateTime date) {
   // Convert UTC to local time to get the correct weekday for the user's timezone
   final localDate = date.isUtc ? date.toLocal() : date;
-  
+
   // DateTime.weekday: Monday=1, Tuesday=2, ..., Friday=5, Saturday=6, Sunday=7
   switch (localDate.weekday) {
     case 1:

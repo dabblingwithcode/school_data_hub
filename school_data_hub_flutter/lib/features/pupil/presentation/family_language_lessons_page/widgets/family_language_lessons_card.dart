@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -20,8 +21,12 @@ class FamilyLanguageLessonsCard extends WatchingWidget {
       surfaceTintColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       elevation: 1.0,
-      margin:
-          const EdgeInsets.only(left: 4.0, right: 4.0, top: 4.0, bottom: 4.0),
+      margin: const EdgeInsets.only(
+        left: 4.0,
+        right: 4.0,
+        top: 4.0,
+        bottom: 4.0,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,12 +57,12 @@ class FamilyLanguageLessonsCard extends WatchingWidget {
                                       _filterStateManager.resetFilters();
                                       _mainMenuBottomNavManager
                                           .setPupilProfileNavPage(0);
-                                      Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                        builder: (ctx) => PupilProfilePage(
-                                          pupil: pupil,
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (ctx) =>
+                                              PupilProfilePage(pupil: pupil),
                                         ),
-                                      ));
+                                      );
                                     },
                                     child: Row(
                                       children: [
@@ -93,10 +98,22 @@ class FamilyLanguageLessonsCard extends WatchingWidget {
                             ],
                           ),
                           const Gap(5),
-                          const Row(
+                          Row(
                             children: [
-                              Text('Herkunftssprache:'),
-                              Gap(5),
+                              const Text('Herkunftssprache:'),
+                              const Gap(10),
+                              Text(
+                                pupil.language.isNotEmpty
+                                    ? pupil.language
+                                    : 'keine Angabe',
+                                overflow: TextOverflow.ellipsis,
+                                softWrap: true,
+                                maxLines: 3,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
                             ],
                           ),
                         ],
@@ -107,26 +124,13 @@ class FamilyLanguageLessonsCard extends WatchingWidget {
                 const Gap(5),
                 Row(
                   children: [
-                    Flexible(
-                      child: InkWell(
-                        onTap: () {},
-                        child: Padding(
-                          padding:
-                              const EdgeInsets.only(right: 8.0, bottom: 15),
-                          child: Text(
-                            pupil.language.isNotEmpty
-                                ? pupil.language
-                                : 'keine Angabe',
-                            overflow: TextOverflow.ellipsis,
-                            softWrap: true,
-                            maxLines: 3,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ),
+                    Text('Angemeldet am:'),
+                    const Gap(10),
+                    Text(
+                      pupil.familyLanguageLessonsSince != null
+                          ? pupil.familyLanguageLessonsSince!
+                                .formatDateForUser()
+                          : 'keine Angabe',
                     ),
                   ],
                 ),
@@ -138,4 +142,3 @@ class FamilyLanguageLessonsCard extends WatchingWidget {
     );
   }
 }
-

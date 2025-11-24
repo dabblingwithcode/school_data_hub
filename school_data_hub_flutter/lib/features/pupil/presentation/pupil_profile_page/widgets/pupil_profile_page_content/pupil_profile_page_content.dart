@@ -4,6 +4,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/after_school_care_content/pupil_ogs_content.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/authorization_content/pupil_profile_authorization_content.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/communication_content/pupil_profile_communication_content.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/credit/pupil_profile_credit_content.dart';
@@ -44,15 +45,16 @@ class PupilProfilePageContent extends WatchingWidget {
                 duration: const Duration(milliseconds: 300),
                 transitionBuilder: (Widget child, Animation<double> animation) {
                   return SlideTransition(
-                    position: Tween<Offset>(
-                      begin: const Offset(0.1, 0),
-                      end: Offset.zero,
-                    ).animate(
-                      CurvedAnimation(
-                        parent: animation,
-                        curve: Curves.easeInOut,
-                      ),
-                    ),
+                    position:
+                        Tween<Offset>(
+                          begin: const Offset(0.1, 0),
+                          end: Offset.zero,
+                        ).animate(
+                          CurvedAnimation(
+                            parent: animation,
+                            curve: Curves.easeInOut,
+                          ),
+                        ),
                     child: FadeTransition(opacity: animation, child: child),
                   );
                 },
@@ -100,6 +102,8 @@ class PupilProfilePageContent extends WatchingWidget {
       return PupilAttendanceContent(pupil: pupil);
     } else if (navState == ProfileNavigationState.schooldayEvent.value) {
       return PupilProfileSchooldayEventsContent(pupil: pupil);
+    } else if (navState == ProfileNavigationState.ogs.value) {
+      return PupilOgsContent(pupil: pupil);
     } else if (navState == ProfileNavigationState.lists.value) {
       return PupilSchoolListsContentCard(pupil: pupil);
     } else if (navState == ProfileNavigationState.authorization.value) {
