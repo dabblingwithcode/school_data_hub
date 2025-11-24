@@ -31,6 +31,7 @@ abstract class PupilIdentity implements _i1.SerializableModel {
     required this.afterSchoolCare,
     this.religion,
     this.religionLessonsSince,
+    this.religionLessonsCancelledAt,
     this.familyLanguageLessonsSince,
     this.leavingDate,
   });
@@ -52,6 +53,7 @@ abstract class PupilIdentity implements _i1.SerializableModel {
     required bool afterSchoolCare,
     String? religion,
     DateTime? religionLessonsSince,
+    DateTime? religionLessonsCancelledAt,
     DateTime? familyLanguageLessonsSince,
     DateTime? leavingDate,
   }) = _PupilIdentityImpl;
@@ -83,6 +85,11 @@ abstract class PupilIdentity implements _i1.SerializableModel {
           ? null
           : _i1.DateTimeJsonExtension.fromJson(
               jsonSerialization['religionLessonsSince']),
+      religionLessonsCancelledAt:
+          jsonSerialization['religionLessonsCancelledAt'] == null
+              ? null
+              : _i1.DateTimeJsonExtension.fromJson(
+                  jsonSerialization['religionLessonsCancelledAt']),
       familyLanguageLessonsSince:
           jsonSerialization['familyLanguageLessonsSince'] == null
               ? null
@@ -127,6 +134,8 @@ abstract class PupilIdentity implements _i1.SerializableModel {
 
   DateTime? religionLessonsSince;
 
+  DateTime? religionLessonsCancelledAt;
+
   DateTime? familyLanguageLessonsSince;
 
   DateTime? leavingDate;
@@ -151,6 +160,7 @@ abstract class PupilIdentity implements _i1.SerializableModel {
     bool? afterSchoolCare,
     String? religion,
     DateTime? religionLessonsSince,
+    DateTime? religionLessonsCancelledAt,
     DateTime? familyLanguageLessonsSince,
     DateTime? leavingDate,
   });
@@ -175,6 +185,8 @@ abstract class PupilIdentity implements _i1.SerializableModel {
       if (religion != null) 'religion': religion,
       if (religionLessonsSince != null)
         'religionLessonsSince': religionLessonsSince?.toJson(),
+      if (religionLessonsCancelledAt != null)
+        'religionLessonsCancelledAt': religionLessonsCancelledAt?.toJson(),
       if (familyLanguageLessonsSince != null)
         'familyLanguageLessonsSince': familyLanguageLessonsSince?.toJson(),
       if (leavingDate != null) 'leavingDate': leavingDate?.toJson(),
@@ -207,6 +219,7 @@ class _PupilIdentityImpl extends PupilIdentity {
     required bool afterSchoolCare,
     String? religion,
     DateTime? religionLessonsSince,
+    DateTime? religionLessonsCancelledAt,
     DateTime? familyLanguageLessonsSince,
     DateTime? leavingDate,
   }) : super._(
@@ -226,6 +239,7 @@ class _PupilIdentityImpl extends PupilIdentity {
           afterSchoolCare: afterSchoolCare,
           religion: religion,
           religionLessonsSince: religionLessonsSince,
+          religionLessonsCancelledAt: religionLessonsCancelledAt,
           familyLanguageLessonsSince: familyLanguageLessonsSince,
           leavingDate: leavingDate,
         );
@@ -251,6 +265,7 @@ class _PupilIdentityImpl extends PupilIdentity {
     bool? afterSchoolCare,
     Object? religion = _Undefined,
     Object? religionLessonsSince = _Undefined,
+    Object? religionLessonsCancelledAt = _Undefined,
     Object? familyLanguageLessonsSince = _Undefined,
     Object? leavingDate = _Undefined,
   }) {
@@ -275,6 +290,9 @@ class _PupilIdentityImpl extends PupilIdentity {
       religionLessonsSince: religionLessonsSince is DateTime?
           ? religionLessonsSince
           : this.religionLessonsSince,
+      religionLessonsCancelledAt: religionLessonsCancelledAt is DateTime?
+          ? religionLessonsCancelledAt
+          : this.religionLessonsCancelledAt,
       familyLanguageLessonsSince: familyLanguageLessonsSince is DateTime?
           ? familyLanguageLessonsSince
           : this.familyLanguageLessonsSince,

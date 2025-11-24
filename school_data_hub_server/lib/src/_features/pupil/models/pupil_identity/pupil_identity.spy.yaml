@@ -16,5 +16,6 @@ fields:
   afterSchoolCare: bool
   religion: String?
   religionLessonsSince: DateTime?
+  religionLessonsCancelledAt: DateTime?
   familyLanguageLessonsSince: DateTime?
   leavingDate: DateTime?
