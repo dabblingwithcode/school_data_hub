@@ -19,6 +19,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/infos_content/widgets/avatar_auth_values.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/infos_content/widgets/pupil_media_auth_values.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -47,32 +48,10 @@ class PupilProfileInfosContent extends WatchingWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header Section
-          const Card(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.info_rounded,
-                    color: AppColors.backgroundColor,
-                    size: 28,
-                  ),
-                  const Gap(12),
-                  Text(
-                    'Persönliche Informationen',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.backgroundColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const Gap(8), // Reduced from 24 to 16
+
           // Special Information Section
-          _buildInfoSection(
+          // Special Information Section
+          PupilProfileContentSection(
             icon: Icons.priority_high_rounded,
             title: 'Besondere Infos',
             child: InkWell(
@@ -140,24 +119,25 @@ class PupilProfileInfosContent extends WatchingWidget {
           ),
           const Gap(8),
           // Basic Information Section
-          _buildInfoSection(
+          // Basic Information Section
+          PupilProfileContentSection(
             icon: Icons.person_outline,
             title: 'Grunddaten',
             child: Column(
               children: [
-                _buildInfoRow(
+                PupilProfileContentRow(
                   icon: Icons.wc,
                   label: 'Geschlecht',
                   value: pupil.gender == 'm' ? 'männlich' : 'weiblich',
                 ),
-                const Gap(8), // Reduced from 12 to 8
-                _buildInfoRow(
+                const Gap(8),
+                PupilProfileContentRow(
                   icon: Icons.cake_outlined,
                   label: 'Geburtsdatum',
                   value: pupil.birthday.formatDateForUser(),
                 ),
-                const Gap(8), // Reduced from 12 to 8
-                _buildInfoRow(
+                const Gap(8),
+                PupilProfileContentRow(
                   icon: Icons.school_outlined,
                   label: 'Aufnahmedatum',
                   value: pupil.pupilSince.formatDateForUser(),
@@ -167,12 +147,13 @@ class PupilProfileInfosContent extends WatchingWidget {
           ),
           const Gap(8),
           // Contact Information Section
-          _buildInfoSection(
+          // Contact Information Section
+          PupilProfileContentSection(
             icon: Icons.contact_phone_outlined,
             title: 'Kontaktinformationen',
             child: Column(
               children: [
-                _buildContactRow(
+                PupilProfileContentRow(
                   icon: Icons.person_outline,
                   label: 'Schüler/in Kontakt',
                   value: pupil.contact?.isNotEmpty == true
@@ -262,8 +243,8 @@ class PupilProfileInfosContent extends WatchingWidget {
                           ),
                         ),
                 ),
-                const Gap(10), // Reduced from 16 to 10
-                _buildContactRow(
+                const Gap(10),
+                PupilProfileContentRow(
                   icon: Icons.family_restroom_outlined,
                   label: 'Familie Kontakt',
                   value: pupil.tutorInfo?.parentsContact ?? 'keine Angabe',
@@ -374,7 +355,8 @@ class PupilProfileInfosContent extends WatchingWidget {
           ),
           const Gap(8),
           // Authorizations Section
-          _buildInfoSection(
+          // Authorizations Section
+          PupilProfileContentSection(
             icon: Icons.verified_user_outlined,
             title: 'Einwilligungen',
             child: Column(
@@ -387,7 +369,8 @@ class PupilProfileInfosContent extends WatchingWidget {
           ),
           const Gap(8),
           // Siblings Section
-          _buildInfoSection(
+          // Siblings Section
+          PupilProfileContentSection(
             icon: Icons.family_restroom_outlined,
             title: 'Geschwister',
             child: pupilSiblings.isNotEmpty
@@ -493,183 +476,6 @@ class PupilProfileInfosContent extends WatchingWidget {
           ),
           const Gap(20), // Extra spacing at the bottom
         ],
-      ),
-    );
-  }
-
-  // Helper method to build section containers
-  Widget _buildInfoSection({
-    required IconData icon,
-    required String title,
-    required Widget child,
-  }) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(icon, color: AppColors.backgroundColor, size: 25),
-                const Gap(10), // Reduced from 12 to 10
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 20, // Reduced from 20 to 18
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.backgroundColor,
-                  ),
-                ),
-              ],
-            ),
-            const Gap(12), // Reduced from 16 to 12
-            child,
-          ],
-        ),
-      ),
-    );
-  }
-
-  // Helper method to build information rows
-  Widget _buildInfoRow({
-    required IconData icon,
-    required String label,
-    required String value,
-    VoidCallback? onTap,
-    VoidCallback? onLongPress,
-    Widget? actionButton,
-  }) {
-    return Card(
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            color: AppColors.backgroundColor.withValues(alpha: 0.7),
-            size: 18, // Reduced from 20 to 18
-          ),
-          const Gap(8), // Reduced from 12 to 8
-          Text(
-            '$label:',
-            style: const TextStyle(
-              fontSize: 14, // Reduced from 16 to 14
-              fontWeight: FontWeight.w500,
-              color: AppColors.backgroundColor,
-            ),
-          ),
-          const Gap(6), // Reduced from 8 to 6
-          Expanded(
-            child: InkWell(
-              onTap: onTap,
-              onLongPress: onLongPress,
-              borderRadius: BorderRadius.circular(8),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8,
-                  horizontal: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: onTap != null
-                      ? AppColors.interactiveColor.withValues(alpha: 0.1)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: 14, // Reduced from 16 to 14
-                    fontWeight: FontWeight.w600,
-                    color: onTap != null
-                        ? AppColors
-                              .interactiveColor // Keep blue for interactive elements
-                        : Colors
-                              .black87, // Changed from AppColors.backgroundColor to black for non-interactive
-                  ),
-                ),
-              ),
-            ),
-          ),
-          if (actionButton != null) ...[const Gap(8), actionButton],
-        ],
-      ),
-    );
-  }
-
-  // Helper method to build contact rows
-  Widget _buildContactRow({
-    required IconData icon,
-    required String label,
-    required String value,
-    VoidCallback? onTap,
-    VoidCallback? onLongPress,
-    Widget? actionButton,
-  }) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(4), // Reduced from 16 to 12
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(6), // Reduced from 8 to 6
-              decoration: BoxDecoration(
-                color: AppColors.backgroundColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(6), // Reduced from 8 to 6
-              ),
-              child: Icon(
-                icon,
-                color: AppColors.backgroundColor,
-                size: 18,
-              ), // Reduced from 20 to 18
-            ),
-            const Gap(10), // Reduced from 12 to 10
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: 12, // Reduced from 14 to 12
-                      fontWeight: FontWeight.w500,
-                      color: Colors.grey.withValues(alpha: 0.8),
-                    ),
-                  ),
-                  const Gap(3), // Reduced from 4 to 3
-                  InkWell(
-                    onTap: onTap,
-                    onLongPress: onLongPress,
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8,
-                        horizontal: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: onTap != null
-                            ? AppColors.interactiveColor.withValues(alpha: 0.1)
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        value,
-                        style: TextStyle(
-                          fontSize: 14, // Reduced from 16 to 14
-                          fontWeight: FontWeight.w600,
-                          color: onTap != null
-                              ? AppColors
-                                    .interactiveColor // Keep blue for interactive elements
-                              : Colors
-                                    .black87, // Changed from AppColors.backgroundColor to black for non-interactive
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (actionButton != null) ...[const Gap(8), actionButton],
-          ],
-        ),
       ),
     );
   }
