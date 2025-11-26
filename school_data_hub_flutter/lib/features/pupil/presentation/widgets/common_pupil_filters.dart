@@ -14,19 +14,21 @@ class FilterHeading extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Text(
-          'Filter',
-          style: AppStyles.title,
-        ),
+        const Text('Filter', style: AppStyles.title),
         const Spacer(),
         IconButton(
-            iconSize: 35,
-            color: AppColors.interactiveColor,
-            onPressed: () {
-              di<FiltersStateManager>().resetFilters();
-              //Navigator.pop(context);
-            },
-            icon: const Icon(Icons.restart_alt_rounded)),
+          iconSize: 35,
+          color: AppColors.interactiveColor,
+          onPressed: () {
+            di<FiltersStateManager>().resetFilters();
+            //Navigator.pop(context);
+          },
+          icon: const Icon(
+            Icons.delete_forever_rounded,
+            size: 35,
+            color: AppColors.accentColor,
+          ),
+        ),
       ],
     );
   }
@@ -44,14 +46,7 @@ class CommonPupilFiltersWidget extends WatchingWidget {
 
     return Column(
       children: [
-        const Row(
-          children: [
-            Text(
-              'Jahrgang',
-              style: AppStyles.subtitle,
-            )
-          ],
-        ),
+        const Row(children: [Text('Jahrgang', style: AppStyles.subtitle)]),
         const Gap(5),
         Wrap(
           spacing: 5,
@@ -68,14 +63,7 @@ class CommonPupilFiltersWidget extends WatchingWidget {
               ),
           ],
         ),
-        const Row(
-          children: [
-            Text(
-              'Klasse',
-              style: AppStyles.subtitle,
-            )
-          ],
-        ),
+        const Row(children: [Text('Klasse', style: AppStyles.subtitle)]),
         const Gap(5),
         Wrap(
           spacing: 5,

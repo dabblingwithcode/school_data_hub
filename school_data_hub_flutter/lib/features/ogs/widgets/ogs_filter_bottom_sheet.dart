@@ -21,90 +21,107 @@ class OgsFilterBottomSheet extends WatchingWidget {
     bool valueNotPresent =
         activeAttendanceFilters[AttendancePupilFilter.notPresent]!;
     return Padding(
-      padding: const EdgeInsets.only(left: 20.0, right: 20, top: 8),
+      padding: const EdgeInsets.only(left: 15.0, right: 15, top: 5),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const FilterHeading(),
-          const CommonPupilFiltersWidget(),
-          const Row(children: [Text('OGS-Filter', style: AppStyles.subtitle)]),
-          Wrap(
-            children: [
-              ThemedFilterChip(
-                label: 'anwesend',
-                selected: valuePresent,
-                onSelected: (val) {
-                  // in case present is selected, not present and unexcused should be deselected
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const CommonPupilFiltersWidget(),
+                  const Row(
+                    children: [Text('OGS-Filter', style: AppStyles.subtitle)],
+                  ),
+                  Wrap(
+                    children: [
+                      ThemedFilterChip(
+                        label: 'anwesend',
+                        selected: valuePresent,
+                        onSelected: (val) {
+                          // in case present is selected, not present and unexcused should be deselected
 
-                  if (val) {
-                    _attendanceFilterLocator.setAttendancePupilFilter(
-                      attendancePupilFilterRecords: [
-                        (
-                          attendancePupilFilter:
-                              AttendancePupilFilter.notPresent,
-                          value: false,
-                        ),
-                        (
-                          attendancePupilFilter:
-                              AttendancePupilFilter.unexcused,
-                          value: false,
-                        ),
-                        (
-                          attendancePupilFilter: AttendancePupilFilter.present,
-                          value: val,
-                        ),
-                      ],
-                    );
-                    return;
-                  }
-                  _attendanceFilterLocator.setAttendancePupilFilter(
-                    attendancePupilFilterRecords: [
-                      (
-                        attendancePupilFilter: AttendancePupilFilter.present,
-                        value: val,
+                          if (val) {
+                            _attendanceFilterLocator.setAttendancePupilFilter(
+                              attendancePupilFilterRecords: [
+                                (
+                                  attendancePupilFilter:
+                                      AttendancePupilFilter.notPresent,
+                                  value: false,
+                                ),
+                                (
+                                  attendancePupilFilter:
+                                      AttendancePupilFilter.unexcused,
+                                  value: false,
+                                ),
+                                (
+                                  attendancePupilFilter:
+                                      AttendancePupilFilter.present,
+                                  value: val,
+                                ),
+                              ],
+                            );
+                            return;
+                          }
+                          _attendanceFilterLocator.setAttendancePupilFilter(
+                            attendancePupilFilterRecords: [
+                              (
+                                attendancePupilFilter:
+                                    AttendancePupilFilter.present,
+                                value: val,
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                      ThemedFilterChip(
+                        label: 'nicht da',
+                        selected: valueNotPresent,
+                        onSelected: (val) {
+                          // in case not present is selected, present should be deselected
+                          if (val) {
+                            //_valuePresent = false;
+                            _attendanceFilterLocator.setAttendancePupilFilter(
+                              attendancePupilFilterRecords: [
+                                (
+                                  attendancePupilFilter:
+                                      AttendancePupilFilter.notPresent,
+                                  value: val,
+                                ),
+                                (
+                                  attendancePupilFilter:
+                                      AttendancePupilFilter.present,
+                                  value: false,
+                                ),
+                                (
+                                  attendancePupilFilter:
+                                      AttendancePupilFilter.unexcused,
+                                  value: false,
+                                ),
+                              ],
+                            );
+                            return;
+                          }
+
+                          _attendanceFilterLocator.setAttendancePupilFilter(
+                            attendancePupilFilterRecords: [
+                              (
+                                attendancePupilFilter:
+                                    AttendancePupilFilter.notPresent,
+                                value: val,
+                              ),
+                            ],
+                          );
+                        },
                       ),
                     ],
-                  );
-                },
+                  ),
+                ],
               ),
-              ThemedFilterChip(
-                label: 'nicht da',
-                selected: valueNotPresent,
-                onSelected: (val) {
-                  // in case not present is selected, present should be deselected
-                  if (val) {
-                    //_valuePresent = false;
-                    _attendanceFilterLocator.setAttendancePupilFilter(
-                      attendancePupilFilterRecords: [
-                        (
-                          attendancePupilFilter:
-                              AttendancePupilFilter.notPresent,
-                          value: val,
-                        ),
-                        (
-                          attendancePupilFilter: AttendancePupilFilter.present,
-                          value: false,
-                        ),
-                        (
-                          attendancePupilFilter:
-                              AttendancePupilFilter.unexcused,
-                          value: false,
-                        ),
-                      ],
-                    );
-                    return;
-                  }
-
-                  _attendanceFilterLocator.setAttendancePupilFilter(
-                    attendancePupilFilterRecords: [
-                      (
-                        attendancePupilFilter: AttendancePupilFilter.notPresent,
-                        value: val,
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ],
+            ),
           ),
         ],
       ),
