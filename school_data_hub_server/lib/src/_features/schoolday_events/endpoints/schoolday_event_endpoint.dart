@@ -1,9 +1,8 @@
 import 'dart:async';
 
 import 'package:logging/logging.dart';
+import 'package:school_data_hub_server/src/_features/schoolday_events/helpers/schoolday_event_notification_helper.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
-import 'package:school_data_hub_server/src/utils/matrix_notifications/matrix_notifications.dart';
-import 'package:school_data_hub_server/src/utils/matrix_notifications/schoolday_event_notification_text.dart';
 import 'package:serverpod/serverpod.dart';
 
 final _log = Logger('SchooldayEventEndpoint');
@@ -52,56 +51,16 @@ class SchooldayEventEndpoint extends Endpoint {
         processedDocument: HubDocument.include(),
       ),
     );
-
-    try {
-      final pupil = await PupilData.db.findFirstRow(session,
-          where: (t) => t.id.equals(eventWithSchoolday!.pupilId),
-          include:
-              PupilData.include(schooldayEvents: SchooldayEvent.includeList()));
-      final numberOfEventsOfTheSameType = pupil?.schooldayEvents
-              ?.where((event) => event.eventType == type)
-              .length ??
-          0;
-      final recipients =
-          await MatrixNotifications.instance.findNotificationRecipients(
+    unawaited(
+      SchooldayEventNotificationHelper.sendNotification(
         session: session,
         pupilNameAndGroup: pupilNameAndGroup,
         tutor: tutor,
-      );
-
-      // Send notification to all recipients
-      if (recipients.isEmpty) {
-        // Fallback to default recipient if no matches found
-        _log.warning('No recipients found for schoolday event $eventId');
-        return eventWithSchoolday!;
-      }
-
-      unawaited(MatrixNotifications.instance.sendDirectTextMessage(
-        session: session,
-        recipients: recipients.toList(),
-        text: getSchooldayEventNotificationText(
-            eventcreator: createdBy,
-            pupilName: pupilNameAndGroup,
-            dateTimeAsString: dateTimeAsString,
-            schooldayEvent: eventWithSchoolday!,
-            numberOfEvents: numberOfEventsOfTheSameType),
-        html: getSchooldayEventNotificationHtml(
-            eventcreator: createdBy,
-            pupilName: pupilNameAndGroup,
-            dateTimeAsString: dateTimeAsString,
-            schooldayEvent: eventWithSchoolday,
-            numberOfEvents: numberOfEventsOfTheSameType),
-      ));
-      // final success = await MailerService.instance.sendNotification(
-      //     recipient: recipient?.userInfo?.email ?? '',
-      //     subject: 'Neues Schulereignis',
-      //     message: 'Es wurde ein neues Schulereignis erstellt.\n\n'
-      //         'Es ist das Schulereignis Nummer ${pupil?.schooldayEvents?.length}');
-    } catch (e) {
-      _log.severe('Error sending matrix notification: $e');
-    }
-
-    return eventWithSchoolday!;
+        eventWithSchoolday: eventWithSchoolday!,
+        dateTimeAsString: dateTimeAsString,
+      ),
+    );
+    return eventWithSchoolday;
   }
 
   Future<SchooldayEvent> updateSchooldayEvent(
@@ -113,31 +72,6 @@ class SchooldayEventEndpoint extends Endpoint {
     String modifiedBy,
     String dateTimeAsString,
   ) async {
-    if (changedProcessedStatus) {
-      final recipients =
-          await MatrixNotifications.instance.findNotificationRecipients(
-        session: session,
-        pupilNameAndGroup: pupilNameAndGroup,
-        tutor: tutor,
-      );
-      unawaited(MatrixNotifications.instance.sendDirectTextMessage(
-        session: session,
-        recipients: recipients.toList(),
-        text: getSchooldayEventNotificationText(
-          eventcreator: modifiedBy,
-          pupilName: pupilNameAndGroup,
-          dateTimeAsString: dateTimeAsString,
-          schooldayEvent: schooldayEvent,
-          processedStatusChange: changedProcessedStatus,
-        ),
-        html: getSchooldayEventNotificationHtml(
-            eventcreator: modifiedBy,
-            pupilName: pupilNameAndGroup,
-            dateTimeAsString: dateTimeAsString,
-            schooldayEvent: schooldayEvent,
-            processedStatusChange: changedProcessedStatus),
-      ));
-    }
     // If processed is false We need to detach and delete the processed document if it exists
     if (changedProcessedStatus && schooldayEvent.processed == false) {
       if (schooldayEvent.processedDocumentId != null) {
@@ -167,6 +101,17 @@ class SchooldayEventEndpoint extends Endpoint {
               document: HubDocument.include(),
               processedDocument: HubDocument.include(),
             ));
+
+    if (changedProcessedStatus) {
+      unawaited(SchooldayEventNotificationHelper.sendNotification(
+        session: session,
+        pupilNameAndGroup: pupilNameAndGroup,
+        tutor: tutor,
+        eventWithSchoolday: updatedSchooldayEvent!,
+        dateTimeAsString: dateTimeAsString,
+        changedProcessedStatus: changedProcessedStatus,
+      ));
+    }
     return updatedSchooldayEvent!;
   }
 

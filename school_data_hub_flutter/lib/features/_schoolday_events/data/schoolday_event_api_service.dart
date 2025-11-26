@@ -33,7 +33,7 @@ class SchooldayEventApiService {
     try {
       final event = await _client.schooldayEvent.createSchooldayEvent(
         pupilNameAndGroup: pupilName,
-        dateTimeAsString: dateTime.formatDateAndTimeForUser(),
+        dateTimeAsString: dateTime.formatDateForUser(),
         pupilId: pupilId,
         schooldayId: schooldayId,
         type: type,
