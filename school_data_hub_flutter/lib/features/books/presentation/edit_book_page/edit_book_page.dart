@@ -3,6 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -20,11 +21,9 @@ class EditBookPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.backgroundColor,
-        title: const Center(
-          child: Text('Buch bearbeiten', style: AppStyles.appBarTextStyle),
-        ),
+      appBar: const GenericAppBar(
+        iconData: Icons.book,
+        title: 'Buch bearbeiten',
       ),
       body: Center(
         heightFactor: 1,
@@ -49,8 +48,8 @@ class EditBookPage extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(10.0),
                                 child: UnencryptedImageInCard(
                                   path: controller.imagePath!,
-                                  cacheKey:
-                                      controller.libraryBook.isbn.toString(),
+                                  cacheKey: controller.libraryBook.isbn
+                                      .toString(),
                                   size: 220,
                                 ),
                               ),
@@ -94,26 +93,26 @@ class EditBookPage extends StatelessWidget {
                               value: ReadingLevel.fromString(
                                 controller.readingLevel,
                               ),
-                              onChanged:
-                                  (value) => controller
-                                      .onChangedReadingLevelDropDown(value),
+                              onChanged: (value) => controller
+                                  .onChangedReadingLevelDropDown(value),
                             ),
                             const Gap(20),
                             Row(
                               children: [
                                 Expanded(
-                                  child: DropdownButtonFormField<
-                                    LibraryBookLocation
-                                  >(
-                                    decoration: AppStyles.textFieldDecoration(
-                                      labelText: 'Ablageort',
-                                    ),
-                                    items: controller.locationDropdownItems,
-                                    value: controller.selectedLocation,
-                                    onChanged:
-                                        (value) => controller
+                                  child:
+                                      DropdownButtonFormField<
+                                        LibraryBookLocation
+                                      >(
+                                        decoration:
+                                            AppStyles.textFieldDecoration(
+                                              labelText: 'Ablageort',
+                                            ),
+                                        items: controller.locationDropdownItems,
+                                        value: controller.selectedLocation,
+                                        onChanged: (value) => controller
                                             .onChangedLocationDropDown(value!),
-                                  ),
+                                      ),
                                 ),
                                 if (_hubSessionManager.isAdmin) ...[
                                   const Gap(10),
@@ -204,16 +203,15 @@ class EditBookPage extends StatelessWidget {
                   Wrap(
                     spacing: 5,
                     runSpacing: 5,
-                    children:
-                        controller.bookTagSelection.entries.map((entry) {
-                          return ThemedFilterChip(
-                            label: entry.key.name,
-                            selected: entry.value,
-                            onSelected: (bool selected) {
-                              controller.switchBookTagSelection(entry.key);
-                            },
-                          );
-                        }).toList(),
+                    children: controller.bookTagSelection.entries.map((entry) {
+                      return ThemedFilterChip(
+                        label: entry.key.name,
+                        selected: entry.value,
+                        onSelected: (bool selected) {
+                          controller.switchBookTagSelection(entry.key);
+                        },
+                      );
+                    }).toList(),
                   ),
                   const Gap(30),
                   ElevatedButton(

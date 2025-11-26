@@ -109,17 +109,12 @@ class UserListCard extends WatchingWidget {
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Row(
-                              children: [
-                                Text('Rolle: ${user.role.name}'),
-                                const Gap(10),
-                                Text('Email: ${user.userInfo?.email ?? 'N/A'}'),
-                              ],
+                              children: [Text('Rolle: ${user.role.name}')],
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const Gap(5),
                     Row(
                       children: [
                         Expanded(
@@ -127,10 +122,10 @@ class UserListCard extends WatchingWidget {
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               children: [
-                                const Text('Zeiteinheiten:'),
-                                const Gap(5),
+                                const Text('Email:'),
+                                const Gap(10),
                                 Text(
-                                  user.timeUnits.toString(),
+                                  user.userInfo?.email ?? 'N/A',
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -148,9 +143,39 @@ class UserListCard extends WatchingWidget {
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               children: [
-                                const Text('Entlastungseinheiten:'),
+                                const Text('Matrix-Id:'),
+                                const Gap(10),
+                                Text(
+                                  user.matrixUserId ?? 'N/A',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                const Text('Stunden:'),
                                 const Gap(5),
-                                //- TODO: Implement update user properties
+                                Text(
+                                  user.timeUnits.toString(),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const Gap(10),
+                                const Text('Entlastung:'),
+                                const Gap(5),
+
                                 Text(
                                   user.reliefTimeUnits.toString(),
                                   style: const TextStyle(
@@ -163,6 +188,7 @@ class UserListCard extends WatchingWidget {
                         ),
                       ],
                     ),
+                    const Gap(5),
                   ],
                 ),
               ),
@@ -197,25 +223,15 @@ class UserListCard extends WatchingWidget {
             title: null,
             tileController: tileController,
             widgetList: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('User ID: ${user.id ?? 'N/A'}'),
-                    const Gap(5),
-                    Text('User Info ID: ${user.userInfoId}'),
-                    const Gap(5),
-                    Text(
-                      'Erstellt: ${user.userInfo?.created != null ? user.userInfo!.created.formatDateForUser() : 'N/A'}',
-                    ),
-                    const Gap(5),
-                    Text(
-                      'Autorisierte Schüler: ${user.pupilsAuth?.length ?? 0}',
-                    ),
-                  ],
-                ),
+              Row(children: [Text('User ID: ${user.id ?? 'N/A'}')]),
+              const Gap(5),
+              Text('User Info ID: ${user.userInfoId}'),
+              const Gap(5),
+              Text(
+                'Erstellt: ${user.userInfo?.created != null ? user.userInfo!.created.formatDateForUser() : 'N/A'}',
               ),
+              const Gap(5),
+              Text('Autorisierte Schüler: ${user.pupilsAuth?.length ?? 0}'),
             ],
           ),
         ],
