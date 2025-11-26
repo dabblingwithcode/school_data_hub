@@ -63,6 +63,7 @@ class PupilIdentityStreamController {
     if (role == PupilIdentityStreamRole.sender &&
         state.streamState.receiverUserName.value.isNotEmpty) {
       state.transferState.transferCounter.value += 1;
+      // TODO: here we must use a datetime sent by the sender
       final now = DateTime.now();
       final dateStr =
           '${now.day.toString().padLeft(2, '0')}.${now.month.toString().padLeft(2, '0')}.${now.year} ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
@@ -81,8 +82,8 @@ class PupilIdentityStreamController {
 
     state.streamState.statusMessage.value =
         role == PupilIdentityStreamRole.sender
-            ? 'Datenübertragung abgeschlossen!'
-            : 'Schülerdaten wurden erfolgreich empfangen!';
+        ? 'Datenübertragung abgeschlossen!'
+        : 'Schülerdaten wurden erfolgreich empfangen!';
 
     // Only cancel subscription for receiver, sender should stay connected
     if (role == PupilIdentityStreamRole.receiver) {
@@ -198,8 +199,8 @@ class PupilIdentityStreamController {
     state.streamState.isProcessing.value = true;
     state.streamState.statusMessage.value =
         role == PupilIdentityStreamRole.sender
-            ? 'Warte auf Verbindung des Empfängers...'
-            : 'Verbindung zum Sender herstellen...';
+        ? 'Warte auf Verbindung des Empfängers...'
+        : 'Verbindung zum Sender herstellen...';
 
     try {
       // If we're a sender, we need to generate encrypted data if not provided
@@ -227,11 +228,10 @@ class PupilIdentityStreamController {
             onReceiverLeft: (userName) => _handleReceiverLeft(userName),
             onRequestReceived: (userName) => _handleRequestReceived(userName),
             onRequestConfirmed: () => _handleRequestConfirmed(),
-            onRequestRejected:
-                (wasAutoRejected) => _handleRequestRejected(wasAutoRejected),
-            onDataReceived:
-                (newCount, totalCount) =>
-                    _handleDataReceived(newCount, totalCount),
+            onRequestRejected: (wasAutoRejected) =>
+                _handleRequestRejected(wasAutoRejected),
+            onDataReceived: (newCount, totalCount) =>
+                _handleDataReceived(newCount, totalCount),
             onShouldPopPage: () => _handleShouldPopPage(),
             onSenderShutdown: (message) => _handleSenderShutdown(message),
           );
@@ -439,7 +439,16 @@ class PupilIdentityStreamController {
     state.receiverState.pendingRequests.value = updatedPendingRequests;
 
     state.streamState.requestReceived.value = true;
-    onConfirmationRequired.call(userName);
+
+    // Auto-confirm if enabled
+    if (state.streamState.autoConfirmEnabled.value) {
+      _log.info(
+        'Auto-confirm enabled, automatically confirming transfer for $userName',
+      );
+      confirmUserRequest(userName);
+    } else {
+      onConfirmationRequired.call(userName);
+    }
   }
 
   /// Handle request confirmed
@@ -572,5 +581,10 @@ class PupilIdentityStreamController {
   void rejectTransfer(String receiverName) {
     // Use the existing rejectUserRequest method
     rejectUserRequest(receiverName);
+  }
+
+  /// Set auto-confirm enabled state
+  void setAutoConfirmEnabled(bool enabled) {
+    state.streamState.autoConfirmEnabled.value = enabled;
   }
 }
