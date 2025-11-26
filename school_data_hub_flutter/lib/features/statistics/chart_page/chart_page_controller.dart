@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/chart_page.dart';
@@ -15,12 +16,14 @@ class ChartPageController extends StatefulWidget {
 class _ChartPageControllerState extends State<ChartPageController> {
   late final PupilManager _pupilManager;
   late final SchoolCalendarManager _schoolCalendarManager;
+  late final SchooldayEventManager _schooldayEventManager;
 
   @override
   void initState() {
     super.initState();
     _pupilManager = di<PupilManager>();
     _schoolCalendarManager = di<SchoolCalendarManager>();
+    _schooldayEventManager = di<SchooldayEventManager>();
   }
 
   /// Gets schooldays for the current semester
@@ -294,6 +297,42 @@ class _ChartPageControllerState extends State<ChartPageController> {
     }).length;
   }
 
+  /// Counts events by type for a given schoolday
+  int getEventCountForSchoolday(
+    Schoolday schoolday,
+    SchooldayEventType eventType,
+  ) {
+    final allEvents = _schooldayEventManager.schooldayEvents;
+    final schooldayDate = schoolday.schoolday.toLocal();
+    final dayDate = DateTime(
+      schooldayDate.year,
+      schooldayDate.month,
+      schooldayDate.day,
+    );
+
+    return allEvents.where((event) {
+      // Match by schooldayId if available, otherwise by date
+      if (event.schooldayId == schoolday.id) {
+        return event.eventType == eventType;
+      }
+      
+      // Fallback: match by date if schoolday object is available
+      if (event.schoolday != null) {
+        final eventDate = event.schoolday!.schoolday.toLocal();
+        final eventDayDate = DateTime(
+          eventDate.year,
+          eventDate.month,
+          eventDate.day,
+        );
+        if (eventDayDate == dayDate && event.eventType == eventType) {
+          return true;
+        }
+      }
+      
+      return false;
+    }).length;
+  }
+
   /// Gets data for the chart: schooldays with their counts
   Map<
     DateTime,
@@ -332,6 +371,59 @@ class _ChartPageControllerState extends State<ChartPageController> {
     return data;
   }
 
+  /// Gets event data for the chart: schooldays with event counts by type
+  Map<
+    DateTime,
+    ({
+      int parentsMeeting,
+      int admonition,
+      int afternoonCareAdmonition,
+      int admonitionAndBanned,
+      int otherEvent,
+    })
+  >
+  getEventChartData() {
+    final schooldays = getSchooldaysForCurrentSemester();
+    final Map<
+      DateTime,
+      ({
+        int parentsMeeting,
+        int admonition,
+        int afternoonCareAdmonition,
+        int admonitionAndBanned,
+        int otherEvent,
+      })
+    >
+    data = {};
+
+    for (final schoolday in schooldays) {
+      data[schoolday.schoolday] = (
+        parentsMeeting: getEventCountForSchoolday(
+          schoolday,
+          SchooldayEventType.parentsMeeting,
+        ),
+        admonition: getEventCountForSchoolday(
+          schoolday,
+          SchooldayEventType.admonition,
+        ),
+        afternoonCareAdmonition: getEventCountForSchoolday(
+          schoolday,
+          SchooldayEventType.afternoonCareAdmonition,
+        ),
+        admonitionAndBanned: getEventCountForSchoolday(
+          schoolday,
+          SchooldayEventType.admonitionAndBanned,
+        ),
+        otherEvent: getEventCountForSchoolday(
+          schoolday,
+          SchooldayEventType.otherEvent,
+        ),
+      );
+    }
+
+    return data;
+  }
+
   @override
   Widget build(BuildContext context) {
     final chartData = getChartData();
@@ -360,6 +452,12 @@ class _ChartPageControllerState extends State<ChartPageController> {
       );
     }
 
-    return ChartPage(chartData: chartData, schooldays: schooldays);
+    final eventChartData = getEventChartData();
+
+    return ChartPage(
+      chartData: chartData,
+      eventChartData: eventChartData,
+      schooldays: schooldays,
+    );
   }
 }
