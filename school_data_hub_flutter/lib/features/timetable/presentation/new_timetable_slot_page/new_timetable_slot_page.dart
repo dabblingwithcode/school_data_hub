@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
@@ -9,6 +10,8 @@ import 'widgets/action_buttons.dart';
 import 'widgets/end_time_field.dart';
 import 'widgets/start_time_field.dart';
 import 'widgets/weekday_dropdown.dart';
+
+final _log = Logger('NewTimetableSlotPage');
 
 class NewTimetableSlotPage extends WatchingWidget {
   final TimetableManager timetableManager;
@@ -118,19 +121,17 @@ class NewTimetableSlotPage extends WatchingWidget {
 
                 // Action Buttons
                 ActionButtons(
-                  onSave:
-                      () => _saveTimetableSlot(
-                        context,
-                        startTimeController,
-                        endTimeController,
-                        selectedWeekday,
-                        selectedWeekdayOption,
-                      ),
+                  onSave: () => _saveTimetableSlot(
+                    context,
+                    startTimeController,
+                    endTimeController,
+                    selectedWeekday,
+                    selectedWeekdayOption,
+                  ),
                   onCancel: () => Navigator.of(context).pop(),
-                  onDelete:
-                      timetableSlot != null
-                          ? () => _deleteTimetableSlot(context)
-                          : null,
+                  onDelete: timetableSlot != null
+                      ? () => _deleteTimetableSlot(context)
+                      : null,
                 ),
               ],
             ),
@@ -196,16 +197,16 @@ class NewTimetableSlotPage extends WatchingWidget {
 
     try {
       final timetable = timetableManager.timetable.value;
-      print(
+      _log.info(
         'Current timetable in manager: ${timetable?.name} (ID: ${timetable?.id})',
       );
 
       if (timetable == null) {
-        print('No timetable available. Debug info:');
-        print(
+        _log.severe('No timetable available. Debug info:');
+        _log.severe(
           '- TimetableManager has timetable: ${timetableManager.timetable.value != null}',
         );
-        print(
+        _log.severe(
           '- TimetableManager has slots: ${timetableManager.timetableSlots.value.length}',
         );
 
@@ -243,7 +244,7 @@ class NewTimetableSlotPage extends WatchingWidget {
               await timetableManager.addTimetableSlot(newTimetableSlot);
               createdCount++;
             } catch (e) {
-              print('Error creating slot for $weekday: $e');
+              _log.severe('Error creating slot for $weekday: $e');
             }
           }
 
@@ -319,26 +320,25 @@ class NewTimetableSlotPage extends WatchingWidget {
 
     final confirmed = await showDialog<bool>(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Zeitslot löschen'),
-            content: const Text(
-              'Sind Sie sicher, dass Sie diesen Zeitslot löschen möchten?',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Abbrechen'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                style: TextButton.styleFrom(
-                  foregroundColor: AppColors.dangerButtonColor,
-                ),
-                child: const Text('Löschen'),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        title: const Text('Zeitslot löschen'),
+        content: const Text(
+          'Sind Sie sicher, dass Sie diesen Zeitslot löschen möchten?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Abbrechen'),
           ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.dangerButtonColor,
+            ),
+            child: const Text('Löschen'),
+          ),
+        ],
+      ),
     );
 
     if (confirmed == true && context.mounted) {

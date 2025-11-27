@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/services/api/api_client.dart';
@@ -18,9 +19,9 @@ class MatrixUserApiService {
     required String matrixUrl,
     required String matrixToken, // Keep for potential future use
     required String corporalToken, // Keep for potential future use
-  })  : _apiClient = apiClient,
-        _matrixUrl = matrixUrl;
-
+  }) : _apiClient = apiClient,
+       _matrixUrl = matrixUrl;
+  final _log = Logger('MatrixUserApiService');
   void setMatrixEnvironmentValues({
     required String url,
     required String matrixToken,
@@ -46,14 +47,14 @@ class MatrixUserApiService {
       "admin": false,
       "displayname": displayName,
       "threepids": [],
-      "avatar_url": ""
+      "avatar_url": "",
     });
 
     // Add before your PUT request
-    print('Matrix API Request:');
-    print('URL: $_matrixUrl${_createMatrixUser(matrixId)}');
-    print('Data: $data');
-    print('Headers: ${_apiClient.matrixOptions.headers}');
+    _log.info('Matrix API Request:');
+    _log.info('URL: $_matrixUrl${_createMatrixUser(matrixId)}');
+    _log.info('Data: $data');
+    _log.info('Headers: ${_apiClient.matrixOptions.headers}');
 
     final Response response = await _apiClient.put(
       '$_matrixUrl${_createMatrixUser(matrixId)}',
@@ -63,9 +64,13 @@ class MatrixUserApiService {
     // statuscode 201 means: User created
     if (!(response.statusCode == 201 || response.statusCode == 200)) {
       _notificationService.showSnackBar(
-          NotificationType.error, 'Fehler: status code ${response.statusCode}');
+        NotificationType.error,
+        'Fehler: status code ${response.statusCode}',
+      );
       throw ApiException(
-          'Fehler beim Erstellen des Benutzers', response.statusCode);
+        'Fehler beim Erstellen des Benutzers',
+        response.statusCode,
+      );
     }
     final MatrixUser newUser = MatrixUser(
       id: matrixId,
@@ -76,11 +81,15 @@ class MatrixUserApiService {
     );
     if (response.statusCode == 201) {
       _notificationService.showSnackBar(
-          NotificationType.success, 'Benutzer erstellt');
+        NotificationType.success,
+        'Benutzer erstellt',
+      );
     }
     if (response.statusCode == 200) {
       _notificationService.showSnackBar(
-          NotificationType.success, 'Deaktivierter Benutzer reaktiviert');
+        NotificationType.success,
+        'Deaktivierter Benutzer reaktiviert',
+      );
     }
 
     return newUser;
@@ -93,9 +102,7 @@ class MatrixUserApiService {
   }
 
   Future<bool> deleteMatrixUser(String userId) async {
-    final data = jsonEncode({
-      "erase": true,
-    });
+    final data = jsonEncode({"erase": true});
     final Response response = await _apiClient.post(
       '$_matrixUrl${_deleteMatrixUser(userId)}',
       data: data,
@@ -104,7 +111,9 @@ class MatrixUserApiService {
 
     if (response.statusCode != 200) {
       _notificationService.showSnackBar(
-          NotificationType.error, 'Fehler: status code ${response.statusCode}');
+        NotificationType.error,
+        'Fehler: status code ${response.statusCode}',
+      );
 
       return false;
     }
@@ -135,7 +144,9 @@ class MatrixUserApiService {
 
     if (response.statusCode != 200) {
       _notificationService.showSnackBar(
-          NotificationType.error, 'Fehler: status code ${response.statusCode}');
+        NotificationType.error,
+        'Fehler: status code ${response.statusCode}',
+      );
 
       return false;
     }

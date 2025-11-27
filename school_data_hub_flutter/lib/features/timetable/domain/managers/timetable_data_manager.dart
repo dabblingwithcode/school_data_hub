@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/timetable/data/timetable_api_service.dart';
 import 'package:school_data_hub_flutter/features/timetable/data/timetable_mock_data.dart';
@@ -7,6 +8,7 @@ import 'package:watch_it/watch_it.dart';
 /// Manages timetable data loading, API calls, and state management
 class TimetableDataManager extends ChangeNotifier {
   final _apiService = di<TimetableApiService>();
+  final _log = Logger('TimetableDataManager');
 
   // Main timetable container
   final _timetable = ValueNotifier<Timetable?>(null);
@@ -51,9 +53,9 @@ class TimetableDataManager extends ChangeNotifier {
 
   /// Refresh all data from API
   Future<void> refreshData() async {
-    print('Refreshing timetable data...');
+    _log.info('Refreshing timetable data...');
     await _loadData();
-    print(
+    _log.info(
       'Data refresh completed. Lesson groups: ${_lessonGroups.value.length}',
     );
     notifyListeners();
@@ -61,14 +63,16 @@ class TimetableDataManager extends ChangeNotifier {
 
   /// Debug method to print current state
   void debugPrintState() {
-    print('=== TimetableDataManager Debug State ===');
-    print('Timetable: ${_timetable.value?.name} (ID: ${_timetable.value?.id})');
-    print('TimetableSlots: ${_timetableSlots.value.length}');
-    print('ScheduledLessons: ${_scheduledLessons.value.length}');
-    print('Subjects: ${_subjects.value.length}');
-    print('Classrooms: ${_classrooms.value.length}');
-    print('LessonGroups: ${_lessonGroups.value.length}');
-    print('====================================');
+    _log.info('=== TimetableDataManager Debug State ===');
+    _log.info(
+      'Timetable: ${_timetable.value?.name} (ID: ${_timetable.value?.id})',
+    );
+    _log.info('TimetableSlots: ${_timetableSlots.value.length}');
+    _log.info('ScheduledLessons: ${_scheduledLessons.value.length}');
+    _log.info('Subjects: ${_subjects.value.length}');
+    _log.info('Classrooms: ${_classrooms.value.length}');
+    _log.info('LessonGroups: ${_lessonGroups.value.length}');
+    _log.info('====================================');
   }
 
   void clearData() {
@@ -88,13 +92,13 @@ class TimetableDataManager extends ChangeNotifier {
   // Load data from API with fallback to mock data
   Future<void> _loadData() async {
     try {
-      print('Loading data from API...');
+      _log.info('Loading data from API...');
       // Try to load from API first
       await _loadFromApi();
-      print('Data loaded from API successfully');
+      _log.info('Data loaded from API successfully');
       debugPrintState();
     } catch (e) {
-      print('API failed, loading mock data: $e');
+      _log.info('API failed, loading mock data: $e');
       // Fallback to mock data if API fails
       await _loadMockData();
       debugPrintState();
@@ -103,37 +107,39 @@ class TimetableDataManager extends ChangeNotifier {
 
   // Load data from API
   Future<void> _loadFromApi() async {
-    print('Loading complete timetable data from API...');
+    _log.info('Loading complete timetable data from API...');
     // Load complete timetable data
     final timetable = await _apiService.fetchCompleteTimetableData();
-    print('API returned timetable: ${timetable?.name} (ID: ${timetable?.id})');
+    _log.info(
+      'API returned timetable: ${timetable?.name} (ID: ${timetable?.id})',
+    );
 
     if (timetable != null) {
       _timetable.value = timetable;
       _timetableSlots.value = timetable.timetableSlots ?? [];
       _scheduledLessons.value = timetable.scheduledLessons ?? [];
-      print(
+      _log.info(
         'Set timetable data - slots: ${timetable.timetableSlots?.length ?? 0}, lessons: ${timetable.scheduledLessons?.length ?? 0}',
       );
     } else {
-      print(
+      _log.info(
         'No timetable data returned from fetchCompleteTimetableData, trying fetchTimetables...',
       );
       // Try to fetch all timetables and use the first one
       final timetables = await _apiService.fetchTimetables();
       if (timetables != null && timetables.isNotEmpty) {
         final firstTimetable = timetables.first;
-        print(
+        _log.info(
           'Using first timetable from fetchTimetables: ${firstTimetable.name} (ID: ${firstTimetable.id})',
         );
         _timetable.value = firstTimetable;
         _timetableSlots.value = firstTimetable.timetableSlots ?? [];
         _scheduledLessons.value = firstTimetable.scheduledLessons ?? [];
-        print(
+        _log.info(
           'Set timetable data from fetchTimetables - slots: ${firstTimetable.timetableSlots?.length ?? 0}, lessons: ${firstTimetable.scheduledLessons?.length ?? 0}',
         );
       } else {
-        print('No timetables found in database');
+        _log.info('No timetables found in database');
       }
     }
 
@@ -171,7 +177,7 @@ class TimetableDataManager extends ChangeNotifier {
         _timetable.value!.id!,
       );
       if (lessonGroups != null) {
-        print(
+        _log.info(
           'Loaded ${lessonGroups.length} lesson groups from API for timetable ${_timetable.value!.id}',
         );
         // Sort lesson groups alphabetically by name
@@ -187,14 +193,14 @@ class TimetableDataManager extends ChangeNotifier {
         }
       }
     } else {
-      print('No timetable loaded, skipping lesson groups fetch');
+      _log.info('No timetable loaded, skipping lesson groups fetch');
       _lessonGroups.value = [];
       _lessonGroupIdMap.clear();
     }
 
     // Load scheduled lesson group memberships
-    final memberships =
-        await _apiService.fetchScheduledLessonGroupMemberships();
+    final memberships = await _apiService
+        .fetchScheduledLessonGroupMemberships();
     if (memberships != null) {
       _scheduledLessonGroupMemberships.value = memberships;
     }
@@ -334,10 +340,10 @@ class TimetableDataManager extends ChangeNotifier {
   // Timetable management methods
   Future<void> createTimetable(Timetable timetable) async {
     try {
-      print('Creating timetable: ${timetable.name}');
+      _log.info('Creating timetable: ${timetable.name}');
       final createdTimetable = await _apiService.createTimetable(timetable);
       if (createdTimetable != null) {
-        print(
+        _log.info(
           'Timetable created successfully: ${createdTimetable.name} (ID: ${createdTimetable.id})',
         );
 
@@ -361,12 +367,12 @@ class TimetableDataManager extends ChangeNotifier {
         await _loadAdditionalDataFromApi();
 
         notifyListeners();
-        print(
+        _log.info(
           'Timetable set as active. Current timetable: ${_timetable.value?.name} (ID: ${_timetable.value?.id})',
         );
       }
     } catch (e) {
-      print('Error creating timetable: $e');
+      _log.info('Error creating timetable: $e');
       // Fallback to local operation if API fails
       final newId = _timetable.value?.id ?? 1;
       final newTimetable = timetable.copyWith(id: newId);
@@ -419,21 +425,21 @@ class TimetableDataManager extends ChangeNotifier {
           try {
             final createdSlot = await _apiService.createTimetableSlot(slot);
             if (createdSlot != null) {
-              print(
+              _log.info(
                 'Created slot: ${createdSlot.day} ${createdSlot.startTime}-${createdSlot.endTime}',
               );
             }
           } catch (e) {
-            print(
+            _log.info(
               'Error creating slot for ${weekday} ${time['start']}-${time['end']}: $e',
             );
           }
         }
       }
 
-      print('Default timetable slots generation completed');
+      _log.info('Default timetable slots generation completed');
     } catch (e) {
-      print('Error generating default timetable slots: $e');
+      _log.info('Error generating default timetable slots: $e');
     }
   }
 
@@ -454,7 +460,7 @@ class TimetableDataManager extends ChangeNotifier {
       _classrooms.value = updatedClassrooms;
       _buildLookupMaps();
       notifyListeners();
-      print(
+      _log.info(
         'Added classroom to local data: ${classroom.roomName} (ID: ${classroom.id})',
       );
     }
@@ -472,7 +478,7 @@ class TimetableDataManager extends ChangeNotifier {
       _classrooms.value = updatedClassrooms;
       _buildLookupMaps();
       notifyListeners();
-      print(
+      _log.info(
         'Updated classroom in local data: ${classroom.roomName} (ID: ${classroom.id})',
       );
     }
@@ -481,25 +487,26 @@ class TimetableDataManager extends ChangeNotifier {
   /// Remove a classroom from the local data
   void removeClassroom(int classroomId) {
     final currentClassrooms = _classrooms.value;
-    final updatedClassrooms =
-        currentClassrooms.where((c) => c.id != classroomId).toList();
+    final updatedClassrooms = currentClassrooms
+        .where((c) => c.id != classroomId)
+        .toList();
     if (updatedClassrooms.length != currentClassrooms.length) {
       _classrooms.value = updatedClassrooms;
       _buildLookupMaps();
       notifyListeners();
-      print('Removed classroom from local data: $classroomId');
+      _log.info('Removed classroom from local data: $classroomId');
     }
   }
 
   /// Add a new lesson group to the local data
   void addLessonGroup(LessonGroup lessonGroup) {
-    print(
+    _log.info(
       'DEBUG: addLessonGroup called - timetableId: ${lessonGroup.timetableId}, current timetable: ${_timetable.value?.id}',
     );
 
     // Only add lesson groups that belong to the current timetable
     if (lessonGroup.timetableId != _timetable.value?.id) {
-      print(
+      _log.info(
         'Skipping lesson group ${lessonGroup.name} - belongs to different timetable (${lessonGroup.timetableId} vs ${_timetable.value?.id})',
       );
       return;
@@ -513,7 +520,7 @@ class TimetableDataManager extends ChangeNotifier {
       _lessonGroups.value = updatedLessonGroups;
       _buildLookupMaps();
       notifyListeners();
-      print(
+      _log.info(
         'Added lesson group to local data: ${lessonGroup.name} (ID: ${lessonGroup.id})',
       );
     }
@@ -523,7 +530,7 @@ class TimetableDataManager extends ChangeNotifier {
   void updateLessonGroup(LessonGroup lessonGroup) {
     // Only update lesson groups that belong to the current timetable
     if (lessonGroup.timetableId != _timetable.value?.id) {
-      print(
+      _log.info(
         'Skipping lesson group update ${lessonGroup.name} - belongs to different timetable (${lessonGroup.timetableId} vs ${_timetable.value?.id})',
       );
       return;
@@ -541,7 +548,7 @@ class TimetableDataManager extends ChangeNotifier {
       _lessonGroups.value = updatedLessonGroups;
       _buildLookupMaps();
       notifyListeners();
-      print(
+      _log.info(
         'Updated lesson group in local data: ${lessonGroup.name} (ID: ${lessonGroup.id})',
       );
     }
@@ -550,13 +557,14 @@ class TimetableDataManager extends ChangeNotifier {
   /// Remove a lesson group from the local data
   void removeLessonGroup(int lessonGroupId) {
     final currentLessonGroups = _lessonGroups.value;
-    final updatedLessonGroups =
-        currentLessonGroups.where((lg) => lg.id != lessonGroupId).toList();
+    final updatedLessonGroups = currentLessonGroups
+        .where((lg) => lg.id != lessonGroupId)
+        .toList();
     if (updatedLessonGroups.length != currentLessonGroups.length) {
       _lessonGroups.value = updatedLessonGroups;
       _buildLookupMaps();
       notifyListeners();
-      print('Removed lesson group from local data: $lessonGroupId');
+      _log.info('Removed lesson group from local data: $lessonGroupId');
     }
   }
 
@@ -570,7 +578,9 @@ class TimetableDataManager extends ChangeNotifier {
       _subjects.value = updatedSubjects;
       _buildLookupMaps();
       notifyListeners();
-      print('Added subject to local data: ${subject.name} (ID: ${subject.id})');
+      _log.info(
+        'Added subject to local data: ${subject.name} (ID: ${subject.id})',
+      );
     }
   }
 
@@ -586,7 +596,7 @@ class TimetableDataManager extends ChangeNotifier {
       _subjects.value = updatedSubjects;
       _buildLookupMaps();
       notifyListeners();
-      print(
+      _log.info(
         'Updated subject in local data: ${subject.name} (ID: ${subject.id})',
       );
     }
@@ -595,13 +605,14 @@ class TimetableDataManager extends ChangeNotifier {
   /// Remove a subject from the local data
   void removeSubject(int subjectId) {
     final currentSubjects = _subjects.value;
-    final updatedSubjects =
-        currentSubjects.where((s) => s.id != subjectId).toList();
+    final updatedSubjects = currentSubjects
+        .where((s) => s.id != subjectId)
+        .toList();
     if (updatedSubjects.length != currentSubjects.length) {
       _subjects.value = updatedSubjects;
       _buildLookupMaps();
       notifyListeners();
-      print('Removed subject from local data: $subjectId');
+      _log.info('Removed subject from local data: $subjectId');
     }
   }
 }

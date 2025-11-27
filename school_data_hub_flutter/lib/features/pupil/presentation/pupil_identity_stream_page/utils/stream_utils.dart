@@ -2,7 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+
+final _log = Logger('StreamUtils');
 
 /// Utility functions for stream operations
 class StreamUtils {
@@ -84,7 +87,7 @@ class StreamUtils {
   /// Logs debug information in debug mode only
   static void debugLog(String message) {
     if (kDebugMode) {
-      print('[PupilIdentityStream] $message');
+      _log.info('[PupilIdentityStream] $message');
     }
   }
 

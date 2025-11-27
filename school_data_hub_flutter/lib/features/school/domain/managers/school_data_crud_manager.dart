@@ -1,23 +1,25 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/school/data/school_data_api_service.dart';
 
 /// Manages CRUD operations for school data
-class SchoolDataCrudManager extends ChangeNotifier {
+class SchoolInfoDataManager extends ChangeNotifier {
   final _apiService = SchoolDataApiService();
+  final _log = Logger('SchoolInfoDataManager');
 
   /// Fetch school data from the server
   Future<SchoolData?> fetchSchoolData() async {
     try {
       final schoolData = await _apiService.fetchSchoolData();
       if (schoolData != null) {
-        print('School data fetched successfully: ${schoolData.name}');
+        _log.info('School data fetched successfully: ${schoolData.name}');
       }
       return schoolData;
     } catch (e) {
-      print('Error fetching school data: $e');
+      _log.info('Error fetching school data: $e');
       rethrow;
     }
   }
@@ -27,11 +29,11 @@ class SchoolDataCrudManager extends ChangeNotifier {
     try {
       final createdSchoolData = await _apiService.postSchoolData(schoolData);
       if (createdSchoolData != null) {
-        print('School data saved successfully: ${createdSchoolData.name}');
+        _log.info('School data saved successfully: ${createdSchoolData.name}');
       }
       return createdSchoolData;
     } catch (e) {
-      print('Error saving school data: $e');
+      _log.info('Error saving school data: $e');
       rethrow;
     }
   }
@@ -41,11 +43,11 @@ class SchoolDataCrudManager extends ChangeNotifier {
     try {
       final logoPath = await _apiService.uploadLogo(imageFile);
       if (logoPath != null) {
-        print('Logo uploaded successfully: $logoPath');
+        _log.info('Logo uploaded successfully: $logoPath');
       }
       return logoPath;
     } catch (e) {
-      print('Error uploading logo: $e');
+      _log.info('Error uploading logo: $e');
       rethrow;
     }
   }
@@ -55,11 +57,11 @@ class SchoolDataCrudManager extends ChangeNotifier {
     try {
       final sealPath = await _apiService.uploadOfficialSeal(imageFile);
       if (sealPath != null) {
-        print('Official seal uploaded successfully: $sealPath');
+        _log.info('Official seal uploaded successfully: $sealPath');
       }
       return sealPath;
     } catch (e) {
-      print('Error uploading official seal: $e');
+      _log.info('Error uploading official seal: $e');
       rethrow;
     }
   }
@@ -69,7 +71,7 @@ class SchoolDataCrudManager extends ChangeNotifier {
     try {
       return await _apiService.getLogoImage(documentId);
     } catch (e) {
-      print('Error getting logo image: $e');
+      _log.info('Error getting logo image: $e');
       rethrow;
     }
   }
@@ -79,7 +81,7 @@ class SchoolDataCrudManager extends ChangeNotifier {
     try {
       return await _apiService.getOfficialSealImage(documentId);
     } catch (e) {
-      print('Error getting official seal image: $e');
+      _log.info('Error getting official seal image: $e');
       rethrow;
     }
   }

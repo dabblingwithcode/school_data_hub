@@ -10,11 +10,11 @@ class PupilListEntryProxy with ChangeNotifier {
   PupilListEntry pupilEntry;
   PupilListEntryProxy({required this.pupilEntry}) {
     notifyListeners();
-    _log.info('PupilListEntryProxy created: ${pupilEntry.id}');
+    // _log.info('PupilListEntryProxy created: ${pupilEntry.id}');
   }
   void setPupilEntry(PupilListEntry entry) {
     pupilEntry = entry;
     notifyListeners();
-    _log.info('PupilListEntryProxy updated: ${pupilEntry.id}');
+    // _log.info('PupilListEntryProxy updated: ${pupilEntry.id}');
   }
 }

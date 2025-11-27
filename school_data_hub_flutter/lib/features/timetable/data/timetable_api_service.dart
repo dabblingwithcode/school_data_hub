@@ -1,3 +1,4 @@
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:watch_it/watch_it.dart';
@@ -7,6 +8,7 @@ import 'package:watch_it/watch_it.dart';
 /// This service uses the implemented server-side endpoints for timetable management.
 class TimetableApiService {
   final _client = di<Client>();
+  final _log = Logger('TimetableApiService');
 
   // ============================================================================
   // TIMETABLE OPERATIONS
@@ -14,9 +16,13 @@ class TimetableApiService {
 
   /// Fetch the main timetable with all related data
   Future<Timetable?> fetchTimetable() async {
+    _log.info('Calling fetchTimetable...');
     final timetable = await ClientHelper.apiCall(
       call: () => _client.timetable.fetchTimetable(),
       errorMessage: 'Fehler beim Laden des Stundenplans',
+    );
+    _log.info(
+      'fetchTimetable returned: ${timetable?.name} (ID: ${timetable?.id})',
     );
     return timetable;
   }
@@ -48,29 +54,31 @@ class TimetableApiService {
 
   /// Fetch complete timetable data (timetable + slots + lessons + related data)
   Future<Timetable?> fetchCompleteTimetableData() async {
-    print('API: Calling fetchCompleteTimetableData...');
+    _log.info('Calling fetchCompleteTimetableData...');
     final timetable = await ClientHelper.apiCall(
       call: () => _client.timetable.fetchCompleteTimetableData(),
       errorMessage: 'Fehler beim Laden der vollständigen Stundenplandaten',
     );
-    print(
+    _log.info(
       'API: fetchCompleteTimetableData returned: ${timetable?.name} (ID: ${timetable?.id})',
     );
-    print('API: Timetable is null: ${timetable == null}');
+    _log.info('API: Timetable is null: ${timetable == null}');
     return timetable;
   }
 
   /// Fetch all timetables
   Future<List<Timetable>?> fetchTimetables() async {
-    print('API: Calling fetchTimetables...');
+    _log.info('API: Calling fetchTimetables...');
     final timetables = await ClientHelper.apiCall(
       call: () => _client.timetable.fetchTimetables(),
       errorMessage: 'Fehler beim Laden der Stundenpläne',
     );
-    print('API: fetchTimetables returned: ${timetables?.length} timetables');
+    _log.info(
+      'API: fetchTimetables returned: ${timetables?.length} timetables',
+    );
     if (timetables != null) {
       for (final timetable in timetables) {
-        print('API: - Timetable: ${timetable.name} (ID: ${timetable.id})');
+        _log.info('API: - Timetable: ${timetable.name} (ID: ${timetable.id})');
       }
     }
     return timetables;
@@ -93,10 +101,8 @@ class TimetableApiService {
     int timetableId,
   ) async {
     return await ClientHelper.apiCall(
-      call:
-          () => _client.timetableSlot.fetchTimetableSlotsByTimetableId(
-            timetableId,
-          ),
+      call: () =>
+          _client.timetableSlot.fetchTimetableSlotsByTimetableId(timetableId),
       errorMessage: 'Fehler beim Laden der Zeitslots für den Stundenplan',
     );
   }
@@ -142,10 +148,8 @@ class TimetableApiService {
     int timetableId,
   ) async {
     return await ClientHelper.apiCall(
-      call:
-          () => _client.scheduledLesson.fetchScheduledLessonsByTimetable(
-            timetableId,
-          ),
+      call: () =>
+          _client.scheduledLesson.fetchScheduledLessonsByTimetable(timetableId),
       errorMessage:
           'Fehler beim Laden der geplanten Stunden für den Stundenplan',
     );
@@ -204,8 +208,8 @@ class TimetableApiService {
     int timetableId,
   ) async {
     return await ClientHelper.apiCall(
-      call:
-          () => _client.learningGroup.fetchLessonGroupsByTimetable(timetableId),
+      call: () =>
+          _client.learningGroup.fetchLessonGroupsByTimetable(timetableId),
       errorMessage: 'Fehler beim Laden der Klassen für den Stundenplan',
     );
   }
@@ -341,10 +345,8 @@ class TimetableApiService {
   Future<List<ScheduledLessonGroupMembership>?>
   fetchScheduledLessonGroupMemberships() async {
     return await ClientHelper.apiCall(
-      call:
-          () =>
-              _client.scheduledLessonGroupMembership
-                  .fetchScheduledLessonGroupMemberships(),
+      call: () => _client.scheduledLessonGroupMembership
+          .fetchScheduledLessonGroupMemberships(),
       errorMessage: 'Fehler beim Laden der Klassenmitgliedschaften',
     );
   }
@@ -354,9 +356,8 @@ class TimetableApiService {
     int lessonGroupId,
   ) async {
     return await ClientHelper.apiCall(
-      call:
-          () => _client.scheduledLessonGroupMembership
-              .fetchMembershipsByLessonGroupId(lessonGroupId),
+      call: () => _client.scheduledLessonGroupMembership
+          .fetchMembershipsByLessonGroupId(lessonGroupId),
       errorMessage: 'Fehler beim Laden der Klassenmitgliedschaften',
     );
   }
@@ -366,9 +367,8 @@ class TimetableApiService {
     ScheduledLessonGroupMembership membership,
   ) async {
     return await ClientHelper.apiCall(
-      call:
-          () => _client.scheduledLessonGroupMembership
-              .createScheduledLessonGroupMembership(membership),
+      call: () => _client.scheduledLessonGroupMembership
+          .createScheduledLessonGroupMembership(membership),
       errorMessage: 'Fehler beim Erstellen der Klassenmitgliedschaft',
     );
   }
@@ -378,9 +378,8 @@ class TimetableApiService {
     ScheduledLessonGroupMembership membership,
   ) async {
     return await ClientHelper.apiCall(
-      call:
-          () => _client.scheduledLessonGroupMembership
-              .updateScheduledLessonGroupMembership(membership),
+      call: () => _client.scheduledLessonGroupMembership
+          .updateScheduledLessonGroupMembership(membership),
       errorMessage: 'Fehler beim Aktualisieren der Klassenmitgliedschaft',
     );
   }
@@ -388,9 +387,8 @@ class TimetableApiService {
   /// Delete a scheduled lesson group membership
   Future<bool?> deleteScheduledLessonGroupMembership(int membershipId) async {
     return await ClientHelper.apiCall(
-      call:
-          () => _client.scheduledLessonGroupMembership
-              .deleteScheduledLessonGroupMembership(membershipId),
+      call: () => _client.scheduledLessonGroupMembership
+          .deleteScheduledLessonGroupMembership(membershipId),
       errorMessage: 'Fehler beim Löschen der Klassenmitgliedschaft',
     );
   }
@@ -401,9 +399,8 @@ class TimetableApiService {
     int pupilDataId,
   ) async {
     return await ClientHelper.apiCall(
-      call:
-          () => _client.scheduledLessonGroupMembership
-              .deletePupilFromLessonGroup(lessonGroupId, pupilDataId),
+      call: () => _client.scheduledLessonGroupMembership
+          .deletePupilFromLessonGroup(lessonGroupId, pupilDataId),
       errorMessage: 'Fehler beim Entfernen des Schülers aus der Klasse',
     );
   }
@@ -418,12 +415,8 @@ class TimetableApiService {
     List<int> pupilDataIds,
   ) async {
     return await ClientHelper.apiCall(
-      call:
-          () => _client.scheduledLessonGroupMembership
-              .updatePupilMembershipsForLessonGroup(
-                lessonGroupId,
-                pupilDataIds,
-              ),
+      call: () => _client.scheduledLessonGroupMembership
+          .updatePupilMembershipsForLessonGroup(lessonGroupId, pupilDataIds),
       errorMessage: 'Fehler beim Aktualisieren der Klassenmitgliedschaften',
     );
   }

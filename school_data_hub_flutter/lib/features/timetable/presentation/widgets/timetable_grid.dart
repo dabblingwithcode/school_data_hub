@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/classroom_list_page/classroom_list_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/lesson_cell/lesson_cell.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _log = Logger('TimetableGrid');
 
 class TimetableGrid extends WatchingWidget {
   final TimetableManager timetableManager;
@@ -45,21 +48,21 @@ class TimetableGrid extends WatchingWidget {
     final timeSlotPeriods = timetableManager.getTimeSlotPeriods();
 
     // Debug logging
-    print('TimetableGrid - timeSlotPeriods: ${timeSlotPeriods.length}');
-    print(
+    _log.info('TimetableGrid - timeSlotPeriods: ${timeSlotPeriods.length}');
+    _log.info(
       'TimetableGrid - allLessonGroupsForWeekday: ${allLessonGroupsForWeekday.length}',
     );
-    print('TimetableGrid - selectedWeekday: $selectedWeekday');
-    print(
+    _log.info('TimetableGrid - selectedWeekday: $selectedWeekday');
+    _log.info(
       'TimetableGrid - total lesson groups: ${lessonGroupsForWeekday.length}',
     );
-    print(
+    _log.info(
       'TimetableGrid - selected lesson group IDs: ${selectedLessonGroupIds}',
     );
-    print(
+    _log.info(
       'TimetableGrid - scheduled lessons count: ${scheduledLessons.length}',
     );
-    print('TimetableGrid - classrooms count: ${classrooms.length}');
+    _log.info('TimetableGrid - classrooms count: ${classrooms.length}');
 
     // Handle empty states
     if (timeSlotPeriods.isEmpty) {
@@ -197,8 +200,9 @@ class _TimetableRow extends StatelessWidget {
   Widget build(BuildContext context) {
     // Get the slot for this weekday and period
     final slotsForPeriod = timetableManager.getSlotsByTimePeriod(period);
-    final slotForWeekday =
-        slotsForPeriod.where((slot) => slot.day == weekday).firstOrNull;
+    final slotForWeekday = slotsForPeriod
+        .where((slot) => slot.day == weekday)
+        .firstOrNull;
 
     return Row(
       children: [
@@ -219,10 +223,9 @@ class _TimetableRow extends StatelessWidget {
             final allLessons = timetableManager.getAllLessonsForSlot(
               slotForWeekday.id!,
             );
-            lessonForGroup =
-                allLessons
-                    .where((lesson) => lesson.lessonGroupId == group.id)
-                    .firstOrNull;
+            lessonForGroup = allLessons
+                .where((lesson) => lesson.lessonGroupId == group.id)
+                .firstOrNull;
           }
 
           return Container(
@@ -231,21 +234,20 @@ class _TimetableRow extends StatelessWidget {
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey.shade300),
             ),
-            child:
-                slotForWeekday != null
-                    ? LessonCell(
-                      lesson: lessonForGroup,
-                      slot: slotForWeekday,
-                      onTap: () {
-                        if (lessonForGroup != null) {
-                          onLessonTap(lessonForGroup.id!);
-                        } else {
-                          // Create lesson for this specific group and slot
-                          onEmptySlotTap(slotForWeekday.id!);
-                        }
-                      },
-                    )
-                    : const SizedBox.shrink(),
+            child: slotForWeekday != null
+                ? LessonCell(
+                    lesson: lessonForGroup,
+                    slot: slotForWeekday,
+                    onTap: () {
+                      if (lessonForGroup != null) {
+                        onLessonTap(lessonForGroup.id!);
+                      } else {
+                        // Create lesson for this specific group and slot
+                        onEmptySlotTap(slotForWeekday.id!);
+                      }
+                    },
+                  )
+                : const SizedBox.shrink(),
           );
         }).toList(),
         // Add new lesson button
@@ -259,10 +261,9 @@ class _TimetableRow extends StatelessWidget {
           child: Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap:
-                  slotForWeekday != null
-                      ? () => onEmptySlotTap(slotForWeekday.id!)
-                      : null,
+              onTap: slotForWeekday != null
+                  ? () => onEmptySlotTap(slotForWeekday.id!)
+                  : null,
               child: const Center(
                 child: Icon(Icons.add, color: Colors.green, size: 24),
               ),
@@ -306,16 +307,15 @@ class _AvailableUsersCell extends WatchingWidget {
     );
 
     // Filter available users
-    final availableUsers =
-        users
-            .where(
-              (user) =>
-                  user.role == Role.teacher && // Only teachers
-                  user.id != null &&
-                  !busyUserIds.contains(user.id) && // Not currently teaching
-                  _hasAvailableTimeUnits(user), // Has time units left
-            )
-            .toList();
+    final availableUsers = users
+        .where(
+          (user) =>
+              user.role == Role.teacher && // Only teachers
+              user.id != null &&
+              !busyUserIds.contains(user.id) && // Not currently teaching
+              _hasAvailableTimeUnits(user), // Has time units left
+        )
+        .toList();
 
     return Container(
       width: 200,
@@ -324,48 +324,47 @@ class _AvailableUsersCell extends WatchingWidget {
         border: Border.all(color: Colors.grey.shade300),
         color: Colors.blue.shade50,
       ),
-      child:
-          availableUsers.isEmpty
-              ? const Center(
-                child: Text(
-                  'Keine Lehrer\nverfügbar',
-                  style: TextStyle(fontSize: 10, color: Colors.grey),
-                  textAlign: TextAlign.center,
-                ),
-              )
-              : Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: SingleChildScrollView(
-                  child: Wrap(
-                    spacing: 2,
-                    runSpacing: 2,
-                    children:
-                        availableUsers.map((user) {
-                          final timeUnitsUsed =
-                              _getScheduledLessonsCountForUser(user.id!);
-                          final availableUnits = user.timeUnits - timeUnitsUsed;
+      child: availableUsers.isEmpty
+          ? const Center(
+              child: Text(
+                'Keine Lehrer\nverfügbar',
+                style: TextStyle(fontSize: 10, color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: SingleChildScrollView(
+                child: Wrap(
+                  spacing: 2,
+                  runSpacing: 2,
+                  children: availableUsers.map((user) {
+                    final timeUnitsUsed = _getScheduledLessonsCountForUser(
+                      user.id!,
+                    );
+                    final availableUnits = user.timeUnits - timeUnitsUsed;
 
-                          return Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 4,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              '${user.userInfo?.fullName ?? 'unbekannt'} ($availableUnits)',
-                              style: const TextStyle(
-                                fontSize: 8,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                  ),
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        '${user.userInfo?.fullName ?? 'unbekannt'} ($availableUnits)',
+                        style: const TextStyle(
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  }).toList(),
                 ),
               ),
+            ),
     );
   }
 

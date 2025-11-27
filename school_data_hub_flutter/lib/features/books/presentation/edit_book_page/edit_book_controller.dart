@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
@@ -8,6 +9,8 @@ import 'package:school_data_hub_flutter/features/books/domain/models/library_boo
 import 'package:school_data_hub_flutter/features/books/presentation/book_tag_management_page/book_tag_management_controller.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/edit_book_page/edit_book_page.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _log = Logger('EditBookController');
 
 class EditBook extends WatchingStatefulWidget {
   final LibraryBookProxy libraryBook;
@@ -93,10 +96,10 @@ class EditBookController extends State<EditBook> {
     final allBookTags = di<BookManager>().bookTags.value;
 
     // Debug logging
-    print(
+    _log.info(
       'DEBUG: Current book tags: ${currentBookTags.map((t) => '${t.name} (id: ${t.id})').toList()}',
     );
-    print(
+    _log.info(
       'DEBUG: All available tags: ${allBookTags.map((t) => '${t.name} (id: ${t.id})').toList()}',
     );
 
@@ -109,10 +112,12 @@ class EditBookController extends State<EditBook> {
         (currentTag) => currentTag.id == tag.id,
       );
       bookTagSelection[tag] = isSelected;
-      print('DEBUG: Tag ${tag.name} (id: ${tag.id}) -> selected: $isSelected');
+      _log.info(
+        'DEBUG: Tag ${tag.name} (id: ${tag.id}) -> selected: $isSelected',
+      );
     }
 
-    print(
+    _log.info(
       'DEBUG: Final bookTagSelection: ${bookTagSelection.map((k, v) => MapEntry('${k.name} (id: ${k.id})', v))}',
     );
   }
@@ -124,8 +129,8 @@ class EditBookController extends State<EditBook> {
     // Find the matching location in the dropdown items
     selectedLocation = allLocations.firstWhere(
       (location) => location.id == currentLocation.id,
-      orElse:
-          () => currentLocation, // Fallback to current location if not found
+      orElse: () =>
+          currentLocation, // Fallback to current location if not found
     );
   }
 
@@ -239,11 +244,10 @@ class EditBookController extends State<EditBook> {
     }
 
     // Get selected tags
-    final selectedTags =
-        bookTagSelection.entries
-            .where((entry) => entry.value)
-            .map((entry) => entry.key)
-            .toList();
+    final selectedTags = bookTagSelection.entries
+        .where((entry) => entry.value)
+        .map((entry) => entry.key)
+        .toList();
 
     // Update the book properties
     await di<BookManager>().updateLibraryBookAndBookProperties(
