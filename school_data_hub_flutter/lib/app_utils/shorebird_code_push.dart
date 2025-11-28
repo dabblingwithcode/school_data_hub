@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/bottom_nav_bar_no_filter_button.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
+
+final _log = Logger('CheckForUpdatesPage');
 
 class CheckForUpdatesPage extends StatefulWidget {
   const CheckForUpdatesPage({super.key});
@@ -30,7 +35,7 @@ class _CheckForUpdatesPageState extends State<CheckForUpdatesPage> {
         })
         .catchError((Object error) {
           // If an error occurs, we log it for now.
-          debugPrint('Error reading current patch: $error');
+          _log.severe('Error reading current patch: $error');
         });
   }
 
@@ -56,7 +61,7 @@ class _CheckForUpdatesPageState extends State<CheckForUpdatesPage> {
       }
     } catch (error) {
       // If an error occurs, we log it for now.
-      debugPrint('Error checking for update: $error');
+      _log.severe('Error checking for update: $error');
     } finally {
       setState(() => _isCheckingForUpdates = false);
     }
@@ -67,7 +72,7 @@ class _CheckForUpdatesPageState extends State<CheckForUpdatesPage> {
       ..hideCurrentMaterialBanner()
       ..showMaterialBanner(
         const MaterialBanner(
-          content: Text('Downloading...'),
+          content: Text('Wird heruntergeladen...'),
           actions: [
             SizedBox(height: 14, width: 14, child: CircularProgressIndicator()),
           ],
@@ -80,9 +85,7 @@ class _CheckForUpdatesPageState extends State<CheckForUpdatesPage> {
       ..hideCurrentMaterialBanner()
       ..showMaterialBanner(
         MaterialBanner(
-          content: Text(
-            'Update available for the ${_currentTrack.name} track.',
-          ),
+          content: Text('Update verfügbar für  ${_currentTrack.name}.'),
           actions: [
             TextButton(
               onPressed: () async {
@@ -103,15 +106,13 @@ class _CheckForUpdatesPageState extends State<CheckForUpdatesPage> {
       ..hideCurrentMaterialBanner()
       ..showMaterialBanner(
         MaterialBanner(
-          content: Text(
-            'No update available on the ${_currentTrack.name} track.',
-          ),
+          content: Text('Kein Update verfügbar für ${_currentTrack.name}.'),
           actions: [
             TextButton(
               onPressed: () {
                 ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
               },
-              child: const Text('Dismiss'),
+              child: const Text('Verstanden'),
             ),
           ],
         ),
@@ -123,13 +124,15 @@ class _CheckForUpdatesPageState extends State<CheckForUpdatesPage> {
       ..hideCurrentMaterialBanner()
       ..showMaterialBanner(
         MaterialBanner(
-          content: const Text('A new patch is ready! Please restart your app.'),
+          content: const Text(
+            'Ein neuer Patch ist verfügbar! Bitte starte die App neu.',
+          ),
           actions: [
             TextButton(
               onPressed: () {
                 ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
               },
-              child: const Text('Dismiss'),
+              child: const Text('Verstanden'),
             ),
           ],
         ),
@@ -141,15 +144,13 @@ class _CheckForUpdatesPageState extends State<CheckForUpdatesPage> {
       ..hideCurrentMaterialBanner()
       ..showMaterialBanner(
         MaterialBanner(
-          content: Text(
-            'An error occurred while downloading the update: $error.',
-          ),
+          content: Text('Fehler beim Herunterladen des Updates: $error.'),
           actions: [
             TextButton(
               onPressed: () {
                 ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
               },
-              child: const Text('Dismiss'),
+              child: const Text('Verstanden'),
             ),
           ],
         ),
@@ -178,10 +179,7 @@ class _CheckForUpdatesPageState extends State<CheckForUpdatesPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: theme.colorScheme.inversePrimary,
-        title: const Text('Shorebird Code Push'),
-      ),
+      appBar: const GenericAppBar(iconData: Icons.update, title: 'OTA Update'),
       body: Column(
         children: [
           if (!_isUpdaterAvailable) const _ShorebirdUnavailable(),
@@ -199,12 +197,12 @@ class _CheckForUpdatesPageState extends State<CheckForUpdatesPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _isCheckingForUpdates ? null : _checkForUpdate,
-        tooltip: 'Check for update',
-        child:
-            _isCheckingForUpdates
-                ? const _LoadingIndicator()
-                : const Icon(Icons.refresh),
+        tooltip: 'Auf Updates prüfen',
+        child: _isCheckingForUpdates
+            ? const _LoadingIndicator()
+            : const Icon(Icons.refresh),
       ),
+      bottomNavigationBar: const BottomNavBarNoFilterButton(),
     );
   }
 }
@@ -216,13 +214,16 @@ class _ShorebirdUnavailable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Center(
-      child: Text(
-        '''
-Shorebird is not available.
-Please make sure the app was generated via `shorebird release` and that it is running in release mode.''',
-        style: theme.textTheme.bodyLarge?.copyWith(
-          color: theme.colorScheme.error,
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Center(
+        child: Text(
+          '''
+OTA Update ist nicht verfügbar.
+Bitte stelle sicher, dass die App mit `shorebird release` generiert wurde und dass sie im Release-Modus läuft.''',
+          style: theme.textTheme.bodyLarge?.copyWith(
+            color: theme.colorScheme.error,
+          ),
         ),
       ),
     );
@@ -242,9 +243,9 @@ class _CurrentPatchVersion extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          const Text('Current patch version:'),
+          const Text('Aktuelle Patch-Version:'),
           Text(
-            patch != null ? '${patch!.number}' : 'No patch installed',
+            patch != null ? '${patch!.number}' : 'Kein Patch installiert',
             style: theme.textTheme.headlineMedium,
           ),
         ],
