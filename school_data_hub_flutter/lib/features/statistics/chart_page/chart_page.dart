@@ -30,12 +30,18 @@ class ChartPage extends StatelessWidget {
     })
   >
   eventChartData;
+  final Map<
+    DateTime,
+    ({int excused, int unexcused, int goneHome})
+  >
+  attendanceChartData;
   final List<Schoolday> schooldays;
 
   const ChartPage({
     super.key,
     required this.chartData,
     required this.eventChartData,
+    required this.attendanceChartData,
     required this.schooldays,
   });
 
@@ -272,6 +278,68 @@ class ChartPage extends StatelessWidget {
         domainFn: (ChartData data, _) => data.dateString,
         measureFn: (ChartData data, _) => data.count,
         data: otherEventData,
+      ),
+    ];
+  }
+
+  List<charts.Series<ChartData, String>> _createAttendanceSeries() {
+    // Sort schooldays by date
+    final sorted = sortedSchooldays;
+
+    final excusedData = sorted.map((schoolday) {
+      final data = attendanceChartData[schoolday.schoolday];
+      final dateStr = _formatDateForChart(schoolday.schoolday);
+      return ChartData(
+        date: schoolday.schoolday,
+        dateString: dateStr,
+        count: data?.excused ?? 0,
+        seriesId: 'excused',
+      );
+    }).toList();
+
+    final unexcusedData = sorted.map((schoolday) {
+      final data = attendanceChartData[schoolday.schoolday];
+      final dateStr = _formatDateForChart(schoolday.schoolday);
+      return ChartData(
+        date: schoolday.schoolday,
+        dateString: dateStr,
+        count: data?.unexcused ?? 0,
+        seriesId: 'unexcused',
+      );
+    }).toList();
+
+    final goneHomeData = sorted.map((schoolday) {
+      final data = attendanceChartData[schoolday.schoolday];
+      final dateStr = _formatDateForChart(schoolday.schoolday);
+      return ChartData(
+        date: schoolday.schoolday,
+        dateString: dateStr,
+        count: data?.goneHome ?? 0,
+        seriesId: 'goneHome',
+      );
+    }).toList();
+
+    return [
+      charts.Series<ChartData, String>(
+        id: 'Entschuldigt',
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(Colors.green),
+        domainFn: (ChartData data, _) => data.dateString,
+        measureFn: (ChartData data, _) => data.count,
+        data: excusedData,
+      ),
+      charts.Series<ChartData, String>(
+        id: 'Unentschuldigt',
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(Colors.red),
+        domainFn: (ChartData data, _) => data.dateString,
+        measureFn: (ChartData data, _) => data.count,
+        data: unexcusedData,
+      ),
+      charts.Series<ChartData, String>(
+        id: 'Nach Hause geschickt',
+        colorFn: (_, __) => charts.ColorUtil.fromDartColor(Colors.orange),
+        domainFn: (ChartData data, _) => data.dateString,
+        measureFn: (ChartData data, _) => data.count,
+        data: goneHomeData,
       ),
     ];
   }
@@ -559,6 +627,111 @@ class ChartPage extends StatelessWidget {
                       _buildLegendItem('Rote Karte - OGS', Colors.orange),
                       _buildLegendItem('Rote Karte + Abholen', Colors.purple),
                       _buildLegendItem('Sonstiges', Colors.grey),
+                    ],
+                  ),
+                  const Gap(30),
+                  const Text(
+                    'Anwesenheit nach Schultag',
+                    style: AppStyles.title,
+                  ),
+                  const Gap(10),
+                  SizedBox(
+                    height: 300,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        if (constraints.maxHeight <= 0 ||
+                            constraints.maxWidth <= 0) {
+                          return const Center(
+                            child: Text('Chart wird geladen...'),
+                          );
+                        }
+                        final attendanceSeries = _createAttendanceSeries();
+                        return charts.OrdinalComboChart(
+                          attendanceSeries,
+                          animate: true,
+                          animationDuration: const Duration(milliseconds: 500),
+                          defaultRenderer: charts.BarRendererConfig(
+                            groupingType: charts.BarGroupingType.stacked,
+                          ),
+                          layoutConfig: charts.LayoutConfig(
+                            leftMarginSpec: charts.MarginSpec.fixedPixel(60),
+                            topMarginSpec: charts.MarginSpec.fixedPixel(20),
+                            rightMarginSpec: charts.MarginSpec.fixedPixel(40),
+                            bottomMarginSpec: charts.MarginSpec.fixedPixel(60),
+                          ),
+                          primaryMeasureAxis: const charts.NumericAxisSpec(
+                            tickProviderSpec:
+                                charts.BasicNumericTickProviderSpec(
+                                  zeroBound: true,
+                                ),
+                          ),
+                          domainAxis: charts.OrdinalAxisSpec(
+                            tickProviderSpec: charts.StaticOrdinalTickProviderSpec(
+                              sortedSchooldays.map((schoolday) {
+                                final dateStr = _formatDateForChart(
+                                  schoolday.schoolday,
+                                );
+                                final firstOfMonthDates =
+                                    _getFirstOfMonthDates();
+
+                                // Only show label if it's the first of a month
+                                if (firstOfMonthDates.contains(dateStr)) {
+                                  try {
+                                    final date = DateFormat(
+                                      'dd.MM',
+                                    ).parse(dateStr);
+                                    return charts.TickSpec<String>(
+                                      dateStr,
+                                      label: DateFormat('MMM').format(date),
+                                    );
+                                  } catch (e) {
+                                    return charts.TickSpec<String>(dateStr);
+                                  }
+                                } else {
+                                  // Return tick with empty label for other dates
+                                  return charts.TickSpec<String>(
+                                    dateStr,
+                                    label: '',
+                                  );
+                                }
+                              }).toList(),
+                            ),
+                          ),
+                          behaviors: [
+                            charts.SeriesLegend(
+                              position: charts.BehaviorPosition.bottom,
+                              desiredMaxRows: 3,
+                              cellPadding: const EdgeInsets.only(
+                                right: 4.0,
+                                bottom: 4.0,
+                              ),
+                            ),
+                            charts.ChartTitle(
+                              'Schultag',
+                              behaviorPosition: charts.BehaviorPosition.bottom,
+                              titleOutsideJustification:
+                                  charts.OutsideJustification.middleDrawArea,
+                            ),
+                            charts.ChartTitle(
+                              'Anzahl',
+                              behaviorPosition: charts.BehaviorPosition.start,
+                              titleOutsideJustification:
+                                  charts.OutsideJustification.middleDrawArea,
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                  const Gap(20),
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 20,
+                    runSpacing: 10,
+                    children: [
+                      _buildLegendItem('Entschuldigt', Colors.green),
+                      _buildLegendItem('Unentschuldigt', Colors.red),
+                      _buildLegendItem('Nach Hause geschickt', Colors.orange),
                     ],
                   ),
                   const Gap(20),

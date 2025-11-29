@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
@@ -17,6 +18,7 @@ class _ChartPageControllerState extends State<ChartPageController> {
   late final PupilManager _pupilManager;
   late final SchoolCalendarManager _schoolCalendarManager;
   late final SchooldayEventManager _schooldayEventManager;
+  late final AttendanceManager _attendanceManager;
 
   @override
   void initState() {
@@ -24,6 +26,7 @@ class _ChartPageControllerState extends State<ChartPageController> {
     _pupilManager = di<PupilManager>();
     _schoolCalendarManager = di<SchoolCalendarManager>();
     _schooldayEventManager = di<SchooldayEventManager>();
+    _attendanceManager = di<AttendanceManager>();
   }
 
   /// Gets schooldays for the current semester
@@ -333,6 +336,64 @@ class _ChartPageControllerState extends State<ChartPageController> {
     }).length;
   }
 
+  /// Counts attendance stats for a given schoolday
+  ({int excused, int unexcused, int goneHome}) getAttendanceCountForSchoolday(
+    Schoolday schoolday,
+  ) {
+    int excused = 0;
+    int unexcused = 0;
+    int goneHome = 0;
+
+    final pupils = _pupilManager.allPupils;
+    final schooldayDate = schoolday.schoolday.toLocal();
+    final dayDate = DateTime(
+      schooldayDate.year,
+      schooldayDate.month,
+      schooldayDate.day,
+    );
+
+    for (final pupil in pupils) {
+      final missedSchooldays =
+          _attendanceManager
+              .getPupilMissedSchooldaysProxy(pupil.pupilId)
+              .missedSchooldays;
+
+      for (final missedSchoolday in missedSchooldays) {
+        // Check if this missedSchoolday corresponds to the current schoolday
+        bool isSameDay = false;
+
+        if (missedSchoolday.schooldayId == schoolday.id) {
+          isSameDay = true;
+        } else if (missedSchoolday.schoolday != null) {
+          final missedDate = missedSchoolday.schoolday!.schoolday.toLocal();
+          final missedDayDate = DateTime(
+            missedDate.year,
+            missedDate.month,
+            missedDate.day,
+          );
+          if (missedDayDate == dayDate) {
+            isSameDay = true;
+          }
+        }
+
+        if (isSameDay) {
+          if (missedSchoolday.missedType == MissedType.missed) {
+            if (missedSchoolday.unexcused == true) {
+              unexcused++;
+            } else {
+              excused++;
+            }
+          }
+          if (missedSchoolday.returned == true) {
+            goneHome++;
+          }
+        }
+      }
+    }
+
+    return (excused: excused, unexcused: unexcused, goneHome: goneHome);
+  }
+
   /// Gets data for the chart: schooldays with their counts
   Map<
     DateTime,
@@ -424,6 +485,19 @@ class _ChartPageControllerState extends State<ChartPageController> {
     return data;
   }
 
+  /// Gets attendance data for the chart
+  Map<DateTime, ({int excused, int unexcused, int goneHome})>
+  getAttendanceChartData() {
+    final schooldays = getSchooldaysForCurrentSemester();
+    final Map<DateTime, ({int excused, int unexcused, int goneHome})> data = {};
+
+    for (final schoolday in schooldays) {
+      data[schoolday.schoolday] = getAttendanceCountForSchoolday(schoolday);
+    }
+
+    return data;
+  }
+
   @override
   Widget build(BuildContext context) {
     final chartData = getChartData();
@@ -453,10 +527,12 @@ class _ChartPageControllerState extends State<ChartPageController> {
     }
 
     final eventChartData = getEventChartData();
+    final attendanceChartData = getAttendanceChartData();
 
     return ChartPage(
       chartData: chartData,
       eventChartData: eventChartData,
+      attendanceChartData: attendanceChartData,
       schooldays: schooldays,
     );
   }
