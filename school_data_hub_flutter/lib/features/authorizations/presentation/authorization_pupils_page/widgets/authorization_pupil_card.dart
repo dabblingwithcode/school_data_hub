@@ -17,15 +17,14 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profil
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _pupilManager = di<PupilManager>();
-final _authorizationManager = di<AuthorizationManager>();
-
 class AuthorizationPupilCard extends WatchingWidget {
   final int pupilId;
   final Authorization authorization;
   const AuthorizationPupilCard(this.pupilId, this.authorization, {super.key});
   @override
   Widget build(BuildContext context) {
+    final _pupilManager = di<PupilManager>();
+    final _authorizationManager = di<AuthorizationManager>();
     final PupilProxy pupil = _pupilManager.getPupilByPupilId(pupilId)!;
 
     final thisAuthorization = watchValue(

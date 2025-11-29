@@ -9,9 +9,8 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _competenceManager = di<CompetenceManager>();
-
 class CompetenceHelper {
+  static CompetenceManager get _competenceManager => di<CompetenceManager>();
   static List<Competence> sortCompetences(List<Competence> competences) {
     List<Competence> rootCompetences = [];
     List<Competence> childCompetences = [];
@@ -47,16 +46,15 @@ class CompetenceHelper {
     int publicId,
   ) {
     if (pupil.competenceChecks != null && pupil.competenceChecks!.isNotEmpty) {
-      final filteredChecks =
-          pupil.competenceChecks!
-              .where(
-                (element) =>
-                    _competenceManager
-                        .findCompetenceById(element.competenceId)
-                        .publicId ==
-                    publicId,
-              )
-              .toList();
+      final filteredChecks = pupil.competenceChecks!
+          .where(
+            (element) =>
+                _competenceManager
+                    .findCompetenceById(element.competenceId)
+                    .publicId ==
+                publicId,
+          )
+          .toList();
       if (filteredChecks.isNotEmpty) {
         return filteredChecks.reduce(
           (a, b) => a.createdAt.isAfter(b.createdAt) ? a : b,

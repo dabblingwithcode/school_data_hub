@@ -10,8 +10,6 @@ import 'package:school_data_hub_flutter/features/school_lists/domain/school_list
 import 'package:school_data_hub_flutter/features/school_lists/presentation/new_list_page/new_school_list_page.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _schoolListManager = di<SchoolListManager>();
-
 class SchoolListStatsRow extends WatchingWidget {
   final SchoolList schoolList;
   final List<PupilProxy> pupils;
@@ -23,6 +21,7 @@ class SchoolListStatsRow extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _schoolListManager = di<SchoolListManager>();
     watch<SchoolListPupilEntriesProxyMap>(
       _schoolListManager.getPupilEntriesProxyFromSchoolList(schoolList.id!),
     );

@@ -13,8 +13,6 @@ import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart'
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _hubSessionManager = di<HubSessionManager>();
-
 class PupilBookCard extends WatchingWidget {
   const PupilBookCard({
     required this.pupilBook,
@@ -26,6 +24,7 @@ class PupilBookCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _hubSessionManager = di<HubSessionManager>();
     final LibraryBookProxy bookProxy = di<BookManager>().getLibraryBookById(
       pupilBook.libraryBookId,
     )!;

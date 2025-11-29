@@ -15,15 +15,14 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profil
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _pupilManager = di<PupilManager>();
-final _hubSessionManager = di<HubSessionManager>();
-
 class PupilProfileCommunicationContent extends WatchingWidget {
   final PupilProxy pupil;
   const PupilProfileCommunicationContent({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _pupilManager = di<PupilManager>();
+    final _hubSessionManager = di<HubSessionManager>();
     final communicationPupil = watchPropertyValue(
       (m) => m.communicationPupil,
       target: pupil,

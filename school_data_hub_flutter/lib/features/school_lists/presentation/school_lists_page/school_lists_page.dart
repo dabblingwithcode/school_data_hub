@@ -11,20 +11,20 @@ import 'package:school_data_hub_flutter/features/school_lists/presentation/schoo
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_lists_page/widgets/school_lists_bottom_navbar.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _schoolListFilterManager = di<SchoolListFilterManager>();
-final _schoolListManager = di<SchoolListManager>();
-
 class SchoolListsPage extends WatchingWidget {
   const SchoolListsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _schoolListFilterManager = di<SchoolListFilterManager>();
+    final _schoolListManager = di<SchoolListManager>();
     bool filtersOn = watchValue((SchoolListFilterManager x) => x.filterState);
     // List<SchoolList> schoolLists =
     //     watchPropertyValue((SchoolListManager x) => x.schoolLists);
     // _schoolListFilterManager.updateFilteredSchoolLists(schoolLists);
-    List<SchoolList> filteredSchoolLists =
-        watchValue((SchoolListFilterManager x) => x.filteredSchoolLists);
+    List<SchoolList> filteredSchoolLists = watchValue(
+      (SchoolListFilterManager x) => x.filteredSchoolLists,
+    );
     // List<SchoolList> visibleSchoolLists = schoolLists
     //     .where((element) =>
     //         element.visibility == 'public' ||
@@ -43,10 +43,7 @@ class SchoolListsPage extends WatchingWidget {
           children: [
             Icon(Icons.rule_rounded, size: 25, color: Colors.white),
             Gap(10),
-            Text(
-              'Listen',
-              style: AppStyles.appBarTextStyle,
-            ),
+            Text('Listen', style: AppStyles.appBarTextStyle),
           ],
         ),
       ),
@@ -59,15 +56,13 @@ class SchoolListsPage extends WatchingWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(
-                      left: 10.0, top: 15.0, right: 10.00),
+                    left: 10.0,
+                    top: 15.0,
+                    right: 10.00,
+                  ),
                   child: Row(
                     children: [
-                      const Text(
-                        'Gesamt:',
-                        style: TextStyle(
-                          fontSize: 13,
-                        ),
-                      ),
+                      const Text('Gesamt:', style: TextStyle(fontSize: 13)),
                       const Gap(10),
                       Text(
                         filteredSchoolLists.length.toString(),
@@ -86,10 +81,10 @@ class SchoolListsPage extends WatchingWidget {
                     children: [
                       Expanded(
                         child: SchoolListSearchTextField(
-                            searchType: SearchType.list,
-                            hintText: 'Liste suchen',
-                            refreshFunction:
-                                _schoolListManager.fetchSchoolLists),
+                          searchType: SearchType.list,
+                          hintText: 'Liste suchen',
+                          refreshFunction: _schoolListManager.fetchSchoolLists,
+                        ),
                       ),
                       //---------------------------------
                       InkWell(
@@ -125,7 +120,8 @@ class SchoolListsPage extends WatchingWidget {
                           itemCount: filteredSchoolLists.length,
                           itemBuilder: (BuildContext context, int index) {
                             return SchoolListCard(
-                                schoolList: filteredSchoolLists[index]);
+                              schoolList: filteredSchoolLists[index],
+                            );
                           },
                         ),
                       ),

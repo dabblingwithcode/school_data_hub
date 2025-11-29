@@ -13,14 +13,13 @@ import 'package:school_data_hub_flutter/features/authorizations/presentation/aut
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _authorizationManager = di<AuthorizationManager>();
-final _pupilsFilter = di<PupilsFilter>();
-
 class AuthorizationsListPage extends WatchingWidget {
   const AuthorizationsListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _authorizationManager = di<AuthorizationManager>();
+    final _pupilsFilter = di<PupilsFilter>();
     bool filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);
 
     List<Authorization> authorizations =

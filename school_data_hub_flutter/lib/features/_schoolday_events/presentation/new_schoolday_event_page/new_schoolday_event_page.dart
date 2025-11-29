@@ -14,13 +14,15 @@ import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _schoolCalendarManager = di<SchoolCalendarManager>();
-final _schooldayEventManager = di<SchooldayEventManager>();
-
 class NewSchooldayEventPage extends WatchingWidget {
   final int pupilId;
 
   const NewSchooldayEventPage({super.key, required this.pupilId});
+
+  SchoolCalendarManager get _schoolCalendarManager =>
+      di<SchoolCalendarManager>();
+  SchooldayEventManager get _schooldayEventManager =>
+      di<SchooldayEventManager>();
 
   String _getDropdownItemText(SchooldayEventType reason) {
     switch (reason) {

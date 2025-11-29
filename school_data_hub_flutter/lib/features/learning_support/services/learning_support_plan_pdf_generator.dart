@@ -18,9 +18,10 @@ import 'package:school_data_hub_flutter/features/school_calendar/domain/school_c
 import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('LearningSupportPlanPdfGenerator');
-final _schoolCalendarManager = di<SchoolCalendarManager>();
 
 class LearningSupportPlanPdfGenerator {
+  static SchoolCalendarManager get _schoolCalendarManager =>
+      di<SchoolCalendarManager>();
   static Future<File> generateLearningSupportPlanPdf({
     required LearningSupportPlan plan,
     required PupilProxy pupil,

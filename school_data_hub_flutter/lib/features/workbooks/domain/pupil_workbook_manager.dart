@@ -6,10 +6,9 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/data/pupil_workbook_api_service.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _hubSessionManager = di<HubSessionManager>();
-final _notificationService = di<NotificationService>();
-
 class PupilWorkbookManager with ChangeNotifier {
+  HubSessionManager get _hubSessionManager => di<HubSessionManager>();
+  NotificationService get _notificationService => di<NotificationService>();
   final Map<int, List<PupilWorkbook>> _pupilWorkbooks = {};
   final _pupilWorkbookApiService = PupilWorkbookApiService();
 

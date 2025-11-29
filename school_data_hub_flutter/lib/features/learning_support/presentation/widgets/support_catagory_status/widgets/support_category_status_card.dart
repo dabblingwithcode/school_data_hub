@@ -10,8 +10,6 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/w
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _learningSupportManager = di<SupportCategoryManager>();
-
 class SupportCategoryStatusCard extends StatelessWidget {
   final PupilProxy pupil;
   final List<SupportCategoryStatus> statusesWithSameGoalCategory;
@@ -24,6 +22,7 @@ class SupportCategoryStatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _learningSupportManager = di<SupportCategoryManager>();
     final int supportCategoryId =
         statusesWithSameGoalCategory[0].supportCategoryId;
     final Color supportCategoryColor =

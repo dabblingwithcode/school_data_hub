@@ -13,9 +13,6 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart
 import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _hubSessionManager = di<HubSessionManager>();
-final _authorizationManager = di<AuthorizationManager>();
-
 class AuthorizationPupilsBottomNavBar extends WatchingWidget {
   final Authorization authorization;
 
@@ -27,6 +24,8 @@ class AuthorizationPupilsBottomNavBar extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _hubSessionManager = di<HubSessionManager>();
+    final _authorizationManager = di<AuthorizationManager>();
     final filtersActive =
         watchValue((FiltersStateManager x) => x.filtersActive);
     return BottomNavBarLayout(
@@ -102,6 +101,7 @@ BottomAppBar authorizationPupilsBottomNavBar(
     Authorization authorization,
     bool filtersOn,
     List<int> pupilsInAuthorization) {
+  final _authorizationManager = di<AuthorizationManager>();
   return BottomAppBar(
     padding: const EdgeInsets.all(9),
     shape: null,

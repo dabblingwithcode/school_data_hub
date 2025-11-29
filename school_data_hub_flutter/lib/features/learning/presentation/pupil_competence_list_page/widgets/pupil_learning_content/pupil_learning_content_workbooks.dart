@@ -12,14 +12,13 @@ import 'package:school_data_hub_flutter/features/workbooks/presentation/new_work
 import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/widgets/pupil_workbook_card.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _hubSessionManager = di<HubSessionManager>();
-
 class PupilLearningContentWorkbooks extends StatelessWidget {
   final PupilProxy pupil;
   const PupilLearningContentWorkbooks({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _hubSessionManager = di<HubSessionManager>();
     return Column(
       children: [
         const Row(

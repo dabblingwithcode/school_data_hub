@@ -20,20 +20,16 @@ import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _hubSessionManager = di<HubSessionManager>();
-
-final _schooldayEventManager = di<SchooldayEventManager>();
-
-final _schoolCalendarManager = di<SchoolCalendarManager>();
-
-final _notificationService = di<NotificationService>();
-
 class PupilSchooldayEventCard extends StatelessWidget {
   final SchooldayEvent schooldayEvent;
   const PupilSchooldayEventCard({required this.schooldayEvent, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _hubSessionManager = di<HubSessionManager>();
+    final _schooldayEventManager = di<SchooldayEventManager>();
+    final _schoolCalendarManager = di<SchoolCalendarManager>();
+    final _notificationService = di<NotificationService>();
     final isAuthorized = SessionHelper.isAuthorized(schooldayEvent.createdBy);
     final isAdmin = _hubSessionManager.isAdmin;
 

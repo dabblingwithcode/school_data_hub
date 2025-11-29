@@ -10,13 +10,12 @@ import 'package:school_data_hub_flutter/features/user/presentation/create_user/w
 import 'package:school_data_hub_flutter/features/user/presentation/widgets/roles_dropdown.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _userManager = di<UserManager>();
-
 class CreateUserPage extends WatchingWidget {
   const CreateUserPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _userManager = di<UserManager>();
     final TextEditingController fullNameController = createOnce(
       () => TextEditingController(),
     );

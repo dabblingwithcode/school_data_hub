@@ -6,10 +6,10 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _matrixPolicyManager = di<MatrixPolicyManager>();
-final _pupilManager = di<PupilManager>();
-
 class MatrixUserHelper {
+  static MatrixPolicyManager get _matrixPolicyManager =>
+      di<MatrixPolicyManager>();
+  static PupilManager get _pupilManager => di<PupilManager>();
   static List<MatrixUser> usersFromUserIds(List<String> userIds) {
     final List<MatrixUser> users = List.from(
       _matrixPolicyManager.matrixUsers.value,

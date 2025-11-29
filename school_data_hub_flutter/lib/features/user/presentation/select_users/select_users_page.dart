@@ -12,8 +12,6 @@ import 'package:school_data_hub_flutter/features/user/presentation/select_users/
 import 'package:school_data_hub_flutter/features/user/presentation/select_users/widgets/select_users_view_bottom_navbar.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _userManager = di<UserManager>();
-
 class SelectUsersPage extends WatchingStatefulWidget {
   final List<User> selectableUsers;
   final String? authorizedUsers;
@@ -34,6 +32,8 @@ class _SelectUsersPageState extends State<SelectUsersPage> {
   List<int> selectedUserIds = [];
   bool isSelectAllMode = false;
   bool isSelectMode = false;
+
+  UserManager get _userManager => di<UserManager>();
 
   @override
   void initState() {

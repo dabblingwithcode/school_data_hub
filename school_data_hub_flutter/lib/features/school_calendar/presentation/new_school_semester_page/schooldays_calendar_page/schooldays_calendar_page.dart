@@ -10,8 +10,6 @@ import 'package:school_data_hub_flutter/features/school_calendar/domain/school_c
 import 'package:table_calendar/table_calendar.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _schoolCalendarManager = di<SchoolCalendarManager>();
-
 class SchooldaysCalendarPage extends WatchingStatefulWidget {
   const SchooldaysCalendarPage({super.key});
 
@@ -30,6 +28,9 @@ class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
     DateTime.now().toLocal().day,
   );
   final kLastDay = DateTime(DateTime.now().toLocal().year + 2, 8, 31);
+
+  SchoolCalendarManager get _schoolCalendarManager =>
+      di<SchoolCalendarManager>();
 
   List<String> _getEventsForDay(DateTime day) {
     final schooldays = _schoolCalendarManager.schooldays.value;

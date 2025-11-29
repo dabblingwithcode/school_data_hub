@@ -9,12 +9,6 @@ import 'package:school_data_hub_flutter/features/school_calendar/domain/school_c
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _learningSupportPlanManager = di<LearningSupportManager>();
-final _schoolCalendarManager = di<SchoolCalendarManager>();
-final _hubSessionManager = di<HubSessionManager>();
-final _notificationService = di<NotificationService>();
-final _userManager = di<UserManager>();
-
 /// StatefulWidget for creating a new learning support plan for a pupil.
 ///
 /// This widget provides a form interface for:
@@ -51,6 +45,14 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
   );
 
   PupilProxy get pupil => widget.pupil;
+
+  LearningSupportManager get _learningSupportPlanManager =>
+      di<LearningSupportManager>();
+  SchoolCalendarManager get _schoolCalendarManager =>
+      di<SchoolCalendarManager>();
+  HubSessionManager get _hubSessionManager => di<HubSessionManager>();
+  NotificationService get _notificationService => di<NotificationService>();
+  UserManager get _userManager => di<UserManager>();
 
   @override
   void initState() {

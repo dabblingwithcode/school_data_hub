@@ -17,11 +17,11 @@ import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('MatrixPolicyHelperFunctions');
 
-final _matrixPolicyManager = di<MatrixPolicyManager>();
-final _secureStorage = HubSecureStorage();
-final _envManager = di<EnvManager>();
-
 class MatrixPolicyHelper {
+  static MatrixPolicyManager get _matrixPolicyManager =>
+      di<MatrixPolicyManager>();
+  static HubSecureStorage get _secureStorage => HubSecureStorage();
+  static EnvManager get _envManager => di<EnvManager>();
   static Future<void> registerMatrixPolicyManager({
     MatrixCredentials? passedCredentials,
   }) async {

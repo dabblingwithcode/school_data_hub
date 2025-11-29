@@ -11,8 +11,6 @@ import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart'
 import 'package:school_data_hub_flutter/features/books/presentation/edit_book_page/edit_book_controller.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _hubSessionManager = di<HubSessionManager>();
-
 class EditBookPage extends StatelessWidget {
   final EditBookController controller;
 
@@ -20,6 +18,7 @@ class EditBookPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _hubSessionManager = di<HubSessionManager>();
     return Scaffold(
       appBar: const GenericAppBar(
         iconData: Icons.book,

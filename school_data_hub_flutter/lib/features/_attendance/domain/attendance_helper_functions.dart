@@ -10,12 +10,12 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _schoolCalendarManager = di<SchoolCalendarManager>();
-final _attendanceManager = di<AttendanceManager>();
-final _pupilManager = di<PupilManager>();
-
 //- lookup functions
 class AttendanceHelper {
+  static SchoolCalendarManager get _schoolCalendarManager =>
+      di<SchoolCalendarManager>();
+  static AttendanceManager get _attendanceManager => di<AttendanceManager>();
+  static PupilManager get _pupilManager => di<PupilManager>();
   // static int? getMissedSchooldayIndex(PupilProxy pupil, DateTime date) {
   //   final int? foundMissedSchooldayIndex = pupil.missedSchooldays?.indexWhere(
   //       (datematch) => (datematch.schoolday!.schoolday.isSameDate(date)));

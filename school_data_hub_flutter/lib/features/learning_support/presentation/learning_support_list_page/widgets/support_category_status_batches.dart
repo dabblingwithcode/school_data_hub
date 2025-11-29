@@ -6,8 +6,6 @@ import 'package:school_data_hub_flutter/features/learning_support/domain/support
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _learningSupportManager = di<SupportCategoryManager>();
-
 class SupportCategoryStatusBatches extends StatelessWidget {
   final PupilProxy pupil;
   const SupportCategoryStatusBatches({
@@ -17,6 +15,7 @@ class SupportCategoryStatusBatches extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _learningSupportManager = di<SupportCategoryManager>();
     List<SupportCategoryStatus> supportCategoryStatuses =
         pupil.supportCategoryStatuses!;
     List<Widget> widgetList = [];

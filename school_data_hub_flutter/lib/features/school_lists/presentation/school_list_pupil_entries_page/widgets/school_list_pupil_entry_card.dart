@@ -17,12 +17,6 @@ import 'package:school_data_hub_flutter/features/school_lists/domain/school_list
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _pupilManager = di<PupilManager>();
-final _mainMenuBottomNavManager = di<BottomNavManager>();
-final _hubSessionManager = di<HubSessionManager>();
-final _notificationService = di<NotificationService>();
-final _schoolListManager = di<SchoolListManager>();
-
 class SchoolListPupilEntryCard extends WatchingWidget {
   final int pupilId;
 
@@ -32,6 +26,11 @@ class SchoolListPupilEntryCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _pupilManager = di<PupilManager>();
+    final _mainMenuBottomNavManager = di<BottomNavManager>();
+    final _hubSessionManager = di<HubSessionManager>();
+    final _notificationService = di<NotificationService>();
+    final _schoolListManager = di<SchoolListManager>();
     final PupilProxy pupil = _pupilManager.getPupilByPupilId(pupilId)!;
 
     final PupilListEntry pupilEntry =

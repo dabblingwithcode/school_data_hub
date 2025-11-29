@@ -4,9 +4,9 @@ import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_roo
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _matrixPolicyManager = di<MatrixPolicyManager>();
-
 class MatrixRoomHelper {
+  static MatrixPolicyManager get _matrixPolicyManager =>
+      di<MatrixPolicyManager>();
   static List<MatrixUser> usersInRoom(String roomId) {
     final List<MatrixUser> users = List.from(
       _matrixPolicyManager.matrixUsers.value,

@@ -14,14 +14,13 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/comm
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _schoolCalendarManager = di<SchoolCalendarManager>();
-final _filterStateManager = di<FiltersStateManager>();
-
 class AttendanceListPageBottomNavBar extends WatchingWidget {
   const AttendanceListPageBottomNavBar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _schoolCalendarManager = di<SchoolCalendarManager>();
+    final _filterStateManager = di<FiltersStateManager>();
     DateTime thisDate =
         watchValue((SchoolCalendarManager x) => x.thisDate).toLocal();
     bool filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);

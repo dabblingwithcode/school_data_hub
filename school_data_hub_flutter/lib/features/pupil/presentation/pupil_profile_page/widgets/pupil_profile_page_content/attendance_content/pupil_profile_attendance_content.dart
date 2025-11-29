@@ -11,14 +11,13 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _attendanceManager = di<AttendanceManager>();
-
 class PupilProfileAttendanceContent extends StatelessWidget {
   final PupilProxy pupil;
   const PupilProfileAttendanceContent({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _attendanceManager = di<AttendanceManager>();
     final missedHoursForActualReport =
         AttendanceHelper.missedHoursforSemesterOrSchoolyear(pupil);
 

@@ -6,14 +6,13 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _hubSessionManager = di<HubSessionManager>();
-
 class PupilProfileHeadingCard extends WatchingWidget {
   final PupilProxy passedPupil;
   const PupilProfileHeadingCard({required this.passedPupil, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _hubSessionManager = di<HubSessionManager>();
     final pupil = watch<PupilProxy>(passedPupil);
     return Card(
       child: Row(

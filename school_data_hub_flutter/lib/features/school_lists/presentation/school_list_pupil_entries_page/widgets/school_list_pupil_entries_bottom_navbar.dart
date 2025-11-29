@@ -17,10 +17,6 @@ import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/select_users/select_users_page.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _schoolListManager = di<SchoolListManager>();
-final _hubSessionManager = di<HubSessionManager>();
-final _pupilManager = di<PupilManager>();
-
 class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
   final int listId;
 
@@ -33,6 +29,9 @@ class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _schoolListManager = di<SchoolListManager>();
+    final _hubSessionManager = di<HubSessionManager>();
+    final _pupilManager = di<PupilManager>();
     final schoolList = _schoolListManager.getSchoolListById(listId);
     return BottomNavBarLayout(
       bottomNavBar: BottomAppBar(

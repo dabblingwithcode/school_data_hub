@@ -17,9 +17,6 @@ import 'package:school_data_hub_flutter/features/app_settings/settings_page/sett
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _bottomNavmanager = di<BottomNavManager>();
-final _envManager = di<EnvManager>();
-
 class MainMenuBottomNavigation extends WatchingStatefulWidget {
   const MainMenuBottomNavigation({super.key});
 
@@ -129,6 +126,8 @@ class _MainMenuBottomNavigationState extends State<MainMenuBottomNavigation> {
 
   @override
   Widget build(BuildContext context) {
+    final _bottomNavmanager = di<BottomNavManager>();
+    final _envManager = di<EnvManager>();
     final locale = AppLocalizations.of(context)!;
 
     final tab = watchValue((BottomNavManager x) => x.bottomNavState);

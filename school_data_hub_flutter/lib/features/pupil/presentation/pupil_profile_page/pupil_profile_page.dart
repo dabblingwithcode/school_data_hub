@@ -12,8 +12,6 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profil
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/pupil_profile_page_content.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _pupilManager = di<PupilManager>();
-
 class PupilProfilePage extends WatchingWidget {
   final PupilProxy pupil;
 
@@ -21,6 +19,7 @@ class PupilProfilePage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _pupilManager = di<PupilManager>();
     return Scaffold(
       backgroundColor: AppColors.pupilProfileBackgroundColor,
       body: RefreshIndicator(

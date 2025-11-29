@@ -13,11 +13,8 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/family_langu
 import 'package:school_data_hub_flutter/features/pupil/presentation/family_language_lessons_page/widgets/family_language_lessons_list_search_bar.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _filterStateManager = di<FiltersStateManager>();
-
-final _pupilManager = di<PupilManager>();
-
 List<PupilProxy> familyLanguageLessonsFilter(List<PupilProxy> pupils) {
+  final _filterStateManager = di<FiltersStateManager>();
   List<PupilProxy> filteredPupils = [];
   bool filtersOn = false;
   for (PupilProxy pupil in pupils) {
@@ -38,6 +35,7 @@ List<PupilProxy> familyLanguageLessonsFilter(List<PupilProxy> pupils) {
 }
 
 void _onPop(bool didPop, dynamic result) {
+  final _filterStateManager = di<FiltersStateManager>();
   _filterStateManager.resetFilters();
 }
 
@@ -46,6 +44,8 @@ class FamilyLanguageLessonsListPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _filterStateManager = di<FiltersStateManager>();
+    final _pupilManager = di<PupilManager>();
     List<PupilProxy> filteredPupils = watchValue(
       (PupilsFilter x) => x.filteredPupils,
     );

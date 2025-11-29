@@ -7,7 +7,6 @@ import 'package:school_data_hub_flutter/features/learning/presentation/competenc
 import 'package:school_data_hub_flutter/features/learning/presentation/competence_list_page/widgets/last_child_competence_card.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _competenceManager = di<CompetenceManager>();
 List<Widget> buildCommonCompetenceTree({
   required Function({int? competenceId, Competence? competence})
       navigateToNewOrPatchCompetencePage,
@@ -17,6 +16,7 @@ List<Widget> buildCommonCompetenceTree({
   required List<Competence> competences,
   required BuildContext context,
 }) {
+  final _competenceManager = di<CompetenceManager>();
   // Separate competences into two lists: one for those without a parent competence and one for those with a parent competence
   List<Competence> rootCompetences = [];
   List<Competence> childCompetences = [];

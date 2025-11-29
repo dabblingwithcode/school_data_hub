@@ -6,8 +6,6 @@ import 'package:watch_it/watch_it.dart';
 
 part 'matrix_user.g.dart';
 
-final _matrixPolicyManager = di<MatrixPolicyManager>();
-
 @JsonSerializable()
 class JoinedRoom {
   final String roomId;
@@ -61,6 +59,8 @@ class MatrixUser extends ChangeNotifier {
   List<JoinedRoom> get joinedRooms => _joinedRooms;
   List<MatrixRoom> get matrixRooms => _matrixRooms;
   bool get isParent => _id.contains('_e') ? true : false;
+
+  MatrixPolicyManager get _matrixPolicyManager => di<MatrixPolicyManager>();
 
   // Setters
   set displayName(String value) {

@@ -13,11 +13,8 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/religion_pag
 import 'package:school_data_hub_flutter/features/pupil/presentation/religion_page/widgets/religion_list_search_bar.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _filterStateManager = di<FiltersStateManager>();
-
-final _pupilManager = di<PupilManager>();
-
 List<PupilProxy> religionFilter(List<PupilProxy> pupils) {
+  final _filterStateManager = di<FiltersStateManager>();
   List<PupilProxy> filteredPupils = [];
   bool filtersOn = false;
   for (PupilProxy pupil in pupils) {
@@ -36,6 +33,7 @@ List<PupilProxy> religionFilter(List<PupilProxy> pupils) {
 }
 
 void _onPop(bool didPop, dynamic result) {
+  final _filterStateManager = di<FiltersStateManager>();
   _filterStateManager.resetFilters();
 }
 
@@ -44,6 +42,8 @@ class ReligionListPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _filterStateManager = di<FiltersStateManager>();
+    final _pupilManager = di<PupilManager>();
     List<PupilProxy> filteredPupils =
         watchValue((PupilsFilter x) => x.filteredPupils);
     List<PupilProxy> pupils = religionFilter(filteredPupils);

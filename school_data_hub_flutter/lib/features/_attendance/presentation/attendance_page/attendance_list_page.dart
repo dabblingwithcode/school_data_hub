@@ -21,16 +21,14 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _attendanceManager = di<AttendanceManager>();
-
-final _notificationService = di<NotificationService>();
-
 final _log = Logger('AttendanceListPage');
 
 class AttendanceListPage extends WatchingWidget {
   const AttendanceListPage({super.key});
   @override
   Widget build(BuildContext context) {
+    final _attendanceManager = di<AttendanceManager>();
+    final _notificationService = di<NotificationService>();
     final bool isAuthenticated = watchPropertyValue(
       (HubSessionManager x) => x.isSignedIn,
     );

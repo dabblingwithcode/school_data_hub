@@ -10,23 +10,19 @@ import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _schooldayEventFilterManager = di<SchooldayEventFilterManager>();
-
-final _schooldayEventManager = di<SchooldayEventManager>();
-
-final _notificationService = di<NotificationService>();
-
 class PupilSchooldayEventsList extends WatchingWidget {
   final PupilProxy pupil;
   const PupilSchooldayEventsList({super.key, required this.pupil});
 
   @override
   Widget build(BuildContext context) {
+    final _schooldayEventFilterManager = di<SchooldayEventFilterManager>();
+    final _schooldayEventManager = di<SchooldayEventManager>();
+    final _notificationService = di<NotificationService>();
     final pupil = this.pupil;
-    final unfilteredEvents =
-        watch(
-          _schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId),
-        ).schooldayEvents;
+    final unfilteredEvents = watch(
+      _schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId),
+    ).schooldayEvents;
     final List<SchooldayEvent> filteredSchooldayEvents =
         _schooldayEventFilterManager.filteredSchooldayEvents(
           unfilteredEvents.values.toList(),
@@ -54,8 +50,8 @@ class PupilSchooldayEventsList extends WatchingWidget {
               onPressed: () async {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder:
-                        (ctx) => NewSchooldayEventPage(pupilId: pupil.pupilId),
+                    builder: (ctx) =>
+                        NewSchooldayEventPage(pupilId: pupil.pupilId),
                   ),
                 );
               },

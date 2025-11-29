@@ -21,11 +21,10 @@ class SupportLevelHistoryExpansionTile extends StatefulWidget {
       _SupportLevelHistoryExpansionTileState();
 }
 
-final _hubSessionManager = di<HubSessionManager>();
-final _pupilManager = di<PupilManager>();
-
 class _SupportLevelHistoryExpansionTileState
     extends State<SupportLevelHistoryExpansionTile> {
+  HubSessionManager get _hubSessionManager => di<HubSessionManager>();
+  PupilManager get _pupilManager => di<PupilManager>();
   late ExpansibleController _tileController;
 
   @override

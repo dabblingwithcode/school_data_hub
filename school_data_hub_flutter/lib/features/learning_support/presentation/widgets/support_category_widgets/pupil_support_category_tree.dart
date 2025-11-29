@@ -9,9 +9,6 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/s
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _learningSupportManager = di<SupportCategoryManager>();
-final _hubSessionManager = di<HubSessionManager>();
-
 List<Widget> pupilSupportCategoryTree({
   required BuildContext context,
   required PupilProxy pupil,
@@ -21,6 +18,8 @@ List<Widget> pupilSupportCategoryTree({
   required SelectCategoryPageController controller,
   required String elementType,
 }) {
+  final _learningSupportManager = di<SupportCategoryManager>();
+  final _hubSessionManager = di<HubSessionManager>();
   List<Widget> supportCategoryWidgets = [];
 
   List<SupportCategory> supportCategories =

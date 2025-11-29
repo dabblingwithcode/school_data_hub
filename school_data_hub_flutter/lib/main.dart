@@ -81,7 +81,6 @@ class MyApp extends WatchingWidget {
 
     // Watch for environment changes - this will trigger rebuilds when EnvManager notifies
     final envManager = watchIt<EnvManager>();
-    final String? currentEnv = envManager.activeEnv?.serverName;
 
     final bool envIsReady = watchValue((EnvManager x) => x.envIsReady);
     final bool userIsAuthenticated = watchValue(
@@ -119,7 +118,7 @@ class MyApp extends WatchingWidget {
                   return ErrorPage(error: snapshot.error.toString());
                 } else if (snapshot.connectionState == ConnectionState.done) {
                   if (userIsAuthenticated) {
-                    return MainMenuBottomNavigation();
+                    return const MainMenuBottomNavigation();
                   } else {
                     return const Login();
                   }
@@ -128,6 +127,8 @@ class MyApp extends WatchingWidget {
                 }
               },
             )
+          : envManager.activeEnv != null
+          ? const LoadingPage()
           : const EntryPoint(),
     );
   }

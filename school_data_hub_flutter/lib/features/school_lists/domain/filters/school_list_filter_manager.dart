@@ -7,12 +7,12 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filt
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _schoolListManager = di<SchoolListManager>();
 final _log = Logger('SchoolListFilterManager');
-final _filtersStateManager = di<FiltersStateManager>();
-final _pupilFilterManager = di<PupilFilterManager>();
 
 class SchoolListFilterManager {
+  SchoolListManager get _schoolListManager => di<SchoolListManager>();
+  FiltersStateManager get _filtersStateManager => di<FiltersStateManager>();
+  PupilFilterManager get _pupilFilterManager => di<PupilFilterManager>();
   final _filteredSchoolLists = ValueNotifier<List<SchoolList>>([]);
   ValueListenable<List<SchoolList>> get filteredSchoolLists =>
       _filteredSchoolLists;

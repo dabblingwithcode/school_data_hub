@@ -18,9 +18,9 @@ import 'package:school_data_hub_flutter/features/school_lists/domain/school_list
 import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('SchoolListPdfGenerator');
-final _schoolListManager = di<SchoolListManager>();
 
 class SchoolListPdfGenerator {
+  static SchoolListManager get _schoolListManager => di<SchoolListManager>();
   static Future<File> generateSchoolListPdf({
     required SchoolList schoolList,
     required List<PupilProxy> pupils,

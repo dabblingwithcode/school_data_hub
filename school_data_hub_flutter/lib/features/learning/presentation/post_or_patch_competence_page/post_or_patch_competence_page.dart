@@ -8,8 +8,6 @@ import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _competenceManager = di<CompetenceManager>();
-
 class PostOrPatchCompetencePage extends StatefulWidget {
   final int? parentCompetence;
   final Competence? competence;
@@ -28,6 +26,8 @@ class PostOrPatchCompetencePageState extends State<PostOrPatchCompetencePage> {
 
   final TextEditingController indicatorsFieldController =
       TextEditingController();
+
+  CompetenceManager get _competenceManager => di<CompetenceManager>();
 
   void postNewCompetence() async {
     if (competenceLevel.isEmpty) {

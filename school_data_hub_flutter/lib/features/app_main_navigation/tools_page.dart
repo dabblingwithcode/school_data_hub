@@ -16,11 +16,11 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identi
 import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_page/timetable_page.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _pupilIdentityManager = di<PupilIdentityManager>();
-final _hubSessionManager = di<HubSessionManager>();
-
 class ToolsPage extends WatchingWidget {
   const ToolsPage({super.key});
+
+  PupilIdentityManager get _pupilIdentityManager => di<PupilIdentityManager>();
+  HubSessionManager get _hubSessionManager => di<HubSessionManager>();
 
   void importFileWithWindows(String function) async {
     final fileContent = await pickFileReturnContentAsString();

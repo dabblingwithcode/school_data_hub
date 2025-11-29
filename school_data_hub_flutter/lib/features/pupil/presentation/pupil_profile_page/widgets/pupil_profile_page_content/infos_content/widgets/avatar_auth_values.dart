@@ -13,16 +13,14 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _hubSessionManager = di<HubSessionManager>();
-
-final _notificationService = di<NotificationService>();
-
 class AvatarAuthValues extends WatchingWidget {
   final PupilProxy pupil;
   const AvatarAuthValues({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _hubSessionManager = di<HubSessionManager>();
+    final _notificationService = di<NotificationService>();
     final avatarAuth = watchPropertyValue((m) => m.avatarAuth, target: pupil);
     final avatarAuthId = watchPropertyValue(
       (m) => m.avatarAuthId,

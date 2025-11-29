@@ -9,10 +9,6 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/communication_content/dialogs/language_dialog_dropdown.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _pupilManager = di<PupilManager>();
-
-final _hubSessionManager = di<HubSessionManager>();
-
 // based on https://mobikul.com/creating-stateful-dialog-form-in-flutter/
 // TODO: It must be a better way to do this
 
@@ -21,6 +17,8 @@ Future<void> languageDialog(
   PupilProxy pupil,
   CommunicationSubject subject,
 ) async {
+  final _pupilManager = di<PupilManager>();
+  final _hubSessionManager = di<HubSessionManager>();
   CommunicationSkills? languageValue;
   switch (subject) {
     case CommunicationSubject.pupil:

@@ -9,14 +9,12 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart'
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _schooldayEventFilterManager = di<SchooldayEventFilterManager>();
-
-final _pupilsFilter = di<PupilsFilter>();
-
 class SchooldayEventFilterBottomSheet extends WatchingWidget {
   const SchooldayEventFilterBottomSheet({super.key});
   @override
   Widget build(BuildContext context) {
+    final _schooldayEventFilterManager = di<SchooldayEventFilterManager>();
+    final _pupilsFilter = di<PupilsFilter>();
     PupilSortMode sortMode = watchValue((PupilsFilter x) => x.sortMode);
     final Map<SchooldayEventFilter, bool> activeSchooldayEventFilters =
         watchValue(

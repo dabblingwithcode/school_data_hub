@@ -3,8 +3,6 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _schooldayEventManager = di<SchooldayEventManager>();
-
 class SchooldayEventTypeDialog extends WatchingWidget {
   // Change HookWidget to HookConsumerWidget
   final SchooldayEvent schooldayEvent;
@@ -13,6 +11,9 @@ class SchooldayEventTypeDialog extends WatchingWidget {
     super.key,
     required this.schooldayEvent,
   });
+
+  SchooldayEventManager get _schooldayEventManager =>
+      di<SchooldayEventManager>();
 
   String _getDropdownItemText(SchooldayEventType reason) {
     switch (reason) {

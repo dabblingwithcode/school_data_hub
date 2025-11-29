@@ -8,10 +8,6 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filt
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _pupilFilterManager = di<PupilFilterManager>();
-final _matrixPolicyManager = di<MatrixPolicyManager>();
-final _matrixPolicyFilterManager = di<MatrixPolicyFilterManager>();
-
 class SelectMatrixRoomsList extends WatchingStatefulWidget {
   final List<String>? selectableRooms;
   const SelectMatrixRoomsList(this.selectableRooms, {super.key});
@@ -34,6 +30,11 @@ class SelectMatrixRoomsListController extends State<SelectMatrixRoomsList> {
   List<String> selectedRooms = [];
   bool isSelectAllMode = false;
   bool isSelectMode = false;
+
+  PupilFilterManager get _pupilFilterManager => di<PupilFilterManager>();
+  MatrixPolicyManager get _matrixPolicyManager => di<MatrixPolicyManager>();
+  MatrixPolicyFilterManager get _matrixPolicyFilterManager =>
+      di<MatrixPolicyFilterManager>();
 
   @override
   void initState() {

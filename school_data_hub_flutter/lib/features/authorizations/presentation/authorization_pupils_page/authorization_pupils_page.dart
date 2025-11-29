@@ -14,9 +14,6 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _pupilManager = di<PupilManager>();
-final _pupilAuthorizationFilterManager = di<PupilAuthorizationFilterManager>();
-
 class AuthorizationPupilsPage extends WatchingWidget {
   final Authorization authorization;
 
@@ -24,6 +21,8 @@ class AuthorizationPupilsPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _pupilManager = di<PupilManager>();
+    final _pupilAuthorizationFilterManager = di<PupilAuthorizationFilterManager>();
     // final filters = watchValue((PupilFilterManager x) => x.filterState);
 
     final thisAuthorization =

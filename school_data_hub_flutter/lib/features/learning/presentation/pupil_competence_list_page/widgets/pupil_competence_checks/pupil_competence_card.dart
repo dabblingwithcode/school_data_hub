@@ -13,8 +13,6 @@ import 'package:school_data_hub_flutter/features/learning/presentation/widgets/d
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _competenceManager = di<CompetenceManager>();
-
 class PupilCompetenceCard extends WatchingWidget {
   final Color backgroundColor;
   final bool isReport;
@@ -46,6 +44,7 @@ class PupilCompetenceCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _competenceManager = di<CompetenceManager>();
     watch(pupil);
     final isExpandedValue = createOnce<ValueNotifier<bool>>(
       () => ValueNotifier(false),

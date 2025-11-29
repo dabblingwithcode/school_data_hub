@@ -11,13 +11,12 @@ import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matri
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/room_list_view_bottom_navbar.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _matrixPolicyManager = di<MatrixPolicyManager>();
-
 class MatrixRoomsListPage extends WatchingWidget {
   const MatrixRoomsListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _matrixPolicyManager = di<MatrixPolicyManager>();
     List<MatrixRoom> matrixRooms =
         watchValue((MatrixPolicyFilterManager x) => x.filteredMatrixRooms);
 

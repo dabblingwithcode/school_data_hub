@@ -10,12 +10,12 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _filterStateManager = di<FiltersStateManager>();
-final _pupilsFilter = di<PupilsFilter>();
-final _schoolCalendarManager = di<SchoolCalendarManager>();
-final _attendanceManager = di<AttendanceManager>();
-
 class AttendancePupilFilterManager {
+  FiltersStateManager get _filterStateManager => di<FiltersStateManager>();
+  PupilsFilter get _pupilsFilter => di<PupilsFilter>();
+  SchoolCalendarManager get _schoolCalendarManager =>
+      di<SchoolCalendarManager>();
+  AttendanceManager get _attendanceManager => di<AttendanceManager>();
   final _attendancePupilFilterState =
       ValueNotifier<Map<AttendancePupilFilter, bool>>(
         initialAttendancePupilFilterValues,

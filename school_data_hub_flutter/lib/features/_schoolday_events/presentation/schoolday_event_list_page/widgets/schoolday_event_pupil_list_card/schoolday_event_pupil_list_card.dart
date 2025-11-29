@@ -17,12 +17,6 @@ import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_pupil_list_card/widgets/schoolday_event_pupil_stats.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _schooldayEventFilterManager = di<SchooldayEventFilterManager>();
-
-final _schooldayEventManager = di<SchooldayEventManager>();
-
-final _mainMenuBottomNavManager = di<BottomNavManager>();
-
 class SchooldayEventPupilListCard extends WatchingStatefulWidget {
   final PupilProxy passedPupil;
   const SchooldayEventPupilListCard(this.passedPupil, {super.key});
@@ -43,6 +37,9 @@ class _SchooldayEventListCardState extends State<SchooldayEventPupilListCard> {
 
   @override
   Widget build(BuildContext context) {
+    final _schooldayEventFilterManager = di<SchooldayEventFilterManager>();
+    final _schooldayEventManager = di<SchooldayEventManager>();
+    final _mainMenuBottomNavManager = di<BottomNavManager>();
     final PupilProxy pupil = widget.passedPupil;
     final unfilteredEvents = watch(
       _schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId),

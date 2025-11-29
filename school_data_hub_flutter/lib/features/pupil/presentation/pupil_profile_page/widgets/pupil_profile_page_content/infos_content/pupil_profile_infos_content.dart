@@ -23,12 +23,6 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profil
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _pupilManager = di<PupilManager>();
-
-final _matrixPolicyManager = di<MatrixPolicyManager>();
-
-final _hubSessionManager = di<HubSessionManager>();
-
 class PupilProfileInfosContent extends WatchingWidget {
   final PupilProxy pupil;
   const PupilProfileInfosContent({required this.pupil, super.key});
@@ -38,6 +32,9 @@ class PupilProfileInfosContent extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _pupilManager = di<PupilManager>();
+    final _matrixPolicyManager = di<MatrixPolicyManager>();
+    final _hubSessionManager = di<HubSessionManager>();
     final pupilSiblings = _pupilManager.getSiblings(pupil);
     watch(pupil);
     return Container(

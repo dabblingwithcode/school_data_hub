@@ -5,24 +5,25 @@ import 'package:school_data_hub_flutter/features/learning/domain/competence_mana
 import 'package:school_data_hub_flutter/features/learning/domain/filters/enums.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _competenceManager = di<CompetenceManager>();
-
 final _log = Logger('CompetenceFilterManager');
 
 class CompetenceFilterManager {
-  final _filterState =
-      ValueNotifier<Map<CompetenceFilter, bool>>(initialCompetenceFilterValues);
+  CompetenceManager get _competenceManager => di<CompetenceManager>();
+  final _filterState = ValueNotifier<Map<CompetenceFilter, bool>>(
+    initialCompetenceFilterValues,
+  );
   ValueListenable<Map<CompetenceFilter, bool>> get filterState => _filterState;
 
-  final _filteredCompetences =
-      ValueNotifier<List<Competence>>(_competenceManager.competences.value);
+  final _filteredCompetences = ValueNotifier<List<Competence>>([]);
   ValueListenable<List<Competence>> get filteredCompetences =>
       _filteredCompetences;
 
   final _filtersOn = ValueNotifier<bool>(false);
   ValueListenable<bool> get filtersOn => _filtersOn;
 
-  CompetenceFilterManager();
+  CompetenceFilterManager() {
+    _filteredCompetences.value = _competenceManager.competences.value;
+  }
 
   refreshFilteredCompetences(List<Competence> competences) {
     _filteredCompetences.value = competences;
@@ -38,10 +39,7 @@ class CompetenceFilterManager {
   }
 
   void setFilter(CompetenceFilter filter, bool isActive) {
-    _filterState.value = {
-      ..._filterState.value,
-      filter: isActive,
-    };
+    _filterState.value = {..._filterState.value, filter: isActive};
 
     filterCompetences();
   }

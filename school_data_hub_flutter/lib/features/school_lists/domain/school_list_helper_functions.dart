@@ -4,9 +4,8 @@ import 'package:school_data_hub_flutter/features/school_lists/domain/models/pupi
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _schoolListManager = di<SchoolListManager>();
-
 class SchoolListHelper {
+  static SchoolListManager get _schoolListManager => di<SchoolListManager>();
   static String listOwner(int listId) {
     final SchoolList schoolList = _schoolListManager.getSchoolListById(listId);
     return schoolList.createdBy;

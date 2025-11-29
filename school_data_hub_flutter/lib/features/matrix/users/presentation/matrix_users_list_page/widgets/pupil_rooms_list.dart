@@ -9,8 +9,6 @@ import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_roo
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _matrixPolicyManager = di<MatrixPolicyManager>();
-
 class MatrixUserRoomsList extends WatchingWidget {
   final MatrixUser matrixUser;
   final List<MatrixRoom> matrixRooms;
@@ -22,6 +20,7 @@ class MatrixUserRoomsList extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _matrixPolicyManager = di<MatrixPolicyManager>();
     List<MatrixRoom> namedMatrixRooms = _matrixPolicyManager.matrixRooms.value;
     final user = watch<MatrixUser>(matrixUser);
 
@@ -155,6 +154,7 @@ List<Widget> roomsList(
   List<MatrixRoom> matrixRooms,
   BuildContext context,
 ) {
+  final _matrixPolicyManager = di<MatrixPolicyManager>();
   List<MatrixRoom> namedMatrixRooms = _matrixPolicyManager.matrixRooms.value;
 
   return [

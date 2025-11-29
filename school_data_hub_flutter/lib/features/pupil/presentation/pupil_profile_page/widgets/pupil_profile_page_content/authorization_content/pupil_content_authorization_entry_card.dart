@@ -14,8 +14,6 @@ import 'package:school_data_hub_flutter/features/authorizations/presentation/aut
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _authorizationManager = di<AuthorizationManager>();
-
 class PupilContentAuthorizationEntryCard extends WatchingWidget {
   final Authorization authorization;
   final PupilAuthorization pupilAuthorization;
@@ -29,6 +27,7 @@ class PupilContentAuthorizationEntryCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _authorizationManager = di<AuthorizationManager>();
     final thisAuthorization = watchValue(
       (AuthorizationManager x) => x.authorizations,
     ).firstWhere((authorization) => authorization.id == this.authorization.id);

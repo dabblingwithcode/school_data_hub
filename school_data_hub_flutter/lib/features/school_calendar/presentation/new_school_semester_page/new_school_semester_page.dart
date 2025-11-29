@@ -6,8 +6,6 @@ import 'package:school_data_hub_flutter/features/school_calendar/domain/school_c
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_page/widgets/date_picker_button.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _schoolCalendarManager = di<SchoolCalendarManager>();
-
 class NewSchoolSemesterPage extends StatefulWidget {
   const NewSchoolSemesterPage({super.key});
 
@@ -33,6 +31,7 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final _schoolCalendarManager = di<SchoolCalendarManager>();
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
       appBar: AppBar(
