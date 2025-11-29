@@ -1,18 +1,12 @@
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/models/schoolday_event_enums.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
-
-final _pupilsFilter = di<PupilsFilter>();
-
-final _schooldayEventFilterManager = di<SchooldayEventFilterManager>();
-final _hubSessionManager = di<HubSessionManager>();
-final _schooldayEventManager = di<SchooldayEventManager>();
 
 class SchooldayEventsCounts {
   final int totalSchooldayEvents;
@@ -31,6 +25,14 @@ class SchooldayEventsCounts {
 }
 
 class SchoolDayEventHelper {
+  static PupilsFilter get _pupilsFilter => di<PupilsFilter>();
+
+  static SchooldayEventFilterManager get _schooldayEventFilterManager =>
+      di<SchooldayEventFilterManager>();
+  static HubSessionManager get _hubSessionManager => di<HubSessionManager>();
+  static SchooldayEventManager get _schooldayEventManager =>
+      di<SchooldayEventManager>();
+
   static int pupilsWithSchoolDayEvents() {
     final List<PupilProxy> pupils = _pupilsFilter.filteredPupils.value;
     int pupilsWithEvents = 0;

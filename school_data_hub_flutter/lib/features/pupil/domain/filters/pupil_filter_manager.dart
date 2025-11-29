@@ -16,17 +16,20 @@ class PupilFilterManager {
   // final _searchText = ValueNotifier<String>('');
   // ValueListenable<String> get searchText => _searchText;
 
-  final _pupilFilterState =
-      ValueNotifier<Map<PupilFilter, bool>>(initialPupilFilterValues);
+  final _pupilFilterState = ValueNotifier<Map<PupilFilter, bool>>(
+    initialPupilFilterValues,
+  );
   ValueListenable<Map<PupilFilter, bool>> get pupilFilterState =>
       _pupilFilterState;
 
-  final _sortMode =
-      ValueNotifier<Map<PupilSortMode, bool>>(initialSortModeValues);
+  final _sortMode = ValueNotifier<Map<PupilSortMode, bool>>(
+    initialSortModeValues,
+  );
   ValueListenable<Map<PupilSortMode, bool>> get sortMode => _sortMode;
 
-  final _filteredPupils =
-      ValueNotifier<List<PupilProxy>>(di<PupilManager>().allPupils);
+  final _filteredPupils = ValueNotifier<List<PupilProxy>>(
+    di<PupilManager>().allPupils,
+  );
   ValueListenable<List<PupilProxy>> get filteredPupils => _filteredPupils;
 
   PupilFilterManager();
@@ -41,8 +44,10 @@ class PupilFilterManager {
 
     _sortMode.value = {...initialSortModeValues};
 
-    di<FiltersStateManager>()
-        .setFilterState(filterState: FilterState.pupilLegacy, value: false);
+    di<FiltersStateManager>().setFilterState(
+      filterState: FilterState.pupilLegacy,
+      value: false,
+    );
 
     di<PupilsFilter>().refreshs();
   }
@@ -55,15 +60,21 @@ class PupilFilterManager {
         record.filter: record.value,
       };
     }
-    final bool pupilFilterStateEqualsInitialState = const MapEquality()
-        .equals(_pupilFilterState.value, initialPupilFilterValues);
+    final bool pupilFilterStateEqualsInitialState = const MapEquality().equals(
+      _pupilFilterState.value,
+      initialPupilFilterValues,
+    );
 
     if (pupilFilterStateEqualsInitialState) {
-      di<FiltersStateManager>()
-          .setFilterState(filterState: FilterState.pupilLegacy, value: false);
+      di<FiltersStateManager>().setFilterState(
+        filterState: FilterState.pupilLegacy,
+        value: false,
+      );
     } else {
-      di<FiltersStateManager>()
-          .setFilterState(filterState: FilterState.pupilLegacy, value: true);
+      di<FiltersStateManager>().setFilterState(
+        filterState: FilterState.pupilLegacy,
+        value: true,
+      );
     }
 
     di<PupilsFilter>().refreshs();
@@ -75,19 +86,21 @@ class PupilFilterManager {
             (b.schooldayEvents?.isEmpty ?? true)
         ? compareLastSchooldayEventDates(a, b) // Handle empty or both empty
         : (a.schooldayEvents?.isEmpty ?? true)
-            ? 1
-            : -1; // Place empty after non-empty
+        ? 1
+        : -1; // Place empty after non-empty
   }
 
   int comparePupilsByLastNonProcessedSchooldayEvent(
-      PupilProxy a, PupilProxy b) {
+    PupilProxy a,
+    PupilProxy b,
+  ) {
     // Handle potential null cases with null-aware operators
     return (a.schooldayEvents?.isEmpty ?? true) ==
             (b.schooldayEvents?.isEmpty ?? true)
         ? compareLastSchooldayEventDates(a, b) // Handle empty or both empty
         : (a.schooldayEvents?.isEmpty ?? true)
-            ? 1
-            : -1; // Place empty after non-empty
+        ? 1
+        : -1; // Place empty after non-empty
   }
 
   int compareLastSchooldayEventDates(PupilProxy a, PupilProxy b) {
@@ -95,8 +108,9 @@ class PupilFilterManager {
     if (a.schooldayEvents!.isNotEmpty && b.schooldayEvents!.isNotEmpty) {
       final schooldayEventDateA = a.schooldayEvents!.last.schoolday!.schoolday;
       final schooldayEventDateB = b.schooldayEvents!.last.schoolday!.schoolday;
-      return schooldayEventDateB
-          .compareTo(schooldayEventDateA); // Reversed for descending order
+      return schooldayEventDateB.compareTo(
+        schooldayEventDateA,
+      ); // Reversed for descending order
     } else {
       // Handle cases where one or both lists are empty
       return 0;

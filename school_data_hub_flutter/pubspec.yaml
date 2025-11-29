@@ -35,7 +35,7 @@ dependencies:
   serverpod_auth_shared_flutter: 2.9.1
   watch_it: ^1.7.0
   package_info_plus: ^9.0.0
-  file_picker: ^10.3.2
+  file_picker: ^10.3.7
   gap: ^3.0.1
   flutter_localizations: 
     sdk: flutter

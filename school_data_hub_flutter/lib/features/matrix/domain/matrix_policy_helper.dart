@@ -5,7 +5,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
-import 'package:school_data_hub_flutter/core/di/dependency_injection.dart';
+import 'package:school_data_hub_flutter/core/di/init_manager.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
@@ -76,7 +76,7 @@ class MatrixPolicyHelper {
     // is the passed credentials are null, we will use the stored ones
     final validCredentials = passedCredentials ?? storedCredentials;
 
-    await DiManager.registerMatrixManagers(validCredentials!);
+    await InitManager.registerMatrixManagers(validCredentials!);
 
     return;
   }

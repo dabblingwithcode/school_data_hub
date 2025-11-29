@@ -6,12 +6,13 @@ import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/core/di/dependency_injection.dart';
+import 'package:school_data_hub_flutter/core/di/init_manager.dart';
 import 'package:school_data_hub_flutter/core/env/models/enums.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
 import 'package:school_data_hub_flutter/core/models/populated_server_session_data.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class EnvManager with ChangeNotifier {
@@ -19,22 +20,21 @@ class EnvManager with ChangeNotifier {
 
   final _notificationService = di<NotificationService>();
 
-  bool _dependentMangagersRegistered = false;
-  bool get dependentManagersRegistered => _dependentMangagersRegistered;
-
-  final _isAuthenticated = ValueNotifier<bool>(false);
-
   // TODO ADVICE: Decouple encryption key for allowing login
   // - And transfer encryption keys over stream as with the pupil identities
   // - with additional one-time password to access the stream
 
   /// TODO ADVICE: is this proxy authentication flag a hack or is this acceptable?
+
+  final _isAuthenticated = ValueNotifier<bool>(false);
+
+  /// ##  🔎 managed observable
   /// We need to observe in [MaterialApp] if a user is authenticated
   /// without accessing [HubSessionManager], because if there is not
   // an active env yet, it will still be unregistered.
   /// So this is a workaround setting a flag here
-  /// **CAUTION**
-  /// Handle this value only with [HubSessionManager] every time
+  ///
+  /// **CAUTION**: Handle this value only with [HubSessionManager] every time
   /// it makes an authentication status change.
   ValueListenable<bool> get isAuthenticated => _isAuthenticated;
 
@@ -48,21 +48,29 @@ class EnvManager with ChangeNotifier {
 
   Env? _activeEnv;
 
+  /// ##  🔎 managed observable
   Env? get activeEnv => _activeEnv;
 
   Map<String, Env> _environments = {};
+
+  /// ##  🔎 managed observable
   Map<String, Env> get envs => _environments;
 
   String _defaultEnv = '';
+
+  /// ##  🔎 managed observable
   String get defaultEnv => _defaultEnv;
 
   final _envIsReady = ValueNotifier<bool>(false);
+
+  /// ##  🔎 managed observable
   ValueListenable<bool> get envIsReady => _envIsReady;
 
   // Declare storage keys for the environment
 
   final String _storageKeyForEnvironments = 'environments_key';
 
+  /// ##  🔎 managed observable
   String get storageKeyForAuthKey =>
       '${_activeEnv!.serverName}_${_activeEnv!.runMode.name}_hub_auth_key';
 
@@ -150,8 +158,7 @@ class EnvManager with ChangeNotifier {
     _log.info('Default Environment set: $_defaultEnv');
 
     _envIsReady.value = true;
-    await DiManager.registerManagersOnActiveEnvScope();
-    setDependentManagersRegistered(true);
+    await InitManager.pushActiveEnvScopeAndRegisterDependentManagers();
 
     if (await HubSecureStorage().containsKey(storageKeyForMatrixCredentials)) {
       final matrixCredentialsJson = await HubSecureStorage().getString(
@@ -163,7 +170,7 @@ class EnvManager with ChangeNotifier {
 
       // Only register matrix managers if they're not already registered
       if (!di.hasScope(DiScope.onMatrixEnvScope.name)) {
-        await DiManager.registerMatrixManagers(matrixCredentials);
+        await InitManager.registerMatrixManagers(matrixCredentials);
       } else {
         _log.info(
           '[DI] Matrix managers already registered, skipping registration',
@@ -176,14 +183,15 @@ class EnvManager with ChangeNotifier {
   /// **TODO:** There should be a better way to handle this.
   /// We need to set the environment to not ready
   /// when we add a new environment
-  void setEnvNotReady() {
+  void deactivateEnv() {
     _envIsReady.value = false;
     _activeEnv = null;
-  }
-
-  void setDependentManagersRegistered(bool value) {
-    _dependentMangagersRegistered = value;
-    _log.info('dependentManagersRegistered: $value');
+    _populatedEnvServerData = PopulatedServerSessionData(
+      schoolSemester: false,
+      schooldays: false,
+      competences: false,
+      supportCategories: false,
+    );
   }
 
   Future<EnvsInStorage?> _environmentsInStorage() async {
@@ -253,7 +261,7 @@ class EnvManager with ChangeNotifier {
 
     // the modified environments map will be stored
     // in the [activateEnv] method
-    activateEnv(envName: env.serverName);
+    activateDifferentEnv(envName: env.serverName);
 
     return;
   }
@@ -293,30 +301,30 @@ class EnvManager with ChangeNotifier {
     _log.info('Active environment updated: ${_activeEnv!.serverName}');
   }
 
-  Future<void> activateEnv({required String envName}) async {
-    _log.info('Activating environment: $envName');
+  Future<void> activateDifferentEnv({required String envName}) async {
+    bool isAnEnvironmentSwitch = _activeEnv?.serverName != envName;
 
+    _log.info(
+      'Switching environment from [${_activeEnv?.serverName}] to [$envName]',
+    );
     // Mark environment as not ready during switch
     _envIsReady.value = false;
     notifyListeners();
-
-    // 1. Reset or drop managers holding data from the old env
-    _log.info(
-      '[DI] Dropping logged in user scope to reset user-dependent managers',
-    );
-    await DiManager.dropOnLoggedInUserScope();
-
     // Reset environment-dependent managers
-    _log.info('[DI] Switching environment managers');
-    await DiManager.switchEnvironmentAndReinitializeManagers();
-    // Note: switchEnvironmentAndReinitializeManagers already calls registerManagersOnActiveEnvScope()
+    // This will automatically drop all child scopes including loggedInUserScope
 
-    // 2. Set the selected env as active
+    await InitManager.dropOldActiveEnvAndRelatedScopes();
+
     _activeEnv = _environments[envName]!;
     _defaultEnv = envName;
 
-    _log.info('Environment set as active: ${_activeEnv!.serverName}');
-    // Don't notify listeners yet - wait until managers are read
+    // Log new environment details
+    _log.info('[ENV] NEW active environment set:');
+    _log.info('[ENV]   - Name: ${_activeEnv!.serverName}');
+    _log.info('[ENV]   - Server URL: ${_activeEnv!.serverUrl}');
+    _log.info('[ENV]   - Run Mode: ${_activeEnv!.runMode.name}');
+
+    // Don't notify listeners yet - wait until managers are ready
 
     // Update storage with new environment configuration
     final updatedEnvsForStorage = EnvsInStorage(
@@ -328,8 +336,13 @@ class EnvManager with ChangeNotifier {
     await HubSecureStorage().setString(_storageKeyForEnvironments, jsonEnvs);
 
     // Managers are already registered by switchEnvironmentAndReinitializeManagers
-    // Just mark them as ready
-    setDependentManagersRegistered(true);
+
+    // If this is an environment switch, we need to register the managers again
+    if (isAnEnvironmentSwitch) {
+      _log.info('[DI] Registering environment-dependent managers');
+      await InitManager.pushActiveEnvScopeAndRegisterDependentManagers();
+    }
+
     _log.info(
       '[DI] Environment-dependent managers are ready for: ${_activeEnv!.serverName}',
     );
@@ -356,7 +369,7 @@ class EnvManager with ChangeNotifier {
         _log.info(
           '[DI] Registering matrix managers for environment ${_activeEnv!.serverName}',
         );
-        await DiManager.registerMatrixManagers(matrixCredentials);
+        await InitManager.registerMatrixManagers(matrixCredentials);
       } else {
         _log.info(
           '[DI] Matrix managers already registered, skipping registration',
@@ -380,25 +393,41 @@ class EnvManager with ChangeNotifier {
 
     _log.info('Environment activated and ready: ${_activeEnv!.serverName}');
 
-    // 3. Check if credentials are stored - if so, log in
+    // Check if credentials are stored - if so, log in
     // Add a small delay to ensure everything is properly initialized
     await Future.delayed(const Duration(milliseconds: 100));
     await _checkAndAttemptAutoLogin();
 
-    // 4. Register user-dependent managers if auto-login was successful
-    // This ensures UI components can access auth-dependent managers like PupilsFilter
-    if (_isAuthenticated.value) {
-      _log.info(
-        '[DI] User is authenticated, registering user-dependent managers',
-      );
-      await DiManager.registerManagersDependingOnAuthedSession();
-    }
+    // Note: registerManagersDependingOnAuthedSession is called automatically
+    // by HubSessionManager.refreshSession() if auto-login succeeds.
+    // No need to call it here again.
 
     // Show success notification after everything is set up
     _notificationService.showSnackBar(
       NotificationType.success,
       'Umgebung ${_activeEnv!.serverName} aktiviert!',
     );
+
+    _log.info('[ENV] Environment switch completed successfully');
+    _log.info(
+      '[ENV] New environment has ${await _checkPupilIdentityCount()} pupil identities',
+    );
+  }
+
+  /// Helper method to log pupil identity count
+  Future<int> _checkPupilIdentityCount() async {
+    try {
+      // We need to wait for all DI to be ready before accessing managers
+      await di.allReady();
+      // PupilIdentityManager is in the loggedInUserScope
+      if (di.isRegistered<PupilIdentityManager>()) {
+        return di<PupilIdentityManager>().availablePupilIds.length;
+      }
+      return 0;
+    } catch (e) {
+      _log.warning('Could not get pupil identity count: $e');
+    }
+    return 0;
   }
 
   /// Check for stored credentials and attempt auto-login
@@ -504,7 +533,7 @@ class EnvManager with ChangeNotifier {
       _log.info(
         '[DI] Switching environment managers after deleting environment $deletedEnvironment',
       );
-      DiManager.switchEnvironmentAndReinitializeManagers();
+      InitManager.dropOldActiveEnvAndRelatedScopes();
     } else {
       // if there are no environments left, delete the environments from secure storage
 
@@ -512,7 +541,7 @@ class EnvManager with ChangeNotifier {
       _log.info(
         '[DDI]Env $deletedEnvironment deleted. No environments left. Cleaning up all environment managers.',
       );
-      DiManager.cleanupAllEnvironmentManagers();
+      InitManager.dropOldActiveEnvAndRelatedScopes();
       _activeEnv = null;
 
       _defaultEnv = '';

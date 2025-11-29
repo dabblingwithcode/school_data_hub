@@ -19,9 +19,7 @@ class HubAuthKeyManager extends AuthenticationKeyManager {
 
   /// Creates a new authentication key manager. By default it will use
   /// secure storage for storing keys.
-  HubAuthKeyManager({
-    required this.storageKeyForAuthKey,
-  });
+  HubAuthKeyManager({required this.storageKeyForAuthKey});
 
   @override
   Future<String?> get() async {
@@ -29,7 +27,7 @@ class HubAuthKeyManager extends AuthenticationKeyManager {
       _authenticationKey = await _storage.getString(storageKeyForAuthKey);
 
       _initialized = true;
-      _log.info('Initialized - authKey from storage is: $_authenticationKey');
+      _log.info('Initialized - authentication key available');
     }
 
     return _authenticationKey;

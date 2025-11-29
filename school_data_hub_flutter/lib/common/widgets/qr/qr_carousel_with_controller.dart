@@ -69,8 +69,9 @@ class _QrCarouselWithControllerState extends State<QrCarouselWithController> {
     return CarouselSlider(
       carouselController: carouselController,
       options: CarouselOptions(
-        viewportFraction:
-            (mediaQuery.orientation == Orientation.landscape) ? 0.6 : 0.9,
+        viewportFraction: (mediaQuery.orientation == Orientation.landscape)
+            ? 0.6
+            : 0.9,
         enlargeCenterPage: true,
         height: maxHeight,
         autoPlay: false,
@@ -95,14 +96,20 @@ class _QrCarouselWithControllerState extends State<QrCarouselWithController> {
                     Row(
                       children: [
                         Gap(mediaQuery.size.width * 0.05),
-                        Text(i.keys.first,
-                            style: const TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.bold)),
+                        Text(
+                          i.keys.first,
+                          style: const TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         const Spacer(),
                         Text(
                           '${myListOfMaps.indexOf(i) + 1}/${myListOfMaps.length}',
                           style: const TextStyle(
-                              fontSize: 30, fontWeight: FontWeight.bold),
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         Gap(mediaQuery.size.width * 0.05),
                       ],
@@ -115,9 +122,9 @@ class _QrCarouselWithControllerState extends State<QrCarouselWithController> {
                         version: QrVersions.auto,
                         size:
                             (mediaQuery.orientation == Orientation.landscape ||
-                                    Platform.isWindows)
-                                ? maxHeight * 0.9
-                                : maxWidth,
+                                Platform.isWindows)
+                            ? maxHeight * 0.9
+                            : maxWidth,
                       ),
                     ),
                   ],
@@ -133,22 +140,22 @@ class _QrCarouselWithControllerState extends State<QrCarouselWithController> {
   @override
   void dispose() {
     hardwareKeyboard.removeHandler(keybardHandler);
-    debugPrint('QrCarouselWithController disposed');
+
     super.dispose();
   }
 }
 
 void showQrCarouselWithController(
-    Map<String, String> qrMap, BuildContext context) {
+  Map<String, String> qrMap,
+  BuildContext context,
+) {
   showDialog(
     context: context,
     builder: (context) {
       return Dialog(
         backgroundColor: Colors.transparent,
         insetPadding: EdgeInsets.zero,
-        child: QrCarouselWithController(
-          qrMap: qrMap,
-        ),
+        child: QrCarouselWithController(qrMap: qrMap),
       );
     },
   );

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -40,7 +38,8 @@ class DiInitOnUserAuth {
 
       await pupilIdentityManager.init();
 
-      _log.info('PupilIdentityManager initialized');
+      _log.fine('PupilIdentityManager initialized');
+      _log.info('########################################################');
 
       return pupilIdentityManager;
     });
@@ -50,7 +49,8 @@ class DiInitOnUserAuth {
 
       await schoolCalendarManager.init();
 
-      _log.info('SchoolCalendarManager initialized');
+      _log.fine('SchoolCalendarManager initialized');
+      _log.info('########################################################');
 
       return schoolCalendarManager;
     });
@@ -60,7 +60,8 @@ class DiInitOnUserAuth {
 
       await supportCategoryManager.init();
 
-      _log.info('SupportCategoryManager initialized');
+      _log.fine('SupportCategoryManager initialized');
+      _log.info('########################################################');
 
       return supportCategoryManager;
     });
@@ -71,6 +72,7 @@ class DiInitOnUserAuth {
       await pupilManager.init();
 
       _log.info('PupilManager initialized');
+      _log.info('########################################################');
 
       return pupilManager;
     }, dependsOn: [PupilIdentityManager, HubSessionManager]);
@@ -81,34 +83,36 @@ class DiInitOnUserAuth {
     );
 
     di.registerSingletonAsync<BookManager>(() async {
-      log('Registering BookManager');
       final bookManager = BookManager();
       await bookManager.init();
-      log('BookManager initialized');
+      _log.fine('BookManager initialized');
+      _log.info('########################################################');
       return bookManager;
     }, dependsOn: []);
 
     di.registerSingletonAsync<SchoolDataMainManager>(() async {
-      log('Registering SchoolDataMainManager');
       final schoolDataManager = SchoolDataMainManager();
       await schoolDataManager.init();
-      log('SchoolDataMainManager initialized');
+      _log.fine('SchoolDataMainManager initialized');
+      _log.info('########################################################');
       return schoolDataManager;
     }, dependsOn: []);
 
     di.registerSingletonAsync<WorkbookManager>(() async {
-      log('Registering WorkbookManager');
       final workbookManager = WorkbookManager();
       await workbookManager.init();
-      log('WorkbookManager initialized');
+      _log.fine('WorkbookManager initialized');
+      _log.info('########################################################');
       return workbookManager;
     }, dependsOn: [HubSessionManager, PupilManager]);
+
     di.registerSingletonAsync<CompetenceManager>(() async {
       final competenceManager = CompetenceManager();
 
       await competenceManager.init();
 
-      _log.info('CompetenceManager initialized');
+      _log.fine('CompetenceManager initialized');
+      _log.info('########################################################');
 
       return competenceManager;
     });
@@ -118,10 +122,10 @@ class DiInitOnUserAuth {
     }, dependsOn: [CompetenceManager]);
 
     di.registerSingletonAsync<AuthorizationManager>(() async {
-      log('Registering AuthorizationManager');
       final authorizationManager = AuthorizationManager();
       await authorizationManager.init();
-      log('AuthorizationManager initialized');
+      _log.fine('AuthorizationManager initialized');
+      _log.info('########################################################');
       return authorizationManager;
     }, dependsOn: [HubSessionManager]);
 
@@ -191,42 +195,46 @@ class DiInitOnUserAuth {
     );
 
     di.registerSingletonAsync<SchoolListManager>(() async {
-      _log.info('Registering SchoolListManager');
       final schoolListManager = SchoolListManager();
       await schoolListManager.init();
-      _log.info('SchoolListManager initialized');
+      _log.fine('SchoolListManager initialized');
+      _log.info('########################################################');
       return schoolListManager;
     }, dependsOn: [HubSessionManager, PupilManager]);
 
     di.registerSingletonWithDependencies<SchoolListFilterManager>(() {
       final schoolListFilterManager = SchoolListFilterManager();
       schoolListFilterManager.init();
+      _log.fine('SchoolListFilterManager initialized');
+      _log.info('########################################################');
       return schoolListFilterManager;
     }, dependsOn: [PupilsFilter, SchoolListManager]);
 
-    _log.info('Managers depending on authenticated session initialized');
-
     di.registerSingletonAsync<UserManager>(() async {
-      _log.info('Registering UserManager');
       final userManager = UserManager();
       await userManager.init();
-      _log.info('UserManager initialized');
+      _log.fine('UserManager initialized');
+      _log.info('########################################################');
       return userManager;
     }, dependsOn: [HubSessionManager]);
 
     di.registerSingletonAsync<TimetableApiService>(() async {
-      _log.info('Registering TimetableApiService');
       final timetableApiService = TimetableApiService();
-      _log.info('TimetableApiService initialized');
+      _log.fine('TimetableApiService initialized');
+      _log.info('########################################################');
       return timetableApiService;
     });
 
     di.registerSingletonAsync<TimetableManager>(() async {
-      _log.info('Registering TimetableManager');
       final timetableManager = TimetableManager();
       await timetableManager.init();
-      _log.info('TimetableManager initialized');
+      _log.fine('TimetableManager initialized');
+      _log.info('########################################################');
       return timetableManager;
     }, dependsOn: [HubSessionManager, TimetableApiService]);
+
+    _log.info(
+      '[Init] Managers depending on authentication are being initialized...',
+    );
   }
 }

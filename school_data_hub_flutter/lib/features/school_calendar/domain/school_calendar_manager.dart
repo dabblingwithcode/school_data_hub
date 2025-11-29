@@ -10,15 +10,12 @@ import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _client = di<Client>();
-
-final _envManager = di<EnvManager>();
-
-final _notificationService = di<NotificationService>();
-
 final _log = Logger('SchooldayManager');
 
 class SchoolCalendarManager {
+  Client get _client => di<Client>();
+  EnvManager get _envManager => di<EnvManager>();
+  final _notificationService = di<NotificationService>();
   final _schooldays = ValueNotifier<List<Schoolday>>([]);
   ValueNotifier<List<Schoolday>> get schooldays => _schooldays;
 

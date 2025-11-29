@@ -5,8 +5,33 @@ Please think out loud and provide
 - Rationale for decision
 - next steps checklist
 
+## Context Usage Guidelines
+
+### Default Context Sources
+- **ALWAYS** check `cursor_docs/` folder first when answering questions about:
+  - Package usage patterns (watch_it, get_it, serverpod, etc.)
+  - Package-specific best practices and conventions
+  - API documentation for packages used in this project
+  - How packages are integrated in this specific codebase
+
+### How to Use cursor_docs
+- When a question involves a package that has documentation in `cursor_docs/`, search and reference that documentation
+- Explicitly cite the specific file when using information from `cursor_docs/` (e.g., "According to `cursor_docs/watch_it_readme.md`...")
+- Prefer information from `cursor_docs/` over general package documentation when available, as these files contain project-specific context
+
+### Context Priority Order
+1. Project codebase (`lib/`, etc.) - actual implementation patterns
+2. `cursor_docs/` folder - project-specific package documentation
+3. General package documentation (pub.dev, GitHub) - fallback if not in cursor_docs
+
+### Available cursor_docs Files
+- `cursor_docs/watch_it_readme.md` - watch_it package documentation and usage patterns
+- `cursor_docs/get_it.md` - get_it package documentation and usage patterns
+  
 ## Dart and flutter rules
 
+- Don't use print() statements!!! Implement or use instead final _log = Logger(<ClassName>);
+- Always prefer using watch functions over ListenableBuilder
 - always use package import even for our project files
   - Comply to the always_use_package_imports rule
 - prefer composability breaking down presentation files:

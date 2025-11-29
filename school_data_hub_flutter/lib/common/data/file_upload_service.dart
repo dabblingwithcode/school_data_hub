@@ -6,8 +6,6 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _client = di<Client>();
-final _notificationService = di<NotificationService>();
 final _log = Logger('FileUploadService');
 
 class ClientFileUpload {
@@ -22,7 +20,7 @@ class ClientFileUpload {
     final documentId = const Uuid().v4();
     final path = p.join(folder.name, '$documentId${p.extension(file.path)}');
     try {
-      final uploadDescription = await _client.files.getUploadDescription(
+      final uploadDescription = await di<Client>().files.getUploadDescription(
         StorageId.private.name,
         path,
       );
@@ -37,20 +35,20 @@ class ClientFileUpload {
         final fileStream = file.openRead();
 
         final fileLength = await file.length();
-        _notificationService.apiRunning(true);
+        di<NotificationService>().apiRunning(true);
         await uploader.upload(fileStream, fileLength);
-        _notificationService.apiRunning(false);
+        di<NotificationService>().apiRunning(false);
 
         // Verify the upload
         try {
-          final success = await _client.files.verifyUpload(
+          final success = await di<Client>().files.verifyUpload(
             StorageId.private.name,
             path,
           );
           return (path: path, success: success);
         } catch (e) {
           _log.severe('Upload failed for $path: $e');
-          _notificationService.showSnackBar(
+          di<NotificationService>().showSnackBar(
             NotificationType.error,
             'Upload failed for $path: $e',
           );
@@ -59,7 +57,7 @@ class ClientFileUpload {
       }
     } catch (e) {
       _log.severe('Failed to get upload description for $path: $e');
-      _notificationService.showSnackBar(
+      di<NotificationService>().showSnackBar(
         NotificationType.error,
         'Failed to get upload description for $path: $e',
       );

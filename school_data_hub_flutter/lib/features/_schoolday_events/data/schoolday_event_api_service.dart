@@ -10,12 +10,12 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _client = di<Client>();
-final _notificationService = di<NotificationService>();
-final _hubSessionManager = di<HubSessionManager>();
 final _log = Logger('SchooldayEventApiService');
 
 class SchooldayEventApiService {
+  final _notificationService = di<NotificationService>();
+  Client get _client => di<Client>();
+  HubSessionManager get _hubSessionManager => di<HubSessionManager>();
   //- post schooldayEvent
 
   Future<SchooldayEvent> postSchooldayEvent(

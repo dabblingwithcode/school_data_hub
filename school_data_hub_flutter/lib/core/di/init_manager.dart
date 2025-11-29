@@ -16,12 +16,12 @@ enum DiScope { onActiveEnvScope, onLoggedInUserScope, onMatrixEnvScope }
 
 final _log = Logger('DiManager');
 
-class DiManager {
-  static final DiManager _instance = DiManager._internal();
+class InitManager {
+  static final InitManager _instance = InitManager._internal();
 
-  factory DiManager() => _instance;
+  factory InitManager() => _instance;
 
-  DiManager._internal();
+  InitManager._internal();
 
   static Future<void> registerCoreManagers() async {
     di.registerSingletonAsync<EnvManager>(() async {
@@ -48,23 +48,32 @@ class DiManager {
     });
   }
 
-  static Future<void> registerManagersOnActiveEnvScope() async {
+  static Future<void> pushActiveEnvScopeAndRegisterDependentManagers() async {
     if (di.hasScope(DiScope.onActiveEnvScope.name)) {
-      _log.info(
+      _log.warning(
         'Active environment scope already exists, skipping registration',
       );
       return;
     }
 
-    di.pushNewScopeAsync(
+    await di.pushNewScopeAsync(
       scopeName: DiScope.onActiveEnvScope.name,
       dispose: () {
         _log.warning('[DI] Disposing [activeEnvScope]');
       },
       init: (getIt) async {
-        _log.info('[DI] Pushing Scope [activeEnvScope]');
+        _log.warning(
+          '########################################################',
+        );
+        _log.fine('[DI] Pushing Scope [activeEnvScope]');
+        _log.warning(
+          '########################################################',
+        );
+
         await DiOnActiveEnv.registerManagers();
-        _log.info('[DI] Managers dependent on [activeEnvScope] initialized');
+        _log.info(
+          '[Init Scope] Managers dependent on [activeEnvScope] are being initialized...',
+        );
       },
     );
   }
@@ -75,27 +84,40 @@ class DiManager {
     _log.info('[DI] Registering managers depending on session');
 
     if (di.hasScope(DiScope.onLoggedInUserScope.name)) {
-      _log.severe(
-        '[DI] [loggedInUserScope] already exists, dropping [loggedInUserScope] it to reinitialize managers...',
+      _log.info(
+        '[DI] [loggedInUserScope] already exists, skipping registration',
       );
-      await di.dropScope(DiScope.onLoggedInUserScope.name);
-
       return;
     }
-    di.pushNewScopeAsync(
+
+    await di.pushNewScopeAsync(
       scopeName: DiScope.onLoggedInUserScope.name,
       dispose: () {
-        _log.severe('[DI] Disposing Scope [loggedInUserScope]', [
-          StackTrace.current,
-        ]);
-      },
-      init: (getIt) async {
-        _log.info('[DI] Pushing Scope [loggedInUserScope]');
-        await DiInitOnUserAuth.registerManagers();
-        _log.info(
-          '[DI] Managers depending on authenticated session initialized',
+        _log.warning(
+          '########################################################',
+        );
+
+        _log.severe('[DI] Disposing Scope [loggedInUserScope]');
+        _log.warning(
+          '########################################################',
         );
       },
+      init: (getIt) async {
+        _log.warning(
+          '########################################################',
+        );
+
+        _log.fine('[DI] Pushing Scope [loggedInUserScope]');
+        _log.warning(
+          '########################################################',
+        );
+
+        await DiInitOnUserAuth.registerManagers();
+      },
+    );
+
+    _log.info(
+      '[Init] Managers depending on authentication are being initialized...',
     );
   }
 
@@ -105,85 +127,78 @@ class DiManager {
         '[DI] Unregistering managers depending on session - dropping [loggedInUserScope]',
       );
 
-      di.dropScope(
+      await di.dropScope(
         DiScope.onLoggedInUserScope.name,
       ); // This will dispose the 'logged_in_user_scope'
+      _log.warning('########################################################');
+
+      _log.info('[DI] [loggedInUserScope] dropped successfully');
+      _log.warning('########################################################');
     } else {
-      _log.info(
+      _log.severe(
         '[DI] [loggedInUserScope] does not exist, skipping drop operation',
       );
     }
   }
 
-  static Future<void> switchEnvironmentAndReinitializeManagers() async {
-    _log.info(
-      '[DI] switchEnvironmentAndReinitializeManagers: starting environment switch...',
-    );
+  static Future<void> dropOldActiveEnvAndRelatedScopes() async {
+    _log.severe('[DI] Dropping old active environment scope');
+    _log.warning('########################################################');
 
     if (di.hasScope(DiScope.onLoggedInUserScope.name)) {
-      _log.severe(
-        '[DI] switchEnvironmentAndReinitializeManagers: [loggedInUserScope] already exists, dropping it...',
-      );
+      _log.severe('[DI] Dropping [loggedInUserScope] ...');
+
       await di.dropScope(DiScope.onLoggedInUserScope.name);
     }
 
-    //- TODO IMPORTANT: check if this is necessary - makes trouble setting up the first env
     if (di.hasScope(DiScope.onActiveEnvScope.name)) {
-      _log.severe('[DI] [activeEnvScope] already exists, dropping it...');
+      _log.severe('[DI] [activeEnvScope]  exists, dropping it...');
+      _log.warning('########################################################');
       await di.dropScope(DiScope.onActiveEnvScope.name);
     }
 
     // Also drop matrix scope if it exists (it's environment-dependent)
-    _log.warning(
-      '[DI] switchEnvironmentAndReinitializeManagers: dropping matrix scope...',
-    );
-    await dropMatrixScope();
-
-    _log.info('[DI] Environment managers switched and reinitialized');
-
-    // Re-register active environment scope with new environment data
-    // This ensures PupilIdentityManager and other environment-dependent managers are available
-    await registerManagersOnActiveEnvScope();
-
-    _log.info(
-      '[DI] switchEnvironmentAndReinitializeManagers: completed successfully',
-    );
-  }
-
-  static Future<void> cleanupAllEnvironmentManagers() async {
-    _log.warning('[DI]cleanupAllEnvironmentManagers: starting...');
-    try {
-      _log.warning('[DI]cleanupAllEnvironmentManagers: dropping scopes...');
-      if (di.hasScope(DiScope.onLoggedInUserScope.name)) {
-        _log.warning(
-          '[DI] cleanupAllEnvironmentManagers: [loggedInUserScope] exists, dropping it ...',
-        );
-        await di.dropScope(DiScope.onLoggedInUserScope.name);
-      }
-
-      if (di.hasScope(DiScope.onActiveEnvScope.name)) {
-        await di.dropScope(DiScope.onActiveEnvScope.name);
-        _log.warning('[DI] dropped [activeEnvScope]');
-      } else {
-        _log.info(
-          '[DI] [activeEnvScope] does not exist, skipping drop operation',
-        );
-      }
-
-      // Also drop matrix scope if it exists
-      _log.warning(
-        '[DI] cleanupAllEnvironmentManagers: dropping matrix scope...',
-      );
+    if (di.hasScope(DiScope.onMatrixEnvScope.name)) {
+      _log.severe('[DI] dropping matrix scope...');
+      _log.warning('########################################################');
       await dropMatrixScope();
-      _log.warning('[DI]cleanupAllEnvironmentManagers: completed successfully');
-    } catch (e) {
-      _log.severe(
-        '[DI]cleanupAllEnvironmentManagers: error occurred: $e',
-        StackTrace.current,
-      );
-      rethrow;
     }
   }
+
+  // static Future<void> cleanupAllEnvironmentManagers() async {
+  //   _log.warning('[DI]cleanupAllEnvironmentManagers: starting...');
+  //   try {
+  //     _log.warning('[DI]cleanupAllEnvironmentManagers: dropping scopes...');
+  //     if (di.hasScope(DiScope.onLoggedInUserScope.name)) {
+  //       _log.warning(
+  //         '[DI] cleanupAllEnvironmentManagers: [loggedInUserScope] exists, dropping it ...',
+  //       );
+  //       await di.dropScope(DiScope.onLoggedInUserScope.name);
+  //     }
+
+  //     if (di.hasScope(DiScope.onActiveEnvScope.name)) {
+  //       await di.dropScope(DiScope.onActiveEnvScope.name);
+  //       _log.warning('[DI] dropped [activeEnvScope]');
+  //     } else {
+  //       _log.info(
+  //         '[DI] [activeEnvScope] does not exist, skipping drop operation',
+  //       );
+  //     }
+
+  //     // Also drop matrix scope if it exists
+  //     _log.warning(
+  //       '[DI] cleanupAllEnvironmentManagers: dropping matrix scope...',
+  //     );
+  //     await dropMatrixScope();
+  //     _log.warning('[DI]cleanupAllEnvironmentManagers: completed successfully');
+  //   } catch (e) {
+  //     _log.severe(
+  //       '[DI]cleanupAllEnvironmentManagers: error occurred: $e',
+  //       StackTrace.current,
+  //     );
+  //     rethrow;
+  //   }
+  // }
 
   static Future<void> registerMatrixManagers(
     MatrixCredentials? matrixCredentials,
@@ -233,39 +248,50 @@ class DiManager {
       di.pushNewScopeAsync(
         scopeName: DiScope.onMatrixEnvScope.name,
         dispose: () {
-          _log.info('[DI] Disposing [matrixScope]');
+          _log.warning(
+            '########################################################',
+          );
+
+          _log.severe('[DI] Disposing [matrixScope]');
+          _log.warning(
+            '########################################################',
+          );
         },
         init: (getIt) async {
-          _log.info('[DI] Pushing Scope [matrixScope]');
+          _log.warning(
+            '########################################################',
+          );
 
-          di.registerSingletonAsync<MatrixPolicyManager>(
-            () async {
-              _log.info('[DI] Registering MatrixPolicyManager');
+          _log.fine('[DI] Pushing Scope [matrixScope]');
+          _log.warning(
+            '########################################################',
+          );
 
-              final policyManager =
-                  await MatrixPolicyManager(
-                    matrixCredentials!.url,
-                    matrixCredentials.policyToken,
-                    matrixCredentials.matrixToken,
-                    matrixCredentials.matrixAdmin,
-                    matrixCredentials.encryptionKey,
-                    matrixCredentials.encryptionIv,
-                  ).init();
+          di.registerSingletonAsync<MatrixPolicyManager>(() async {
+            _log.info('[DI] Registering MatrixPolicyManager');
 
-              _log.info('[DI] Matrix managers initialized');
+            final policyManager = await MatrixPolicyManager(
+              matrixCredentials!.url,
+              matrixCredentials.policyToken,
+              matrixCredentials.matrixToken,
+              matrixCredentials.matrixAdmin,
+              matrixCredentials.encryptionKey,
+              matrixCredentials.encryptionIv,
+            ).init();
 
-              // Set the registration status to true after the manager is fully initialized
-              // Since we depend on HubSessionManager, it should be ready now
-              di<HubSessionManager>()
-                  .changeMatrixPolicyManagerRegistrationStatus(true);
-              _log.info(
-                '[DI] Matrix registration status set to true after initialization',
-              );
+            _log.info('[DI] Matrix managers initialized');
 
-              return policyManager;
-            },
-            dependsOn: [HubSessionManager],
-          ); // TODO: add dependency to PupilManager?
+            // Set the registration status to true after the manager is fully initialized
+            // Since we depend on HubSessionManager, it should be ready now
+            di<HubSessionManager>().changeMatrixPolicyManagerRegistrationStatus(
+              true,
+            );
+            _log.info(
+              '[DI] Matrix registration status set to true after initialization',
+            );
+
+            return policyManager;
+          }, dependsOn: [HubSessionManager]);
 
           di.registerSingletonWithDependencies(() {
             return MatrixPolicyFilterManager(di<MatrixPolicyManager>());

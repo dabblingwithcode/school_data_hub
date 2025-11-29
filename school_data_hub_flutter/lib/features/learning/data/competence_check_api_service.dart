@@ -6,9 +6,8 @@ import 'package:school_data_hub_flutter/common/models/enums.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _client = di<Client>();
-
 class CompetenceCheckApiService {
+  Client get _client => di<Client>();
   //- create
 
   Future<PupilData?> postCompetenceCheck({

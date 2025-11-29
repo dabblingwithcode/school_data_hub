@@ -8,11 +8,9 @@ import 'package:watch_it/watch_it.dart';
 class UserManager {
   final _log = Logger('UserManager');
 
-  final _client = di<Client>();
-
-  final _sessionManager = di<HubSessionManager>();
-
-  final _notificationService = di<NotificationService>();
+  Client get _client => di<Client>();
+  HubSessionManager get _sessionManager => di<HubSessionManager>();
+  NotificationService get _notificationService => di<NotificationService>();
   ValueListenable<List<User>> get users => _users;
   final _users = ValueNotifier<List<User>>([]);
 
