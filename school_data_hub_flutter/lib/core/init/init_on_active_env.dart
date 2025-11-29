@@ -22,9 +22,9 @@ class InitOnActiveEnv {
       final envManager = di<EnvManager>();
       final activeEnv = envManager.activeEnv;
       final serverUrl = activeEnv!.serverUrl;
-      _log.info('Registering Client for environment:');
-      _log.info(
-        '   - Name: [${activeEnv.serverName}] Server URL: [${activeEnv.serverUrl}] Run Mode: [${activeEnv.runMode.name}]',
+      _log.info('ClientURL: [${activeEnv.serverUrl}]');
+      _log.fine(
+        '======================================================== [CLIENT] [${activeEnv.serverName}] [${activeEnv.runMode.name}]',
       );
 
       return Client(
@@ -44,10 +44,8 @@ class InitOnActiveEnv {
         // this will initialize the session manager and load the stored user info
         // it returns a bool
         await sessionManager.initialize();
-        _log.info('HubSessionManager initialized');
-        _log.warning(
-          '========================================================',
-        );
+        _log.fine('HubSessionManager initialized');
+        _log.info('========================================================');
         return sessionManager;
       },
       dependsOn: [EnvManager, Client],

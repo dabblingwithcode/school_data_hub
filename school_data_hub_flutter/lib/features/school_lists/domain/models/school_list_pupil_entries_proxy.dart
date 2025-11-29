@@ -15,8 +15,9 @@ class SchoolListPupilEntriesProxyMap with ChangeNotifier {
     final Set<int> newEntryIds = newEntries.map((e) => e.id!).toSet();
 
     // Find keys to remove (in current map but not in new entries)
-    final List<int> keysToRemove =
-        pupilEntries.keys.where((key) => !newEntryIds.contains(key)).toList();
+    final List<int> keysToRemove = pupilEntries.keys
+        .where((key) => !newEntryIds.contains(key))
+        .toList();
 
     // Remove entries that no longer exist
     for (final key in keysToRemove) {
@@ -46,7 +47,7 @@ class SchoolListPupilEntriesProxyMap with ChangeNotifier {
           pupilEntries[entryId]!.setPupilEntry(newEntry);
           hasChanges = true;
         } else {
-          _log.fine('No changes for entry with ID: $entryId');
+          _log.info('No changes for entry with ID: $entryId');
         }
       }
     }
@@ -54,9 +55,9 @@ class SchoolListPupilEntriesProxyMap with ChangeNotifier {
     // Only notify listeners if something actually changed
     if (hasChanges) {
       notifyListeners();
-      _log.fine('${pupilEntries.length} pupil entries updated in proxy');
+      _log.info('${pupilEntries.length} pupil entries updated in proxy');
     } else {
-      _log.fine('No changes in pupil entries');
+      _log.info('No changes in pupil entries');
     }
   }
 

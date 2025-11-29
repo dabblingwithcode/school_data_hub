@@ -23,7 +23,7 @@ class SchoolListFilterManager {
   SchoolListFilterManager init() {
     _schoolListManager.addListener(_onSchoolListsChanged);
     resetFilters();
-    _log.fine('SchoolListFilterManager initialized');
+
     return this;
   }
 
@@ -35,9 +35,11 @@ class SchoolListFilterManager {
     // If we have an active filter, reapply it to the new data
     if (_filterState.value) {
       _filteredSchoolLists.value = _schoolListManager.schoolLists
-          .where((element) => element.name
-              .toLowerCase()
-              .contains(_filteredSchoolLists.value.first.name.toLowerCase()))
+          .where(
+            (element) => element.name.toLowerCase().contains(
+              _filteredSchoolLists.value.first.name.toLowerCase(),
+            ),
+          )
           .toList();
     } else {
       // Otherwise, just update with the new full list
@@ -53,7 +55,9 @@ class SchoolListFilterManager {
     _filterState.value = false;
     _filteredSchoolLists.value = _schoolListManager.schoolLists;
     _filtersStateManager.setFilterState(
-        filterState: FilterState.schoolList, value: false);
+      filterState: FilterState.schoolList,
+      value: false,
+    );
   }
 
   void onSearchEnter(String text) {
@@ -63,7 +67,9 @@ class SchoolListFilterManager {
     }
     _filterState.value = true;
     _filtersStateManager.setFilterState(
-        filterState: FilterState.schoolList, value: true);
+      filterState: FilterState.schoolList,
+      value: true,
+    );
     String lowerCaseText = text.toLowerCase();
     _filteredSchoolLists.value = _schoolListManager.schoolLists
         .where((element) => element.name.toLowerCase().contains(lowerCaseText))
@@ -71,30 +77,31 @@ class SchoolListFilterManager {
   }
 
   List<PupilListEntry> addPupilEntryFiltersToFilteredPupils(
-      List<PupilListEntry> pupilEntries) {
+    List<PupilListEntry> pupilEntries,
+  ) {
     List<PupilListEntry> filteredPupilEntries = [];
     bool filterIsOn = false;
     for (PupilListEntry pupilEntry in pupilEntries) {
-      if (_pupilFilterManager
-              .pupilFilterState.value[PupilFilter.schoolListYesResponse]! &&
+      if (_pupilFilterManager.pupilFilterState.value[PupilFilter
+              .schoolListYesResponse]! &&
           pupilEntry.status != true) {
         filterIsOn = true;
         continue;
       }
-      if (_pupilFilterManager
-              .pupilFilterState.value[PupilFilter.schoolListNoResponse]! &&
+      if (_pupilFilterManager.pupilFilterState.value[PupilFilter
+              .schoolListNoResponse]! &&
           pupilEntry.status != false) {
         filterIsOn = true;
         continue;
       }
-      if (_pupilFilterManager
-              .pupilFilterState.value[PupilFilter.schoolListNullResponse]! &&
+      if (_pupilFilterManager.pupilFilterState.value[PupilFilter
+              .schoolListNullResponse]! &&
           pupilEntry.status != null) {
         filterIsOn = true;
         continue;
       }
-      if (_pupilFilterManager
-              .pupilFilterState.value[PupilFilter.schoolListCommentResponse]! &&
+      if (_pupilFilterManager.pupilFilterState.value[PupilFilter
+              .schoolListCommentResponse]! &&
           pupilEntry.comment == null) {
         filterIsOn = true;
         continue;

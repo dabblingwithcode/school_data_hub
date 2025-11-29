@@ -101,7 +101,7 @@ class ApiClient {
       cancelToken: cancelToken,
       onReceiveProgress: onReceiveProgress,
     );
-    _log.fine("Response[GET] ${response.statusCode} => PATH: $uri");
+    //  _log.fine("Response[GET] ${response.statusCode} => PATH: $uri");
 
     return response;
   }
@@ -124,7 +124,7 @@ class ApiClient {
       cancelToken: cancelToken,
       onReceiveProgress: onReceiveProgress,
     );
-    _log.fine("Response[PATCH] ${response.statusCode} => PATH: $uri");
+    //  _log.fine("Response[PATCH] ${response.statusCode} => PATH: $uri");
     if (response.statusCode == 401) {
       if (response.data['message'] == 'Token nicht (mehr) gültig!') {
         // locator<SessionManager>().logout();
@@ -154,7 +154,7 @@ class ApiClient {
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,
     );
-    _log.fine("Response[POST] ${response.statusCode} => PATH: $uri");
+    //  _log.fine("Response[POST] ${response.statusCode} => PATH: $uri");
     if (response.statusCode == 401) {
       // if (response.data['message'] == 'Token nicht (mehr) gültig!') {
       //   locator<SessionManager>().logout();
@@ -184,7 +184,7 @@ class ApiClient {
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,
     );
-    _log.fine("Response[PUT] ${response.statusCode} => PATH: $uri");
+    //  _log.fine("Response[PUT] ${response.statusCode} => PATH: $uri");
     if (response.statusCode == 401) {
       // if (response.data['message'] == 'Token nicht (mehr) gültig!') {
       //   locator<SessionManager>().logout();
@@ -211,7 +211,7 @@ class ApiClient {
       options: options,
       cancelToken: cancelToken,
     );
-    _log.fine("Response[DELETE] ${response.statusCode} => PATH: $uri");
+    //  _log.fine("Response[DELETE] ${response.statusCode} => PATH: $uri");
     if (response.statusCode == 401) {
       // if (response.data['message'] == 'Token nicht (mehr) gültig!') {
       //   locator<SessionManager>().logout();

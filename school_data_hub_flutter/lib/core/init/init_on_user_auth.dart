@@ -29,9 +29,9 @@ import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _log = Logger('DiOnUserAuth');
+final _log = Logger('[Init][OnUserAuth]');
 
-class DiInitOnUserAuth {
+class InitOnUserAuth {
   static Future<void> registerManagers() async {
     di.registerSingletonAsync<PupilIdentityManager>(() async {
       final pupilIdentityManager = PupilIdentityManager();
@@ -39,7 +39,7 @@ class DiInitOnUserAuth {
       await pupilIdentityManager.init();
 
       _log.fine('PupilIdentityManager initialized');
-      _log.info('########################################################');
+      _log.info('========================================================');
 
       return pupilIdentityManager;
     });
@@ -50,7 +50,7 @@ class DiInitOnUserAuth {
       await schoolCalendarManager.init();
 
       _log.fine('SchoolCalendarManager initialized');
-      _log.info('########################################################');
+      _log.info('========================================================');
 
       return schoolCalendarManager;
     });
@@ -61,7 +61,7 @@ class DiInitOnUserAuth {
       await supportCategoryManager.init();
 
       _log.fine('SupportCategoryManager initialized');
-      _log.info('########################################################');
+      _log.info('========================================================');
 
       return supportCategoryManager;
     });
@@ -71,8 +71,8 @@ class DiInitOnUserAuth {
 
       await pupilManager.init();
 
-      _log.info('PupilManager initialized');
-      _log.info('########################################################');
+      _log.fine('PupilManager initialized');
+      _log.info('========================================================');
 
       return pupilManager;
     }, dependsOn: [PupilIdentityManager, HubSessionManager]);
@@ -86,7 +86,7 @@ class DiInitOnUserAuth {
       final bookManager = BookManager();
       await bookManager.init();
       _log.fine('BookManager initialized');
-      _log.info('########################################################');
+      _log.info('========================================================');
       return bookManager;
     }, dependsOn: []);
 
@@ -94,7 +94,7 @@ class DiInitOnUserAuth {
       final schoolDataManager = SchoolDataMainManager();
       await schoolDataManager.init();
       _log.fine('SchoolDataMainManager initialized');
-      _log.info('########################################################');
+      _log.info('========================================================');
       return schoolDataManager;
     }, dependsOn: []);
 
@@ -102,7 +102,7 @@ class DiInitOnUserAuth {
       final workbookManager = WorkbookManager();
       await workbookManager.init();
       _log.fine('WorkbookManager initialized');
-      _log.info('########################################################');
+      _log.info('========================================================');
       return workbookManager;
     }, dependsOn: [HubSessionManager, PupilManager]);
 
@@ -112,7 +112,7 @@ class DiInitOnUserAuth {
       await competenceManager.init();
 
       _log.fine('CompetenceManager initialized');
-      _log.info('########################################################');
+      _log.info('========================================================');
 
       return competenceManager;
     });
@@ -125,7 +125,7 @@ class DiInitOnUserAuth {
       final authorizationManager = AuthorizationManager();
       await authorizationManager.init();
       _log.fine('AuthorizationManager initialized');
-      _log.info('########################################################');
+      _log.info('========================================================');
       return authorizationManager;
     }, dependsOn: [HubSessionManager]);
 
@@ -163,8 +163,11 @@ class DiInitOnUserAuth {
     );
 
     di.registerSingletonWithDependencies<SchooldayEventFilterManager>(() {
-      _log.info('SchooldayEventFilterManager initializing');
-      return SchooldayEventFilterManager();
+      final schooldayEventFilterManager = SchooldayEventFilterManager();
+
+      _log.fine('SchooldayEventFilterManager initialized');
+      _log.info('========================================================');
+      return schooldayEventFilterManager;
     }, dependsOn: [PupilManager, PupilFilterManager, SchooldayEventManager]);
 
     di.registerSingletonWithDependencies<AttendanceManager>(
@@ -198,7 +201,7 @@ class DiInitOnUserAuth {
       final schoolListManager = SchoolListManager();
       await schoolListManager.init();
       _log.fine('SchoolListManager initialized');
-      _log.info('########################################################');
+      _log.info('========================================================');
       return schoolListManager;
     }, dependsOn: [HubSessionManager, PupilManager]);
 
@@ -206,7 +209,7 @@ class DiInitOnUserAuth {
       final schoolListFilterManager = SchoolListFilterManager();
       schoolListFilterManager.init();
       _log.fine('SchoolListFilterManager initialized');
-      _log.info('########################################################');
+      _log.info('========================================================');
       return schoolListFilterManager;
     }, dependsOn: [PupilsFilter, SchoolListManager]);
 
@@ -214,14 +217,14 @@ class DiInitOnUserAuth {
       final userManager = UserManager();
       await userManager.init();
       _log.fine('UserManager initialized');
-      _log.info('########################################################');
+      _log.info('========================================================');
       return userManager;
     }, dependsOn: [HubSessionManager]);
 
     di.registerSingletonAsync<TimetableApiService>(() async {
       final timetableApiService = TimetableApiService();
       _log.fine('TimetableApiService initialized');
-      _log.info('########################################################');
+      _log.info('========================================================');
       return timetableApiService;
     });
 
@@ -229,12 +232,10 @@ class DiInitOnUserAuth {
       final timetableManager = TimetableManager();
       await timetableManager.init();
       _log.fine('TimetableManager initialized');
-      _log.info('########################################################');
+      _log.info('========================================================');
       return timetableManager;
     }, dependsOn: [HubSessionManager, TimetableApiService]);
 
-    _log.info(
-      '[Init] Managers depending on authentication are being initialized...',
-    );
+    _log.info('Managers depending on authentication are being initialized...');
   }
 }

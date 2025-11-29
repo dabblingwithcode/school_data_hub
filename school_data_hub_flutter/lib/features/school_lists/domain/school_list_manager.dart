@@ -80,8 +80,10 @@ class SchoolListManager with ChangeNotifier {
     if (pupilEntries.isEmpty) {
       return [];
     }
-    final pupilIdsInList =
-        pupilEntries.values.map((e) => e.pupilEntry.pupilId).toSet().toList();
+    final pupilIdsInList = pupilEntries.values
+        .map((e) => e.pupilEntry.pupilId)
+        .toSet()
+        .toList();
 
     return _pupilManager.getPupilsFromPupilIds(pupilIdsInList);
   }
@@ -102,7 +104,7 @@ class SchoolListManager with ChangeNotifier {
       _schoolListIdPupilEntriesMap[schoolList.id!]!.setPupilEntries(
         pupilEntries,
       );
-      _log.fine(
+      _log.info(
         'Updated pupil entries map for school list number ${schoolList.id!}',
       );
     } else {
@@ -111,13 +113,13 @@ class SchoolListManager with ChangeNotifier {
       _schoolListIdPupilEntriesMap[schoolList.id!]!.setPupilEntries(
         pupilEntries,
       );
-      _log.fine(
+      _log.info(
         'Created new pupil entries map for school list number ${schoolList.id!}',
       );
     }
 
     notifyListeners();
-    _log.fine(
+    _log.info(
       'Finished updating School list number ${schoolList.id!} with ${pupilEntries.length} pupil entries',
     );
   }
@@ -220,13 +222,12 @@ class SchoolListManager with ChangeNotifier {
     required bool public,
   }) async {
     final schoolList = await ClientHelper.apiCall(
-      call:
-          () => _apiSchoolListService.postSchoolListWithGroup(
-            name: name,
-            description: description,
-            pupilIds: pupilIds,
-            public: public,
-          ),
+      call: () => _apiSchoolListService.postSchoolListWithGroup(
+        name: name,
+        description: description,
+        pupilIds: pupilIds,
+        public: public,
+      ),
       errorMessage: 'Fehler beim Erstellen der Schulliste',
     );
     if (schoolList == null) {

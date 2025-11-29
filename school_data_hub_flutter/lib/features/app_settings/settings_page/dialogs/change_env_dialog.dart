@@ -4,9 +4,9 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:school_data_hub_flutter/core/di/init_manager.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
+import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _envManager = di<EnvManager>();

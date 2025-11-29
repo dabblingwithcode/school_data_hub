@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
@@ -270,10 +269,6 @@ class PupilDataApiService {
   }
 
   Future<DateTime?> fetchLastIdentitiesUpdate() async {
-    final _log = Logger('PupilDataApiService');
-    _log.warning('########################################################');
-    _log.warning('Client is using server URL: ${_client.host}');
-    _log.warning('########################################################');
     final lastUpdate = await ClientHelper.apiCall(
       call: () => _client.pupilIdentity.fetchLastPupilIdentitiesUpdate(),
       errorMessage: 'Die letzte Aktualisierung konnte nicht geladen werden',

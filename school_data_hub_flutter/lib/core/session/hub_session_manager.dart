@@ -8,9 +8,9 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/auth/hub_auth_key_manager.dart';
-import 'package:school_data_hub_flutter/core/di/init_manager.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/env/utils/env_utils.dart';
+import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:serverpod_auth_client/serverpod_auth_client.dart'
     as auth_client;
 import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
@@ -326,7 +326,7 @@ class HubSessionManager with ChangeNotifier {
         'We have a signed user - Saving userinfo to storage with key: $_userInfoStorageKey',
       );
 
-      _log.fine('User info received from auth call: ${signedInUser!.userName}');
+      _log.info('User info received for user: ${signedInUser!.userName}');
 
       await _storage.setString(
         _userInfoStorageKey,
@@ -334,13 +334,13 @@ class HubSessionManager with ChangeNotifier {
       );
 
       _log.info(
-        'User auth from auth call stored in storage and set: ${signedInUser?.userName}',
+        'User auth from auth call stored in storage and set for user: ${signedInUser?.userName}',
       );
 
       _user = await _client.user.getCurrentUser();
 
       if (!_isDisposed) notifyListeners();
-      _log.fine('User fetched from server: ${_user?.userInfo?.userName}');
+      _log.info('User fetched from server: ${_user?.userInfo?.userName}');
       // We can start now the managers dependent on authentication
       if (!_isDisposed) {
         await InitManager.registerManagersDependingOnAuthedSession();

@@ -49,7 +49,7 @@ class PupilIdentityManager {
   // List<int> get availablePupilIds => _pupilIdentities.keys.toList();
 
   List<int> get availablePupilIds {
-    _log.fine(
+    _log.info(
       'getter returning [${_pupilIdentities.keys.length}] available pupil ids',
     );
     return _pupilIdentities.keys.toList();

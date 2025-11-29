@@ -6,12 +6,11 @@ import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/core/di/init_manager.dart';
 import 'package:school_data_hub_flutter/core/env/models/enums.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
+import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:school_data_hub_flutter/core/models/populated_server_session_data.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -161,19 +160,9 @@ class EnvManager with ChangeNotifier {
     await InitManager.pushActiveEnvScopeAndRegisterDependentManagers();
 
     if (await HubSecureStorage().containsKey(storageKeyForMatrixCredentials)) {
-      final matrixCredentialsJson = await HubSecureStorage().getString(
-        storageKeyForMatrixCredentials,
-      );
-      final matrixCredentials = MatrixCredentials.fromJson(
-        json.decode(matrixCredentialsJson!) as Map<String, dynamic>,
-      );
-
       // Only register matrix managers if they're not already registered
       if (!di.hasScope(DiScope.onMatrixEnvScope.name)) {
-        await InitManager.registerMatrixManagers(
-          matrixCredentials,
-          storageKey: storageKeyForMatrixCredentials,
-        );
+        await InitManager.registerMatrixManagers();
       } else {
         _log.info(
           '[DI] Matrix managers already registered, skipping registration',
@@ -357,12 +346,6 @@ class EnvManager with ChangeNotifier {
       _log.info(
         '[DI] Found matrix credentials for environment ${_activeEnv!.serverName}',
       );
-      final matrixCredentialsJson = await HubSecureStorage().getString(
-        storageKeyForMatrixCredentials,
-      );
-      final matrixCredentials = MatrixCredentials.fromJson(
-        json.decode(matrixCredentialsJson!) as Map<String, dynamic>,
-      );
 
       // Only register matrix managers if they're not already registered
       final hasMatrixScope = di.hasScope(DiScope.onMatrixEnvScope.name);
@@ -374,10 +357,7 @@ class EnvManager with ChangeNotifier {
         _log.info(
           '[DI] Registering matrix managers for environment ${_activeEnv!.serverName}',
         );
-        await InitManager.registerMatrixManagers(
-          matrixCredentials,
-          storageKey: storageKeyForMatrixCredentials,
-        );
+        await InitManager.registerMatrixManagers();
       } else {
         _log.info(
           '[DI] Matrix managers already registered, skipping registration',
