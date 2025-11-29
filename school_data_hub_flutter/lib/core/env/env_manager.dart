@@ -170,11 +170,16 @@ class EnvManager with ChangeNotifier {
 
       // Only register matrix managers if they're not already registered
       if (!di.hasScope(DiScope.onMatrixEnvScope.name)) {
-        await InitManager.registerMatrixManagers(matrixCredentials);
+        await InitManager.registerMatrixManagers(
+          matrixCredentials,
+          storageKey: storageKeyForMatrixCredentials,
+        );
       } else {
         _log.info(
           '[DI] Matrix managers already registered, skipping registration',
         );
+        // Ensure session configured flag is set even if skipping registration
+        di<HubSessionManager>().setIsMatrixSessionConfigured(true);
       }
     }
     return;
@@ -369,11 +374,16 @@ class EnvManager with ChangeNotifier {
         _log.info(
           '[DI] Registering matrix managers for environment ${_activeEnv!.serverName}',
         );
-        await InitManager.registerMatrixManagers(matrixCredentials);
+        await InitManager.registerMatrixManagers(
+          matrixCredentials,
+          storageKey: storageKeyForMatrixCredentials,
+        );
       } else {
         _log.info(
           '[DI] Matrix managers already registered, skipping registration',
         );
+        // Ensure session configured flag is set even if skipping registration
+        di<HubSessionManager>().setIsMatrixSessionConfigured(true);
       }
     } else {
       _log.info(

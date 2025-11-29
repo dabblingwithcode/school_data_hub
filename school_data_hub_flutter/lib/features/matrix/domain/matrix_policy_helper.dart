@@ -76,7 +76,10 @@ class MatrixPolicyHelper {
     // is the passed credentials are null, we will use the stored ones
     final validCredentials = passedCredentials ?? storedCredentials;
 
-    await InitManager.registerMatrixManagers(validCredentials!);
+    await InitManager.registerMatrixManagers(
+      validCredentials!,
+      storageKey: _secureStorageKey,
+    );
 
     return;
   }

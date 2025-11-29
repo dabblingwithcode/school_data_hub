@@ -7,11 +7,11 @@ import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_moni
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _log = Logger('DiOnActiveEnv');
+final _log = Logger('[Init][OnActiveEnv]');
 
-class DiOnActiveEnv {
+class InitOnActiveEnv {
   static Future<void> registerManagers() async {
-    _log.info('[DI] Registering managers on active environment scope');
+    _log.info('Registering managers on active environment scope');
     di.registerSingletonWithDependencies<HubAuthKeyManager>(() {
       return HubAuthKeyManager(
         storageKeyForAuthKey: di<EnvManager>().storageKeyForAuthKey,
@@ -21,14 +21,11 @@ class DiOnActiveEnv {
     di.registerSingletonWithDependencies<Client>(() {
       final envManager = di<EnvManager>();
       final activeEnv = envManager.activeEnv;
-
-      _log.info('[DI] Registering Client for environment:');
-      _log.info('[DI]   - Name: ${activeEnv?.serverName}');
-      _log.info('[DI]   - Server URL: ${activeEnv?.serverUrl}');
-      _log.info('[DI]   - Run Mode: ${activeEnv?.runMode.name}');
-
       final serverUrl = activeEnv!.serverUrl;
-      _log.info('[DI] Creating Client with server URL: $serverUrl');
+      _log.info('Registering Client for environment:');
+      _log.info(
+        '   - Name: [${activeEnv.serverName}] Server URL: [${activeEnv.serverUrl}] Run Mode: [${activeEnv.runMode.name}]',
+      );
 
       return Client(
         serverUrl,
@@ -47,7 +44,10 @@ class DiOnActiveEnv {
         // this will initialize the session manager and load the stored user info
         // it returns a bool
         await sessionManager.initialize();
-        _log.info('SessionManager initialized');
+        _log.info('HubSessionManager initialized');
+        _log.warning(
+          '========================================================',
+        );
         return sessionManager;
       },
       dependsOn: [EnvManager, Client],

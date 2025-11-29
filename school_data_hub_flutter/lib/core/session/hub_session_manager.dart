@@ -33,6 +33,13 @@ class HubSessionManager with ChangeNotifier {
   String get _userInfoStorageKey => _envManager.storageKeyForUserInfo;
 
   bool _matrixPolicyManagerRegistrationStatus = false;
+  bool _isMatrixSessionConfigured = false;
+  bool get isMatrixSessionConfigured => _isMatrixSessionConfigured;
+
+  void setIsMatrixSessionConfigured(bool isConfigured) {
+    _isMatrixSessionConfigured = isConfigured;
+    notifyListeners();
+  }
 
   bool get matrixPolicyManagerRegistrationStatus =>
       _matrixPolicyManagerRegistrationStatus;
@@ -363,14 +370,18 @@ class HubSessionManager with ChangeNotifier {
     }
   }
 
-  // TODO URGENT DI REGISTRATION MATRIX COLD INIT
   void changeMatrixPolicyManagerRegistrationStatus(bool isRegistered) {
     if (_matrixPolicyManagerRegistrationStatus != isRegistered) {
       _log.info(
         'MatrixPolicyManager registration status changing from $_matrixPolicyManagerRegistrationStatus to $isRegistered',
       );
       _matrixPolicyManagerRegistrationStatus = isRegistered;
-
+      _isMatrixSessionConfigured = isRegistered;
+      if (isRegistered) {
+        _log.info('Matrix session is configured');
+      } else {
+        _log.info('Matrix session is not configured');
+      }
       notifyListeners();
 
       _log.info(

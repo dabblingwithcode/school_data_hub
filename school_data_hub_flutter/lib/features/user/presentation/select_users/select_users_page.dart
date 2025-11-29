@@ -39,15 +39,14 @@ class _SelectUsersPageState extends State<SelectUsersPage> {
   void initState() {
     if (widget.authorizedUsers != null && widget.authorizedUsers!.isNotEmpty) {
       final authorizedUserNames = widget.authorizedUsers!;
-      final authorizedUsers =
-          widget.selectableUsers
-              .where(
-                (user) =>
-                    user.userInfo?.userName != null &&
-                    authorizedUserNames.contains(user.userInfo!.userName!),
-              )
-              .map((user) => user.id!)
-              .toList();
+      final authorizedUsers = widget.selectableUsers
+          .where(
+            (user) =>
+                user.userInfo?.userName != null &&
+                authorizedUserNames.contains(user.userInfo!.userName!),
+          )
+          .map((user) => user.id!)
+          .toList();
       if (authorizedUsers.isNotEmpty) {
         setState(() {
           isSelectMode = true;
@@ -93,11 +92,10 @@ class _SelectUsersPageState extends State<SelectUsersPage> {
       isSelectAllMode = !isSelectAllMode;
       if (isSelectAllMode) {
         isSelectMode = true;
-        selectedUserIds =
-            selectableUsers
-                .where((user) => user.id != null)
-                .map((user) => user.id!)
-                .toList();
+        selectedUserIds = selectableUsers
+            .where((user) => user.id != null)
+            .map((user) => user.id!)
+            .toList();
       } else {
         isSelectMode = false;
         selectedUserIds.clear();
@@ -121,18 +119,16 @@ class _SelectUsersPageState extends State<SelectUsersPage> {
     final List<User> allUsers = watchValue((UserManager x) => x.users);
 
     // Filter to only include selectable users
-    final List<User> selectableUsers =
-        widget.selectableUsers != null
-            ? allUsers
-                .where(
-                  (user) => widget.selectableUsers!.any(
-                    (selectableUser) =>
-                        selectableUser.id != null &&
-                        selectableUser.id == user.id,
-                  ),
-                )
-                .toList()
-            : allUsers;
+    final List<User> selectableUsers = widget.selectableUsers.isNotEmpty
+        ? allUsers
+              .where(
+                (user) => widget.selectableUsers.any(
+                  (selectableUser) =>
+                      selectableUser.id != null && selectableUser.id == user.id,
+                ),
+              )
+              .toList()
+        : allUsers;
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
@@ -157,15 +153,13 @@ class _SelectUsersPageState extends State<SelectUsersPage> {
                 ),
                 GenericSliverListWithEmptyListCheck(
                   items: selectableUsers,
-                  itemBuilder:
-                      (_, user) => SelectUsersListCard(
-                        isSelectMode: isSelectMode,
-                        isSelected:
-                            user.id != null &&
-                            selectedUserIds.contains(user.id!),
-                        passedUser: user,
-                        onCardPress: onCardPress,
-                      ),
+                  itemBuilder: (_, user) => SelectUsersListCard(
+                    isSelectMode: isSelectMode,
+                    isSelected:
+                        user.id != null && selectedUserIds.contains(user.id!),
+                    passedUser: user,
+                    onCardPress: onCardPress,
+                  ),
                 ),
               ],
             ),

@@ -76,27 +76,22 @@ class WorkbookCard extends WatchingWidget {
                         // await di<WorkbookManager>()
                         //     .postWorkbookFile(file, workbook.isbn);
                       },
-                      onLongPress: (workbook.imageUrl == null)
-                          ? () {}
-                          : () async {
-                              if (workbook.imageUrl == null) {
-                                return;
-                              }
-                              final bool? result = await confirmationDialog(
-                                context: context,
-                                title: 'Bild löschen',
-                                message: 'Bild löschen?',
-                              );
-                              if (result != true) return;
-                              // TODO: implement when ready
-                              di<NotificationService>().showSnackBar(
-                                NotificationType.warning,
-                                'Not implemented yet',
-                              );
+                      onLongPress: () async {
+                        final bool? result = await confirmationDialog(
+                          context: context,
+                          title: 'Bild löschen',
+                          message: 'Bild löschen?',
+                        );
+                        if (result != true) return;
+                        // TODO: implement when ready
+                        di<NotificationService>().showSnackBar(
+                          NotificationType.warning,
+                          'Not implemented yet',
+                        );
 
-                              // await di<WorkbookManager>()
-                              //     .deleteWorkbookFile(workbook.isbn);
-                            },
+                        // await di<WorkbookManager>()
+                        //     .deleteWorkbookFile(workbook.isbn);
+                      },
                       child: workbook.imageUrl != null
                           ? UnencryptedImageInCard(
                               cacheKey: workbook.isbn.toString(),

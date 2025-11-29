@@ -27,11 +27,9 @@ class PupilListButtons extends WatchingWidget {
     // Always call watch methods at the top level, not conditionally
 
     final isReady = watchPropertyValue((HubSessionManager x) => x.isReady);
-    final isTester = watchPropertyValue(
-      (HubSessionManager x) => x.user?.userFlags.isTester ?? false,
-    );
+
     final matrixSessionConfigured = watchPropertyValue(
-      (HubSessionManager x) => x.matrixPolicyManagerRegistrationStatus,
+      (HubSessionManager x) => x.isMatrixSessionConfigured,
     );
 
     return Wrap(

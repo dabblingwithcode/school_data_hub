@@ -90,30 +90,25 @@ class PupilWorkbookCard extends WatchingWidget {
                             // await di<WorkbookManager>()
                             //     .postWorkbookFile(file, workbook.isbn);
                           },
-                          onLongPress: (workbook.imageUrl == null)
-                              ? () {}
-                              : () async {
-                                  if (workbook.imageUrl == null) {
-                                    return;
-                                  }
-                                  final bool? result = await confirmationDialog(
-                                    context: context,
-                                    title: 'Bild löschen',
-                                    message: 'Bild löschen?',
-                                  );
-                                  if (result != true) return;
-                                  // TODO: Uncomment when API is ready
-                                  di<NotificationService>().showSnackBar(
-                                    NotificationType.warning,
-                                    'Not implemented yet',
-                                  );
-                                  // await di<WorkbookManager>()
-                                  //     .deleteAuthorizationFile(
-                                  //   pupil.internalId,
-                                  //   authorizationId,
-                                  //   pupilAuthorization.fileId!,
-                                  // );
-                                },
+                          onLongPress: () async {
+                            final bool? result = await confirmationDialog(
+                              context: context,
+                              title: 'Bild löschen',
+                              message: 'Bild löschen?',
+                            );
+                            if (result != true) return;
+                            // TODO: Uncomment when API is ready
+                            di<NotificationService>().showSnackBar(
+                              NotificationType.warning,
+                              'Not implemented yet',
+                            );
+                            // await di<WorkbookManager>()
+                            //     .deleteAuthorizationFile(
+                            //   pupil.internalId,
+                            //   authorizationId,
+                            //   pupilAuthorization.fileId!,
+                            // );
+                          },
                           child:
                               //  workbook.imageUrl != null
                               //     ? Provider<DocumentImageData>.value(

@@ -15,37 +15,41 @@ class NewWorkbookPage extends WatchingWidget {
   final bool isEdit;
   final Workbook? workbook;
 
-  const NewWorkbookPage(
-      {required this.isEdit,
-      this.name,
-      required this.isbn,
-      this.subject,
-      this.level,
-      this.amount,
-      this.workbook,
-      super.key});
+  const NewWorkbookPage({
+    required this.isEdit,
+    this.name,
+    required this.isbn,
+    this.subject,
+    this.level,
+    this.amount,
+    this.workbook,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final workbookNameTextFieldController =
-        createOnce(() => TextEditingController());
-    final subjectTextFieldController =
-        createOnce(() => TextEditingController());
+    final workbookNameTextFieldController = createOnce(
+      () => TextEditingController(),
+    );
+    final subjectTextFieldController = createOnce(
+      () => TextEditingController(),
+    );
     final levelTextFieldController = createOnce(() => TextEditingController());
     final amountTextFieldController = createOnce(() => TextEditingController());
 
     callOnce((context) async {
       await di<WorkbookManager>().fetchWorkbookByIsbn(isbn);
-      final workbook = di<WorkbookManager>()
-          .workbooks
-          .value
-          .firstWhere((element) => element.isbn == isbn);
+      // final workbook = di<WorkbookManager>()
+      //     .workbooks
+      //     .value
+      //     .firstWhere((element) => element.isbn == isbn);
       if (isEdit) {
         workbookNameTextFieldController.text = name ?? '';
         subjectTextFieldController.text = subject ?? '';
         levelTextFieldController.text = level ?? '';
-        amountTextFieldController.text =
-            amount != null ? amount!.toString() : '';
+        amountTextFieldController.text = amount != null
+            ? amount!.toString()
+            : '';
       }
     });
     Future<void> updateWorkbook() async {
@@ -117,33 +121,44 @@ class NewWorkbookPage extends WatchingWidget {
                     ],
                   ),
                   TextField(
-                      style: const TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold),
-                      minLines: 2,
-                      maxLines: 2,
-                      controller: workbookNameTextFieldController,
-                      decoration: AppStyles.textFieldDecoration(
-                          labelText: 'Name des Heftes')),
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    minLines: 2,
+                    maxLines: 2,
+                    controller: workbookNameTextFieldController,
+                    decoration: AppStyles.textFieldDecoration(
+                      labelText: 'Name des Heftes',
+                    ),
+                  ),
                   const Gap(20),
 
                   TextField(
                     style: const TextStyle(
-                        color: Colors.black, fontWeight: FontWeight.bold),
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
                     minLines: 1,
                     maxLines: 1,
                     controller: subjectTextFieldController,
-                    decoration:
-                        AppStyles.textFieldDecoration(labelText: 'Fach'),
+                    decoration: AppStyles.textFieldDecoration(
+                      labelText: 'Fach',
+                    ),
                   ),
                   const Gap(20),
                   TextField(
-                      minLines: 1,
-                      maxLines: 1,
-                      controller: levelTextFieldController,
-                      style: const TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold),
-                      decoration: AppStyles.textFieldDecoration(
-                          labelText: 'Kompetenzstufe')),
+                    minLines: 1,
+                    maxLines: 1,
+                    controller: levelTextFieldController,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    decoration: AppStyles.textFieldDecoration(
+                      labelText: 'Kompetenzstufe',
+                    ),
+                  ),
                   // const Gap(20),
                   // TextField(
                   //     style: const TextStyle(
@@ -163,7 +178,7 @@ class NewWorkbookPage extends WatchingWidget {
                         style: AppStyles.buttonTextStyle,
                       ),
                     ),
-                    const Gap(15)
+                    const Gap(15),
                   ],
                   ElevatedButton(
                     style: AppStyles.successButtonStyle,
