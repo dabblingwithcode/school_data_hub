@@ -23,6 +23,30 @@ class BooksEndpoint extends Endpoint {
     return books;
   }
 
+  Future<LibraryBookStatsDto> getBookStats(Session session) async {
+    final totalCatalogedBooks = await Book.db.count(session);
+    final totalBooksWithReadingLevel1 = await Book.db
+        .count(session, where: (t) => t.readingLevel.equals('leicht'));
+    final booksWithReadingLevel2 = await Book.db
+        .count(session, where: (t) => t.readingLevel.equals('mittel'));
+    final booksWithReadingLevel3 = await Book.db
+        .count(session, where: (t) => t.readingLevel.equals('schwer'));
+    final totalLibraryBooks = await LibraryBook.db.count(session);
+    final totalReadBooks = await LibraryBook.db.count(session,
+        where: (t) => t.lending.any((l) => l.returnedAt.notEquals(null)));
+    final actuallyBorrowedBooks = await LibraryBook.db
+        .count(session, where: (t) => t.available.equals(false));
+    return LibraryBookStatsDto(
+      totalCatalogedBooks: totalCatalogedBooks,
+      totalBooksWithReadingLevel1: totalBooksWithReadingLevel1,
+      booksWithReadingLevel2: booksWithReadingLevel2,
+      booksWithReadingLevel3: booksWithReadingLevel3,
+      totalLibraryBooks: totalLibraryBooks,
+      totalReadBooks: totalReadBooks,
+      actuallyBorrowedBooks: actuallyBorrowedBooks,
+    );
+  }
+
   Future<Book?> fetchBookByIsbn(
     Session session,
     int isbn,

@@ -38,6 +38,9 @@ class BookManager {
   ValueListenable<List<LibraryBookProxy>> get searchResults => _searchResults;
   final _searchResults = ValueNotifier<List<LibraryBookProxy>>([]);
 
+  final _bookStats = ValueNotifier<LibraryBookStatsDto?>(null);
+  ValueListenable<LibraryBookStatsDto?> get bookStats => _bookStats;
+
   BookManager();
 
   //  final session = di<HubSessionManager>().credentials.value;
@@ -56,6 +59,7 @@ class BookManager {
     await fetchLocations();
     await fetchBookTags();
     await fetchLibraryBooks();
+    await fetchBookStats();
 
     return this;
   }
@@ -164,6 +168,13 @@ class BookManager {
   }
 
   //- get functions
+
+  Future<void> fetchBookStats() async {
+    final stats = await _bookApiService.fetchBookStats();
+    if (stats != null) {
+      _bookStats.value = stats;
+    }
+  }
 
   LibraryBookProxy? getLibraryBookById(int? libraryBookId) {
     if (libraryBookId == null) return null;

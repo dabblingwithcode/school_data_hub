@@ -1,10 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:isbn/isbn.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_search_form/book_search_form_page.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_tag_management_page/book_tag_management_controller.dart';
 import 'package:watch_it/watch_it.dart';
@@ -15,50 +18,121 @@ import '../book_list_page/book_list_page.dart';
 import '../book_list_page/widgets/book_list_bottom_navbar.dart';
 import '../new_book_page/new_book_controller.dart';
 
-class BooksMainMenuPage extends StatelessWidget {
+class BooksMainMenuPage extends WatchingWidget {
   const BooksMainMenuPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final stats = watchValue((BookManager m) => m.bookStats);
+
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
       appBar: const GenericAppBar(iconData: Icons.lightbulb, title: 'Bücher'),
       body: Center(
         child: SizedBox(
           width: 380,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildButton(context, "Schlagwörter verwalten", () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (ctx) => const BookTagManagement(),
-                  ),
-                );
-              }),
-              const SizedBox(height: 20),
-              _buildButton(context, "Ausgeliehene Bücher", () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (ctx) => const BookListPage()),
-                );
-              }),
-              const SizedBox(height: 20),
-              _buildButton(context, "Buch erfassen", () async {
-                await _showNewBookDialog(context);
-              }),
-              const SizedBox(height: 20),
-              _buildButton(context, "Bücher suchen", () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (ctx) => const BookSearchFormPage(),
-                  ),
-                );
-              }),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (stats != null) _buildStatsCard(stats),
+                const Gap(20),
+                _buildButton(context, "Schlagwörter verwalten", () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (ctx) => const BookTagManagement(),
+                    ),
+                  );
+                }),
+                const SizedBox(height: 20),
+                _buildButton(context, "Ausgeliehene Bücher", () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (ctx) => const BookListPage()),
+                  );
+                }),
+                const SizedBox(height: 20),
+                _buildButton(context, "Buch erfassen", () async {
+                  await _showNewBookDialog(context);
+                }),
+                const SizedBox(height: 20),
+                _buildButton(context, "Bücher suchen", () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (ctx) => const BookSearchFormPage(),
+                    ),
+                  );
+                }),
+              ],
+            ),
           ),
         ),
       ),
       bottomNavigationBar: const BookListBottomNavBar(),
+    );
+  }
+
+  Widget _buildStatsCard(LibraryBookStatsDto stats) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            const Text(
+              'Bibliotheks-Statistik',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const Divider(),
+            _buildStatRow(
+              'Katalogisierte Bücher',
+              stats.totalCatalogedBooks.toString(),
+            ),
+            _buildStatRow(
+              'Exemplare in Bibliothek',
+              stats.totalLibraryBooks.toString(),
+            ),
+            const Divider(),
+            _buildStatRow(
+              'Verliehene Bücher',
+              stats.actuallyBorrowedBooks.toString(),
+            ),
+            _buildStatRow(
+              'Gelesene Bücher (Rückgaben)',
+              stats.totalReadBooks.toString(),
+            ),
+            const Divider(),
+            _buildStatRow(
+              'Lesestufe 1',
+              stats.totalBooksWithReadingLevel1.toString(),
+            ),
+            _buildStatRow(
+              'Lesestufe 2',
+              stats.booksWithReadingLevel2.toString(),
+            ),
+            _buildStatRow(
+              'Lesestufe 3',
+              stats.booksWithReadingLevel3.toString(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: const TextStyle(fontSize: 14)),
+          Text(
+            value,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
     );
   }
 
@@ -126,8 +200,8 @@ Future<void> _showNewBookDialog(BuildContext context) async {
     final cleanScannedIsbn = scannedIsbn.replaceAll('-', '');
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder:
-            (ctx) => NewBook(isEdit: false, isbn: int.parse(cleanScannedIsbn)),
+        builder: (ctx) =>
+            NewBook(isEdit: false, isbn: int.parse(cleanScannedIsbn)),
       ),
     );
   }

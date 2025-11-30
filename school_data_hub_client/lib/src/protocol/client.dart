@@ -41,78 +41,80 @@ import 'package:school_data_hub_client/src/protocol/_features/books/models/book_
     as _i17;
 import 'package:school_data_hub_client/src/protocol/_features/books/models/book.dart'
     as _i18;
-import 'package:school_data_hub_client/src/protocol/_features/books/models/library_book_location.dart'
+import 'package:school_data_hub_client/src/protocol/_features/books/models/book_stats_dto.dart'
     as _i19;
-import 'package:school_data_hub_client/src/protocol/_features/books/models/library_book.dart'
+import 'package:school_data_hub_client/src/protocol/_features/books/models/library_book_location.dart'
     as _i20;
-import 'package:school_data_hub_client/src/protocol/_features/books/models/library_book_query.dart'
+import 'package:school_data_hub_client/src/protocol/_features/books/models/library_book.dart'
     as _i21;
-import 'package:school_data_hub_client/src/protocol/_features/books/models/pupil_book_lending.dart'
+import 'package:school_data_hub_client/src/protocol/_features/books/models/library_book_query.dart'
     as _i22;
-import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/learning_support_plan.dart'
+import 'package:school_data_hub_client/src/protocol/_features/books/models/pupil_book_lending.dart'
     as _i23;
-import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/support_category_status.dart'
+import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/learning_support_plan.dart'
     as _i24;
-import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_data/preschool/pre_school_medical.dart'
+import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/support_category_status.dart'
     as _i25;
-import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_data/preschool/pre_school_medical_status.dart'
+import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_data/preschool/pre_school_medical.dart'
     as _i26;
-import 'package:school_data_hub_client/src/protocol/_features/matrix/compulsory_room.dart'
+import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_data/preschool/pre_school_medical_status.dart'
     as _i27;
-import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_data/dto/pupil_document_type.dart'
+import 'package:school_data_hub_client/src/protocol/_features/matrix/compulsory_room.dart'
     as _i28;
-import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/support_level_legacy_dto.dart'
+import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_data/dto/pupil_document_type.dart'
     as _i29;
-import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_identity/pupil_identity_dto.dart'
+import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/support_level_legacy_dto.dart'
     as _i30;
-import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_data/communication/communication_skills.dart'
+import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_identity/pupil_identity_dto.dart'
     as _i31;
-import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_data/communication/tutor_info.dart'
+import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_data/communication/communication_skills.dart'
     as _i32;
-import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_data/dto/siblings_tutor_info_dto.dart'
+import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_data/communication/tutor_info.dart'
     as _i33;
-import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_data/communication/public_media_auth.dart'
+import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_data/dto/siblings_tutor_info_dto.dart'
     as _i34;
-import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/support_level.dart'
+import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_data/communication/public_media_auth.dart'
     as _i35;
-import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_data/after_school_care/after_school_care.dart'
+import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/support_level.dart'
     as _i36;
-import 'package:school_data_hub_client/src/protocol/_features/school_data/models/school_data.dart'
+import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_data/after_school_care/after_school_care.dart'
     as _i37;
-import 'package:school_data_hub_client/src/protocol/_features/school_lists/models/school_list.dart'
+import 'package:school_data_hub_client/src/protocol/_features/school_data/models/school_data.dart'
     as _i38;
-import 'package:school_data_hub_client/src/protocol/_features/school_lists/models/pupil_entry.dart'
+import 'package:school_data_hub_client/src/protocol/_features/school_lists/models/school_list.dart'
     as _i39;
-import 'package:school_data_hub_client/src/protocol/_features/schoolday/models/school_semester.dart'
+import 'package:school_data_hub_client/src/protocol/_features/school_lists/models/pupil_entry.dart'
     as _i40;
-import 'package:school_data_hub_client/src/protocol/_features/schoolday/models/schoolday.dart'
+import 'package:school_data_hub_client/src/protocol/_features/schoolday/models/school_semester.dart'
     as _i41;
-import 'package:school_data_hub_client/src/protocol/_features/schoolday_events/models/schoolday_event.dart'
+import 'package:school_data_hub_client/src/protocol/_features/schoolday/models/schoolday.dart'
     as _i42;
-import 'package:school_data_hub_client/src/protocol/_features/schoolday_events/models/schoolday_event_type.dart'
+import 'package:school_data_hub_client/src/protocol/_features/schoolday_events/models/schoolday_event.dart'
     as _i43;
-import 'package:school_data_hub_client/src/protocol/_features/timetable/models/classroom.dart'
+import 'package:school_data_hub_client/src/protocol/_features/schoolday_events/models/schoolday_event_type.dart'
     as _i44;
-import 'package:school_data_hub_client/src/protocol/_features/timetable/models/lesson/lesson_group.dart'
+import 'package:school_data_hub_client/src/protocol/_features/timetable/models/classroom.dart'
     as _i45;
-import 'package:school_data_hub_client/src/protocol/_features/timetable/models/scheduled_lesson/scheduled_lesson.dart'
+import 'package:school_data_hub_client/src/protocol/_features/timetable/models/lesson/lesson_group.dart'
     as _i46;
-import 'package:school_data_hub_client/src/protocol/_features/timetable/models/scheduled_lesson/lesson_group_membership.dart'
+import 'package:school_data_hub_client/src/protocol/_features/timetable/models/scheduled_lesson/scheduled_lesson.dart'
     as _i47;
-import 'package:school_data_hub_client/src/protocol/_features/timetable/models/scheduled_lesson/subject.dart'
+import 'package:school_data_hub_client/src/protocol/_features/timetable/models/scheduled_lesson/lesson_group_membership.dart'
     as _i48;
-import 'package:school_data_hub_client/src/protocol/_features/timetable/models/timetable.dart'
+import 'package:school_data_hub_client/src/protocol/_features/timetable/models/scheduled_lesson/subject.dart'
     as _i49;
-import 'package:school_data_hub_client/src/protocol/_features/timetable/models/scheduled_lesson/timetable_slot.dart'
+import 'package:school_data_hub_client/src/protocol/_features/timetable/models/timetable.dart'
     as _i50;
-import 'package:school_data_hub_client/src/protocol/_features/timetable/models/scheduled_lesson/weekday_enum.dart'
+import 'package:school_data_hub_client/src/protocol/_features/timetable/models/scheduled_lesson/timetable_slot.dart'
     as _i51;
-import 'package:school_data_hub_client/src/protocol/_features/workbooks/models/pupil_workbook.dart'
+import 'package:school_data_hub_client/src/protocol/_features/timetable/models/scheduled_lesson/weekday_enum.dart'
     as _i52;
-import 'package:school_data_hub_client/src/protocol/_features/workbooks/models/workbook.dart'
+import 'package:school_data_hub_client/src/protocol/_features/workbooks/models/pupil_workbook.dart'
     as _i53;
-import 'dart:typed_data' as _i54;
-import 'protocol.dart' as _i55;
+import 'package:school_data_hub_client/src/protocol/_features/workbooks/models/workbook.dart'
+    as _i54;
+import 'dart:typed_data' as _i55;
+import 'protocol.dart' as _i56;
 
 /// The endpoint for admin operations.
 /// This endpoint requires the user to be logged in and have admin scope.
@@ -495,6 +497,13 @@ class EndpointBooks extends _i1.EndpointRef {
         {},
       );
 
+  _i2.Future<_i19.LibraryBookStatsDto> getBookStats() =>
+      caller.callServerEndpoint<_i19.LibraryBookStatsDto>(
+        'books',
+        'getBookStats',
+        {},
+      );
+
   _i2.Future<_i18.Book?> fetchBookByIsbn(int isbn) =>
       caller.callServerEndpoint<_i18.Book?>(
         'books',
@@ -529,31 +538,31 @@ class EndpointLibraryBookLocations extends _i1.EndpointRef {
   @override
   String get name => 'libraryBookLocations';
 
-  _i2.Future<_i19.LibraryBookLocation> postLibraryBookLocation(
-          _i19.LibraryBookLocation libraryBookLocation) =>
-      caller.callServerEndpoint<_i19.LibraryBookLocation>(
+  _i2.Future<_i20.LibraryBookLocation> postLibraryBookLocation(
+          _i20.LibraryBookLocation libraryBookLocation) =>
+      caller.callServerEndpoint<_i20.LibraryBookLocation>(
         'libraryBookLocations',
         'postLibraryBookLocation',
         {'libraryBookLocation': libraryBookLocation},
       );
 
-  _i2.Future<List<_i19.LibraryBookLocation>> fetchLibraryBookLocations() =>
-      caller.callServerEndpoint<List<_i19.LibraryBookLocation>>(
+  _i2.Future<List<_i20.LibraryBookLocation>> fetchLibraryBookLocations() =>
+      caller.callServerEndpoint<List<_i20.LibraryBookLocation>>(
         'libraryBookLocations',
         'fetchLibraryBookLocations',
         {},
       );
 
-  _i2.Future<_i19.LibraryBookLocation> updateLibraryBookLocation(
-          _i19.LibraryBookLocation libraryBookLocation) =>
-      caller.callServerEndpoint<_i19.LibraryBookLocation>(
+  _i2.Future<_i20.LibraryBookLocation> updateLibraryBookLocation(
+          _i20.LibraryBookLocation libraryBookLocation) =>
+      caller.callServerEndpoint<_i20.LibraryBookLocation>(
         'libraryBookLocations',
         'updateLibraryBookLocation',
         {'libraryBookLocation': libraryBookLocation},
       );
 
   _i2.Future<bool> deleteLibraryBookLocation(
-          _i19.LibraryBookLocation location) =>
+          _i20.LibraryBookLocation location) =>
       caller.callServerEndpoint<bool>(
         'libraryBookLocations',
         'deleteLibraryBookLocation',
@@ -568,12 +577,12 @@ class EndpointLibraryBooks extends _i1.EndpointRef {
   @override
   String get name => 'libraryBooks';
 
-  _i2.Future<_i20.LibraryBook> postLibraryBook(
+  _i2.Future<_i21.LibraryBook> postLibraryBook(
     int isbn,
     String libraryId,
-    _i19.LibraryBookLocation location,
+    _i20.LibraryBookLocation location,
   ) =>
-      caller.callServerEndpoint<_i20.LibraryBook>(
+      caller.callServerEndpoint<_i21.LibraryBook>(
         'libraryBooks',
         'postLibraryBook',
         {
@@ -583,47 +592,47 @@ class EndpointLibraryBooks extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<List<_i20.LibraryBook>> fetchLibraryBooks() =>
-      caller.callServerEndpoint<List<_i20.LibraryBook>>(
+  _i2.Future<List<_i21.LibraryBook>> fetchLibraryBooks() =>
+      caller.callServerEndpoint<List<_i21.LibraryBook>>(
         'libraryBooks',
         'fetchLibraryBooks',
         {},
       );
 
-  _i2.Future<_i20.LibraryBook?> fetchLibraryBookByIsbn(int isbn) =>
-      caller.callServerEndpoint<_i20.LibraryBook?>(
+  _i2.Future<_i21.LibraryBook?> fetchLibraryBookByIsbn(int isbn) =>
+      caller.callServerEndpoint<_i21.LibraryBook?>(
         'libraryBooks',
         'fetchLibraryBookByIsbn',
         {'isbn': isbn},
       );
 
-  _i2.Future<_i20.LibraryBook?> fetchLibraryBookByLibraryId(String libraryId) =>
-      caller.callServerEndpoint<_i20.LibraryBook?>(
+  _i2.Future<_i21.LibraryBook?> fetchLibraryBookByLibraryId(String libraryId) =>
+      caller.callServerEndpoint<_i21.LibraryBook?>(
         'libraryBooks',
         'fetchLibraryBookByLibraryId',
         {'libraryId': libraryId},
       );
 
-  _i2.Future<List<_i20.LibraryBook>> fetchLibraryBooksMatchingQuery(
-          _i21.LibraryBookQuery libraryBookQuery) =>
-      caller.callServerEndpoint<List<_i20.LibraryBook>>(
+  _i2.Future<List<_i21.LibraryBook>> fetchLibraryBooksMatchingQuery(
+          _i22.LibraryBookQuery libraryBookQuery) =>
+      caller.callServerEndpoint<List<_i21.LibraryBook>>(
         'libraryBooks',
         'fetchLibraryBooksMatchingQuery',
         {'libraryBookQuery': libraryBookQuery},
       );
 
-  _i2.Future<_i20.LibraryBook> updateLibraryBookAndRelatedBook(
+  _i2.Future<_i21.LibraryBook> updateLibraryBookAndRelatedBook(
     int isbn,
     String libraryId,
     bool? available,
-    _i19.LibraryBookLocation? location,
+    _i20.LibraryBookLocation? location,
     String? title,
     String? author,
     String? description,
     String? readingLevel,
     List<_i17.BookTag>? tags,
   ) =>
-      caller.callServerEndpoint<_i20.LibraryBook>(
+      caller.callServerEndpoint<_i21.LibraryBook>(
         'libraryBooks',
         'updateLibraryBookAndRelatedBook',
         {
@@ -669,23 +678,23 @@ class EndpointPupilBookLending extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<List<_i22.PupilBookLending>> fetchPupilBookLendings() =>
-      caller.callServerEndpoint<List<_i22.PupilBookLending>>(
+  _i2.Future<List<_i23.PupilBookLending>> fetchPupilBookLendings() =>
+      caller.callServerEndpoint<List<_i23.PupilBookLending>>(
         'pupilBookLending',
         'fetchPupilBookLendings',
         {},
       );
 
-  _i2.Future<_i22.PupilBookLending?> fetchPupilBookLendingByLendingId(
+  _i2.Future<_i23.PupilBookLending?> fetchPupilBookLendingByLendingId(
           String lendingId) =>
-      caller.callServerEndpoint<_i22.PupilBookLending?>(
+      caller.callServerEndpoint<_i23.PupilBookLending?>(
         'pupilBookLending',
         'fetchPupilBookLendingByLendingId',
         {'lendingId': lendingId},
       );
 
   _i2.Future<_i5.PupilData> updatePupilBookLending(
-          _i22.PupilBookLending pupilBookLending) =>
+          _i23.PupilBookLending pupilBookLending) =>
       caller.callServerEndpoint<_i5.PupilData>(
         'pupilBookLending',
         'updatePupilBookLending',
@@ -836,29 +845,29 @@ class EndpointLearningSupportPlan extends _i1.EndpointRef {
   @override
   String get name => 'learningSupportPlan';
 
-  _i2.Future<List<_i23.LearningSupportPlan>> fetchLearningSupportPlans() =>
-      caller.callServerEndpoint<List<_i23.LearningSupportPlan>>(
+  _i2.Future<List<_i24.LearningSupportPlan>> fetchLearningSupportPlans() =>
+      caller.callServerEndpoint<List<_i24.LearningSupportPlan>>(
         'learningSupportPlan',
         'fetchLearningSupportPlans',
         {},
       );
 
-  _i2.Future<_i23.LearningSupportPlan> createLearningSupportPlan(
-          _i23.LearningSupportPlan plan) =>
-      caller.callServerEndpoint<_i23.LearningSupportPlan>(
+  _i2.Future<_i24.LearningSupportPlan> createLearningSupportPlan(
+          _i24.LearningSupportPlan plan) =>
+      caller.callServerEndpoint<_i24.LearningSupportPlan>(
         'learningSupportPlan',
         'createLearningSupportPlan',
         {'plan': plan},
       );
 
-  _i2.Future<bool> updateLearningSupportPlan(_i23.LearningSupportPlan plan) =>
+  _i2.Future<bool> updateLearningSupportPlan(_i24.LearningSupportPlan plan) =>
       caller.callServerEndpoint<bool>(
         'learningSupportPlan',
         'updateLearningSupportPlan',
         {'plan': plan},
       );
 
-  _i2.Future<bool> deleteLearningSupportPlan(_i23.LearningSupportPlan plan) =>
+  _i2.Future<bool> deleteLearningSupportPlan(_i24.LearningSupportPlan plan) =>
       caller.callServerEndpoint<bool>(
         'learningSupportPlan',
         'deleteLearningSupportPlan',
@@ -886,23 +895,23 @@ class EndpointLearningSupportPlan extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<List<_i24.SupportCategoryStatus>> fetchSupportCategoryStatus(
+  _i2.Future<List<_i25.SupportCategoryStatus>> fetchSupportCategoryStatus(
           int pupilId) =>
-      caller.callServerEndpoint<List<_i24.SupportCategoryStatus>>(
+      caller.callServerEndpoint<List<_i25.SupportCategoryStatus>>(
         'learningSupportPlan',
         'fetchSupportCategoryStatus',
         {'pupilId': pupilId},
       );
 
-  _i2.Future<List<_i24.SupportCategoryStatus>>
+  _i2.Future<List<_i25.SupportCategoryStatus>>
       fetchSupportCategoryStatusFromPupil(int pupilId) =>
-          caller.callServerEndpoint<List<_i24.SupportCategoryStatus>>(
+          caller.callServerEndpoint<List<_i25.SupportCategoryStatus>>(
             'learningSupportPlan',
             'fetchSupportCategoryStatusFromPupil',
             {'pupilId': pupilId},
           );
 
-  _i2.Future<_i24.SupportCategoryStatus> updateCategoryStatus(
+  _i2.Future<_i25.SupportCategoryStatus> updateCategoryStatus(
     int pupilId,
     int supportCategoryId,
     int? status,
@@ -910,7 +919,7 @@ class EndpointLearningSupportPlan extends _i1.EndpointRef {
     String? createdBy,
     DateTime? createdAt,
   ) =>
-      caller.callServerEndpoint<_i24.SupportCategoryStatus>(
+      caller.callServerEndpoint<_i25.SupportCategoryStatus>(
         'learningSupportPlan',
         'updateCategoryStatus',
         {
@@ -964,12 +973,12 @@ class EndpointPreSchoolMedical extends _i1.EndpointRef {
   String get name => 'preSchoolMedical';
 
   /// Create a new PreSchoolMedical record for a pupil
-  _i2.Future<_i25.PreSchoolMedical> createPreSchoolMedical(
+  _i2.Future<_i26.PreSchoolMedical> createPreSchoolMedical(
     int pupilId,
-    _i26.PreSchoolMedicalStatus? preschoolMedicalStatus,
+    _i27.PreSchoolMedicalStatus? preschoolMedicalStatus,
     String createdBy,
   ) =>
-      caller.callServerEndpoint<_i25.PreSchoolMedical>(
+      caller.callServerEndpoint<_i26.PreSchoolMedical>(
         'preSchoolMedical',
         'createPreSchoolMedical',
         {
@@ -980,12 +989,12 @@ class EndpointPreSchoolMedical extends _i1.EndpointRef {
       );
 
   /// Update an existing PreSchoolMedical record
-  _i2.Future<_i25.PreSchoolMedical> updatePreSchoolMedical(
+  _i2.Future<_i26.PreSchoolMedical> updatePreSchoolMedical(
     int preSchoolMedicalId,
-    _i26.PreSchoolMedicalStatus? preschoolMedicalStatus,
+    _i27.PreSchoolMedicalStatus? preschoolMedicalStatus,
     String updatedBy,
   ) =>
-      caller.callServerEndpoint<_i25.PreSchoolMedical>(
+      caller.callServerEndpoint<_i26.PreSchoolMedical>(
         'preSchoolMedical',
         'updatePreSchoolMedical',
         {
@@ -996,18 +1005,18 @@ class EndpointPreSchoolMedical extends _i1.EndpointRef {
       );
 
   /// Get a PreSchoolMedical record by ID
-  _i2.Future<_i25.PreSchoolMedical?> getPreSchoolMedical(
+  _i2.Future<_i26.PreSchoolMedical?> getPreSchoolMedical(
           int preSchoolMedicalId) =>
-      caller.callServerEndpoint<_i25.PreSchoolMedical?>(
+      caller.callServerEndpoint<_i26.PreSchoolMedical?>(
         'preSchoolMedical',
         'getPreSchoolMedical',
         {'preSchoolMedicalId': preSchoolMedicalId},
       );
 
   /// Get PreSchoolMedical record for a specific pupil
-  _i2.Future<_i25.PreSchoolMedical?> getPreSchoolMedicalByPupilId(
+  _i2.Future<_i26.PreSchoolMedical?> getPreSchoolMedicalByPupilId(
           int pupilId) =>
-      caller.callServerEndpoint<_i25.PreSchoolMedical?>(
+      caller.callServerEndpoint<_i26.PreSchoolMedical?>(
         'preSchoolMedical',
         'getPreSchoolMedicalByPupilId',
         {'pupilId': pupilId},
@@ -1022,12 +1031,12 @@ class EndpointPreSchoolMedical extends _i1.EndpointRef {
       );
 
   /// Add a file to a PreSchoolMedical record
-  _i2.Future<_i25.PreSchoolMedical> addFileToPreSchoolMedical(
+  _i2.Future<_i26.PreSchoolMedical> addFileToPreSchoolMedical(
     int preSchoolMedicalId,
     String filePath,
     String createdBy,
   ) =>
-      caller.callServerEndpoint<_i25.PreSchoolMedical>(
+      caller.callServerEndpoint<_i26.PreSchoolMedical>(
         'preSchoolMedical',
         'addFileToPreSchoolMedical',
         {
@@ -1052,17 +1061,17 @@ class EndpointPreSchoolMedical extends _i1.EndpointRef {
       );
 
   /// Get all PreSchoolMedical records (for admin purposes)
-  _i2.Future<List<_i25.PreSchoolMedical>> getAllPreSchoolMedicalRecords() =>
-      caller.callServerEndpoint<List<_i25.PreSchoolMedical>>(
+  _i2.Future<List<_i26.PreSchoolMedical>> getAllPreSchoolMedicalRecords() =>
+      caller.callServerEndpoint<List<_i26.PreSchoolMedical>>(
         'preSchoolMedical',
         'getAllPreSchoolMedicalRecords',
         {},
       );
 
   /// Get PreSchoolMedical records with specific status
-  _i2.Future<List<_i25.PreSchoolMedical>> getPreSchoolMedicalByStatus(
-          _i26.PreSchoolMedicalStatus status) =>
-      caller.callServerEndpoint<List<_i25.PreSchoolMedical>>(
+  _i2.Future<List<_i26.PreSchoolMedical>> getPreSchoolMedicalByStatus(
+          _i27.PreSchoolMedicalStatus status) =>
+      caller.callServerEndpoint<List<_i26.PreSchoolMedical>>(
         'preSchoolMedical',
         'getPreSchoolMedicalByStatus',
         {'status': status},
@@ -1120,16 +1129,16 @@ class EndpointMatrix extends _i1.EndpointRef {
   @override
   String get name => 'matrix';
 
-  _i2.Future<List<_i27.CompulsoryRoom>?> getCompulsoryRooms() =>
-      caller.callServerEndpoint<List<_i27.CompulsoryRoom>?>(
+  _i2.Future<List<_i28.CompulsoryRoom>?> getCompulsoryRooms() =>
+      caller.callServerEndpoint<List<_i28.CompulsoryRoom>?>(
         'matrix',
         'getCompulsoryRooms',
         {},
       );
 
-  _i2.Future<List<_i27.CompulsoryRoom>> setCompulsoryRooms(
-          List<_i27.CompulsoryRoom> compulsoryRooms) =>
-      caller.callServerEndpoint<List<_i27.CompulsoryRoom>>(
+  _i2.Future<List<_i28.CompulsoryRoom>> setCompulsoryRooms(
+          List<_i28.CompulsoryRoom> compulsoryRooms) =>
+      caller.callServerEndpoint<List<_i28.CompulsoryRoom>>(
         'matrix',
         'setCompulsoryRooms',
         {'compulsoryRooms': compulsoryRooms},
@@ -1175,7 +1184,7 @@ class EndpointPupil extends _i1.EndpointRef {
 
   _i2.Future<_i5.PupilData> deletePupilDocument(
     int pupilId,
-    _i28.PupilDocumentType documentType,
+    _i29.PupilDocumentType documentType,
   ) =>
       caller.callServerEndpoint<_i5.PupilData>(
         'pupil',
@@ -1213,7 +1222,7 @@ class EndpointPupil extends _i1.EndpointRef {
       );
 
   _i2.Future<bool> bulkAddSupportLevels(
-          List<_i29.SupportLevelLegacyDto> supportLevelData) =>
+          List<_i30.SupportLevelLegacyDto> supportLevelData) =>
       caller.callServerEndpoint<bool>(
         'pupil',
         'bulkAddSupportLevels',
@@ -1228,10 +1237,10 @@ class EndpointPupilIdentity extends _i1.EndpointRef {
   @override
   String get name => 'pupilIdentity';
 
-  _i2.Stream<_i30.PupilIdentityDto> streamEncryptedPupilIds(
+  _i2.Stream<_i31.PupilIdentityDto> streamEncryptedPupilIds(
           String channelName) =>
-      caller.callStreamingServerEndpoint<_i2.Stream<_i30.PupilIdentityDto>,
-          _i30.PupilIdentityDto>(
+      caller.callStreamingServerEndpoint<_i2.Stream<_i31.PupilIdentityDto>,
+          _i31.PupilIdentityDto>(
         'pupilIdentity',
         'streamEncryptedPupilIds',
         {'channelName': channelName},
@@ -1240,7 +1249,7 @@ class EndpointPupilIdentity extends _i1.EndpointRef {
 
   _i2.Future<bool> sendPupilIdentityMessage(
     String pupilIdentityChannel,
-    _i30.PupilIdentityDto pupilIdentityMessage,
+    _i31.PupilIdentityDto pupilIdentityMessage,
   ) =>
       caller.callServerEndpoint<bool>(
         'pupilIdentity',
@@ -1289,7 +1298,7 @@ class EndpointPupilUpdate extends _i1.EndpointRef {
 
   _i2.Future<_i5.PupilData> updateCommunicationSkills({
     required int pupilId,
-    required _i31.CommunicationSkills? communicationSkills,
+    required _i32.CommunicationSkills? communicationSkills,
   }) =>
       caller.callServerEndpoint<_i5.PupilData>(
         'pupilUpdate',
@@ -1302,7 +1311,7 @@ class EndpointPupilUpdate extends _i1.EndpointRef {
 
   _i2.Future<_i5.PupilData> updateTutorInfo(
     int pupilId,
-    _i32.TutorInfo? tutorInfo,
+    _i33.TutorInfo? tutorInfo,
   ) =>
       caller.callServerEndpoint<_i5.PupilData>(
         'pupilUpdate',
@@ -1314,7 +1323,7 @@ class EndpointPupilUpdate extends _i1.EndpointRef {
       );
 
   _i2.Future<List<_i5.PupilData>> updateSiblingsTutorInfo(
-          _i33.SiblingsTutorInfo siblingsTutorInfo) =>
+          _i34.SiblingsTutorInfo siblingsTutorInfo) =>
       caller.callServerEndpoint<List<_i5.PupilData>>(
         'pupilUpdate',
         'updateSiblingsTutorInfo',
@@ -1325,7 +1334,7 @@ class EndpointPupilUpdate extends _i1.EndpointRef {
     int pupilId,
     String filePath,
     String createdBy,
-    _i28.PupilDocumentType documentType,
+    _i29.PupilDocumentType documentType,
   ) =>
       caller.callServerEndpoint<_i5.PupilData>(
         'pupilUpdate',
@@ -1372,7 +1381,7 @@ class EndpointPupilUpdate extends _i1.EndpointRef {
 
   _i2.Future<_i5.PupilData> updatePreSchoolMedicalStatus(
     int pupilId,
-    _i26.PreSchoolMedicalStatus preSchoolMedicalStatus,
+    _i27.PreSchoolMedicalStatus preSchoolMedicalStatus,
     String updatedBy,
   ) =>
       caller.callServerEndpoint<_i5.PupilData>(
@@ -1387,7 +1396,7 @@ class EndpointPupilUpdate extends _i1.EndpointRef {
 
   _i2.Future<_i5.PupilData> updatePublicMediaAuth(
     int pupilId,
-    _i34.PublicMediaAuth publicMediaAuth,
+    _i35.PublicMediaAuth publicMediaAuth,
   ) =>
       caller.callServerEndpoint<_i5.PupilData>(
         'pupilUpdate',
@@ -1399,7 +1408,7 @@ class EndpointPupilUpdate extends _i1.EndpointRef {
       );
 
   _i2.Future<_i5.PupilData> updateSupportLevel(
-    _i35.SupportLevel supportLevel,
+    _i36.SupportLevel supportLevel,
     int pupilId,
   ) =>
       caller.callServerEndpoint<_i5.PupilData>(
@@ -1427,7 +1436,7 @@ class EndpointPupilUpdate extends _i1.EndpointRef {
 
   _i2.Future<_i5.PupilData> updateAfterSchoolCare(
     int pupilId,
-    _i36.AfterSchoolCare afterSchoolCare,
+    _i37.AfterSchoolCare afterSchoolCare,
   ) =>
       caller.callServerEndpoint<_i5.PupilData>(
         'pupilUpdate',
@@ -1446,16 +1455,16 @@ class EndpointSchoolData extends _i1.EndpointRef {
   @override
   String get name => 'schoolData';
 
-  _i2.Future<_i37.SchoolData> postSchoolData(_i37.SchoolData schoolData) =>
-      caller.callServerEndpoint<_i37.SchoolData>(
+  _i2.Future<_i38.SchoolData> postSchoolData(_i38.SchoolData schoolData) =>
+      caller.callServerEndpoint<_i38.SchoolData>(
         'schoolData',
         'postSchoolData',
         {'schoolData': schoolData},
       );
 
   /// TODO: we should be specific about which school data to get
-  _i2.Future<_i37.SchoolData?> getSchoolData() =>
-      caller.callServerEndpoint<_i37.SchoolData?>(
+  _i2.Future<_i38.SchoolData?> getSchoolData() =>
+      caller.callServerEndpoint<_i38.SchoolData?>(
         'schoolData',
         'getSchoolData',
         {},
@@ -1469,21 +1478,21 @@ class EndpointSchoolList extends _i1.EndpointRef {
   @override
   String get name => 'schoolList';
 
-  _i2.Future<List<_i38.SchoolList>> fetchSchoolLists(String userName) =>
-      caller.callServerEndpoint<List<_i38.SchoolList>>(
+  _i2.Future<List<_i39.SchoolList>> fetchSchoolLists(String userName) =>
+      caller.callServerEndpoint<List<_i39.SchoolList>>(
         'schoolList',
         'fetchSchoolLists',
         {'userName': userName},
       );
 
-  _i2.Future<_i38.SchoolList> postSchoolList(
+  _i2.Future<_i39.SchoolList> postSchoolList(
     String name,
     String description,
     List<int> pupilIds,
     bool public,
     String createdBy,
   ) =>
-      caller.callServerEndpoint<_i38.SchoolList>(
+      caller.callServerEndpoint<_i39.SchoolList>(
         'schoolList',
         'postSchoolList',
         {
@@ -1495,7 +1504,7 @@ class EndpointSchoolList extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i38.SchoolList> updateSchoolList(
+  _i2.Future<_i39.SchoolList> updateSchoolList(
     int listId,
     String? name,
     String? description,
@@ -1503,7 +1512,7 @@ class EndpointSchoolList extends _i1.EndpointRef {
     bool? public,
     ({_i14.MemberOperation operation, List<int> pupilIds})? updateMembers,
   ) =>
-      caller.callServerEndpoint<_i38.SchoolList>(
+      caller.callServerEndpoint<_i39.SchoolList>(
         'schoolList',
         'updateSchoolList',
         {
@@ -1523,9 +1532,9 @@ class EndpointSchoolList extends _i1.EndpointRef {
         {'listId': listId},
       );
 
-  _i2.Future<_i39.PupilListEntry> updatePupilListEntry(
-          _i39.PupilListEntry entry) =>
-      caller.callServerEndpoint<_i39.PupilListEntry>(
+  _i2.Future<_i40.PupilListEntry> updatePupilListEntry(
+          _i40.PupilListEntry entry) =>
+      caller.callServerEndpoint<_i40.PupilListEntry>(
         'schoolList',
         'updatePupilListEntry',
         {'entry': entry},
@@ -1539,7 +1548,7 @@ class EndpointSchooldayAdmin extends _i1.EndpointRef {
   @override
   String get name => 'schooldayAdmin';
 
-  _i2.Future<_i40.SchoolSemester> createSchoolSemester(
+  _i2.Future<_i41.SchoolSemester> createSchoolSemester(
     String schoolYearName,
     DateTime startDate,
     DateTime endDate,
@@ -1549,7 +1558,7 @@ class EndpointSchooldayAdmin extends _i1.EndpointRef {
     DateTime? reportConferenceDate,
     DateTime? reportSignedDate,
   ) =>
-      caller.callServerEndpoint<_i40.SchoolSemester>(
+      caller.callServerEndpoint<_i41.SchoolSemester>(
         'schooldayAdmin',
         'createSchoolSemester',
         {
@@ -1564,43 +1573,43 @@ class EndpointSchooldayAdmin extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<List<_i40.SchoolSemester>> getAllSchoolSemesters() =>
-      caller.callServerEndpoint<List<_i40.SchoolSemester>>(
+  _i2.Future<List<_i41.SchoolSemester>> getAllSchoolSemesters() =>
+      caller.callServerEndpoint<List<_i41.SchoolSemester>>(
         'schooldayAdmin',
         'getAllSchoolSemesters',
         {},
       );
 
-  _i2.Future<_i40.SchoolSemester?> getCurrentSchoolSemester() =>
-      caller.callServerEndpoint<_i40.SchoolSemester?>(
+  _i2.Future<_i41.SchoolSemester?> getCurrentSchoolSemester() =>
+      caller.callServerEndpoint<_i41.SchoolSemester?>(
         'schooldayAdmin',
         'getCurrentSchoolSemester',
         {},
       );
 
-  _i2.Future<bool> updateSchoolSemester(_i40.SchoolSemester schoolSemester) =>
+  _i2.Future<bool> updateSchoolSemester(_i41.SchoolSemester schoolSemester) =>
       caller.callServerEndpoint<bool>(
         'schooldayAdmin',
         'updateSchoolSemester',
         {'schoolSemester': schoolSemester},
       );
 
-  _i2.Future<bool> deleteSchoolSemester(_i40.SchoolSemester semester) =>
+  _i2.Future<bool> deleteSchoolSemester(_i41.SchoolSemester semester) =>
       caller.callServerEndpoint<bool>(
         'schooldayAdmin',
         'deleteSchoolSemester',
         {'semester': semester},
       );
 
-  _i2.Future<_i41.Schoolday?> createSchoolday(DateTime date) =>
-      caller.callServerEndpoint<_i41.Schoolday?>(
+  _i2.Future<_i42.Schoolday?> createSchoolday(DateTime date) =>
+      caller.callServerEndpoint<_i42.Schoolday?>(
         'schooldayAdmin',
         'createSchoolday',
         {'date': date},
       );
 
-  _i2.Future<List<_i41.Schoolday>> createSchooldays(List<DateTime> dates) =>
-      caller.callServerEndpoint<List<_i41.Schoolday>>(
+  _i2.Future<List<_i42.Schoolday>> createSchooldays(List<DateTime> dates) =>
+      caller.callServerEndpoint<List<_i42.Schoolday>>(
         'schooldayAdmin',
         'createSchooldays',
         {'dates': dates},
@@ -1613,7 +1622,7 @@ class EndpointSchooldayAdmin extends _i1.EndpointRef {
         {'date': date},
       );
 
-  _i2.Future<bool> updateSchoolday(_i41.Schoolday schoolday) =>
+  _i2.Future<bool> updateSchoolday(_i42.Schoolday schoolday) =>
       caller.callServerEndpoint<bool>(
         'schooldayAdmin',
         'updateSchoolday',
@@ -1628,15 +1637,15 @@ class EndpointSchoolday extends _i1.EndpointRef {
   @override
   String get name => 'schoolday';
 
-  _i2.Future<List<_i40.SchoolSemester>> getSchoolSemesters() =>
-      caller.callServerEndpoint<List<_i40.SchoolSemester>>(
+  _i2.Future<List<_i41.SchoolSemester>> getSchoolSemesters() =>
+      caller.callServerEndpoint<List<_i41.SchoolSemester>>(
         'schoolday',
         'getSchoolSemesters',
         {},
       );
 
-  _i2.Future<List<_i41.Schoolday>> getSchooldays() =>
-      caller.callServerEndpoint<List<_i41.Schoolday>>(
+  _i2.Future<List<_i42.Schoolday>> getSchooldays() =>
+      caller.callServerEndpoint<List<_i42.Schoolday>>(
         'schoolday',
         'getSchooldays',
         {},
@@ -1650,24 +1659,24 @@ class EndpointSchooldayEvent extends _i1.EndpointRef {
   @override
   String get name => 'schooldayEvent';
 
-  _i2.Future<List<_i42.SchooldayEvent>> fetchSchooldayEvents() =>
-      caller.callServerEndpoint<List<_i42.SchooldayEvent>>(
+  _i2.Future<List<_i43.SchooldayEvent>> fetchSchooldayEvents() =>
+      caller.callServerEndpoint<List<_i43.SchooldayEvent>>(
         'schooldayEvent',
         'fetchSchooldayEvents',
         {},
       );
 
-  _i2.Future<_i42.SchooldayEvent> createSchooldayEvent({
+  _i2.Future<_i43.SchooldayEvent> createSchooldayEvent({
     required int pupilId,
     required String pupilNameAndGroup,
     required String dateTimeAsString,
     required int schooldayId,
-    required _i43.SchooldayEventType type,
+    required _i44.SchooldayEventType type,
     required String reason,
     required String createdBy,
     required String tutor,
   }) =>
-      caller.callServerEndpoint<_i42.SchooldayEvent>(
+      caller.callServerEndpoint<_i43.SchooldayEvent>(
         'schooldayEvent',
         'createSchooldayEvent',
         {
@@ -1682,15 +1691,15 @@ class EndpointSchooldayEvent extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i42.SchooldayEvent> updateSchooldayEvent(
-    _i42.SchooldayEvent schooldayEvent,
+  _i2.Future<_i43.SchooldayEvent> updateSchooldayEvent(
+    _i43.SchooldayEvent schooldayEvent,
     bool changedProcessedStatus,
     String pupilNameAndGroup,
     String tutor,
     String modifiedBy,
     String dateTimeAsString,
   ) =>
-      caller.callServerEndpoint<_i42.SchooldayEvent>(
+      caller.callServerEndpoint<_i43.SchooldayEvent>(
         'schooldayEvent',
         'updateSchooldayEvent',
         {
@@ -1710,13 +1719,13 @@ class EndpointSchooldayEvent extends _i1.EndpointRef {
         {'schooldayEventId': schooldayEventId},
       );
 
-  _i2.Future<_i42.SchooldayEvent> updateSchooldayEventFile(
+  _i2.Future<_i43.SchooldayEvent> updateSchooldayEventFile(
     int schooldayEventId,
     String filePath,
     String createdBy,
     bool isprocessed,
   ) =>
-      caller.callServerEndpoint<_i42.SchooldayEvent>(
+      caller.callServerEndpoint<_i43.SchooldayEvent>(
         'schooldayEvent',
         'updateSchooldayEventFile',
         {
@@ -1727,11 +1736,11 @@ class EndpointSchooldayEvent extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i42.SchooldayEvent> deleteSchooldayEventFile(
+  _i2.Future<_i43.SchooldayEvent> deleteSchooldayEventFile(
     int schooldayEventId,
     bool isProcessed,
   ) =>
-      caller.callServerEndpoint<_i42.SchooldayEvent>(
+      caller.callServerEndpoint<_i43.SchooldayEvent>(
         'schooldayEvent',
         'deleteSchooldayEventFile',
         {
@@ -1748,43 +1757,43 @@ class EndpointClassroom extends _i1.EndpointRef {
   @override
   String get name => 'classroom';
 
-  _i2.Future<_i44.Classroom> createClassroom(_i44.Classroom classroom) =>
-      caller.callServerEndpoint<_i44.Classroom>(
+  _i2.Future<_i45.Classroom> createClassroom(_i45.Classroom classroom) =>
+      caller.callServerEndpoint<_i45.Classroom>(
         'classroom',
         'createClassroom',
         {'classroom': classroom},
       );
 
-  _i2.Future<List<_i44.Classroom>> fetchClassrooms() =>
-      caller.callServerEndpoint<List<_i44.Classroom>>(
+  _i2.Future<List<_i45.Classroom>> fetchClassrooms() =>
+      caller.callServerEndpoint<List<_i45.Classroom>>(
         'classroom',
         'fetchClassrooms',
         {},
       );
 
-  _i2.Future<_i44.Classroom?> fetchClassroomById(int id) =>
-      caller.callServerEndpoint<_i44.Classroom?>(
+  _i2.Future<_i45.Classroom?> fetchClassroomById(int id) =>
+      caller.callServerEndpoint<_i45.Classroom?>(
         'classroom',
         'fetchClassroomById',
         {'id': id},
       );
 
-  _i2.Future<_i44.Classroom?> fetchClassroomByRoomCode(String roomCode) =>
-      caller.callServerEndpoint<_i44.Classroom?>(
+  _i2.Future<_i45.Classroom?> fetchClassroomByRoomCode(String roomCode) =>
+      caller.callServerEndpoint<_i45.Classroom?>(
         'classroom',
         'fetchClassroomByRoomCode',
         {'roomCode': roomCode},
       );
 
-  _i2.Future<List<_i44.Classroom>> fetchClassroomsByRoomName(String roomName) =>
-      caller.callServerEndpoint<List<_i44.Classroom>>(
+  _i2.Future<List<_i45.Classroom>> fetchClassroomsByRoomName(String roomName) =>
+      caller.callServerEndpoint<List<_i45.Classroom>>(
         'classroom',
         'fetchClassroomsByRoomName',
         {'roomName': roomName},
       );
 
-  _i2.Future<_i44.Classroom> updateClassroom(_i44.Classroom classroom) =>
-      caller.callServerEndpoint<_i44.Classroom>(
+  _i2.Future<_i45.Classroom> updateClassroom(_i45.Classroom classroom) =>
+      caller.callServerEndpoint<_i45.Classroom>(
         'classroom',
         'updateClassroom',
         {'classroom': classroom},
@@ -1804,61 +1813,61 @@ class EndpointLearningGroup extends _i1.EndpointRef {
   @override
   String get name => 'learningGroup';
 
-  _i2.Future<_i45.LessonGroup> createLessonGroup(
-          _i45.LessonGroup lessonGroup) =>
-      caller.callServerEndpoint<_i45.LessonGroup>(
+  _i2.Future<_i46.LessonGroup> createLessonGroup(
+          _i46.LessonGroup lessonGroup) =>
+      caller.callServerEndpoint<_i46.LessonGroup>(
         'learningGroup',
         'createLessonGroup',
         {'lessonGroup': lessonGroup},
       );
 
-  _i2.Future<List<_i45.LessonGroup>> fetchLessonGroups() =>
-      caller.callServerEndpoint<List<_i45.LessonGroup>>(
+  _i2.Future<List<_i46.LessonGroup>> fetchLessonGroups() =>
+      caller.callServerEndpoint<List<_i46.LessonGroup>>(
         'learningGroup',
         'fetchLessonGroups',
         {},
       );
 
-  _i2.Future<_i45.LessonGroup?> fetchLessonGroupById(int id) =>
-      caller.callServerEndpoint<_i45.LessonGroup?>(
+  _i2.Future<_i46.LessonGroup?> fetchLessonGroupById(int id) =>
+      caller.callServerEndpoint<_i46.LessonGroup?>(
         'learningGroup',
         'fetchLessonGroupById',
         {'id': id},
       );
 
-  _i2.Future<_i45.LessonGroup?> fetchLessonGroupByPublicId(String publicId) =>
-      caller.callServerEndpoint<_i45.LessonGroup?>(
+  _i2.Future<_i46.LessonGroup?> fetchLessonGroupByPublicId(String publicId) =>
+      caller.callServerEndpoint<_i46.LessonGroup?>(
         'learningGroup',
         'fetchLessonGroupByPublicId',
         {'publicId': publicId},
       );
 
-  _i2.Future<List<_i45.LessonGroup>> fetchLessonGroupsByName(String name) =>
-      caller.callServerEndpoint<List<_i45.LessonGroup>>(
+  _i2.Future<List<_i46.LessonGroup>> fetchLessonGroupsByName(String name) =>
+      caller.callServerEndpoint<List<_i46.LessonGroup>>(
         'learningGroup',
         'fetchLessonGroupsByName',
         {'name': name},
       );
 
-  _i2.Future<List<_i45.LessonGroup>> fetchLessonGroupsByCreator(
+  _i2.Future<List<_i46.LessonGroup>> fetchLessonGroupsByCreator(
           String createdBy) =>
-      caller.callServerEndpoint<List<_i45.LessonGroup>>(
+      caller.callServerEndpoint<List<_i46.LessonGroup>>(
         'learningGroup',
         'fetchLessonGroupsByCreator',
         {'createdBy': createdBy},
       );
 
-  _i2.Future<List<_i45.LessonGroup>> fetchLessonGroupsByTimetable(
+  _i2.Future<List<_i46.LessonGroup>> fetchLessonGroupsByTimetable(
           int timetableId) =>
-      caller.callServerEndpoint<List<_i45.LessonGroup>>(
+      caller.callServerEndpoint<List<_i46.LessonGroup>>(
         'learningGroup',
         'fetchLessonGroupsByTimetable',
         {'timetableId': timetableId},
       );
 
-  _i2.Future<_i45.LessonGroup> updateLessonGroup(
-          _i45.LessonGroup lessonGroup) =>
-      caller.callServerEndpoint<_i45.LessonGroup>(
+  _i2.Future<_i46.LessonGroup> updateLessonGroup(
+          _i46.LessonGroup lessonGroup) =>
+      caller.callServerEndpoint<_i46.LessonGroup>(
         'learningGroup',
         'updateLessonGroup',
         {'lessonGroup': lessonGroup},
@@ -1878,77 +1887,77 @@ class EndpointScheduledLesson extends _i1.EndpointRef {
   @override
   String get name => 'scheduledLesson';
 
-  _i2.Future<_i46.ScheduledLesson?> createScheduledLesson(
-          _i46.ScheduledLesson scheduledLesson) =>
-      caller.callServerEndpoint<_i46.ScheduledLesson?>(
+  _i2.Future<_i47.ScheduledLesson?> createScheduledLesson(
+          _i47.ScheduledLesson scheduledLesson) =>
+      caller.callServerEndpoint<_i47.ScheduledLesson?>(
         'scheduledLesson',
         'createScheduledLesson',
         {'scheduledLesson': scheduledLesson},
       );
 
-  _i2.Future<List<_i46.ScheduledLesson>> fetchScheduledLessons() =>
-      caller.callServerEndpoint<List<_i46.ScheduledLesson>>(
+  _i2.Future<List<_i47.ScheduledLesson>> fetchScheduledLessons() =>
+      caller.callServerEndpoint<List<_i47.ScheduledLesson>>(
         'scheduledLesson',
         'fetchScheduledLessons',
         {},
       );
 
-  _i2.Future<_i46.ScheduledLesson?> fetchScheduledLessonById(int id) =>
-      caller.callServerEndpoint<_i46.ScheduledLesson?>(
+  _i2.Future<_i47.ScheduledLesson?> fetchScheduledLessonById(int id) =>
+      caller.callServerEndpoint<_i47.ScheduledLesson?>(
         'scheduledLesson',
         'fetchScheduledLessonById',
         {'id': id},
       );
 
-  _i2.Future<List<_i46.ScheduledLesson>> fetchScheduledLessonsByTimetable(
+  _i2.Future<List<_i47.ScheduledLesson>> fetchScheduledLessonsByTimetable(
           int timetableId) =>
-      caller.callServerEndpoint<List<_i46.ScheduledLesson>>(
+      caller.callServerEndpoint<List<_i47.ScheduledLesson>>(
         'scheduledLesson',
         'fetchScheduledLessonsByTimetable',
         {'timetableId': timetableId},
       );
 
-  _i2.Future<List<_i46.ScheduledLesson>> fetchScheduledLessonsBySubject(
+  _i2.Future<List<_i47.ScheduledLesson>> fetchScheduledLessonsBySubject(
           int subjectId) =>
-      caller.callServerEndpoint<List<_i46.ScheduledLesson>>(
+      caller.callServerEndpoint<List<_i47.ScheduledLesson>>(
         'scheduledLesson',
         'fetchScheduledLessonsBySubject',
         {'subjectId': subjectId},
       );
 
-  _i2.Future<List<_i46.ScheduledLesson>> fetchScheduledLessonsByRoom(
+  _i2.Future<List<_i47.ScheduledLesson>> fetchScheduledLessonsByRoom(
           int roomId) =>
-      caller.callServerEndpoint<List<_i46.ScheduledLesson>>(
+      caller.callServerEndpoint<List<_i47.ScheduledLesson>>(
         'scheduledLesson',
         'fetchScheduledLessonsByRoom',
         {'roomId': roomId},
       );
 
-  _i2.Future<List<_i46.ScheduledLesson>> fetchScheduledLessonsBySlotId(
+  _i2.Future<List<_i47.ScheduledLesson>> fetchScheduledLessonsBySlotId(
           int slotId) =>
-      caller.callServerEndpoint<List<_i46.ScheduledLesson>>(
+      caller.callServerEndpoint<List<_i47.ScheduledLesson>>(
         'scheduledLesson',
         'fetchScheduledLessonsBySlotId',
         {'slotId': slotId},
       );
 
-  _i2.Future<List<_i46.ScheduledLesson>> fetchActiveScheduledLessons() =>
-      caller.callServerEndpoint<List<_i46.ScheduledLesson>>(
+  _i2.Future<List<_i47.ScheduledLesson>> fetchActiveScheduledLessons() =>
+      caller.callServerEndpoint<List<_i47.ScheduledLesson>>(
         'scheduledLesson',
         'fetchActiveScheduledLessons',
         {},
       );
 
-  _i2.Future<_i46.ScheduledLesson?> updateScheduledLesson(
-          _i46.ScheduledLesson scheduledLesson) =>
-      caller.callServerEndpoint<_i46.ScheduledLesson?>(
+  _i2.Future<_i47.ScheduledLesson?> updateScheduledLesson(
+          _i47.ScheduledLesson scheduledLesson) =>
+      caller.callServerEndpoint<_i47.ScheduledLesson?>(
         'scheduledLesson',
         'updateScheduledLesson',
         {'scheduledLesson': scheduledLesson},
       );
 
-  _i2.Future<_i46.ScheduledLesson?> deactivateScheduledLesson(int id) =>
-      caller.callServerEndpoint<_i46.ScheduledLesson?>(
+  _i2.Future<_i47.ScheduledLesson?> deactivateScheduledLesson(int id) =>
+      caller.callServerEndpoint<_i47.ScheduledLesson?>(
         'scheduledLesson',
         'deactivateScheduledLesson',
         {'id': id},
@@ -1970,53 +1979,53 @@ class EndpointScheduledLessonGroupMembership extends _i1.EndpointRef {
   @override
   String get name => 'scheduledLessonGroupMembership';
 
-  _i2.Future<_i47.ScheduledLessonGroupMembership>
+  _i2.Future<_i48.ScheduledLessonGroupMembership>
       createScheduledLessonGroupMembership(
-              _i47.ScheduledLessonGroupMembership membership) =>
-          caller.callServerEndpoint<_i47.ScheduledLessonGroupMembership>(
+              _i48.ScheduledLessonGroupMembership membership) =>
+          caller.callServerEndpoint<_i48.ScheduledLessonGroupMembership>(
             'scheduledLessonGroupMembership',
             'createScheduledLessonGroupMembership',
             {'membership': membership},
           );
 
-  _i2.Future<List<_i47.ScheduledLessonGroupMembership>>
+  _i2.Future<List<_i48.ScheduledLessonGroupMembership>>
       fetchScheduledLessonGroupMemberships() =>
-          caller.callServerEndpoint<List<_i47.ScheduledLessonGroupMembership>>(
+          caller.callServerEndpoint<List<_i48.ScheduledLessonGroupMembership>>(
             'scheduledLessonGroupMembership',
             'fetchScheduledLessonGroupMemberships',
             {},
           );
 
-  _i2.Future<_i47.ScheduledLessonGroupMembership?>
+  _i2.Future<_i48.ScheduledLessonGroupMembership?>
       fetchScheduledLessonGroupMembershipById(int id) =>
-          caller.callServerEndpoint<_i47.ScheduledLessonGroupMembership?>(
+          caller.callServerEndpoint<_i48.ScheduledLessonGroupMembership?>(
             'scheduledLessonGroupMembership',
             'fetchScheduledLessonGroupMembershipById',
             {'id': id},
           );
 
-  _i2.Future<List<_i47.ScheduledLessonGroupMembership>>
+  _i2.Future<List<_i48.ScheduledLessonGroupMembership>>
       fetchMembershipsByLessonGroupId(int lessonGroupId) =>
-          caller.callServerEndpoint<List<_i47.ScheduledLessonGroupMembership>>(
+          caller.callServerEndpoint<List<_i48.ScheduledLessonGroupMembership>>(
             'scheduledLessonGroupMembership',
             'fetchMembershipsByLessonGroupId',
             {'lessonGroupId': lessonGroupId},
           );
 
-  _i2.Future<List<_i47.ScheduledLessonGroupMembership>>
+  _i2.Future<List<_i48.ScheduledLessonGroupMembership>>
       fetchMembershipsByPupilDataId(int pupilDataId) =>
-          caller.callServerEndpoint<List<_i47.ScheduledLessonGroupMembership>>(
+          caller.callServerEndpoint<List<_i48.ScheduledLessonGroupMembership>>(
             'scheduledLessonGroupMembership',
             'fetchMembershipsByPupilDataId',
             {'pupilDataId': pupilDataId},
           );
 
-  _i2.Future<_i47.ScheduledLessonGroupMembership?>
+  _i2.Future<_i48.ScheduledLessonGroupMembership?>
       fetchMembershipByLessonGroupAndPupil(
     int lessonGroupId,
     int pupilDataId,
   ) =>
-          caller.callServerEndpoint<_i47.ScheduledLessonGroupMembership?>(
+          caller.callServerEndpoint<_i48.ScheduledLessonGroupMembership?>(
             'scheduledLessonGroupMembership',
             'fetchMembershipByLessonGroupAndPupil',
             {
@@ -2025,10 +2034,10 @@ class EndpointScheduledLessonGroupMembership extends _i1.EndpointRef {
             },
           );
 
-  _i2.Future<_i47.ScheduledLessonGroupMembership>
+  _i2.Future<_i48.ScheduledLessonGroupMembership>
       updateScheduledLessonGroupMembership(
-              _i47.ScheduledLessonGroupMembership membership) =>
-          caller.callServerEndpoint<_i47.ScheduledLessonGroupMembership>(
+              _i48.ScheduledLessonGroupMembership membership) =>
+          caller.callServerEndpoint<_i48.ScheduledLessonGroupMembership>(
             'scheduledLessonGroupMembership',
             'updateScheduledLessonGroupMembership',
             {'membership': membership},
@@ -2075,50 +2084,50 @@ class EndpointSubject extends _i1.EndpointRef {
   @override
   String get name => 'subject';
 
-  _i2.Future<_i48.Subject> createSubject(_i48.Subject subject) =>
-      caller.callServerEndpoint<_i48.Subject>(
+  _i2.Future<_i49.Subject> createSubject(_i49.Subject subject) =>
+      caller.callServerEndpoint<_i49.Subject>(
         'subject',
         'createSubject',
         {'subject': subject},
       );
 
-  _i2.Future<List<_i48.Subject>> fetchSubjects() =>
-      caller.callServerEndpoint<List<_i48.Subject>>(
+  _i2.Future<List<_i49.Subject>> fetchSubjects() =>
+      caller.callServerEndpoint<List<_i49.Subject>>(
         'subject',
         'fetchSubjects',
         {},
       );
 
-  _i2.Future<_i48.Subject?> fetchSubjectById(int id) =>
-      caller.callServerEndpoint<_i48.Subject?>(
+  _i2.Future<_i49.Subject?> fetchSubjectById(int id) =>
+      caller.callServerEndpoint<_i49.Subject?>(
         'subject',
         'fetchSubjectById',
         {'id': id},
       );
 
-  _i2.Future<_i48.Subject?> fetchSubjectByPublicId(String publicId) =>
-      caller.callServerEndpoint<_i48.Subject?>(
+  _i2.Future<_i49.Subject?> fetchSubjectByPublicId(String publicId) =>
+      caller.callServerEndpoint<_i49.Subject?>(
         'subject',
         'fetchSubjectByPublicId',
         {'publicId': publicId},
       );
 
-  _i2.Future<List<_i48.Subject>> fetchSubjectsByName(String name) =>
-      caller.callServerEndpoint<List<_i48.Subject>>(
+  _i2.Future<List<_i49.Subject>> fetchSubjectsByName(String name) =>
+      caller.callServerEndpoint<List<_i49.Subject>>(
         'subject',
         'fetchSubjectsByName',
         {'name': name},
       );
 
-  _i2.Future<List<_i48.Subject>> fetchSubjectsByCreator(String createdBy) =>
-      caller.callServerEndpoint<List<_i48.Subject>>(
+  _i2.Future<List<_i49.Subject>> fetchSubjectsByCreator(String createdBy) =>
+      caller.callServerEndpoint<List<_i49.Subject>>(
         'subject',
         'fetchSubjectsByCreator',
         {'createdBy': createdBy},
       );
 
-  _i2.Future<_i48.Subject> updateSubject(_i48.Subject subject) =>
-      caller.callServerEndpoint<_i48.Subject>(
+  _i2.Future<_i49.Subject> updateSubject(_i49.Subject subject) =>
+      caller.callServerEndpoint<_i49.Subject>(
         'subject',
         'updateSubject',
         {'subject': subject},
@@ -2138,65 +2147,65 @@ class EndpointTimetable extends _i1.EndpointRef {
   @override
   String get name => 'timetable';
 
-  _i2.Future<_i49.Timetable> createTimetable(_i49.Timetable timetable) =>
-      caller.callServerEndpoint<_i49.Timetable>(
+  _i2.Future<_i50.Timetable> createTimetable(_i50.Timetable timetable) =>
+      caller.callServerEndpoint<_i50.Timetable>(
         'timetable',
         'createTimetable',
         {'timetable': timetable},
       );
 
-  _i2.Future<List<_i49.Timetable>> fetchTimetables() =>
-      caller.callServerEndpoint<List<_i49.Timetable>>(
+  _i2.Future<List<_i50.Timetable>> fetchTimetables() =>
+      caller.callServerEndpoint<List<_i50.Timetable>>(
         'timetable',
         'fetchTimetables',
         {},
       );
 
-  _i2.Future<_i49.Timetable?> fetchTimetableById(int id) =>
-      caller.callServerEndpoint<_i49.Timetable?>(
+  _i2.Future<_i50.Timetable?> fetchTimetableById(int id) =>
+      caller.callServerEndpoint<_i50.Timetable?>(
         'timetable',
         'fetchTimetableById',
         {'id': id},
       );
 
-  _i2.Future<_i49.Timetable?> fetchTimetable() =>
-      caller.callServerEndpoint<_i49.Timetable?>(
+  _i2.Future<_i50.Timetable?> fetchTimetable() =>
+      caller.callServerEndpoint<_i50.Timetable?>(
         'timetable',
         'fetchTimetable',
         {},
       );
 
-  _i2.Future<_i49.Timetable?> fetchCompleteTimetableData() =>
-      caller.callServerEndpoint<_i49.Timetable?>(
+  _i2.Future<_i50.Timetable?> fetchCompleteTimetableData() =>
+      caller.callServerEndpoint<_i50.Timetable?>(
         'timetable',
         'fetchCompleteTimetableData',
         {},
       );
 
-  _i2.Future<List<_i49.Timetable>> fetchActiveTimetables() =>
-      caller.callServerEndpoint<List<_i49.Timetable>>(
+  _i2.Future<List<_i50.Timetable>> fetchActiveTimetables() =>
+      caller.callServerEndpoint<List<_i50.Timetable>>(
         'timetable',
         'fetchActiveTimetables',
         {},
       );
 
-  _i2.Future<List<_i49.Timetable>> fetchTimetablesBySemester(
+  _i2.Future<List<_i50.Timetable>> fetchTimetablesBySemester(
           int schoolSemesterId) =>
-      caller.callServerEndpoint<List<_i49.Timetable>>(
+      caller.callServerEndpoint<List<_i50.Timetable>>(
         'timetable',
         'fetchTimetablesBySemester',
         {'schoolSemesterId': schoolSemesterId},
       );
 
-  _i2.Future<_i49.Timetable> updateTimetable(_i49.Timetable timetable) =>
-      caller.callServerEndpoint<_i49.Timetable>(
+  _i2.Future<_i50.Timetable> updateTimetable(_i50.Timetable timetable) =>
+      caller.callServerEndpoint<_i50.Timetable>(
         'timetable',
         'updateTimetable',
         {'timetable': timetable},
       );
 
-  _i2.Future<_i49.Timetable> deactivateTimetable(int id) =>
-      caller.callServerEndpoint<_i49.Timetable>(
+  _i2.Future<_i50.Timetable> deactivateTimetable(int id) =>
+      caller.callServerEndpoint<_i50.Timetable>(
         'timetable',
         'deactivateTimetable',
         {'id': id},
@@ -2216,47 +2225,47 @@ class EndpointTimetableSlot extends _i1.EndpointRef {
   @override
   String get name => 'timetableSlot';
 
-  _i2.Future<_i50.TimetableSlot> createTimetableSlot(
-          _i50.TimetableSlot timetableSlot) =>
-      caller.callServerEndpoint<_i50.TimetableSlot>(
+  _i2.Future<_i51.TimetableSlot> createTimetableSlot(
+          _i51.TimetableSlot timetableSlot) =>
+      caller.callServerEndpoint<_i51.TimetableSlot>(
         'timetableSlot',
         'createTimetableSlot',
         {'timetableSlot': timetableSlot},
       );
 
-  _i2.Future<List<_i50.TimetableSlot>> fetchTimetableSlots() =>
-      caller.callServerEndpoint<List<_i50.TimetableSlot>>(
+  _i2.Future<List<_i51.TimetableSlot>> fetchTimetableSlots() =>
+      caller.callServerEndpoint<List<_i51.TimetableSlot>>(
         'timetableSlot',
         'fetchTimetableSlots',
         {},
       );
 
-  _i2.Future<_i50.TimetableSlot?> fetchTimetableSlotById(int id) =>
-      caller.callServerEndpoint<_i50.TimetableSlot?>(
+  _i2.Future<_i51.TimetableSlot?> fetchTimetableSlotById(int id) =>
+      caller.callServerEndpoint<_i51.TimetableSlot?>(
         'timetableSlot',
         'fetchTimetableSlotById',
         {'id': id},
       );
 
-  _i2.Future<List<_i50.TimetableSlot>> fetchTimetableSlotsByTimetableId(
+  _i2.Future<List<_i51.TimetableSlot>> fetchTimetableSlotsByTimetableId(
           int timetableId) =>
-      caller.callServerEndpoint<List<_i50.TimetableSlot>>(
+      caller.callServerEndpoint<List<_i51.TimetableSlot>>(
         'timetableSlot',
         'fetchTimetableSlotsByTimetableId',
         {'timetableId': timetableId},
       );
 
-  _i2.Future<List<_i50.TimetableSlot>> fetchTimetableSlotsByDay(
-          _i51.Weekday day) =>
-      caller.callServerEndpoint<List<_i50.TimetableSlot>>(
+  _i2.Future<List<_i51.TimetableSlot>> fetchTimetableSlotsByDay(
+          _i52.Weekday day) =>
+      caller.callServerEndpoint<List<_i51.TimetableSlot>>(
         'timetableSlot',
         'fetchTimetableSlotsByDay',
         {'day': day},
       );
 
-  _i2.Future<_i50.TimetableSlot> updateTimetableSlot(
-          _i50.TimetableSlot timetableSlot) =>
-      caller.callServerEndpoint<_i50.TimetableSlot>(
+  _i2.Future<_i51.TimetableSlot> updateTimetableSlot(
+          _i51.TimetableSlot timetableSlot) =>
+      caller.callServerEndpoint<_i51.TimetableSlot>(
         'timetableSlot',
         'updateTimetableSlot',
         {'timetableSlot': timetableSlot},
@@ -2318,12 +2327,12 @@ class EndpointPupilWorkbooks extends _i1.EndpointRef {
   @override
   String get name => 'pupilWorkbooks';
 
-  _i2.Future<_i52.PupilWorkbook> postPupilWorkbook(
+  _i2.Future<_i53.PupilWorkbook> postPupilWorkbook(
     int isbn,
     int pupilId,
     String createdBy,
   ) =>
-      caller.callServerEndpoint<_i52.PupilWorkbook>(
+      caller.callServerEndpoint<_i53.PupilWorkbook>(
         'pupilWorkbooks',
         'postPupilWorkbook',
         {
@@ -2333,24 +2342,24 @@ class EndpointPupilWorkbooks extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<List<_i52.PupilWorkbook>> fetchPupilWorkbooks() =>
-      caller.callServerEndpoint<List<_i52.PupilWorkbook>>(
+  _i2.Future<List<_i53.PupilWorkbook>> fetchPupilWorkbooks() =>
+      caller.callServerEndpoint<List<_i53.PupilWorkbook>>(
         'pupilWorkbooks',
         'fetchPupilWorkbooks',
         {},
       );
 
-  _i2.Future<List<_i52.PupilWorkbook>> fetchPupilWorkbooksFromPupil(
+  _i2.Future<List<_i53.PupilWorkbook>> fetchPupilWorkbooksFromPupil(
           int pupilId) =>
-      caller.callServerEndpoint<List<_i52.PupilWorkbook>>(
+      caller.callServerEndpoint<List<_i53.PupilWorkbook>>(
         'pupilWorkbooks',
         'fetchPupilWorkbooksFromPupil',
         {'pupilId': pupilId},
       );
 
-  _i2.Future<_i52.PupilWorkbook> updatePupilWorkbook(
-          _i52.PupilWorkbook pupilWorkbook) =>
-      caller.callServerEndpoint<_i52.PupilWorkbook>(
+  _i2.Future<_i53.PupilWorkbook> updatePupilWorkbook(
+          _i53.PupilWorkbook pupilWorkbook) =>
+      caller.callServerEndpoint<_i53.PupilWorkbook>(
         'pupilWorkbooks',
         'updatePupilWorkbook',
         {'pupilWorkbook': pupilWorkbook},
@@ -2371,29 +2380,29 @@ class EndpointWorkbooks extends _i1.EndpointRef {
   @override
   String get name => 'workbooks';
 
-  _i2.Future<_i53.Workbook> postWorkbook(_i53.Workbook workbook) =>
-      caller.callServerEndpoint<_i53.Workbook>(
+  _i2.Future<_i54.Workbook> postWorkbook(_i54.Workbook workbook) =>
+      caller.callServerEndpoint<_i54.Workbook>(
         'workbooks',
         'postWorkbook',
         {'workbook': workbook},
       );
 
-  _i2.Future<_i53.Workbook> fetchWorkbookByIsbn(int isbn) =>
-      caller.callServerEndpoint<_i53.Workbook>(
+  _i2.Future<_i54.Workbook> fetchWorkbookByIsbn(int isbn) =>
+      caller.callServerEndpoint<_i54.Workbook>(
         'workbooks',
         'fetchWorkbookByIsbn',
         {'isbn': isbn},
       );
 
-  _i2.Future<List<_i53.Workbook>> fetchWorkbooks() =>
-      caller.callServerEndpoint<List<_i53.Workbook>>(
+  _i2.Future<List<_i54.Workbook>> fetchWorkbooks() =>
+      caller.callServerEndpoint<List<_i54.Workbook>>(
         'workbooks',
         'fetchWorkbooks',
         {},
       );
 
-  _i2.Future<_i53.Workbook> updateWorkbook(_i53.Workbook workbook) =>
-      caller.callServerEndpoint<_i53.Workbook>(
+  _i2.Future<_i54.Workbook> updateWorkbook(_i54.Workbook workbook) =>
+      caller.callServerEndpoint<_i54.Workbook>(
         'workbooks',
         'updateWorkbook',
         {'workbook': workbook},
@@ -2444,15 +2453,15 @@ class EndpointFiles extends _i1.EndpointRef {
       );
 
   /// As described in https://docs.serverpod.dev/concepts/file-uploads#client-side-code
-  _i2.Future<_i54.ByteData?> getImage(String documentId) =>
-      caller.callServerEndpoint<_i54.ByteData?>(
+  _i2.Future<_i55.ByteData?> getImage(String documentId) =>
+      caller.callServerEndpoint<_i55.ByteData?>(
         'files',
         'getImage',
         {'documentId': documentId},
       );
 
-  _i2.Future<_i54.ByteData?> getUnencryptedImage(String path) =>
-      caller.callServerEndpoint<_i54.ByteData?>(
+  _i2.Future<_i55.ByteData?> getUnencryptedImage(String path) =>
+      caller.callServerEndpoint<_i55.ByteData?>(
         'files',
         'getUnencryptedImage',
         {'path': path},
@@ -2483,7 +2492,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
           host,
-          _i55.Protocol(),
+          _i56.Protocol(),
           securityContext: securityContext,
           authenticationKeyManager: authenticationKeyManager,
           streamingConnectionTimeout: streamingConnectionTimeout,

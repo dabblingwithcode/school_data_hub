@@ -1,0 +1,10 @@
+class: LibraryBookStatsDto
+fields:
+  totalCatalogedBooks: int
+  totalBooksWithReadingLevel1: int
+  booksWithReadingLevel2: int
+  booksWithReadingLevel3: int
+  totalLibraryBooks: int
+  totalReadBooks: int
+  actuallyBorrowedBooks: int
+

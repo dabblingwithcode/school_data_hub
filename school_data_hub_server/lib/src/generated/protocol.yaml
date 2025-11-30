@@ -37,6 +37,7 @@ bookTags:
 books:
   - postBook:
   - fetchBooks:
+  - getBookStats:
   - fetchBookByIsbn:
   - updateBookTags:
   - deleteBook:

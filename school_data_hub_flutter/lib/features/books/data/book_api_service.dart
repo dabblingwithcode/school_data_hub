@@ -84,6 +84,14 @@ class BookApiService {
     return book;
   }
 
+  Future<LibraryBookStatsDto?> fetchBookStats() async {
+    final stats = await ClientHelper.apiCall(
+      call: () => _client.books.getBookStats(),
+      errorMessage: 'Fehler beim Laden der Statistiken',
+    );
+    return stats;
+  }
+
   Future<Book?> updateBookTags(int isbn, List<BookTag> tags) async {
     final updatedBook = await ClientHelper.apiCall(
       call: () => _client.books.updateBookTags(isbn, tags: tags),

@@ -1106,6 +1106,15 @@ class Endpoints extends _i1.EndpointDispatch {
           ) async =>
               (endpoints['books'] as _i8.BooksEndpoint).fetchBooks(session),
         ),
+        'getBookStats': _i1.MethodConnector(
+          name: 'getBookStats',
+          params: {},
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['books'] as _i8.BooksEndpoint).getBookStats(session),
+        ),
         'fetchBookByIsbn': _i1.MethodConnector(
           name: 'fetchBookByIsbn',
           params: {
