@@ -14,6 +14,7 @@ import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/dialogues/schoolday_event_reason_dialog.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/dialogues/schoolday_event_type_dialog.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_reason_chips.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_type_icon.dart';
@@ -144,14 +145,33 @@ class PupilSchooldayEventCard extends StatelessWidget {
                         ),
                         const Gap(5),
                         //-TODO: Add the possibility to change the admonishing reasons
-                        Wrap(
-                          direction: Axis.horizontal,
-                          spacing: 5,
-                          children: [
-                            ...schooldayEventReasonChips(
-                              schooldayEvent.eventReason,
-                            ),
-                          ],
+                        InkWell(
+                          onTap: () {
+                            if (!isAuthorized) {
+                              _notificationService.showSnackBar(
+                                NotificationType.error,
+                                'Nicht berechtigt!',
+                              );
+                              return;
+                            }
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return SchooldayEventReasonDialog(
+                                  schooldayEvent: schooldayEvent,
+                                );
+                              },
+                            );
+                          },
+                          child: Wrap(
+                            direction: Axis.horizontal,
+                            spacing: 5,
+                            children: [
+                              ...schooldayEventReasonChips(
+                                schooldayEvent.eventReason,
+                              ),
+                            ],
+                          ),
                         ),
                         const Gap(10),
                         Row(

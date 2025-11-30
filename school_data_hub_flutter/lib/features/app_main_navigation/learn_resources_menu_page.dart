@@ -142,43 +142,43 @@ class LearnResourcesMenuPage extends StatelessWidget {
                     ),
                   ),
                 ),
-              if (di<HubSessionManager>().user!.userFlags.isTester)
-                Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Card(
-                    color: AppColors.backgroundColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (ctx) => const BooksMainMenuPage(),
+
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Card(
+                  color: AppColors.backgroundColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (ctx) => const BooksMainMenuPage(),
+                        ),
+                      );
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.book,
+                          size: 50,
+                          color: AppColors.gridViewColor,
+                        ),
+                        const Gap(10),
+                        Text(
+                          locale.books,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
                           ),
-                        );
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.book,
-                            size: 50,
-                            color: AppColors.gridViewColor,
-                          ),
-                          const Gap(10),
-                          Text(
-                            locale.books,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
+              ),
             ],
           ),
         ),
