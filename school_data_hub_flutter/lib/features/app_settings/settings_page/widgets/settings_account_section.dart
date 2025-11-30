@@ -14,11 +14,11 @@ class SettingsAccountSection extends AbstractSettingsSection with WatchItMixin {
   Widget build(BuildContext context) {
     di.allReady();
 
-    final String username =
-        watchPropertyValue(
-          (HubSessionManager x) => x.user,
-        )!.userInfo!.userName!;
+    final String username = watchPropertyValue(
+      (HubSessionManager x) => x.user,
+    )!.userInfo!.userName!;
     final isTester = di<HubSessionManager>().user!.userFlags.isTester;
+    final isAdmin = di<HubSessionManager>().isAdmin;
     return SettingsSection(
       title: const Text(
         'Konto',
@@ -38,7 +38,9 @@ class SettingsAccountSection extends AbstractSettingsSection with WatchItMixin {
         ),
         SettingsTile(
           leading: const Icon(Icons.build_rounded),
-          title: Text('Ist Tester: ${isTester ? "Ja" : "Nein"}'),
+          title: Text(
+            'Tester: ${isTester ? "Ja" : "Nein"}  |  Admin: ${isAdmin ? "Ja" : "Nein"}',
+          ),
         ),
 
         SettingsTile.navigation(

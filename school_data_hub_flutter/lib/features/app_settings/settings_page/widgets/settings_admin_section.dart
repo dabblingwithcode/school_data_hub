@@ -14,7 +14,6 @@ import 'package:school_data_hub_flutter/features/learning_support/domain/learnin
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/set_matrix_environment_page/set_matrix_environment_controller.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/presentation/pupil_matrix_contacts_list_page/pupils_matrix_contacts_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/school/presentation/edit_school_data_page/edit_school_data_page.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_page/new_school_semester_page.dart';
@@ -134,14 +133,12 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
           },
         ),
         SettingsTile.navigation(
-          leading:
-              matrixPolicyManagerIsRegistered
-                  ? const Icon(Icons.check_circle_rounded, color: Colors.green)
-                  : const Icon(Icons.chat_rounded),
-          title:
-              matrixPolicyManagerIsRegistered
-                  ? const Text('Raumverwaltung initialisiert')
-                  : const Text('Raumverwaltung initialisieren'),
+          leading: matrixPolicyManagerIsRegistered
+              ? const Icon(Icons.check_circle_rounded, color: Colors.green)
+              : const Icon(Icons.chat_rounded),
+          title: matrixPolicyManagerIsRegistered
+              ? const Text('Raumverwaltung initialisiert')
+              : const Text('Raumverwaltung initialisieren'),
           onPressed: (context) async {
             if (matrixPolicyManagerIsRegistered) {
               _notificationService.showSnackBar(
@@ -168,17 +165,7 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
                 .deleteAndDeregisterMatrixPolicyManager();
           },
         ),
-        SettingsTile.navigation(
-          leading: const Icon(Icons.group),
-          title: const Text('Kontakte bearbeiten'),
-          onPressed: (context) async {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (ctx) => const PupilsMatrixContactsListPage(),
-              ),
-            );
-          },
-        ),
+
         SettingsTile.navigation(
           leading: const Icon(Icons.calendar_month_rounded),
           title: const Text('Schultage-Kalender'),
