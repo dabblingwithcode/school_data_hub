@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
-// ignore: directives_ordering
-import 'package:school_data_hub_flutter/features/statistics/chart_page/chart_page_controller.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/list_tiles/enrollment_list_tiles.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/list_tiles/group_list_tiles.dart';
@@ -38,22 +36,9 @@ class StatisticsPage extends StatelessWidget {
             child: Column(
               children: [
                 const Gap(15),
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Schulzahlen', style: AppStyles.title),
-                    IconButton(
-                      icon: const Icon(Icons.show_chart),
-                      tooltip: 'Diagramm anzeigen',
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (ctx) => const ChartPageController(),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+                  children: [Text('Schulzahlen', style: AppStyles.title)],
                 ),
                 const Gap(10),
                 Expanded(
