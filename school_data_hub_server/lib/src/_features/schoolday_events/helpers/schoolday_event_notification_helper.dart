@@ -76,18 +76,18 @@ String _getEventTypeText(SchooldayEventType type) => switch (type) {
     };
 
 String _getEventReasonText(String reason) => reason
-    .replaceAll('gm', '🤜🤕')
-    .replaceAll('gl', '🤜🎓️')
-    .replaceAll('gs', '🤜🏫')
-    .replaceAll('ab', '🤬💔')
-    .replaceAll('gv', '🚨😱')
-    .replaceAll('äa', '😈😖')
-    .replaceAll('il', '🎓️🙉')
-    .replaceAll('us', '🛑🎓️')
-    .replaceAll('ss', '📝')
-    .replaceAll('le', '💡🧠')
-    .replaceAll('fi', '🛟🧠')
-    .replaceAll('ki', '⚠️ℹ️');
+    .replaceAll('gm*', '🤜🤕*')
+    .replaceAll('gl*', '🤜🎓️*')
+    .replaceAll('gs*', '🤜🏫*')
+    .replaceAll('ab*', '🤬💔*')
+    .replaceAll('gv*', '🚨😱*')
+    .replaceAll('äa*', '😈😖*')
+    .replaceAll('il*', '🎓️🙉*')
+    .replaceAll('us*', '🛑🎓️*')
+    .replaceAll('ss*', '📝*')
+    .replaceAll('le*', '💡🧠*')
+    .replaceAll('fi*', '🛟🧠*')
+    .replaceAll('ki*', '⚠️ℹ️*');
 
 String _getSchooldayEventNotificationText(
     {required String eventcreator,
