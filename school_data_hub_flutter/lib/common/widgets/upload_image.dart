@@ -10,9 +10,13 @@ import 'package:path_provider/path_provider.dart';
 
 Future<File?> createImageFile(context) async {
   XFile? image = await ImagePicker().pickImage(
-      source: Platform.isWindows || Platform.isMacOS? ImageSource.gallery : ImageSource.camera,
-      preferredCameraDevice:
-          Platform.isWindows ? CameraDevice.front : CameraDevice.rear);
+    source: Platform.isWindows || Platform.isMacOS
+        ? ImageSource.gallery
+        : ImageSource.camera,
+    preferredCameraDevice: Platform.isWindows
+        ? CameraDevice.front
+        : CameraDevice.rear,
+  );
   if (image == null) {
     return null;
   }
@@ -49,43 +53,41 @@ class _CropAvatarState extends State<CropAvatarView> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        // appBar: AppBar(
-        //   title: Text('Gesicht zentrieren'),
-        // ),
-        body: Center(
-          child: Container(
-            decoration: const BoxDecoration(
-              color: Colors.black,
-            ),
-            child: CropImage(
-              controller: controller,
-              image: Image.file(File(widget.image.path)),
-              paddingSize: 0,
-              alwaysMove: true,
-            ),
-          ),
+    // appBar: AppBar(
+    //   title: Text('Gesicht zentrieren'),
+    // ),
+    body: Center(
+      child: Container(
+        decoration: const BoxDecoration(color: Colors.black),
+        child: CropImage(
+          controller: controller,
+          image: Image.file(File(widget.image.path)),
+          paddingSize: 0,
+          alwaysMove: true,
         ),
-        bottomNavigationBar: _buildButtons(),
-      );
+      ),
+    ),
+    bottomNavigationBar: _buildButtons(),
+  );
 
-  Widget _buildButtons() => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.rotate_90_degrees_ccw_outlined),
-            onPressed: _rotateLeft,
-          ),
-          IconButton(
-            icon: const Icon(Icons.rotate_90_degrees_cw_outlined),
-            onPressed: _rotateRight,
-          ),
-          TextButton(
-            onPressed: _finished,
-            child: const Text('Fertig'),
-          ),
-        ],
-      );
+  Widget _buildButtons() => SafeArea(
+    top: false,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        IconButton(
+          icon: const Icon(Icons.rotate_90_degrees_ccw_outlined),
+          onPressed: _rotateLeft,
+        ),
+        IconButton(
+          icon: const Icon(Icons.rotate_90_degrees_cw_outlined),
+          onPressed: _rotateRight,
+        ),
+        TextButton(onPressed: _finished, child: const Text('Fertig')),
+      ],
+    ),
+  );
 
   // Future<void> _aspectRatios() async {
   //   final value = await showDialog<double>(
@@ -173,7 +175,8 @@ class _CropAvatarState extends State<CropAvatarView> {
     String tempPath = (await getTemporaryDirectory()).path;
     File file = File(p.join(tempPath, 'temporaryProfile.jpeg'));
     await file.writeAsBytes(
-        bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
+      bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes),
+    );
     return file;
   }
 }
