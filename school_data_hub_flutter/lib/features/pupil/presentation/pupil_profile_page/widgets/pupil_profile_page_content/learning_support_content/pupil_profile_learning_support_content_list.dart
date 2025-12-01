@@ -387,6 +387,14 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
               child: ElevatedButton(
                 style: AppStyles.actionButtonStyle,
                 onPressed: () {
+                  if (pupil.supportLevelHistory == null ||
+                      pupil.supportLevelHistory!.isEmpty) {
+                    di<NotificationService>().showSnackBar(
+                      NotificationType.error,
+                      'Förderebene nicht festgelegt',
+                    );
+                    return;
+                  }
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (ctx) => NewLearningSupportPlan(pupil: pupil),
