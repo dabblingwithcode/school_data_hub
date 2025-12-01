@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
@@ -17,8 +18,6 @@ import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_goals_list.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan/controller/new_learning_support_plan_controller.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/preschool_revision_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/support_level_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/support_category_statuses_list.dart';
@@ -278,15 +277,14 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
             child: ElevatedButton(
               style: AppStyles.actionButtonStyle,
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (ctx) => NewSupportCategoryStatus(
-                      appBarTitle: 'Neuer Förderbereich',
-                      pupilId: pupil.pupilId,
-                      goalCategoryId: 0,
-                      elementType: 'status',
-                    ),
-                  ),
+                context.push(
+                  '/pupil/new-support-category-status',
+                  extra: {
+                    'appBarTitle': 'Neuer Förderbereich',
+                    'pupilId': pupil.pupilId,
+                    'goalCategoryId': 0,
+                    'elementType': 'status',
+                  },
                 );
               },
               child: const Text(
@@ -395,10 +393,9 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                     );
                     return;
                   }
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (ctx) => NewLearningSupportPlan(pupil: pupil),
-                    ),
+                  context.push(
+                    '/pupil/new-learning-support-plan',
+                    extra: pupil,
                   );
                 },
                 child: const Text(
@@ -581,11 +578,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
 
       // Navigate to PDF viewer
       if (context.mounted) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (ctx) => LearningSupportPlanPdfViewPage(pdfFile: file),
-          ),
-        );
+        context.push('/pupil/learning-support-plan-pdf', extra: file);
       }
     } catch (e) {
       di<NotificationService>().showSnackBar(

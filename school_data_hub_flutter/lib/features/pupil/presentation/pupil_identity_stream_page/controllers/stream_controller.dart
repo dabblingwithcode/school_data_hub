@@ -46,10 +46,18 @@ class PupilIdentityStreamController {
     state = PupilIdentityStreamState();
     channelName = importedChannelName ?? StreamUtils.generateConnectionCode();
 
-    // Auto-start the connection when controller is created
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      setupConnection();
-    });
+    // Auto-start the connection when controller is created if we have an imported channel name
+    if (importedChannelName != null &&
+        role == PupilIdentityStreamRole.receiver) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        setupConnection();
+      });
+    } else if (role == PupilIdentityStreamRole.sender) {
+      // Auto-start sender connection
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        setupConnection();
+      });
+    }
   }
 
   /// Complete a transfer and update state
@@ -500,17 +508,11 @@ class PupilIdentityStreamController {
     // If receiver is leaving, send close message before disposing
     if (role == PupilIdentityStreamRole.receiver &&
         state.streamState.isConnected.value) {
-      // Send close message and ignore errors since we're disposing
-      di<Client>().pupilIdentity
-          .sendPupilIdentityMessage(
-            channelName,
-            PupilIdentityDto(
-              type: 'close',
-              value:
-                  di<HubSessionManager>().user?.userInfo?.userName ?? 'Unknown',
-            ),
-          )
-          .ignore();
+      // We do NOT send a close message here because it causes the sender to think
+      // the receiver left intentionally, while we might just be navigating away
+      // or the widget is being rebuilt. The sender handles disconnects gracefully.
+      // If we really want to signal "leaving", we should do it in stopStream()
+      // which is called on explicit exit actions.
     }
 
     _subscription?.cancel();

@@ -10,13 +10,7 @@ import 'package:school_data_hub_flutter/app_utils/logger/logrecord_formatter.dar
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_monitor.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/entry_point/entry_point_controller.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/error_page.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/loading_page.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/no_connection_page.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/landing_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/core/router/app_router.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:window_manager/window_manager.dart';
@@ -56,8 +50,11 @@ void main() async {
     ),
   );
 
-  InitManager.registerCoreManagers();
+  await InitManager.registerCoreManagers();
+  await di<EnvManager>().init();
   await di.allReady();
+
+  di.registerSingleton<AppRouter>(AppRouter());
 
   runApp(const MyApp());
   //- Hack: - This is a to avoid calls to firebase from the mobile_scanner package every 15 minutes
@@ -77,20 +74,10 @@ class MyApp extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final log = Logger('MyApp');
+    final router = di<AppRouter>().router;
 
-    // Watch for environment changes - this will trigger rebuilds when EnvManager notifies
-    final envManager = watchIt<EnvManager>();
-
-    final bool envIsReady = watchValue((EnvManager x) => x.envIsReady);
-    final bool userIsAuthenticated = watchValue(
-      (EnvManager x) => x.isAuthenticated,
-    );
-    final bool isConnected = watchValue(
-      (ServerpodConnectivityMonitor x) => x.isConnected,
-    );
-
-    return MaterialApp(
+    return MaterialApp.router(
+      routerConfig: router,
       localizationsDelegates: const <LocalizationsDelegate<Object>>[
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -104,32 +91,6 @@ class MyApp extends WatchingWidget {
       ],
       debugShowCheckedModeBanner: false,
       title: 'Schuldaten Hub',
-      home: !isConnected
-          ? const NoConnectionPage()
-          : envIsReady
-          ? FutureBuilder(
-              future: di.allReady(timeout: const Duration(seconds: 30)),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  log.shout(
-                    'Dependency Injection Error: ${snapshot.error}',
-                    snapshot.stackTrace,
-                  );
-                  return ErrorPage(error: snapshot.error.toString());
-                } else if (snapshot.connectionState == ConnectionState.done) {
-                  if (userIsAuthenticated) {
-                    return const MainMenuBottomNavigation();
-                  } else {
-                    return const Login();
-                  }
-                } else {
-                  return const LoadingPage();
-                }
-              },
-            )
-          : envManager.activeEnv != null
-          ? const LoadingPage()
-          : const EntryPoint(),
     );
   }
 }

@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/books/presentation/books_main_menu_page/books_main_menu_page.dart';
-import 'package:school_data_hub_flutter/features/learning/presentation/competence_list_page/competence_list_page.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_page/controller/category_list_controller.dart';
-import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/controller/workbook_list_view_model.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -37,11 +34,7 @@ class LearnResourcesMenuPage extends StatelessWidget {
                 padding: const EdgeInsets.all(4.0),
                 child: InkWell(
                   onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (ctx) => const CompetenceListPage(),
-                      ),
-                    );
+                    context.push('/learning/competences');
                   },
                   child: Card(
                     color: AppColors.backgroundColor,
@@ -78,11 +71,7 @@ class LearnResourcesMenuPage extends StatelessWidget {
                   ),
                   child: InkWell(
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (ctx) => const CategoryList(),
-                        ),
-                      );
+                      context.push('/learning/categories');
                     },
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -115,11 +104,7 @@ class LearnResourcesMenuPage extends StatelessWidget {
                     ),
                     child: InkWell(
                       onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (ctx) => const WorkbookList(),
-                          ),
-                        );
+                        context.push('/learning/workbooks');
                       },
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -152,11 +137,7 @@ class LearnResourcesMenuPage extends StatelessWidget {
                   ),
                   child: InkWell(
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (ctx) => const BooksMainMenuPage(),
-                        ),
-                      );
+                      context.push('/learning/books');
                     },
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

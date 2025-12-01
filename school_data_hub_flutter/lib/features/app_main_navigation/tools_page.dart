@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/app_utils/pick_file_return_content_as_string.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -13,12 +14,6 @@ import 'package:school_data_hub_flutter/common/widgets/qr/qr_image_picker.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/birthdays_page.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identity_stream_page/pupil_identity_stream_page.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
-import 'package:school_data_hub_flutter/features/statistics/chart_page/chart_page_controller.dart';
-import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_page/timetable_page.dart';
 import 'package:watch_it/watch_it.dart';
 
 class ToolsPage extends WatchingWidget {
@@ -98,13 +93,11 @@ class ToolsPage extends WatchingWidget {
                         );
                         return;
                       }
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => PupilIdentityStreamPage(
-                            role: PupilIdentityStreamRole.receiver,
-                            importedChannelName: channelName,
-                          ),
-                        ),
+                      context.push(
+                        Uri(
+                          path: '/pupil-identity-stream',
+                          queryParameters: {'code': channelName},
+                        ).toString(),
                       );
                     },
                     onLongPress: Platform.isAndroid || Platform.isIOS
@@ -125,13 +118,11 @@ class ToolsPage extends WatchingWidget {
                               );
                               return;
                             }
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => PupilIdentityStreamPage(
-                                  role: PupilIdentityStreamRole.receiver,
-                                  importedChannelName: channelName,
-                                ),
-                              ),
+                            context.push(
+                              Uri(
+                                path: '/pupil-identity-stream',
+                                queryParameters: {'code': channelName},
+                              ).toString(),
                             );
                           }
                         : null,
@@ -143,15 +134,10 @@ class ToolsPage extends WatchingWidget {
                   const Gap(16),
                   _buildToolButton(
                     onPressed: () async {
-                      final List<int>?
-                      pupilIds = await Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (ctx) => SelectPupilsListPage(
-                            selectablePupils: di<PupilManager>()
-                                .getPupilsFromInternalIds(
-                                  di<PupilIdentityManager>().availablePupilIds,
-                                ),
-                          ),
+                      final List<int>? pupilIds = await context.push<List<int>>(
+                        '/select-pupils',
+                        extra: di<PupilManager>().getPupilsFromInternalIds(
+                          di<PupilIdentityManager>().availablePupilIds,
                         ),
                       );
                       if (pupilIds == null || pupilIds.isEmpty) {
@@ -163,14 +149,13 @@ class ToolsPage extends WatchingWidget {
                           await di<PupilIdentityManager>()
                               .generatePupilIdentitiesQrData(internalIds);
                       if (!context.mounted) return;
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => PupilIdentityStreamPage(
-                            role: PupilIdentityStreamRole.sender,
-                            encryptedData: encryptedPupilIdentities,
-                            selectedPupilIds: pupilIds,
-                          ),
-                        ),
+                      context.push(
+                        '/pupil-identity-stream',
+                        extra: {
+                          'role': PupilIdentityStreamRole.sender,
+                          'encryptedData': encryptedPupilIdentities,
+                          'selectedPupilIds': pupilIds,
+                        },
                       );
                     },
                     icon: Icons.mobile_screen_share,
@@ -181,11 +166,7 @@ class ToolsPage extends WatchingWidget {
                   const Gap(16),
                   _buildToolButton(
                     onPressed: () async {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const ChartPageController(),
-                        ),
-                      );
+                      context.push('/charts');
                     },
                     icon: Icons.bar_chart_rounded,
                     title: 'Datenvisualisierungen',
@@ -195,11 +176,7 @@ class ToolsPage extends WatchingWidget {
                   const Gap(16),
                   _buildToolButton(
                     onPressed: () async {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const Statistics(),
-                        ),
-                      );
+                      context.push('/statistics');
                     },
                     icon: Icons.table_chart_rounded,
                     title: 'Statistik-Zahlen ansehen',
@@ -219,12 +196,7 @@ class ToolsPage extends WatchingWidget {
                         return;
                       }
                       if (context.mounted) {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (ctx) =>
-                                BirthdaysView(selectedDate: selectedDate),
-                          ),
-                        );
+                        context.push('/birthdays', extra: selectedDate);
                       }
                     },
                     icon: Icons.cake_rounded,
@@ -241,11 +213,7 @@ class ToolsPage extends WatchingWidget {
 
                     _buildToolButton(
                       onPressed: () async {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const TimetablePage(),
-                          ),
-                        );
+                        context.push('/timetable');
                       },
                       icon: Icons.schedule,
                       title: 'Stundenplan verwalten',

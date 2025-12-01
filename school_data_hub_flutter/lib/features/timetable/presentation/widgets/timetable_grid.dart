@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/classroom_list_page/classroom_list_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/lesson_cell/lesson_cell.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:watch_it/watch_it.dart';
@@ -89,12 +89,7 @@ class TimetableGrid extends WatchingWidget {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ClassroomListPage(),
-                  ),
-                );
+                await context.push('/classrooms');
                 // Refresh data when returning from ClassroomListPage
                 // Note: This will trigger a rebuild of the TimetableGrid
                 // since it's watching the TimetableManager state

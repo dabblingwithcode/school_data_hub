@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 
 class PupilListCard extends StatelessWidget {
   final PupilProxy passedPupil;
-  const PupilListCard({
-    required this.passedPupil,
-    super.key,
-  });
+  const PupilListCard({required this.passedPupil, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,11 +19,7 @@ class PupilListCard extends StatelessWidget {
           Expanded(
             child: InkWell(
               onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (ctx) => PupilProfilePage(pupil: pupil),
-                  ),
-                );
+                context.push('/pupil/${pupil.pupilId}');
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -44,10 +36,7 @@ class PupilListCard extends StatelessWidget {
                     ),
                     Text(
                       'Klasse: ${pupil.schoolGrade.name}',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
+                      style: const TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                   ],
                 ),
@@ -59,4 +48,3 @@ class PupilListCard extends StatelessWidget {
     );
   }
 }
-

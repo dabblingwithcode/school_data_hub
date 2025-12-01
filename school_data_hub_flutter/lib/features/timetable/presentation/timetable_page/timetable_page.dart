@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/paddings.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/classroom_list_page/classroom_list_page.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/learning_group_list_page/learning_group_list_page.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/new_lesson_group_page/new_lesson_group_page.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/new_scheduled_lesson_page/new_scheduled_lesson_page.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/new_timetable_page/new_timetable_page.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/subject_list_page/subject_list_page.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_slot_list_page/timetable_slot_list_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/timetable_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/timetable_grid.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/weekday_selector.dart';
@@ -30,10 +24,11 @@ class TimetablePage extends WatchingWidget {
 
     // Watch the timetable data to make the page reactive
     final timetable = watch(timetableManager.timetable);
-    final timetableSlots = watch(timetableManager.timetableSlots);
-    final scheduledLessons = watch(timetableManager.scheduledLessons);
+    watch(timetableManager.timetableSlots);
+    watch(timetableManager.scheduledLessons);
 
     // Show loading or empty state if no timetable
+    // ignore: unnecessary_null_comparison
     if (timetable == null) {
       return Scaffold(
         backgroundColor: AppColors.canvasColor,
@@ -67,11 +62,7 @@ class TimetablePage extends WatchingWidget {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () async {
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const NewTimetablePage(),
-                    ),
-                  );
+                  await context.push('/timetable/new');
                   // Refresh data when returning from NewTimetablePage
                   await timetableManager.refreshData();
                 },
@@ -83,42 +74,24 @@ class TimetablePage extends WatchingWidget {
         bottomNavigationBar: TimetableBottomNavBar(onManageLessonGroups: () {}),
       );
     }
-    void _navigateToNewLesson() {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) =>
-              NewScheduledLessonPage(timetableManager: timetableManager),
-        ),
-      );
-    }
 
     void _navigateToNewLessonGroup() async {
-      await Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const NewLessonGroupPage()),
-      );
+      await context.push('/timetable/lesson-group');
       // Refresh data when returning from NewLessonGroupPage
       await timetableManager.refreshData();
     }
 
     void _onLessonTap(int lessonId) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => NewScheduledLessonPage(
-            timetableManager: timetableManager,
-            editingLessonId: lessonId,
-          ),
-        ),
+      context.push(
+        '/timetable/lesson',
+        extra: {'editingLessonId': lessonId},
       );
     }
 
     void _onEmptySlotTap(int slotId) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => NewScheduledLessonPage(
-            timetableManager: timetableManager,
-            preselectedSlotId: slotId,
-          ),
-        ),
+      context.push(
+        '/timetable/lesson',
+        extra: {'preselectedSlotId': slotId},
       );
     }
 
@@ -185,7 +158,7 @@ class TimetableBottomNavBar extends StatelessWidget {
                 tooltip: 'zurück',
                 icon: const Icon(Icons.arrow_back, size: 35),
                 onPressed: () {
-                  Navigator.pop(context);
+                  context.pop();
                 },
               ),
               const Spacer(),
@@ -193,12 +166,7 @@ class TimetableBottomNavBar extends StatelessWidget {
                 tooltip: 'Zeitslots verwalten',
                 icon: const Icon(Icons.punch_clock_rounded, size: 35),
                 onPressed: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const TimetableSlotListPage(),
-                    ),
-                  );
+                  await context.push('/timetable/slots');
                   // Refresh data when returning from NewTimetablePage
                   await di<TimetableManager>().refreshData();
                 },
@@ -207,12 +175,7 @@ class TimetableBottomNavBar extends StatelessWidget {
                 tooltip: 'Neuer Stundenplan',
                 icon: const Icon(Icons.calendar_month, size: 35),
                 onPressed: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const NewTimetablePage(),
-                    ),
-                  );
+                  await context.push('/timetable/new');
                   // Refresh data when returning from NewTimetablePage
                   await di<TimetableManager>().refreshData();
                 },
@@ -221,36 +184,21 @@ class TimetableBottomNavBar extends StatelessWidget {
                 tooltip: 'Lerngruppen',
                 icon: const Icon(Icons.groups, size: 35),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LearningGroupListPage(),
-                    ),
-                  );
+                  context.push('/timetable/groups');
                 },
               ),
               IconButton(
                 tooltip: 'Räume verwalten',
                 icon: const Icon(Icons.door_front_door_rounded, size: 35),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ClassroomListPage(),
-                    ),
-                  );
+                  context.push('/classrooms');
                 },
               ),
               IconButton(
                 tooltip: 'Fächer verwalten',
                 icon: const Icon(Icons.subject, size: 35),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const SubjectListPage(),
-                    ),
-                  );
+                  context.push('/timetable/subjects');
                 },
               ),
               const Gap(AppPaddings.bottomNavBarButtonGap),

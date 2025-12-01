@@ -156,8 +156,10 @@ class EnvManager with ChangeNotifier {
     notifyListeners();
     _log.info('Default Environment set: $_defaultEnv');
 
-    _envIsReady.value = true;
     await InitManager.pushActiveEnvScopeAndRegisterDependentManagers();
+    await di.allReady();
+
+    _envIsReady.value = true;
 
     if (await HubSecureStorage().containsKey(storageKeyForMatrixCredentials)) {
       // Only register matrix managers if they're not already registered
@@ -171,6 +173,8 @@ class EnvManager with ChangeNotifier {
         di<HubSessionManager>().setIsMatrixSessionConfigured(true);
       }
     }
+
+    await _checkAndAttemptAutoLogin();
     return;
   }
 
@@ -178,8 +182,8 @@ class EnvManager with ChangeNotifier {
   /// We need to set the environment to not ready
   /// when we add a new environment
   void deactivateEnv() {
-    _envIsReady.value = false;
     _activeEnv = null;
+    _envIsReady.value = false;
     _populatedEnvServerData = PopulatedServerSessionData(
       schoolSemester: false,
       schooldays: false,

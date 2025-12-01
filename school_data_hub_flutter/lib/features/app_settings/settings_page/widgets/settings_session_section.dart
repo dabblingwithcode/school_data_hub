@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
@@ -10,7 +11,6 @@ import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/dialogs/change_env_dialog.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
@@ -149,10 +149,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
 
               await _cacheManager.emptyCache();
               if (context.mounted) {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (ctx) => const Login()),
-                  (route) => false,
-                );
+                context.go('/login');
               }
             }
             return;

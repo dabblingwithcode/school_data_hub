@@ -27,14 +27,6 @@ class InitManager {
   InitManager._internal();
 
   static Future<void> registerCoreManagers() async {
-    di.registerSingletonAsync<EnvManager>(() async {
-      final envManager = EnvManager();
-
-      await envManager.init();
-
-      return envManager;
-    });
-
     di.registerSingleton<DefaultCacheManager>(DefaultCacheManager());
 
     di.registerSingleton<NotificationService>(NotificationService());
@@ -49,6 +41,8 @@ class InitManager {
       await updateManager.initialize();
       return updateManager;
     });
+
+    di.registerSingleton<EnvManager>(EnvManager());
   }
 
   static Future<void> pushActiveEnvScopeAndRegisterDependentManagers() async {
@@ -59,7 +53,7 @@ class InitManager {
       return;
     }
 
-    await di.pushNewScopeAsync(
+    di.pushNewScope(
       scopeName: DiScope.onActiveEnvScope.name,
       dispose: () {
         _log.info('Dropping scope[activeEnvScope]');
@@ -73,7 +67,7 @@ class InitManager {
           '======================================================== [SCOPE] [activeEnvScope]',
         );
 
-        await InitOnActiveEnv.registerManagers();
+        InitOnActiveEnv.registerManagers();
         _log.info(
           ' Managers dependent on [activeEnvScope] are being initialized...',
         );

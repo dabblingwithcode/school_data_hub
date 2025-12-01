@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:watch_it/watch_it.dart';
@@ -15,17 +16,45 @@ Future<String?> qrScanner(
 
     return null;
   }
-  final controller = MobileScannerController(
-    detectionSpeed: DetectionSpeed.normal,
-    formats: [BarcodeFormat.qrCode, BarcodeFormat.ean13],
-    facing: CameraFacing.back,
-    torchEnabled: false,
+  
+  return await context.push<String>(
+    '/scanner',
+    extra: overlayText,
   );
-  final result = await Navigator.push(
-    context,
-    MaterialPageRoute(
-      fullscreenDialog: true,
-      builder: (context) => Stack(
+}
+
+class ScannerPage extends StatefulWidget {
+  final String overlayText;
+  const ScannerPage({required this.overlayText, super.key});
+
+  @override
+  State<ScannerPage> createState() => _ScannerPageState();
+}
+
+class _ScannerPageState extends State<ScannerPage> {
+  late final MobileScannerController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = MobileScannerController(
+      detectionSpeed: DetectionSpeed.normal,
+      formats: [BarcodeFormat.qrCode, BarcodeFormat.ean13],
+      facing: CameraFacing.back,
+      torchEnabled: false,
+    );
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
         children: [
           MobileScanner(
               controller: controller,
@@ -34,8 +63,9 @@ Future<String?> qrScanner(
                 final Barcode barcode;
                 barcode = capture.barcodes[0];
 
-                Navigator.pop(context, barcode.displayValue);
-                controller.dispose();
+                if (mounted) {
+                  context.pop(barcode.displayValue);
+                }
               }),
           Positioned(
             bottom: 50,
@@ -44,7 +74,7 @@ Future<String?> qrScanner(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(overlayText,
+                Text(widget.overlayText,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                         decoration: TextDecoration.none,
@@ -57,7 +87,6 @@ Future<String?> qrScanner(
           ),
         ],
       ),
-    ),
-  );
-  return result;
+    );
+  }
 }

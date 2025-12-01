@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:crop_image/crop_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import 'package:path_provider/path_provider.dart';
@@ -42,10 +43,13 @@ void setAvatar({
     }
   }
 
-  File imageFile = await Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => CropAvatarView(image: image!)),
+  File? imageFile = await context.push<File>(
+    '/crop-avatar',
+    extra: image,
   );
+  
+  if (imageFile == null) return;
+
   PupilMutator().updatePupilDocument(
     imageFile: imageFile,
     pupilProxy: pupil,

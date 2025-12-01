@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
@@ -1349,7 +1350,7 @@ class _LearningSupportPlanPdfViewPageState
         onPrinted: (context) {
           // File will be deleted in dispose(), no need to delete here
           if (context.mounted) {
-            Navigator.of(context).pop();
+            context.pop();
           }
         },
         build: (format) => widget.pdfFile.readAsBytes(),
@@ -1359,7 +1360,7 @@ class _LearningSupportPlanPdfViewPageState
             onPressed: () {
               // File will be deleted in dispose(), no need to delete here
               if (context.mounted) {
-                Navigator.of(context).pop();
+                context.pop();
               }
             },
           ),

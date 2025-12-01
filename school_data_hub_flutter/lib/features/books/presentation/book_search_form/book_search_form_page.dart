@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
@@ -6,8 +7,6 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_list_page/widgets/book_list_bottom_navbar.dart';
-import 'package:school_data_hub_flutter/features/books/presentation/book_search_form/select_book_tags_page.dart';
-import 'package:school_data_hub_flutter/features/books/presentation/book_search_page/book_search_results_page.dart';
 import 'package:watch_it/watch_it.dart';
 
 class BookSearchFormPage extends StatefulWidget {
@@ -152,17 +151,10 @@ class _BookSearchFormPageState extends State<BookSearchFormPage> {
                                           ),
                                         IconButton(
                                           onPressed: () async {
-                                            final result =
-                                                await Navigator.of(
-                                                  context,
-                                                ).push<List<BookTag>>(
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        SelectBookTagsPage(
-                                                          initialSelectedTags:
-                                                              selectedBookTags,
-                                                        ),
-                                                  ),
+                                            final result = await context
+                                                .push<List<BookTag>>(
+                                                  '/learning/books/select-tags',
+                                                  extra: selectedBookTags,
                                                 );
                                             if (result != null) {
                                               setState(() {
@@ -358,20 +350,19 @@ class _BookSearchFormPageState extends State<BookSearchFormPage> {
                           ? selectedBookTags
                           : null,
                     );
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => BookSearchResultsPage(
-                          title: title,
-                          author: author,
-                          keywords: keywords,
-                          location: selectedLocation?.location == "Alle Räume"
-                              ? null
-                              : selectedLocation!,
-                          readingLevel: readingLevel,
-                          borrowStatus: selectedBorrowStatus,
-                          selectedTags: selectedBookTags,
-                        ),
-                      ),
+                    context.push(
+                      '/learning/books/search-results',
+                      extra: {
+                        'title': title,
+                        'author': author,
+                        'keywords': keywords,
+                        'location': selectedLocation?.location == "Alle Räume"
+                            ? null
+                            : selectedLocation!,
+                        'readingLevel': readingLevel,
+                        'borrowStatus': selectedBorrowStatus,
+                        'selectedTags': selectedBookTags,
+                      },
                     );
                   },
                   child: const Text('SUCHEN', style: AppStyles.buttonTextStyle),

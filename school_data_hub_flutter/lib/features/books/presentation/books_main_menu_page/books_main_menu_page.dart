@@ -2,21 +2,18 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:isbn/isbn.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
-import 'package:school_data_hub_flutter/features/books/presentation/book_search_form/book_search_form_page.dart';
-import 'package:school_data_hub_flutter/features/books/presentation/book_tag_management_page/book_tag_management_controller.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../../../common/theme/app_colors.dart';
 import '../../../../common/widgets/dialogs/short_textfield_dialog.dart';
-import '../book_list_page/book_list_page.dart';
 import '../book_list_page/widgets/book_list_bottom_navbar.dart';
-import '../new_book_page/new_book_controller.dart';
 
 class BooksMainMenuPage extends WatchingWidget {
   const BooksMainMenuPage({super.key});
@@ -38,17 +35,11 @@ class BooksMainMenuPage extends WatchingWidget {
                 if (stats != null) _buildStatsCard(stats),
                 const Gap(20),
                 _buildButton(context, "Schlagwörter verwalten", () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (ctx) => const BookTagManagement(),
-                    ),
-                  );
+                  context.push('/learning/books/tags');
                 }),
                 const SizedBox(height: 20),
                 _buildButton(context, "Ausgeliehene Bücher", () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (ctx) => const BookListPage()),
-                  );
+                  context.push('/learning/books/list');
                 }),
                 const SizedBox(height: 20),
                 _buildButton(context, "Buch erfassen", () async {
@@ -56,11 +47,7 @@ class BooksMainMenuPage extends WatchingWidget {
                 }),
                 const SizedBox(height: 20),
                 _buildButton(context, "Bücher suchen", () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (ctx) => const BookSearchFormPage(),
-                    ),
-                  );
+                  context.push('/learning/books/search');
                 }),
               ],
             ),
@@ -177,10 +164,9 @@ Future<void> _showNewBookDialog(BuildContext context) async {
     if (isbn != null && isbn.isNotEmpty) {
       final cleanIsbn = isbn.replaceAll('-', '');
 
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (ctx) => NewBook(isEdit: false, isbn: int.parse(cleanIsbn)),
-        ),
+      context.push(
+        '/learning/books/new',
+        extra: {'isEdit': false, 'isbn': int.parse(cleanIsbn)},
       );
     }
   } else {
@@ -198,11 +184,9 @@ Future<void> _showNewBookDialog(BuildContext context) async {
     }
 
     final cleanScannedIsbn = scannedIsbn.replaceAll('-', '');
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (ctx) =>
-            NewBook(isEdit: false, isbn: int.parse(cleanScannedIsbn)),
-      ),
+    context.push(
+      '/learning/books/new',
+      extra: {'isEdit': false, 'isbn': int.parse(cleanScannedIsbn)},
     );
   }
 }

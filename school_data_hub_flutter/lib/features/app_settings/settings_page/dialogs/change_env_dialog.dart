@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
@@ -96,11 +97,11 @@ Future<bool?> changeEnvironmentDialog({required BuildContext context}) async {
             child: ElevatedButton(
               style: AppStyles.successButtonStyle,
               onPressed: () async {
-                Navigator.of(context).pop();
+                context.pop();
                 _log.info(
                   '[DI] User wants to add a new environment frpm the dialog: dropping logged in user scope first',
                 );
-                InitManager.dropOnLoggedInUserScope();
+                await InitManager.dropOnLoggedInUserScope();
                 //  await di<HubSessionManager>().signOutDevice();
                 _log.warning(
                   '[DI] User signed out, setting env not ready from the dialog',

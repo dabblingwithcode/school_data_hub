@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:crop_image/crop_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -31,21 +32,20 @@ Future<File?> createImageFile(context) async {
   // final imageFile = memoryImageToFile(image);
   // return imageFile;
 
-  File imageFile = await Navigator.push(
+  File? imageFile = await GoRouter.of(
     context,
-    MaterialPageRoute(builder: (context) => CropAvatarView(image: image)),
-  );
+  ).push<File>('/crop-document', extra: image);
   return imageFile;
 }
 
-class CropAvatarView extends StatefulWidget {
+class CropDocumentView extends StatefulWidget {
   final XFile image;
-  const CropAvatarView({super.key, required this.image});
+  const CropDocumentView({super.key, required this.image});
   @override
-  State<CropAvatarView> createState() => _CropAvatarState();
+  State<CropDocumentView> createState() => _CropDocumentViewState();
 }
 
-class _CropAvatarState extends State<CropAvatarView> {
+class _CropDocumentViewState extends State<CropDocumentView> {
   final controller = CropController(
     aspectRatio: 21.0 / 29.7,
     defaultCrop: const Rect.fromLTRB(0, 0, 1, 1),
@@ -144,7 +144,7 @@ class _CropAvatarState extends State<CropAvatarView> {
     final imageBytes = await bitmap.toByteData(format: ImageByteFormat.png);
     final file = await imageToFile(bytes: imageBytes!);
     if (mounted) {
-      Navigator.pop(context, file);
+      context.pop(file);
       controller.dispose();
     }
 

@@ -12,45 +12,43 @@ final _log = Logger('[Init][OnActiveEnv]');
 class InitOnActiveEnv {
   static Future<void> registerManagers() async {
     _log.info('Registering managers on active environment scope');
-    di.registerSingletonWithDependencies<HubAuthKeyManager>(() {
-      return HubAuthKeyManager(
+    di.registerSingleton<HubAuthKeyManager>(
+      HubAuthKeyManager(
         storageKeyForAuthKey: di<EnvManager>().storageKeyForAuthKey,
-      );
-    }, dependsOn: [EnvManager]);
+      ),
+    );
 
-    di.registerSingletonWithDependencies<Client>(() {
-      final envManager = di<EnvManager>();
-      final activeEnv = envManager.activeEnv;
-      final serverUrl = activeEnv!.serverUrl;
-      _log.info('ClientURL: [${activeEnv.serverUrl}]');
-      _log.fine(
-        '======================================================== [CLIENT] [${activeEnv.serverName}] [${activeEnv.runMode.name}]',
-      );
-
-      return Client(
-        serverUrl,
-        authenticationKeyManager: di<HubAuthKeyManager>(),
-      )..connectivityMonitor = di<ServerpodConnectivityMonitor>();
-    }, dependsOn: [HubAuthKeyManager]);
-
-    di.registerSingletonAsync<HubSessionManager>(
-      () async {
-        // like described in the serverpod documentation
-        // https://docs.serverpod.dev/concepts/authentication/setup#app-setup
-        final sessionManager = HubSessionManager(
-          caller: di<Client>().modules.auth,
+    di.registerSingleton<Client>(
+      (() {
+        final envManager = di<EnvManager>();
+        final activeEnv = envManager.activeEnv;
+        final serverUrl = activeEnv!.serverUrl;
+        _log.info('ClientURL: [${activeEnv.serverUrl}]');
+        _log.fine(
+          '======================================================== [CLIENT] [${activeEnv.serverName}] [${activeEnv.runMode.name}]',
         );
 
-        // this will initialize the session manager and load the stored user info
-        // it returns a bool
-        await sessionManager.initialize();
-        _log.fine('HubSessionManager initialized');
-        _log.info('========================================================');
-        return sessionManager;
-      },
-      dependsOn: [EnvManager, Client],
-      dispose: (param) => param.dispose(),
+        return Client(
+          serverUrl,
+          authenticationKeyManager: di<HubAuthKeyManager>(),
+        )..connectivityMonitor = di<ServerpodConnectivityMonitor>();
+      })(),
     );
+
+    di.registerSingletonAsync<HubSessionManager>(() async {
+      // like described in the serverpod documentation
+      // https://docs.serverpod.dev/concepts/authentication/setup#app-setup
+      final sessionManager = HubSessionManager(
+        caller: di<Client>().modules.auth,
+      );
+
+      // this will initialize the session manager and load the stored user info
+      // it returns a bool
+      await sessionManager.initialize();
+      _log.fine('HubSessionManager initialized');
+      _log.info('========================================================');
+      return sessionManager;
+    }, dispose: (param) => param.dispose());
 
     // Register BottomNavManager in active environment scope so it's always available
     di.registerSingleton<BottomNavManager>(BottomNavManager());

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/app_utils/app_helpers.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
@@ -13,15 +14,8 @@ import 'package:school_data_hub_flutter/features/learning/domain/competence_mana
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/presentation/set_matrix_environment_page/set_matrix_environment_controller.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
-import 'package:school_data_hub_flutter/features/school/presentation/edit_school_data_page/edit_school_data_page.dart';
-import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_page/new_school_semester_page.dart';
-import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_page/schooldays_calendar_page/schooldays_calendar_page.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_page.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/reset_password/reset_user_password_page.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/user_list/user_list_page.dart';
 import 'package:watch_it/watch_it.dart';
 
 class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
@@ -51,38 +45,28 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
           title: const Text('Schuldaten eintragen'),
           leading: const Icon(Icons.account_circle_rounded),
           onPressed: (context) {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (ctx) => const EditSchoolDataPage()),
-            );
+            context.push('/admin/edit-school-data');
           },
         ),
         SettingsTile.navigation(
           title: const Text('Neuen User erstellen'),
           leading: const Icon(Icons.account_circle_rounded),
           onPressed: (context) {
-            Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (ctx) => const CreateUserPage()));
+            context.push('/admin/create-user');
           },
         ),
         SettingsTile.navigation(
           title: const Text('User-Verwaltung'),
           leading: const Icon(Icons.account_circle_rounded),
           onPressed: (context) {
-            Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (ctx) => const UserListPage()));
+            context.push('/admin/users');
           },
         ),
         SettingsTile.navigation(
           title: const Text('User-Passwort zurücksetzen'),
           leading: const Icon(Icons.lock_reset),
           onPressed: (context) {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (ctx) => const ResetUserPasswordPage(),
-              ),
-            );
+            context.push('/admin/reset-password');
           },
         ),
         SettingsTile.navigation(
@@ -149,11 +133,7 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
             }
 
             if (context.mounted) {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (ctx) => const SetMatrixEnvironment(),
-                ),
-              );
+              context.push('/admin/matrix/set-environment');
             }
           },
         ),
@@ -170,22 +150,14 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
           leading: const Icon(Icons.calendar_month_rounded),
           title: const Text('Schultage-Kalender'),
           onPressed: (context) {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (ctx) => const SchooldaysCalendarPage(),
-              ),
-            );
+            context.push('/admin/calendar');
           },
         ),
         SettingsTile.navigation(
           leading: const Icon(Icons.calendar_month_rounded),
           title: const Text('Schulsemester hinzufügen'),
           onPressed: (context) {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (ctx) => const NewSchoolSemesterPage(),
-              ),
-            );
+            context.push('/admin/new-semester');
           },
         ),
 

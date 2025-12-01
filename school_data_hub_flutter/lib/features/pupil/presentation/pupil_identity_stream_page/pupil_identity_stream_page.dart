@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -26,6 +27,7 @@ class PupilIdentityStreamPage extends WatchingWidget {
   final String? encryptedData;
   final String? importedChannelName;
   final List<int>? selectedPupilIds;
+  final String? expectedInstanceUrl;
 
   PupilIdentityStreamPage({
     Key? key,
@@ -33,10 +35,65 @@ class PupilIdentityStreamPage extends WatchingWidget {
     this.encryptedData,
     this.importedChannelName,
     this.selectedPupilIds,
+    this.expectedInstanceUrl,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Validate instance if acting as receiver with expected instance
+    callOnce((context) {
+      if (role == PupilIdentityStreamRole.receiver &&
+          expectedInstanceUrl != null) {
+        final currentInstanceUrl = di<EnvManager>().activeEnv?.serverUrl;
+        
+        // Helper to normalize URL (trim, lowercase, remove trailing slash and protocol)
+        String normalize(String? url) {
+          if (url == null) return '';
+          var s = url.trim().toLowerCase();
+          // Remove protocol
+          s = s.replaceAll(RegExp(r'^https?://'), '');
+          if (s.endsWith('/')) {
+            s = s.substring(0, s.length - 1);
+          }
+          return s;
+        }
+
+        final expected = normalize(expectedInstanceUrl);
+        final current = normalize(currentInstanceUrl);
+
+        // Check if current instance matches expected instance
+        // We check equality or if expected is contained in current (to handle variations)
+        // But strict equality after normalization is safer to prevent partial matches like "test" in "test-dev"
+        if (current.isNotEmpty && expected.isNotEmpty && expected != current) {
+          // Mismatch detected
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => AlertDialog(
+                title: const Text('Falsche Instanz'),
+                content: Text(
+                  'Dieser Link ist für die Instanz "$expectedInstanceUrl", '
+                  'aber Sie sind mit "$currentInstanceUrl" verbunden.\n\n'
+                  'Bitte wechseln Sie zur richtigen Instanz, um die Daten zu importieren.',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close dialog
+                      Navigator.of(context).pop(); // Go back from stream page
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          });
+          return; // Stop further initialization
+        }
+      }
+    });
+
     // Initialize controller (which creates and owns the state)
     final controller = createOnce<PupilIdentityStreamController>(() {
       final ctrl = PupilIdentityStreamController(

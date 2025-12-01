@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
-import 'package:school_data_hub_flutter/features/authorizations/presentation/authorizations_list_page/authorizations_list_page.dart';
-import 'package:school_data_hub_flutter/features/school_lists/presentation/school_lists_page/school_lists_page.dart';
+import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 
 class SchoolListsMenuPage extends StatelessWidget {
   const SchoolListsMenuPage({super.key});
@@ -17,10 +15,7 @@ class SchoolListsMenuPage extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: AppColors.backgroundColor,
-        title: Text(
-          locale.checkLists,
-          style: AppStyles.appBarTextStyle,
-        ),
+        title: Text(locale.checkLists, style: AppStyles.appBarTextStyle),
       ),
       body: Center(
         child: SizedBox(
@@ -33,21 +28,23 @@ class SchoolListsMenuPage extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             children: [
               MainMenuButton(
-                  destinationPage: const SchoolListsPage(),
-                  buttonIcon: const Icon(
-                    Icons.rule,
-                    size: 50,
-                    color: AppColors.gridViewColor,
-                  ),
-                  buttonText: locale.lists),
+                destinationRoute: '/school/lists',
+                buttonIcon: const Icon(
+                  Icons.rule,
+                  size: 50,
+                  color: AppColors.gridViewColor,
+                ),
+                buttonText: locale.lists,
+              ),
               MainMenuButton(
-                  destinationPage: const AuthorizationsListPage(),
-                  buttonIcon: const Icon(
-                    Icons.fact_check_rounded,
-                    size: 50,
-                    color: AppColors.gridViewColor,
-                  ),
-                  buttonText: locale.authorizations)
+                destinationRoute: '/school/authorizations',
+                buttonIcon: const Icon(
+                  Icons.fact_check_rounded,
+                  size: 50,
+                  color: AppColors.gridViewColor,
+                ),
+                buttonText: locale.authorizations,
+              ),
             ],
           ),
         ),
