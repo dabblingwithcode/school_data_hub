@@ -59,10 +59,7 @@ class TimetableApiService {
       call: () => _client.timetable.fetchCompleteTimetableData(),
       errorMessage: 'Fehler beim Laden der vollständigen Stundenplandaten',
     );
-    _log.info(
-      'API: fetchCompleteTimetableData returned: ${timetable?.name} (ID: ${timetable?.id})',
-    );
-    _log.info('API: Timetable is null: ${timetable == null}');
+
     return timetable;
   }
 

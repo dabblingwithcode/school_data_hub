@@ -7,7 +7,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
-import 'package:school_data_hub_flutter/core/router/scaffold_with_navbar.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/landing_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_monitor.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/attendance_list_page.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/missed_classes_pupil_list_page/missed_classes_pupil_list_page.dart';
@@ -535,7 +535,7 @@ class AppRouter {
             ),
           ],
           navigatorContainerBuilder: (context, navigationShell, children) {
-            return ScaffoldWithNavBar(
+            return MainMenuBottomNavigation(
               navigationShell: navigationShell,
               children: children,
             );

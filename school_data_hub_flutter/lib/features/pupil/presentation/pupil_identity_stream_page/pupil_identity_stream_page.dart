@@ -45,7 +45,7 @@ class PupilIdentityStreamPage extends WatchingWidget {
       if (role == PupilIdentityStreamRole.receiver &&
           expectedInstanceUrl != null) {
         final currentInstanceUrl = di<EnvManager>().activeEnv?.serverUrl;
-        
+
         // Helper to normalize URL (trim, lowercase, remove trailing slash and protocol)
         String normalize(String? url) {
           if (url == null) return '';
@@ -196,30 +196,32 @@ class PupilIdentityStreamPage extends WatchingWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Connection Status (fixed at top)
-                ConnectionStatus(
-                  isConnected: isConnected,
-                  isProcessing: isProcessing,
-                  statusMessage: state.streamState.statusMessage.value,
-                ),
-
-                const Gap(16),
-
-                // Role-specific UI (scrollable content)
                 Expanded(
-                  child: Column(
-                    children: [
-                      if (role == PupilIdentityStreamRole.sender) ...[
-                        _buildSenderTopSection(
-                          context,
-                          state,
-                          controller,
-                          isConnected,
-                          autoConfirmEnabled,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Connection Status (fixed at top)
+                        ConnectionStatus(
+                          isConnected: isConnected,
+                          isProcessing: isProcessing,
+                          statusMessage: state.streamState.statusMessage.value,
                         ),
+
                         const Gap(16),
-                        Expanded(
-                          child: _buildSenderScrollableContent(
+
+                        // Role-specific UI
+                        if (role == PupilIdentityStreamRole.sender) ...[
+                          _buildSenderTopSection(
+                            context,
+                            state,
+                            controller,
+                            isConnected,
+                            autoConfirmEnabled,
+                          ),
+                          const Gap(16),
+                          _buildSenderScrollableContent(
                             context,
                             state,
                             controller,
@@ -230,10 +232,8 @@ class PupilIdentityStreamPage extends WatchingWidget {
                             transferCounter,
                             rejectedUsers,
                           ),
-                        ),
-                      ] else ...[
-                        Expanded(
-                          child: _buildReceiverScrollableContent(
+                        ] else ...[
+                          _buildReceiverScrollableContent(
                             context,
                             state,
                             controller,
@@ -241,12 +241,11 @@ class PupilIdentityStreamPage extends WatchingWidget {
                             requestSent,
                             isTransmitting,
                           ),
-                        ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
-
                 const Gap(16),
 
                 // Action Buttons (fixed at bottom)
@@ -319,35 +318,33 @@ class PupilIdentityStreamPage extends WatchingWidget {
     int transferCounter,
     Set<String> rejectedUsers,
   ) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          // Connected Receivers Management
-          _buildReceiversSection(
-            context,
-            receivers,
-            pendingRequests,
-            activeTransfers,
-            controller,
-          ),
+    return Column(
+      children: [
+        // Connected Receivers Management
+        _buildReceiversSection(
+          context,
+          receivers,
+          pendingRequests,
+          activeTransfers,
+          controller,
+        ),
 
-          // Transfer History
-          TransferHistoryWidget(
-            transferHistory: transferHistory,
-            transferCounter: transferCounter,
-          ),
+        // Transfer History
+        TransferHistoryWidget(
+          transferHistory: transferHistory,
+          transferCounter: transferCounter,
+        ),
 
-          const Gap(16),
+        const Gap(16),
 
-          // Rejected Requests
-          RejectedRequestsWidget(
-            rejectedUsers: rejectedUsers,
-            onClearRejected: rejectedUsers.isNotEmpty
-                ? () => controller.clearRejectedUsers()
-                : null,
-          ),
-        ],
-      ),
+        // Rejected Requests
+        RejectedRequestsWidget(
+          rejectedUsers: rejectedUsers,
+          onClearRejected: rejectedUsers.isNotEmpty
+              ? () => controller.clearRejectedUsers()
+              : null,
+        ),
+      ],
     );
   }
 
@@ -360,12 +357,10 @@ class PupilIdentityStreamPage extends WatchingWidget {
     bool isTransmitting,
   ) {
     // Overlay management is now handled by registerHandler calls
-    return const SingleChildScrollView(
-      child: Column(
-        children: [
-          // Overlay will be shown instead of inline content
-        ],
-      ),
+    return const Column(
+      children: [
+        // Overlay will be shown instead of inline content
+      ],
     );
   }
 
@@ -638,6 +633,7 @@ class PupilIdentityStreamPage extends WatchingWidget {
   ) async {
     // This would typically show a dialog to enter connection code
     // For now, we'll use the imported channel name or generate one
+    // TODO: Remove this hallucination once we have a proper connection dialog
     final code = importedChannelName ?? StreamUtils.generateConnectionCode();
     controller.setChannelName(code);
     controller.startStream();

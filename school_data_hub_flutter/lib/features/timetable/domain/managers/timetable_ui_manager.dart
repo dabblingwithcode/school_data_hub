@@ -36,8 +36,9 @@ class TimetableUiManager extends ChangeNotifier {
   void selectLessonGroup(LessonGroup? lessonGroup) {
     if (_selectedLessonGroup.value != lessonGroup) {
       _selectedLessonGroup.value = lessonGroup;
-      _selectedLessonGroupIds.value =
-          lessonGroup != null ? {lessonGroup.id!} : {};
+      _selectedLessonGroupIds.value = lessonGroup != null
+          ? {lessonGroup.id!}
+          : {};
       notifyListeners();
     }
   }
@@ -179,10 +180,9 @@ class TimetableUiManager extends ChangeNotifier {
   ) {
     // If specific lesson groups are selected, return those groups (even if they don't have lessons yet)
     if (selectedGroupIds.isNotEmpty) {
-      final selectedGroups =
-          lessonGroups
-              .where((group) => selectedGroupIds.contains(group.id))
-              .toList();
+      final selectedGroups = lessonGroups
+          .where((group) => selectedGroupIds.contains(group.id))
+          .toList();
       return selectedGroups;
     }
 
@@ -195,15 +195,15 @@ class TimetableUiManager extends ChangeNotifier {
     final lessonGroupIds = <int>{};
 
     // Get all slots for this weekday
-    final slotsForWeekday =
-        timetableSlots.where((slot) => slot.day == weekday).toList();
+    final slotsForWeekday = timetableSlots
+        .where((slot) => slot.day == weekday)
+        .toList();
 
     // Get all lessons in these slots
     for (final slot in slotsForWeekday) {
-      final lessonsInSlot =
-          scheduledLessons
-              .where((lesson) => lesson.scheduledAtId == slot.id)
-              .toList();
+      final lessonsInSlot = scheduledLessons
+          .where((lesson) => lesson.scheduledAtId == slot.id)
+          .toList();
       for (final lesson in lessonsInSlot) {
         lessonGroupIds.add(lesson.lessonGroupId);
       }
@@ -226,15 +226,15 @@ class TimetableUiManager extends ChangeNotifier {
 
     // Get all slots for this time period
     final slotsForPeriod = getSlotsByTimePeriod(period, timetableSlots);
-    final slotForWeekday =
-        slotsForPeriod.where((slot) => slot.day == weekday).firstOrNull;
+    final slotForWeekday = slotsForPeriod
+        .where((slot) => slot.day == weekday)
+        .firstOrNull;
 
     if (slotForWeekday != null) {
       // Get all lessons in this time slot
-      final lessonsInSlot =
-          scheduledLessons
-              .where((lesson) => lesson.scheduledAtId == slotForWeekday.id)
-              .toList();
+      final lessonsInSlot = scheduledLessons
+          .where((lesson) => lesson.scheduledAtId == slotForWeekday.id)
+          .toList();
 
       // Add main teachers to busy list
       for (final lesson in lessonsInSlot) {

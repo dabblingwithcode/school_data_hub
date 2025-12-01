@@ -33,13 +33,8 @@ class NotificationService {
     if (_loadingNewInstance.value) {
       return;
     }
-    _log.fine(
-      '=================================================== SNACK BAR START ===================================================',
-    );
-    _log.info(message);
-    _log.fine(
-      '=================================================== SNACK BAR END ===================================================',
-    );
+
+    _log.fine('SNACK BAR MESSAGE: ${type.name} $message');
 
     _snackBar.value = NotificationData(type, message);
   }

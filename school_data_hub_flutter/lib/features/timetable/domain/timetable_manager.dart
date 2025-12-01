@@ -428,8 +428,9 @@ class TimetableManager extends ChangeNotifier {
     String period,
   ) {
     final slotsForPeriod = getSlotsByTimePeriod(period);
-    final slotForWeekday =
-        slotsForPeriod.where((slot) => slot.day == weekday).firstOrNull;
+    final slotForWeekday = slotsForPeriod
+        .where((slot) => slot.day == weekday)
+        .firstOrNull;
 
     if (slotForWeekday == null) return [];
 

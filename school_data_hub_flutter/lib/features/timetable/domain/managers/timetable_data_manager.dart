@@ -107,19 +107,15 @@ class TimetableDataManager extends ChangeNotifier {
 
   // Load data from API
   Future<void> _loadFromApi() async {
-    _log.info('Loading complete timetable data from API...');
     // Load complete timetable data
     final timetable = await _apiService.fetchCompleteTimetableData();
-    _log.info(
-      'API returned timetable: ${timetable?.name} (ID: ${timetable?.id})',
-    );
 
     if (timetable != null) {
       _timetable.value = timetable;
       _timetableSlots.value = timetable.timetableSlots ?? [];
       _scheduledLessons.value = timetable.scheduledLessons ?? [];
       _log.info(
-        'Set timetable data - slots: ${timetable.timetableSlots?.length ?? 0}, lessons: ${timetable.scheduledLessons?.length ?? 0}',
+        'Timetable data loaded: ${timetable.name} (ID: ${timetable.id}) - slots: ${timetable.timetableSlots?.length ?? 0}, lessons: ${timetable.scheduledLessons?.length ?? 0}',
       );
     } else {
       _log.info(

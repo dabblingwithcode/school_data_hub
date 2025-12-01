@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 
 class StreamActionButtons extends StatelessWidget {
   final bool isConnected;
@@ -31,11 +32,14 @@ class StreamActionButtons extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
@@ -43,12 +47,12 @@ class StreamActionButtons extends StatelessWidget {
                         strokeWidth: 2,
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Text(
                       isProcessing
                           ? 'Stream startet...'
                           : 'Verbindung wird aufgebaut...',
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ],
                 ),
@@ -60,15 +64,19 @@ class StreamActionButtons extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: hasActiveTransfers ? null : onStopStream,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      hasActiveTransfers ? Colors.grey : Colors.red,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  backgroundColor: hasActiveTransfers
+                      ? Colors.grey
+                      : AppColors.cancelButtonColor,
+                  minimumSize: const Size.fromHeight(50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 child: Text(
                   hasActiveTransfers
                       ? 'Transfer läuft - bitte warten'
                       : 'Stream beenden',
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white, fontSize: 17.0),
                 ),
               ),
             ),
