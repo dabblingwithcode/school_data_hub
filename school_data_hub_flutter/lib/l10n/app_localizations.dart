@@ -214,11 +214,11 @@ abstract class AppLocalizations {
   /// **'Lernlisten'**
   String get learningLists;
 
-  /// No description provided for @scanTools.
+  /// No description provided for @tools.
   ///
   /// In de, this message translates to:
-  /// **'Scan-Tools'**
-  String get scanTools;
+  /// **'Tools'**
+  String get tools;
 
   /// No description provided for @settings.
   ///
