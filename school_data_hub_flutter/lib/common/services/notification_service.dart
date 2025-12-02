@@ -36,7 +36,8 @@ class NotificationService {
 
     _log.fine(
       '''====================================================================================== SNACK BAR MESSAGE:
-      ${type} $message''',
+      ${type} $message
+      ''',
     );
 
     _snackBar.value = NotificationData(type, message);
@@ -47,7 +48,8 @@ class NotificationService {
 
     _log.fine(
       '''====================================================================================== INFORMATION DIALOG:
-      $message''',
+      $message
+      ''',
     );
   }
 
