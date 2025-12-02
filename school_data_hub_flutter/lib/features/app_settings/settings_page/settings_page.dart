@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
+import 'package:school_data_hub_flutter/app_utils/logs_page.dart';
 import 'package:school_data_hub_flutter/app_utils/shorebird_code_push.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
@@ -62,6 +63,15 @@ class SettingsPage extends StatelessWidget {
                     leading: const Icon(Icons.build_rounded),
                     title: Text(
                       'Patch level: ${di<ShorebirdUpdateManager>().currentPatch?.number.toString() ?? '0'}',
+                    ),
+                  ),
+                  SettingsTile.navigation(
+                    leading: const Icon(Icons.bug_report_rounded),
+                    title: const Text('Logs'),
+                    onPressed: (context) => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (ctx) => const LogViewerPage(),
+                      ),
                     ),
                   ),
                   SettingsTile.navigation(
