@@ -22,7 +22,7 @@ class SchoolDataApiService {
   /// Create or update school data
   Future<SchoolData?> postSchoolData(SchoolData schoolData) async {
     final createdSchoolData = await ClientHelper.apiCall(
-      call: () => _client.schoolData.postSchoolData(schoolData),
+      call: () => _client.admin.postSchoolData(schoolData),
       errorMessage: 'Fehler beim Speichern der Schulinformationen',
     );
     return createdSchoolData;

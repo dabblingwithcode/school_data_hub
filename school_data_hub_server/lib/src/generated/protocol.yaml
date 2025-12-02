@@ -8,6 +8,7 @@ admin:
   - updateBackendPupilDataState:
   - importCompetencesFromJsonFile:
   - importSupportCategoriesFromJsonFile:
+  - postSchoolData:
 missedSchoolday:
   - streamMissedSchooldays:
   - postMissedSchoolday:
@@ -130,7 +131,6 @@ pupilUpdate:
   - updateSchoolyearHeldBackDate:
   - updateAfterSchoolCare:
 schoolData:
-  - postSchoolData:
   - getSchoolData:
 schoolList:
   - fetchSchoolLists:

@@ -301,4 +301,10 @@ class AdminEndpoint extends Endpoint {
 
     return processedCategories;
   }
+
+  Future<SchoolData> postSchoolData(
+      Session session, SchoolData schoolData) async {
+    final schooldataInDb = await session.db.insertRow(schoolData);
+    return schooldataInDb;
+  }
 }
