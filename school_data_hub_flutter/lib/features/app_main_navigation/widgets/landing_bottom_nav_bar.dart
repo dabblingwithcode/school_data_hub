@@ -242,7 +242,7 @@ class _MainMenuBottomNavigationState extends State<MainMenuBottomNavigation> {
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.build_rounded),
-              label: locale.scanTools,
+              label: locale.tools,
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.settings),
