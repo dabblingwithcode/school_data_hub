@@ -9,6 +9,7 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/grades_widget.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
 import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
@@ -32,19 +33,15 @@ class WorkbookCard extends WatchingWidget {
         color: Colors.white,
         surfaceTintColor: Colors.white,
         child: InkWell(
-          // onTap: () {
-          //   Navigator.of(context).push(MaterialPageRoute(
-          //     builder: (ctx) => SchoolListPupils(
-          //       workbook,
-          //     ),
-          //   ));
-          // },
           onLongPress: () async {
-            // if (!di<SessionManager>().isAdmin.value) {
-            //   informationDialog(context, 'Keine Berechtigung',
-            //       'Arbeitshefte können nur von Admins bearbeitet werden!');
-            //   return;
-            // }
+            if (!di<HubSessionManager>().isAdmin) {
+              informationDialog(
+                context,
+                'Keine Berechtigung',
+                'Arbeitshefte können nur von Admins bearbeitet werden!',
+              );
+              return;
+            }
             final bool? result = await confirmationDialog(
               context: context,
               title: 'Arbeitsheft löschen',
@@ -92,7 +89,7 @@ class WorkbookCard extends WatchingWidget {
                         // await di<WorkbookManager>()
                         //     .deleteWorkbookFile(workbook.isbn);
                       },
-                      child: workbook.imageUrl != null
+                      child: workbook.imageUrl.isNotEmpty
                           ? UnencryptedImageInCard(
                               cacheKey: workbook.isbn.toString(),
                               path: workbook.imageUrl,

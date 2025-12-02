@@ -1,4 +1,5 @@
 import 'package:school_data_hub_server/src/generated/protocol.dart';
+import 'package:school_data_hub_server/src/helpers/hub_document_helper.dart';
 import 'package:school_data_hub_server/src/schemas/pupil_schemas.dart';
 import 'package:serverpod/serverpod.dart';
 
@@ -112,6 +113,42 @@ class PupilBookLendingEndpoint extends Endpoint {
     final pupil = await PupilData.db.findFirstRow(session,
         where: (t) => t.id.equals(pupilBookLending.pupilId),
         include: PupilSchemas.allInclude);
+    return pupil!;
+  }
+
+  Future<PupilData> addFileToPupilBookLending(
+    Session session,
+    String lendingId,
+    String filePath,
+    String createdBy,
+  ) async {
+    final pupilBookLending = await PupilBookLending.db.findFirstRow(
+      session,
+      where: (t) => t.lendingId.equals(lendingId),
+    );
+    if (pupilBookLending == null) {
+      throw Exception('Pupil book lending with id $lendingId does not exist.');
+    }
+    final document = HubDocumentHelper().createHubDocumentObject(
+      session: session,
+      createdBy: createdBy,
+      path: filePath,
+    );
+
+    final documentInDatabase = await HubDocument.db.insertRow(
+      session,
+      document,
+    );
+    await PupilBookLending.db.attachRow.pupilBookLendingFiles(
+      session,
+      pupilBookLending,
+      documentInDatabase,
+    );
+    final pupil = await PupilData.db.findById(
+      session,
+      pupilBookLending.pupilId,
+      include: PupilSchemas.allInclude,
+    );
     return pupil!;
   }
 }

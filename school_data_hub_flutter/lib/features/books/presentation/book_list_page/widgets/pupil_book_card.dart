@@ -4,13 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/audio_recorder_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/document_audio.dart';
 import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class PupilBookCard extends WatchingWidget {
@@ -193,6 +197,30 @@ class PupilBookCard extends WatchingWidget {
                           ],
                         ),
                         const Gap(10),
+                        // Audio recordings
+                        if (pupilBook.pupilBookLendingFiles != null)
+                          for (var file in pupilBook.pupilBookLendingFiles!)
+                            if (file.documentId.endsWith('.m4a') ||
+                                file.documentId.endsWith('.mp3')) ...[
+                              const Gap(5),
+                              DocumentAudio(
+                                  documentId: file.documentId, decrypt: true),
+                            ],
+
+                        const Gap(5),
+                        InkWell(
+                          onTap: () async {
+                            final File? file =
+                                await showAudioRecorderDialog(context);
+                            if (file == null) return;
+                            await di<PupilManager>().addFileToPupilBookLending(
+                              pupilBookLending: pupilBook,
+                              file: file,
+                            );
+                          },
+                          child: const Icon(Icons.mic,
+                              color: AppColors.interactiveColor),
+                        ),
                       ],
                     ),
                   ),

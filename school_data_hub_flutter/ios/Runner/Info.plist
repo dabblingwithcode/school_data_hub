@@ -60,5 +60,7 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Diese App benötigt Zugriff auf das Mikrofon, um Audioaufnahmen für Arbeitshefte zu erstellen.</string>
 </dict>
 </plist>

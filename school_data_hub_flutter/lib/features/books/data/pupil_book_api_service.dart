@@ -12,12 +12,11 @@ class PupilBookApiService {
     required String lentBy,
   }) async {
     final pupil = await ClientHelper.apiCall(
-      call:
-          () => _client.pupilBookLending.postPupilBookLending(
-            pupilId,
-            libraryId,
-            lentBy,
-          ),
+      call: () => _client.pupilBookLending.postPupilBookLending(
+        pupilId,
+        libraryId,
+        lentBy,
+      ),
       errorMessage: 'Fehler beim Erstellen des Leihvorgangs',
     );
     return pupil;
@@ -41,6 +40,23 @@ class PupilBookApiService {
     final pupil = await ClientHelper.apiCall(
       call: () => _client.pupilBookLending.deletePupilBookLending(lendingId),
       errorMessage: 'Fehler beim Löschen des Leihvorgangs',
+    );
+    return pupil;
+  }
+
+  //- add file to pupil book lending
+  Future<PupilData?> addFileToPupilBookLending({
+    required String pupilBookLendingId,
+    required String filePath,
+    required String createdBy,
+  }) async {
+    final pupil = await ClientHelper.apiCall(
+      call: () => _client.pupilBookLending.addFileToPupilBookLending(
+        pupilBookLendingId,
+        filePath,
+        createdBy,
+      ),
+      errorMessage: 'Fehler beim Hinzufügen der Datei zum Leihvorgang',
     );
     return pupil;
   }

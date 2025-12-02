@@ -7,7 +7,10 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
+import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/data/pupil_book_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/data/pupil_data_api_service.dart';
@@ -378,6 +381,42 @@ class PupilManager extends ChangeNotifier {
     _pupilIdPupilsMap[pupil.id!]!.updatePupil(pupil);
 
     return;
+  }
+
+  Future<void> addFileToPupilBookLending({
+    required PupilBookLending pupilBookLending,
+    required File file,
+  }) async {
+    final encryptedFile = await customEncrypter.encryptFile(file);
+    final pathInfo = await ClientFileUpload.uploadFile(
+      encryptedFile,
+      ServerStorageFolder.documents,
+    );
+
+    if (pathInfo.path == null || !pathInfo.success) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Upload fehlgeschlagen',
+      );
+      return;
+    }
+
+    final result = await ClientHelper.apiCall(
+      call: () => _pupilBookApiService.addFileToPupilBookLending(
+        pupilBookLendingId: pupilBookLending.lendingId,
+        filePath: pathInfo.path!,
+        createdBy: _hubSessionManager.userName!,
+      ),
+    );
+    if (result == null) {
+      return;
+    }
+    updatePupilProxyWithPupilData(result);
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Datei hinzugefügt',
+    );
   }
 
   //- IMPORT FUNCTIONS

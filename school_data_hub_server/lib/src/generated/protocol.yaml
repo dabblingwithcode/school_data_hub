@@ -60,6 +60,7 @@ pupilBookLending:
   - fetchPupilBookLendingByLendingId:
   - updatePupilBookLending:
   - deletePupilBookLending:
+  - addFileToPupilBookLending:
 competenceCheck:
   - postCompetenceCheck:
   - updateCompetenceCheck:
