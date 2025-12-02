@@ -1,5 +1,8 @@
 import 'package:logging/logging.dart';
+import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
+import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/filters/attendance_pupil_filter.dart';
@@ -33,6 +36,21 @@ final _log = Logger('[Init][OnUserAuth]');
 
 class InitOnUserAuth {
   static Future<void> registerManagers() async {
+    if (await HubSecureStorage().containsKey(
+      di<EnvManager>().storageKeyForMatrixCredentials,
+    )) {
+      _log.info(' Matrix credentials found');
+      // Only register matrix managers if they're not already registered
+      if (!di.hasScope(DiScope.onMatrixEnvScope.name)) {
+        await InitManager.registerMatrixManagers();
+      } else {
+        _log.info(' Matrix managers already registered, skipping registration');
+        // Ensure session configured flag is set even if skipping registration
+        di<HubSessionManager>().setIsMatrixSessionConfigured(true);
+      }
+    } else {
+      _log.info(' No matrix credentials found');
+    }
     di.registerSingletonAsync<PupilIdentityManager>(() async {
       final pupilIdentityManager = PupilIdentityManager();
 

@@ -159,18 +159,6 @@ class EnvManager with ChangeNotifier {
     _envIsReady.value = true;
     await InitManager.pushActiveEnvScopeAndRegisterDependentManagers();
 
-    if (await HubSecureStorage().containsKey(storageKeyForMatrixCredentials)) {
-      // Only register matrix managers if they're not already registered
-      if (!di.hasScope(DiScope.onMatrixEnvScope.name)) {
-        await InitManager.registerMatrixManagers();
-      } else {
-        _log.info(
-          '[DI] Matrix managers already registered, skipping registration',
-        );
-        // Ensure session configured flag is set even if skipping registration
-        di<HubSessionManager>().setIsMatrixSessionConfigured(true);
-      }
-    }
     return;
   }
 
@@ -338,42 +326,42 @@ class EnvManager with ChangeNotifier {
     }
 
     _log.info(
-      '[DI] Environment-dependent managers are ready for: ${_activeEnv!.serverName}',
+      'Environment-dependent managers are ready for: ${_activeEnv!.serverName}',
     );
 
-    // Handle matrix credentials if they exist
-    if (await HubSecureStorage().containsKey(storageKeyForMatrixCredentials)) {
-      _log.info(
-        '[DI] Found matrix credentials for environment ${_activeEnv!.serverName}',
-      );
+    // // Handle matrix credentials if they exist
+    // if (await HubSecureStorage().containsKey(storageKeyForMatrixCredentials)) {
+    //   _log.info(
+    //     '[DI] Found matrix credentials for environment ${_activeEnv!.serverName}',
+    //   );
 
-      // Only register matrix managers if they're not already registered
-      final hasMatrixScope = di.hasScope(DiScope.onMatrixEnvScope.name);
-      _log.info(
-        '[DI] Environment ${_activeEnv!.serverName}: hasMatrixScope = $hasMatrixScope',
-      );
+    //   // Only register matrix managers if they're not already registered
+    //   final hasMatrixScope = di.hasScope(DiScope.onMatrixEnvScope.name);
+    //   _log.info(
+    //     '[DI] Environment ${_activeEnv!.serverName}: hasMatrixScope = $hasMatrixScope',
+    //   );
 
-      if (!hasMatrixScope) {
-        _log.info(
-          '[DI] Registering matrix managers for environment ${_activeEnv!.serverName}',
-        );
-        await InitManager.registerMatrixManagers();
-      } else {
-        _log.info(
-          '[DI] Matrix managers already registered, skipping registration',
-        );
-        // Ensure session configured flag is set even if skipping registration
-        di<HubSessionManager>().setIsMatrixSessionConfigured(true);
-      }
-    } else {
-      _log.info(
-        '[DI] No matrix credentials found for environment ${_activeEnv!.serverName}',
-      );
-    }
+    //   if (!hasMatrixScope) {
+    //     _log.info(
+    //       '[DI] Registering matrix managers for environment ${_activeEnv!.serverName}',
+    //     );
+    //     await InitManager.registerMatrixManagers();
+    //   } else {
+    //     _log.info(
+    //       '[DI] Matrix managers already registered, skipping registration',
+    //     );
+    //     // Ensure session configured flag is set even if skipping registration
+    //     di<HubSessionManager>().setIsMatrixSessionConfigured(true);
+    //   }
+    // } else {
+    //   _log.info(
+    //     '[DI] No matrix credentials found for environment ${_activeEnv!.serverName}',
+    //   );
+    // }
 
     // Wait for all DI registrations to be ready
-    _log.info('[DI] Waiting for all managers to be ready...');
-    await di.allReady();
+    // _log.info('[DI] Waiting for all managers to be ready...');
+    // await di.allReady();
 
     // Set environment as ready
     _envIsReady.value = true;
@@ -441,12 +429,12 @@ class EnvManager with ChangeNotifier {
               return;
             }
 
-            // Try to get the session manager - this will throw if not ready
-            final sessionManager = di<HubSessionManager>();
+            // // Try to get the session manager - this will throw if not ready
+            // final sessionManager = di<HubSessionManager>();
 
-            // The session manager should handle the auto-login
-            // This will set the authentication status appropriately
-            await sessionManager.initialize();
+            // // The session manager should handle the auto-login
+            // // This will set the authentication status appropriately
+            // await sessionManager.initialize();
 
             _log.info('Auto-login completed successfully');
           } catch (sessionError) {
