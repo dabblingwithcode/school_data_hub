@@ -33,12 +33,9 @@ class NotificationService {
     if (_loadingNewInstance.value) {
       return;
     }
+
     _log.fine(
-      '=================================================== SNACK BAR START ===================================================',
-    );
-    _log.info(message);
-    _log.fine(
-      '=================================================== SNACK BAR END ===================================================',
+      '====================================================================================== SNACK BAR MESSAGE: ${type.name} $message',
     );
 
     _snackBar.value = NotificationData(type, message);
@@ -46,12 +43,9 @@ class NotificationService {
 
   void showInformationDialog(String message) {
     _snackBar.value = NotificationData(NotificationType.dialog, message);
+
     _log.fine(
-      '=================================================== INFORMATION DIALOG START ===================================================',
-    );
-    _log.info(message);
-    _log.fine(
-      '=================================================== INFORMATION DIALOG END ===================================================',
+      '====================================================================================== INFORMATION DIALOG: $message',
     );
   }
 
