@@ -42,10 +42,17 @@ class InitManager {
       return updateManager;
     });
 
-    di.registerSingleton<EnvManager>(EnvManager());
+    di.registerSingletonAsync<EnvManager>(() async {
+      final envManager = EnvManager();
+      await envManager.init();
+
+      return envManager;
+    });
   }
 
   static Future<void> pushActiveEnvScopeAndRegisterDependentManagers() async {
+    // We have a race condition, let's wait a bit to ensure EnvManager is registered
+    await Future.delayed(const Duration(milliseconds: 100));
     if (di.hasScope(DiScope.onActiveEnvScope.name)) {
       _log.warning(
         'Active environment scope already exists, skipping registration',

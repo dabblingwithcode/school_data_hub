@@ -206,6 +206,27 @@ Widget statisticsGroupCard(
           const Gap(5),
           Row(
             children: [
+              const Text(
+                'Verbleiber*innen:',
+                style: TextStyle(color: Colors.black, fontSize: 18),
+              ),
+              const Gap(5),
+              Text(
+                controller
+                    .pupilsWithSchoolyearHeldBack(group)
+                    .length
+                    .toString(),
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ],
+          ),
+          const Gap(5),
+          Row(
+            children: [
               const Icon(Icons.support_rounded, color: Colors.red),
               const Gap(10),
               const Text(

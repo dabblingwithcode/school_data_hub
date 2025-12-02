@@ -55,8 +55,9 @@ class ChartPageBottomBar extends StatelessWidget {
                   child: NavigationBar(
                     elevation: 0,
                     backgroundColor: Colors.transparent,
-                    indicatorColor:
-                        Theme.of(context).colorScheme.secondaryContainer,
+                    indicatorColor: Theme.of(
+                      context,
+                    ).colorScheme.secondaryContainer,
                     selectedIndex: selectedIndex,
                     onDestinationSelected: onDestinationSelected,
                     destinations: const [
@@ -73,7 +74,7 @@ class ChartPageBottomBar extends StatelessWidget {
                       NavigationDestination(
                         icon: Icon(Icons.access_time_outlined),
                         selectedIcon: Icon(Icons.access_time),
-                        label: 'Anwesenheit',
+                        label: 'Fehlzeiten',
                       ),
                     ],
                   ),

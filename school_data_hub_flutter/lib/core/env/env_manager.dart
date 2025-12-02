@@ -132,6 +132,7 @@ class EnvManager with ChangeNotifier {
 
   Future<EnvManager> init() async {
     await firstRun();
+    InitManager.pushActiveEnvScopeAndRegisterDependentManagers();
     return this;
   }
 
@@ -156,15 +157,11 @@ class EnvManager with ChangeNotifier {
     notifyListeners();
     _log.info('Default Environment set: $_defaultEnv');
 
-    await InitManager.pushActiveEnvScopeAndRegisterDependentManagers();
-    await di.allReady();
-
     _envIsReady.value = true;
-
     if (await HubSecureStorage().containsKey(storageKeyForMatrixCredentials)) {
       // Only register matrix managers if they're not already registered
       if (!di.hasScope(DiScope.onMatrixEnvScope.name)) {
-        await InitManager.registerMatrixManagers();
+        InitManager.registerMatrixManagers();
       } else {
         _log.info(
           '[DI] Matrix managers already registered, skipping registration',

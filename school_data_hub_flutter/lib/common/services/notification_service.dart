@@ -41,12 +41,9 @@ class NotificationService {
 
   void showInformationDialog(String message) {
     _snackBar.value = NotificationData(NotificationType.dialog, message);
+
     _log.fine(
-      '=================================================== INFORMATION DIALOG START ===================================================',
-    );
-    _log.info(message);
-    _log.fine(
-      '=================================================== INFORMATION DIALOG END ===================================================',
+      '====================================================================================== INFORMATION DIALOG: $message',
     );
   }
 

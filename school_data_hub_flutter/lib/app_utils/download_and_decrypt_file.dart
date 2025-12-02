@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:path/path.dart' as p;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
@@ -29,7 +30,9 @@ Future<File?> downloadAndDecryptFile({
         : customEncrypter.decryptTheseBytes(fileBytes);
 
     final tempDir = await Directory.systemTemp.createTemp();
-    final tempFile = File('${tempDir.path}/decrypted_${documentId.hashCode}');
+    final extension = p.extension(documentId);
+    final tempFile =
+        File('${tempDir.path}/decrypted_${documentId.hashCode}$extension');
     await tempFile.writeAsBytes(decryptedBytes);
     return tempFile;
   }
@@ -53,7 +56,8 @@ Future<File?> downloadAndDecryptFile({
 
   if (!decrypt) {
     final tempDir = await Directory.systemTemp.createTemp();
-    final tempFile = File('${tempDir.path}/${documentId.hashCode}');
+    final extension = p.extension(documentId);
+    final tempFile = File('${tempDir.path}/${documentId.hashCode}$extension');
     await tempFile.writeAsBytes(fileBytes);
     return tempFile;
   }
@@ -63,7 +67,9 @@ Future<File?> downloadAndDecryptFile({
       : customEncrypter.decryptTheseBytes(fileBytes);
 
   final tempDir = await Directory.systemTemp.createTemp();
-  final tempFile = File('${tempDir.path}/decrypted_${documentId.hashCode}');
+  final extension = p.extension(documentId);
+  final tempFile =
+      File('${tempDir.path}/decrypted_${documentId.hashCode}$extension');
   await tempFile.writeAsBytes(decryptedBytes);
   return tempFile;
 }

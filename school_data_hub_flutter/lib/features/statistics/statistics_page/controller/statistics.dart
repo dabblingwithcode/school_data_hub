@@ -138,6 +138,16 @@ class StatisticsController extends State<Statistics> {
     return groupPupils;
   }
 
+  List<PupilProxy> pupilsWithSchoolyearHeldBack(List<PupilProxy> givenPupils) {
+    List<PupilProxy> groupPupils = [];
+    for (PupilProxy pupil in givenPupils) {
+      if (pupil.schoolyearHeldBackAt != null) {
+        groupPupils.add(pupil);
+      }
+    }
+    return groupPupils;
+  }
+
   List<PupilProxy> schoolyearInaGivenGroup(
     List<PupilProxy> group,
     String schoolyear,

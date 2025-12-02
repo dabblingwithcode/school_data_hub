@@ -200,26 +200,30 @@ class PupilBookCard extends WatchingWidget {
                         // Audio recordings
                         if (pupilBook.pupilBookLendingFiles != null)
                           for (var file in pupilBook.pupilBookLendingFiles!)
-                            if (file.documentId.endsWith('.m4a') ||
-                                file.documentId.endsWith('.mp3')) ...[
+                            if (file.documentId != null) ...[
                               const Gap(5),
                               DocumentAudio(
-                                  documentId: file.documentId, decrypt: true),
+                                documentId: file.documentId,
+                                decrypt: true,
+                              ),
                             ],
 
                         const Gap(5),
                         InkWell(
                           onTap: () async {
-                            final File? file =
-                                await showAudioRecorderDialog(context);
+                            final File? file = await showAudioRecorderDialog(
+                              context,
+                            );
                             if (file == null) return;
                             await di<PupilManager>().addFileToPupilBookLending(
                               pupilBookLending: pupilBook,
                               file: file,
                             );
                           },
-                          child: const Icon(Icons.mic,
-                              color: AppColors.interactiveColor),
+                          child: const Icon(
+                            Icons.mic,
+                            color: AppColors.interactiveColor,
+                          ),
                         ),
                       ],
                     ),

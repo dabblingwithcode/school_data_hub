@@ -8,7 +8,6 @@ import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:school_data_hub_flutter/app_utils/logger/logrecord_formatter.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:school_data_hub_flutter/core/router/app_router.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
@@ -51,7 +50,7 @@ void main() async {
   );
 
   await InitManager.registerCoreManagers();
-  await di<EnvManager>().init();
+
   await di.allReady();
 
   di.registerSingleton<AppRouter>(AppRouter());

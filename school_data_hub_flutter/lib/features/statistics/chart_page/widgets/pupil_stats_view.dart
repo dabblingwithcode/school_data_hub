@@ -162,17 +162,6 @@ class _PupilStatsViewState extends State<PupilStatsView> {
                         changedListener: _onSelectionChanged,
                       ),
                     ],
-                    behaviors: [
-                      charts.ChartTitle(
-                        'Schüler*innen',
-                        titleStyleSpec: const charts.TextStyleSpec(
-                          fontSize: 16,
-                        ),
-                        behaviorPosition: charts.BehaviorPosition.start,
-                        titleOutsideJustification:
-                            charts.OutsideJustification.middleDrawArea,
-                      ),
-                    ],
                   );
                 },
               ),
