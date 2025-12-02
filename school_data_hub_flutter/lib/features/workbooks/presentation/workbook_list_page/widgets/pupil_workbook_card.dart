@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialo
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/grades_widget.dart';
-import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
+import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/enums.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/widgets/competence_check_dropdown.dart';
@@ -80,7 +80,9 @@ class PupilWorkbookCard extends WatchingWidget {
                       children: [
                         InkWell(
                           onTap: () async {
-                            final File? file = await createImageFile(context);
+                            final File? file = await createAndCropImageFile(
+                              context,
+                            );
                             if (file == null) return;
                             // TODO: Uncomment when API is ready
                             di<NotificationService>().showSnackBar(

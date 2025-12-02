@@ -10,7 +10,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_picker.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/document_image.dart';
-import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
+import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
@@ -233,7 +233,9 @@ class PupilSchooldayEventCard extends StatelessWidget {
                       children: [
                         InkWell(
                           onTap: () async {
-                            final File? file = await createImageFile(context);
+                            final File? file = await createAndCropImageFile(
+                              context,
+                            );
                             if (file == null) return;
                             await _schooldayEventManager
                                 .updateSchooldayEventFile(
@@ -295,7 +297,9 @@ class PupilSchooldayEventCard extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: () async {
-                          final File? file = await createImageFile(context);
+                          final File? file = await createAndCropImageFile(
+                            context,
+                          );
                           if (file == null) return;
                           await _schooldayEventManager.updateSchooldayEventFile(
                             imageFile: file,

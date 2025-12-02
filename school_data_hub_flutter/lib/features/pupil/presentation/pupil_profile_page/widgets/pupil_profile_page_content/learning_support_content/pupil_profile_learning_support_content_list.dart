@@ -12,7 +12,7 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/document_image.dart';
-import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
+import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
@@ -142,7 +142,9 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                   children: [
                     InkWell(
                       onTap: () async {
-                        final File? file = await createImageFile(context);
+                        final File? file = await createAndCropImageFile(
+                          context,
+                        );
                         if (file == null) return;
 
                         await _uploadFileToPreSchoolMedical(file, pupil);

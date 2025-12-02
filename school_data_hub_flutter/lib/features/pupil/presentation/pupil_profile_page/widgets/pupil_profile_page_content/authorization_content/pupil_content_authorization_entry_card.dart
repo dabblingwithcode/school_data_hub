@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/common/widgets/custom_checkbox_either_or
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/document_image.dart';
-import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
+import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/presentation/authorization_pupils_page/authorization_pupils_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -54,10 +54,8 @@ class PupilContentAuthorizationEntryCard extends WatchingWidget {
                               onTap: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder:
-                                        (ctx) => AuthorizationPupilsPage(
-                                          authorization,
-                                        ),
+                                    builder: (ctx) =>
+                                        AuthorizationPupilsPage(authorization),
                                   ),
                                 );
                               },
@@ -118,7 +116,9 @@ class PupilContentAuthorizationEntryCard extends WatchingWidget {
                         children: [
                           InkWell(
                             onTap: () async {
-                              final File? file = await createImageFile(context);
+                              final File? file = await createAndCropImageFile(
+                                context,
+                              );
                               if (file == null) return;
                               await _authorizationManager
                                   .addFileToPupilAuthorization(
@@ -141,22 +141,21 @@ class PupilContentAuthorizationEntryCard extends WatchingWidget {
                                     pupilAuthorization.file!.documentId,
                                   );
                             },
-                            child:
-                                pupilAuthorization.fileId != null
-                                    ? DocumentImage(
-                                      documentId:
-                                          pupilAuthorization.file!.documentId,
-                                      size: 70,
-                                    )
-                                    : SizedBox(
-                                      height: 70,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(5),
-                                        child: Image.asset(
-                                          'assets/document_camera.png',
-                                        ),
+                            child: pupilAuthorization.fileId != null
+                                ? DocumentImage(
+                                    documentId:
+                                        pupilAuthorization.file!.documentId,
+                                    size: 70,
+                                  )
+                                : SizedBox(
+                                    height: 70,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(5),
+                                      child: Image.asset(
+                                        'assets/document_camera.png',
                                       ),
                                     ),
+                                  ),
                           ),
                         ],
                       ),
@@ -234,10 +233,9 @@ class PupilContentAuthorizationEntryCard extends WatchingWidget {
                                 .updatePupilAuthorization(
                                   pupilId: pupil.pupilId,
                                   authorizationId: authorization.id!,
-                                  comment:
-                                      authorizationComment == ''
-                                          ? null
-                                          : authorizationComment,
+                                  comment: authorizationComment == ''
+                                      ? null
+                                      : authorizationComment,
                                 );
                           },
                           child: Text(

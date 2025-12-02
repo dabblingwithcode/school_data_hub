@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/document_image.dart';
-import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
+import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
@@ -51,10 +51,9 @@ class AvatarAuthValues extends WatchingWidget {
           Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color:
-                  avatarAuth != null
-                      ? Colors.green.withValues(alpha: 0.1)
-                      : Colors.red.withValues(alpha: 0.1),
+              color: avatarAuth != null
+                  ? Colors.green.withValues(alpha: 0.1)
+                  : Colors.red.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(
@@ -85,10 +84,9 @@ class AvatarAuthValues extends WatchingWidget {
                       : 'Keine Einwilligung',
                   style: TextStyle(
                     fontSize: 12,
-                    color:
-                        avatarAuth != null
-                            ? Colors.green.withValues(alpha: 0.8)
-                            : Colors.red.withValues(alpha: 0.8),
+                    color: avatarAuth != null
+                        ? Colors.green.withValues(alpha: 0.8)
+                        : Colors.red.withValues(alpha: 0.8),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -99,7 +97,7 @@ class AvatarAuthValues extends WatchingWidget {
           // Document Image
           InkWell(
             onTap: () async {
-              final File? file = await createImageFile(context);
+              final File? file = await createAndCropImageFile(context);
               if (file == null) return;
               await PupilMutator().updatePupilDocument(
                 imageFile: file,
@@ -138,29 +136,24 @@ class AvatarAuthValues extends WatchingWidget {
                   width: 1,
                 ),
               ),
-              child:
-                  avatarAuthId != null
-                      ? DocumentImage(
-                        documentId: avatarAuth!.documentId,
-                        size: 50, // Reduced from 70 to 50
-                      )
-                      : Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          color: AppColors.backgroundColor.withValues(
-                            alpha: 0.1,
-                          ),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Icon(
-                          Icons.add_a_photo,
-                          color: AppColors.backgroundColor.withValues(
-                            alpha: 0.6,
-                          ),
-                          size: 24,
-                        ),
+              child: avatarAuthId != null
+                  ? DocumentImage(
+                      documentId: avatarAuth!.documentId,
+                      size: 50, // Reduced from 70 to 50
+                    )
+                  : Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(
+                        color: AppColors.backgroundColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(6),
                       ),
+                      child: Icon(
+                        Icons.add_a_photo,
+                        color: AppColors.backgroundColor.withValues(alpha: 0.6),
+                        size: 24,
+                      ),
+                    ),
             ),
           ),
         ],

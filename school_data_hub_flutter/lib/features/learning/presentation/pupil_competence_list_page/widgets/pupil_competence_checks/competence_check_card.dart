@@ -13,7 +13,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_pi
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/document_image.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
-import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
+import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
@@ -294,7 +294,9 @@ class CompetenceCheckCard extends StatelessWidget {
                         children: [
                           InkWell(
                             onTap: () async {
-                              final File? file = await createImageFile(context);
+                              final File? file = await createAndCropImageFile(
+                                context,
+                              );
                               if (file == null) return;
                               await di<CompetenceManager>()
                                   .addFileToCompetenceCheck(

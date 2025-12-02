@@ -10,7 +10,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
-import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
+import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_helper.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
@@ -140,7 +140,9 @@ class BookCard extends WatchingWidget {
                       children: [
                         InkWell(
                           onTap: () async {
-                            final File? file = await createImageFile(context);
+                            final File? file = await createAndCropImageFile(
+                              context,
+                            );
                             if (file == null) return;
                             // TODO: Uncomment this when the API is ready ?
                             // await di<BookManager>()

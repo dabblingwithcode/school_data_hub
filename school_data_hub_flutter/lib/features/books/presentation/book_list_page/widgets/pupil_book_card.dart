@@ -6,7 +6,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
+import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
@@ -72,7 +72,9 @@ class PupilBookCard extends WatchingWidget {
                   children: [
                     InkWell(
                       onTap: () async {
-                        final File? file = await createImageFile(context);
+                        final File? file = await createAndCropImageFile(
+                          context,
+                        );
                         if (file == null) return;
                         // TODO: Uncomment this when the API is ready ?
                         // await di<WorkbookManager>()
