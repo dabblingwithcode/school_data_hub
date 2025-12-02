@@ -78,6 +78,7 @@ dependencies:
   msix: ^3.16.12
   uml_for_serverpod: ^0.0.5
   community_charts_flutter: ^1.0.4
+  go_router: ^17.0.0
 
 
 dev_dependencies:
