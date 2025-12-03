@@ -31,6 +31,7 @@ Please think out loud and provide
 ## Dart and flutter rules
 
 - Don't use print() statements!!! Implement or use instead final _log = Logger(<ClassName>);
+- Always prefer WatchingWidget and createOnce functions for local state over StatefulWidget
 - Always prefer using watch functions over ListenableBuilder
 - always use package import even for our project files
   - Comply to the always_use_package_imports rule
