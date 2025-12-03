@@ -88,6 +88,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
     ..._groupFilters,
     ...genderFilters,
     ...religionCourseFilters,
+    ...familyLanguageFilters,
     _textFilter,
   ];
 
@@ -167,6 +168,9 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
     bool isAnyReligionCourseFilterActive = religionCourseFilters.any(
       (filter) => filter.isActive,
     );
+    bool isAnyFamilyLanguageFilterActive = familyLanguageFilters.any(
+      (filter) => filter.isActive,
+    );
 
     bool isTextFilterActive = _textFilter.isActive;
 
@@ -218,6 +222,15 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
           );
 
       if (!isMatchedByReligionCourseFilter) {
+        if (filtersOn == false) filtersOn = true;
+        continue;
+      }
+      bool isMatchedByFamilyLanguageFilter =
+          !isAnyFamilyLanguageFilterActive ||
+          familyLanguageFilters.any(
+            (filter) => filter.isActive && filter.matches(pupil),
+          );
+      if (!isMatchedByFamilyLanguageFilter) {
         if (filtersOn == false) filtersOn = true;
         continue;
       }
@@ -419,6 +432,9 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
 
   @override
   List<Filter> get religionCourseFilters => PupilProxy.religionCourseFilters;
+
+  @override
+  List<Filter> get familyLanguageFilters => PupilProxy.familyLanguageFilters;
 
   @override
   void populateGroupFilters(List<String> groupIds) {

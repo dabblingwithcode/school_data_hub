@@ -62,6 +62,22 @@ enum ReligionCourse {
   const ReligionCourse(this.value);
 }
 
+enum FamilyLanguage {
+  turkish('Türkisch'),
+  arabic('Arabisch'),
+  albanian('Albanisch'),
+  other('Andere');
+
+  static const stringToValue = {
+    'Türkisch': FamilyLanguage.turkish,
+    'Arabisch': FamilyLanguage.arabic,
+    'Albanisch': FamilyLanguage.albanian,
+    'Andere': FamilyLanguage.other,
+  };
+  final String value;
+  const FamilyLanguage(this.value);
+}
+
 enum Gender {
   male('m'),
   female('w');

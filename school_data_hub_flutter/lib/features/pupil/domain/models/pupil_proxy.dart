@@ -37,6 +37,13 @@ class PupilProxy with ChangeNotifier {
     ReligionCourseFilter(ReligionCourse.none),
   ];
 
+  static List<FamilyLanguageFilter> familyLanguageFilters = [
+    FamilyLanguageFilter(FamilyLanguage.turkish),
+    FamilyLanguageFilter(FamilyLanguage.arabic),
+    FamilyLanguageFilter(FamilyLanguage.albanian),
+    FamilyLanguageFilter(FamilyLanguage.other),
+  ];
+
   late PupilData _pupilData;
   PupilIdentity _pupilIdentity;
 
