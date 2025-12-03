@@ -25,7 +25,9 @@ class LearningPupilListPage extends WatchingWidget {
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
       appBar: const GenericAppBar(
-          iconData: Icons.lightbulb_rounded, title: 'Lernen'),
+        iconData: Icons.lightbulb_rounded,
+        title: 'Lernen',
+      ),
       body: RefreshIndicator(
         onRefresh: () async => di<PupilManager>().updatePupilList(pupils),
         child: Center(
@@ -35,20 +37,24 @@ class LearningPupilListPage extends WatchingWidget {
               slivers: [
                 const SliverGap(5),
                 GenericSliverSearchAppBar(
-                  height: 140,
+                  height: 160,
                   title: PupilCompetenceListSearchBar(
-                      pupils: pupils, filtersOn: filtersOn),
+                    pupils: pupils,
+                    filtersOn: filtersOn,
+                  ),
                 ),
                 GenericSliverListWithEmptyListCheck(
-                    items: pupils,
-                    itemBuilder: (_, pupil) => LearningListCard(pupil)),
+                  items: pupils,
+                  itemBuilder: (_, pupil) => LearningListCard(pupil),
+                ),
               ],
             ),
           ),
         ),
       ),
-      bottomNavigationBar:
-          PupilCompetenceListBottomNavBar(filtersOn: filtersOn),
+      bottomNavigationBar: PupilCompetenceListBottomNavBar(
+        filtersOn: filtersOn,
+      ),
     );
   }
 }

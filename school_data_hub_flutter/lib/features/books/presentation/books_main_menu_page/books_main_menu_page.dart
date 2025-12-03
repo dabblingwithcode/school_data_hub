@@ -14,7 +14,6 @@ import 'package:watch_it/watch_it.dart';
 
 import '../../../../common/theme/app_colors.dart';
 import '../../../../common/widgets/dialogs/short_textfield_dialog.dart';
-import '../book_list_page/book_list_page.dart';
 import '../book_list_page/widgets/book_list_bottom_navbar.dart';
 import '../new_book_page/new_book_controller.dart';
 
@@ -44,17 +43,17 @@ class BooksMainMenuPage extends WatchingWidget {
                     ),
                   );
                 }),
-                const SizedBox(height: 20),
-                _buildButton(context, "Ausgeliehene Bücher", () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (ctx) => const BookListPage()),
-                  );
-                }),
-                const SizedBox(height: 20),
+                // const SizedBox(height: 20),
+                // _buildButton(context, "Ausgeliehene Bücher", () {
+                //   Navigator.of(context).push(
+                //     MaterialPageRoute(builder: (ctx) => const BookListPage()),
+                //   );
+                // }),
+                const SizedBox(height: 5),
                 _buildButton(context, "Buch erfassen", () async {
                   await _showNewBookDialog(context);
                 }),
-                const SizedBox(height: 20),
+                const SizedBox(height: 5),
                 _buildButton(context, "Bücher suchen", () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
