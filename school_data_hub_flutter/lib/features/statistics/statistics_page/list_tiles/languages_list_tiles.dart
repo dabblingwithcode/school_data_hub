@@ -4,57 +4,59 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/pupil_list_dialog.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
+import 'package:watch_it/watch_it.dart';
 
-languagesListTiles(context, StatisticsController controller) {
-  List<MapEntry<String, int>> sortedLanguageOccurrences =
-      controller.languageOccurrences.entries.toList()
-        ..sort((a, b) => b.value.compareTo(a.value));
+class LanguagesListTiles extends WatchingWidget {
+  final StatisticsController controller;
+  const LanguagesListTiles({required this.controller, super.key});
 
-  final List<Color> palette = [
-    Colors.blue,
-    Colors.red,
-    Colors.green,
-    Colors.orange,
-    Colors.purple,
-    Colors.teal,
-    Colors.amber,
-    Colors.indigo,
-    Colors.brown,
-    Colors.pink,
-    Colors.cyan,
-    Colors.lime,
-    Colors.deepOrange,
-    Colors.lightBlue,
-    Colors.deepPurple,
-  ];
+  @override
+  Widget build(BuildContext context) {
+    final sortedLanguageOccurrences =
+        controller.languageOccurrences.entries.toList()
+          ..sort((a, b) => b.value.compareTo(a.value));
 
-  Color getColor(int index) => palette[index % palette.length];
+    final palette = [
+      Colors.blue,
+      Colors.red,
+      Colors.green,
+      Colors.orange,
+      Colors.purple,
+      Colors.teal,
+      Colors.amber,
+      Colors.indigo,
+      Colors.brown,
+      Colors.pink,
+      Colors.cyan,
+      Colors.lime,
+      Colors.deepOrange,
+      Colors.lightBlue,
+      Colors.deepPurple,
+    ];
 
-  return ListTileTheme(
-    contentPadding: const EdgeInsets.all(0),
-    dense: true,
-    horizontalTitleGap: 0.0,
-    minLeadingWidth: 0,
-    child: ExpansionTile(
-      tilePadding: const EdgeInsets.all(0),
-      title: Row(
-        children: [
-          const Text(
-            'Sprachen',
-            style: TextStyle(color: Colors.black, fontSize: 18),
-          ),
-          const Gap(10),
-          Text(
-            sortedLanguageOccurrences.length.toString(),
-            style: const TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
-          ),
-        ],
-      ),
+    Color getColor(int index) => palette[index % palette.length];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Row(
+          children: [
+            const Text(
+              'Sprachen',
+              style: TextStyle(color: Colors.black, fontSize: 18),
+            ),
+            const Gap(10),
+            Text(
+              sortedLanguageOccurrences.length.toString(),
+              style: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+          ],
+        ),
+        const Gap(10),
         Card(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,7 +101,7 @@ languagesListTiles(context, StatisticsController controller) {
                               ),
                               const Gap(10),
                               Text(
-                                "$language:",
+                                '$language:',
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 18,
@@ -107,7 +109,7 @@ languagesListTiles(context, StatisticsController controller) {
                               ),
                               const Gap(10),
                               Text(
-                                "$occurrences",
+                                '$occurrences',
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
@@ -157,6 +159,6 @@ languagesListTiles(context, StatisticsController controller) {
           ),
         ),
       ],
-    ),
-  );
+    );
+  }
 }
