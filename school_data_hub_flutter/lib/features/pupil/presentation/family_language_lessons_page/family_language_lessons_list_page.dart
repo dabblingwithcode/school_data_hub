@@ -94,7 +94,7 @@ class FamilyLanguageLessonsListPage extends WatchingWidget {
             ),
           ),
         ),
-        bottomNavigationBar: FamilyLanguageLessonsListPageBottomNavBar(),
+        bottomNavigationBar: const FamilyLanguageLessonsListPageBottomNavBar(),
       ),
     );
   }

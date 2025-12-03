@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/pick_file_return_content_as_string.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
@@ -91,10 +92,9 @@ class ToolsPage extends WatchingWidget {
                       }
 
                       if (channelName == null || channelName.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Kein gültiger Verbindungscode.'),
-                          ),
+                        di<NotificationService>().showSnackBar(
+                          NotificationType.error,
+                          'Kein gültiger Verbindungscode.',
                         );
                         return;
                       }
@@ -116,12 +116,9 @@ class ToolsPage extends WatchingWidget {
                               labelText: 'Verbindungscode',
                             );
                             if (channelName == null || channelName.isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Kein gültiger Verbindungscode.',
-                                  ),
-                                ),
+                              di<NotificationService>().showSnackBar(
+                                NotificationType.error,
+                                'Kein gültiger Verbindungscode.',
                               );
                               return;
                             }

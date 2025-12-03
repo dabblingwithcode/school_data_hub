@@ -143,12 +143,12 @@ class SchoolDataUiManager extends ChangeNotifier {
 
   /// Debug method to print current state
   void debugPrintState() {
-    _log.info('=== SchoolDataUiManager Debug State ===');
-    _log.info('Form Data: ${_formData.value?.name ?? 'null'}');
-    _log.info('Is Form Valid: ${_isFormValid.value}');
-    _log.info('Is Form Dirty: ${_isFormDirty.value}');
-    _log.info('Selected Logo File: ${_selectedLogoFile.value ?? 'none'}');
-    _log.info('Selected Seal File: ${_selectedSealFile.value ?? 'none'}');
-    _log.info('====================================');
+    _log.info('''
+    Form Data: ${_formData.value?.name ?? 'null'}
+    Is Form Valid: ${_isFormValid.value}
+    Is Form Dirty: ${_isFormDirty.value}
+    Selected Logo File: ${_selectedLogoFile.value ?? 'none'}
+    Selected Seal File: ${_selectedSealFile.value ?? 'none'}
+    ''');
   }
 }

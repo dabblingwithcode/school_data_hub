@@ -62,16 +62,10 @@ class InitManager {
     await di.pushNewScopeAsync(
       scopeName: DiScope.onActiveEnvScope.name,
       dispose: () {
-        _log.info('Dropping scope[activeEnvScope]');
-        _log.warning(
-          '======================================================== [SCOPE] [activeEnvScope]',
-        );
+        _log.warning('[SCOPE] Dropping scope[activeEnvScope]');
       },
       init: (getIt) async {
-        _log.info('Pushing scope [activeEnvScope]');
-        _log.fine(
-          '======================================================== [SCOPE] [activeEnvScope]',
-        );
+        _log.info('[SCOPE] Pushing scope [activeEnvScope]');
 
         await InitOnActiveEnv.registerManagers();
         _log.info(
@@ -94,16 +88,10 @@ class InitManager {
     await di.pushNewScopeAsync(
       scopeName: DiScope.onLoggedInUserScope.name,
       dispose: () {
-        _log.info('Dropping scope [loggedInUserScope]');
-        _log.warning(
-          '======================================================== [SCOPE] [loggedInUserScope]',
-        );
+        _log.warning('[SCOPE] Dropping scope [loggedInUserScope]');
       },
       init: (getIt) async {
-        _log.info('Pushing scope [loggedInUserScope]');
-        _log.fine(
-          '======================================================== [SCOPE] [loggedInUserScope]',
-        );
+        _log.info('[SCOPE] Pushing scope [loggedInUserScope]');
 
         await InitOnUserAuth.registerManagers();
       },
@@ -117,17 +105,10 @@ class InitManager {
       await di.dropScope(
         DiScope.onLoggedInUserScope.name,
       ); // This will dispose the 'logged_in_user_scope'
-      _log.info('[loggedInUserScope] dropped successfully');
-      _log.warning(
-        '======================================================== [SCOPE] [loggedInUserScope]',
-      );
+      _log.info('[SCOPE] [loggedInUserScope] dropped successfully');
     } else {
       _log.severe(
-        '[loggedInUserScope] does not exist, skipping drop operation',
-        StackTrace.current,
-      );
-      _log.severe(
-        '======================================================== [SCOPE] [loggedInUserScope]',
+        '[SCOPE] [loggedInUserScope] does not exist, skipping drop operation',
       );
     }
   }
@@ -137,29 +118,19 @@ class InitManager {
 
     if (di.hasScope(DiScope.onLoggedInUserScope.name)) {
       await di.dropScope(DiScope.onLoggedInUserScope.name);
-      _log.info('[loggedInUserScope] dropped successfully');
-      _log.warning(
-        '======================================================== [SCOPE] [loggedInUserScope]',
-      );
+      _log.info('[SCOPE] [loggedInUserScope] dropped successfully');
     }
 
     if (di.hasScope(DiScope.onActiveEnvScope.name)) {
       await di.dropScope(DiScope.onActiveEnvScope.name);
-      _log.info('[activeEnvScope] dropped successfully');
-      _log.warning(
-        '======================================================== [SCOPE] [activeEnvScope]',
-      );
+      _log.info('[SCOPE] [activeEnvScope] dropped successfully');
     }
 
     // Also drop matrix scope if it exists (it's environment-dependent)
     if (di.hasScope(DiScope.onMatrixEnvScope.name)) {
-      _log.info('Matrix scope exists, dropping it...');
-      _log.warning('========================================================');
+      _log.info('[SCOPE] Matrix scope exists, dropping it...');
       await dropMatrixScope();
-      _log.info('[matrixScope] dropped successfully');
-      _log.warning(
-        '======================================================== [SCOPE] [matrixScope]',
-      );
+      _log.info('[SCOPE] [matrixScope] dropped successfully');
     }
   }
 
@@ -180,16 +151,10 @@ class InitManager {
     await di.pushNewScopeAsync(
       scopeName: DiScope.onMatrixEnvScope.name,
       dispose: () {
-        _log.fine('Dropping scope [matrixScope]');
-        _log.warning(
-          '======================================================== [SCOPE] [matrixScope]',
-        );
+        _log.warning('[SCOPE] Dropping scope [matrixScope]');
       },
       init: (getIt) async {
-        _log.info('Pushing scope [matrixScope]');
-        _log.fine(
-          '======================================================== [SCOPE] [matrixScope]',
-        );
+        _log.info('[SCOPE] Pushing scope [matrixScope]');
 
         // Register the manager inside the matrix scope
         getIt.registerLazySingletonAsync<MatrixPolicyManager>(() async {
@@ -368,15 +333,9 @@ class InitManager {
       final hasScope = di.hasScope(DiScope.onMatrixEnvScope.name);
 
       if (hasScope) {
-        _log.info('Dropping scope [matrixScope]...');
-        _log.warning(
-          '======================================================== [SCOPE] [matrixScope]',
-        );
+        _log.warning('[SCOPE] Dropping scope [matrixScope]...');
         await di.dropScope(DiScope.onMatrixEnvScope.name);
-        _log.info('[matrixScope] dropped successfully');
-        _log.warning(
-          '======================================================== [SCOPE] [matrixScope]',
-        );
+        _log.info('[SCOPE] [matrixScope] dropped successfully');
         // Add a small delay to ensure the scope is fully dropped
         // await Future.delayed(const Duration(milliseconds: 50));
 

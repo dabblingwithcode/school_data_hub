@@ -63,16 +63,15 @@ class TimetableDataManager extends ChangeNotifier {
 
   /// Debug method to print current state
   void debugPrintState() {
-    _log.info('=== TimetableDataManager Debug State ===');
     _log.info(
-      'Timetable: ${_timetable.value?.name} (ID: ${_timetable.value?.id})',
+      '''Timetable: ${_timetable.value?.name} (ID: ${_timetable.value?.id})
+      TimetableSlots: ${_timetableSlots.value.length}
+      ScheduledLessons: ${_scheduledLessons.value.length}
+      Subjects: ${_subjects.value.length}
+      Classrooms: ${_classrooms.value.length}
+      LessonGroups: ${_lessonGroups.value.length}
+      ''',
     );
-    _log.info('TimetableSlots: ${_timetableSlots.value.length}');
-    _log.info('ScheduledLessons: ${_scheduledLessons.value.length}');
-    _log.info('Subjects: ${_subjects.value.length}');
-    _log.info('Classrooms: ${_classrooms.value.length}');
-    _log.info('LessonGroups: ${_lessonGroups.value.length}');
-    _log.info('====================================');
   }
 
   void clearData() {

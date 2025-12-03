@@ -76,18 +76,11 @@ class SchoolDataManager extends ChangeNotifier {
 
   /// Debug method to print current state
   void debugPrintState() {
-    _log.info('=== SchoolDataManager Debug State ===');
     _log.info(
-      'School Data: ${_schoolData.value?.name ?? 'null'} (ID: ${_schoolData.value?.id ?? 'null'})',
+      '''School Data: ${_schoolData.value?.name ?? 'null'} (ID: ${_schoolData.value?.id ?? 'null'})
+    Logo Image: ${_logoImage.value != null ? 'loaded' : 'not loaded'}
+    Official Seal Image: ${_officialSealImage.value != null ? 'loaded' : 'not loaded'}
+    ''',
     );
-    _log.info(
-      'Logo Image: ${_logoImage.value != null ? 'loaded' : 'not loaded'}',
-    );
-    _log.info(
-      'Official Seal Image: ${_officialSealImage.value != null ? 'loaded' : 'not loaded'}',
-    );
-    _log.info('Is Loading: ${_isLoading.value}');
-    _log.info('Is Saving: ${_isSaving.value}');
-    _log.info('====================================');
   }
 }

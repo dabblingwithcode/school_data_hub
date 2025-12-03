@@ -34,11 +34,9 @@ class NotificationService {
       return;
     }
 
-    _log.fine(
-      '''====================================================================================== SNACK BAR MESSAGE:
+    _log.fine('''SNACK BAR MESSAGE:
       ${type} $message
-      ''',
-    );
+      ''');
 
     _snackBar.value = NotificationData(type, message);
   }
@@ -46,11 +44,9 @@ class NotificationService {
   void showInformationDialog(String message) {
     _snackBar.value = NotificationData(NotificationType.dialog, message);
 
-    _log.fine(
-      '''====================================================================================== INFORMATION DIALOG:
+    _log.fine('''INFORMATION DIALOG:
       $message
-      ''',
-    );
+      ''');
   }
 
   void apiRunning(bool value) {
