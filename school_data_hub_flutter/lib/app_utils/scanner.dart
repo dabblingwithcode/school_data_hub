@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:watch_it/watch_it.dart';
@@ -20,33 +19,17 @@ Future<String?> qrScanner({
 
     return null;
   }
-  return await Navigator.push(
+  final controller = MobileScannerController(
+    detectionSpeed: DetectionSpeed.normal,
+    formats: [BarcodeFormat.qrCode, BarcodeFormat.ean13],
+    facing: CameraFacing.back,
+    torchEnabled: false,
+  );
+  final result = await Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => ScannerPage(overlayText: overlayText),
-    ),
-  );
-  //return await context.push<String>('/scanner', extra: overlayText);
-}
-
-class ScannerPage extends WatchingWidget {
-  final String overlayText;
-  const ScannerPage({required this.overlayText, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final controller = createOnce(
-      () => MobileScannerController(
-        detectionSpeed: DetectionSpeed.normal,
-        formats: [BarcodeFormat.qrCode, BarcodeFormat.ean13],
-        facing: CameraFacing.back,
-        torchEnabled: false,
-      ),
-      dispose: (controller) => controller.dispose(),
-    );
-
-    return Scaffold(
-      body: Stack(
+      fullscreenDialog: true,
+      builder: (context) => Stack(
         children: [
           MobileScanner(
             controller: controller,
@@ -55,9 +38,8 @@ class ScannerPage extends WatchingWidget {
               final Barcode barcode;
               barcode = capture.barcodes[0];
 
-              if (context.mounted) {
-                context.pop(barcode.displayValue);
-              }
+              Navigator.pop(context, barcode.displayValue);
+              controller.dispose();
             },
           ),
           Positioned(
@@ -83,6 +65,7 @@ class ScannerPage extends WatchingWidget {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+  return result;
 }
