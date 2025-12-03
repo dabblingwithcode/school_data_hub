@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
@@ -30,7 +31,10 @@ class PupilIdentityHelper {
     final pupilsJson = await HubSecureStorage().getString(secureStorageKey);
     if (pupilsJson == null) return {};
 
-    final Map<String, dynamic> decodedJson = jsonDecode(pupilsJson);
+    final Map<String, dynamic> decodedJson = await compute(
+      (json) => jsonDecode(json),
+      pupilsJson,
+    );
 
     return Map<int, PupilIdentity>.fromEntries(
       decodedJson.entries.map((entry) {
@@ -114,7 +118,12 @@ class PupilIdentityHelper {
       default:
         throw Exception('Unknown school grade: ${pupilIdentityStringItems[5]}');
     }
-
+    // _log.info(
+    //   'Decoding pupil identity from string list: $pupilIdentityStringItems',
+    // );
+    // if (pupilIdentityStringItems[0] == '1668') {
+    //   debugger();
+    // }
     final newPupilIdentity = PupilIdentity(
       id: int.parse(pupilIdentityStringItems[0]),
       firstName: pupilIdentityStringItems[1],
@@ -134,15 +143,15 @@ class PupilIdentityHelper {
           : pupilIdentityStringItems[10],
       birthday: DateTime.tryParse(
         pupilIdentityStringItems[11],
-      )!.subtract(Duration(hours: 1)),
+      )!.subtract(const Duration(hours: 1)),
       migrationSupportEnds: pupilIdentityStringItems[12] == ''
           ? null
           : DateTime.tryParse(
               pupilIdentityStringItems[12],
-            )!.subtract(Duration(hours: 1)),
+            )!.subtract(const Duration(hours: 1)),
       pupilSince: DateTime.tryParse(
         pupilIdentityStringItems[13],
-      )!.subtract(Duration(hours: 1)),
+      )!.subtract(const Duration(hours: 1)),
       afterSchoolCare: pupilIdentityStringItems[14] != '' ? true : false,
       religion: pupilIdentityStringItems[15] == ''
           ? null
@@ -151,17 +160,17 @@ class PupilIdentityHelper {
           ? null
           : DateTime.tryParse(
               pupilIdentityStringItems[16],
-            )!.subtract(Duration(hours: 1)),
-      familyLanguageLessonsSince: pupilIdentityStringItems[18] == ''
+            )!.subtract(const Duration(hours: 1)),
+      familyLanguageLessonsSince: pupilIdentityStringItems[17] == ''
           ? null
           : DateTime.tryParse(
-              pupilIdentityStringItems[18],
-            )!.subtract(Duration(hours: 1)),
+              pupilIdentityStringItems[17],
+            )!.subtract(const Duration(hours: 1)),
       leavingDate: pupilIdentityStringItems[18] == ''
           ? null
           : DateTime.tryParse(
               pupilIdentityStringItems[19],
-            )?.subtract(Duration(hours: 1)),
+            )?.subtract(const Duration(hours: 1)),
     );
     return newPupilIdentity;
   }

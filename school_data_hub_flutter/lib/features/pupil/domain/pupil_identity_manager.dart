@@ -377,6 +377,7 @@ class PupilIdentityManager {
             pupilIdentity.afterSchoolCare,
             pupilIdentity.religion ?? '',
             pupilIdentity.religionLessonsSince?.formatDateForJson() ?? '',
+            pupilIdentity.familyLanguageLessonsSince?.formatDateForJson() ?? '',
             pupilIdentity.leavingDate?.formatDateForJson() ?? '',
           ].join(',') +
           ',\n';
@@ -439,9 +440,7 @@ class PupilIdentityManager {
         .streamEncryptedPupilIds(channelName)
         .listen(
           (PupilIdentityDto event) async {
-            _log.info(
-              'Received event: ${event.type} with value: ${event.value}',
-            );
+            _log.info('Received event: [${event.type}] ');
 
             switch (role) {
               //- Stream behavior for sender role
