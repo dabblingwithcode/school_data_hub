@@ -1,4 +1,6 @@
 class: PupilIdentityDto
 fields:
+  sender: String
   type: String
+  dataTimeStamp: DateTime?
   value: String

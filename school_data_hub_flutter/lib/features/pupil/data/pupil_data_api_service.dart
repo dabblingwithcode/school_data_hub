@@ -275,4 +275,13 @@ class PupilDataApiService {
     );
     return lastUpdate;
   }
+
+  Future<bool?> updateLastIdentitiesUpdate(DateTime date) async {
+    final updated = await ClientHelper.apiCall(
+      call: () => _client.pupilIdentity.updateLastPupilIdentitiesUpdate(date),
+      errorMessage:
+          'Die letzte Aktualisierung konnte nicht aktualisiert werden',
+    );
+    return updated;
+  }
 }

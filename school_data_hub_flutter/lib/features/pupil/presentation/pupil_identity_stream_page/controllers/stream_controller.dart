@@ -11,7 +11,6 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identi
 import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('StreamController');
-final _notificationService = di<NotificationService>();
 
 class PupilIdentityStreamController {
   final PupilIdentityStreamRole role;
@@ -19,6 +18,10 @@ class PupilIdentityStreamController {
   final List<int>? selectedPupilIds;
   final String? importedChannelName;
   late String channelName;
+
+  final String thisUserName = di<HubSessionManager>().user!.userInfo!.userName!;
+
+  final _notificationService = di<NotificationService>();
 
   // Controller creates and owns the state
   late final PupilIdentityStreamState state;
@@ -121,7 +124,11 @@ class PupilIdentityStreamController {
     // Send confirmation to specific receiver
     await di<Client>().pupilIdentity.sendPupilIdentityMessage(
       channelName,
-      PupilIdentityDto(type: 'confirmed', value: userName),
+      PupilIdentityDto(
+        sender: thisUserName,
+        type: 'confirmed',
+        value: userName,
+      ),
     );
   }
 
@@ -172,7 +179,11 @@ class PupilIdentityStreamController {
         );
         await di<Client>().pupilIdentity.sendPupilIdentityMessage(
           channelName,
-          PupilIdentityDto(type: 'rejected', value: rejectionValue),
+          PupilIdentityDto(
+            sender: thisUserName,
+            type: 'rejected',
+            value: rejectionValue,
+          ),
         );
         _log.info('Rejection message sent successfully to $userName');
         return; // Success, exit retry loop
@@ -212,7 +223,7 @@ class PupilIdentityStreamController {
           'Generating encrypted data for ${selectedPupilIds!.length} pupils',
         );
         dataToSend = await di<PupilIdentityManager>()
-            .generatePupilIdentitiesQrData(selectedPupilIds!);
+            .generateEncryptedPupilIdentitiesTransferString(selectedPupilIds!);
       }
 
       _log.info('Creating stream subscription...');
@@ -268,8 +279,9 @@ class PupilIdentityStreamController {
         .sendPupilIdentityMessage(
           channelName,
           PupilIdentityDto(
+            sender: thisUserName,
             type: 'joined',
-            value: di<HubSessionManager>().user!.userInfo!.userName!,
+            value: thisUserName,
           ),
         )
         .then((_) {
@@ -293,8 +305,9 @@ class PupilIdentityStreamController {
           return di<Client>().pupilIdentity.sendPupilIdentityMessage(
             channelName,
             PupilIdentityDto(
+              sender: thisUserName,
               type: 'request',
-              value: di<HubSessionManager>().user!.userInfo!.userName!,
+              value: thisUserName,
             ),
           );
         })
@@ -505,9 +518,9 @@ class PupilIdentityStreamController {
           .sendPupilIdentityMessage(
             channelName,
             PupilIdentityDto(
+              sender: thisUserName,
               type: 'close',
-              value:
-                  di<HubSessionManager>().user?.userInfo?.userName ?? 'Unknown',
+              value: thisUserName,
             ),
           )
           .ignore();
@@ -532,6 +545,7 @@ class PupilIdentityStreamController {
         await di<Client>().pupilIdentity.sendPupilIdentityMessage(
           channelName,
           PupilIdentityDto(
+            sender: thisUserName,
             type: 'shutdown',
             value: 'Sender hat den Stream beendet',
           ),
@@ -552,9 +566,9 @@ class PupilIdentityStreamController {
         await di<Client>().pupilIdentity.sendPupilIdentityMessage(
           channelName,
           PupilIdentityDto(
+            sender: thisUserName,
             type: 'close',
-            value:
-                di<HubSessionManager>().user?.userInfo?.userName ?? 'Unknown',
+            value: thisUserName,
           ),
         );
         _log.info('Sent close message to sender before leaving');

@@ -10,7 +10,6 @@ import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
@@ -22,8 +21,6 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_hel
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _envManager = di<EnvManager>();
-
 enum PupilIdentityStreamRole { sender, receiver }
 
 class PupilIdentityManager {
@@ -33,7 +30,7 @@ class PupilIdentityManager {
 
   final _log = Logger('PupilIdentityManager');
 
-  final secureStorageKey = _envManager.storageKeyForPupilIdentities;
+  final secureStorageKey = di<EnvManager>().storageKeyForPupilIdentities;
 
   Map<int, PupilIdentity> _pupilIdentities = {};
 
@@ -85,13 +82,13 @@ class PupilIdentityManager {
     await getPupilIdentitiesForEnv();
 
     _log.info(
-      'PupilIdentityManager re-initialized for environment: ${_envManager.activeEnv?.serverName}',
+      'PupilIdentityManager re-initialized for environment: ${di<EnvManager>().activeEnv?.serverName}',
     );
   }
 
   /// Checks if the manager is ready for the current environment
   bool get isReadyForCurrentEnvironment {
-    return _envManager.activeEnv != null && _pupilIdentities.isNotEmpty;
+    return di<EnvManager>().activeEnv != null && _pupilIdentities.isNotEmpty;
   }
 
   void dispose() {
@@ -114,7 +111,7 @@ class PupilIdentityManager {
   }
 
   Future<void> getPupilIdentitiesForEnv() async {
-    final activeEnv = _envManager.activeEnv!;
+    final activeEnv = di<EnvManager>().activeEnv!;
 
     final Map<int, PupilIdentity> pupilIdentities =
         await PupilIdentityHelper.readPupilIdentitiesFromStorage(
@@ -154,7 +151,7 @@ class PupilIdentityManager {
     return;
   }
 
-  Future<void> decryptAndAddOrUpdatePupilIdentities(
+  Future<void> updatePupilIdentitiesFromEncryptedSource(
     List<String> encryptedCodes,
   ) async {
     // We need the decrypted information as a string with line breaks.
@@ -166,10 +163,12 @@ class PupilIdentityManager {
       decryptedString += '${customEncrypter.decryptString(code)}\n';
     }
 
-    addOrUpdateNewPupilIdentities(identitiesInStringLines: decryptedString);
+    updatePupilIdentitiesFromUnencryptedSource(
+      identitiesInStringLines: decryptedString,
+    );
   }
 
-  Future<void> addOrUpdateNewPupilIdentities({
+  Future<void> updatePupilIdentitiesFromUnencryptedSource({
     required String identitiesInStringLines,
   }) async {
     late final String? decryptedIdentitiesAsString;
@@ -215,7 +214,7 @@ class PupilIdentityManager {
       _groups.value = availableGroups;
       di<PupilsFilter>().populateGroupFilters(availableGroups.toList());
     }
-    await _envManager.updateActiveEnv(
+    await di<EnvManager>().updateActiveEnv(
       lastIdentitiesUpdate: DateTime.now().toUtc(),
     );
     di<PupilManager>().fetchAllPupils();
@@ -237,7 +236,7 @@ class PupilIdentityManager {
     );
   }
 
-  Future<void> updateBackendPupilsFromSchoolPupilIdentitySource(
+  Future<void> updateBackendPupilsWithSchoolPupilIdentitySource(
     String textFileContent,
   ) async {
     // The pupils in the string are separated by a line break - let's split them out
@@ -307,17 +306,15 @@ class PupilIdentityManager {
     }
 
     await writePupilIdentitiesToStorage();
-    await _envManager.updateActiveEnv(
-      lastIdentitiesUpdate: DateTime.now().toUtc(),
+    // This is the new reference data for all the clients to adopt.
+    // We need to update the active environment and the backend with the new last identities update.
+    final newLastIdentitiesUpdate = DateTime.now().toUtc();
+    await di<EnvManager>().updateActiveEnv(
+      lastIdentitiesUpdate: newLastIdentitiesUpdate,
     );
-
-    await ClientHelper.apiCall(
-      call: () => di<Client>().pupilIdentity.updateLastPupilIdentitiesUpdate(
-        DateTime.now().toUtc(),
-      ),
-      errorMessage: 'Die letzte Aktualisierung konnte nicht gespeichert werden',
+    await PupilDataApiService().updateLastIdentitiesUpdate(
+      newLastIdentitiesUpdate,
     );
-
     await di<PupilManager>().fetchAllPupils();
 
     _notificationService.showSnackBar(
@@ -345,12 +342,12 @@ class PupilIdentityManager {
     );
   }
 
-  Future<String> generatePupilIdentitiesQrData(List<int> internalIds) async {
-    String qrString = '';
+  Future<String> generateEncryptedPupilIdentitiesTransferString(
+    List<int> internalIds,
+  ) async {
+    String transferString = '';
     for (int internalId in internalIds) {
-      PupilIdentity pupilIdentity = _pupilIdentities.values
-          .where((element) => element.id == internalId)
-          .single;
+      PupilIdentity pupilIdentity = _pupilIdentities[internalId]!;
       final migrationSupportEnds = pupilIdentity.migrationSupportEnds != null
           ? pupilIdentity.migrationSupportEnds!.formatDateForJson()
           : '';
@@ -374,16 +371,17 @@ class PupilIdentityManager {
             pupilIdentity.birthday.formatDateForJson(),
             migrationSupportEnds,
             pupilIdentity.pupilSince.formatDateForJson(),
-            pupilIdentity.afterSchoolCare,
+            pupilIdentity.afterSchoolCare ? 'OFFGANZ' : '',
             pupilIdentity.religion ?? '',
             pupilIdentity.religionLessonsSince?.formatDateForJson() ?? '',
+            pupilIdentity.religionLessonsCancelledAt?.formatDateForJson() ?? '',
             pupilIdentity.familyLanguageLessonsSince?.formatDateForJson() ?? '',
             pupilIdentity.leavingDate?.formatDateForJson() ?? '',
           ].join(',') +
           ',\n';
-      qrString = qrString + pupilIdentityString;
+      transferString = transferString + pupilIdentityString;
     }
-    final encryptedString = customEncrypter.encryptString(qrString);
+    final encryptedString = customEncrypter.encryptString(transferString);
     return encryptedString;
   }
 
@@ -440,7 +438,7 @@ class PupilIdentityManager {
         .streamEncryptedPupilIds(channelName)
         .listen(
           (PupilIdentityDto event) async {
-            _log.info('Received event: [${event.type}] ');
+            _log.info('Received event: [${event.type}] from ${event.sender}');
 
             switch (role) {
               //- Stream behavior for sender role
@@ -453,22 +451,22 @@ class PupilIdentityManager {
                       onReceiverJoined(event.value);
                     }
                     onStatusUpdate(
-                      'Empfänger ${event.value} ist der Übertragung beigetreten.',
+                      'Empfänger ${event.sender} ist der Übertragung beigetreten.',
                     );
                     break;
                   case 'request':
                     // Receiver requests data
                     if (onRequestReceived != null) {
-                      onRequestReceived(event.value);
+                      onRequestReceived(event.sender);
                     }
                     onStatusUpdate(
-                      'Empfänger ${event.value} hat Daten angefordert. Warten auf Bestätigung...',
+                      'Empfänger ${event.sender} hat Daten angefordert. Warten auf Bestätigung...',
                     );
                     break;
                   case 'confirmed':
                     // Check if confirmation is for a specific user
-                    final targetUser = event.value.isNotEmpty
-                        ? event.value
+                    final targetUser = event.sender.isNotEmpty
+                        ? event.sender
                         : null;
                     if (targetUser == null) {
                       // Legacy: no targeting, proceed for any receiver
@@ -479,6 +477,10 @@ class PupilIdentityManager {
                       await _client.pupilIdentity.sendPupilIdentityMessage(
                         channelName,
                         PupilIdentityDto(
+                          sender:
+                              di<HubSessionManager>().user!.userInfo!.userName!,
+                          dataTimeStamp:
+                              di<EnvManager>().activeEnv?.lastIdentitiesUpdate,
                           type: 'data',
                           value: encryptedPupilIds ?? '',
                         ),
@@ -495,7 +497,11 @@ class PupilIdentityManager {
                       await _client.pupilIdentity.sendPupilIdentityMessage(
                         channelName,
                         PupilIdentityDto(
+                          sender:
+                              di<HubSessionManager>().user!.userInfo!.userName!,
                           type: 'data',
+                          dataTimeStamp:
+                              di<EnvManager>().activeEnv?.lastIdentitiesUpdate,
                           value: '$targetUser:${encryptedPupilIds ?? ''}',
                         ),
                       );
@@ -587,19 +593,42 @@ class PupilIdentityManager {
                       'Verschlüsselte Schülerdaten empfangen. Verarbeite...',
                     );
                     _log.info(
-                      'Received encrypted pupil identities: ${actualData.length} characters',
+                      'Received encrypted pupil identities dated on ${event.dataTimeStamp}.',
                     );
 
                     try {
                       final beforeCount = _pupilIdentities.length;
-                      await decryptAndAddOrUpdatePupilIdentities([actualData]);
+                      if (event.dataTimeStamp!.isBefore(
+                        di<EnvManager>().activeEnv!.lastIdentitiesUpdate!,
+                      )) {
+                        _notificationService.showInformationDialog(
+                          'Die empfangenen Schülerdaten sind veraltet. Die neueste Version ist vom ${di<EnvManager>().activeEnv!.lastIdentitiesUpdate!.formatDateForUser()}.',
+                        );
+                        return;
+                      }
+                      _log.info('''Received newer pupil identities:
+                      Timestamp: ${event.dataTimeStamp}
+                      Last identities update: ${di<EnvManager>().activeEnv!.lastIdentitiesUpdate}
+                      ''');
+                      await updatePupilIdentitiesFromEncryptedSource([
+                        actualData,
+                      ]);
                       final afterCount = _pupilIdentities.length;
                       final newCount = afterCount - beforeCount;
+                      // Set the last identities update to the received data time stamp
+                      di<EnvManager>().updateActiveEnv(
+                        lastIdentitiesUpdate: event.dataTimeStamp,
+                      );
 
                       // Send confirmation
                       await _client.pupilIdentity.sendPupilIdentityMessage(
                         channelName,
-                        PupilIdentityDto(type: 'ok', value: ''),
+                        PupilIdentityDto(
+                          sender:
+                              di<HubSessionManager>().user!.userInfo!.userName!,
+                          type: 'ok',
+                          value: '',
+                        ),
                       );
 
                       onCompleted();

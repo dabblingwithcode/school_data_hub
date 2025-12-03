@@ -10,7 +10,6 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/qr/qr_image_picker.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
@@ -28,7 +27,7 @@ class ToolsPage extends WatchingWidget {
   PupilIdentityManager get _pupilIdentityManager => di<PupilIdentityManager>();
   HubSessionManager get _hubSessionManager => di<HubSessionManager>();
 
-  void importFileWithWindows(String function) async {
+  void importUnencryptedPupilIdentitySourceFile(String function) async {
     final fileContent = await pickFileReturnContentAsString();
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result == null || fileContent == null) {
@@ -37,22 +36,14 @@ class ToolsPage extends WatchingWidget {
     }
 
     if (function == 'update_backend') {
-      _pupilIdentityManager.updateBackendPupilsFromSchoolPupilIdentitySource(
+      _pupilIdentityManager.updateBackendPupilsWithSchoolPupilIdentitySource(
         fileContent,
       );
     } else if (function == 'pupil_identities') {
-      _pupilIdentityManager.addOrUpdateNewPupilIdentities(
+      _pupilIdentityManager.updatePupilIdentitiesFromUnencryptedSource(
         identitiesInStringLines: fileContent,
       );
     }
-  }
-
-  void importFromQrImage() async {
-    final rawTextResult = await scanPickedQrImage();
-    if (rawTextResult == null) {
-      return;
-    }
-    _pupilIdentityManager.decryptAndAddOrUpdatePupilIdentities([rawTextResult]);
   }
 
   @override
@@ -133,7 +124,7 @@ class ToolsPage extends WatchingWidget {
                           }
                         : null,
                     icon: Icons.qr_code_scanner_rounded,
-                    title: 'Schülerdaten aus einem anderen Gerät importieren',
+                    title: 'Schüler-Ids aus einem anderen Gerät importieren',
                     subtitle: 'QR-Code scannen oder Verbindungscode eingeben',
                     color: Colors.blue[700]!,
                   ),
@@ -158,7 +149,9 @@ class ToolsPage extends WatchingWidget {
                           .getInternalIdsFromPupilIds(pupilIds);
                       final String encryptedPupilIdentities =
                           await di<PupilIdentityManager>()
-                              .generatePupilIdentitiesQrData(internalIds);
+                              .generateEncryptedPupilIdentitiesTransferString(
+                                internalIds,
+                              );
                       if (!context.mounted) return;
                       Navigator.of(context).push(
                         MaterialPageRoute(
@@ -171,7 +164,7 @@ class ToolsPage extends WatchingWidget {
                       );
                     },
                     icon: Icons.mobile_screen_share,
-                    title: 'Schüler-Ids mit einem anderen Gerät teilen',
+                    title: 'Schüler-Ids teilen',
                     subtitle: 'Daten auf ein anderes Gerät übertragen',
                     color: Colors.indigo[700]!,
                   ),
@@ -251,8 +244,6 @@ class ToolsPage extends WatchingWidget {
                     ),
 
                     const Gap(16),
-
-                    const Gap(16),
                   ],
 
                   // Desktop-only section
@@ -268,7 +259,9 @@ class ToolsPage extends WatchingWidget {
                               'Achtung! Nicht mehr vorhandene SchülerInnen auf dem Server werden gelöscht. Fortfahren?',
                         );
                         if (confirm == true) {
-                          importFileWithWindows('update_backend');
+                          importUnencryptedPupilIdentitySourceFile(
+                            'update_backend',
+                          );
                         }
                       },
                       icon: Icons.school,
@@ -280,8 +273,9 @@ class ToolsPage extends WatchingWidget {
                     const Gap(16),
 
                     _buildToolButton(
-                      onPressed: () =>
-                          importFileWithWindows('pupil_identities'),
+                      onPressed: () => importUnencryptedPupilIdentitySourceFile(
+                        'pupil_identities',
+                      ),
                       icon: Icons.people,
                       title: 'ID-Liste importieren',
                       subtitle: 'Schüler-Identitäten aus Datei importieren',

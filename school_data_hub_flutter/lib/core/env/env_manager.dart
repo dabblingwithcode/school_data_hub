@@ -269,6 +269,9 @@ class EnvManager with ChangeNotifier {
     );
     _environments[_activeEnv!.serverName] = _activeEnv!;
     notifyListeners();
+    _log.info('''Active environment updated: ${_activeEnv!.serverName}
+    lastIdentitiesUpdate: ${_activeEnv!.lastIdentitiesUpdate}
+    ''');
     // The active environment changed, we need to update
     // this information in storage
     final updatedEnvsForStorage = EnvsInStorage(
