@@ -10,6 +10,7 @@ enum SchooldayEventReason {
   other('ss'),
   learningDevelopmentInfo('le'),
   learningSupportInfo('fi'),
+  transitionAdvice('üb'),
   admonitionInfo('ki');
 
   final String value;
@@ -35,6 +36,7 @@ enum SchooldayEventFilter {
   learningDevelopmentInfo,
   learningSupportInfo,
   admonitionInfo,
+  transitionAdvice,
   processed,
 }
 
@@ -57,5 +59,6 @@ Map<SchooldayEventFilter, bool> initialSchooldayEventFilterValues = {
   SchooldayEventFilter.learningDevelopmentInfo: false,
   SchooldayEventFilter.learningSupportInfo: false,
   SchooldayEventFilter.admonitionInfo: false,
+  SchooldayEventFilter.transitionAdvice: false,
   SchooldayEventFilter.processed: false,
 };

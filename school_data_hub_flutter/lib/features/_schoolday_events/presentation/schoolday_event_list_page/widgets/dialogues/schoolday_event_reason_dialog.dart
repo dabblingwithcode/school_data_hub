@@ -89,6 +89,13 @@ class SchooldayEventReasonDialog extends WatchingWidget {
         ),
       ),
     );
+    final transitionAdvice = createOnce(
+      () => ValueNotifier<bool>(
+        schooldayEvent.eventReason.contains(
+          SchooldayEventReason.transitionAdvice.value,
+        ),
+      ),
+    );
     final admonitionInfo = createOnce(
       () => ValueNotifier<bool>(
         schooldayEvent.eventReason.contains(
@@ -126,6 +133,15 @@ class SchooldayEventReasonDialog extends WatchingWidget {
                         },
                         emojis: '🛟🧠',
                         text: 'Förderung',
+                      ),
+                      const Gap(5),
+                      SchooldayEventReasonFilterChip(
+                        isReason: watch(transitionAdvice).value,
+                        onSelected: (value) {
+                          transitionAdvice.value = value;
+                        },
+                        emojis: '🧠🗺️',
+                        text: 'Übergang',
                       ),
                       const Gap(5),
                       SchooldayEventReasonFilterChip(

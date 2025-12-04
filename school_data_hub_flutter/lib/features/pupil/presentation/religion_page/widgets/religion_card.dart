@@ -128,7 +128,7 @@ class ReligionCard extends WatchingWidget {
                 const Gap(5),
                 Row(
                   children: [
-                    Text('Angemeldet seit:'),
+                    const Text('Angemeldet seit:'),
                     const Gap(10),
                     Text(
                       pupil.religionLessonsSince != null
@@ -137,6 +137,18 @@ class ReligionCard extends WatchingWidget {
                     ),
                   ],
                 ),
+                if (pupil.religionLessonsCancelledAt != null) ...[
+                  const Gap(5),
+                  Row(
+                    children: [
+                      const Text('Abgemeldet am:'),
+                      const Gap(10),
+                      Text(
+                        pupil.religionLessonsCancelledAt!.formatDateForUser(),
+                      ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),

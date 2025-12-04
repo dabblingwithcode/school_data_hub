@@ -81,6 +81,7 @@ class SchooldayEventApiService {
     NullableStringRecord? processedBy,
     NullableDateTimeRecord? processedAt,
     int? schooldayId,
+    NullableStringRecord? comment,
   }) async {
     bool changedProcessedStatus = false;
     // if the schooldayEvent is patched as processed,
@@ -113,6 +114,7 @@ class SchooldayEventApiService {
       processedAt: processedAt != null
           ? processedAt.value
           : schooldayEvent.processedAt,
+      comment: comment != null ? comment.value : schooldayEvent.comment,
     );
     final pupil = di<PupilManager>().getPupilByPupilId(schooldayEvent.pupilId)!;
     try {

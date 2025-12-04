@@ -63,7 +63,7 @@ class LogEntryCard extends StatelessWidget {
                 ),
                 Text(
                   timestamp,
-                  style: AppStyles.textLabel.copyWith(color: Colors.black54),
+                  style: AppStyles.subtitle.copyWith(color: Colors.black54),
                 ),
               ],
             ),

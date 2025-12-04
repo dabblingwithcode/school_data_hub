@@ -55,6 +55,7 @@ class NewSchooldayEventPage extends WatchingWidget {
     required bool learningDevelopmentInfo,
     required bool learningSupportInfo,
     required bool admonitionInfo,
+    required bool transitionAdvice,
     required bool other,
   }) async {
     Set<String> schooldayEventReason = {};
@@ -114,7 +115,9 @@ class NewSchooldayEventPage extends WatchingWidget {
     if (other == true) {
       schooldayEventReason.add(SchooldayEventReason.other.value);
     }
-
+    if (transitionAdvice == true) {
+      schooldayEventReason.add(SchooldayEventReason.transitionAdvice.value);
+    }
     for (final reason in schooldayEventReason) {
       schooldayEventReasons = '$schooldayEventReasons$reason*';
     }
@@ -157,6 +160,7 @@ class NewSchooldayEventPage extends WatchingWidget {
       () => ValueNotifier<bool>(false),
     );
     final learningSupportInfo = createOnce(() => ValueNotifier<bool>(false));
+    final transitionAdvice = createOnce(() => ValueNotifier<bool>(false));
     final admonitionInfo = createOnce(() => ValueNotifier<bool>(false));
     final schooldayEventType = watch(schooldayEventTypeDropdown).value;
     return Scaffold(
@@ -309,6 +313,14 @@ class NewSchooldayEventPage extends WatchingWidget {
                                     emojis: '🛟🧠',
                                     text: 'Förderung',
                                   ),
+                                  SchooldayEventReasonFilterChip(
+                                    isReason: watch(transitionAdvice).value,
+                                    onSelected: (value) {
+                                      transitionAdvice.value = value;
+                                    },
+                                    emojis: '🧠🗺️',
+                                    text: 'Übergang',
+                                  ),
                                   const Gap(5),
                                   SchooldayEventReasonFilterChip(
                                     isReason: watch(admonitionInfo).value,
@@ -459,6 +471,7 @@ class NewSchooldayEventPage extends WatchingWidget {
                         learningDevelopmentInfo.value == false &&
                         learningSupportInfo.value == false &&
                         admonitionInfo.value == false &&
+                        transitionAdvice.value == false &&
                         other.value == false) {
                       informationDialog(
                         context,
@@ -484,6 +497,7 @@ class NewSchooldayEventPage extends WatchingWidget {
                         learningDevelopmentInfo: learningDevelopmentInfo.value,
                         learningSupportInfo: learningSupportInfo.value,
                         admonitionInfo: admonitionInfo.value,
+                        transitionAdvice: transitionAdvice.value,
                         other: other.value,
                       ),
                     );

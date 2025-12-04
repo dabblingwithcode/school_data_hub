@@ -164,6 +164,7 @@ class SchooldayEventManager with ChangeNotifier {
     NullableStringRecord? processedBy,
     NullableDateTimeRecord? processedAt,
     int? schooldayId,
+    NullableStringRecord? comment,
   }) async {
     String? cacheKey;
     if (processed == false && eventToUpdate.processedDocumentId != null) {
@@ -179,6 +180,7 @@ class SchooldayEventManager with ChangeNotifier {
           processedAt: processedAt,
           schooldayId: schooldayId,
           type: schoolEventType,
+          comment: comment,
         );
 
     _updateSchooldayEventCollections(schooldayEvent);

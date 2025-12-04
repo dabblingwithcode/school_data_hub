@@ -94,7 +94,7 @@ class SchooldayEventEndpoint extends Endpoint {
     }
 
     await session.db.updateRow(schooldayEvent);
-    final updatedSchooldayEvent =
+    final updatedSchooldayEventInDatabase =
         await SchooldayEvent.db.findById(session, schooldayEvent.id!,
             include: SchooldayEvent.include(
               schoolday: Schoolday.include(),
@@ -107,12 +107,12 @@ class SchooldayEventEndpoint extends Endpoint {
         session: session,
         pupilNameAndGroup: pupilNameAndGroup,
         tutor: tutor,
-        eventWithSchoolday: updatedSchooldayEvent!,
+        eventWithSchoolday: updatedSchooldayEventInDatabase!,
         dateTimeAsString: dateTimeAsString,
         changedProcessedStatus: changedProcessedStatus,
       ));
     }
-    return updatedSchooldayEvent!;
+    return updatedSchooldayEventInDatabase!;
   }
 
   Future<bool> deleteSchooldayEvent(

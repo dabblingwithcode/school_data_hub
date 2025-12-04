@@ -701,10 +701,11 @@ class PupilIdentityManager {
                 'Der Server konnte nicht gefunden werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.',
               );
             } else {
-              _notificationService.showSnackBar(
-                NotificationType.error,
-                'Ein unbekannter Fehler ist aufgetreten: $errorString',
-              );
+              _log.severe('Error in pupil identity stream: $errorString');
+              // _notificationService.showSnackBar(
+              //   NotificationType.error,
+              //   'Ein unbekannter Fehler ist aufgetreten: $errorString',
+              // );
             }
             // retry the subscription after a delay
             await Future.delayed(const Duration(seconds: 1));

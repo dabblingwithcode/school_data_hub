@@ -12,3 +12,4 @@ fields:
   processedDocument: HubDocument?, relation(optional)
   schoolday: Schoolday?, relation(name=schoolday_event_schoolday)
   pupil: PupilData?, relation(name=schoolday_event_pupil)
+  comment: String?

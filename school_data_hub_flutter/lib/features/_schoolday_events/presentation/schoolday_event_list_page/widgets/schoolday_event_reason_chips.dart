@@ -9,15 +9,14 @@ class SchooldayEventReasonChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Chip(
-        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-        labelPadding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(30))),
-        backgroundColor: AppColors.filterChipUnselectedColor,
-        label: Text(
-          reason,
-          style: const TextStyle(fontSize: emojiSize),
-        ));
+      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+      labelPadding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(30)),
+      ),
+      backgroundColor: AppColors.filterChipUnselectedColor,
+      label: Text(reason, style: const TextStyle(fontSize: emojiSize)),
+    );
   }
 }
 
@@ -56,6 +55,9 @@ List<Widget> schooldayEventReasonChips(String reason) {
   }
   if (reason.contains(SchooldayEventReason.learningSupportInfo.value)) {
     chips.add(const SchooldayEventReasonChip(reason: '🛟🧠'));
+  }
+  if (reason.contains(SchooldayEventReason.transitionAdvice.value)) {
+    chips.add(const SchooldayEventReasonChip(reason: '🧠🗺️'));
   }
   if (reason.contains(SchooldayEventReason.admonitionInfo.value)) {
     chips.add(const SchooldayEventReasonChip(reason: '⚠️ℹ️'));

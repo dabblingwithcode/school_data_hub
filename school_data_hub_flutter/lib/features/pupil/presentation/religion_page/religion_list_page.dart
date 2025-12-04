@@ -22,12 +22,21 @@ List<PupilProxy> religionFilter(List<PupilProxy> pupils) {
       filtersOn = true;
       continue;
     }
+    if (pupil.religionLessonsCancelledAt != null &&
+        pupil.religionLessonsCancelledAt!.isAfter(
+          pupil.religionLessonsSince!,
+        )) {
+      filtersOn = true;
+      continue;
+    }
 
     filteredPupils.add(pupil);
   }
   if (filtersOn) {
     _filterStateManager.setFilterState(
-        filterState: FilterState.pupil, value: true);
+      filterState: FilterState.pupil,
+      value: true,
+    );
   }
   return filteredPupils;
 }
@@ -44,8 +53,9 @@ class ReligionListPage extends WatchingWidget {
   Widget build(BuildContext context) {
     final _filterStateManager = di<FiltersStateManager>();
     final _pupilManager = di<PupilManager>();
-    List<PupilProxy> filteredPupils =
-        watchValue((PupilsFilter x) => x.filteredPupils);
+    List<PupilProxy> filteredPupils = watchValue(
+      (PupilsFilter x) => x.filteredPupils,
+    );
     List<PupilProxy> pupils = religionFilter(filteredPupils);
     onDispose(() {
       _filterStateManager.resetFilters();
@@ -60,16 +70,9 @@ class ReligionListPage extends WatchingWidget {
           title: const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.church,
-                size: 25,
-                color: Colors.white,
-              ),
+              Icon(Icons.church, size: 25, color: Colors.white),
               Gap(10),
-              Text(
-                'Religion',
-                style: AppStyles.appBarTextStyle,
-              ),
+              Text('Religion', style: AppStyles.appBarTextStyle),
             ],
           ),
           automaticallyImplyLeading: false,
@@ -84,13 +87,12 @@ class ReligionListPage extends WatchingWidget {
                   const SliverGap(5),
                   GenericSliverSearchAppBar(
                     height: 110,
-                    title: ReligionListSearchBar(
-                      pupils: pupils,
-                    ),
+                    title: ReligionListSearchBar(pupils: pupils),
                   ),
                   GenericSliverListWithEmptyListCheck(
-                      items: pupils,
-                      itemBuilder: (_, pupil) => ReligionCard(pupil)),
+                    items: pupils,
+                    itemBuilder: (_, pupil) => ReligionCard(pupil),
+                  ),
                 ],
               ),
             ),
@@ -101,4 +103,3 @@ class ReligionListPage extends WatchingWidget {
     );
   }
 }
-

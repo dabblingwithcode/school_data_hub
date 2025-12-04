@@ -124,7 +124,7 @@ class FamilyLanguageLessonsCard extends WatchingWidget {
                 const Gap(5),
                 Row(
                   children: [
-                    Text('Angemeldet am:'),
+                    const Text('Angemeldet am:'),
                     const Gap(10),
                     Text(
                       pupil.familyLanguageLessonsSince != null

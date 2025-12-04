@@ -103,6 +103,8 @@ class PupilProxy with ChangeNotifier {
   DateTime? get familyLanguageLessonsSince =>
       _pupilIdentity.familyLanguageLessonsSince;
   DateTime? get religionLessonsSince => _pupilIdentity.religionLessonsSince;
+  DateTime? get religionLessonsCancelledAt =>
+      _pupilIdentity.religionLessonsCancelledAt;
 
   String? get religion => _pupilIdentity.religion;
   //- PUPIL DATA GETTERS

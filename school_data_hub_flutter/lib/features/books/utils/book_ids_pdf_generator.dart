@@ -10,7 +10,7 @@ final _notificationService = di<NotificationService>();
 List<String> generateBookIds({required int startAtIdNr, required int count}) {
   List<String> bookIds = [];
   for (int index = startAtIdNr; index <= count + startAtIdNr; index++) {
-    String bookId = 'C3 ${index.toString().padLeft(5, '0')}';
+    String bookId = 'LI ${index.toString().padLeft(5, '0')}';
     bookIds.add(bookId);
   }
   return bookIds;
@@ -19,6 +19,10 @@ List<String> generateBookIds({required int startAtIdNr, required int count}) {
 pw.Widget buildBarcodePage(List<String> bookIds, int startIndex) {
   final schoolData = di<SchoolDataMainManager>().schoolData.value;
   final List<String> addressLines = schoolData?.address.split(', ') ?? [];
+  final String? addressLine1 = addressLines.isNotEmpty
+      ? addressLines.first
+      : null;
+  final String? addressLine2 = addressLines.length > 1 ? addressLines[1] : null;
   return pw.Column(
     children: List.generate(9, (rowIndex) {
       return pw.Row(
@@ -52,16 +56,10 @@ pw.Widget buildBarcodePage(List<String> bookIds, int startIndex) {
                     fontWeight: pw.FontWeight.bold,
                   ),
                 ),
-
-                pw.Text(
-                  addressLines[0],
-                  style: const pw.TextStyle(fontSize: 6),
-                ),
-
-                pw.Text(
-                  addressLines[1],
-                  style: const pw.TextStyle(fontSize: 6),
-                ),
+                if (addressLine1 != null)
+                  pw.Text(addressLine1, style: const pw.TextStyle(fontSize: 6)),
+                if (addressLine2 != null)
+                  pw.Text(addressLine2, style: const pw.TextStyle(fontSize: 6)),
               ],
             );
           } else {
@@ -76,7 +74,7 @@ pw.Widget buildBarcodePage(List<String> bookIds, int startIndex) {
 void generateBookIdsPdf() async {
   _notificationService.setHeavyLoadingValue(true);
   final pdf = pw.Document();
-  List<String> bookIds = generateBookIds(startAtIdNr: 1, count: 200);
+  List<String> bookIds = generateBookIds(startAtIdNr: 1002, count: 300);
 
   int itemsPerPage = 9 * 6;
   int totalPages = (bookIds.length / itemsPerPage).ceil();

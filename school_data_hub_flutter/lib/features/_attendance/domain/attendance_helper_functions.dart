@@ -282,6 +282,23 @@ class AttendanceHelper {
     return missedSchooldayUnexcusedCount;
   }
 
+  static int lateExcusedSum(PupilProxy pupil) {
+    int missedSchooldayUnexcusedCount = 0;
+    final missedSchooldays = _attendanceManager
+        .getPupilMissedSchooldaysProxy(pupil.pupilId)
+        .missedSchooldays;
+    if (missedSchooldays.isNotEmpty) {
+      missedSchooldayUnexcusedCount = missedSchooldays
+          .where(
+            (element) =>
+                element.missedType == MissedType.late &&
+                element.unexcused == false,
+          )
+          .length;
+    }
+    return missedSchooldayUnexcusedCount;
+  }
+
   static int contactedSum(PupilProxy pupil) {
     final missedSchooldays = _attendanceManager
         .getPupilMissedSchooldaysProxy(pupil.pupilId)
