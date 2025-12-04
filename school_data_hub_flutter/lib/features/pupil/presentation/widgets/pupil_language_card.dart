@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
+import 'package:watch_it/watch_it.dart';
 
-class PupilListCard extends StatelessWidget {
+class PupilLanguageCard extends StatelessWidget {
   final PupilProxy passedPupil;
-  const PupilListCard({
-    required this.passedPupil,
-    super.key,
-  });
+  const PupilLanguageCard({required this.passedPupil, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +22,9 @@ class PupilListCard extends StatelessWidget {
           Expanded(
             child: InkWell(
               onTap: () {
+                di<BottomNavManager>().setPupilProfileNavPage(
+                  ProfileNavigationState.language.value,
+                );
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (ctx) => PupilProfilePage(pupil: pupil),
@@ -43,10 +45,10 @@ class PupilListCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      'Klasse: ${pupil.schoolGrade.name}',
+                      'Familiensprache: ${pupil.language}',
                       style: const TextStyle(
                         fontSize: 14,
-                        color: Colors.grey,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
@@ -59,4 +61,3 @@ class PupilListCard extends StatelessWidget {
     );
   }
 }
-

@@ -482,26 +482,40 @@ class PupilSchooldayEventCard extends StatelessWidget {
                 ],
               ),
               const Gap(5),
-              InkWell(
-                onTap: () async {
-                  final String? comment = await shortTextfieldDialog(
-                    context: context,
-                    title: 'Kommentar',
-                    labelText: 'Kommentar',
-                    hintText: 'Kommentar',
-                    obscureText: false,
-                  );
-                  if (comment != null) {
-                    await _schooldayEventManager.updateSchooldayEvent(
-                      eventToUpdate: schooldayEvent,
-                      comment: (value: comment),
-                    );
-                  }
-                },
-                child: Text(
-                  schooldayEvent.comment ?? 'Kommentar hinzufügen',
-                  style: const TextStyle(fontSize: 16),
-                ),
+              const Row(
+                children: [Text('Kommentar:', style: TextStyle(fontSize: 16))],
+              ),
+              const Gap(5),
+              Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () async {
+                        final String? comment = await shortTextfieldDialog(
+                          context: context,
+                          title: 'Kommentar',
+                          labelText: 'Kommentar',
+                          hintText: 'Kommentar',
+                          obscureText: false,
+                        );
+                        if (comment != null) {
+                          await _schooldayEventManager.updateSchooldayEvent(
+                            eventToUpdate: schooldayEvent,
+                            comment: (value: comment),
+                          );
+                        }
+                      },
+                      child: Text(
+                        schooldayEvent.comment ?? 'Kommentar hinzufügen',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: AppColors.interactiveColor,
+                        ),
+                        softWrap: true,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

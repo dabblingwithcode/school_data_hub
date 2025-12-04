@@ -3,7 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_list_card.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_language_card.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -91,33 +91,28 @@ class EnrollmentListTiles extends WatchingWidget {
                       seenEnrollmentDates.add(enrollmentDate);
                     }
 
-                    return Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (!isDatePrinted)
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 5.0,
-                              ),
-                              child: Row(
-                                children: [
-                                  const Gap(5),
-                                  Text(
-                                    '${pupil.pupilSince.asWeekdayName(context)}, ${pupil.pupilSince.formatDateForUser()}',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.backgroundColor,
-                                      fontSize: 18,
-                                    ),
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (!isDatePrinted)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5.0),
+                            child: Row(
+                              children: [
+                                const Gap(5),
+                                Text(
+                                  '${pupil.pupilSince.asWeekdayName(context)}, ${pupil.pupilSince.formatDateForUser()}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.backgroundColor,
+                                    fontSize: 18,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          PupilListCard(passedPupil: pupil),
-                        ],
-                      ),
+                          ),
+                        PupilLanguageCard(passedPupil: pupil),
+                      ],
                     );
                   },
                 ),
