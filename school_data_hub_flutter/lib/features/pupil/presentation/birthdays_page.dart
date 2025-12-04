@@ -84,7 +84,7 @@ class BirthdaysView extends StatelessWidget {
                                             children: [
                                               const Gap(5),
                                               Text(
-                                                '${DateTime(DateTime.now().year, listedPupil.birthday.month, listedPupil.birthday.day).asWeekdayName(context)}, ${listedPupil.birthday.formatDateForUser()}',
+                                                '${DateTime(DateTime.now().year, listedPupil.birthday.month, listedPupil.birthday.day).asWeekdayName(context)}, ${DateTime(DateTime.now().year, listedPupil.birthday.month, listedPupil.birthday.day).formatDateForUser()}',
                                                 style: const TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color:

@@ -5,6 +5,8 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/features/_attendance/domain/filters/attendance_pupil_filter.dart';
+import 'package:school_data_hub_flutter/features/_attendance/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/attendance_list_page.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/chart_page.dart';
@@ -45,13 +47,33 @@ class AttendanceStatsView extends WatchingWidget {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Details'),
+            title: const Text('Details', style: AppStyles.title),
             content: Text(buffer.toString()),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                   di<SchoolCalendarManager>().setThisDate(chartData.date);
+                  di<AttendancePupilFilterManager>().setAttendancePupilFilter(
+                    attendancePupilFilterRecords: [
+                      (
+                        attendancePupilFilter: AttendancePupilFilter.missed,
+                        value: true,
+                      ),
+                      (
+                        attendancePupilFilter: AttendancePupilFilter.notPresent,
+                        value: true,
+                      ),
+                      (
+                        attendancePupilFilter: AttendancePupilFilter.unexcused,
+                        value: false,
+                      ),
+                      (
+                        attendancePupilFilter: AttendancePupilFilter.goneHome,
+                        value: true,
+                      ),
+                    ],
+                  );
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => const AttendanceListPage(),
