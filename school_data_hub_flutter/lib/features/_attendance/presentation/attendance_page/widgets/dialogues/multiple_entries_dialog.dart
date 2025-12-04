@@ -12,16 +12,14 @@ import 'package:watch_it/watch_it.dart';
 
 final GlobalKey<FormState> _missedDatesformKey = GlobalKey<FormState>();
 
-final _attendanceManager = di<AttendanceManager>();
-
-final _schoolCalendarManager = di<SchoolCalendarManager>();
-
 // based on https://mobikul.com/creating-stateful-dialog-form-in-flutter/
 
 Future<void> createMissedSchooldayList(
   BuildContext context,
   PupilProxy pupil,
 ) async {
+  final _attendanceManager = di<AttendanceManager>();
+  final _schoolCalendarManager = di<SchoolCalendarManager>();
   final DateTime thisDate = _schoolCalendarManager.thisDate.value;
   return await showDialog(
     context: context,

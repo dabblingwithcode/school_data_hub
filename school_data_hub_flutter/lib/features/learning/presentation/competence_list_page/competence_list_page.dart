@@ -8,13 +8,12 @@ import 'package:school_data_hub_flutter/features/learning/presentation/competenc
 import 'package:school_data_hub_flutter/features/learning/presentation/post_or_patch_competence_page/post_or_patch_competence_page.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _competenceManager = di<CompetenceManager>();
-
 class CompetenceListPage extends WatchingWidget {
   const CompetenceListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _competenceManager = di<CompetenceManager>();
     navigateToNewOrPatchCompetencePage(
         {int? competenceId, Competence? competence}) {
       Navigator.of(context).push(MaterialPageRoute(

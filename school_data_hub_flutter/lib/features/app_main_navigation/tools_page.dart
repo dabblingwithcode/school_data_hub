@@ -5,24 +5,29 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/pick_file_return_content_as_string.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/qr/qr_image_picker.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/birthdays_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identity_stream_page/pupil_identity_stream_page.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
+import 'package:school_data_hub_flutter/features/statistics/chart_page/chart_page_controller.dart';
+import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_page/timetable_page.dart';
 import 'package:watch_it/watch_it.dart';
-
-final _pupilIdentityManager = di<PupilIdentityManager>();
-final _hubSessionManager = di<HubSessionManager>();
 
 class ToolsPage extends WatchingWidget {
   const ToolsPage({super.key});
 
-  void importFileWithWindows(String function) async {
+  PupilIdentityManager get _pupilIdentityManager => di<PupilIdentityManager>();
+  HubSessionManager get _hubSessionManager => di<HubSessionManager>();
+
+  void importUnencryptedPupilIdentitySourceFile(String function) async {
     final fileContent = await pickFileReturnContentAsString();
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result == null || fileContent == null) {
@@ -31,22 +36,14 @@ class ToolsPage extends WatchingWidget {
     }
 
     if (function == 'update_backend') {
-      _pupilIdentityManager.updateBackendPupilsFromSchoolPupilIdentitySource(
+      _pupilIdentityManager.updateBackendPupilsWithSchoolPupilIdentitySource(
         fileContent,
       );
     } else if (function == 'pupil_identities') {
-      _pupilIdentityManager.addOrUpdateNewPupilIdentities(
+      _pupilIdentityManager.updatePupilIdentitiesFromUnencryptedSource(
         identitiesInStringLines: fileContent,
       );
     }
-  }
-
-  void importFromQrImage() async {
-    final rawTextResult = await scanPickedQrImage();
-    if (rawTextResult == null) {
-      return;
-    }
-    _pupilIdentityManager.decryptAndAddOrUpdatePupilIdentities([rawTextResult]);
   }
 
   @override
@@ -86,59 +83,146 @@ class ToolsPage extends WatchingWidget {
                       }
 
                       if (channelName == null || channelName.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Kein gültiger Verbindungscode.'),
-                          ),
+                        di<NotificationService>().showSnackBar(
+                          NotificationType.error,
+                          'Kein gültiger Verbindungscode.',
                         );
                         return;
                       }
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder:
-                              (context) => PupilIdentityStreamPage(
-                                role: PupilIdentityStreamRole.receiver,
-                                importedChannelName: channelName,
-                              ),
+                          builder: (context) => PupilIdentityStreamPage(
+                            role: PupilIdentityStreamRole.receiver,
+                            importedChannelName: channelName,
+                          ),
                         ),
                       );
                     },
-                    onLongPress:
-                        Platform.isAndroid || Platform.isIOS
-                            ? () async {
-                              final channelName = await shortTextfieldDialog(
-                                context: context,
-                                title: 'Verbindungscode eingeben',
-                                hintText: 'z.B. 12345678',
-                                labelText: 'Verbindungscode',
+                    onLongPress: Platform.isAndroid || Platform.isIOS
+                        ? () async {
+                            final channelName = await shortTextfieldDialog(
+                              context: context,
+                              title: 'Verbindungscode eingeben',
+                              hintText: 'z.B. 12345678',
+                              labelText: 'Verbindungscode',
+                            );
+                            if (channelName == null || channelName.isEmpty) {
+                              di<NotificationService>().showSnackBar(
+                                NotificationType.error,
+                                'Kein gültiger Verbindungscode.',
                               );
-                              if (channelName == null || channelName.isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Kein gültiger Verbindungscode.',
-                                    ),
-                                  ),
-                                );
-                                return;
-                              }
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => PupilIdentityStreamPage(
-                                        role: PupilIdentityStreamRole.receiver,
-                                        importedChannelName: channelName,
-                                      ),
-                                ),
-                              );
+                              return;
                             }
-                            : null,
-                    icon: Icons.mobile_screen_share,
-                    title: 'Schülerdaten von einem anderen Gerät übertragen',
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => PupilIdentityStreamPage(
+                                  role: PupilIdentityStreamRole.receiver,
+                                  importedChannelName: channelName,
+                                ),
+                              ),
+                            );
+                          }
+                        : null,
+                    icon: Icons.qr_code_scanner_rounded,
+                    title: 'Schüler-Ids aus einem anderen Gerät importieren',
                     subtitle: 'QR-Code scannen oder Verbindungscode eingeben',
                     color: Colors.blue[700]!,
                   ),
-
+                  const Gap(16),
+                  _buildToolButton(
+                    onPressed: () async {
+                      final List<int>?
+                      pupilIds = await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (ctx) => SelectPupilsListPage(
+                            selectablePupils: di<PupilManager>()
+                                .getPupilsFromInternalIds(
+                                  di<PupilIdentityManager>().availablePupilIds,
+                                ),
+                          ),
+                        ),
+                      );
+                      if (pupilIds == null || pupilIds.isEmpty) {
+                        return;
+                      }
+                      final internalIds = di<PupilManager>()
+                          .getInternalIdsFromPupilIds(pupilIds);
+                      final String encryptedPupilIdentities =
+                          await di<PupilIdentityManager>()
+                              .generateEncryptedPupilIdentitiesTransferString(
+                                internalIds,
+                              );
+                      if (!context.mounted) return;
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => PupilIdentityStreamPage(
+                            role: PupilIdentityStreamRole.sender,
+                            encryptedData: encryptedPupilIdentities,
+                            selectedPupilIds: pupilIds,
+                          ),
+                        ),
+                      );
+                    },
+                    icon: Icons.mobile_screen_share,
+                    title: 'Schüler-Ids teilen',
+                    subtitle: 'Daten auf ein anderes Gerät übertragen',
+                    color: Colors.indigo[700]!,
+                  ),
+                  const Gap(16),
+                  _buildToolButton(
+                    onPressed: () async {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const ChartPageController(),
+                        ),
+                      );
+                    },
+                    icon: Icons.bar_chart_rounded,
+                    title: 'Datenvisualisierungen',
+                    subtitle: 'Schüler*inenzahlen, Fehlzeiten, Ereignisse',
+                    color: Colors.orange[700]!,
+                  ),
+                  const Gap(16),
+                  _buildToolButton(
+                    onPressed: () async {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const Statistics(),
+                        ),
+                      );
+                    },
+                    icon: Icons.table_chart_rounded,
+                    title: 'Statistik-Zahlen ansehen',
+                    subtitle: 'Detaillierte Tabellen und Zahlenübersicht',
+                    color: Colors.teal[700]!,
+                  ),
+                  const Gap(16),
+                  _buildToolButton(
+                    onPressed: () async {
+                      final DateTime? selectedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime.now(),
+                      );
+                      if (selectedDate == null) {
+                        return;
+                      }
+                      if (context.mounted) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (ctx) =>
+                                BirthdaysView(selectedDate: selectedDate),
+                          ),
+                        );
+                      }
+                    },
+                    icon: Icons.cake_rounded,
+                    title: 'Geburtstage',
+                    subtitle:
+                        'Vergangene Geburtstage seit einem Datum anzeigen',
+                    color: Colors.pink[600]!,
+                  ),
                   const Gap(16),
 
                   // Admin section
@@ -160,25 +244,6 @@ class ToolsPage extends WatchingWidget {
                     ),
 
                     const Gap(16),
-
-                    // _buildToolButton(
-                    //   onPressed: () async {
-                    //     final bool? confirm = await confirmationDialog(
-                    //       context: context,
-                    //       title: 'Datenbank aus json importieren',
-                    //       message: 'Json importieren?',
-                    //     );
-                    //     if (confirm == true) {
-                    //       di<PupilManager>().importSupportLevelsFromJson();
-                    //     }
-                    //   },
-                    //   icon: Icons.file_upload,
-                    //   title: 'Daten aus JSON importieren',
-                    //   subtitle: 'Support-Levels und andere Daten importieren',
-                    //   color: Colors.orange[700]!,
-                    // ),
-
-                    // const Gap(16),
                   ],
 
                   // Desktop-only section
@@ -194,7 +259,9 @@ class ToolsPage extends WatchingWidget {
                               'Achtung! Nicht mehr vorhandene SchülerInnen auf dem Server werden gelöscht. Fortfahren?',
                         );
                         if (confirm == true) {
-                          importFileWithWindows('update_backend');
+                          importUnencryptedPupilIdentitySourceFile(
+                            'update_backend',
+                          );
                         }
                       },
                       icon: Icons.school,
@@ -206,20 +273,9 @@ class ToolsPage extends WatchingWidget {
                     const Gap(16),
 
                     _buildToolButton(
-                      onPressed: () async {
-                        importFromQrImage();
-                      },
-                      icon: Icons.qr_code_scanner,
-                      title: 'Daten aus QR-Bilddatei importieren',
-                      subtitle: 'QR-Code aus Bilddatei scannen',
-                      color: Colors.teal[700]!,
-                    ),
-
-                    const Gap(16),
-
-                    _buildToolButton(
-                      onPressed:
-                          () => importFileWithWindows('pupil_identities'),
+                      onPressed: () => importUnencryptedPupilIdentitySourceFile(
+                        'pupil_identities',
+                      ),
                       icon: Icons.people,
                       title: 'ID-Liste importieren',
                       subtitle: 'Schüler-Identitäten aus Datei importieren',

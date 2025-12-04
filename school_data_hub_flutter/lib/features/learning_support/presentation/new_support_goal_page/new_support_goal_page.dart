@@ -10,15 +10,14 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/w
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _pupilManager = di<PupilManager>();
-final _learningSupportManager = di<SupportCategoryManager>();
-
 class NewSupportGoalPage extends StatelessWidget {
   final NewSupportCategoryStatusController controller;
   const NewSupportGoalPage(this.controller, {super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _pupilManager = di<PupilManager>();
+    final _learningSupportManager = di<SupportCategoryManager>();
     return Theme(
       data: ThemeData(
         unselectedWidgetColor: Colors.white,

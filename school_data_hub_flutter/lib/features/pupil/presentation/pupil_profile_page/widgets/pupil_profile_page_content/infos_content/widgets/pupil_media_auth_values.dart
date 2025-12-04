@@ -7,15 +7,11 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/document_image.dart';
-import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
+import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:watch_it/watch_it.dart';
-
-final _hubSessionManager = di<HubSessionManager>();
-
-final _notificationService = di<NotificationService>();
 
 class PublicMediaAuthValues extends WatchingWidget {
   final PupilProxy pupil;
@@ -23,6 +19,8 @@ class PublicMediaAuthValues extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _hubSessionManager = di<HubSessionManager>();
+    final _notificationService = di<NotificationService>();
     final publicMediaAuth = watchPropertyValue(
       (m) => m.publicMediaAuth,
       target: pupil,
@@ -85,7 +83,7 @@ class PublicMediaAuthValues extends WatchingWidget {
               ),
               InkWell(
                 onTap: () async {
-                  final File? file = await createImageFile(context);
+                  final File? file = await createAndCropImageFile(context);
                   if (file == null) return;
                   await PupilMutator().updatePupilDocument(
                     imageFile: file,
@@ -120,29 +118,28 @@ class PublicMediaAuthValues extends WatchingWidget {
                       width: 1,
                     ),
                   ),
-                  child:
-                      publicMediaAuthDocumentId != null
-                          ? DocumentImage(
-                            documentId: publicMediaAuthDocument!.documentId,
-                            size: 40, // Smaller than before
-                          )
-                          : Container(
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
-                              color: AppColors.backgroundColor.withValues(
-                                alpha: 0.1,
-                              ),
-                              borderRadius: BorderRadius.circular(6),
+                  child: publicMediaAuthDocumentId != null
+                      ? DocumentImage(
+                          documentId: publicMediaAuthDocument!.documentId,
+                          size: 40, // Smaller than before
+                        )
+                      : Container(
+                          height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(
+                            color: AppColors.backgroundColor.withValues(
+                              alpha: 0.1,
                             ),
-                            child: Icon(
-                              Icons.add_a_photo,
-                              color: AppColors.backgroundColor.withValues(
-                                alpha: 0.6,
-                              ),
-                              size: 20,
-                            ),
+                            borderRadius: BorderRadius.circular(6),
                           ),
+                          child: Icon(
+                            Icons.add_a_photo,
+                            color: AppColors.backgroundColor.withValues(
+                              alpha: 0.6,
+                            ),
+                            size: 20,
+                          ),
+                        ),
                 ),
               ),
             ],
@@ -252,10 +249,9 @@ class PublicMediaAuthValues extends WatchingWidget {
                 // Deny checkbox
                 Container(
                   decoration: BoxDecoration(
-                    color:
-                        !isAllowed
-                            ? Colors.red.withValues(alpha: 0.1)
-                            : Colors.transparent,
+                    color: !isAllowed
+                        ? Colors.red.withValues(alpha: 0.1)
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Transform.scale(
@@ -264,14 +260,13 @@ class PublicMediaAuthValues extends WatchingWidget {
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       value: !isAllowed,
                       activeColor: Colors.red,
-                      onChanged:
-                          hasDocument
-                              ? (newValue) async {
-                                if (newValue == true) {
-                                  await onChanged(false);
-                                }
+                      onChanged: hasDocument
+                          ? (newValue) async {
+                              if (newValue == true) {
+                                await onChanged(false);
                               }
-                              : null,
+                            }
+                          : null,
                     ),
                   ),
                 ),
@@ -284,10 +279,9 @@ class PublicMediaAuthValues extends WatchingWidget {
                 // Allow checkbox
                 Container(
                   decoration: BoxDecoration(
-                    color:
-                        isAllowed
-                            ? Colors.green.withValues(alpha: 0.1)
-                            : Colors.transparent,
+                    color: isAllowed
+                        ? Colors.green.withValues(alpha: 0.1)
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Transform.scale(
@@ -296,14 +290,13 @@ class PublicMediaAuthValues extends WatchingWidget {
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       value: isAllowed,
                       activeColor: Colors.green,
-                      onChanged:
-                          hasDocument
-                              ? (newValue) async {
-                                if (newValue == true && !isAllowed) {
-                                  await onChanged(true);
-                                }
+                      onChanged: hasDocument
+                          ? (newValue) async {
+                              if (newValue == true && !isAllowed) {
+                                await onChanged(true);
                               }
-                              : null,
+                            }
+                          : null,
                     ),
                   ),
                 ),

@@ -37,6 +37,7 @@ abstract class SchooldayEvent
     this.schoolday,
     required this.pupilId,
     this.pupil,
+    this.comment,
   });
 
   factory SchooldayEvent({
@@ -56,6 +57,7 @@ abstract class SchooldayEvent
     _i4.Schoolday? schoolday,
     required int pupilId,
     _i5.PupilData? pupil,
+    String? comment,
   }) = _SchooldayEventImpl;
 
   factory SchooldayEvent.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -92,6 +94,7 @@ abstract class SchooldayEvent
           ? null
           : _i5.PupilData.fromJson(
               (jsonSerialization['pupil'] as Map<String, dynamic>)),
+      comment: jsonSerialization['comment'] as String?,
     );
   }
 
@@ -132,6 +135,8 @@ abstract class SchooldayEvent
 
   _i5.PupilData? pupil;
 
+  String? comment;
+
   @override
   _i1.Table<int?> get table => t;
 
@@ -155,6 +160,7 @@ abstract class SchooldayEvent
     _i4.Schoolday? schoolday,
     int? pupilId,
     _i5.PupilData? pupil,
+    String? comment,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -177,6 +183,7 @@ abstract class SchooldayEvent
       if (schoolday != null) 'schoolday': schoolday?.toJson(),
       'pupilId': pupilId,
       if (pupil != null) 'pupil': pupil?.toJson(),
+      if (comment != null) 'comment': comment,
     };
   }
 
@@ -201,6 +208,7 @@ abstract class SchooldayEvent
       if (schoolday != null) 'schoolday': schoolday?.toJsonForProtocol(),
       'pupilId': pupilId,
       if (pupil != null) 'pupil': pupil?.toJsonForProtocol(),
+      if (comment != null) 'comment': comment,
     };
   }
 
@@ -264,6 +272,7 @@ class _SchooldayEventImpl extends SchooldayEvent {
     _i4.Schoolday? schoolday,
     required int pupilId,
     _i5.PupilData? pupil,
+    String? comment,
   }) : super._(
           id: id,
           eventId: eventId,
@@ -281,6 +290,7 @@ class _SchooldayEventImpl extends SchooldayEvent {
           schoolday: schoolday,
           pupilId: pupilId,
           pupil: pupil,
+          comment: comment,
         );
 
   /// Returns a shallow copy of this [SchooldayEvent]
@@ -304,6 +314,7 @@ class _SchooldayEventImpl extends SchooldayEvent {
     Object? schoolday = _Undefined,
     int? pupilId,
     Object? pupil = _Undefined,
+    Object? comment = _Undefined,
   }) {
     return SchooldayEvent(
       id: id is int? ? id : this.id,
@@ -328,6 +339,7 @@ class _SchooldayEventImpl extends SchooldayEvent {
           schoolday is _i4.Schoolday? ? schoolday : this.schoolday?.copyWith(),
       pupilId: pupilId ?? this.pupilId,
       pupil: pupil is _i5.PupilData? ? pupil : this.pupil?.copyWith(),
+      comment: comment is String? ? comment : this.comment,
     );
   }
 }
@@ -380,6 +392,10 @@ class SchooldayEventTable extends _i1.Table<int?> {
       'pupilId',
       this,
     );
+    comment = _i1.ColumnString(
+      'comment',
+      this,
+    );
   }
 
   late final _i1.ColumnString eventId;
@@ -411,6 +427,8 @@ class SchooldayEventTable extends _i1.Table<int?> {
   late final _i1.ColumnInt pupilId;
 
   _i5.PupilDataTable? _pupil;
+
+  late final _i1.ColumnString comment;
 
   _i3.HubDocumentTable get document {
     if (_document != null) return _document!;
@@ -478,6 +496,7 @@ class SchooldayEventTable extends _i1.Table<int?> {
         processedDocumentId,
         schooldayId,
         pupilId,
+        comment,
       ];
 
   @override

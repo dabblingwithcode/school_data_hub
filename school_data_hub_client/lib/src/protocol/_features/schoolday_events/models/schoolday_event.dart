@@ -34,6 +34,7 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
     this.schoolday,
     required this.pupilId,
     this.pupil,
+    this.comment,
   });
 
   factory SchooldayEvent({
@@ -53,6 +54,7 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
     _i4.Schoolday? schoolday,
     required int pupilId,
     _i5.PupilData? pupil,
+    String? comment,
   }) = _SchooldayEventImpl;
 
   factory SchooldayEvent.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -89,6 +91,7 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
           ? null
           : _i5.PupilData.fromJson(
               (jsonSerialization['pupil'] as Map<String, dynamic>)),
+      comment: jsonSerialization['comment'] as String?,
     );
   }
 
@@ -127,6 +130,8 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
 
   _i5.PupilData? pupil;
 
+  String? comment;
+
   /// Returns a shallow copy of this [SchooldayEvent]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
@@ -147,6 +152,7 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
     _i4.Schoolday? schoolday,
     int? pupilId,
     _i5.PupilData? pupil,
+    String? comment,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -169,6 +175,7 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
       if (schoolday != null) 'schoolday': schoolday?.toJson(),
       'pupilId': pupilId,
       if (pupil != null) 'pupil': pupil?.toJson(),
+      if (comment != null) 'comment': comment,
     };
   }
 
@@ -198,6 +205,7 @@ class _SchooldayEventImpl extends SchooldayEvent {
     _i4.Schoolday? schoolday,
     required int pupilId,
     _i5.PupilData? pupil,
+    String? comment,
   }) : super._(
           id: id,
           eventId: eventId,
@@ -215,6 +223,7 @@ class _SchooldayEventImpl extends SchooldayEvent {
           schoolday: schoolday,
           pupilId: pupilId,
           pupil: pupil,
+          comment: comment,
         );
 
   /// Returns a shallow copy of this [SchooldayEvent]
@@ -238,6 +247,7 @@ class _SchooldayEventImpl extends SchooldayEvent {
     Object? schoolday = _Undefined,
     int? pupilId,
     Object? pupil = _Undefined,
+    Object? comment = _Undefined,
   }) {
     return SchooldayEvent(
       id: id is int? ? id : this.id,
@@ -262,6 +272,7 @@ class _SchooldayEventImpl extends SchooldayEvent {
           schoolday is _i4.Schoolday? ? schoolday : this.schoolday?.copyWith(),
       pupilId: pupilId ?? this.pupilId,
       pupil: pupil is _i5.PupilData? ? pupil : this.pupil?.copyWith(),
+      comment: comment is String? ? comment : this.comment,
     );
   }
 }

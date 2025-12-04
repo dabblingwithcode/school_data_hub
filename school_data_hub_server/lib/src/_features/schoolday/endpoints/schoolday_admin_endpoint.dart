@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:school_data_hub_server/src/helpers/date_extension.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 
@@ -61,9 +62,10 @@ class SchooldayAdminEndpoint extends Endpoint {
   }
 
   Future<Schoolday?> createSchoolday(Session session, DateTime date) async {
+    final newDate = date.justDate();
     final schoolSemester = await SchoolSemester.db.findFirstRow(
       session,
-      where: (t) => (t.startDate <= date) & (t.endDate >= date),
+      where: (t) => (t.startDate <= newDate) & (t.endDate >= newDate),
     );
 
     if (schoolSemester == null) {
@@ -71,7 +73,7 @@ class SchooldayAdminEndpoint extends Endpoint {
     }
     final schoolday = Schoolday(
       schoolSemesterId: schoolSemester.id!,
-      schoolday: date,
+      schoolday: newDate,
     );
 
     await session.db.insertRow(schoolday);
@@ -88,8 +90,8 @@ class SchooldayAdminEndpoint extends Endpoint {
 
     for (final date in dates) {
       final schoolSemester = allSemesters.firstWhereOrNull((t) =>
-          (t.startDate.isBefore(date) || t.startDate.isAtSameMomentAs(date)) &&
-          (t.endDate.isAfter(date) || t.endDate.isAtSameMomentAs(date)));
+          (t.startDate.isBeforeDay(date) || t.startDate.isSameDay(date)) &&
+          (t.endDate.isAfterDay(date) || t.endDate.isSameDay(date)));
 
       if (schoolSemester == null) {
         throw Exception('No school semester found for date: $date');
@@ -97,7 +99,7 @@ class SchooldayAdminEndpoint extends Endpoint {
 
       final schoolday = Schoolday(
         schoolSemesterId: schoolSemester.id!,
-        schoolday: date,
+        schoolday: date.justDate(),
       );
       schooldays.add(schoolday);
     }

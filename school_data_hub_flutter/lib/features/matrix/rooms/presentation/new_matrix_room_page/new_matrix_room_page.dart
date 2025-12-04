@@ -7,9 +7,6 @@ import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_man
 import 'package:school_data_hub_flutter/features/matrix/rooms/data/matrix_room_api_service.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _matrixPolicyManager = di<MatrixPolicyManager>();
-final _notificationService = di<NotificationService>();
-
 class NewMatrixRoomPage extends StatefulWidget {
   const NewMatrixRoomPage({super.key});
 
@@ -24,6 +21,9 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
 
   ChatTypePreset selectedRoomType = ChatTypePreset.private;
   bool isProcessing = false;
+
+  MatrixPolicyManager get _matrixPolicyManager => di<MatrixPolicyManager>();
+  NotificationService get _notificationService => di<NotificationService>();
 
   @override
   void dispose() {

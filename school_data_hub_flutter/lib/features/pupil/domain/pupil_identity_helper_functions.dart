@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
@@ -11,17 +12,6 @@ import 'package:watch_it/watch_it.dart';
 final _log = Logger('PupilIdentityHelper');
 
 class PupilIdentityHelper {
-  //- TIMEZONE CONVERSION HELPERS
-
-  /// Converts a DateTime string from Berlin timezone (UTC+1) to UTC.
-  /// Returns null if the dateString is null or cannot be parsed.
-  static DateTime? _convertBerlinDateStringToUtc(String? dateString) {
-    if (dateString == null) return null;
-    final berlinDate = DateTime.tryParse(dateString);
-    if (berlinDate == null) return null;
-    return berlinDate.subtract(Duration(hours: 1));
-  }
-
   //- LOCAL STORAGE HELPERS
 
   static Future<Map<int, PupilIdentity>> readPupilIdentitiesFromStorage({
@@ -30,7 +20,10 @@ class PupilIdentityHelper {
     final pupilsJson = await HubSecureStorage().getString(secureStorageKey);
     if (pupilsJson == null) return {};
 
-    final Map<String, dynamic> decodedJson = jsonDecode(pupilsJson);
+    final Map<String, dynamic> decodedJson = await compute(
+      (json) => jsonDecode(json),
+      pupilsJson,
+    );
 
     return Map<int, PupilIdentity>.fromEntries(
       decodedJson.entries.map((entry) {
@@ -42,25 +35,25 @@ class PupilIdentityHelper {
         );
 
         // Convert all DateTime fields from Berlin timezone to UTC
-        final dateTimeFields = [
-          'birthday',
-          'migrationSupportEnds',
-          'pupilSince',
-          'religionLessonsSince',
-          'familyLanguageLessonsSince',
-          'leavingDate',
-        ];
+        // final dateTimeFields = [
+        //   'birthday',
+        //   'migrationSupportEnds',
+        //   'pupilSince',
+        //   'religionLessonsSince',
+        //   'familyLanguageLessonsSince',
+        //   'leavingDate',
+        // ];
 
-        for (final field in dateTimeFields) {
-          if (jsonData[field] != null) {
-            final convertedDate = _convertBerlinDateStringToUtc(
-              jsonData[field] as String?,
-            );
-            if (convertedDate != null) {
-              jsonData[field] = convertedDate.toIso8601String();
-            }
-          }
-        }
+        // for (final field in dateTimeFields) {
+        //   if (jsonData[field] != null) {
+        //     final convertedDate = _convertBerlinDateStringToUtc(
+        //       jsonData[field] as String?,
+        //     );
+        //     if (convertedDate != null) {
+        //       jsonData[field] = convertedDate.toIso8601String();
+        //     }
+        //   }
+        // }
 
         final PupilIdentity pupilIdentity = PupilIdentity.fromJson(jsonData);
 
@@ -127,41 +120,33 @@ class PupilIdentityHelper {
       specialNeeds: pupilIdentityStringItems[6] == ''
           ? null
           : '${pupilIdentityStringItems[6]}${pupilIdentityStringItems[7]}',
+      //
       gender: pupilIdentityStringItems[8],
       language: pupilIdentityStringItems[9],
       family: pupilIdentityStringItems[10] == ''
           ? null
           : pupilIdentityStringItems[10],
-      birthday: DateTime.tryParse(
-        pupilIdentityStringItems[11],
-      )!.subtract(Duration(hours: 1)),
+      birthday: DateTime.parse(pupilIdentityStringItems[11]),
       migrationSupportEnds: pupilIdentityStringItems[12] == ''
           ? null
-          : DateTime.tryParse(
-              pupilIdentityStringItems[12],
-            )!.subtract(Duration(hours: 1)),
-      pupilSince: DateTime.tryParse(
-        pupilIdentityStringItems[13],
-      )!.subtract(Duration(hours: 1)),
+          : DateTime.tryParse(pupilIdentityStringItems[12]),
+      pupilSince: DateTime.tryParse(pupilIdentityStringItems[13])!,
       afterSchoolCare: pupilIdentityStringItems[14] != '' ? true : false,
       religion: pupilIdentityStringItems[15] == ''
           ? null
           : pupilIdentityStringItems[15],
       religionLessonsSince: pupilIdentityStringItems[16] == ''
           ? null
-          : DateTime.tryParse(
-              pupilIdentityStringItems[16],
-            )!.subtract(Duration(hours: 1)),
+          : DateTime.tryParse(pupilIdentityStringItems[16])!,
+      religionLessonsCancelledAt: pupilIdentityStringItems[17] == ''
+          ? null
+          : DateTime.tryParse(pupilIdentityStringItems[17])!,
       familyLanguageLessonsSince: pupilIdentityStringItems[18] == ''
           ? null
-          : DateTime.tryParse(
-              pupilIdentityStringItems[18],
-            )!.subtract(Duration(hours: 1)),
-      leavingDate: pupilIdentityStringItems[18] == ''
+          : DateTime.tryParse(pupilIdentityStringItems[18])!,
+      leavingDate: pupilIdentityStringItems[19] == ''
           ? null
-          : DateTime.tryParse(
-              pupilIdentityStringItems[19],
-            )?.subtract(Duration(hours: 1)),
+          : DateTime.tryParse(pupilIdentityStringItems[19]),
     );
     return newPupilIdentity;
   }

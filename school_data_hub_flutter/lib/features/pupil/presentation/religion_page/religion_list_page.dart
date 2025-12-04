@@ -13,15 +13,19 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/religion_pag
 import 'package:school_data_hub_flutter/features/pupil/presentation/religion_page/widgets/religion_list_search_bar.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _filterStateManager = di<FiltersStateManager>();
-
-final _pupilManager = di<PupilManager>();
-
 List<PupilProxy> religionFilter(List<PupilProxy> pupils) {
+  final _filterStateManager = di<FiltersStateManager>();
   List<PupilProxy> filteredPupils = [];
   bool filtersOn = false;
   for (PupilProxy pupil in pupils) {
     if (pupil.religionLessonsSince == null) {
+      filtersOn = true;
+      continue;
+    }
+    if (pupil.religionLessonsCancelledAt != null &&
+        pupil.religionLessonsCancelledAt!.isAfter(
+          pupil.religionLessonsSince!,
+        )) {
       filtersOn = true;
       continue;
     }
@@ -30,12 +34,15 @@ List<PupilProxy> religionFilter(List<PupilProxy> pupils) {
   }
   if (filtersOn) {
     _filterStateManager.setFilterState(
-        filterState: FilterState.pupil, value: true);
+      filterState: FilterState.pupil,
+      value: true,
+    );
   }
   return filteredPupils;
 }
 
 void _onPop(bool didPop, dynamic result) {
+  final _filterStateManager = di<FiltersStateManager>();
   _filterStateManager.resetFilters();
 }
 
@@ -44,8 +51,11 @@ class ReligionListPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<PupilProxy> filteredPupils =
-        watchValue((PupilsFilter x) => x.filteredPupils);
+    final _filterStateManager = di<FiltersStateManager>();
+    final _pupilManager = di<PupilManager>();
+    List<PupilProxy> filteredPupils = watchValue(
+      (PupilsFilter x) => x.filteredPupils,
+    );
     List<PupilProxy> pupils = religionFilter(filteredPupils);
     onDispose(() {
       _filterStateManager.resetFilters();
@@ -60,16 +70,9 @@ class ReligionListPage extends WatchingWidget {
           title: const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.church,
-                size: 25,
-                color: Colors.white,
-              ),
+              Icon(Icons.church, size: 25, color: Colors.white),
               Gap(10),
-              Text(
-                'Religion',
-                style: AppStyles.appBarTextStyle,
-              ),
+              Text('Religion', style: AppStyles.appBarTextStyle),
             ],
           ),
           automaticallyImplyLeading: false,
@@ -84,13 +87,12 @@ class ReligionListPage extends WatchingWidget {
                   const SliverGap(5),
                   GenericSliverSearchAppBar(
                     height: 110,
-                    title: ReligionListSearchBar(
-                      pupils: pupils,
-                    ),
+                    title: ReligionListSearchBar(pupils: pupils),
                   ),
                   GenericSliverListWithEmptyListCheck(
-                      items: pupils,
-                      itemBuilder: (_, pupil) => ReligionCard(pupil)),
+                    items: pupils,
+                    itemBuilder: (_, pupil) => ReligionCard(pupil),
+                  ),
                 ],
               ),
             ),
@@ -101,4 +103,3 @@ class ReligionListPage extends WatchingWidget {
     );
   }
 }
-

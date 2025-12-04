@@ -9,14 +9,13 @@ import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_m
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/controller/select_matrix_users_list_controller.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _matrixPolicyManager = di<MatrixPolicyManager>();
-final _matrixPolicyFilterManager = di<MatrixPolicyFilterManager>();
-
 class MatrixUsersListViewBottomNavbar extends WatchingWidget {
   const MatrixUsersListViewBottomNavbar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _matrixPolicyManager = di<MatrixPolicyManager>();
+    final _matrixPolicyFilterManager = di<MatrixPolicyFilterManager>();
     final bool filtersOn = watchValue(
       (MatrixPolicyFilterManager x) => x.filtersOn,
     );

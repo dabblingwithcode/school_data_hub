@@ -11,6 +11,7 @@ class StreamState {
   final ValueNotifier<bool> requestReceived;
   final ValueNotifier<bool> requestSent;
   final ValueNotifier<bool> isTransmitting;
+  final ValueNotifier<bool> autoConfirmEnabled;
 
   StreamState()
     : isConnected = ValueNotifier(false),
@@ -21,7 +22,8 @@ class StreamState {
       receiverUserName = ValueNotifier(''),
       requestReceived = ValueNotifier(false),
       requestSent = ValueNotifier(false),
-      isTransmitting = ValueNotifier(false);
+      isTransmitting = ValueNotifier(false),
+      autoConfirmEnabled = ValueNotifier(false);
 
   void dispose() {
     isConnected.dispose();
@@ -33,6 +35,7 @@ class StreamState {
     requestReceived.dispose();
     requestSent.dispose();
     isTransmitting.dispose();
+    autoConfirmEnabled.dispose();
   }
 }
 

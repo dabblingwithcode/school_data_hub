@@ -16,9 +16,6 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupil
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _pupilManager = di<PupilManager>();
-final _pupilFilerManager = di<PupilFilterManager>();
-
 class SelectPupilsListPage extends WatchingStatefulWidget {
   final List<PupilProxy>? selectablePupils;
 
@@ -36,6 +33,9 @@ class _SelectPupilsListPageState extends State<SelectPupilsListPage> {
   List<int> selectedPupilIds = [];
   bool isSelectAllMode = false;
   bool isSelectMode = false;
+
+  PupilManager get _pupilManager => di<PupilManager>();
+  PupilFilterManager get _pupilFilerManager => di<PupilFilterManager>();
 
   @override
   void initState() {

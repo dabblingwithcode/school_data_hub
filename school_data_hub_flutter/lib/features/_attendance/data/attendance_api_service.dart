@@ -14,7 +14,7 @@ class AttendanceApiService {
 
   final _notificationService = di<NotificationService>();
 
-//- fetch all missed schooldays -//
+  //- fetch all missed schooldays -//
 
   Future<List<MissedSchoolday>?> fetchAllMissedSchooldayes() async {
     final missedSchooldays = await ClientHelper.apiCall(
@@ -28,7 +28,8 @@ class AttendanceApiService {
   //- fetch missed schooldays for a date -//
 
   Future<List<MissedSchoolday>?> fetchMissedSchooldayesOnASchoolday(
-      DateTime schoolday) async {
+    DateTime schoolday,
+  ) async {
     final missedSchooldays = await ClientHelper.apiCall(
       call: () =>
           _client.missedSchoolday.fetchMissedSchooldaysOnASchoolday(schoolday),
@@ -54,14 +55,17 @@ class AttendanceApiService {
     final schoolday = _schoolCalendarManager.getSchooldayByDate(date);
 
     final MissedSchoolday missedSchoolday = MissedSchoolday(
-        missedType: missedType,
-        unexcused: unexcused ?? false,
-        contacted: contactedType ?? ContactedType.notSet,
-        returned: returned ?? false,
-        writtenExcuse: writtenExcuse ?? false,
-        createdBy: _session.signedInUser!.userName!,
-        schooldayId: schoolday!.id!,
-        pupilId: pupilId);
+      missedType: missedType,
+      unexcused: unexcused ?? false,
+      contacted: contactedType ?? ContactedType.notSet,
+      returned: returned ?? false,
+      minutesLate: minutesLate ?? null,
+      returnedAt: returnedAt ?? null,
+      writtenExcuse: writtenExcuse ?? false,
+      createdBy: _session.signedInUser!.userName!,
+      schooldayId: schoolday!.id!,
+      pupilId: pupilId,
+    );
 
     final missedSchooldayResponse = await ClientHelper.apiCall(
       call: () => _client.missedSchoolday.postMissedSchoolday(missedSchoolday),
@@ -73,8 +77,9 @@ class AttendanceApiService {
 
   //- post a list of missed schooldays -//
 
-  Future<List<MissedSchoolday>?> postMissedSchooldayList(
-      {required List<MissedSchoolday> missedSchooldays}) async {
+  Future<List<MissedSchoolday>?> postMissedSchooldayList({
+    required List<MissedSchoolday> missedSchooldays,
+  }) async {
     final missedSchooldaysList = await ClientHelper.apiCall(
       call: () =>
           _client.missedSchoolday.postMissedSchooldays(missedSchooldays),
@@ -90,8 +95,9 @@ class AttendanceApiService {
     required MissedSchoolday missedSchooldayToUpdate,
   }) async {
     final missedSchoolday = await ClientHelper.apiCall(
-      call: () => _client.missedSchoolday
-          .updateMissedSchoolday(missedSchooldayToUpdate),
+      call: () => _client.missedSchoolday.updateMissedSchoolday(
+        missedSchooldayToUpdate,
+      ),
       errorMessage: 'Fehler beim Aktualisieren der Fehlzeit',
     );
 

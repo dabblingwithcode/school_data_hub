@@ -12,15 +12,14 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avat
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _schoolListManager = di<SchoolListManager>();
-final _pupilManager = di<PupilManager>();
-final _hubSessionManager = di<HubSessionManager>();
-
 class NewSchoolListPage extends WatchingWidget {
   final SchoolList? initialSchoolList;
   const NewSchoolListPage({this.initialSchoolList, super.key});
   @override
   Widget build(BuildContext context) {
+    final _schoolListManager = di<SchoolListManager>();
+    final _pupilManager = di<PupilManager>();
+    final _hubSessionManager = di<HubSessionManager>();
     // Create text editing controllers using createOnce
     final schoolListNameController = createOnce<TextEditingController>(
       () => TextEditingController(),

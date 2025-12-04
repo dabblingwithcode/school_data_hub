@@ -8,9 +8,9 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/auth/hub_auth_key_manager.dart';
-import 'package:school_data_hub_flutter/core/di/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/env/utils/env_utils.dart';
+import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:serverpod_auth_client/serverpod_auth_client.dart'
     as auth_client;
 import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
@@ -33,6 +33,13 @@ class HubSessionManager with ChangeNotifier {
   String get _userInfoStorageKey => _envManager.storageKeyForUserInfo;
 
   bool _matrixPolicyManagerRegistrationStatus = false;
+  bool _isMatrixSessionConfigured = false;
+  bool get isMatrixSessionConfigured => _isMatrixSessionConfigured;
+
+  void setIsMatrixSessionConfigured(bool isConfigured) {
+    _isMatrixSessionConfigured = isConfigured;
+    notifyListeners();
+  }
 
   bool get matrixPolicyManagerRegistrationStatus =>
       _matrixPolicyManagerRegistrationStatus;
@@ -47,6 +54,7 @@ class HubSessionManager with ChangeNotifier {
 
   User? _user;
   bool _isReady = false;
+  bool _isDisposed = false;
 
   User? get user => _user;
   bool get isReady => _isReady;
@@ -72,6 +80,12 @@ class HubSessionManager with ChangeNotifier {
       'The client needs an associated key manager',
     );
     keyManager = caller.client.authenticationKeyManager! as HubAuthKeyManager;
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
   }
 
   /// Returns a singleton instance of the session manager
@@ -110,7 +124,7 @@ class HubSessionManager with ChangeNotifier {
 
     // Update streaming connection, if it's open.
     await caller.client.updateStreamingConnectionAuthenticationKey(key);
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   /// Returns true if the user is currently signed in.
@@ -128,7 +142,7 @@ class HubSessionManager with ChangeNotifier {
     await _loadUserInfoFromStorage();
     final sessionRefreshed = await refreshSession();
     _isReady = true;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
     return sessionRefreshed;
   }
 
@@ -148,11 +162,11 @@ class HubSessionManager with ChangeNotifier {
 
       _signedInUser = null;
 
-      await _handleAuthCallResultInStorage();
+      // await _handleAuthCallResultInStorage();
 
       await keyManager.remove();
 
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
 
       /// Don't forget to set the flag in [EnvManager] to false
       /// to get to the login screen.
@@ -233,7 +247,7 @@ class HubSessionManager with ChangeNotifier {
 
       await _handleAuthCallResultInStorage();
 
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
       if (_signedInUser != null) {
         /// Don't forget to set the flag in [EnvManager] to false
         /// to get to the login screen.
@@ -245,9 +259,11 @@ class HubSessionManager with ChangeNotifier {
 
         _user = await _client.user.getCurrentUser();
 
-        notifyListeners();
+        if (!_isDisposed) notifyListeners();
 
-        _log.info('User fetched refreshing session: ${_user?.toJson()}');
+        _log.info(
+          'User fetched refreshing session: ${_user?.userInfo?.userName}',
+        );
 
         return false;
       } else {
@@ -291,10 +307,16 @@ class HubSessionManager with ChangeNotifier {
       jsonDecode(json),
     );
 
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   Future<void> _handleAuthCallResultInStorage() async {
+    if (_isDisposed) {
+      _log.warning(
+        'HubSessionManager is disposed, skipping _handleAuthCallResultInStorage',
+      );
+      return;
+    }
     if (signedInUser == null) {
       _log.warning('No signed user found');
 
@@ -304,21 +326,25 @@ class HubSessionManager with ChangeNotifier {
         'We have a signed user - Saving userinfo to storage with key: $_userInfoStorageKey',
       );
 
-      _log.fine('User info: ${signedInUser!.toJson()}');
+      _log.info('User info received for user: ${signedInUser!.userName}');
 
       await _storage.setString(
         _userInfoStorageKey,
         SerializationManager.encode(signedInUser),
       );
 
+      _log.info(
+        'User auth from auth call stored in storage and set for user: ${signedInUser?.userName}',
+      );
+
       _user = await _client.user.getCurrentUser();
 
-      notifyListeners();
-      _log.fine(
-        'User fetched in _handleAuthCallResultInStorage: ${_user?.toJson()}',
-      );
+      if (!_isDisposed) notifyListeners();
+      _log.info('User fetched from server: ${_user?.userInfo?.userName}');
       // We can start now the managers dependent on authentication
-      await DiManager.registerManagersDependingOnAuthedSession();
+      if (!_isDisposed) {
+        await InitManager.registerManagersDependingOnAuthedSession();
+      }
     }
   }
 
@@ -333,7 +359,7 @@ class HubSessionManager with ChangeNotifier {
       if (success) {
         _signedInUser = await caller.status.getUserInfo();
 
-        notifyListeners();
+        if (!_isDisposed) notifyListeners();
 
         return true;
       }
@@ -344,14 +370,18 @@ class HubSessionManager with ChangeNotifier {
     }
   }
 
-  // TODO URGENT DI REGISTRATION MATRIX COLD INIT
   void changeMatrixPolicyManagerRegistrationStatus(bool isRegistered) {
     if (_matrixPolicyManagerRegistrationStatus != isRegistered) {
       _log.info(
         'MatrixPolicyManager registration status changing from $_matrixPolicyManagerRegistrationStatus to $isRegistered',
       );
       _matrixPolicyManagerRegistrationStatus = isRegistered;
-
+      _isMatrixSessionConfigured = isRegistered;
+      if (isRegistered) {
+        _log.info('Matrix session is configured');
+      } else {
+        _log.info('Matrix session is not configured');
+      }
       notifyListeners();
 
       _log.info(

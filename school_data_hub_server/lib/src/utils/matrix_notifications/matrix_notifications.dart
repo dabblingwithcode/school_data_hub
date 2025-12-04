@@ -17,6 +17,7 @@ class MatrixNotifications {
 
   MatrixNotifications._internal();
 
+// TODO: This is hardcoded, put it in the secrets
   final _currentUserId = '@schuldaten-hub:hermannschule.de';
   final MatrixClient _matrixClient = MatrixClient();
   final _log = Logger('MatrixNotifications');

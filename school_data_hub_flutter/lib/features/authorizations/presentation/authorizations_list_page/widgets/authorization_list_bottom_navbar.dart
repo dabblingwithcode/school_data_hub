@@ -7,13 +7,12 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/presentation/new_authorization_page/new_authorization_page.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _hubSessionManager = di<HubSessionManager>();
-
 class AuthorizationListBottomNavBar extends StatelessWidget {
   const AuthorizationListBottomNavBar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _hubSessionManager = di<HubSessionManager>();
     return BottomNavBarLayout(
       bottomNavBar: BottomAppBar(
         height: 60,

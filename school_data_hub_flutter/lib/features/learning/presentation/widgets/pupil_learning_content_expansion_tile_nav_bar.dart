@@ -29,7 +29,7 @@ class SelectedLearningContentNotifier extends ChangeNotifier {
     return _instance;
   }
 
-  SelectedContent _selectedContent = SelectedContent.competenceStatuses;
+  SelectedContent _selectedContent = SelectedContent.books;
 
   SelectedContent get selectedContent => _selectedContent;
 

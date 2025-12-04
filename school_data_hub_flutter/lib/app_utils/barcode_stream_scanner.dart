@@ -100,7 +100,7 @@ class _BarcodeStreamScannerState extends State<BarcodeStreamScanner> {
                       onPressed: () {
                         unawaited(
                           _pupilIdentityManager
-                              .decryptAndAddOrUpdatePupilIdentities(
+                              .updatePupilIdentitiesFromEncryptedSource(
                                 _scannedQrCodes,
                               ),
                         );

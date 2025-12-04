@@ -4,9 +4,9 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:school_data_hub_flutter/core/di/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
+import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _envManager = di<EnvManager>();
@@ -54,7 +54,7 @@ Future<bool?> changeEnvironmentDialog({required BuildContext context}) async {
                         if (confirmation != true) return;
                         if (context.mounted) {
                           Navigator.of(context).pop();
-                          _envManager.activateEnv(
+                          _envManager.activateDifferentEnv(
                             envName: envs[index].serverName,
                           );
                         }
@@ -78,10 +78,10 @@ Future<bool?> changeEnvironmentDialog({required BuildContext context}) async {
                     const Gap(10),
                     _envManager.activeEnv?.serverName == envs[index].serverName
                         ? const Icon(
-                          Icons.check,
-                          color: Colors.green,
-                          weight: 20,
-                        )
+                            Icons.check,
+                            color: Colors.green,
+                            weight: 20,
+                          )
                         : const SizedBox(),
                   ],
                 ),
@@ -100,12 +100,12 @@ Future<bool?> changeEnvironmentDialog({required BuildContext context}) async {
                 _log.info(
                   '[DI] User wants to add a new environment frpm the dialog: dropping logged in user scope first',
                 );
-                DiManager.dropOnLoggedInUserScope();
+                InitManager.dropOnLoggedInUserScope();
                 //  await di<HubSessionManager>().signOutDevice();
                 _log.warning(
                   '[DI] User signed out, setting env not ready from the dialog',
                 );
-                _envManager.setEnvNotReady();
+                _envManager.deactivateEnv();
               }, // Add onPressed
               child: const Text(
                 "NEUE INSTANZ",

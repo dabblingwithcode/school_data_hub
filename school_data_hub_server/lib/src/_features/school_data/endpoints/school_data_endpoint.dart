@@ -5,15 +5,6 @@ class SchoolDataEndpoint extends Endpoint {
   @override
   bool get requireLogin => true;
 
-  @override
-  Set<Scope> get requiredScopes => {Scope('serverpod.admin')};
-
-  Future<SchoolData> postSchoolData(
-      Session session, SchoolData schoolData) async {
-    final schooldataInDb = await session.db.insertRow(schoolData);
-    return schooldataInDb;
-  }
-
   /// TODO: we should be specific about which school data to get
   Future<SchoolData?> getSchoolData(Session session) async {
     var schoolData = await SchoolData.db.findFirstRow(session);

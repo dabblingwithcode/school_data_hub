@@ -7,10 +7,11 @@ import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_moni
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _log = Logger('DiOnActiveEnv');
+final _log = Logger('[Init][OnActiveEnv]');
 
-class DiOnActiveEnv {
+class InitOnActiveEnv {
   static Future<void> registerManagers() async {
+    _log.info('Registering managers on active environment scope');
     di.registerSingletonWithDependencies<HubAuthKeyManager>(() {
       return HubAuthKeyManager(
         storageKeyForAuthKey: di<EnvManager>().storageKeyForAuthKey,
@@ -18,25 +19,34 @@ class DiOnActiveEnv {
     }, dependsOn: [EnvManager]);
 
     di.registerSingletonWithDependencies<Client>(() {
+      final envManager = di<EnvManager>();
+      final activeEnv = envManager.activeEnv;
+      final serverUrl = activeEnv!.serverUrl;
+      _log.info('[CLIENT] ClientURL: [${activeEnv.serverUrl}]');
+
       return Client(
-        di<EnvManager>().activeEnv!.serverUrl,
+        serverUrl,
         authenticationKeyManager: di<HubAuthKeyManager>(),
       )..connectivityMonitor = di<ServerpodConnectivityMonitor>();
     }, dependsOn: [HubAuthKeyManager]);
 
-    di.registerSingletonAsync<HubSessionManager>(() async {
-      // like described in the serverpod documentation
-      // https://docs.serverpod.dev/concepts/authentication/setup#app-setup
-      final sessionManager = HubSessionManager(
-        caller: di<Client>().modules.auth,
-      );
+    di.registerSingletonAsync<HubSessionManager>(
+      () async {
+        // like described in the serverpod documentation
+        // https://docs.serverpod.dev/concepts/authentication/setup#app-setup
+        final sessionManager = HubSessionManager(
+          caller: di<Client>().modules.auth,
+        );
 
-      // this will initialize the session manager and load the stored user info
-      // it returns a bool
-      await sessionManager.initialize();
-      _log.info('SessionManager initialized');
-      return sessionManager;
-    }, dependsOn: [EnvManager, Client]);
+        // this will initialize the session manager and load the stored user info
+        // it returns a bool
+        await sessionManager.initialize();
+        _log.info('[SESSION] HubSessionManager initialized');
+        return sessionManager;
+      },
+      dependsOn: [EnvManager, Client],
+      dispose: (param) => param.dispose(),
+    );
 
     // Register BottomNavManager in active environment scope so it's always available
     di.registerSingleton<BottomNavManager>(BottomNavManager());

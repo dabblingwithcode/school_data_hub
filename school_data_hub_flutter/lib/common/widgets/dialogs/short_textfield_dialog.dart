@@ -21,37 +21,34 @@ Future<String?> shortTextfieldDialog({
           textAlign: TextAlign.center,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
-        content: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextField(
-            controller: textEditingController,
-            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+        content: TextField(
+          controller: textEditingController,
+          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
 
-            //maxLength: 16,
-            obscureText: obscureText ?? false,
-            decoration: InputDecoration(
-              //border: InputBorder.none,
-              border: const OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: AppColors.backgroundColor,
-                  width: 2,
-                ),
+          //maxLength: 16,
+          obscureText: obscureText ?? false,
+          decoration: InputDecoration(
+            //border: InputBorder.none,
+            border: const OutlineInputBorder(
+              borderSide: BorderSide(
+                color: AppColors.backgroundColor,
+                width: 2,
               ),
-              focusedBorder: const OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: AppColors.backgroundColor,
-                  width: 2,
-                ),
-              ),
-              labelStyle: const TextStyle(color: AppColors.backgroundColor),
-              labelText: labelText,
-              hintText: hintText,
             ),
+            focusedBorder: const OutlineInputBorder(
+              borderSide: BorderSide(
+                color: AppColors.backgroundColor,
+                width: 2,
+              ),
+            ),
+            labelStyle: const TextStyle(color: AppColors.backgroundColor),
+            labelText: labelText,
+            hintText: hintText,
           ),
         ),
         actions: <Widget>[
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: ElevatedButton(
               style: AppStyles.cancelButtonStyle,
               child: const Text('ABBRECHEN', style: AppStyles.buttonTextStyle),
@@ -61,7 +58,7 @@ Future<String?> shortTextfieldDialog({
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: ElevatedButton(
               style: AppStyles.successButtonStyle,
               child: const Text('OKAY', style: AppStyles.buttonTextStyle),

@@ -3,14 +3,13 @@ import 'package:school_data_hub_flutter/features/learning_support/domain/learnin
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _learningSupportManager = di<SupportCategoryManager>();
-
 class SupportCategoryCardBanner extends StatelessWidget {
   final int categoryId;
   const SupportCategoryCardBanner({required this.categoryId, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _learningSupportManager = di<SupportCategoryManager>();
     return Container(
         decoration: BoxDecoration(
           color: LearningSupportHelper.getRootSupportCategoryColor(

@@ -8,13 +8,12 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart
 import 'package:watch_it/watch_it.dart';
 
 // based on https://mobikul.com/creating-stateful-dialog-form-in-flutter/
-final _hubSessionManager = di<HubSessionManager>();
-
 Future<void> preschoolRevisionDialog(
   BuildContext context,
   PupilProxy pupil,
   PreSchoolMedicalStatus? value,
 ) async {
+  final _hubSessionManager = di<HubSessionManager>();
   return await showDialog(
     context: context,
     builder: (context) {

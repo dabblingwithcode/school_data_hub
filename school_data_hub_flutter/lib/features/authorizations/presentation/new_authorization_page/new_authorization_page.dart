@@ -10,9 +10,6 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupil
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _pupilManager = di<PupilManager>();
-final _authorizationManager = di<AuthorizationManager>();
-
 class NewAuthorizationPage extends StatefulWidget {
   const NewAuthorizationPage({super.key});
 
@@ -27,6 +24,9 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
       TextEditingController();
 
   Set<int> pupilIds = {};
+  PupilManager get _pupilManager => di<PupilManager>();
+  AuthorizationManager get _authorizationManager => di<AuthorizationManager>();
+
   void postNewAuthorization() async {
     String text1 = authorizationNameController.text;
     String text2 = authorizationDescriptionController.text;

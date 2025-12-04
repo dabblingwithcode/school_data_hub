@@ -3,11 +3,9 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _notificationService = di<NotificationService>();
-
-final _client = di<Client>();
-
 class PupilWorkbookApiService {
+  final _notificationService = di<NotificationService>();
+  Client get _client => di<Client>();
   //- create
 
   Future<PupilWorkbook?> postNewPupilWorkbook(

@@ -6,8 +6,6 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialo
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _userManager = di<UserManager>();
-
 /// A page for users to change their password.
 ///
 /// Usage example:
@@ -24,6 +22,7 @@ class UserChangePasswordPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _userManager = di<UserManager>();
     final TextEditingController oldPasswordController = createOnce(
       () => TextEditingController(),
     );

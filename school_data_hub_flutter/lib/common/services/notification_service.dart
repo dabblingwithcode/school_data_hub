@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/models/enums.dart';
 
 export 'package:school_data_hub_flutter/common/models/enums.dart';
@@ -10,9 +11,12 @@ class NotificationData {
   NotificationData(this.type, this.message);
 }
 
+final _log = Logger('NotificationService');
+
 class NotificationService {
   final _snackBar = ValueNotifier<NotificationData>(
-      NotificationData(NotificationType.success, ''));
+    NotificationData(NotificationType.success, ''),
+  );
   ValueListenable<NotificationData> get notification => _snackBar;
 
   final _apiRunning = ValueNotifier<bool>(false);
@@ -29,11 +33,20 @@ class NotificationService {
     if (_loadingNewInstance.value) {
       return;
     }
+
+    _log.fine('''SNACK BAR MESSAGE:
+      ${type} $message
+      ''');
+
     _snackBar.value = NotificationData(type, message);
   }
 
   void showInformationDialog(String message) {
     _snackBar.value = NotificationData(NotificationType.dialog, message);
+
+    _log.fine('''INFORMATION DIALOG:
+      $message
+      ''');
   }
 
   void apiRunning(bool value) {

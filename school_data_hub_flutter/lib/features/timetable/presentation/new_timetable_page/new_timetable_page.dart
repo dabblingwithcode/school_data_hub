@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -21,6 +22,8 @@ export 'widgets/end_date_field.dart';
 export 'widgets/name_field.dart';
 export 'widgets/school_semester_dropdown.dart';
 export 'widgets/start_date_field.dart';
+
+final _log = Logger('NewTimetablePage');
 
 class NewTimetablePage extends WatchingWidget {
   final Timetable? timetable;
@@ -201,15 +204,17 @@ class NewTimetablePage extends WatchingWidget {
                         final userName =
                             sessionManager.userName ?? 'unknown_user';
 
-                        print('Creating timetable with:');
-                        print('- Name: $name');
-                        print('- Start Date: $startDate');
-                        print('- End Date: $endDate');
-                        print(
+                        _log.info('Creating timetable with:');
+                        _log.info('- Name: $name');
+                        _log.info('- Start Date: $startDate');
+                        _log.info('- End Date: $endDate');
+                        _log.info(
                           '- School Semester ID: ${selectedSemester.value!.id}',
                         );
-                        print('- Created By: $userName');
-                        print('- Is Signed In: ${sessionManager.isSignedIn}');
+                        _log.info('- Created By: $userName');
+                        _log.info(
+                          '- Is Signed In: ${sessionManager.isSignedIn}',
+                        );
 
                         final newTimetable = Timetable(
                           id: _isEditing ? timetable!.id : null,

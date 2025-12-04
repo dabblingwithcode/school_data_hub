@@ -6,10 +6,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:school_data_hub_flutter/app_utils/logger/log_service.dart';
 import 'package:school_data_hub_flutter/app_utils/logger/logrecord_formatter.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/core/di/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_monitor.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/entry_point/entry_point_controller.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/error_page.dart';
@@ -25,11 +26,14 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Set the global logging level
   Logger.root.level = Level.ALL;
-
+  di.registerSingleton<LogService>(LogService());
+  final logService = di<LogService>();
   // Add your custom colored console listener
   Logger.root.onRecord.listen((record) {
     final colorFormatter = const ColorFormatter();
     log(colorFormatter.format(record));
+    final appLog = AppLog(record.level, record.message, record.loggerName);
+    logService.addLog(appLog);
   });
   // using package window_manager to set a default windows window size
   if (Platform.isWindows) {
@@ -56,11 +60,11 @@ void main() async {
     ),
   );
 
-  DiManager.registerCoreManagers();
+  InitManager.registerCoreManagers();
   await di.allReady();
 
   runApp(const MyApp());
-  // TODO: INFO - This is a hack to avoid calls to firebase from the mobile_scanner package every 15 minutes
+  //- Hack: - This is a to avoid calls to firebase from the mobile_scanner package every 15 minutes
   // like described here: https://github.com/juliansteenbakker/mobile_scanner/issues/553
   if (Platform.isAndroid) {
     final dir = await getApplicationDocumentsDirectory();
@@ -81,7 +85,6 @@ class MyApp extends WatchingWidget {
 
     // Watch for environment changes - this will trigger rebuilds when EnvManager notifies
     final envManager = watchIt<EnvManager>();
-    final String? currentEnv = envManager.activeEnv?.serverName;
 
     final bool envIsReady = watchValue((EnvManager x) => x.envIsReady);
     final bool userIsAuthenticated = watchValue(
@@ -105,31 +108,32 @@ class MyApp extends WatchingWidget {
       ],
       debugShowCheckedModeBanner: false,
       title: 'Schuldaten Hub',
-      home:
-          !isConnected
-              ? const NoConnectionPage()
-              : envIsReady
-              ? FutureBuilder(
-                future: di.allReady(timeout: const Duration(seconds: 30)),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    log.shout(
-                      'Dependency Injection Error: ${snapshot.error}',
-                      snapshot.stackTrace,
-                    );
-                    return ErrorPage(error: snapshot.error.toString());
-                  } else if (snapshot.connectionState == ConnectionState.done) {
-                    if (userIsAuthenticated) {
-                      return MainMenuBottomNavigation();
-                    } else {
-                      return const Login();
-                    }
+      home: !isConnected
+          ? const NoConnectionPage()
+          : envIsReady
+          ? FutureBuilder(
+              future: di.allReady(timeout: const Duration(seconds: 30)),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  log.shout(
+                    'Dependency Injection Error: ${snapshot.error}',
+                    snapshot.stackTrace,
+                  );
+                  return ErrorPage(error: snapshot.error.toString());
+                } else if (snapshot.connectionState == ConnectionState.done) {
+                  if (userIsAuthenticated) {
+                    return const MainMenuBottomNavigation();
                   } else {
-                    return const LoadingPage();
+                    return const Login();
                   }
-                },
-              )
-              : const EntryPoint(),
+                } else {
+                  return const LoadingPage();
+                }
+              },
+            )
+          : envManager.activeEnv != null
+          ? const LoadingPage()
+          : const EntryPoint(),
     );
   }
 }

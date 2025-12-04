@@ -58,7 +58,7 @@ class LoginController extends State<Login> {
   void changeEnv(String? envName) {
     setState(() {
       selectedEnv = envName!;
-      _envManager.activateEnv(envName: envName);
+      _envManager.activateDifferentEnv(envName: envName);
     });
   }
 

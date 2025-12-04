@@ -4,10 +4,9 @@ import 'package:school_data_hub_flutter/common/domain/filters/filters_state_mana
 import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _authorizationManager = di<AuthorizationManager>();
-final _filtersStateManager = di<FiltersStateManager>();
-
 class AuthorizationFilterManager {
+  AuthorizationManager get _authorizationManager => di<AuthorizationManager>();
+  FiltersStateManager get _filtersStateManager => di<FiltersStateManager>();
   final ValueNotifier<List<Authorization>> _filteredAuthorizations =
       ValueNotifier<List<Authorization>>([]);
   ValueListenable<List<Authorization>> get filteredAuthorizations =>

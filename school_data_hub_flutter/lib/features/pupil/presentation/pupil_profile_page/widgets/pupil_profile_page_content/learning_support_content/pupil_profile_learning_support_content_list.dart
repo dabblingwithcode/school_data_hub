@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -12,7 +13,6 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/document_image.dart';
-import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
@@ -142,7 +142,9 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                   children: [
                     InkWell(
                       onTap: () async {
-                        final File? file = await createImageFile(context);
+                        final File? file = await createAndCropImageFile(
+                          context,
+                        );
                         if (file == null) return;
 
                         await _uploadFileToPreSchoolMedical(file, pupil);
@@ -382,23 +384,33 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
               ...otherPlans.map((plan) => _buildPlanCard(context, plan)),
             const Gap(10),
             // New Learning Support Plan Button
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: ElevatedButton(
-                style: AppStyles.actionButtonStyle,
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (ctx) => NewLearningSupportPlan(pupil: pupil),
-                    ),
-                  );
-                },
-                child: const Text(
-                  "NEUER FÖRDERPLAN",
-                  style: AppStyles.buttonTextStyle,
+            // TODO: show if special educator or group tutor
+            if (di<HubSessionManager>().isAdmin)
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: ElevatedButton(
+                  style: AppStyles.actionButtonStyle,
+                  onPressed: () {
+                    if (pupil.supportLevelHistory == null ||
+                        pupil.supportLevelHistory!.isEmpty) {
+                      di<NotificationService>().showSnackBar(
+                        NotificationType.error,
+                        'Förderebene nicht festgelegt',
+                      );
+                      return;
+                    }
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (ctx) => NewLearningSupportPlan(pupil: pupil),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    "NEUER FÖRDERPLAN",
+                    style: AppStyles.buttonTextStyle,
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ],

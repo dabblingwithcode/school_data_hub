@@ -11,7 +11,6 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identi
 import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('StreamController');
-final _notificationService = di<NotificationService>();
 
 class PupilIdentityStreamController {
   final PupilIdentityStreamRole role;
@@ -19,6 +18,10 @@ class PupilIdentityStreamController {
   final List<int>? selectedPupilIds;
   final String? importedChannelName;
   late String channelName;
+
+  final String thisUserName = di<HubSessionManager>().user!.userInfo!.userName!;
+
+  final _notificationService = di<NotificationService>();
 
   // Controller creates and owns the state
   late final PupilIdentityStreamState state;
@@ -59,10 +62,17 @@ class PupilIdentityStreamController {
     state.streamState.isTransmitting.value = false;
     _notificationService.setHeavyLoadingValue(false);
 
+    if (role == PupilIdentityStreamRole.receiver) {
+      state.streamState.receiverJoined.value = false;
+      state.streamState.requestSent.value = false;
+      state.streamState.isConnected.value = false;
+    }
+
     // For sender, record the successful transfer
     if (role == PupilIdentityStreamRole.sender &&
         state.streamState.receiverUserName.value.isNotEmpty) {
       state.transferState.transferCounter.value += 1;
+      // TODO: here we must use a datetime sent by the sender
       final now = DateTime.now();
       final dateStr =
           '${now.day.toString().padLeft(2, '0')}.${now.month.toString().padLeft(2, '0')}.${now.year} ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
@@ -81,8 +91,8 @@ class PupilIdentityStreamController {
 
     state.streamState.statusMessage.value =
         role == PupilIdentityStreamRole.sender
-            ? 'Datenübertragung abgeschlossen!'
-            : 'Schülerdaten wurden erfolgreich empfangen!';
+        ? 'Datenübertragung abgeschlossen!'
+        : 'Schülerdaten wurden erfolgreich empfangen!';
 
     // Only cancel subscription for receiver, sender should stay connected
     if (role == PupilIdentityStreamRole.receiver) {
@@ -120,7 +130,11 @@ class PupilIdentityStreamController {
     // Send confirmation to specific receiver
     await di<Client>().pupilIdentity.sendPupilIdentityMessage(
       channelName,
-      PupilIdentityDto(type: 'confirmed', value: userName),
+      PupilIdentityDto(
+        sender: thisUserName,
+        type: 'confirmed',
+        value: userName,
+      ),
     );
   }
 
@@ -171,7 +185,11 @@ class PupilIdentityStreamController {
         );
         await di<Client>().pupilIdentity.sendPupilIdentityMessage(
           channelName,
-          PupilIdentityDto(type: 'rejected', value: rejectionValue),
+          PupilIdentityDto(
+            sender: thisUserName,
+            type: 'rejected',
+            value: rejectionValue,
+          ),
         );
         _log.info('Rejection message sent successfully to $userName');
         return; // Success, exit retry loop
@@ -198,8 +216,8 @@ class PupilIdentityStreamController {
     state.streamState.isProcessing.value = true;
     state.streamState.statusMessage.value =
         role == PupilIdentityStreamRole.sender
-            ? 'Warte auf Verbindung des Empfängers...'
-            : 'Verbindung zum Sender herstellen...';
+        ? 'Warte auf Verbindung des Empfängers...'
+        : 'Verbindung zum Sender herstellen...';
 
     try {
       // If we're a sender, we need to generate encrypted data if not provided
@@ -211,7 +229,7 @@ class PupilIdentityStreamController {
           'Generating encrypted data for ${selectedPupilIds!.length} pupils',
         );
         dataToSend = await di<PupilIdentityManager>()
-            .generatePupilIdentitiesQrData(selectedPupilIds!);
+            .generateEncryptedPupilIdentitiesTransferString(selectedPupilIds!);
       }
 
       _log.info('Creating stream subscription...');
@@ -227,11 +245,10 @@ class PupilIdentityStreamController {
             onReceiverLeft: (userName) => _handleReceiverLeft(userName),
             onRequestReceived: (userName) => _handleRequestReceived(userName),
             onRequestConfirmed: () => _handleRequestConfirmed(),
-            onRequestRejected:
-                (wasAutoRejected) => _handleRequestRejected(wasAutoRejected),
-            onDataReceived:
-                (newCount, totalCount) =>
-                    _handleDataReceived(newCount, totalCount),
+            onRequestRejected: (wasAutoRejected) =>
+                _handleRequestRejected(wasAutoRejected),
+            onDataReceived: (newCount, totalCount) =>
+                _handleDataReceived(newCount, totalCount),
             onShouldPopPage: () => _handleShouldPopPage(),
             onSenderShutdown: (message) => _handleSenderShutdown(message),
           );
@@ -268,8 +285,9 @@ class PupilIdentityStreamController {
         .sendPupilIdentityMessage(
           channelName,
           PupilIdentityDto(
+            sender: thisUserName,
             type: 'joined',
-            value: di<HubSessionManager>().user!.userInfo!.userName!,
+            value: thisUserName,
           ),
         )
         .then((_) {
@@ -293,8 +311,9 @@ class PupilIdentityStreamController {
           return di<Client>().pupilIdentity.sendPupilIdentityMessage(
             channelName,
             PupilIdentityDto(
+              sender: thisUserName,
               type: 'request',
-              value: di<HubSessionManager>().user!.userInfo!.userName!,
+              value: thisUserName,
             ),
           );
         })
@@ -439,7 +458,16 @@ class PupilIdentityStreamController {
     state.receiverState.pendingRequests.value = updatedPendingRequests;
 
     state.streamState.requestReceived.value = true;
-    onConfirmationRequired.call(userName);
+
+    // Auto-confirm if enabled
+    if (state.streamState.autoConfirmEnabled.value) {
+      _log.info(
+        'Auto-confirm enabled, automatically confirming transfer for $userName',
+      );
+      confirmUserRequest(userName);
+    } else {
+      onConfirmationRequired.call(userName);
+    }
   }
 
   /// Handle request confirmed
@@ -496,9 +524,9 @@ class PupilIdentityStreamController {
           .sendPupilIdentityMessage(
             channelName,
             PupilIdentityDto(
+              sender: thisUserName,
               type: 'close',
-              value:
-                  di<HubSessionManager>().user?.userInfo?.userName ?? 'Unknown',
+              value: thisUserName,
             ),
           )
           .ignore();
@@ -523,6 +551,7 @@ class PupilIdentityStreamController {
         await di<Client>().pupilIdentity.sendPupilIdentityMessage(
           channelName,
           PupilIdentityDto(
+            sender: thisUserName,
             type: 'shutdown',
             value: 'Sender hat den Stream beendet',
           ),
@@ -543,9 +572,9 @@ class PupilIdentityStreamController {
         await di<Client>().pupilIdentity.sendPupilIdentityMessage(
           channelName,
           PupilIdentityDto(
+            sender: thisUserName,
             type: 'close',
-            value:
-                di<HubSessionManager>().user?.userInfo?.userName ?? 'Unknown',
+            value: thisUserName,
           ),
         );
         _log.info('Sent close message to sender before leaving');
@@ -572,5 +601,10 @@ class PupilIdentityStreamController {
   void rejectTransfer(String receiverName) {
     // Use the existing rejectUserRequest method
     rejectUserRequest(receiverName);
+  }
+
+  /// Set auto-confirm enabled state
+  void setAutoConfirmEnabled(bool enabled) {
+    state.streamState.autoConfirmEnabled.value = enabled;
   }
 }

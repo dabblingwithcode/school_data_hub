@@ -30,6 +30,21 @@ class ReligionCourseFilter extends SelectorFilter<PupilProxy, ReligionCourse> {
   }
 }
 
+class FamilyLanguageFilter extends SelectorFilter<PupilProxy, FamilyLanguage> {
+  FamilyLanguageFilter(FamilyLanguage familyLanguage)
+    : super(
+        name: familyLanguage.value,
+        selector: (proxy) =>
+            FamilyLanguage.stringToValue[proxy.language] ??
+            FamilyLanguage.other,
+      );
+
+  @override
+  bool matches(PupilProxy item) {
+    return selector(item).value == name;
+  }
+}
+
 class GroupFilter extends SelectorFilter<PupilProxy, String> {
   GroupFilter(String group)
     : super(name: group, selector: (proxy) => proxy.groupId);

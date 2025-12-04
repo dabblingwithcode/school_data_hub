@@ -8,14 +8,13 @@ import 'package:school_data_hub_flutter/features/matrix/users/presentation/matri
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/new_matrix_room_page/new_matrix_room_page.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _matrixPolicyManager = di<MatrixPolicyManager>();
-final _matrixPolicyFilterManager = di<MatrixPolicyFilterManager>();
-
 class RoomListPageBottomNavBar extends WatchingWidget {
   const RoomListPageBottomNavBar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _matrixPolicyManager = di<MatrixPolicyManager>();
+    final _matrixPolicyFilterManager = di<MatrixPolicyFilterManager>();
     final bool filtersOn =
         watchValue((MatrixPolicyFilterManager x) => x.filtersOn);
     final bool pendingChanges =

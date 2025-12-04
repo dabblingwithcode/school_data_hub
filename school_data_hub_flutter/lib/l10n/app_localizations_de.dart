@@ -69,7 +69,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get learningLists => 'Lernlisten';
 
   @override
-  String get scanTools => 'Scan-Tools';
+  String get tools => 'Tools';
 
   @override
   String get settings => 'Einstellungen';

@@ -10,12 +10,12 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _client = di<Client>();
-final _notificationService = di<NotificationService>();
-final _hubSessionManager = di<HubSessionManager>();
 final _log = Logger('SchooldayEventApiService');
 
 class SchooldayEventApiService {
+  final _notificationService = di<NotificationService>();
+  Client get _client => di<Client>();
+  HubSessionManager get _hubSessionManager => di<HubSessionManager>();
   //- post schooldayEvent
 
   Future<SchooldayEvent> postSchooldayEvent(
@@ -33,7 +33,7 @@ class SchooldayEventApiService {
     try {
       final event = await _client.schooldayEvent.createSchooldayEvent(
         pupilNameAndGroup: pupilName,
-        dateTimeAsString: dateTime.formatDateAndTimeForUser(),
+        dateTimeAsString: dateTime.formatDateForUser(),
         pupilId: pupilId,
         schooldayId: schooldayId,
         type: type,
@@ -81,6 +81,7 @@ class SchooldayEventApiService {
     NullableStringRecord? processedBy,
     NullableDateTimeRecord? processedAt,
     int? schooldayId,
+    NullableStringRecord? comment,
   }) async {
     bool changedProcessedStatus = false;
     // if the schooldayEvent is patched as processed,
@@ -113,6 +114,7 @@ class SchooldayEventApiService {
       processedAt: processedAt != null
           ? processedAt.value
           : schooldayEvent.processedAt,
+      comment: comment != null ? comment.value : schooldayEvent.comment,
     );
     final pupil = di<PupilManager>().getPupilByPupilId(schooldayEvent.pupilId)!;
     try {

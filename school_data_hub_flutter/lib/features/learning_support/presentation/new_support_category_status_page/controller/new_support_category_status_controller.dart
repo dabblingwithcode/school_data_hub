@@ -3,8 +3,6 @@ import 'package:school_data_hub_flutter/features/learning_support/domain/learnin
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/new_support_category_status_page.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _learningSupportPlanManager = di<LearningSupportManager>();
-
 class NewSupportCategoryStatus extends StatefulWidget {
   final String appBarTitle;
   final int pupilId;
@@ -26,6 +24,9 @@ class NewSupportCategoryStatus extends StatefulWidget {
 
 class NewSupportCategoryStatusController
     extends State<NewSupportCategoryStatus> {
+  LearningSupportManager get _learningSupportPlanManager =>
+      di<LearningSupportManager>();
+
   @override
   void initState() {
     super.initState();

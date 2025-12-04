@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
@@ -10,6 +11,7 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper.dart';
+import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_page/new_matrix_user_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -45,13 +47,27 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
               ),
               GenericSliverListWithEmptyListCheck(
                 items: pupils,
-                itemBuilder:
-                    (_, pupil) => Card(
-                      color:
-                          pupil.tutorInfo?.parentsContact == null ||
-                                  pupil.contact == null
-                              ? Colors.orange
-                              : Colors.white,
+                itemBuilder: (_, pupil) {
+                  final missingContacts =
+                      pupil.tutorInfo?.parentsContact == null ||
+                      pupil.contact == null;
+                  final subtleBorder = AppColors.canvasColor;
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8.0,
+                      vertical: 1.0,
+                    ),
+                    child: Card(
+                      color: missingContacts
+                          ? const Color.fromARGB(255, 251, 232, 176)
+                          : Colors.white,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: missingContacts ? Colors.orange : subtleBorder,
+                          width: 3,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       child: Column(
                         children: [
                           Row(
@@ -70,8 +86,8 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                           onTap: () {
                                             Navigator.of(context).push(
                                               MaterialPageRoute(
-                                                builder:
-                                                    (ctx) => PupilProfilePage(
+                                                builder: (ctx) =>
+                                                    PupilProfilePage(
                                                       pupil: pupil,
                                                     ),
                                               ),
@@ -102,23 +118,31 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                     Row(
                                       children: [
                                         const Text('Kontakt: '),
+                                        const Gap(5),
                                         InkWell(
                                           onTap: () async {
                                             if (pupil.contact == null) {
+                                              if (!di
+                                                  .isRegistered<
+                                                    MatrixPolicyManager
+                                                  >()) {
+                                                di<NotificationService>()
+                                                    .showInformationDialog(
+                                                      'Es sind keine Matrix-Admindaten hinterlegt.',
+                                                    );
+                                                return;
+                                              }
                                               Navigator.of(context).push(
                                                 MaterialPageRoute(
-                                                  builder:
-                                                      (
-                                                        ctx,
-                                                      ) => NewMatrixUserPage(
-                                                        pupil: pupil,
-                                                        matrixId:
-                                                            MatrixPolicyHelper.generateMatrixId(
-                                                              isParent: false,
-                                                            ),
-                                                        displayName:
-                                                            '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (${pupil.group})',
-                                                      ),
+                                                  builder: (ctx) => NewMatrixUserPage(
+                                                    pupil: pupil,
+                                                    matrixId:
+                                                        MatrixPolicyHelper.generateMatrixId(
+                                                          isParent: false,
+                                                        ),
+                                                    displayName:
+                                                        '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (${pupil.group})',
+                                                  ),
                                                 ),
                                               );
                                               return;
@@ -156,53 +180,60 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                                 );
                                           },
                                           child: Text(
-                                            pupil.contact ??
-                                                'nicht eingetragen',
+                                            pupil.contact ?? 'nicht vorhanden',
                                             style: TextStyle(
-                                              color:
-                                                  pupil.contact == null
-                                                      ? Colors.black
-                                                      : AppColors
-                                                          .backgroundColor,
-                                              fontWeight:
-                                                  pupil.contact == null
-                                                      ? FontWeight.normal
-                                                      : FontWeight.bold,
+                                              color: pupil.contact == null
+                                                  ? Colors.black
+                                                  : AppColors.backgroundColor,
+                                              fontWeight: pupil.contact == null
+                                                  ? FontWeight.bold
+                                                  : FontWeight.bold,
                                             ),
                                           ),
                                         ),
                                         const Gap(10),
                                         IconButton(
+                                          iconSize: 18,
                                           icon: const Icon(Icons.copy),
                                           onPressed: () {
+                                            if (pupil.contact == null) {
+                                              return;
+                                            }
                                             Clipboard.setData(
                                               ClipboardData(
                                                 text: pupil.contact!,
                                               ),
                                             );
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              const SnackBar(
-                                                content: Text(
+                                            di<NotificationService>()
+                                                .showSnackBar(
+                                                  NotificationType.success,
                                                   'In die Zwischenablage kopiert',
-                                                ),
-                                              ),
-                                            );
+                                                );
                                           },
                                         ),
                                       ],
                                     ),
-                                    const Gap(10),
+
                                     Row(
                                       children: [
                                         const Text('Elternkontakt: '),
+                                        const Gap(5),
                                         InkWell(
                                           onTap: () async {
                                             if (pupil
                                                     .tutorInfo
                                                     ?.parentsContact ==
                                                 null) {
+                                              if (!di
+                                                  .isRegistered<
+                                                    MatrixPolicyManager
+                                                  >()) {
+                                                di<NotificationService>()
+                                                    .showInformationDialog(
+                                                      'Es sind keine Matrix-Admindaten hinterlegt.',
+                                                    );
+                                                return;
+                                              }
                                               String? pupilSiblingsGroups;
                                               if (pupil.family != null) {
                                                 pupilSiblingsGroups =
@@ -219,22 +250,19 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                               }
                                               Navigator.of(context).push(
                                                 MaterialPageRoute(
-                                                  builder:
-                                                      (
-                                                        ctx,
-                                                      ) => NewMatrixUserPage(
-                                                        pupil: pupil,
-                                                        matrixId:
-                                                            MatrixPolicyHelper.generateMatrixId(
-                                                              isParent: true,
-                                                            ),
-                                                        displayName:
-                                                            pupilSiblingsGroups !=
-                                                                    null
-                                                                ? 'Fa. ${pupil.lastName} (E) $pupilSiblingsGroups'
-                                                                : '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (E) ${pupil.group}',
-                                                        isParent: true,
-                                                      ),
+                                                  builder: (ctx) => NewMatrixUserPage(
+                                                    pupil: pupil,
+                                                    matrixId:
+                                                        MatrixPolicyHelper.generateMatrixId(
+                                                          isParent: true,
+                                                        ),
+                                                    displayName:
+                                                        pupilSiblingsGroups !=
+                                                            null
+                                                        ? 'Fa. ${pupil.lastName} (E) $pupilSiblingsGroups'
+                                                        : '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (E) ${pupil.group}',
+                                                    isParent: true,
+                                                  ),
                                                 ),
                                               );
                                               return;
@@ -261,27 +289,26 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                                 await longTextFieldDialog(
                                                   title: 'Elternkontakt',
                                                   labelText: 'Elternkontakt',
-                                                  initialValue:
-                                                      pupil
-                                                          .tutorInfo
-                                                          ?.parentsContact,
+                                                  initialValue: pupil
+                                                      .tutorInfo
+                                                      ?.parentsContact,
                                                   parentContext: context,
                                                 );
                                             if (tutorContact == null) return;
                                             final TutorInfo? tutorInfo =
                                                 pupil.tutorInfo == null
-                                                    ? TutorInfo(
-                                                      parentsContact:
-                                                          '@$tutorContact',
-                                                      createdBy:
-                                                          di<HubSessionManager>()
-                                                              .signedInUser!
-                                                              .userName!,
-                                                    )
-                                                    : pupil.tutorInfo!.copyWith(
-                                                      parentsContact:
-                                                          '@$tutorContact',
-                                                    );
+                                                ? TutorInfo(
+                                                    parentsContact:
+                                                        '@$tutorContact',
+                                                    createdBy:
+                                                        di<HubSessionManager>()
+                                                            .signedInUser!
+                                                            .userName!,
+                                                  )
+                                                : pupil.tutorInfo!.copyWith(
+                                                    parentsContact:
+                                                        '@$tutorContact',
+                                                  );
                                             await PupilMutator()
                                                 .updateTutorInfo(
                                                   pupilId: pupil.pupilId,
@@ -290,30 +317,36 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                           },
                                           child: Text(
                                             pupil.tutorInfo?.parentsContact ??
-                                                'nicht eingetragen',
+                                                'nicht vorhanden',
                                             style: TextStyle(
                                               color:
                                                   pupil
-                                                              .tutorInfo
-                                                              ?.parentsContact ==
-                                                          null
-                                                      ? Colors.black
-                                                      : AppColors
-                                                          .backgroundColor,
+                                                          .tutorInfo
+                                                          ?.parentsContact ==
+                                                      null
+                                                  ? Colors.black
+                                                  : AppColors.backgroundColor,
                                               fontWeight:
                                                   pupil
-                                                              .tutorInfo
-                                                              ?.parentsContact ==
-                                                          null
-                                                      ? FontWeight.normal
-                                                      : FontWeight.bold,
+                                                          .tutorInfo
+                                                          ?.parentsContact ==
+                                                      null
+                                                  ? FontWeight.bold
+                                                  : FontWeight.bold,
                                             ),
                                           ),
                                         ),
                                         const Gap(10),
                                         IconButton(
+                                          iconSize: 18,
                                           icon: const Icon(Icons.copy),
                                           onPressed: () {
+                                            if (pupil
+                                                    .tutorInfo
+                                                    ?.parentsContact ==
+                                                null) {
+                                              return;
+                                            }
                                             Clipboard.setData(
                                               ClipboardData(
                                                 text:
@@ -323,15 +356,11 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                                     'Kein Elternkontakt vorhanden!',
                                               ),
                                             );
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              const SnackBar(
-                                                content: Text(
+                                            di<NotificationService>()
+                                                .showSnackBar(
+                                                  NotificationType.success,
                                                   'In die Zwischenablage kopiert',
-                                                ),
-                                              ),
-                                            );
+                                                );
                                           },
                                         ),
                                       ],
@@ -345,6 +374,8 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                         ],
                       ),
                     ),
+                  );
+                },
               ),
             ],
           ),

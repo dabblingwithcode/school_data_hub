@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_tag_management_page/book_tag_management_page.dart';
@@ -81,9 +80,7 @@ class BookTagManagementController extends State<BookTagManagement> {
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.red,
-              ),
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
               child: const Text('Löschen'),
             ),
           ],
@@ -109,26 +106,16 @@ class BookTagManagementController extends State<BookTagManagement> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.label_outline,
-                  size: 64,
-                  color: Colors.grey,
-                ),
+                Icon(Icons.label_outline, size: 64, color: Colors.grey),
                 SizedBox(height: 16),
                 Text(
                   'Keine Buch-Tags vorhanden',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
                 SizedBox(height: 8),
                 Text(
                   'Tippen Sie auf das + Symbol, um ein neues Tag zu erstellen',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -136,66 +123,82 @@ class BookTagManagementController extends State<BookTagManagement> {
           );
         }
 
-        return ListView.builder(
-          itemCount: bookTags.length,
-          itemBuilder: (context, index) {
-            final tag = bookTags[index];
-            return Card(
-              margin: const EdgeInsets.only(bottom: 8.0),
-              child: ListTile(
-                leading: const Icon(
-                  Icons.label,
-                  color: AppColors.interactiveColor,
-                ),
-                title: Text(
-                  tag.name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                trailing: PopupMenuButton<String>(
-                  onSelected: (value) {
-                    switch (value) {
-                      case 'edit':
-                        editTag(context, tag);
-                        break;
-                      case 'delete':
-                        deleteTag(context, tag);
-                        break;
-                    }
-                  },
-                  itemBuilder: (BuildContext context) => [
-                    const PopupMenuItem<String>(
-                      value: 'edit',
-                      child: Row(
-                        children: [
-                          Icon(Icons.edit),
-                          SizedBox(width: 8),
-                          Text('Bearbeiten'),
-                        ],
-                      ),
-                    ),
-                    const PopupMenuItem<String>(
-                      value: 'delete',
-                      child: Row(
-                        children: [
-                          Icon(Icons.delete, color: Colors.red),
-                          SizedBox(width: 8),
-                          Text(
-                            'Löschen',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
+        return SingleChildScrollView(
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: bookTags.map((tag) {
+              return Chip(
+                label: Text(tag.name),
+                deleteIcon: const Icon(Icons.more_horiz, size: 18),
+                onDeleted: () {
+                  // Using onDeleted to trigger the context menu for edit/delete
+                  // because Chip doesn't support context menu directly
+                  _showTagOptions(context, tag);
+                },
+              );
+            }).toList(),
+          ),
         );
       },
     );
+  }
+
+  Future<void> _showTagOptions(BuildContext context, BookTag tag) async {
+    final RenderBox? button = context.findRenderObject() as RenderBox?;
+    final overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox?;
+
+    if (button == null || overlay == null) return;
+
+    final relativePosition = RelativeRect.fromRect(
+      Rect.fromPoints(
+        button.localToGlobal(Offset.zero, ancestor: overlay),
+        button.localToGlobal(
+          button.size.bottomRight(Offset.zero),
+          ancestor: overlay,
+        ),
+      ),
+      Offset.zero & overlay.size,
+    );
+
+    final result = await showMenu<String>(
+      context: context,
+      position: relativePosition,
+      items: [
+        const PopupMenuItem<String>(
+          value: 'edit',
+          child: Row(
+            children: [
+              Icon(Icons.edit),
+              SizedBox(width: 8),
+              Text('Bearbeiten'),
+            ],
+          ),
+        ),
+        const PopupMenuItem<String>(
+          value: 'delete',
+          child: Row(
+            children: [
+              Icon(Icons.delete, color: Colors.red),
+              SizedBox(width: 8),
+              Text('Löschen', style: TextStyle(color: Colors.red)),
+            ],
+          ),
+        ),
+      ],
+    );
+
+    if (result != null) {
+      switch (result) {
+        case 'edit':
+          if (context.mounted) await editTag(context, tag);
+          break;
+        case 'delete':
+          if (context.mounted) await deleteTag(context, tag);
+          break;
+      }
+    }
   }
 
   @override

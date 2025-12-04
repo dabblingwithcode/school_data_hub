@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/paddings.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/schoolday_event_list_page.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/pupil_schoolday_events_list.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
 
 class PupilProfileSchooldayEventsContent extends StatelessWidget {
   final PupilProxy pupil;
@@ -12,38 +11,25 @@ class PupilProfileSchooldayEventsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: AppColors.pupilProfileCardColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.pupilProfileBackgroundColor,
       ),
-      child: Padding(
-        padding: AppPaddings.pupilProfileCardPadding,
-        child: Column(children: [
-          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            const Icon(
-              Icons.warning_amber_rounded,
-              color: Color.fromARGB(255, 239, 66, 66),
-              size: 24,
-            ),
-            const Gap(5),
-            InkWell(
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
+      child: Column(
+        children: [
+          PupilProfileContentSection(
+            icon: Icons.warning_amber_rounded,
+            title: 'Ereignisse',
+            onTitleTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
                   builder: (ctx) => const SchooldayEventListPage(),
-                ));
-              },
-              child: const Text('Ereignisse',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.backgroundColor,
-                  )),
-            )
-          ]),
-          const Gap(15),
-          PupilSchooldayEventsList(pupil: pupil),
-        ]),
+                ),
+              );
+            },
+            child: PupilSchooldayEventsList(pupil: pupil),
+          ),
+        ],
       ),
     );
   }

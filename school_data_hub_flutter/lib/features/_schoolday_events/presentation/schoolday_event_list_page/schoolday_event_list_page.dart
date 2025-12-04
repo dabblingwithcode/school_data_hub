@@ -13,13 +13,12 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_fil
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _schooldayEventManager = di<SchooldayEventManager>();
-
 class SchooldayEventListPage extends WatchingWidget {
   const SchooldayEventListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _schooldayEventManager = di<SchooldayEventManager>();
     //-TODO: Filterstate in SchooldayEventSearchbar and SchooldayEventListPageBottomNavBar
 
     List<PupilProxy> pupils = watchValue((PupilsFilter x) => x.filteredPupils);
@@ -27,7 +26,9 @@ class SchooldayEventListPage extends WatchingWidget {
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
       appBar: const GenericAppBar(
-          iconData: Icons.warning_amber_rounded, title: 'Ereignisse'),
+        iconData: Icons.warning_amber_rounded,
+        title: 'Ereignisse',
+      ),
       body: RefreshIndicator(
         onRefresh: () async => _schooldayEventManager.fetchSchooldayEvents(),
         child: Center(
@@ -41,9 +42,9 @@ class SchooldayEventListPage extends WatchingWidget {
                   title: SchooldayEventListSearchBar(),
                 ),
                 GenericSliverListWithEmptyListCheck(
-                    items: pupils,
-                    itemBuilder: (_, pupil) =>
-                        SchooldayEventPupilListCard(pupil)),
+                  items: pupils,
+                  itemBuilder: (_, pupil) => SchooldayEventPupilListCard(pupil),
+                ),
               ],
             ),
           ),

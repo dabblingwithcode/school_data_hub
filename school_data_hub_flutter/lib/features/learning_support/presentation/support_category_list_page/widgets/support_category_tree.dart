@@ -4,8 +4,6 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _learningSupportManager = di<SupportCategoryManager>();
-
 class SupportCategoryTree extends StatelessWidget {
   final int? parentId;
   final int indentation;
@@ -18,6 +16,7 @@ class SupportCategoryTree extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _learningSupportManager = di<SupportCategoryManager>();
     List<Widget> goalCategoryWidgets = [];
 
     List<SupportCategory> goalCategories =
@@ -122,6 +121,7 @@ class SupportCategoryTree extends StatelessWidget {
 
 List<Widget> buildCategoryTree(
     int? parentId, int indentation, Color? backGroundColor) {
+  final _learningSupportManager = di<SupportCategoryManager>();
   List<Widget> goalCategoryWidgets = [];
 
   List<SupportCategory> supportCategories =

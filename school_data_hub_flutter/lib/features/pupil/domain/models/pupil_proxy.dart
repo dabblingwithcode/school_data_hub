@@ -37,6 +37,13 @@ class PupilProxy with ChangeNotifier {
     ReligionCourseFilter(ReligionCourse.none),
   ];
 
+  static List<FamilyLanguageFilter> familyLanguageFilters = [
+    FamilyLanguageFilter(FamilyLanguage.turkish),
+    FamilyLanguageFilter(FamilyLanguage.arabic),
+    FamilyLanguageFilter(FamilyLanguage.albanian),
+    FamilyLanguageFilter(FamilyLanguage.other),
+  ];
+
   late PupilData _pupilData;
   PupilIdentity _pupilIdentity;
 
@@ -96,6 +103,8 @@ class PupilProxy with ChangeNotifier {
   DateTime? get familyLanguageLessonsSince =>
       _pupilIdentity.familyLanguageLessonsSince;
   DateTime? get religionLessonsSince => _pupilIdentity.religionLessonsSince;
+  DateTime? get religionLessonsCancelledAt =>
+      _pupilIdentity.religionLessonsCancelledAt;
 
   String? get religion => _pupilIdentity.religion;
   //- PUPIL DATA GETTERS

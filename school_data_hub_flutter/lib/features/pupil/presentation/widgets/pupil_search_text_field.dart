@@ -8,11 +8,12 @@ class PupilSearchTextField extends WatchingStatefulWidget {
   final SearchType searchType;
   final String hintText;
   final Function refreshFunction;
-  const PupilSearchTextField(
-      {required this.searchType,
-      required this.hintText,
-      required this.refreshFunction,
-      super.key});
+  const PupilSearchTextField({
+    required this.searchType,
+    required this.hintText,
+    required this.refreshFunction,
+    super.key,
+  });
 
   @override
   State<PupilSearchTextField> createState() => _SearchTextFieldState();
@@ -26,7 +27,6 @@ class _SearchTextFieldState extends State<PupilSearchTextField> {
   final textEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final textFilter = watch(di<PupilsFilter>().textFilter);
     final filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);
 
     if (di<PupilsFilter>().textFilter.text == '') {
@@ -42,26 +42,19 @@ class _SearchTextFieldState extends State<PupilSearchTextField> {
         filled: true,
         border: UnderlineInputBorder(
           borderSide: BorderSide.none,
-          borderRadius: BorderRadius.circular(
-            12,
-          ),
+          borderRadius: BorderRadius.circular(12),
         ),
         hintText: widget.hintText,
         floatingLabelBehavior: FloatingLabelBehavior.never,
         prefixIcon: filtersOn
             ? IconButton(
-                icon: const Icon(
-                  Icons.close_outlined,
-                ),
+                icon: const Icon(Icons.close_outlined),
                 onPressed: () => di<PupilsFilter>().resetFilters(),
                 color: Colors.black45,
               )
             : IconButton(
                 onPressed: () => widget.refreshFunction,
-                icon: const Icon(
-                  Icons.search_outlined,
-                  color: Colors.black45,
-                ),
+                icon: const Icon(Icons.search_outlined, color: Colors.black45),
               ),
         suffixIcon: const SizedBox.shrink(),
       ),

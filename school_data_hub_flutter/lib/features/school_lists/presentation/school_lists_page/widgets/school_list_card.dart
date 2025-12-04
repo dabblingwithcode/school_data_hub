@@ -10,15 +10,14 @@ import 'package:school_data_hub_flutter/features/school_lists/presentation/schoo
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_stats_row.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _schoolListManager = di<SchoolListManager>();
-final _hubSessionManager = di<HubSessionManager>();
-
 class SchoolListCard extends WatchingWidget {
   final SchoolList schoolList;
   const SchoolListCard({required this.schoolList, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _schoolListManager = di<SchoolListManager>();
+    final _hubSessionManager = di<HubSessionManager>();
     final schoolList = watchPropertyValue(
       (SchoolListManager x) => x.schoolLists,
     ).firstWhere((element) => element.listId == this.schoolList.listId);

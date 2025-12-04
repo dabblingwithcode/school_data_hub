@@ -10,8 +10,6 @@ import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart'
 import 'package:school_data_hub_flutter/features/books/presentation/new_book_page/new_book_controller.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _hubSessionManager = di<HubSessionManager>();
-
 class NewBookPage extends StatelessWidget {
   final NewBookController controller;
 
@@ -19,6 +17,7 @@ class NewBookPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _hubSessionManager = di<HubSessionManager>();
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,

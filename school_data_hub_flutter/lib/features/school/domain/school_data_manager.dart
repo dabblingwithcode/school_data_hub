@@ -1,23 +1,28 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/school/domain/managers/school_data_crud_manager.dart';
 import 'package:school_data_hub_flutter/features/school/domain/managers/school_data_manager.dart'
     as data_manager;
 import 'package:school_data_hub_flutter/features/school/domain/managers/school_data_ui_manager.dart';
 
+final _log = Logger('SchoolDataMainManager');
+
+// AI GENERATED CODE
+
 /// Main school data manager that orchestrates all sub-managers
 /// This follows the established pattern from the timetable feature
 class SchoolDataMainManager extends ChangeNotifier {
   // Sub-managers
   final data_manager.SchoolDataManager _dataManager;
-  final SchoolDataCrudManager _crudManager;
+  final SchoolInfoDataManager _crudManager;
   final SchoolDataUiManager _uiManager;
 
   SchoolDataMainManager()
     : _dataManager = data_manager.SchoolDataManager(),
-      _crudManager = SchoolDataCrudManager(),
+      _crudManager = SchoolInfoDataManager(),
       _uiManager = SchoolDataUiManager();
 
   // Expose data manager properties
@@ -60,7 +65,7 @@ class SchoolDataMainManager extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print('Error refreshing school data: $e');
+      _log.severe('Error refreshing school data: $e');
       rethrow;
     } finally {
       _dataManager.setLoading(false);
@@ -73,7 +78,7 @@ class SchoolDataMainManager extends ChangeNotifier {
       final imageData = await _crudManager.getLogoImage(documentId);
       _dataManager.setLogoImage(imageData);
     } catch (e) {
-      print('Error loading logo image: $e');
+      _log.severe('Error loading logo image: $e');
     }
   }
 
@@ -83,7 +88,7 @@ class SchoolDataMainManager extends ChangeNotifier {
       final imageData = await _crudManager.getOfficialSealImage(documentId);
       _dataManager.setOfficialSealImage(imageData);
     } catch (e) {
-      print('Error loading official seal image: $e');
+      _log.severe('Error loading official seal image: $e');
     }
   }
 
@@ -103,7 +108,7 @@ class SchoolDataMainManager extends ChangeNotifier {
         notifyListeners();
       }
     } catch (e) {
-      print('Error saving school data: $e');
+      _log.severe('Error saving school data: $e');
       rethrow;
     } finally {
       _dataManager.setSaving(false);
@@ -120,11 +125,11 @@ class SchoolDataMainManager extends ChangeNotifier {
         final currentData = _uiManager.getCurrentFormData();
         if (currentData != null) {
           // Note: This would need to be updated when the API supports logo path storage
-          print('Logo uploaded successfully: $logoPath');
+          _log.info('Logo uploaded successfully: $logoPath');
         }
       }
     } catch (e) {
-      print('Error uploading logo: $e');
+      _log.severe('Error uploading logo: $e');
       rethrow;
     } finally {
       _dataManager.setSaving(false);
@@ -141,11 +146,11 @@ class SchoolDataMainManager extends ChangeNotifier {
         final currentData = _uiManager.getCurrentFormData();
         if (currentData != null) {
           // Note: This would need to be updated when the API supports seal path storage
-          print('Official seal uploaded successfully: $sealPath');
+          _log.info('Official seal uploaded successfully: $sealPath');
         }
       }
     } catch (e) {
-      print('Error uploading official seal: $e');
+      _log.severe('Error uploading official seal: $e');
       rethrow;
     } finally {
       _dataManager.setSaving(false);

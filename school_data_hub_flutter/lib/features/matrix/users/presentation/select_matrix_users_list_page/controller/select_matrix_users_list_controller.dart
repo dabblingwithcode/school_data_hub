@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
@@ -19,6 +20,7 @@ class SelectMatrixUsersList extends WatchingStatefulWidget {
 }
 
 class SelectMatrixUsersListController extends State<SelectMatrixUsersList> {
+  final _log = Logger('SelectMatrixUsersListController');
   List<MatrixUser>? users;
   List<MatrixUser>? filteredUsers;
   //TODO: This needs to be changed to specific filters!
@@ -154,7 +156,7 @@ class SelectMatrixUsersListController extends State<SelectMatrixUsersList> {
       if (pdfFile != null) {
         // Show PDF preview
         if (context.mounted) {
-          print('Navigating to BulkPdfViewPage with file: ${pdfFile.path}');
+          _log.info('Navigating to BulkPdfViewPage with file: ${pdfFile.path}');
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => PdfViewerPage(pdfFile: pdfFile),

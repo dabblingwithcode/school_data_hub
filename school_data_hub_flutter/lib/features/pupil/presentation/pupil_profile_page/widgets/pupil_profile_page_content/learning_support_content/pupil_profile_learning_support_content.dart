@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/paddings.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/learning_support_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/pupil_profile_learning_support_content_list.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
 
 class PupilProfileLearningSupportContent extends StatelessWidget {
   final PupilProxy pupil;
@@ -12,38 +11,25 @@ class PupilProfileLearningSupportContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: AppColors.pupilProfileCardColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.pupilProfileBackgroundColor,
       ),
-      child: Padding(
-        padding: AppPaddings.pupilProfileCardPadding,
-        child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            const Icon(
-              Icons.support_rounded,
-              color: Colors.red,
-              size: 24,
-            ),
-            const Gap(5),
-            InkWell(
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
+      child: Column(
+        children: [
+          PupilProfileContentSection(
+            icon: Icons.support_rounded,
+            title: 'Förderung',
+            onTitleTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
                   builder: (ctx) => const LearningSupportListPage(),
-                ));
-              },
-              child: const Text('Förderung',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.backgroundColor,
-                  )),
-            ),
-          ]),
-          const Gap(15),
-          PupilProfileLearningSupportContentList(pupil: pupil),
-        ]),
+                ),
+              );
+            },
+            child: PupilProfileLearningSupportContentList(pupil: pupil),
+          ),
+        ],
       ),
     );
   }

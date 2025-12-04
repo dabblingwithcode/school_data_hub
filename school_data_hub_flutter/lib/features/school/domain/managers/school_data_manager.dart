@@ -1,5 +1,8 @@
 import 'package:flutter/foundation.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+
+final _log = Logger('SchoolDataManager');
 
 /// Manages local school data storage and state
 class SchoolDataManager extends ChangeNotifier {
@@ -42,21 +45,21 @@ class SchoolDataManager extends ChangeNotifier {
   void setSchoolData(SchoolData schoolData) {
     _schoolData.value = schoolData;
     notifyListeners();
-    print('School data updated: ${schoolData.name}');
+    _log.info('School data updated: ${schoolData.name}');
   }
 
   /// Set logo image
   void setLogoImage(ByteData? imageData) {
     _logoImage.value = imageData;
     notifyListeners();
-    print('Logo image updated');
+    _log.info('Logo image updated');
   }
 
   /// Set official seal image
   void setOfficialSealImage(ByteData? imageData) {
     _officialSealImage.value = imageData;
     notifyListeners();
-    print('Official seal image updated');
+    _log.info('Official seal image updated');
   }
 
   /// Set loading state
@@ -73,16 +76,11 @@ class SchoolDataManager extends ChangeNotifier {
 
   /// Debug method to print current state
   void debugPrintState() {
-    print('=== SchoolDataManager Debug State ===');
-    print(
-      'School Data: ${_schoolData.value?.name ?? 'null'} (ID: ${_schoolData.value?.id ?? 'null'})',
+    _log.info(
+      '''School Data: ${_schoolData.value?.name ?? 'null'} (ID: ${_schoolData.value?.id ?? 'null'})
+    Logo Image: ${_logoImage.value != null ? 'loaded' : 'not loaded'}
+    Official Seal Image: ${_officialSealImage.value != null ? 'loaded' : 'not loaded'}
+    ''',
     );
-    print('Logo Image: ${_logoImage.value != null ? 'loaded' : 'not loaded'}');
-    print(
-      'Official Seal Image: ${_officialSealImage.value != null ? 'loaded' : 'not loaded'}',
-    );
-    print('Is Loading: ${_isLoading.value}');
-    print('Is Saving: ${_isSaving.value}');
-    print('====================================');
   }
 }

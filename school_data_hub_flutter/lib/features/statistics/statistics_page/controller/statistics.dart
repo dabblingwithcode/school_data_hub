@@ -26,7 +26,7 @@ class StatisticsController extends State<Statistics> {
     super.initState();
   }
 
-  calculateLanguageOccurrences() {
+  void calculateLanguageOccurrences() {
     for (PupilProxy pupil in pupils) {
       languageOccurrences[pupil.language] =
           (languageOccurrences[pupil.language] ?? 0) + 1;
@@ -38,13 +38,24 @@ class StatisticsController extends State<Statistics> {
   }
 
   List<PupilProxy> pupilsNotEnrolledOnDate(List<PupilProxy> givenPupils) {
+    Map<int, String> pupilsWithEnrollmentDate = {};
+    for (PupilProxy pupil in givenPupils) {
+      pupilsWithEnrollmentDate[pupil.internalId] = pupil.pupilSince
+          .formatDateForUser();
+    }
+    // debugger();
     return givenPupils.where((pupil) {
-      return !(pupil.pupilSince.month == 8 && pupil.pupilSince.day == 1);
+      final date = pupil.pupilSince.toLocal().add(const Duration(hours: 2));
+      return !(date.month == DateTime.august && date.day == 1);
     }).toList();
   }
 
   List<PupilProxy> pupilsEnrolledAfterDate(DateTime date) {
-    return pupils.where((pupil) => pupil.pupilSince.isAfter(date)).toList();
+    final enrolledPupils = pupils
+        .where((pupil) => pupil.pupilSince.isAfter(date))
+        .toList();
+    enrolledPupils.sort((a, b) => a.pupilSince.compareTo(b.pupilSince));
+    return enrolledPupils;
   }
 
   List<PupilProxy> pupilsEnrolledBetweenDates(
@@ -58,6 +69,16 @@ class StatisticsController extends State<Statistics> {
               pupil.pupilSince.isBefore(endDate),
         )
         .toList();
+  }
+
+  List<PupilProxy> pupilsWithSchoolyearHeldBack(List<PupilProxy> givenPupils) {
+    List<PupilProxy> groupPupils = [];
+    for (PupilProxy pupil in givenPupils) {
+      if (pupil.schoolyearHeldBackAt != null) {
+        groupPupils.add(pupil);
+      }
+    }
+    return groupPupils;
   }
 
   List<PupilProxy> pupilsInaGivenGroup(String group) {

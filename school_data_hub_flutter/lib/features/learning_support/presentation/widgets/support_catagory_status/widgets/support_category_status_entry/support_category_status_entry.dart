@@ -13,8 +13,6 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/w
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _learningSupportPlanManager = di<LearningSupportManager>();
-
 class SupportCategoryStatusEntry extends StatelessWidget {
   final PupilProxy pupil;
   final SupportCategoryStatus status;
@@ -27,6 +25,7 @@ class SupportCategoryStatusEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _learningSupportPlanManager = di<LearningSupportManager>();
     final bool authorizedToChangeStatus =
         LearningSupportHelper.isAuthorizedToChangeStatus(status);
     return Padding(

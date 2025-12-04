@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/document_image.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
-import 'package:school_data_hub_flutter/common/widgets/upload_image.dart';
+import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_helper.dart';
@@ -75,8 +75,8 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                                 );
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder:
-                                        (ctx) => PupilProfilePage(pupil: pupil),
+                                    builder: (ctx) =>
+                                        PupilProfilePage(pupil: pupil),
                                   ),
                                 );
                               },
@@ -120,35 +120,35 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                         const Gap(5),
                         competenceCheck != null
                             ? GrowthDropdown(
-                              dropdownValue: competenceCheck.score,
-                              onChangedFunction: (int value) async {
-                                if (value == competenceCheck.score) {
-                                  return;
-                                }
-                                await di<CompetenceManager>()
-                                    .updateCompetenceCheck(
-                                      competenceCheckId:
-                                          competenceCheck.checkId,
-                                      score: (value: value),
-                                    );
-                              },
-                            )
+                                dropdownValue: competenceCheck.score,
+                                onChangedFunction: (int value) async {
+                                  if (value == competenceCheck.score) {
+                                    return;
+                                  }
+                                  await di<CompetenceManager>()
+                                      .updateCompetenceCheck(
+                                        competenceCheckId:
+                                            competenceCheck.checkId,
+                                        score: (value: value),
+                                      );
+                                },
+                              )
                             : GrowthDropdown(
-                              dropdownValue: 0,
-                              onChangedFunction: (int? value) async {
-                                if (value == 0) {
-                                  return;
-                                }
-                                await di<CompetenceManager>()
-                                    .postCompetenceCheck(
-                                      pupilId: pupil.internalId,
-                                      competenceId: competenceId,
-                                      competenceComment: '',
-                                      groupId: groupId,
-                                      score: value!,
-                                    );
-                              },
-                            ),
+                                dropdownValue: 0,
+                                onChangedFunction: (int? value) async {
+                                  if (value == 0) {
+                                    return;
+                                  }
+                                  await di<CompetenceManager>()
+                                      .postCompetenceCheck(
+                                        pupilId: pupil.internalId,
+                                        competenceId: competenceId,
+                                        competenceComment: '',
+                                        groupId: groupId,
+                                        score: value!,
+                                      );
+                                },
+                              ),
                         const Spacer(),
                         //- Take picture button only visible if there are less than 4 pictures
                         if (competenceCheck != null &&
@@ -158,9 +158,8 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                             children: [
                               InkWell(
                                 onTap: () async {
-                                  final File? file = await createImageFile(
-                                    context,
-                                  );
+                                  final File? file =
+                                      await createAndCropImageFile(context);
                                   if (file == null) return;
                                   await di<CompetenceManager>()
                                       .addFileToCompetenceCheck(
@@ -245,9 +244,8 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                             children: [
                               InkWell(
                                 onTap: () async {
-                                  final File? file = await createImageFile(
-                                    context,
-                                  );
+                                  final File? file =
+                                      await createAndCropImageFile(context);
 
                                   if (file == null) return;
                                   // TODO: Uncomment this when postCompetenceCheckWithFile is implemented

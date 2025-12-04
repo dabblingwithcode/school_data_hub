@@ -1,5 +1,8 @@
 import 'package:flutter/foundation.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+
+final _log = Logger('SchoolDataUiManager');
 
 /// Manages UI state and form data for school data
 class SchoolDataUiManager extends ChangeNotifier {
@@ -140,12 +143,12 @@ class SchoolDataUiManager extends ChangeNotifier {
 
   /// Debug method to print current state
   void debugPrintState() {
-    print('=== SchoolDataUiManager Debug State ===');
-    print('Form Data: ${_formData.value?.name ?? 'null'}');
-    print('Is Form Valid: ${_isFormValid.value}');
-    print('Is Form Dirty: ${_isFormDirty.value}');
-    print('Selected Logo File: ${_selectedLogoFile.value ?? 'none'}');
-    print('Selected Seal File: ${_selectedSealFile.value ?? 'none'}');
-    print('====================================');
+    _log.info('''
+    Form Data: ${_formData.value?.name ?? 'null'}
+    Is Form Valid: ${_isFormValid.value}
+    Is Form Dirty: ${_isFormDirty.value}
+    Selected Logo File: ${_selectedLogoFile.value ?? 'none'}
+    Selected Seal File: ${_selectedSealFile.value ?? 'none'}
+    ''');
   }
 }

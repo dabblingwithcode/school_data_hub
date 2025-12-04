@@ -9,16 +9,18 @@ import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_roo
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _matrixPolicyManager = di<MatrixPolicyManager>();
-
 class MatrixUserRoomsList extends WatchingWidget {
   final MatrixUser matrixUser;
   final List<MatrixRoom> matrixRooms;
-  const MatrixUserRoomsList(
-      {required this.matrixUser, required this.matrixRooms, super.key});
+  const MatrixUserRoomsList({
+    required this.matrixUser,
+    required this.matrixRooms,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final _matrixPolicyManager = di<MatrixPolicyManager>();
     List<MatrixRoom> namedMatrixRooms = _matrixPolicyManager.matrixRooms.value;
     final user = watch<MatrixUser>(matrixUser);
 
@@ -30,10 +32,7 @@ class MatrixUserRoomsList extends WatchingWidget {
               padding: EdgeInsets.only(left: 22),
               child: Text(
                 'Räume:',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 18,
-                ),
+                style: TextStyle(color: Colors.black, fontSize: 18),
               ),
             ),
           ],
@@ -48,10 +47,12 @@ class MatrixUserRoomsList extends WatchingWidget {
             int powerLevel = 0;
             final List<MatrixRoom> matrixRoomList = List.from(matrixRooms);
             MatrixRoom matrixRoom = namedMatrixRooms.firstWhere(
-                (element) => element.id == matrixRoomList[index].id);
+              (element) => element.id == matrixRoomList[index].id,
+            );
             if (matrixRoom.roomAdmins != null) {
-              RoomAdmin? admin = matrixRoom.roomAdmins!
-                  .firstWhereOrNull((element) => element.id == user.id);
+              RoomAdmin? admin = matrixRoom.roomAdmins!.firstWhereOrNull(
+                (element) => element.id == user.id,
+              );
               if (admin != null) {
                 powerLevel = admin.powerLevel;
               }
@@ -72,10 +73,11 @@ class MatrixUserRoomsList extends WatchingWidget {
                         InkWell(
                           onLongPress: () async {
                             final bool? confirm = await confirmationDialog(
-                                context: context,
-                                title: 'Raum verlassen?',
-                                message:
-                                    'Diese/n Nutzer/in wirklich aus dem Raum entfernen?');
+                              context: context,
+                              title: 'Raum verlassen?',
+                              message:
+                                  'Diese/n Nutzer/in wirklich aus dem Raum entfernen?',
+                            );
                             if (confirm == true) {
                               user.leaveRoom(matrixRoom);
                             }
@@ -90,18 +92,50 @@ class MatrixUserRoomsList extends WatchingWidget {
                           ),
                         ),
                         const Gap(5),
-                        Text(matrixRoom.id),
+                        InkWell(
+                          onLongPress: () async {
+                            final bool? result = await confirmationDialog(
+                              context: context,
+                              message:
+                                  'Moderationsrechte für ${matrixUser.displayName} vergeben?',
+                              title: 'Moderationsrechte vergeben',
+                            );
+                            if (result == true) {
+                              matrixUser.setPowerLevel(
+                                matrixRooms[index].id,
+                                50,
+                              );
+                              // _matrixPolicyManager.rooms.changeRoomPowerLevels(
+                              //   roomId: roomId,
+                              //   roomAdmin: RoomAdmin(
+                              //     id: matrixUser.id!,
+                              //     powerLevel: 50,
+                              //   ),
+                              // );
+                            }
+                          },
+                          child: Text(matrixRoom.id),
+                        ),
                         const Gap(5),
                         powerLevel > 99
-                            ? const Icon(Icons.star,
-                                color: Colors.yellow, size: 20)
+                            ? const Icon(
+                                Icons.star,
+                                color: Colors.yellow,
+                                size: 20,
+                              )
                             : powerLevel > 49
-                                ? const Icon(Icons.chat,
-                                    color: Colors.orange, size: 20)
-                                : powerLevel > 29
-                                    ? const Icon(Icons.remove_red_eye_outlined,
-                                        color: AppColors.groupColor, size: 20)
-                                    : const SizedBox.shrink(),
+                            ? const Icon(
+                                Icons.chat,
+                                color: Colors.orange,
+                                size: 20,
+                              )
+                            : powerLevel > 29
+                            ? const Icon(
+                                Icons.remove_red_eye_outlined,
+                                color: AppColors.groupColor,
+                                size: 20,
+                              )
+                            : const SizedBox.shrink(),
                       ],
                     ),
                   ),
@@ -109,14 +143,18 @@ class MatrixUserRoomsList extends WatchingWidget {
               ),
             );
           },
-        )
+        ),
       ],
     );
   }
 }
 
 List<Widget> roomsList(
-    MatrixUser matrixUser, List<MatrixRoom> matrixRooms, BuildContext context) {
+  MatrixUser matrixUser,
+  List<MatrixRoom> matrixRooms,
+  BuildContext context,
+) {
+  final _matrixPolicyManager = di<MatrixPolicyManager>();
   List<MatrixRoom> namedMatrixRooms = _matrixPolicyManager.matrixRooms.value;
 
   return [
@@ -131,10 +169,7 @@ List<Widget> roomsList(
           onPressed: () async {
             // changeCreditDialog(context, pupil);
           },
-          child: const Text(
-            "RÄUME ÄNDERN",
-            style: AppStyles.buttonTextStyle,
-          ),
+          child: const Text("RÄUME ÄNDERN", style: AppStyles.buttonTextStyle),
         ),
       ),
     ),
@@ -144,10 +179,7 @@ List<Widget> roomsList(
           padding: EdgeInsets.only(left: 22),
           child: Text(
             'Räume:',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-            ),
+            style: TextStyle(color: Colors.black, fontSize: 18),
           ),
         ),
       ],
@@ -161,10 +193,12 @@ List<Widget> roomsList(
       itemBuilder: (BuildContext context, int index) {
         int powerLevel = 0;
         final List<MatrixRoom> matrixRoomList = List.from(matrixRooms);
-        MatrixRoom matrixRoom = namedMatrixRooms
-            .firstWhere((element) => element.id == matrixRoomList[index].id);
-        RoomAdmin? admin = matrixRoom.roomAdmins!
-            .firstWhereOrNull((element) => element.id == matrixUser.id);
+        MatrixRoom matrixRoom = namedMatrixRooms.firstWhere(
+          (element) => element.id == matrixRoomList[index].id,
+        );
+        RoomAdmin? admin = matrixRoom.roomAdmins!.firstWhereOrNull(
+          (element) => element.id == matrixUser.id,
+        );
         if (admin != null) {
           powerLevel = admin.powerLevel;
         }
@@ -197,12 +231,14 @@ List<Widget> roomsList(
                     powerLevel > 99
                         ? const Icon(Icons.star, color: Colors.yellow, size: 20)
                         : powerLevel > 49
-                            ? const Icon(Icons.chat,
-                                color: Colors.orange, size: 20)
-                            : powerLevel > 29
-                                ? const Icon(Icons.remove_red_eye_outlined,
-                                    color: AppColors.groupColor, size: 20)
-                                : const SizedBox.shrink(),
+                        ? const Icon(Icons.chat, color: Colors.orange, size: 20)
+                        : powerLevel > 29
+                        ? const Icon(
+                            Icons.remove_red_eye_outlined,
+                            color: AppColors.groupColor,
+                            size: 20,
+                          )
+                        : const SizedBox.shrink(),
                   ],
                 ),
               ),

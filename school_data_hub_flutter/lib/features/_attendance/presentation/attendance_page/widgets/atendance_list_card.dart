@@ -22,9 +22,6 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profil
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _attendanceManager = di<AttendanceManager>();
-final _notificationService = di<NotificationService>();
-
 class AttendanceCard extends WatchingWidget {
   final PupilProxy pupil;
   final DateTime thisDate;
@@ -33,6 +30,8 @@ class AttendanceCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _attendanceManager = di<AttendanceManager>();
+    final _notificationService = di<NotificationService>();
     final FocusNode _dropdownFocusNode = FocusNode();
     final missedSchooldaysList = _attendanceManager
         .getPupilMissedSchooldaysProxy(pupil.pupilId);

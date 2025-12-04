@@ -15,13 +15,22 @@ class PupilSchoolListContentList extends WatchingWidget {
       (SchoolListManager m) => m.allPupilEntries,
     );
     final pupilListEntries = [
-      ...pupilListEntriesProxyMaps
-          .expand((element) => element.pupilEntries.values)
+      ...pupilListEntriesProxyMaps.expand(
+        (element) => element.pupilEntries.values,
+      ),
     ];
     final filteredPupilListEntries = pupilListEntries
         .where((element) => element.pupilEntry.pupilId == pupil.pupilId)
         .toList();
 
+    if (filteredPupilListEntries.isEmpty) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 20.0),
+          child: Text('Keine Listen gefunden'),
+        ),
+      );
+    }
     return Column(
       children: [
         ListView.builder(
@@ -35,7 +44,7 @@ class PupilSchoolListContentList extends WatchingWidget {
             );
           },
         ),
-        const Gap(10)
+        const Gap(10),
       ],
     );
   }

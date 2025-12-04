@@ -8,8 +8,6 @@ import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/reset_password/widgets/user_selection_dropdown.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _userManager = di<UserManager>();
-
 /// A page for admins to reset a user's password.
 ///
 /// Usage example:
@@ -26,6 +24,7 @@ class ResetUserPasswordPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _userManager = di<UserManager>();
     final selectedUser = createOnce(() => ValueNotifier<User?>(null));
     final TextEditingController newPasswordController = createOnce(
       () => TextEditingController(),

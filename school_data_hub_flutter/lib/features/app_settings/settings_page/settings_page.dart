@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
+import 'package:school_data_hub_flutter/app_utils/logs_page.dart';
 import 'package:school_data_hub_flutter/app_utils/shorebird_code_push.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
@@ -9,7 +10,6 @@ import 'package:school_data_hub_flutter/core/updater/shorebird_update_manager.da
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/widgets/settings_account_section.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/widgets/settings_admin_section.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/widgets/settings_session_section.dart';
-import 'package:school_data_hub_flutter/features/app_settings/settings_page/widgets/settings_tools_section.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -40,7 +40,6 @@ class SettingsPage extends StatelessWidget {
               const SettingsAccountSection(),
               const SettingsSessionSection(),
               if (isAdmin) const SettingsAdminSection(),
-              const SettingsToolsSection(),
               SettingsSection(
                 title: const Padding(
                   padding: EdgeInsets.all(8.0),
@@ -67,22 +66,30 @@ class SettingsPage extends StatelessWidget {
                     ),
                   ),
                   SettingsTile.navigation(
+                    leading: const Icon(Icons.bug_report_rounded),
+                    title: const Text('Logs'),
+                    onPressed: (context) => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (ctx) => const LogViewerPage(),
+                      ),
+                    ),
+                  ),
+                  SettingsTile.navigation(
                     leading: const Icon(Icons.info_rounded),
                     title: const Text('App Infos'),
-                    onPressed:
-                        (context) => showAboutDialog(
-                          context: context,
-                          applicationIcon: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.asset(
-                              'assets/schuldaten_hub_logo.png',
-                              scale: 8,
-                            ),
-                          ),
-                          applicationName: 'Schuldaten App',
-                          applicationVersion: envManager.packageInfo.version,
-                          applicationLegalese: '© 2025 Schuldaten Hub',
+                    onPressed: (context) => showAboutDialog(
+                      context: context,
+                      applicationIcon: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.asset(
+                          'assets/schuldaten_hub_logo.png',
+                          scale: 8,
                         ),
+                      ),
+                      applicationName: 'Schuldaten App',
+                      applicationVersion: envManager.packageInfo.version,
+                      applicationLegalese: '© 2025 Schuldaten Hub',
+                    ),
                   ),
                   SettingsTile.navigation(
                     leading: const Icon(Icons.update_rounded),

@@ -5,8 +5,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
-import 'package:school_data_hub_flutter/core/di/dependency_injection.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
@@ -17,11 +17,11 @@ import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('MatrixPolicyHelperFunctions');
 
-final _matrixPolicyManager = di<MatrixPolicyManager>();
-final _secureStorage = HubSecureStorage();
-final _envManager = di<EnvManager>();
-
 class MatrixPolicyHelper {
+  static MatrixPolicyManager get _matrixPolicyManager =>
+      di<MatrixPolicyManager>();
+  static HubSecureStorage get _secureStorage => HubSecureStorage();
+  static EnvManager get _envManager => di<EnvManager>();
   static Future<void> registerMatrixPolicyManager({
     MatrixCredentials? passedCredentials,
   }) async {
@@ -31,7 +31,6 @@ class MatrixPolicyHelper {
     // if they are null, we will read them from secure storage
 
     final _secureStorageKey = _envManager.storageKeyForMatrixCredentials;
-    MatrixCredentials? storedCredentials;
     if (passedCredentials == null) {
       _log.warning(
         'No matrix credentials passed, the app is initializing\nreading matrix credentials from secure storage',
@@ -43,10 +42,6 @@ class MatrixPolicyHelper {
       if (matrixStoredValues == null) {
         throw Exception('Matrix stored values are null');
       }
-
-      storedCredentials = MatrixCredentials.fromJson(
-        jsonDecode(matrixStoredValues),
-      );
     } else {
       _log.info('Matrix credentials passed, storing them in secure storage');
 
@@ -74,9 +69,9 @@ class MatrixPolicyHelper {
     }
 
     // is the passed credentials are null, we will use the stored ones
-    final validCredentials = passedCredentials ?? storedCredentials;
+    // final validCredentials = passedCredentials ?? storedCredentials;
 
-    await DiManager.registerMatrixManagers(validCredentials!);
+    await InitManager.registerMatrixManagers();
 
     return;
   }

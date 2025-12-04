@@ -13,13 +13,12 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _pupilManager = di<PupilManager>();
-
 class LearningSupportListPage extends WatchingWidget {
   const LearningSupportListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _pupilManager = di<PupilManager>();
     bool filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);
     // These come from the PupilFilterManager
 

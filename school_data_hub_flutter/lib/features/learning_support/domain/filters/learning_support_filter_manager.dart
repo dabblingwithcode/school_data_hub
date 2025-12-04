@@ -10,15 +10,15 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_helper_functions.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _filtersStateManager = di<FiltersStateManager>();
-final _pupilFilterManager = di<PupilFilterManager>();
-final _pupilsFilter = di<PupilsFilter>();
-final _learningSupportManager = di<SupportCategoryManager>();
-
 typedef SupportLevelFilterRecord = ({SupportLevelType filter, bool value});
 typedef SupportAreaFilterRecord = ({SupportArea filter, bool value});
 
 class LearningSupportFilterManager {
+  FiltersStateManager get _filtersStateManager => di<FiltersStateManager>();
+  PupilFilterManager get _pupilFilterManager => di<PupilFilterManager>();
+  PupilsFilter get _pupilsFilter => di<PupilsFilter>();
+  SupportCategoryManager get _learningSupportManager =>
+      di<SupportCategoryManager>();
   final _supportLevelFilterState = ValueNotifier<Map<SupportLevelType, bool>>(
       initialSupportLevelFilterValues);
   ValueListenable<Map<SupportLevelType, bool>> get supportLevelFilterState =>

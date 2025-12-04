@@ -11,8 +11,9 @@ class PupilProfileAuthorizationContentList extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authorizations =
-        watchValue((AuthorizationManager x) => x.authorizations);
+    final authorizations = watchValue(
+      (AuthorizationManager x) => x.authorizations,
+    );
     List<PupilAuthorization> pupilAuthorizations = [];
     for (final authorization in authorizations) {
       for (final pupilAuthorization in authorization.authorizedPupils!) {
@@ -20,6 +21,14 @@ class PupilProfileAuthorizationContentList extends WatchingWidget {
           pupilAuthorizations.add(pupilAuthorization);
         }
       }
+    }
+    if (pupilAuthorizations.isEmpty) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 20.0),
+          child: Text('Keine Einwilligungen gefunden'),
+        ),
+      );
     }
     return ListView.builder(
       padding: const EdgeInsets.all(0),

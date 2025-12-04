@@ -4,16 +4,19 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/list_tiles/group_card.dart';
 
-groupTiles(context, StatisticsController controller, List<PupilProxy> group) {
-  String groupString = group[0].group;
-  return ListTileTheme(
-    contentPadding: const EdgeInsets.all(0),
-    dense: true,
-    horizontalTitleGap: 0.0,
-    minLeadingWidth: 0,
-    child: ExpansionTile(
-      tilePadding: const EdgeInsets.all(0),
-      title: Row(
+groupTiles(
+  context,
+  StatisticsController controller,
+  List<PupilProxy> group,
+) {
+  if (group.isEmpty) {
+    return const SizedBox.shrink();
+  }
+  final groupString = group.first.group;
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
         children: [
           Text(
             groupString,
@@ -53,7 +56,8 @@ groupTiles(context, StatisticsController controller, List<PupilProxy> group) {
           ),
         ],
       ),
-      children: [statisticsGroupCard(controller, group)],
-    ),
+      const Gap(10),
+      statisticsGroupCard(controller, group),
+    ],
   );
 }

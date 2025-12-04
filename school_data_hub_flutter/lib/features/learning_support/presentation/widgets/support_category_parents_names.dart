@@ -4,7 +4,6 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _learningSupportManager = di<SupportCategoryManager>();
 // class CategoryTreeParentsNames extends StatelessWidget {
 //   final int categoryId;
 //   final Color categoryColor;
@@ -82,6 +81,7 @@ final _learningSupportManager = di<SupportCategoryManager>();
 
 List<Widget> categoryTreeAncestorsNames(
     {required int categoryId, required Color categoryColor}) {
+  final _learningSupportManager = di<SupportCategoryManager>();
   // Create an empty list to store ancestors
   List<Widget> ancestors = [];
 

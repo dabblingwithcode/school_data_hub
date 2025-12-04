@@ -7,11 +7,15 @@ import 'package:watch_it/watch_it.dart';
 
 final _notificationService = di<NotificationService>();
 
-Future<String?> qrScanner(
-    {required BuildContext context, required String overlayText}) async {
+Future<String?> qrScanner({
+  required BuildContext context,
+  required String overlayText,
+}) async {
   if (Platform.isWindows) {
-    _notificationService.showSnackBar(NotificationType.error,
-        'Scannen mit Windows ist zur Zeit nicht möglich.');
+    _notificationService.showSnackBar(
+      NotificationType.error,
+      'Scannen mit Windows ist zur Zeit nicht möglich.',
+    );
 
     return null;
   }
@@ -28,15 +32,16 @@ Future<String?> qrScanner(
       builder: (context) => Stack(
         children: [
           MobileScanner(
-              controller: controller,
-              // fit: BoxFit.contain,
-              onDetect: (capture) {
-                final Barcode barcode;
-                barcode = capture.barcodes[0];
+            controller: controller,
+            // fit: BoxFit.contain,
+            onDetect: (capture) {
+              final Barcode barcode;
+              barcode = capture.barcodes[0];
 
-                Navigator.pop(context, barcode.displayValue);
-                controller.dispose();
-              }),
+              Navigator.pop(context, barcode.displayValue);
+              controller.dispose();
+            },
+          ),
           Positioned(
             bottom: 50,
             left: 0,
@@ -44,14 +49,17 @@ Future<String?> qrScanner(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(overlayText,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                        decoration: TextDecoration.none,
-                        backgroundColor: Colors.transparent,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white)),
+                Text(
+                  overlayText,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    decoration: TextDecoration.none,
+                    backgroundColor: Colors.transparent,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
               ],
             ),
           ),

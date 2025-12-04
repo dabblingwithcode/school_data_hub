@@ -9,8 +9,6 @@ import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/controller/select_matrix_users_list_controller.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _matrixPolicyManager = di<MatrixPolicyManager>();
-
 class MatrixUsersInRoomList extends WatchingWidget {
   final List<MatrixUser> matrixUsers;
   final String roomId;
@@ -23,6 +21,7 @@ class MatrixUsersInRoomList extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _matrixPolicyManager = di<MatrixPolicyManager>();
     return Column(
       children: [
         Padding(
@@ -41,10 +40,9 @@ class MatrixUsersInRoomList extends WatchingWidget {
                 final List<String> selectedUserIds =
                     await Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder:
-                            (ctx) => SelectMatrixUsersList(
-                              MatrixUserHelper.usersFromUserIds(availableUsers),
-                            ),
+                        builder: (ctx) => SelectMatrixUsersList(
+                          MatrixUserHelper.usersFromUserIds(availableUsers),
+                        ),
                       ),
                     ) ??
                     [];
@@ -105,6 +103,7 @@ class MatrixUsersInRoomListItem extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _matrixPolicyManager = di<MatrixPolicyManager>();
     watch(matrixUser);
     final MatrixRoom room = watch(
       _matrixPolicyManager.rooms.getRoomById(roomId),

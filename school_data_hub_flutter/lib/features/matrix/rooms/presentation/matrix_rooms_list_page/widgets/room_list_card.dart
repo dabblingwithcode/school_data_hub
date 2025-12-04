@@ -13,14 +13,13 @@ import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matri
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/users_in_room_list.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _matrixPolicyManager = di<MatrixPolicyManager>();
-
 class RoomListCard extends WatchingWidget {
   final MatrixRoom matrixRoom;
   const RoomListCard(this.matrixRoom, {super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _matrixPolicyManager = di<MatrixPolicyManager>();
     final _tileController = createOnce<CustomExpansionTileController>(
       () => CustomExpansionTileController(),
     );

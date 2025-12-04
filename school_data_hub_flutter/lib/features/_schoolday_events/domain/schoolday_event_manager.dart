@@ -35,14 +35,26 @@ class SchooldayEventManager with ChangeNotifier {
   }
 
   Future<void> init() async {
-    // we must have a proxy object for every pupil because we need to
-    // watch them in the UI unconditionally (even if there are no entries)
+    _pupilManager.addListener(_updatePupilProxies);
+    _updatePupilProxies();
+    // Defer fetching events until next frame to ensure proxies are ready
+    Future.microtask(() => fetchSchooldayEvents());
+    _log.info('SchooldayEventManager initialized');
+  }
+
+  void _updatePupilProxies() {
     final pupilIds = _pupilManager.allPupils.map((e) => e.pupilId).toList();
     for (var pupilId in pupilIds) {
-      _pupilSchooldayEventsMap[pupilId] = PupilSchooldayEventsProxy();
+      if (!_pupilSchooldayEventsMap.containsKey(pupilId)) {
+        _pupilSchooldayEventsMap[pupilId] = PupilSchooldayEventsProxy();
+      }
     }
-    fetchSchooldayEvents();
-    _log.info('SchooldayEventManager initialized');
+  }
+
+  @override
+  void dispose() {
+    _pupilManager.removeListener(_updatePupilProxies);
+    super.dispose();
   }
 
   //- Getters
@@ -152,6 +164,7 @@ class SchooldayEventManager with ChangeNotifier {
     NullableStringRecord? processedBy,
     NullableDateTimeRecord? processedAt,
     int? schooldayId,
+    NullableStringRecord? comment,
   }) async {
     String? cacheKey;
     if (processed == false && eventToUpdate.processedDocumentId != null) {
@@ -167,6 +180,7 @@ class SchooldayEventManager with ChangeNotifier {
           processedAt: processedAt,
           schooldayId: schooldayId,
           type: schoolEventType,
+          comment: comment,
         );
 
     _updateSchooldayEventCollections(schooldayEvent);

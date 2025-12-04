@@ -14,23 +14,36 @@ import 'package:serverpod/serverpod.dart' as _i1;
 abstract class PupilIdentityDto
     implements _i1.SerializableModel, _i1.ProtocolSerialization {
   PupilIdentityDto._({
+    required this.sender,
     required this.type,
+    this.dataTimeStamp,
     required this.value,
   });
 
   factory PupilIdentityDto({
+    required String sender,
     required String type,
+    DateTime? dataTimeStamp,
     required String value,
   }) = _PupilIdentityDtoImpl;
 
   factory PupilIdentityDto.fromJson(Map<String, dynamic> jsonSerialization) {
     return PupilIdentityDto(
+      sender: jsonSerialization['sender'] as String,
       type: jsonSerialization['type'] as String,
+      dataTimeStamp: jsonSerialization['dataTimeStamp'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(
+              jsonSerialization['dataTimeStamp']),
       value: jsonSerialization['value'] as String,
     );
   }
 
+  String sender;
+
   String type;
+
+  DateTime? dataTimeStamp;
 
   String value;
 
@@ -38,13 +51,17 @@ abstract class PupilIdentityDto
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   PupilIdentityDto copyWith({
+    String? sender,
     String? type,
+    DateTime? dataTimeStamp,
     String? value,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
+      'sender': sender,
       'type': type,
+      if (dataTimeStamp != null) 'dataTimeStamp': dataTimeStamp?.toJson(),
       'value': value,
     };
   }
@@ -52,7 +69,9 @@ abstract class PupilIdentityDto
   @override
   Map<String, dynamic> toJsonForProtocol() {
     return {
+      'sender': sender,
       'type': type,
+      if (dataTimeStamp != null) 'dataTimeStamp': dataTimeStamp?.toJson(),
       'value': value,
     };
   }
@@ -63,12 +82,18 @@ abstract class PupilIdentityDto
   }
 }
 
+class _Undefined {}
+
 class _PupilIdentityDtoImpl extends PupilIdentityDto {
   _PupilIdentityDtoImpl({
+    required String sender,
     required String type,
+    DateTime? dataTimeStamp,
     required String value,
   }) : super._(
+          sender: sender,
           type: type,
+          dataTimeStamp: dataTimeStamp,
           value: value,
         );
 
@@ -77,11 +102,16 @@ class _PupilIdentityDtoImpl extends PupilIdentityDto {
   @_i1.useResult
   @override
   PupilIdentityDto copyWith({
+    String? sender,
     String? type,
+    Object? dataTimeStamp = _Undefined,
     String? value,
   }) {
     return PupilIdentityDto(
+      sender: sender ?? this.sender,
       type: type ?? this.type,
+      dataTimeStamp:
+          dataTimeStamp is DateTime? ? dataTimeStamp : this.dataTimeStamp,
       value: value ?? this.value,
     );
   }

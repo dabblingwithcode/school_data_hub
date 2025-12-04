@@ -10,8 +10,6 @@ import 'package:school_data_hub_flutter/features/school_lists/domain/school_list
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_page/school_list_pupil_entries_page.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _schoolListManager = di<SchoolListManager>();
-
 class PupilProfileSchoolListPupilEntryCard extends WatchingWidget {
   final PupilListEntryProxy pupilListEntryProxy;
   const PupilProfileSchoolListPupilEntryCard({
@@ -21,6 +19,7 @@ class PupilProfileSchoolListPupilEntryCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _schoolListManager = di<SchoolListManager>();
     final pupilListEntry = watch(pupilListEntryProxy).pupilEntry;
     final schoolList = _schoolListManager.getSchoolListById(
       pupilListEntry.schoolListId,

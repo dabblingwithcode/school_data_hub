@@ -13,8 +13,11 @@ import 'package:watch_it/watch_it.dart';
 class PupilCompetenceListSearchBar extends StatelessWidget {
   final List<PupilProxy> pupils;
   final bool filtersOn;
-  const PupilCompetenceListSearchBar(
-      {required this.filtersOn, required this.pupils, super.key});
+  const PupilCompetenceListSearchBar({
+    required this.filtersOn,
+    required this.pupils,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,14 +27,17 @@ class PupilCompetenceListSearchBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(5.0),
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           const Gap(5),
-          Flexible(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: SizedBox(
+              height: 30,
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const Icon(
                       Icons.people_alt_rounded,
@@ -49,15 +55,13 @@ class PupilCompetenceListSearchBar extends StatelessWidget {
                     const Gap(15),
                     const Text(
                       'Ebene 1: ',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 13,
-                      ),
+                      style: TextStyle(color: Colors.black, fontSize: 13),
                     ),
                     const Gap(5),
                     Text(
-                      (LearningSupportHelper.developmentPlan1Pupils(pupils))
-                          .toString(),
+                      (LearningSupportHelper.developmentPlan1Pupils(
+                        pupils,
+                      )).toString(),
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -67,15 +71,13 @@ class PupilCompetenceListSearchBar extends StatelessWidget {
                     const Gap(15),
                     const Text(
                       '2: ',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 13,
-                      ),
+                      style: TextStyle(color: Colors.black, fontSize: 13),
                     ),
                     const Gap(5),
                     Text(
-                      (LearningSupportHelper.developmentPlan2Pupils(pupils))
-                          .toString(),
+                      (LearningSupportHelper.developmentPlan2Pupils(
+                        pupils,
+                      )).toString(),
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -85,15 +87,13 @@ class PupilCompetenceListSearchBar extends StatelessWidget {
                     const Gap(15),
                     const Text(
                       '3: ',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 13,
-                      ),
+                      style: TextStyle(color: Colors.black, fontSize: 13),
                     ),
                     const Gap(5),
                     Text(
-                      (LearningSupportHelper.developmentPlan3Pupils(pupils))
-                          .toString(),
+                      (LearningSupportHelper.developmentPlan3Pupils(
+                        pupils,
+                      )).toString(),
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -110,10 +110,12 @@ class PupilCompetenceListSearchBar extends StatelessWidget {
             child: Row(
               children: [
                 Expanded(
-                    child: PupilSearchTextField(
-                        searchType: SearchType.pupil,
-                        hintText: 'Schüler/in suchen',
-                        refreshFunction: di<PupilsFilter>().refreshs)),
+                  child: PupilSearchTextField(
+                    searchType: SearchType.pupil,
+                    hintText: 'Schüler/in suchen',
+                    refreshFunction: di<PupilsFilter>().refreshs,
+                  ),
+                ),
                 InkWell(
                   onTap: () => showLearningSupportFilterBottomSheet(context),
                   onLongPress: () => di<PupilsFilter>().resetFilters(),
@@ -129,7 +131,7 @@ class PupilCompetenceListSearchBar extends StatelessWidget {
               ],
             ),
           ),
-          const PupilLearningContentNavBar()
+          const PupilLearningContentNavBar(),
         ],
       ),
     );

@@ -3,30 +3,30 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_search_text_field.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/searchbar/schoolday_event_stats_row.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_search_text_field.dart';
 import 'package:watch_it/watch_it.dart';
-
-final _pupilsFilter = di<PupilsFilter>();
-
-final _filtersStateManager = di<FiltersStateManager>();
 
 class SchooldayEventListSearchBar extends WatchingWidget {
   const SchooldayEventListSearchBar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final _pupilsFilter = di<PupilsFilter>();
+
+    final _filtersStateManager = di<FiltersStateManager>();
     final pupils = watchValue((PupilsFilter x) => x.filteredPupils);
 
     // we need to watch the schoolday events to refresh the counts for the stats
     watchPropertyValue((SchooldayEventManager m) => m.schooldayEvents);
 
-    final filtersActive =
-        watchValue((FiltersStateManager x) => x.filtersActive);
+    final filtersActive = watchValue(
+      (FiltersStateManager x) => x.filtersActive,
+    );
 
     // Let's get the total numbers for the schoolday events variants
     final SchooldayEventsCounts schooldayEventsCounts =
@@ -58,10 +58,12 @@ class SchooldayEventListSearchBar extends WatchingWidget {
             child: Row(
               children: [
                 Expanded(
-                    child: PupilSearchTextField(
-                        searchType: SearchType.pupil,
-                        hintText: 'Schüler/in suchen',
-                        refreshFunction: _pupilsFilter.refreshs)),
+                  child: PupilSearchTextField(
+                    searchType: SearchType.pupil,
+                    hintText: 'Schüler/in suchen',
+                    refreshFunction: _pupilsFilter.refreshs,
+                  ),
+                ),
                 const Gap(5),
                 InkWell(
                   onTap: () => showSchooldayEventFilterBottomSheet(context),

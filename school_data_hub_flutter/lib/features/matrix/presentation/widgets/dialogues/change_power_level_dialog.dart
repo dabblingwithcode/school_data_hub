@@ -4,8 +4,6 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _pupilManager = di<PupilManager>();
-
 final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
 final TextEditingController _textEditingController = TextEditingController();
@@ -15,6 +13,7 @@ final TextEditingController _textEditingController = TextEditingController();
 
 Future<void> changePowerLevelsDialog(
     BuildContext context, PupilProxy pupil) async {
+  final _pupilManager = di<PupilManager>();
   return await showDialog(
       context: context,
       builder: (context) {

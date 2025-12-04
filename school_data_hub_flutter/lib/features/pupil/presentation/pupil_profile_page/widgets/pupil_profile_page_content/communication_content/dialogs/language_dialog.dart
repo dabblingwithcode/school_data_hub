@@ -4,14 +4,9 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/communication_content/dialogs/language_dialog_dropdown.dart';
 import 'package:watch_it/watch_it.dart';
-
-final _pupilManager = di<PupilManager>();
-
-final _hubSessionManager = di<HubSessionManager>();
 
 // based on https://mobikul.com/creating-stateful-dialog-form-in-flutter/
 // TODO: It must be a better way to do this
@@ -21,6 +16,7 @@ Future<void> languageDialog(
   PupilProxy pupil,
   CommunicationSubject subject,
 ) async {
+  final _hubSessionManager = di<HubSessionManager>();
   CommunicationSkills? languageValue;
   switch (subject) {
     case CommunicationSubject.pupil:
@@ -127,30 +123,28 @@ Future<void> languageDialog(
                         );
                         break;
                       case CommunicationSubject.tutor1:
-                        final tutorInfo =
-                            pupil.tutorInfo != null
-                                ? pupil.tutorInfo!.copyWith(
-                                  communicationTutor1: languageValue,
-                                )
-                                : TutorInfo(
-                                  communicationTutor1: languageValue,
-                                  createdBy: _hubSessionManager.userName!,
-                                );
+                        final tutorInfo = pupil.tutorInfo != null
+                            ? pupil.tutorInfo!.copyWith(
+                                communicationTutor1: languageValue,
+                              )
+                            : TutorInfo(
+                                communicationTutor1: languageValue,
+                                createdBy: _hubSessionManager.userName!,
+                              );
                         PupilMutator().updateTutorInfo(
                           pupilId: pupil.pupilId,
                           tutorInfo: tutorInfo,
                         );
                         break;
                       case CommunicationSubject.tutor2:
-                        final tutorInfo =
-                            pupil.tutorInfo != null
-                                ? pupil.tutorInfo!.copyWith(
-                                  communicationTutor2: languageValue,
-                                )
-                                : TutorInfo(
-                                  communicationTutor2: languageValue,
-                                  createdBy: _hubSessionManager.userName!,
-                                );
+                        final tutorInfo = pupil.tutorInfo != null
+                            ? pupil.tutorInfo!.copyWith(
+                                communicationTutor2: languageValue,
+                              )
+                            : TutorInfo(
+                                communicationTutor2: languageValue,
+                                createdBy: _hubSessionManager.userName!,
+                              );
                         PupilMutator().updateTutorInfo(
                           pupilId: pupil.pupilId,
                           tutorInfo: tutorInfo,

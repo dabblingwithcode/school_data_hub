@@ -2,9 +2,8 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _client = di<Client>();
-
 class LearningSupportApiService {
+  Client get _client => di<Client>();
   //- LEARNING SUPPORT PLANS ------------------------------------------
 
   Future<LearningSupportPlan?> postLearningSupportPlan(

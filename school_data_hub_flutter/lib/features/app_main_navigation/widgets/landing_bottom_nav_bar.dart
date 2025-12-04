@@ -17,12 +17,15 @@ import 'package:school_data_hub_flutter/features/app_settings/settings_page/sett
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _bottomNavmanager = di<BottomNavManager>();
-final _envManager = di<EnvManager>();
+class MainMenuBottomNavigation extends WatchingStatefulWidget {
+  const MainMenuBottomNavigation({super.key});
 
-class MainMenuBottomNavigation extends WatchingWidget {
-  MainMenuBottomNavigation({super.key});
+  @override
+  State<MainMenuBottomNavigation> createState() =>
+      _MainMenuBottomNavigationState();
+}
 
+class _MainMenuBottomNavigationState extends State<MainMenuBottomNavigation> {
   final List pages = [
     const PupilListsMenuPage(),
     const SchoolListsMenuPage(),
@@ -36,44 +39,41 @@ class MainMenuBottomNavigation extends WatchingWidget {
 
   void showHeavyLoadingOverlay(BuildContext context) {
     overlayEntry = OverlayEntry(
-      builder:
-          (context) => const Stack(
-            fit: StackFit.expand,
-            children: [
-              ModalBarrier(
-                dismissible: false,
-                color: Color.fromARGB(
-                  108,
-                  0,
-                  0,
-                  0,
-                ), // Colors.black.withOpacity(0.3)
-              ), // Background color
-              Material(
-                color: Colors.transparent,
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Bitte warten...', // Your text here
-                        style: TextStyle(
-                          color: Colors.white, // Text color
-                          fontSize: 20, // Text size
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      CircularProgressIndicator(
-                        color: AppColors.interactiveColor,
-                      ),
-                    ],
+      builder: (context) => const Stack(
+        fit: StackFit.expand,
+        children: [
+          ModalBarrier(
+            dismissible: false,
+            color: Color.fromARGB(
+              108,
+              0,
+              0,
+              0,
+            ), // Colors.black.withOpacity(0.3)
+          ), // Background color
+          Material(
+            color: Colors.transparent,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Bitte warten...', // Your text here
+                    style: TextStyle(
+                      color: Colors.white, // Text color
+                      fontSize: 20, // Text size
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
+                  SizedBox(height: 16),
+                  CircularProgressIndicator(color: AppColors.interactiveColor),
+                ],
               ),
-            ],
+            ),
           ),
+        ],
+      ),
     );
 
     Overlay.of(context).insert(overlayEntry!);
@@ -98,16 +98,15 @@ class MainMenuBottomNavigation extends WatchingWidget {
     } else {
       // Create new banner
       _notificationOverlayEntry = OverlayEntry(
-        builder:
-            (context) => Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: NotificationBanner(
-                notifications: List.from(_notifications),
-                onDismiss: hideNotificationBanner,
-              ),
-            ),
+        builder: (context) => Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          child: NotificationBanner(
+            notifications: List.from(_notifications),
+            onDismiss: hideNotificationBanner,
+          ),
+        ),
       );
 
       Overlay.of(context).insert(_notificationOverlayEntry!);
@@ -127,6 +126,8 @@ class MainMenuBottomNavigation extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _bottomNavmanager = di<BottomNavManager>();
+    final _envManager = di<EnvManager>();
     final locale = AppLocalizations.of(context)!;
 
     final tab = watchValue((BottomNavManager x) => x.bottomNavState);
@@ -169,8 +170,8 @@ class MainMenuBottomNavigation extends WatchingWidget {
       },
     );
     callOnce((context) async {
-      final envDataIncomplete =
-          di<EnvManager>().isAnyImportantEnvDataNotPopulatedInServer();
+      final envDataIncomplete = di<EnvManager>()
+          .isAnyImportantEnvDataNotPopulatedInServer();
       if (envDataIncomplete) {
         final serverDataStatus = _envManager.populatedEnvServerData;
         final List<String> missingFields = [];
@@ -241,7 +242,7 @@ class MainMenuBottomNavigation extends WatchingWidget {
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.build_rounded),
-              label: locale.scanTools,
+              label: locale.tools,
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.settings),
@@ -261,67 +262,64 @@ OverlayEntry? overlayEntry;
 void showInstanceLoadingOverlay(BuildContext context) {
   final locale = AppLocalizations.of(context)!;
   overlayEntry = OverlayEntry(
-    builder:
-        (context) => Stack(
-          fit: StackFit.expand,
-          children: [
-            const ModalBarrier(
-              dismissible: false,
-              color: AppColors.backgroundColor, // Colors.black.withOpacity(0.3)
-            ), // Background color
-            Material(
-              color: Colors.transparent,
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(
-                      height: 300,
-                      width: 300,
-                      child: Image(image: AssetImage('assets/foreground.png')),
-                    ),
-                    Text(
-                      locale.schoolDataHub,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 30,
-                      ),
-                    ),
-                    const Gap(15),
-                    if (di<EnvManager>().activeEnv != null)
-                      Text(
-                        di<EnvManager>().activeEnv!.serverName,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22,
-                        ),
-                      ),
-                    const Gap(10),
-                    const Text(
-                      'Instanzdaten werden geladen!',
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                    ),
-                    const Gap(5),
-                    const Text(
-                      'Bitte warten...', // Your text here
-                      style: TextStyle(
-                        color: Colors.white, // Text color
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold, // Text size
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const CircularProgressIndicator(
-                      color: AppColors.accentColor,
-                    ),
-                  ],
+    builder: (context) => Stack(
+      fit: StackFit.expand,
+      children: [
+        const ModalBarrier(
+          dismissible: false,
+          color: AppColors.backgroundColor, // Colors.black.withOpacity(0.3)
+        ), // Background color
+        Material(
+          color: Colors.transparent,
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(
+                  height: 300,
+                  width: 300,
+                  child: Image(image: AssetImage('assets/foreground.png')),
                 ),
-              ),
+                Text(
+                  locale.schoolDataHub,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 30,
+                  ),
+                ),
+                const Gap(15),
+                if (di<EnvManager>().activeEnv != null)
+                  Text(
+                    di<EnvManager>().activeEnv!.serverName,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22,
+                    ),
+                  ),
+                const Gap(10),
+                const Text(
+                  'Instanzdaten werden geladen!',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+                const Gap(5),
+                const Text(
+                  'Bitte warten...', // Your text here
+                  style: TextStyle(
+                    color: Colors.white, // Text color
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold, // Text size
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const CircularProgressIndicator(color: AppColors.accentColor),
+              ],
             ),
-          ],
+          ),
         ),
+      ],
+    ),
   );
 
   Overlay.of(context).insert(overlayEntry!);

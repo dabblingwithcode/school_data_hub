@@ -197,7 +197,7 @@ class MatrixUserManager extends ChangeNotifier {
     required bool isStaff,
   }) async {
     final password = MatrixPolicyHelper.generatePassword();
-    debugPrint('Generated password: $password');
+    _log.info('Generated password: $password');
 
     final bool success = await _matrixApiService.userApi.resetPassword(
       userId: user.id!,
@@ -234,10 +234,9 @@ class MatrixUserManager extends ChangeNotifier {
 
     for (String roomId in roomIds) {
       user.joinRoom(MatrixRoom(id: roomId));
-      final updatedUsers =
-          _matrixUsers.value
-              .map((e) => e.id == matrixUserId ? user : e)
-              .toList();
+      final updatedUsers = _matrixUsers.value
+          .map((e) => e.id == matrixUserId ? user : e)
+          .toList();
       _matrixUsers.value = updatedUsers;
     }
 

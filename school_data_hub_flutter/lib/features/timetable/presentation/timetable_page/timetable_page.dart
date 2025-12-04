@@ -59,7 +59,7 @@ class TimetablePage extends WatchingWidget {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () async {
-                  print('Manual refresh triggered');
+                  timetableManager.debugPrintState();
                   await timetableManager.refreshData();
                 },
                 child: const Text('Daten neu laden'),
@@ -86,9 +86,8 @@ class TimetablePage extends WatchingWidget {
     void _navigateToNewLesson() {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder:
-              (context) =>
-                  NewScheduledLessonPage(timetableManager: timetableManager),
+          builder: (context) =>
+              NewScheduledLessonPage(timetableManager: timetableManager),
         ),
       );
     }
@@ -104,11 +103,10 @@ class TimetablePage extends WatchingWidget {
     void _onLessonTap(int lessonId) {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder:
-              (context) => NewScheduledLessonPage(
-                timetableManager: timetableManager,
-                editingLessonId: lessonId,
-              ),
+          builder: (context) => NewScheduledLessonPage(
+            timetableManager: timetableManager,
+            editingLessonId: lessonId,
+          ),
         ),
       );
     }
@@ -116,11 +114,10 @@ class TimetablePage extends WatchingWidget {
     void _onEmptySlotTap(int slotId) {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder:
-              (context) => NewScheduledLessonPage(
-                timetableManager: timetableManager,
-                preselectedSlotId: slotId,
-              ),
+          builder: (context) => NewScheduledLessonPage(
+            timetableManager: timetableManager,
+            preselectedSlotId: slotId,
+          ),
         ),
       );
     }

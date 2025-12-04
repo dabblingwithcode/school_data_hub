@@ -8,14 +8,15 @@ import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _competenceManager = di<CompetenceManager>();
-
 class PostOrPatchCompetencePage extends StatefulWidget {
   final int? parentCompetence;
   final Competence? competence;
 
-  const PostOrPatchCompetencePage(
-      {super.key, this.competence, this.parentCompetence});
+  const PostOrPatchCompetencePage({
+    super.key,
+    this.competence,
+    this.parentCompetence,
+  });
 
   @override
   PostOrPatchCompetencePageState createState() =>
@@ -29,35 +30,45 @@ class PostOrPatchCompetencePageState extends State<PostOrPatchCompetencePage> {
   final TextEditingController indicatorsFieldController =
       TextEditingController();
 
+  CompetenceManager get _competenceManager => di<CompetenceManager>();
+
   void postNewCompetence() async {
     if (competenceLevel.isEmpty) {
-      informationDialog(context, 'Kompetenzstufe auswählen',
-          'Bitte mindestens eine Kompetenzstufe auswählen!');
+      informationDialog(
+        context,
+        'Kompetenzstufe auswählen',
+        'Bitte mindestens eine Kompetenzstufe auswählen!',
+      );
       return;
     }
     Navigator.pop(context);
 
     await _competenceManager.postNewCompetence(
-        parentCompetence: widget.parentCompetence,
-        competenceLevel: [competenceLevel],
-        competenceName: nameFieldController.text,
-        indicators: [indicatorsFieldController.text]);
+      parentCompetence: widget.parentCompetence,
+      competenceLevel: [competenceLevel],
+      competenceName: nameFieldController.text,
+      indicators: [indicatorsFieldController.text],
+    );
   }
 
   void patchCompetence() async {
     if (competenceLevel.isEmpty) {
-      informationDialog(context, 'Kompetenzstufe auswählen',
-          'Bitte mindestens eine Kompetenzstufe auswählen!');
+      informationDialog(
+        context,
+        'Kompetenzstufe auswählen',
+        'Bitte mindestens eine Kompetenzstufe auswählen!',
+      );
       return;
     }
     String competenceName = nameFieldController.text;
     String newCompetenceLevel = competenceLevel;
     String text3 = indicatorsFieldController.text;
     await _competenceManager.updateCompetenceProperty(
-        publicId: widget.competence!.publicId,
-        competenceName: competenceName,
-        competenceLevel: (value: [newCompetenceLevel]),
-        indicators: (value: [text3]));
+      publicId: widget.competence!.publicId,
+      competenceName: competenceName,
+      competenceLevel: (value: [newCompetenceLevel]),
+      indicators: (value: [text3]),
+    );
     // ignore: use_build_context_synchronously
     Navigator.pop(context);
   }
@@ -71,14 +82,16 @@ class PostOrPatchCompetencePageState extends State<PostOrPatchCompetencePage> {
     super.initState();
     setState(() {
       // TODO: implement lists for competence level and indicators
-      competenceLevel =
-          widget.competence != null ? widget.competence!.level!.join() : '';
-      nameFieldController.text =
-          widget.competence != null ? widget.competence!.name : '';
+      competenceLevel = widget.competence != null
+          ? widget.competence!.level!.join()
+          : '';
+      nameFieldController.text = widget.competence != null
+          ? widget.competence!.name
+          : '';
       indicatorsFieldController.text = widget.competence != null
           ? widget.competence!.indicators != null
-              ? widget.competence!.indicators!.join()
-              : ''
+                ? widget.competence!.indicators!.join()
+                : ''
           : '';
     });
   }
@@ -92,10 +105,11 @@ class PostOrPatchCompetencePageState extends State<PostOrPatchCompetencePage> {
 
     return Scaffold(
       appBar: GenericAppBar(
-          iconData: Icons.edit_document,
-          title: widget.competence != null
-              ? 'Kompetenz überarbeiten'
-              : 'Neue Kompetenz'),
+        iconData: Icons.edit_document,
+        title: widget.competence != null
+            ? 'Kompetenz überarbeiten'
+            : 'Neue Kompetenz',
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
@@ -108,7 +122,9 @@ class PostOrPatchCompetencePageState extends State<PostOrPatchCompetencePage> {
                   Text(
                     'Übergeordnete Kompetenz: ${_competenceManager.findCompetenceById(widget.parentCompetence!).name}',
                     style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 const Text(
                   'Kompetenz',
@@ -120,7 +136,8 @@ class PostOrPatchCompetencePageState extends State<PostOrPatchCompetencePage> {
                   maxLines: 2,
                   controller: nameFieldController,
                   decoration: AppStyles.textFieldDecoration(
-                      labelText: 'Name der Kompetenz'),
+                    labelText: 'Name der Kompetenz',
+                  ),
                 ),
                 const Gap(10),
                 const Text(
@@ -132,73 +149,85 @@ class PostOrPatchCompetencePageState extends State<PostOrPatchCompetencePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     ThemedFilterChip(
-                        label: 'E1',
-                        selected: gradeE1,
-                        onSelected: (value) {
-                          if (value) {
-                            setState(() {
-                              competenceLevel = '${competenceLevel}E1';
-                              gradeE1 = true;
-                            });
-                          } else {
-                            setState(() {
-                              competenceLevel =
-                                  competenceLevel.replaceAll('E1', '');
-                              gradeE1 = false;
-                            });
-                          }
-                        }),
+                      label: 'E1',
+                      selected: gradeE1,
+                      onSelected: (value) {
+                        if (value) {
+                          setState(() {
+                            competenceLevel = '${competenceLevel}E1';
+                            gradeE1 = true;
+                          });
+                        } else {
+                          setState(() {
+                            competenceLevel = competenceLevel.replaceAll(
+                              'E1',
+                              '',
+                            );
+                            gradeE1 = false;
+                          });
+                        }
+                      },
+                    ),
                     ThemedFilterChip(
-                        label: 'E2',
-                        selected: gradeE2,
-                        onSelected: (value) {
-                          if (value) {
-                            setState(() {
-                              competenceLevel = '${competenceLevel}E2';
-                              gradeE2 = true;
-                            });
-                          } else {
-                            setState(() {
-                              competenceLevel =
-                                  competenceLevel.replaceAll('E2', '');
-                              gradeE2 = false;
-                            });
-                          }
-                        }),
+                      label: 'E2',
+                      selected: gradeE2,
+                      onSelected: (value) {
+                        if (value) {
+                          setState(() {
+                            competenceLevel = '${competenceLevel}E2';
+                            gradeE2 = true;
+                          });
+                        } else {
+                          setState(() {
+                            competenceLevel = competenceLevel.replaceAll(
+                              'E2',
+                              '',
+                            );
+                            gradeE2 = false;
+                          });
+                        }
+                      },
+                    ),
                     ThemedFilterChip(
-                        label: 'K3',
-                        selected: gradeS3,
-                        onSelected: (value) {
-                          if (value) {
-                            setState(() {
-                              competenceLevel = '${competenceLevel}03';
-                              gradeS3 = true;
-                            });
-                          } else {
-                            setState(() {
-                              competenceLevel =
-                                  competenceLevel.replaceAll('K3', '');
-                              gradeS3 = false;
-                            });
-                          }
-                        }),
+                      label: 'K3',
+                      selected: gradeS3,
+                      onSelected: (value) {
+                        if (value) {
+                          setState(() {
+                            competenceLevel = '${competenceLevel}K3';
+                            gradeS3 = true;
+                          });
+                        } else {
+                          setState(() {
+                            competenceLevel = competenceLevel.replaceAll(
+                              'K3',
+                              '',
+                            );
+                            gradeS3 = false;
+                          });
+                        }
+                      },
+                    ),
                     ThemedFilterChip(
-                        label: 'K4',
-                        selected: gradeS4,
-                        onSelected: (value) {
-                          if (value) {
-                            setState(() {
-                              competenceLevel = '${competenceLevel}04';
-                              gradeS4 = true;
-                            });
-                          } else {
-                            setState(() {
-                              competenceLevel =
-                                  competenceLevel.replaceAll('K4', '');
-                              gradeS4 = false;
-                            });
-                          }
-                        }),
+                      label: 'K4',
+                      selected: gradeS4,
+                      onSelected: (value) {
+                        if (value) {
+                          setState(() {
+                            competenceLevel = '${competenceLevel}K4';
+                            gradeS4 = true;
+                          });
+                        } else {
+                          setState(() {
+                            competenceLevel = competenceLevel.replaceAll(
+                              'K4',
+                              '',
+                            );
+                            gradeS4 = false;
+                          });
+                        }
+                      },
+                    ),
                   ],
                 ),
                 const Gap(20),
@@ -218,10 +247,7 @@ class PostOrPatchCompetencePageState extends State<PostOrPatchCompetencePage> {
                         ? postNewCompetence()
                         : patchCompetence();
                   },
-                  child: const Text(
-                    'SENDEN',
-                    style: AppStyles.buttonTextStyle,
-                  ),
+                  child: const Text('SENDEN', style: AppStyles.buttonTextStyle),
                 ),
                 const Gap(15),
                 ElevatedButton(

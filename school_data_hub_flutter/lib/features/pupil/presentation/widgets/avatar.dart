@@ -36,56 +36,54 @@ class AvatarImage extends WatchingWidget {
       width: size,
       height: size,
       child: Center(
-        child:
-            avatar != null
-                ? WidgetZoom(
-                  heroAnimationTag: avatar.documentId,
-                  zoomWidget: FutureBuilder<Widget>(
-                    future: cachedImageOrDownloadImage(
-                      documentId: avatar.documentId,
-                      decrypt: true,
-                    ),
-                    builder: (context, snapshot) {
-                      Widget child;
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        // Display a loading indicator while the future is not complete
-                        child = const CircularProgressIndicator(
-                          strokeWidth: 8,
-                          color: AppColors.backgroundColor,
-                        );
-                      } else if (snapshot.hasError) {
-                        // Display an error message if the future encounters an error
-                        child = Text('Error: ${snapshot.error}');
-                      } else {
-                        child = snapshot.data!;
-                      }
-                      return AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(size / 2),
-                          child: child,
-                        ),
-                      );
-                    },
+        child: avatar != null
+            ? WidgetZoom(
+                heroAnimationTag: avatar.documentId,
+                zoomWidget: FutureBuilder<Widget>(
+                  future: cachedImageOrDownloadImage(
+                    documentId: avatar.documentId,
+                    decrypt: true,
                   ),
-                )
-                : ClipRRect(
-                  borderRadius: BorderRadius.circular(size / 2),
-                  child:
-                      avatarAuth
-                          ? Image.asset(
-                            'assets/dummy-profile-pic-auth.png',
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          )
-                          : Image.asset(
-                            'assets/dummy-profile-pic-unauth.png',
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          ),
+                  builder: (context, snapshot) {
+                    Widget child;
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      // Display a loading indicator while the future is not complete
+                      child = const CircularProgressIndicator(
+                        strokeWidth: 8,
+                        color: AppColors.backgroundColor,
+                      );
+                    } else if (snapshot.hasError) {
+                      // Display an error message if the future encounters an error
+                      child = Text('Error: ${snapshot.error}');
+                    } else {
+                      child = snapshot.data!;
+                    }
+                    return AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(size / 2),
+                        child: child,
+                      ),
+                    );
+                  },
                 ),
+              )
+            : ClipRRect(
+                borderRadius: BorderRadius.circular(size / 2),
+                child: avatarAuth
+                    ? Image.asset(
+                        'assets/dummy-profile-pic-auth.png',
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.asset(
+                        'assets/dummy-profile-pic-unauth.png',
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+              ),
       ),
     );
   }
@@ -125,10 +123,9 @@ class AvatarWithBadges extends WatchingWidget {
                 position: position,
                 items: [
                   PopupMenuItem(
-                    child:
-                        pupil.avatar == null
-                            ? const Text('Foto hochladen')
-                            : const Text('Foto ersetzen'),
+                    child: pupil.avatar == null
+                        ? const Text('Foto hochladen')
+                        : const Text('Foto ersetzen'),
                     onTap: () => setAvatar(context: context, pupil: pupil),
                   ),
                   if (pupil.avatar != null)
@@ -163,10 +160,9 @@ class AvatarWithBadges extends WatchingWidget {
               width: 30.0,
               height: 30.0,
               decoration: BoxDecoration(
-                color:
-                    AttendanceHelper.pupilIsMissedToday(pupil)
-                        ? AppColors.warningButtonColor
-                        : AppColors.groupColor,
+                color: AttendanceHelper.pupilIsMissedToday(pupil)
+                    ? AppColors.warningButtonColor
+                    : AppColors.groupColor,
                 shape: BoxShape.circle,
               ),
               child: Center(
@@ -185,23 +181,25 @@ class AvatarWithBadges extends WatchingWidget {
             bottom: 0,
             right: 0,
             child: Container(
-              width: 30.0,
-              height: 30.0,
+              width: pupil.schoolyearHeldBackAt != null ? 33.0 : 30.0,
+              height: pupil.schoolyearHeldBackAt != null ? 33.0 : 30.0,
               decoration: BoxDecoration(
-                color:
-                    SchoolDayEventHelper.pupilIsAdmonishedToday(pupil)
-                        ? Colors.red
-                        : AppColors.schoolyearColor,
+                border: pupil.schoolyearHeldBackAt != null
+                    ? Border.all(
+                        color: const Color.fromARGB(255, 250, 197, 98),
+                        width: 3,
+                      )
+                    : null,
+                color: SchoolDayEventHelper.pupilIsAdmonishedToday(pupil)
+                    ? Colors.red
+                    : AppColors.schoolyearColor,
                 shape: BoxShape.circle,
               ),
               child: Center(
                 child: Text(
                   pupil.schoolGrade.name,
-                  style: TextStyle(
-                    color:
-                        pupil.schoolyearHeldBackAt != null
-                            ? const Color.fromARGB(255, 250, 197, 98)
-                            : Colors.white,
+                  style: const TextStyle(
+                    color: Colors.white,
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                   ),
@@ -242,8 +240,8 @@ class AvatarWithBadges extends WatchingWidget {
                 decoration: BoxDecoration(
                   color:
                       PupilHelper.hasLanguageSupport(pupil.migrationSupportEnds)
-                          ? Colors.green
-                          : Colors.grey,
+                      ? Colors.green
+                      : Colors.grey,
                   shape: BoxShape.circle,
                 ),
                 child: const Center(

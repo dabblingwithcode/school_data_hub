@@ -7,10 +7,6 @@ import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _notificationService = di<NotificationService>();
-final _hubSessionManager = di<HubSessionManager>();
-final _client = di<Client>();
-
 class PupilDataApiService {
   // Private constructor
   PupilDataApiService._internal();
@@ -23,6 +19,9 @@ class PupilDataApiService {
     return _instance;
   }
 
+  final _notificationService = di<NotificationService>();
+  HubSessionManager get _hubSessionManager => di<HubSessionManager>();
+  Client get _client => di<Client>();
   // - update backend pupil database
 
   Future<List<PupilData>?> updateBackendPupilsDatabase({
@@ -275,5 +274,14 @@ class PupilDataApiService {
       errorMessage: 'Die letzte Aktualisierung konnte nicht geladen werden',
     );
     return lastUpdate;
+  }
+
+  Future<bool?> updateLastIdentitiesUpdate(DateTime date) async {
+    final updated = await ClientHelper.apiCall(
+      call: () => _client.pupilIdentity.updateLastPupilIdentitiesUpdate(date),
+      errorMessage:
+          'Die letzte Aktualisierung konnte nicht aktualisiert werden',
+    );
+    return updated;
   }
 }
