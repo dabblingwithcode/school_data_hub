@@ -439,7 +439,7 @@ class PupilIdentityManager {
         .listen(
           (PupilIdentityDto event) async {
             _log.info('Received event: [${event.type}] from ${event.sender}');
-
+            final eventSender = event.sender;
             switch (role) {
               //- Stream behavior for sender role
               case PupilIdentityStreamRole.sender:
@@ -448,25 +448,25 @@ class PupilIdentityManager {
                   case 'joined':
                     // Receiver joined the stream
                     if (onReceiverJoined != null) {
-                      onReceiverJoined(event.value);
+                      onReceiverJoined(eventSender);
                     }
                     onStatusUpdate(
-                      'Empfänger ${event.sender} ist der Übertragung beigetreten.',
+                      'Empfänger $eventSender ist der Übertragung beigetreten.',
                     );
                     break;
                   case 'request':
                     // Receiver requests data
                     if (onRequestReceived != null) {
-                      onRequestReceived(event.sender);
+                      onRequestReceived(eventSender);
                     }
                     onStatusUpdate(
-                      'Empfänger ${event.sender} hat Daten angefordert. Warten auf Bestätigung...',
+                      'Empfänger $eventSender hat Daten angefordert. Warten auf Bestätigung...',
                     );
                     break;
                   case 'confirmed':
                     // Check if confirmation is for a specific user
-                    final targetUser = event.sender.isNotEmpty
-                        ? event.sender
+                    final targetUser = event.value.isNotEmpty
+                        ? event.value
                         : null;
                     if (targetUser == null) {
                       // Legacy: no targeting, proceed for any receiver
@@ -598,18 +598,40 @@ class PupilIdentityManager {
 
                     try {
                       final beforeCount = _pupilIdentities.length;
-                      if (event.dataTimeStamp!.isBefore(
+                      final dataUpdateIsUpToDate = event.dataTimeStamp!.isAfter(
                         di<EnvManager>().activeEnv!.lastIdentitiesUpdate!,
-                      )) {
-                        _notificationService.showInformationDialog(
-                          'Die empfangenen Schülerdaten sind veraltet. Die neueste Version ist vom ${di<EnvManager>().activeEnv!.lastIdentitiesUpdate!.formatDateForUser()}.',
-                        );
-                        return;
-                      }
+                      );
+
                       _log.info('''Received newer pupil identities:
                       Timestamp: ${event.dataTimeStamp}
                       Last identities update: ${di<EnvManager>().activeEnv!.lastIdentitiesUpdate}
                       ''');
+                      if (!dataUpdateIsUpToDate) {
+                        // Send confirmation
+                        await _client.pupilIdentity.sendPupilIdentityMessage(
+                          channelName,
+                          PupilIdentityDto(
+                            sender: di<HubSessionManager>()
+                                .user!
+                                .userInfo!
+                                .userName!,
+                            type: 'ok',
+                            value: '',
+                          ),
+                        );
+
+                        onCompleted();
+                        onStatusUpdate('Schülerdaten sind veraltet!');
+                        _encryptedPupilIdsSubscription!.cancel();
+                        if (onRequestRejected != null) {
+                          onRequestRejected(false);
+                        }
+                        _notificationService.showInformationDialog(
+                          'Schülerdaten sind veraltet und wurden nicht verarbeitet.',
+                        );
+
+                        return;
+                      }
                       await updatePupilIdentitiesFromEncryptedSource([
                         actualData,
                       ]);

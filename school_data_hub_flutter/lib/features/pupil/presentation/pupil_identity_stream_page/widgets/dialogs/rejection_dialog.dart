@@ -25,8 +25,8 @@ class RejectionDialog extends StatelessWidget {
       title: const Text('Anfrage abgelehnt'),
       content: Text(
         wasAutoRejected
-            ? 'Der Sender hat Ihre Anfrage bereits zuvor abgelehnt. Sie können diesem Stream nicht mehr beitreten.'
-            : 'Der Sender hat Ihre Anfrage für Schülerdaten abgelehnt.',
+            ? 'Der Sender hat Ihre Anfrage bereits zuvor abgelehnt. Sie können diesem Stream nicht beitreten.'
+            : 'Der Sender hat Ihre Anfrage abgelehnt.',
       ),
       actions: [
         ElevatedButton(

@@ -62,6 +62,12 @@ class PupilIdentityStreamController {
     state.streamState.isTransmitting.value = false;
     _notificationService.setHeavyLoadingValue(false);
 
+    if (role == PupilIdentityStreamRole.receiver) {
+      state.streamState.receiverJoined.value = false;
+      state.streamState.requestSent.value = false;
+      state.streamState.isConnected.value = false;
+    }
+
     // For sender, record the successful transfer
     if (role == PupilIdentityStreamRole.sender &&
         state.streamState.receiverUserName.value.isNotEmpty) {
