@@ -51,9 +51,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                   final missingContacts =
                       pupil.tutorInfo?.parentsContact == null ||
                       pupil.contact == null;
-                  final subtleBorder = AppColors.backgroundColor.withValues(
-                    alpha: 102,
-                  );
+                  final subtleBorder = AppColors.canvasColor;
                   return Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8.0,
@@ -195,6 +193,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                         ),
                                         const Gap(10),
                                         IconButton(
+                                          iconSize: 18,
                                           icon: const Icon(Icons.copy),
                                           onPressed: () {
                                             if (pupil.contact == null) {
@@ -339,6 +338,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                         ),
                                         const Gap(10),
                                         IconButton(
+                                          iconSize: 18,
                                           icon: const Icon(Icons.copy),
                                           onPressed: () {
                                             if (pupil
