@@ -172,7 +172,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
       (filter) => filter.isActive,
     );
 
-    bool isTextFilterActive = _textFilter.isActive;
+    // bool isTextFilterActive = _textFilter.isActive;
 
     for (final pupil in allPupils) {
       // matches if no group filter is active or if the group matches the pupil's group

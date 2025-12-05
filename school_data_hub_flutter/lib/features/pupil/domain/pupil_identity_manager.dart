@@ -161,7 +161,9 @@ class PupilIdentityManager {
         _pupilIdentities[newPupilIdentity.id] = newPupilIdentity;
       }
     }
-
+    _log.info(
+      'Pupil identities decoded from unencrypted source: ${_pupilIdentities.length}',
+    );
     await _writePupilIdentitiesToStorage();
 
     if (updateGroupFilters) {
@@ -194,7 +196,7 @@ class PupilIdentityManager {
       jsonPupilIdentitiesAsString,
     );
     _log.info(
-      'Pupil identities written to secure storage with key $secureStorageKey',
+      '${_pupilIdentities.length} pupil identities written to secure storage with key $secureStorageKey',
     );
   }
 

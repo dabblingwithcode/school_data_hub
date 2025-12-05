@@ -120,10 +120,9 @@ class UpdateStatusWidget extends WatchingWidget {
             Row(
               children: [
                 ElevatedButton(
-                  onPressed:
-                      status == UpdateManagerStatus.checking
-                          ? null
-                          : () => updateManager.checkForUpdate(),
+                  onPressed: status == UpdateManagerStatus.checking
+                      ? null
+                      : () => updateManager.checkForUpdates(),
                   child: const Text('Check for Updates'),
                 ),
 
@@ -194,28 +193,27 @@ class UpdateStatusWidget extends WatchingWidget {
   void _showRestartDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Restart Required'),
-            content: const Text(
-              'An update has been downloaded and is ready to be applied. '
-              'Please restart the app to apply the update.',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Later'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  // You could add app restart logic here if needed
-                  // For now, user needs to manually restart
-                },
-                child: const Text('OK'),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        title: const Text('Restart Required'),
+        content: const Text(
+          'An update has been downloaded and is ready to be applied. '
+          'Please restart the app to apply the update.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Later'),
           ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              // You could add app restart logic here if needed
+              // For now, user needs to manually restart
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
     );
   }
 }

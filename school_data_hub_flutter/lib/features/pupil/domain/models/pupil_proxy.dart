@@ -77,10 +77,10 @@ class PupilProxy with ChangeNotifier {
   String get gender => _pupilIdentity.gender;
   String get language => _pupilIdentity.language;
   String? get family => _pupilIdentity.family;
-  DateTime get birthday => _pupilIdentity.birthday;
+  DateTime get birthday => _pupilIdentity.birthday.toLocal();
   int get age {
-    final today = DateTime.now().toUtc();
-    int age = today.year - _pupilIdentity.birthday.year;
+    final today = DateTime.now();
+    int age = today.year - _pupilIdentity.birthday.toLocal().year;
     if (today.month < _pupilIdentity.birthday.month ||
         (today.month == _pupilIdentity.birthday.month &&
             today.day < _pupilIdentity.birthday.day)) {
@@ -91,14 +91,16 @@ class PupilProxy with ChangeNotifier {
 
   String? get groupTutor => _pupilIdentity.groupTutor;
 
-  DateTime? get migrationSupportEnds => _pupilIdentity.migrationSupportEnds;
+  DateTime? get migrationSupportEnds =>
+      _pupilIdentity.migrationSupportEnds?.toLocal();
   DateTime get pupilSince => _pupilIdentity.pupilSince;
 
   DateTime? get familyLanguageLessonsSince =>
-      _pupilIdentity.familyLanguageLessonsSince;
-  DateTime? get religionLessonsSince => _pupilIdentity.religionLessonsSince;
+      _pupilIdentity.familyLanguageLessonsSince?.toLocal();
+  DateTime? get religionLessonsSince =>
+      _pupilIdentity.religionLessonsSince?.toLocal();
   DateTime? get religionLessonsCancelledAt =>
-      _pupilIdentity.religionLessonsCancelledAt;
+      _pupilIdentity.religionLessonsCancelledAt?.toLocal();
 
   String? get religion => _pupilIdentity.religion;
   //- PUPIL DATA GETTERS
@@ -176,7 +178,8 @@ class PupilProxy with ChangeNotifier {
 
   // learning related
 
-  DateTime? get schoolyearHeldBackAt => _pupilData.schoolyearHeldBackAt;
+  DateTime? get schoolyearHeldBackAt =>
+      _pupilData.schoolyearHeldBackAt?.toLocal();
 
   List<CompetenceCheck>? get competenceChecks => _pupilData.competenceChecks;
 

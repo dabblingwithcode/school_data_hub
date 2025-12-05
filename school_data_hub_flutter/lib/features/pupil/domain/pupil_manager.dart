@@ -130,7 +130,7 @@ class PupilManager extends ChangeNotifier {
   List<PupilProxy> getPupilsWithBirthdaySinceDate(DateTime date) {
     Map<int, PupilProxy> allPupils = Map<int, PupilProxy>.of(_pupilIdPupilsMap);
 
-    final DateTime now = DateTime.now().toUtc();
+    final DateTime now = DateTime.now();
 
     allPupils.removeWhere((key, pupil) {
       final birthdayThisYear = DateTime(

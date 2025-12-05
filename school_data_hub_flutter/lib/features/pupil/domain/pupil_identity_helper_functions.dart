@@ -4,9 +4,9 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_identity_extensions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
@@ -155,60 +155,5 @@ class PupilIdentityHelper {
       textLines = textLines + pupilIdentity.toTextLine() + '\n';
     }
     return textLines;
-  }
-}
-
-extension PupilIdentityExtension on PupilIdentity {
-  String toTextLine() {
-    final migrationSupportEnds = this.migrationSupportEnds != null
-        ? this.migrationSupportEnds!.formatDateForJson()
-        : '';
-
-    final specialNeeds = this.specialNeeds ?? '';
-
-    return [
-      this.id.toString(),
-      this.firstName,
-      this.lastName,
-      this.group,
-      this.groupTutor,
-      this.schoolGrade,
-      specialNeeds,
-      '', // this is a placeholder for the second special needs field in the administrative data source
-      this.gender,
-      this.language,
-      this.family ?? '',
-      this.birthday.formatDateForJson(),
-      migrationSupportEnds,
-      this.pupilSince.formatDateForJson(),
-      this.afterSchoolCare ? 'OFFGANZ' : '',
-      this.religion ?? '',
-      this.religionLessonsSince?.formatDateForJson() ?? '',
-      this.religionLessonsCancelledAt?.formatDateForJson() ?? '',
-      this.familyLanguageLessonsSince?.formatDateForJson() ?? '',
-      this.leavingDate?.formatDateForJson() ?? '',
-    ].join(',');
-  }
-
-  bool isEqual(PupilIdentity other) {
-    return this.id == other.id &&
-        this.firstName == other.firstName &&
-        this.lastName == other.lastName &&
-        this.group == other.group &&
-        this.groupTutor == other.groupTutor &&
-        this.schoolGrade == other.schoolGrade &&
-        this.specialNeeds == other.specialNeeds &&
-        this.gender == other.gender &&
-        this.language == other.language &&
-        this.family == other.family &&
-        this.birthday == other.birthday &&
-        this.migrationSupportEnds == other.migrationSupportEnds &&
-        this.pupilSince == other.pupilSince &&
-        this.afterSchoolCare == other.afterSchoolCare &&
-        this.religion == other.religion &&
-        this.religionLessonsSince == other.religionLessonsSince &&
-        this.religionLessonsCancelledAt == other.religionLessonsCancelledAt &&
-        this.familyLanguageLessonsSince == other.familyLanguageLessonsSince &&
-        this.leavingDate == other.leavingDate;
   }
 }

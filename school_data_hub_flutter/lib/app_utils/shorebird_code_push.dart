@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/bottom_nav_bar_no_filter_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/core/updater/shorebird_update_manager.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
+import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('CheckForUpdatesPage');
 
@@ -14,7 +17,7 @@ class CheckForUpdatesPage extends StatefulWidget {
 }
 
 class _CheckForUpdatesPageState extends State<CheckForUpdatesPage> {
-  final _updater = ShorebirdUpdater();
+  final _updater = di<ShorebirdUpdateManager>().shorebirdUpdater;
   late final bool _isUpdaterAvailable;
   var _currentTrack = UpdateTrack.stable;
   var _isCheckingForUpdates = false;
@@ -176,32 +179,40 @@ class _CheckForUpdatesPageState extends State<CheckForUpdatesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       appBar: const GenericAppBar(iconData: Icons.update, title: 'OTA Update'),
-      body: Column(
-        children: [
-          if (!_isUpdaterAvailable) const _ShorebirdUnavailable(),
-          const Spacer(),
-          _CurrentPatchVersion(patch: _currentPatch),
-          const SizedBox(height: 12),
-          _TrackPicker(
-            currentTrack: _currentTrack,
-            onChanged: (track) {
-              setState(() => _currentTrack = track);
-            },
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                if (!_isUpdaterAvailable) const _ShorebirdUnavailable(),
+                const Spacer(),
+                _CurrentPatchVersion(patch: _currentPatch),
+                const SizedBox(height: 12),
+                _TrackPicker(
+                  currentTrack: _currentTrack,
+                  onChanged: (track) {
+                    setState(() => _currentTrack = track);
+                  },
+                ),
+                const Gap(25),
+                ElevatedButton.icon(
+                  onPressed: _isCheckingForUpdates ? null : _checkForUpdate,
+                  icon: _isCheckingForUpdates
+                      ? const _LoadingIndicator()
+                      : const Icon(Icons.refresh),
+                  label: const Text('Nach Updates suchen'),
+                ),
+                const Spacer(),
+              ],
+            ),
           ),
-          const Spacer(),
-        ],
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _isCheckingForUpdates ? null : _checkForUpdate,
-        tooltip: 'Auf Updates prüfen',
-        child: _isCheckingForUpdates
-            ? const _LoadingIndicator()
-            : const Icon(Icons.refresh),
-      ),
+
       bottomNavigationBar: const BottomNavBarNoFilterButton(),
     );
   }

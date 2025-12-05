@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
+import 'package:watch_it/watch_it.dart';
 
 /// Update status with additional context
 enum UpdateManagerStatus {
@@ -21,7 +23,7 @@ class ShorebirdUpdateManager extends ChangeNotifier {
   static final _log = Logger('ShorebirdUpdateManager');
 
   final ShorebirdUpdater _updater = ShorebirdUpdater();
-
+  ShorebirdUpdater get shorebirdUpdater => _updater;
   // Status tracking
   UpdateManagerStatus _status = UpdateManagerStatus.idle;
   UpdateTrack _currentTrack = UpdateTrack.stable;
@@ -76,6 +78,19 @@ class ShorebirdUpdateManager extends ChangeNotifier {
         _startAutoCheck();
       }
 
+      final updateAvailable = await checkForUpdates();
+      if (updateAvailable) {
+        di<NotificationService>().showSnackBar(
+          NotificationType.info,
+          'Ein Update wird heruntergeladen...',
+        );
+        _setStatus(UpdateManagerStatus.updateAvailable);
+        await _updater.update(track: _currentTrack);
+        di<NotificationService>().showInformationDialog(
+          'Ein Update ist verfügbar. Bitte installieren Sie es, um die neueste Version der App zu verwenden.',
+        );
+      }
+
       _log.info('ShorebirdUpdateManager initialized successfully');
     } catch (error, stackTrace) {
       _log.severe(
@@ -95,7 +110,7 @@ class ShorebirdUpdateManager extends ChangeNotifier {
   }
 
   /// Check for updates manually
-  Future<bool> checkForUpdate({UpdateTrack? track}) async {
+  Future<bool> checkForUpdates({UpdateTrack? track}) async {
     if (!_updater.isAvailable) {
       _log.warning('Cannot check for updates: Shorebird not available');
       return false;
@@ -121,6 +136,8 @@ class ShorebirdUpdateManager extends ChangeNotifier {
           _log.info('Update available');
           _updateAvailable = true;
           _setStatus(UpdateManagerStatus.updateAvailable);
+          await _updater.update(track: _currentTrack);
+
           return true;
 
         case UpdateStatus.restartRequired:
@@ -281,7 +298,7 @@ class ShorebirdUpdateManager extends ChangeNotifier {
       if (_status == UpdateManagerStatus.idle ||
           _status == UpdateManagerStatus.upToDate) {
         _log.fine('Auto-checking for updates');
-        checkForUpdate();
+        checkForUpdates();
       }
     });
 
