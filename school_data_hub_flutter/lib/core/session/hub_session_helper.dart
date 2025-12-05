@@ -3,7 +3,7 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('SessionHelper');
@@ -28,11 +28,13 @@ class SessionHelper {
   static Future<void> logoutAndDeleteAllInstanceData() async {
     // TODO: Check if we really considered everything here
     _log.info('Deleting all instance data...');
-    await di<PupilIdentityManager>().deleteAllPupilIdentities();
-
-    await di<EnvManager>().deleteEnv();
+    await PupilIdentityHelper.deletePupilIdentitiesForEnv(
+      di<EnvManager>().storageKeyForPupilIdentities,
+    );
 
     await di<HubSessionManager>().signOutDevice();
+
+    await di<EnvManager>().deleteEnv();
 
     final cacheManager = di<DefaultCacheManager>();
 

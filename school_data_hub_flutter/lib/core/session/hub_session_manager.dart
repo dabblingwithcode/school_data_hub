@@ -232,7 +232,7 @@ class HubSessionManager with ChangeNotifier {
   /// Signs the user out from the current device.
   /// Returns true if successful.
   Future<bool> signOutDevice() async {
-    di.popScope();
+    di.dropScope(InitScope.onLoggedInUserScope.name);
     final signOut = await _signOut(allDevices: false);
     return signOut;
   }

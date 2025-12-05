@@ -31,7 +31,7 @@ class EnvManager with ChangeNotifier {
   /// We need to observe in [MaterialApp] if a user is authenticated
   /// without accessing [HubSessionManager], because if there is not
   // an active env yet, it will still be unregistered.
-  /// So this is a workaround setting a flag here
+  /// So this is a workaround setting a flag here.
   ///
   /// **CAUTION**: Handle this value only with [HubSessionManager] every time
   /// it makes an authentication status change.
@@ -69,18 +69,20 @@ class EnvManager with ChangeNotifier {
 
   final String _storageKeyForEnvironments = 'environments_key';
 
-  /// ##  🔎 managed observable
-  String get storageKeyForAuthKey =>
-      '${_activeEnv!.serverName}_${_activeEnv!.runMode.name}_hub_auth_key';
+  String storageKeyPrefix() {
+    return '${_activeEnv?.serverName}_${_activeEnv?.runMode.name}';
+  }
 
-  String get storageKeyForUserInfo =>
-      '${_activeEnv!.serverName}_${_activeEnv!.runMode.name}_hub_user_info';
+  /// ##  🔎 managed observable
+  String get storageKeyForAuthKey => '${storageKeyPrefix()}_hub_auth_key';
+
+  String get storageKeyForUserInfo => '${storageKeyPrefix()}_hub_user_info';
 
   String get storageKeyForPupilIdentities =>
-      '${_activeEnv!.serverName}_${_activeEnv!.runMode.name}_pupil_identities';
+      '${storageKeyPrefix()}_pupil_identities';
 
   String get storageKeyForMatrixCredentials =>
-      '${_activeEnv!.serverName}_${_activeEnv!.runMode.name}_matrix_credentials';
+      '${storageKeyPrefix()}_matrix_credentials';
 
   PackageInfo _packageInfo = PackageInfo(
     appName: '',
@@ -298,7 +300,7 @@ class EnvManager with ChangeNotifier {
     // Reset environment-dependent managers
     // This will automatically drop all child scopes including loggedInUserScope
 
-    await InitManager.dropOldActiveEnvAndRelatedScopes();
+    await InitManager.dropAllScopes();
 
     _activeEnv = _environments[envName]!;
     _defaultEnv = envName;
@@ -432,13 +434,6 @@ class EnvManager with ChangeNotifier {
               return;
             }
 
-            // // Try to get the session manager - this will throw if not ready
-            // final sessionManager = di<HubSessionManager>();
-
-            // // The session manager should handle the auto-login
-            // // This will set the authentication status appropriately
-            // await sessionManager.initialize();
-
             _log.info('Auto-login completed successfully');
           } catch (sessionError) {
             if (sessionError.toString().contains('not ready yet')) {
@@ -514,7 +509,7 @@ class EnvManager with ChangeNotifier {
       _log.info(
         '[DI] Switching environment managers after deleting environment $deletedEnvironment',
       );
-      InitManager.dropOldActiveEnvAndRelatedScopes();
+      InitManager.dropAllScopes();
     } else {
       // if there are no environments left, delete the environments from secure storage
 
@@ -522,7 +517,7 @@ class EnvManager with ChangeNotifier {
       _log.info(
         '[DDI]Env $deletedEnvironment deleted. No environments left. Cleaning up all environment managers.',
       );
-      InitManager.dropOldActiveEnvAndRelatedScopes();
+      InitManager.dropAllScopes();
       _activeEnv = null;
 
       _defaultEnv = '';

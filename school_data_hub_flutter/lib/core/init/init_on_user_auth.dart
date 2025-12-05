@@ -41,7 +41,7 @@ class InitOnUserAuth {
     )) {
       _log.info(' Matrix credentials found');
       // Only register matrix managers if they're not already registered
-      if (!di.hasScope(DiScope.onMatrixEnvScope.name)) {
+      if (!di.hasScope(InitScope.onMatrixEnvScope.name)) {
         await InitManager.registerMatrixManagers();
       } else {
         _log.info(' Matrix managers already registered, skipping registration');

@@ -1,9 +1,6 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:collection/collection.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
@@ -15,7 +12,6 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_fil
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter_impl.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:watch_it/watch_it.dart';
 
 class PupilManager extends ChangeNotifier {
@@ -232,23 +228,7 @@ class PupilManager extends ChangeNotifier {
 
     // now we match the pupils from the response with their personal data
 
-    for (PupilData fetchedPupil in fetchedPupils) {
-      final proxyInRepository = _pupilIdPupilsMap[fetchedPupil.id!];
-      if (proxyInRepository != null) {
-        proxyInRepository.updatePupil(fetchedPupil);
-      } else {
-        // if the pupil is not in the repository, that would be weird
-        // since we did not send the id to the backend
-
-        final pupilIdentity = di<PupilIdentityManager>()
-            .getPupilIdentityByInternalId(fetchedPupil.internalId);
-
-        _pupilIdPupilsMap[fetchedPupil.id!] = PupilProxy(
-          pupilData: fetchedPupil,
-          pupilIdentity: pupilIdentity!,
-        );
-      }
-    }
+    updatePupilProxiesWithPupilData(fetchedPupils);
 
     // remove the outdated pupil identities that
     // did not get a response from the backend
@@ -274,8 +254,16 @@ class PupilManager extends ChangeNotifier {
     final proxy = _pupilIdPupilsMap[pupilData.id!];
     if (proxy != null) {
       proxy.updatePupil(pupilData);
-      //- TODO ADVICE: Is this true? No need to call notifyListeners here, because the proxy will notify the listeners itself
-      notifyListeners();
+    } else {
+      final pupilIdentity = di<PupilIdentityManager>()
+          .getPupilIdentityByInternalId(pupilData.internalId);
+      if (pupilIdentity != null) {
+        _pupilIdPupilsMap[pupilData.id!] = PupilProxy(
+          pupilData: pupilData,
+          pupilIdentity: pupilIdentity,
+        );
+        notifyListeners();
+      }
     }
   }
 
@@ -378,177 +366,5 @@ class PupilManager extends ChangeNotifier {
     _pupilIdPupilsMap[pupil.id!]!.updatePupil(pupil);
 
     return;
-  }
-
-  //- IMPORT FUNCTIONS
-
-  // Future<void> importSupportLevelsFromJson() async {
-  //   final jsonFilePath = await FilePicker.platform
-  //       .pickFiles(type: FileType.custom, allowedExtensions: ['json'])
-  //       .then((result) => result?.files.single.path);
-
-  //   int totalRecords = 0;
-
-  //   int successCount = 0;
-  //   int notMatchedCount = 0;
-
-  //   _log.info('Starting support level import from: $jsonFilePath');
-
-  //   // Read and parse JSON file
-  //   final file = File(jsonFilePath!);
-  //   if (!await file.exists()) {
-  //     throw Exception('File not found: $jsonFilePath');
-  //   }
-
-  //   final jsonString = await file.readAsString();
-  //   final List<dynamic> jsonData = json.decode(jsonString);
-  //   for (var entry in jsonData) {
-  //     totalRecords++;
-  //     final int internalId = entry['pupil_id'] as int;
-  //     final level = entry['level'] as String;
-  //     final String comment =
-  //         entry['comment'] != ''
-  //             ? customEncrypter.encryptString(entry['comment'] as String)
-  //             : '';
-  //     final DateTime createdAt = DateTime.parse(entry['created_at'] as String);
-  //     final String createdBy = entry['created_by'] as String;
-
-  //     final pupil = getPupilsFromInternalIds([internalId]).firstOrNull;
-  //     if (pupil == null) {
-  //       notMatchedCount++;
-  //       _log.warning(
-  //         'No pupil found for internal ID $internalId - skipping...',
-  //       );
-  //       continue;
-  //     }
-  //     await PupilMutator().updatePupilSupportLevel(
-  //       pupilId: pupil.pupilId,
-  //       level: int.parse(level),
-  //       comment: comment.isEmpty ? 'Kein Eintrag gefunden' : comment,
-  //       createdAt: createdAt,
-  //       createdBy: createdBy,
-  //     );
-  //     _log.warning('Imported support level for pupil ID $internalId');
-  //     // final result = await _updateSupportLevelWithJsonRecord(internalId, entry);
-
-  //     // if (result == true) {
-  //     //   successCount++;
-  //     // } else if (result == false) {
-  //     //   notMatchedCount++;
-  //     // } else {
-  //     //   // result is null, indicating an error during import
-  //     //   _log.warning('Failed to import support level for pupil ID $internalId');
-  //     // }
-  //   }
-
-  //   _log.info(
-  //     'Import completed. Total records: $totalRecords, Successfully updated: $successCount, Not matched: $notMatchedCount',
-  //   );
-  // }
-
-  /// Import pupil data from a JSON file
-  /// Maps contact and parents_contact fields to existing pupils
-  /// Uses array index to match pupils since JSON doesn't contain internal_id
-  Future<void> importPupilDataFromJson() async {
-    final jsonFilePath = await FilePicker.platform
-        .pickFiles(type: FileType.custom, allowedExtensions: ['json'])
-        .then((result) => result?.files.single.path);
-
-    if (jsonFilePath == null) {
-      return;
-    }
-
-    int totalRecords = 0;
-
-    int successCount = 0;
-    int notMatchedCount = 0;
-
-    _log.info('Starting pupil data import from: $jsonFilePath');
-
-    // Read and parse JSON file
-    final file = File(jsonFilePath);
-    if (!await file.exists()) {
-      throw Exception('File not found: $jsonFilePath');
-    }
-
-    final jsonString = await file.readAsString();
-    final List<dynamic> jsonData = json.decode(jsonString);
-    for (var entry in jsonData) {
-      totalRecords++;
-      final int internalId = entry['internal_id'] as int;
-
-      final result = await _updatePupilWithJsonRecord(internalId, entry);
-
-      if (result == true) {
-        successCount++;
-      } else if (result == false) {
-        notMatchedCount++;
-      } else {
-        // result is null, indicating an error during import
-        _log.warning('Failed to import data for pupil ID $internalId');
-      }
-    }
-
-    _log.info(
-      'Import completed. Total records: $totalRecords, Successfully updated: $successCount, Not matched: $notMatchedCount',
-    );
-  }
-
-  /// Process the import data and update pupils
-
-  /// Import individual pupil record
-  Future<bool?> _updatePupilWithJsonRecord(
-    int internalId,
-    Map<String, dynamic> data,
-  ) async {
-    bool hasUpdates = false;
-    _log.info('Querying internal ID: $internalId');
-    final pupil = getPupilsFromInternalIds([internalId]).firstOrNull;
-
-    if (pupil == null) {
-      _log.warning('Pupil not found for internal ID: $internalId');
-      return false;
-    }
-
-    try {
-      final avatarAuthId = data['avatar_auth_id'] as String?;
-      if (avatarAuthId != null) {
-        // Find the avatar file in the decrypted folder
-        final decryptedFolderPath =
-            'H:/code/dabblingwithcode/school_data_hub/private/old_instance/media_upload/auth/decrypted';
-        final avatarFileName = '_${avatarAuthId}.jpg';
-        final avatarFile = File('$decryptedFolderPath/$avatarFileName');
-
-        if (await avatarFile.exists()) {
-          _log.info('Avatar file found: $avatarFileName');
-          try {
-            // Update the pupil with the avatar file
-            await PupilMutator().updatePupilDocument(
-              imageFile: avatarFile,
-              pupilProxy: pupil,
-              documentType: PupilDocumentType.avatarAuth,
-            );
-            hasUpdates = true;
-            _log.info(
-              'Updated avatar auth for pupil ${pupil.internalId} with file: $avatarFileName',
-            );
-          } catch (e) {
-            _log.warning(
-              'Failed to update avatar auth for pupil ${pupil.internalId}: $e',
-            );
-          }
-        } else {
-          _log.warning('Avatar file not found: $avatarFileName');
-        }
-      }
-
-      if (hasUpdates) {
-        return true;
-      }
-    } catch (e, stackTrace) {
-      _log.severe('Error importing data for pupil $internalId', e, stackTrace);
-      return null;
-    }
-    return false;
   }
 }

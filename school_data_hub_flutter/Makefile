@@ -6,5 +6,5 @@ patch_android: ## Create a patch and publish it to Shorebird
 	shorebird patch android
 
 patch_windows: ## Create a patch and publish it to Shorebird
-  shorebird patch windows --platforms=windows --release-version=0.5.1+1
+  shorebird patch windows --platforms=windows --release-version=0.5.2+1
 

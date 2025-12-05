@@ -42,6 +42,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
   Widget build(BuildContext context) {
     final _hubSessionManager = di<HubSessionManager>();
     final isAdmin = _hubSessionManager.isAdmin;
+
     final kindergarden = watchPropertyValue(
       (m) => m.kindergarden,
       target: pupil,

@@ -1274,8 +1274,8 @@ class EndpointPupilIdentity extends _i1.EndpointRef {
         {},
       );
 
-  _i2.Future<bool> updateLastPupilIdentitiesUpdate(DateTime date) =>
-      caller.callServerEndpoint<bool>(
+  _i2.Future<DateTime?> updateLastPupilIdentitiesUpdate(DateTime date) =>
+      caller.callServerEndpoint<DateTime?>(
         'pupilIdentity',
         'updateLastPupilIdentitiesUpdate',
         {'date': date},

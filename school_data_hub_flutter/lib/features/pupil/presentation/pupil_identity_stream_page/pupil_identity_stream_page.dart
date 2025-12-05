@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:watch_it/watch_it.dart';
 
 import 'controllers/stream_controller.dart';
@@ -61,10 +61,8 @@ class PupilIdentityStreamPage extends WatchingWidget {
       return ctrl;
     }, dispose: (controller) => controller.dispose());
 
-    // Access state through the controller
     final state = controller.state;
 
-    // Watch all state variables at the top of build method (best practice)
     final isConnected = watch(state.streamState.isConnected).value;
     final isProcessing = watch(state.streamState.isProcessing).value;
     final receivers = watch(state.receiverState.connectedReceivers).value;

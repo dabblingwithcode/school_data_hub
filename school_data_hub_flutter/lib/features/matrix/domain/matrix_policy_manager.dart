@@ -151,7 +151,7 @@ class MatrixPolicyManager extends ChangeNotifier {
 
   Future<void> deleteAndDeregisterMatrixPolicyManager() async {
     await _secureStorage.remove(_secureStorageKey);
-    di.dropScope(DiScope.onMatrixEnvScope.name);
+    di.dropScope(InitScope.onMatrixEnvScope.name);
 
     _sessionManager.changeMatrixPolicyManagerRegistrationStatus(false);
     _notificationService.showSnackBar(

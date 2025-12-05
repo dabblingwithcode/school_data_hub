@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identity_stream_page/widgets/status_indicators/compact_status_indicator.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identity_stream_page/widgets/status_indicators/status_indicators.dart';
 

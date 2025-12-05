@@ -13,6 +13,7 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/dialogs/change_env_dialog.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -57,15 +58,20 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
 
         SettingsTile.navigation(
           leading: const Icon(Icons.perm_identity_rounded),
-          title: const Text('Personenbezogene Daten vom:'),
+          title: const Text('Lokale Daten vom:'),
           value: Text(
-            di<EnvManager>().activeEnv?.lastIdentitiesUpdate
-                    ?.formatDateForUser() ??
-                'unbekannt',
+            '${di<EnvManager>().activeEnv?.lastIdentitiesUpdate?.formatDateAndTimeForUser()} ',
           ),
           trailing: null,
         ),
-
+        SettingsTile.navigation(
+          leading: const Icon(Icons.perm_identity_rounded),
+          title: const Text('Aktuelleste Daten vom:'),
+          value: Text(
+            '${di<PupilIdentityManager>().remoteLastIdentitiesUpdate.value?.formatDateAndTimeForUser()}',
+          ),
+          trailing: null,
+        ),
         SettingsTile.navigation(
           leading: const Icon(Icons.attach_money_rounded),
           title: const Text('Guthaben'),
@@ -141,7 +147,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
               _log.warning(
                 '[DI] Env deleted, calling [unregisterMaagersDependentOnEnv] from the settings section!',
               );
-              InitManager.dropOldActiveEnvAndRelatedScopes();
+              InitManager.dropAllScopes();
               _notificationService.showSnackBar(
                 NotificationType.success,
                 'Instanz-ID-Schlüssel gelöscht',

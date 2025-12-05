@@ -3706,7 +3706,7 @@ class _PupilIdentityEndpoint {
     });
   }
 
-  _i3.Future<bool> updateLastPupilIdentitiesUpdate(
+  _i3.Future<DateTime?> updateLastPupilIdentitiesUpdate(
     _i1.TestSessionBuilder sessionBuilder,
     DateTime date,
   ) async {
@@ -3727,7 +3727,7 @@ class _PupilIdentityEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<bool>);
+        ) as _i3.Future<DateTime?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

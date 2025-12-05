@@ -5,7 +5,9 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_stream_suscription.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identity_stream_page/models/stream_state.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identity_stream_page/utils/stream_utils.dart';
 import 'package:watch_it/watch_it.dart';
@@ -228,12 +230,12 @@ class PupilIdentityStreamController {
         _log.info(
           'Generating encrypted data for ${selectedPupilIds!.length} pupils',
         );
-        dataToSend = await di<PupilIdentityManager>()
+        dataToSend = await PupilIdentityHelper()
             .generateEncryptedPupilIdentitiesTransferString(selectedPupilIds!);
       }
 
       _log.info('Creating stream subscription...');
-      _subscription = await di<PupilIdentityManager>()
+      _subscription = await PupilIdentityStream()
           .encryptedPupilIdsStreamSubscription(
             channelName: channelName,
             role: role,

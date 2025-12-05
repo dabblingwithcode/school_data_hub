@@ -11,6 +11,8 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/birthdays_page.dart';
@@ -40,9 +42,9 @@ class ToolsPage extends WatchingWidget {
         fileContent,
       );
     } else if (function == 'pupil_identities') {
-      _pupilIdentityManager.updatePupilIdentitiesFromUnencryptedSource(
-        identitiesInStringLines: fileContent,
-      );
+      // _pupilIdentityManager.updatePupilIdentitiesFromUnencryptedSource(
+      //   identitiesInStringLines: fileContent,
+      // );
     }
   }
 
@@ -148,7 +150,7 @@ class ToolsPage extends WatchingWidget {
                       final internalIds = di<PupilManager>()
                           .getInternalIdsFromPupilIds(pupilIds);
                       final String encryptedPupilIdentities =
-                          await di<PupilIdentityManager>()
+                          await PupilIdentityHelper()
                               .generateEncryptedPupilIdentitiesTransferString(
                                 internalIds,
                               );
@@ -256,7 +258,7 @@ class ToolsPage extends WatchingWidget {
                           context: context,
                           title: 'Datenbank aus SchiLD importieren',
                           message:
-                              'Achtung! Nicht mehr vorhandene SchülerInnen auf dem Server werden gelöscht. Fortfahren?',
+                              'Achtung! Nicht mehr vorhandene SchülerInnen auf dem Server werden deaktiviert. Fortfahren?',
                         );
                         if (confirm == true) {
                           importUnencryptedPupilIdentitySourceFile(

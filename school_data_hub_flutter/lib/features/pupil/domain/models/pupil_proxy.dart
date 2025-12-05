@@ -50,23 +50,17 @@ class PupilProxy with ChangeNotifier {
   bool pupilIsDirty = false;
 
   void updatePupil(PupilData pupilData) {
-    //- TODO ADVICE: Would it make sense?
-    //if (pupilData == _pupilData) return;
+    // TODO: Revisit for equality check
     _pupilData = pupilData;
-    // ignore: prefer_for_elements_to_map_fromiterable
-    // _missedSchooldays = Map.fromIterable(pupilData.missedSchooldays,
-    //     key: (e) => e.missedDay, value: (e) => e);
 
     pupilIsDirty = true;
     notifyListeners();
   }
 
   void updatePupilIdentity(PupilIdentity pupilIdentity) {
-    if (_pupilIdentity != pupilIdentity) {
-      _pupilIdentity = pupilIdentity;
-      pupilIsDirty = true;
-      notifyListeners();
-    }
+    _pupilIdentity = pupilIdentity;
+    pupilIsDirty = true;
+    notifyListeners();
   }
 
   //- PupilIdentity GETTERS

@@ -12,6 +12,7 @@ final _log = Logger('[Init][OnActiveEnv]');
 class InitOnActiveEnv {
   static Future<void> registerManagers() async {
     _log.info('Registering managers on active environment scope');
+
     di.registerSingletonWithDependencies<HubAuthKeyManager>(() {
       return HubAuthKeyManager(
         storageKeyForAuthKey: di<EnvManager>().storageKeyForAuthKey,
@@ -41,11 +42,13 @@ class InitOnActiveEnv {
         // this will initialize the session manager and load the stored user info
         // it returns a bool
         await sessionManager.initialize();
+
         _log.info('[SESSION] HubSessionManager initialized');
+
         return sessionManager;
       },
       dependsOn: [EnvManager, Client],
-      dispose: (param) => param.dispose(),
+      dispose: (hubSessionManager) => hubSessionManager.dispose(),
     );
 
     // Register BottomNavManager in active environment scope so it's always available
