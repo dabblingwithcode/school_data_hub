@@ -56,7 +56,7 @@ class FamilyLanguageLessonsCard extends WatchingWidget {
                                     onTap: () {
                                       _filterStateManager.resetFilters();
                                       _mainMenuBottomNavManager
-                                          .setPupilProfileNavPage(0);
+                                          .setPupilProfileNavPage(1);
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (ctx) =>
