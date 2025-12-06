@@ -1,80 +1,95 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+extension DateOnlyParsing on String {
+  /// Parse a date-only string (e.g., `yyyy-MM-dd`) to UTC midnight.
+  DateTime toDateOnlyUtc() {
+    final parsed = DateTime.parse(this);
+    return DateTime.utc(parsed.year, parsed.month, parsed.day);
+  }
+
+  /// Try to parse a date-only string to UTC midnight; returns null on failure.
+  DateTime? tryToDateOnlyUtc() {
+    final parsed = DateTime.tryParse(this);
+    if (parsed == null) return null;
+    return DateTime.utc(parsed.year, parsed.month, parsed.day);
+  }
+}
+
 extension DateHubExtension on DateTime {
-  bool isSameDate(DateTime other) {
-    if (year == other.year && month == other.month && day == other.day) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+  /// Ensure UTC without double converting.
+  DateTime toUtcSafe() => isUtc ? this : toUtc();
 
-  bool isBeforeDate(DateTime other) {
-    return year == other.year && month == other.month && day < other.day ||
-        year == other.year && month < other.month ||
-        year < other.year;
-  }
+  /// Ensure local without double converting.
+  DateTime toLocalSafe() => isUtc ? toLocal() : this;
 
-  bool isAfterDate(DateTime other) {
-    return year == other.year && month == other.month && day > other.day ||
-        year == other.year && month > other.month ||
-        year > other.year;
-  }
+  bool isSameDate(DateTime other) =>
+      year == other.year && month == other.month && day == other.day;
 
+  bool isBeforeDate(DateTime other) =>
+      year == other.year && month == other.month && day < other.day ||
+      year == other.year && month < other.month ||
+      year < other.year;
+
+  bool isAfterDate(DateTime other) =>
+      year == other.year && month == other.month && day > other.day ||
+      year == other.year && month > other.month ||
+      year > other.year;
+
+  /// UI: localized date (dd.MM.yyyy) using local time.
   String formatDateForUser() {
-    final date = this.toLocal();
-    final DateFormat dateFormat = DateFormat("dd.MM.yyyy");
-    return dateFormat.format(date).toString();
+    final date = toLocalSafe();
+    final dateFormat = DateFormat('dd.MM.yyyy');
+    return dateFormat.format(date);
   }
 
-  String formatDateForJson() {
-    final DateFormat dateFormat = DateFormat("yyyy-MM-dd");
-    return dateFormat.format(this).toString();
+  /// Serialization: date portion, defaults to UTC normalization.
+  String formatDateForJson({bool normalizeUtc = true}) {
+    final date = normalizeUtc ? toUtcSafe() : this;
+    final dateFormat = DateFormat('yyyy-MM-dd');
+    return dateFormat.format(date);
   }
 
-  /// Format DateTime with time for UI display
+  /// UI: date + time (dd.MM.yyyy HH:mm) in local time.
   String formatDateAndTimeForUser() {
-    final date = this.isUtc ? this.toLocal() : this;
-    final DateFormat dateFormat = DateFormat("dd.MM.yyyy HH:mm");
-    return dateFormat.format(date).toString();
+    final date = toLocalSafe();
+    final dateFormat = DateFormat('dd.MM.yyyy HH:mm');
+    return dateFormat.format(date);
   }
 
-  /// Format time only for UI display
+  /// UI: time only (HH:mm) in local time.
   String formatTimeForUser() {
-    final date = this.isUtc ? this.toLocal() : this;
-    final DateFormat timeFormat = DateFormat("HH:mm");
-    return timeFormat.format(date).toString();
+    final date = toLocalSafe();
+    final timeFormat = DateFormat('HH:mm');
+    return timeFormat.format(date);
   }
 
-  /// Format date with weekday for UI display
-  String formatWithWeekday() {
-    final date = this.isUtc ? this.toLocal() : this;
-    final DateFormat dateFormat = DateFormat("EEEE, dd.MM.yyyy", "de_DE");
-    return dateFormat.format(date).toString();
+  /// UI: weekday + date in local time (German locale by default).
+  String formatWithWeekday({String locale = 'de_DE'}) {
+    final date = toLocalSafe();
+    final dateFormat = DateFormat('EEEE, dd.MM.yyyy', locale);
+    return dateFormat.format(date);
   }
 
-  /// Convert to UTC for server communication
-  DateTime formatToUtcForServer() {
-    return this.isUtc ? this : this.toUtc();
-  }
+  /// Server: normalize to UTC for transport/storage.
+  DateTime formatToUtcForServer() => toUtcSafe();
 
-  /// Get the start of day in local time
+  /// Start of day in local time.
   DateTime startOfDayLocal() {
-    final local = this.isUtc ? this.toLocal() : this;
+    final local = toLocalSafe();
     return DateTime(local.year, local.month, local.day);
   }
 
-  /// Get the start of day in UTC
+  /// Start of day in UTC.
   DateTime startOfDayUtc() {
-    final utc = this.isUtc ? this : this.toUtc();
+    final utc = toUtcSafe();
     return DateTime.utc(utc.year, utc.month, utc.day);
   }
 
   String asWeekdayName(BuildContext context) {
     final locale = Localizations.localeOf(context).toString();
-    final DateFormat dateFormat = DateFormat("EEEE", locale);
-    return dateFormat.format(this);
+    final dateFormat = DateFormat('EEEE', locale);
+    return dateFormat.format(toLocalSafe());
   }
 }
 

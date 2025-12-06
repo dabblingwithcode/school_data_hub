@@ -256,7 +256,7 @@ class PupilIdentityStream {
                       final newCount = afterCount - beforeCount;
                       // Set the last identities update to the received data time stamp
                       di<EnvManager>().updateActiveEnv(
-                        lastIdentitiesUpdate: event.dataTimeStamp,
+                        lastIdentitiesUpdate: event.dataTimeStamp?.toUtc(),
                       );
 
                       // Send confirmation

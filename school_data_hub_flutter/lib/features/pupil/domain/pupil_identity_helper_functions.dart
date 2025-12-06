@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
+import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_identity_extensions.dart';
@@ -107,27 +108,27 @@ class PupilIdentityHelper {
       family: pupilIdentityStringItems[10] == ''
           ? null
           : pupilIdentityStringItems[10],
-      birthday: DateTime.parse(pupilIdentityStringItems[11]),
+      birthday: pupilIdentityStringItems[11].toDateOnlyUtc(),
       migrationSupportEnds: pupilIdentityStringItems[12] == ''
           ? null
-          : DateTime.tryParse(pupilIdentityStringItems[12]),
-      pupilSince: DateTime.tryParse(pupilIdentityStringItems[13])!,
+          : pupilIdentityStringItems[12].tryToDateOnlyUtc(),
+      pupilSince: pupilIdentityStringItems[13].toDateOnlyUtc(),
       afterSchoolCare: pupilIdentityStringItems[14] != '' ? true : false,
       religion: pupilIdentityStringItems[15] == ''
           ? null
           : pupilIdentityStringItems[15],
       religionLessonsSince: pupilIdentityStringItems[16] == ''
           ? null
-          : DateTime.tryParse(pupilIdentityStringItems[16])!,
+          : pupilIdentityStringItems[16].toDateOnlyUtc(),
       religionLessonsCancelledAt: pupilIdentityStringItems[17] == ''
           ? null
-          : DateTime.tryParse(pupilIdentityStringItems[17])!,
+          : pupilIdentityStringItems[17].toDateOnlyUtc(),
       familyLanguageLessonsSince: pupilIdentityStringItems[18] == ''
           ? null
-          : DateTime.tryParse(pupilIdentityStringItems[18])!,
+          : pupilIdentityStringItems[18].toDateOnlyUtc(),
       leavingDate: pupilIdentityStringItems[19] == ''
           ? null
-          : DateTime.tryParse(pupilIdentityStringItems[19]),
+          : pupilIdentityStringItems[19].toDateOnlyUtc(),
     );
     return newPupilIdentity;
   }

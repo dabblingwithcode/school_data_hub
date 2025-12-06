@@ -120,11 +120,12 @@ class PupilIdentityManager {
     DateTime updateTimestamp,
     String encryptedText,
   ) async {
+    final normalizedTimestamp = updateTimestamp.toUtc();
     final decryptedText = customEncrypter.decryptString(encryptedText);
 
     _updatePupilIdentitiesFromUnencryptedSource(
       pupilIdentityTextLines: decryptedText,
-      updateTimestamp: updateTimestamp,
+      updateTimestamp: normalizedTimestamp,
     );
   }
 
@@ -132,6 +133,7 @@ class PupilIdentityManager {
     required String pupilIdentityTextLines,
     required DateTime? updateTimestamp,
   }) async {
+    final normalizedUpdateTimestamp = updateTimestamp?.toUtc();
     late final String? decryptedIdentitiesAsString;
 
     // If the string is imported in windows, it comes from a .txt file and it's not encrypted
@@ -174,7 +176,7 @@ class PupilIdentityManager {
       di<PupilsFilter>().populateGroupFilters(availableGroups.toList());
     }
     await di<EnvManager>().updateActiveEnv(
-      lastIdentitiesUpdate: updateTimestamp,
+      lastIdentitiesUpdate: normalizedUpdateTimestamp,
     );
     di<PupilManager>().fetchAllPupils();
     _mainMenuBottomNavManager.setBottomNavPage(0);
