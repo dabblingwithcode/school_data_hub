@@ -24,13 +24,18 @@ import 'package:watch_it/watch_it.dart';
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
+  // Disable Signals debug logging
+  SignalsObserver.instance = null; // AppSignalsObserver();
   WidgetsFlutterBinding.ensureInitialized();
+
   // Set the global logging level
   Logger.root.level = Level.ALL;
   di.registerSingleton<LogService>(LogService());
+
   final logService = di<LogService>();
   // Add your custom colored console listener
   Logger.root.onRecord.listen((record) {
+    //  if (record.loggerName == 'Signals') return;
     final colorFormatter = const ColorFormatter();
     log(colorFormatter.format(record));
     final appLog = AppLog(record.level, record.message, record.loggerName);

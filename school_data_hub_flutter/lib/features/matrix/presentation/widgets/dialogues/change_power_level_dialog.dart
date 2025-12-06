@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
-import 'package:watch_it/watch_it.dart';
 
 final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -12,34 +10,39 @@ final TextEditingController _textEditingController = TextEditingController();
 // based on https://mobikul.com/creating-stateful-dialog-form-in-flutter/
 
 Future<void> changePowerLevelsDialog(
-    BuildContext context, PupilProxy pupil) async {
-  final _pupilManager = di<PupilManager>();
+  BuildContext context,
+  PupilProxy pupil,
+) async {
   return await showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(builder: (context, setState) {
+    context: context,
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
           return AlertDialog(
             content: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      width: 100,
-                      child: TextFormField(
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                            fontSize: 25, fontWeight: FontWeight.bold),
-                        keyboardType: TextInputType.number,
-                        controller: _textEditingController,
-                        validator: (value) {
-                          return value!.isNotEmpty ? null : "";
-                        },
-                        decoration: const InputDecoration(hintText: "?"),
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 100,
+                    child: TextFormField(
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
                       ),
+                      keyboardType: TextInputType.number,
+                      controller: _textEditingController,
+                      validator: (value) {
+                        return value!.isNotEmpty ? null : "";
+                      },
+                      decoration: const InputDecoration(hintText: "?"),
                     ),
-                  ],
-                )),
+                  ),
+                ],
+              ),
+            ),
             title: const Text(
               'Guthaben ändern',
               textAlign: TextAlign.center,
@@ -76,10 +79,7 @@ Future<void> changePowerLevelsDialog(
                     //   Navigator.of(context).pop();
                     // }
                   },
-                  child: const Text(
-                    "MINUS",
-                    style: AppStyles.buttonTextStyle,
-                  ),
+                  child: const Text("MINUS", style: AppStyles.buttonTextStyle),
                 ),
               ),
               ElevatedButton(
@@ -97,13 +97,12 @@ Future<void> changePowerLevelsDialog(
                   //   Navigator.of(context).pop();
                   // }
                 },
-                child: const Text(
-                  "PLUS",
-                  style: AppStyles.buttonTextStyle,
-                ),
+                child: const Text("PLUS", style: AppStyles.buttonTextStyle),
               ),
             ],
           );
-        });
-      });
+        },
+      );
+    },
+  );
 }

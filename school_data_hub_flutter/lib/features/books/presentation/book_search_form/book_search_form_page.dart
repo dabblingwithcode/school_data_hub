@@ -297,7 +297,7 @@ class _BookSearchFormPageState extends State<BookSearchFormPage> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: DropdownButtonFormField<BorrowedStatus>(
-                          value: BorrowedStatus.all,
+                          initialValue: BorrowedStatus.all,
                           decoration: InputDecoration(
                             fillColor: Colors.white,
                             filled: true,

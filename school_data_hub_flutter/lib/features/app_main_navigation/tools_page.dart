@@ -39,7 +39,7 @@ class ToolsPage extends WatchingWidget {
     }
 
     if (function == 'update_backend') {
-      _pupilIdentityManager.updateBackendPupilsWithSchoolPupilIdentitySource(
+      _pupilIdentityManager.updateServerFromPupilIdentityExternalSource(
         fileContent,
       );
     } else if (function == 'pupil_identities') {

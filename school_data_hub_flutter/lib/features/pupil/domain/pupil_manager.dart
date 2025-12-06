@@ -176,6 +176,7 @@ class PupilManager extends ChangeNotifier {
   //- Fetch all available pupils from the backend
 
   Future<void> fetchAllPupils() async {
+    _log.info('Fetching all pupils');
     final pupilsToFetch = di<PupilIdentityManager>().availablePupilIds;
 
     if (pupilsToFetch.isEmpty) {

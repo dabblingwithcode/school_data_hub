@@ -89,7 +89,7 @@ class EditBookPage extends StatelessWidget {
                                 labelText: 'Lesestufe',
                               ),
                               items: controller.readingLevelDropdownItems,
-                              value: ReadingLevel.fromString(
+                              initialValue: ReadingLevel.fromString(
                                 controller.readingLevel,
                               ),
                               onChanged: (value) => controller
@@ -108,7 +108,8 @@ class EditBookPage extends StatelessWidget {
                                               labelText: 'Ablageort',
                                             ),
                                         items: controller.locationDropdownItems,
-                                        value: controller.selectedLocation,
+                                        initialValue:
+                                            controller.selectedLocation,
                                         onChanged: (value) => controller
                                             .onChangedLocationDropDown(value!),
                                       ),

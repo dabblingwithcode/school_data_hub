@@ -6,11 +6,11 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/data/pupil_data_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_selector_filters.dart';
@@ -18,6 +18,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_fil
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:signals/signals_flutter.dart';
 import 'package:watch_it/watch_it.dart';
 
 class PupilIdentityManager {
@@ -37,8 +38,8 @@ class PupilIdentityManager {
   final _groups = ValueNotifier<Set<String>>({});
   ValueListenable<Set<String>> get groups => _groups;
 
-  final _remoteLastIdentitiesUpdate = ValueNotifier<DateTime?>(null);
-  ValueListenable<DateTime?> get remoteLastIdentitiesUpdate =>
+  final Signal<DateTime?> _remoteLastIdentitiesUpdate = signal(null);
+  Signal<DateTime?> get remoteLastIdentitiesUpdate =>
       _remoteLastIdentitiesUpdate;
 
   List<PupilIdentity> get pupilIdentities => _pupilIdentities.values.toList();
@@ -134,29 +135,26 @@ class PupilIdentityManager {
     required DateTime? updateTimestamp,
   }) async {
     final normalizedUpdateTimestamp = updateTimestamp?.toUtc();
-    late final String? decryptedIdentitiesAsString;
-
-    // If the string is imported in windows, it comes from a .txt file and it's not encrypted
-    decryptedIdentitiesAsString = pupilIdentityTextLines;
 
     // The pupils in the string are separated by a '\n' - let's split them apart
-    List<String> splittedPupilIdentities = decryptedIdentitiesAsString.split(
-      '\n',
-    );
+    List<String> pupilIdentityTextLineList = pupilIdentityTextLines.split('\n');
+
     // The properties are separated by commas, let's build the PupilIdentity objects with them
 
     bool updateGroupFilters = false;
 
-    for (String data in splittedPupilIdentities) {
-      if (data != '') {
+    for (String textLine in pupilIdentityTextLineList) {
+      if (textLine != '') {
         final newPupilIdentity =
-            PupilIdentityHelper.decodePupilIdentityFromTextLine(data);
+            PupilIdentityHelper.decodePupilIdentityFromTextLine(textLine);
 
+        //- check if the group filter needs to be updated
         if (PupilProxy.groupFilters.any(
               (filter) =>
                   (filter as GroupFilter).name == newPupilIdentity.group,
             ) ==
             false) {
+          //- group filter needs to be updated, set the updateGroupFilters flag to true
           updateGroupFilters = true;
         }
         //- add the new pupil to the pupilIdentities map
@@ -186,23 +184,32 @@ class PupilIdentityManager {
     final Map<String, Map<String, dynamic>> jsonMap = _pupilIdentities.map(
       (key, value) => MapEntry(key.toString(), value.toJson()),
     );
-
+    _log.info('Writing ${_pupilIdentities.length} pupil identities to storage');
     final jsonPupilIdentitiesAsString = json.encode(jsonMap);
     // save the pupil identities in a file for debugging purposes
-    File(
-      'pupil_identities_in_storage.json',
-    ).writeAsStringSync(jsonPupilIdentitiesAsString);
-
-    await HubSecureStorage().setString(
-      secureStorageKey,
-      jsonPupilIdentitiesAsString,
+    _log.severe(
+      '''Writing ${_pupilIdentities.length} pupil identities with key [$secureStorageKey] to storage:
+  ${jsonPupilIdentitiesAsString.substring(0, 200)}...''',
     );
-    _log.info(
-      '${_pupilIdentities.length} pupil identities written to secure storage with key $secureStorageKey',
-    );
+    try {
+      await HubSecureStorage().setString(
+        secureStorageKey,
+        jsonPupilIdentitiesAsString,
+      );
+      _log.info(
+        '${_pupilIdentities.length} pupil identities written to secure storage with key $secureStorageKey',
+      );
+    } catch (e, stack) {
+      _log.severe(
+        'Failed to write ${_pupilIdentities.length} pupil identities to secure storage with key $secureStorageKey: $e',
+        e,
+        stack,
+      );
+      rethrow;
+    }
   }
 
-  Future<void> updateBackendPupilsWithSchoolPupilIdentitySource(
+  Future<void> updateServerFromPupilIdentityExternalSource(
     String textFileContent,
   ) async {
     // The pupils in the string are separated by a line break - let's split them out
@@ -298,7 +305,7 @@ class PupilIdentityManager {
     return;
   }
 
-  Future<void> fetchLastIdentitiesUpdate() async {
+  Future<void> fetchServerIdentitiesTimestamp() async {
     final lastUpdate = await PupilDataApiService().fetchLastIdentitiesUpdate();
     if (lastUpdate == null) {
       _notificationService.showSnackBar(

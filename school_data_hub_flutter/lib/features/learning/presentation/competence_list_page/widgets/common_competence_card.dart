@@ -10,40 +10,43 @@ import 'package:watch_it/watch_it.dart';
 class CommonCompetenceCard extends WatchingStatefulWidget {
   final Color competenceBackgroundColor;
   final Function({int? competenceId, Competence? competence})
-      navigateToNewOrPatchCompetencePage;
+  navigateToNewOrPatchCompetencePage;
   final Competence competence;
   final List<Widget> children;
-  const CommonCompetenceCard(
-      {required this.competence,
-      required this.competenceBackgroundColor,
-      required this.navigateToNewOrPatchCompetencePage,
-      required this.children,
-      super.key});
+  const CommonCompetenceCard({
+    required this.competence,
+    required this.competenceBackgroundColor,
+    required this.navigateToNewOrPatchCompetencePage,
+    required this.children,
+    super.key,
+  });
 
   @override
   State<CommonCompetenceCard> createState() => _CommonCompetenceCardState();
 }
 
 class _CommonCompetenceCardState extends State<CommonCompetenceCard> {
-  void _onReorder(int oldIndex, int newIndex) {
-    setState(() {
-      if (newIndex > oldIndex) {
-        newIndex -= 1;
-      }
-      final item = widget.children.removeAt(oldIndex);
-      widget.children.insert(newIndex, item);
-    });
-  }
+  // void _onReorder(int oldIndex, int newIndex) {
+  //   setState(() {
+  //     if (newIndex > oldIndex) {
+  //       newIndex -= 1;
+  //     }
+  //     final item = widget.children.removeAt(oldIndex);
+  //     widget.children.insert(newIndex, item);
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
     final childrenController = createOnce<CustomExpansionTileController>(
-        () => CustomExpansionTileController());
+      () => CustomExpansionTileController(),
+    );
     // final childrenController = useCustomExpansionTileController();
 
     return Padding(
       padding: EdgeInsets.symmetric(
-          vertical: widget.competence.parentCompetence == null ? 3 : 0),
+        vertical: widget.competence.parentCompetence == null ? 3 : 0,
+      ),
       child: Card(
         color: widget.competenceBackgroundColor,
         elevation: 0,
@@ -62,10 +65,12 @@ class _CommonCompetenceCardState extends State<CommonCompetenceCard> {
                   Expanded(
                     child: InkWell(
                       onTap: () => widget.navigateToNewOrPatchCompetencePage(
-                          competence: widget.competence),
+                        competence: widget.competence,
+                      ),
                       onLongPress: () =>
                           widget.navigateToNewOrPatchCompetencePage(
-                              competenceId: widget.competence.publicId),
+                            competenceId: widget.competence.publicId,
+                          ),
                       child: Text(
                         widget.competence.name,
                         maxLines: 4,
@@ -73,7 +78,8 @@ class _CommonCompetenceCardState extends State<CommonCompetenceCard> {
                         textAlign: TextAlign.start,
                         style: TextStyle(
                           color: AppColors.bestContrastCompetenceFontColor(
-                              widget.competenceBackgroundColor),
+                            widget.competenceBackgroundColor,
+                          ),
                           fontWeight: FontWeight.bold,
                           fontSize: widget.competence.parentCompetence == null
                               ? 20

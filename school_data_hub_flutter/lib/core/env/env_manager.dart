@@ -70,20 +70,20 @@ class EnvManager with ChangeNotifier {
 
   final String _storageKeyForEnvironments = 'environments_key';
 
-  String storageKeyPrefix() {
+  String _storageKeyPrefix() {
     return '${_activeEnv?.serverName}_${_activeEnv?.runMode.name}';
   }
 
   /// ##  🔎 managed observable
-  String get storageKeyForAuthKey => '${storageKeyPrefix()}_hub_auth_key';
+  String get storageKeyForAuthKey => '${_storageKeyPrefix()}_hub_auth_key';
 
-  String get storageKeyForUserInfo => '${storageKeyPrefix()}_hub_user_info';
+  String get storageKeyForUserInfo => '${_storageKeyPrefix()}_hub_user_info';
 
   String get storageKeyForPupilIdentities =>
-      '${storageKeyPrefix()}_pupil_identities';
+      '${_storageKeyPrefix()}_pupil_identities';
 
   String get storageKeyForMatrixCredentials =>
-      '${storageKeyPrefix()}_matrix_credentials';
+      '${_storageKeyPrefix()}_matrix_credentials';
 
   PackageInfo _packageInfo = PackageInfo(
     appName: '',

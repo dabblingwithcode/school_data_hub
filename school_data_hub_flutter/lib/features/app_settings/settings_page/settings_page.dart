@@ -69,9 +69,7 @@ class SettingsPage extends StatelessWidget {
                     leading: const Icon(Icons.bug_report_rounded),
                     title: const Text('Logs'),
                     onPressed: (context) => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (ctx) => const LogViewerPage(),
-                      ),
+                      MaterialPageRoute(builder: (ctx) => LogViewerPage()),
                     ),
                   ),
                   SettingsTile.navigation(

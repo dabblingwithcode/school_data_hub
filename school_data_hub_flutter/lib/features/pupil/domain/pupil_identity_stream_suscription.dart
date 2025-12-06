@@ -42,15 +42,20 @@ class PupilIdentityStream {
       'encryptedPupilIdsStreamSubscription called with channelName: $channelName and role: $role',
     );
     final _client = di<Client>();
-    _log.info('starting encryptedPupilIdsStreamSubscription');
+    _log.info(
+      '[${role.name.toUpperCase()}]: starting encryptedPupilIdsStreamSubscription',
+    );
     // just in case we have a previous subscription, we cancel it first
     _encryptedPupilIdsSubscription?.cancel();
     _encryptedPupilIdsSubscription = _client.pupilIdentity
         .streamEncryptedPupilIds(channelName)
         .listen(
           (PupilIdentityDto event) async {
-            _log.info('Received event: [${event.type}] from ${event.sender}');
             final eventSender = event.sender;
+            _log.info(
+              '[${role.name.toUpperCase()}]: [${event.type}] Received event from $eventSender',
+            );
+
             switch (role) {
               //- Stream behavior for sender role
               case PupilIdentityStreamRole.sender:
@@ -75,6 +80,16 @@ class PupilIdentityStream {
                     );
                     break;
                   case 'confirmed':
+                    // Ignore confirmations sent by ourselves to avoid double sending
+                    final currentUser =
+                        di<HubSessionManager>().user?.userInfo?.userName;
+                    if (eventSender == currentUser) {
+                      _log.fine(
+                        '[${role.name.toUpperCase()}] [${event.type}] from $eventSender: Ignoring self-confirmation message.',
+                      );
+                      break;
+                    }
+
                     // Check if confirmation is for a specific user
                     final targetUser = event.value.isNotEmpty
                         ? event.value
@@ -104,6 +119,9 @@ class PupilIdentityStream {
                       if (onRequestConfirmed != null) {
                         onRequestConfirmed();
                       }
+                      _log.info(
+                        '[${role.name.toUpperCase()}] [${event.type}] from $eventSender: Sending data to $targetUser',
+                      );
                       onStatusUpdate('Sende Daten an $targetUser...');
                       await _client.pupilIdentity.sendPupilIdentityMessage(
                         channelName,
@@ -126,15 +144,21 @@ class PupilIdentityStream {
                     onStatusUpdate(
                       'Datenübertragung erfolgreich abgeschlossen!',
                     );
-                    _log.info('Receiver acknowledged the data');
+                    _log.info(
+                      '[${role.name.toUpperCase()}]: Receiver acknowledged the data.',
+                    );
                     break;
                   case 'rejected':
                     onStatusUpdate('Anfrage wurde vom Sender abgelehnt.');
-                    _log.info('Request was rejected by sender');
+                    _log.info(
+                      '[${role.name.toUpperCase()}] [${event.type}] from $eventSender: Request was rejected by sender',
+                    );
                     break;
                   case 'close':
                     // Receiver left the stream
-                    _log.info('Receiver ${event.value} left the stream');
+                    _log.info(
+                      '[${role.name.toUpperCase()}] [${event.type}] from $eventSender: Receiver ${event.value} left the stream',
+                    );
                     onStatusUpdate(
                       'Empfänger ${event.value} hat die Verbindung beendet.',
                     );
@@ -169,7 +193,7 @@ class PupilIdentityStream {
                         onRequestRejected(isAutoRejection);
                       }
                       _log.info(
-                        'Request was rejected by sender (auto: $isAutoRejection)',
+                        '[${role.name.toUpperCase()}] [${event.type}] from $eventSender: Request was rejected by sender (auto: $isAutoRejection)',
                       );
 
                       // Close the connection to kick the receiver off the stream
@@ -192,7 +216,7 @@ class PupilIdentityStream {
                         if (targetUser != currentUserName) {
                           // Data is not for this user, ignore it
                           _log.info(
-                            'Data received for $targetUser, ignoring as current user is $currentUserName',
+                            '[${role.name.toUpperCase()}] [${event.type}] from $eventSender: Data received for $targetUser, ignoring as current user is $currentUserName',
                           );
                           break;
                         }
@@ -205,7 +229,7 @@ class PupilIdentityStream {
                       'Verschlüsselte Schülerdaten empfangen. Verarbeite...',
                     );
                     _log.info(
-                      'Received encrypted pupil identities dated on ${event.dataTimeStamp}.',
+                      '[${role.name.toUpperCase()}] [${event.type}] from $eventSender: Received encrypted pupil identities dated on ${event.dataTimeStamp}.',
                     );
 
                     try {
@@ -285,13 +309,17 @@ class PupilIdentityStream {
 
                       _encryptedPupilIdsSubscription!.cancel();
                     } catch (e) {
-                      _log.severe('Error processing received data: $e');
+                      _log.severe(
+                        '[${role.name.toUpperCase()}] [${event.type}] from $eventSender: Error processing received data: $e',
+                      );
                       onStatusUpdate('Fehler beim Verarbeiten der Daten: $e');
                     }
                     break;
                   case 'shutdown':
                     // Sender has shut down the stream
-                    _log.info('Sender has shut down the stream');
+                    _log.info(
+                      '[${role.name.toUpperCase()}] [${event.type}] from $eventSender: Sender has shut down the stream',
+                    );
                     onStatusUpdate('Der Sender hat den Stream beendet.');
                     if (onSenderShutdown != null) {
                       onSenderShutdown(event.value);
@@ -318,7 +346,9 @@ class PupilIdentityStream {
                 'Der Server konnte nicht gefunden werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.',
               );
             } else {
-              _log.severe('Error in pupil identity stream: $errorString');
+              _log.severe(
+                '[${role.name.toUpperCase()}] : Error in pupil identity stream: $errorString',
+              );
               // _notificationService.showSnackBar(
               //   NotificationType.error,
               //   'Ein unbekannter Fehler ist aufgetreten: $errorString',
@@ -327,6 +357,9 @@ class PupilIdentityStream {
             // retry the subscription after a delay
             await Future.delayed(const Duration(seconds: 1));
             _encryptedPupilIdsSubscription!.cancel();
+            _log.warning(
+              '[${role.name.toUpperCase()}] : Retrying subscription after error',
+            );
             encryptedPupilIdsStreamSubscription(
               channelName: channelName,
               role: role,
@@ -353,10 +386,47 @@ class PupilIdentityStream {
 
     // Call onConnected immediately after subscription is established
     _log.info(
-      'Stream subscription established for channel: $channelName with role: $role',
+      '[${role.name.toUpperCase()}]: Stream subscription established for channel: $channelName',
     );
     onConnected();
 
     return _encryptedPupilIdsSubscription!;
+  }
+
+  bool _isReceivedDataUpToDateOrNewer(DateTime dataTimeStamp) {
+    if (di<EnvManager>().activeEnv!.lastIdentitiesUpdate == null) {
+      _log.warning(
+        '[Timestamp]: No last identities update found, so there is still no data',
+      );
+      return true;
+    }
+    if (dataTimeStamp.isBefore(
+      di<PupilIdentityManager>().remoteLastIdentitiesUpdate.value!,
+    )) {
+      _log.warning(
+        '[Timestamp]: Received data is older than the last identities update',
+      );
+      return false;
+    }
+    if (dataTimeStamp.isBefore(
+      di<PupilIdentityManager>().remoteLastIdentitiesUpdate.value!,
+    )) {
+      _log.warning(
+        '[Timestamp]: Received data is older than the remote last identities update',
+      );
+      return true;
+    }
+    if (dataTimeStamp.isAtSameMomentAs(
+      di<PupilIdentityManager>().remoteLastIdentitiesUpdate.value!,
+    )) {
+      _log.warning(
+        '[Timestamp]: Received data is up to date with the remote last identities timestamp',
+      );
+      return true;
+    }
+
+    return dataTimeStamp.isAfter(
+      di<EnvManager>().activeEnv!.lastIdentitiesUpdate!,
+    );
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
+import 'package:signals/signals_flutter.dart';
 import 'package:watch_it/watch_it.dart';
 
 import 'controllers/stream_controller.dart';
@@ -63,64 +64,31 @@ class PupilIdentityStreamPage extends WatchingWidget {
 
     final state = controller.state;
 
-    final isConnected = watch(state.streamState.isConnected).value;
-    final isProcessing = watch(state.streamState.isProcessing).value;
-    final receivers = watch(state.receiverState.connectedReceivers).value;
-    final pendingRequests = watch(state.receiverState.pendingRequests).value;
-    final activeTransfers = watch(state.receiverState.activeTransfers).value;
-    final transferHistory = watch(state.transferState.transferHistory).value;
-    final transferCounter = watch(state.transferState.transferCounter).value;
-    final rejectedUsers = watch(state.receiverState.rejectedUsers).value;
-    final receiverJoined = watch(state.streamState.receiverJoined).value;
-    final requestSent = watch(state.streamState.requestSent).value;
-    final isTransmitting = watch(state.streamState.isTransmitting).value;
-    final autoConfirmEnabled = watch(
-      state.streamState.autoConfirmEnabled,
-    ).value;
+    final isConnected = state.streamState.isConnected.watch(context);
+    final isProcessing = state.streamState.isProcessing.watch(context);
+    final receivers = state.receiverState.connectedReceivers.watch(context);
+    final pendingRequests = state.receiverState.pendingRequests.watch(context);
+    final activeTransfers = state.receiverState.activeTransfers.watch(context);
+    final transferHistory = state.transferState.transferHistory.watch(context);
+    final transferCounter = state.transferState.transferCounter.watch(context);
+    final rejectedUsers = state.receiverState.rejectedUsers.watch(context);
+    final receiverJoined = state.streamState.receiverJoined.watch(context);
+    final requestSent = state.streamState.requestSent.watch(context);
+    final isTransmitting = state.streamState.isTransmitting.watch(context);
+    final autoConfirmEnabled =
+        state.streamState.autoConfirmEnabled.watch(context);
 
-    // Register handlers for receiver status changes that require overlay management
+    // Update overlay when receiver-related signals change
     if (role == PupilIdentityStreamRole.receiver) {
-      registerHandler(
-        select: (state) => state.streamState.receiverJoined,
-        target: state,
-        handler: (context, joined, cancel) {
-          _updateReceiverOverlay(
-            context,
-            controller,
-            joined,
-            requestSent,
-            isTransmitting,
-          );
-        },
-      );
-
-      registerHandler(
-        select: (state) => state.streamState.requestSent,
-        target: state,
-        handler: (context, reqSent, cancel) {
-          _updateReceiverOverlay(
-            context,
-            controller,
-            receiverJoined,
-            reqSent,
-            isTransmitting,
-          );
-        },
-      );
-
-      registerHandler(
-        select: (state) => state.streamState.isTransmitting,
-        target: state,
-        handler: (context, transmitting, cancel) {
-          _updateReceiverOverlay(
-            context,
-            controller,
-            receiverJoined,
-            requestSent,
-            transmitting,
-          );
-        },
-      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _updateReceiverOverlay(
+          context,
+          controller,
+          receiverJoined,
+          requestSent,
+          isTransmitting,
+        );
+      });
     }
 
     return Scaffold(
