@@ -73,6 +73,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.9"
+  basic_interfaces:
+    dependency: transitive
+    description:
+      name: basic_interfaces
+      sha256: c37c8c4ddbc594430eb3817a4edfcc9a0cadbc7ea4c51a5b48785e351f1ba479
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4"
   bidi:
     dependency: transitive
     description:
@@ -941,6 +949,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.1.1"
+  lite_ref:
+    dependency: transitive
+    description:
+      name: lite_ref
+      sha256: "2519ee5c20257ed8b8eec92c967b8ae2a3361895e9e5dd268569c681803df41b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.8.1"
+  lite_ref_core:
+    dependency: transitive
+    description:
+      name: lite_ref_core
+      sha256: b902af6b90736d6fb7a2c171af37d15f4894a5880e9eb55ffb3fee5f01385849
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
   logging:
     dependency: "direct main"
     description:
@@ -1433,6 +1457,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  sliver_dashboard:
+    dependency: "direct main"
+    description:
+      name: sliver_dashboard
+      sha256: "5de309ba727fe0b0d15d67e6d3f74f9555ecaefc16f864d116a963b38530d646"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.3"
   source_gen:
     dependency: transitive
     description:
@@ -1513,6 +1545,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.12.1"
+  state_beacon:
+    dependency: transitive
+    description:
+      name: state_beacon
+      sha256: "74550d1df83fec01ccce7b35b8a365f7e44d64b994bea8f3d3a2c3ea8720f62b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.1"
+  state_beacon_core:
+    dependency: transitive
+    description:
+      name: state_beacon_core
+      sha256: c60eceef6d638938e26ff3f502d79377c595ab0a08442a9c879f053f6bcaa25c
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.1"
+  state_beacon_flutter:
+    dependency: transitive
+    description:
+      name: state_beacon_flutter
+      sha256: "7a9db1a4532f0563e240ab1803751810c3d619a1d631e101b4abac43a21b4406"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.1"
   stream_channel:
     dependency: transitive
     description:

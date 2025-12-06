@@ -20,6 +20,7 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identi
 import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/chart_page_controller.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
+import 'package:school_data_hub_flutter/features/timetable/presentation/sliver_dashboard_page/sliver_dashboard_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_page/timetable_page.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -247,6 +248,22 @@ class ToolsPage extends WatchingWidget {
 
                     const Gap(16),
                   ],
+
+                  _buildToolButton(
+                    onPressed: () async {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const DashboardPage(),
+                        ),
+                      );
+                    },
+                    icon: Icons.schedule,
+                    title: 'Sliver Dashboard',
+                    subtitle: 'Timetables und Lerngruppen verwalten',
+                    color: Colors.green[700]!,
+                  ),
+
+                  const Gap(16),
 
                   // Desktop-only section
                   if (Platform.isWindows || Platform.isMacOS) ...[
