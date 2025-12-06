@@ -19,6 +19,7 @@ import 'package:school_data_hub_flutter/features/app_entry_point/login_page/logi
 import 'package:school_data_hub_flutter/features/app_entry_point/no_connection_page.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/landing_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
+import 'package:signals/signals_flutter.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -83,16 +84,12 @@ class MyApp extends WatchingWidget {
   Widget build(BuildContext context) {
     final log = Logger('MyApp');
 
-    // Watch for environment changes - this will trigger rebuilds when EnvManager notifies
-    final envManager = watchIt<EnvManager>();
-
-    final bool envIsReady = watchValue((EnvManager x) => x.envIsReady);
-    final bool userIsAuthenticated = watchValue(
-      (EnvManager x) => x.isAuthenticated,
+    final bool envIsReady = di<EnvManager>().envIsReady.watch(context);
+    final bool userIsAuthenticated = di<EnvManager>().isAuthenticated.watch(
+      context,
     );
-    final bool isConnected = watchValue(
-      (ServerpodConnectivityMonitor x) => x.isConnected,
-    );
+    final bool isConnected = di<ServerpodConnectivityMonitor>().isConnected
+        .watch(context);
 
     return MaterialApp(
       localizationsDelegates: const <LocalizationsDelegate<Object>>[
@@ -131,7 +128,7 @@ class MyApp extends WatchingWidget {
                 }
               },
             )
-          : envManager.activeEnv != null
+          : di<EnvManager>().activeEnv != null
           ? const LoadingPage()
           : const EntryPoint(),
     );

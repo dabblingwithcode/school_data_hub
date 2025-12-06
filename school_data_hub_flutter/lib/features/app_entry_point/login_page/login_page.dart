@@ -14,6 +14,7 @@ import 'package:school_data_hub_flutter/features/app_entry_point/login_page/logi
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/widgets/environments_dropdown.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/landing_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
+import 'package:signals/signals_flutter.dart';
 import 'package:watch_it/watch_it.dart';
 
 class LoginPage extends WatchingWidget {
@@ -32,8 +33,8 @@ class LoginPage extends WatchingWidget {
           : snackbar(context, value.type, value.message),
     );
 
-    final bool isAuthenticated = watchValue(
-      (EnvManager x) => x.isAuthenticated,
+    final bool isAuthenticated = di<EnvManager>().isAuthenticated.watch(
+      context,
     );
 
     final locale = AppLocalizations.of(context)!;
@@ -42,7 +43,7 @@ class LoginPage extends WatchingWidget {
     //FocusScopeNode currentFocus = FocusScope.of(context);
 
     return (isAuthenticated)
-        ? MainMenuBottomNavigation()
+        ? const MainMenuBottomNavigation()
         : Scaffold(
             resizeToAvoidBottomInset: true,
             body: Container(

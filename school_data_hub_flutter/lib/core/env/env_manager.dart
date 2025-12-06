@@ -12,6 +12,7 @@ import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:school_data_hub_flutter/core/models/populated_server_session_data.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
+import 'package:signals/signals_flutter.dart';
 import 'package:watch_it/watch_it.dart';
 
 class EnvManager with ChangeNotifier {
@@ -25,7 +26,7 @@ class EnvManager with ChangeNotifier {
 
   /// TODO ADVICE: is this proxy authentication flag a hack or is this acceptable?
 
-  final _isAuthenticated = ValueNotifier<bool>(false);
+  final _isAuthenticated = signal(false);
 
   /// ##  🔎 managed observable
   /// We need to observe in [MaterialApp] if a user is authenticated
@@ -35,7 +36,7 @@ class EnvManager with ChangeNotifier {
   ///
   /// **CAUTION**: Handle this value only with [HubSessionManager] every time
   /// it makes an authentication status change.
-  ValueListenable<bool> get isAuthenticated => _isAuthenticated;
+  Signal<bool> get isAuthenticated => _isAuthenticated;
 
   /// **WARNING:**
   ///
@@ -60,10 +61,10 @@ class EnvManager with ChangeNotifier {
   /// ##  🔎 managed observable
   String get defaultEnv => _defaultEnv;
 
-  final _envIsReady = ValueNotifier<bool>(false);
+  final _envIsReady = signal(false);
 
   /// ##  🔎 managed observable
-  ValueListenable<bool> get envIsReady => _envIsReady;
+  Signal<bool> get envIsReady => _envIsReady;
 
   // Declare storage keys for the environment
 
