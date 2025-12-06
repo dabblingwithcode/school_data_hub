@@ -3,16 +3,16 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/filter_button.dart';
-import 'package:school_data_hub_flutter/features/ogs/widgets/ogs_filter_bottom_sheet.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/after_school_care/widgets/after_school_care_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_search_text_field.dart';
 import 'package:watch_it/watch_it.dart';
 
-class OgsListSearchBar extends StatelessWidget {
+class AfterSchoolCareListSearchBar extends StatelessWidget {
   final List<PupilProxy> pupils;
   final bool filtersOn;
-  const OgsListSearchBar({
+  const AfterSchoolCareListSearchBar({
     required this.pupils,
     required this.filtersOn,
     super.key,

@@ -12,4 +12,5 @@ fields:
   processedDocument: HubDocument?, relation(optional)
   schoolday: Schoolday?, relation(name=schoolday_event_schoolday)
   pupil: PupilData?, relation(name=schoolday_event_pupil)
+  ## TODO: Add eventTime
   comment: String?

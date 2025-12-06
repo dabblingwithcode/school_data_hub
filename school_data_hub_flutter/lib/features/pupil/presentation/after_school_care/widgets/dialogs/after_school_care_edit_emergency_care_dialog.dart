@@ -4,7 +4,7 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 
-Future<void> ogsEditEmergencyCareDialog(
+Future<void> afterSchoolCareEditEmergencyCareDialog(
   BuildContext context,
   PupilProxy pupil,
 ) async {

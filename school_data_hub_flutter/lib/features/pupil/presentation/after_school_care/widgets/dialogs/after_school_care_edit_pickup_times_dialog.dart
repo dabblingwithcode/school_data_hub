@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart'
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 
-Future<void> ogsEditPickUpTimesDialog(
+Future<void> afterSchoolCareEditPickUpTimesDialog(
   BuildContext context,
   PupilProxy pupil,
 ) async {

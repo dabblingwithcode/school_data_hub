@@ -4,15 +4,15 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
-import 'package:school_data_hub_flutter/features/ogs/widgets/dialogs/ogs_edit_emergency_care_dialog.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/after_school_care/widgets/dialogs/after_school_care_edit_emergency_care_dialog.dart';
 import 'package:watch_it/watch_it.dart';
 
-class OgsDetails extends WatchingWidget {
+class AfterSchoolCareDetails extends WatchingWidget {
   final PupilProxy pupil;
-  const OgsDetails({required this.pupil, super.key});
+  const AfterSchoolCareDetails({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class OgsDetails extends WatchingWidget {
         Padding(
           padding: const EdgeInsets.all(10.0),
           child: InkWell(
-            onTap: () => ogsEditEmergencyCareDialog(context, pupil),
+            onTap: () => afterSchoolCareEditEmergencyCareDialog(context, pupil),
             child: Row(
               children: [
                 const Text(

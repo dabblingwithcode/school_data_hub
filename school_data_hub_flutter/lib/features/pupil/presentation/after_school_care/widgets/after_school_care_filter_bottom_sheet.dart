@@ -6,8 +6,8 @@ import 'package:school_data_hub_flutter/features/_attendance/domain/models/enums
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
 import 'package:watch_it/watch_it.dart';
 
-class OgsFilterBottomSheet extends WatchingWidget {
-  const OgsFilterBottomSheet({super.key});
+class AfterSchoolCareFilterBottomSheet extends WatchingWidget {
+  const AfterSchoolCareFilterBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -139,6 +139,6 @@ showOgsFilterBottomSheet(BuildContext context) {
       ),
     ),
     context: context,
-    builder: (_) => const OgsFilterBottomSheet(),
+    builder: (_) => const AfterSchoolCareFilterBottomSheet(),
   );
 }

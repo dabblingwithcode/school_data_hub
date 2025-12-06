@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/features/ogs/widgets/ogs_details.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/after_school_care/widgets/after_school_care_details.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
 
@@ -19,7 +19,7 @@ class PupilOgsContent extends StatelessWidget {
           PupilProfileContentSection(
             icon: Icons.access_time,
             title: 'OGS-Informationen',
-            child: OgsDetails(pupil: pupil),
+            child: AfterSchoolCareDetails(pupil: pupil),
           ),
         ],
       ),

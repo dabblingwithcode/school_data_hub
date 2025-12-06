@@ -3,11 +3,14 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/common/widgets/filter_button.dart';
-import 'package:school_data_hub_flutter/features/ogs/widgets/ogs_filter_bottom_sheet.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/after_school_care/widgets/after_school_care_filter_bottom_sheet.dart';
 
-class OgsListPageBottomNavBar extends StatelessWidget {
+class AfterSchoolCareListPageBottomNavBar extends StatelessWidget {
   final bool filtersOn;
-  const OgsListPageBottomNavBar({required this.filtersOn, super.key});
+  const AfterSchoolCareListPageBottomNavBar({
+    required this.filtersOn,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
