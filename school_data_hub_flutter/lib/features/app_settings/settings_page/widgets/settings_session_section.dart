@@ -3,11 +3,11 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
-import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
@@ -57,31 +57,6 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           ),
 
         SettingsTile.navigation(
-          leading: const Icon(Icons.perm_identity_rounded),
-          title: const Text('Lokale Daten vom:'),
-          value: Text(
-            '${di<EnvManager>().activeEnv?.lastIdentitiesUpdate?.formatDateAndTimeForUser()} ',
-            style: TextStyle(
-              color:
-                  di<EnvManager>().activeEnv?.lastIdentitiesUpdate ==
-                      di<PupilIdentityManager>()
-                          .remoteLastIdentitiesUpdate
-                          .value
-                  ? Colors.green
-                  : Colors.red,
-            ),
-          ),
-          trailing: null,
-        ),
-        SettingsTile.navigation(
-          leading: const Icon(Icons.perm_identity_rounded),
-          title: const Text('Aktuelleste Daten vom:'),
-          value: Text(
-            '${di<PupilIdentityManager>().remoteLastIdentitiesUpdate.value?.formatDateAndTimeForUser()}',
-          ),
-          trailing: null,
-        ),
-        SettingsTile.navigation(
           leading: const Icon(Icons.attach_money_rounded),
           title: const Text('Guthaben'),
           value: Text(
@@ -111,6 +86,45 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           description: const Text('Daten bleiben erhalten'),
 
           //onPressed:
+        ),
+        SettingsTile.navigation(
+          leading: const Icon(Icons.perm_identity_rounded),
+          title: const Text('Lokale Daten vom:'),
+          value: Text(
+            '${di<EnvManager>().activeEnv?.lastIdentitiesUpdate?.formatDateAndTimeForUser()} ',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color:
+                  di<EnvManager>().activeEnv?.lastIdentitiesUpdate ==
+                          di<PupilIdentityManager>()
+                              .remoteLastIdentitiesUpdate
+                              .value ||
+                      di<PupilIdentityManager>()
+                                  .remoteLastIdentitiesUpdate
+                                  .value !=
+                              null &&
+                          di<EnvManager>().activeEnv?.lastIdentitiesUpdate !=
+                              null &&
+                          (di<EnvManager>().activeEnv?.lastIdentitiesUpdate!
+                                  .isAfter(
+                                    di<PupilIdentityManager>()
+                                        .remoteLastIdentitiesUpdate
+                                        .value!,
+                                  ) ==
+                              true)
+                  ? Colors.green
+                  : Colors.red,
+            ),
+          ),
+          trailing: null,
+        ),
+        SettingsTile.navigation(
+          leading: const Icon(Icons.perm_identity_rounded),
+          title: const Text('Aktuelleste Daten vom:'),
+          value: Text(
+            '${di<PupilIdentityManager>().remoteLastIdentitiesUpdate.value?.formatDateAndTimeForUser()}',
+          ),
+          trailing: null,
         ),
         SettingsTile.navigation(
           leading: const Row(

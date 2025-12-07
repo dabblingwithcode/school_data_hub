@@ -30,9 +30,9 @@ class BookTagManagementController extends State<BookTagManagement> {
   Future<void> createNewTag(BuildContext context) async {
     final String? newTagName = await shortTextfieldDialog(
       context: context,
-      title: 'Neues Buch-Tag erstellen',
-      labelText: 'Tag-Name',
-      hintText: 'Name des neuen Tags eingeben',
+      title: 'Neues Schlagwort erstellen',
+      labelText: 'Schlagwort',
+      hintText: 'Schlagwort eingeben',
     );
 
     if (newTagName != null && newTagName.trim().isNotEmpty) {

@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/pupil_schoolday_events_list.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_pupil_list_card/widgets/schoolday_event_pupil_stats.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:watch_it/watch_it.dart';
 
 class SchooldayEventPupilListCard extends WatchingStatefulWidget {
@@ -86,34 +86,16 @@ class _SchooldayEventListCardState extends State<SchooldayEventPupilListCard> {
                                   ),
                                 );
                               },
-                              child: Text(
-                                pupil.firstName,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: InkWell(
-                              onTap: () {
-                                // Navigator.of(context).push(MaterialPageRoute(
-                                //   builder: (ctx) => PupilProfilePage(
-                                //     pupil: pupil,
-                                //   ),
-                                // ));
-                              },
                               child: Row(
                                 children: [
+                                  Text(
+                                    pupil.firstName,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const Gap(10),
                                   Text(
                                     pupil.lastName,
                                     style: const TextStyle(fontSize: 18),
@@ -121,7 +103,7 @@ class _SchooldayEventListCardState extends State<SchooldayEventPupilListCard> {
                                   if (pupil.family != null) ...[
                                     const Gap(10),
                                     const Icon(
-                                      Icons.group,
+                                      Icons.family_restroom_rounded,
                                       size: 25,
                                       color: AppColors.backgroundColor,
                                     ),
@@ -133,9 +115,14 @@ class _SchooldayEventListCardState extends State<SchooldayEventPupilListCard> {
                         ),
                       ],
                     ),
+                    const Gap(10),
                     Row(
                       children: [
-                        const Text('zuletzt:'),
+                        Text(
+                          schooldayEvents.isNotEmpty
+                              ? 'zuletzt:'
+                              : 'keine Ereignisse',
+                        ),
                         const Gap(10),
                         if (schooldayEvents.isNotEmpty)
                           Text(
@@ -149,6 +136,7 @@ class _SchooldayEventListCardState extends State<SchooldayEventPupilListCard> {
                           ),
                       ],
                     ),
+                    const Gap(10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [

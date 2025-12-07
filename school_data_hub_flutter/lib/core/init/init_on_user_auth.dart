@@ -40,6 +40,7 @@ class InitOnUserAuth {
       di<EnvManager>().storageKeyForMatrixCredentials,
     )) {
       _log.info(' Matrix credentials found');
+
       // Only register matrix managers if they're not already registered
       if (!di.hasScope(InitScope.onMatrixEnvScope.name)) {
         await InitManager.registerMatrixManagers();
@@ -51,140 +52,273 @@ class InitOnUserAuth {
     } else {
       _log.info(' No matrix credentials found');
     }
-    di.registerSingletonAsync<PupilIdentityManager>(() async {
-      final pupilIdentityManager = PupilIdentityManager();
+    di.registerSingletonAsync<PupilIdentityManager>(
+      () async {
+        final pupilIdentityManager = PupilIdentityManager();
 
-      await pupilIdentityManager.init();
+        await pupilIdentityManager.init();
 
-      _log.info('[PUPIL IDENTITY MANAGER] PupilIdentityManager initialized');
+        _log.info('[PUPIL IDENTITY MANAGER] PupilIdentityManager initialized');
 
-      return pupilIdentityManager;
-    });
+        return pupilIdentityManager;
+      },
+      dispose: (instance) {
+        _log.info('[PUPIL IDENTITY MANAGER] PupilIdentityManager disposed');
+        instance.dispose();
+        return;
+      },
+    );
 
-    di.registerSingletonAsync<SchoolCalendarManager>(() async {
-      final schoolCalendarManager = SchoolCalendarManager();
+    di.registerSingletonAsync<SchoolCalendarManager>(
+      () async {
+        final schoolCalendarManager = SchoolCalendarManager();
 
-      await schoolCalendarManager.init();
+        await schoolCalendarManager.init();
 
-      _log.info('[SCHOOL CALENDAR MANAGER] SchoolCalendarManager initialized');
+        _log.info(
+          '[SCHOOL CALENDAR MANAGER] SchoolCalendarManager initialized',
+        );
 
-      return schoolCalendarManager;
-    });
+        return schoolCalendarManager;
+      },
+      dispose: (instance) {
+        _log.info('[SCHOOL CALENDAR MANAGER] SchoolCalendarManager disposed');
+        instance.dispose();
+        return;
+      },
+    );
 
-    di.registerSingletonAsync<SupportCategoryManager>(() async {
-      final supportCategoryManager = SupportCategoryManager();
+    di.registerSingletonAsync<SupportCategoryManager>(
+      () async {
+        final supportCategoryManager = SupportCategoryManager();
 
-      await supportCategoryManager.init();
+        await supportCategoryManager.init();
 
-      _log.info(
-        '[SUPPORT CATEGORY MANAGER] SupportCategoryManager initialized',
-      );
+        _log.info(
+          '[SUPPORT CATEGORY MANAGER] SupportCategoryManager initialized',
+        );
 
-      return supportCategoryManager;
-    });
+        return supportCategoryManager;
+      },
+      dispose: (instance) {
+        _log.info('[SUPPORT CATEGORY MANAGER] SupportCategoryManager disposed');
+        instance.dispose();
+        return;
+      },
+    );
 
-    di.registerSingletonAsync<PupilManager>(() async {
-      final pupilManager = PupilManager();
+    di.registerSingletonAsync<PupilManager>(
+      () async {
+        final pupilManager = PupilManager();
 
-      await pupilManager.init();
+        await pupilManager.init();
 
-      _log.info('[PUPIL MANAGER] PupilManager initialized');
+        _log.info('[PUPIL MANAGER] PupilManager initialized');
 
-      return pupilManager;
-    }, dependsOn: [PupilIdentityManager, HubSessionManager]);
+        return pupilManager;
+      },
+      dependsOn: [PupilIdentityManager, HubSessionManager],
+      dispose: (instance) {
+        _log.info('[PUPIL MANAGER] PupilManager disposed');
+        instance.dispose();
+        return;
+      },
+    );
 
     di.registerSingletonWithDependencies<LearningSupportManager>(
       () => LearningSupportManager(),
       dependsOn: [PupilManager, SchoolCalendarManager, SupportCategoryManager],
+      dispose: (instance) {
+        _log.info('[LEARNING SUPPORT MANAGER] LearningSupportManager disposed');
+        instance.dispose();
+        return;
+      },
     );
 
-    di.registerSingletonAsync<BookManager>(() async {
-      final bookManager = BookManager();
-      await bookManager.init();
-      _log.info('[BOOK MANAGER] BookManager initialized');
-      return bookManager;
-    }, dependsOn: []);
+    di.registerSingletonAsync<BookManager>(
+      () async {
+        final bookManager = BookManager();
+        await bookManager.init();
+        _log.info('[BOOK MANAGER] BookManager initialized');
+        return bookManager;
+      },
+      dependsOn: [],
+      dispose: (instance) {
+        _log.info('[BOOK MANAGER] BookManager disposed');
+        instance.dispose();
+        return;
+      },
+    );
 
-    di.registerSingletonAsync<SchoolDataMainManager>(() async {
-      final schoolDataManager = SchoolDataMainManager();
-      await schoolDataManager.init();
-      _log.info('[SCHOOL DATA MAIN MANAGER] SchoolDataMainManager initialized');
-      return schoolDataManager;
-    }, dependsOn: []);
+    di.registerSingletonAsync<SchoolDataMainManager>(
+      () async {
+        final schoolDataManager = SchoolDataMainManager();
+        await schoolDataManager.init();
+        _log.info(
+          '[SCHOOL DATA MAIN MANAGER] SchoolDataMainManager initialized',
+        );
+        return schoolDataManager;
+      },
+      dependsOn: [],
+      dispose: (instance) {
+        _log.info('[SCHOOL DATA MAIN MANAGER] SchoolDataMainManager disposed');
+        instance.dispose();
+        return;
+      },
+    );
 
-    di.registerSingletonAsync<WorkbookManager>(() async {
-      final workbookManager = WorkbookManager();
-      await workbookManager.init();
-      _log.info('[WORKBOOK MANAGER] WorkbookManager initialized');
-      return workbookManager;
-    }, dependsOn: [HubSessionManager, PupilManager]);
+    di.registerSingletonAsync<WorkbookManager>(
+      () async {
+        final workbookManager = WorkbookManager();
+        await workbookManager.init();
+        _log.info('[WORKBOOK MANAGER] WorkbookManager initialized');
+        return workbookManager;
+      },
+      dependsOn: [HubSessionManager, PupilManager],
+      dispose: (instance) {
+        _log.info('[WORKBOOK MANAGER] WorkbookManager disposed');
+        instance.dispose();
+        return;
+      },
+    );
 
-    di.registerSingletonAsync<CompetenceManager>(() async {
-      final competenceManager = CompetenceManager();
+    di.registerSingletonAsync<CompetenceManager>(
+      () async {
+        final competenceManager = CompetenceManager();
 
-      await competenceManager.init();
+        await competenceManager.init();
 
-      _log.info('[COMPETENCE MANAGER] CompetenceManager initialized');
+        _log.info('[COMPETENCE MANAGER] CompetenceManager initialized');
 
-      return competenceManager;
-    });
+        return competenceManager;
+      },
+      dispose: (instance) {
+        _log.info('[COMPETENCE MANAGER] CompetenceManager disposed');
+        instance.dispose();
+        return;
+      },
+    );
 
-    di.registerSingletonWithDependencies<CompetenceFilterManager>(() {
-      return CompetenceFilterManager();
-    }, dependsOn: [CompetenceManager]);
+    di.registerSingletonWithDependencies<CompetenceFilterManager>(
+      () {
+        return CompetenceFilterManager();
+      },
+      dependsOn: [CompetenceManager],
+      dispose: (instance) {
+        _log.info(
+          '[COMPETENCE FILTER MANAGER] CompetenceFilterManager disposed',
+        );
+        instance.dispose();
+        return;
+      },
+    );
 
-    di.registerSingletonAsync<AuthorizationManager>(() async {
-      final authorizationManager = AuthorizationManager();
-      await authorizationManager.init();
-      _log.info('[AUTHORIZATION MANAGER] AuthorizationManager initialized');
-      return authorizationManager;
-    }, dependsOn: [HubSessionManager]);
+    di.registerSingletonAsync<AuthorizationManager>(
+      () async {
+        final authorizationManager = AuthorizationManager();
+        await authorizationManager.init();
+        _log.info('[AUTHORIZATION MANAGER] AuthorizationManager initialized');
+        return authorizationManager;
+      },
+      dependsOn: [HubSessionManager],
+      dispose: (instance) {
+        _log.info('[AUTHORIZATION MANAGER] AuthorizationManager disposed');
+        instance.dispose();
+        return;
+      },
+    );
+    di.registerSingletonWithDependencies<AuthorizationFilterManager>(
+      () => AuthorizationFilterManager(),
+      dependsOn: [AuthorizationManager],
+      dispose: (instance) {
+        _log.info(
+          '[AUTHORIZATION FILTER MANAGER] AuthorizationFilterManager disposed',
+        );
+        instance.dispose();
+        return;
+      },
+    );
 
     di.registerSingletonWithDependencies<PupilAuthorizationFilterManager>(
       () => PupilAuthorizationFilterManager(),
       dependsOn: [AuthorizationManager],
-    );
-
-    di.registerSingletonWithDependencies<AuthorizationFilterManager>(
-      () {
-        final authorizationFilterManager = AuthorizationFilterManager();
-        return authorizationFilterManager.init();
+      dispose: (instance) {
+        _log.info(
+          '[PUPIL AUTHORIZATION FILTER MANAGER] PupilAuthorizationFilterManager disposed',
+        );
+        instance.dispose();
+        return;
       },
-      dispose: (instance) => instance.dispose(),
-      dependsOn: [AuthorizationManager],
     );
 
     di.registerSingletonWithDependencies<PupilFilterManager>(
       () => PupilFilterManager(),
+      dispose: (instance) {
+        _log.info('[PUPILS FILTER] PupilFilterManager disposed');
+        instance.dispose();
+        return;
+      },
       dependsOn: [PupilManager],
     );
 
     di.registerSingleton<FiltersStateManager>(
       FiltersStateManagerImplementation(),
+      dispose: (instance) {
+        _log.info('[FILTERS STATE MANAGER] FiltersStateManager disposed');
+        instance.dispose();
+        return;
+      },
     );
 
     di.registerSingletonWithDependencies<LearningSupportFilterManager>(
       () => LearningSupportFilterManager(),
       dependsOn: [PupilManager, PupilFilterManager],
+      dispose: (instance) {
+        _log.info(
+          '[LEARNING SUPPORT FILTER MANAGER] LearningSupportFilterManager disposed',
+        );
+        instance.dispose();
+        return;
+      },
     );
 
     di.registerSingletonWithDependencies<SchooldayEventManager>(
       () => SchooldayEventManager(),
       dependsOn: [SchoolCalendarManager, PupilManager],
+      dispose: (instance) {
+        _log.info('[SCHOOLDAY EVENT MANAGER] SchooldayEventManager disposed');
+        instance.dispose();
+        return;
+      },
     );
 
-    di.registerSingletonWithDependencies<SchooldayEventFilterManager>(() {
-      final schooldayEventFilterManager = SchooldayEventFilterManager();
+    di.registerSingletonWithDependencies<SchooldayEventFilterManager>(
+      () {
+        final schooldayEventFilterManager = SchooldayEventFilterManager();
 
-      _log.info(
-        '[SCHOOLDAY EVENT FILTER MANAGER] SchooldayEventFilterManager initialized',
-      );
-      return schooldayEventFilterManager;
-    }, dependsOn: [PupilManager, PupilFilterManager, SchooldayEventManager]);
+        _log.info(
+          '[SCHOOLDAY EVENT FILTER MANAGER] SchooldayEventFilterManager initialized',
+        );
+        return schooldayEventFilterManager;
+      },
+      dispose: (instance) {
+        _log.info(
+          '[SCHOOLDAY EVENT FILTER MANAGER] SchooldayEventFilterManager disposed',
+        );
+        instance.dispose();
+        return;
+      },
+      dependsOn: [PupilManager, PupilFilterManager, SchooldayEventManager],
+    );
 
     di.registerSingletonWithDependencies<AttendanceManager>(
       () => AttendanceManager(),
       dependsOn: [PupilManager, SchoolCalendarManager],
+      dispose: (instance) {
+        _log.info('[ATTENDANCE MANAGER] AttendanceManager disposed');
+        instance.dispose();
+        return;
+      },
     );
 
     di.registerSingletonWithDependencies<AttendancePupilFilterManager>(
@@ -198,10 +332,14 @@ class InitOnUserAuth {
 
     di.registerSingletonWithDependencies<PupilsFilter>(
       () => PupilsFilterImplementation(di<PupilManager>()),
-      dispose: (instance) => instance.dispose(),
+      dispose: (instance) {
+        instance.dispose();
+        _log.info('[PUPILS FILTER] PupilsFilterImplementation disposed');
+        return;
+      },
       dependsOn: [
         PupilManager,
-        PupilIdentityManager,
+
         PupilFilterManager,
         LearningSupportFilterManager,
         SchooldayEventFilterManager,
@@ -209,28 +347,54 @@ class InitOnUserAuth {
       ],
     );
 
-    di.registerSingletonAsync<SchoolListManager>(() async {
-      final schoolListManager = SchoolListManager();
-      await schoolListManager.init();
-      _log.info('[SCHOOL LIST MANAGER] SchoolListManager initialized');
-      return schoolListManager;
-    }, dependsOn: [HubSessionManager, PupilManager]);
+    di.registerSingletonAsync<SchoolListManager>(
+      () async {
+        final schoolListManager = SchoolListManager();
+        await schoolListManager.init();
+        _log.info('[SCHOOL LIST MANAGER] SchoolListManager initialized');
+        return schoolListManager;
+      },
+      dispose: (instance) {
+        _log.info('[SCHOOL LIST MANAGER] SchoolListManager disposed');
+        instance.dispose();
+        return;
+      },
+      dependsOn: [HubSessionManager, PupilManager],
+    );
 
-    di.registerSingletonWithDependencies<SchoolListFilterManager>(() {
-      final schoolListFilterManager = SchoolListFilterManager();
-      schoolListFilterManager.init();
-      _log.info(
-        '[SCHOOL LIST FILTER MANAGER] SchoolListFilterManager initialized',
-      );
-      return schoolListFilterManager;
-    }, dependsOn: [PupilsFilter, SchoolListManager]);
+    di.registerSingletonWithDependencies<SchoolListFilterManager>(
+      () {
+        final schoolListFilterManager = SchoolListFilterManager();
+        schoolListFilterManager.init();
+        _log.info(
+          '[SCHOOL LIST FILTER MANAGER] SchoolListFilterManager initialized',
+        );
+        return schoolListFilterManager;
+      },
+      dispose: (instance) {
+        _log.info(
+          '[SCHOOL LIST FILTER MANAGER] SchoolListFilterManager disposed',
+        );
+        instance.dispose();
+        return;
+      },
+      dependsOn: [PupilsFilter, SchoolListManager],
+    );
 
-    di.registerSingletonAsync<UserManager>(() async {
-      final userManager = UserManager();
-      await userManager.init();
-      _log.info('[USER MANAGER] UserManager initialized');
-      return userManager;
-    }, dependsOn: [HubSessionManager]);
+    di.registerSingletonAsync<UserManager>(
+      () async {
+        final userManager = UserManager();
+        await userManager.init();
+        _log.info('[USER MANAGER] UserManager initialized');
+        return userManager;
+      },
+      dispose: (instance) {
+        _log.info('[USER MANAGER] UserManager disposed');
+        instance.dispose();
+        return;
+      },
+      dependsOn: [HubSessionManager],
+    );
 
     di.registerSingletonAsync<TimetableApiService>(() async {
       final timetableApiService = TimetableApiService();
@@ -238,12 +402,20 @@ class InitOnUserAuth {
       return timetableApiService;
     });
 
-    di.registerSingletonAsync<TimetableManager>(() async {
-      final timetableManager = TimetableManager();
-      await timetableManager.init();
-      _log.info('[TIMETABLE MANAGER] TimetableManager initialized');
-      return timetableManager;
-    }, dependsOn: [HubSessionManager, TimetableApiService]);
+    di.registerSingletonAsync<TimetableManager>(
+      () async {
+        final timetableManager = TimetableManager();
+        await timetableManager.init();
+        _log.info('[TIMETABLE MANAGER] TimetableManager initialized');
+        return timetableManager;
+      },
+      dispose: (instance) {
+        _log.info('[TIMETABLE MANAGER] TimetableManager disposed');
+        instance.dispose();
+        return;
+      },
+      dependsOn: [HubSessionManager, TimetableApiService],
+    );
 
     _log.info('Managers depending on authentication are being initialized...');
   }

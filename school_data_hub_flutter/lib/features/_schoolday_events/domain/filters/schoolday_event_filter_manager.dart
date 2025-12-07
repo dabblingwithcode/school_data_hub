@@ -33,6 +33,12 @@ class SchooldayEventFilterManager {
 
   SchooldayEventFilterManager();
 
+  void dispose() {
+    _schooldayEventsFilterState.dispose();
+    _pupilIdsWithFilteredSchooldayEvents.dispose();
+    return;
+  }
+
   void resetFilters() {
     _schooldayEventsFilterState.value = {...initialSchooldayEventFilterValues};
     _filtersStateManager.setFilterState(

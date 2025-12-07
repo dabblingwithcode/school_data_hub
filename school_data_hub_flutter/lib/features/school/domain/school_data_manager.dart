@@ -48,6 +48,14 @@ class SchoolDataMainManager extends ChangeNotifier {
     return this;
   }
 
+  void dispose() {
+    _dataManager.dispose();
+    _crudManager.dispose();
+    _uiManager.dispose();
+    super.dispose();
+    return;
+  }
+
   /// Refresh all data from API
   Future<void> refreshData() async {
     _dataManager.setLoading(true);

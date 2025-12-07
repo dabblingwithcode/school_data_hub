@@ -5,9 +5,9 @@ import 'dart:convert';
 import 'dart:isolate';
 
 import 'package:logging/logging.dart';
-import 'package:school_data_hub_flutter/app_utils/logger/ansi_code.dart'
+import 'package:school_data_hub_flutter/app_utils/logger/domain/ansi_code.dart'
     as ansi;
-import 'package:school_data_hub_flutter/app_utils/logger/exception_chain.dart';
+import 'package:school_data_hub_flutter/app_utils/logger/domain/exception_chain.dart';
 
 /// Base class for formatters which are responsible for converting
 /// [LogRecord]s to strings.

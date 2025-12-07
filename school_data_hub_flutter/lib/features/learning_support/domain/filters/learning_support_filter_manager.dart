@@ -20,12 +20,14 @@ class LearningSupportFilterManager {
   SupportCategoryManager get _learningSupportManager =>
       di<SupportCategoryManager>();
   final _supportLevelFilterState = ValueNotifier<Map<SupportLevelType, bool>>(
-      initialSupportLevelFilterValues);
+    initialSupportLevelFilterValues,
+  );
   ValueListenable<Map<SupportLevelType, bool>> get supportLevelFilterState =>
       _supportLevelFilterState;
 
-  final _supportAreaFiltersState =
-      ValueNotifier<Map<SupportArea, bool>>(initialSupportAreaFilterValues);
+  final _supportAreaFiltersState = ValueNotifier<Map<SupportArea, bool>>(
+    initialSupportAreaFilterValues,
+  );
   ValueListenable<Map<SupportArea, bool>> get supportAreaFilterState =>
       _supportAreaFiltersState;
   bool get supportLevelFiltersActive =>
@@ -35,8 +37,15 @@ class LearningSupportFilterManager {
       _supportAreaFiltersState.value.containsValue(true);
   LearningSupportFilterManager();
 
-  void setSupportLevelFilter(
-      {required List<SupportLevelFilterRecord> supportLevelFilterRecords}) {
+  void dispose() {
+    _supportLevelFilterState.dispose();
+    _supportAreaFiltersState.dispose();
+    return;
+  }
+
+  void setSupportLevelFilter({
+    required List<SupportLevelFilterRecord> supportLevelFilterRecords,
+  }) {
     for (final record in supportLevelFilterRecords) {
       _supportLevelFilterState.value = {
         ..._supportLevelFilterState.value,
@@ -48,10 +57,14 @@ class LearningSupportFilterManager {
 
     if (supportLevelFilterStateEqualsInitialState) {
       _filtersStateManager.setFilterState(
-          filterState: FilterState.pupilLegacy, value: false);
+        filterState: FilterState.pupilLegacy,
+        value: false,
+      );
     } else {
       _filtersStateManager.setFilterState(
-          filterState: FilterState.pupilLegacy, value: true);
+        filterState: FilterState.pupilLegacy,
+        value: true,
+      );
     }
     _pupilsFilter.refreshs();
   }
@@ -59,8 +72,9 @@ class LearningSupportFilterManager {
   // We pass a list of [SupportAreaFilterRecord] to this function
   // because we want to be able to set multiple filters at once
   // in the case of filters that are mutually exclusive
-  void setSupportAreaFilter(
-      {required List<SupportAreaFilterRecord> supportAreaFilterRecords}) {
+  void setSupportAreaFilter({
+    required List<SupportAreaFilterRecord> supportAreaFilterRecords,
+  }) {
     for (final record in supportAreaFilterRecords) {
       _supportAreaFiltersState.value = {
         ..._supportAreaFiltersState.value,
@@ -68,14 +82,20 @@ class LearningSupportFilterManager {
       };
     }
     final bool pupilFilterStateEqualsInitialState = const MapEquality().equals(
-        _pupilFilterManager.pupilFilterState.value, initialPupilFilterValues);
+      _pupilFilterManager.pupilFilterState.value,
+      initialPupilFilterValues,
+    );
 
     if (pupilFilterStateEqualsInitialState) {
       _filtersStateManager.setFilterState(
-          filterState: FilterState.pupilLegacy, value: false);
+        filterState: FilterState.pupilLegacy,
+        value: false,
+      );
     } else {
       _filtersStateManager.setFilterState(
-          filterState: FilterState.pupilLegacy, value: true);
+        filterState: FilterState.pupilLegacy,
+        value: true,
+      );
     }
 
     _pupilsFilter.refreshs();
@@ -178,66 +198,78 @@ class LearningSupportFilterManager {
 
     if (pupil.supportCategoryStatuses != null) {
       if (activeFilters[SupportArea.motorics]! &&
-          pupil.supportCategoryStatuses!.any((element) =>
-              _learningSupportManager
-                  .getRootSupportCategory(element.supportCategoryId)
-                  .categoryId ==
-              SupportArea.motorics.value)) {
+          pupil.supportCategoryStatuses!.any(
+            (element) =>
+                _learningSupportManager
+                    .getRootSupportCategory(element.supportCategoryId)
+                    .categoryId ==
+                SupportArea.motorics.value,
+          )) {
         return true;
       }
 
       // emotions filter
 
       if (activeFilters[SupportArea.emotions]! &&
-          pupil.supportCategoryStatuses!.any((element) =>
-              _learningSupportManager
-                  .getRootSupportCategory(element.supportCategoryId)
-                  .categoryId ==
-              SupportArea.emotions.value)) {
+          pupil.supportCategoryStatuses!.any(
+            (element) =>
+                _learningSupportManager
+                    .getRootSupportCategory(element.supportCategoryId)
+                    .categoryId ==
+                SupportArea.emotions.value,
+          )) {
         return true;
       }
 
       // math filter
 
       if (activeFilters[SupportArea.math] == true &&
-          pupil.supportCategoryStatuses!.any((element) =>
-              _learningSupportManager
-                  .getRootSupportCategory(element.supportCategoryId)
-                  .categoryId ==
-              SupportArea.math.value)) {
+          pupil.supportCategoryStatuses!.any(
+            (element) =>
+                _learningSupportManager
+                    .getRootSupportCategory(element.supportCategoryId)
+                    .categoryId ==
+                SupportArea.math.value,
+          )) {
         return true;
       }
 
       // learning filter
 
       if (activeFilters[SupportArea.learning] == true &&
-          pupil.supportCategoryStatuses!.any((element) =>
-              _learningSupportManager
-                  .getRootSupportCategory(element.supportCategoryId)
-                  .categoryId ==
-              SupportArea.learning.value)) {
+          pupil.supportCategoryStatuses!.any(
+            (element) =>
+                _learningSupportManager
+                    .getRootSupportCategory(element.supportCategoryId)
+                    .categoryId ==
+                SupportArea.learning.value,
+          )) {
         return true;
       }
 
       // German language filter
 
       if (activeFilters[SupportArea.german] == true &&
-          pupil.supportCategoryStatuses!.any((element) =>
-              _learningSupportManager
-                  .getRootSupportCategory(element.supportCategoryId)
-                  .categoryId ==
-              SupportArea.german.value)) {
+          pupil.supportCategoryStatuses!.any(
+            (element) =>
+                _learningSupportManager
+                    .getRootSupportCategory(element.supportCategoryId)
+                    .categoryId ==
+                SupportArea.german.value,
+          )) {
         return true;
       }
 
       // Language filter
 
       if (activeFilters[SupportArea.language] == true &&
-          pupil.supportCategoryStatuses!.any((element) =>
-              _learningSupportManager
-                  .getRootSupportCategory(element.supportCategoryId)
-                  .categoryId ==
-              SupportArea.language.value)) {
+          pupil.supportCategoryStatuses!.any(
+            (element) =>
+                _learningSupportManager
+                    .getRootSupportCategory(element.supportCategoryId)
+                    .categoryId ==
+                SupportArea.language.value,
+          )) {
         return true;
       }
     }

@@ -13,8 +13,8 @@ class BookTagManagementPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const GenericAppBar(
-        iconData: Icons.label,
-        title: 'Buch-Tags verwalten',
+        iconData: Icons.bookmark,
+        title: 'Schlagwörter verwalten',
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -22,7 +22,7 @@ class BookTagManagementPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Verfügbare Buch-Tags',
+              'Verfügbare Schlagwörter',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const Gap(16),

@@ -35,6 +35,12 @@ class SupportCategoryManager with ChangeNotifier {
 
   SupportCategoryManager();
 
+  void dispose() {
+    _supportCategories.dispose();
+
+    super.dispose();
+  }
+
   Future<SupportCategoryManager> init() async {
     await fetchSupportCategories();
     return this;

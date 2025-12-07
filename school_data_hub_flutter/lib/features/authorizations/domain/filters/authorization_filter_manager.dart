@@ -17,8 +17,12 @@ class AuthorizationFilterManager {
 
   String _currentSearchText = '';
   void dispose() {
-    _authorizationManager.authorizations
-        .removeListener(_onAuthorizationsChanged);
+    _authorizationManager.authorizations.removeListener(
+      _onAuthorizationsChanged,
+    );
+    _filterState.dispose();
+    _filteredAuthorizations.dispose();
+    return;
   }
 
   AuthorizationFilterManager init() {
@@ -43,7 +47,9 @@ class AuthorizationFilterManager {
     _filterState.value = false;
     _filteredAuthorizations.value = _authorizationManager.authorizations.value;
     _filtersStateManager.setFilterState(
-        filterState: FilterState.authorization, value: false);
+      filterState: FilterState.authorization,
+      value: false,
+    );
   }
 
   onSearchText(String text) {

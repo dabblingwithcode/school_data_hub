@@ -28,6 +28,11 @@ class LearningSupportManager with ChangeNotifier {
   final _notificationService = di<NotificationService>();
 
   //- OBSERVABLES -//
+  void dispose() {
+    _learningSupportPlans.dispose();
+    super.dispose();
+    return;
+  }
 
   final _learningSupportPlans =
       ValueNotifier<Map<int, List<LearningSupportPlan>>>({});

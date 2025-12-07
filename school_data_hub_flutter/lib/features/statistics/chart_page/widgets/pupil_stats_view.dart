@@ -185,17 +185,17 @@ class _PupilStatsViewState extends State<PupilStatsView> {
                 runSpacing: 10,
                 children: [
                   _buildLegendItem(
-                    'Besonderer Förderbedarf',
+                    'festgestellter Förderbedarf',
                     AppColors.accentColor,
                     'Special Needs',
                   ),
                   _buildLegendItem(
-                    'Migrationsunterstützung',
+                    'Erstförderung',
                     AppColors.backgroundColor,
                     'Migration Support',
                   ),
                   _buildLegendItem(
-                    'Förderstufe 3',
+                    'Förderebene 3',
                     AppColors.warningButtonColor,
                     'Support Level 3',
                   ),

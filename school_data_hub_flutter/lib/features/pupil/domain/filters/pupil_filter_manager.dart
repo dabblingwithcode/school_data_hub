@@ -34,6 +34,13 @@ class PupilFilterManager {
 
   PupilFilterManager();
 
+  void dispose() {
+    _pupilFilterState.dispose();
+    _sortMode.dispose();
+    _filteredPupils.dispose();
+    return;
+  }
+
   void resetFilters() {
     _pupilFilterState.value = {...initialPupilFilterValues};
 

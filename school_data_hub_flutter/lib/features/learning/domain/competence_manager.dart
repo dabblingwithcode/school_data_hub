@@ -37,6 +37,12 @@ class CompetenceManager {
   }
 
   CompetenceManager();
+  void dispose() {
+    _competences.dispose();
+
+    return;
+  }
+
   Future<CompetenceManager> init() async {
     await firstFetchCompetences();
 
@@ -52,8 +58,8 @@ class CompetenceManager {
   //- the CompetenceFilterManager is not registered in the di yet
 
   Future<void> firstFetchCompetences() async {
-    final List<Competence> competences =
-        await _client.competence.getAllCompetences();
+    final List<Competence> competences = await _client.competence
+        .getAllCompetences();
     if (competences.isNotEmpty) {
       //- Do we need to sort the competences here?
       //   competences.sort((a, b) => a.publicId.compareTo(b.publicId));
@@ -78,8 +84,8 @@ class CompetenceManager {
   }
 
   Future<void> fetchCompetences() async {
-    final List<Competence> competences =
-        await _client.competence.getAllCompetences();
+    final List<Competence> competences = await _client.competence
+        .getAllCompetences();
 
     final sortedCompetences = CompetenceHelper.sortCompetences(competences);
     _competences.value = sortedCompetences;
@@ -183,10 +189,9 @@ class CompetenceManager {
     final competenceListIndex = _competences.value.indexWhere(
       (element) => element.publicId == publicId,
     );
-    final competence =
-        competenceListIndex != -1
-            ? _competences.value[competenceListIndex]
-            : null;
+    final competence = competenceListIndex != -1
+        ? _competences.value[competenceListIndex]
+        : null;
     if (competence == null) {
       _notificationService.showSnackBar(
         NotificationType.error,

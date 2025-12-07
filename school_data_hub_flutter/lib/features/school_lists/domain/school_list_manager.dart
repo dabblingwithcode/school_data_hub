@@ -36,6 +36,12 @@ class SchoolListManager with ChangeNotifier {
     _schoolListIdPupilEntriesMap.clear();
   }
 
+  void dispose() {
+    clearData();
+    super.dispose();
+    return;
+  }
+
   Future<SchoolListManager> init() async {
     await fetchSchoolLists();
     return this;

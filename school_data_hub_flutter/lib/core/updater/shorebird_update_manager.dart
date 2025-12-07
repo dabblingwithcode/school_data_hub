@@ -86,6 +86,7 @@ class ShorebirdUpdateManager extends ChangeNotifier {
         );
         _setStatus(UpdateManagerStatus.updateAvailable);
         await _updater.update(track: _currentTrack);
+
         di<NotificationService>().showInformationDialog(
           'Ein Update ist verfügbar. Bitte installieren Sie es, um die neueste Version der App zu verwenden.',
         );
@@ -142,6 +143,9 @@ class ShorebirdUpdateManager extends ChangeNotifier {
 
         case UpdateStatus.restartRequired:
           _log.info('Restart required to apply update');
+          di<NotificationService>().showInformationDialog(
+            'Ein Update wurde installiert. Bitte starten Sie die App neu, um die neueste Version der App zu verwenden.',
+          );
           _setStatus(UpdateManagerStatus.restartRequired);
           return false;
 

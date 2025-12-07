@@ -26,7 +26,10 @@ class BooksMainMenuPage extends WatchingWidget {
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
-      appBar: const GenericAppBar(iconData: Icons.lightbulb, title: 'Bücher'),
+      appBar: const GenericAppBar(
+        iconData: Icons.book_rounded,
+        title: 'Bücherei',
+      ),
       body: Center(
         child: SizedBox(
           width: 380,
@@ -42,7 +45,7 @@ class BooksMainMenuPage extends WatchingWidget {
                       builder: (ctx) => const BookTagManagement(),
                     ),
                   );
-                }),
+                }, icon: Icons.bookmark),
                 // const SizedBox(height: 20),
                 // _buildButton(context, "Ausgeliehene Bücher", () {
                 //   Navigator.of(context).push(
@@ -52,7 +55,7 @@ class BooksMainMenuPage extends WatchingWidget {
                 const SizedBox(height: 5),
                 _buildButton(context, "Buch erfassen", () async {
                   await _showNewBookDialog(context);
-                }),
+                }, icon: Icons.qr_code_scanner),
                 const SizedBox(height: 5),
                 _buildButton(context, "Bücher suchen", () {
                   Navigator.of(context).push(
@@ -60,7 +63,7 @@ class BooksMainMenuPage extends WatchingWidget {
                       builder: (ctx) => const BookSearchFormPage(),
                     ),
                   );
-                }),
+                }, icon: Icons.search),
               ],
             ),
           ),
@@ -135,7 +138,12 @@ class BooksMainMenuPage extends WatchingWidget {
     );
   }
 
-  Widget _buildButton(BuildContext context, String label, VoidCallback onTap) {
+  Widget _buildButton(
+    BuildContext context,
+    String label,
+    VoidCallback onTap, {
+    IconData? icon,
+  }) {
     return Padding(
       padding: const EdgeInsets.all(4.0),
       child: InkWell(
@@ -149,13 +157,22 @@ class BooksMainMenuPage extends WatchingWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 20),
             alignment: Alignment.center,
-            child: Text(
-              label,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (icon != null) ...[
+                  Icon(icon, size: 24, color: Colors.white),
+                  const Gap(10),
+                ],
+                Text(
+                  label,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
             ),
           ),
         ),

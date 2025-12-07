@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
-import 'package:school_data_hub_flutter/app_utils/logger/log_service.dart';
+import 'package:school_data_hub_flutter/app_utils/logger/model/app_log.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 
@@ -57,7 +57,8 @@ class LogEntryCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     log.loggerName,
-                    style: AppStyles.subtitle,
+
+                    style: AppStyles.subtitle.copyWith(color: levelColor),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -87,21 +88,9 @@ class LogEntryCard extends StatelessWidget {
   Color _levelColor(Level level) {
     if (level == Level.SEVERE) return AppColors.dangerButtonColor;
     if (level == Level.WARNING) return AppColors.warningButtonColor;
-    if (level == Level.INFO) return Colors.green.shade700;
+    if (level == Level.FINE) return Colors.green.shade700;
+    if (level == Level.INFO) return Colors.blue.shade700;
     if (level == Level.SHOUT) return Colors.red.shade900;
     return Colors.blueGrey;
-  }
-
-  IconData _levelIcon(Level level) {
-    if (level == Level.SEVERE || level == Level.SHOUT) {
-      return Icons.error_outline;
-    }
-    if (level == Level.WARNING) {
-      return Icons.warning_amber_rounded;
-    }
-    if (level == Level.INFO) {
-      return Icons.info_outline;
-    }
-    return Icons.bubble_chart_outlined;
   }
 }

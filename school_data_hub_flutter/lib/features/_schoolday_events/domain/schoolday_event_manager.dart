@@ -33,6 +33,14 @@ class SchooldayEventManager with ChangeNotifier {
   SchooldayEventManager() {
     init();
   }
+  @override
+  void dispose() {
+    _pupilManager.removeListener(_updatePupilProxies);
+    _pupilSchooldayEventsMap.clear();
+    _schooldayEventsMap.clear();
+    super.dispose();
+    return;
+  }
 
   Future<void> init() async {
     _pupilManager.addListener(_updatePupilProxies);
@@ -49,12 +57,6 @@ class SchooldayEventManager with ChangeNotifier {
         _pupilSchooldayEventsMap[pupilId] = PupilSchooldayEventsProxy();
       }
     }
-  }
-
-  @override
-  void dispose() {
-    _pupilManager.removeListener(_updatePupilProxies);
-    super.dispose();
   }
 
   //- Getters

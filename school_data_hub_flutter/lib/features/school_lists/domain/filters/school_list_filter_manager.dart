@@ -20,15 +20,19 @@ class SchoolListFilterManager {
   ValueListenable<bool> get filterState => _filterState;
   final _filterState = ValueNotifier<bool>(false);
 
+  void dispose() {
+    _filteredSchoolLists.dispose();
+    _filterState.dispose();
+    _schoolListManager.removeListener(_onSchoolListsChanged);
+
+    return;
+  }
+
   SchoolListFilterManager init() {
     _schoolListManager.addListener(_onSchoolListsChanged);
     resetFilters();
 
     return this;
-  }
-
-  void dispose() {
-    _schoolListManager.removeListener(_onSchoolListsChanged);
   }
 
   void _onSchoolListsChanged() {

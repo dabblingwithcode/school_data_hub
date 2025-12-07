@@ -8,10 +8,10 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/models/attendance_values.dart';
@@ -19,8 +19,6 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('AttendancePdfGenerator');
-final _attendanceManager = di<AttendanceManager>();
-final _notificationService = di<NotificationService>();
 
 class AttendancePdfGenerator {
   /// Generates a PDF for the attendance list of a specific date
@@ -38,7 +36,7 @@ class AttendancePdfGenerator {
 
     final pdf = pw.Document();
 
-    _notificationService.setHeavyLoadingValue(true);
+    di<NotificationService>().setHeavyLoadingValue(true);
 
     // Configuration for pagination
     const int maxPupilsPerPage = 24;
@@ -94,7 +92,7 @@ class AttendancePdfGenerator {
       }
     }
 
-    _notificationService.setHeavyLoadingValue(false);
+    di<NotificationService>().setHeavyLoadingValue(false);
 
     // Get the proper directory for saving files
     final directory = await getApplicationDocumentsDirectory();
@@ -475,7 +473,7 @@ class AttendancePdfGenerator {
     PupilProxy pupil,
     DateTime targetDate,
   ) {
-    final missedSchooldaysList = _attendanceManager
+    final missedSchooldaysList = di<AttendanceManager>()
         .getPupilMissedSchooldaysProxy(pupil.pupilId);
     final missedSchoolday = missedSchooldaysList.missedSchooldays.firstWhere(
       (element) => element.schoolday?.schoolday.isSameDate(targetDate) ?? false,
@@ -577,7 +575,7 @@ class MissedSchooldaysPdfGenerator {
 
     final pdf = pw.Document();
 
-    _notificationService.setHeavyLoadingValue(true);
+    di<NotificationService>().setHeavyLoadingValue(true);
 
     // Sort pupils by missed hours (descending)
     final sortedPupils = List<PupilProxy>.from(pupils);
@@ -610,7 +608,7 @@ class MissedSchooldaysPdfGenerator {
 
       // Then add detailed pages for each pupil
       for (var pupil in sortedPupils) {
-        final missedSchooldays = _attendanceManager
+        final missedSchooldays = di<AttendanceManager>()
             .getPupilMissedSchooldaysProxy(pupil.pupilId)
             .missedSchooldays
             .where((ms) => ms.missedType != MissedType.notSet)
@@ -656,7 +654,7 @@ class MissedSchooldaysPdfGenerator {
       }
     }
 
-    _notificationService.setHeavyLoadingValue(false);
+    di<NotificationService>().setHeavyLoadingValue(false);
 
     // Get the proper directory for saving files
     final directory = await getApplicationDocumentsDirectory();

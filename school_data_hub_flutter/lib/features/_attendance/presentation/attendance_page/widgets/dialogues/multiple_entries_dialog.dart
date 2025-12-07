@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_picker.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
@@ -236,7 +236,7 @@ Future<void> createMissedSchooldayList(
                   style: AppStyles.successButtonStyle,
                   onPressed: () {
                     if (_missedDatesformKey.currentState!.validate()) {
-                      _attendanceManager.postManyMissedSchooldayes(
+                      _attendanceManager.postManyMissedSchooldays(
                         pupil.internalId,
                         startDate,
                         endDate,

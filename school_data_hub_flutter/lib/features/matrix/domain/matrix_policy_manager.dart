@@ -112,6 +112,14 @@ class MatrixPolicyManager extends ChangeNotifier {
     return this;
   }
 
+  void dispose() {
+    _roomManager.dispose();
+    _userManager.dispose();
+    _policyPendingChanges.dispose();
+    super.dispose();
+    return;
+  }
+
   void pendingChangesHandler(bool newValue) {
     if (newValue == _policyPendingChanges.value) return;
     _policyPendingChanges.value = newValue;
@@ -151,7 +159,7 @@ class MatrixPolicyManager extends ChangeNotifier {
 
   Future<void> deleteAndDeregisterMatrixPolicyManager() async {
     await _secureStorage.remove(_secureStorageKey);
-    di.dropScope(InitScope.onMatrixEnvScope.name);
+    await di.dropScope(InitScope.onMatrixEnvScope.name);
 
     _sessionManager.changeMatrixPolicyManagerRegistrationStatus(false);
     _notificationService.showSnackBar(

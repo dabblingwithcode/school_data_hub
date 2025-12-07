@@ -31,6 +31,16 @@ class PupilManager extends ChangeNotifier {
 
   PupilManager();
 
+  void dispose() {
+    // dispose all the pupil proxies
+    for (final pupil in _pupilIdPupilsMap.values) {
+      pupil.dispose();
+    }
+    _pupilIdPupilsMap.clear();
+    super.dispose();
+    return;
+  }
+
   Future<void> init() async {
     await fetchAllPupils();
   }

@@ -1,25 +1,12 @@
 // lib/services/log_service.dart
 import 'package:logging/logging.dart';
+import 'package:school_data_hub_flutter/app_utils/logger/model/app_log.dart';
 import 'package:signals/signals.dart';
-
-// Represents a single log entry for display
-class AppLog {
-  final Level level;
-  final String message;
-  final String loggerName;
-  final DateTime time;
-
-  AppLog(this.level, this.message, this.loggerName) : time = DateTime.now();
-
-  @override
-  String toString() =>
-      '[${time.toIso8601String().split('T').last.substring(0, 8)}] [${level.name}] [$loggerName] $message';
-}
 
 // Service to manage the list of logs backed by signals
 class LogService {
   // Define a max number of logs to keep in memory
-  static const int _maxLogs = 100;
+  static const int _maxLogs = 1000;
 
   final Signal<List<AppLog>> _logs = signal(
     <AppLog>[],
@@ -32,6 +19,14 @@ class LogService {
   final Signal<Map<Level, bool>> _levelVisibility = signal(
     {},
     debugLabel: 'LogService._levelVisibility',
+  );
+  final Signal<Set<String>> _loggerNames = signal(
+    <String>{},
+    debugLabel: 'LogService._loggerNames',
+  );
+  final Signal<Set<String>> _selectedLoggerFilters = signal(
+    <String>{},
+    debugLabel: 'LogService._selectedLoggerFilters',
   );
 
   void addLogString({
@@ -65,8 +60,20 @@ class LogService {
   late final Computed<bool> showFine = computed(
     () => _isLevelVisible(Level.FINE),
   );
+  late final Computed<List<String>> loggerNamesSorted = computed(
+    () => _loggerNames.value.toList()..sort(),
+  );
+  late final Computed<Set<String>> selectedLoggerFilters = computed(
+    () => _selectedLoggerFilters.value,
+  );
+  late final Computed<bool> filtersActive = computed(
+    () =>
+        _selectedLoggerFilters.value.isNotEmpty ||
+        _levelVisibility.value.values.any((isVisible) => !isVisible),
+  );
 
   Signal<String> get searchQuery => _searchQuery;
+  Signal<Set<String>> get loggerNames => _loggerNames;
 
   /// Ingest a [LogRecord] and fan out aggregated console strings into
   /// individual app logs when needed.
@@ -93,6 +100,9 @@ class LogService {
       updated.length = _maxLogs;
     }
     _logs.value = updated;
+    if (!_loggerNames.value.contains(log.loggerName)) {
+      _loggerNames.value = {..._loggerNames.value, log.loggerName};
+    }
   }
 
   void updateSearchQuery(String query) {
@@ -105,10 +115,29 @@ class LogService {
 
   void setLevelVisibility(Level level, bool isVisible) {
     final current = _levelVisibility.value[level] ?? true;
-    if (current == isVisible) {
-      return;
+    if (current == isVisible) return;
+
+    if (isVisible) {
+      final next = {..._levelVisibility.value}..remove(level);
+      _levelVisibility.value = next;
+    } else {
+      _levelVisibility.value = {..._levelVisibility.value, level: isVisible};
     }
-    _levelVisibility.value = {..._levelVisibility.value, level: isVisible};
+  }
+
+  void toggleLoggerFilter(String loggerName, bool enabled) {
+    final next = {..._selectedLoggerFilters.value};
+    if (enabled) {
+      next.add(loggerName);
+    } else {
+      next.remove(loggerName);
+    }
+    _selectedLoggerFilters.value = next;
+  }
+
+  void clearLoggerFilters() {
+    if (_selectedLoggerFilters.value.isEmpty) return;
+    _selectedLoggerFilters.value = {};
   }
 
   void clearLogs() {
@@ -118,12 +147,22 @@ class LogService {
     _logs.value = [];
   }
 
+  void resetFilters() {
+    _levelVisibility.value = {};
+    _selectedLoggerFilters.value = {};
+  }
+
   List<AppLog> _computeFilteredLogs() {
     final visibility = _levelVisibility.value;
     final query = _searchQuery.value.toLowerCase();
+    final selectedLoggers = _selectedLoggerFilters.value;
     return _logs.value
         .where((log) {
           if (!(visibility[log.level] ?? true)) {
+            return false;
+          }
+          if (selectedLoggers.isNotEmpty &&
+              !selectedLoggers.contains(log.loggerName)) {
             return false;
           }
           if (query.isEmpty) {

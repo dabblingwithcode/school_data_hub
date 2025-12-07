@@ -6,8 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:school_data_hub_flutter/app_utils/logger/log_service.dart';
-import 'package:school_data_hub_flutter/app_utils/logger/logrecord_formatter.dart';
+import 'package:school_data_hub_flutter/app_utils/logger/domain/log_record_formatter.dart';
+import 'package:school_data_hub_flutter/app_utils/logger/domain/log_service.dart';
+import 'package:school_data_hub_flutter/app_utils/logger/model/app_log.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
@@ -27,7 +28,6 @@ void main() async {
   // Disable Signals debug logging
   SignalsObserver.instance = null; // AppSignalsObserver();
   WidgetsFlutterBinding.ensureInitialized();
-
   // Set the global logging level
   Logger.root.level = Level.ALL;
   di.registerSingleton<LogService>(LogService());

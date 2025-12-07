@@ -55,6 +55,7 @@ class PupilIdentityManager {
 
   void dispose() {
     _groups.dispose();
+    _remoteLastIdentitiesUpdate.dispose();
     _pupilIdentities.clear();
     _log.info('PupilIdentityManager disposed');
   }
@@ -106,7 +107,11 @@ class PupilIdentityManager {
         _activeEnv.lastIdentitiesUpdate != null) {
       if (lastIdentitiesUpdate.isAfter(_activeEnv.lastIdentitiesUpdate!)) {
         _notificationService.showInformationDialog(
-          'Die gespeicherten Schülerdaten vom ${_activeEnv.lastIdentitiesUpdate!.formatDateAndTimeForUser()}  sind veraltet. Die neueste Version ist vom ${lastIdentitiesUpdate.formatDateAndTimeForUser()} Bitte aktualisieren Sie die Schülerdaten.',
+          '''Die gespeicherten Schüler*innen-Ids vom ${_activeEnv.lastIdentitiesUpdate!.formatDateAndTimeForUser()} sind veraltet.
+          
+          Die neueste Version ist vom ${lastIdentitiesUpdate.formatDateAndTimeForUser()}.
+          
+          Schüler*innen-Ids aus einer vertrauenswürdigen Quelle aktualisieren!''',
         );
       } else {
         _log.info('Pupil identities are up to date.');
@@ -184,13 +189,9 @@ class PupilIdentityManager {
     final Map<String, Map<String, dynamic>> jsonMap = _pupilIdentities.map(
       (key, value) => MapEntry(key.toString(), value.toJson()),
     );
-    _log.info('Writing ${_pupilIdentities.length} pupil identities to storage');
+
     final jsonPupilIdentitiesAsString = json.encode(jsonMap);
-    // save the pupil identities in a file for debugging purposes
-    _log.severe(
-      '''Writing ${_pupilIdentities.length} pupil identities with key [$secureStorageKey] to storage:
-  ${jsonPupilIdentitiesAsString.substring(0, 200)}...''',
-    );
+
     try {
       await HubSecureStorage().setString(
         secureStorageKey,

@@ -54,7 +54,8 @@ extension DateHubExtension on DateTime {
   String formatDateAndTimeForUser() {
     final date = toLocalSafe();
     final dateFormat = DateFormat('dd.MM.yyyy HH:mm');
-    return dateFormat.format(date);
+    final formattedDate = dateFormat.format(date);
+    return '${formattedDate} Uhr';
   }
 
   /// UI: time only (HH:mm) in local time.

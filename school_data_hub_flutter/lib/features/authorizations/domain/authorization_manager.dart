@@ -28,6 +28,13 @@ class AuthorizationManager with ChangeNotifier {
 
   AuthorizationManager();
 
+  void dispose() {
+    _authorizations.dispose();
+    _authorizationsMap.clear();
+    super.dispose();
+    return;
+  }
+
   Future<AuthorizationManager> init() async {
     _notificationService.showSnackBar(
       NotificationType.success,
@@ -112,13 +119,12 @@ class AuthorizationManager with ChangeNotifier {
     ({MemberOperation operation, List<int> pupilIds})? membersToUpdate,
   }) async {
     final updatedAuth = await ClientHelper.apiCall(
-      call:
-          () => _authorizationApiService.updateAuthorization(
-            authId,
-            name,
-            description,
-            membersToUpdate,
-          ),
+      call: () => _authorizationApiService.updateAuthorization(
+        authId,
+        name,
+        description,
+        membersToUpdate,
+      ),
     );
     if (updatedAuth == null) {
       return;
@@ -155,10 +161,9 @@ class AuthorizationManager with ChangeNotifier {
     ({bool? value})? status,
     String? comment,
   }) async {
-    final pupilAuth =
-        _authorizationsMap[authorizationId]!.authorizedPupils!
-            .where((element) => element.pupilId == pupilId)
-            .first;
+    final pupilAuth = _authorizationsMap[authorizationId]!.authorizedPupils!
+        .where((element) => element.pupilId == pupilId)
+        .first;
     final pupilAuthUpdate = pupilAuth.copyWith(
       status: status != null ? status.value : pupilAuth.status,
       comment: comment ?? pupilAuth.comment,
@@ -208,8 +213,9 @@ class AuthorizationManager with ChangeNotifier {
 
   //- diese Funktion hat keinen API-Call
   Authorization getAuthorization(int authId) {
-    final Authorization authorizations =
-        _authorizations.value.where((element) => element.id == authId).first;
+    final Authorization authorizations = _authorizations.value
+        .where((element) => element.id == authId)
+        .first;
 
     return authorizations;
   }
@@ -246,15 +252,13 @@ class AuthorizationManager with ChangeNotifier {
     List<PupilProxy> filteredPupils,
   ) {
     final Authorization authorization = _authorizationsMap[authorizationId]!;
-    final List<PupilProxy> listedPupils =
-        filteredPupils
-            .where(
-              (pupil) => authorization.authorizedPupils!.any(
-                (authorization) =>
-                    authorization.authorizationId == authorizationId,
-              ),
-            )
-            .toList();
+    final List<PupilProxy> listedPupils = filteredPupils
+        .where(
+          (pupil) => authorization.authorizedPupils!.any(
+            (authorization) => authorization.authorizationId == authorizationId,
+          ),
+        )
+        .toList();
 
     return listedPupils;
   }

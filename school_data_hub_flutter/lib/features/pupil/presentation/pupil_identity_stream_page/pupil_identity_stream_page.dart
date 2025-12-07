@@ -75,8 +75,9 @@ class PupilIdentityStreamPage extends WatchingWidget {
     final receiverJoined = state.streamState.receiverJoined.watch(context);
     final requestSent = state.streamState.requestSent.watch(context);
     final isTransmitting = state.streamState.isTransmitting.watch(context);
-    final autoConfirmEnabled =
-        state.streamState.autoConfirmEnabled.watch(context);
+    final autoConfirmEnabled = state.streamState.autoConfirmEnabled.watch(
+      context,
+    );
 
     // Update overlay when receiver-related signals change
     if (role == PupilIdentityStreamRole.receiver) {
@@ -102,33 +103,30 @@ class PupilIdentityStreamPage extends WatchingWidget {
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Connection Status (fixed at top)
-                ConnectionStatus(
-                  isConnected: isConnected,
-                  isProcessing: isProcessing,
-                  statusMessage: state.streamState.statusMessage.value,
-                ),
-
-                const Gap(16),
-
-                // Role-specific UI (scrollable content)
                 Expanded(
-                  child: Column(
-                    children: [
-                      if (role == PupilIdentityStreamRole.sender) ...[
-                        _buildSenderTopSection(
-                          context,
-                          state,
-                          controller,
-                          isConnected,
-                          autoConfirmEnabled,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Connection Status
+                        ConnectionStatus(
+                          isConnected: isConnected,
+                          isProcessing: isProcessing,
+                          statusMessage: state.streamState.statusMessage.value,
                         ),
                         const Gap(16),
-                        Expanded(
-                          child: _buildSenderScrollableContent(
+                        if (role == PupilIdentityStreamRole.sender) ...[
+                          _buildSenderTopSection(
+                            context,
+                            state,
+                            controller,
+                            isConnected,
+                            autoConfirmEnabled,
+                          ),
+                          const Gap(16),
+                          _buildSenderScrollableContent(
                             context,
                             state,
                             controller,
@@ -139,10 +137,8 @@ class PupilIdentityStreamPage extends WatchingWidget {
                             transferCounter,
                             rejectedUsers,
                           ),
-                        ),
-                      ] else ...[
-                        Expanded(
-                          child: _buildReceiverScrollableContent(
+                        ] else ...[
+                          _buildReceiverScrollableContent(
                             context,
                             state,
                             controller,
@@ -150,15 +146,13 @@ class PupilIdentityStreamPage extends WatchingWidget {
                             requestSent,
                             isTransmitting,
                           ),
-                        ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
-
                 const Gap(16),
-
-                // Action Buttons (fixed at bottom)
+                // Action Buttons stay visible
                 _buildActionButtons(
                   context,
                   state,
@@ -228,35 +222,33 @@ class PupilIdentityStreamPage extends WatchingWidget {
     int transferCounter,
     Set<String> rejectedUsers,
   ) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          // Connected Receivers Management
-          _buildReceiversSection(
-            context,
-            receivers,
-            pendingRequests,
-            activeTransfers,
-            controller,
-          ),
+    return Column(
+      children: [
+        // Connected Receivers Management
+        _buildReceiversSection(
+          context,
+          receivers,
+          pendingRequests,
+          activeTransfers,
+          controller,
+        ),
 
-          // Transfer History
-          TransferHistoryWidget(
-            transferHistory: transferHistory,
-            transferCounter: transferCounter,
-          ),
+        // Transfer History
+        TransferHistoryWidget(
+          transferHistory: transferHistory,
+          transferCounter: transferCounter,
+        ),
 
-          const Gap(16),
+        const Gap(16),
 
-          // Rejected Requests
-          RejectedRequestsWidget(
-            rejectedUsers: rejectedUsers,
-            onClearRejected: rejectedUsers.isNotEmpty
-                ? () => controller.clearRejectedUsers()
-                : null,
-          ),
-        ],
-      ),
+        // Rejected Requests
+        RejectedRequestsWidget(
+          rejectedUsers: rejectedUsers,
+          onClearRejected: rejectedUsers.isNotEmpty
+              ? () => controller.clearRejectedUsers()
+              : null,
+        ),
+      ],
     );
   }
 
@@ -269,12 +261,10 @@ class PupilIdentityStreamPage extends WatchingWidget {
     bool isTransmitting,
   ) {
     // Overlay management is now handled by registerHandler calls
-    return const SingleChildScrollView(
-      child: Column(
-        children: [
-          // Overlay will be shown instead of inline content
-        ],
-      ),
+    return const Column(
+      children: [
+        // Overlay will be shown instead of inline content
+      ],
     );
   }
 

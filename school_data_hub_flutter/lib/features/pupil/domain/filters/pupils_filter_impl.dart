@@ -19,16 +19,16 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_man
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _log = Logger('PupilsFilterImplementation');
-
 class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
+  final _log = Logger('PupilsFilterImplementation');
+
   // Lazy getters to avoid accessing dependencies during construction
   PupilIdentityManager get _pupilIdentityManager => di<PupilIdentityManager>();
   LearningSupportFilterManager get _learningSupportFilterManager =>
       di<LearningSupportFilterManager>();
   SchooldayEventFilterManager get _schooldayEventFilterManager =>
       di<SchooldayEventFilterManager>();
-  PupilFilterManager get _pupilFilterManager => di<PupilFilterManager>();
+  // PupilFilterManager get _pupilFilterManager => di<PupilFilterManager>();
   AttendancePupilFilterManager get _attendancePupilFilterManager =>
       di<AttendancePupilFilterManager>();
   FiltersStateManager get _filtersStateManager => di<FiltersStateManager>();
@@ -46,9 +46,11 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
     refreshs();
     _pupilsManager.addListener(refreshs);
   }
-
+  // guard from trying to call a value when the filter is disposed
+  bool _isDisposed = false;
   @override
   void dispose() {
+    _isDisposed = true;
     _pupilsManager.removeListener(refreshs);
     _filteredPupils.dispose();
 
@@ -57,6 +59,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
 
   @override
   void clearFilteredPupils() {
+    if (_isDisposed) return;
     _filteredPupils.value = [];
     _filteredPupilIds.value = [];
     notifyListeners();
@@ -95,6 +98,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
   // reset the filters to its initial state
   @override
   void resetFilters() {
+    if (_isDisposed) return;
     // first reset all implemented filter objects
 
     for (final filter in allPupilFilters) {
@@ -122,6 +126,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
   // and sort mode
   @override
   void refreshs() {
+    //if (_isDisposed) return;
     final allPupils = _pupilsManager.allPupils;
 
     bool filtersOn = false;
@@ -129,7 +134,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
     // checks if any not yet migrated filters are active
 
     final bool specificFiltersOn =
-        _pupilFilterManager.pupilFilterState.value.values.any(
+        di<PupilFilterManager>().pupilFilterState.value.values.any(
           (x) => x == true,
         ) ||
         _schooldayEventFilterManager.schooldayEventsFilterState.value.values
@@ -269,10 +274,10 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
 
       // after school care filters
 
-      if (_pupilFilterManager.pupilFilterState.value[PupilFilter
+      if (di<PupilFilterManager>().pupilFilterState.value[PupilFilter
                   .afterSchoolCare]! &&
               pupil.afterSchoolCare == null ||
-          _pupilFilterManager.pupilFilterState.value[PupilFilter
+          di<PupilFilterManager>().pupilFilterState.value[PupilFilter
                   .noAfterSchoolCare]! &&
               pupil.afterSchoolCare != null) {
         if (filtersOn == false) filtersOn = true;
@@ -303,7 +308,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
 
       // language support filters
 
-      if (_pupilFilterManager.pupilFilterState.value[PupilFilter
+      if (di<PupilFilterManager>().pupilFilterState.value[PupilFilter
               .migrationSupport]! &&
           !PupilHelper.hasLanguageSupport(pupil.migrationSupportEnds)) {
         if (filtersOn == false) filtersOn = true;

@@ -4,8 +4,8 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/data/attendance_api_service.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/models/pupil_missed_classes_proxy.dart';
@@ -43,6 +43,17 @@ class AttendanceManager with ChangeNotifier {
 
   AttendanceManager() {
     init();
+  }
+
+  void dispose() {
+    _closeStreamSubscription();
+
+    _pupilMissedSchooldaysMap.clear();
+
+    _missedSchooldays.dispose();
+
+    super.dispose();
+    return;
   }
 
   Future<void> init() async {
@@ -223,11 +234,6 @@ class AttendanceManager with ChangeNotifier {
     _missedSchooldaySubscription = null;
   }
 
-  @override
-  void dispose() {
-    _closeStreamSubscription();
-    super.dispose();
-  }
   //- CRUD operantions
 
   void fetchAllPupilMissedSchooldayes() async {
@@ -480,11 +486,11 @@ class AttendanceManager with ChangeNotifier {
     return;
   }
 
-  Future<void> postManyMissedSchooldayes(
-    id,
-    startdate,
-    enddate,
-    missedType,
+  Future<void> postManyMissedSchooldays(
+    int id,
+    DateTime startdate,
+    DateTime enddate,
+    MissedType missedType,
   ) async {
     List<MissedSchoolday> missedSchooldays = [];
 
@@ -497,10 +503,13 @@ class AttendanceManager with ChangeNotifier {
 
     for (DateTime validSchoolday in validSchooldays) {
       // if the date is the same as the startdate or enddate or in between
-      if (validSchoolday.isSameDate(startdate.toUtc()) ||
-          validSchoolday.isSameDate(enddate.toUtc()) ||
-          (validSchoolday.isAfterDate(startdate.toUtc()) &&
-              validSchoolday.isBeforeDate(enddate.toUtc()))) {
+
+      // TODO: For now, we are not transforming the dates to UTC,
+      // because this will cause it becoming a different day
+      if (validSchoolday.isSameDate(startdate) ||
+          validSchoolday.isSameDate(enddate) ||
+          (validSchoolday.isAfterDate(startdate) &&
+              validSchoolday.isBeforeDate(enddate))) {
         final schoolday = _schoolCalendarManager.getSchooldayByDate(
           validSchoolday,
         );
