@@ -5,6 +5,7 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
+import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_identity_extensions.dart';
@@ -48,6 +49,8 @@ class PupilIdentityHelper {
       'Pupil identities for environment $secureStorageKey have been deleted.',
     );
     di<PupilIdentityManager>().clearPupilIdentities();
+
+    di<EnvManager>().updateActiveEnv(lastIdentitiesUpdate: null);
 
     di<PupilsFilter>().clearFilteredPupils();
 
@@ -104,27 +107,27 @@ class PupilIdentityHelper {
       family: pupilIdentityStringItems[10] == ''
           ? null
           : pupilIdentityStringItems[10],
-      birthday: DateTime.parse(pupilIdentityStringItems[11]).toUtcSafe(),
+      birthday: pupilIdentityStringItems[11].toDateOnlyUtc(),
       migrationSupportEnds: pupilIdentityStringItems[12] == ''
           ? null
-          : DateTime.parse(pupilIdentityStringItems[12]).toUtcSafe(),
-      pupilSince: DateTime.parse(pupilIdentityStringItems[13]).toUtcSafe(),
+          : pupilIdentityStringItems[12].toDateOnlyUtc(),
+      pupilSince: pupilIdentityStringItems[13].toDateOnlyUtc(),
       afterSchoolCare: pupilIdentityStringItems[14] != '' ? true : false,
       religion: pupilIdentityStringItems[15] == ''
           ? null
           : pupilIdentityStringItems[15],
       religionLessonsSince: pupilIdentityStringItems[16] == ''
           ? null
-          : DateTime.parse(pupilIdentityStringItems[16]).toUtcSafe(),
+          : pupilIdentityStringItems[16].tryToDateOnlyUtc(),
       religionLessonsCancelledAt: pupilIdentityStringItems[17] == ''
           ? null
-          : DateTime.parse(pupilIdentityStringItems[17]).toUtcSafe(),
+          : pupilIdentityStringItems[17].tryToDateOnlyUtc(),
       familyLanguageLessonsSince: pupilIdentityStringItems[18] == ''
           ? null
-          : DateTime.parse(pupilIdentityStringItems[18]).toUtcSafe(),
+          : pupilIdentityStringItems[18].tryToDateOnlyUtc(),
       leavingDate: pupilIdentityStringItems[19] == ''
           ? null
-          : DateTime.parse(pupilIdentityStringItems[19]).toUtcSafe(),
+          : pupilIdentityStringItems[19].tryToDateOnlyUtc(),
     );
     return newPupilIdentity;
   }

@@ -47,12 +47,10 @@ class EnvManager with ChangeNotifier {
 
   Env? _activeEnv;
 
-  /// ##  🔎 managed observable
   Env? get activeEnv => _activeEnv;
 
   Map<String, Env> _environments = {};
 
-  /// ##  🔎 managed observable
   Map<String, Env> get envs => _environments;
 
   String _defaultEnv = '';

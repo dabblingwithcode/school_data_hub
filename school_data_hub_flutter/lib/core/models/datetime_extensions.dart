@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 extension DateOnlyParsing on String {
-  /// Parse a date-only string (e.g., `yyyy-MM-dd`) to UTC midnight.
+  /// WARNING:We are hacking the utc time to be 2 hours ahead of the local time.
+  /// because otherwise the date will be thrown one day back in our local timezone.
   DateTime toDateOnlyUtc() {
-    final parsed = DateTime.parse(this);
+    final parsed = DateTime.parse(this).add(const Duration(hours: 2));
     return DateTime.utc(parsed.year, parsed.month, parsed.day);
   }
 
   /// Try to parse a date-only string to UTC midnight; returns null on failure.
   DateTime? tryToDateOnlyUtc() {
-    final parsed = DateTime.tryParse(this);
+    final parsed = DateTime.tryParse(this)?.add(const Duration(hours: 2));
     if (parsed == null) return null;
     return DateTime.utc(parsed.year, parsed.month, parsed.day);
   }
@@ -93,29 +94,3 @@ extension DateHubExtension on DateTime {
     return dateFormat.format(toLocalSafe());
   }
 }
-
-// extension ColorLog on String {
-//   String logWarning() {
-//     final String message =
-//         "\u001b[1;33m [SCHULDATEN HUB] WARNING: $this \u001b[0m";
-//     return message;
-//   }
-
-//   String logSuccess() {
-//     final String message =
-//         "\u001b[1;32m [SCHULDATEN HUB] SUCCESS: $this \u001b[0m";
-//     return message;
-//   }
-
-//   String logError() {
-//     final String message =
-//         "\u001b[1;31m [SCHULDATEN HUB] ERROR: $this \u001b[0m";
-//     return message;
-//   }
-
-//   String logInfo() {
-//     final String message =
-//         "\u001b[1;34m [SCHULDATEN HUB] INFO: $this \u001b[0m";
-//     return message;
-//   }
-// }

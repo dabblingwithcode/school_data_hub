@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/pick_file_return_content_as_string.dart';
@@ -31,9 +30,9 @@ class ToolsPage extends WatchingWidget {
   HubSessionManager get _hubSessionManager => di<HubSessionManager>();
 
   void importUnencryptedPupilIdentitySourceFile(String function) async {
-    final fileContent = await pickFileReturnContentAsString();
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-    if (result == null || fileContent == null) {
+    final fileContent = await fromTextFilePickerToString();
+
+    if (fileContent == null) {
       // User canceled the picker
       return;
     }
@@ -43,9 +42,10 @@ class ToolsPage extends WatchingWidget {
         fileContent,
       );
     } else if (function == 'pupil_identities') {
-      // _pupilIdentityManager.updatePupilIdentitiesFromUnencryptedSource(
-      //   identitiesInStringLines: fileContent,
-      // );
+      _pupilIdentityManager.updatePupilIdentitiesFromUnencryptedSource(
+        updateTimestamp: null,
+        pupilIdentityTextLines: fileContent,
+      );
     }
   }
 

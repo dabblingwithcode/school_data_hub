@@ -165,7 +165,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           leading: const Icon(Icons.perm_identity_rounded),
           title: const Text('Lokale Daten vom:'),
           value: Text(
-            '${di<EnvManager>().activeEnv?.lastIdentitiesUpdate?.formatDateAndTimeForUser()} ',
+            '${di<EnvManager>().activeEnv?.lastIdentitiesUpdate?.formatDateAndTimeForUser() ?? 'Keine Daten'} ',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color:

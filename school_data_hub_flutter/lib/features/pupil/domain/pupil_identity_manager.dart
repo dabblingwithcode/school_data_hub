@@ -125,17 +125,17 @@ class PupilIdentityManager {
     final normalizedTimestamp = updateTimestamp.toUtc();
     final decryptedText = customEncrypter.decryptString(encryptedText);
 
-    _updatePupilIdentitiesFromUnencryptedSource(
+    updatePupilIdentitiesFromUnencryptedSource(
       pupilIdentityTextLines: decryptedText,
       updateTimestamp: normalizedTimestamp,
     );
   }
 
-  Future<void> _updatePupilIdentitiesFromUnencryptedSource({
+  Future<void> updatePupilIdentitiesFromUnencryptedSource({
     required String pupilIdentityTextLines,
     required DateTime? updateTimestamp,
   }) async {
-    final normalizedUpdateTimestamp = updateTimestamp?.toUtc();
+    final normalizedUpdateTimestamp = updateTimestamp?.toUtc() ?? null;
 
     // The pupils in the string are separated by a '\n' - let's split them apart
     List<String> pupilIdentityTextLineList = pupilIdentityTextLines.split('\n');
@@ -263,7 +263,7 @@ class PupilIdentityManager {
         .fetchLastIdentitiesUpdate();
 
     // Now we need to store the updated pupil identities in storage
-    _updatePupilIdentitiesFromUnencryptedSource(
+    updatePupilIdentitiesFromUnencryptedSource(
       pupilIdentityTextLines: textFileContent,
       updateTimestamp: updateTimestamp,
     );

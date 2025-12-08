@@ -21,15 +21,17 @@ extension PupilIdentityExtension on PupilIdentity {
       this.gender,
       this.language,
       this.family ?? '',
-      this.birthday.toLocalSafe().formatDateForJson(),
+      this.birthday.formatDateForJson(normalizeUtc: false),
       migrationSupportEnds,
-      this.pupilSince.toLocalSafe().formatDateForJson(),
+      this.pupilSince.formatDateForJson(normalizeUtc: false),
       this.afterSchoolCare ? 'OFFGANZ' : '',
       this.religion ?? '',
-      this.religionLessonsSince?.toLocalSafe().formatDateForJson() ?? '',
-      this.religionLessonsCancelledAt?.toLocalSafe().formatDateForJson() ?? '',
-      this.familyLanguageLessonsSince?.toLocalSafe().formatDateForJson() ?? '',
-      this.leavingDate?.toLocalSafe().formatDateForJson() ?? '',
+      this.religionLessonsSince?.formatDateForJson(normalizeUtc: false) ?? '',
+      this.religionLessonsCancelledAt?.formatDateForJson(normalizeUtc: false) ??
+          '',
+      this.familyLanguageLessonsSince?.formatDateForJson(normalizeUtc: false) ??
+          '',
+      this.leavingDate?.formatDateForJson(normalizeUtc: false) ?? '',
     ].join(',');
   }
 
