@@ -3,6 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/select_competence_page/select_competence_view_model.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/learning_support_list_filter_bottom_sheet.dart';
 import 'package:watch_it/watch_it.dart';
@@ -26,22 +27,22 @@ class PupilCompetenceListBottomNavBar extends StatelessWidget {
               const Spacer(),
               InkWell(
                 onTap: () => Navigator.pop(context),
-                child: const Icon(
-                  Icons.arrow_back,
-                  size: 30,
-                ),
+                child: const Icon(Icons.arrow_back, size: 30),
               ),
-              const Gap(30),
-              InkWell(
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) => const SelectCompetence()));
-                },
-                child: const Icon(
-                  Icons.add_a_photo_rounded,
-                  size: 30,
+
+              if (di<HubSessionManager>().isAdmin) ...[
+                const Gap(30),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (ctx) => const SelectCompetence(),
+                      ),
+                    );
+                  },
+                  child: const Icon(Icons.add_a_photo_rounded, size: 30),
                 ),
-              ),
+              ],
               const Gap(30),
               InkWell(
                 onTap: () => showLearningSupportFilterBottomSheet(context),
@@ -52,7 +53,7 @@ class PupilCompetenceListBottomNavBar extends StatelessWidget {
                   size: 30,
                 ),
               ),
-              const Gap(15)
+              const Gap(15),
             ],
           ),
         ),

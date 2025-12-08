@@ -167,8 +167,8 @@ class NewTimetableSlotPage extends WatchingWidget {
 
     if (selectedWeekdayOption.value == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Bitte wählen Sie einen Wochentag aus.'),
+        SnackBar(
+          content: const Text('Bitte wählen Sie einen Wochentag aus.'),
           backgroundColor: AppColors.snackBarErrorColor,
         ),
       );
@@ -177,8 +177,8 @@ class NewTimetableSlotPage extends WatchingWidget {
 
     if (startTimeController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Bitte geben Sie eine Startzeit ein.'),
+        SnackBar(
+          content: const Text('Bitte geben Sie eine Startzeit ein.'),
           backgroundColor: AppColors.snackBarErrorColor,
         ),
       );
@@ -187,8 +187,8 @@ class NewTimetableSlotPage extends WatchingWidget {
 
     if (endTimeController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Bitte geben Sie eine Endzeit ein.'),
+        SnackBar(
+          content: const Text('Bitte geben Sie eine Endzeit ein.'),
           backgroundColor: AppColors.snackBarErrorColor,
         ),
       );
@@ -211,8 +211,8 @@ class NewTimetableSlotPage extends WatchingWidget {
         );
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
+          SnackBar(
+            content: const Text(
               'Kein Stundenplan ausgewählt. Bitte erstellen Sie zuerst einen Stundenplan.',
             ),
             backgroundColor: AppColors.snackBarErrorColor,
@@ -269,8 +269,8 @@ class NewTimetableSlotPage extends WatchingWidget {
           await timetableManager.addTimetableSlot(newTimetableSlot);
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Zeitslot erfolgreich erstellt.'),
+              SnackBar(
+                content: const Text('Zeitslot erfolgreich erstellt.'),
                 backgroundColor: AppColors.snackBarSuccessColor,
               ),
             );
@@ -290,8 +290,8 @@ class NewTimetableSlotPage extends WatchingWidget {
         await timetableManager.updateTimetableSlot(updatedTimetableSlot);
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Zeitslot erfolgreich aktualisiert.'),
+            SnackBar(
+              content: const Text('Zeitslot erfolgreich aktualisiert.'),
               backgroundColor: AppColors.snackBarSuccessColor,
             ),
           );
@@ -346,8 +346,8 @@ class NewTimetableSlotPage extends WatchingWidget {
         await timetableManager.removeTimetableSlot(timetableSlot!);
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Zeitslot erfolgreich gelöscht.'),
+            SnackBar(
+              content: const Text('Zeitslot erfolgreich gelöscht.'),
               backgroundColor: AppColors.snackBarSuccessColor,
             ),
           );

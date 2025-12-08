@@ -26,9 +26,7 @@ class PupilProfilePageContent extends WatchingWidget {
     int navState = watchValue((BottomNavManager x) => x.pupilProfileNavState);
 
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.pupilProfileBackgroundColor,
-      ),
+      decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Padding(

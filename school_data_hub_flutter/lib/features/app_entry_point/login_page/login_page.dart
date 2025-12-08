@@ -68,9 +68,7 @@ class LoginPage extends WatchingWidget {
                               height: 250,
                               width: 250,
                               child: Image(
-                                image: AssetImage(
-                                  'assets/schuldaten_hub_logo.png',
-                                ),
+                                image: AssetImage('assets/foreground.png'),
                               ),
                             ),
                       const Gap(20),
@@ -149,7 +147,7 @@ class LoginPage extends WatchingWidget {
                                 filled: true,
                                 fillColor: Colors.white,
                                 labelText: locale.password,
-                                labelStyle: const TextStyle(
+                                labelStyle: TextStyle(
                                   color: AppColors.backgroundColor,
                                 ),
                               ),

@@ -38,7 +38,7 @@ class PupilListButtons extends WatchingWidget {
       children: [
         MainMenuButton(
           destinationPage: const SchooldayEventListPage(),
-          buttonIcon: const Icon(
+          buttonIcon: Icon(
             Icons.warning_rounded,
             size: 50,
             color: AppColors.gridViewColor,
@@ -47,7 +47,7 @@ class PupilListButtons extends WatchingWidget {
         ),
         MainMenuButton(
           destinationPage: const MissedSchooldayesPupilListPage(),
-          buttonIcon: const Icon(
+          buttonIcon: Icon(
             Icons.calendar_month_rounded,
             size: 50,
             color: AppColors.gridViewColor,
@@ -56,7 +56,7 @@ class PupilListButtons extends WatchingWidget {
         ),
         MainMenuButton(
           destinationPage: const AttendanceListPage(),
-          buttonIcon: const Icon(
+          buttonIcon: Icon(
             Icons.event_available_rounded,
             size: 50,
             color: AppColors.gridViewColor,
@@ -65,7 +65,7 @@ class PupilListButtons extends WatchingWidget {
         ),
         MainMenuButton(
           destinationPage: const CreditListPage(),
-          buttonIcon: const Icon(
+          buttonIcon: Icon(
             Icons.attach_money_rounded,
             size: 50,
             color: AppColors.gridViewColor,
@@ -75,7 +75,7 @@ class PupilListButtons extends WatchingWidget {
         if (isReady)
           MainMenuButton(
             destinationPage: const LearningPupilListPage(),
-            buttonIcon: const Icon(
+            buttonIcon: Icon(
               Icons.lightbulb,
               size: 50,
               color: AppColors.gridViewColor,
@@ -84,7 +84,7 @@ class PupilListButtons extends WatchingWidget {
           ),
         MainMenuButton(
           destinationPage: const LearningSupportListPage(),
-          buttonIcon: const Icon(
+          buttonIcon: Icon(
             Icons.support_rounded,
             size: 50,
             color: AppColors.gridViewColor,
@@ -93,16 +93,16 @@ class PupilListButtons extends WatchingWidget {
         ),
         MainMenuButton(
           destinationPage: const SpecialInfoListPage(),
-          buttonIcon: const Icon(
+          buttonIcon: Icon(
             Icons.emergency_rounded,
             size: 50,
             color: AppColors.gridViewColor,
           ),
           buttonText: locale.specialInfo,
         ),
-        const MainMenuButton(
+        MainMenuButton(
           destinationPage: const ReligionListPage(),
-          buttonIcon: const Row(
+          buttonIcon: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -120,9 +120,9 @@ class PupilListButtons extends WatchingWidget {
           ),
           buttonText: 'Reli-Unterricht',
         ),
-        const MainMenuButton(
+        MainMenuButton(
           destinationPage: const FamilyLanguageLessonsListPage(),
-          buttonIcon: const Row(
+          buttonIcon: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -139,7 +139,7 @@ class PupilListButtons extends WatchingWidget {
           destinationPage: const OgsListPage(),
           buttonIcon: Text(
             locale.allDayCare,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 35,
               color: AppColors.gridViewColor,
               fontWeight: FontWeight.bold,
@@ -150,14 +150,14 @@ class PupilListButtons extends WatchingWidget {
         if (matrixSessionConfigured)
           MainMenuButton(
             destinationPage: const MatrixUsersListPage(),
-            buttonIcon: const Icon(
+            buttonIcon: Icon(
               Icons.chat_rounded,
               size: 50,
               color: AppColors.gridViewColor,
             ),
             buttonText: locale.matrixRooms,
           ),
-        const MainMenuButton(
+        MainMenuButton(
           destinationPage: PupilsMatrixContactsListPage(),
           buttonIcon: Icon(
             Icons.group,

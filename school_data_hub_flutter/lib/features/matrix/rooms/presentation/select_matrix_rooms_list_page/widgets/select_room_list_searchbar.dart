@@ -14,13 +14,17 @@ final _matrixPolicyFilterManager = di<MatrixPolicyFilterManager>();
 class SelectRoomListSearchBar extends WatchingWidget {
   final List<MatrixRoom> matrixRooms;
   final SelectMatrixRoomsListController controller;
-  const SelectRoomListSearchBar(
-      {required this.matrixRooms, required this.controller, super.key});
+  const SelectRoomListSearchBar({
+    required this.matrixRooms,
+    required this.controller,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final bool filtersOn =
-        watchValue((MatrixPolicyFilterManager x) => x.filtersOn);
+    final bool filtersOn = watchValue(
+      (MatrixPolicyFilterManager x) => x.filtersOn,
+    );
     return Container(
       decoration: BoxDecoration(
         color: AppColors.canvasColor,
@@ -35,7 +39,7 @@ class SelectRoomListSearchBar extends WatchingWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.meeting_room_rounded,
                     color: AppColors.backgroundColor,
                   ),
@@ -49,12 +53,7 @@ class SelectRoomListSearchBar extends WatchingWidget {
                     ),
                   ),
                   const Gap(10),
-                  const Text(
-                    'Ausgewählt:',
-                    style: TextStyle(
-                      fontSize: 13,
-                    ),
-                  ),
+                  const Text('Ausgewählt:', style: TextStyle(fontSize: 13)),
                   const Gap(10),
                   Text(
                     controller.selectedRooms.length.toString(),
@@ -73,11 +72,13 @@ class SelectRoomListSearchBar extends WatchingWidget {
             child: Row(
               children: [
                 Expanded(
-                    child: MatrixSearchTextField(
-                        searchType: SearchType.room,
-                        hintText: 'Raum suchen',
-                        refreshFunction:
-                            _matrixPolicyFilterManager.setRoomsFilterText)),
+                  child: MatrixSearchTextField(
+                    searchType: SearchType.room,
+                    hintText: 'Raum suchen',
+                    refreshFunction:
+                        _matrixPolicyFilterManager.setRoomsFilterText,
+                  ),
+                ),
                 InkWell(
                   onTap: () => showSelectMatrixRoomsFilterBottomSheet(context),
                   onLongPress: () =>

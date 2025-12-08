@@ -37,7 +37,7 @@ class AttendanceRankingListSearchbar extends WatchingWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.people_alt_rounded,
                       color: AppColors.backgroundColor,
                     ),

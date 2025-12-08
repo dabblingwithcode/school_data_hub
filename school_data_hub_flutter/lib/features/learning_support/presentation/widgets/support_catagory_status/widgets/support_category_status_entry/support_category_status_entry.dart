@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_symbol.dart';
@@ -91,7 +91,7 @@ class SupportCategoryStatusEntry extends StatelessWidget {
                           },
                           child: Text(
                             status.createdAt.formatDateForUser(),
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppColors.interactiveColor,
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -128,7 +128,7 @@ class SupportCategoryStatusEntry extends StatelessWidget {
                           },
                           child: Text(
                             status.comment,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppColors.interactiveColor,
                               fontWeight: FontWeight.bold,
                             ),
@@ -153,17 +153,17 @@ class SupportCategoryStatusEntry extends StatelessWidget {
                                     );
                                 if (correctedCreatedBy != null) {
                                   // TODO: uncomment when ready
-                                  //  _learningSupportManager
-                                  //       .updateSupportCategoryStatusProperty(
-                                  //     pupil: pupil,
-                                  //     statusId: status.statusId,
-                                  //     createdBy: correctedCreatedBy,
-                                  //   );
+                                  // di<LearningSupportManager>().
+                                  //     .updateSupportCategoryStatusProperty(
+                                  //       pupil: pupil,
+                                  //       statusId: status.statusId,
+                                  //       createdBy: correctedCreatedBy,
+                                  //     );
                                 }
                               },
                               child: Text(
                                 status.createdBy,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: AppColors.interactiveColor,
                                   fontWeight: FontWeight.bold,
                                 ),

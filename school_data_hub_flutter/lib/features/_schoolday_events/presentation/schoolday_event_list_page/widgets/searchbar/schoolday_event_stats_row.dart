@@ -18,7 +18,7 @@ class SchooldayEventStats extends WatchingWidget {
     final filteredPupils = watchValue((PupilsFilter x) => x.filteredPupils);
     return Row(
       children: [
-        const Icon(
+        Icon(
           Icons.people_alt_rounded,
           color: AppColors.backgroundColor,
         ),

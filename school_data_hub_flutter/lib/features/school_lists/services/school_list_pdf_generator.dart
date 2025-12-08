@@ -590,10 +590,10 @@ class _SchoolListPdfViewPageState extends State<SchoolListPdfViewPage> {
         title: 'Schulliste PDF',
       ),
       body: PdfPreview(
-        actionBarTheme: const PdfActionBarTheme(
+        actionBarTheme: PdfActionBarTheme(
           backgroundColor: AppColors.backgroundColor,
           iconColor: Colors.white,
-          textStyle: TextStyle(color: Colors.white),
+          textStyle: const TextStyle(color: Colors.white),
         ),
         allowSharing: true,
         allowPrinting: true,

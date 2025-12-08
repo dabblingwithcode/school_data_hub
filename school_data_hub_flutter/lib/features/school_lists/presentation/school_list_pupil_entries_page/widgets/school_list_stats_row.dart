@@ -41,12 +41,12 @@ class SchoolListStatsRow extends WatchingWidget {
             if (confirm != true) return;
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder:
-                    (ctx) => NewSchoolListPage(initialSchoolList: schoolList),
+                builder: (ctx) =>
+                    NewSchoolListPage(initialSchoolList: schoolList),
               ),
             );
           },
-          child: const Icon(
+          child: Icon(
             Icons.people_alt_rounded,
             color: AppColors.backgroundColor,
           ),
@@ -83,7 +83,7 @@ class SchoolListStatsRow extends WatchingWidget {
           ),
         ),
         const Gap(10),
-        const Icon(Icons.question_mark_rounded, color: AppColors.accentColor),
+        Icon(Icons.question_mark_rounded, color: AppColors.accentColor),
         const Gap(5),
         Text(
           stats['null'].toString(),
@@ -94,7 +94,7 @@ class SchoolListStatsRow extends WatchingWidget {
           ),
         ),
         const Gap(10),
-        const Icon(Icons.create, color: AppColors.backgroundColor),
+        Icon(Icons.create, color: AppColors.backgroundColor),
         const Gap(5),
         Text(
           stats['comment'].toString(),

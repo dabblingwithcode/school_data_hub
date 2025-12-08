@@ -94,11 +94,11 @@ class PupilLearningContentNavBar extends WatchingWidget {
                   IconButton(
                     isSelected:
                         selectedContent == SelectedContent.competenceStatuses,
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.lightbulb,
                       color: AppColors.interactiveColor,
                     ),
-                    selectedIcon: const Icon(
+                    selectedIcon: Icon(
                       Icons.lightbulb,
                       color: AppColors.accentColor,
                     ),
@@ -132,11 +132,11 @@ class PupilLearningContentNavBar extends WatchingWidget {
                   IconButton(
                     isSelected:
                         selectedContent == SelectedContent.competenceGoals,
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.emoji_nature_rounded,
                       color: AppColors.interactiveColor,
                     ),
-                    selectedIcon: const Icon(
+                    selectedIcon: Icon(
                       Icons.emoji_nature_rounded,
                       color: AppColors.accentColor,
                     ),
@@ -167,11 +167,11 @@ class PupilLearningContentNavBar extends WatchingWidget {
                 children: [
                   IconButton(
                     isSelected: selectedContent == SelectedContent.workbooks,
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.note_alt,
                       color: AppColors.interactiveColor,
                     ),
-                    selectedIcon: const Icon(
+                    selectedIcon: Icon(
                       Icons.note_alt,
                       color: AppColors.accentColor,
                     ),
@@ -201,11 +201,11 @@ class PupilLearningContentNavBar extends WatchingWidget {
               children: [
                 IconButton(
                   isSelected: selectedContent == SelectedContent.books,
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.book,
                     color: AppColors.interactiveColor,
                   ),
-                  selectedIcon: const Icon(
+                  selectedIcon: Icon(
                     Icons.book,
                     color: AppColors.accentColor,
                   ),

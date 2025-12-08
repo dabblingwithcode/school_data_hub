@@ -39,7 +39,7 @@ class PupilProfileInfosContent extends WatchingWidget {
     final pupilSiblings = _pupilManager.getSiblings(pupil);
     watch(pupil);
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.pupilProfileBackgroundColor,
       ),
       child: Column(
@@ -204,7 +204,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                               ),
                             );
                           },
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.add_circle_outline,
                             size: 24,
                             color: AppColors.interactiveColor,
@@ -244,7 +244,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                               }
                             }
                           },
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.qr_code_2_rounded,
                             size: 24,
                             color: AppColors.backgroundColor,
@@ -313,7 +313,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                               ),
                             );
                           },
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.add_circle_outline,
                             size: 24,
                             color: AppColors.interactiveColor,
@@ -352,7 +352,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                               }
                             }
                           },
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.qr_code_2_rounded,
                             size: 24,
                             color: AppColors.backgroundColor,
@@ -417,7 +417,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                                       children: [
                                         Text(
                                           '${sibling.firstName} ${sibling.lastName}',
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 18,
                                             color: AppColors.backgroundColor,

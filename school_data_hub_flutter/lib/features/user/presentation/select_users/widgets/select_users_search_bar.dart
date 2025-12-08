@@ -49,7 +49,7 @@ class SelectUsersSearchBar extends WatchingWidget {
                       children: [
                         Text(
                           'Ausgewählt: ${selectedUsers.length}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
                             color: AppColors.backgroundColor,
                             fontWeight: FontWeight.bold,

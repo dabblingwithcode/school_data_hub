@@ -20,10 +20,9 @@ class PupilAttendanceContent extends WatchingWidget {
     final _attendanceManager = di<AttendanceManager>();
     final missedHoursForActualReport =
         AttendanceHelper.missedHoursforSemesterOrSchoolyear(pupil);
-    List<MissedSchoolday> missedSchooldays =
-        watch(
-          _attendanceManager.getPupilMissedSchooldaysProxy(pupil.pupilId),
-        ).missedSchooldays;
+    List<MissedSchoolday> missedSchooldays = watch(
+      _attendanceManager.getPupilMissedSchooldaysProxy(pupil.pupilId),
+    ).missedSchooldays;
 
     // sort by missedDay
     missedSchooldays.sort(
@@ -51,12 +50,12 @@ class PupilAttendanceContent extends WatchingWidget {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder:
-                              (ctx) => const MissedSchooldayesPupilListPage(),
+                          builder: (ctx) =>
+                              const MissedSchooldayesPupilListPage(),
                         ),
                       );
                     },
-                    child: const Text(
+                    child: Text(
                       'Fehlzeiten',
                       style: TextStyle(
                         fontSize: 24,

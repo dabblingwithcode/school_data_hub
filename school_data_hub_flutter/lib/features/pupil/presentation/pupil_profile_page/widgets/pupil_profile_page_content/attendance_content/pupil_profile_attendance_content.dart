@@ -29,9 +29,7 @@ class PupilProfileAttendanceContent extends StatelessWidget {
       (b, a) => a.schoolday!.schoolday.compareTo(b.schoolday!.schoolday),
     );
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.pupilProfileBackgroundColor,
-      ),
+      decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
       child: Column(
         children: [
           PupilProfileContentSection(

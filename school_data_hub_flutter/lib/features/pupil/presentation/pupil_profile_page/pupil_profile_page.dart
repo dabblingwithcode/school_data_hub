@@ -35,7 +35,7 @@ class PupilProfilePage extends WatchingWidget {
                       dragStartBehavior: DragStartBehavior.down,
                       slivers: [
                         SliverAppBar(
-                          systemOverlayStyle: const SystemUiOverlayStyle(
+                          systemOverlayStyle: SystemUiOverlayStyle(
                             statusBarColor:
                                 AppColors.pupilProfileBackgroundColor,
                           ),

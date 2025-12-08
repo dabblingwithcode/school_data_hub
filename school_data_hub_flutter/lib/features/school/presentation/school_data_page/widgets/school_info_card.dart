@@ -20,7 +20,7 @@ class SchoolInfoCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(Icons.school, color: AppColors.backgroundColor),
+                Icon(Icons.school, color: AppColors.backgroundColor),
                 const Gap(8),
                 const Text('Schulinformationen', style: AppStyles.title),
               ],

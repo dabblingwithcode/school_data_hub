@@ -67,14 +67,14 @@ class PupilProfileHeadingCard extends WatchingWidget {
                     const Gap(15),
                     pupil.specialNeeds != null
                         ? Text(
-                          pupil.schoolGrade.name,
-                          textAlign: TextAlign.left,
-                          style: const TextStyle(
-                            color: AppColors.schoolyearColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18.0,
-                          ),
-                        )
+                            pupil.schoolGrade.name,
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              color: AppColors.schoolyearColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18.0,
+                            ),
+                          )
                         : const SizedBox.shrink(),
                     const Gap(15),
                     if (pupil.specialInformation != null)

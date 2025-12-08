@@ -39,7 +39,7 @@ class PupilCompetenceListSearchBar extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.people_alt_rounded,
                       color: AppColors.backgroundColor,
                     ),

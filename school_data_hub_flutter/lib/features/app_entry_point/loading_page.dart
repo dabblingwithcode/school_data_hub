@@ -36,7 +36,7 @@ class LoadingPageState extends State<LoadingPage> {
         child: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: const BoxDecoration(color: AppColors.backgroundColor),
+          decoration: BoxDecoration(color: AppColors.backgroundColor),
           child: LayoutBuilder(
             builder: (context, constraints) {
               final double maxContentWidth = constraints.maxWidth >= 600

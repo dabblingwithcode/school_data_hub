@@ -102,7 +102,7 @@ class _SchooldayEventListCardState extends State<SchooldayEventPupilListCard> {
                                   ),
                                   if (pupil.family != null) ...[
                                     const Gap(10),
-                                    const Icon(
+                                    Icon(
                                       Icons.family_restroom_rounded,
                                       size: 25,
                                       color: AppColors.backgroundColor,

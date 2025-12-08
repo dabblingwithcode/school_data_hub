@@ -26,15 +26,11 @@ class PupilProfileContentHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(
-            icon,
-            color: AppColors.groupColor,
-            size: 28,
-          ),
+          Icon(icon, color: AppColors.groupColor, size: 28),
           const Gap(12),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
               color: AppColors.backgroundColor,
@@ -84,7 +80,9 @@ class PupilProfileContentSection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                      vertical: 4.0, horizontal: 4.0),
+                    vertical: 4.0,
+                    horizontal: 4.0,
+                  ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -92,7 +90,7 @@ class PupilProfileContentSection extends StatelessWidget {
                       const Gap(10),
                       Text(
                         title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: AppColors.backgroundColor,
@@ -102,10 +100,7 @@ class PupilProfileContentSection extends StatelessWidget {
                   ),
                 ),
               ),
-              if (headerTrailing != null) ...[
-                const Spacer(),
-                headerTrailing!,
-              ],
+              if (headerTrailing != null) ...[const Spacer(), headerTrailing!],
             ],
           ),
           const Gap(12),
@@ -134,8 +129,10 @@ class PupilProfileContentRow extends StatelessWidget {
     this.onLongPress,
     this.actionButton,
     super.key,
-  }) : assert(value != null || valueWidget != null,
-            'Either value or valueWidget must be provided');
+  }) : assert(
+         value != null || valueWidget != null,
+         'Either value or valueWidget must be provided',
+       );
 
   @override
   Widget build(BuildContext context) {
@@ -159,7 +156,7 @@ class PupilProfileContentRow extends StatelessWidget {
           const Gap(8),
           Text(
             '$label:',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
               color: AppColors.backgroundColor,
@@ -182,7 +179,8 @@ class PupilProfileContentRow extends StatelessWidget {
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: valueWidget ??
+                child:
+                    valueWidget ??
                     Text(
                       value!,
                       style: TextStyle(

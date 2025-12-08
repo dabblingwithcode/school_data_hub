@@ -118,7 +118,7 @@ class EditBookPage extends StatelessWidget {
                                   const Gap(10),
                                   InkWell(
                                     onTap: () => controller.addLocation(),
-                                    child: const Icon(
+                                    child: Icon(
                                       Icons.add,
                                       color: AppColors.interactiveColor,
                                     ),
@@ -181,7 +181,7 @@ class EditBookPage extends StatelessWidget {
                         const Gap(10),
                         InkWell(
                           onTap: () => controller.createNewTag(context),
-                          child: const Icon(
+                          child: Icon(
                             Icons.add,
                             color: AppColors.interactiveColor,
                             size: 20,
@@ -190,7 +190,7 @@ class EditBookPage extends StatelessWidget {
                         const Gap(5),
                         InkWell(
                           onTap: () => controller.openTagManagement(context),
-                          child: const Icon(
+                          child: Icon(
                             Icons.settings,
                             color: AppColors.interactiveColor,
                             size: 20,

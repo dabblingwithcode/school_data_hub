@@ -69,12 +69,12 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
-                        shape: const RoundedRectangleBorder(
+                        shape: RoundedRectangleBorder(
                           side: BorderSide(
                             color: AppColors.backgroundColor,
                             width: 2.0,
                           ),
-                          borderRadius: BorderRadius.only(
+                          borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(
                               10.0,
                             ), // Adjust the radius as needed
@@ -97,11 +97,11 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                         Icons.info_rounded,
                         color:
                             _mainMenuBottomNavManager
-                                        .pupilProfileNavState
-                                        .value ==
-                                    0
-                                ? AppColors.backgroundColor
-                                : Colors.white,
+                                    .pupilProfileNavState
+                                    .value ==
+                                0
+                            ? AppColors.backgroundColor
+                            : Colors.white,
                       ),
                     ),
                   ),
@@ -110,7 +110,7 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
-                        shape: const RoundedRectangleBorder(
+                        shape:  RoundedRectangleBorder(
                           side: BorderSide(
                             color: AppColors.backgroundColor,
                             width: 2.0,
@@ -134,11 +134,11 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                         Icons.language_rounded,
                         color:
                             _mainMenuBottomNavManager
-                                        .pupilProfileNavState
-                                        .value ==
-                                    1
-                                ? AppColors.groupColor
-                                : Colors.white,
+                                    .pupilProfileNavState
+                                    .value ==
+                                1
+                            ? AppColors.groupColor
+                            : Colors.white,
                       ),
                     ),
                   ),
@@ -147,7 +147,7 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
-                        shape: const RoundedRectangleBorder(
+                        shape:  RoundedRectangleBorder(
                           side: BorderSide(
                             color: AppColors.backgroundColor,
                             width: 2.0,
@@ -171,11 +171,11 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                         Icons.attach_money_rounded,
                         color:
                             _mainMenuBottomNavManager
-                                        .pupilProfileNavState
-                                        .value ==
-                                    2
-                                ? AppColors.accentColor
-                                : Colors.white,
+                                    .pupilProfileNavState
+                                    .value ==
+                                2
+                            ? AppColors.accentColor
+                            : Colors.white,
                       ),
                     ),
                   ),
@@ -184,7 +184,7 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
-                        shape: const RoundedRectangleBorder(
+                        shape:  RoundedRectangleBorder(
                           side: BorderSide(
                             color: AppColors.backgroundColor,
                             width: 2.0,
@@ -208,11 +208,11 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                         Icons.calendar_month_rounded,
                         color:
                             _mainMenuBottomNavManager
-                                        .pupilProfileNavState
-                                        .value ==
-                                    3
-                                ? Colors.grey[800]
-                                : Colors.white,
+                                    .pupilProfileNavState
+                                    .value ==
+                                3
+                            ? Colors.grey[800]
+                            : Colors.white,
                       ),
                     ),
                   ),
@@ -221,12 +221,12 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
-                        shape: const RoundedRectangleBorder(
+                        shape:  RoundedRectangleBorder(
                           side: BorderSide(
                             color: AppColors.backgroundColor,
                             width: 2.0,
                           ),
-                          borderRadius: BorderRadius.only(
+                          borderRadius:const BorderRadius.only(
                             topRight: Radius.circular(
                               10.0,
                             ), // Adjust the radius as needed
@@ -249,11 +249,11 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                         Icons.warning_rounded,
                         color:
                             _mainMenuBottomNavManager
-                                        .pupilProfileNavState
-                                        .value ==
-                                    4
-                                ? AppColors.accentColor
-                                : Colors.white,
+                                    .pupilProfileNavState
+                                    .value ==
+                                4
+                            ? AppColors.accentColor
+                            : Colors.white,
                       ),
                     ),
                   ),
@@ -290,11 +290,11 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                         style: TextStyle(
                           color:
                               _mainMenuBottomNavManager
-                                          .pupilProfileNavState
-                                          .value ==
-                                      5
-                                  ? AppColors.backgroundColor
-                                  : Colors.white,
+                                      .pupilProfileNavState
+                                      .value ==
+                                  5
+                              ? AppColors.backgroundColor
+                              : Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 13,
                         ),
@@ -326,11 +326,11 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                         Icons.rule,
                         color:
                             _mainMenuBottomNavManager
-                                        .pupilProfileNavState
-                                        .value ==
-                                    6
-                                ? Colors.grey[600]
-                                : Colors.white,
+                                    .pupilProfileNavState
+                                    .value ==
+                                6
+                            ? Colors.grey[600]
+                            : Colors.white,
                       ),
                     ),
                   ),
@@ -359,11 +359,11 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                         Icons.fact_check_rounded,
                         color:
                             _mainMenuBottomNavManager
-                                        .pupilProfileNavState
-                                        .value ==
-                                    7
-                                ? Colors.grey[600]
-                                : Colors.white,
+                                    .pupilProfileNavState
+                                    .value ==
+                                7
+                            ? Colors.grey[600]
+                            : Colors.white,
                       ),
                     ),
                   ),
@@ -392,11 +392,11 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                         Icons.support_rounded,
                         color:
                             _mainMenuBottomNavManager
-                                        .pupilProfileNavState
-                                        .value ==
-                                    8
-                                ? const Color.fromARGB(255, 245, 75, 75)
-                                : Colors.white,
+                                    .pupilProfileNavState
+                                    .value ==
+                                8
+                            ? const Color.fromARGB(255, 245, 75, 75)
+                            : Colors.white,
                       ),
                     ),
                   ),
@@ -425,11 +425,11 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
                         Icons.lightbulb,
                         color:
                             _mainMenuBottomNavManager
-                                        .pupilProfileNavState
-                                        .value ==
-                                    9
-                                ? AppColors.accentColor
-                                : Colors.white,
+                                    .pupilProfileNavState
+                                    .value ==
+                                9
+                            ? AppColors.accentColor
+                            : Colors.white,
                       ),
                     ),
                   ),

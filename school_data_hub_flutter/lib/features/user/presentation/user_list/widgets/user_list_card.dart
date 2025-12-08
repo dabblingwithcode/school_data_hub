@@ -206,7 +206,7 @@ class UserListCard extends WatchingWidget {
                     Center(
                       child: Text(
                         user.credit.toString(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 23,
                           fontWeight: FontWeight.bold,
                           color: AppColors.backgroundColor,

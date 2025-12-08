@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_helper_functions.dart';
 
 class CommunicationValues extends StatelessWidget {
@@ -24,7 +24,7 @@ class CommunicationValues extends StatelessWidget {
                 PupilHelper.communicationPredicate(
                   communicationSkills?.understanding,
                 ),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   color: AppColors.interactiveColor,
                 ),
@@ -41,7 +41,7 @@ class CommunicationValues extends StatelessWidget {
                 PupilHelper.communicationPredicate(
                   communicationSkills?.speaking,
                 ),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   color: AppColors.interactiveColor,
                 ),
@@ -58,7 +58,7 @@ class CommunicationValues extends StatelessWidget {
                 PupilHelper.communicationPredicate(
                   communicationSkills?.reading,
                 ),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   color: AppColors.interactiveColor,
                 ),

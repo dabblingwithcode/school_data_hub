@@ -4,12 +4,7 @@ import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matri
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/matrix_users_list_page.dart';
 import 'package:watch_it/watch_it.dart';
 
-enum SelectedMatrixContent {
-  rooms,
-  users,
-  compulsoryRooms,
-  settings,
-}
+enum SelectedMatrixContent { rooms, users, compulsoryRooms, settings }
 
 class SelectedMatrixContentNotifier extends ChangeNotifier {
   // Private constructor
@@ -46,15 +41,15 @@ class MatrixEntryPageTopNavBar extends WatchingWidget {
       children: [
         const MatrixContentNavBar(),
         Padding(
-            padding: const EdgeInsets.only(top: 5),
-            child: (selectedContent == SelectedMatrixContent.rooms)
-                ? const MatrixRoomsListPage()
-                : (selectedContent == SelectedMatrixContent.users)
-                    ? const MatrixUsersListPage()
-                    : (selectedContent == SelectedMatrixContent.compulsoryRooms)
-                        ? const SizedBox() // Placeholder widget
-                        : const SizedBox() // Default case
-            )
+          padding: const EdgeInsets.only(top: 5),
+          child: (selectedContent == SelectedMatrixContent.rooms)
+              ? const MatrixRoomsListPage()
+              : (selectedContent == SelectedMatrixContent.users)
+              ? const MatrixUsersListPage()
+              : (selectedContent == SelectedMatrixContent.compulsoryRooms)
+              ? const SizedBox() // Placeholder widget
+              : const SizedBox(), // Default case
+        ),
       ],
     );
   }
@@ -77,12 +72,12 @@ class MatrixContentNavBar extends WatchingWidget {
           children: [
             IconButton(
               isSelected: selectedContent == SelectedMatrixContent.rooms,
-              icon: const Icon(
+              icon: Icon(
                 Icons.meeting_room_rounded,
                 size: 30,
                 color: AppColors.interactiveColor,
               ),
-              selectedIcon: const Icon(
+              selectedIcon: Icon(
                 Icons.meeting_room_rounded,
                 size: 30,
                 color: AppColors.accentColor,
@@ -97,12 +92,12 @@ class MatrixContentNavBar extends WatchingWidget {
             ),
             IconButton(
               isSelected: selectedContent == SelectedMatrixContent.users,
-              icon: const Icon(
+              icon: Icon(
                 Icons.people_alt_rounded,
                 size: 30,
                 color: AppColors.interactiveColor,
               ),
-              selectedIcon: const Icon(
+              selectedIcon: Icon(
                 Icons.people_alt_rounded,
                 size: 30,
                 color: AppColors.accentColor,

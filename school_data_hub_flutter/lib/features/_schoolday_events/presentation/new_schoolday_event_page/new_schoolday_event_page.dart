@@ -244,7 +244,7 @@ class NewSchooldayEventPage extends WatchingWidget {
                           thisDate.value = newDate;
                         }
                       },
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.calendar_today_rounded,
                         color: AppColors.interactiveColor,
                       ),

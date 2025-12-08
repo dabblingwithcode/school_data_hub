@@ -39,7 +39,7 @@ class _MainMenuBottomNavigationState extends State<MainMenuBottomNavigation> {
 
   void showHeavyLoadingOverlay(BuildContext context) {
     overlayEntry = OverlayEntry(
-      builder: (context) => const Stack(
+      builder: (context) => Stack(
         fit: StackFit.expand,
         children: [
           ModalBarrier(
@@ -265,7 +265,7 @@ void showInstanceLoadingOverlay(BuildContext context) {
     builder: (context) => Stack(
       fit: StackFit.expand,
       children: [
-        const ModalBarrier(
+        ModalBarrier(
           dismissible: false,
           color: AppColors.backgroundColor, // Colors.black.withOpacity(0.3)
         ), // Background color
@@ -313,7 +313,7 @@ void showInstanceLoadingOverlay(BuildContext context) {
                   ),
                 ),
                 const SizedBox(height: 16),
-                const CircularProgressIndicator(color: AppColors.accentColor),
+                CircularProgressIndicator(color: AppColors.accentColor),
               ],
             ),
           ),

@@ -66,15 +66,14 @@ class PupilProfileSchoolListPupilEntryCard extends WatchingWidget {
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder:
-                                    (ctx) =>
-                                        SchoolListPupilEntriesPage(schoolList),
+                                builder: (ctx) =>
+                                    SchoolListPupilEntriesPage(schoolList),
                               ),
                             );
                           },
                           child: Text(
                             schoolList.name,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: AppColors.interactiveColor,
@@ -172,7 +171,7 @@ class PupilProfileSchoolListPupilEntryCard extends WatchingWidget {
                       },
                       child: Text(
                         pupilListEntry.comment ?? 'kein Kommentar',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
                           color: AppColors.interactiveColor,

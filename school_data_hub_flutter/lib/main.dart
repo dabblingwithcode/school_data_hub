@@ -89,6 +89,18 @@ class MyApp extends WatchingWidget {
   Widget build(BuildContext context) {
     final log = Logger('MyApp');
 
+    // Watch the color palette signal to trigger rebuilds on color changes
+    AppColors.paletteSignal.watch(context);
+
+    // Update status bar color when palette changes
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle().copyWith(
+        statusBarColor: AppColors.backgroundColor,
+        statusBarBrightness: Brightness.dark,
+        statusBarIconBrightness: Brightness.light,
+      ),
+    );
+
     final bool envIsReady = di<EnvManager>().envIsReady.watch(context);
     final bool userIsAuthenticated = di<EnvManager>().isAuthenticated.watch(
       context,

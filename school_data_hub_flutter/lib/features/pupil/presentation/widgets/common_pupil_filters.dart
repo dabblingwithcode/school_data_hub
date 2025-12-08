@@ -23,7 +23,7 @@ class FilterHeading extends StatelessWidget {
             di<FiltersStateManager>().resetFilters();
             //Navigator.pop(context);
           },
-          icon: const Icon(
+          icon: Icon(
             Icons.delete_forever_rounded,
             size: 35,
             color: AppColors.accentColor,

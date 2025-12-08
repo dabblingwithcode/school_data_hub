@@ -1330,15 +1330,15 @@ class _AttendancePdfViewPageState extends State<AttendancePdfViewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const GenericAppBar(
+      appBar: GenericAppBar(
         iconData: Icons.list_alt_rounded,
         title: 'Anwesenheitsliste PDF',
       ),
       body: PdfPreview(
-        actionBarTheme: const PdfActionBarTheme(
+        actionBarTheme: PdfActionBarTheme(
           backgroundColor: AppColors.backgroundColor,
           iconColor: Colors.white,
-          textStyle: TextStyle(color: Colors.white),
+          textStyle: const TextStyle(color: Colors.white),
         ),
         allowSharing: true,
         allowPrinting: true,
@@ -1403,15 +1403,15 @@ class _MissedSchooldaysPdfViewPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const GenericAppBar(
+      appBar: GenericAppBar(
         iconData: Icons.calendar_month_rounded,
         title: 'Fehlzeitenliste PDF',
       ),
       body: PdfPreview(
-        actionBarTheme: const PdfActionBarTheme(
+        actionBarTheme: PdfActionBarTheme(
           backgroundColor: AppColors.backgroundColor,
           iconColor: Colors.white,
-          textStyle: TextStyle(color: Colors.white),
+          textStyle: const TextStyle(color: Colors.white),
         ),
         allowSharing: true,
         allowPrinting: true,

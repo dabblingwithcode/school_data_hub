@@ -173,10 +173,7 @@ Widget statisticsGroupCard(
               //     fontSize: 18,
               //   ),
               // ),
-              const Icon(
-                Icons.translate_rounded,
-                color: AppColors.backgroundColor,
-              ),
+              Icon(Icons.translate_rounded, color: AppColors.backgroundColor),
 
               const Gap(5),
               Text(

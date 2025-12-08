@@ -33,13 +33,12 @@ class SchoolListPupilEntryCard extends WatchingWidget {
     final _schoolListManager = di<SchoolListManager>();
     final PupilProxy pupil = _pupilManager.getPupilByPupilId(pupilId)!;
 
-    final PupilListEntry pupilEntry =
-        watch(
-          _schoolListManager.getPupilSchoolListEntryProxy(
-            pupilId: pupilId,
-            listId: originListId,
-          )!,
-        ).pupilEntry;
+    final PupilListEntry pupilEntry = watch(
+      _schoolListManager.getPupilSchoolListEntryProxy(
+        pupilId: pupilId,
+        listId: originListId,
+      )!,
+    ).pupilEntry;
 
     return Card(
       color: Colors.white,
@@ -148,7 +147,7 @@ class SchoolListPupilEntryCard extends WatchingWidget {
                             ? pupilEntry.comment!
                             : 'kein Kommentar',
                         textAlign: TextAlign.left,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           color: AppColors.backgroundColor,
                         ),

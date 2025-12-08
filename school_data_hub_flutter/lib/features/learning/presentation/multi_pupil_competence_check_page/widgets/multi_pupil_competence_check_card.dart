@@ -302,14 +302,14 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                       }
                     }
                   },
-                  child: const Text(
-                    'Kommentar:',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.interactiveColor,
-                    ),
+                child: Text(
+                  'Kommentar:',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.interactiveColor,
                   ),
+                ),
                 ),
                 const Gap(5),
                 Flexible(

@@ -170,7 +170,7 @@ class _BookSearchFormPageState extends State<BookSearchFormPage> {
                                               });
                                             }
                                           },
-                                          icon: const Icon(
+                                          icon: Icon(
                                             Icons.add,
                                             color: AppColors.interactiveColor,
                                           ),
@@ -204,7 +204,7 @@ class _BookSearchFormPageState extends State<BookSearchFormPage> {
                                             .withValues(alpha: 0.2),
                                         checkmarkColor:
                                             AppColors.interactiveColor,
-                                        deleteIcon: const Icon(
+                                        deleteIcon: Icon(
                                           Icons.close,
                                           size: 18,
                                           color: AppColors.interactiveColor,

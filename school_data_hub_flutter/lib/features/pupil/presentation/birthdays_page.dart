@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
@@ -85,7 +85,7 @@ class BirthdaysView extends StatelessWidget {
                                               const Gap(5),
                                               Text(
                                                 '${DateTime(DateTime.now().year, listedPupil.birthday.month, listedPupil.birthday.day).asWeekdayName(context)}, ${DateTime(DateTime.now().year, listedPupil.birthday.month, listedPupil.birthday.day).formatDateForUser()}',
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color:
                                                       AppColors.backgroundColor,

@@ -23,12 +23,14 @@ class DocumentImage extends StatelessWidget {
           heroAnimationTag: documentId,
           zoomWidget: FutureBuilder<Image>(
             future: cachedImageOrDownloadImage(
-                documentId: documentId, decrypt: true),
+              documentId: documentId,
+              decrypt: true,
+            ),
             builder: (context, snapshot) {
               Widget child;
               if (snapshot.connectionState == ConnectionState.waiting) {
                 // Display a loading indicator while the future is not complete
-                child = const SizedBox(
+                child = SizedBox(
                   height: 25,
                   width: 25,
                   child: CircularProgressIndicator(
@@ -38,16 +40,21 @@ class DocumentImage extends StatelessWidget {
                 );
               } else if (snapshot.hasError) {
                 // Display an error message if the future encounters an error
-                child = Text('Error: ${snapshot.error}',
-                    style: const TextStyle(color: Colors.orange));
+                child = Text(
+                  'Error: ${snapshot.error}',
+                  style: const TextStyle(color: Colors.orange),
+                );
               } else {
                 // Display the result when the future is complete
                 child = ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(5)),
-                    child: snapshot.data!);
+                  borderRadius: const BorderRadius.all(Radius.circular(5)),
+                  child: snapshot.data!,
+                );
               }
               return AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300), child: child);
+                duration: const Duration(milliseconds: 300),
+                child: child,
+              );
             },
           ),
         ),

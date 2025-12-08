@@ -36,7 +36,7 @@ class LearningSupportListSearchBar extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.people_alt_rounded,
                       color: AppColors.backgroundColor,
                     ),

@@ -21,10 +21,9 @@ class SelectUsersListCard extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color:
-          isSelected
-              ? AppColors.interactiveColor.withValues(alpha: 0.3)
-              : Colors.white,
+      color: isSelected
+          ? AppColors.interactiveColor.withValues(alpha: 0.3)
+          : Colors.white,
       surfaceTintColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       elevation: 1.0,
@@ -52,10 +51,9 @@ class SelectUsersListCard extends WatchingWidget {
                 height: 80,
                 margin: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
-                  color:
-                      isSelected
-                          ? AppColors.interactiveColor
-                          : Colors.grey.shade300,
+                  color: isSelected
+                      ? AppColors.interactiveColor
+                      : Colors.grey.shade300,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -149,7 +147,7 @@ class SelectUsersListCard extends WatchingWidget {
                   const Text('Credit', style: TextStyle(fontSize: 12)),
                   Text(
                     passedUser.credit.toString(),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: AppColors.backgroundColor,

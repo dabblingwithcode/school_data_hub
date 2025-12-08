@@ -68,7 +68,7 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
                   minLines: 1,
                   maxLines: 3,
                   controller: authorizationNameController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     contentPadding: EdgeInsets.all(10),
                     border: OutlineInputBorder(
                       borderSide: BorderSide(
@@ -87,7 +87,7 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
                   minLines: 1,
                   maxLines: 3,
                   controller: authorizationDescriptionController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     contentPadding: EdgeInsets.all(10),
                     border: OutlineInputBorder(
                       borderSide: BorderSide(
@@ -184,7 +184,7 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
                                                   children: [
                                                     Text(
                                                       listedPupil.group,
-                                                      style: const TextStyle(
+                                                      style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           color: AppColors
@@ -194,7 +194,7 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
                                                     Text(
                                                       listedPupil
                                                           .schoolGrade.name,
-                                                      style: const TextStyle(
+                                                      style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           color: AppColors

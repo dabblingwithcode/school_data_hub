@@ -54,7 +54,7 @@ class CompetenceCheckCard extends StatelessWidget {
           color: AppColors.cardInCardColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
-            side: const BorderSide(
+            side: BorderSide(
               color: AppColors.cardInCardBorderColor,
               width: 2,
             ),
@@ -83,7 +83,7 @@ class CompetenceCheckCard extends StatelessWidget {
                             },
                             child: Text(
                               competenceCheck.createdAt.formatDateForUser(),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: AppColors.interactiveColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
@@ -123,7 +123,7 @@ class CompetenceCheckCard extends StatelessWidget {
                             },
                             child: Text(
                               competenceCheck.createdBy,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
                                 color: AppColors.backgroundColor,
@@ -220,7 +220,7 @@ class CompetenceCheckCard extends StatelessWidget {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Text(
+                                  Text(
                                     'x',
                                     style: TextStyle(
                                       fontSize: 14,
@@ -233,7 +233,7 @@ class CompetenceCheckCard extends StatelessWidget {
                                     competenceCheck.valueFactor.toStringAsFixed(
                                       1,
                                     ),
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.interactiveColor,
@@ -263,7 +263,7 @@ class CompetenceCheckCard extends StatelessWidget {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Text(
+                                Text(
                                   'x',
                                   style: TextStyle(
                                     fontSize: 14,
@@ -276,7 +276,7 @@ class CompetenceCheckCard extends StatelessWidget {
                                   competenceCheck.valueFactor.toStringAsFixed(
                                     1,
                                   ),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.backgroundColor,
@@ -387,7 +387,7 @@ class CompetenceCheckCard extends StatelessWidget {
                           }
                         }
                       },
-                      child: const Text(
+                      child: Text(
                         'Kommentar:',
                         style: TextStyle(
                           fontSize: 16,

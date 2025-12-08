@@ -45,7 +45,7 @@ class LanguageDialogDropdown extends StatelessWidget {
                     FocusManager.instance.primaryFocus?.unfocus();
                   },
                   value: value,
-                  items: const [
+                  items: [
                     DropdownMenuItem(
                       value: 0,
                       child: Center(

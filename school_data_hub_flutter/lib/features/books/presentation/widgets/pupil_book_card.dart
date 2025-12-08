@@ -215,7 +215,7 @@ class PupilBookLendingCard extends StatelessWidget {
                               pupilBookLending.status == '')
                           ? 'Kein Eintrag - Tippen zum Bearbeiten'
                           : pupilBookLending.status!,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         color: AppColors.interactiveColor,
                       ),

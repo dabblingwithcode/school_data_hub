@@ -22,9 +22,7 @@ class PupilProfileCreditContent extends WatchingWidget {
       target: pupil,
     );
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.pupilProfileBackgroundColor,
-      ),
+      decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
       child: Column(
         children: [
           PupilProfileContentSection(
@@ -39,7 +37,7 @@ class PupilProfileCreditContent extends WatchingWidget {
               children: [
                 Text(
                   credit.toString(),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.groupColor,
                     fontSize: 60,
                     fontWeight: FontWeight.bold,

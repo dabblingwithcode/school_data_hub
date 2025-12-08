@@ -1,7 +1,8 @@
 // lib/services/log_service.dart
 import 'package:logging/logging.dart';
-import 'package:school_data_hub_flutter/app_utils/logger/model/app_log.dart';
 import 'package:signals/signals.dart';
+
+import '../model/app_log.dart';
 
 // Service to manage the list of logs backed by signals
 class LogService {

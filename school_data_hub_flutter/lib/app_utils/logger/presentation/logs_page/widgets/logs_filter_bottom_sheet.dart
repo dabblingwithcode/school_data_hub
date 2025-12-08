@@ -113,7 +113,7 @@ class _LogLevelSwitches extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Log-Level anzeigen', style: AppStyles.subtitle),
+            const Text('Log-Level anzeigen', style: AppStyles.subtitle),
             const Gap(12),
             Wrap(
               spacing: 16,
@@ -305,4 +305,3 @@ class _LoggerChip extends StatelessWidget {
     );
   }
 }
-

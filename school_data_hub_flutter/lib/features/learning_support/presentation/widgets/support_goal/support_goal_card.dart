@@ -44,7 +44,7 @@ class SupportGoalCard extends StatelessWidget {
           child: Card(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0),
-              side: const BorderSide(
+              side: BorderSide(
                 color: AppColors.cardInCardBorderColor,
                 width: 2,
               ),
@@ -113,10 +113,10 @@ class SupportGoalCard extends StatelessWidget {
                     Flexible(
                       child: Text(
                         pupil.supportGoals![goalIndex].description,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.groupColor,
+                          color: AppColors.groupColor.withValues(alpha: 0.7),
                         ),
                       ),
                     ),

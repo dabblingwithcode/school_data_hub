@@ -1,16 +1,17 @@
 // lib/log_viewer_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:school_data_hub_flutter/app_utils/logger/domain/log_service.dart';
-import 'package:school_data_hub_flutter/app_utils/logger/model/app_log.dart';
-import 'package:school_data_hub_flutter/app_utils/logger/presentation/logs_page/widgets/log_entry_card.dart';
-import 'package:school_data_hub_flutter/app_utils/logger/presentation/logs_page/widgets/logs_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
 import 'package:signals_hooks/signals_hooks.dart';
 import 'package:watch_it/watch_it.dart';
+
+import '../../domain/log_service.dart';
+import '../../model/app_log.dart';
+import 'widgets/log_entry_card.dart';
+import 'widgets/logs_filter_bottom_sheet.dart';
 
 class LogViewerPage extends HookWidget {
   const LogViewerPage({super.key});

@@ -18,8 +18,9 @@ class UserListSearchBar extends WatchingWidget {
       0,
       (sum, user) => sum + user.timeUnits,
     );
-    final int adminCount =
-        users.where((user) => user.role == Role.admin).length;
+    final int adminCount = users
+        .where((user) => user.role == Role.admin)
+        .length;
 
     return Container(
       decoration: BoxDecoration(
@@ -37,7 +38,7 @@ class UserListSearchBar extends WatchingWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.people, color: AppColors.backgroundColor),
+                    Icon(Icons.people, color: AppColors.backgroundColor),
                     const Gap(10),
                     Text(
                       totalUsers.toString(),
@@ -48,7 +49,7 @@ class UserListSearchBar extends WatchingWidget {
                       ),
                     ),
                     const Gap(10),
-                    const Text(
+                    Text(
                       'Admins:',
                       style: TextStyle(
                         fontSize: 13,
@@ -66,7 +67,7 @@ class UserListSearchBar extends WatchingWidget {
                       ),
                     ),
                     const Gap(10),
-                    const Text(
+                    Text(
                       'Gesamt Credit:',
                       style: TextStyle(
                         fontSize: 13,
@@ -84,7 +85,7 @@ class UserListSearchBar extends WatchingWidget {
                       ),
                     ),
                     const Gap(10),
-                    const Text(
+                    Text(
                       'Zeiteinheiten:',
                       style: TextStyle(
                         fontSize: 13,

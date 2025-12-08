@@ -4,6 +4,7 @@ import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
@@ -33,6 +34,73 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
     final locale = AppLocalizations.of(context)!;
     final _hubSessionManager = di<HubSessionManager>();
     final int userCredit = _hubSessionManager.userCredit ?? 0;
+    final activeEnv = serverName;
+    final activeSchemeKey =
+        appColorSchemeKeyFromString(activeEnv?.colorSchemeKey);
+    final palettes = AppColors.availablePalettes();
+    final currentPalette = palettes.firstWhere(
+      (palette) => palette.key == activeSchemeKey,
+      orElse: () => palettes.first,
+    );
+
+    Future<void> _openColorSchemePicker() async {
+      var tempSelection = activeSchemeKey;
+      final selected = await showDialog<AppColorSchemeKey>(
+        context: context,
+        builder: (ctx) => StatefulBuilder(
+          builder: (ctx, setState) => AlertDialog(
+            title: const Text('Farbschema wählen'),
+            content: SizedBox(
+              width: 360,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: palettes
+                    .map(
+                      (palette) => RadioListTile<AppColorSchemeKey>(
+                        value: palette.key,
+                        // ignore: deprecated_member_use
+                        groupValue: tempSelection,
+                        // ignore: deprecated_member_use
+                        onChanged: (value) {
+                          if (value == null) return;
+                          setState(() {
+                            tempSelection = value;
+                          });
+                        },
+                        title: Text(palette.displayName),
+                        subtitle: Text(palette.key.name),
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text('Abbrechen'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(tempSelection),
+                child: const Text('Speichern'),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      if (selected == null) {
+        return;
+      }
+
+      await di<EnvManager>().updateActiveEnv(
+        colorSchemeKey: selected.name,
+      );
+      AppColors.setPalette(selected);
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Farbschema aktualisiert',
+      );
+    }
 
     return SettingsSection(
       title: Text(
@@ -45,6 +113,13 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           leading: const Icon(Icons.home),
           title: const Text('Instanz:'),
           value: Text(serverName!.serverName),
+          trailing: null,
+        ),
+        SettingsTile.navigation(
+          onPressed: (context) => _openColorSchemePicker(),
+          leading: const Icon(Icons.color_lens_outlined),
+          title: const Text('Farbschema'),
+          value: Text(currentPalette.displayName),
           trailing: null,
         ),
         if (_hubSessionManager.isAdmin)

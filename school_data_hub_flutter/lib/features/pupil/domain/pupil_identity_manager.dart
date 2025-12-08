@@ -259,13 +259,7 @@ class PupilIdentityManager {
       );
       return;
     }
-    final List<PupilData>? updatedPupilDataRepository =
-        await PupilDataApiService().updateBackendPupilsDatabase(
-          filePath: fileResponse.path!,
-        );
-    if (updatedPupilDataRepository == null) {
-      return;
-    }
+
     // The backend successfuly updated the pupils, let's get the new update timestamp
     final updateTimestamp = await PupilDataApiService()
         .fetchLastIdentitiesUpdate();
@@ -275,6 +269,13 @@ class PupilIdentityManager {
       pupilIdentityTextLines: textFileContent,
       updateTimestamp: updateTimestamp,
     );
+    final List<PupilData>? updatedPupilDataRepository =
+        await PupilDataApiService().updateBackendPupilsDatabase(
+          filePath: fileResponse.path!,
+        );
+    if (updatedPupilDataRepository == null) {
+      return;
+    }
     for (PupilData pupil in updatedPupilDataRepository) {
       di<PupilManager>().updatePupilProxyWithPupilData(pupil);
     }

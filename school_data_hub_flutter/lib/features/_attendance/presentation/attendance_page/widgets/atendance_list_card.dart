@@ -4,10 +4,10 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/models/attendance_values.dart';
@@ -293,7 +293,7 @@ class AttendanceCard extends WatchingWidget {
                                   Container(
                                     width: 25.0,
                                     height: 25.0,
-                                    decoration: const BoxDecoration(
+                                    decoration: BoxDecoration(
                                       color: AppColors.unexcusedCheckColor,
                                       shape: BoxShape.circle,
                                     ),
@@ -331,7 +331,7 @@ class AttendanceCard extends WatchingWidget {
                                   Container(
                                     width: 25.0,
                                     height: 25.0,
-                                    decoration: const BoxDecoration(
+                                    decoration: BoxDecoration(
                                       color: AppColors.homeColor,
                                       shape: BoxShape.circle,
                                     ),
@@ -595,7 +595,7 @@ class AttendanceCard extends WatchingWidget {
                                 Container(
                                   width: 20.0,
                                   height: 20.0,
-                                  decoration: const BoxDecoration(
+                                  decoration: BoxDecoration(
                                     color: AppColors.unexcusedCheckColor,
                                     shape: BoxShape.circle,
                                   ),
@@ -737,7 +737,7 @@ class AttendanceCard extends WatchingWidget {
                                 Container(
                                   width: 20.0,
                                   height: 20.0,
-                                  decoration: const BoxDecoration(
+                                  decoration: BoxDecoration(
                                     color: AppColors.homeColor,
                                     shape: BoxShape.circle,
                                   ),

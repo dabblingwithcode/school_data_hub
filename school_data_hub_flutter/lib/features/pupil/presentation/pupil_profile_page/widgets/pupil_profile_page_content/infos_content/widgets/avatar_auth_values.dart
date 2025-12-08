@@ -69,7 +69,7 @@ class AvatarAuthValues extends WatchingWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Avatar-Einwilligung',
                   style: TextStyle(
                     fontSize: 14,

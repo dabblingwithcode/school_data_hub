@@ -147,7 +147,7 @@ class LearningListCard extends WatchingWidget {
                               const Gap(5),
                               Text(
                                 '$totalCompetencesChecked/$totalCompetencesToReport',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.backgroundColor,

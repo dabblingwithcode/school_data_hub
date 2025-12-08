@@ -11,6 +11,7 @@ import 'package:school_data_hub_flutter/features/app_settings/settings_page/widg
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/widgets/settings_admin_section.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/widgets/settings_session_section.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
+import 'package:signals/signals_flutter.dart';
 import 'package:watch_it/watch_it.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -18,6 +19,7 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AppColors.paletteSignal.watch(context);
     final locale = AppLocalizations.of(context)!;
 
     final envManager = di<EnvManager>();

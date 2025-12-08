@@ -116,7 +116,7 @@ Future<void> preschoolRevisionDialog(
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text(
+                child: Text(
                   'ABBRECHEN',
                   style: TextStyle(
                     color: AppColors.accentColor,

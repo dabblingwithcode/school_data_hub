@@ -66,11 +66,7 @@ class AfterSchoolCareDetails extends WatchingWidget {
                   ),
                 ),
                 const Gap(10),
-                const Icon(
-                  Icons.edit,
-                  size: 18,
-                  color: AppColors.backgroundColor,
-                ),
+                Icon(Icons.edit, size: 18, color: AppColors.backgroundColor),
               ],
             ),
           ),
@@ -254,7 +250,7 @@ class AfterSchoolCareDetails extends WatchingWidget {
                     children: [
                       if (pickUpInfo?.time == null ||
                           pickUpInfo!.time.isEmpty) ...[
-                        const Icon(
+                        Icon(
                           Icons.access_time,
                           size: 18,
                           color: AppColors.backgroundColor,

@@ -159,7 +159,7 @@ class RoomListCard extends WatchingWidget {
                                   },
                                   child: Text(
                                     room.eventsDefault.toString(),
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.interactiveColor,
@@ -188,7 +188,7 @@ class RoomListCard extends WatchingWidget {
                                   },
                                   child: Text(
                                     room.powerLevelReactions.toString(),
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.interactiveColor,
@@ -269,7 +269,7 @@ class RoomListCard extends WatchingWidget {
                     Center(
                       child: Text(
                         matrixUsersInRoom.length.toString(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 23,
                           fontWeight: FontWeight.bold,
                           color: AppColors.backgroundColor,

@@ -44,7 +44,7 @@ class AvatarImage extends WatchingWidget {
                     Widget child;
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       // Display a loading indicator while the future is not complete
-                      child = const CircularProgressIndicator(
+                      child = CircularProgressIndicator(
                         strokeWidth: 8,
                         color: AppColors.backgroundColor,
                       );
@@ -202,7 +202,7 @@ class AvatarWithBadges extends WatchingWidget {
                       Text(
                         specialNeedsText,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                           color: AppColors.groupColor,
@@ -273,7 +273,7 @@ class AvatarWithBadges extends WatchingWidget {
                 child: Container(
                   width: _badgeSize,
                   height: _badgeSize,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     color: AppColors.ogsColor,
                     shape: BoxShape.circle,
                   ),

@@ -102,9 +102,9 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                           ),
                                         ),
                                         if (pupil.family != null)
-                                          const Row(
+                                          Row(
                                             children: [
-                                              Gap(10),
+                                              const Gap(10),
                                               Icon(
                                                 Icons.group,
                                                 size: 25,

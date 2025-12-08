@@ -77,71 +77,70 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
               ),
               actions: [
                 TextButton(
-                  onPressed:
-                      isSending ? null : () => Navigator.of(context).pop(),
+                  onPressed: isSending
+                      ? null
+                      : () => Navigator.of(context).pop(),
                   child: const Text('Abbrechen'),
                 ),
                 ElevatedButton(
-                  onPressed:
-                      isSending
-                          ? null
-                          : () async {
-                            if (messageController.text.trim().isEmpty) return;
+                  onPressed: isSending
+                      ? null
+                      : () async {
+                          if (messageController.text.trim().isEmpty) return;
 
-                            setState(() => isSending = true);
+                          setState(() => isSending = true);
 
-                            try {
-                              log('Sending direct message to ${matrixUser.id}');
-                              log(
-                                'Message text: ${messageController.text.trim()}',
+                          try {
+                            log('Sending direct message to ${matrixUser.id}');
+                            log(
+                              'Message text: ${messageController.text.trim()}',
+                            );
+
+                            final result = await _matrixPolicyManager
+                                .sendDirectTextMessage(
+                                  targetUserId: matrixUser.id!,
+                                  text: messageController.text.trim(),
+                                );
+
+                            log('Message sent successfully: $result');
+
+                            if (context.mounted) {
+                              Navigator.of(context).pop();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Nachricht an ${matrixUser.displayName} gesendet!',
+                                  ),
+                                  backgroundColor: Colors.green,
+                                ),
                               );
-
-                              final result = await _matrixPolicyManager
-                                  .sendDirectTextMessage(
-                                    targetUserId: matrixUser.id!,
-                                    text: messageController.text.trim(),
-                                  );
-
-                              log('Message sent successfully: $result');
-
-                              if (context.mounted) {
-                                Navigator.of(context).pop();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'Nachricht an ${matrixUser.displayName} gesendet!',
-                                    ),
-                                    backgroundColor: Colors.green,
-                                  ),
-                                );
-                              }
-                            } catch (e, stackTrace) {
-                              log('Error sending message: $e');
-                              log('Stack trace: $stackTrace');
-
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Fehler beim Senden: $e'),
-                                    backgroundColor: Colors.red,
-                                    duration: const Duration(seconds: 5),
-                                  ),
-                                );
-                              }
-                            } finally {
-                              if (context.mounted) {
-                                setState(() => isSending = false);
-                              }
                             }
-                          },
-                  child:
-                      isSending
-                          ? const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                          : const Text('Senden'),
+                          } catch (e, stackTrace) {
+                            log('Error sending message: $e');
+                            log('Stack trace: $stackTrace');
+
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Fehler beim Senden: $e'),
+                                  backgroundColor: Colors.red,
+                                  duration: const Duration(seconds: 5),
+                                ),
+                              );
+                            }
+                          } finally {
+                            if (context.mounted) {
+                              setState(() => isSending = false);
+                            }
+                          }
+                        },
+                  child: isSending
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Senden'),
                 ),
               ],
             );
@@ -161,13 +160,13 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
     return Card(
       color:
           !MatrixUserHelper.isLinkedToPupil(matrixUser) &&
-                  matrixUser.id!.contains('_')
-              ? Colors.orange
-              : userRelationship != null && userRelationship.isParent
-              ? const Color.fromARGB(255, 202, 252, 187)
-              : !matrixUser.id!.contains('_')
-              ? const Color.fromARGB(255, 219, 170, 211)
-              : Colors.white,
+              matrixUser.id!.contains('_')
+          ? Colors.orange
+          : userRelationship != null && userRelationship.isParent
+          ? const Color.fromARGB(255, 202, 252, 187)
+          : !matrixUser.id!.contains('_')
+          ? const Color.fromARGB(255, 219, 170, 211)
+          : Colors.white,
       surfaceTintColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       elevation: 1.0,
@@ -276,40 +275,37 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                                 }
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder:
-                                        (ctx) => PupilProfilePage(
-                                          pupil:
-                                              MatrixUserHelper.linkedPupil(
-                                                matrixUser,
-                                              )!,
-                                        ),
+                                    builder: (ctx) => PupilProfilePage(
+                                      pupil: MatrixUserHelper.linkedPupil(
+                                        matrixUser,
+                                      )!,
+                                    ),
                                   ),
                                 );
                               },
-                              child:
-                                  matrixUser.isParent
-                                      ? Text(
-                                        '${matrixUser.displayName} 👨‍👩‍👦',
-                                        overflow: TextOverflow.fade,
-                                        softWrap: false,
-                                        textAlign: TextAlign.left,
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                        ),
-                                      )
-                                      : Text(
-                                        matrixUser.displayName,
-                                        overflow: TextOverflow.fade,
-                                        softWrap: false,
-                                        textAlign: TextAlign.left,
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                        ),
+                              child: matrixUser.isParent
+                                  ? Text(
+                                      '${matrixUser.displayName} 👨‍👩‍👦',
+                                      overflow: TextOverflow.fade,
+                                      softWrap: false,
+                                      textAlign: TextAlign.left,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
                                       ),
+                                    )
+                                  : Text(
+                                      matrixUser.displayName,
+                                      overflow: TextOverflow.fade,
+                                      softWrap: false,
+                                      textAlign: TextAlign.left,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                      ),
+                                    ),
                             ),
                           ),
                         ),
@@ -327,10 +323,9 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                                   style: TextStyle(
                                     color:
                                         userRelationship?.pupil != null ||
-                                                userRelationship?.isParent ==
-                                                    true
-                                            ? Colors.green
-                                            : AppColors.backgroundColor,
+                                            userRelationship?.isParent == true
+                                        ? Colors.green
+                                        : AppColors.backgroundColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
                                   ),
@@ -392,16 +387,15 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                                 .resetPasswordAndPrintCredentialsFile(
                                   user: matrixUser,
                                   logoutDevices: logOutDevices,
-                                  isStaff:
-                                      userRelationship?.isTeacher == true
-                                          ? true
-                                          : false,
+                                  isStaff: userRelationship?.isTeacher == true
+                                      ? true
+                                      : false,
                                 );
                             if (file != null) {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder:
-                                      (context) => PdfViewerPage(pdfFile: file),
+                                  builder: (context) =>
+                                      PdfViewerPage(pdfFile: file),
                                 ),
                               );
                             }
@@ -409,8 +403,8 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                           icon: const Icon(Icons.qr_code_2_rounded),
                         ),
                         IconButton(
-                          onPressed:
-                              () => _showMessageDialog(context, matrixUser),
+                          onPressed: () =>
+                              _showMessageDialog(context, matrixUser),
                           icon: const Icon(Icons.message, color: Colors.blue),
                         ),
                       ],
@@ -432,7 +426,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                     Center(
                       child: Text(
                         matrixUser.matrixRooms.length.toString(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 23,
                           fontWeight: FontWeight.bold,
                           color: AppColors.backgroundColor,
@@ -464,20 +458,18 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                       final List<String> selectedRoomIds =
                           await Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder:
-                                  (ctx) =>
-                                      SelectMatrixRoomsList(availableRooms),
+                              builder: (ctx) =>
+                                  SelectMatrixRoomsList(availableRooms),
                             ),
                           ) ??
                           [];
                       if (selectedRoomIds.isNotEmpty) {
-                        final List<JoinedRoom> joinedRooms =
-                            selectedRoomIds
-                                .map(
-                                  (roomId) =>
-                                      JoinedRoom(roomId: roomId, powerLevel: 0),
-                                )
-                                .toList();
+                        final List<JoinedRoom> joinedRooms = selectedRoomIds
+                            .map(
+                              (roomId) =>
+                                  JoinedRoom(roomId: roomId, powerLevel: 0),
+                            )
+                            .toList();
                         matrixUser.joinRooms(joinedRooms);
                       }
                     },

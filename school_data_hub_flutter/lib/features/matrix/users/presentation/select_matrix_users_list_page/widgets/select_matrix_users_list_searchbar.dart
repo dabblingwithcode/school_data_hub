@@ -36,10 +36,7 @@ class SelectUserListSearchBar extends WatchingWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.group_rounded,
-                    color: AppColors.backgroundColor,
-                  ),
+                  Icon(Icons.group_rounded, color: AppColors.backgroundColor),
                   const Gap(10),
                   Text(
                     matrixUsers.length.toString(),
@@ -78,10 +75,8 @@ class SelectUserListSearchBar extends WatchingWidget {
                 ),
                 InkWell(
                   onTap: () => {},
-                  onLongPress:
-                      () =>
-                          di<MatrixPolicyFilterManager>()
-                              .resetAllMatrixFilters(),
+                  onLongPress: () =>
+                      di<MatrixPolicyFilterManager>().resetAllMatrixFilters(),
                   // onPressed: () => showBottomSheetFilters(context),
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),

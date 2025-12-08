@@ -25,9 +25,9 @@ Future<DateTime?> selectSchooldayDate(
     builder: (context, child) {
       return Theme(
         data: Theme.of(context).copyWith(
-          colorScheme: const ColorScheme.light(
+          colorScheme: ColorScheme.light(
             primary: AppColors.backgroundColor,
-            onPrimary: Color.fromARGB(255, 241, 241, 241),
+            onPrimary: const Color.fromARGB(255, 241, 241, 241),
             onSurface: Colors.deepPurple,
           ),
           textButtonTheme: TextButtonThemeData(

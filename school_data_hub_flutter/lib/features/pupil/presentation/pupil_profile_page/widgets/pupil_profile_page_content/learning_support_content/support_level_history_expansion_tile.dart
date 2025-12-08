@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
-import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/support_level_dialog.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -66,7 +66,7 @@ class _SupportLevelHistoryExpansionTileState
                       : pupil.latestSupportLevel!.level == 3
                       ? 'Förderebene 3'
                       : '🌈-Förderung',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: AppColors.interactiveColor,
@@ -135,7 +135,7 @@ class _SupportLevelHistoryExpansionTileState
                                             .supportLevelHistory![index]
                                             .level
                                             .toString(),
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           color: AppColors.backgroundColor,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 18,

@@ -102,26 +102,26 @@ class NewSchoolListPage extends WatchingWidget {
                 const Gap(10),
                 _hubSessionManager.isAdmin == true
                     ? Row(
-                      children: [
-                        const Text(
-                          'Öffentliche Liste:',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                        children: [
+                          const Text(
+                            'Öffentliche Liste:',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        const Gap(10),
+                          const Gap(10),
 
-                        Switch(
-                          value:
-                              isOnValue, // Boolean value representing the switch state
-                          onChanged: (newValue) {
-                            isOn.value = newValue;
-                          },
-                          activeColor: Colors.blue, // Change color if desired
-                        ),
-                      ],
-                    )
+                          Switch(
+                            value:
+                                isOnValue, // Boolean value representing the switch state
+                            onChanged: (newValue) {
+                              isOn.value = newValue;
+                            },
+                            activeColor: Colors.blue, // Change color if desired
+                          ),
+                        ],
+                      )
                     : const SizedBox.shrink(),
                 Row(
                   children: [
@@ -156,119 +156,126 @@ class NewSchoolListPage extends WatchingWidget {
                 if (pupilIdsValue.isEmpty) const Gap(30),
                 pupilIdsValue.isNotEmpty
                     ? Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: ListView.builder(
-                            padding: const EdgeInsets.only(top: 5, bottom: 15),
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: pupilsFromIds.length,
-                            itemBuilder: (context, int index) {
-                              PupilProxy listedPupil = pupilsFromIds[index];
-                              return Column(
-                                children: [
-                                  // const Gap(5),
-                                  InkWell(
-                                    onLongPress: () {
-                                      final currentPupilIds = Set<int>.from(
-                                        pupilIdsValue,
-                                      );
-                                      currentPupilIds.remove(
-                                        listedPupil.internalId,
-                                      );
-                                      pupilIds.value = currentPupilIds;
-                                    },
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder:
-                                              (ctx) => PupilProfilePage(
-                                                pupil: listedPupil,
-                                              ),
-                                        ),
-                                      );
-                                    },
-                                    child: Card(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          children: [
-                                            AvatarWithBadges(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: ListView.builder(
+                              padding: const EdgeInsets.only(
+                                top: 5,
+                                bottom: 15,
+                              ),
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: pupilsFromIds.length,
+                              itemBuilder: (context, int index) {
+                                PupilProxy listedPupil = pupilsFromIds[index];
+                                return Column(
+                                  children: [
+                                    // const Gap(5),
+                                    InkWell(
+                                      onLongPress: () {
+                                        final currentPupilIds = Set<int>.from(
+                                          pupilIdsValue,
+                                        );
+                                        currentPupilIds.remove(
+                                          listedPupil.internalId,
+                                        );
+                                        pupilIds.value = currentPupilIds;
+                                      },
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (ctx) => PupilProfilePage(
                                               pupil: listedPupil,
-                                              size: 50,
                                             ),
-                                            const Gap(10),
-                                            Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  listedPupil.firstName,
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 18,
+                                          ),
+                                        );
+                                      },
+                                      child: Card(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
+                                            children: [
+                                              AvatarWithBadges(
+                                                pupil: listedPupil,
+                                                size: 50,
+                                              ),
+                                              const Gap(10),
+                                              Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    listedPupil.firstName,
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 18,
+                                                    ),
                                                   ),
-                                                ),
-                                                //const Gap(10),
-                                                Text(
-                                                  listedPupil.lastName,
-                                                  style: const TextStyle(),
-                                                ),
-                                              ],
-                                            ),
-                                            const Spacer(),
-                                            Column(
-                                              children: [
-                                                Text(
-                                                  listedPupil.group,
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: AppColors.groupColor,
-                                                    fontSize: 18,
+                                                  //const Gap(10),
+                                                  Text(
+                                                    listedPupil.lastName,
+                                                    style: const TextStyle(),
                                                   ),
-                                                ),
-                                                Text(
-                                                  listedPupil.schoolGrade.name,
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color:
-                                                        AppColors
-                                                            .schoolyearColor,
-                                                    fontSize: 18,
+                                                ],
+                                              ),
+                                              const Spacer(),
+                                              Column(
+                                                children: [
+                                                  Text(
+                                                    listedPupil.group,
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color:
+                                                          AppColors.groupColor,
+                                                      fontSize: 18,
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                            const Gap(15),
-                                          ],
+                                                  Text(
+                                                    listedPupil
+                                                        .schoolGrade
+                                                        .name,
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: AppColors
+                                                          .schoolyearColor,
+                                                      fontSize: 18,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const Gap(15),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              );
-                            },
+                                  ],
+                                );
+                              },
+                            ),
                           ),
                         ),
-                      ),
-                    )
+                      )
                     : const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Keine Kinder ausgewählt!',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Color.fromARGB(255, 91, 91, 91),
-                            fontWeight: FontWeight.bold,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Keine Kinder ausgewählt!',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Color.fromARGB(255, 91, 91, 91),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
                 if (pupilIds.value.isEmpty) const Spacer(),
                 ElevatedButton(
                   style: AppStyles.actionButtonStyle,
@@ -276,13 +283,10 @@ class NewSchoolListPage extends WatchingWidget {
                     final List<int> selectedPupilIds =
                         await Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder:
-                                (ctx) => SelectPupilsListPage(
-                                  selectablePupils: _pupilManager
-                                      .getPupilsNotListed(
-                                        pupilIdsValue.toList(),
-                                      ),
-                                ),
+                            builder: (ctx) => SelectPupilsListPage(
+                              selectablePupils: _pupilManager
+                                  .getPupilsNotListed(pupilIdsValue.toList()),
+                            ),
                           ),
                         ) ??
                         [];

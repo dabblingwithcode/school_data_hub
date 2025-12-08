@@ -136,7 +136,7 @@ Future<void> supportLevelDialog(
                     },
                     child: Text(
                       selectedDate.formatDateForUser(),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.backgroundColor,
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
@@ -170,7 +170,7 @@ Future<void> supportLevelDialog(
               Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: InkWell(
-                  child: const Text(
+                  child: Text(
                     'ABBRECHEN',
                     style: TextStyle(
                       color: AppColors.accentColor,
@@ -186,7 +186,7 @@ Future<void> supportLevelDialog(
               Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: InkWell(
-                  child: const Text(
+                  child: Text(
                     'OK',
                     style: TextStyle(
                       color: AppColors.accentColor,

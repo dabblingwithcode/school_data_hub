@@ -44,10 +44,11 @@ class AuthorizationCard extends WatchingWidget {
                 children: [
                   Text(
                     authorization.name,
-                    style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.interactiveColor),
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.interactiveColor,
+                    ),
                   ),
                   const Gap(5),
                   SizedBox(

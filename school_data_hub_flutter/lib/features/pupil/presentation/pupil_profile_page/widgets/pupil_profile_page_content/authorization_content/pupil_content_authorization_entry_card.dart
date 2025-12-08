@@ -85,7 +85,7 @@ class PupilContentAuthorizationEntryCard extends WatchingWidget {
                                       scrollDirection: Axis.horizontal,
                                       child: Text(
                                         authorization.name,
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
                                           color: AppColors.interactiveColor,
@@ -240,7 +240,7 @@ class PupilContentAuthorizationEntryCard extends WatchingWidget {
                           },
                           child: Text(
                             pupilAuthorization.comment ?? 'kein Kommentar',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
                               color: AppColors.interactiveColor,

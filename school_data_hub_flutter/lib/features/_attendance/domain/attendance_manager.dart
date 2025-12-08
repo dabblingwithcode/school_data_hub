@@ -9,7 +9,6 @@ import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/data/attendance_api_service.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/models/pupil_missed_classes_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
@@ -71,11 +70,10 @@ class AttendanceManager with ChangeNotifier {
   //- Getters
 
   MissedSchoolday? getPupilMissedSchooldayOnDate(int pupilId, DateTime date) {
+    // Using toUtc would make the comparison fail because the date is in the local timezone
     return _pupilMissedSchooldaysMap[pupilId]!.missedSchooldays
         .firstWhereOrNull(
-          (element) => element.schoolday!.schoolday.isSameDate(
-            date.formatToUtcForServer(),
-          ),
+          (element) => element.schoolday!.schoolday.isSameDate(date),
         );
   }
 
@@ -175,15 +173,21 @@ class AttendanceManager with ChangeNotifier {
           (event) {
             switch (event.operation) {
               case 'add':
-                _log.fine('add missedSchoolday ${event.missedSchoolday}');
+                _log.fine(
+                  '[STREAM]add missedSchoolday ${event.missedSchoolday}',
+                );
                 updateMissedSchooldayInCollections(event.missedSchoolday);
                 break;
               case 'update':
-                _log.fine('update missedSchoolday ${event.missedSchoolday}');
+                _log.fine(
+                  '[STREAM] update missedSchoolday ${event.missedSchoolday}',
+                );
                 updateMissedSchooldayInCollections(event.missedSchoolday);
                 break;
               case 'delete':
-                _log.fine('delete missedSchoolday ${event.missedSchoolday}');
+                _log.fine(
+                  '[STREAM] delete missedSchoolday ${event.missedSchoolday}',
+                );
                 removeMissedSchooldayFromCollections(
                   event.missedSchoolday.pupilId,
                   event.missedSchoolday.schoolday!.schoolday,
@@ -207,7 +211,7 @@ class AttendanceManager with ChangeNotifier {
                 'Der Server konnte nicht gefunden werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.',
               );
             } else {
-              _notificationService.showSnackBar(
+              _log.severe(
                 NotificationType.error,
                 'Ein unbekannter Fehler ist aufgetreten: $errorString',
               );
@@ -486,17 +490,14 @@ class AttendanceManager with ChangeNotifier {
     return;
   }
 
-  Future<void> postManyMissedSchooldays(
-    int id,
-    DateTime startdate,
-    DateTime enddate,
-    MissedType missedType,
-  ) async {
+  Future<void> postManyMissedSchooldays({
+    required int id,
+    required DateTime startdate,
+    required DateTime enddate,
+    required MissedType missedType,
+    String? comment,
+  }) async {
     List<MissedSchoolday> missedSchooldays = [];
-
-    final PupilProxy pupil = _pupilManager.allPupils.firstWhere(
-      (pupil) => pupil.internalId == id,
-    );
 
     final List<DateTime> validSchooldays =
         _schoolCalendarManager.availableDates.value;
@@ -516,7 +517,7 @@ class AttendanceManager with ChangeNotifier {
         missedSchooldays.add(
           MissedSchoolday(
             createdBy: _sessionManager.signedInUser!.userName!,
-            pupilId: pupil.pupilId,
+            pupilId: id,
             schoolday: schoolday,
             missedType: missedType,
             unexcused: false,
@@ -526,7 +527,7 @@ class AttendanceManager with ChangeNotifier {
             minutesLate: null,
             writtenExcuse: false,
             modifiedBy: null,
-            comment: null,
+            comment: comment,
             schooldayId: schoolday!.id!,
           ),
         );

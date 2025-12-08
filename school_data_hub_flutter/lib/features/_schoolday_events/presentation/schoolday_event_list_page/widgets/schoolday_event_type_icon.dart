@@ -35,17 +35,16 @@ class SchooldayEventTypeIcon extends StatelessWidget {
                   fontWeight: FontWeight.bold)),
         ]);
       case SchooldayEventType.otherEvent:
-        return const Icon(Icons.assignment_rounded,
-            color: AppColors.backgroundColor);
+        return Icon(Icons.assignment_rounded, color: AppColors.backgroundColor);
       case SchooldayEventType.notSet:
         return Image.asset('assets/choose.png');
       case SchooldayEventType.admonitionAndBanned:
-        return const Row(mainAxisSize: MainAxisSize.min, children: [
-          Icon(
+        return Row(mainAxisSize: MainAxisSize.min, children: [
+          const Icon(
             Icons.sim_card_alert_rounded,
             color: Colors.red,
           ),
-          Gap(5),
+          const Gap(5),
           Icon(
             Icons.home,
             color: AppColors.accentColor,

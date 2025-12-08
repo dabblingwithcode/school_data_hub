@@ -98,7 +98,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                         schooldayEvent.schoolday!.schoolday
                                             .formatDateForUser(),
 
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           color: AppColors.interactiveColor,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 20,
@@ -204,7 +204,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                     },
                                     child: Text(
                                       schooldayEvent.createdBy,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 18,
                                         color: AppColors.backgroundColor,
@@ -394,7 +394,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                               schooldayEvent.processed
                                   ? 'Bearbeitet von'
                                   : 'Nicht bearbeitet',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 16,
                                 color: AppColors.backgroundColor,
                               ),
@@ -426,7 +426,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                     },
                                     child: Text(
                                       schooldayEvent.processedBy!,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.interactiveColor,
@@ -461,7 +461,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                     },
                                     child: Text(
                                       'am ${schooldayEvent.processedAt!.formatDateForUser()}',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 18,
                                         color: AppColors.interactiveColor,
@@ -507,7 +507,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                       },
                       child: Text(
                         schooldayEvent.comment ?? 'Kommentar hinzufügen',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           color: AppColors.interactiveColor,
                         ),

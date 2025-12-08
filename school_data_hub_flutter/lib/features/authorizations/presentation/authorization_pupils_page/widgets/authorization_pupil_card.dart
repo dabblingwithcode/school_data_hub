@@ -246,7 +246,7 @@ class AuthorizationPupilCard extends WatchingWidget {
                       pupilAuthorization.comment != null
                           ? pupilAuthorization.comment!
                           : 'kein Kommentar',
-                      style: const TextStyle(color: AppColors.backgroundColor),
+                      style: TextStyle(color: AppColors.backgroundColor),
                       textAlign: TextAlign.left,
                       maxLines: 3,
                       softWrap: true,

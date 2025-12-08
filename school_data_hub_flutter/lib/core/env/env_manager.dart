@@ -6,6 +6,7 @@ import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/env/models/enums.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
@@ -59,6 +60,10 @@ class EnvManager with ChangeNotifier {
 
   final _envIsReady = signal(false);
   Signal<bool> get envIsReady => _envIsReady;
+
+  void _syncPaletteWithActiveEnv() {
+    AppColors.setPaletteByKeyString(_activeEnv?.colorSchemeKey);
+  }
 
   // Declare storage keys for the environment
 
@@ -162,6 +167,7 @@ class EnvManager with ChangeNotifier {
 
     _activeEnv =
         environmentsMapWithDefaultServerEnv.environmentsMap[_defaultEnv];
+    _syncPaletteWithActiveEnv();
     notifyListeners();
     _log.info('Default Environment set: $_defaultEnv');
 
@@ -263,6 +269,7 @@ class EnvManager with ChangeNotifier {
     String? key,
     String? iv,
     DateTime? lastIdentitiesUpdate,
+    String? colorSchemeKey,
   }) async {
     if (_activeEnv == null) {
       _log.warning('No active environment set, cannot update it.');
@@ -275,8 +282,10 @@ class EnvManager with ChangeNotifier {
       iv: iv ?? _activeEnv!.iv,
       lastIdentitiesUpdate:
           lastIdentitiesUpdate ?? _activeEnv!.lastIdentitiesUpdate,
+      colorSchemeKey: colorSchemeKey ?? _activeEnv!.colorSchemeKey,
     );
     _environments[_activeEnv!.serverName] = _activeEnv!;
+    _syncPaletteWithActiveEnv();
     notifyListeners();
     _log.info('''Active environment updated: ${_activeEnv!.serverName}
     lastIdentitiesUpdate: ${_activeEnv!.lastIdentitiesUpdate}
@@ -311,6 +320,7 @@ class EnvManager with ChangeNotifier {
 
     _activeEnv = _environments[envName]!;
     _defaultEnv = envName;
+    _syncPaletteWithActiveEnv();
 
     // Log new environment details
     _log.info('[ENV] NEW active environment set:');
