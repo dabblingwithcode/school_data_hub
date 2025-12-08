@@ -1,12 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_picker.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/models/attendance_values.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -15,7 +15,7 @@ class AttendanceHelper {
   static SchoolCalendarManager get _schoolCalendarManager =>
       di<SchoolCalendarManager>();
   static AttendanceManager get _attendanceManager => di<AttendanceManager>();
-  static PupilManager get _pupilManager => di<PupilManager>();
+  static PupilProxyManager get _pupilManager => di<PupilProxyManager>();
   // static int? getMissedSchooldayIndex(PupilProxy pupil, DateTime date) {
   //   final int? foundMissedSchooldayIndex = pupil.missedSchooldays?.indexWhere(
   //       (datematch) => (datematch.schoolday!.schoolday.isSameDate(date)));

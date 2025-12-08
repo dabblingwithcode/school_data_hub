@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/domain/models/nullable_records.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('SchooldayEventApiService');
@@ -28,7 +28,7 @@ class SchooldayEventApiService {
   ) async {
     final userName = _hubSessionManager.userName!;
     _notificationService.apiRunning(true);
-    final pupil = di<PupilManager>().getPupilByPupilId(pupilId);
+    final pupil = di<PupilProxyManager>().getPupilByPupilId(pupilId);
     final tutor = pupil?.groupTutor;
     try {
       final event = await _client.schooldayEvent.createSchooldayEvent(
@@ -116,7 +116,9 @@ class SchooldayEventApiService {
           : schooldayEvent.processedAt,
       comment: comment != null ? comment.value : schooldayEvent.comment,
     );
-    final pupil = di<PupilManager>().getPupilByPupilId(schooldayEvent.pupilId)!;
+    final pupil = di<PupilProxyManager>().getPupilByPupilId(
+      schooldayEvent.pupilId,
+    )!;
     try {
       _notificationService.apiRunning(true);
       final updatedSchooldayEvent = await _client.schooldayEvent

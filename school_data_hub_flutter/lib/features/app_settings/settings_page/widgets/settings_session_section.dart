@@ -13,7 +13,7 @@ import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/dialogs/change_env_dialog.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
@@ -35,8 +35,9 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
     final _hubSessionManager = di<HubSessionManager>();
     final int userCredit = _hubSessionManager.userCredit ?? 0;
     final activeEnv = serverName;
-    final activeSchemeKey =
-        appColorSchemeKeyFromString(activeEnv?.colorSchemeKey);
+    final activeSchemeKey = appColorSchemeKeyFromString(
+      activeEnv?.colorSchemeKey,
+    );
     final palettes = AppColors.availablePalettes();
     final currentPalette = palettes.firstWhere(
       (palette) => palette.key == activeSchemeKey,
@@ -92,9 +93,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
         return;
       }
 
-      await di<EnvManager>().updateActiveEnv(
-        colorSchemeKey: selected.name,
-      );
+      await di<EnvManager>().updateActiveEnv(colorSchemeKey: selected.name);
       AppColors.setPalette(selected);
       _notificationService.showSnackBar(
         NotificationType.success,

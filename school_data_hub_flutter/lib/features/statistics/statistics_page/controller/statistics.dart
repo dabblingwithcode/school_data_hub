@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_helper_functions.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/statistics_page.dart';
 import 'package:watch_it/watch_it.dart';
@@ -16,7 +16,7 @@ class Statistics extends WatchingStatefulWidget {
 }
 
 class StatisticsController extends State<Statistics> {
-  final List<PupilProxy> pupils = di<PupilManager>().allPupils;
+  final List<PupilProxy> pupils = di<PupilProxyManager>().allPupils;
   Map<String, int> languageOccurrences = {};
   Map<String, DateTime> enrollments = {};
   @override
@@ -127,7 +127,7 @@ class StatisticsController extends State<Statistics> {
       // if the pupil has a language support as of today, add to list
 
       if (pupil.migrationSupportEnds != null) {
-        if (PupilHelper.hasLanguageSupport(pupil.migrationSupportEnds)) {
+        if (PupilProxyHelper.hasLanguageSupport(pupil.migrationSupportEnds)) {
           groupPupils.add(pupil);
         }
       }
@@ -140,7 +140,7 @@ class StatisticsController extends State<Statistics> {
     for (PupilProxy pupil in givenPupils) {
       // if the pupil has a language support as of today, add to list
       if (pupil.migrationSupportEnds != null) {
-        if (PupilHelper.hadLanguageSupport(pupil.migrationSupportEnds)) {
+        if (PupilProxyHelper.hadLanguageSupport(pupil.migrationSupportEnds)) {
           groupPupils.add(pupil);
         }
       }

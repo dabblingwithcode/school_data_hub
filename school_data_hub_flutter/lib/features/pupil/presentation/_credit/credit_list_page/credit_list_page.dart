@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/widgets/credit_list_card.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/widgets/credit_list_page_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/widgets/credit_list_searchbar.dart';
@@ -19,15 +19,18 @@ class CreditListPage extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     List<PupilProxy> pupils = watchValue((PupilsFilter x) => x.filteredPupils);
-    int userCredit =
-        watchPropertyValue((HubSessionManager x) => x.user)!.credit;
+    int userCredit = watchPropertyValue(
+      (HubSessionManager x) => x.user,
+    )!.credit;
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
       appBar: GenericAppBar(
-          iconData: Icons.credit_card, title: 'Guthaben: $userCredit'),
+        iconData: Icons.credit_card,
+        title: 'Guthaben: $userCredit',
+      ),
       body: RefreshIndicator(
-        onRefresh: () async => di<PupilManager>().fetchAllPupils(),
+        onRefresh: () async => di<PupilProxyManager>().fetchAllPupils(),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 700),
@@ -39,8 +42,9 @@ class CreditListPage extends WatchingWidget {
                   title: CreditListSearchBar(pupils: pupils),
                 ),
                 GenericSliverListWithEmptyListCheck(
-                    items: pupils,
-                    itemBuilder: (_, pupil) => CreditListCard(pupil)),
+                  items: pupils,
+                  itemBuilder: (_, pupil) => CreditListCard(pupil),
+                ),
               ],
             ),
           ),

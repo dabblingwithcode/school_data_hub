@@ -41,27 +41,22 @@ class PupilSchooldayEventsList extends WatchingWidget {
           ),
         Padding(
           padding: const EdgeInsets.only(top: 10.0),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            //margin: const EdgeInsets.only(bottom: 16),
-            width: double.infinity,
-            child: ElevatedButton(
-              style: AppStyles.actionButtonStyle,
-              onPressed: () async {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (ctx) =>
-                        NewSchooldayEventPage(pupilId: pupil.pupilId),
-                  ),
-                );
-              },
-              child: const Text(
-                "NEUES EREIGNIS",
-                style: TextStyle(
-                  fontSize: 17.0,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+          child: ElevatedButton(
+            style: AppStyles.actionButtonStyle,
+            onPressed: () async {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (ctx) =>
+                      NewSchooldayEventPage(pupilId: pupil.pupilId),
                 ),
+              );
+            },
+            child: const Text(
+              "NEUES EREIGNIS",
+              style: TextStyle(
+                fontSize: 17.0,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),

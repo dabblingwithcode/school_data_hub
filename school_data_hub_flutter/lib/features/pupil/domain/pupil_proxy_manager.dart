@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/data/pupil_book_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/data/pupil_data_api_service.dart';
@@ -14,7 +15,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-class PupilManager extends ChangeNotifier {
+class PupilProxyManager extends ChangeNotifier {
   final _log = Logger('PupilManager');
 
   final _notificationService = di<NotificationService>();
@@ -29,7 +30,7 @@ class PupilManager extends ChangeNotifier {
 
   List<PupilProxy> get allPupils => _pupilIdPupilsMap.values.toList();
 
-  PupilManager();
+  PupilProxyManager();
 
   void dispose() {
     // dispose all the pupil proxies
@@ -143,14 +144,15 @@ class PupilManager extends ChangeNotifier {
     final DateTime now = DateTime.now();
 
     allPupils.removeWhere((key, pupil) {
+      final birthdayToLocal = pupil.birthday.toLocal();
       final birthdayThisYear = DateTime(
         now.year,
-        pupil.birthday.month,
-        pupil.birthday.day,
+        birthdayToLocal.month,
+        birthdayToLocal.day,
       );
 
       // Ensure the birthday this year is not before the specified date and not after today.
-      return !(birthdayThisYear.isAtSameMomentAs(date) ||
+      return !(birthdayThisYear.isSameDate(date) ||
           (birthdayThisYear.isAfter(date) && birthdayThisYear.isBefore(now)));
     });
 

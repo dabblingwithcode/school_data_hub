@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialo
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_set_avatar.dart';
 import 'package:watch_it/watch_it.dart';
@@ -298,7 +298,7 @@ class AvatarWithBadges extends WatchingWidget {
                   height: _badgeSize,
                   decoration: BoxDecoration(
                     color:
-                        PupilHelper.hasLanguageSupport(
+                        PupilProxyHelper.hasLanguageSupport(
                           pupil.migrationSupportEnds,
                         )
                         ? Colors.green

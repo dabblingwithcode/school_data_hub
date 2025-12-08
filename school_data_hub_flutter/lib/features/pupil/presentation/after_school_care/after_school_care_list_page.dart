@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/after_school_care/widgets/after_school_care_list_card.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/after_school_care/widgets/after_school_care_list_search_bar.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/after_school_care/widgets/after_school_care_view_bottom_navbar.dart';
@@ -47,7 +47,8 @@ class OgsListPage extends WatchingWidget {
         title: 'OGS Infos',
       ),
       body: RefreshIndicator(
-        onRefresh: () async => di<PupilManager>().updatePupilList(ogsPupils),
+        onRefresh: () async =>
+            di<PupilProxyManager>().updatePupilList(ogsPupils),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 800),

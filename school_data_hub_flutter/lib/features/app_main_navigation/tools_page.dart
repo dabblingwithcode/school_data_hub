@@ -12,9 +12,9 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_d
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/birthdays_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identity_stream_page/pupil_identity_stream_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
@@ -138,7 +138,7 @@ class ToolsPage extends WatchingWidget {
                       pupilIds = await Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (ctx) => SelectPupilsListPage(
-                            selectablePupils: di<PupilManager>()
+                            selectablePupils: di<PupilProxyManager>()
                                 .getPupilsFromInternalIds(
                                   di<PupilIdentityManager>().availablePupilIds,
                                 ),
@@ -148,7 +148,7 @@ class ToolsPage extends WatchingWidget {
                       if (pupilIds == null || pupilIds.isEmpty) {
                         return;
                       }
-                      final internalIds = di<PupilManager>()
+                      final internalIds = di<PupilProxyManager>()
                           .getInternalIdsFromPupilIds(pupilIds);
                       final String encryptedPupilIdentities =
                           await PupilIdentityHelper()

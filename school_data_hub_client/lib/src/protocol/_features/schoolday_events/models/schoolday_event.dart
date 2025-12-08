@@ -22,6 +22,7 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
     required this.eventId,
     required this.eventType,
     required this.eventReason,
+    this.eventTime,
     required this.createdBy,
     required this.processed,
     this.processedBy,
@@ -42,6 +43,7 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
     required String eventId,
     required _i2.SchooldayEventType eventType,
     required String eventReason,
+    String? eventTime,
     required String createdBy,
     required bool processed,
     String? processedBy,
@@ -64,6 +66,7 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
       eventType: _i2.SchooldayEventType.fromJson(
           (jsonSerialization['eventType'] as String)),
       eventReason: jsonSerialization['eventReason'] as String,
+      eventTime: jsonSerialization['eventTime'] as String?,
       createdBy: jsonSerialization['createdBy'] as String,
       processed: jsonSerialization['processed'] as bool,
       processedBy: jsonSerialization['processedBy'] as String?,
@@ -106,6 +109,8 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
 
   String eventReason;
 
+  String? eventTime;
+
   String createdBy;
 
   bool processed;
@@ -140,6 +145,7 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
     String? eventId,
     _i2.SchooldayEventType? eventType,
     String? eventReason,
+    String? eventTime,
     String? createdBy,
     bool? processed,
     String? processedBy,
@@ -161,6 +167,7 @@ abstract class SchooldayEvent implements _i1.SerializableModel {
       'eventId': eventId,
       'eventType': eventType.toJson(),
       'eventReason': eventReason,
+      if (eventTime != null) 'eventTime': eventTime,
       'createdBy': createdBy,
       'processed': processed,
       if (processedBy != null) 'processedBy': processedBy,
@@ -193,6 +200,7 @@ class _SchooldayEventImpl extends SchooldayEvent {
     required String eventId,
     required _i2.SchooldayEventType eventType,
     required String eventReason,
+    String? eventTime,
     required String createdBy,
     required bool processed,
     String? processedBy,
@@ -211,6 +219,7 @@ class _SchooldayEventImpl extends SchooldayEvent {
           eventId: eventId,
           eventType: eventType,
           eventReason: eventReason,
+          eventTime: eventTime,
           createdBy: createdBy,
           processed: processed,
           processedBy: processedBy,
@@ -235,6 +244,7 @@ class _SchooldayEventImpl extends SchooldayEvent {
     String? eventId,
     _i2.SchooldayEventType? eventType,
     String? eventReason,
+    Object? eventTime = _Undefined,
     String? createdBy,
     bool? processed,
     Object? processedBy = _Undefined,
@@ -254,6 +264,7 @@ class _SchooldayEventImpl extends SchooldayEvent {
       eventId: eventId ?? this.eventId,
       eventType: eventType ?? this.eventType,
       eventReason: eventReason ?? this.eventReason,
+      eventTime: eventTime is String? ? eventTime : this.eventTime,
       createdBy: createdBy ?? this.createdBy,
       processed: processed ?? this.processed,
       processedBy: processedBy is String? ? processedBy : this.processedBy,

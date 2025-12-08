@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/chart_page.dart';
 import 'package:watch_it/watch_it.dart';
@@ -15,7 +15,7 @@ class ChartPageController extends StatefulWidget {
 }
 
 class _ChartPageControllerState extends State<ChartPageController> {
-  late final PupilManager _pupilManager;
+  late final PupilProxyManager _pupilManager;
   late final SchoolCalendarManager _schoolCalendarManager;
   late final SchooldayEventManager _schooldayEventManager;
   late final AttendanceManager _attendanceManager;
@@ -53,7 +53,7 @@ class _ChartPageControllerState extends State<ChartPageController> {
   @override
   void initState() {
     super.initState();
-    _pupilManager = di<PupilManager>();
+    _pupilManager = di<PupilProxyManager>();
     _schoolCalendarManager = di<SchoolCalendarManager>();
     _schooldayEventManager = di<SchooldayEventManager>();
     _attendanceManager = di<AttendanceManager>();

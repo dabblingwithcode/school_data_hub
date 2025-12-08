@@ -25,9 +25,9 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/w
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/support_category_statuses_list.dart';
 import 'package:school_data_hub_flutter/features/learning_support/services/learning_support_plan_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_helper_functions.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/support_level_history_expansion_tile.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
@@ -78,7 +78,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                   pupil.preSchoolMedical?.preschoolMedicalStatus,
                 ),
                 child: Text(
-                  PupilHelper.preschoolRevisionPredicate(
+                  PupilProxyHelper.preschoolRevisionPredicate(
                     pupil.preSchoolMedical,
                   ),
                   style: TextStyle(
@@ -626,7 +626,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
       final client = di<Client>();
       final notificationService = di<NotificationService>();
       final hubSessionManager = di<HubSessionManager>();
-      final pupilManager = di<PupilManager>();
+      final pupilManager = di<PupilProxyManager>();
 
       // Ensure PreSchoolMedical record exists
       if (pupil.preSchoolMedical == null) {
@@ -713,7 +713,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
     try {
       final client = di<Client>();
       final notificationService = di<NotificationService>();
-      final pupilManager = di<PupilManager>();
+      final pupilManager = di<PupilProxyManager>();
 
       if (pupil.preSchoolMedical == null) {
         notificationService.showSnackBar(

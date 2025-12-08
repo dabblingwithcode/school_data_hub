@@ -4,7 +4,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
@@ -24,7 +24,7 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
       TextEditingController();
 
   Set<int> pupilIds = {};
-  PupilManager get _pupilManager => di<PupilManager>();
+  PupilProxyManager get _pupilManager => di<PupilProxyManager>();
   AuthorizationManager get _authorizationManager => di<AuthorizationManager>();
 
   void postNewAuthorization() async {
@@ -32,13 +32,17 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
     String text2 = authorizationDescriptionController.text;
 
     await _authorizationManager.postAuthorizationWithPupils(
-        text1, text2, pupilIds.toList());
+      text1,
+      text2,
+      pupilIds.toList(),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    List<PupilProxy> pupilsFromIds =
-        _pupilManager.getPupilsFromPupilIds(pupilIds.toList());
+    List<PupilProxy> pupilsFromIds = _pupilManager.getPupilsFromPupilIds(
+      pupilIds.toList(),
+    );
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -49,10 +53,7 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
           children: [
             Icon(Icons.fact_check_rounded, size: 25, color: Colors.white),
             Gap(10),
-            Text(
-              'Neue Nachweis-Liste',
-              style: AppStyles.appBarTextStyle,
-            ),
+            Text('Neue Nachweis-Liste', style: AppStyles.appBarTextStyle),
           ],
         ),
       ),
@@ -72,11 +73,15 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
                     contentPadding: EdgeInsets.all(10),
                     border: OutlineInputBorder(
                       borderSide: BorderSide(
-                          color: AppColors.backgroundColor, width: 2),
+                        color: AppColors.backgroundColor,
+                        width: 2,
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                          color: AppColors.backgroundColor, width: 2),
+                        color: AppColors.backgroundColor,
+                        width: 2,
+                      ),
                     ),
                     labelStyle: TextStyle(color: AppColors.backgroundColor),
                     labelText: 'Name der Liste',
@@ -91,11 +96,15 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
                     contentPadding: EdgeInsets.all(10),
                     border: OutlineInputBorder(
                       borderSide: BorderSide(
-                          color: AppColors.backgroundColor, width: 2),
+                        color: AppColors.backgroundColor,
+                        width: 2,
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                          color: AppColors.backgroundColor, width: 2),
+                        color: AppColors.backgroundColor,
+                        width: 2,
+                      ),
                     ),
                     labelStyle: TextStyle(color: AppColors.backgroundColor),
                     labelText: 'Kurze Beschreibung der Liste',
@@ -106,15 +115,19 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
                   children: [
                     const Text(
                       'Ausgewählte Kinder:',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const Gap(10),
                     Text(
                       pupilsFromIds.length.toString(),
                       style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
-                    )
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ],
                 ),
                 if (pupilIds.isEmpty) const Gap(30),
@@ -125,104 +138,117 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
                           child: SingleChildScrollView(
                             scrollDirection: Axis.vertical,
                             child: ListView.builder(
-                                padding:
-                                    const EdgeInsets.only(top: 5, bottom: 15),
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: pupilsFromIds.length,
-                                itemBuilder: (context, int index) {
-                                  PupilProxy listedPupil = pupilsFromIds[index];
-                                  return Column(
-                                    children: [
-                                      // const Gap(5),
-                                      InkWell(
-                                        onLongPress: () {
-                                          setState(() {
-                                            pupilIds
-                                                .remove(listedPupil.internalId);
-                                          });
-                                        },
-                                        onTap: () {
-                                          Navigator.of(context)
-                                              .push(MaterialPageRoute(
+                              padding: const EdgeInsets.only(
+                                top: 5,
+                                bottom: 15,
+                              ),
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: pupilsFromIds.length,
+                              itemBuilder: (context, int index) {
+                                PupilProxy listedPupil = pupilsFromIds[index];
+                                return Column(
+                                  children: [
+                                    // const Gap(5),
+                                    InkWell(
+                                      onLongPress: () {
+                                        setState(() {
+                                          pupilIds.remove(
+                                            listedPupil.internalId,
+                                          );
+                                        });
+                                      },
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
                                             builder: (ctx) => PupilProfilePage(
                                               pupil: listedPupil,
                                             ),
-                                          ));
-                                        },
-                                        child: Card(
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Row(
-                                              children: [
-                                                AvatarWithBadges(
-                                                    pupil: listedPupil,
-                                                    size: 50),
-                                                const Gap(10),
-                                                Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      listedPupil.firstName,
-                                                      style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 18),
+                                          ),
+                                        );
+                                      },
+                                      child: Card(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
+                                            children: [
+                                              AvatarWithBadges(
+                                                pupil: listedPupil,
+                                                size: 50,
+                                              ),
+                                              const Gap(10),
+                                              Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    listedPupil.firstName,
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 18,
                                                     ),
-                                                    //const Gap(10),
-                                                    Text(
-                                                      listedPupil.lastName,
-                                                      style: const TextStyle(),
+                                                  ),
+                                                  //const Gap(10),
+                                                  Text(
+                                                    listedPupil.lastName,
+                                                    style: const TextStyle(),
+                                                  ),
+                                                ],
+                                              ),
+                                              const Spacer(),
+                                              Column(
+                                                children: [
+                                                  Text(
+                                                    listedPupil.group,
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color:
+                                                          AppColors.groupColor,
+                                                      fontSize: 18,
                                                     ),
-                                                  ],
-                                                ),
-                                                const Spacer(),
-                                                Column(
-                                                  children: [
-                                                    Text(
-                                                      listedPupil.group,
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: AppColors
-                                                              .groupColor,
-                                                          fontSize: 18),
+                                                  ),
+                                                  Text(
+                                                    listedPupil
+                                                        .schoolGrade
+                                                        .name,
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: AppColors
+                                                          .schoolyearColor,
+                                                      fontSize: 18,
                                                     ),
-                                                    Text(
-                                                      listedPupil
-                                                          .schoolGrade.name,
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: AppColors
-                                                              .schoolyearColor,
-                                                          fontSize: 18),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const Gap(15),
-                                              ],
-                                            ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const Gap(15),
+                                            ],
                                           ),
                                         ),
                                       ),
-                                    ],
-                                  );
-                                }),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
                           ),
                         ),
                       )
                     : const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('Keine Kinder ausgewählt!',
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  color: Color.fromARGB(255, 91, 91, 91),
-                                  fontWeight: FontWeight.bold)),
+                          Text(
+                            'Keine Kinder ausgewählt!',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Color.fromARGB(255, 91, 91, 91),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ],
                       ),
                 if (pupilIds.isEmpty) const Spacer(),
@@ -230,12 +256,15 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
                   style: AppStyles.actionButtonStyle,
                   onPressed: () async {
                     final List<int> selectedPupilIds =
-                        await Navigator.of(context).push(MaterialPageRoute(
-                              builder: (ctx) => SelectPupilsListPage(
-                                  selectablePupils: _pupilManager
-                                      .getPupilsNotListed(pupilIds.toList())),
-                            )) ??
-                            [];
+                        await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (ctx) => SelectPupilsListPage(
+                              selectablePupils: _pupilManager
+                                  .getPupilsNotListed(pupilIds.toList()),
+                            ),
+                          ),
+                        ) ??
+                        [];
                     if (selectedPupilIds.isNotEmpty) {
                       setState(() {
                         pupilIds.addAll(selectedPupilIds.toSet());
@@ -254,10 +283,7 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
                     postNewAuthorization();
                     Navigator.pop(context);
                   },
-                  child: const Text(
-                    'SENDEN',
-                    style: AppStyles.buttonTextStyle,
-                  ),
+                  child: const Text('SENDEN', style: AppStyles.buttonTextStyle),
                 ),
                 const Gap(15),
                 ElevatedButton(

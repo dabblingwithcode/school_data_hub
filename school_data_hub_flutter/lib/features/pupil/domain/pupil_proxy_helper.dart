@@ -5,7 +5,7 @@
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
-class PupilHelper {
+class PupilProxyHelper {
   static String preschoolRevisionPredicate(PreSchoolMedical? preSchoolMedical) {
     if (preSchoolMedical == null) {
       return 'nicht vorhanden';

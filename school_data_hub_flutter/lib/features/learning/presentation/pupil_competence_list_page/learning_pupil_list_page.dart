@@ -10,7 +10,7 @@ import 'package:school_data_hub_flutter/features/learning/presentation/pupil_com
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_competence_list_page/widgets/pupil_competence_list_search_bar.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class LearningPupilListPage extends WatchingWidget {
@@ -29,7 +29,7 @@ class LearningPupilListPage extends WatchingWidget {
         title: 'Lernen',
       ),
       body: RefreshIndicator(
-        onRefresh: () async => di<PupilManager>().updatePupilList(pupils),
+        onRefresh: () async => di<PupilProxyManager>().updatePupilList(pupils),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 700),

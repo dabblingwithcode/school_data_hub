@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/filters/school_list_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_pupil_entries_bottom_navbar.dart';
@@ -24,7 +24,7 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
   Widget build(BuildContext context) {
     final _schoolListManager = di<SchoolListManager>();
     final _schoolListFilterManager = di<SchoolListFilterManager>();
-    final _pupilManager = di<PupilManager>();
+    final _pupilManager = di<PupilProxyManager>();
     final unfilteredPupilListEntries = watch(
       _schoolListManager.getPupilEntriesProxyFromSchoolList(schoolList.id!),
     ).pupilEntries.values.map((e) => e.pupilEntry).toList();

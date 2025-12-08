@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/features/_attendance/presentation/missed
 import 'package:school_data_hub_flutter/features/_attendance/presentation/missed_classes_pupil_list_page/widgets/missed_classes_pupil_list_searchbar.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class MissedSchooldayesPupilListPage extends WatchingWidget {
@@ -26,7 +26,7 @@ class MissedSchooldayesPupilListPage extends WatchingWidget {
         title: 'Fehlzeiten',
       ),
       body: RefreshIndicator(
-        onRefresh: () async => di<PupilManager>().fetchAllPupils(),
+        onRefresh: () async => di<PupilProxyManager>().fetchAllPupils(),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 700),

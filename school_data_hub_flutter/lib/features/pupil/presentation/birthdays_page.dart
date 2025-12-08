@@ -3,8 +3,10 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -15,7 +17,7 @@ class BirthdaysView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Set<DateTime> seenBirthdays = {};
-    final List<PupilProxy> pupils = di<PupilManager>()
+    final List<PupilProxy> pupils = di<PupilProxyManager>()
         .getPupilsWithBirthdaySinceDate(selectedDate);
 
     return Scaffold(
@@ -98,12 +100,15 @@ class BirthdaysView extends StatelessWidget {
                                       : const SizedBox.shrink(),
                                   InkWell(
                                     onTap: () {
-                                      // Navigator.of(context)
-                                      //     .push(MaterialPageRoute(
-                                      //   builder: (ctx) => PupilProfilePage(
-                                      //     pupil: listedPupil,
-                                      //   ),
-                                      // ));
+                                      di<BottomNavManager>()
+                                          .setPupilProfileNavPage(0);
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (ctx) => PupilProfilePage(
+                                            pupil: listedPupil,
+                                          ),
+                                        ),
+                                      );
                                     },
                                     child: Card(
                                       color: AppColors.cardInCardColor,

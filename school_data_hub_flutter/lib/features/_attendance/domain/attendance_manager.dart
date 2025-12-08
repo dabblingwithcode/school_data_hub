@@ -9,13 +9,13 @@ import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/data/attendance_api_service.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/models/pupil_missed_classes_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class AttendanceManager with ChangeNotifier {
   // Lazy getters to avoid accessing dependencies during construction
-  PupilManager get _pupilManager => di<PupilManager>();
+  PupilProxyManager get _pupilManager => di<PupilProxyManager>();
   SchoolCalendarManager get _schoolCalendarManager =>
       di<SchoolCalendarManager>();
   NotificationService get _notificationService => di<NotificationService>();

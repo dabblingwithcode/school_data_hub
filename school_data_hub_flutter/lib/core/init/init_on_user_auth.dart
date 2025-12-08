@@ -21,7 +21,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filt
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter_impl.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/filters/school_list_filter_manager.dart';
@@ -107,9 +107,9 @@ class InitOnUserAuth {
       },
     );
 
-    di.registerSingletonAsync<PupilManager>(
+    di.registerSingletonAsync<PupilProxyManager>(
       () async {
-        final pupilManager = PupilManager();
+        final pupilManager = PupilProxyManager();
 
         await pupilManager.init();
 
@@ -127,7 +127,11 @@ class InitOnUserAuth {
 
     di.registerSingletonWithDependencies<LearningSupportManager>(
       () => LearningSupportManager(),
-      dependsOn: [PupilManager, SchoolCalendarManager, SupportCategoryManager],
+      dependsOn: [
+        PupilProxyManager,
+        SchoolCalendarManager,
+        SupportCategoryManager,
+      ],
       dispose: (instance) {
         _log.info('[LEARNING SUPPORT MANAGER] LearningSupportManager disposed');
         instance.dispose();
@@ -174,7 +178,7 @@ class InitOnUserAuth {
         _log.info('[WORKBOOK MANAGER] WorkbookManager initialized');
         return workbookManager;
       },
-      dependsOn: [HubSessionManager, PupilManager],
+      dependsOn: [HubSessionManager, PupilProxyManager],
       dispose: (instance) {
         _log.info('[WORKBOOK MANAGER] WorkbookManager disposed');
         instance.dispose();
@@ -258,7 +262,7 @@ class InitOnUserAuth {
         instance.dispose();
         return;
       },
-      dependsOn: [PupilManager],
+      dependsOn: [PupilProxyManager],
     );
 
     di.registerSingleton<FiltersStateManager>(
@@ -272,7 +276,7 @@ class InitOnUserAuth {
 
     di.registerSingletonWithDependencies<LearningSupportFilterManager>(
       () => LearningSupportFilterManager(),
-      dependsOn: [PupilManager, PupilFilterManager],
+      dependsOn: [PupilProxyManager, PupilFilterManager],
       dispose: (instance) {
         _log.info(
           '[LEARNING SUPPORT FILTER MANAGER] LearningSupportFilterManager disposed',
@@ -284,7 +288,7 @@ class InitOnUserAuth {
 
     di.registerSingletonWithDependencies<SchooldayEventManager>(
       () => SchooldayEventManager(),
-      dependsOn: [SchoolCalendarManager, PupilManager],
+      dependsOn: [SchoolCalendarManager, PupilProxyManager],
       dispose: (instance) {
         _log.info('[SCHOOLDAY EVENT MANAGER] SchooldayEventManager disposed');
         instance.dispose();
@@ -308,12 +312,12 @@ class InitOnUserAuth {
         instance.dispose();
         return;
       },
-      dependsOn: [PupilManager, PupilFilterManager, SchooldayEventManager],
+      dependsOn: [PupilProxyManager, PupilFilterManager, SchooldayEventManager],
     );
 
     di.registerSingletonWithDependencies<AttendanceManager>(
       () => AttendanceManager(),
-      dependsOn: [PupilManager, SchoolCalendarManager],
+      dependsOn: [PupilProxyManager, SchoolCalendarManager],
       dispose: (instance) {
         _log.info('[ATTENDANCE MANAGER] AttendanceManager disposed');
         instance.dispose();
@@ -331,14 +335,14 @@ class InitOnUserAuth {
     );
 
     di.registerSingletonWithDependencies<PupilsFilter>(
-      () => PupilsFilterImplementation(di<PupilManager>()),
+      () => PupilsFilterImplementation(di<PupilProxyManager>()),
       dispose: (instance) {
         instance.dispose();
         _log.info('[PUPILS FILTER] PupilsFilterImplementation disposed');
         return;
       },
       dependsOn: [
-        PupilManager,
+        PupilProxyManager,
 
         PupilFilterManager,
         LearningSupportFilterManager,
@@ -359,7 +363,7 @@ class InitOnUserAuth {
         instance.dispose();
         return;
       },
-      dependsOn: [HubSessionManager, PupilManager],
+      dependsOn: [HubSessionManager, PupilProxyManager],
     );
 
     di.registerSingletonWithDependencies<SchoolListFilterManager>(

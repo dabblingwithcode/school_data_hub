@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 
-enum AppColorSchemeKey { classic, lila, darkBlue }
+enum AppColorSchemeKey { classic, lila, darkBlue, turquoise }
 
 AppColorSchemeKey appColorSchemeKeyFromString(String? key) {
   return AppColorSchemeKey.values.firstWhere(
@@ -355,10 +355,19 @@ class AppColorPalettes {
     gridViewColor: const Color.fromARGB(255, 255, 172, 78),
   );
 
+  static final turquoise = classic.copyWith(
+    key: AppColorSchemeKey.turquoise,
+    displayName: 'turquoise',
+    backgroundColor: const Color.fromARGB(255, 110, 195, 190),
+    interactiveColor: const Color.fromARGB(255, 110, 195, 190),
+    accentColor: const Color(0xFF007A7C),
+    gridViewColor: const Color(0xFF2A4D4A),
+  );
   static final Map<AppColorSchemeKey, AppColorPalette> _byKey = {
     AppColorSchemeKey.classic: classic,
     AppColorSchemeKey.lila: lila,
     AppColorSchemeKey.darkBlue: darkBlue,
+    AppColorSchemeKey.turquoise: turquoise,
   };
 
   static Iterable<AppColorPalette> get all => _byKey.values;

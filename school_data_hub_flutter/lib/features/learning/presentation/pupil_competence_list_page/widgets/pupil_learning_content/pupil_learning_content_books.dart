@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/widgets/pupil_book_card.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class PupilLearningContentBooks extends StatelessWidget {
@@ -56,7 +56,7 @@ class PupilLearningContentBooks extends StatelessWidget {
               );
             }
             if (bookId != null) {
-              di<PupilManager>().postPupilBookLending(
+              di<PupilProxyManager>().postPupilBookLending(
                 pupilId: pupil.pupilId,
                 libraryId: bookId,
               );

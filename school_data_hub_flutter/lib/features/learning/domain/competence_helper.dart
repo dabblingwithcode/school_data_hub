@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/features/learning/domain/competence_mana
 import 'package:school_data_hub_flutter/features/learning/domain/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class CompetenceHelper {
@@ -207,7 +207,9 @@ class CompetenceHelper {
   getCompetenceChecksMappedTopublicIdsForThisPupil(int pupilId) {
     final Map<int, List<CompetenceCheck>> competenceChecksMap = {};
 
-    final PupilProxy pupil = di<PupilManager>().getPupilByPupilId(pupilId)!;
+    final PupilProxy pupil = di<PupilProxyManager>().getPupilByPupilId(
+      pupilId,
+    )!;
     if (pupil.competenceChecks == null || pupil.competenceChecks!.isEmpty) {
       return {};
     }

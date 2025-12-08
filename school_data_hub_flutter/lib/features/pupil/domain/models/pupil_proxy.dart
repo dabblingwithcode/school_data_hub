@@ -1,12 +1,15 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:flutter/foundation.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_selector_filters.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _log = Logger('PupilProxy');
 
 class PupilProxy with ChangeNotifier {
   PupilProxy({
@@ -77,7 +80,15 @@ class PupilProxy with ChangeNotifier {
   String get gender => _pupilIdentity.gender;
   String get language => _pupilIdentity.language;
   String? get family => _pupilIdentity.family;
-  DateTime get birthday => _pupilIdentity.birthday.toLocal();
+  DateTime get birthday {
+    final utc = _pupilIdentity.birthday;
+    final local = utc.toLocal();
+    _log.fine('''${_pupilIdentity.firstName} ${_pupilIdentity.lastName}
+    is UTC: ${utc.isUtc}
+    birthday UTC: $utc, local: $local''');
+    return local;
+  }
+
   int get age {
     final today = DateTime.now();
     int age = today.year - _pupilIdentity.birthday.toLocal().year;

@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/common/domain/models/nullable_records.da
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/data/schoolday_event_api_service.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/models/pupil_schoolday_events_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class SchooldayEventManager with ChangeNotifier {
@@ -19,7 +19,7 @@ class SchooldayEventManager with ChangeNotifier {
 
   final _notificationService = di<NotificationService>();
 
-  final _pupilManager = di<PupilManager>();
+  final _pupilManager = di<PupilProxyManager>();
 
   final _schooldayEventApiService = SchooldayEventApiService();
 
@@ -122,7 +122,7 @@ class SchooldayEventManager with ChangeNotifier {
   ) async {
     final SchooldayEvent
     schooldayEvent = await _schooldayEventApiService.postSchooldayEvent(
-      '${di<PupilManager>().getPupilByPupilId(pupilId)!.firstName} (${di<PupilManager>().getPupilByPupilId(pupilId)!.group})',
+      '${di<PupilProxyManager>().getPupilByPupilId(pupilId)!.firstName} (${di<PupilProxyManager>().getPupilByPupilId(pupilId)!.group})',
       pupilId,
       schooldayId,
       dateTime,

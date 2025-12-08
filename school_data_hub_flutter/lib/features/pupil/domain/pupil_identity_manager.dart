@@ -16,8 +16,8 @@ import 'package:school_data_hub_flutter/features/pupil/data/pupil_data_api_servi
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_selector_filters.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -29,7 +29,7 @@ class PupilIdentityManager {
 
   final _mainMenuBottomNavManager = di<BottomNavManager>();
 
-  final secureStorageKey = di<EnvManager>().storageKeyForPupilIdentities;
+  final _secureStorageKey = di<EnvManager>().storageKeyForPupilIdentities;
 
   // data holders and getters
 
@@ -81,7 +81,7 @@ class PupilIdentityManager {
 
     final Map<int, PupilIdentity> pupilIdentities =
         await PupilIdentityHelper.readPupilIdentitiesFromStorage(
-          secureStorageKey: secureStorageKey,
+          secureStorageKey: _secureStorageKey,
         );
 
     _pupilIdentities.clear();
@@ -107,11 +107,7 @@ class PupilIdentityManager {
         _activeEnv.lastIdentitiesUpdate != null) {
       if (lastIdentitiesUpdate.isAfter(_activeEnv.lastIdentitiesUpdate!)) {
         _notificationService.showInformationDialog(
-          '''Die gespeicherten Schüler*innen-Ids vom ${_activeEnv.lastIdentitiesUpdate!.formatDateAndTimeForUser()} sind veraltet.
-          
-          Die neueste Version ist vom ${lastIdentitiesUpdate.formatDateAndTimeForUser()}.
-          
-          Schüler*innen-Ids aus einer vertrauenswürdigen Quelle aktualisieren!''',
+          'Die gespeicherten Schüler*innen-Ids vomn\n${_activeEnv.lastIdentitiesUpdate!.formatDateAndTimeForUser()}\n sind veraltet. Die neueste Version ist vom \n ${lastIdentitiesUpdate.formatDateAndTimeForUser()}.\n Schüler*innen-Ids aus einer vertrauenswürdigen Quelle aktualisieren!',
         );
       } else {
         _log.info('Pupil identities are up to date.');
@@ -147,7 +143,7 @@ class PupilIdentityManager {
     // The properties are separated by commas, let's build the PupilIdentity objects with them
 
     bool updateGroupFilters = false;
-
+    String pupilIdentitiesWithBirthday = '';
     for (String textLine in pupilIdentityTextLineList) {
       if (textLine != '') {
         final newPupilIdentity =
@@ -164,11 +160,13 @@ class PupilIdentityManager {
         }
         //- add the new pupil to the pupilIdentities map
         _pupilIdentities[newPupilIdentity.id] = newPupilIdentity;
+        pupilIdentitiesWithBirthday =
+            pupilIdentitiesWithBirthday +
+            '${newPupilIdentity.group}, ${newPupilIdentity.firstName}, Geburtstag: ${newPupilIdentity.birthday},\n ';
       }
     }
-    _log.info(
-      'Pupil identities decoded from unencrypted source: ${_pupilIdentities.length}',
-    );
+    _log.info('Pupil identities with birthday:\n$pupilIdentitiesWithBirthday');
+
     await _writePupilIdentitiesToStorage();
 
     if (updateGroupFilters) {
@@ -181,7 +179,7 @@ class PupilIdentityManager {
     await di<EnvManager>().updateActiveEnv(
       lastIdentitiesUpdate: normalizedUpdateTimestamp,
     );
-    di<PupilManager>().fetchAllPupils();
+    di<PupilProxyManager>().fetchAllPupils();
     _mainMenuBottomNavManager.setBottomNavPage(0);
   }
 
@@ -194,15 +192,15 @@ class PupilIdentityManager {
 
     try {
       await HubSecureStorage().setString(
-        secureStorageKey,
+        _secureStorageKey,
         jsonPupilIdentitiesAsString,
       );
       _log.info(
-        '${_pupilIdentities.length} pupil identities written to secure storage with key $secureStorageKey',
+        '${_pupilIdentities.length} pupil identities written to secure storage with key $_secureStorageKey',
       );
     } catch (e, stack) {
       _log.severe(
-        'Failed to write ${_pupilIdentities.length} pupil identities to secure storage with key $secureStorageKey: $e',
+        'Failed to write ${_pupilIdentities.length} pupil identities to secure storage with key $_secureStorageKey: $e',
         e,
         stack,
       );
@@ -277,7 +275,7 @@ class PupilIdentityManager {
       return;
     }
     for (PupilData pupil in updatedPupilDataRepository) {
-      di<PupilManager>().updatePupilProxyWithPupilData(pupil);
+      di<PupilProxyManager>().updatePupilProxyWithPupilData(pupil);
     }
     // We don't need the temp file any more, let's delete it
     textFile.delete();
@@ -295,7 +293,7 @@ class PupilIdentityManager {
     await PupilDataApiService().updateLastIdentitiesUpdate(
       newLastIdentitiesUpdate,
     );
-    await di<PupilManager>().fetchAllPupils();
+    await di<PupilProxyManager>().fetchAllPupils();
 
     _notificationService.showSnackBar(
       NotificationType.success,

@@ -4,12 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
-import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_identity_extensions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('PupilIdentityHelper');
@@ -23,24 +23,20 @@ class PupilIdentityHelper {
     final pupilsJson = await HubSecureStorage().getString(secureStorageKey);
     if (pupilsJson == null) return {};
 
-    final Map<String, dynamic> decodedJson = await compute(
-      (json) => jsonDecode(json),
-      pupilsJson,
-    );
+    return compute(_jsonDecodePupilIdentities, pupilsJson);
+  }
 
-    return Map<int, PupilIdentity>.fromEntries(
-      decodedJson.entries.map((entry) {
-        final int pupilId = int.parse(entry.key);
+  /// Decode JSON from secure storage into a map of pupilId -> PupilIdentity
+  /// off the main isolate.
+  static Map<int, PupilIdentity> _jsonDecodePupilIdentities(String json) {
+    final Map<String, dynamic> decodedJson =
+        jsonDecode(json) as Map<String, dynamic>;
 
-        // Clone the JSON map and convert DateTime strings from Berlin to UTC
-        final Map<String, dynamic> jsonData = Map<String, dynamic>.from(
-          entry.value as Map,
-        );
-
-        final PupilIdentity pupilIdentity = PupilIdentity.fromJson(jsonData);
-
-        return MapEntry(pupilId, pupilIdentity);
-      }),
+    return decodedJson.map(
+      (key, value) => MapEntry(
+        int.parse(key),
+        PupilIdentity.fromJson(Map<String, dynamic>.from(value as Map)),
+      ),
     );
   }
 
@@ -55,7 +51,7 @@ class PupilIdentityHelper {
 
     di<PupilsFilter>().clearFilteredPupils();
 
-    di<PupilManager>().clearData();
+    di<PupilProxyManager>().clearData();
   }
 
   //- OBJECT HELPERS
@@ -108,27 +104,27 @@ class PupilIdentityHelper {
       family: pupilIdentityStringItems[10] == ''
           ? null
           : pupilIdentityStringItems[10],
-      birthday: pupilIdentityStringItems[11].toDateOnlyUtc(),
+      birthday: DateTime.parse(pupilIdentityStringItems[11]).toUtcSafe(),
       migrationSupportEnds: pupilIdentityStringItems[12] == ''
           ? null
-          : pupilIdentityStringItems[12].tryToDateOnlyUtc(),
-      pupilSince: pupilIdentityStringItems[13].toDateOnlyUtc(),
+          : DateTime.parse(pupilIdentityStringItems[12]).toUtcSafe(),
+      pupilSince: DateTime.parse(pupilIdentityStringItems[13]).toUtcSafe(),
       afterSchoolCare: pupilIdentityStringItems[14] != '' ? true : false,
       religion: pupilIdentityStringItems[15] == ''
           ? null
           : pupilIdentityStringItems[15],
       religionLessonsSince: pupilIdentityStringItems[16] == ''
           ? null
-          : pupilIdentityStringItems[16].toDateOnlyUtc(),
+          : DateTime.parse(pupilIdentityStringItems[16]).toUtcSafe(),
       religionLessonsCancelledAt: pupilIdentityStringItems[17] == ''
           ? null
-          : pupilIdentityStringItems[17].toDateOnlyUtc(),
+          : DateTime.parse(pupilIdentityStringItems[17]).toUtcSafe(),
       familyLanguageLessonsSince: pupilIdentityStringItems[18] == ''
           ? null
-          : pupilIdentityStringItems[18].toDateOnlyUtc(),
+          : DateTime.parse(pupilIdentityStringItems[18]).toUtcSafe(),
       leavingDate: pupilIdentityStringItems[19] == ''
           ? null
-          : pupilIdentityStringItems[19].toDateOnlyUtc(),
+          : DateTime.parse(pupilIdentityStringItems[19]).toUtcSafe(),
     );
     return newPupilIdentity;
   }
@@ -146,15 +142,5 @@ class PupilIdentityHelper {
     }
     final encryptedString = customEncrypter.encryptString(transferString);
     return encryptedString;
-  }
-
-  static String generateTextLinesFromPupilIdentities(
-    List<PupilIdentity> pupilIdentities,
-  ) {
-    String textLines = '';
-    for (PupilIdentity pupilIdentity in pupilIdentities) {
-      textLines = textLines + pupilIdentity.toTextLine() + '\n';
-    }
-    return textLines;
   }
 }

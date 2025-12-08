@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/features/matrix/users/presentation/selec
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/widgets/select_matrix_user_list_card.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/widgets/select_matrix_users_list_searchbar.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/widgets/select_matrix_users_list_view_bottom_navbar.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class SelectMatrixUsersListPage extends WatchingWidget {
@@ -25,22 +25,20 @@ class SelectMatrixUsersListPage extends WatchingWidget {
     final List<MatrixUser> filteredUsers = watchValue(
       (MatrixPolicyFilterManager x) => x.filteredMatrixUsers,
     );
-    final selectableUsers =
-        filteredUsers
-            .where((user) => controller.users!.contains(user))
-            .toList();
+    final selectableUsers = filteredUsers
+        .where((user) => controller.users!.contains(user))
+        .toList();
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
       appBar: AppBar(
-        leading:
-            controller.isSelectMode
-                ? IconButton(
-                  onPressed: () {
-                    controller.cancelSelect();
-                  },
-                  icon: const Icon(Icons.close),
-                )
-                : null,
+        leading: controller.isSelectMode
+            ? IconButton(
+                onPressed: () {
+                  controller.cancelSelect();
+                },
+                icon: const Icon(Icons.close),
+              )
+            : null,
         automaticallyImplyLeading: false,
         centerTitle: true,
         backgroundColor: AppColors.backgroundColor,
@@ -52,7 +50,7 @@ class SelectMatrixUsersListPage extends WatchingWidget {
         ),
       ),
       body: RefreshIndicator(
-        onRefresh: () async => di<PupilManager>().fetchAllPupils(),
+        onRefresh: () async => di<PupilProxyManager>().fetchAllPupils(),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 800),
@@ -84,27 +82,27 @@ class SelectMatrixUsersListPage extends WatchingWidget {
                   ),
                   selectableUsers.isEmpty
                       ? const SliverToBoxAdapter(
-                        child: Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              'Keine Ergebnisse',
-                              style: TextStyle(fontSize: 18),
+                          child: Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'Keine Ergebnisse',
+                                style: TextStyle(fontSize: 18),
+                              ),
                             ),
                           ),
-                        ),
-                      )
+                        )
                       : SliverList(
-                        delegate: SliverChildBuilderDelegate((
-                          BuildContext context,
-                          int index,
-                        ) {
-                          return SelectMatrixUserCard(
-                            controller,
-                            selectableUsers[index],
-                          );
-                        }, childCount: selectableUsers.length),
-                      ),
+                          delegate: SliverChildBuilderDelegate((
+                            BuildContext context,
+                            int index,
+                          ) {
+                            return SelectMatrixUserCard(
+                              controller,
+                              selectableUsers[index],
+                            );
+                          }, childCount: selectableUsers.length),
+                        ),
                 ],
               ),
             ),

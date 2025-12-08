@@ -4,6 +4,7 @@ fields:
   eventId: String
   eventType: SchooldayEventType
   eventReason: String
+  eventTime: String?
   createdBy: String
   processed: bool
   processedBy: String?

@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_stream_suscription.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identity_stream_page/models/stream_state.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identity_stream_page/utils/stream_utils.dart';

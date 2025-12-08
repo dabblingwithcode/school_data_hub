@@ -14,9 +14,9 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_text
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
@@ -34,7 +34,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
   FiltersStateManager get _filtersStateManager => di<FiltersStateManager>();
 
   PupilsFilterImplementation(
-    PupilManager pupilsManager,
+    PupilProxyManager pupilsManager,
     //   {
     //  PupilSortMode? sortMode,
     // }
@@ -65,7 +65,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
     notifyListeners();
   }
 
-  final PupilManager _pupilsManager;
+  final PupilProxyManager _pupilsManager;
 
   @override
   ValueListenable<List<PupilProxy>> get filteredPupils => _filteredPupils;
@@ -310,7 +310,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
 
       if (di<PupilFilterManager>().pupilFilterState.value[PupilFilter
               .migrationSupport]! &&
-          !PupilHelper.hasLanguageSupport(pupil.migrationSupportEnds)) {
+          !PupilProxyHelper.hasLanguageSupport(pupil.migrationSupportEnds)) {
         if (filtersOn == false) filtersOn = true;
         continue;
       }

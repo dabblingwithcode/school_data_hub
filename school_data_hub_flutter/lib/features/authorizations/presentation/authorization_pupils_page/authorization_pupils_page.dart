@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/features/authorizations/presentation/aut
 import 'package:school_data_hub_flutter/features/authorizations/presentation/authorization_pupils_page/widgets/authorization_pupils_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class AuthorizationPupilsPage extends WatchingWidget {
@@ -21,32 +21,34 @@ class AuthorizationPupilsPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _pupilManager = di<PupilManager>();
-    final _pupilAuthorizationFilterManager = di<PupilAuthorizationFilterManager>();
+    final _pupilManager = di<PupilProxyManager>();
+    final _pupilAuthorizationFilterManager =
+        di<PupilAuthorizationFilterManager>();
     // final filters = watchValue((PupilFilterManager x) => x.filterState);
 
-    final thisAuthorization =
-        watchValue((AuthorizationManager x) => x.authorizations).firstWhere(
-            (authorization) => authorization.id == this.authorization.id);
+    final thisAuthorization = watchValue(
+      (AuthorizationManager x) => x.authorizations,
+    ).firstWhere((authorization) => authorization.id == this.authorization.id);
 
     final filteredPupils = watchValue((PupilsFilter x) => x.filteredPupils);
 
     final List<PupilAuthorization> pupilAuthorizations =
         _pupilAuthorizationFilterManager
             .applyAuthorizationFiltersToPupilAuthorizations(
-                thisAuthorization.authorizedPupils!);
+              thisAuthorization.authorizedPupils!,
+            );
 
     List<PupilProxy> pupilsInList = filteredPupils
-        .where((pupil) => pupilAuthorizations
-            .any((pupilAuth) => pupilAuth.pupilId == pupil.pupilId))
+        .where(
+          (pupil) => pupilAuthorizations.any(
+            (pupilAuth) => pupilAuth.pupilId == pupil.pupilId,
+          ),
+        )
         .toList();
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
-      appBar: GenericAppBar(
-        iconData: Icons.list,
-        title: authorization.name,
-      ),
+      appBar: GenericAppBar(iconData: Icons.list, title: authorization.name),
       body: RefreshIndicator(
         onRefresh: () async => di<AuthorizationManager>().fetchAuthorizations(),
         child: Center(
@@ -58,8 +60,9 @@ class AuthorizationPupilsPage extends WatchingWidget {
                   const SliverGap(5),
                   GenericSliverSearchAppBar(
                     height: 110,
-                    title:
-                        AuthorizationPupilListSearchBar(pupils: pupilsInList),
+                    title: AuthorizationPupilListSearchBar(
+                      pupils: pupilsInList,
+                    ),
                   ),
                   pupilsInList.isEmpty
                       ? const SliverToBoxAdapter(
@@ -78,7 +81,9 @@ class AuthorizationPupilsPage extends WatchingWidget {
                             (BuildContext context, int index) {
                               // Your list view items go here
                               return AuthorizationPupilCard(
-                                  pupilsInList[index].pupilId, authorization);
+                                pupilsInList[index].pupilId,
+                                authorization,
+                              );
                             },
                             childCount: pupilsInList
                                 .length, // Adjust this based on your data
@@ -92,8 +97,9 @@ class AuthorizationPupilsPage extends WatchingWidget {
       ),
       bottomNavigationBar: AuthorizationPupilsBottomNavBar(
         authorization: authorization,
-        pupilsInAuthorization:
-            _pupilManager.getPupilIdsFromPupils(pupilsInList),
+        pupilsInAuthorization: _pupilManager.getPupilIdsFromPupils(
+          pupilsInList,
+        ),
       ),
     );
   }

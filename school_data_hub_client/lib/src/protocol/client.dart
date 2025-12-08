@@ -846,6 +846,95 @@ class EndpointCompetence extends _i1.EndpointRef {
 }
 
 /// {@category Endpoint}
+class EndpointCompetenceGoal extends _i1.EndpointRef {
+  EndpointCompetenceGoal(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'competenceGoal';
+
+  _i2.Future<_i5.PupilData> postCompetenceGoal({
+    required int competenceId,
+    required int pupilId,
+    required String description,
+    List<String>? strategies,
+    required String createdBy,
+    String? modifiedBy,
+    int? score,
+    DateTime? achievedAt,
+  }) =>
+      caller.callServerEndpoint<_i5.PupilData>(
+        'competenceGoal',
+        'postCompetenceGoal',
+        {
+          'competenceId': competenceId,
+          'pupilId': pupilId,
+          'description': description,
+          'strategies': strategies,
+          'createdBy': createdBy,
+          'modifiedBy': modifiedBy,
+          'score': score,
+          'achievedAt': achievedAt,
+        },
+      );
+
+  _i2.Future<_i5.PupilData> updateCompetenceGoal(
+    String publicId, {
+    ({String value})? description,
+    ({List<String>? value})? strategies,
+    ({String value})? modifiedBy,
+    ({int? value})? score,
+    ({DateTime value})? achievedAt,
+  }) =>
+      caller.callServerEndpoint<_i5.PupilData>(
+        'competenceGoal',
+        'updateCompetenceGoal',
+        {
+          'publicId': publicId,
+          'description': _i16.mapRecordToJson(description),
+          'strategies': _i16.mapRecordToJson(strategies),
+          'modifiedBy': _i16.mapRecordToJson(modifiedBy),
+          'score': _i16.mapRecordToJson(score),
+          'achievedAt': _i16.mapRecordToJson(achievedAt),
+        },
+      );
+
+  _i2.Future<_i5.PupilData> deleteCompetenceGoal(String publicId) =>
+      caller.callServerEndpoint<_i5.PupilData>(
+        'competenceGoal',
+        'deleteCompetenceGoal',
+        {'publicId': publicId},
+      );
+
+  _i2.Future<_i5.PupilData> addFileToCompetenceGoal(
+    String publicId,
+    String filePath,
+    String createdBy,
+  ) =>
+      caller.callServerEndpoint<_i5.PupilData>(
+        'competenceGoal',
+        'addFileToCompetenceGoal',
+        {
+          'publicId': publicId,
+          'filePath': filePath,
+          'createdBy': createdBy,
+        },
+      );
+
+  _i2.Future<_i5.PupilData> removeFileFromCompetenceGoal(
+    String publicId,
+    String documentId,
+  ) =>
+      caller.callServerEndpoint<_i5.PupilData>(
+        'competenceGoal',
+        'removeFileFromCompetenceGoal',
+        {
+          'publicId': publicId,
+          'documentId': documentId,
+        },
+      );
+}
+
+/// {@category Endpoint}
 class EndpointLearningSupportPlan extends _i1.EndpointRef {
   EndpointLearningSupportPlan(_i1.EndpointCaller caller) : super(caller);
 
@@ -2514,6 +2603,7 @@ class Client extends _i1.ServerpodClientShared {
     pupilBookLending = EndpointPupilBookLending(this);
     competenceCheck = EndpointCompetenceCheck(this);
     competence = EndpointCompetence(this);
+    competenceGoal = EndpointCompetenceGoal(this);
     learningSupportPlan = EndpointLearningSupportPlan(this);
     preSchoolMedical = EndpointPreSchoolMedical(this);
     supportCategory = EndpointSupportCategory(this);
@@ -2564,6 +2654,8 @@ class Client extends _i1.ServerpodClientShared {
   late final EndpointCompetenceCheck competenceCheck;
 
   late final EndpointCompetence competence;
+
+  late final EndpointCompetenceGoal competenceGoal;
 
   late final EndpointLearningSupportPlan learningSupportPlan;
 
@@ -2628,6 +2720,7 @@ class Client extends _i1.ServerpodClientShared {
         'pupilBookLending': pupilBookLending,
         'competenceCheck': competenceCheck,
         'competence': competence,
+        'competenceGoal': competenceGoal,
         'learningSupportPlan': learningSupportPlan,
         'preSchoolMedical': preSchoolMedical,
         'supportCategory': supportCategory,

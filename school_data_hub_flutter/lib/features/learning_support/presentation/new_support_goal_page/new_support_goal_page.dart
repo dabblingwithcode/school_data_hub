@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/n
 import 'package:school_data_hub_flutter/features/learning_support/presentation/select_support_category_page/controller/select_support_category_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_category_parents_names.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_category_widgets/support_category_status_dropdown.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class NewSupportGoalPage extends StatelessWidget {
@@ -16,7 +16,7 @@ class NewSupportGoalPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _pupilManager = di<PupilManager>();
+    final _pupilManager = di<PupilProxyManager>();
     final _learningSupportManager = di<SupportCategoryManager>();
     return Theme(
       data: ThemeData(
@@ -41,12 +41,14 @@ class NewSupportGoalPage extends StatelessWidget {
                   children: <Widget>[
                     const Row(
                       children: [
-                        Text('Förderkategorie',
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            )),
+                        Text(
+                          'Förderkategorie',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
                     const Gap(10),
@@ -54,21 +56,25 @@ class NewSupportGoalPage extends StatelessWidget {
                             controller.goalCategoryId == 0
                         ? ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                backgroundColor: AppColors.backgroundColor,
-                                minimumSize: const Size.fromHeight(60)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              backgroundColor: AppColors.backgroundColor,
+                              minimumSize: const Size.fromHeight(60),
+                            ),
                             onPressed: () async {
-                              final int? categoryId = await Navigator.of(
-                                      context)
-                                  .push(MaterialPageRoute(
+                              final int? categoryId =
+                                  await Navigator.of(context).push(
+                                    MaterialPageRoute(
                                       builder: (ctx) => SelectSupportCategory(
-                                          pupil:
-                                              _pupilManager.getPupilByPupilId(
-                                                  controller.widget.pupilId)!,
-                                          elementType:
-                                              controller.widget.elementType)));
+                                        pupil: _pupilManager.getPupilByPupilId(
+                                          controller.widget.pupilId,
+                                        )!,
+                                        elementType:
+                                            controller.widget.elementType,
+                                      ),
+                                    ),
+                                  );
                               if (categoryId == null) {
                                 return;
                               }
@@ -85,8 +91,10 @@ class NewSupportGoalPage extends StatelessWidget {
                                 ),
                               ),
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 5.0, bottom: 8),
+                                padding: const EdgeInsets.only(
+                                  top: 5.0,
+                                  bottom: 8,
+                                ),
                                 child: Wrap(
                                   crossAxisAlignment: WrapCrossAlignment.center,
                                   alignment: WrapAlignment.center,
@@ -95,7 +103,8 @@ class NewSupportGoalPage extends StatelessWidget {
                                       categoryId: controller.goalCategoryId!,
                                       categoryColor: _learningSupportManager
                                           .getCategoryColor(
-                                              controller.goalCategoryId!),
+                                            controller.goalCategoryId!,
+                                          ),
                                     ),
                                   ],
                                 ),
@@ -106,40 +115,42 @@ class NewSupportGoalPage extends StatelessWidget {
                     controller.goalCategoryId == null
                         ? const SizedBox.shrink()
                         : controller.goalCategoryId == 0
-                            ? const SizedBox.shrink()
-                            : Row(
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      _learningSupportManager
-                                          .getSupportCategory(
-                                              controller.goalCategoryId!)
-                                          .name,
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        color: _learningSupportManager
-                                            .getCategoryColor(
-                                                controller.goalCategoryId!),
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                        ? const SizedBox.shrink()
+                        : Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  _learningSupportManager
+                                      .getSupportCategory(
+                                        controller.goalCategoryId!,
+                                      )
+                                      .name,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: _learningSupportManager
+                                        .getCategoryColor(
+                                          controller.goalCategoryId!,
+                                        ),
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                ],
+                                ),
                               ),
+                            ],
+                          ),
                     const Gap(15),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                            (controller.widget.appBarTitle ==
-                                    'Neues Förderziel')
-                                ? 'Förderziel'
-                                : 'Status',
-                            style: const TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            )),
+                          (controller.widget.appBarTitle == 'Neues Förderziel')
+                              ? 'Förderziel'
+                              : 'Status',
+                          style: const TextStyle(
+                            fontSize: 20,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
                     const Gap(10),
@@ -150,17 +161,20 @@ class NewSupportGoalPage extends StatelessWidget {
                         maxLines: 3,
                         controller: controller.descriptionTextFieldController,
                         decoration: AppStyles.textFieldDecoration(
-                            labelText: 'Beschreibung des Zieles'),
+                          labelText: 'Beschreibung des Zieles',
+                        ),
                       ),
                       const Gap(20),
                       const Row(
                         children: [
-                          Text('Strategien',
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              )),
+                          Text(
+                            'Strategien',
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ],
                       ),
                       const Gap(10),
@@ -170,10 +184,12 @@ class NewSupportGoalPage extends StatelessWidget {
                       maxLines: 4,
                       controller: controller.strategiesTextField2Controller,
                       decoration: AppStyles.textFieldDecoration(
-                          labelText: (controller.widget.appBarTitle ==
-                                  'Neues Förderziel')
-                              ? 'Hilfen für das Erreichen des Zieles'
-                              : 'Beschreibung des Status'),
+                        labelText:
+                            (controller.widget.appBarTitle ==
+                                'Neues Förderziel')
+                            ? 'Hilfen für das Erreichen des Zieles'
+                            : 'Beschreibung des Status',
+                      ),
                     ),
                     const Gap(20),
                     if (controller.widget.appBarTitle != 'Neues Förderziel')
@@ -189,8 +205,9 @@ class NewSupportGoalPage extends StatelessWidget {
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<int>(
                                 icon: const Visibility(
-                                    visible: false,
-                                    child: Icon(Icons.arrow_downward)),
+                                  visible: false,
+                                  child: Icon(Icons.arrow_downward),
+                                ),
                                 onTap: () {
                                   FocusManager.instance.primaryFocus!.unfocus();
                                 },
@@ -201,17 +218,18 @@ class NewSupportGoalPage extends StatelessWidget {
                                 },
                               ),
                             ),
-                          )
+                          ),
                         ],
                       ),
                     const Padding(padding: EdgeInsets.symmetric(vertical: 40)),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          backgroundColor: Colors.amber[800],
-                          minimumSize: const Size.fromHeight(60)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        backgroundColor: Colors.amber[800],
+                        minimumSize: const Size.fromHeight(60),
+                      ),
                       onPressed: () {
                         if (controller.widget.appBarTitle ==
                             'Neues Förderziel') {
@@ -235,12 +253,12 @@ class NewSupportGoalPage extends StatelessWidget {
                     const Gap(15),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          backgroundColor:
-                              const Color.fromARGB(255, 235, 67, 67),
-                          minimumSize: const Size.fromHeight(60)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        backgroundColor: const Color.fromARGB(255, 235, 67, 67),
+                        minimumSize: const Size.fromHeight(60),
+                      ),
                       onPressed: () {
                         Navigator.pop(context);
                       },

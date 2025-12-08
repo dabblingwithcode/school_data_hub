@@ -11,86 +11,94 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
 import 'package:watch_it/watch_it.dart';
 
-class PupilProfileAttendanceContent extends StatelessWidget {
+class PupilAttendanceContent extends WatchingWidget {
   final PupilProxy pupil;
-  const PupilProfileAttendanceContent({required this.pupil, super.key});
+  const PupilAttendanceContent({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {
     final _attendanceManager = di<AttendanceManager>();
     final missedHoursForActualReport =
         AttendanceHelper.missedHoursforSemesterOrSchoolyear(pupil);
+    List<MissedSchoolday> missedSchooldays = watch(
+      _attendanceManager.getPupilMissedSchooldaysProxy(pupil.pupilId),
+    ).missedSchooldays;
 
-    List<MissedSchoolday> missedSchooldays = _attendanceManager
-        .getPupilMissedSchooldaysProxy(pupil.pupilId)
-        .missedSchooldays;
     // sort by missedDay
     missedSchooldays.sort(
       (b, a) => a.schoolday!.schoolday.compareTo(b.schoolday!.schoolday),
     );
     return Container(
       decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
-      child: Column(
-        children: [
-          PupilProfileContentSection(
-            icon: Icons.calendar_month_rounded,
-            title: 'Fehlzeiten',
-            onTitleTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (ctx) => const MissedSchooldayesPupilListPage(),
-                ),
-              );
-            },
-            child: Column(
-              children: [
-                attendanceStats(pupil),
-                const Gap(10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Text('Fehlstunden:', style: TextStyle(fontSize: 14)),
-                    Text(
-                      ' ${missedHoursForActualReport.missed.toString()}',
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.only(bottom: 160),
+        child: Column(
+          children: [
+            PupilProfileContentSection(
+              icon: Icons.calendar_month_rounded,
+              title: 'Fehlzeiten',
+              onTitleTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (ctx) => const MissedSchooldayesPupilListPage(),
+                  ),
+                );
+              },
+              child: Column(
+                children: [
+                  const Gap(15),
+                  attendanceStats(pupil),
+                  const Gap(10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Fehlstunden:',
+                        style: TextStyle(fontSize: 14),
                       ),
-                    ),
-                    const Gap(5),
-                    const Text('davon unent:', style: TextStyle(fontSize: 14)),
-                    Text(
-                      ' ${missedHoursForActualReport.unexcused.toString()}',
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                      Text(
+                        ' ${missedHoursForActualReport.missed.toString()}',
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
-                    ),
-                    const Gap(15),
-                  ],
-                ),
-                const Gap(10),
-                ListView.builder(
-                  padding: const EdgeInsets.only(top: 5, bottom: 15),
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: missedSchooldays.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    // pupil.pupilMissedSchooldayes.sort(
-                    //     (a, b) => a.missedDay.compareTo(b.missedDay));
-
-                    return MissedSchooldayCard(
-                      pupil: pupil,
-                      missedSchoolday: missedSchooldays[index],
-                    );
-                  },
-                ),
-              ],
+                      const Gap(5),
+                      const Text(
+                        'davon unent:',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      Text(
+                        ' ${missedHoursForActualReport.unexcused.toString()}',
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const Gap(15),
+                    ],
+                  ),
+                  const Gap(10),
+                  ListView.builder(
+                    padding: const EdgeInsets.only(top: 5, bottom: 5),
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: missedSchooldays.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return MissedSchooldayCard(
+                        pupil: pupil,
+                        missedSchoolday: missedSchooldays[index],
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
