@@ -15,8 +15,8 @@ import 'package:school_data_hub_flutter/features/matrix/presentation/widgets/dia
 import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_page/new_matrix_user_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/infos_content/widgets/avatar_auth_values.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/infos_content/widgets/pupil_media_auth_values.dart';
@@ -489,7 +489,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                       ),
                     ),
             ),
-            const Gap(120), // Extra spacing at the bottom to avoid nav overlap
+            // Extra spacing at the bottom to avoid nav overlap
           ],
         ),
       ),

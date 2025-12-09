@@ -91,7 +91,7 @@ class PupilLearningContentBooks extends StatelessWidget {
             },
           ),
         ],
-        const Gap(10),
+        const Gap(5),
       ],
     );
   }

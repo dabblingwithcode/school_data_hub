@@ -15,10 +15,9 @@ class BottomNavBarLayout extends StatelessWidget {
     Theme(
       data: ThemeData(canvasColor: AppColors.backgroundColor),
       child: Padding(
-        padding:
-            Platform.isWindows
-                ? const EdgeInsets.only(left: 5, right: 5, bottom: 20)
-                : const EdgeInsets.only(left: 5, right: 5, bottom: 10),
+        padding: Platform.isWindows
+            ? const EdgeInsets.only(left: 5, right: 5, bottom: 20)
+            : const EdgeInsets.only(left: 5, right: 5, bottom: 10),
         child: SizedBox(
           height: kBottomNavigationBarHeight + 30,
           child: Align(
@@ -53,10 +52,9 @@ class BottomNavBarProfileLayout extends StatelessWidget {
     Theme(
       data: ThemeData(canvasColor: AppColors.backgroundColor),
       child: Padding(
-        padding:
-            Platform.isWindows
-                ? const EdgeInsets.only(left: 5, right: 5, bottom: 20)
-                : const EdgeInsets.only(left: 5, right: 5),
+        padding: Platform.isWindows
+            ? const EdgeInsets.only(left: 5, right: 5, bottom: 20)
+            : const EdgeInsets.only(left: 5, right: 5),
         child: SizedBox(
           height: kBottomNavigationBarHeight + 30,
           child: Align(

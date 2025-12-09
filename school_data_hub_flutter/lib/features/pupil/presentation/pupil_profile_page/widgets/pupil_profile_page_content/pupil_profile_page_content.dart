@@ -22,62 +22,30 @@ class PupilProfilePageContent extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     int navState = watchValue((BottomNavManager x) => x.pupilProfileNavState);
-    final pageController = createOnce(
-      () => PageController(initialPage: navState),
-    );
 
-    registerHandler(
-      select: (BottomNavManager x) => x.pupilProfileNavState,
-      handler: (context, value, cancel) {
-        if (!pageController.hasClients) return;
-        final current = pageController.page?.round();
-        if (current == value) return;
-        pageController.animateToPage(
-          value,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-        );
-      },
-    );
+    final children = [
+      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.info),
+      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.language),
+      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.credit),
+      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.attendance),
+      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.schoolday),
+      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.ogs),
+      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.lists),
+      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.auth),
+      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.learningSup),
+      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.learning),
+    ];
 
     return Container(
       decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
       child: Padding(
-        padding: const EdgeInsets.only(left: 4, right: 4, bottom: 8.0),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final pageHeight =
-                constraints.hasBoundedHeight && constraints.maxHeight.isFinite
-                ? constraints.maxHeight
-                : MediaQuery.of(context).size.height;
-            return SizedBox(
-              height: pageHeight,
-              child: PageView(
-                controller: pageController,
-                physics: const BouncingScrollPhysics(),
-                onPageChanged: (index) =>
-                    di<BottomNavManager>().setPupilProfileNavPage(index),
-                children: const [
-                  _ProfilePageWrapper(childBuilder: _ProfilePageChild.info),
-                  _ProfilePageWrapper(childBuilder: _ProfilePageChild.language),
-                  _ProfilePageWrapper(childBuilder: _ProfilePageChild.credit),
-                  _ProfilePageWrapper(
-                    childBuilder: _ProfilePageChild.attendance,
-                  ),
-                  _ProfilePageWrapper(
-                    childBuilder: _ProfilePageChild.schoolday,
-                  ),
-                  _ProfilePageWrapper(childBuilder: _ProfilePageChild.ogs),
-                  _ProfilePageWrapper(childBuilder: _ProfilePageChild.lists),
-                  _ProfilePageWrapper(childBuilder: _ProfilePageChild.auth),
-                  _ProfilePageWrapper(
-                    childBuilder: _ProfilePageChild.learningSup,
-                  ),
-                  _ProfilePageWrapper(childBuilder: _ProfilePageChild.learning),
-                ],
-              ),
-            );
-          },
+        padding: const EdgeInsets.only(left: 4, right: 4, bottom: 10),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          child: KeyedSubtree(
+            key: ValueKey(navState),
+            child: children[navState],
+          ),
         ),
       ),
     );
@@ -152,14 +120,7 @@ class _ProfilePageWrapper extends StatelessWidget {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.only(bottom: 160),
-          child: child,
-        ),
-      ),
+      child: ClipRRect(borderRadius: BorderRadius.circular(16), child: child),
     );
   }
 }

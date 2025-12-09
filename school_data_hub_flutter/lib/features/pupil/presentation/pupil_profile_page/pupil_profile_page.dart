@@ -1,7 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -65,7 +64,6 @@ class PupilProfilePage extends WatchingWidget {
                         SliverToBoxAdapter(
                           child: PupilProfilePageContent(pupil: pupil),
                         ),
-                        const SliverGap(60),
                       ],
                     ),
                   ),

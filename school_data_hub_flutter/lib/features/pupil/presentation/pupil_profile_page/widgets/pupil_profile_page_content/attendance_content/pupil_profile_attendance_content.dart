@@ -30,75 +30,65 @@ class PupilAttendanceContent extends WatchingWidget {
     );
     return Container(
       decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
-      child: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.only(bottom: 160),
-        child: Column(
-          children: [
-            PupilProfileContentSection(
-              icon: Icons.calendar_month_rounded,
-              title: 'Fehlzeiten',
-              onTitleTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (ctx) => const MissedSchooldayesPupilListPage(),
-                  ),
-                );
-              },
-              child: Column(
-                children: [
-                  const Gap(15),
-                  attendanceStats(pupil),
-                  const Gap(10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Fehlstunden:',
-                        style: TextStyle(fontSize: 14),
+      child: Column(
+        children: [
+          PupilProfileContentSection(
+            icon: Icons.calendar_month_rounded,
+            title: 'Fehlzeiten',
+            onTitleTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (ctx) => const MissedSchooldayesPupilListPage(),
+                ),
+              );
+            },
+            child: Column(
+              children: [
+                const Gap(15),
+                attendanceStats(pupil),
+                const Gap(10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const Text('Fehlstunden:', style: TextStyle(fontSize: 14)),
+                    Text(
+                      ' ${missedHoursForActualReport.missed.toString()}',
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
-                      Text(
-                        ' ${missedHoursForActualReport.missed.toString()}',
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
+                    ),
+                    const Gap(5),
+                    const Text('davon unent:', style: TextStyle(fontSize: 14)),
+                    Text(
+                      ' ${missedHoursForActualReport.unexcused.toString()}',
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
-                      const Gap(5),
-                      const Text(
-                        'davon unent:',
-                        style: TextStyle(fontSize: 14),
-                      ),
-                      Text(
-                        ' ${missedHoursForActualReport.unexcused.toString()}',
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const Gap(15),
-                    ],
-                  ),
-                  const Gap(10),
-                  ListView.builder(
-                    padding: const EdgeInsets.only(top: 5, bottom: 5),
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: missedSchooldays.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return MissedSchooldayCard(
-                        pupil: pupil,
-                        missedSchoolday: missedSchooldays[index],
-                      );
-                    },
-                  ),
-                ],
-              ),
+                    ),
+                    const Gap(15),
+                  ],
+                ),
+                const Gap(10),
+                ListView.builder(
+                  padding: const EdgeInsets.only(top: 5, bottom: 5),
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: missedSchooldays.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return MissedSchooldayCard(
+                      pupil: pupil,
+                      missedSchoolday: missedSchooldays[index],
+                    );
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
