@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_checkbox_either_or.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/document_image.dart';
+import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -187,7 +187,7 @@ class AuthorizationPupilCard extends WatchingWidget {
                             );
                       },
                       child: pupilAuthorization.fileId != null
-                          ? DocumentImage(
+                          ? EncryptedDocumentImage(
                               documentId: pupilAuthorization.file!.documentId,
                               size: 70,
                             )

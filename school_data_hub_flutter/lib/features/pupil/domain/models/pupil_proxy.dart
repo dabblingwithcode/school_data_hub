@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters.dart';
+import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_selector_filters.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
@@ -156,7 +157,7 @@ class PupilProxy with ChangeNotifier {
 
   // Legacy OGS getters for backward compatibility
   // TODO URGENT: Remove these after migrating all OGS code to use proper afterSchoolCare model
-  bool get ogs => afterSchoolCare != null;
+  //bool get ogs => afterSchoolCare != null;
 
   String? pickUpTime(AfterSchoolCareWeekday weekday) {
     final pickUpTimes = afterSchoolCare?.pickUpTimes;
@@ -225,6 +226,7 @@ class PupilProxy with ChangeNotifier {
 
   // schoolday related
 
-  List<MissedSchoolday>? get missedSchooldays => _pupilData.missedSchooldays;
+  List<MissedSchoolday>? get missedSchooldays =>
+      di<AttendanceManager>().getAllPupilMissedSchooldays(pupilId);
   List<SchooldayEvent>? get schooldayEvents => _pupilData.schooldayEvents;
 }

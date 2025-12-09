@@ -43,9 +43,9 @@ class StatisticsController extends State<Statistics> {
       pupilsWithEnrollmentDate[pupil.internalId] = pupil.pupilSince
           .formatDateForUser();
     }
-    // debugger();
+
     return givenPupils.where((pupil) {
-      final date = pupil.pupilSince.toLocal().add(const Duration(hours: 2));
+      final date = pupil.pupilSince;
       return !(date.month == DateTime.august && date.day == 1);
     }).toList();
   }

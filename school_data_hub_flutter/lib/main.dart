@@ -94,7 +94,7 @@ class MyApp extends WatchingWidget {
 
     // Update status bar color when palette changes
     SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle().copyWith(
+      const SystemUiOverlayStyle().copyWith(
         statusBarColor: AppColors.backgroundColor,
         statusBarBrightness: Brightness.dark,
         statusBarIconBrightness: Brightness.light,

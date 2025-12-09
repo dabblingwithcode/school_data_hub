@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
@@ -35,9 +34,8 @@ class LearningPupilListPage extends WatchingWidget {
             constraints: const BoxConstraints(maxWidth: 700),
             child: CustomScrollView(
               slivers: [
-                const SliverGap(5),
                 GenericSliverSearchAppBar(
-                  height: 160,
+                  height: 180,
                   title: PupilCompetenceListSearchBar(
                     pupils: pupils,
                     filtersOn: filtersOn,

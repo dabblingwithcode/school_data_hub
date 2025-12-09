@@ -15,6 +15,7 @@ class PupilProfileHeadingCard extends WatchingWidget {
     final _hubSessionManager = di<HubSessionManager>();
     final pupil = watch<PupilProxy>(passedPupil);
     return Card(
+      color: Colors.white,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

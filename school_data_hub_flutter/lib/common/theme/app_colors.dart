@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 
-enum AppColorSchemeKey { classic, lila, darkBlue, turquoise }
+enum AppColorSchemeKey { classic, lila, darkBlue, turquoise, blue }
 
 AppColorSchemeKey appColorSchemeKeyFromString(String? key) {
   return AppColorSchemeKey.values.firstWhere(
@@ -273,7 +273,7 @@ class AppColorPalette {
 class AppColorPalettes {
   static const classic = AppColorPalette(
     key: AppColorSchemeKey.classic,
-    displayName: 'Classic Indigo',
+    displayName: 'standard',
     backgroundColor: Color.fromRGBO(74, 76, 161, 1),
     interactiveColor: Color.fromRGBO(74, 76, 161, 1),
     accentColor: Color.fromRGBO(252, 160, 39, 1),
@@ -340,15 +340,15 @@ class AppColorPalettes {
   static final lila = classic.copyWith(
     key: AppColorSchemeKey.lila,
     displayName: 'lila',
-    backgroundColor: const Color.fromARGB(255, 107, 13, 126),
+    backgroundColor: const Color.fromARGB(255, 167, 83, 184),
     interactiveColor: const Color.fromARGB(255, 107, 13, 126),
     accentColor: const Color.fromARGB(255, 216, 141, 3),
-    gridViewColor: const Color.fromARGB(255, 216, 141, 3),
+    gridViewColor: const Color.fromARGB(255, 247, 184, 68),
   );
 
   static final darkBlue = classic.copyWith(
     key: AppColorSchemeKey.darkBlue,
-    displayName: 'darkBlue',
+    displayName: 'dunkelblau',
     backgroundColor: const Color.fromARGB(255, 40, 28, 105),
     interactiveColor: const Color.fromARGB(255, 40, 28, 105),
     accentColor: const Color.fromARGB(255, 255, 172, 78),
@@ -357,17 +357,27 @@ class AppColorPalettes {
 
   static final turquoise = classic.copyWith(
     key: AppColorSchemeKey.turquoise,
-    displayName: 'turquoise',
+    displayName: 'türkis',
     backgroundColor: const Color.fromARGB(255, 110, 195, 190),
     interactiveColor: const Color.fromARGB(255, 110, 195, 190),
     accentColor: const Color(0xFF007A7C),
+    gridViewColor: const Color(0xFF007A7C),
+  );
+  static final blue = classic.copyWith(
+    key: AppColorSchemeKey.blue,
+    displayName: 'blau',
+    backgroundColor: const Color.fromARGB(255, 52, 159, 221),
+    interactiveColor: const Color(0xFF4FD1C5),
+    accentColor: const Color(0xFF64FFDA),
     gridViewColor: const Color(0xFF2A4D4A),
   );
+
   static final Map<AppColorSchemeKey, AppColorPalette> _byKey = {
     AppColorSchemeKey.classic: classic,
     AppColorSchemeKey.lila: lila,
     AppColorSchemeKey.darkBlue: darkBlue,
     AppColorSchemeKey.turquoise: turquoise,
+    AppColorSchemeKey.blue: blue,
   };
 
   static Iterable<AppColorPalette> get all => _byKey.values;

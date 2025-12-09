@@ -100,21 +100,10 @@ class PupilIdentityManager {
 
     // Now we check if the identities are outdated
 
-    final lastIdentitiesUpdate = await PupilDataApiService()
+    final remoteLastIdentitiesUpdate = await PupilDataApiService()
         .fetchLastIdentitiesUpdate();
-    _remoteLastIdentitiesUpdate.value = lastIdentitiesUpdate;
-    if (lastIdentitiesUpdate != null &&
-        _activeEnv.lastIdentitiesUpdate != null) {
-      if (lastIdentitiesUpdate.isAfter(_activeEnv.lastIdentitiesUpdate!)) {
-        _notificationService.showInformationDialog(
-          'Die gespeicherten Schüler*innen-Ids vomn\n${_activeEnv.lastIdentitiesUpdate!.formatDateAndTimeForUser()}\n sind veraltet. Die neueste Version ist vom \n ${lastIdentitiesUpdate.formatDateAndTimeForUser()}.\n Schüler*innen-Ids aus einer vertrauenswürdigen Quelle aktualisieren!',
-        );
-      } else {
-        _log.info('Pupil identities are up to date.');
-      }
-    } else {
-      _log.warning('No last identities update found in the server.');
-    }
+    _remoteLastIdentitiesUpdate.value = remoteLastIdentitiesUpdate;
+
     return;
   }
 
@@ -176,6 +165,7 @@ class PupilIdentityManager {
       _groups.value = availableGroups;
       di<PupilsFilter>().populateGroupFilters(availableGroups.toList());
     }
+    di<PupilProxyManager>().clearData();
     await di<EnvManager>().updateActiveEnv(
       lastIdentitiesUpdate: normalizedUpdateTimestamp,
     );

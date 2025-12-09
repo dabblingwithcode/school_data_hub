@@ -147,55 +147,57 @@ class PupilProfileContentRow extends StatelessWidget {
           width: 1,
         ),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            icon,
-            color: AppColors.backgroundColor.withValues(alpha: 0.7),
-            size: 18,
-          ),
-          const Gap(8),
-          Text(
-            '$label:',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: AppColors.backgroundColor,
-            ),
+          Row(
+            children: [
+              Icon(
+                icon,
+                color: AppColors.backgroundColor.withValues(alpha: 0.7),
+                size: 18,
+              ),
+              const Gap(8),
+              Text(
+                '$label:',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.backgroundColor,
+                ),
+              ),
+              if (actionButton != null) ...[const Spacer(), actionButton!],
+            ],
           ),
           const Gap(6),
-          Expanded(
-            child: InkWell(
-              onTap: onTap,
-              onLongPress: onLongPress,
-              borderRadius: BorderRadius.circular(8),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8,
-                  horizontal: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: onTap != null
-                      ? AppColors.interactiveColor.withValues(alpha: 0.1)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child:
-                    valueWidget ??
-                    Text(
-                      value!,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: onTap != null
-                            ? AppColors.interactiveColor
-                            : Colors.black87,
-                      ),
-                    ),
+          InkWell(
+            onTap: onTap,
+            onLongPress: onLongPress,
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              decoration: BoxDecoration(
+                color: onTap != null
+                    ? AppColors.interactiveColor.withValues(alpha: 0.1)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(8),
               ),
+              child:
+                  valueWidget ??
+                  Text(
+                    value!,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: onTap != null
+                          ? AppColors.interactiveColor
+                          : Colors.black87,
+                    ),
+                  ),
             ),
           ),
-          if (actionButton != null) ...[const Gap(8), actionButton!],
+          const Gap(10),
         ],
       ),
     );

@@ -6,7 +6,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/document_image.dart';
+import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
@@ -230,7 +230,7 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                                     //             competenceCheck.checkId,
                                     //         fileId: file.fileId);
                                   },
-                                  child: DocumentImage(
+                                  child: EncryptedDocumentImage(
                                     documentId: file.documentId,
                                     size: 70,
                                   ),
@@ -302,14 +302,14 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                       }
                     }
                   },
-                child: Text(
-                  'Kommentar:',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.interactiveColor,
+                  child: Text(
+                    'Kommentar:',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.interactiveColor,
+                    ),
                   ),
-                ),
                 ),
                 const Gap(5),
                 Flexible(

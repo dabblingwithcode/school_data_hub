@@ -50,7 +50,10 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
         context: context,
         builder: (ctx) => StatefulBuilder(
           builder: (ctx, setState) => AlertDialog(
-            title: const Text('Farbschema wählen'),
+            title: const Text(
+              'Farbschema wählen',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
             content: SizedBox(
               width: 360,
               child: Column(
@@ -68,8 +71,20 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
                             tempSelection = value;
                           });
                         },
-                        title: Text(palette.displayName),
-                        subtitle: Text(palette.key.name),
+                        title: Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                color: palette.backgroundColor,
+                                width: 20,
+                                height: 20,
+                              ),
+                            ),
+                            const Gap(10),
+                            Text(palette.displayName),
+                          ],
+                        ),
                       ),
                     )
                     .toList(),

@@ -7,8 +7,8 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialo
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_set_avatar.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:widget_zoom/widget_zoom.dart';
@@ -197,7 +197,7 @@ class AvatarWithBadges extends WatchingWidget {
                             ..color = Colors.white,
                         ),
                       ),
-                      const SizedBox(),
+
                       const SizedBox(),
                       Text(
                         specialNeedsText,
@@ -212,6 +212,25 @@ class AvatarWithBadges extends WatchingWidget {
                   ),
                 ),
               ),
+            if (pupil.family != null) ...[
+              Positioned(
+                top: 0,
+                bottom: 0,
+                left: -_badgeOffset - 7,
+                child: Container(
+                  width: _badgeSize,
+                  height: _badgeSize,
+
+                  child: Center(
+                    child: Icon(
+                      Icons.family_restroom_rounded,
+                      size: 20,
+                      color: AppColors.backgroundColor,
+                    ),
+                  ),
+                ),
+              ),
+            ],
             Positioned(
               bottom: -_badgeOffset,
               left: -_badgeOffset,

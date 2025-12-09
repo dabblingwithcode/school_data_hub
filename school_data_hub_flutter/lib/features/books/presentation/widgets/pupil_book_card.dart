@@ -39,6 +39,7 @@ class PupilBookLendingCard extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Card(
+        color: AppColors.cardInCardColor,
         child: InkWell(
           onLongPress: () async {
             if (pupilBookLending.lentBy != di<HubSessionManager>().userName ||

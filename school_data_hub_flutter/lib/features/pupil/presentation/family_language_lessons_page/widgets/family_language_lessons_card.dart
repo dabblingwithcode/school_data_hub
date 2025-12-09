@@ -98,6 +98,7 @@ class FamilyLanguageLessonsCard extends WatchingWidget {
                           ),
                           const Gap(5),
                           Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               const Text('Herkunftssprache:'),
                               const Gap(10),
@@ -110,7 +111,7 @@ class FamilyLanguageLessonsCard extends WatchingWidget {
                                 maxLines: 3,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 14,
+                                  fontSize: 16,
                                 ),
                               ),
                             ],
@@ -122,6 +123,7 @@ class FamilyLanguageLessonsCard extends WatchingWidget {
                 ),
                 const Gap(5),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const Text('Angemeldet am:'),
                     const Gap(10),
@@ -130,6 +132,10 @@ class FamilyLanguageLessonsCard extends WatchingWidget {
                           ? pupil.familyLanguageLessonsSince!
                                 .formatDateForUser()
                           : 'keine Angabe',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
                   ],
                 ),

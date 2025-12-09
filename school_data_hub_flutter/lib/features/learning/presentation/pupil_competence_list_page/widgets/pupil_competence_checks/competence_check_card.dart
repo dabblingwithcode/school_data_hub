@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialo
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_picker.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/document_image.dart';
+import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
@@ -54,10 +54,7 @@ class CompetenceCheckCard extends StatelessWidget {
           color: AppColors.cardInCardColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
-            side: BorderSide(
-              color: AppColors.cardInCardBorderColor,
-              width: 2,
-            ),
+            side: BorderSide(color: AppColors.cardInCardBorderColor, width: 2),
           ),
           child: Padding(
             padding: const EdgeInsets.all(10),
@@ -355,7 +352,7 @@ class CompetenceCheckCard extends StatelessWidget {
                                       fileId: file.documentId,
                                     );
                               },
-                              child: DocumentImage(
+                              child: EncryptedDocumentImage(
                                 documentId: file.documentId,
                                 size: 70,
                               ),

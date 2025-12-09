@@ -67,7 +67,7 @@ class PupilProfilePage extends WatchingWidget {
                     ),
                   ),
                   PupilProfileNavigation(
-                    boxWidth: MediaQuery.of(context).size.width,
+                    boxWidth: MediaQuery.sizeOf(context).width,
                     //MediaQuery.of(context).size.width / 5,
                   ),
                 ],

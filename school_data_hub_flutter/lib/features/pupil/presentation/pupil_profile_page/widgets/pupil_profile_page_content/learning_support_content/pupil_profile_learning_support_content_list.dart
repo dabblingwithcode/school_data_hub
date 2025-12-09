@@ -13,7 +13,7 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/document_image.dart';
+import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
@@ -108,7 +108,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                                 maxWidth: 600,
                                 maxHeight: 800,
                               ),
-                              child: DocumentImage(
+                              child: EncryptedDocumentImage(
                                 documentId: file.documentId,
                                 size: 400,
                               ),
@@ -135,7 +135,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
 
                         await _removeFileFromPreSchoolMedical(file, pupil);
                       },
-                      child: DocumentImage(
+                      child: EncryptedDocumentImage(
                         documentId: file.documentId,
                         size: 70,
                       ),

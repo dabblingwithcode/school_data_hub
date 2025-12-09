@@ -16,7 +16,7 @@ import 'package:watch_it/watch_it.dart';
 List<PupilProxy> _afterSchoolCareFilter(List<PupilProxy> pupils) {
   List<PupilProxy> filteredPupils = [];
   for (PupilProxy pupil in pupils) {
-    if (!pupil.ogs == true) {
+    if (pupil.afterSchoolCare == null) {
       di<FiltersStateManager>().setFilterState(
         filterState: FilterState.pupil,
         value: true,
@@ -56,7 +56,7 @@ class OgsListPage extends WatchingWidget {
               slivers: [
                 const SliverGap(5),
                 GenericSliverSearchAppBar(
-                  height: 110,
+                  height: 105,
                   title: AfterSchoolCareListSearchBar(
                     pupils: ogsPupils,
                     filtersOn: filtersOn,

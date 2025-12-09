@@ -98,7 +98,7 @@ class ReligionCard extends WatchingWidget {
                           ),
 
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               const Text('Religion:'),
                               const Gap(10),
@@ -112,7 +112,7 @@ class ReligionCard extends WatchingWidget {
                                     maxLines: 3,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 14,
+                                      fontSize: 16,
                                     ),
                                   ),
                                 ),
@@ -133,6 +133,10 @@ class ReligionCard extends WatchingWidget {
                       pupil.religionLessonsSince != null
                           ? pupil.religionLessonsSince!.formatDateForUser()
                           : 'keine Angabe',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
                   ],
                 ),

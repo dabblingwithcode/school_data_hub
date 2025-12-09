@@ -27,7 +27,7 @@ class PupilCompetenceListSearchBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(5.0),
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+        // mainAxisAlignment: MainAxisAlignment.end,
         children: [
           const Gap(5),
           Padding(
