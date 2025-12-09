@@ -52,13 +52,12 @@ class PupilProfilePage extends WatchingWidget {
                           flexibleSpace: FlexibleSpaceBar(
                             expandedTitleScale: 1,
                             collapseMode: CollapseMode.none,
-                            titlePadding: const EdgeInsets.only(
-                              left: 0,
-                              top: 5,
-                              right: 0,
-                              bottom: 5,
+                            background: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 5),
+                              child: PupilProfileHeadingCard(
+                                passedPupil: pupil,
+                              ),
                             ),
-                            title: PupilProfileHeadingCard(passedPupil: pupil),
                           ),
                         ),
                         SliverToBoxAdapter(
