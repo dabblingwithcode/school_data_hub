@@ -237,8 +237,9 @@ class PupilIdentityManager {
       ..writeAsStringSync(pupilListTxtFileContentForBackendUpdate);
 
     final fileResponse = await ClientFileUpload.uploadFile(
-      textFile,
-      ServerStorageFolder.temp,
+      file: textFile,
+      storageId: StorageId.private,
+      folder: ServerStorageFolder.temp,
     );
     if (fileResponse.success == false) {
       _notificationService.showSnackBar(

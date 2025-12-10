@@ -142,8 +142,9 @@ class CompetenceManager {
       File file = File(pickedFile.files.single.path!);
 
       final fileResponse = await ClientFileUpload.uploadFile(
-        file,
-        ServerStorageFolder.temp,
+        file: file,
+        storageId: StorageId.private,
+        folder: ServerStorageFolder.temp,
       );
 
       if (fileResponse.success == false) {

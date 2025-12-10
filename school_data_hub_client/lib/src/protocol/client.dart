@@ -518,6 +518,19 @@ class EndpointBooks extends _i1.EndpointRef {
         {'isbn': isbn},
       );
 
+  _i2.Future<_i19.Book> updateBookImage(
+    int isbn,
+    String imagePath,
+  ) =>
+      caller.callServerEndpoint<_i19.Book>(
+        'books',
+        'updateBookImage',
+        {
+          'isbn': isbn,
+          'imagePath': imagePath,
+        },
+      );
+
   _i2.Future<_i19.Book> updateBookTags(
     int isbn, {
     List<_i18.BookTag>? tags,

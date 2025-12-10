@@ -31,8 +31,9 @@ class SchoolDataApiService {
   /// Upload school logo
   Future<String?> uploadLogo(File imageFile) async {
     final result = await ClientFileUpload.uploadFile(
-      imageFile,
-      ServerStorageFolder.schoolLogos,
+      file: imageFile,
+      storageId: StorageId.private,
+      folder: ServerStorageFolder.schoolLogos,
     );
 
     if (result.success && result.path != null) {
@@ -44,8 +45,9 @@ class SchoolDataApiService {
   /// Upload official seal
   Future<String?> uploadOfficialSeal(File imageFile) async {
     final result = await ClientFileUpload.uploadFile(
-      imageFile,
-      ServerStorageFolder.schoolSeals,
+      file: imageFile,
+      storageId: StorageId.private,
+      folder: ServerStorageFolder.schoolSeals,
     );
 
     if (result.success && result.path != null) {

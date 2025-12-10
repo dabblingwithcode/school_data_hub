@@ -1,9 +1,16 @@
+import 'dart:io';
+
+import 'package:logging/logging.dart';
+import 'package:path/path.dart' as p;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:watch_it/watch_it.dart';
 
 class BookApiService {
   final _client = di<Client>();
+  final _notificationService = di<NotificationService>();
+  final _log = Logger('SchooldayEventApiService');
 
   // - BOOK TAGS - //
 
@@ -49,8 +56,8 @@ class BookApiService {
     LibraryBookLocation location,
   ) async {
     final bookLocationInServer = await ClientHelper.apiCall(
-      call:
-          () => _client.libraryBookLocations.postLibraryBookLocation(location),
+      call: () =>
+          _client.libraryBookLocations.postLibraryBookLocation(location),
       errorMessage: 'Fehler beim Erstellen des Buchstandorts',
     );
     return bookLocationInServer;
@@ -66,9 +73,8 @@ class BookApiService {
 
   Future<bool?> deleteBookLocation(LibraryBookLocation location) async {
     final success = await ClientHelper.apiCall(
-      call:
-          () =>
-              _client.libraryBookLocations.deleteLibraryBookLocation(location),
+      call: () =>
+          _client.libraryBookLocations.deleteLibraryBookLocation(location),
       errorMessage: 'Fehler beim Löschen des Buchstandorts',
     );
     return success;
@@ -98,6 +104,100 @@ class BookApiService {
       errorMessage: 'Fehler beim Aktualisieren der Buchtags',
     );
     return updatedBook;
+  }
+
+  Future<Book?> updateBookImage({required int isbn, required File file}) async {
+    try {
+      final documentId = isbn.toString();
+      final path = p.posix.join('$documentId.jpg');
+      String? uploadDescription;
+      try {
+        uploadDescription = await _client.files.getUploadDescription(
+          StorageId.public.name,
+          path,
+        );
+      } catch (e) {
+        _notificationService.apiRunning(false);
+        throw Exception('Failed to get upload description, $e');
+      }
+
+      if (uploadDescription != null) {
+        _log.info('Upload description received for $path');
+        _log.fine('Upload description: $uploadDescription');
+        // Create an uploader
+        final uploader = FileUploader(uploadDescription);
+
+        // Upload the file
+        final fileStream = file.openRead();
+
+        final fileLength = await file.length();
+        _log.info('File length: $fileLength');
+        _notificationService.apiRunning(true);
+        try {
+          await uploader.upload(fileStream, fileLength);
+        } catch (e) {
+          _notificationService.apiRunning(false);
+          _log.severe('Error while uploading file', e, StackTrace.current);
+
+          throw Exception('Failed to upload file, $uploadDescription');
+        }
+
+        _notificationService.apiRunning(false);
+        bool success = false;
+        try {
+          // Verify the upload
+          success = await _client.files.verifyUpload('public', path);
+        } catch (e) {
+          _notificationService.apiRunning(false);
+          throw Exception('Failed to verify upload, $e');
+        }
+
+        if (success) {
+          try {
+            final updatedSchooldayEvent = await _client.books.updateBookImage(
+              isbn,
+              path,
+            );
+            _notificationService.apiRunning(false);
+
+            return updatedSchooldayEvent;
+          } catch (e) {
+            _notificationService.apiRunning(false);
+
+            _log.severe(
+              'Error while updating schoolday event file',
+              e,
+              StackTrace.current,
+            );
+
+            _notificationService.showSnackBar(
+              NotificationType.error,
+              'Das Dokument konnte nicht aktualisiert werden: ${e.toString()}',
+            );
+
+            throw Exception('Failed to update schoolday event file, $e');
+          }
+        } else {
+          _notificationService.apiRunning(false);
+          throw Exception('Failed to verify upload, $success');
+        }
+      } else {
+        _notificationService.apiRunning(false);
+
+        _log.severe('Error while uploading file', null, StackTrace.current);
+
+        _notificationService.showSnackBar(
+          NotificationType.error,
+          'Das Ereignisdokument konnte nicht hochgeladen werden: ${uploadDescription.toString()}',
+        );
+
+        throw Exception('Failed to upload file, $uploadDescription');
+      }
+    } catch (e) {
+      _notificationService.apiRunning(false);
+      throw Exception('Failed to upload file, $e');
+    }
+    return null;
   }
 
   // - LIBRARY BOOKS - //
@@ -142,18 +242,17 @@ class BookApiService {
     List<BookTag>? tags,
   }) async {
     final updatedLibraryBook = await ClientHelper.apiCall(
-      call:
-          () => _client.libraryBooks.updateLibraryBookAndRelatedBook(
-            isbn,
-            libraryId,
-            available,
-            location,
-            title,
-            author,
-            description,
-            readingLevel,
-            tags,
-          ),
+      call: () => _client.libraryBooks.updateLibraryBookAndRelatedBook(
+        isbn,
+        libraryId,
+        available,
+        location,
+        title,
+        author,
+        description,
+        readingLevel,
+        tags,
+      ),
       errorMessage: 'Fehler beim Aktualisieren des Buches',
     );
     return updatedLibraryBook;

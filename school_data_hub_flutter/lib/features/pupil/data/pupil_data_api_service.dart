@@ -175,8 +175,9 @@ class PupilDataApiService {
     required PupilDocumentType documentType,
   }) async {
     final result = await ClientFileUpload.uploadFile(
-      file,
-      documentType == PupilDocumentType.avatar
+      file: file,
+      storageId: StorageId.private,
+      folder: documentType == PupilDocumentType.avatar
           ? ServerStorageFolder.avatars
           : ServerStorageFolder.documents,
     );
