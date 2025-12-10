@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/models/schoolday_event_enums.dart';
@@ -150,6 +151,39 @@ class SchooldayEventFilterManager {
 
       if (activeFilters[SchooldayEventFilter.otherEvent]!) {
         if (schooldayEvent.eventType == SchooldayEventType.otherEvent) {
+          isMatched = true;
+          complementaryFilter = true;
+        } else if (!complementaryFilter) {
+          isMatched = false;
+        }
+      }
+
+      if (activeFilters[SchooldayEventFilter.duringBreak]!) {
+        if (schooldayEvent.eventTime == null) {
+          continue;
+        }
+        final eventTimeOfDay = TimeOfDay(
+          hour: int.parse(schooldayEvent.eventTime!.split(':')[0]),
+          minute: int.parse(schooldayEvent.eventTime!.split(':')[1]),
+        );
+        if (eventTimeOfDay.isAfter(const TimeOfDay(hour: 10, minute: 29)) &&
+            eventTimeOfDay.isBefore(const TimeOfDay(hour: 11, minute: 20))) {
+          isMatched = true;
+          complementaryFilter = true;
+        } else if (!complementaryFilter) {
+          isMatched = false;
+        }
+      }
+      if (activeFilters[SchooldayEventFilter.notDuringBreak]!) {
+        if (schooldayEvent.eventTime == null) {
+          continue;
+        }
+        final eventTimeOfDay = TimeOfDay(
+          hour: int.parse(schooldayEvent.eventTime!.split(':')[0]),
+          minute: int.parse(schooldayEvent.eventTime!.split(':')[1]),
+        );
+        if (eventTimeOfDay.isBefore(const TimeOfDay(hour: 10, minute: 29)) ||
+            eventTimeOfDay.isAfter(const TimeOfDay(hour: 11, minute: 20))) {
           isMatched = true;
           complementaryFilter = true;
         } else if (!complementaryFilter) {

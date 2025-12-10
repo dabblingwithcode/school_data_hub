@@ -38,6 +38,8 @@ enum SchooldayEventFilter {
   admonitionInfo,
   transitionAdvice,
   processed,
+  duringBreak,
+  notDuringBreak,
 }
 
 Map<SchooldayEventFilter, bool> initialSchooldayEventFilterValues = {
@@ -61,4 +63,6 @@ Map<SchooldayEventFilter, bool> initialSchooldayEventFilterValues = {
   SchooldayEventFilter.admonitionInfo: false,
   SchooldayEventFilter.transitionAdvice: false,
   SchooldayEventFilter.processed: false,
+  SchooldayEventFilter.duringBreak: false,
+  SchooldayEventFilter.notDuringBreak: false,
 };
