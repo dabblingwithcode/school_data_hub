@@ -13,10 +13,11 @@ class ClientFileUpload {
   static final _instance = ClientFileUpload.__internal();
   factory ClientFileUpload() => _instance;
 
-  static Future<({String? path, bool success})> uploadFile(
-    File file,
-    ServerStorageFolder folder,
-  ) async {
+  static Future<({String? path, bool success})> uploadFile({
+    required File file,
+    required StorageId storageId,
+    required ServerStorageFolder folder,
+  }) async {
     final documentId = const Uuid().v4();
     final path = p.join(folder.name, '$documentId${p.extension(file.path)}');
     try {

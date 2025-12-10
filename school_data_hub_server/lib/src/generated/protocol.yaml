@@ -40,6 +40,7 @@ books:
   - fetchBooks:
   - getBookStats:
   - fetchBookByIsbn:
+  - updateBookImage:
   - updateBookTags:
   - deleteBook:
 libraryBookLocations:

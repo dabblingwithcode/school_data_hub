@@ -1158,6 +1158,30 @@ class Endpoints extends _i1.EndpointDispatch {
             params['isbn'],
           ),
         ),
+        'updateBookImage': _i1.MethodConnector(
+          name: 'updateBookImage',
+          params: {
+            'isbn': _i1.ParameterDescription(
+              name: 'isbn',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'imagePath': _i1.ParameterDescription(
+              name: 'imagePath',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['books'] as _i8.BooksEndpoint).updateBookImage(
+            session,
+            params['isbn'],
+            params['imagePath'],
+          ),
+        ),
         'updateBookTags': _i1.MethodConnector(
           name: 'updateBookTags',
           params: {

@@ -11,6 +11,16 @@ class FilesEndpoint extends Endpoint {
   /// as described in https://docs.serverpod.dev/concepts/file-uploads#client-side-code
   Future<String?> getUploadDescription(
       Session session, String storageId, String path) async {
+    if (await session.storage.fileExists(
+      storageId: storageId,
+      path: path,
+    )) {
+      await session.storage.deleteFile(
+        storageId: storageId,
+        path: path,
+      );
+    }
+
     return await session.storage.createDirectFileUploadDescription(
       storageId: storageId,
       path: path,

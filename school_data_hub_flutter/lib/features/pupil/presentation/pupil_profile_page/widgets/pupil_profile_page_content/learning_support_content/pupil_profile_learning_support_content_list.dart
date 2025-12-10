@@ -665,8 +665,9 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
 
       // Upload file to server storage
       final fileResponse = await ClientFileUpload.uploadFile(
-        file,
-        ServerStorageFolder.documents,
+        file: file,
+        storageId: StorageId.private,
+        folder: ServerStorageFolder.documents,
       );
 
       if (fileResponse.success == false) {

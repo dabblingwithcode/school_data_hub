@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
@@ -284,6 +286,12 @@ class BookManager {
 
   void setLastLocationValue(LibraryBookLocation location) {
     _lastSelectedLocation.value = location;
+  }
+
+  // - BOOK IMAGE
+
+  Future<void> updateBookImage({required File file, required int isbn}) async {
+    await _bookApiService.updateBookImage(file: file, isbn: isbn);
   }
 
   //- LIBRARY BOOKS

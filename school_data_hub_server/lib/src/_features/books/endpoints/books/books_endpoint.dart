@@ -78,6 +78,21 @@ class BooksEndpoint extends Endpoint {
 
   //-update
 
+  Future<Book> updateBookImage(
+      Session session, int isbn, String imagePath) async {
+    final book = await Book.db.findFirstRow(
+      session,
+      where: (t) => t.isbn.equals(isbn),
+    );
+    if (book == null) {
+      throw Exception('Book with isbn $isbn does not exist.');
+    }
+
+    book.imagePath = imagePath;
+    final updatedBook = await Book.db.updateRow(session, book);
+    return updatedBook;
+  }
+
   Future<Book> updateBookTags(Session session, int isbn,
       {List<BookTag>? tags}) async {
     final book = await Book.db.findFirstRow(
