@@ -31,7 +31,7 @@ class ReligionListSearchBar extends WatchingWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.people_alt_rounded,
                   color: AppColors.backgroundColor,
                 ),
@@ -52,17 +52,19 @@ class ReligionListSearchBar extends WatchingWidget {
             child: Row(
               children: [
                 Expanded(
-                    child: PupilSearchTextField(
-                        searchType: SearchType.pupil,
-                        hintText: 'Schüler/in suchen',
-                        refreshFunction: _pupilsFilter.refreshs)),
+                  child: PupilSearchTextField(
+                    searchType: SearchType.pupil,
+                    hintText: 'Schüler/in suchen',
+                    refreshFunction: _pupilsFilter.refreshs,
+                  ),
+                ),
                 FilterButton(
                   isSearchBar: true,
                   showBottomSheetFunction: () => showGenericFilterBottomSheet(
-                      context: context, filterList: [
-                    const ReligionFilterBottomSheet(),
-                  ]),
-                )
+                    context: context,
+                    filterList: [const ReligionFilterBottomSheet()],
+                  ),
+                ),
               ],
             ),
           ),
@@ -71,4 +73,3 @@ class ReligionListSearchBar extends WatchingWidget {
     );
   }
 }
-

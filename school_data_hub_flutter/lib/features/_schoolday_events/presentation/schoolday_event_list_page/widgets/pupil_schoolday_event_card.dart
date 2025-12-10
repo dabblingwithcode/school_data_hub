@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_picker.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/document_image.dart';
+import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
@@ -49,7 +49,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                 )
               : Border.all(
                   color: AppColors
-                      .cardInCardBorderColor, // Specify the color of the border here
+                      .backgroundColor, // Specify the color of the border here
                   width: 2,
                 ),
           borderRadius: BorderRadius.circular(10),
@@ -98,7 +98,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                         schooldayEvent.schoolday!.schoolday
                                             .formatDateForUser(),
 
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           color: AppColors.interactiveColor,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 20,
@@ -108,6 +108,69 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                   : Text(
                                       schooldayEvent.schoolday!.schoolday
                                           .formatDateForUser(),
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                              const Gap(10),
+                              isAuthorized
+                                  ? InkWell(
+                                      onTap: () async {
+                                        final eventTime =
+                                            schooldayEvent.eventTime ?? '00:00';
+                                        final TimeOfDay?
+                                        picked = await showTimePicker(
+                                          context: context,
+                                          initialTime: TimeOfDay(
+                                            hour: int.parse(
+                                              eventTime.split(':')[0],
+                                            ),
+                                            minute: int.parse(
+                                              eventTime.split(':')[1],
+                                            ),
+                                          ),
+                                          builder:
+                                              (
+                                                BuildContext context,
+                                                Widget? child,
+                                              ) {
+                                                return MediaQuery(
+                                                  data: MediaQuery.of(context)
+                                                      .copyWith(
+                                                        alwaysUse24HourFormat:
+                                                            true,
+                                                      ),
+                                                  child: child!,
+                                                );
+                                              },
+                                        );
+                                        if (picked != null) {
+                                          final newEventTime =
+                                              '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+                                          await _schooldayEventManager
+                                              .updateSchooldayEvent(
+                                                eventToUpdate: schooldayEvent,
+                                                eventTime: newEventTime,
+                                              );
+                                          _notificationService.showSnackBar(
+                                            NotificationType.success,
+                                            'Uhrzeit erfolgreich geändert!',
+                                          );
+                                        }
+                                      },
+                                      child: Text(
+                                        schooldayEvent.eventTime ?? '--:--',
+                                        style: TextStyle(
+                                          color: AppColors.interactiveColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    )
+                                  : Text(
+                                      schooldayEvent.eventTime ?? '--:--',
                                       style: const TextStyle(
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold,
@@ -204,7 +267,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                     },
                                     child: Text(
                                       schooldayEvent.createdBy,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 18,
                                         color: AppColors.backgroundColor,
@@ -272,7 +335,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                             );
                           },
                           child: schooldayEvent.processedDocumentId != null
-                              ? DocumentImage(
+                              ? EncryptedDocumentImage(
                                   documentId: schooldayEvent
                                       .processedDocument!
                                       .documentId,
@@ -334,7 +397,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                           );
                         },
                         child: schooldayEvent.document != null
-                            ? DocumentImage(
+                            ? EncryptedDocumentImage(
                                 documentId: schooldayEvent.document!.documentId,
                                 size: 70,
                               )
@@ -394,7 +457,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                               schooldayEvent.processed
                                   ? 'Bearbeitet von'
                                   : 'Nicht bearbeitet',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 16,
                                 color: AppColors.backgroundColor,
                               ),
@@ -426,7 +489,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                     },
                                     child: Text(
                                       schooldayEvent.processedBy!,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.interactiveColor,
@@ -461,7 +524,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                     },
                                     child: Text(
                                       'am ${schooldayEvent.processedAt!.formatDateForUser()}',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 18,
                                         color: AppColors.interactiveColor,
@@ -507,7 +570,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                       },
                       child: Text(
                         schooldayEvent.comment ?? 'Kommentar hinzufügen',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           color: AppColors.interactiveColor,
                         ),

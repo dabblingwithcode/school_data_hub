@@ -90,7 +90,7 @@ void missedSchooldaysBadgesInformationDialog(
                   Container(
                     width: 25.0,
                     height: 25.0,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color:
                           AppColors.contactedSuccessColor, // Colors.green[100],
                       shape: BoxShape.circle,
@@ -116,7 +116,7 @@ void missedSchooldaysBadgesInformationDialog(
                   Container(
                     width: 25.0,
                     height: 25.0,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: AppColors.contactedCalledBackColor,
                       shape: BoxShape.circle,
                     ),
@@ -143,7 +143,7 @@ void missedSchooldaysBadgesInformationDialog(
                   Container(
                     width: 25.0,
                     height: 25.0,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: AppColors.contactedFailedColor,
                       shape: BoxShape.circle,
                     ),

@@ -11,11 +11,11 @@ class BottomNavManager {
     _bottomNavState.value = 0;
   }
 
-  setBottomNavPage(int index) {
+  void setBottomNavPage(int index) {
     _bottomNavState.value = index;
   }
 
-  setPupilProfileNavPage(int index) {
+  void setPupilProfileNavPage(int index) {
     _pupilProfileNavState.value = index;
   }
 }

@@ -247,7 +247,7 @@ class BookCard extends WatchingWidget {
                       },
                       child: Text(
                         bookProxy.description,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           color: AppColors.interactiveColor,
                         ),

@@ -32,7 +32,7 @@ class RoomListSearchBar extends WatchingWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.meeting_room_rounded,
                     color: AppColors.backgroundColor,
                   ),
@@ -55,11 +55,13 @@ class RoomListSearchBar extends WatchingWidget {
             child: Row(
               children: [
                 Expanded(
-                    child: MatrixSearchTextField(
-                        searchType: SearchType.room,
-                        hintText: 'Raum suchen',
-                        refreshFunction:
-                            _matrixPolicyFilterManager.setRoomsFilterText)),
+                  child: MatrixSearchTextField(
+                    searchType: SearchType.room,
+                    hintText: 'Raum suchen',
+                    refreshFunction:
+                        _matrixPolicyFilterManager.setRoomsFilterText,
+                  ),
+                ),
                 InkWell(
                   // TODO: repair this
                   onTap: () => const RoomsFilterBottomSheet(),

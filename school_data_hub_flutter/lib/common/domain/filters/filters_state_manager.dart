@@ -33,6 +33,7 @@ const Map<FilterState, bool> _initialFilterGlobalValues = {
 };
 
 abstract class FiltersStateManager {
+  void dispose();
   bool getFilterState(FilterState filterState);
 
   ValueListenable<bool> get filtersActive;
@@ -48,6 +49,13 @@ abstract class FiltersStateManager {
 
 class FiltersStateManagerImplementation implements FiltersStateManager {
   FiltersStateManagerImplementation();
+
+  void dispose() {
+    _filterStates.dispose();
+    _filtersActive.dispose();
+
+    return;
+  }
 
   void init() {
     _filterStates.value = {..._initialFilterGlobalValues};

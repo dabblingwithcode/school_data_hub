@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filt
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 // TODO: this is an old class and the rests being used should be migrated to PupilsFilterImplementation
@@ -28,11 +28,18 @@ class PupilFilterManager {
   ValueListenable<Map<PupilSortMode, bool>> get sortMode => _sortMode;
 
   final _filteredPupils = ValueNotifier<List<PupilProxy>>(
-    di<PupilManager>().allPupils,
+    di<PupilProxyManager>().allPupils,
   );
   ValueListenable<List<PupilProxy>> get filteredPupils => _filteredPupils;
 
   PupilFilterManager();
+
+  void dispose() {
+    _pupilFilterState.dispose();
+    _sortMode.dispose();
+    _filteredPupils.dispose();
+    return;
+  }
 
   void resetFilters() {
     _pupilFilterState.value = {...initialPupilFilterValues};

@@ -10,7 +10,7 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/l
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/learning_support_list_search_bar.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class LearningSupportListPage extends WatchingWidget {
@@ -18,7 +18,7 @@ class LearningSupportListPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _pupilManager = di<PupilManager>();
+    final _pupilManager = di<PupilProxyManager>();
     bool filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);
     // These come from the PupilFilterManager
 
@@ -26,7 +26,9 @@ class LearningSupportListPage extends WatchingWidget {
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
       appBar: const GenericAppBar(
-          iconData: Icons.support_rounded, title: 'Förderung'),
+        iconData: Icons.support_rounded,
+        title: 'Förderung',
+      ),
       body: RefreshIndicator(
         onRefresh: () async => _pupilManager.updatePupilList(pupils),
         child: Center(
@@ -38,18 +40,22 @@ class LearningSupportListPage extends WatchingWidget {
                 GenericSliverSearchAppBar(
                   height: 110,
                   title: LearningSupportListSearchBar(
-                      pupils: pupils, filtersOn: filtersOn),
+                    pupils: pupils,
+                    filtersOn: filtersOn,
+                  ),
                 ),
                 GenericSliverListWithEmptyListCheck(
-                    items: pupils,
-                    itemBuilder: (_, pupil) => LearningSupportCard(pupil)),
+                  items: pupils,
+                  itemBuilder: (_, pupil) => LearningSupportCard(pupil),
+                ),
               ],
             ),
           ),
         ),
       ),
-      bottomNavigationBar:
-          LearningSupportListPageBottomNavBar(filtersOn: filtersOn),
+      bottomNavigationBar: LearningSupportListPageBottomNavBar(
+        filtersOn: filtersOn,
+      ),
     );
   }
 }

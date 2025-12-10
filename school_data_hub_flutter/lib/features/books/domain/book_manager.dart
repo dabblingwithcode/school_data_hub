@@ -43,6 +43,17 @@ class BookManager {
 
   BookManager();
 
+  void dispose() {
+    _libraryBookProxies.dispose();
+    _isbnLibraryBooksMap.dispose();
+    _locations.dispose();
+    _bookTags.dispose();
+    _lastSelectedLocation.dispose();
+    _searchResults.dispose();
+    _bookStats.dispose();
+
+    return;
+  }
   //  final session = di<HubSessionManager>().credentials.value;
 
   int _currentPage = 1;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:watch_it/watch_it.dart';
@@ -23,13 +23,12 @@ class PupilManagementSection extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pupils = di<PupilManager>().allPupils;
+    final pupils = di<PupilProxyManager>().allPupils;
 
     // Get selected pupils
-    final selectedPupils =
-        pupils
-            .where((pupil) => selectedPupilIds.contains(pupil.pupilId))
-            .toList();
+    final selectedPupils = pupils
+        .where((pupil) => selectedPupilIds.contains(pupil.pupilId))
+        .toList();
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -152,10 +151,9 @@ class PupilManagementSection extends WatchingWidget {
   void _selectPupils(BuildContext context) async {
     final result = await Navigator.of(context).push<List<int>>(
       MaterialPageRoute(
-        builder:
-            (context) => SelectPupilsListPage(
-              selectablePupils: di<PupilManager>().allPupils,
-            ),
+        builder: (context) => SelectPupilsListPage(
+          selectablePupils: di<PupilProxyManager>().allPupils,
+        ),
       ),
     );
 

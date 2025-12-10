@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.da
 import 'package:school_data_hub_flutter/common/widgets/filter_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
@@ -31,7 +31,7 @@ class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final _schoolListManager = di<SchoolListManager>();
     final _hubSessionManager = di<HubSessionManager>();
-    final _pupilManager = di<PupilManager>();
+    final _pupilManager = di<PupilProxyManager>();
     final schoolList = _schoolListManager.getSchoolListById(listId);
     return BottomNavBarLayout(
       bottomNavBar: BottomAppBar(
@@ -61,42 +61,38 @@ class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
                       tooltip: 'Liste teilen',
                       onPressed: () async {
                         final users = di<UserManager>().users.value;
-                        final List<int>? selectedUsers = await Navigator.of(
-                          context,
-                        ).push(
-                          MaterialPageRoute(
-                            builder:
-                                (ctx) => SelectUsersPage(
-                                  selectableUsers:
-                                      users
-                                          .where(
-                                            (user) =>
-                                                user.userInfo?.userName !=
-                                                _hubSessionManager.userName,
-                                          )
-                                          .toList(),
+                        final List<int>? selectedUsers =
+                            await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (ctx) => SelectUsersPage(
+                                  selectableUsers: users
+                                      .where(
+                                        (user) =>
+                                            user.userInfo?.userName !=
+                                            _hubSessionManager.userName,
+                                      )
+                                      .toList(),
                                   authorizedUsers: schoolList.authorizedUsers,
                                 ),
-                          ),
-                        );
+                              ),
+                            );
                         if (selectedUsers == null) return;
 
                         final userManager = di<UserManager>();
-                        final authorizedUsernames =
-                            selectedUsers.isEmpty
-                                ? null
-                                : selectedUsers
-                                    .map(
-                                      (userId) =>
-                                          userManager.users.value
-                                              .firstWhere(
-                                                (user) => user.id == userId,
-                                              )
-                                              .userInfo
-                                              ?.userName ??
-                                          'Unknown',
-                                    )
-                                    .join('*');
+                        final authorizedUsernames = selectedUsers.isEmpty
+                            ? null
+                            : selectedUsers
+                                  .map(
+                                    (userId) =>
+                                        userManager.users.value
+                                            .firstWhere(
+                                              (user) => user.id == userId,
+                                            )
+                                            .userInfo
+                                            ?.userName ??
+                                        'Unknown',
+                                  )
+                                  .join('*');
 
                         _schoolListManager.updateSchoolListProperty(
                           listId: listId,
@@ -115,11 +111,11 @@ class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
                   final List<int> selectedPupilIds =
                       await Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder:
-                              (ctx) => SelectPupilsListPage(
-                                selectablePupils: _pupilManager
-                                    .getPupilsNotListed(pupilsInList),
-                              ),
+                          builder: (ctx) => SelectPupilsListPage(
+                            selectablePupils: _pupilManager.getPupilsNotListed(
+                              pupilsInList,
+                            ),
+                          ),
                         ),
                       ) ??
                       [];
@@ -150,8 +146,8 @@ class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
                   if (context.mounted) {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder:
-                            (ctx) => SchoolListPdfViewPage(pdfFile: pdfFile),
+                        builder: (ctx) =>
+                            SchoolListPdfViewPage(pdfFile: pdfFile),
                       ),
                     );
                   }

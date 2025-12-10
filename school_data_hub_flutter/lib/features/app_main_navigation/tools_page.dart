@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/pick_file_return_content_as_string.dart';
@@ -11,13 +10,16 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/birthdays_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identity_stream_page/pupil_identity_stream_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/chart_page_controller.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
+import 'package:school_data_hub_flutter/features/timetable/presentation/sliver_dashboard_page/sliver_dashboard_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_page/timetable_page.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -28,20 +30,21 @@ class ToolsPage extends WatchingWidget {
   HubSessionManager get _hubSessionManager => di<HubSessionManager>();
 
   void importUnencryptedPupilIdentitySourceFile(String function) async {
-    final fileContent = await pickFileReturnContentAsString();
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-    if (result == null || fileContent == null) {
+    final fileContent = await fromTextFilePickerToString();
+
+    if (fileContent == null) {
       // User canceled the picker
       return;
     }
 
     if (function == 'update_backend') {
-      _pupilIdentityManager.updateBackendPupilsWithSchoolPupilIdentitySource(
+      _pupilIdentityManager.updateServerFromPupilIdentityExternalSource(
         fileContent,
       );
     } else if (function == 'pupil_identities') {
       _pupilIdentityManager.updatePupilIdentitiesFromUnencryptedSource(
-        identitiesInStringLines: fileContent,
+        updateTimestamp: null,
+        pupilIdentityTextLines: fileContent,
       );
     }
   }
@@ -135,7 +138,7 @@ class ToolsPage extends WatchingWidget {
                       pupilIds = await Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (ctx) => SelectPupilsListPage(
-                            selectablePupils: di<PupilManager>()
+                            selectablePupils: di<PupilProxyManager>()
                                 .getPupilsFromInternalIds(
                                   di<PupilIdentityManager>().availablePupilIds,
                                 ),
@@ -145,10 +148,10 @@ class ToolsPage extends WatchingWidget {
                       if (pupilIds == null || pupilIds.isEmpty) {
                         return;
                       }
-                      final internalIds = di<PupilManager>()
+                      final internalIds = di<PupilProxyManager>()
                           .getInternalIdsFromPupilIds(pupilIds);
                       final String encryptedPupilIdentities =
-                          await di<PupilIdentityManager>()
+                          await PupilIdentityHelper()
                               .generateEncryptedPupilIdentitiesTransferString(
                                 internalIds,
                               );
@@ -246,6 +249,22 @@ class ToolsPage extends WatchingWidget {
                     const Gap(16),
                   ],
 
+                  _buildToolButton(
+                    onPressed: () async {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const DashboardPage(),
+                        ),
+                      );
+                    },
+                    icon: Icons.schedule,
+                    title: 'Sliver Dashboard',
+                    subtitle: 'Timetables und Lerngruppen verwalten',
+                    color: Colors.green[700]!,
+                  ),
+
+                  const Gap(16),
+
                   // Desktop-only section
                   if (Platform.isWindows || Platform.isMacOS) ...[
                     _buildSectionHeader('Desktop Tools'),
@@ -256,7 +275,7 @@ class ToolsPage extends WatchingWidget {
                           context: context,
                           title: 'Datenbank aus SchiLD importieren',
                           message:
-                              'Achtung! Nicht mehr vorhandene SchülerInnen auf dem Server werden gelöscht. Fortfahren?',
+                              'Achtung! Nicht mehr vorhandene SchülerInnen auf dem Server werden deaktiviert. Fortfahren?',
                         );
                         if (confirm == true) {
                           importUnencryptedPupilIdentitySourceFile(

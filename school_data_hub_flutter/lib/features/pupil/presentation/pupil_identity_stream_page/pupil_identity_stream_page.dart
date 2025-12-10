@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
+import 'package:signals/signals_flutter.dart';
 import 'package:watch_it/watch_it.dart';
 
 import 'controllers/stream_controller.dart';
@@ -61,68 +62,34 @@ class PupilIdentityStreamPage extends WatchingWidget {
       return ctrl;
     }, dispose: (controller) => controller.dispose());
 
-    // Access state through the controller
     final state = controller.state;
 
-    // Watch all state variables at the top of build method (best practice)
-    final isConnected = watch(state.streamState.isConnected).value;
-    final isProcessing = watch(state.streamState.isProcessing).value;
-    final receivers = watch(state.receiverState.connectedReceivers).value;
-    final pendingRequests = watch(state.receiverState.pendingRequests).value;
-    final activeTransfers = watch(state.receiverState.activeTransfers).value;
-    final transferHistory = watch(state.transferState.transferHistory).value;
-    final transferCounter = watch(state.transferState.transferCounter).value;
-    final rejectedUsers = watch(state.receiverState.rejectedUsers).value;
-    final receiverJoined = watch(state.streamState.receiverJoined).value;
-    final requestSent = watch(state.streamState.requestSent).value;
-    final isTransmitting = watch(state.streamState.isTransmitting).value;
-    final autoConfirmEnabled = watch(
-      state.streamState.autoConfirmEnabled,
-    ).value;
+    final isConnected = state.streamState.isConnected.watch(context);
+    final isProcessing = state.streamState.isProcessing.watch(context);
+    final receivers = state.receiverState.connectedReceivers.watch(context);
+    final pendingRequests = state.receiverState.pendingRequests.watch(context);
+    final activeTransfers = state.receiverState.activeTransfers.watch(context);
+    final transferHistory = state.transferState.transferHistory.watch(context);
+    final transferCounter = state.transferState.transferCounter.watch(context);
+    final rejectedUsers = state.receiverState.rejectedUsers.watch(context);
+    final receiverJoined = state.streamState.receiverJoined.watch(context);
+    final requestSent = state.streamState.requestSent.watch(context);
+    final isTransmitting = state.streamState.isTransmitting.watch(context);
+    final autoConfirmEnabled = state.streamState.autoConfirmEnabled.watch(
+      context,
+    );
 
-    // Register handlers for receiver status changes that require overlay management
+    // Update overlay when receiver-related signals change
     if (role == PupilIdentityStreamRole.receiver) {
-      registerHandler(
-        select: (state) => state.streamState.receiverJoined,
-        target: state,
-        handler: (context, joined, cancel) {
-          _updateReceiverOverlay(
-            context,
-            controller,
-            joined,
-            requestSent,
-            isTransmitting,
-          );
-        },
-      );
-
-      registerHandler(
-        select: (state) => state.streamState.requestSent,
-        target: state,
-        handler: (context, reqSent, cancel) {
-          _updateReceiverOverlay(
-            context,
-            controller,
-            receiverJoined,
-            reqSent,
-            isTransmitting,
-          );
-        },
-      );
-
-      registerHandler(
-        select: (state) => state.streamState.isTransmitting,
-        target: state,
-        handler: (context, transmitting, cancel) {
-          _updateReceiverOverlay(
-            context,
-            controller,
-            receiverJoined,
-            requestSent,
-            transmitting,
-          );
-        },
-      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _updateReceiverOverlay(
+          context,
+          controller,
+          receiverJoined,
+          requestSent,
+          isTransmitting,
+        );
+      });
     }
 
     return Scaffold(
@@ -136,33 +103,30 @@ class PupilIdentityStreamPage extends WatchingWidget {
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Connection Status (fixed at top)
-                ConnectionStatus(
-                  isConnected: isConnected,
-                  isProcessing: isProcessing,
-                  statusMessage: state.streamState.statusMessage.value,
-                ),
-
-                const Gap(16),
-
-                // Role-specific UI (scrollable content)
                 Expanded(
-                  child: Column(
-                    children: [
-                      if (role == PupilIdentityStreamRole.sender) ...[
-                        _buildSenderTopSection(
-                          context,
-                          state,
-                          controller,
-                          isConnected,
-                          autoConfirmEnabled,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Connection Status
+                        ConnectionStatus(
+                          isConnected: isConnected,
+                          isProcessing: isProcessing,
+                          statusMessage: state.streamState.statusMessage.value,
                         ),
                         const Gap(16),
-                        Expanded(
-                          child: _buildSenderScrollableContent(
+                        if (role == PupilIdentityStreamRole.sender) ...[
+                          _buildSenderTopSection(
+                            context,
+                            state,
+                            controller,
+                            isConnected,
+                            autoConfirmEnabled,
+                          ),
+                          const Gap(16),
+                          _buildSenderScrollableContent(
                             context,
                             state,
                             controller,
@@ -173,10 +137,8 @@ class PupilIdentityStreamPage extends WatchingWidget {
                             transferCounter,
                             rejectedUsers,
                           ),
-                        ),
-                      ] else ...[
-                        Expanded(
-                          child: _buildReceiverScrollableContent(
+                        ] else ...[
+                          _buildReceiverScrollableContent(
                             context,
                             state,
                             controller,
@@ -184,15 +146,13 @@ class PupilIdentityStreamPage extends WatchingWidget {
                             requestSent,
                             isTransmitting,
                           ),
-                        ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
-
                 const Gap(16),
-
-                // Action Buttons (fixed at bottom)
+                // Action Buttons stay visible
                 _buildActionButtons(
                   context,
                   state,
@@ -262,35 +222,33 @@ class PupilIdentityStreamPage extends WatchingWidget {
     int transferCounter,
     Set<String> rejectedUsers,
   ) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          // Connected Receivers Management
-          _buildReceiversSection(
-            context,
-            receivers,
-            pendingRequests,
-            activeTransfers,
-            controller,
-          ),
+    return Column(
+      children: [
+        // Connected Receivers Management
+        _buildReceiversSection(
+          context,
+          receivers,
+          pendingRequests,
+          activeTransfers,
+          controller,
+        ),
 
-          // Transfer History
-          TransferHistoryWidget(
-            transferHistory: transferHistory,
-            transferCounter: transferCounter,
-          ),
+        // Transfer History
+        TransferHistoryWidget(
+          transferHistory: transferHistory,
+          transferCounter: transferCounter,
+        ),
 
-          const Gap(16),
+        const Gap(16),
 
-          // Rejected Requests
-          RejectedRequestsWidget(
-            rejectedUsers: rejectedUsers,
-            onClearRejected: rejectedUsers.isNotEmpty
-                ? () => controller.clearRejectedUsers()
-                : null,
-          ),
-        ],
-      ),
+        // Rejected Requests
+        RejectedRequestsWidget(
+          rejectedUsers: rejectedUsers,
+          onClearRejected: rejectedUsers.isNotEmpty
+              ? () => controller.clearRejectedUsers()
+              : null,
+        ),
+      ],
     );
   }
 
@@ -303,12 +261,10 @@ class PupilIdentityStreamPage extends WatchingWidget {
     bool isTransmitting,
   ) {
     // Overlay management is now handled by registerHandler calls
-    return const SingleChildScrollView(
-      child: Column(
-        children: [
-          // Overlay will be shown instead of inline content
-        ],
-      ),
+    return const Column(
+      children: [
+        // Overlay will be shown instead of inline content
+      ],
     );
   }
 

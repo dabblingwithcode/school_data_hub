@@ -13,7 +13,7 @@ class ErrorPage extends StatelessWidget {
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.backgroundColor,
         ),
         child: Center(
@@ -40,7 +40,7 @@ class ErrorPage extends StatelessWidget {
                   ),
                 ),
                 const Gap(30),
-                const Text(
+                Text(
                   "Ein Fehler ist aufgetreten!",
                   style: TextStyle(
                     color: AppColors.accentColor,
@@ -55,11 +55,13 @@ class ErrorPage extends StatelessWidget {
                       child: SingleChildScrollView(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                          child: Text(error,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                              )),
+                          child: Text(
+                            error,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
+                          ),
                         ),
                       ),
                     ),

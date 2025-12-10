@@ -14,6 +14,7 @@ import 'package:school_data_hub_flutter/features/app_main_navigation/pupil_lists
 import 'package:school_data_hub_flutter/features/app_main_navigation/school_lists_page.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/tools_page.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/settings_page.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -39,10 +40,10 @@ class _MainMenuBottomNavigationState extends State<MainMenuBottomNavigation> {
 
   void showHeavyLoadingOverlay(BuildContext context) {
     overlayEntry = OverlayEntry(
-      builder: (context) => const Stack(
+      builder: (context) => Stack(
         fit: StackFit.expand,
         children: [
-          ModalBarrier(
+          const ModalBarrier(
             dismissible: false,
             color: Color.fromARGB(
               108,
@@ -58,7 +59,7 @@ class _MainMenuBottomNavigationState extends State<MainMenuBottomNavigation> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'Bitte warten...', // Your text here
                     style: TextStyle(
                       color: Colors.white, // Text color
@@ -66,7 +67,7 @@ class _MainMenuBottomNavigationState extends State<MainMenuBottomNavigation> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   CircularProgressIndicator(color: AppColors.interactiveColor),
                 ],
               ),
@@ -198,7 +199,10 @@ class _MainMenuBottomNavigationState extends State<MainMenuBottomNavigation> {
           }),
         );
       }
+      await di.allReady();
+      PupilIdentityHelper.checkForOutdatedPupilIdentities();
     });
+
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
       body: PageView(
@@ -265,7 +269,7 @@ void showInstanceLoadingOverlay(BuildContext context) {
     builder: (context) => Stack(
       fit: StackFit.expand,
       children: [
-        const ModalBarrier(
+        ModalBarrier(
           dismissible: false,
           color: AppColors.backgroundColor, // Colors.black.withOpacity(0.3)
         ), // Background color
@@ -313,7 +317,7 @@ void showInstanceLoadingOverlay(BuildContext context) {
                   ),
                 ),
                 const SizedBox(height: 16),
-                const CircularProgressIndicator(color: AppColors.accentColor),
+                CircularProgressIndicator(color: AppColors.accentColor),
               ],
             ),
           ),

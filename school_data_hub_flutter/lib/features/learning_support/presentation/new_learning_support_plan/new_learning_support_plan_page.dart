@@ -136,7 +136,7 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                         ),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.info_outline,
                               color: AppColors.backgroundColor,
                               size: 16,
@@ -229,19 +229,19 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                     maxLines: 4,
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.all(10),
-                      border: const OutlineInputBorder(
+                      border: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: AppColors.backgroundColor,
                           width: 2,
                         ),
                       ),
-                      focusedBorder: const OutlineInputBorder(
+                      focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: AppColors.backgroundColor,
                           width: 2,
                         ),
                       ),
-                      labelStyle: const TextStyle(
+                      labelStyle: TextStyle(
                         color: AppColors.backgroundColor,
                       ),
                       labelText: 'Kommentar',
@@ -259,19 +259,19 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                     controller: controller.socialPedagogueController,
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.all(10),
-                      border: const OutlineInputBorder(
+                      border: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: AppColors.backgroundColor,
                           width: 2,
                         ),
                       ),
-                      focusedBorder: const OutlineInputBorder(
+                      focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: AppColors.backgroundColor,
                           width: 2,
                         ),
                       ),
-                      labelStyle: const TextStyle(
+                      labelStyle: TextStyle(
                         color: AppColors.backgroundColor,
                       ),
                       labelText: 'Sozialpädagoge',
@@ -290,13 +290,13 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                     maxLines: 3,
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.all(10),
-                      border: const OutlineInputBorder(
+                      border: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: AppColors.backgroundColor,
                           width: 2,
                         ),
                       ),
-                      focusedBorder: const OutlineInputBorder(
+                      focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: AppColors.backgroundColor,
                           width: 2,
@@ -319,19 +319,19 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                     maxLines: 4,
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.all(10),
-                      border: const OutlineInputBorder(
+                      border: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: AppColors.backgroundColor,
                           width: 2,
                         ),
                       ),
-                      focusedBorder: const OutlineInputBorder(
+                      focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: AppColors.backgroundColor,
                           width: 2,
                         ),
                       ),
-                      labelStyle: const TextStyle(
+                      labelStyle: TextStyle(
                         color: AppColors.backgroundColor,
                       ),
                       labelText: 'Stärkenbeschreibung',
@@ -350,19 +350,19 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                     maxLines: 4,
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.all(10),
-                      border: const OutlineInputBorder(
+                      border: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: AppColors.backgroundColor,
                           width: 2,
                         ),
                       ),
-                      focusedBorder: const OutlineInputBorder(
+                      focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: AppColors.backgroundColor,
                           width: 2,
                         ),
                       ),
-                      labelStyle: const TextStyle(
+                      labelStyle: TextStyle(
                         color: AppColors.backgroundColor,
                       ),
                       labelText: 'Problembeschreibung',

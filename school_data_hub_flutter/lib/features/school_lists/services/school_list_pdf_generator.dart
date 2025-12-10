@@ -8,7 +8,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
@@ -590,10 +590,10 @@ class _SchoolListPdfViewPageState extends State<SchoolListPdfViewPage> {
         title: 'Schulliste PDF',
       ),
       body: PdfPreview(
-        actionBarTheme: const PdfActionBarTheme(
+        actionBarTheme: PdfActionBarTheme(
           backgroundColor: AppColors.backgroundColor,
           iconColor: Colors.white,
-          textStyle: TextStyle(color: Colors.white),
+          textStyle: const TextStyle(color: Colors.white),
         ),
         allowSharing: true,
         allowPrinting: true,

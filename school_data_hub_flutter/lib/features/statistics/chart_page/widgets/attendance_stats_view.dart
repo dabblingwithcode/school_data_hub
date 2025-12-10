@@ -5,6 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/filters/attendance_pupil_filter.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/attendance_list_page.dart';
@@ -38,16 +39,18 @@ class AttendanceStatsView extends WatchingWidget {
         if (dateData == null) return;
 
         final buffer = StringBuffer();
-        buffer.writeln('Datum: ${chartData.dateString}');
-        buffer.writeln();
+
         buffer.writeln('Entschuldigt: ${dateData.excused}');
         buffer.writeln('Unentschuldigt: ${dateData.unexcused}');
-        buffer.writeln('Nach Hause geschickt: ${dateData.goneHome}');
+        buffer.writeln('Abgeholt: ${dateData.goneHome}');
 
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Details', style: AppStyles.title),
+            title: Text(
+              '${chartData.date.formatWithWeekday()}',
+              style: AppStyles.title,
+            ),
             content: Text(buffer.toString()),
             actions: [
               TextButton(
@@ -302,11 +305,7 @@ class AttendanceStatsView extends WatchingWidget {
                 children: [
                   _buildLegendItem('Entschuldigt', Colors.green, 'excused'),
                   _buildLegendItem('Unentschuldigt', Colors.red, 'unexcused'),
-                  _buildLegendItem(
-                    'Nach Hause geschickt',
-                    Colors.orange,
-                    'goneHome',
-                  ),
+                  _buildLegendItem('abgeholt', Colors.orange, 'goneHome'),
                 ],
               ),
             ),

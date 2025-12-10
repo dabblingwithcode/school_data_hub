@@ -38,7 +38,7 @@ Widget contactedDayBadge(contacted) {
         child: Container(
           width: 25.0,
           height: 25.0,
-          decoration: BoxDecoration(
+        decoration: BoxDecoration(
             color:
                 contacted == ContactedType.contacted
                     ? AppColors.contactedSuccessColor
@@ -69,7 +69,7 @@ Widget returnedBadge(returned) {
       child: Container(
         width: 25.0,
         height: 25.0,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.goneHomeColor,
           shape: BoxShape.circle,
         ),
@@ -98,7 +98,7 @@ Widget excusedBadge(excused) {
       child: Container(
         width: 25.0,
         height: 25.0,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.unexcusedCheckColor,
           shape: BoxShape.circle,
         ),
@@ -148,7 +148,7 @@ Widget missedTypeBadge(missedtype) {
       child: Container(
         width: 25.0,
         height: 25.0,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.missedColor,
           shape: BoxShape.circle,
         ),
@@ -171,7 +171,7 @@ Widget missedTypeBadge(missedtype) {
       child: Container(
         width: 25.0,
         height: 25.0,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.lateColor,
           shape: BoxShape.circle,
         ),
@@ -194,7 +194,7 @@ Widget missedTypeBadge(missedtype) {
       child: Container(
         width: 25.0,
         height: 25.0,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.presentColor,
           shape: BoxShape.circle,
         ),
@@ -217,7 +217,7 @@ Widget missedTypeBadge(missedtype) {
       child: Container(
         width: 25.0,
         height: 25.0,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.homeColor,
           shape: BoxShape.circle,
         ),

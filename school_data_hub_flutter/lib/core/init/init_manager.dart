@@ -15,7 +15,7 @@ import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_man
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
 import 'package:watch_it/watch_it.dart';
 
-enum DiScope { onActiveEnvScope, onLoggedInUserScope, onMatrixEnvScope }
+enum InitScope { onActiveEnvScope, onAuthScope, onMatrixEnvScope }
 
 final _log = Logger('[Init][Manager]');
 
@@ -52,15 +52,14 @@ class InitManager {
   }
 
   static Future<void> pushActiveEnvScopeAndRegisterDependentManagers() async {
-    if (di.hasScope(DiScope.onActiveEnvScope.name)) {
-      _log.warning(
-        'Active environment scope already exists, skipping registration',
-      );
+    if (di.hasScope(InitScope.onActiveEnvScope.name)) {
+      _log.warning('''WARNING: 
+     [SCOPE onActiveEnvScope] already exists, skipping registration''');
       return;
     }
 
     await di.pushNewScopeAsync(
-      scopeName: DiScope.onActiveEnvScope.name,
+      scopeName: InitScope.onActiveEnvScope.name,
       dispose: () {
         _log.warning('[SCOPE] Dropping scope[activeEnvScope]');
       },
@@ -80,17 +79,17 @@ class InitManager {
   static Future<void> registerManagersDependingOnAuthedSession() async {
     _log.info('Registering managers depending on session');
 
-    if (di.hasScope(DiScope.onLoggedInUserScope.name)) {
+    if (di.hasScope(InitScope.onAuthScope.name)) {
       _log.info('[loggedInUserScope] already exists, skipping registration');
       return;
     }
 
     await di.pushNewScopeAsync(
-      scopeName: DiScope.onLoggedInUserScope.name,
+      scopeName: InitScope.onAuthScope.name,
       dispose: () {
-        _log.warning('[SCOPE] Dropping scope [loggedInUserScope]');
+        _log.warning('[SCOPE] Dropped scope [loggedInUserScope] successfully');
       },
-      init: (getIt) async {
+      init: (di) async {
         _log.info('[SCOPE] Pushing scope [loggedInUserScope]');
 
         await InitOnUserAuth.registerManagers();
@@ -99,11 +98,11 @@ class InitManager {
   }
 
   static Future<void> dropOnLoggedInUserScope() async {
-    if (di.hasScope(DiScope.onLoggedInUserScope.name)) {
+    if (di.hasScope(InitScope.onAuthScope.name)) {
       _log.info('Dropping scope [loggedInUserScope]...');
 
       await di.dropScope(
-        DiScope.onLoggedInUserScope.name,
+        InitScope.onAuthScope.name,
       ); // This will dispose the 'logged_in_user_scope'
       _log.info('[SCOPE] [loggedInUserScope] dropped successfully');
     } else {
@@ -113,24 +112,36 @@ class InitManager {
     }
   }
 
-  static Future<void> dropOldActiveEnvAndRelatedScopes() async {
-    _log.info('Dropping old [activeEnv] and related scopes...');
+  static Future<void> dropAllScopes() async {
+    _log.info('[SCOPE] Dropping old scopes...');
 
-    if (di.hasScope(DiScope.onLoggedInUserScope.name)) {
-      await di.dropScope(DiScope.onLoggedInUserScope.name);
+    if (di.hasScope(InitScope.onAuthScope.name)) {
+      await di.dropScope(InitScope.onAuthScope.name);
       _log.info('[SCOPE] [loggedInUserScope] dropped successfully');
+    } else {
+      _log.warning(
+        '[SCOPE] WARNING: [loggedInUserScope] does not exist, skipping drop operation',
+      );
     }
 
-    if (di.hasScope(DiScope.onActiveEnvScope.name)) {
-      await di.dropScope(DiScope.onActiveEnvScope.name);
+    if (di.hasScope(InitScope.onActiveEnvScope.name)) {
+      await di.dropScope(InitScope.onActiveEnvScope.name);
       _log.info('[SCOPE] [activeEnvScope] dropped successfully');
+    } else {
+      _log.severe(
+        '[SCOPE] [activeEnvScope] does not exist, skipping drop operation',
+      );
     }
 
     // Also drop matrix scope if it exists (it's environment-dependent)
-    if (di.hasScope(DiScope.onMatrixEnvScope.name)) {
+    if (di.hasScope(InitScope.onMatrixEnvScope.name)) {
       _log.info('[SCOPE] Matrix scope exists, dropping it...');
       await dropMatrixScope();
       _log.info('[SCOPE] [matrixScope] dropped successfully');
+    } else {
+      _log.warning(
+        '[SCOPE] [matrixScope] does not exist, skipping drop operation',
+      );
     }
   }
 
@@ -142,14 +153,14 @@ class InitManager {
     _log.info('Creating matrix scope and registering managers');
 
     // Drop existing matrix scope if it exists
-    if (di.hasScope(DiScope.onMatrixEnvScope.name)) {
+    if (di.hasScope(InitScope.onMatrixEnvScope.name)) {
       _log.info('Dropping existing matrix scope before creating new one');
-      await di.dropScope(DiScope.onMatrixEnvScope.name);
+      await di.dropScope(InitScope.onMatrixEnvScope.name);
       await Future.delayed(const Duration(milliseconds: 50));
     }
 
     await di.pushNewScopeAsync(
-      scopeName: DiScope.onMatrixEnvScope.name,
+      scopeName: InitScope.onMatrixEnvScope.name,
       dispose: () {
         _log.warning('[SCOPE] Dropping scope [matrixScope]');
       },
@@ -157,39 +168,52 @@ class InitManager {
         _log.info('[SCOPE] Pushing scope [matrixScope]');
 
         // Register the manager inside the matrix scope
-        getIt.registerLazySingletonAsync<MatrixPolicyManager>(() async {
-          _log.info('Registering MatrixPolicyManager in matrix scope');
+        getIt.registerLazySingletonAsync<MatrixPolicyManager>(
+          () async {
+            _log.info('Registering MatrixPolicyManager in matrix scope');
 
-          // Wait for HubSessionManager to be ready (we check this inside the factory
-          // since registerLazySingletonAsync doesn't support dependsOn)
-          await di.isReady<HubSessionManager>();
+            // Wait for HubSessionManager to be ready (we check this inside the factory
+            // since registerLazySingletonAsync doesn't support dependsOn)
+            await di.isReady<HubSessionManager>();
 
-          final policyManager = await MatrixPolicyManager(
-            credentials.url,
-            credentials.policyToken,
-            credentials.matrixToken,
-            credentials.matrixAdmin,
-            credentials.encryptionKey,
-            credentials.encryptionIv,
-          ).init();
+            final policyManager = await MatrixPolicyManager(
+              credentials.url,
+              credentials.policyToken,
+              credentials.matrixToken,
+              credentials.matrixAdmin,
+              credentials.encryptionKey,
+              credentials.encryptionIv,
+            ).init();
 
-          _log.info('Matrix managers initialized');
+            _log.info('Matrix managers initialized');
 
-          // Set the registration status to true after the manager is fully initialized
-          // Since we depend on HubSessionManager, it should be ready now
-          di<HubSessionManager>().changeMatrixPolicyManagerRegistrationStatus(
-            true,
-          );
-          _log.info(
-            'Matrix registration status set to true after initialization',
-          );
+            // Set the registration status to true after the manager is fully initialized
+            // Since we depend on HubSessionManager, it should be ready now
+            di<HubSessionManager>().changeMatrixPolicyManagerRegistrationStatus(
+              true,
+            );
+            _log.info(
+              'Matrix registration status set to true after initialization',
+            );
 
-          return policyManager;
-        });
+            return policyManager;
+          },
+          dispose: (instance) {
+            _log.info('[MATRIX POLICY MANAGER] MatrixPolicyManager disposed');
+            instance.dispose();
+          },
+        );
 
-        getIt.registerSingletonWithDependencies(() {
-          return MatrixPolicyFilterManager(getIt<MatrixPolicyManager>());
-        }, dependsOn: [MatrixPolicyManager]);
+        di.registerSingletonWithDependencies(
+          () {
+            return MatrixPolicyFilterManager(di<MatrixPolicyManager>());
+          },
+          dependsOn: [MatrixPolicyManager],
+          dispose: (instance) {
+            _log.info('[MATRIX POLICY FILTER MANAGER] disposed');
+            instance.dispose();
+          },
+        );
       },
     );
 
@@ -242,46 +266,53 @@ class InitManager {
       if (!di.isRegistered<MatrixPolicyManager>()) {
         _log.info('Registering MatrixPolicyManager async singleton lazily');
 
-        di.registerLazySingletonAsync<MatrixPolicyManager>(() async {
-          _log.info(
-            'MatrixPolicyManager called (parent scope) - initializing...',
-          );
+        di.registerLazySingletonAsync<MatrixPolicyManager>(
+          () async {
+            _log.info(
+              'MatrixPolicyManager called (parent scope) - initializing...',
+            );
 
-          // Wait for HubSessionManager to be ready
-          await di.isReady<HubSessionManager>();
+            // Wait for HubSessionManager to be ready
+            await di.isReady<HubSessionManager>();
 
-          // Check if matrix scope already exists and manager is registered there
-          if (di.hasScope(DiScope.onMatrixEnvScope.name)) {
-            _log.info('Matrix scope already exists, checking for manager');
-            try {
-              await di.isReady<MatrixPolicyManager>();
-              final manager = await di.getAsync<MatrixPolicyManager>();
-              _log.info('Found existing MatrixPolicyManager in matrix scope');
-              return manager;
-            } catch (e) {
-              _log.warning(
-                'Matrix scope exists but manager not found, will create new one: $e',
+            // Check if matrix scope already exists and manager is registered there
+            if (di.hasScope(InitScope.onMatrixEnvScope.name)) {
+              _log.info('Matrix scope already exists, checking for manager');
+              try {
+                await di.isReady<MatrixPolicyManager>();
+                final manager = await di.getAsync<MatrixPolicyManager>();
+                _log.info('Found existing MatrixPolicyManager in matrix scope');
+                return manager;
+              } catch (e) {
+                _log.warning(
+                  'Matrix scope exists but manager not found, will create new one: $e',
+                );
+              }
+            }
+
+            // Read credentials from storage
+            final credentials = await _readMatrixCredentialsFromStorage();
+            if (credentials == null) {
+              throw Exception(
+                'Matrix credentials not found in secure storage. '
+                'Please configure matrix environment first.',
               );
             }
-          }
 
-          // Read credentials from storage
-          final credentials = await _readMatrixCredentialsFromStorage();
-          if (credentials == null) {
-            throw Exception(
-              'Matrix credentials not found in secure storage. '
-              'Please configure matrix environment first.',
+            // Create scope and register managers, get the manager instance
+            // This will register the manager inside the matrix scope
+            final manager = await _createMatrixScopeAndRegisterManagers(
+              credentials,
             );
-          }
-
-          // Create scope and register managers, get the manager instance
-          // This will register the manager inside the matrix scope
-          final manager = await _createMatrixScopeAndRegisterManagers(
-            credentials,
-          );
-          _log.info('MatrixPolicyManager successfully initialized');
-          return manager;
-        });
+            _log.info('MatrixPolicyManager successfully initialized');
+            return manager;
+          },
+          dispose: (instance) {
+            _log.info('[MATRIX POLICY MANAGER] MatrixPolicyManager disposed');
+            instance.dispose();
+            return;
+          },
+        );
 
         _log.info('MatrixPolicyManager factory registered');
       } else {
@@ -330,18 +361,29 @@ class InitManager {
 
   static Future<void> dropMatrixScope() async {
     try {
-      final hasScope = di.hasScope(DiScope.onMatrixEnvScope.name);
+      final hasScope = di.hasScope(InitScope.onMatrixEnvScope.name);
 
       if (hasScope) {
         _log.warning('[SCOPE] Dropping scope [matrixScope]...');
-        await di.dropScope(DiScope.onMatrixEnvScope.name);
+        await di.dropScope(InitScope.onMatrixEnvScope.name);
         _log.info('[SCOPE] [matrixScope] dropped successfully');
         // Add a small delay to ensure the scope is fully dropped
         // await Future.delayed(const Duration(milliseconds: 50));
 
         // Check if scope was actually dropped
-        final scopeStillExists = di.hasScope(DiScope.onMatrixEnvScope.name);
+        final scopeStillExists = di.hasScope(InitScope.onMatrixEnvScope.name);
         if (!scopeStillExists) _log.info('Matrix scope dropped successfully!');
+
+        if (di.isRegistered<MatrixPolicyManager>()) {
+          await di.resetLazySingleton<MatrixPolicyManager>(
+            disposingFunction: (instance) {
+              _log.info(
+                '[MATRIX POLICY MANAGER] disposed during reset after scope drop',
+              );
+              instance.dispose();
+            },
+          );
+        }
 
         // Reset the registration status in HubSessionManager
         try {

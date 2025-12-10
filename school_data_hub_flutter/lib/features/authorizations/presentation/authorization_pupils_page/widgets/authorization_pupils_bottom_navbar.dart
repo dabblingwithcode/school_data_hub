@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/presentation/authorization_pupils_page/widgets/authorization_pupils_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -17,17 +17,19 @@ class AuthorizationPupilsBottomNavBar extends WatchingWidget {
   final Authorization authorization;
 
   final List<int> pupilsInAuthorization;
-  const AuthorizationPupilsBottomNavBar(
-      {required this.pupilsInAuthorization,
-      required this.authorization,
-      super.key});
+  const AuthorizationPupilsBottomNavBar({
+    required this.pupilsInAuthorization,
+    required this.authorization,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     final _hubSessionManager = di<HubSessionManager>();
     final _authorizationManager = di<AuthorizationManager>();
-    final filtersActive =
-        watchValue((FiltersStateManager x) => x.filtersActive);
+    final filtersActive = watchValue(
+      (FiltersStateManager x) => x.filtersActive,
+    );
     return BottomNavBarLayout(
       bottomNavBar: BottomAppBar(
         height: 60,
@@ -41,10 +43,7 @@ class AuthorizationPupilsBottomNavBar extends WatchingWidget {
               const Spacer(),
               IconButton(
                 tooltip: 'zurück',
-                icon: const Icon(
-                  Icons.arrow_back,
-                  size: 35,
-                ),
+                icon: const Icon(Icons.arrow_back, size: 35),
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -53,27 +52,32 @@ class AuthorizationPupilsBottomNavBar extends WatchingWidget {
                   _hubSessionManager.isAdmin) ...[
                 const Gap(AppPaddings.bottomNavBarButtonGap),
                 IconButton(
-                    tooltip: 'Kinder hinzufügen',
-                    icon: const Icon(Icons.add, color: Colors.white, size: 30),
-                    onPressed: () async {
-                      final List<int>? selectedPupilIds =
-                          await Navigator.of(context).push(MaterialPageRoute(
-                        builder: (ctx) => SelectPupilsListPage(
-                            selectablePupils: di<PupilManager>()
-                                .getPupilsNotListed(pupilsInAuthorization)),
-                      ));
-                      if (selectedPupilIds == null) {
-                        return;
-                      }
-                      if (selectedPupilIds.isNotEmpty) {
-                        _authorizationManager.updateAuthorization(
-                            authId: authorization.id!,
-                            membersToUpdate: (
-                              operation: MemberOperation.add,
-                              pupilIds: selectedPupilIds
-                            ));
-                      }
-                    })
+                  tooltip: 'Kinder hinzufügen',
+                  icon: const Icon(Icons.add, color: Colors.white, size: 30),
+                  onPressed: () async {
+                    final List<int>? selectedPupilIds =
+                        await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (ctx) => SelectPupilsListPage(
+                              selectablePupils: di<PupilProxyManager>()
+                                  .getPupilsNotListed(pupilsInAuthorization),
+                            ),
+                          ),
+                        );
+                    if (selectedPupilIds == null) {
+                      return;
+                    }
+                    if (selectedPupilIds.isNotEmpty) {
+                      _authorizationManager.updateAuthorization(
+                        authId: authorization.id!,
+                        membersToUpdate: (
+                          operation: MemberOperation.add,
+                          pupilIds: selectedPupilIds,
+                        ),
+                      );
+                    }
+                  },
+                ),
               ],
               const Gap(AppPaddings.bottomNavBarButtonGap),
               InkWell(
@@ -87,7 +91,7 @@ class AuthorizationPupilsBottomNavBar extends WatchingWidget {
                   size: 30,
                 ),
               ),
-              const Gap(15)
+              const Gap(15),
             ],
           ),
         ),
@@ -97,10 +101,11 @@ class AuthorizationPupilsBottomNavBar extends WatchingWidget {
 }
 
 BottomAppBar authorizationPupilsBottomNavBar(
-    BuildContext context,
-    Authorization authorization,
-    bool filtersOn,
-    List<int> pupilsInAuthorization) {
+  BuildContext context,
+  Authorization authorization,
+  bool filtersOn,
+  List<int> pupilsInAuthorization,
+) {
   final _authorizationManager = di<AuthorizationManager>();
   return BottomAppBar(
     padding: const EdgeInsets.all(9),
@@ -113,10 +118,7 @@ BottomAppBar authorizationPupilsBottomNavBar(
           const Spacer(),
           IconButton(
             tooltip: 'zurück',
-            icon: const Icon(
-              Icons.arrow_back,
-              size: 35,
-            ),
+            icon: const Icon(Icons.arrow_back, size: 35),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -128,23 +130,28 @@ BottomAppBar authorizationPupilsBottomNavBar(
                   icon: const Icon(Icons.add, color: Colors.white, size: 30),
                   onPressed: () async {
                     final List<int>? selectedPupilIds =
-                        await Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) => SelectPupilsListPage(
-                          selectablePupils: di<PupilManager>()
-                              .getPupilsNotListed(pupilsInAuthorization)),
-                    ));
+                        await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (ctx) => SelectPupilsListPage(
+                              selectablePupils: di<PupilProxyManager>()
+                                  .getPupilsNotListed(pupilsInAuthorization),
+                            ),
+                          ),
+                        );
                     if (selectedPupilIds == null) {
                       return;
                     }
                     if (selectedPupilIds.isNotEmpty) {
                       _authorizationManager.updateAuthorization(
-                          authId: authorization.id!,
-                          membersToUpdate: (
-                            operation: MemberOperation.add,
-                            pupilIds: selectedPupilIds
-                          ));
+                        authId: authorization.id!,
+                        membersToUpdate: (
+                          operation: MemberOperation.add,
+                          pupilIds: selectedPupilIds,
+                        ),
+                      );
                     }
-                  })
+                  },
+                )
               : const SizedBox.shrink(),
           const Gap(10),
           InkWell(
@@ -156,7 +163,7 @@ BottomAppBar authorizationPupilsBottomNavBar(
               size: 30,
             ),
           ),
-          const Gap(10)
+          const Gap(10),
         ],
       ),
     ),

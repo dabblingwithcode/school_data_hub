@@ -23,10 +23,9 @@ class GenericSliverSearchAppBar extends StatelessWidget {
       stretch: false,
       elevation: 0,
       flexibleSpace: FlexibleSpaceBar(
-        titlePadding:
-            const EdgeInsets.only(left: 5, top: 5, right: 5, bottom: 5),
+        expandedTitleScale: 1,
         collapseMode: CollapseMode.none,
-        title: title,
+        background: title,
       ),
     );
   }

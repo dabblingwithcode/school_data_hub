@@ -33,6 +33,8 @@ class PupilIdentityEndpoint extends Endpoint {
     // Find the last update for the user's pupil identities
     var lastUpdate = await LastPupilIdentiesUpdate.db.findFirstRow(
       session,
+      orderBy: (t) => t.date,
+      orderDescending: true,
     );
     // If no update is found, return null
     if (lastUpdate == null) {
@@ -42,27 +44,23 @@ class PupilIdentityEndpoint extends Endpoint {
     return lastUpdate.date;
   }
 
-  Future<bool> updateLastPupilIdentitiesUpdate(
+  Future<DateTime?> updateLastPupilIdentitiesUpdate(
       Session session, DateTime date) async {
     // Create or update the last identities update record
     var lastUpdate = await LastPupilIdentiesUpdate.db.findFirstRow(
       session,
     );
     try {
-      if (lastUpdate == null) {
-        // Create a new record if it doesn't exist
-        lastUpdate = LastPupilIdentiesUpdate(date: date);
-        await LastPupilIdentiesUpdate.db.insertRow(session, lastUpdate);
-      } else {
-        // Update the existing record
-        lastUpdate.date = date;
-        await LastPupilIdentiesUpdate.db.updateRow(session, lastUpdate);
-      }
-      return true;
+      // Create a new record
+      lastUpdate = LastPupilIdentiesUpdate(date: date);
+      final newLastUpdate =
+          await LastPupilIdentiesUpdate.db.insertRow(session, lastUpdate);
+
+      return newLastUpdate.date;
     } catch (e) {
       // Handle any errors that occur during the update
       log('Error updating last pupil identities: $e');
-      return false;
+      return null;
     }
   }
 

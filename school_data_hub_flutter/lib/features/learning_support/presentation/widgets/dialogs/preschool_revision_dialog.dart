@@ -66,7 +66,7 @@ Future<void> preschoolRevisionDialog(
                   const Gap(16),
                   // Dropdown
                   DropdownButtonFormField<PreSchoolMedicalStatus>(
-                    value: dialogdropdownValue,
+                    initialValue: dialogdropdownValue,
                     decoration: const InputDecoration(
                       labelText: 'Status der Eingangsuntersuchung',
                       border: OutlineInputBorder(),
@@ -116,7 +116,7 @@ Future<void> preschoolRevisionDialog(
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text(
+                child: Text(
                   'ABBRECHEN',
                   style: TextStyle(
                     color: AppColors.accentColor,

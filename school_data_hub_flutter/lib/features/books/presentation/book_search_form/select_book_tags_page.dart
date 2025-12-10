@@ -33,7 +33,7 @@ class SelectBookTagsPage extends WatchingWidget {
             onPressed: () {
               Navigator.of(context).pop(selectedTags.value);
             },
-            child: const Text(
+            child: Text(
               'Fertig',
               style: TextStyle(
                 color: AppColors.interactiveColor,
@@ -117,9 +117,9 @@ class SelectBookTagsPage extends WatchingWidget {
                             selectedColor: AppColors.interactiveColor
                                 .withValues(alpha: 0.2),
                             checkmarkColor: AppColors.interactiveColor,
-                            avatar:
+                                avatar:
                                 isSelected
-                                    ? const Icon(
+                                    ? Icon(
                                       Icons.check,
                                       color: AppColors.successButtonColor,
                                       size: 18,

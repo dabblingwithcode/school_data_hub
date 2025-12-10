@@ -10,7 +10,7 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/data/learning_support_api_service.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -21,13 +21,18 @@ class LearningSupportManager with ChangeNotifier {
 
   final _learningSupportApiService = LearningSupportApiService();
 
-  final _pupilManager = di<PupilManager>();
+  final _pupilManager = di<PupilProxyManager>();
 
   final _hubSessionManager = di<HubSessionManager>();
 
   final _notificationService = di<NotificationService>();
 
   //- OBSERVABLES -//
+  void dispose() {
+    _learningSupportPlans.dispose();
+    super.dispose();
+    return;
+  }
 
   final _learningSupportPlans =
       ValueNotifier<Map<int, List<LearningSupportPlan>>>({});
@@ -105,7 +110,7 @@ class LearningSupportManager with ChangeNotifier {
   }
 
   LearningSupportPlan? getCurrentLearningSupportPlan(int pupilId) {
-    return di<PupilManager>()
+    return di<PupilProxyManager>()
         .getPupilByPupilId(pupilId)!
         .learningSupportPlans
         ?.firstWhereOrNull(

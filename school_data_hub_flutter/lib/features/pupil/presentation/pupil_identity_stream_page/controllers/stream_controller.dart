@@ -4,8 +4,11 @@ import 'package:flutter/scheduler.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_stream_suscription.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identity_stream_page/models/stream_state.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identity_stream_page/utils/stream_utils.dart';
 import 'package:watch_it/watch_it.dart';
@@ -28,6 +31,7 @@ class PupilIdentityStreamController {
   StreamSubscription<PupilIdentityDto>? _subscription;
 
   Timer? _rejectionTimer;
+  bool _isDisposed = false;
 
   // Callbacks for UI interactions
   final Function(String userName) onConfirmationRequired;
@@ -57,6 +61,9 @@ class PupilIdentityStreamController {
 
   /// Complete a transfer and update state
   void completeTransfer() {
+    if (_isDisposed) {
+      return;
+    }
     state.streamState.isProcessing.value = false;
     state.streamState.isCompleted.value = true;
     state.streamState.isTransmitting.value = false;
@@ -102,6 +109,9 @@ class PupilIdentityStreamController {
 
   /// Reset sender state for new requests
   void resetSenderForNewRequest() {
+    if (_isDisposed) {
+      return;
+    }
     if (role == PupilIdentityStreamRole.sender) {
       state.streamState.receiverJoined.value = false;
       state.streamState.receiverUserName.value = '';
@@ -127,7 +137,17 @@ class PupilIdentityStreamController {
     updatedPendingRequests.remove(userName);
     state.receiverState.pendingRequests.value = updatedPendingRequests;
 
-    // Send confirmation to specific receiver
+    // Build encrypted data for the receiver
+    String? dataToSend = encryptedData;
+    if (dataToSend == null && selectedPupilIds != null) {
+      dataToSend = await PupilIdentityHelper()
+          .generateEncryptedPupilIdentitiesTransferString(selectedPupilIds!);
+    }
+
+    // Update local state to transmitting
+    _handleRequestConfirmed();
+
+    // Notify receiver of confirmation (backward compatibility)
     await di<Client>().pupilIdentity.sendPupilIdentityMessage(
       channelName,
       PupilIdentityDto(
@@ -136,6 +156,20 @@ class PupilIdentityStreamController {
         value: userName,
       ),
     );
+
+    // Send the data targeted to this receiver
+    await di<Client>().pupilIdentity.sendPupilIdentityMessage(
+      channelName,
+      PupilIdentityDto(
+        sender: thisUserName,
+        type: 'data',
+        dataTimeStamp: di<EnvManager>().activeEnv?.lastIdentitiesUpdate,
+        value: '$userName:${dataToSend ?? ''}',
+      ),
+    );
+
+    state.streamState.statusMessage.value =
+        'Daten an $userName gesendet. Warte auf Bestätigung...';
   }
 
   /// Handle rejection of a user request
@@ -228,12 +262,12 @@ class PupilIdentityStreamController {
         _log.info(
           'Generating encrypted data for ${selectedPupilIds!.length} pupils',
         );
-        dataToSend = await di<PupilIdentityManager>()
+        dataToSend = await PupilIdentityHelper()
             .generateEncryptedPupilIdentitiesTransferString(selectedPupilIds!);
       }
 
       _log.info('Creating stream subscription...');
-      _subscription = await di<PupilIdentityManager>()
+      _subscription = await PupilIdentityStream()
           .encryptedPupilIdsStreamSubscription(
             channelName: channelName,
             role: role,
@@ -369,11 +403,14 @@ class PupilIdentityStreamController {
     // Reset sender for new requests after a short delay
     if (role == PupilIdentityStreamRole.sender) {
       Future.delayed(const Duration(seconds: 3), () {
+        if (_isDisposed) {
+          return;
+        }
         resetSenderForNewRequest();
       });
     }
     _log.info(
-      'Data transfer completed for channel: $channelName with role: $role',
+      '[${role.name.toUpperCase()}]: Data transfer completed for channel:[ $channelName]',
     );
   }
 
@@ -513,6 +550,7 @@ class PupilIdentityStreamController {
 
   /// Dispose resources
   void dispose() {
+    _isDisposed = true;
     // Cancel the rejection timeout timer
     _rejectionTimer?.cancel();
 

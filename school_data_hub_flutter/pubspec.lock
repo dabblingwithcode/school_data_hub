@@ -73,6 +73,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.9"
+  basic_interfaces:
+    dependency: transitive
+    description:
+      name: basic_interfaces
+      sha256: c37c8c4ddbc594430eb3817a4edfcc9a0cadbc7ea4c51a5b48785e351f1ba479
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4"
   bidi:
     dependency: transitive
     description:
@@ -542,6 +550,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.4.1"
+  flutter_hooks:
+    dependency: "direct main"
+    description:
+      name: flutter_hooks
+      sha256: cde36b12f7188c85286fba9b38cc5a902e7279f36dd676967106c041dc9dde70
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.20.5"
   flutter_launcher_icons:
     dependency: "direct main"
     description:
@@ -941,6 +957,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.1.1"
+  lite_ref:
+    dependency: transitive
+    description:
+      name: lite_ref
+      sha256: "2519ee5c20257ed8b8eec92c967b8ae2a3361895e9e5dd268569c681803df41b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.8.1"
+  lite_ref_core:
+    dependency: transitive
+    description:
+      name: lite_ref_core
+      sha256: b902af6b90736d6fb7a2c171af37d15f4894a5880e9eb55ffb3fee5f01385849
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
   logging:
     dependency: "direct main"
     description:
@@ -1165,6 +1197,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.1"
+  preact_signals:
+    dependency: transitive
+    description:
+      name: preact_signals
+      sha256: ad45313c86b2228536a16d3dfc86da8263705d4acb4136c42907378de6910d8c
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.9.4"
   printing:
     dependency: "direct main"
     description:
@@ -1272,42 +1312,42 @@ packages:
     dependency: "direct main"
     description:
       name: serverpod_auth_client
-      sha256: "41615696ff57d86e45dbbd8b51f48e914b3c1719b229e8b01ebd937c983ae1ad"
+      sha256: "9ac62f7071a1d7cbe7890799f4334ad2c698b02000c1ca092999531f30e45549"
       url: "https://pub.dev"
     source: hosted
-    version: "2.9.1"
+    version: "2.9.2"
   serverpod_auth_shared_flutter:
     dependency: "direct main"
     description:
       name: serverpod_auth_shared_flutter
-      sha256: f63ce3f663d41bee2c0235119d5597ce655ad777c74b507c49666eed0ec9c040
+      sha256: eb36e10124ca35fbf89256c58c374b5ee45359f629c275ecb60e1f6d53b95b7c
       url: "https://pub.dev"
     source: hosted
-    version: "2.9.1"
+    version: "2.9.2"
   serverpod_client:
     dependency: "direct main"
     description:
       name: serverpod_client
-      sha256: "04cb6d36730c8c24c067cde6e41551ad2dd7ae3725bbaa2756e82d2f5b345f54"
+      sha256: f1f9695e06b12c4ed6bfafba9e54c64b8154c6aa2cb0526ac4f8c9e7c0a6aed1
       url: "https://pub.dev"
     source: hosted
-    version: "2.9.1"
+    version: "2.9.2"
   serverpod_flutter:
     dependency: "direct main"
     description:
       name: serverpod_flutter
-      sha256: "1d9c2cb511581a7fdc1fc81ac5475ef75c0cf0a1c9181308e956db4818759bb7"
+      sha256: fe756b793c85b67196be89e9c505730ab9b6430eab7455b1d4938e1ed963142f
       url: "https://pub.dev"
     source: hosted
-    version: "2.9.1"
+    version: "2.9.2"
   serverpod_serialization:
     dependency: transitive
     description:
       name: serverpod_serialization
-      sha256: c301a5e45610c062e51e1ba580f51f3257c3404ce2dd2f7e216dccbd93869502
+      sha256: e68bee9f9e5d609ae6249365826748c43742fd05080bae8549eabf939294271c
       url: "https://pub.dev"
     source: hosted
-    version: "2.9.1"
+    version: "2.9.2"
   shared_preferences:
     dependency: transitive
     description:
@@ -1388,6 +1428,38 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.4"
+  signals:
+    dependency: "direct main"
+    description:
+      name: signals
+      sha256: "0d644f4ec8ce4862c61e3d3d1168d08a7b9b6ecbe067d4f96e26dd35287f5dcd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.3.0"
+  signals_core:
+    dependency: transitive
+    description:
+      name: signals_core
+      sha256: ea427bd53619e69e6f6cf244177e3b72870e433065c807600fb496fd80611c9f
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.2.1"
+  signals_flutter:
+    dependency: transitive
+    description:
+      name: signals_flutter
+      sha256: "7c83418f47e3538685217e583f0fbd17a29716fa1a9ce2247e2455786e8ea81a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.3.0"
+  signals_hooks:
+    dependency: "direct main"
+    description:
+      name: signals_hooks
+      sha256: "31f561507886ae27ee9bb0ea19454417e3cf2f007c87dc11dcec12acbe95e02a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.0"
   simple_gesture_detector:
     dependency: transitive
     description:
@@ -1401,6 +1473,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  sliver_dashboard:
+    dependency: "direct main"
+    description:
+      name: sliver_dashboard
+      sha256: "5de309ba727fe0b0d15d67e6d3f74f9555ecaefc16f864d116a963b38530d646"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.3"
   source_gen:
     dependency: transitive
     description:
@@ -1481,6 +1561,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.12.1"
+  state_beacon:
+    dependency: transitive
+    description:
+      name: state_beacon
+      sha256: "74550d1df83fec01ccce7b35b8a365f7e44d64b994bea8f3d3a2c3ea8720f62b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.1"
+  state_beacon_core:
+    dependency: transitive
+    description:
+      name: state_beacon_core
+      sha256: c60eceef6d638938e26ff3f502d79377c595ab0a08442a9c879f053f6bcaa25c
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.1"
+  state_beacon_flutter:
+    dependency: transitive
+    description:
+      name: state_beacon_flutter
+      sha256: "7a9db1a4532f0563e240ab1803751810c3d619a1d631e101b4abac43a21b4406"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.1"
   stream_channel:
     dependency: transitive
     description:

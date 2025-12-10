@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
@@ -44,7 +44,7 @@ class SupportGoalCard extends StatelessWidget {
           child: Card(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0),
-              side: const BorderSide(
+              side: BorderSide(
                 color: AppColors.cardInCardBorderColor,
                 width: 2,
               ),
@@ -113,10 +113,10 @@ class SupportGoalCard extends StatelessWidget {
                     Flexible(
                       child: Text(
                         pupil.supportGoals![goalIndex].description,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.groupColor,
+                          color: AppColors.groupColor.withValues(alpha: 0.7),
                         ),
                       ),
                     ),

@@ -72,12 +72,12 @@ class SchoolListPupilEntriesPageSearchBar extends WatchingWidget {
                       observedSchoolList.public != true
                           ? Text(
                             observedSchoolList.createdBy,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppColors.backgroundColor,
                               fontWeight: FontWeight.bold,
                             ),
                           )
-                          : const Icon(
+                          : Icon(
                             Icons.school_rounded,
                             color: AppColors.backgroundColor,
                           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/attendance_badges.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -93,13 +94,13 @@ Widget statisticsGroupCard(
               ),
               const Gap(10),
               const Text(
-                'S3:',
+                'K3:',
                 style: TextStyle(color: Colors.black, fontSize: 18),
               ),
               const Gap(5),
               Text(
                 controller
-                    .schoolyearInaGivenGroup(group, 'S3')
+                    .schoolyearInaGivenGroup(group, 'K3')
                     .length
                     .toString(),
                 style: const TextStyle(
@@ -110,13 +111,13 @@ Widget statisticsGroupCard(
               ),
               const Gap(10),
               const Text(
-                'S4:',
+                'K4:',
                 style: TextStyle(color: Colors.black, fontSize: 18),
               ),
               const Gap(5),
               Text(
                 controller
-                    .schoolyearInaGivenGroup(group, 'S4')
+                    .schoolyearInaGivenGroup(group, 'K4')
                     .length
                     .toString(),
                 style: const TextStyle(
@@ -166,17 +167,7 @@ Widget statisticsGroupCard(
           const Gap(5),
           Row(
             children: [
-              // const Text(
-              //   'a. Familiensprache:',
-              //   style: TextStyle(
-              //     color: Colors.black,
-              //     fontSize: 18,
-              //   ),
-              // ),
-              const Icon(
-                Icons.translate_rounded,
-                color: AppColors.backgroundColor,
-              ),
+              Icon(Icons.translate_rounded, color: AppColors.backgroundColor),
 
               const Gap(5),
               Text(
@@ -383,7 +374,7 @@ Widget statisticsGroupCard(
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              missedTypeBadge('missed'),
+              missedTypeBadge(MissedType.missed),
               const Gap(5),
               Text(
                 controller.totalMissedClasses(group).length.toString(),

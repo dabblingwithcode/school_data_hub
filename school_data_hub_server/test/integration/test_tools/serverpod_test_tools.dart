@@ -227,6 +227,8 @@ class TestEndpoints {
 
   late final _CompetenceEndpoint competence;
 
+  late final _CompetenceGoalEndpoint competenceGoal;
+
   late final _LearningSupportPlanEndpoint learningSupportPlan;
 
   late final _PreSchoolMedicalEndpoint preSchoolMedical;
@@ -327,6 +329,10 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
     competence = _CompetenceEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    competenceGoal = _CompetenceGoalEndpoint(
       endpoints,
       serializationManager,
     );
@@ -2494,6 +2500,200 @@ class _CompetenceEndpoint {
   }
 }
 
+class _CompetenceGoalEndpoint {
+  _CompetenceGoalEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<_i6.PupilData> postCompetenceGoal(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required int competenceId,
+    required int pupilId,
+    required String description,
+    List<String>? strategies,
+    required String createdBy,
+    String? modifiedBy,
+    int? score,
+    DateTime? achievedAt,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'competenceGoal',
+        method: 'postCompetenceGoal',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'competenceGoal',
+          methodName: 'postCompetenceGoal',
+          parameters: _i1.testObjectToJson({
+            'competenceId': competenceId,
+            'pupilId': pupilId,
+            'description': description,
+            'strategies': strategies,
+            'createdBy': createdBy,
+            'modifiedBy': modifiedBy,
+            'score': score,
+            'achievedAt': achievedAt,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i6.PupilData>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i6.PupilData> updateCompetenceGoal(
+    _i1.TestSessionBuilder sessionBuilder,
+    String publicId, {
+    ({String value})? description,
+    ({List<String>? value})? strategies,
+    ({String value})? modifiedBy,
+    ({int? value})? score,
+    ({DateTime value})? achievedAt,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'competenceGoal',
+        method: 'updateCompetenceGoal',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'competenceGoal',
+          methodName: 'updateCompetenceGoal',
+          parameters: _i1.testObjectToJson({
+            'publicId': publicId,
+            'description': _i15.mapRecordToJson(description),
+            'strategies': _i15.mapRecordToJson(strategies),
+            'modifiedBy': _i15.mapRecordToJson(modifiedBy),
+            'score': _i15.mapRecordToJson(score),
+            'achievedAt': _i15.mapRecordToJson(achievedAt),
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i6.PupilData>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i6.PupilData> deleteCompetenceGoal(
+    _i1.TestSessionBuilder sessionBuilder,
+    String publicId,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'competenceGoal',
+        method: 'deleteCompetenceGoal',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'competenceGoal',
+          methodName: 'deleteCompetenceGoal',
+          parameters: _i1.testObjectToJson({'publicId': publicId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i6.PupilData>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i6.PupilData> addFileToCompetenceGoal(
+    _i1.TestSessionBuilder sessionBuilder,
+    String publicId,
+    String filePath,
+    String createdBy,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'competenceGoal',
+        method: 'addFileToCompetenceGoal',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'competenceGoal',
+          methodName: 'addFileToCompetenceGoal',
+          parameters: _i1.testObjectToJson({
+            'publicId': publicId,
+            'filePath': filePath,
+            'createdBy': createdBy,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i6.PupilData>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i6.PupilData> removeFileFromCompetenceGoal(
+    _i1.TestSessionBuilder sessionBuilder,
+    String publicId,
+    String documentId,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'competenceGoal',
+        method: 'removeFileFromCompetenceGoal',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'competenceGoal',
+          methodName: 'removeFileFromCompetenceGoal',
+          parameters: _i1.testObjectToJson({
+            'publicId': publicId,
+            'documentId': documentId,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i6.PupilData>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
 class _LearningSupportPlanEndpoint {
   _LearningSupportPlanEndpoint(
     this._endpointDispatch,
@@ -3706,7 +3906,7 @@ class _PupilIdentityEndpoint {
     });
   }
 
-  _i3.Future<bool> updateLastPupilIdentitiesUpdate(
+  _i3.Future<DateTime?> updateLastPupilIdentitiesUpdate(
     _i1.TestSessionBuilder sessionBuilder,
     DateTime date,
   ) async {
@@ -3727,7 +3927,7 @@ class _PupilIdentityEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<bool>);
+        ) as _i3.Future<DateTime?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

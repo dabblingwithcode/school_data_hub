@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
@@ -57,6 +57,7 @@ class NewSchooldayEventPage extends WatchingWidget {
     required bool admonitionInfo,
     required bool transitionAdvice,
     required bool other,
+    required String eventTime,
   }) async {
     Set<String> schooldayEventReason = {};
     String schooldayEventReasons = '';
@@ -134,6 +135,7 @@ class NewSchooldayEventPage extends WatchingWidget {
       thisDate,
       schooldayEventType,
       schooldayEventReasons,
+      eventTime: eventTime,
     );
   }
 
@@ -145,6 +147,10 @@ class NewSchooldayEventPage extends WatchingWidget {
     final thisDate = createOnce(
       () => ValueNotifier<DateTime>(_schoolCalendarManager.thisDate.value),
     );
+    final now = DateTime.now();
+    final defaultTime =
+        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+    final eventTime = createOnce(() => ValueNotifier<String>(defaultTime));
     final violenceAgainstPupils = createOnce(() => ValueNotifier<bool>(false));
     final violenceAgainstTeacher = createOnce(() => ValueNotifier<bool>(false));
     final violenceAgainstThings = createOnce(() => ValueNotifier<bool>(false));
@@ -244,7 +250,7 @@ class NewSchooldayEventPage extends WatchingWidget {
                           thisDate.value = newDate;
                         }
                       },
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.calendar_today_rounded,
                         color: AppColors.interactiveColor,
                       ),
@@ -261,6 +267,79 @@ class NewSchooldayEventPage extends WatchingWidget {
                       },
                       child: Text(
                         watch(thisDate).value.formatDateForUser(),
+                        style: AppStyles.title.copyWith(
+                          color: AppColors.interactiveColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const Gap(5),
+                const Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Uhrzeit',
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () async {
+                        final TimeOfDay? picked = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay(
+                            hour: int.parse(eventTime.value.split(':')[0]),
+                            minute: int.parse(eventTime.value.split(':')[1]),
+                          ),
+                          builder: (BuildContext context, Widget? child) {
+                            return MediaQuery(
+                              data: MediaQuery.of(
+                                context,
+                              ).copyWith(alwaysUse24HourFormat: true),
+                              child: child!,
+                            );
+                          },
+                        );
+                        if (picked != null) {
+                          eventTime.value =
+                              '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+                        }
+                      },
+                      icon: Icon(
+                        Icons.access_time_rounded,
+                        color: AppColors.interactiveColor,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        final TimeOfDay? picked = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay(
+                            hour: int.parse(eventTime.value.split(':')[0]),
+                            minute: int.parse(eventTime.value.split(':')[1]),
+                          ),
+                          builder: (BuildContext context, Widget? child) {
+                            return MediaQuery(
+                              data: MediaQuery.of(
+                                context,
+                              ).copyWith(alwaysUse24HourFormat: true),
+                              child: child!,
+                            );
+                          },
+                        );
+                        if (picked != null) {
+                          eventTime.value =
+                              '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+                        }
+                      },
+                      child: Text(
+                        watch(eventTime).value,
                         style: AppStyles.title.copyWith(
                           color: AppColors.interactiveColor,
                         ),
@@ -480,7 +559,7 @@ class NewSchooldayEventPage extends WatchingWidget {
                       );
                       return;
                     }
-                    unawaited(
+                      unawaited(
                       postSchooldayEvent(
                         schooldayEventType: schooldayEventType,
                         thisDate: thisDate.value,
@@ -499,6 +578,7 @@ class NewSchooldayEventPage extends WatchingWidget {
                         admonitionInfo: admonitionInfo.value,
                         transitionAdvice: transitionAdvice.value,
                         other: other.value,
+                        eventTime: eventTime.value,
                       ),
                     );
                     Navigator.pop(context);

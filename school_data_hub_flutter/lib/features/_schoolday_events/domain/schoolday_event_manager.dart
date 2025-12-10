@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/common/domain/models/nullable_records.da
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/data/schoolday_event_api_service.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/models/pupil_schoolday_events_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class SchooldayEventManager with ChangeNotifier {
@@ -19,7 +19,7 @@ class SchooldayEventManager with ChangeNotifier {
 
   final _notificationService = di<NotificationService>();
 
-  final _pupilManager = di<PupilManager>();
+  final _pupilManager = di<PupilProxyManager>();
 
   final _schooldayEventApiService = SchooldayEventApiService();
 
@@ -32,6 +32,14 @@ class SchooldayEventManager with ChangeNotifier {
 
   SchooldayEventManager() {
     init();
+  }
+  @override
+  void dispose() {
+    _pupilManager.removeListener(_updatePupilProxies);
+    _pupilSchooldayEventsMap.clear();
+    _schooldayEventsMap.clear();
+    super.dispose();
+    return;
   }
 
   Future<void> init() async {
@@ -49,12 +57,6 @@ class SchooldayEventManager with ChangeNotifier {
         _pupilSchooldayEventsMap[pupilId] = PupilSchooldayEventsProxy();
       }
     }
-  }
-
-  @override
-  void dispose() {
-    _pupilManager.removeListener(_updatePupilProxies);
-    super.dispose();
   }
 
   //- Getters
@@ -116,16 +118,18 @@ class SchooldayEventManager with ChangeNotifier {
     int schooldayId,
     DateTime dateTime,
     SchooldayEventType type,
-    String reason,
-  ) async {
+    String reason, {
+    String? eventTime,
+  }) async {
     final SchooldayEvent
     schooldayEvent = await _schooldayEventApiService.postSchooldayEvent(
-      '${di<PupilManager>().getPupilByPupilId(pupilId)!.firstName} (${di<PupilManager>().getPupilByPupilId(pupilId)!.group})',
+      '${di<PupilProxyManager>().getPupilByPupilId(pupilId)!.firstName} (${di<PupilProxyManager>().getPupilByPupilId(pupilId)!.group})',
       pupilId,
       schooldayId,
       dateTime,
       type,
       reason,
+      eventTime: eventTime,
     );
 
     _updateSchooldayEventCollections(schooldayEvent);
@@ -165,6 +169,7 @@ class SchooldayEventManager with ChangeNotifier {
     NullableDateTimeRecord? processedAt,
     int? schooldayId,
     NullableStringRecord? comment,
+    String? eventTime,
   }) async {
     String? cacheKey;
     if (processed == false && eventToUpdate.processedDocumentId != null) {
@@ -181,6 +186,7 @@ class SchooldayEventManager with ChangeNotifier {
           schooldayId: schooldayId,
           type: schoolEventType,
           comment: comment,
+          eventTime: eventTime,
         );
 
     _updateSchooldayEventCollections(schooldayEvent);

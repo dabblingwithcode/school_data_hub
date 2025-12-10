@@ -35,7 +35,7 @@ Future<bool?> changeEnvironmentDialog({required BuildContext context}) async {
                     TextButton(
                       child: Text(
                         envs[index].serverName,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 20,
                           color: AppColors.interactiveColor,
                         ),
@@ -77,7 +77,7 @@ Future<bool?> changeEnvironmentDialog({required BuildContext context}) async {
                     ),
                     const Gap(10),
                     _envManager.activeEnv?.serverName == envs[index].serverName
-                        ? const Icon(
+                        ? Icon(
                             Icons.check,
                             color: Colors.green,
                             weight: 20,

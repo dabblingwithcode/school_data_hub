@@ -3,7 +3,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_language_card.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/language_content/pupil_language_card.dart';
 
 class PupilListDialog extends StatelessWidget {
   final String title;

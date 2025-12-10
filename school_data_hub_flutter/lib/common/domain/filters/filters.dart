@@ -3,8 +3,6 @@ import 'package:school_data_hub_flutter/common/domain/filters/filters_state_mana
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _pupilsFilter = di<PupilsFilter>();
-
 abstract class Filter<T extends Object> with ChangeNotifier {
   Filter({
     required this.name,
@@ -32,19 +30,25 @@ abstract class Filter<T extends Object> with ChangeNotifier {
   void toggle(bool isActive) {
     _isActive = isActive;
     if (isActive) {
-      di<FiltersStateManager>()
-          .setFilterState(filterState: FilterState.pupil, value: true);
+      di<FiltersStateManager>().setFilterState(
+        filterState: FilterState.pupil,
+        value: true,
+      );
     } else {
-      if (!(_pupilsFilter.groupFilters.any((filter) => filter.isActive) ||
-          _pupilsFilter.schoolGradeFilters.any((filter) => filter.isActive) ||
-          _pupilsFilter.textFilter.isActive)) {
-        di<FiltersStateManager>()
-            .setFilterState(filterState: FilterState.pupil, value: false);
+      if (!(di<PupilsFilter>().groupFilters.any((filter) => filter.isActive) ||
+          di<PupilsFilter>().schoolGradeFilters.any(
+            (filter) => filter.isActive,
+          ) ||
+          di<PupilsFilter>().textFilter.isActive)) {
+        di<FiltersStateManager>().setFilterState(
+          filterState: FilterState.pupil,
+          value: false,
+        );
       }
     }
 
     notifyListeners();
-    _pupilsFilter.refreshs();
+    di<PupilsFilter>().refreshs();
   }
 
   bool matches(T item);

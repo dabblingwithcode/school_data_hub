@@ -130,7 +130,7 @@ class MatrixUserRoomsList extends WatchingWidget {
                                 size: 20,
                               )
                             : powerLevel > 29
-                            ? const Icon(
+                            ? Icon(
                                 Icons.remove_red_eye_outlined,
                                 color: AppColors.groupColor,
                                 size: 20,
@@ -233,7 +233,7 @@ List<Widget> roomsList(
                         : powerLevel > 49
                         ? const Icon(Icons.chat, color: Colors.orange, size: 20)
                         : powerLevel > 29
-                        ? const Icon(
+                        ? Icon(
                             Icons.remove_red_eye_outlined,
                             color: AppColors.groupColor,
                             size: 20,

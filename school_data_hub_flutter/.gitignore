@@ -28,6 +28,7 @@ rooms.json
 test_enc.dart
 decrypt_files.dart
 **/scripts/
+cursor_docs/
 
 # Flutter/Dart/Pub related
 **/doc/api/

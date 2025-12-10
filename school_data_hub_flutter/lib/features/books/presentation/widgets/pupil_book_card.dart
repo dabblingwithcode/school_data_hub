@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
@@ -9,10 +8,11 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialo
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class PupilBookLendingCard extends StatelessWidget {
@@ -30,7 +30,7 @@ class PupilBookLendingCard extends StatelessWidget {
       pupilBookLending.libraryBookId,
     )!;
     void updatepupilBookRating(int rating) {
-      di<PupilManager>().updatePupilBookLending(
+      di<PupilProxyManager>().updatePupilBookLending(
         pupilBookLending: pupilBookLending,
         score: (value: rating),
       );
@@ -39,6 +39,7 @@ class PupilBookLendingCard extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Card(
+        color: AppColors.cardInCardColor,
         child: InkWell(
           onLongPress: () async {
             if (pupilBookLending.lentBy != di<HubSessionManager>().userName ||
@@ -56,7 +57,7 @@ class PupilBookLendingCard extends StatelessWidget {
               message: 'Ausleihe von "${book.title}" wirklich löschen?',
             );
             if (result == true) {
-              di<PupilManager>().deletePupilBook(
+              di<PupilProxyManager>().deletePupilBook(
                 lendingId: pupilBookLending.lendingId,
               );
             }
@@ -190,7 +191,7 @@ class PupilBookLendingCard extends StatelessWidget {
                       parentContext: context,
                     );
                     if (status == null) return;
-                    await di<PupilManager>().updatePupilBookLending(
+                    await di<PupilProxyManager>().updatePupilBookLending(
                       pupilBookLending: pupilBookLending,
                       status: (value: status),
                     );
@@ -215,7 +216,7 @@ class PupilBookLendingCard extends StatelessWidget {
                               pupilBookLending.status == '')
                           ? 'Kein Eintrag - Tippen zum Bearbeiten'
                           : pupilBookLending.status!,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         color: AppColors.interactiveColor,
                       ),
@@ -243,7 +244,7 @@ class PupilBookLendingCard extends StatelessWidget {
                                     'Buch "${book.title}" wirklich zurückgeben?',
                               );
                               if (result!) {
-                                di<PupilManager>().returnLibraryBook(
+                                di<PupilProxyManager>().returnLibraryBook(
                                   pupilBookLending: pupilBookLending,
                                 );
                               }

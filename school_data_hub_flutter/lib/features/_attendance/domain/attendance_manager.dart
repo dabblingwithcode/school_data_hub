@@ -4,19 +4,18 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/data/attendance_api_service.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/models/pupil_missed_classes_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class AttendanceManager with ChangeNotifier {
   // Lazy getters to avoid accessing dependencies during construction
-  PupilManager get _pupilManager => di<PupilManager>();
+  PupilProxyManager get _pupilManager => di<PupilProxyManager>();
   SchoolCalendarManager get _schoolCalendarManager =>
       di<SchoolCalendarManager>();
   NotificationService get _notificationService => di<NotificationService>();
@@ -45,6 +44,17 @@ class AttendanceManager with ChangeNotifier {
     init();
   }
 
+  void dispose() {
+    _closeStreamSubscription();
+
+    _pupilMissedSchooldaysMap.clear();
+
+    _missedSchooldays.dispose();
+
+    super.dispose();
+    return;
+  }
+
   Future<void> init() async {
     // we must have a proxy object for every pupil because we need to
     // watch them in the UI unconditionally (even if there are no entries)
@@ -60,11 +70,10 @@ class AttendanceManager with ChangeNotifier {
   //- Getters
 
   MissedSchoolday? getPupilMissedSchooldayOnDate(int pupilId, DateTime date) {
+    // Using toUtc would make the comparison fail because the date is in the local timezone
     return _pupilMissedSchooldaysMap[pupilId]!.missedSchooldays
         .firstWhereOrNull(
-          (element) => element.schoolday!.schoolday.isSameDate(
-            date.formatToUtcForServer(),
-          ),
+          (element) => element.schoolday!.schoolday.isSameDate(date),
         );
   }
 
@@ -164,15 +173,21 @@ class AttendanceManager with ChangeNotifier {
           (event) {
             switch (event.operation) {
               case 'add':
-                _log.fine('add missedSchoolday ${event.missedSchoolday}');
+                _log.fine(
+                  '[STREAM]add missedSchoolday ${event.missedSchoolday}',
+                );
                 updateMissedSchooldayInCollections(event.missedSchoolday);
                 break;
               case 'update':
-                _log.fine('update missedSchoolday ${event.missedSchoolday}');
+                _log.fine(
+                  '[STREAM] update missedSchoolday ${event.missedSchoolday}',
+                );
                 updateMissedSchooldayInCollections(event.missedSchoolday);
                 break;
               case 'delete':
-                _log.fine('delete missedSchoolday ${event.missedSchoolday}');
+                _log.fine(
+                  '[STREAM] delete missedSchoolday ${event.missedSchoolday}',
+                );
                 removeMissedSchooldayFromCollections(
                   event.missedSchoolday.pupilId,
                   event.missedSchoolday.schoolday!.schoolday,
@@ -196,7 +211,7 @@ class AttendanceManager with ChangeNotifier {
                 'Der Server konnte nicht gefunden werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.',
               );
             } else {
-              _notificationService.showSnackBar(
+              _log.severe(
                 NotificationType.error,
                 'Ein unbekannter Fehler ist aufgetreten: $errorString',
               );
@@ -223,11 +238,6 @@ class AttendanceManager with ChangeNotifier {
     _missedSchooldaySubscription = null;
   }
 
-  @override
-  void dispose() {
-    _closeStreamSubscription();
-    super.dispose();
-  }
   //- CRUD operantions
 
   void fetchAllPupilMissedSchooldayes() async {
@@ -480,34 +490,34 @@ class AttendanceManager with ChangeNotifier {
     return;
   }
 
-  Future<void> postManyMissedSchooldayes(
-    id,
-    startdate,
-    enddate,
-    missedType,
-  ) async {
+  Future<void> postManyMissedSchooldays({
+    required int id,
+    required DateTime startdate,
+    required DateTime enddate,
+    required MissedType missedType,
+    String? comment,
+  }) async {
     List<MissedSchoolday> missedSchooldays = [];
-
-    final PupilProxy pupil = _pupilManager.allPupils.firstWhere(
-      (pupil) => pupil.internalId == id,
-    );
 
     final List<DateTime> validSchooldays =
         _schoolCalendarManager.availableDates.value;
 
     for (DateTime validSchoolday in validSchooldays) {
       // if the date is the same as the startdate or enddate or in between
-      if (validSchoolday.isSameDate(startdate.toUtc()) ||
-          validSchoolday.isSameDate(enddate.toUtc()) ||
-          (validSchoolday.isAfterDate(startdate.toUtc()) &&
-              validSchoolday.isBeforeDate(enddate.toUtc()))) {
+
+      // TODO: For now, we are not transforming the dates to UTC,
+      // because this will cause it becoming a different day
+      if (validSchoolday.isSameDate(startdate) ||
+          validSchoolday.isSameDate(enddate) ||
+          (validSchoolday.isAfterDate(startdate) &&
+              validSchoolday.isBeforeDate(enddate))) {
         final schoolday = _schoolCalendarManager.getSchooldayByDate(
           validSchoolday,
         );
         missedSchooldays.add(
           MissedSchoolday(
             createdBy: _sessionManager.signedInUser!.userName!,
-            pupilId: pupil.pupilId,
+            pupilId: id,
             schoolday: schoolday,
             missedType: missedType,
             unexcused: false,
@@ -517,7 +527,7 @@ class AttendanceManager with ChangeNotifier {
             minutesLate: null,
             writtenExcuse: false,
             modifiedBy: null,
-            comment: null,
+            comment: comment,
             schooldayId: schoolday!.id!,
           ),
         );

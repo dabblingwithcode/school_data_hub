@@ -1,5 +1,7 @@
 enum CommunicationSubject { pupil, tutor1, tutor2 }
 
+enum PupilIdentityStreamRole { sender, receiver }
+
 enum PupilSortMode {
   sortByName,
   sortByMissedExcused,

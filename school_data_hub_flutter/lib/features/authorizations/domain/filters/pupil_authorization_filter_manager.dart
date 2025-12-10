@@ -9,7 +9,7 @@ import 'package:watch_it/watch_it.dart';
 
 typedef AuthorizationFilterRecord = ({
   AuthorizationFilter authorizationFilter,
-  bool value
+  bool value,
 });
 
 // class AuthorizationFilter extends Filter<PupilProxy> {
@@ -126,7 +126,7 @@ enum AuthorizationFilter {
   no,
   nullResponse,
   commentResponse,
-  fileResponse
+  fileResponse,
 }
 
 Map<AuthorizationFilter, bool> initialPupilAuthorizationFilterValues = {
@@ -140,22 +140,30 @@ Map<AuthorizationFilter, bool> initialPupilAuthorizationFilterValues = {
 class PupilAuthorizationFilterManager {
   final _pupilAuthorizationFilterState =
       ValueNotifier<Map<AuthorizationFilter, bool>>(
-          initialPupilAuthorizationFilterValues);
+        initialPupilAuthorizationFilterValues,
+      );
   ValueListenable<Map<AuthorizationFilter, bool>>
-      get authorizationFilterState => _pupilAuthorizationFilterState;
+  get authorizationFilterState => _pupilAuthorizationFilterState;
 
   PupilAuthorizationFilterManager();
-
-  resetFilters() {
-    _pupilAuthorizationFilterState.value = {
-      ...initialPupilAuthorizationFilterValues
-    };
-    di<FiltersStateManager>()
-        .setFilterState(filterState: FilterState.pupil, value: false);
+  void dispose() {
+    _pupilAuthorizationFilterState.dispose();
+    return;
   }
 
-  void setFilter(
-      {required List<AuthorizationFilterRecord> authorizationFilters}) {
+  void resetFilters() {
+    _pupilAuthorizationFilterState.value = {
+      ...initialPupilAuthorizationFilterValues,
+    };
+    di<FiltersStateManager>().setFilterState(
+      filterState: FilterState.pupil,
+      value: false,
+    );
+  }
+
+  void setFilter({
+    required List<AuthorizationFilterRecord> authorizationFilters,
+  }) {
     for (AuthorizationFilterRecord record in authorizationFilters) {
       _pupilAuthorizationFilterState.value = {
         ..._pupilAuthorizationFilterState.value,
@@ -164,12 +172,15 @@ class PupilAuthorizationFilterManager {
     }
 
     final authorizationFilterStateEqualsInitialValues = const MapEquality()
-        .equals(_pupilAuthorizationFilterState.value,
-            initialPupilAuthorizationFilterValues);
+        .equals(
+          _pupilAuthorizationFilterState.value,
+          initialPupilAuthorizationFilterValues,
+        );
 
     di<FiltersStateManager>().setFilterState(
-        filterState: FilterState.pupil,
-        value: !authorizationFilterStateEqualsInitialValues);
+      filterState: FilterState.pupil,
+      value: !authorizationFilterStateEqualsInitialValues,
+    );
 
     di<PupilsFilter>().refreshs();
   }
@@ -180,32 +191,32 @@ class PupilAuthorizationFilterManager {
     List<PupilAuthorization> filteredPupilAuthorizations = [];
     bool filterIsOn = false;
     for (PupilAuthorization pupilAuthorization in pupilAuthorizations) {
-      if (activeFilters
-              .pupilFilterState.value[PupilFilter.authorizationPositive]! &&
+      if (activeFilters.pupilFilterState.value[PupilFilter
+              .authorizationPositive]! &&
           pupilAuthorization.status != true) {
         filterIsOn = true;
         continue;
       }
-      if (activeFilters
-              .pupilFilterState.value[PupilFilter.authorizationNegative]! &&
+      if (activeFilters.pupilFilterState.value[PupilFilter
+              .authorizationNegative]! &&
           pupilAuthorization.status != false) {
         filterIsOn = true;
         continue;
       }
-      if (activeFilters
-              .pupilFilterState.value[PupilFilter.authorizationNoValue]! &&
+      if (activeFilters.pupilFilterState.value[PupilFilter
+              .authorizationNoValue]! &&
           pupilAuthorization.status != null) {
         filterIsOn = true;
         continue;
       }
-      if (activeFilters
-              .pupilFilterState.value[PupilFilter.authorizationComment]! &&
+      if (activeFilters.pupilFilterState.value[PupilFilter
+              .authorizationComment]! &&
           pupilAuthorization.comment == null) {
         filterIsOn = true;
         continue;
       }
-      if (activeFilters
-              .pupilFilterState.value[PupilFilter.authorizationNoFile]! &&
+      if (activeFilters.pupilFilterState.value[PupilFilter
+              .authorizationNoFile]! &&
           pupilAuthorization.fileId != null) {
         filterIsOn = true;
         continue;
@@ -214,8 +225,10 @@ class PupilAuthorizationFilterManager {
       filteredPupilAuthorizations.add(pupilAuthorization);
     }
     if (filterIsOn) {
-      di<FiltersStateManager>()
-          .setFilterState(filterState: FilterState.pupil, value: true);
+      di<FiltersStateManager>().setFilterState(
+        filterState: FilterState.pupil,
+        value: true,
+      );
     }
 
     return filteredPupilAuthorizations;

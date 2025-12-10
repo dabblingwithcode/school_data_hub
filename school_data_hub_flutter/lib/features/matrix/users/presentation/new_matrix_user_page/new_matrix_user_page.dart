@@ -105,8 +105,8 @@ class NewMatrixUserPageState extends State<NewMatrixUserPage> {
                         minLines: 1,
                         maxLines: 3,
                         controller: matrixIdController,
-                        decoration: const InputDecoration(
-                          contentPadding: EdgeInsets.all(10),
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.all(10),
                           border: OutlineInputBorder(
                             borderSide: BorderSide(
                               color: AppColors.backgroundColor,
@@ -142,8 +142,8 @@ class NewMatrixUserPageState extends State<NewMatrixUserPage> {
                   minLines: 1,
                   maxLines: 3,
                   controller: displayNameController,
-                  decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.all(10),
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.all(10),
                     border: OutlineInputBorder(
                       borderSide: BorderSide(
                         color: AppColors.backgroundColor,
@@ -184,72 +184,74 @@ class NewMatrixUserPageState extends State<NewMatrixUserPage> {
                 if (roomIds.isEmpty) const Gap(30),
                 roomIds.isNotEmpty
                     ? Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: ListView.builder(
-                            padding: const EdgeInsets.only(top: 5, bottom: 5),
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: roomsFromIds.length,
-                            itemBuilder: (context, int index) {
-                              MatrixRoom listedRoom = roomsFromIds[index];
-                              return Column(
-                                children: [
-                                  Card(
-                                    color: Colors.white,
-                                    child: SizedBox(
-                                      height: 60,
-                                      child: Row(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(15.0),
-                                            child: Text(
-                                              listedRoom.name!,
-                                              style: const TextStyle(
-                                                fontSize: 17,
-                                                fontWeight: FontWeight.bold,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: ListView.builder(
+                              padding: const EdgeInsets.only(top: 5, bottom: 5),
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: roomsFromIds.length,
+                              itemBuilder: (context, int index) {
+                                MatrixRoom listedRoom = roomsFromIds[index];
+                                return Column(
+                                  children: [
+                                    Card(
+                                      color: Colors.white,
+                                      child: SizedBox(
+                                        height: 60,
+                                        child: Row(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.all(
+                                                15.0,
+                                              ),
+                                              child: Text(
+                                                listedRoom.name!,
+                                                style: const TextStyle(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          const Spacer(),
-                                          IconButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                roomIds.remove(listedRoom.id);
-                                              });
-                                            },
-                                            icon: const Icon(
-                                              Icons.delete,
-                                              color: AppColors.accentColor,
+                                            const Spacer(),
+                                            IconButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  roomIds.remove(listedRoom.id);
+                                                });
+                                              },
+                                              icon: Icon(
+                                                Icons.delete,
+                                                color: AppColors.accentColor,
+                                              ),
                                             ),
-                                          ),
-                                          const Gap(10),
-                                        ],
+                                            const Gap(10),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              );
-                            },
+                                  ],
+                                );
+                              },
+                            ),
                           ),
                         ),
-                      ),
-                    )
+                      )
                     : const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Keine Räume ausgewählt!',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Color.fromARGB(255, 91, 91, 91),
-                            fontWeight: FontWeight.bold,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Keine Räume ausgewählt!',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Color.fromARGB(255, 91, 91, 91),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
                 if (roomIds.isEmpty) const Spacer(),
                 ElevatedButton(
                   style: AppStyles.actionButtonStyle,
@@ -257,12 +259,9 @@ class NewMatrixUserPageState extends State<NewMatrixUserPage> {
                     final List<String> selectedRoomIds =
                         await Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder:
-                                (ctx) => SelectMatrixRoomsList(
-                                  MatrixRoomHelper.restOfRooms(
-                                    roomIds.toList(),
-                                  ),
-                                ),
+                            builder: (ctx) => SelectMatrixRoomsList(
+                              MatrixRoomHelper.restOfRooms(roomIds.toList()),
+                            ),
                           ),
                         ) ??
                         [];

@@ -8,13 +8,13 @@ class AppStyles {
   static InputDecoration textFieldDecoration({required String labelText}) {
     return InputDecoration(
       contentPadding: const EdgeInsets.all(10),
-      border: const OutlineInputBorder(
+      border: OutlineInputBorder(
         borderSide: BorderSide(color: AppColors.backgroundColor, width: 2),
       ),
-      focusedBorder: const OutlineInputBorder(
+      focusedBorder: OutlineInputBorder(
         borderSide: BorderSide(color: AppColors.backgroundColor, width: 2),
       ),
-      labelStyle: const TextStyle(color: AppColors.backgroundColor),
+      labelStyle: TextStyle(color: AppColors.backgroundColor),
       labelText: labelText,
     );
   }

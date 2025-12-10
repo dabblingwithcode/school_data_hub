@@ -1307,6 +1307,37 @@ class Protocol extends _i1.SerializationManager {
                   : deserialize<String>(data['n']['value']),
             ) as T;
     }
+    if (t == _i1.getType<List<String>?>()) {
+      return (data != null
+          ? (data as List).map((e) => deserialize<String>(e)).toList()
+          : null) as T;
+    }
+    if (t == _i1.getType<({List<String>? value})?>()) {
+      return (data == null)
+          ? null as T
+          : (
+              value: ((data as Map)['n'] as Map)['value'] == null
+                  ? null
+                  : deserialize<List<String>>(data['n']['value']),
+            ) as T;
+    }
+    if (t == _i1.getType<({int? value})?>()) {
+      return (data == null)
+          ? null as T
+          : (
+              value: ((data as Map)['n'] as Map)['value'] == null
+                  ? null
+                  : deserialize<int>(data['n']['value']),
+            ) as T;
+    }
+    if (t == _i1.getType<({DateTime value})?>()) {
+      return (data == null)
+          ? null as T
+          : (
+              value:
+                  deserialize<DateTime>(((data as Map)['n'] as Map)['value']),
+            ) as T;
+    }
     if (t == List<_i93.LearningSupportPlan>) {
       return (data as List)
           .map((e) => deserialize<_i93.LearningSupportPlan>(e))
@@ -2004,6 +2035,27 @@ Map<String, dynamic>? mapRecordToJson(Record? record) {
     };
   }
   if (record is ({String? value})) {
+    return {
+      "n": {
+        "value": record.value,
+      },
+    };
+  }
+  if (record is ({List<String>? value})) {
+    return {
+      "n": {
+        "value": record.value,
+      },
+    };
+  }
+  if (record is ({int? value})) {
+    return {
+      "n": {
+        "value": record.value,
+      },
+    };
+  }
+  if (record is ({DateTime value})) {
     return {
       "n": {
         "value": record.value,

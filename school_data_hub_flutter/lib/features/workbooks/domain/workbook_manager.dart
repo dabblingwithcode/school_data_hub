@@ -17,6 +17,11 @@ class WorkbookManager {
 
   WorkbookManager();
 
+  void dispose() {
+    _workbooks.dispose();
+    return;
+  }
+
   Future<WorkbookManager> init() async {
     await fetchWorkbooks();
 
@@ -48,15 +53,17 @@ class WorkbookManager {
   }
 
   Future<void> fetchWorkbooks() async {
-    final List<Workbook>? responseWorkbooks =
-        await _workbookApiService.getWorkbooks();
+    final List<Workbook>? responseWorkbooks = await _workbookApiService
+        .getWorkbooks();
     if (responseWorkbooks == null) {
       return;
     }
     // sort workbooks by name
     responseWorkbooks.sort((a, b) => a.name.compareTo(b.name));
     _notificationService.showSnackBar(
-        NotificationType.success, 'Arbeitshefte erfolgreich geladen');
+      NotificationType.success,
+      'Arbeitshefte erfolgreich geladen',
+    );
 
     _workbooks.value = responseWorkbooks;
 
@@ -64,25 +71,28 @@ class WorkbookManager {
   }
 
   Future<void> fetchWorkbookByIsbn(int isbn) async {
-    final Workbook? responseWorkbook =
-        await _workbookApiService.fetchWorkbookByIsbn(isbn);
+    final Workbook? responseWorkbook = await _workbookApiService
+        .fetchWorkbookByIsbn(isbn);
     if (responseWorkbook == null) {
       return;
     }
     _updateWorkbookInCollection(responseWorkbook);
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Arbeitsheft erfolgreich geladen');
+      NotificationType.success,
+      'Arbeitsheft erfolgreich geladen',
+    );
 
     return;
   }
 
-  Future<void> updateWorkbookProperty(
-      {required Workbook workbook,
-      String? name,
-      String? subject,
-      String? level,
-      int? amount}) async {
+  Future<void> updateWorkbookProperty({
+    required Workbook workbook,
+    String? name,
+    String? subject,
+    String? level,
+    int? amount,
+  }) async {
     final Workbook workbookToUpdate = workbook.copyWith(
       name: name ?? workbook.name,
       subject: subject ?? workbook.subject,
@@ -91,9 +101,8 @@ class WorkbookManager {
     );
 
     final updatedWorkbook = await ClientHelper.apiCall(
-      call: () => _workbookApiService.updateWorkbook(
-        workbook: workbookToUpdate,
-      ),
+      call: () =>
+          _workbookApiService.updateWorkbook(workbook: workbookToUpdate),
       errorMessage: 'Fehler beim Aktualisieren des Arbeitshefts',
     );
     if (updatedWorkbook == null) {
@@ -102,7 +111,9 @@ class WorkbookManager {
     _updateWorkbookInCollection(updatedWorkbook);
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Arbeitsheft erfolgreich aktualisiert');
+      NotificationType.success,
+      'Arbeitsheft erfolgreich aktualisiert',
+    );
 
     return;
   }
@@ -127,7 +138,9 @@ class WorkbookManager {
 
     _removeWorkbookFromCollection(workbook.isbn);
     _notificationService.showSnackBar(
-        NotificationType.success, 'Arbeitsheft erfolgreich gelöscht');
+      NotificationType.success,
+      'Arbeitsheft erfolgreich gelöscht',
+    );
 
     //- TODO: delete all pupilWorkbooks with this isbn in memory
 
@@ -137,8 +150,9 @@ class WorkbookManager {
   //- helper function
   Workbook? getWorkbookByIsbn(int? isbn) {
     if (isbn == null) return null;
-    final Workbook? workbook =
-        _workbooks.value.firstWhereOrNull((element) => element.isbn == isbn);
+    final Workbook? workbook = _workbooks.value.firstWhereOrNull(
+      (element) => element.isbn == isbn,
+    );
     return workbook;
   }
 

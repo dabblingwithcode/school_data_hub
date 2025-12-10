@@ -15,7 +15,7 @@ import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_man
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_page/new_matrix_user_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/widgets/credit_list_page_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/widgets/credit_list_searchbar.dart';
@@ -28,7 +28,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _pupilManager = di<PupilManager>();
+    final _pupilManager = di<PupilProxyManager>();
     List<PupilProxy> pupils = watchValue((PupilsFilter x) => x.filteredPupils);
     return Scaffold(
       appBar: const GenericAppBar(
@@ -102,9 +102,9 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                           ),
                                         ),
                                         if (pupil.family != null)
-                                          const Row(
+                                          Row(
                                             children: [
-                                              Gap(10),
+                                              const Gap(10),
                                               Icon(
                                                 Icons.group,
                                                 size: 25,

@@ -2,19 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 
-Future<bool?> confirmationDialog(
-    {required BuildContext context,
-    required String title,
-    required String message}) async {
+Future<bool?> confirmationDialog({
+  required BuildContext context,
+  required String title,
+  required String message,
+}) async {
   return showDialog<bool>(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        icon: const Icon(
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        icon: Icon(
           Icons.question_mark_rounded,
           color: AppColors.backgroundColor,
           size: 50,
@@ -31,10 +29,7 @@ Future<bool?> confirmationDialog(
                     onPressed: () {
                       Navigator.of(context).pop(false);
                     }, // Add onPressed
-                    child: const Text(
-                      "NEIN",
-                      style: AppStyles.buttonTextStyle,
-                    ),
+                    child: const Text("NEIN", style: AppStyles.buttonTextStyle),
                   ),
                 ),
               ),
@@ -46,10 +41,7 @@ Future<bool?> confirmationDialog(
                     onPressed: () {
                       Navigator.of(context).pop(true);
                     }, // Add onPressed
-                    child: const Text(
-                      "JA",
-                      style: AppStyles.buttonTextStyle,
-                    ),
+                    child: const Text("JA", style: AppStyles.buttonTextStyle),
                   ),
                 ),
               ),

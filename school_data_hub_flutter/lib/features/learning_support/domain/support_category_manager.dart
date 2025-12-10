@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/data/learning_support_api_service.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class SupportCategoryManager with ChangeNotifier {
@@ -34,6 +34,12 @@ class SupportCategoryManager with ChangeNotifier {
   Map<int, int> _rootCategoriesMap = {};
 
   SupportCategoryManager();
+
+  void dispose() {
+    _supportCategories.dispose();
+
+    super.dispose();
+  }
 
   Future<SupportCategoryManager> init() async {
     await fetchSupportCategories();
@@ -66,7 +72,7 @@ class SupportCategoryManager with ChangeNotifier {
   List<SupportGoal> getGoalsForSupportCategory(int categoryId) {
     List<SupportGoal> goals = [];
 
-    final List<PupilProxy> pupils = di<PupilManager>().allPupils;
+    final List<PupilProxy> pupils = di<PupilProxyManager>().allPupils;
     for (PupilProxy pupil in pupils) {
       for (SupportGoal goal in pupil.supportGoals!) {
         if (goal.supportCategoryId == categoryId) {

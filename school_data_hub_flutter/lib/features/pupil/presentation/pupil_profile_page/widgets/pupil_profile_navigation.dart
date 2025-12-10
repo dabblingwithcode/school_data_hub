@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
@@ -21,31 +23,72 @@ enum ProfileNavigationState {
   const ProfileNavigationState(this.value);
 }
 
-class PupilProfileNavigation extends WatchingStatefulWidget {
+class PupilProfileNavigation extends WatchingWidget {
   final double boxWidth;
   const PupilProfileNavigation({required this.boxWidth, super.key});
 
-  @override
-  State<PupilProfileNavigation> createState() => _PupilProfileNavigationState();
-}
-
-class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
-  Color navigationBackgroundColor(int page) {
-    return page == _mainMenuBottomNavManager.pupilProfileNavState.value
-        ? Colors.white
-        : AppColors.backgroundColor;
+  Color _navigationBackgroundColor(bool isSelected) {
+    return isSelected ? Colors.white : AppColors.backgroundColor;
   }
 
-  Color navigationBackgroundActive = AppColors.accentColor;
-  Color navigationIconInactive = Colors.white;
-  Color navigationIconActive = Colors.white;
+  Color _activeForegroundColor(ProfileNavigationState state) {
+    switch (state) {
+      case ProfileNavigationState.info:
+        return AppColors.backgroundColor;
+      case ProfileNavigationState.language:
+        return AppColors.groupColor;
+      case ProfileNavigationState.credit:
+        return AppColors.accentColor;
+      case ProfileNavigationState.attendance:
+        return Colors.grey.shade800;
+      case ProfileNavigationState.schooldayEvent:
+        return AppColors.accentColor;
+      case ProfileNavigationState.ogs:
+        return AppColors.backgroundColor;
+      case ProfileNavigationState.lists:
+        return Colors.grey.shade600;
+      case ProfileNavigationState.authorization:
+        return Colors.grey.shade600;
+      case ProfileNavigationState.learningSupport:
+        return const Color.fromARGB(255, 245, 75, 75);
+      case ProfileNavigationState.learning:
+        return AppColors.accentColor;
+    }
+  }
+
+  ElevatedButton _navButton({
+    required ProfileNavigationState state,
+    required int selectedState,
+    required Widget child,
+    EdgeInsetsGeometry? padding,
+  }) {
+    final bool isSelected = selectedState == state.value;
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        padding: padding,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: AppColors.backgroundColor, width: 2.0),
+          borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+        ),
+        backgroundColor: _navigationBackgroundColor(isSelected),
+      ),
+      onPressed: () {
+        if (isSelected) {
+          return;
+        }
+        _mainMenuBottomNavManager.setPupilProfileNavPage(state.value);
+      },
+      child: child,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final int pupilProfileNavState = watchValue(
       (BottomNavManager x) => x.pupilProfileNavState,
     );
-    //double boxHeight = 35;
+
     return Theme(
       data: Theme.of(context).copyWith(
         elevatedButtonTheme: ElevatedButtonThemeData(
@@ -56,386 +99,220 @@ class _PupilProfileNavigationState extends State<PupilProfileNavigation> {
       ),
       child: Center(
         child: SizedBox(
-          height: 80,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  //- Information Button - top left border radius
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        shape: const RoundedRectangleBorder(
-                          side: BorderSide(
-                            color: AppColors.backgroundColor,
-                            width: 2.0,
-                          ),
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(
-                              10.0,
-                            ), // Adjust the radius as needed
-                          ),
-                        ),
-                        backgroundColor: navigationBackgroundColor(
-                          ProfileNavigationState.info.value,
-                        ),
-                      ),
-                      onPressed: () {
-                        if (pupilProfileNavState ==
-                            ProfileNavigationState.info.value) {
-                          return;
-                        }
-                        _mainMenuBottomNavManager.setPupilProfileNavPage(
-                          ProfileNavigationState.info.value,
-                        );
-                      },
-                      child: Icon(
-                        Icons.info_rounded,
-                        color:
-                            _mainMenuBottomNavManager
-                                        .pupilProfileNavState
-                                        .value ==
-                                    0
-                                ? AppColors.backgroundColor
-                                : Colors.white,
-                      ),
-                    ),
-                  ),
-                  //- Language Button
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        shape: const RoundedRectangleBorder(
-                          side: BorderSide(
-                            color: AppColors.backgroundColor,
-                            width: 2.0,
-                          ),
-                          borderRadius: BorderRadius.zero,
-                        ),
-                        backgroundColor: navigationBackgroundColor(
-                          ProfileNavigationState.language.value,
-                        ),
-                      ),
-                      onPressed: () {
-                        if (pupilProfileNavState ==
-                            ProfileNavigationState.language.value) {
-                          return;
-                        }
-                        _mainMenuBottomNavManager.setPupilProfileNavPage(
-                          ProfileNavigationState.language.value,
-                        );
-                      },
-                      child: Icon(
-                        Icons.language_rounded,
-                        color:
-                            _mainMenuBottomNavManager
-                                        .pupilProfileNavState
-                                        .value ==
-                                    1
-                                ? AppColors.groupColor
-                                : Colors.white,
-                      ),
-                    ),
-                  ),
-                  //- Credit Button
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        shape: const RoundedRectangleBorder(
-                          side: BorderSide(
-                            color: AppColors.backgroundColor,
-                            width: 2.0,
-                          ),
-                          borderRadius: BorderRadius.zero,
-                        ),
-                        backgroundColor: navigationBackgroundColor(
-                          ProfileNavigationState.credit.value,
-                        ),
-                      ),
-                      onPressed: () {
-                        if (pupilProfileNavState ==
-                            ProfileNavigationState.credit.value) {
-                          return;
-                        }
-                        _mainMenuBottomNavManager.setPupilProfileNavPage(
-                          ProfileNavigationState.credit.value,
-                        );
-                      },
-                      child: Icon(
-                        Icons.attach_money_rounded,
-                        color:
-                            _mainMenuBottomNavManager
-                                        .pupilProfileNavState
-                                        .value ==
-                                    2
-                                ? AppColors.accentColor
-                                : Colors.white,
-                      ),
-                    ),
-                  ),
-                  //- Attendance Button
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        shape: const RoundedRectangleBorder(
-                          side: BorderSide(
-                            color: AppColors.backgroundColor,
-                            width: 2.0,
-                          ),
-                          borderRadius: BorderRadius.zero,
-                        ),
-                        backgroundColor: navigationBackgroundColor(
-                          ProfileNavigationState.attendance.value,
-                        ),
-                      ),
-                      onPressed: () {
-                        if (pupilProfileNavState ==
-                            ProfileNavigationState.attendance.value) {
-                          return;
-                        }
-                        _mainMenuBottomNavManager.setPupilProfileNavPage(
-                          ProfileNavigationState.attendance.value,
-                        );
-                      },
-                      child: Icon(
-                        Icons.calendar_month_rounded,
-                        color:
-                            _mainMenuBottomNavManager
-                                        .pupilProfileNavState
-                                        .value ==
-                                    3
-                                ? Colors.grey[800]
-                                : Colors.white,
-                      ),
-                    ),
-                  ),
-                  //- SchooldayEvent Button - bottom right border radius
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        shape: const RoundedRectangleBorder(
-                          side: BorderSide(
-                            color: AppColors.backgroundColor,
-                            width: 2.0,
-                          ),
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(
-                              10.0,
-                            ), // Adjust the radius as needed
-                          ),
-                        ),
-                        backgroundColor: navigationBackgroundColor(
-                          ProfileNavigationState.schooldayEvent.value,
-                        ),
-                      ),
-                      onPressed: () {
-                        if (pupilProfileNavState ==
-                            ProfileNavigationState.schooldayEvent.value) {
-                          return;
-                        }
-                        _mainMenuBottomNavManager.setPupilProfileNavPage(
-                          ProfileNavigationState.schooldayEvent.value,
-                        );
-                      },
-                      child: Icon(
-                        Icons.warning_rounded,
-                        color:
-                            _mainMenuBottomNavManager
-                                        .pupilProfileNavState
-                                        .value ==
-                                    4
-                                ? AppColors.accentColor
-                                : Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
+          height: Platform.isWindows ? 65 : 85,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0), //5.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.backgroundColor,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(10.0),
+                  topRight: Radius.circular(10.0),
+                ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  //- OGS Button
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        elevation: 0,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                        backgroundColor: navigationBackgroundColor(
-                          ProfileNavigationState.ogs.value,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: _navButton(
+                          state: ProfileNavigationState.info,
+                          selectedState: pupilProfileNavState,
+                          child: Icon(
+                            Icons.info_rounded,
+                            color:
+                                _mainMenuBottomNavManager
+                                        .pupilProfileNavState
+                                        .value ==
+                                    ProfileNavigationState.info.value
+                                ? _activeForegroundColor(
+                                    ProfileNavigationState.info,
+                                  )
+                                : Colors.white,
+                          ),
                         ),
                       ),
-                      onPressed: () {
-                        if (pupilProfileNavState ==
-                            ProfileNavigationState.ogs.value) {
-                          return;
-                        }
-                        _mainMenuBottomNavManager.setPupilProfileNavPage(
-                          ProfileNavigationState.ogs.value,
-                        );
-                      },
-                      child: Text(
-                        'OGS',
-                        style: TextStyle(
-                          color:
-                              _mainMenuBottomNavManager
+                      Expanded(
+                        child: _navButton(
+                          state: ProfileNavigationState.language,
+                          selectedState: pupilProfileNavState,
+                          child: Icon(
+                            Icons.language_rounded,
+                            color:
+                                _mainMenuBottomNavManager
+                                        .pupilProfileNavState
+                                        .value ==
+                                    ProfileNavigationState.language.value
+                                ? _activeForegroundColor(
+                                    ProfileNavigationState.language,
+                                  )
+                                : Colors.white,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: _navButton(
+                          state: ProfileNavigationState.credit,
+                          selectedState: pupilProfileNavState,
+                          child: Icon(
+                            Icons.attach_money_rounded,
+                            color:
+                                _mainMenuBottomNavManager
+                                        .pupilProfileNavState
+                                        .value ==
+                                    ProfileNavigationState.credit.value
+                                ? _activeForegroundColor(
+                                    ProfileNavigationState.credit,
+                                  )
+                                : Colors.white,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: _navButton(
+                          state: ProfileNavigationState.attendance,
+                          selectedState: pupilProfileNavState,
+                          child: Icon(
+                            Icons.calendar_month_rounded,
+                            color:
+                                _mainMenuBottomNavManager
+                                        .pupilProfileNavState
+                                        .value ==
+                                    ProfileNavigationState.attendance.value
+                                ? _activeForegroundColor(
+                                    ProfileNavigationState.attendance,
+                                  )
+                                : Colors.white,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: _navButton(
+                          state: ProfileNavigationState.schooldayEvent,
+                          selectedState: pupilProfileNavState,
+                          child: Icon(
+                            Icons.warning_rounded,
+                            color:
+                                _mainMenuBottomNavManager
+                                        .pupilProfileNavState
+                                        .value ==
+                                    ProfileNavigationState.schooldayEvent.value
+                                ? _activeForegroundColor(
+                                    ProfileNavigationState.schooldayEvent,
+                                  )
+                                : Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: _navButton(
+                          state: ProfileNavigationState.ogs,
+                          selectedState: pupilProfileNavState,
+                          padding: EdgeInsets.zero,
+                          child: Text(
+                            'OGS',
+                            style: TextStyle(
+                              color:
+                                  _mainMenuBottomNavManager
                                           .pupilProfileNavState
                                           .value ==
-                                      5
-                                  ? AppColors.backgroundColor
+                                      ProfileNavigationState.ogs.value
+                                  ? _activeForegroundColor(
+                                      ProfileNavigationState.ogs,
+                                    )
                                   : Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  //- Lists Button
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                        backgroundColor: navigationBackgroundColor(
-                          ProfileNavigationState.lists.value,
-                        ),
-                      ),
-                      onPressed: () {
-                        if (pupilProfileNavState ==
-                            ProfileNavigationState.lists.value) {
-                          return;
-                        }
-                        _mainMenuBottomNavManager.setPupilProfileNavPage(
-                          ProfileNavigationState.lists.value,
-                        );
-                      },
-                      child: Icon(
-                        Icons.rule,
-                        color:
-                            _mainMenuBottomNavManager
+                      Expanded(
+                        child: _navButton(
+                          state: ProfileNavigationState.lists,
+                          selectedState: pupilProfileNavState,
+                          child: Icon(
+                            Icons.rule,
+                            color:
+                                _mainMenuBottomNavManager
                                         .pupilProfileNavState
                                         .value ==
-                                    6
-                                ? Colors.grey[600]
+                                    ProfileNavigationState.lists.value
+                                ? _activeForegroundColor(
+                                    ProfileNavigationState.lists,
+                                  )
                                 : Colors.white,
-                      ),
-                    ),
-                  ),
-                  //- Authorization Button
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                        backgroundColor: navigationBackgroundColor(
-                          ProfileNavigationState.authorization.value,
+                          ),
                         ),
                       ),
-                      onPressed: () {
-                        if (pupilProfileNavState ==
-                            ProfileNavigationState.authorization.value) {
-                          return;
-                        }
-                        _mainMenuBottomNavManager.setPupilProfileNavPage(
-                          ProfileNavigationState.authorization.value,
-                        );
-                      },
-                      child: Icon(
-                        Icons.fact_check_rounded,
-                        color:
-                            _mainMenuBottomNavManager
+                      Expanded(
+                        child: _navButton(
+                          state: ProfileNavigationState.authorization,
+                          selectedState: pupilProfileNavState,
+                          child: Icon(
+                            Icons.fact_check_rounded,
+                            color:
+                                _mainMenuBottomNavManager
                                         .pupilProfileNavState
                                         .value ==
-                                    7
-                                ? Colors.grey[600]
+                                    ProfileNavigationState.authorization.value
+                                ? _activeForegroundColor(
+                                    ProfileNavigationState.authorization,
+                                  )
                                 : Colors.white,
-                      ),
-                    ),
-                  ),
-                  //- Learning supporn button
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                        backgroundColor: navigationBackgroundColor(
-                          ProfileNavigationState.learningSupport.value,
+                          ),
                         ),
                       ),
-                      onPressed: () {
-                        if (pupilProfileNavState ==
-                            ProfileNavigationState.learningSupport.value) {
-                          return;
-                        }
-                        _mainMenuBottomNavManager.setPupilProfileNavPage(
-                          ProfileNavigationState.learningSupport.value,
-                        );
-                      },
-                      child: Icon(
-                        Icons.support_rounded,
-                        color:
-                            _mainMenuBottomNavManager
+                      Expanded(
+                        child: _navButton(
+                          state: ProfileNavigationState.learningSupport,
+                          selectedState: pupilProfileNavState,
+                          child: Icon(
+                            Icons.support_rounded,
+                            color:
+                                _mainMenuBottomNavManager
                                         .pupilProfileNavState
                                         .value ==
-                                    8
-                                ? const Color.fromARGB(255, 245, 75, 75)
+                                    ProfileNavigationState.learningSupport.value
+                                ? _activeForegroundColor(
+                                    ProfileNavigationState.learningSupport,
+                                  )
                                 : Colors.white,
-                      ),
-                    ),
-                  ),
-                  //- Learning Button - bottom right border radius
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                        backgroundColor: navigationBackgroundColor(
-                          ProfileNavigationState.learning.value,
+                          ),
                         ),
                       ),
-                      onPressed: () {
-                        if (pupilProfileNavState ==
-                            ProfileNavigationState.learning.value) {
-                          return;
-                        }
-                        _mainMenuBottomNavManager.setPupilProfileNavPage(
-                          ProfileNavigationState.learning.value,
-                        );
-                      },
-                      child: Icon(
-                        Icons.lightbulb,
-                        color:
-                            _mainMenuBottomNavManager
+                      Expanded(
+                        child: _navButton(
+                          state: ProfileNavigationState.learning,
+                          selectedState: pupilProfileNavState,
+                          child: Icon(
+                            Icons.lightbulb,
+                            color:
+                                _mainMenuBottomNavManager
                                         .pupilProfileNavState
                                         .value ==
-                                    9
-                                ? AppColors.accentColor
+                                    ProfileNavigationState.learning.value
+                                ? _activeForegroundColor(
+                                    ProfileNavigationState.learning,
+                                  )
                                 : Colors.white,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),

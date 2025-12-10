@@ -29,12 +29,9 @@ class SchoolLogoCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(Icons.image, color: AppColors.backgroundColor),
+                Icon(Icons.image, color: AppColors.backgroundColor),
                 const Gap(8),
-                const Text(
-                  'Schul-Logo & Amtssiegel',
-                  style: AppStyles.title,
-                ),
+                const Text('Schul-Logo & Amtssiegel', style: AppStyles.title),
               ],
             ),
             const Gap(16),

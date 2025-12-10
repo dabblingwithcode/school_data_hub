@@ -80,7 +80,7 @@ class SchoolListCard extends WatchingWidget {
                                 scrollDirection: Axis.horizontal,
                                 child: Text(
                                   schoolList.name,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.interactiveColor,
@@ -90,17 +90,17 @@ class SchoolListCard extends WatchingWidget {
                             ),
                             const Gap(10),
                             schoolList.public == true
-                                ? const Icon(
-                                  Icons.school_rounded,
-                                  color: AppColors.backgroundColor,
-                                )
+                                ? Icon(
+                                    Icons.school_rounded,
+                                    color: AppColors.backgroundColor,
+                                  )
                                 : Text(
-                                  schoolList.createdBy,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+                                    schoolList.createdBy,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
                             const Padding(padding: EdgeInsets.only(right: 10)),
                           ],
                         ),
@@ -127,7 +127,7 @@ class SchoolListCard extends WatchingWidget {
                                     const Gap(2),
                                     Text(
                                       '+ ${schoolList.authorizedUsers!.replaceAll('*', ' + ')}',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 12,
                                         color: AppColors.backgroundColor,
                                         fontWeight: FontWeight.w500,

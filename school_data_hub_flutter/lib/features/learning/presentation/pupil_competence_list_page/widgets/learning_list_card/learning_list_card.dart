@@ -70,160 +70,184 @@ class LearningListCard extends WatchingWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    const Gap(5),
-                    Column(
+                    const Gap(10),
+                    Row(
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: InkWell(
-                                  onTap: () {
-                                    di<BottomNavManager>()
-                                        .setPupilProfileNavPage(
-                                          ProfileNavigationState.learning.value,
-                                        );
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (ctx) =>
-                                            PupilProfilePage(pupil: pupil),
-                                      ),
-                                    );
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        pupil.firstName,
-                                        overflow: TextOverflow.fade,
-                                        softWrap: false,
-                                        textAlign: TextAlign.left,
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                      const Gap(5),
-                                      Text(
-                                        pupil.lastName,
-                                        overflow: TextOverflow.fade,
-                                        softWrap: false,
-                                        textAlign: TextAlign.left,
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.normal,
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                    ],
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: InkWell(
+                              onTap: () {
+                                di<BottomNavManager>().setPupilProfileNavPage(
+                                  ProfileNavigationState.learning.value,
+                                );
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (ctx) =>
+                                        PupilProfilePage(pupil: pupil),
                                   ),
-                                ),
+                                );
+                              },
+                              child: Row(
+                                children: [
+                                  Text(
+                                    pupil.firstName,
+                                    overflow: TextOverflow.fade,
+                                    softWrap: false,
+                                    textAlign: TextAlign.left,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  const Gap(5),
+                                  Text(
+                                    pupil.lastName,
+                                    overflow: TextOverflow.fade,
+                                    softWrap: false,
+                                    textAlign: TextAlign.left,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
 
                     const Gap(5),
-                    Column(
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        if (selectedContent ==
-                            SelectedContent.competenceStatuses) ...[
-                          CustomExpansionTileSwitch(
-                            includeSwitch: true,
-                            switchColor: AppColors.interactiveColor,
-                            customExpansionTileController:
-                                expansionTileController,
-                            expansionSwitchWidget: CompetenceChecksBadges(
-                              pupil: pupil,
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.book,
+                                  size: 30,
+                                  color: AppColors.interactiveColor,
+                                ),
+                                const Gap(5),
+                                const Text(
+                                  'Gelesen: ',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const Text('Items dokumentiert: '),
-                              const Gap(5),
-                              Text(
-                                '$totalCompetencesChecked/$totalCompetencesToReport',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.backgroundColor,
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            if (selectedContent ==
+                                SelectedContent.competenceStatuses) ...[
+                              CustomExpansionTileSwitch(
+                                includeSwitch: true,
+                                switchColor: AppColors.interactiveColor,
+                                customExpansionTileController:
+                                    expansionTileController,
+                                expansionSwitchWidget: CompetenceChecksBadges(
+                                  pupil: pupil,
+                                ),
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Text('Items dokumentiert: '),
+                                  const Gap(5),
+                                  Text(
+                                    '$totalCompetencesChecked/$totalCompetencesToReport',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.backgroundColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                            if (selectedContent ==
+                                SelectedContent.competenceGoals) ...[
+                              CustomExpansionTileSwitch(
+                                customExpansionTileController:
+                                    expansionTileController,
+                                expansionSwitchWidget: const Text(
+                                  'Lernziele sind noch nicht implementiert',
                                 ),
                               ),
                             ],
-                          ),
-                        ],
-                        if (selectedContent ==
-                            SelectedContent.competenceGoals) ...[
-                          CustomExpansionTileSwitch(
-                            customExpansionTileController:
-                                expansionTileController,
-                            expansionSwitchWidget: const Text(
-                              'Lernziele sind noch nicht implementiert',
-                            ),
-                          ),
-                        ],
-                        if (selectedContent == SelectedContent.workbooks) ...[
-                          CustomExpansionTileSwitch(
-                            customExpansionTileController:
-                                expansionTileController,
-                            expansionSwitchWidget: WorkbooksInfoSwitch(
-                              pupil: pupil,
-                            ),
-                            includeSwitch: true,
-                            switchColor: AppColors.interactiveColor,
-                          ),
-                        ],
-                        if (selectedContent == SelectedContent.books) ...[
-                          CustomExpansionTileSwitch(
-                            customExpansionTileController:
-                                expansionTileController,
-                            expansionSwitchWidget: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Gap(10),
+                            if (selectedContent ==
+                                SelectedContent.workbooks) ...[
+                              CustomExpansionTileSwitch(
+                                customExpansionTileController:
+                                    expansionTileController,
+                                expansionSwitchWidget: WorkbooksInfoSwitch(
+                                  pupil: pupil,
+                                ),
+                                includeSwitch: true,
+                                switchColor: AppColors.interactiveColor,
+                              ),
+                            ],
+                            if (selectedContent == SelectedContent.books) ...[
+                              CustomExpansionTileSwitch(
+                                customExpansionTileController:
+                                    expansionTileController,
+                                expansionSwitchWidget: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Gap(10),
 
-                                Column(
-                                  children: [
-                                    Text(
-                                      totalLendings.toString(),
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.green,
-                                      ),
+                                    Column(
+                                      children: [
+                                        Text(
+                                          totalLendings.toString(),
+                                          style: const TextStyle(
+                                            fontSize: 35,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.green,
+                                          ),
+                                        ),
+                                        const Text(
+                                          'gesamt',
+                                          style: TextStyle(fontSize: 10),
+                                        ),
+                                      ],
                                     ),
-                                    const Text(
-                                      'gesamt',
-                                      style: TextStyle(fontSize: 10),
+                                    const Gap(10),
+                                    Column(
+                                      children: [
+                                        Text(
+                                          notReturnedLendings.toString(),
+                                          style: const TextStyle(
+                                            fontSize: 35,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.orange,
+                                          ),
+                                        ),
+                                        const Text(
+                                          'aktiv',
+                                          style: TextStyle(fontSize: 10),
+                                        ),
+                                      ],
                                     ),
+                                    const Gap(15),
                                   ],
                                 ),
-                                const Gap(10),
-                                Column(
-                                  children: [
-                                    Text(
-                                      notReturnedLendings.toString(),
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.orange,
-                                      ),
-                                    ),
-                                    const Text(
-                                      'aktiv',
-                                      style: TextStyle(fontSize: 10),
-                                    ),
-                                  ],
-                                ),
-                                const Gap(15),
-                              ],
-                            ),
-                          ),
-                        ],
+                              ),
+                            ],
+                          ],
+                        ),
                       ],
                     ),
                   ],

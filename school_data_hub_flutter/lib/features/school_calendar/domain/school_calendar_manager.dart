@@ -40,6 +40,14 @@ class SchoolCalendarManager {
     return this;
   }
 
+  void dispose() {
+    _schooldays.dispose();
+    _availableDates.dispose();
+    _schoolSemesters.dispose();
+    _currentSemester.dispose();
+    _thisDate.dispose();
+    return;
+  }
   //- DOMAIN FUNCTIONS
 
   void clearData() {
@@ -173,8 +181,8 @@ class SchoolCalendarManager {
   //- read
 
   Future<void> fetchSchooldays() async {
-    final List<Schoolday> responseSchooldays =
-        await _client.schoolday.getSchooldays();
+    final List<Schoolday> responseSchooldays = await _client.schoolday
+        .getSchooldays();
 
     if (responseSchooldays.isNotEmpty) {
       _notificationService.showSnackBar(
@@ -215,8 +223,9 @@ class SchoolCalendarManager {
       return;
     }
     if (isDeleted) {
-      _schooldays.value =
-          _schooldays.value.where((day) => day != schoolday).toList();
+      _schooldays.value = _schooldays.value
+          .where((day) => day != schoolday)
+          .toList();
 
       _notificationService.showSnackBar(
         NotificationType.success,
@@ -246,17 +255,16 @@ class SchoolCalendarManager {
     required bool isFirst,
   }) async {
     final SchoolSemester? newSemester = await ClientHelper.apiCall(
-      call:
-          () => _client.schooldayAdmin.createSchoolSemester(
-            schoolYearName,
-            startDate.toUtc(),
-            endDate.toUtc(),
-            isFirst,
-            classConferenceDate?.toUtc(),
-            supportConferenceDate?.toUtc(),
-            reportConferenceDate?.toUtc(),
-            reportSignedDate?.toUtc(),
-          ),
+      call: () => _client.schooldayAdmin.createSchoolSemester(
+        schoolYearName,
+        startDate.toUtc(),
+        endDate.toUtc(),
+        isFirst,
+        classConferenceDate?.toUtc(),
+        supportConferenceDate?.toUtc(),
+        reportConferenceDate?.toUtc(),
+        reportSignedDate?.toUtc(),
+      ),
     );
     if (newSemester == null) {
       return;
@@ -279,8 +287,8 @@ class SchoolCalendarManager {
   //- read
 
   Future<void> fetchSchoolSemesters() async {
-    final List<SchoolSemester> responseSchoolSemesters =
-        await _client.schoolday.getSchoolSemesters();
+    final List<SchoolSemester> responseSchoolSemesters = await _client.schoolday
+        .getSchoolSemesters();
 
     _notificationService.showSnackBar(
       NotificationType.success,

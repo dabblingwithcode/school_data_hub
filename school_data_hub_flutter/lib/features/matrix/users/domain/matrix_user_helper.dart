@@ -3,19 +3,20 @@ import 'package:collection/collection.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class MatrixUserHelper {
   static MatrixPolicyManager get _matrixPolicyManager =>
       di<MatrixPolicyManager>();
-  static PupilManager get _pupilManager => di<PupilManager>();
+  static PupilProxyManager get _pupilManager => di<PupilProxyManager>();
   static List<MatrixUser> usersFromUserIds(List<String> userIds) {
     final List<MatrixUser> users = List.from(
       _matrixPolicyManager.matrixUsers.value,
     );
-    final usersFromUserIds =
-        users.where((user) => userIds.contains(user.id)).toList();
+    final usersFromUserIds = users
+        .where((user) => userIds.contains(user.id))
+        .toList();
     return usersFromUserIds;
   }
 

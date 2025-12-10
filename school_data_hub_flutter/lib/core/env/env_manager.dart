@@ -6,12 +6,13 @@ import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/env/models/enums.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:school_data_hub_flutter/core/models/populated_server_session_data.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
+import 'package:signals/signals_flutter.dart';
 import 'package:watch_it/watch_it.dart';
 
 class EnvManager with ChangeNotifier {
@@ -25,17 +26,16 @@ class EnvManager with ChangeNotifier {
 
   /// TODO ADVICE: is this proxy authentication flag a hack or is this acceptable?
 
-  final _isAuthenticated = ValueNotifier<bool>(false);
+  final _isAuthenticated = signal(false);
 
-  /// ##  🔎 managed observable
   /// We need to observe in [MaterialApp] if a user is authenticated
   /// without accessing [HubSessionManager], because if there is not
   // an active env yet, it will still be unregistered.
-  /// So this is a workaround setting a flag here
+  /// So this is a workaround setting a flag here.
   ///
   /// **CAUTION**: Handle this value only with [HubSessionManager] every time
   /// it makes an authentication status change.
-  ValueListenable<bool> get isAuthenticated => _isAuthenticated;
+  Signal<bool> get isAuthenticated => _isAuthenticated;
 
   /// **WARNING:**
   ///
@@ -47,40 +47,39 @@ class EnvManager with ChangeNotifier {
 
   Env? _activeEnv;
 
-  /// ##  🔎 managed observable
   Env? get activeEnv => _activeEnv;
 
   Map<String, Env> _environments = {};
 
-  /// ##  🔎 managed observable
   Map<String, Env> get envs => _environments;
 
   String _defaultEnv = '';
-
-  /// ##  🔎 managed observable
   String get defaultEnv => _defaultEnv;
 
-  final _envIsReady = ValueNotifier<bool>(false);
+  final _envIsReady = signal(false);
+  Signal<bool> get envIsReady => _envIsReady;
 
-  /// ##  🔎 managed observable
-  ValueListenable<bool> get envIsReady => _envIsReady;
+  void _syncPaletteWithActiveEnv() {
+    AppColors.setPaletteByKeyString(_activeEnv?.colorSchemeKey);
+  }
 
   // Declare storage keys for the environment
 
   final String _storageKeyForEnvironments = 'environments_key';
 
-  /// ##  🔎 managed observable
-  String get storageKeyForAuthKey =>
-      '${_activeEnv!.serverName}_${_activeEnv!.runMode.name}_hub_auth_key';
+  String _storageKeyPrefix() {
+    return '${_activeEnv?.serverName}_${_activeEnv?.runMode.name}';
+  }
 
-  String get storageKeyForUserInfo =>
-      '${_activeEnv!.serverName}_${_activeEnv!.runMode.name}_hub_user_info';
+  String get storageKeyForAuthKey => '${_storageKeyPrefix()}_hub_auth_key';
+
+  String get storageKeyForUserInfo => '${_storageKeyPrefix()}_hub_user_info';
 
   String get storageKeyForPupilIdentities =>
-      '${_activeEnv!.serverName}_${_activeEnv!.runMode.name}_pupil_identities';
+      '${_storageKeyPrefix()}_pupil_identities';
 
   String get storageKeyForMatrixCredentials =>
-      '${_activeEnv!.serverName}_${_activeEnv!.runMode.name}_matrix_credentials';
+      '${_storageKeyPrefix()}_matrix_credentials';
 
   PackageInfo _packageInfo = PackageInfo(
     appName: '',
@@ -130,6 +129,19 @@ class EnvManager with ChangeNotifier {
         _populatedEnvServerData.supportCategories == false;
   }
 
+  void dispose() {
+    _isAuthenticated.dispose();
+    _envIsReady.dispose();
+    _packageInfo;
+    _populatedEnvServerData;
+    _environments;
+    _defaultEnv;
+    _storageKeyForEnvironments;
+
+    super.dispose();
+    return;
+  }
+
   Future<EnvManager> init() async {
     await firstRun();
     return this;
@@ -153,6 +165,7 @@ class EnvManager with ChangeNotifier {
 
     _activeEnv =
         environmentsMapWithDefaultServerEnv.environmentsMap[_defaultEnv];
+    _syncPaletteWithActiveEnv();
     notifyListeners();
     _log.info('Default Environment set: $_defaultEnv');
 
@@ -254,6 +267,7 @@ class EnvManager with ChangeNotifier {
     String? key,
     String? iv,
     DateTime? lastIdentitiesUpdate,
+    String? colorSchemeKey,
   }) async {
     if (_activeEnv == null) {
       _log.warning('No active environment set, cannot update it.');
@@ -266,8 +280,10 @@ class EnvManager with ChangeNotifier {
       iv: iv ?? _activeEnv!.iv,
       lastIdentitiesUpdate:
           lastIdentitiesUpdate ?? _activeEnv!.lastIdentitiesUpdate,
+      colorSchemeKey: colorSchemeKey ?? _activeEnv!.colorSchemeKey,
     );
     _environments[_activeEnv!.serverName] = _activeEnv!;
+    _syncPaletteWithActiveEnv();
     notifyListeners();
     _log.info('''Active environment updated: ${_activeEnv!.serverName}
     lastIdentitiesUpdate: ${_activeEnv!.lastIdentitiesUpdate}
@@ -298,10 +314,11 @@ class EnvManager with ChangeNotifier {
     // Reset environment-dependent managers
     // This will automatically drop all child scopes including loggedInUserScope
 
-    await InitManager.dropOldActiveEnvAndRelatedScopes();
+    await InitManager.dropAllScopes();
 
     _activeEnv = _environments[envName]!;
     _defaultEnv = envName;
+    _syncPaletteWithActiveEnv();
 
     // Log new environment details
     _log.info('[ENV] NEW active environment set:');
@@ -332,40 +349,6 @@ class EnvManager with ChangeNotifier {
       'Environment-dependent managers are ready for: ${_activeEnv!.serverName}',
     );
 
-    // // Handle matrix credentials if they exist
-    // if (await HubSecureStorage().containsKey(storageKeyForMatrixCredentials)) {
-    //   _log.info(
-    //     '[DI] Found matrix credentials for environment ${_activeEnv!.serverName}',
-    //   );
-
-    //   // Only register matrix managers if they're not already registered
-    //   final hasMatrixScope = di.hasScope(DiScope.onMatrixEnvScope.name);
-    //   _log.info(
-    //     '[DI] Environment ${_activeEnv!.serverName}: hasMatrixScope = $hasMatrixScope',
-    //   );
-
-    //   if (!hasMatrixScope) {
-    //     _log.info(
-    //       '[DI] Registering matrix managers for environment ${_activeEnv!.serverName}',
-    //     );
-    //     await InitManager.registerMatrixManagers();
-    //   } else {
-    //     _log.info(
-    //       '[DI] Matrix managers already registered, skipping registration',
-    //     );
-    //     // Ensure session configured flag is set even if skipping registration
-    //     di<HubSessionManager>().setIsMatrixSessionConfigured(true);
-    //   }
-    // } else {
-    //   _log.info(
-    //     '[DI] No matrix credentials found for environment ${_activeEnv!.serverName}',
-    //   );
-    // }
-
-    // Wait for all DI registrations to be ready
-    // _log.info('[DI] Waiting for all managers to be ready...');
-    // await di.allReady();
-
     // Set environment as ready
     _envIsReady.value = true;
 
@@ -389,27 +372,24 @@ class EnvManager with ChangeNotifier {
       'Umgebung ${_activeEnv!.serverName} aktiviert!',
     );
 
-    _log.info('[ENV] Environment switch completed successfully');
-    _log.info(
-      '[ENV] New environment has ${await _checkPupilIdentityCount()} pupil identities',
-    );
+    _log.info('Environment switch completed successfully');
   }
 
   /// Helper method to log pupil identity count
-  Future<int> _checkPupilIdentityCount() async {
-    try {
-      // We need to wait for all DI to be ready before accessing managers
-      await di.allReady();
-      // PupilIdentityManager is in the loggedInUserScope
-      if (di.isRegistered<PupilIdentityManager>()) {
-        return di<PupilIdentityManager>().availablePupilIds.length;
-      }
-      return 0;
-    } catch (e) {
-      _log.warning('Could not get pupil identity count: $e');
-    }
-    return 0;
-  }
+  // Future<int> _checkPupilIdentityCount() async {
+  //   try {
+  //     // We need to wait for all DI to be ready before accessing managers
+  //     await di.allReady();
+  //     // PupilIdentityManager is in the loggedInUserScope
+  //     if (di.isRegistered<PupilIdentityManager>()) {
+  //       return di<PupilIdentityManager>().availablePupilIds.length;
+  //     }
+  //     return 0;
+  //   } catch (e) {
+  //     _log.warning('Could not get pupil identity count: $e');
+  //   }
+  //   return 0;
+  // }
 
   /// Check for stored credentials and attempt auto-login
   Future<void> _checkAndAttemptAutoLogin() async {
@@ -431,13 +411,6 @@ class EnvManager with ChangeNotifier {
               _isAuthenticated.value = false;
               return;
             }
-
-            // // Try to get the session manager - this will throw if not ready
-            // final sessionManager = di<HubSessionManager>();
-
-            // // The session manager should handle the auto-login
-            // // This will set the authentication status appropriately
-            // await sessionManager.initialize();
 
             _log.info('Auto-login completed successfully');
           } catch (sessionError) {
@@ -514,7 +487,7 @@ class EnvManager with ChangeNotifier {
       _log.info(
         '[DI] Switching environment managers after deleting environment $deletedEnvironment',
       );
-      InitManager.dropOldActiveEnvAndRelatedScopes();
+      InitManager.dropAllScopes();
     } else {
       // if there are no environments left, delete the environments from secure storage
 
@@ -522,7 +495,7 @@ class EnvManager with ChangeNotifier {
       _log.info(
         '[DDI]Env $deletedEnvironment deleted. No environments left. Cleaning up all environment managers.',
       );
-      InitManager.dropOldActiveEnvAndRelatedScopes();
+      InitManager.dropAllScopes();
       _activeEnv = null;
 
       _defaultEnv = '';

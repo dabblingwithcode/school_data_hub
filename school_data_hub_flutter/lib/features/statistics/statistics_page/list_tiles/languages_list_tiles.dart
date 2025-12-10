@@ -81,7 +81,7 @@ class LanguagesListTiles extends WatchingWidget {
                           await showDialog(
                             context: context,
                             builder: (context) => PupilListDialog(
-                              title: 'Schüler mit Sprache: $language',
+                              title: '$language',
                               pupils: pupilsWithLanguage,
                             ),
                           );

@@ -52,7 +52,7 @@ class EditSchoolDataPage extends WatchingWidget {
                         onPressed: () {
                           schoolDataManager.resetForm();
                         },
-                        child: const Text(
+                        child: Text(
                           'Zurücksetzen',
                           style: TextStyle(color: AppColors.backgroundColor),
                         ),
@@ -71,44 +71,40 @@ class EditSchoolDataPage extends WatchingWidget {
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed:
-                            isFormValid && !isSaving
-                                ? () async {
-                                  try {
-                                    await schoolDataManager.saveSchoolData();
-                                    if (context.mounted) {
-                                      Navigator.of(context).pop();
-                                    }
-                                  } catch (e) {
-                                    if (context.mounted) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            'Fehler beim Speichern: $e',
-                                          ),
-                                          backgroundColor: Colors.red,
+                        onPressed: isFormValid && !isSaving
+                            ? () async {
+                                try {
+                                  await schoolDataManager.saveSchoolData();
+                                  if (context.mounted) {
+                                    Navigator.of(context).pop();
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Fehler beim Speichern: $e',
                                         ),
-                                      );
-                                    }
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
                                   }
                                 }
-                                : null,
+                              }
+                            : null,
                         style: AppStyles.actionButtonStyle,
-                        child:
-                            isSaving
-                                ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white,
-                                    ),
+                        child: isSaving
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
                                   ),
-                                )
-                                : const Text('Speichern'),
+                                ),
+                              )
+                            : const Text('Speichern'),
                       ),
                     ),
                     const Gap(16),

@@ -48,10 +48,10 @@ class LearnResourcesMenuPage extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
                     ),
-                    child: Column(
+                        child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.lightbulb,
                           size: 50,
                           color: AppColors.gridViewColor,
@@ -87,7 +87,7 @@ class LearnResourcesMenuPage extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.support_rounded,
                           size: 50,
                           color: AppColors.gridViewColor,
@@ -124,7 +124,7 @@ class LearnResourcesMenuPage extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.note_alt,
                             size: 50,
                             color: AppColors.gridViewColor,
@@ -161,7 +161,7 @@ class LearnResourcesMenuPage extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.book,
                           size: 50,
                           color: AppColors.gridViewColor,

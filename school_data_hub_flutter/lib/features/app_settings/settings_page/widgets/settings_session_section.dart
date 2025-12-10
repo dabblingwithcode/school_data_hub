@@ -3,16 +3,18 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/dialogs/change_env_dialog.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -23,15 +25,104 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    di.allReady();
+    callOnce((BuildContext context) async {
+      await di.allReady();
+    });
+
     final serverName = watchPropertyValue((EnvManager x) => x.activeEnv);
     final _cacheManager = di<DefaultCacheManager>();
+
+    final pupilIdentityManager = di.isRegistered<PupilIdentityManager>()
+        ? di<PupilIdentityManager>()
+        : null;
+    final remoteUpdate = pupilIdentityManager?.remoteLastIdentitiesUpdate.value;
 
     final _notificationService = di<NotificationService>();
 
     final locale = AppLocalizations.of(context)!;
     final _hubSessionManager = di<HubSessionManager>();
-    final int userCredit = _hubSessionManager.userCredit ?? 0;
+
+    final activeEnv = serverName;
+    final activeSchemeKey = appColorSchemeKeyFromString(
+      activeEnv?.colorSchemeKey,
+    );
+    final palettes = AppColors.availablePalettes();
+    final currentPalette = palettes.firstWhere(
+      (palette) => palette.key == activeSchemeKey,
+      orElse: () => palettes.first,
+    );
+
+    Future<void> _openColorSchemePicker() async {
+      var tempSelection = activeSchemeKey;
+      final selected = await showDialog<AppColorSchemeKey>(
+        context: context,
+        builder: (ctx) => StatefulBuilder(
+          builder: (ctx, setState) => AlertDialog(
+            title: const Text(
+              'Farbschema wählen',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            content: SizedBox(
+              width: 360,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: palettes
+                    .map(
+                      (palette) => RadioListTile<AppColorSchemeKey>(
+                        value: palette.key,
+                        // ignore: deprecated_member_use
+                        groupValue: tempSelection,
+                        // ignore: deprecated_member_use
+                        onChanged: (value) {
+                          if (value == null) return;
+                          setState(() {
+                            tempSelection = value;
+                          });
+                        },
+                        title: Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                color: palette.backgroundColor,
+                                width: 20,
+                                height: 20,
+                              ),
+                            ),
+                            const Gap(10),
+                            Text(palette.displayName),
+                          ],
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text('Abbrechen'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(tempSelection),
+                child: const Text('Speichern'),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      if (selected == null) {
+        return;
+      }
+
+      await di<EnvManager>().updateActiveEnv(colorSchemeKey: selected.name);
+      AppColors.setPalette(selected);
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Farbschema aktualisiert',
+      );
+    }
 
     return SettingsSection(
       title: Text(
@@ -46,6 +137,13 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           value: Text(serverName!.serverName),
           trailing: null,
         ),
+        SettingsTile.navigation(
+          onPressed: (context) => _openColorSchemePicker(),
+          leading: const Icon(Icons.color_lens_outlined),
+          title: const Text('Farbschema'),
+          value: Text(currentPalette.displayName),
+          trailing: null,
+        ),
         if (_hubSessionManager.isAdmin)
           SettingsTile.navigation(
             onPressed: (context) => changeEnvironmentDialog(context: context),
@@ -54,26 +152,6 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
             value: Text(serverName.serverUrl),
             trailing: null,
           ),
-
-        SettingsTile.navigation(
-          leading: const Icon(Icons.perm_identity_rounded),
-          title: const Text('Personenbezogene Daten vom:'),
-          value: Text(
-            di<EnvManager>().activeEnv?.lastIdentitiesUpdate
-                    ?.formatDateForUser() ??
-                'unbekannt',
-          ),
-          trailing: null,
-        ),
-
-        SettingsTile.navigation(
-          leading: const Icon(Icons.attach_money_rounded),
-          title: const Text('Guthaben'),
-          value: Text(
-            userCredit.toString(),
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
 
         SettingsTile.navigation(
           onPressed: (context) async {
@@ -96,6 +174,34 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           description: const Text('Daten bleiben erhalten'),
 
           //onPressed:
+        ),
+        SettingsTile.navigation(
+          leading: const Icon(Icons.perm_identity_rounded),
+          title: const Text('Lokale Daten vom:'),
+          value: Text(
+            '${di<EnvManager>().activeEnv?.lastIdentitiesUpdate?.formatDateAndTimeForUser() ?? 'Keine Daten'} ',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color:
+                  di<EnvManager>().activeEnv?.lastIdentitiesUpdate ==
+                          remoteUpdate ||
+                      remoteUpdate != null &&
+                          di<EnvManager>().activeEnv?.lastIdentitiesUpdate !=
+                              null &&
+                          (di<EnvManager>().activeEnv?.lastIdentitiesUpdate!
+                                  .isAfter(remoteUpdate) ==
+                              true)
+                  ? Colors.green
+                  : Colors.red,
+            ),
+          ),
+          trailing: null,
+        ),
+        SettingsTile.navigation(
+          leading: const Icon(Icons.perm_identity_rounded),
+          title: const Text('Aktuelleste Daten vom:'),
+          value: Text('${remoteUpdate?.formatDateAndTimeForUser()}'),
+          trailing: null,
         ),
         SettingsTile.navigation(
           leading: const Row(
@@ -141,7 +247,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
               _log.warning(
                 '[DI] Env deleted, calling [unregisterMaagersDependentOnEnv] from the settings section!',
               );
-              InitManager.dropOldActiveEnvAndRelatedScopes();
+              InitManager.dropAllScopes();
               _notificationService.showSnackBar(
                 NotificationType.success,
                 'Instanz-ID-Schlüssel gelöscht',

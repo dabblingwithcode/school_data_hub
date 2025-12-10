@@ -12,7 +12,7 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/data/competence_check_api_service.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/filters/competence_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class CompetenceManager {
@@ -37,6 +37,12 @@ class CompetenceManager {
   }
 
   CompetenceManager();
+  void dispose() {
+    _competences.dispose();
+
+    return;
+  }
+
   Future<CompetenceManager> init() async {
     await firstFetchCompetences();
 
@@ -52,8 +58,8 @@ class CompetenceManager {
   //- the CompetenceFilterManager is not registered in the di yet
 
   Future<void> firstFetchCompetences() async {
-    final List<Competence> competences =
-        await _client.competence.getAllCompetences();
+    final List<Competence> competences = await _client.competence
+        .getAllCompetences();
     if (competences.isNotEmpty) {
       //- Do we need to sort the competences here?
       //   competences.sort((a, b) => a.publicId.compareTo(b.publicId));
@@ -78,8 +84,8 @@ class CompetenceManager {
   }
 
   Future<void> fetchCompetences() async {
-    final List<Competence> competences =
-        await _client.competence.getAllCompetences();
+    final List<Competence> competences = await _client.competence
+        .getAllCompetences();
 
     final sortedCompetences = CompetenceHelper.sortCompetences(competences);
     _competences.value = sortedCompetences;
@@ -183,10 +189,9 @@ class CompetenceManager {
     final competenceListIndex = _competences.value.indexWhere(
       (element) => element.publicId == publicId,
     );
-    final competence =
-        competenceListIndex != -1
-            ? _competences.value[competenceListIndex]
-            : null;
+    final competence = competenceListIndex != -1
+        ? _competences.value[competenceListIndex]
+        : null;
     if (competence == null) {
       _notificationService.showSnackBar(
         NotificationType.error,
@@ -266,11 +271,29 @@ class CompetenceManager {
     if (updatedPupilData == null) {
       return;
     }
-    di<PupilManager>().updatePupilProxyWithPupilData(updatedPupilData);
+    di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
 
     _notificationService.showSnackBar(
       NotificationType.success,
       'Kompetenzcheck erstellt',
+    );
+
+    return;
+  }
+
+  Future<void> postCompetenceGoal({
+    required int pupilId,
+    required int competenceId,
+    required String description,
+    required List<String> strategies,
+  }) async {
+    // TODO: Implement backend call when available
+    // Currently there is no endpoint for posting a competence goal
+    // We would need something like _client.competence.postCompetenceGoal(...)
+
+    _notificationService.showSnackBar(
+      NotificationType.warning,
+      'Speichern nicht möglich: Backend-Endpunkt fehlt (CompetenceGoal)',
     );
 
     return;
@@ -294,7 +317,7 @@ class CompetenceManager {
           competenceComment: competenceComment,
           valueFactor: valueFactor,
         );
-    di<PupilManager>().updatePupilProxyWithPupilData(updatedPupilData);
+    di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
 
     _notificationService.showSnackBar(
       NotificationType.success,
@@ -313,7 +336,7 @@ class CompetenceManager {
       'Kompetenzcheck gelöscht',
     );
 
-    di<PupilManager>().updatePupilProxyWithPupilData(pupilData);
+    di<PupilProxyManager>().updatePupilProxyWithPupilData(pupilData);
 
     return;
   }
@@ -326,7 +349,7 @@ class CompetenceManager {
     final createdBy = di<HubSessionManager>().userName;
     final updatedPupilData = await _competenceCheckApiService
         .addFileToCompetenceCheck(competenceCheckId, encryptedFile, createdBy!);
-    di<PupilManager>().updatePupilProxyWithPupilData(updatedPupilData);
+    di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
 
     _notificationService.showSnackBar(
       NotificationType.success,
@@ -342,7 +365,7 @@ class CompetenceManager {
   }) async {
     final updatedPupilData = await _competenceCheckApiService
         .removeFileFromCompetenceCheck(competenceCheckId, fileId);
-    di<PupilManager>().updatePupilProxyWithPupilData(updatedPupilData);
+    di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
   }
 
   Competence findCompetenceById(int competenceId) {

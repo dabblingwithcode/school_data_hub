@@ -29,19 +29,19 @@ Future<String?> shortTextfieldDialog({
           obscureText: obscureText ?? false,
           decoration: InputDecoration(
             //border: InputBorder.none,
-            border: const OutlineInputBorder(
+            border: OutlineInputBorder(
               borderSide: BorderSide(
                 color: AppColors.backgroundColor,
                 width: 2,
               ),
             ),
-            focusedBorder: const OutlineInputBorder(
+            focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(
                 color: AppColors.backgroundColor,
                 width: 2,
               ),
             ),
-            labelStyle: const TextStyle(color: AppColors.backgroundColor),
+            labelStyle: TextStyle(color: AppColors.backgroundColor),
             labelText: labelText,
             hintText: hintText,
           ),

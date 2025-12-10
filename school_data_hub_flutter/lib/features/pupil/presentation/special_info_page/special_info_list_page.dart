@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/special_info_page/widgets/special_info_card.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/special_info_page/widgets/special_info_list_page_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/special_info_page/widgets/special_info_list_search_bar.dart';
@@ -27,7 +27,9 @@ List<PupilProxy> specialInfoFilter(List<PupilProxy> pupils) {
   }
   if (filtersOn) {
     _filterStateManager.setFilterState(
-        filterState: FilterState.pupil, value: true);
+      filterState: FilterState.pupil,
+      value: true,
+    );
   }
   return filteredPupils;
 }
@@ -43,9 +45,10 @@ class SpecialInfoListPage extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final _filterStateManager = di<FiltersStateManager>();
-    final _pupilManager = di<PupilManager>();
-    List<PupilProxy> filteredPupils =
-        watchValue((PupilsFilter x) => x.filteredPupils);
+    final _pupilManager = di<PupilProxyManager>();
+    List<PupilProxy> filteredPupils = watchValue(
+      (PupilsFilter x) => x.filteredPupils,
+    );
     List<PupilProxy> pupils = specialInfoFilter(filteredPupils);
     onDispose(() {
       _filterStateManager.resetFilters();
@@ -60,16 +63,9 @@ class SpecialInfoListPage extends WatchingWidget {
           title: const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.emergency_rounded,
-                size: 25,
-                color: Colors.white,
-              ),
+              Icon(Icons.emergency_rounded, size: 25, color: Colors.white),
               Gap(10),
-              Text(
-                'Besondere Infos',
-                style: AppStyles.appBarTextStyle,
-              ),
+              Text('Besondere Infos', style: AppStyles.appBarTextStyle),
             ],
           ),
           automaticallyImplyLeading: false,
@@ -84,13 +80,12 @@ class SpecialInfoListPage extends WatchingWidget {
                   const SliverGap(5),
                   GenericSliverSearchAppBar(
                     height: 110,
-                    title: SpecialInfoListSearchBar(
-                      pupils: pupils,
-                    ),
+                    title: SpecialInfoListSearchBar(pupils: pupils),
                   ),
                   GenericSliverListWithEmptyListCheck(
-                      items: pupils,
-                      itemBuilder: (_, pupil) => SpecialInfoCard(pupil)),
+                    items: pupils,
+                    itemBuilder: (_, pupil) => SpecialInfoCard(pupil),
+                  ),
                 ],
               ),
             ),

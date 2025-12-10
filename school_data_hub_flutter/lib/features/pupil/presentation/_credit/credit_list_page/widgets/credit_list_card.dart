@@ -19,8 +19,10 @@ class CreditListCard extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final tileController = createOnce(() => CustomExpansionTileController());
-    final creditEarned =
-        watchPropertyValue((m) => m.creditEarned, target: pupil);
+    final creditEarned = watchPropertyValue(
+      (m) => m.creditEarned,
+      target: pupil,
+    );
     final credit = watchPropertyValue((m) => m.credit, target: pupil);
 
     return Card(
@@ -28,8 +30,12 @@ class CreditListCard extends WatchingWidget {
       surfaceTintColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       elevation: 1.0,
-      margin:
-          const EdgeInsets.only(left: 4.0, right: 4.0, top: 4.0, bottom: 4.0),
+      margin: const EdgeInsets.only(
+        left: 4.0,
+        right: 4.0,
+        top: 4.0,
+        bottom: 4.0,
+      ),
       child: Column(
         children: [
           Row(
@@ -53,11 +59,12 @@ class CreditListCard extends WatchingWidget {
                               onTap: () {
                                 _mainMenuBottomNavManager
                                     .setPupilProfileNavPage(2);
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (ctx) => PupilProfilePage(
-                                    pupil: pupil,
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (ctx) =>
+                                        PupilProfilePage(pupil: pupil),
                                   ),
-                                ));
+                                );
                               },
                               child: Row(
                                 children: [
@@ -132,7 +139,7 @@ class CreditListCard extends WatchingWidget {
                     Center(
                       child: Text(
                         credit.toString(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 23,
                           fontWeight: FontWeight.bold,
                           color: AppColors.backgroundColor,
@@ -146,9 +153,10 @@ class CreditListCard extends WatchingWidget {
             ],
           ),
           CustomExpansionTileContent(
-              title: null,
-              tileController: tileController,
-              widgetList: [CreditTransactions(pupil: pupil)])
+            title: null,
+            tileController: tileController,
+            widgetList: [CreditTransactions(pupil: pupil)],
+          ),
         ],
       ),
     );

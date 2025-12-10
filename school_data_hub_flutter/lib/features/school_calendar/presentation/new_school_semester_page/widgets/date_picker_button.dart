@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 
 class DatePickerButton extends StatelessWidget {
   final DateTime? dateToSelect;

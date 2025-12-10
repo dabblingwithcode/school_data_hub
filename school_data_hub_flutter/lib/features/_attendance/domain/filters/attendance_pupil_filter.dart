@@ -1,8 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
@@ -37,6 +37,9 @@ class AttendancePupilFilterManager {
 
   void dispose() {
     _attendanceManager.missedSchooldays.removeListener(refreshPupilsFilter);
+    _attendancePupilFilterState.dispose();
+
+    return;
   }
 
   void setAttendancePupilFilter({

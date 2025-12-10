@@ -1,14 +1,14 @@
 import 'package:encrypt/encrypt.dart' as enc;
-import 'dart:math' as math;
+// import 'dart:math' as math;
 
 void main() {
-  String generateRandomUtf8StringOfLength(int length) {
-    const chars =
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    final random = math.Random.secure();
-    return List.generate(length, (index) => chars[random.nextInt(chars.length)])
-        .join();
-  }
+  // String generateRandomUtf8StringOfLength(int length) {
+  //   const chars =
+  //       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  //   final random = math.Random.secure();
+  //   return List.generate(length, (index) => chars[random.nextInt(chars.length)])
+  //       .join();
+  // }
 
   final key =
       'zRvyjwzJRg05dQEBMhCQxjGcGz3tMc0Y'; // generateRandomUtf8StringOfLength(32);
@@ -17,14 +17,16 @@ void main() {
 
   print('Key: $key');
   print('iv: $iv');
-  final encrypter =
-      enc.Encrypter(enc.AES(enc.Key.fromUtf8(key), mode: enc.AESMode.cbc));
+  final encrypter = enc.Encrypter(
+    enc.AES(enc.Key.fromUtf8(key), mode: enc.AESMode.cbc),
+  );
 
   final ivFromUtf8 = enc.IV.fromUtf8(iv);
 
   String encryptString(String nonEncryptedString) {
-    final encryptedString =
-        encrypter.encrypt(nonEncryptedString, iv: ivFromUtf8).base64;
+    final encryptedString = encrypter
+        .encrypt(nonEncryptedString, iv: ivFromUtf8)
+        .base64;
     return encryptedString;
   }
 

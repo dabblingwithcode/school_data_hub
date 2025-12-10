@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/features/learning/presentation/multi_pup
 import 'package:school_data_hub_flutter/features/learning/presentation/multi_pupil_competence_check_page/widgets/competence_parents_names_widget.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/multi_pupil_competence_check_page/widgets/multi_pupil_competence_check_card.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/multi_pupil_competence_check_page/widgets/multi_pupil_competence_check_page_bottom_navbar.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/widgets/credit_list_searchbar.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -27,7 +27,7 @@ class MultiPupilCompetenceCheckPage extends StatelessWidget {
         iconData: Icons.group_add_rounded,
       ),
       body: RefreshIndicator(
-        onRefresh: () async => di<PupilManager>().fetchAllPupils(),
+        onRefresh: () async => di<PupilProxyManager>().fetchAllPupils(),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 800),
@@ -38,7 +38,8 @@ class MultiPupilCompetenceCheckPage extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       color: CompetenceHelper.getCompetenceColor(
-                          competence.publicId),
+                        competence.publicId,
+                      ),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Padding(
@@ -54,7 +55,8 @@ class MultiPupilCompetenceCheckPage extends StatelessWidget {
                                   competenceId: competence.publicId,
                                   categoryColor:
                                       CompetenceHelper.getCompetenceColor(
-                                          competence.publicId),
+                                        competence.publicId,
+                                      ),
                                 ),
                               ],
                             ),
@@ -73,13 +75,14 @@ class MultiPupilCompetenceCheckPage extends StatelessWidget {
                         title: CreditListSearchBar(pupils: filteredPupils),
                       ),
                       GenericSliverListWithEmptyListCheck(
-                          items: filteredPupils,
-                          itemBuilder: (_, pupil) =>
-                              MultiPupilCompetenceCheckCard(
-                                passedPupil: pupil,
-                                groupId: viewModel.groupId,
-                                competenceId: competence.publicId,
-                              )),
+                        items: filteredPupils,
+                        itemBuilder: (_, pupil) =>
+                            MultiPupilCompetenceCheckCard(
+                              passedPupil: pupil,
+                              groupId: viewModel.groupId,
+                              competenceId: competence.publicId,
+                            ),
+                      ),
                     ],
                   ),
                 ),

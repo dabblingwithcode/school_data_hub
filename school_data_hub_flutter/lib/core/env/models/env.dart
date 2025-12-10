@@ -26,6 +26,7 @@ class Env {
   final String? iv;
   final String serverUrl;
   final DateTime? lastIdentitiesUpdate;
+  final String? colorSchemeKey;
 
   Env({
     required this.serverName,
@@ -34,6 +35,7 @@ class Env {
     this.iv,
     required this.serverUrl,
     this.lastIdentitiesUpdate,
+    this.colorSchemeKey,
   });
 
   Env copyWith({
@@ -42,6 +44,7 @@ class Env {
     String? key,
     String? iv,
     DateTime? lastIdentitiesUpdate,
+    String? colorSchemeKey,
   }) => Env(
     serverName: serverName ?? this.serverName,
     runMode: runMode ?? this.runMode,
@@ -49,6 +52,7 @@ class Env {
     iv: iv ?? this.iv,
     serverUrl: this.serverUrl,
     lastIdentitiesUpdate: lastIdentitiesUpdate ?? this.lastIdentitiesUpdate,
+    colorSchemeKey: colorSchemeKey ?? this.colorSchemeKey,
   );
 
   factory Env.fromJson(Map<String, dynamic> json) => Env(
@@ -61,6 +65,7 @@ class Env {
     key: json["key"],
     iv: json["iv"],
     serverUrl: json["server_url"],
+    colorSchemeKey: json["color_scheme_key"] as String?,
   );
 
   Map<String, dynamic> toJson() => {
@@ -70,5 +75,6 @@ class Env {
     "key": key,
     "iv": iv,
     "server_url": serverUrl,
+    "color_scheme_key": colorSchemeKey,
   };
 }

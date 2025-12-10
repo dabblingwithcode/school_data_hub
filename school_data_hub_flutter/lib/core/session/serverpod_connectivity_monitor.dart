@@ -1,13 +1,11 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:signals/signals_flutter.dart';
 import 'package:watch_it/watch_it.dart';
-
-final _notificationService = di<NotificationService>();
 
 /// Copied from [FlutterConnectivityMonitor] in the serverpod package
 /// and added a ValueNotifier to the class to be able to observe it with watch_it
@@ -15,10 +13,10 @@ final _notificationService = di<NotificationService>();
 class ServerpodConnectivityMonitor extends ConnectivityMonitor {
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   bool _receivedFirstEvent = false;
-
+  final _notificationService = di<NotificationService>();
   // value notifier to observe with watch_it
-  final ValueNotifier<bool> _isConnected = ValueNotifier(false);
-  ValueListenable<bool> get isConnected => _isConnected;
+  final Signal<bool> _isConnected = signal(false);
+  Signal<bool> get isConnected => _isConnected;
 
   /// Creates a new connectivity monitor.
   ServerpodConnectivityMonitor() {
@@ -27,18 +25,23 @@ class ServerpodConnectivityMonitor extends ConnectivityMonitor {
     var connectionTime = DateTime.now().toUtc();
 
     // Start listening to connection status changes.
-    _connectivitySubscription =
-        Connectivity().onConnectivityChanged.listen((event) {
+    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((
+      event,
+    ) {
       final bool hasConnectivity =
           !(event.length == 1 && event.first == ConnectivityResult.none);
       if (hasConnectivity != _isConnected.value) {
         _isConnected.value = hasConnectivity;
         if (hasConnectivity) {
           _notificationService.showSnackBar(
-              NotificationType.info, 'Mit dem Internet verbunden');
+            NotificationType.info,
+            'Mit dem Internet verbunden',
+          );
         } else {
           _notificationService.showSnackBar(
-              NotificationType.error, 'Keine Internetverbindung');
+            NotificationType.error,
+            'Keine Internetverbindung',
+          );
         }
       }
 
@@ -46,8 +49,9 @@ class ServerpodConnectivityMonitor extends ConnectivityMonitor {
         // Skip the first event if it happens immediately on launch as it may
         // not be correct on some platforms.
         _receivedFirstEvent = true;
-        var durationSinceStart =
-            DateTime.now().toUtc().difference(connectionTime);
+        var durationSinceStart = DateTime.now().toUtc().difference(
+          connectionTime,
+        );
         if (!hasConnectivity && durationSinceStart < warmupDuration) {
           return;
         }

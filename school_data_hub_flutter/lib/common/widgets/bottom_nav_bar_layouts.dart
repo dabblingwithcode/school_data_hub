@@ -15,10 +15,9 @@ class BottomNavBarLayout extends StatelessWidget {
     Theme(
       data: ThemeData(canvasColor: AppColors.backgroundColor),
       child: Padding(
-        padding:
-            Platform.isWindows
-                ? const EdgeInsets.only(left: 5, right: 5, bottom: 20)
-                : const EdgeInsets.only(left: 5, right: 5, bottom: 10),
+        padding: Platform.isWindows
+            ? const EdgeInsets.only(left: 5, right: 5, bottom: 20)
+            : const EdgeInsets.only(left: 5, right: 5, bottom: 10),
         child: SizedBox(
           height: kBottomNavigationBarHeight + 30,
           child: Align(
@@ -47,18 +46,16 @@ class BottomNavBarProfileLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return
-    // Platform.isWindows
-    //     ?
-    Theme(
+    return Theme(
       data: ThemeData(canvasColor: AppColors.backgroundColor),
       child: Padding(
-        padding:
-            Platform.isWindows
-                ? const EdgeInsets.only(left: 5, right: 5, bottom: 20)
-                : const EdgeInsets.only(left: 5, right: 5),
+        padding: Platform.isWindows
+            ? const EdgeInsets.only(left: 0, right: 0, bottom: 10)
+            : const EdgeInsets.only(left: 0, right: 0),
         child: SizedBox(
-          height: kBottomNavigationBarHeight + 30,
+          height: Platform.isWindows
+              ? kBottomNavigationBarHeight + 20
+              : kBottomNavigationBarHeight + 30,
           child: Align(
             alignment: Alignment.bottomCenter,
             child: ConstrainedBox(
@@ -76,18 +73,5 @@ class BottomNavBarProfileLayout extends StatelessWidget {
       ),
     );
     // : bottomNavBar;
-  }
-}
-
-class BottomNavBarMobile extends StatelessWidget {
-  final Widget bottomNavBar;
-  const BottomNavBarMobile({required this.bottomNavBar, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Theme(
-      data: ThemeData(canvasColor: AppColors.backgroundColor),
-      child: bottomNavBar,
-    );
   }
 }

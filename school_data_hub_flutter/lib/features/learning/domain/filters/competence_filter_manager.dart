@@ -25,6 +25,13 @@ class CompetenceFilterManager {
     _filteredCompetences.value = _competenceManager.competences.value;
   }
 
+  void dispose() {
+    _filterState.dispose();
+    _filteredCompetences.dispose();
+    _filtersOn.dispose();
+    return;
+  }
+
   refreshFilteredCompetences(List<Competence> competences) {
     _filteredCompetences.value = competences;
     _log.info('refreshed filtered competences');

@@ -52,6 +52,16 @@ class TimetableManager extends ChangeNotifier {
   Map<int, Classroom> get classroomIdMap => _dataManager.classroomIdMap;
   Map<int, LessonGroup> get lessonGroupIdMap => _dataManager.lessonGroupIdMap;
 
+  void dispose() {
+    _dataManager.dispose();
+    _crudManager.dispose();
+    _uiManager.dispose();
+    _lessonManager.dispose();
+    _membershipManager.dispose();
+    super.dispose();
+    return;
+  }
+
   /// Initialize the timetable manager
   Future<TimetableManager> init() async {
     await _dataManager.init();
@@ -428,8 +438,9 @@ class TimetableManager extends ChangeNotifier {
     String period,
   ) {
     final slotsForPeriod = getSlotsByTimePeriod(period);
-    final slotForWeekday =
-        slotsForPeriod.where((slot) => slot.day == weekday).firstOrNull;
+    final slotForWeekday = slotsForPeriod
+        .where((slot) => slot.day == weekday)
+        .firstOrNull;
 
     if (slotForWeekday == null) return [];
 

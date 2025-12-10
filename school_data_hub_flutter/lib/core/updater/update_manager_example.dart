@@ -18,19 +18,17 @@ class _UpdateManagerExampleState extends State<UpdateManagerExample> {
   void initState() {
     super.initState();
     _updateManager = di<ShorebirdUpdateManager>();
-    
+
     // Optional: Check for updates when the page loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _updateManager.checkForUpdate();
+      _updateManager.checkForUpdates();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Update Manager'),
-      ),
+      appBar: AppBar(title: const Text('Update Manager')),
       body: const Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -38,27 +36,21 @@ class _UpdateManagerExampleState extends State<UpdateManagerExample> {
           children: [
             Text(
               'App Update Status',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
-            
+
             // The update status widget handles all the UI
             UpdateStatusWidget(),
-            
+
             SizedBox(height: 24),
-            
+
             Text(
               'Auto-update Settings',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
-            
+
             _AutoUpdateSettings(),
           ],
         ),
@@ -88,13 +80,15 @@ class _AutoUpdateSettings extends WatchingWidget {
           children: [
             SwitchListTile(
               title: const Text('Auto-check for updates'),
-              subtitle: const Text('Automatically check for updates in the background'),
+              subtitle: const Text(
+                'Automatically check for updates in the background',
+              ),
               value: autoCheckEnabled,
               onChanged: (value) {
                 updateManager.setAutoCheckEnabled(value);
               },
             ),
-            
+
             if (autoCheckEnabled) ...[
               const Divider(),
               ListTile(

@@ -21,10 +21,7 @@ class ContactInfoCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(
-                  Icons.contact_phone,
-                  color: AppColors.backgroundColor,
-                ),
+                Icon(Icons.contact_phone, color: AppColors.backgroundColor),
                 const Gap(8),
                 const Text('Kontaktinformationen', style: AppStyles.title),
               ],
@@ -86,8 +83,9 @@ class ContactInfoCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 14,
                       color: onTap != null ? AppColors.backgroundColor : null,
-                      decoration:
-                          onTap != null ? TextDecoration.underline : null,
+                      decoration: onTap != null
+                          ? TextDecoration.underline
+                          : null,
                     ),
                   ),
                 ),

@@ -6,20 +6,13 @@ void informationDialog(BuildContext context, String title, String text) =>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        icon: const Icon(
-          Icons.info,
-          color: AppColors.backgroundColor,
-          size: 50,
-        ),
+        icon: Icon(Icons.info, color: AppColors.backgroundColor, size: 50),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         content: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 300),
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
-            child: Text(
-              text,
-              textAlign: TextAlign.center,
-            ),
+            child: Text(text, textAlign: TextAlign.center),
           ),
         ),
         actions: [
@@ -30,10 +23,7 @@ void informationDialog(BuildContext context, String title, String text) =>
               onPressed: () {
                 Navigator.of(context).pop(true);
               }, // Add onPressed
-              child: const Text(
-                "OK",
-                style: AppStyles.buttonTextStyle,
-              ),
+              child: const Text("OK", style: AppStyles.buttonTextStyle),
             ),
           ),
         ],

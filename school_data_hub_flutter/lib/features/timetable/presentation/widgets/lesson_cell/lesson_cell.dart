@@ -26,9 +26,9 @@ class LessonCell extends WatchingWidget {
     final _timetableManager = di<TimetableManager>();
 
     // Watch scheduled lesson group memberships to update pupil count
-    final scheduledLessonGroupMemberships = watchValue(
-      (TimetableManager x) => x.scheduledLessonGroupMemberships,
-    );
+    // final scheduledLessonGroupMemberships = watchValue(
+    //   (TimetableManager x) => x.scheduledLessonGroupMemberships,
+    // );
 
     if (lesson != null) {
       return LongPressDraggable<ScheduledLesson>(
@@ -72,13 +72,12 @@ class LessonCell extends WatchingWidget {
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(4.0),
-                  decoration:
-                      candidateData.isNotEmpty
-                          ? BoxDecoration(
-                            border: Border.all(color: Colors.blue, width: 2),
-                            borderRadius: BorderRadius.circular(4),
-                          )
-                          : null,
+                  decoration: candidateData.isNotEmpty
+                      ? BoxDecoration(
+                          border: Border.all(color: Colors.blue, width: 2),
+                          borderRadius: BorderRadius.circular(4),
+                        )
+                      : null,
                   child: _buildLessonContent(context, _userManager),
                 ),
               ),
@@ -102,13 +101,12 @@ class LessonCell extends WatchingWidget {
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(4.0),
-                decoration:
-                    candidateData.isNotEmpty
-                        ? BoxDecoration(
-                          border: Border.all(color: Colors.green, width: 2),
-                          borderRadius: BorderRadius.circular(4),
-                        )
-                        : null,
+                decoration: candidateData.isNotEmpty
+                    ? BoxDecoration(
+                        border: Border.all(color: Colors.green, width: 2),
+                        borderRadius: BorderRadius.circular(4),
+                      )
+                    : null,
                 child: _buildEmptyContent(context),
               ),
             ),
@@ -126,12 +124,11 @@ class LessonCell extends WatchingWidget {
 
     // Get pupil count for this lesson group
     final timetableManager = di<TimetableManager>();
-    final pupilCount =
-        lesson!.lessonGroup?.id != null
-            ? timetableManager
-                .getPupilIdsForLessonGroup(lesson!.lessonGroup!.id!)
-                .length
-            : 0;
+    final pupilCount = lesson!.lessonGroup?.id != null
+        ? timetableManager
+              .getPupilIdsForLessonGroup(lesson!.lessonGroup!.id!)
+              .length
+        : 0;
 
     return Card(
       margin: const EdgeInsets.all(0),
@@ -241,12 +238,11 @@ class LessonCell extends WatchingWidget {
 
     showDialog(
       context: context,
-      builder:
-          (context) => _TeacherSelectionDialog(
-            lesson: lesson!,
-            slot: slot,
-            timetableManager: timetableManager,
-          ),
+      builder: (context) => _TeacherSelectionDialog(
+        lesson: lesson!,
+        slot: slot,
+        timetableManager: timetableManager,
+      ),
     );
   }
 
@@ -305,20 +301,20 @@ class _TeacherSelectionDialogState extends State<_TeacherSelectionDialog> {
     final users = watchValue((UserManager m) => m.users);
 
     // Get all teachers (users with teacher role)
-    final allTeachers =
-        users.where((user) => user.role == Role.teacher).toList();
+    final allTeachers = users
+        .where((user) => user.role == Role.teacher)
+        .toList();
 
     // Get available teachers for this time slot (not busy with other lessons)
     final busyUserIds = widget.timetableManager.getBusyUserIdsForTimeSlot(
       widget.slot.day,
       widget.slot.startTime,
     );
-    final availableTeachers =
-        allTeachers.where((teacher) {
-          // Include if not busy OR already assigned to this lesson
-          return !busyUserIds.contains(teacher.id) ||
-              _selectedTeacherIds.contains(teacher.id);
-        }).toList();
+    final availableTeachers = allTeachers.where((teacher) {
+      // Include if not busy OR already assigned to this lesson
+      return !busyUserIds.contains(teacher.id) ||
+          _selectedTeacherIds.contains(teacher.id);
+    }).toList();
 
     return AlertDialog(
       title: Text(
@@ -339,138 +335,126 @@ class _TeacherSelectionDialogState extends State<_TeacherSelectionDialog> {
             Flexible(
               child: SingleChildScrollView(
                 child: Column(
-                  children:
-                      availableTeachers.map((teacher) {
-                        final isSelected = _selectedTeacherIds.contains(
-                          teacher.id,
-                        );
-                        final isMainTeacher = teacher.id == _mainTeacherId;
-                        final isBusy =
-                            busyUserIds.contains(teacher.id) && !isSelected;
+                  children: availableTeachers.map((teacher) {
+                    final isSelected = _selectedTeacherIds.contains(teacher.id);
+                    final isMainTeacher = teacher.id == _mainTeacherId;
+                    final isBusy =
+                        busyUserIds.contains(teacher.id) && !isSelected;
 
-                        // Get remaining time units for this teacher
-                        final remainingTimeUnits = widget.timetableManager
-                            .getRemainingTimeUnitsForUser(
-                              teacher.id!,
-                              teacher.timeUnits,
-                            );
-
-                        return CheckboxListTile(
-                          title: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  teacher.userInfo?.fullName ??
-                                      'Unbekannter Lehrer',
-                                  style: TextStyle(
-                                    fontWeight:
-                                        isMainTeacher
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
-                                    color: isBusy ? Colors.grey : null,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color:
-                                      remainingTimeUnits > 0
-                                          ? Colors.green
-                                          : Colors.red,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  '${remainingTimeUnits}h',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(teacher.userInfo?.email ?? ''),
-                              if (isMainTeacher)
-                                const Text(
-                                  'Hauptlehrer',
-                                  style: TextStyle(
-                                    color: Colors.orange,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              if (isBusy)
-                                const Text(
-                                  'Belegt zu dieser Zeit',
-                                  style: TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              if (remainingTimeUnits <= 0)
-                                const Text(
-                                  'Keine verfügbaren Stunden',
-                                  style: TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                            ],
-                          ),
-                          value: isSelected,
-                          onChanged:
-                              teacher.id == null
-                                  ? null
-                                  : (bool? value) {
-                                    setState(() {
-                                      if (value == true) {
-                                        if (!_selectedTeacherIds.contains(
-                                          teacher.id,
-                                        )) {
-                                          _selectedTeacherIds.add(teacher.id!);
-                                        }
-                                      } else {
-                                        // Don't allow unchecking main teacher
-                                        if (teacher.id != _mainTeacherId) {
-                                          _selectedTeacherIds.remove(
-                                            teacher.id,
-                                          );
-                                        }
-                                      }
-                                    });
-                                  },
-                          secondary:
-                              isMainTeacher
-                                  ? const Icon(Icons.star, color: Colors.orange)
-                                  : IconButton(
-                                    icon: const Icon(
-                                      Icons.star_border,
-                                      color: Colors.grey,
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _mainTeacherId = teacher.id!;
-                                        // Ensure main teacher is selected
-                                        if (!_selectedTeacherIds.contains(
-                                          teacher.id,
-                                        )) {
-                                          _selectedTeacherIds.add(teacher.id!);
-                                        }
-                                      });
-                                    },
-                                    tooltip: 'Als Hauptlehrer setzen',
-                                  ),
+                    // Get remaining time units for this teacher
+                    final remainingTimeUnits = widget.timetableManager
+                        .getRemainingTimeUnitsForUser(
+                          teacher.id!,
+                          teacher.timeUnits,
                         );
-                      }).toList(),
+
+                    return CheckboxListTile(
+                      title: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              teacher.userInfo?.fullName ??
+                                  'Unbekannter Lehrer',
+                              style: TextStyle(
+                                fontWeight: isMainTeacher
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                color: isBusy ? Colors.grey : null,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: remainingTimeUnits > 0
+                                  ? Colors.green
+                                  : Colors.red,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              '${remainingTimeUnits}h',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(teacher.userInfo?.email ?? ''),
+                          if (isMainTeacher)
+                            const Text(
+                              'Hauptlehrer',
+                              style: TextStyle(
+                                color: Colors.orange,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
+                          if (isBusy)
+                            const Text(
+                              'Belegt zu dieser Zeit',
+                              style: TextStyle(color: Colors.red, fontSize: 12),
+                            ),
+                          if (remainingTimeUnits <= 0)
+                            const Text(
+                              'Keine verfügbaren Stunden',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                        ],
+                      ),
+                      value: isSelected,
+                      onChanged: teacher.id == null
+                          ? null
+                          : (bool? value) {
+                              setState(() {
+                                if (value == true) {
+                                  if (!_selectedTeacherIds.contains(
+                                    teacher.id,
+                                  )) {
+                                    _selectedTeacherIds.add(teacher.id!);
+                                  }
+                                } else {
+                                  // Don't allow unchecking main teacher
+                                  if (teacher.id != _mainTeacherId) {
+                                    _selectedTeacherIds.remove(teacher.id);
+                                  }
+                                }
+                              });
+                            },
+                      secondary: isMainTeacher
+                          ? const Icon(Icons.star, color: Colors.orange)
+                          : IconButton(
+                              icon: const Icon(
+                                Icons.star_border,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _mainTeacherId = teacher.id!;
+                                  // Ensure main teacher is selected
+                                  if (!_selectedTeacherIds.contains(
+                                    teacher.id,
+                                  )) {
+                                    _selectedTeacherIds.add(teacher.id!);
+                                  }
+                                });
+                              },
+                              tooltip: 'Als Hauptlehrer setzen',
+                            ),
+                    );
+                  }).toList(),
                 ),
               ),
             ),
@@ -505,18 +489,17 @@ class _TeacherSelectionDialogState extends State<_TeacherSelectionDialog> {
 
   void _saveTeacherAssignments() {
     // Update the lesson with new teacher assignments
-    final updatedLessonTeachers =
-        _selectedTeacherIds
-            .where(
-              (id) => id != _mainTeacherId,
-            ) // Exclude main teacher from lessonTeachers list
-            .map(
-              (id) => ScheduledLessonTeacher(
-                userId: id,
-                scheduledLessonId: widget.lesson.id!,
-              ),
-            )
-            .toList();
+    final updatedLessonTeachers = _selectedTeacherIds
+        .where(
+          (id) => id != _mainTeacherId,
+        ) // Exclude main teacher from lessonTeachers list
+        .map(
+          (id) => ScheduledLessonTeacher(
+            userId: id,
+            scheduledLessonId: widget.lesson.id!,
+          ),
+        )
+        .toList();
 
     final updatedLesson = widget.lesson.copyWith(
       mainTeacherId: _mainTeacherId,

@@ -72,6 +72,12 @@ competence:
   - getAllCompetences:
   - updateCompetence:
   - deleteCompetence:
+competenceGoal:
+  - postCompetenceGoal:
+  - updateCompetenceGoal:
+  - deleteCompetenceGoal:
+  - addFileToCompetenceGoal:
+  - removeFileFromCompetenceGoal:
 learningSupportPlan:
   - fetchLearningSupportPlans:
   - createLearningSupportPlan:

@@ -27,7 +27,7 @@ class PupilCompetenceListSearchBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(5.0),
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+        // mainAxisAlignment: MainAxisAlignment.end,
         children: [
           const Gap(5),
           Padding(
@@ -39,7 +39,7 @@ class PupilCompetenceListSearchBar extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.people_alt_rounded,
                       color: AppColors.backgroundColor,
                     ),

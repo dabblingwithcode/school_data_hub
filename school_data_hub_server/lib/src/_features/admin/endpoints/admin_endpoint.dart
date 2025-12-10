@@ -180,7 +180,7 @@ class AdminEndpoint extends Endpoint {
         // If the pupil exists, we process it updating just the after care status
         // This is the second string of the line
         if (line.split(',')[1] == 'true') {
-          // we just check if the after achool care is set
+          // we check if the after achool care is set
           // if it is already set we leave it alone
           // if not, we set the after school care as an empty object
           // the user will have to fill it later
@@ -188,8 +188,6 @@ class AdminEndpoint extends Endpoint {
             existingPupil.afterSchoolCare = AfterSchoolCare();
 
             await session.db.updateRow(existingPupil);
-          } else {
-            // the after school care is already set, we leave it alone
           }
         } else {
           // there is no entry for after School care
@@ -202,7 +200,8 @@ class AdminEndpoint extends Endpoint {
         // we have processed the pupil, let's remove it from the unprocessed list
         unprocessedPupilsList.remove(existingPupil);
       } else {
-        // If the pupil doesn't exist, we first need to check if it exists and should be activated
+        // The pupil is not in the active pupils list
+        // We first need to check if it exists but is inactive and should be activated
         // if it doesn't exist, we'll created a new one
         final inactivePupil = await PupilData.db.findFirstRow(
           session,
@@ -222,14 +221,15 @@ class AdminEndpoint extends Endpoint {
       }
     }
     // if there are unprocessed pupils, they are not active in the school data system
-    // we set them to inactive
+    // so we set them to inactive
     for (final pupil in unprocessedPupilsList) {
       pupil.status = PupilStatus.inactive;
       await session.db.updateRow(pupil);
     }
 
     // we return the updated set of pupils that are active in the school data system
-    final pupils = await PupilData.db.find(session);
+    final pupils = await PupilData.db
+        .find(session, where: (t) => t.status.equals(PupilStatus.active));
     return pupils.toSet();
   }
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:logging/logging.dart';
 import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
 
 // Configure secure storage with platform-specific options
@@ -26,6 +27,7 @@ class HubSecureStorage extends Storage {
   factory HubSecureStorage() {
     return _instance;
   }
+  final _log = Logger('HubSecureStorage');
 
   /// Stores an int value with the specified key.
   @override
@@ -44,6 +46,7 @@ class HubSecureStorage extends Storage {
   /// Stores a string value with the specified key.
   @override
   Future<void> setString(String key, String value) async {
+    _log.info('Setting string value for key $key');
     await _secureStorage.write(key: key, value: value);
     return;
   }

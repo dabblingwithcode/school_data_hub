@@ -34,7 +34,7 @@ class CreditListSearchBar extends WatchingWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.people_alt_rounded,
                       color: AppColors.backgroundColor,
                     ),
@@ -48,12 +48,13 @@ class CreditListSearchBar extends WatchingWidget {
                       ),
                     ),
                     const Gap(10),
-                    const Text(
+                    Text(
                       'BIP:',
                       style: TextStyle(
-                          fontSize: 13,
-                          color: AppColors.backgroundColor,
-                          fontWeight: FontWeight.bold),
+                        fontSize: 13,
+                        color: AppColors.backgroundColor,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const Gap(10),
                     Text(
@@ -65,12 +66,13 @@ class CreditListSearchBar extends WatchingWidget {
                       ),
                     ),
                     const Gap(10),
-                    const Text(
+                    Text(
                       'in Umlauf: ',
                       style: TextStyle(
-                          fontSize: 13,
-                          color: AppColors.backgroundColor,
-                          fontWeight: FontWeight.bold),
+                        fontSize: 13,
+                        color: AppColors.backgroundColor,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const Gap(10),
                     Text(
@@ -92,15 +94,18 @@ class CreditListSearchBar extends WatchingWidget {
               children: [
                 Expanded(
                   child: PupilSearchTextField(
-                      searchType: SearchType.pupil,
-                      hintText: 'Schüler/in suchen',
-                      refreshFunction: di<PupilsFilter>().refreshs),
+                    searchType: SearchType.pupil,
+                    hintText: 'Schüler/in suchen',
+                    refreshFunction: di<PupilsFilter>().refreshs,
+                  ),
                 ),
                 const Gap(5),
                 FilterButton(
                   isSearchBar: true,
                   showBottomSheetFunction: () => showGenericBottomSheet(
-                      context, const CreditFilterBottomSheet()),
+                    context,
+                    const CreditFilterBottomSheet(),
+                  ),
                 ),
               ],
             ),

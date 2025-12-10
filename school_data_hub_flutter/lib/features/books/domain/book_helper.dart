@@ -1,5 +1,5 @@
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 enum BookBorrowStatus { since2Weeks, since3Weeks, since5weeks }
@@ -9,19 +9,19 @@ class BookHelpers {
     required int libraryBookId,
   }) {
     // Get all pupil book lendings
-    final allPupilBookLendings =
-        di<PupilManager>().allPupils
-            .map((pupil) => pupil.pupilBookLendings ?? <PupilBookLending>[])
-            .expand((element) => element)
-            .toList();
+    final allPupilBookLendings = di<PupilProxyManager>().allPupils
+        .map((pupil) => pupil.pupilBookLendings ?? <PupilBookLending>[])
+        .expand((element) => element)
+        .toList();
 
     // Filter by libraryId
-    final pupilBookLendingsLinkedToLibraryBook =
-        allPupilBookLendings.where((pupilBook) {
-          final match = pupilBook.libraryBookId == libraryBookId;
+    final pupilBookLendingsLinkedToLibraryBook = allPupilBookLendings.where((
+      pupilBook,
+    ) {
+      final match = pupilBook.libraryBookId == libraryBookId;
 
-          return match;
-        }).toList();
+      return match;
+    }).toList();
 
     pupilBookLendingsLinkedToLibraryBook.sort(
       (a, b) => b.lentAt.compareTo(a.lentAt),

@@ -8,10 +8,10 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
@@ -655,7 +655,7 @@ class LearningSupportPlanPdfGenerator {
                     pw.Expanded(
                       child: pw.Container(
                         height: 20,
-                        decoration: pw.BoxDecoration(
+                        decoration: const pw.BoxDecoration(
                           border: pw.Border(
                             bottom: pw.BorderSide(color: PdfColors.black),
                           ),
@@ -679,7 +679,7 @@ class LearningSupportPlanPdfGenerator {
                     pw.Container(
                       width: 80,
                       height: 20,
-                      decoration: pw.BoxDecoration(
+                      decoration: const pw.BoxDecoration(
                         border: pw.Border(
                           bottom: pw.BorderSide(color: PdfColors.black),
                         ),
@@ -695,7 +695,7 @@ class LearningSupportPlanPdfGenerator {
                     pw.Expanded(
                       child: pw.Container(
                         height: 20,
-                        decoration: pw.BoxDecoration(
+                        decoration: const pw.BoxDecoration(
                           border: pw.Border(
                             bottom: pw.BorderSide(color: PdfColors.black),
                           ),
@@ -724,7 +724,7 @@ class LearningSupportPlanPdfGenerator {
                     pw.Expanded(
                       child: pw.Container(
                         height: 20,
-                        decoration: pw.BoxDecoration(
+                        decoration: const pw.BoxDecoration(
                           border: pw.Border(
                             bottom: pw.BorderSide(color: PdfColors.black),
                           ),
@@ -747,7 +747,7 @@ class LearningSupportPlanPdfGenerator {
                     pw.Container(
                       width: 30,
                       height: 20,
-                      decoration: pw.BoxDecoration(
+                      decoration: const pw.BoxDecoration(
                         border: pw.Border(
                           bottom: pw.BorderSide(color: PdfColors.black),
                         ),
@@ -763,7 +763,7 @@ class LearningSupportPlanPdfGenerator {
                     pw.Expanded(
                       child: pw.Container(
                         height: 20,
-                        decoration: pw.BoxDecoration(
+                        decoration: const pw.BoxDecoration(
                           border: pw.Border(
                             bottom: pw.BorderSide(color: PdfColors.black),
                           ),
@@ -785,7 +785,7 @@ class LearningSupportPlanPdfGenerator {
                     pw.Container(
                       width: 50,
                       height: 20,
-                      decoration: pw.BoxDecoration(
+                      decoration: const pw.BoxDecoration(
                         border: pw.Border(
                           bottom: pw.BorderSide(color: PdfColors.black),
                         ),
@@ -797,7 +797,7 @@ class LearningSupportPlanPdfGenerator {
                     pw.Container(
                       width: 50,
                       height: 20,
-                      decoration: pw.BoxDecoration(
+                      decoration: const pw.BoxDecoration(
                         border: pw.Border(
                           bottom: pw.BorderSide(color: PdfColors.black),
                         ),
@@ -832,7 +832,7 @@ class LearningSupportPlanPdfGenerator {
         children: [
           pw.Row(
             children: [
-              pw.Text('☐', style: pw.TextStyle(fontSize: 16)),
+              pw.Text('☐', style: const pw.TextStyle(fontSize: 16)),
               pw.SizedBox(width: 5),
               pw.Text(
                 'Individueller Förderplan (FE I) falls Schriftform gewünscht',
@@ -843,7 +843,7 @@ class LearningSupportPlanPdfGenerator {
           pw.SizedBox(height: 8),
           pw.Row(
             children: [
-              pw.Text('☐', style: pw.TextStyle(fontSize: 16)),
+              pw.Text('☐', style: const pw.TextStyle(fontSize: 16)),
               pw.SizedBox(width: 5),
               pw.Text(
                 'Individuell erweiterter Förderplan [FE II]',
@@ -862,7 +862,7 @@ class LearningSupportPlanPdfGenerator {
           pw.SizedBox(height: 8),
           pw.Row(
             children: [
-              pw.Text('☐', style: pw.TextStyle(fontSize: 16)),
+              pw.Text('☐', style: const pw.TextStyle(fontSize: 16)),
               pw.SizedBox(width: 5),
               pw.Text(
                 'Förderplan gemäß AO-SF § 21(7) mit sonderpädagogischer Unterstützung (FE III)',
@@ -874,7 +874,7 @@ class LearningSupportPlanPdfGenerator {
           pw.Row(
             children: [
               pw.SizedBox(width: 20),
-              pw.Text('☐', style: pw.TextStyle(fontSize: 16)),
+              pw.Text('☐', style: const pw.TextStyle(fontSize: 16)),
               pw.SizedBox(width: 5),
               pw.Text(
                 'mit Bescheid vom',
@@ -884,7 +884,7 @@ class LearningSupportPlanPdfGenerator {
               pw.Container(
                 width: 100,
                 height: 20,
-                decoration: pw.BoxDecoration(
+                decoration: const pw.BoxDecoration(
                   border: pw.Border(
                     bottom: pw.BorderSide(color: PdfColors.black),
                   ),
@@ -896,7 +896,7 @@ class LearningSupportPlanPdfGenerator {
           pw.Row(
             children: [
               pw.SizedBox(width: 20),
-              pw.Text('☐', style: pw.TextStyle(fontSize: 16)),
+              pw.Text('☐', style: const pw.TextStyle(fontSize: 16)),
               pw.SizedBox(width: 5),
               pw.Text('ohne Bescheid', style: pw.TextStyle(font: fontRegular)),
             ],
@@ -931,7 +931,7 @@ class LearningSupportPlanPdfGenerator {
                     pw.Expanded(
                       child: pw.Container(
                         height: 20,
-                        decoration: pw.BoxDecoration(
+                        decoration: const pw.BoxDecoration(
                           border: pw.Border(
                             bottom: pw.BorderSide(color: PdfColors.black),
                           ),
@@ -948,7 +948,7 @@ class LearningSupportPlanPdfGenerator {
                     pw.Expanded(
                       child: pw.Container(
                         height: 20,
-                        decoration: pw.BoxDecoration(
+                        decoration: const pw.BoxDecoration(
                           border: pw.Border(
                             bottom: pw.BorderSide(color: PdfColors.black),
                           ),
@@ -989,7 +989,7 @@ class LearningSupportPlanPdfGenerator {
                     pw.Expanded(
                       child: pw.Container(
                         height: 20,
-                        decoration: pw.BoxDecoration(
+                        decoration: const pw.BoxDecoration(
                           border: pw.Border(
                             bottom: pw.BorderSide(color: PdfColors.black),
                           ),
@@ -1043,7 +1043,7 @@ class LearningSupportPlanPdfGenerator {
                 pw.SizedBox(height: 5),
                 pw.Container(
                   height: 20,
-                  decoration: pw.BoxDecoration(
+                  decoration: const pw.BoxDecoration(
                     border: pw.Border(
                       bottom: pw.BorderSide(color: PdfColors.black),
                     ),
@@ -1068,7 +1068,7 @@ class LearningSupportPlanPdfGenerator {
                 pw.SizedBox(height: 5),
                 pw.Container(
                   height: 20,
-                  decoration: pw.BoxDecoration(
+                  decoration: const pw.BoxDecoration(
                     border: pw.Border(
                       bottom: pw.BorderSide(color: PdfColors.black),
                     ),
@@ -1090,7 +1090,7 @@ class LearningSupportPlanPdfGenerator {
                 pw.SizedBox(height: 5),
                 pw.Container(
                   height: 20,
-                  decoration: pw.BoxDecoration(
+                  decoration: const pw.BoxDecoration(
                     border: pw.Border(
                       bottom: pw.BorderSide(color: PdfColors.black),
                     ),
@@ -1158,7 +1158,7 @@ class LearningSupportPlanPdfGenerator {
         children: [
           pw.Row(
             children: [
-              pw.Text('😊', style: pw.TextStyle(fontSize: 16)),
+              pw.Text('😊', style: const pw.TextStyle(fontSize: 16)),
               pw.SizedBox(width: 5),
               pw.Text(
                 'Stärken',
@@ -1244,28 +1244,28 @@ class LearningSupportPlanPdfGenerator {
           pw.SizedBox(width: 20),
           pw.Row(
             children: [
-              pw.Text('☐', style: pw.TextStyle(fontSize: 16)),
+              pw.Text('☐', style: const pw.TextStyle(fontSize: 16)),
               pw.SizedBox(width: 5),
               pw.Text(
                 '1. Lernjahr Deutsch',
                 style: pw.TextStyle(font: fontRegular),
               ),
               pw.SizedBox(width: 10),
-              pw.Text('☐', style: pw.TextStyle(fontSize: 16)),
+              pw.Text('☐', style: const pw.TextStyle(fontSize: 16)),
               pw.SizedBox(width: 5),
               pw.Text(
                 '2. Lernjahr Deutsch',
                 style: pw.TextStyle(font: fontRegular),
               ),
               pw.SizedBox(width: 10),
-              pw.Text('☐', style: pw.TextStyle(fontSize: 16)),
+              pw.Text('☐', style: const pw.TextStyle(fontSize: 16)),
               pw.SizedBox(width: 5),
               pw.Text(
                 '3. Lernjahr Deutsch',
                 style: pw.TextStyle(font: fontRegular),
               ),
               pw.SizedBox(width: 10),
-              pw.Text('☐', style: pw.TextStyle(fontSize: 16)),
+              pw.Text('☐', style: const pw.TextStyle(fontSize: 16)),
               pw.SizedBox(width: 5),
               pw.Text(
                 '>3. Lernjahr Deutsch',
@@ -1281,7 +1281,7 @@ class LearningSupportPlanPdfGenerator {
               pw.Container(
                 width: 100,
                 height: 20,
-                decoration: pw.BoxDecoration(
+                decoration: const pw.BoxDecoration(
                   border: pw.Border(
                     bottom: pw.BorderSide(color: PdfColors.black),
                   ),
@@ -1324,10 +1324,10 @@ class _LearningSupportPlanPdfViewPageState
         title: 'Förderplan PDF',
       ),
       body: PdfPreview(
-        actionBarTheme: const PdfActionBarTheme(
+        actionBarTheme: PdfActionBarTheme(
           backgroundColor: AppColors.backgroundColor,
           iconColor: Colors.white,
-          textStyle: TextStyle(color: Colors.white),
+          textStyle: const TextStyle(color: Colors.white),
         ),
         allowSharing: true,
         allowPrinting: true,

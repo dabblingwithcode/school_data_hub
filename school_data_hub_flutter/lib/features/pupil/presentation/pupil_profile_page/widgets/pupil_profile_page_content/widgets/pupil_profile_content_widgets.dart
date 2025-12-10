@@ -26,15 +26,11 @@ class PupilProfileContentHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(
-            icon,
-            color: AppColors.groupColor,
-            size: 28,
-          ),
+          Icon(icon, color: AppColors.groupColor, size: 28),
           const Gap(12),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
               color: AppColors.backgroundColor,
@@ -78,13 +74,16 @@ class PupilProfileContentSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               InkWell(
                 onTap: onTitleTap,
                 borderRadius: BorderRadius.circular(8),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                      vertical: 4.0, horizontal: 4.0),
+                    vertical: 4.0,
+                    horizontal: 4.0,
+                  ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -92,7 +91,7 @@ class PupilProfileContentSection extends StatelessWidget {
                       const Gap(10),
                       Text(
                         title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: AppColors.backgroundColor,
@@ -102,10 +101,7 @@ class PupilProfileContentSection extends StatelessWidget {
                   ),
                 ),
               ),
-              if (headerTrailing != null) ...[
-                const Spacer(),
-                headerTrailing!,
-              ],
+              if (headerTrailing != null) ...[const Spacer(), headerTrailing!],
             ],
           ),
           const Gap(12),
@@ -134,8 +130,10 @@ class PupilProfileContentRow extends StatelessWidget {
     this.onLongPress,
     this.actionButton,
     super.key,
-  }) : assert(value != null || valueWidget != null,
-            'Either value or valueWidget must be provided');
+  }) : assert(
+         value != null || valueWidget != null,
+         'Either value or valueWidget must be provided',
+       );
 
   @override
   Widget build(BuildContext context) {
@@ -149,54 +147,57 @@ class PupilProfileContentRow extends StatelessWidget {
           width: 1,
         ),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            icon,
-            color: AppColors.backgroundColor.withValues(alpha: 0.7),
-            size: 18,
-          ),
-          const Gap(8),
-          Text(
-            '$label:',
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: AppColors.backgroundColor,
-            ),
+          Row(
+            children: [
+              Icon(
+                icon,
+                color: AppColors.backgroundColor.withValues(alpha: 0.7),
+                size: 18,
+              ),
+              const Gap(8),
+              Text(
+                '$label:',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.backgroundColor,
+                ),
+              ),
+              if (actionButton != null) ...[const Spacer(), actionButton!],
+            ],
           ),
           const Gap(6),
-          Expanded(
-            child: InkWell(
-              onTap: onTap,
-              onLongPress: onLongPress,
-              borderRadius: BorderRadius.circular(8),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8,
-                  horizontal: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: onTap != null
-                      ? AppColors.interactiveColor.withValues(alpha: 0.1)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: valueWidget ??
-                    Text(
-                      value!,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: onTap != null
-                            ? AppColors.interactiveColor
-                            : Colors.black87,
-                      ),
-                    ),
+          InkWell(
+            onTap: onTap,
+            onLongPress: onLongPress,
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              decoration: BoxDecoration(
+                color: onTap != null
+                    ? AppColors.interactiveColor.withValues(alpha: 0.1)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(8),
               ),
+              child:
+                  valueWidget ??
+                  Text(
+                    value!,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: onTap != null
+                          ? AppColors.interactiveColor
+                          : Colors.black87,
+                    ),
+                  ),
             ),
           ),
-          if (actionButton != null) ...[const Gap(8), actionButton!],
+          const Gap(10),
         ],
       ),
     );

@@ -15,11 +15,7 @@ class GenericFilterBottomSheet extends StatelessWidget {
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
-              child: Column(
-                children: [
-                  ...children,
-                ],
-              ),
+              child: Column(children: [...children]),
             ),
           ),
         ],
@@ -28,8 +24,10 @@ class GenericFilterBottomSheet extends StatelessWidget {
   }
 }
 
-showGenericFilterBottomSheet(
-    {required BuildContext context, required List<Widget> filterList}) {
+showGenericFilterBottomSheet({
+  required BuildContext context,
+  required List<Widget> filterList,
+}) {
   return showModalBottomSheet(
     constraints: const BoxConstraints(maxWidth: 800),
     shape: const RoundedRectangleBorder(
@@ -39,8 +37,6 @@ showGenericFilterBottomSheet(
       ),
     ),
     context: context,
-    builder: (_) => GenericFilterBottomSheet(
-      children: filterList,
-    ),
+    builder: (_) => GenericFilterBottomSheet(children: filterList),
   );
 }

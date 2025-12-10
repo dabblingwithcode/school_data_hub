@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/pupil_competence_list_page/widgets/pupil_competence_goals/dialogs/add_competence_goal_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_competence_list_page/widgets/pupil_learning_content/pupil_learning_goals_widget.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
@@ -28,7 +29,14 @@ class PupilLearningContentCompetenceGoals extends StatelessWidget {
             Expanded(
               child: ElevatedButton(
                 style: AppStyles.actionButtonStyle,
-                onPressed: () async {},
+                onPressed: () async {
+                  await showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AddCompetenceGoalDialog(pupilId: pupil.pupilId);
+                    },
+                  );
+                },
                 child: const Text(
                   "NEUES LERNZIEL",
                   style: AppStyles.buttonTextStyle,

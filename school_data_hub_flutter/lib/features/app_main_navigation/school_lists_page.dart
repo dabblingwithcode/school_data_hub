@@ -34,7 +34,7 @@ class SchoolListsMenuPage extends StatelessWidget {
             children: [
               MainMenuButton(
                   destinationPage: const SchoolListsPage(),
-                  buttonIcon: const Icon(
+                  buttonIcon: Icon(
                     Icons.rule,
                     size: 50,
                     color: AppColors.gridViewColor,
@@ -42,7 +42,7 @@ class SchoolListsMenuPage extends StatelessWidget {
                   buttonText: locale.lists),
               MainMenuButton(
                   destinationPage: const AuthorizationsListPage(),
-                  buttonIcon: const Icon(
+                  buttonIcon: Icon(
                     Icons.fact_check_rounded,
                     size: 50,
                     color: AppColors.gridViewColor,

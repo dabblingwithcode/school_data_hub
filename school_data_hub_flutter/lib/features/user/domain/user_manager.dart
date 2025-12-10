@@ -15,6 +15,11 @@ class UserManager {
   final _users = ValueNotifier<List<User>>([]);
 
   UserManager();
+  void dispose() {
+    _users.dispose();
+    return;
+  }
+
   Future<UserManager> init() async {
     await fetchUsers();
     return this;

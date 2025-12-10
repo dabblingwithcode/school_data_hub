@@ -12,7 +12,7 @@ Widget authorizationStatsRow(Authorization authorization) {
       (stats['yes'] ?? 0) + (stats['no'] ?? 0) + (stats['null'] ?? 0);
   return Row(
     children: [
-      const Icon(
+      Icon(
         Icons.people_alt_rounded,
         color: AppColors.backgroundColor,
       ),
@@ -54,7 +54,7 @@ Widget authorizationStatsRow(Authorization authorization) {
         ),
       ),
       const Gap(10),
-      const Icon(
+      Icon(
         Icons.question_mark_rounded,
         color: AppColors.accentColor,
       ),
@@ -68,7 +68,7 @@ Widget authorizationStatsRow(Authorization authorization) {
         ),
       ),
       const Gap(10),
-      const Icon(
+      Icon(
         Icons.create,
         color: AppColors.backgroundColor,
       ),

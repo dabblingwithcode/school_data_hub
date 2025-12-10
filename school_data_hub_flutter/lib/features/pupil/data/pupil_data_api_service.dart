@@ -271,16 +271,17 @@ class PupilDataApiService {
   Future<DateTime?> fetchLastIdentitiesUpdate() async {
     final lastUpdate = await ClientHelper.apiCall(
       call: () => _client.pupilIdentity.fetchLastPupilIdentitiesUpdate(),
-      errorMessage: 'Die letzte Aktualisierung konnte nicht geladen werden',
+      errorMessage:
+          'Die letzte Abgleich-Zeitstempel konnte nicht geladen werden',
     );
     return lastUpdate;
   }
 
-  Future<bool?> updateLastIdentitiesUpdate(DateTime date) async {
+  Future<DateTime?> updateLastIdentitiesUpdate(DateTime date) async {
     final updated = await ClientHelper.apiCall(
       call: () => _client.pupilIdentity.updateLastPupilIdentitiesUpdate(date),
       errorMessage:
-          'Die letzte Aktualisierung konnte nicht aktualisiert werden',
+          'Die letzte Abgleich-Zeitstempel konnte nicht aktualisiert werden',
     );
     return updated;
   }

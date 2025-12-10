@@ -51,12 +51,13 @@ class NewBookPage extends StatelessWidget {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(10.0),
                                 child:
-                                // TODO: Repair when image loading is implemented
-                                UnencryptedImageInCard(
-                                  path: controller.imagePath!,
-                                  cacheKey: controller.widget.isbn.toString(),
-                                  size: 220,
-                                ),
+                                    // TODO: Repair when image loading is implemented
+                                    UnencryptedImageInCard(
+                                      path: controller.imagePath!,
+                                      cacheKey: controller.widget.isbn
+                                          .toString(),
+                                      size: 220,
+                                    ),
                               ),
                             ],
                           ),
@@ -97,35 +98,36 @@ class NewBookPage extends StatelessWidget {
                                 labelText: 'Lesestufe',
                               ),
                               items: controller.readingLevelDropdownItems,
-                              value: ReadingLevel.fromString(
+                              initialValue: ReadingLevel.fromString(
                                 controller.readingLevel,
                               ),
-                              onChanged:
-                                  (value) => controller
-                                      .onChangedReadingLevelDropDown(value),
+                              onChanged: (value) => controller
+                                  .onChangedReadingLevelDropDown(value),
                             ),
                             const Gap(20),
                             Row(
                               children: [
                                 Expanded(
-                                  child: DropdownButtonFormField<
-                                    LibraryBookLocation
-                                  >(
-                                    decoration: AppStyles.textFieldDecoration(
-                                      labelText: 'Ablageort',
-                                    ),
-                                    items: controller.locationDropdownItems,
-                                    value: controller.lastLocationValue,
-                                    onChanged:
-                                        (value) => controller
+                                  child:
+                                      DropdownButtonFormField<
+                                        LibraryBookLocation
+                                      >(
+                                        decoration:
+                                            AppStyles.textFieldDecoration(
+                                              labelText: 'Ablageort',
+                                            ),
+                                        items: controller.locationDropdownItems,
+                                        initialValue:
+                                            controller.lastLocationValue,
+                                        onChanged: (value) => controller
                                             .onChangedLocationDropDown(value!),
-                                  ),
+                                      ),
                                 ),
                                 if (_hubSessionManager.isAdmin) ...[
                                   const Gap(10),
                                   InkWell(
                                     onTap: () => controller.addLocation(),
-                                    child: const Icon(
+                                    child: Icon(
                                       Icons.add,
                                       color: AppColors.interactiveColor,
                                     ),
@@ -188,7 +190,7 @@ class NewBookPage extends StatelessWidget {
                         const Gap(10),
                         InkWell(
                           onTap: () => controller.createNewTag(context),
-                          child: const Icon(
+                          child: Icon(
                             Icons.add,
                             color: AppColors.interactiveColor,
                             size: 20,
@@ -197,7 +199,7 @@ class NewBookPage extends StatelessWidget {
                         const Gap(5),
                         InkWell(
                           onTap: () => controller.openTagManagement(context),
-                          child: const Icon(
+                          child: Icon(
                             Icons.settings,
                             color: AppColors.interactiveColor,
                             size: 20,
@@ -210,16 +212,15 @@ class NewBookPage extends StatelessWidget {
                   Wrap(
                     spacing: 5,
                     runSpacing: 5,
-                    children:
-                        controller.bookTagSelection.entries.map((entry) {
-                          return ThemedFilterChip(
-                            label: entry.key.name,
-                            selected: entry.value,
-                            onSelected: (bool selected) {
-                              controller.switchBookTagSelection(entry.key);
-                            },
-                          );
-                        }).toList(),
+                    children: controller.bookTagSelection.entries.map((entry) {
+                      return ThemedFilterChip(
+                        label: entry.key.name,
+                        selected: entry.value,
+                        onSelected: (bool selected) {
+                          controller.switchBookTagSelection(entry.key);
+                        },
+                      );
+                    }).toList(),
                   ),
                   const Gap(30),
                   ...<Widget>[

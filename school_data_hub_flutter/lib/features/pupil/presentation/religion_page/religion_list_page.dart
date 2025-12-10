@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/religion_page/widgets/religion_card.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/religion_page/widgets/religion_list_page_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/religion_page/widgets/religion_list_search_bar.dart';
@@ -52,7 +52,7 @@ class ReligionListPage extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final _filterStateManager = di<FiltersStateManager>();
-    final _pupilManager = di<PupilManager>();
+    final _pupilManager = di<PupilProxyManager>();
     List<PupilProxy> filteredPupils = watchValue(
       (PupilsFilter x) => x.filteredPupils,
     );

@@ -9,7 +9,7 @@ List<DropdownMenuItem<MissedType>> missedTypeMenuItems = [
       child: Container(
         width: 30.0,
         height: 30.0,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.presentColor,
           shape: BoxShape.circle,
         ),
@@ -28,7 +28,7 @@ List<DropdownMenuItem<MissedType>> missedTypeMenuItems = [
       child: Container(
         width: 30.0,
         height: 30.0,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.lateColor,
           shape: BoxShape.circle,
         ),
@@ -47,7 +47,7 @@ List<DropdownMenuItem<MissedType>> missedTypeMenuItems = [
       child: Container(
         width: 30.0,
         height: 30.0,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.missedColor,
           shape: BoxShape.circle,
         ),
@@ -69,7 +69,7 @@ List<DropdownMenuItem<ContactedType>> dropdownContactedMenuItems = [
       child: Container(
         width: 30.0,
         height: 30.0,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.contactedQuestionColor,
           shape: BoxShape.circle,
         ),
@@ -88,7 +88,7 @@ List<DropdownMenuItem<ContactedType>> dropdownContactedMenuItems = [
       child: Container(
         width: 30.0,
         height: 30.0,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.contactedSuccessColor, // Colors.green[100],
           shape: BoxShape.circle,
         ),
@@ -101,7 +101,7 @@ List<DropdownMenuItem<ContactedType>> dropdownContactedMenuItems = [
       child: Container(
         width: 30.0,
         height: 30.0,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.contactedCalledBackColor,
           shape: BoxShape.circle,
         ),
@@ -116,7 +116,7 @@ List<DropdownMenuItem<ContactedType>> dropdownContactedMenuItems = [
       child: Container(
         width: 30.0,
         height: 30.0,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.contactedFailedColor,
           shape: BoxShape.circle,
         ),

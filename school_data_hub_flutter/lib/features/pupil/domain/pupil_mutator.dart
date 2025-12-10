@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/data/pupil_data_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class PupilMutator {
@@ -22,7 +22,7 @@ class PupilMutator {
 
   final _cacheManager = di<DefaultCacheManager>();
   final _pupilDataApiService = PupilDataApiService();
-  final _pupilManager = di<PupilManager>();
+  final _pupilManager = di<PupilProxyManager>();
   final _hubSessionManager = di<HubSessionManager>();
 
   Future<void> updateStringProperty({
@@ -351,7 +351,7 @@ class PupilMutator {
   }) async {
     // first we get the current after school care value or create a new one if it is null
     final afterSchoolCarePupilValue =
-        di<PupilManager>().getPupilByPupilId(pupilId)!.afterSchoolCare ??
+        di<PupilProxyManager>().getPupilByPupilId(pupilId)!.afterSchoolCare ??
         AfterSchoolCare();
     AfterSchoolCarePickUpTimes? pickUpTimes =
         afterSchoolCarePupilValue.pickUpTimes ?? AfterSchoolCarePickUpTimes();

@@ -17,20 +17,17 @@ class GenericSliverListWithEmptyListCheck<T> extends StatelessWidget {
             child: Center(
               child: Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Text(
-                  'Keine Ergebnisse',
-                  style: TextStyle(fontSize: 18),
-                ),
+                child: Text('Keine Ergebnisse', style: TextStyle(fontSize: 18)),
               ),
             ),
           )
         : SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
-                return itemBuilder(context, items[index]);
-              },
-              childCount: items.length,
-            ),
+            delegate: SliverChildBuilderDelegate((
+              BuildContext context,
+              int index,
+            ) {
+              return itemBuilder(context, items[index]);
+            }, childCount: items.length),
           );
   }
 }

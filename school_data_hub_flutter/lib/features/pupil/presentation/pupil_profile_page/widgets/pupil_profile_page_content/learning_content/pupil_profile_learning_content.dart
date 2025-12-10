@@ -1,12 +1,12 @@
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/widgets/pupil_learning_content_expansion_tile_nav_bar.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -18,9 +18,7 @@ class PupilLearningContent extends WatchingWidget {
   Widget build(BuildContext context) {
     watch(pupil);
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.pupilProfileBackgroundColor,
-      ),
+      decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
       child: Column(
         children: [
           PupilProfileContentSection(
@@ -49,7 +47,7 @@ class PupilLearningContent extends WatchingWidget {
                         );
 
                         if (date != null && date.isNotEmpty) {
-                          di<PupilManager>().updateSchoolyearHeldBackDate(
+                          di<PupilProxyManager>().updateSchoolyearHeldBackDate(
                             pupilId: pupil.pupilId,
                             date: (value: date.first!.toUtc()),
                           );
@@ -63,7 +61,7 @@ class PupilLearningContent extends WatchingWidget {
                           message: 'Eintrag wirklich löschen?',
                         );
                         if (confirmation != true) return;
-                        di<PupilManager>().updateSchoolyearHeldBackDate(
+                        di<PupilProxyManager>().updateSchoolyearHeldBackDate(
                           pupilId: pupil.internalId,
                           date: (value: null),
                         );
@@ -72,7 +70,7 @@ class PupilLearningContent extends WatchingWidget {
                         pupil.schoolyearHeldBackAt != null
                             ? 'Entscheidung vom ${pupil.schoolyearHeldBackAt!.formatDateForUser()}'
                             : 'nein',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.interactiveColor,
                           fontWeight: FontWeight.bold,
                         ),

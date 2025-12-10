@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
-
-final _schoolCalendarManager = di<SchoolCalendarManager>();
 
 Future<DateTime?> selectSchooldayDate(
   BuildContext context,
   DateTime thisDate,
 ) async {
-  List<DateTime> availableDates = _schoolCalendarManager.availableDates.value;
+  List<DateTime> availableDates =
+      di<SchoolCalendarManager>().availableDates.value;
 
   bool isSelectableSchoolday(DateTime day) {
     final validDate = availableDates.any((date) => date.isSameDate(day));
@@ -26,9 +25,9 @@ Future<DateTime?> selectSchooldayDate(
     builder: (context, child) {
       return Theme(
         data: Theme.of(context).copyWith(
-          colorScheme: const ColorScheme.light(
+          colorScheme: ColorScheme.light(
             primary: AppColors.backgroundColor,
-            onPrimary: Color.fromARGB(255, 241, 241, 241),
+            onPrimary: const Color.fromARGB(255, 241, 241, 241),
             onSurface: Colors.deepPurple,
           ),
           textButtonTheme: TextButtonThemeData(

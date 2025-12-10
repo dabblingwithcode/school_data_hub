@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/domain/models/nullable_records.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('SchooldayEventApiService');
@@ -24,14 +24,15 @@ class SchooldayEventApiService {
     int schooldayId,
     DateTime dateTime,
     SchooldayEventType type,
-    String reason,
-  ) async {
+    String reason, {
+    String? eventTime,
+  }) async {
     final userName = _hubSessionManager.userName!;
     _notificationService.apiRunning(true);
-    final pupil = di<PupilManager>().getPupilByPupilId(pupilId);
+    final pupil = di<PupilProxyManager>().getPupilByPupilId(pupilId);
     final tutor = pupil?.groupTutor;
     try {
-      final event = await _client.schooldayEvent.createSchooldayEvent(
+      var event = await _client.schooldayEvent.createSchooldayEvent(
         pupilNameAndGroup: pupilName,
         dateTimeAsString: dateTime.formatDateForUser(),
         pupilId: pupilId,
@@ -41,6 +42,13 @@ class SchooldayEventApiService {
         createdBy: userName,
         tutor: tutor ?? '',
       );
+
+      if (eventTime != null) {
+        event = await updateSchooldayEvent(
+          schooldayEvent: event,
+          eventTime: eventTime,
+        );
+      }
 
       _notificationService.apiRunning(false);
 
@@ -77,11 +85,11 @@ class SchooldayEventApiService {
     SchooldayEventType? type,
     String? reason,
     bool? processed,
-    //String? file,
     NullableStringRecord? processedBy,
     NullableDateTimeRecord? processedAt,
     int? schooldayId,
     NullableStringRecord? comment,
+    String? eventTime,
   }) async {
     bool changedProcessedStatus = false;
     // if the schooldayEvent is patched as processed,
@@ -115,8 +123,11 @@ class SchooldayEventApiService {
           ? processedAt.value
           : schooldayEvent.processedAt,
       comment: comment != null ? comment.value : schooldayEvent.comment,
+      eventTime: eventTime ?? schooldayEvent.eventTime,
     );
-    final pupil = di<PupilManager>().getPupilByPupilId(schooldayEvent.pupilId)!;
+    final pupil = di<PupilProxyManager>().getPupilByPupilId(
+      schooldayEvent.pupilId,
+    )!;
     try {
       _notificationService.apiRunning(true);
       final updatedSchooldayEvent = await _client.schooldayEvent

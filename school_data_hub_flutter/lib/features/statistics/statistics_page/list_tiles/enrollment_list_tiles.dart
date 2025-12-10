@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_language_card.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/language_content/pupil_language_card.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -102,7 +102,7 @@ class EnrollmentListTiles extends WatchingWidget {
                                 const Gap(5),
                                 Text(
                                   '${pupil.pupilSince.asWeekdayName(context)}, ${pupil.pupilSince.formatDateForUser()}',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.backgroundColor,
                                     fontSize: 18,

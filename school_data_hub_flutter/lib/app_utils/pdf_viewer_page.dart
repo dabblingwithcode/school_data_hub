@@ -18,10 +18,10 @@ class PdfViewerPage extends StatelessWidget {
       ),
 
       body: PdfPreview(
-        actionBarTheme: const PdfActionBarTheme(
+        actionBarTheme: PdfActionBarTheme(
           backgroundColor: AppColors.backgroundColor,
           iconColor: Colors.white,
-          textStyle: TextStyle(color: Colors.white),
+          textStyle: const TextStyle(color: Colors.white),
         ),
         allowSharing: false,
         canChangePageFormat: false,

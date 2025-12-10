@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filt
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/widgets/select_pupils_list_card.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/widgets/select_pupils_search_bar.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/widgets/select_pupils_view_bottom_navbar.dart';
@@ -34,7 +34,7 @@ class _SelectPupilsListPageState extends State<SelectPupilsListPage> {
   bool isSelectAllMode = false;
   bool isSelectMode = false;
 
-  PupilManager get _pupilManager => di<PupilManager>();
+  PupilProxyManager get _pupilManager => di<PupilProxyManager>();
   PupilFilterManager get _pupilFilerManager => di<PupilFilterManager>();
 
   @override
@@ -80,8 +80,9 @@ class _SelectPupilsListPageState extends State<SelectPupilsListPage> {
       isSelectAllMode = !isSelectAllMode;
       if (isSelectAllMode) {
         isSelectMode = true;
-        selectedPupilIds =
-            selectablePupils.map((pupil) => pupil.pupilId).toList();
+        selectedPupilIds = selectablePupils
+            .map((pupil) => pupil.pupilId)
+            .toList();
       } else {
         isSelectMode = false;
         selectedPupilIds.clear();
@@ -97,8 +98,9 @@ class _SelectPupilsListPageState extends State<SelectPupilsListPage> {
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
     bool filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);
-    final List<PupilProxy> filteredPupils =
-        watchValue((PupilsFilter x) => x.filteredPupils);
+    final List<PupilProxy> filteredPupils = watchValue(
+      (PupilsFilter x) => x.filteredPupils,
+    );
 
     final List<PupilProxy> selectablePupils = filteredPupils
         .where((pupil) => widget.selectablePupils!.contains(pupil))
@@ -122,18 +124,20 @@ class _SelectPupilsListPageState extends State<SelectPupilsListPage> {
                   height: 110,
                   title: SelectPupilsSearchBar(
                     selectablePupils: selectablePupils,
-                    selectedPupils:
-                        _pupilManager.getPupilsFromPupilIds(selectedPupilIds),
+                    selectedPupils: _pupilManager.getPupilsFromPupilIds(
+                      selectedPupilIds,
+                    ),
                   ),
                 ),
                 GenericSliverListWithEmptyListCheck(
-                    items: selectablePupils,
-                    itemBuilder: (_, pupil) => SelectPupilListCard(
-                          isSelectMode: isSelectMode,
-                          isSelected: selectedPupilIds.contains(pupil.pupilId),
-                          passedPupil: pupil,
-                          onCardPress: onCardPress,
-                        )),
+                  items: selectablePupils,
+                  itemBuilder: (_, pupil) => SelectPupilListCard(
+                    isSelectMode: isSelectMode,
+                    isSelected: selectedPupilIds.contains(pupil.pupilId),
+                    passedPupil: pupil,
+                    onCardPress: onCardPress,
+                  ),
+                ),
               ],
             ),
           ),

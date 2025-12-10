@@ -1,12 +1,16 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:flutter/foundation.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters.dart';
+import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_selector_filters.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:watch_it/watch_it.dart';
+
+final _log = Logger('PupilProxy');
 
 class PupilProxy with ChangeNotifier {
   PupilProxy({
@@ -50,23 +54,17 @@ class PupilProxy with ChangeNotifier {
   bool pupilIsDirty = false;
 
   void updatePupil(PupilData pupilData) {
-    //- TODO ADVICE: Would it make sense?
-    //if (pupilData == _pupilData) return;
+    // TODO: Revisit for equality check
     _pupilData = pupilData;
-    // ignore: prefer_for_elements_to_map_fromiterable
-    // _missedSchooldays = Map.fromIterable(pupilData.missedSchooldays,
-    //     key: (e) => e.missedDay, value: (e) => e);
 
     pupilIsDirty = true;
     notifyListeners();
   }
 
   void updatePupilIdentity(PupilIdentity pupilIdentity) {
-    if (_pupilIdentity != pupilIdentity) {
-      _pupilIdentity = pupilIdentity;
-      pupilIsDirty = true;
-      notifyListeners();
-    }
+    _pupilIdentity = pupilIdentity;
+    pupilIsDirty = true;
+    notifyListeners();
   }
 
   //- PupilIdentity GETTERS
@@ -83,10 +81,18 @@ class PupilProxy with ChangeNotifier {
   String get gender => _pupilIdentity.gender;
   String get language => _pupilIdentity.language;
   String? get family => _pupilIdentity.family;
-  DateTime get birthday => _pupilIdentity.birthday;
+  DateTime get birthday {
+    final utc = _pupilIdentity.birthday;
+    final local = utc.toLocal();
+    _log.fine('''${_pupilIdentity.firstName} ${_pupilIdentity.lastName}
+    is UTC: ${utc.isUtc}
+    birthday UTC: $utc, local: $local''');
+    return local;
+  }
+
   int get age {
-    final today = DateTime.now().toUtc();
-    int age = today.year - _pupilIdentity.birthday.year;
+    final today = DateTime.now();
+    int age = today.year - _pupilIdentity.birthday.toLocal().year;
     if (today.month < _pupilIdentity.birthday.month ||
         (today.month == _pupilIdentity.birthday.month &&
             today.day < _pupilIdentity.birthday.day)) {
@@ -97,14 +103,16 @@ class PupilProxy with ChangeNotifier {
 
   String? get groupTutor => _pupilIdentity.groupTutor;
 
-  DateTime? get migrationSupportEnds => _pupilIdentity.migrationSupportEnds;
+  DateTime? get migrationSupportEnds =>
+      _pupilIdentity.migrationSupportEnds?.toLocal();
   DateTime get pupilSince => _pupilIdentity.pupilSince;
 
   DateTime? get familyLanguageLessonsSince =>
-      _pupilIdentity.familyLanguageLessonsSince;
-  DateTime? get religionLessonsSince => _pupilIdentity.religionLessonsSince;
+      _pupilIdentity.familyLanguageLessonsSince?.toLocal();
+  DateTime? get religionLessonsSince =>
+      _pupilIdentity.religionLessonsSince?.toLocal();
   DateTime? get religionLessonsCancelledAt =>
-      _pupilIdentity.religionLessonsCancelledAt;
+      _pupilIdentity.religionLessonsCancelledAt?.toLocal();
 
   String? get religion => _pupilIdentity.religion;
   //- PUPIL DATA GETTERS
@@ -149,7 +157,7 @@ class PupilProxy with ChangeNotifier {
 
   // Legacy OGS getters for backward compatibility
   // TODO URGENT: Remove these after migrating all OGS code to use proper afterSchoolCare model
-  bool get ogs => afterSchoolCare != null;
+  //bool get ogs => afterSchoolCare != null;
 
   String? pickUpTime(AfterSchoolCareWeekday weekday) {
     final pickUpTimes = afterSchoolCare?.pickUpTimes;
@@ -182,7 +190,8 @@ class PupilProxy with ChangeNotifier {
 
   // learning related
 
-  DateTime? get schoolyearHeldBackAt => _pupilData.schoolyearHeldBackAt;
+  DateTime? get schoolyearHeldBackAt =>
+      _pupilData.schoolyearHeldBackAt?.toLocal();
 
   List<CompetenceCheck>? get competenceChecks => _pupilData.competenceChecks;
 
@@ -217,6 +226,7 @@ class PupilProxy with ChangeNotifier {
 
   // schoolday related
 
-  List<MissedSchoolday>? get missedSchooldays => _pupilData.missedSchooldays;
+  List<MissedSchoolday>? get missedSchooldays =>
+      di<AttendanceManager>().getAllPupilMissedSchooldays(pupilId);
   List<SchooldayEvent>? get schooldayEvents => _pupilData.schooldayEvents;
 }

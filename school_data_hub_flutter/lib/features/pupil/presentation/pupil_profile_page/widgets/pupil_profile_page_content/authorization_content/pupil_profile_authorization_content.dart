@@ -12,9 +12,7 @@ class PupilProfileAuthorizationContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.pupilProfileBackgroundColor,
-      ),
+      decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
       child: Column(
         children: [
           PupilProfileContentSection(

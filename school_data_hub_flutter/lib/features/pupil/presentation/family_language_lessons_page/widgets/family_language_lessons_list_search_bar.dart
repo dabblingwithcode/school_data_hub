@@ -31,7 +31,7 @@ class FamilyLanguageLessonsListSearchBar extends WatchingWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.people_alt_rounded,
                   color: AppColors.backgroundColor,
                 ),
@@ -52,17 +52,19 @@ class FamilyLanguageLessonsListSearchBar extends WatchingWidget {
             child: Row(
               children: [
                 Expanded(
-                    child: PupilSearchTextField(
-                        searchType: SearchType.pupil,
-                        hintText: 'Schüler/in suchen',
-                        refreshFunction: _pupilsFilter.refreshs)),
+                  child: PupilSearchTextField(
+                    searchType: SearchType.pupil,
+                    hintText: 'Schüler/in suchen',
+                    refreshFunction: _pupilsFilter.refreshs,
+                  ),
+                ),
                 FilterButton(
                   isSearchBar: true,
                   showBottomSheetFunction: () => showGenericFilterBottomSheet(
-                      context: context, filterList: [
-                    const CommonPupilFiltersWidget(),
-                  ]),
-                )
+                    context: context,
+                    filterList: [const CommonPupilFiltersWidget()],
+                  ),
+                ),
               ],
             ),
           ),
@@ -71,4 +73,3 @@ class FamilyLanguageLessonsListSearchBar extends WatchingWidget {
     );
   }
 }
-

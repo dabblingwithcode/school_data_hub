@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
@@ -109,33 +109,7 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                         ),
                       ],
                     ),
-                    Wrap(
-                      children: [
-                        const Text('ärztl. U.: '),
-                        Text(
-                          LearningSupportHelper.preschoolRevision(
-                            pupil.preSchoolMedical?.preschoolMedicalStatus,
-                          ),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Wrap(
-                      children: [
-                        const Text('Kindergartenbesuch: '),
-                        Text(
-                          pupil.kindergardenInfo?.attendedMonths.toString() ??
-                              'Kein Eintrag',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
+
                     if (pupil.migrationSupportEnds != null)
                       Wrap(
                         children: [
@@ -191,7 +165,7 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                                   ? '🌈'
                                   : pupil.latestSupportLevel!.level.toString()
                             : '0',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 23,
                           fontWeight: FontWeight.bold,
                           color: AppColors.backgroundColor,
@@ -204,7 +178,7 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                                 ? '${pupil.specialNeeds!.substring(0, 2)} ${pupil.specialNeeds!.substring(2, 4)}'
                                 : pupil.specialNeeds!.substring(0, 2)
                           : '',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                         color: AppColors.groupColor,

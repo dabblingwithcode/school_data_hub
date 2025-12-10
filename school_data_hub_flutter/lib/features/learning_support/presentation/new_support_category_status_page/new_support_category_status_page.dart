@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/s
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/goal_examples_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_category_parents_names.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_category_widgets/support_category_status_dropdown.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class NewSupportCategoryStatusPage extends StatelessWidget {
@@ -18,7 +18,7 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _pupilManager = di<PupilManager>();
+    final _pupilManager = di<PupilProxyManager>();
     final _learningSupportPlanManager = di<LearningSupportManager>();
     final _supportCategoryManager = di<SupportCategoryManager>();
     return Theme(
@@ -65,94 +65,91 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                         controller.goalCategoryId == null ||
                                 controller.goalCategoryId == 0
                             ? ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  backgroundColor: AppColors.backgroundColor,
+                                  minimumSize: const Size.fromHeight(60),
                                 ),
-                                backgroundColor: AppColors.backgroundColor,
-                                minimumSize: const Size.fromHeight(60),
-                              ),
-                              onPressed: () async {
-                                final int? categoryId = await Navigator.of(
-                                  context,
-                                ).push(
-                                  MaterialPageRoute(
-                                    builder:
-                                        (ctx) => SelectSupportCategory(
-                                          pupil:
-                                              _pupilManager.getPupilByPupilId(
-                                                controller.widget.pupilId,
-                                              )!,
-                                          elementType:
-                                              controller.widget.elementType,
+                                onPressed: () async {
+                                  final int?
+                                  categoryId = await Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (ctx) => SelectSupportCategory(
+                                        pupil: _pupilManager.getPupilByPupilId(
+                                          controller.widget.pupilId,
+                                        )!,
+                                        elementType:
+                                            controller.widget.elementType,
+                                      ),
+                                    ),
+                                  );
+                                  if (categoryId == null) {
+                                    return;
+                                  }
+                                  controller.setGoalCategoryId(categoryId);
+                                },
+                                child: const Text(
+                                  'KATEGORIE AUSWÄHLEN',
+                                  style: AppStyles.buttonTextStyle,
+                                ),
+                              )
+                            : InkWell(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    color: _supportCategoryManager
+                                        .getCategoryColor(
+                                          controller.goalCategoryId!,
                                         ),
                                   ),
-                                );
-                                if (categoryId == null) {
-                                  return;
-                                }
-                                controller.setGoalCategoryId(categoryId);
-                              },
-                              child: const Text(
-                                'KATEGORIE AUSWÄHLEN',
-                                style: AppStyles.buttonTextStyle,
-                              ),
-                            )
-                            : InkWell(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                  color: _supportCategoryManager
-                                      .getCategoryColor(
-                                        controller.goalCategoryId!,
-                                      ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: 5.0,
-                                    bottom: 8,
-                                  ),
-                                  child: Wrap(
-                                    crossAxisAlignment:
-                                        WrapCrossAlignment.center,
-                                    children: [
-                                      ...categoryTreeAncestorsNames(
-                                        categoryId: controller.goalCategoryId!,
-                                        categoryColor:
-                                            Colors
-                                                .white, //locator<LearningSupportManager>().getCategoryColor(controller.goalCategoryId!),
-                                      ),
-                                    ],
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: 5.0,
+                                      bottom: 8,
+                                    ),
+                                    child: Wrap(
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.center,
+                                      children: [
+                                        ...categoryTreeAncestorsNames(
+                                          categoryId:
+                                              controller.goalCategoryId!,
+                                          categoryColor: Colors
+                                              .white, //locator<LearningSupportManager>().getCategoryColor(controller.goalCategoryId!),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
                         const Gap(5),
                         controller.goalCategoryId == null
                             ? const SizedBox.shrink()
                             : controller.goalCategoryId == 0
                             ? const SizedBox.shrink()
                             : Row(
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    _supportCategoryManager
-                                        .getSupportCategory(
-                                          controller.goalCategoryId!,
-                                        )
-                                        .name,
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      color: _supportCategoryManager
-                                          .getCategoryColor(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      _supportCategoryManager
+                                          .getSupportCategory(
                                             controller.goalCategoryId!,
-                                          ),
-                                      fontWeight: FontWeight.bold,
+                                          )
+                                          .name,
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        color: _supportCategoryManager
+                                            .getCategoryColor(
+                                              controller.goalCategoryId!,
+                                            ),
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
+                                ],
+                              ),
                         const Gap(5),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -204,9 +201,9 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                           decoration: AppStyles.textFieldDecoration(
                             labelText:
                                 (controller.widget.appBarTitle ==
-                                        'Neues Förderziel')
-                                    ? 'Hilfen für das Erreichen des Zieles'
-                                    : 'Beschreibung des Ist-Zustandes',
+                                    'Neues Förderziel')
+                                ? 'Hilfen für das Erreichen des Zieles'
+                                : 'Beschreibung des Ist-Zustandes',
                           ),
                         ),
                         const Gap(20),
@@ -301,10 +298,9 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                                   pupilId: controller.widget.pupilId,
                                   supportCategoryId: controller.goalCategoryId!,
                                   status: controller.categoryStatusValue,
-                                  comment:
-                                      controller
-                                          .strategiesTextField2Controller
-                                          .text,
+                                  comment: controller
+                                      .strategiesTextField2Controller
+                                      .text,
                                 );
                           }
                           Navigator.pop(context);

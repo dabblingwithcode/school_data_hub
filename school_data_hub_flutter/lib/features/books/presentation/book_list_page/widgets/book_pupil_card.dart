@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:watch_it/watch_it.dart';
@@ -19,7 +19,7 @@ class BookLendingPupilCard extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final pupil = watch<PupilProxy>(
-      di<PupilManager>().getPupilByPupilId(passedPupilBook.pupilId)!,
+      di<PupilProxyManager>().getPupilByPupilId(passedPupilBook.pupilId)!,
     );
     final watchedPupilBook = pupil.pupilBookLendings?.firstWhere(
       (element) => element.lendingId == passedPupilBook.lendingId,

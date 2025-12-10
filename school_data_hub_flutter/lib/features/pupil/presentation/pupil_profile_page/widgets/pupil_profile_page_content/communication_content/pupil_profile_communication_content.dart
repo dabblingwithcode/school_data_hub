@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/extensions/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
@@ -28,9 +28,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
     final tutorInfo = watchPropertyValue((m) => m.tutorInfo, target: pupil);
 
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.pupilProfileBackgroundColor,
-      ),
+      decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -77,7 +75,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                   icon: Icons.person_outline,
                   label: 'Kind',
                   valueWidget: communicationPupil == null
-                      ? const Text(
+                      ? Text(
                           'kein Eintrag - tippen zum Hinzufügen',
                           style: TextStyle(
                             fontSize: 14,
@@ -120,7 +118,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                   icon: Icons.person_outline,
                   label: 'Mutter / TutorIn 1',
                   valueWidget: tutorInfo?.communicationTutor1 == null
-                      ? const Text(
+                      ? Text(
                           'kein Eintrag - tippen zum Hinzufügen',
                           style: TextStyle(
                             fontSize: 14,
@@ -166,7 +164,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                   icon: Icons.person_outline,
                   label: 'Vater / TutorIn 2',
                   valueWidget: tutorInfo?.communicationTutor2 == null
-                      ? const Text(
+                      ? Text(
                           'kein Eintrag - tippen zum Hinzufügen',
                           style: TextStyle(
                             fontSize: 14,

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/after_school_care_content/pupil_ogs_content.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/after_school_care_content/pupil_after_school_care_content.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/attendance_content/pupil_profile_attendance_content.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/authorization_content/pupil_profile_authorization_content.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/communication_content/pupil_profile_communication_content.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/credit/pupil_profile_credit_content.dart';
@@ -13,7 +12,6 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profil
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/pupil_profile_learning_support_content.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/school_list_content/pupil_school_lists_content_card.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/schoolday_events_content/pupil_profile_schoolday_events_content.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_profile_attendance_content.dart';
 import 'package:watch_it/watch_it.dart';
 
 class PupilProfilePageContent extends WatchingWidget {
@@ -25,55 +23,93 @@ class PupilProfilePageContent extends WatchingWidget {
   Widget build(BuildContext context) {
     int navState = watchValue((BottomNavManager x) => x.pupilProfileNavState);
 
+    final children = [
+      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.info),
+      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.language),
+      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.credit),
+      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.attendance),
+      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.schoolday),
+      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.ogs),
+      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.lists),
+      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.auth),
+      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.learningSup),
+      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.learning),
+    ];
+
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.pupilProfileBackgroundColor,
-      ),
-      child: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Padding(
-          padding: const EdgeInsets.only(
-            left: 4,
-            right: 4,
-            bottom: 8.0,
-          ), // Reduced padding
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              // Add animated transition for content switching
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                transitionBuilder: (Widget child, Animation<double> animation) {
-                  return SlideTransition(
-                    position:
-                        Tween<Offset>(
-                          begin: const Offset(0.1, 0),
-                          end: Offset.zero,
-                        ).animate(
-                          CurvedAnimation(
-                            parent: animation,
-                            curve: Curves.easeInOut,
-                          ),
-                        ),
-                    child: FadeTransition(opacity: animation, child: child),
-                  );
-                },
-                child: _buildContentForState(navState),
-              ),
-              const Gap(16), // Reduced from 32 to 16
-            ],
+      decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 4, right: 4, bottom: 10),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          child: KeyedSubtree(
+            key: ValueKey(navState),
+            child: children[navState],
           ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildContentForState(int navState) {
-    // Use a key to ensure AnimatedSwitcher recognizes content changes
-    final contentKey = ValueKey(navState);
+enum _ProfilePageChild {
+  info,
+  language,
+  credit,
+  attendance,
+  schoolday,
+  ogs,
+  lists,
+  auth,
+  learningSup,
+  learning,
+}
+
+class _ProfilePageWrapper extends StatelessWidget {
+  final _ProfilePageChild childBuilder;
+  const _ProfilePageWrapper({required this.childBuilder});
+
+  @override
+  Widget build(BuildContext context) {
+    final PupilProxy pupil = (context as Element)
+        .findAncestorWidgetOfExactType<PupilProfilePageContent>()!
+        .pupil;
+
+    Widget child;
+    switch (childBuilder) {
+      case _ProfilePageChild.info:
+        child = PupilProfileInfosContent(pupil: pupil);
+        break;
+      case _ProfilePageChild.language:
+        child = PupilProfileCommunicationContent(pupil: pupil);
+        break;
+      case _ProfilePageChild.credit:
+        child = PupilProfileCreditContent(pupil: pupil);
+        break;
+      case _ProfilePageChild.attendance:
+        child = PupilAttendanceContent(pupil: pupil);
+        break;
+      case _ProfilePageChild.schoolday:
+        child = PupilProfileSchooldayEventsContent(pupil: pupil);
+        break;
+      case _ProfilePageChild.ogs:
+        child = PupilOgsContent(pupil: pupil);
+        break;
+      case _ProfilePageChild.lists:
+        child = PupilSchoolListsContentCard(pupil: pupil);
+        break;
+      case _ProfilePageChild.auth:
+        child = PupilProfileAuthorizationContent(pupil: pupil);
+        break;
+      case _ProfilePageChild.learningSup:
+        child = PupilProfileLearningSupportContent(pupil: pupil);
+        break;
+      case _ProfilePageChild.learning:
+        child = PupilLearningContent(pupil: pupil);
+        break;
+    }
 
     return Container(
-      key: contentKey,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
@@ -84,36 +120,7 @@ class PupilProfilePageContent extends WatchingWidget {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: _getContentWidget(navState),
-      ),
+      child: ClipRRect(borderRadius: BorderRadius.circular(16), child: child),
     );
-  }
-
-  Widget _getContentWidget(int navState) {
-    if (navState == ProfileNavigationState.info.value) {
-      return PupilProfileInfosContent(pupil: pupil);
-    } else if (navState == ProfileNavigationState.language.value) {
-      return PupilProfileCommunicationContent(pupil: pupil);
-    } else if (navState == ProfileNavigationState.credit.value) {
-      return PupilProfileCreditContent(pupil: pupil);
-    } else if (navState == ProfileNavigationState.attendance.value) {
-      return PupilAttendanceContent(pupil: pupil);
-    } else if (navState == ProfileNavigationState.schooldayEvent.value) {
-      return PupilProfileSchooldayEventsContent(pupil: pupil);
-    } else if (navState == ProfileNavigationState.ogs.value) {
-      return PupilOgsContent(pupil: pupil);
-    } else if (navState == ProfileNavigationState.lists.value) {
-      return PupilSchoolListsContentCard(pupil: pupil);
-    } else if (navState == ProfileNavigationState.authorization.value) {
-      return PupilProfileAuthorizationContent(pupil: pupil);
-    } else if (navState == ProfileNavigationState.learningSupport.value) {
-      return PupilProfileLearningSupportContent(pupil: pupil);
-    } else if (navState == ProfileNavigationState.learning.value) {
-      return PupilLearningContent(pupil: pupil);
-    } else {
-      return PupilProfileInfosContent(pupil: pupil);
-    }
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identity_stream_page/pupil_identity_stream_page.dart';
 
 Future<void> showConnectionCodeDialog(BuildContext context) async {

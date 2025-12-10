@@ -12,7 +12,8 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/document_image.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
@@ -24,8 +25,9 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/w
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/support_category_statuses_list.dart';
 import 'package:school_data_hub_flutter/features/learning_support/services/learning_support_plan_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_helper_functions.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/support_level_history_expansion_tile.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
@@ -42,6 +44,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
   Widget build(BuildContext context) {
     final _hubSessionManager = di<HubSessionManager>();
     final isAdmin = _hubSessionManager.isAdmin;
+
     final kindergarden = watchPropertyValue(
       (m) => m.kindergarden,
       target: pupil,
@@ -64,134 +67,148 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
           ],
         ),
         const Gap(10),
-        if (isAdmin)
-          Row(
-            children: [
-              Expanded(
-                child: InkWell(
-                  onTap: () => preschoolRevisionDialog(
-                    context,
-                    pupil,
-                    pupil.preSchoolMedical?.preschoolMedicalStatus,
+
+        Row(
+          children: [
+            Expanded(
+              child: InkWell(
+                onTap: () => preschoolRevisionDialog(
+                  context,
+                  pupil,
+                  pupil.preSchoolMedical?.preschoolMedicalStatus,
+                ),
+                child: Text(
+                  PupilProxyHelper.preschoolRevisionPredicate(
+                    pupil.preSchoolMedical,
                   ),
-                  child: Text(
-                    PupilHelper.preschoolRevisionPredicate(
-                      pupil.preSchoolMedical,
-                    ),
-                    style: const TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.interactiveColor,
-                    ),
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.interactiveColor,
                   ),
                 ),
               ),
-              // HubDocument files display (following competence check pattern)
-              if (pupil.preSchoolMedical?.preschoolMedicalFiles != null)
-                for (HubDocument file
-                    in pupil.preSchoolMedical!.preschoolMedicalFiles!) ...[
-                  const Gap(10),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      InkWell(
-                        onTap: () async {
-                          // Show document in full screen dialog
-                          showDialog(
-                            context: context,
-                            builder: (context) => Dialog(
-                              child: Container(
-                                constraints: const BoxConstraints(
-                                  maxWidth: 600,
-                                  maxHeight: 800,
-                                ),
-                                child: DocumentImage(
-                                  documentId: file.documentId,
-                                  size: 400,
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                        onLongPress: () async {
-                          bool? confirm = await confirmationDialog(
-                            context: context,
-                            title: 'Dokument löschen',
-                            message: 'Dokument löschen?',
-                          );
-                          if (confirm != true) {
-                            return;
-                          }
-
-                          await _removeFileFromPreSchoolMedical(file, pupil);
-                        },
-                        child: DocumentImage(
-                          documentId: file.documentId,
-                          size: 70,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              // Upload button (following competence check pattern)
-              if (pupil.preSchoolMedical?.preschoolMedicalFiles == null ||
-                  (pupil.preSchoolMedical?.preschoolMedicalFiles?.length ?? 0) <
-                      4)
+            ),
+            // HubDocument files display (following competence check pattern)
+            if (pupil.preSchoolMedical?.preschoolMedicalFiles != null)
+              for (HubDocument file
+                  in pupil.preSchoolMedical!.preschoolMedicalFiles!) ...[
+                const Gap(10),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     InkWell(
                       onTap: () async {
-                        final File? file = await createAndCropImageFile(
-                          context,
+                        // Show document in full screen dialog
+                        showDialog(
+                          context: context,
+                          builder: (context) => Dialog(
+                            child: Container(
+                              constraints: const BoxConstraints(
+                                maxWidth: 600,
+                                maxHeight: 800,
+                              ),
+                              child: EncryptedDocumentImage(
+                                documentId: file.documentId,
+                                size: 400,
+                              ),
+                            ),
+                          ),
                         );
-                        if (file == null) return;
-
-                        await _uploadFileToPreSchoolMedical(file, pupil);
                       },
-                      child: SizedBox(
-                        height: 70,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(5),
-                          child: Image.asset('assets/document_camera.png'),
-                        ),
+                      onLongPress: () async {
+                        if (!isAdmin) {
+                          di<NotificationService>().showSnackBar(
+                            NotificationType.error,
+                            'Nur Admins können Dokumente ansehen',
+                          );
+                          return;
+                        }
+                        bool? confirm = await confirmationDialog(
+                          context: context,
+                          title: 'Dokument löschen',
+                          message: 'Dokument löschen?',
+                        );
+                        if (confirm != true) {
+                          return;
+                        }
+
+                        await _removeFileFromPreSchoolMedical(file, pupil);
+                      },
+                      child: EncryptedDocumentImage(
+                        documentId: file.documentId,
+                        size: 70,
                       ),
                     ),
                   ],
                 ),
-            ],
-          ),
-        if (isAdmin)
+              ],
+            // Upload button (following competence check pattern)
+            if (pupil.preSchoolMedical?.preschoolMedicalFiles == null ||
+                (pupil.preSchoolMedical?.preschoolMedicalFiles?.length ?? 0) <
+                    4)
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    onTap: () async {
+                      if (!isAdmin) {
+                        di<NotificationService>().showSnackBar(
+                          NotificationType.error,
+                          'Nur Admins können Dokumente hochladen',
+                        );
+                        return;
+                      }
+                      final File? file = await createAndCropImageFile(context);
+                      if (file == null) return;
+
+                      await _uploadFileToPreSchoolMedical(file, pupil);
+                    },
+                    child: SizedBox(
+                      height: 70,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: Image.asset('assets/document_camera.png'),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
+        if (isAdmin) ...[
           const Row(
             children: [
               Text('Kindergartenbesuch: ', style: TextStyle(fontSize: 15.0)),
               Gap(5),
             ],
           ),
-        const Gap(10),
-        if (isAdmin)
+          const Gap(10),
+
           Row(
             children: [
               InkWell(
                 //- TODO: implement long text field dialog
                 onTap: () async {
-                  //   final newKindergardenValue = await longTextFieldDialog(
-                  //       title: 'Informationen zum Kindergartenbesuch',
-                  //       labelText: 'Kindergartenbesuch',
-                  //       initialValue: kindergarden ?? '',
-                  //       parentContext: context);
-                  //   if (newKindergardenValue == null ||
-                  //       newKindergardenValue.isEmpty) {
-                  //     return;
-                  //   }
-                  //   await _pupilManager.updateStringProperty(
-                  //       pupilId: pupil.pupilId,
-                  //       property: 'kindergarden',
-                  //       value: newKindergardenValue);
+                  final newKindergardenValue = await longTextFieldDialog(
+                    title: 'Informationen zum Kindergartenbesuch',
+                    labelText: 'Kindergartenbesuch',
+                    initialValue: kindergarden?.name ?? 'Kein Eintrag',
+                    parentContext: context,
+                  );
+                  if (newKindergardenValue == null ||
+                      newKindergardenValue.isEmpty) {
+                    return;
+                  }
+                  await di<PupilMutator>().updateStringProperty(
+                    pupilId: pupil.pupilId,
+                    property: 'kindergarden',
+                    value: newKindergardenValue,
+                  );
                 },
                 child: Text(
                   kindergarden?.name ?? 'kein Eintrag',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
                     color: AppColors.interactiveColor,
@@ -200,6 +217,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
               ),
             ],
           ),
+        ],
         const Gap(10),
         if (supportLevelHistory != null)
           supportLevelHistory.isNotEmpty
@@ -231,7 +249,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                             : latestSupportLevel.level == 4
                             ? 'Regenbogenförderung'
                             : 'unbekannt',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: AppColors.interactiveColor,
@@ -452,7 +470,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                   ),
                   child: Text(
                     'Förderebene ${plan.learningSupportLevelId}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       color: AppColors.backgroundColor,
@@ -472,7 +490,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                         color: AppColors.accentColor.withValues(alpha: 0.3),
                       ),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.picture_as_pdf,
                       size: 20,
                       color: AppColors.accentColor,
@@ -608,7 +626,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
       final client = di<Client>();
       final notificationService = di<NotificationService>();
       final hubSessionManager = di<HubSessionManager>();
-      final pupilManager = di<PupilManager>();
+      final pupilManager = di<PupilProxyManager>();
 
       // Ensure PreSchoolMedical record exists
       if (pupil.preSchoolMedical == null) {
@@ -695,7 +713,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
     try {
       final client = di<Client>();
       final notificationService = di<NotificationService>();
-      final pupilManager = di<PupilManager>();
+      final pupilManager = di<PupilProxyManager>();
 
       if (pupil.preSchoolMedical == null) {
         notificationService.showSnackBar(
