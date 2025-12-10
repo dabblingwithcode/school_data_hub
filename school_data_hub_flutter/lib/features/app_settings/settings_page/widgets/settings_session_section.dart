@@ -29,6 +29,11 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
     final serverName = watchPropertyValue((EnvManager x) => x.activeEnv);
     final _cacheManager = di<DefaultCacheManager>();
 
+    final pupilIdentityManager = di.isRegistered<PupilIdentityManager>()
+        ? di<PupilIdentityManager>()
+        : null;
+    final remoteUpdate = pupilIdentityManager?.remoteLastIdentitiesUpdate.value;
+
     final _notificationService = di<NotificationService>();
 
     final locale = AppLocalizations.of(context)!;
@@ -185,21 +190,12 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
               fontWeight: FontWeight.bold,
               color:
                   di<EnvManager>().activeEnv?.lastIdentitiesUpdate ==
-                          di<PupilIdentityManager>()
-                              .remoteLastIdentitiesUpdate
-                              .value ||
-                      di<PupilIdentityManager>()
-                                  .remoteLastIdentitiesUpdate
-                                  .value !=
-                              null &&
+                          remoteUpdate ||
+                      remoteUpdate != null &&
                           di<EnvManager>().activeEnv?.lastIdentitiesUpdate !=
                               null &&
                           (di<EnvManager>().activeEnv?.lastIdentitiesUpdate!
-                                  .isAfter(
-                                    di<PupilIdentityManager>()
-                                        .remoteLastIdentitiesUpdate
-                                        .value!,
-                                  ) ==
+                                  .isAfter(remoteUpdate) ==
                               true)
                   ? Colors.green
                   : Colors.red,
@@ -210,9 +206,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
         SettingsTile.navigation(
           leading: const Icon(Icons.perm_identity_rounded),
           title: const Text('Aktuelleste Daten vom:'),
-          value: Text(
-            '${di<PupilIdentityManager>().remoteLastIdentitiesUpdate.value?.formatDateAndTimeForUser()}',
-          ),
+          value: Text('${remoteUpdate?.formatDateAndTimeForUser()}'),
           trailing: null,
         ),
         SettingsTile.navigation(
