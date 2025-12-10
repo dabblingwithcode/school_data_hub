@@ -28,7 +28,14 @@ class IsbnApi {
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode != 200) {
-      throw Exception('Failed to load book data');
+      // The api had no data for this isbn, we need t return a placeholder book
+      // to let the user type the book data himself
+      return IsbnApiData(
+          author: 'Unbekannt',
+          title: 'Unbekannt',
+          description: 'Unbekannt',
+          imagePath:
+              'https://hermannschule.de/Bilder/kein_bild_vorhanden.jpeg');
     }
 
     final document = parse(response.body);
@@ -60,7 +67,7 @@ class IsbnApi {
     if (image.statusCode != 200) {
       // If the image is not found, we return a placeholder image
       return IsbnApiData(
-          imagePath: 'https://via.placeholder.com/150',
+          imagePath: 'https://hermannschule.de/Bilder/kein_bild_vorhanden.jpeg',
           title: title,
           author: author,
           description: description);
