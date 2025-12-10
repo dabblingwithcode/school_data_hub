@@ -118,8 +118,9 @@ class SchooldayEventManager with ChangeNotifier {
     int schooldayId,
     DateTime dateTime,
     SchooldayEventType type,
-    String reason,
-  ) async {
+    String reason, {
+    String? eventTime,
+  }) async {
     final SchooldayEvent
     schooldayEvent = await _schooldayEventApiService.postSchooldayEvent(
       '${di<PupilProxyManager>().getPupilByPupilId(pupilId)!.firstName} (${di<PupilProxyManager>().getPupilByPupilId(pupilId)!.group})',
@@ -128,6 +129,7 @@ class SchooldayEventManager with ChangeNotifier {
       dateTime,
       type,
       reason,
+      eventTime: eventTime,
     );
 
     _updateSchooldayEventCollections(schooldayEvent);
@@ -167,6 +169,7 @@ class SchooldayEventManager with ChangeNotifier {
     NullableDateTimeRecord? processedAt,
     int? schooldayId,
     NullableStringRecord? comment,
+    String? eventTime,
   }) async {
     String? cacheKey;
     if (processed == false && eventToUpdate.processedDocumentId != null) {
@@ -183,6 +186,7 @@ class SchooldayEventManager with ChangeNotifier {
           schooldayId: schooldayId,
           type: schoolEventType,
           comment: comment,
+          eventTime: eventTime,
         );
 
     _updateSchooldayEventCollections(schooldayEvent);

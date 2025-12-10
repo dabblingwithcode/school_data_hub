@@ -19,6 +19,7 @@ class SettingsAccountSection extends AbstractSettingsSection with WatchItMixin {
     )!.userInfo!.userName!;
     final isTester = di<HubSessionManager>().user!.userFlags.isTester;
     final isAdmin = di<HubSessionManager>().isAdmin;
+    final int userCredit = di<HubSessionManager>().userCredit ?? 0;
     return SettingsSection(
       title: const Text(
         'Konto',
@@ -80,6 +81,14 @@ class SettingsAccountSection extends AbstractSettingsSection with WatchItMixin {
           title: const Text('Ausloggen und Daten löschen'),
           value: const Text('App wird zurückgesetzt!'),
           //onPressed:
+        ),
+        SettingsTile.navigation(
+          leading: const Icon(Icons.attach_money_rounded),
+          title: const Text('Guthaben'),
+          value: Text(
+            userCredit.toString(),
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
       ],
     );

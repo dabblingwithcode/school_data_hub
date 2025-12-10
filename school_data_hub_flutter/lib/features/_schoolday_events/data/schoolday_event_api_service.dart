@@ -24,14 +24,15 @@ class SchooldayEventApiService {
     int schooldayId,
     DateTime dateTime,
     SchooldayEventType type,
-    String reason,
-  ) async {
+    String reason, {
+    String? eventTime,
+  }) async {
     final userName = _hubSessionManager.userName!;
     _notificationService.apiRunning(true);
     final pupil = di<PupilProxyManager>().getPupilByPupilId(pupilId);
     final tutor = pupil?.groupTutor;
     try {
-      final event = await _client.schooldayEvent.createSchooldayEvent(
+      var event = await _client.schooldayEvent.createSchooldayEvent(
         pupilNameAndGroup: pupilName,
         dateTimeAsString: dateTime.formatDateForUser(),
         pupilId: pupilId,
@@ -41,6 +42,13 @@ class SchooldayEventApiService {
         createdBy: userName,
         tutor: tutor ?? '',
       );
+
+      if (eventTime != null) {
+        event = await updateSchooldayEvent(
+          schooldayEvent: event,
+          eventTime: eventTime,
+        );
+      }
 
       _notificationService.apiRunning(false);
 
@@ -77,11 +85,11 @@ class SchooldayEventApiService {
     SchooldayEventType? type,
     String? reason,
     bool? processed,
-    //String? file,
     NullableStringRecord? processedBy,
     NullableDateTimeRecord? processedAt,
     int? schooldayId,
     NullableStringRecord? comment,
+    String? eventTime,
   }) async {
     bool changedProcessedStatus = false;
     // if the schooldayEvent is patched as processed,
@@ -115,6 +123,7 @@ class SchooldayEventApiService {
           ? processedAt.value
           : schooldayEvent.processedAt,
       comment: comment != null ? comment.value : schooldayEvent.comment,
+      eventTime: eventTime ?? schooldayEvent.eventTime,
     );
     final pupil = di<PupilProxyManager>().getPupilByPupilId(
       schooldayEvent.pupilId,

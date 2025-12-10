@@ -25,7 +25,10 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    di.allReady();
+    callOnce((BuildContext context) async {
+      await di.allReady();
+    });
+
     final serverName = watchPropertyValue((EnvManager x) => x.activeEnv);
     final _cacheManager = di<DefaultCacheManager>();
 
@@ -38,7 +41,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
 
     final locale = AppLocalizations.of(context)!;
     final _hubSessionManager = di<HubSessionManager>();
-    final int userCredit = _hubSessionManager.userCredit ?? 0;
+
     final activeEnv = serverName;
     final activeSchemeKey = appColorSchemeKeyFromString(
       activeEnv?.colorSchemeKey,
@@ -149,15 +152,6 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
             value: Text(serverName.serverUrl),
             trailing: null,
           ),
-
-        SettingsTile.navigation(
-          leading: const Icon(Icons.attach_money_rounded),
-          title: const Text('Guthaben'),
-          value: Text(
-            userCredit.toString(),
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
 
         SettingsTile.navigation(
           onPressed: (context) async {

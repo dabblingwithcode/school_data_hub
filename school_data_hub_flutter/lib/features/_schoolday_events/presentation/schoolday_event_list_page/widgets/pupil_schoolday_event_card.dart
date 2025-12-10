@@ -114,6 +114,69 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                         fontSize: 20,
                                       ),
                                     ),
+                              const Gap(10),
+                              isAuthorized
+                                  ? InkWell(
+                                      onTap: () async {
+                                        final eventTime =
+                                            schooldayEvent.eventTime ?? '00:00';
+                                        final TimeOfDay?
+                                        picked = await showTimePicker(
+                                          context: context,
+                                          initialTime: TimeOfDay(
+                                            hour: int.parse(
+                                              eventTime.split(':')[0],
+                                            ),
+                                            minute: int.parse(
+                                              eventTime.split(':')[1],
+                                            ),
+                                          ),
+                                          builder:
+                                              (
+                                                BuildContext context,
+                                                Widget? child,
+                                              ) {
+                                                return MediaQuery(
+                                                  data: MediaQuery.of(context)
+                                                      .copyWith(
+                                                        alwaysUse24HourFormat:
+                                                            true,
+                                                      ),
+                                                  child: child!,
+                                                );
+                                              },
+                                        );
+                                        if (picked != null) {
+                                          final newEventTime =
+                                              '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+                                          await _schooldayEventManager
+                                              .updateSchooldayEvent(
+                                                eventToUpdate: schooldayEvent,
+                                                eventTime: newEventTime,
+                                              );
+                                          _notificationService.showSnackBar(
+                                            NotificationType.success,
+                                            'Uhrzeit erfolgreich geändert!',
+                                          );
+                                        }
+                                      },
+                                      child: Text(
+                                        schooldayEvent.eventTime ?? '--:--',
+                                        style: TextStyle(
+                                          color: AppColors.interactiveColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    )
+                                  : Text(
+                                      schooldayEvent.eventTime ?? '--:--',
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                    ),
                               const Gap(5),
                               InkWell(
                                 onLongPress: () {
