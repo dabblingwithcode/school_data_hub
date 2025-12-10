@@ -212,32 +212,33 @@ class AvatarWithBadges extends WatchingWidget {
                   ),
                 ),
               ),
-            if (pupil.family != null) ...[
-              Positioned(
+
+            if (pupil.specialInformation != null)
+              const Positioned(
                 top: 0,
                 bottom: 0,
-                left: -_badgeOffset - 7,
-                child: Container(
-                  width: _badgeSize,
-                  height: _badgeSize,
-
-                  child: Center(
-                    child: Icon(
-                      Icons.family_restroom_rounded,
-                      size: 20,
-                      color: AppColors.backgroundColor,
-                    ),
+                left: -_badgeOffset,
+                child: Center(
+                  child: Icon(
+                    Icons.info_rounded,
+                    size: 25,
+                    color: Color.fromARGB(255, 6, 92, 163),
                   ),
                 ),
               ),
-            ],
             Positioned(
               bottom: -_badgeOffset,
               left: -_badgeOffset,
               child: Container(
-                width: _badgeSize,
-                height: _badgeSize,
+                width: pupil.family != null ? _badgeSize + 3 : _badgeSize,
+                height: pupil.family != null ? _badgeSize + 3 : _badgeSize,
                 decoration: BoxDecoration(
+                  border: pupil.family != null
+                      ? Border.all(
+                          color: const Color.fromARGB(255, 120, 127, 216),
+                          width: 3,
+                        )
+                      : null,
                   color: AttendanceHelper.pupilIsMissedToday(pupil)
                       ? AppColors.warningButtonColor
                       : AppColors.groupColor,
@@ -259,8 +260,8 @@ class AvatarWithBadges extends WatchingWidget {
               bottom: -_badgeOffset,
               right: -_badgeOffset,
               child: Container(
-                width: pupil.schoolyearHeldBackAt != null ? 33.0 : _badgeSize,
-                height: pupil.schoolyearHeldBackAt != null ? 33.0 : _badgeSize,
+                width: pupil.family != null ? _badgeSize + 3 : _badgeSize,
+                height: pupil.family != null ? _badgeSize + 3 : _badgeSize,
                 decoration: BoxDecoration(
                   border: pupil.schoolyearHeldBackAt != null
                       ? Border.all(

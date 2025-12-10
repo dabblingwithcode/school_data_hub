@@ -109,33 +109,7 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                         ),
                       ],
                     ),
-                    Wrap(
-                      children: [
-                        const Text('ärztl. U.: '),
-                        Text(
-                          LearningSupportHelper.preschoolRevision(
-                            pupil.preSchoolMedical?.preschoolMedicalStatus,
-                          ),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Wrap(
-                      children: [
-                        const Text('Kindergartenbesuch: '),
-                        Text(
-                          pupil.kindergardenInfo?.attendedMonths.toString() ??
-                              'Kein Eintrag',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
+
                     if (pupil.migrationSupportEnds != null)
                       Wrap(
                         children: [
