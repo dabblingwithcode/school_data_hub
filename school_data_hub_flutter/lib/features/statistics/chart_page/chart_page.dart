@@ -65,7 +65,7 @@ class ChartPage extends WatchingWidget {
           title: 'Statistik Diagramm',
         ),
         body: const Center(child: Text('Keine Daten verfügbar')),
-        bottomNavigationBar: const BottomNavBarNoFilterButton(),
+        bottomNavigationBar: GenericBottomNavBarWithActions(),
       );
     }
 

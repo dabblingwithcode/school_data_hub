@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
-import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/change_password/change_password_page.dart';
 import 'package:watch_it/watch_it.dart';
@@ -57,31 +54,6 @@ class SettingsAccountSection extends AbstractSettingsSection with WatchItMixin {
           trailing: null,
         ),
 
-        SettingsTile.navigation(
-          leading: GestureDetector(
-            onTap: () async {
-              bool? confirm = await confirmationDialog(
-                context: context,
-                title: 'Achtung!',
-                message: 'Ausloggen und alle Daten löschen?',
-              );
-              if (confirm == true && context.mounted) {
-                SessionHelper.logoutAndDeleteAllInstanceData();
-              }
-              return;
-            },
-            child: const Row(
-              children: [
-                Icon(Icons.logout),
-                Gap(5),
-                Icon(Icons.delete_forever_outlined),
-              ],
-            ),
-          ),
-          title: const Text('Ausloggen und Daten löschen'),
-          value: const Text('App wird zurückgesetzt!'),
-          //onPressed:
-        ),
         SettingsTile.navigation(
           leading: const Icon(Icons.attach_money_rounded),
           title: const Text('Guthaben'),

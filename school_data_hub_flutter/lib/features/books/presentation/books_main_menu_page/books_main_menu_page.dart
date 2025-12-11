@@ -8,6 +8,7 @@ import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
+import 'package:school_data_hub_flutter/features/books/presentation/book_infos_page/book_infos_page.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_search_form/book_search_form_page.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_tag_management_page/book_tag_management_controller.dart';
 import 'package:watch_it/watch_it.dart';
@@ -53,9 +54,22 @@ class BooksMainMenuPage extends WatchingWidget {
                 //   );
                 // }),
                 const SizedBox(height: 5),
-                _buildButton(context, "Buch erfassen", () async {
-                  await _showNewBookDialog(context);
-                }, icon: Icons.qr_code_scanner),
+                _buildButton(
+                  context,
+                  "Buch erfassen",
+                  () async {
+                    await _showNewBookDialog(context);
+                  },
+                  icon: Icons.qr_code_scanner,
+                  onLongPress: () async {
+                    // For Windows: allow manual ISBN entry
+                    await _showNewBookDialog(context, dialog: true);
+                  },
+                ),
+                const SizedBox(height: 5),
+                _buildButton(context, "Buch-Infos", () async {
+                  await _showBookInfosDialog(context);
+                }, icon: Icons.info_outline),
                 const SizedBox(height: 5),
                 _buildButton(context, "Bücher suchen", () {
                   Navigator.of(context).push(
@@ -142,12 +156,14 @@ class BooksMainMenuPage extends WatchingWidget {
     BuildContext context,
     String label,
     VoidCallback onTap, {
+    VoidCallback? onLongPress,
     IconData? icon,
   }) {
     return Padding(
       padding: const EdgeInsets.all(4.0),
       child: InkWell(
         onTap: onTap,
+        onLongPress: onLongPress,
         child: Card(
           color: AppColors.backgroundColor,
           shape: RoundedRectangleBorder(
@@ -181,8 +197,8 @@ class BooksMainMenuPage extends WatchingWidget {
   }
 }
 
-Future<void> _showNewBookDialog(BuildContext context) async {
-  if (Platform.isWindows) {
+Future<void> _showNewBookDialog(BuildContext context, {bool? dialog}) async {
+  if (Platform.isWindows || dialog == true) {
     final isbn = await shortTextfieldDialog(
       context: context,
       title: 'ISBN eingeben',
@@ -219,6 +235,37 @@ Future<void> _showNewBookDialog(BuildContext context) async {
         builder: (ctx) =>
             NewBook(isEdit: false, isbn: int.parse(cleanScannedIsbn)),
       ),
+    );
+  }
+}
+
+Future<void> _showBookInfosDialog(BuildContext context) async {
+  if (Platform.isWindows) {
+    final libraryId = await shortTextfieldDialog(
+      context: context,
+      title: 'Buch-ID eingeben',
+      labelText: 'Buch-ID',
+      hintText: 'Bitte geben Sie die Buch-ID ein',
+    );
+
+    if (libraryId != null && libraryId.isNotEmpty) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (ctx) => BookInfosPage(libraryId: libraryId),
+        ),
+      );
+    }
+  } else {
+    final String? scannedLibraryId = await qrScanner(
+      context: context,
+      overlayText: 'Buch-ID scannen',
+    );
+    if (scannedLibraryId == null) return;
+
+    final bookId = scannedLibraryId.replaceFirst('Buch ID: ', '').trim();
+
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (ctx) => BookInfosPage(libraryId: bookId)),
     );
   }
 }

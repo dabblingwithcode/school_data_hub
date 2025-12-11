@@ -63,7 +63,10 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
         activeSchooldayEventFilters[SchooldayEventFilter.learningSupportInfo]!;
     bool valueAdmonitionInfo =
         activeSchooldayEventFilters[SchooldayEventFilter.admonitionInfo]!;
-
+    bool valueDuringBreak =
+        activeSchooldayEventFilters[SchooldayEventFilter.duringBreak]!;
+    bool valueNotDuringBreak =
+        activeSchooldayEventFilters[SchooldayEventFilter.notDuringBreak]!;
     return Padding(
       padding: const EdgeInsets.only(left: 15.0, right: 15, top: 5),
       child: Column(
@@ -179,6 +182,42 @@ class SchooldayEventFilterBottomSheet extends WatchingWidget {
                               (
                                 filter: SchooldayEventFilter.otherEvent,
                                 value: val,
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                      ThemedFilterChip(
+                        label: '🕒',
+                        selected: valueDuringBreak,
+                        onSelected: (val) {
+                          _schooldayEventFilterManager.setFilter(
+                            schooldayEventFilters: [
+                              (
+                                filter: SchooldayEventFilter.duringBreak,
+                                value: val,
+                              ),
+                              (
+                                filter: SchooldayEventFilter.notDuringBreak,
+                                value: !val,
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                      ThemedFilterChip(
+                        label: '✏️',
+                        selected: valueNotDuringBreak,
+                        onSelected: (val) {
+                          _schooldayEventFilterManager.setFilter(
+                            schooldayEventFilters: [
+                              (
+                                filter: SchooldayEventFilter.notDuringBreak,
+                                value: val,
+                              ),
+                              (
+                                filter: SchooldayEventFilter.duringBreak,
+                                value: !val,
                               ),
                             ],
                           );

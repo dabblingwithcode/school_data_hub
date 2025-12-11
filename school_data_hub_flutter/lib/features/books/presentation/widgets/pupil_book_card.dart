@@ -42,8 +42,11 @@ class PupilBookLendingCard extends StatelessWidget {
         color: AppColors.cardInCardColor,
         child: InkWell(
           onLongPress: () async {
-            if (pupilBookLending.lentBy != di<HubSessionManager>().userName ||
-                !di<HubSessionManager>().isAdmin) {
+            final isAuthorized =
+                di<HubSessionManager>().isAdmin ||
+                di<HubSessionManager>().userName == pupilBookLending.lentBy;
+
+            if (!isAuthorized) {
               informationDialog(
                 context,
                 'Keine Berechtigung',

@@ -241,8 +241,6 @@ class LibraryBooksEndpoint extends Endpoint {
         }
         await Book.db.updateRow(session, book, transaction: transaction);
       }
-
-      return libraryBook;
     });
     final updatedLibraryBook = await LibraryBook.db.findFirstRow(
       session,
