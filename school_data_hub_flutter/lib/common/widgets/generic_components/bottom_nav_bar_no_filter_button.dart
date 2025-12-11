@@ -3,8 +3,9 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
 
-class BottomNavBarNoFilterButton extends StatelessWidget {
-  const BottomNavBarNoFilterButton({super.key});
+class GenericBottomNavBarWithActions extends StatelessWidget {
+  final List<Widget>? actions;
+  GenericBottomNavBarWithActions({this.actions, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +29,8 @@ class BottomNavBarNoFilterButton extends StatelessWidget {
                     Navigator.pop(context);
                   },
                 ),
+                if (actions != null)
+                  for (var action in actions!) ...[const Gap(15), action],
                 const Gap(15),
               ],
             ),

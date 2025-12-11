@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -22,7 +23,16 @@ class UnencryptedImageInCard extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final refreshState = useState(0);
     final randomPart = useMemoized(() => UniqueKey().toString(), []);
+    final imageFuture = useMemoized(
+      () => cachedPublicImageOrDownloadPublicImage(
+        path: path,
+        cacheKey: cacheKey,
+      ),
+      [path, cacheKey, refreshState.value],
+    );
+
     return SizedBox(
       height: size,
       width: (21 / 30) * size,
@@ -31,18 +41,18 @@ class UnencryptedImageInCard extends HookWidget {
           onLongPress: () async {
             final File? file = await createAndCropImageFile(context);
             if (file == null) return;
+
+            await di<DefaultCacheManager>().removeFile(cacheKey);
             await di<BookManager>().updateBookImage(
               file: file,
               isbn: int.tryParse(cacheKey)!,
             );
+            refreshState.value++;
           },
           child: WidgetZoom(
             heroAnimationTag: '$cacheKey$randomPart',
             zoomWidget: FutureBuilder<Image>(
-              future: cachedPublicImageOrDownloadPublicImage(
-                path: path,
-                cacheKey: cacheKey,
-              ),
+              future: imageFuture,
               builder: (context, snapshot) {
                 Widget child;
                 if (snapshot.connectionState == ConnectionState.waiting) {

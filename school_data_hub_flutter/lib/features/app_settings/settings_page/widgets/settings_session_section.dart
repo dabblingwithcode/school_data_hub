@@ -154,28 +154,6 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           ),
 
         SettingsTile.navigation(
-          onPressed: (context) async {
-            final confirm = await confirmationDialog(
-              context: context,
-              title: 'Ausloggen',
-              message: 'Wirklich ausloggen?\n\nDaten bleiben erhalten!',
-            );
-            if (confirm == true && context.mounted) {
-              di<HubSessionManager>().signOutDevice();
-
-              _notificationService.showSnackBar(
-                NotificationType.success,
-                'Erfolgreich ausgeloggt!',
-              );
-            }
-          },
-          leading: const Icon(Icons.logout),
-          title: const Text('Ausloggen'),
-          description: const Text('Daten bleiben erhalten'),
-
-          //onPressed:
-        ),
-        SettingsTile.navigation(
           leading: const Icon(Icons.perm_identity_rounded),
           title: const Text('Lokale Daten vom:'),
           value: Text(
@@ -287,13 +265,13 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
             },
             child: const Row(
               children: [
-                Icon(Icons.logout),
+                Icon(Icons.image),
                 Gap(5),
                 Icon(Icons.delete_forever_outlined),
               ],
             ),
           ),
-          title: const Text('Lokal gespeicherte Bilder löschen'),
+          title: const Text('Bilder-Cache löschen'),
 
           //onPressed:
         ),
@@ -320,6 +298,28 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           ),
           title: const Text('Ausloggen und Daten löschen'),
           value: const Text('App wird zurückgesetzt!'),
+          //onPressed:
+        ),
+        SettingsTile.navigation(
+          onPressed: (context) async {
+            final confirm = await confirmationDialog(
+              context: context,
+              title: 'Ausloggen',
+              message: 'Wirklich ausloggen?\n\nDaten bleiben erhalten!',
+            );
+            if (confirm == true && context.mounted) {
+              di<HubSessionManager>().signOutDevice();
+
+              _notificationService.showSnackBar(
+                NotificationType.success,
+                'Erfolgreich ausgeloggt!',
+              );
+            }
+          },
+          leading: const Icon(Icons.logout),
+          title: const Text('Ausloggen'),
+          description: const Text('Daten bleiben erhalten'),
+
           //onPressed:
         ),
       ],

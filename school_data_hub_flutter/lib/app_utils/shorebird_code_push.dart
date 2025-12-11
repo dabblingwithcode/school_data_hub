@@ -213,7 +213,7 @@ class _CheckForUpdatesPageState extends State<CheckForUpdatesPage> {
         ),
       ),
 
-      bottomNavigationBar: const BottomNavBarNoFilterButton(),
+      bottomNavigationBar: GenericBottomNavBarWithActions(),
     );
   }
 }

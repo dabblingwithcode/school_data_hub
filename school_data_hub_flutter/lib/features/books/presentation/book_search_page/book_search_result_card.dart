@@ -25,7 +25,7 @@ class SearchResultBookCard extends WatchingWidget {
     final descriptionTileController = createOnce<ExpansibleController>(
       () => ExpansibleController(),
     );
-
+    watch(bookProxy);
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Card(

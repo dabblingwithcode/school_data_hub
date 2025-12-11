@@ -57,11 +57,12 @@ class IsbnApi {
           .replaceAll('<br>', '')
           .replaceAll(RegExp(r'<[^>]*>'), '')
           .trim();
-
-      description = description.replaceAll('\n', '');
-
       // Replace multiple consecutive spaces with a newline
-      description = description.replaceAll(RegExp(r' {2,}'), '\n');
+      description = description
+          .replaceAll('\n', '')
+          .replaceAll(RegExp(r' {2,}'), '\n')
+          .replaceFirst('Verfügbarkeit jetzt prüfen', '')
+          .trim();
     }
     final image = await http.get(Uri.parse(imageUrl));
     if (image.statusCode != 200) {
