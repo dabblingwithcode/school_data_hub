@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
@@ -31,7 +30,7 @@ class BookLendingPupilCard extends WatchingWidget {
     }
 
     return Card(
-      color: AppColors.cardInCardColor,
+      color: Colors.white,
       surfaceTintColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       elevation: 1.0,
@@ -108,6 +107,7 @@ class BookLendingPupilCard extends WatchingWidget {
                           ),
                         ],
                       ),
+                      const Gap(10),
                       Row(
                         children: [
                           Text(
@@ -126,7 +126,8 @@ class BookLendingPupilCard extends WatchingWidget {
                           ),
                         ],
                       ),
-                      if (watchedPupilBook.returnedAt != null)
+                      if (watchedPupilBook.returnedAt != null) ...[
+                        const Gap(10),
                         Row(
                           children: [
                             Text(
@@ -149,6 +150,7 @@ class BookLendingPupilCard extends WatchingWidget {
                             ),
                           ],
                         ),
+                      ],
                     ],
                   ),
                 ),
@@ -165,27 +167,33 @@ class BookLendingPupilCard extends WatchingWidget {
                 const Gap(5),
               ],
             ),
-            const Text(
-              'Status:',
-              style: TextStyle(fontWeight: FontWeight.bold),
+            const Padding(
+              padding: EdgeInsets.only(left: 8.0),
+              child: Text(
+                'Status:',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
             const Gap(2),
-            InkWell(
-              onLongPress: () async {
-                final status = await longTextFieldDialog(
-                  title: 'Status',
-                  labelText: 'Status',
-                  initialValue: watchedPupilBook.status ?? '',
-                  parentContext: context,
-                );
-                if (status == null) return;
-                // TODO: Uncomment this when the API is ready
-                // await di<PupilManager>().patchPupilBook(
-                //     lendingId: watchedPupilBook.lendingId, comment: status);
-              },
-              child: Text(
-                watchedPupilBook.status ?? 'Keine Einträge',
-                style: const TextStyle(fontSize: 16),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: InkWell(
+                onLongPress: () async {
+                  final status = await longTextFieldDialog(
+                    title: 'Status',
+                    labelText: 'Status',
+                    initialValue: watchedPupilBook.status ?? '',
+                    parentContext: context,
+                  );
+                  if (status == null) return;
+                  // TODO: Uncomment this when the API is ready
+                  // await di<PupilManager>().patchPupilBook(
+                  //     lendingId: watchedPupilBook.lendingId, comment: status);
+                },
+                child: Text(
+                  watchedPupilBook.status ?? 'Keine Einträge',
+                  style: const TextStyle(fontSize: 16),
+                ),
               ),
             ),
             const Gap(10),

@@ -274,6 +274,7 @@ class PupilProxyManager extends ChangeNotifier {
         _pupilIdPupilsMap[pupilData.id!] = PupilProxy(
           pupilData: pupilData,
           pupilIdentity: pupilIdentity,
+          siblingsResolver: getSiblings,
         );
         notifyListeners();
       }

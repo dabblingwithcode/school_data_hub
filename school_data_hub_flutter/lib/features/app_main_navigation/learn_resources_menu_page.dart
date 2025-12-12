@@ -48,7 +48,7 @@ class LearnResourcesMenuPage extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
                     ),
-                        child: Column(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
@@ -167,9 +167,9 @@ class LearnResourcesMenuPage extends StatelessWidget {
                           color: AppColors.gridViewColor,
                         ),
                         const Gap(10),
-                        Text(
-                          locale.books,
-                          style: const TextStyle(
+                        const Text(
+                          'Bücherei',
+                          style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),

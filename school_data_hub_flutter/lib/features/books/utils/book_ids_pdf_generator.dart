@@ -74,7 +74,7 @@ pw.Widget buildBarcodePage(List<String> bookIds, int startIndex) {
 void generateBookIdsPdf() async {
   _notificationService.setHeavyLoadingValue(true);
   final pdf = pw.Document();
-  List<String> bookIds = generateBookIds(startAtIdNr: 1002, count: 300);
+  List<String> bookIds = generateBookIds(startAtIdNr: 1303, count: 300);
 
   int itemsPerPage = 9 * 6;
   int totalPages = (bookIds.length / itemsPerPage).ceil();

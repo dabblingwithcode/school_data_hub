@@ -197,7 +197,6 @@ class BookApiService {
       _notificationService.apiRunning(false);
       throw Exception('Failed to upload file, $e');
     }
-    return null;
   }
 
   // - LIBRARY BOOKS - //

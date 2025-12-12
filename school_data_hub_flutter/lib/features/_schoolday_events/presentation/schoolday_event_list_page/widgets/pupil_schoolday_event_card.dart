@@ -245,7 +245,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                             ),
                             const Gap(5),
                             // only admin can change the admonishing user
-                            isAdmin
+                            isAuthorized
                                 ? InkWell(
                                     onTap: () async {
                                       final String? createdBy =

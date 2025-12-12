@@ -9,6 +9,7 @@ class LibraryBookProxy with ChangeNotifier {
 
   void updateLibraryBook(LibraryBook librarybook) {
     _librarybook = librarybook;
+
     notifyListeners();
   }
 

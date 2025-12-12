@@ -186,26 +186,25 @@ class NewBookPage extends StatelessWidget {
                         'Buch-Tags:',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      if (_hubSessionManager.isAdmin) ...[
-                        const Gap(10),
-                        InkWell(
-                          onTap: () => controller.createNewTag(context),
-                          child: Icon(
-                            Icons.add,
-                            color: AppColors.interactiveColor,
-                            size: 20,
-                          ),
+
+                      const Gap(10),
+                      InkWell(
+                        onTap: () => controller.createNewTag(context),
+                        child: Icon(
+                          Icons.add,
+                          color: AppColors.interactiveColor,
+                          size: 20,
                         ),
-                        const Gap(5),
-                        InkWell(
-                          onTap: () => controller.openTagManagement(context),
-                          child: Icon(
-                            Icons.settings,
-                            color: AppColors.interactiveColor,
-                            size: 20,
-                          ),
+                      ),
+                      const Gap(5),
+                      InkWell(
+                        onTap: () => controller.openTagManagement(context),
+                        child: Icon(
+                          Icons.settings,
+                          color: AppColors.interactiveColor,
+                          size: 20,
                         ),
-                      ],
+                      ),
                     ],
                   ),
                   const Gap(10),
