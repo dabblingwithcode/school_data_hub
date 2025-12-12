@@ -185,7 +185,10 @@ Widget statisticsGroupCard(
               ),
               const Gap(5),
               Text(
-                controller.pupilsNotEnrolledOnDate(group).length.toString(),
+                controller
+                    .pupilsNotEnrolledOnRegularDate(group)
+                    .length
+                    .toString(),
                 style: const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,

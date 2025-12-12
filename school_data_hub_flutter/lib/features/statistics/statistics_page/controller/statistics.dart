@@ -37,7 +37,9 @@ class StatisticsController extends State<Statistics> {
     return givenPupils.where((pupil) => pupil.language != 'Deutsch').toList();
   }
 
-  List<PupilProxy> pupilsNotEnrolledOnDate(List<PupilProxy> givenPupils) {
+  List<PupilProxy> pupilsNotEnrolledOnRegularDate(
+    List<PupilProxy> givenPupils,
+  ) {
     Map<int, String> pupilsWithEnrollmentDate = {};
     for (PupilProxy pupil in givenPupils) {
       pupilsWithEnrollmentDate[pupil.internalId] = pupil.pupilSince
@@ -52,7 +54,7 @@ class StatisticsController extends State<Statistics> {
 
   List<PupilProxy> pupilsEnrolledAfterDate(DateTime date) {
     final enrolledPupils = pupils
-        .where((pupil) => pupil.pupilSince.isAfter(date))
+        .where((pupil) => pupil.pupilSince.isAfterDate(date))
         .toList();
     enrolledPupils.sort((a, b) => a.pupilSince.compareTo(b.pupilSince));
     return enrolledPupils;
@@ -65,8 +67,12 @@ class StatisticsController extends State<Statistics> {
     return pupils
         .where(
           (pupil) =>
-              pupil.pupilSince.isAfter(startDate) &&
-              pupil.pupilSince.isBefore(endDate),
+              pupil.pupilSince.isAfterDate(
+                startDate.subtract(const Duration(days: 1)),
+              ) &&
+              pupil.pupilSince.isBeforeDate(
+                endDate.subtract(const Duration(days: 1)),
+              ),
         )
         .toList();
   }

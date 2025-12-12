@@ -130,18 +130,11 @@ class PupilProxy with ChangeNotifier {
   String get gender => _pupilIdentity.gender;
   String get language => _pupilIdentity.language;
   String? get family => _pupilIdentity.family;
-  DateTime get birthday {
-    final utc = _pupilIdentity.birthday;
-    final local = utc.toLocal();
-    _log.fine('''${_pupilIdentity.firstName} ${_pupilIdentity.lastName}
-    is UTC: ${utc.isUtc}
-    birthday UTC: $utc, local: $local''');
-    return local;
-  }
+  DateTime get birthday => _pupilIdentity.birthday.add(const Duration(days: 1));
 
   int get age {
     final today = DateTime.now();
-    int age = today.year - _pupilIdentity.birthday.toLocal().year;
+    int age = today.year - _pupilIdentity.birthday.year;
     if (today.month < _pupilIdentity.birthday.month ||
         (today.month == _pupilIdentity.birthday.month &&
             today.day < _pupilIdentity.birthday.day)) {
@@ -153,15 +146,16 @@ class PupilProxy with ChangeNotifier {
   String? get groupTutor => _pupilIdentity.groupTutor;
 
   DateTime? get migrationSupportEnds =>
-      _pupilIdentity.migrationSupportEnds?.toLocal();
-  DateTime get pupilSince => _pupilIdentity.pupilSince;
+      _pupilIdentity.migrationSupportEnds?.add(const Duration(days: 1));
+  DateTime get pupilSince =>
+      _pupilIdentity.pupilSince.add(const Duration(days: 1));
 
   DateTime? get familyLanguageLessonsSince =>
-      _pupilIdentity.familyLanguageLessonsSince?.toLocal();
+      _pupilIdentity.familyLanguageLessonsSince?.add(const Duration(days: 1));
   DateTime? get religionLessonsSince =>
-      _pupilIdentity.religionLessonsSince?.toLocal();
+      _pupilIdentity.religionLessonsSince?.add(const Duration(days: 1));
   DateTime? get religionLessonsCancelledAt =>
-      _pupilIdentity.religionLessonsCancelledAt?.toLocal();
+      _pupilIdentity.religionLessonsCancelledAt?.add(const Duration(days: 1));
 
   String? get religion => _pupilIdentity.religion;
   //- PUPIL DATA GETTERS
@@ -204,10 +198,6 @@ class PupilProxy with ChangeNotifier {
 
   AfterSchoolCare? get afterSchoolCare => _pupilData.afterSchoolCare;
 
-  // Legacy OGS getters for backward compatibility
-  // TODO URGENT: Remove these after migrating all OGS code to use proper afterSchoolCare model
-  //bool get ogs => afterSchoolCare != null;
-
   String? pickUpTime(AfterSchoolCareWeekday weekday) {
     final pickUpTimes = afterSchoolCare?.pickUpTimes;
     if (pickUpTimes == null) return null;
@@ -226,7 +216,7 @@ class PupilProxy with ChangeNotifier {
     }
   }
 
-  String? get ogsInfo => afterSchoolCare?.afterSchoolCareInfo;
+  String? get afterSchoolCareInfo => afterSchoolCare?.afterSchoolCareInfo;
 
   // rewards related
 
