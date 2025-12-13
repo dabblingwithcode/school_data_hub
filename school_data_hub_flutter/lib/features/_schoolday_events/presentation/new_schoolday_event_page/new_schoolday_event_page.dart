@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_picker.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/models/schoolday_event_enums.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/new_schoolday_event_page/widgets/schoolday_event_filter_chip.dart';
@@ -130,11 +130,11 @@ class NewSchooldayEventPage extends WatchingWidget {
     // TODO: This is very optimistic. We should check if the schoolday is null and handle it properly.
 
     await _schooldayEventManager.postSchooldayEvent(
-      pupilId,
-      schoolday!.id!,
-      thisDate,
-      schooldayEventType,
-      schooldayEventReasons,
+      pupilId: pupilId,
+      schooldayId: schoolday!.id!,
+      dateTime: thisDate,
+      type: schooldayEventType,
+      reason: schooldayEventReasons,
       eventTime: eventTime,
     );
   }
@@ -559,7 +559,7 @@ class NewSchooldayEventPage extends WatchingWidget {
                       );
                       return;
                     }
-                      unawaited(
+                    unawaited(
                       postSchooldayEvent(
                         schooldayEventType: schooldayEventType,
                         thisDate: thisDate.value,

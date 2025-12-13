@@ -3,7 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/filters/school_list_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_lists_page/widgets/school_list_card.dart';
@@ -34,19 +34,11 @@ class SchoolListsPage extends WatchingWidget {
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        backgroundColor: AppColors.backgroundColor,
-        title: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.rule_rounded, size: 25, color: Colors.white),
-            Gap(10),
-            Text('Listen', style: AppStyles.appBarTextStyle),
-          ],
-        ),
+      appBar: const GenericAppBar(
+        iconData: Icons.rule_rounded,
+        title: 'Listen',
       ),
+
       body: RefreshIndicator(
         onRefresh: () async => _schoolListManager.fetchSchoolLists(),
         child: Center(
@@ -86,7 +78,7 @@ class SchoolListsPage extends WatchingWidget {
                           refreshFunction: _schoolListManager.fetchSchoolLists,
                         ),
                       ),
-                      //---------------------------------
+
                       InkWell(
                         onTap: () {},
 

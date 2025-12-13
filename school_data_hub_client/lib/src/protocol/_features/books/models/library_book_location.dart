@@ -10,7 +10,6 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-
 import '../../../_features/books/models/library_book.dart' as _i2;
 
 abstract class LibraryBookLocation implements _i1.SerializableModel {
@@ -67,17 +66,6 @@ abstract class LibraryBookLocation implements _i1.SerializableModel {
   String toString() {
     return _i1.SerializationManager.encode(this);
   }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is LibraryBookLocation &&
-        other.id == id &&
-        other.location == location;
-  }
-
-  @override
-  int get hashCode => Object.hash(id, location);
 }
 
 class _Undefined {}

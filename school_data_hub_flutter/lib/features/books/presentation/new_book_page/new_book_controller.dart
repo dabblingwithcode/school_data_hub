@@ -22,6 +22,7 @@ class NewBook extends WatchingStatefulWidget {
   final bool? bookAvailable;
   final String? imageId;
   final bool isEdit;
+  final List<BookTagging>? bookTags;
   const NewBook({
     required this.isEdit,
     this.bookTitle,
@@ -34,6 +35,7 @@ class NewBook extends WatchingStatefulWidget {
     this.location,
     this.bookAvailable,
     this.imageId,
+    this.bookTags,
     super.key,
   });
 
@@ -123,10 +125,9 @@ class NewBookController extends State<NewBook> {
       readingLevel = widget.bookReadingLevel ?? ReadingLevel.notSet.value;
 
       bookDescriptionTextFieldController.text = widget.bookDescription ?? '';
-    }
-
-    for (var tag in di<BookManager>().bookTags.value) {
-      bookTagSelection[tag] = false;
+      for (final BookTagging tag in widget.bookTags ?? []) {
+        bookTagSelection[tag.bookTag!] = true;
+      }
     }
   }
 
@@ -166,20 +167,13 @@ class NewBookController extends State<NewBook> {
     final allLocations = di<BookManager>().locations.value.toList();
     final lastLocation = di<BookManager>().lastLocationValue.value;
 
-    // Remove duplicates from the list first (based on ID/content equality)
-    // We can use a Set, but we need equality operator on LibraryBookLocation first.
-    // Assuming we added equality operator in the model.
-    final uniqueLocations = allLocations.toSet().toList();
-
-    locationDropdownItems.clear();
-
-    // Check if lastLocation is already in the list
-    final isLastLocationInList = uniqueLocations.any(
-      (location) => location == lastLocation,
+    // Check if lastLocation is already in the list to avoid duplicates
+    final isLastLocationInList = allLocations.any(
+      (location) => location.id == lastLocation.id,
     );
 
-    // Add all locations from the unique list
-    for (final location in uniqueLocations) {
+    // Add all locations from the list
+    for (final location in allLocations) {
       locationDropdownItems.add(
         DropdownMenuItem(value: location, child: Text(location.location)),
       );
@@ -214,15 +208,6 @@ class NewBookController extends State<NewBook> {
       locations.addAll(di<BookManager>().locations.value);
       locationDropdownItems.clear();
       _createDropdownItems();
-
-      // Check if current selection still exists, if not, reset or select default
-      // We check if the lastLocationValue exists in the updated items by comparing IDs/Objects
-      // Since objects might be new instances, we might need robust check.
-      // But _createDropdownItems adds the *current* lastLocationValue if missing.
-      // So effectively, lastLocationValue is always "valid" in the sense that it's in the list.
-      // BUT: The error says "Either zero or 2 or more ... detected".
-      // This implies duplication in the items list OR that the value passed to DropdownButton
-      // matches multiple items in the list.
     });
   }
 

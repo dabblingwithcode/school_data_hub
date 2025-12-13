@@ -214,15 +214,24 @@ class AvatarWithBadges extends WatchingWidget {
               ),
 
             if (pupil.specialInformation != null)
-              const Positioned(
+              Positioned(
                 top: 0,
                 bottom: 0,
                 left: -_badgeOffset,
                 child: Center(
-                  child: Icon(
-                    Icons.info_rounded,
-                    size: 25,
-                    color: Color.fromARGB(255, 6, 92, 163),
+                  child: InkWell(
+                    onTap: () {
+                      informationDialog(
+                        context,
+                        'Besondere Information',
+                        pupil.specialInformation!,
+                      );
+                    },
+                    child: const Icon(
+                      Icons.info_rounded,
+                      size: 25,
+                      color: Color.fromARGB(255, 6, 92, 163),
+                    ),
                   ),
                 ),
               ),
@@ -230,10 +239,14 @@ class AvatarWithBadges extends WatchingWidget {
               bottom: -_badgeOffset,
               left: -_badgeOffset,
               child: Container(
-                width: pupil.family != null ? _badgeSize + 3 : _badgeSize,
-                height: pupil.family != null ? _badgeSize + 3 : _badgeSize,
+                width: pupil.siblingIds.isNotEmpty
+                    ? _badgeSize + 3
+                    : _badgeSize,
+                height: pupil.siblingIds.isNotEmpty
+                    ? _badgeSize + 3
+                    : _badgeSize,
                 decoration: BoxDecoration(
-                  border: pupil.family != null
+                  border: pupil.siblingIds.isNotEmpty
                       ? Border.all(
                           color: const Color.fromARGB(255, 120, 127, 216),
                           width: 3,

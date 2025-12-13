@@ -48,8 +48,9 @@ class SessionHelper {
 
   static bool isAuthorized(String createdBy) {
     return di<HubSessionManager>().signedInUser!.userName == createdBy ||
-            di<HubSessionManager>().isAdmin
-        ? true
-        : false;
+        di<HubSessionManager>().isAdmin ||
+        di<HubSessionManager>().signedInUser!.scopeNames.any(
+          (scopeName) => scopeName == 'SchooldayEventsManagement',
+        );
   }
 }

@@ -1771,11 +1771,12 @@ class EndpointSchooldayEvent extends _i1.EndpointRef {
   _i2.Future<_i43.SchooldayEvent> createSchooldayEvent({
     required int pupilId,
     required String pupilNameAndGroup,
-    required String dateTimeAsString,
+    required String dateAsString,
     required int schooldayId,
     required _i44.SchooldayEventType type,
     required String reason,
     required String createdBy,
+    required String eventTime,
     required String tutor,
   }) =>
       caller.callServerEndpoint<_i43.SchooldayEvent>(
@@ -1784,11 +1785,12 @@ class EndpointSchooldayEvent extends _i1.EndpointRef {
         {
           'pupilId': pupilId,
           'pupilNameAndGroup': pupilNameAndGroup,
-          'dateTimeAsString': dateTimeAsString,
+          'dateAsString': dateAsString,
           'schooldayId': schooldayId,
           'type': type,
           'reason': reason,
           'createdBy': createdBy,
+          'eventTime': eventTime,
           'tutor': tutor,
         },
       );

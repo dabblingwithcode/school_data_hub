@@ -61,7 +61,7 @@ class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
                       tooltip: 'Liste teilen',
                       onPressed: () async {
                         final users = di<UserManager>().users.value;
-                        final List<int>? selectedUsers =
+                        final List<User>? selectedUsers =
                             await Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (ctx) => SelectUsersPage(
@@ -78,20 +78,10 @@ class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
                             );
                         if (selectedUsers == null) return;
 
-                        final userManager = di<UserManager>();
                         final authorizedUsernames = selectedUsers.isEmpty
                             ? null
                             : selectedUsers
-                                  .map(
-                                    (userId) =>
-                                        userManager.users.value
-                                            .firstWhere(
-                                              (user) => user.id == userId,
-                                            )
-                                            .userInfo
-                                            ?.userName ??
-                                        'Unknown',
-                                  )
+                                  .map((user) => user.userInfo!.userName!)
                                   .join('*');
 
                         _schoolListManager.updateSchoolListProperty(

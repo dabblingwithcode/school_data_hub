@@ -52,7 +52,7 @@ List<Widget> pupilAfterSchoolCareContentList(
         final String? ogsInfo = await longTextFieldDialog(
           title: 'OGS Informationen',
           labelText: 'OGS Informationen',
-          initialValue: pupil.ogsInfo,
+          initialValue: pupil.afterSchoolCareInfo,
           parentContext: context,
         );
         if (ogsInfo == null) return;
@@ -63,7 +63,7 @@ List<Widget> pupilAfterSchoolCareContentList(
         );
       },
       onLongPress: () async {
-        if (pupil.ogsInfo == null) return;
+        if (pupil.afterSchoolCareInfo == null) return;
         final bool? confirm = await confirmationDialog(
           context: context,
           title: 'OGS Infos löschen',
@@ -79,9 +79,9 @@ List<Widget> pupilAfterSchoolCareContentList(
       child: Row(
         children: [
           Flexible(
-            child: pupil.ogsInfo != null
+            child: pupil.afterSchoolCareInfo != null
                 ? Text(
-                    pupil.ogsInfo!,
+                    pupil.afterSchoolCareInfo!,
                     softWrap: true,
                     style: TextStyle(
                       fontSize: 20,

@@ -6,17 +6,19 @@ class SelectUsersPageBottomNavBar extends StatelessWidget {
   final bool filtersOn;
   final bool isSelectMode;
   final bool isSelectAllMode;
-  final List<int> selectedUserIds;
+
   final Function cancelSelect;
   final Function toggleSelectAll;
+  final Function sendSelectedUsers;
 
   const SelectUsersPageBottomNavBar({
     required this.filtersOn,
     required this.isSelectMode,
     required this.isSelectAllMode,
-    required this.selectedUserIds,
+
     required this.cancelSelect,
     required this.toggleSelectAll,
+    required this.sendSelectedUsers,
     super.key,
   });
 
@@ -43,11 +45,11 @@ class SelectUsersPageBottomNavBar extends StatelessWidget {
               const Gap(30),
               isSelectMode
                   ? IconButton(
-                    onPressed: () {
-                      cancelSelect();
-                    },
-                    icon: const Icon(Icons.close),
-                  )
+                      onPressed: () {
+                        cancelSelect();
+                      },
+                      icon: const Icon(Icons.close),
+                    )
                   : const SizedBox.shrink(),
               IconButton(
                 tooltip: 'alle auswählen',
@@ -66,7 +68,7 @@ class SelectUsersPageBottomNavBar extends StatelessWidget {
                   size: 30,
                 ),
                 onPressed: () {
-                  Navigator.pop(context, selectedUserIds);
+                  sendSelectedUsers();
                 },
               ),
               // Note: Filter functionality removed as there's no UsersFilter implementation

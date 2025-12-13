@@ -8,7 +8,11 @@ import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_m
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_selector_filters.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_identity_extensions.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
+
+typedef SiblingsResolver = List<PupilProxy> Function(PupilProxy pupil);
 
 final _log = Logger('PupilProxy');
 
@@ -16,7 +20,9 @@ class PupilProxy with ChangeNotifier {
   PupilProxy({
     required PupilData pupilData,
     required PupilIdentity pupilIdentity,
+    SiblingsResolver? siblingsResolver,
   }) : _pupilIdentity = pupilIdentity {
+    _siblingsResolver = siblingsResolver;
     updatePupil(pupilData);
   }
 
@@ -51,6 +57,11 @@ class PupilProxy with ChangeNotifier {
   late PupilData _pupilData;
   PupilIdentity _pupilIdentity;
 
+  SiblingsResolver? _siblingsResolver;
+  List<PupilProxy>? _cachedSiblings;
+  List<int>? _cachedSiblingIds;
+  String? _cachedFamilyKey;
+
   bool pupilIsDirty = false;
 
   void updatePupil(PupilData pupilData) {
@@ -62,9 +73,47 @@ class PupilProxy with ChangeNotifier {
   }
 
   void updatePupilIdentity(PupilIdentity pupilIdentity) {
-    _pupilIdentity = pupilIdentity;
+    if (!_pupilIdentity.isEqual(pupilIdentity)) _pupilIdentity = pupilIdentity;
     pupilIsDirty = true;
     notifyListeners();
+  }
+
+  /// Cached siblings based on family identifier; resolves once per family value.
+  List<PupilProxy> get siblings {
+    _siblingsResolver ??= di<PupilProxyManager>().getSiblings;
+    final resolver = _siblingsResolver;
+    final familyValue = family;
+    if (resolver == null || familyValue == null) {
+      return const [];
+    }
+
+    if (_cachedSiblings != null && _cachedFamilyKey == familyValue) {
+      return _cachedSiblings!;
+    }
+
+    final resolved = resolver(this);
+    // Guard against accidental self-inclusion or mismatched families.
+    final filtered = resolved
+        .where((p) => p.pupilId != pupilId && p.family == family)
+        .toList(growable: false);
+
+    _cachedSiblings = filtered;
+    _cachedSiblingIds = filtered.map((p) => p.pupilId).toList(growable: false);
+    _cachedFamilyKey = familyValue;
+    return filtered;
+  }
+
+  List<int> get siblingIds {
+    if (_cachedSiblingIds != null && _cachedFamilyKey == family) {
+      return _cachedSiblingIds!;
+    }
+
+    final resolved = siblings;
+    if (_cachedSiblingIds != null && _cachedFamilyKey == family) {
+      return _cachedSiblingIds!;
+    }
+
+    return resolved.map((p) => p.pupilId).toList(growable: false);
   }
 
   //- PupilIdentity GETTERS
@@ -81,18 +130,11 @@ class PupilProxy with ChangeNotifier {
   String get gender => _pupilIdentity.gender;
   String get language => _pupilIdentity.language;
   String? get family => _pupilIdentity.family;
-  DateTime get birthday {
-    final utc = _pupilIdentity.birthday;
-    final local = utc.toLocal();
-    _log.fine('''${_pupilIdentity.firstName} ${_pupilIdentity.lastName}
-    is UTC: ${utc.isUtc}
-    birthday UTC: $utc, local: $local''');
-    return local;
-  }
+  DateTime get birthday => _pupilIdentity.birthday.add(const Duration(days: 1));
 
   int get age {
     final today = DateTime.now();
-    int age = today.year - _pupilIdentity.birthday.toLocal().year;
+    int age = today.year - _pupilIdentity.birthday.year;
     if (today.month < _pupilIdentity.birthday.month ||
         (today.month == _pupilIdentity.birthday.month &&
             today.day < _pupilIdentity.birthday.day)) {
@@ -104,15 +146,16 @@ class PupilProxy with ChangeNotifier {
   String? get groupTutor => _pupilIdentity.groupTutor;
 
   DateTime? get migrationSupportEnds =>
-      _pupilIdentity.migrationSupportEnds?.toLocal();
-  DateTime get pupilSince => _pupilIdentity.pupilSince;
+      _pupilIdentity.migrationSupportEnds?.add(const Duration(days: 1));
+  DateTime get pupilSince =>
+      _pupilIdentity.pupilSince.add(const Duration(days: 1));
 
   DateTime? get familyLanguageLessonsSince =>
-      _pupilIdentity.familyLanguageLessonsSince?.toLocal();
+      _pupilIdentity.familyLanguageLessonsSince?.add(const Duration(days: 1));
   DateTime? get religionLessonsSince =>
-      _pupilIdentity.religionLessonsSince?.toLocal();
+      _pupilIdentity.religionLessonsSince?.add(const Duration(days: 1));
   DateTime? get religionLessonsCancelledAt =>
-      _pupilIdentity.religionLessonsCancelledAt?.toLocal();
+      _pupilIdentity.religionLessonsCancelledAt?.add(const Duration(days: 1));
 
   String? get religion => _pupilIdentity.religion;
   //- PUPIL DATA GETTERS
@@ -155,10 +198,6 @@ class PupilProxy with ChangeNotifier {
 
   AfterSchoolCare? get afterSchoolCare => _pupilData.afterSchoolCare;
 
-  // Legacy OGS getters for backward compatibility
-  // TODO URGENT: Remove these after migrating all OGS code to use proper afterSchoolCare model
-  //bool get ogs => afterSchoolCare != null;
-
   String? pickUpTime(AfterSchoolCareWeekday weekday) {
     final pickUpTimes = afterSchoolCare?.pickUpTimes;
     if (pickUpTimes == null) return null;
@@ -177,7 +216,7 @@ class PupilProxy with ChangeNotifier {
     }
   }
 
-  String? get ogsInfo => afterSchoolCare?.afterSchoolCareInfo;
+  String? get afterSchoolCareInfo => afterSchoolCare?.afterSchoolCareInfo;
 
   // rewards related
 

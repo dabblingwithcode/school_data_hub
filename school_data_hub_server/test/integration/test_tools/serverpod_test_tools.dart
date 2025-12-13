@@ -5015,11 +5015,12 @@ class _SchooldayEventEndpoint {
     _i1.TestSessionBuilder sessionBuilder, {
     required int pupilId,
     required String pupilNameAndGroup,
-    required String dateTimeAsString,
+    required String dateAsString,
     required int schooldayId,
     required _i45.SchooldayEventType type,
     required String reason,
     required String createdBy,
+    required String eventTime,
     required String tutor,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -5036,11 +5037,12 @@ class _SchooldayEventEndpoint {
           parameters: _i1.testObjectToJson({
             'pupilId': pupilId,
             'pupilNameAndGroup': pupilNameAndGroup,
-            'dateTimeAsString': dateTimeAsString,
+            'dateAsString': dateAsString,
             'schooldayId': schooldayId,
             'type': type,
             'reason': reason,
             'createdBy': createdBy,
+            'eventTime': eventTime,
             'tutor': tutor,
           }),
           serializationManager: _serializationManager,

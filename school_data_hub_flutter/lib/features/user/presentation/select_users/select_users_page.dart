@@ -3,22 +3,24 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/bottom_nav_bar_no_filter_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/select_users/widgets/select_users_list_card.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/select_users/widgets/select_users_search_bar.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/select_users/widgets/select_users_view_bottom_navbar.dart';
 import 'package:watch_it/watch_it.dart';
 
 class SelectUsersPage extends WatchingStatefulWidget {
   final List<User> selectableUsers;
   final String? authorizedUsers;
+  final bool? isMultiSelectMode;
 
   const SelectUsersPage({
     required this.selectableUsers,
     this.authorizedUsers,
+    this.isMultiSelectMode,
     super.key,
   });
 
@@ -65,6 +67,16 @@ class _SelectUsersPageState extends State<SelectUsersPage> {
   }
 
   void onCardPress(int userId) {
+    if (widget.isMultiSelectMode == false) {
+      if (selectedUserIds.contains(userId)) {
+        return;
+      } else {
+        setState(() {
+          selectedUserIds = [userId];
+        });
+        return;
+      }
+    }
     if (selectedUserIds.contains(userId)) {
       setState(() {
         selectedUserIds.remove(userId);
@@ -101,10 +113,6 @@ class _SelectUsersPageState extends State<SelectUsersPage> {
         selectedUserIds.clear();
       }
     });
-  }
-
-  List<int> getSelectedUserIds() {
-    return selectedUserIds.toList();
   }
 
   List<User> getSelectedUsers() {
@@ -166,14 +174,53 @@ class _SelectUsersPageState extends State<SelectUsersPage> {
           ),
         ),
       ),
-      bottomNavigationBar: SelectUsersPageBottomNavBar(
-        isSelectAllMode: isSelectAllMode,
-        isSelectMode: isSelectMode,
-        filtersOn: filtersOn,
-        selectedUserIds: selectedUserIds,
-        cancelSelect: cancelSelect,
-        toggleSelectAll: () => toggleSelectAll(selectableUsers),
+      bottomNavigationBar: GenericBottomNavBarWithActions(
+        actions: [
+          if (widget.isMultiSelectMode == true) ...[
+            IconButton(
+              onPressed: () {
+                cancelSelect();
+              },
+              icon: const Icon(Icons.close),
+            ),
+            IconButton(
+              tooltip: 'alle auswählen',
+              icon: Icon(
+                Icons.select_all_rounded,
+                color: isSelectAllMode ? Colors.deepOrange : Colors.white,
+                size: 30,
+              ),
+              onPressed: () => toggleSelectAll(selectableUsers),
+            ),
+          ],
+          IconButton(
+            tooltip: 'Okay',
+            icon: Icon(
+              Icons.check,
+              color: widget.isMultiSelectMode == true
+                  ? isSelectMode
+                        ? Colors.green
+                        : Colors.white
+                  : Colors.white,
+              size: 30,
+            ),
+            onPressed: () {
+              Navigator.pop(context, getSelectedUsers());
+            },
+          ),
+        ],
       ),
+      // bottomNavigationBar: SelectUsersPageBottomNavBar(
+      //   isSelectAllMode: isSelectAllMode,
+      //   isSelectMode: isSelectMode,
+      //   filtersOn: filtersOn,
+
+      //   cancelSelect: cancelSelect,
+      //   toggleSelectAll: () => toggleSelectAll(selectableUsers),
+      //   sendSelectedUsers: () {
+      //     Navigator.pop(context, getSelectedUsers());
+      //   },
+      // ),
     );
   }
 }

@@ -58,12 +58,12 @@ class InitOnUserAuth {
 
         await pupilIdentityManager.init();
 
-        _log.info('[PUPIL IDENTITY MANAGER] PupilIdentityManager initialized');
+        _log.info('[PupilIdentityManager] initialized ✅️');
 
         return pupilIdentityManager;
       },
       dispose: (instance) {
-        _log.info('[PUPIL IDENTITY MANAGER] PupilIdentityManager disposed');
+        _log.info('[PupilIdentityManager] disposed 🚮');
         instance.dispose();
         return;
       },
@@ -75,14 +75,12 @@ class InitOnUserAuth {
 
         await schoolCalendarManager.init();
 
-        _log.info(
-          '[SCHOOL CALENDAR MANAGER] SchoolCalendarManager initialized',
-        );
+        _log.info('[SchoolCalendarManager] initialized ✅️');
 
         return schoolCalendarManager;
       },
       dispose: (instance) {
-        _log.info('[SCHOOL CALENDAR MANAGER] SchoolCalendarManager disposed');
+        _log.info('[SchoolCalendarManager] disposed 🚮');
         instance.dispose();
         return;
       },
@@ -94,14 +92,12 @@ class InitOnUserAuth {
 
         await supportCategoryManager.init();
 
-        _log.info(
-          '[SUPPORT CATEGORY MANAGER] SupportCategoryManager initialized',
-        );
+        _log.info('[SupportCategoryManager] initialized ✅️');
 
         return supportCategoryManager;
       },
       dispose: (instance) {
-        _log.info('[SUPPORT CATEGORY MANAGER] SupportCategoryManager disposed');
+        _log.info('[SupportCategoryManager] disposed 🚮');
         instance.dispose();
         return;
       },
@@ -113,13 +109,13 @@ class InitOnUserAuth {
 
         await pupilManager.init();
 
-        _log.info('[PUPIL MANAGER] PupilManager initialized');
+        _log.info('[PupilProxyManager] initialized ✅️');
 
         return pupilManager;
       },
       dependsOn: [PupilIdentityManager, HubSessionManager],
       dispose: (instance) {
-        _log.info('[PUPIL MANAGER] PupilManager disposed');
+        _log.info('[PupilProxyManager] disposed 🚮');
         instance.dispose();
         return;
       },
@@ -133,7 +129,7 @@ class InitOnUserAuth {
         SupportCategoryManager,
       ],
       dispose: (instance) {
-        _log.info('[LEARNING SUPPORT MANAGER] LearningSupportManager disposed');
+        _log.info('[LearningSupportManager] disposed 🚮');
         instance.dispose();
         return;
       },
@@ -143,12 +139,12 @@ class InitOnUserAuth {
       () async {
         final bookManager = BookManager();
         await bookManager.init();
-        _log.info('[BOOK MANAGER] BookManager initialized');
+        _log.info('[BookManager] initialized ✅️');
         return bookManager;
       },
       dependsOn: [],
       dispose: (instance) {
-        _log.info('[BOOK MANAGER] BookManager disposed');
+        _log.info('[BookManager] disposed 🚮');
         instance.dispose();
         return;
       },
@@ -158,14 +154,12 @@ class InitOnUserAuth {
       () async {
         final schoolDataManager = SchoolDataMainManager();
         await schoolDataManager.init();
-        _log.info(
-          '[SCHOOL DATA MAIN MANAGER] SchoolDataMainManager initialized',
-        );
+        _log.info('[SchoolDataMainManager] initialized ✅️');
         return schoolDataManager;
       },
       dependsOn: [],
       dispose: (instance) {
-        _log.info('[SCHOOL DATA MAIN MANAGER] SchoolDataMainManager disposed');
+        _log.info('[SchoolDataMainManager] disposed 🚮');
         instance.dispose();
         return;
       },
@@ -175,12 +169,12 @@ class InitOnUserAuth {
       () async {
         final workbookManager = WorkbookManager();
         await workbookManager.init();
-        _log.info('[WORKBOOK MANAGER] WorkbookManager initialized');
+        _log.info('[WorkbookManager] initialized ✅️');
         return workbookManager;
       },
       dependsOn: [HubSessionManager, PupilProxyManager],
       dispose: (instance) {
-        _log.info('[WORKBOOK MANAGER] WorkbookManager disposed');
+        _log.info('[WorkbookManager] disposed 🚮');
         instance.dispose();
         return;
       },
@@ -192,12 +186,12 @@ class InitOnUserAuth {
 
         await competenceManager.init();
 
-        _log.info('[COMPETENCE MANAGER] CompetenceManager initialized');
+        _log.info('[CompetenceManager] initialized ✅️');
 
         return competenceManager;
       },
       dispose: (instance) {
-        _log.info('[COMPETENCE MANAGER] CompetenceManager disposed');
+        _log.info('[CompetenceManager] disposed 🚮');
         instance.dispose();
         return;
       },
@@ -209,9 +203,7 @@ class InitOnUserAuth {
       },
       dependsOn: [CompetenceManager],
       dispose: (instance) {
-        _log.info(
-          '[COMPETENCE FILTER MANAGER] CompetenceFilterManager disposed',
-        );
+        _log.info('[CompetenceFilterManager] disposed 🚮');
         instance.dispose();
         return;
       },
@@ -221,12 +213,12 @@ class InitOnUserAuth {
       () async {
         final authorizationManager = AuthorizationManager();
         await authorizationManager.init();
-        _log.info('[AUTHORIZATION MANAGER] AuthorizationManager initialized');
+        _log.info('[AuthorizationManager] initialized ✅️');
         return authorizationManager;
       },
       dependsOn: [HubSessionManager],
       dispose: (instance) {
-        _log.info('[AUTHORIZATION MANAGER] AuthorizationManager disposed');
+        _log.info('[AuthorizationManager] disposed 🚮');
         instance.dispose();
         return;
       },
@@ -235,9 +227,7 @@ class InitOnUserAuth {
       () => AuthorizationFilterManager(),
       dependsOn: [AuthorizationManager],
       dispose: (instance) {
-        _log.info(
-          '[AUTHORIZATION FILTER MANAGER] AuthorizationFilterManager disposed',
-        );
+        _log.info('[AuthorizationFilterManager] disposed 🚮');
         instance.dispose();
         return;
       },
@@ -247,9 +237,7 @@ class InitOnUserAuth {
       () => PupilAuthorizationFilterManager(),
       dependsOn: [AuthorizationManager],
       dispose: (instance) {
-        _log.info(
-          '[PUPIL AUTHORIZATION FILTER MANAGER] PupilAuthorizationFilterManager disposed',
-        );
+        _log.info('[PupilAuthorizationFilterManager] disposed 🚮');
         instance.dispose();
         return;
       },
@@ -258,7 +246,7 @@ class InitOnUserAuth {
     di.registerSingletonWithDependencies<PupilFilterManager>(
       () => PupilFilterManager(),
       dispose: (instance) {
-        _log.info('[PUPILS FILTER] PupilFilterManager disposed');
+        _log.info('[PupilFilterManager] disposed 🚮');
         instance.dispose();
         return;
       },
@@ -268,7 +256,7 @@ class InitOnUserAuth {
     di.registerSingleton<FiltersStateManager>(
       FiltersStateManagerImplementation(),
       dispose: (instance) {
-        _log.info('[FILTERS STATE MANAGER] FiltersStateManager disposed');
+        _log.info('[FiltersStateManager] disposed 🚮');
         instance.dispose();
         return;
       },
@@ -278,9 +266,7 @@ class InitOnUserAuth {
       () => LearningSupportFilterManager(),
       dependsOn: [PupilProxyManager, PupilFilterManager],
       dispose: (instance) {
-        _log.info(
-          '[LEARNING SUPPORT FILTER MANAGER] LearningSupportFilterManager disposed',
-        );
+        _log.info('[LearningSupportFilterManager] disposed 🚮');
         instance.dispose();
         return;
       },
@@ -290,7 +276,7 @@ class InitOnUserAuth {
       () => SchooldayEventManager(),
       dependsOn: [SchoolCalendarManager, PupilProxyManager],
       dispose: (instance) {
-        _log.info('[SCHOOLDAY EVENT MANAGER] SchooldayEventManager disposed');
+        _log.info('[SchooldayEventManager] disposed 🚮');
         instance.dispose();
         return;
       },
@@ -300,15 +286,11 @@ class InitOnUserAuth {
       () {
         final schooldayEventFilterManager = SchooldayEventFilterManager();
 
-        _log.info(
-          '[SCHOOLDAY EVENT FILTER MANAGER] SchooldayEventFilterManager initialized',
-        );
+        _log.info('[SchooldayEventFilterManager] initialized ✅️');
         return schooldayEventFilterManager;
       },
       dispose: (instance) {
-        _log.info(
-          '[SCHOOLDAY EVENT FILTER MANAGER] SchooldayEventFilterManager disposed',
-        );
+        _log.info('[SchooldayEventFilterManager] disposed 🚮');
         instance.dispose();
         return;
       },
@@ -319,7 +301,7 @@ class InitOnUserAuth {
       () => AttendanceManager(),
       dependsOn: [PupilProxyManager, SchoolCalendarManager],
       dispose: (instance) {
-        _log.info('[ATTENDANCE MANAGER] AttendanceManager disposed');
+        _log.info('[AttendanceManager] disposed 🚮');
         instance.dispose();
         return;
       },
@@ -338,7 +320,7 @@ class InitOnUserAuth {
       () => PupilsFilterImplementation(di<PupilProxyManager>()),
       dispose: (instance) {
         instance.dispose();
-        _log.info('[PUPILS FILTER] PupilsFilterImplementation disposed');
+        _log.info('[PupilsFilterImplementation] disposed 🚮');
         return;
       },
       dependsOn: [
@@ -355,11 +337,11 @@ class InitOnUserAuth {
       () async {
         final schoolListManager = SchoolListManager();
         await schoolListManager.init();
-        _log.info('[SCHOOL LIST MANAGER] SchoolListManager initialized');
+        _log.info('[SchoolListManager] initialized ✅️');
         return schoolListManager;
       },
       dispose: (instance) {
-        _log.info('[SCHOOL LIST MANAGER] SchoolListManager disposed');
+        _log.info('[SchoolListManager] disposed 🚮');
         instance.dispose();
         return;
       },
@@ -370,15 +352,11 @@ class InitOnUserAuth {
       () {
         final schoolListFilterManager = SchoolListFilterManager();
         schoolListFilterManager.init();
-        _log.info(
-          '[SCHOOL LIST FILTER MANAGER] SchoolListFilterManager initialized',
-        );
+        _log.info('[SchoolListFilterManager] initialized ✅️');
         return schoolListFilterManager;
       },
       dispose: (instance) {
-        _log.info(
-          '[SCHOOL LIST FILTER MANAGER] SchoolListFilterManager disposed',
-        );
+        _log.info('[SchoolListFilterManager] disposed 🚮');
         instance.dispose();
         return;
       },
@@ -389,11 +367,11 @@ class InitOnUserAuth {
       () async {
         final userManager = UserManager();
         await userManager.init();
-        _log.info('[USER MANAGER] UserManager initialized');
+        _log.info('[UserManager] initialized ✅️');
         return userManager;
       },
       dispose: (instance) {
-        _log.info('[USER MANAGER] UserManager disposed');
+        _log.info('[UserManager] disposed 🚮');
         instance.dispose();
         return;
       },
@@ -402,7 +380,7 @@ class InitOnUserAuth {
 
     di.registerSingletonAsync<TimetableApiService>(() async {
       final timetableApiService = TimetableApiService();
-      _log.info('[TIMETABLE API SERVICE] TimetableApiService initialized');
+      _log.info('[TimetableApiService] initialized ✅️');
       return timetableApiService;
     });
 
@@ -410,11 +388,11 @@ class InitOnUserAuth {
       () async {
         final timetableManager = TimetableManager();
         await timetableManager.init();
-        _log.info('[TIMETABLE MANAGER] TimetableManager initialized');
+        _log.info('[TimetableManager] initialized ✅️');
         return timetableManager;
       },
       dispose: (instance) {
-        _log.info('[TIMETABLE MANAGER] TimetableManager disposed');
+        _log.info('[TimetableManager] disposed 🚮');
         instance.dispose();
         return;
       },

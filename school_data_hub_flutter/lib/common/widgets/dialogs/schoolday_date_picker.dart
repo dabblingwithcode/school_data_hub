@@ -16,9 +16,21 @@ Future<DateTime?> selectSchooldayDate(
     return validDate;
   }
 
+  // If the provided date is not a valid school day, find the nearest one
+  DateTime initialDate = thisDate;
+  if (!isSelectableSchoolday(initialDate) && availableDates.isNotEmpty) {
+    // Find the nearest available date
+    availableDates.sort(
+      (a, b) => (a.difference(thisDate).inDays.abs()).compareTo(
+        b.difference(thisDate).inDays.abs(),
+      ),
+    );
+    initialDate = availableDates.first;
+  }
+
   final DateTime? pickedDate = await showDatePicker(
     context: context,
-    initialDate: thisDate,
+    initialDate: initialDate,
     selectableDayPredicate: isSelectableSchoolday,
     firstDate: DateTime.now().toUtc().subtract(const Duration(days: 365)),
     lastDate: DateTime.now().toUtc().toUtc().add(const Duration(days: 365)),

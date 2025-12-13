@@ -247,16 +247,26 @@ class EnvManager with ChangeNotifier {
       json.decode(envAsString) as Map<String, dynamic>,
     );
 
+    // ensure the new environment always starts with the blue color scheme
+    final Env envWithPalette = env.copyWith(
+      colorSchemeKey: _environments.entries.length > 1
+          ? AppColorSchemeKey.blue.name
+          : AppColorSchemeKey.standard.name,
+    );
+
     // add the env to the environments map
-    _environments = {..._environments, env.serverName: env};
+    _environments = {
+      ..._environments,
+      envWithPalette.serverName: envWithPalette,
+    };
 
     _log.info(
-      'Environment ${env.serverName} added to environments map in memory',
+      'Environment ${envWithPalette.serverName} added to environments map in memory',
     );
 
     // the modified environments map will be stored
     // in the [activateEnv] method
-    activateDifferentEnv(envName: env.serverName);
+    activateDifferentEnv(envName: envWithPalette.serverName);
 
     return;
   }

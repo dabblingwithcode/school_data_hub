@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
 
-enum AppColorSchemeKey { classic, lila, darkBlue, turquoise, blue }
+enum AppColorSchemeKey { standard, lila, darkBlue, turquoise, blue }
 
 AppColorSchemeKey appColorSchemeKeyFromString(String? key) {
   return AppColorSchemeKey.values.firstWhere(
     (k) => k.name == key,
-    orElse: () => AppColorSchemeKey.classic,
+    orElse: () => AppColorSchemeKey.standard,
   );
 }
 
@@ -272,7 +272,7 @@ class AppColorPalette {
 
 class AppColorPalettes {
   static const classic = AppColorPalette(
-    key: AppColorSchemeKey.classic,
+    key: AppColorSchemeKey.standard,
     displayName: 'standard',
     backgroundColor: Color.fromRGBO(74, 76, 161, 1),
     interactiveColor: Color.fromRGBO(74, 76, 161, 1),
@@ -373,7 +373,7 @@ class AppColorPalettes {
   );
 
   static final Map<AppColorSchemeKey, AppColorPalette> _byKey = {
-    AppColorSchemeKey.classic: classic,
+    AppColorSchemeKey.standard: classic,
     AppColorSchemeKey.lila: lila,
     AppColorSchemeKey.darkBlue: darkBlue,
     AppColorSchemeKey.turquoise: turquoise,

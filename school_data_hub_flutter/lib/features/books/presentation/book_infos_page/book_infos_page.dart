@@ -100,6 +100,7 @@ class _BookInfosPageState extends State<BookInfosPage> {
           location: _bookProxy!.location,
           bookAvailable: _bookProxy!.available,
           imageId: _bookProxy!.imagePath,
+          bookTags: _bookProxy!.book.tags,
         ),
       ),
     ).then((_) {
@@ -140,18 +141,18 @@ class _BookInfosPageState extends State<BookInfosPage> {
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 800),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(5.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               BookHeader(bookProxy: bookProxy),
-              const Gap(20),
+              const Gap(10),
               _buildDescription(bookProxy),
-              const Gap(20),
+              const Gap(10),
               _buildOtherCopies(bookProxy),
-              const Gap(20),
+              const Gap(0),
               _buildLendings(bookProxy),
-              const Gap(20),
+              const Gap(10),
             ],
           ),
         ),
@@ -307,9 +308,15 @@ class _BookInfosPageState extends State<BookInfosPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Ausleihen:',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const Gap(10),
+            Text(
+              'Ausleihen:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
         const Gap(10),
         if (sortedLendings.isEmpty)
