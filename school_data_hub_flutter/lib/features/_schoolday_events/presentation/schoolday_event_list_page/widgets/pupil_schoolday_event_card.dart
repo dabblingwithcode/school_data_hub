@@ -19,6 +19,8 @@ import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_reason_chips.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_type_icon.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
+import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
+import 'package:school_data_hub_flutter/features/user/presentation/select_users/select_users_page.dart';
 import 'package:watch_it/watch_it.dart';
 
 class PupilSchooldayEventCard extends StatelessWidget {
@@ -244,26 +246,43 @@ class PupilSchooldayEventCard extends StatelessWidget {
                               style: TextStyle(fontSize: 16),
                             ),
                             const Gap(5),
-                            // only admin can change the admonishing user
+
                             isAuthorized
                                 ? InkWell(
                                     onTap: () async {
-                                      final String? createdBy =
-                                          await shortTextfieldDialog(
-                                            context: context,
-                                            title: 'Erstellt von:',
-                                            labelText: 'Kürzel eingeben',
-                                            hintText: 'Kürzel eingeben',
-                                            obscureText: false,
+                                      final users =
+                                          di<UserManager>().users.value;
+                                      final List<User>? selectedUsers =
+                                          await Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (ctx) => SelectUsersPage(
+                                                selectableUsers: users,
+                                                authorizedUsers:
+                                                    schooldayEvent.createdBy,
+                                                isMultiSelectMode: false,
+                                              ),
+                                            ),
                                           );
-                                      if (createdBy != null) {
-                                        await _schooldayEventManager
-                                            .updateSchooldayEvent(
-                                              eventToUpdate: schooldayEvent,
-                                              createdBy: createdBy,
-                                              processed: false,
-                                            );
+                                      if (selectedUsers == null ||
+                                          selectedUsers.isEmpty)
+                                        return;
+                                      if (selectedUsers
+                                              .first
+                                              .userInfo!
+                                              .userName ==
+                                          schooldayEvent.createdBy) {
+                                        return;
                                       }
+
+                                      await _schooldayEventManager
+                                          .updateSchooldayEvent(
+                                            eventToUpdate: schooldayEvent,
+                                            createdBy: selectedUsers
+                                                .first
+                                                .userInfo!
+                                                .userName!,
+                                            processed: false,
+                                          );
                                     },
                                     child: Text(
                                       schooldayEvent.createdBy,
