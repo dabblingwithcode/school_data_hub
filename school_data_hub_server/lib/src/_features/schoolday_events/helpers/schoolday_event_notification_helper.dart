@@ -137,7 +137,7 @@ String _getSchooldayEventNotificationHtml({
   }
 
   return '''
-<h4><strong>${processedStatusChange == true ? '👀 ' : ''} ${escapeHtml(eventType)}</strong></h4><p>für</p>
+<h4><strong>${processedStatusChange == true ? '👀 bearbeitet</strong><br>' : ''} <strong>${escapeHtml(eventType)}</strong></h4><p>für</p>
 <h3><strong>${escapeHtml(pupilName)}</strong></h3>
 <h4>Grund:</h4>
 <p><strong>$eventReason</strong></p>
