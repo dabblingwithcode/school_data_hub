@@ -47,17 +47,21 @@ class SchooldayEventNotificationHelper {
         session: session,
         recipients: recipients.toList(),
         text: _getSchooldayEventNotificationText(
-            eventcreator: eventWithSchoolday.createdBy,
-            pupilName: pupilNameAndGroup,
-            dateTimeAsString: dateAsString,
-            schooldayEvent: eventWithSchoolday,
-            numberOfEvents: numberOfEventsOfTheSameType),
+          eventcreator: eventWithSchoolday.createdBy,
+          pupilName: pupilNameAndGroup,
+          dateTimeAsString: dateAsString,
+          schooldayEvent: eventWithSchoolday,
+          numberOfEvents: numberOfEventsOfTheSameType,
+          processedStatusChange: changedProcessedStatus,
+        ),
         html: _getSchooldayEventNotificationHtml(
-            eventcreator: eventWithSchoolday.createdBy,
-            pupilName: pupilNameAndGroup,
-            dateTimeAsString: dateAsString,
-            schooldayEvent: eventWithSchoolday,
-            numberOfEvents: numberOfEventsOfTheSameType),
+          eventcreator: eventWithSchoolday.createdBy,
+          pupilName: pupilNameAndGroup,
+          dateTimeAsString: dateAsString,
+          schooldayEvent: eventWithSchoolday,
+          numberOfEvents: numberOfEventsOfTheSameType,
+          processedStatusChange: changedProcessedStatus,
+        ),
       ));
     } catch (e) {
       _log.severe('Error sending matrix notification: $e');
@@ -136,7 +140,7 @@ String _getSchooldayEventNotificationHtml({
 <h4><strong>${processedStatusChange == true ? '👀 ' : ''} ${escapeHtml(eventType)}</strong></h4><p>für</p>
 <h3><strong>${escapeHtml(pupilName)}</strong></h3>
 <h4>Grund:</h4>
-<p><strong>$eventReason}</strong></p>
+<p><strong>$eventReason</strong></p>
   ${processedStatusChange != null ? schooldayEvent.processed == true ? '<h3>Status: <strong>Bearbeitet von ${escapeHtml(eventcreator)} am ${escapeHtml(dateTimeAsString)}' : '<h3>Status: <strong>Nicht bearbeitet' : '<p>Eingetragen von <strong>${escapeHtml(eventcreator)}</strong> am <strong>${escapeHtml(dateTimeAsString)}</strong></p>'}
 
 ${numberOfEvents != null && (processedStatusChange == false || processedStatusChange == null) ? '<p>Das ist das <strong>$numberOfEvents</strong>. Schulereignis dieser Art für <strong>${escapeHtml(pupilName)}</strong>.</p>' : ''}

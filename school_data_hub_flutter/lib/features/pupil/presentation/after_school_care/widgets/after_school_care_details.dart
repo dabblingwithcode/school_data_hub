@@ -22,14 +22,34 @@ class AfterSchoolCareDetails extends WatchingWidget {
     );
 
     if (afterSchoolCare == null) {
-      return const Padding(
-        padding: EdgeInsets.all(10.0),
-        child: Text(
-          'Keine OGS Daten vorhanden',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Card(
+            color: Colors.grey[100],
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: Colors.grey[300]!),
+            ),
+            child: const Padding(
+              padding: EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.info_outline, size: 48, color: Colors.grey),
+                  Gap(12),
+                  Text(
+                    'Keine OGS Daten vorhanden',
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       );
@@ -37,336 +57,564 @@ class AfterSchoolCareDetails extends WatchingWidget {
 
     final pickUpTimes = afterSchoolCare.pickUpTimes;
 
-    return Column(
-      children: [
-        // Emergency Care
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: InkWell(
-            onTap: () => afterSchoolCareEditEmergencyCareDialog(context, pupil),
-            child: Row(
-              children: [
-                const Text(
-                  'Notbetreuung:',
-                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-                ),
-                const Gap(10),
-                Text(
-                  afterSchoolCare.emergencyCare == null
-                      ? 'Nicht gesetzt'
-                      : (afterSchoolCare.emergencyCare == true ? 'Ja' : 'Nein'),
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                    color: afterSchoolCare.emergencyCare == true
-                        ? Colors.orange
-                        : (afterSchoolCare.emergencyCare == null
-                              ? Colors.grey
-                              : Colors.black),
-                  ),
-                ),
-                const Gap(10),
-                Icon(Icons.edit, size: 18, color: AppColors.backgroundColor),
-              ],
-            ),
-          ),
-        ),
-        const Gap(10),
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _EmergencyCareCard(pupil: pupil, afterSchoolCare: afterSchoolCare),
+          const Gap(16),
+          _PickUpTimesCard(pupil: pupil, afterSchoolCare: afterSchoolCare),
+          const Gap(16),
+          _OgsInfoCard(pupil: pupil, afterSchoolCare: afterSchoolCare),
+        ],
+      ),
+    );
+  }
+}
 
-        // Pick Up Times Header
-        Padding(
-          padding: const EdgeInsets.only(left: 10, top: 10),
-          child: const Row(
-            children: [
-              Text(
-                'Abholzeiten:',
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-        ),
-        const Gap(5),
-        // All weekdays with individual edit buttons
-        _buildPickUpTimeRow(
-          context,
-          'Montag',
-          pickUpTimes?.monday,
-          pupil,
-          AfterSchoolCareWeekday.monday,
-        ),
-        _buildPickUpTimeRow(
-          context,
-          'Dienstag',
-          pickUpTimes?.tuesday,
-          pupil,
-          AfterSchoolCareWeekday.tuesday,
-        ),
-        _buildPickUpTimeRow(
-          context,
-          'Mittwoch',
-          pickUpTimes?.wednesday,
-          pupil,
-          AfterSchoolCareWeekday.wednesday,
-        ),
-        _buildPickUpTimeRow(
-          context,
-          'Donnerstag',
-          pickUpTimes?.thursday,
-          pupil,
-          AfterSchoolCareWeekday.thursday,
-        ),
-        _buildPickUpTimeRow(
-          context,
-          'Freitag',
-          pickUpTimes?.friday,
-          pupil,
-          AfterSchoolCareWeekday.friday,
-        ),
-        const Gap(10),
+// Emergency Care Card Component
+class _EmergencyCareCard extends StatelessWidget {
+  final PupilProxy pupil;
+  final AfterSchoolCare afterSchoolCare;
 
-        // OGS Info
-        const Padding(
-          padding: EdgeInsets.only(left: 10, top: 10),
+  const _EmergencyCareCard({
+    required this.pupil,
+    required this.afterSchoolCare,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final emergencyCare = afterSchoolCare.emergencyCare;
+    final isEmergency = emergencyCare == true;
+    final isNotSet = emergencyCare == null;
+
+    return Card(
+      elevation: 2,
+      shadowColor: Colors.black26,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: InkWell(
+        onTap: () => afterSchoolCareEditEmergencyCareDialog(context, pupil),
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Row(
             children: [
-              Text(
-                'OGS Informationen:',
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: isEmergency
+                      ? Colors.orange.withOpacity(0.1)
+                      : (isNotSet
+                            ? Colors.grey.withOpacity(0.1)
+                            : Colors.green.withOpacity(0.1)),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  isEmergency
+                      ? Icons.warning_amber_rounded
+                      : (isNotSet
+                            ? Icons.help_outline
+                            : Icons.check_circle_outline),
+                  size: 28,
+                  color: isEmergency
+                      ? Colors.orange
+                      : (isNotSet ? Colors.grey : Colors.green),
+                ),
               ),
+              const Gap(16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Notbetreuung',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black54,
+                      ),
+                    ),
+                    const Gap(4),
+                    Text(
+                      isNotSet
+                          ? 'Nicht gesetzt'
+                          : (isEmergency ? 'Ja' : 'Nein'),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: isEmergency
+                            ? Colors.orange
+                            : (isNotSet ? Colors.grey : Colors.black87),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.edit, size: 20, color: AppColors.backgroundColor),
             ],
           ),
         ),
-        const Gap(5),
-        Padding(
-          padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-          child: InkWell(
-            onTap: () async {
-              final String? ogsInfo = await longTextFieldDialog(
-                title: 'OGS Informationen',
-                labelText: 'OGS Informationen',
-                initialValue: afterSchoolCare.afterSchoolCareInfo ?? '',
-                parentContext: context,
-              );
-              if (ogsInfo == null) return;
-              await PupilMutator().updateAfterSchoolCare(
-                pupilId: pupil.pupilId,
-                afterSchoolCareInfo: (value: ogsInfo),
-              );
-            },
-            onLongPress: () async {
-              if (afterSchoolCare.afterSchoolCareInfo == null) return;
-              final bool? confirm = await confirmationDialog(
-                context: context,
-                title: 'OGS Infos löschen',
-                message: 'OGS Informationen für dieses Kind löschen?',
-              );
-              if (confirm == false || confirm == null) return;
-              await PupilMutator().updateAfterSchoolCare(
-                pupilId: pupil.pupilId,
-                afterSchoolCareInfo: (value: null),
-              );
-            },
-            child: Text(
-              afterSchoolCare.afterSchoolCareInfo == null ||
-                      (afterSchoolCare.afterSchoolCareInfo?.isEmpty ?? true)
-                  ? 'keine Informationen'
-                  : afterSchoolCare.afterSchoolCareInfo!,
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-                color:
-                    afterSchoolCare.afterSchoolCareInfo == null ||
-                        (afterSchoolCare.afterSchoolCareInfo?.isEmpty ?? true)
-                    ? Colors.grey
-                    : AppColors.backgroundColor,
+      ),
+    );
+  }
+}
+
+// Pick Up Times Card Component
+class _PickUpTimesCard extends StatelessWidget {
+  final PupilProxy pupil;
+  final AfterSchoolCare afterSchoolCare;
+
+  const _PickUpTimesCard({required this.pupil, required this.afterSchoolCare});
+
+  @override
+  Widget build(BuildContext context) {
+    final pickUpTimes = afterSchoolCare.pickUpTimes;
+
+    return Card(
+      elevation: 2,
+      shadowColor: Colors.black26,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.backgroundColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.access_time,
+                    size: 20,
+                    color: AppColors.backgroundColor,
+                  ),
+                ),
+                const Gap(12),
+                const Text(
+                  'Abholzeiten',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+            const Gap(16),
+            _PickUpTimeRow(
+              day: 'Montag',
+              pickUpInfo: pickUpTimes?.monday,
+              pupil: pupil,
+              weekday: AfterSchoolCareWeekday.monday,
+            ),
+            const Divider(height: 24),
+            _PickUpTimeRow(
+              day: 'Dienstag',
+              pickUpInfo: pickUpTimes?.tuesday,
+              pupil: pupil,
+              weekday: AfterSchoolCareWeekday.tuesday,
+            ),
+            const Divider(height: 24),
+            _PickUpTimeRow(
+              day: 'Mittwoch',
+              pickUpInfo: pickUpTimes?.wednesday,
+              pupil: pupil,
+              weekday: AfterSchoolCareWeekday.wednesday,
+            ),
+            const Divider(height: 24),
+            _PickUpTimeRow(
+              day: 'Donnerstag',
+              pickUpInfo: pickUpTimes?.thursday,
+              pupil: pupil,
+              weekday: AfterSchoolCareWeekday.thursday,
+            ),
+            const Divider(height: 24),
+            _PickUpTimeRow(
+              day: 'Freitag',
+              pickUpInfo: pickUpTimes?.friday,
+              pupil: pupil,
+              weekday: AfterSchoolCareWeekday.friday,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Pick Up Time Row Component
+class _PickUpTimeRow extends StatelessWidget {
+  final String day;
+  final PickUpInfo? pickUpInfo;
+  final PupilProxy pupil;
+  final AfterSchoolCareWeekday weekday;
+
+  const _PickUpTimeRow({
+    required this.day,
+    required this.pickUpInfo,
+    required this.pupil,
+    required this.weekday,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            SizedBox(
+              width: 90,
+              child: Text(
+                day,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
               ),
             ),
+            const Gap(12),
+            Expanded(
+              child: _TimeSelector(
+                pickUpInfo: pickUpInfo,
+                pupil: pupil,
+                weekday: weekday,
+              ),
+            ),
+          ],
+        ),
+        const Gap(8),
+        Padding(
+          padding: const EdgeInsets.only(left: 102),
+          child: _ModalitySelector(
+            pickUpInfo: pickUpInfo,
+            pupil: pupil,
+            weekday: weekday,
           ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildPickUpTimeRow(
-    BuildContext context,
-    String day,
-    PickUpInfo? pickUpInfo,
-    PupilProxy pupil,
-    AfterSchoolCareWeekday weekday,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 20, bottom: 5, right: 10),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(
-              day,
-              style: const TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
+// Time Selector Component
+class _TimeSelector extends StatelessWidget {
+  final PickUpInfo? pickUpInfo;
+  final PupilProxy pupil;
+  final AfterSchoolCareWeekday weekday;
+
+  const _TimeSelector({
+    required this.pickUpInfo,
+    required this.pupil,
+    required this.weekday,
+  });
+
+  Future<void> _selectTime(BuildContext context) async {
+    TimeOfDay initialTime = TimeOfDay.now();
+    final currentTime = pickUpInfo?.time;
+
+    if (currentTime != null && currentTime.isNotEmpty) {
+      final parts = currentTime.split(':');
+      if (parts.length == 2) {
+        final hour = int.tryParse(parts[0]);
+        final minute = int.tryParse(parts[1]);
+        if (hour != null && minute != null) {
+          initialTime = TimeOfDay(hour: hour, minute: minute);
+        }
+      }
+    }
+
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: initialTime,
+    );
+
+    if (pickedTime != null) {
+      final timeString =
+          '${pickedTime.hour.toString().padLeft(2, '0')}:${pickedTime.minute.toString().padLeft(2, '0')}';
+      await PupilMutator().updateAfterSchoolCare(
+        pupilId: pupil.pupilId,
+        weekday: (value: weekday),
+        time: timeString,
+        modality: pickUpInfo?.modality ?? '',
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final hasTime = pickUpInfo?.time != null && pickUpInfo!.time.isNotEmpty;
+
+    return InkWell(
+      onTap: () => _selectTime(context),
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: hasTime
+              ? AppColors.backgroundColor.withOpacity(0.1)
+              : Colors.grey.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: hasTime
+                ? AppColors.backgroundColor.withOpacity(0.3)
+                : Colors.grey[300]!,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.schedule,
+              size: 18,
+              color: hasTime ? AppColors.backgroundColor : Colors.grey[600],
+            ),
+            const Gap(8),
+            Text(
+              hasTime ? '${pickUpInfo!.time} Uhr' : 'Nicht gesetzt',
+              style: TextStyle(
+                fontSize: hasTime ? 16 : 14,
+                fontWeight: hasTime ? FontWeight.w600 : FontWeight.normal,
+                color: hasTime ? AppColors.backgroundColor : Colors.grey[600],
+                fontStyle: hasTime ? FontStyle.normal : FontStyle.italic,
               ),
             ),
-          ),
-          const Gap(5),
-          Expanded(
-            child: Row(
-              children: [
-                InkWell(
-                  onTap: () async {
-                    // Parse current time or use current time as default
-                    TimeOfDay initialTime = TimeOfDay.now();
-                    final currentTime = pickUpInfo?.time;
-                    if (currentTime != null && currentTime.isNotEmpty) {
-                      final parts = currentTime.split(':');
-                      if (parts.length == 2) {
-                        final hour = int.tryParse(parts[0]);
-                        final minute = int.tryParse(parts[1]);
-                        if (hour != null && minute != null) {
-                          initialTime = TimeOfDay(hour: hour, minute: minute);
-                        }
-                      }
-                    }
-
-                    final TimeOfDay? pickedTime = await showTimePicker(
-                      context: context,
-                      initialTime: initialTime,
-                    );
-
-                    if (pickedTime != null) {
-                      // Convert TimeOfDay to HH:mm format
-                      final timeString =
-                          '${pickedTime.hour.toString().padLeft(2, '0')}:${pickedTime.minute.toString().padLeft(2, '0')}';
-                      await PupilMutator().updateAfterSchoolCare(
-                        pupilId: pupil.pupilId,
-                        weekday: (value: weekday),
-                        time: timeString,
-                        modality: pickUpInfo?.modality ?? '',
-                      );
-                    }
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (pickUpInfo?.time == null ||
-                          pickUpInfo!.time.isEmpty) ...[
-                        Icon(
-                          Icons.access_time,
-                          size: 18,
-                          color: AppColors.backgroundColor,
-                        ),
-                        const Gap(5),
-                      ],
-                      Text(
-                        pickUpInfo?.time ?? 'Nicht gesetzt',
-                        style: TextStyle(
-                          fontSize:
-                              pickUpInfo?.time != null &&
-                                  pickUpInfo!.time.isNotEmpty
-                              ? 18.0
-                              : 16.0,
-                          fontWeight: FontWeight.bold,
-                          color:
-                              pickUpInfo?.time != null &&
-                                  pickUpInfo!.time.isNotEmpty
-                              ? AppColors.backgroundColor
-                              : Colors.grey[600],
-                          fontStyle:
-                              pickUpInfo?.time != null &&
-                                  pickUpInfo!.time.isNotEmpty
-                              ? FontStyle.normal
-                              : FontStyle.italic,
-                        ),
-                      ),
-                      if (pickUpInfo?.time != null &&
-                          pickUpInfo!.time.isNotEmpty) ...[
-                        const Gap(5),
-                        const Text('Uhr', style: TextStyle(fontSize: 16.0)),
-                      ],
-                    ],
-                  ),
-                ),
-                const Gap(5),
-                Expanded(
-                  child: _buildModalityDropdown(
-                    context,
-                    pickUpInfo?.modality,
-                    pupil,
-                    weekday,
-                    pickUpInfo?.time ?? '',
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+}
 
-  /// Converts a modality string to the corresponding enum value
+// Modality Selector Component
+class _ModalitySelector extends StatelessWidget {
+  final PickUpInfo? pickUpInfo;
+  final PupilProxy pupil;
+  final AfterSchoolCareWeekday weekday;
+
+  const _ModalitySelector({
+    required this.pickUpInfo,
+    required this.pupil,
+    required this.weekday,
+  });
+
   AfterSchoolCarePickUpModality _modalityStringToEnum(String? modality) {
     if (modality == null || modality.isEmpty) {
       return AfterSchoolCarePickUpModality.notSet;
     }
-    // Try to find matching enum by value
     for (final enumValue in AfterSchoolCarePickUpModality.values) {
       if (enumValue.value == modality) {
         return enumValue;
       }
     }
-    // If no match found, return notSet
     return AfterSchoolCarePickUpModality.notSet;
   }
 
-  Widget _buildModalityDropdown(
-    BuildContext context,
-    String? currentModality,
-    PupilProxy pupil,
-    AfterSchoolCareWeekday weekday,
-    String time,
-  ) {
-    final currentModalityEnum = _modalityStringToEnum(currentModality);
+  @override
+  Widget build(BuildContext context) {
+    final currentModalityEnum = _modalityStringToEnum(pickUpInfo?.modality);
 
-    return DropdownButton<AfterSchoolCarePickUpModality>(
-      value: currentModalityEnum,
-      isDense: true,
-      isExpanded: true,
-      underline: Container(),
-      items: AfterSchoolCarePickUpModality.values.map((modality) {
-        return DropdownMenuItem<AfterSchoolCarePickUpModality>(
-          value: modality,
-          child: Text(
-            modality.value,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 14.0,
-              fontStyle: modality == AfterSchoolCarePickUpModality.notSet
-                  ? FontStyle.italic
-                  : FontStyle.normal,
-              color: modality == AfterSchoolCarePickUpModality.notSet
-                  ? Colors.grey
-                  : Colors.black,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey[300]!),
+      ),
+      child: DropdownButton<AfterSchoolCarePickUpModality>(
+        value: currentModalityEnum,
+        isDense: true,
+        isExpanded: true,
+        underline: Container(),
+        icon: Icon(Icons.arrow_drop_down, color: Colors.grey[700]),
+        items: AfterSchoolCarePickUpModality.values.map((modality) {
+          return DropdownMenuItem<AfterSchoolCarePickUpModality>(
+            value: modality,
+            child: Row(
+              children: [
+                Icon(
+                  _getModalityIcon(modality),
+                  size: 16,
+                  color: modality == AfterSchoolCarePickUpModality.notSet
+                      ? Colors.grey
+                      : Colors.black54,
+                ),
+                const Gap(8),
+                Expanded(
+                  child: Text(
+                    modality.value,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontStyle:
+                          modality == AfterSchoolCarePickUpModality.notSet
+                          ? FontStyle.italic
+                          : FontStyle.normal,
+                      color: modality == AfterSchoolCarePickUpModality.notSet
+                          ? Colors.grey
+                          : Colors.black87,
+                    ),
+                  ),
+                ),
+              ],
             ),
+          );
+        }).toList(),
+        onChanged: (AfterSchoolCarePickUpModality? newModality) async {
+          if (newModality == null) return;
+
+          final modalityString =
+              newModality == AfterSchoolCarePickUpModality.notSet
+              ? ''
+              : newModality.value;
+
+          await PupilMutator().updateAfterSchoolCare(
+            pupilId: pupil.pupilId,
+            weekday: (value: weekday),
+            time: pickUpInfo?.time ?? '',
+            modality: modalityString,
+          );
+        },
+      ),
+    );
+  }
+
+  IconData _getModalityIcon(AfterSchoolCarePickUpModality modality) {
+    if (modality == AfterSchoolCarePickUpModality.notSet) {
+      return Icons.help_outline;
+    }
+    // Add specific icons for different modalities if needed
+    return Icons.directions_walk;
+  }
+}
+
+// OGS Info Card Component
+class _OgsInfoCard extends StatelessWidget {
+  final PupilProxy pupil;
+  final AfterSchoolCare afterSchoolCare;
+
+  const _OgsInfoCard({required this.pupil, required this.afterSchoolCare});
+
+  Future<void> _editInfo(BuildContext context) async {
+    final String? ogsInfo = await longTextFieldDialog(
+      title: 'OGS Informationen',
+      labelText: 'OGS Informationen',
+      initialValue: afterSchoolCare.afterSchoolCareInfo ?? '',
+      parentContext: context,
+    );
+    if (ogsInfo == null) return;
+    await PupilMutator().updateAfterSchoolCare(
+      pupilId: pupil.pupilId,
+      afterSchoolCareInfo: (value: ogsInfo),
+    );
+  }
+
+  Future<void> _deleteInfo(BuildContext context) async {
+    if (afterSchoolCare.afterSchoolCareInfo == null) return;
+    final bool? confirm = await confirmationDialog(
+      context: context,
+      title: 'OGS Infos löschen',
+      message: 'OGS Informationen für dieses Kind löschen?',
+    );
+    if (confirm == false || confirm == null) return;
+    await PupilMutator().updateAfterSchoolCare(
+      pupilId: pupil.pupilId,
+      afterSchoolCareInfo: (value: null),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final hasInfo =
+        afterSchoolCare.afterSchoolCareInfo != null &&
+        afterSchoolCare.afterSchoolCareInfo!.isNotEmpty;
+
+    return Card(
+      elevation: 2,
+      shadowColor: Colors.black26,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: InkWell(
+        onTap: () => _editInfo(context),
+        onLongPress: () => _deleteInfo(context),
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: hasInfo
+                          ? AppColors.backgroundColor.withOpacity(0.1)
+                          : Colors.grey.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Icons.info_outline,
+                      size: 20,
+                      color: hasInfo ? AppColors.backgroundColor : Colors.grey,
+                    ),
+                  ),
+                  const Gap(12),
+                  const Expanded(
+                    child: Text(
+                      'OGS Informationen',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                  Icon(Icons.edit, size: 20, color: AppColors.backgroundColor),
+                ],
+              ),
+              const Gap(12),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: hasInfo ? Colors.grey[50] : Colors.grey[100],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey[300]!),
+                ),
+                child: Text(
+                  hasInfo
+                      ? afterSchoolCare.afterSchoolCareInfo!
+                      : 'Keine Informationen vorhanden',
+                  style: TextStyle(
+                    fontSize: hasInfo ? 15 : 14,
+                    fontWeight: hasInfo ? FontWeight.normal : FontWeight.normal,
+                    color: hasInfo ? Colors.black87 : Colors.grey[600],
+                    fontStyle: hasInfo ? FontStyle.normal : FontStyle.italic,
+                  ),
+                ),
+              ),
+              if (hasInfo)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    'Lang drücken zum Löschen',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
+            ],
           ),
-        );
-      }).toList(),
-      onChanged: (AfterSchoolCarePickUpModality? newModality) async {
-        if (newModality == null) return;
-
-        // If notSet is selected, we want to clear the modality (set to empty string)
-        final modalityString =
-            newModality == AfterSchoolCarePickUpModality.notSet
-            ? ''
-            : newModality.value;
-
-        await PupilMutator().updateAfterSchoolCare(
-          pupilId: pupil.pupilId,
-          weekday: (value: weekday),
-          time: time,
-          modality: modalityString,
-        );
-      },
+        ),
+      ),
     );
   }
 }
