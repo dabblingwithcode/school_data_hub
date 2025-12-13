@@ -8,6 +8,7 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
+import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('SchooldayEventApiService');
@@ -24,9 +25,9 @@ class SchooldayEventApiService {
     int schooldayId,
     DateTime dateTime,
     SchooldayEventType type,
-    String reason, {
-    String? eventTime,
-  }) async {
+    String reason,
+    String eventTime,
+  ) async {
     final userName = _hubSessionManager.userName!;
     _notificationService.apiRunning(true);
     final pupil = di<PupilProxyManager>().getPupilByPupilId(pupilId);
@@ -34,12 +35,13 @@ class SchooldayEventApiService {
     try {
       var event = await _client.schooldayEvent.createSchooldayEvent(
         pupilNameAndGroup: pupilName,
-        dateTimeAsString: dateTime.formatDateForUser(),
+        dateAsString: dateTime.formatDateForUser(),
         pupilId: pupilId,
         schooldayId: schooldayId,
         type: type,
         reason: reason,
         createdBy: userName,
+        eventTime: eventTime,
         tutor: tutor ?? '',
       );
 
@@ -98,7 +100,7 @@ class SchooldayEventApiService {
     if (processed == true && processedBy == null && processedAt == null) {
       processedBy = (value: _hubSessionManager.user!.userInfo!.userName!);
 
-      processedAt = (value: DateTime.now().formatToUtcForServer());
+      processedAt = (value: di<SchoolCalendarManager>().thisDate.value);
       changedProcessedStatus = true;
     }
 
@@ -137,7 +139,7 @@ class SchooldayEventApiService {
             '${pupil.firstName} (${pupil.group})',
             '${pupil.groupTutor}',
             '${di<HubSessionManager>().userName!}',
-            '${DateTime.now().formatDateAndTimeForUser()}',
+            '${DateTime.now().formatDateForUser()}',
           );
       _notificationService.apiRunning(false);
       return updatedSchooldayEvent;

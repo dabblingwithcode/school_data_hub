@@ -23,11 +23,12 @@ class SchooldayEventEndpoint extends Endpoint {
   Future<SchooldayEvent> createSchooldayEvent(Session session,
       {required int pupilId,
       required String pupilNameAndGroup,
-      required String dateTimeAsString,
+      required String dateAsString,
       required int schooldayId,
       required SchooldayEventType type,
       required String reason,
       required String createdBy,
+      required String eventTime,
       required String tutor}) async {
     final eventId = Uuid().v4();
 
@@ -38,6 +39,7 @@ class SchooldayEventEndpoint extends Endpoint {
       eventType: type,
       eventReason: reason,
       createdBy: createdBy,
+      eventTime: eventTime,
       processed: false,
     );
 
@@ -57,7 +59,7 @@ class SchooldayEventEndpoint extends Endpoint {
         pupilNameAndGroup: pupilNameAndGroup,
         tutor: tutor,
         eventWithSchoolday: eventWithSchoolday!,
-        dateTimeAsString: dateTimeAsString,
+        dateAsString: dateAsString,
       ),
     );
     return eventWithSchoolday;
@@ -108,7 +110,7 @@ class SchooldayEventEndpoint extends Endpoint {
         pupilNameAndGroup: pupilNameAndGroup,
         tutor: tutor,
         eventWithSchoolday: updatedSchooldayEventInDatabase!,
-        dateTimeAsString: dateTimeAsString,
+        dateAsString: dateTimeAsString,
         changedProcessedStatus: changedProcessedStatus,
       ));
     }

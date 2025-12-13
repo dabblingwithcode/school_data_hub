@@ -487,24 +487,40 @@ class PupilSchooldayEventCard extends StatelessWidget {
                             isAdmin
                                 ? InkWell(
                                     onTap: () async {
-                                      //-TODO: get the user from select user page
-                                      final String? processingUser =
-                                          await shortTextfieldDialog(
-                                            context: context,
-                                            title: 'Bearbeitet von:',
-                                            labelText: 'Kürzel eingeben',
-                                            hintText: 'Kürzel eingeben',
-                                            obscureText: false,
-                                          );
-                                      if (processingUser != null) {
-                                        await _schooldayEventManager
-                                            .updateSchooldayEvent(
-                                              eventToUpdate: schooldayEvent,
-                                              processedBy: (
-                                                value: processingUser,
+                                      final users =
+                                          di<UserManager>().users.value;
+                                      final List<User>? selectedUsers =
+                                          await Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (ctx) => SelectUsersPage(
+                                                selectableUsers: users,
+                                                authorizedUsers:
+                                                    schooldayEvent.processedBy,
+                                                isMultiSelectMode: false,
                                               ),
-                                            );
+                                            ),
+                                          );
+                                      if (selectedUsers == null ||
+                                          selectedUsers.isEmpty)
+                                        return;
+                                      if (selectedUsers
+                                              .first
+                                              .userInfo!
+                                              .userName ==
+                                          schooldayEvent.processedBy) {
+                                        return;
                                       }
+
+                                      await _schooldayEventManager
+                                          .updateSchooldayEvent(
+                                            eventToUpdate: schooldayEvent,
+                                            processedBy: (
+                                              value: selectedUsers
+                                                  .first
+                                                  .userInfo!
+                                                  .userName!,
+                                            ),
+                                          );
                                     },
                                     child: Text(
                                       schooldayEvent.processedBy!,
@@ -530,7 +546,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                       final DateTime? newDate =
                                           await selectSchooldayDate(
                                             context,
-                                            DateTime.now(),
+                                            schooldayEvent.processedAt!,
                                           );
 
                                       if (newDate != null) {

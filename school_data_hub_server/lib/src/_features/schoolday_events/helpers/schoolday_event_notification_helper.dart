@@ -15,7 +15,7 @@ class SchooldayEventNotificationHelper {
     required String pupilNameAndGroup,
     required String tutor,
     required SchooldayEvent eventWithSchoolday,
-    required String dateTimeAsString,
+    required String dateAsString,
     bool? changedProcessedStatus,
   }) async {
     try {
@@ -49,13 +49,13 @@ class SchooldayEventNotificationHelper {
         text: _getSchooldayEventNotificationText(
             eventcreator: eventWithSchoolday.createdBy,
             pupilName: pupilNameAndGroup,
-            dateTimeAsString: dateTimeAsString,
+            dateTimeAsString: dateAsString,
             schooldayEvent: eventWithSchoolday,
             numberOfEvents: numberOfEventsOfTheSameType),
         html: _getSchooldayEventNotificationHtml(
             eventcreator: eventWithSchoolday.createdBy,
             pupilName: pupilNameAndGroup,
-            dateTimeAsString: dateTimeAsString,
+            dateTimeAsString: dateAsString,
             schooldayEvent: eventWithSchoolday,
             numberOfEvents: numberOfEventsOfTheSameType),
       ));

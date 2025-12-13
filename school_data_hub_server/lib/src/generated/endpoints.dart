@@ -3678,8 +3678,8 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<String>(),
               nullable: false,
             ),
-            'dateTimeAsString': _i1.ParameterDescription(
-              name: 'dateTimeAsString',
+            'dateAsString': _i1.ParameterDescription(
+              name: 'dateAsString',
               type: _i1.getType<String>(),
               nullable: false,
             ),
@@ -3703,6 +3703,11 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<String>(),
               nullable: false,
             ),
+            'eventTime': _i1.ParameterDescription(
+              name: 'eventTime',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
             'tutor': _i1.ParameterDescription(
               name: 'tutor',
               type: _i1.getType<String>(),
@@ -3718,11 +3723,12 @@ class Endpoints extends _i1.EndpointDispatch {
             session,
             pupilId: params['pupilId'],
             pupilNameAndGroup: params['pupilNameAndGroup'],
-            dateTimeAsString: params['dateTimeAsString'],
+            dateAsString: params['dateAsString'],
             schooldayId: params['schooldayId'],
             type: params['type'],
             reason: params['reason'],
             createdBy: params['createdBy'],
+            eventTime: params['eventTime'],
             tutor: params['tutor'],
           ),
         ),

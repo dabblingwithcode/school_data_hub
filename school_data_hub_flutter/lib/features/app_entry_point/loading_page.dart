@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/app_utils/logger/presentation/logs_page/logs_page.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
@@ -16,20 +16,20 @@ class LoadingPage extends WatchingStatefulWidget {
 }
 
 class LoadingPageState extends State<LoadingPage> {
-  String actualNotificationMessage = "";
-  String lastNotificationMessage = "";
+  // String actualNotificationMessage = "";
+  // String lastNotificationMessage = "";
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
-    final NotificationData snackBarData = watchValue(
-      (NotificationService x) => x.notification,
-    );
-    String newValue = snackBarData.message;
+    // final NotificationData snackBarData = watchValue(
+    //   (NotificationService x) => x.notification,
+    // );
+    // String newValue = snackBarData.message;
 
-    if (newValue != actualNotificationMessage) {
-      lastNotificationMessage = actualNotificationMessage;
-      actualNotificationMessage = newValue;
-    }
+    // if (newValue != actualNotificationMessage) {
+    //   lastNotificationMessage = actualNotificationMessage;
+    //   actualNotificationMessage = newValue;
+    // }
 
     return Scaffold(
       body: SafeArea(
@@ -54,11 +54,18 @@ class LoadingPageState extends State<LoadingPage> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const SizedBox(
+                        SizedBox(
                           height: 300,
                           width: 300,
-                          child: Image(
-                            image: AssetImage('assets/foreground.png'),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(builder: (ctx) => LogsPage()),
+                              );
+                            },
+                            child: const Image(
+                              image: AssetImage('assets/foreground.png'),
+                            ),
                           ),
                         ),
                         Text(
@@ -82,31 +89,36 @@ class LoadingPageState extends State<LoadingPage> {
                             ),
                           ),
                         const Gap(40),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text(
-                            lastNotificationMessage,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                        const Text(
+                          'Lade Daten...',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white, fontSize: 18),
                         ),
-                        const Gap(5),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text(
-                            actualNotificationMessage,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        //   child: Text(
+                        //     lastNotificationMessage,
+                        //     textAlign: TextAlign.center,
+                        //     style: const TextStyle(
+                        //       color: Colors.white,
+                        //       fontSize: 18,
+                        //       fontWeight: FontWeight.bold,
+                        //     ),
+                        //   ),
+                        // ),
+                        // const Gap(5),
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        //   child: Text(
+                        //     actualNotificationMessage,
+                        //     textAlign: TextAlign.center,
+                        //     style: const TextStyle(
+                        //       color: Colors.white,
+                        //       fontSize: 18,
+                        //       fontWeight: FontWeight.bold,
+                        //     ),
+                        //   ),
+                        // ),
                         const Gap(30),
                         const CircularProgressIndicator(color: Colors.white),
                       ],

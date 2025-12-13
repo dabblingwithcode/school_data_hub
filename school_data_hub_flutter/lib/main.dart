@@ -25,6 +25,7 @@ import 'package:watch_it/watch_it.dart';
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
+  GetIt.instance.debugEventsEnabled = true;
   // Disable Signals debug logging
   SignalsObserver.instance = null; // AppSignalsObserver();
   WidgetsFlutterBinding.ensureInitialized();

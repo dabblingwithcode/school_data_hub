@@ -13,8 +13,8 @@ import '../../model/app_log.dart';
 import 'widgets/log_entry_card.dart';
 import 'widgets/logs_filter_bottom_sheet.dart';
 
-class LogViewerPage extends HookWidget {
-  const LogViewerPage({super.key});
+class LogsPage extends HookWidget {
+  const LogsPage({super.key});
 
   @override
   Widget build(BuildContext context) {

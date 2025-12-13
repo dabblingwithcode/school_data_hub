@@ -33,12 +33,27 @@ class NotificationService {
     if (_loadingNewInstance.value) {
       return;
     }
+    switch (type) {
+      case NotificationType.success:
+        _log.info('''SNACK BAR SUCCESS:
+        $message''');
+      case NotificationType.error:
+        _log.severe('''SNACK BAR ERROR:
+        $message''');
+      case NotificationType.info:
+        _log.info('''SNACK BAR INFO:
+        $message''');
+      case NotificationType.warning:
+        _log.warning('''SNACK BAR WARNING:
+        $message''');
+      case NotificationType.dialog:
+        _log.info('''SNACK BAR DIALOG:
+        $message''');
+    }
 
-    _log.fine('''SNACK BAR MESSAGE:
-      ${type} $message
-      ''');
-
-    _snackBar.value = NotificationData(type, message);
+    //- TODO: Investigate when we really want to show one
+    //- before uncommenting this
+    // _snackBar.value = NotificationData(type, message);
   }
 
   void showInformationDialog(String message) {

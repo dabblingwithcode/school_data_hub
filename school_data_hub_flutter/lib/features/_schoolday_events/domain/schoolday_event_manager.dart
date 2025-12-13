@@ -113,13 +113,13 @@ class SchooldayEventManager with ChangeNotifier {
 
   //- post schoolday event
 
-  Future<void> postSchooldayEvent(
-    int pupilId,
-    int schooldayId,
-    DateTime dateTime,
-    SchooldayEventType type,
-    String reason, {
-    String? eventTime,
+  Future<void> postSchooldayEvent({
+    required int pupilId,
+    required int schooldayId,
+    required DateTime dateTime,
+    required SchooldayEventType type,
+    required String reason,
+    required String eventTime,
   }) async {
     final SchooldayEvent
     schooldayEvent = await _schooldayEventApiService.postSchooldayEvent(
@@ -129,7 +129,7 @@ class SchooldayEventManager with ChangeNotifier {
       dateTime,
       type,
       reason,
-      eventTime: eventTime,
+      eventTime,
     );
 
     _updateSchooldayEventCollections(schooldayEvent);
