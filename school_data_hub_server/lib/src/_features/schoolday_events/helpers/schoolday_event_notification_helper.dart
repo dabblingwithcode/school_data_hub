@@ -133,10 +133,10 @@ String _getSchooldayEventNotificationHtml({
   }
 
   return '''
-<h3><strong>${escapeHtml(eventType)}</strong></h3><p>für</p>
+<h3><strong>${processedStatusChange == true ? '👀 ' : ''} ${escapeHtml(eventType)}</strong></h3><p>für</p>
 <h3><strong>${escapeHtml(pupilName)}</strong></h3>
 <h4>Grund:</h4>
-<p><strong>${escapeHtml(eventReason).replaceAll('*', '<br>')}</strong></p>
+<p><strong>$eventReason}</strong></p>
   ${processedStatusChange != null ? schooldayEvent.processed == true ? '<h3>Status: <strong>Bearbeitet von ${escapeHtml(eventcreator)} am ${escapeHtml(dateTimeAsString)}' : '<h3>Status: <strong>Nicht bearbeitet' : '<p>Eingetragen von <strong>${escapeHtml(eventcreator)}</strong> am <strong>${escapeHtml(dateTimeAsString)}</strong></p>'}
 
 ${numberOfEvents != null ? '<p>Das ist das <strong>$numberOfEvents</strong>. Schulereignis dieser Art für <strong>${escapeHtml(pupilName)}</strong>.</p>' : ''}
