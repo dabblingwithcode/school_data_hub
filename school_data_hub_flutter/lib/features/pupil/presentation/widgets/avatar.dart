@@ -175,6 +175,30 @@ class AvatarWithBadges extends WatchingWidget {
                 ),
               ),
             ),
+            if (pupil.isBirthdayToday)
+              Positioned(
+                top: 0,
+                bottom: 0,
+                left: _badgeOffset,
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    width: _badgeSize,
+                    height: _badgeSize,
+                    decoration: const BoxDecoration(
+                      color: Color.fromARGB(255, 228, 76, 99),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.cake_rounded,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             if (pupil.specialNeeds != null)
               Positioned(
                 top: 0,

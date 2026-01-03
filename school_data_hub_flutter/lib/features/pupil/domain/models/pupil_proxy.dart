@@ -132,6 +132,11 @@ class PupilProxy with ChangeNotifier {
   String? get family => _pupilIdentity.family;
   DateTime get birthday => _pupilIdentity.birthday.add(const Duration(days: 1));
 
+  bool get isBirthdayToday {
+    final today = DateTime.now();
+    return today.month == birthday.month && today.day == birthday.day;
+  }
+
   int get age {
     final today = DateTime.now();
     int age = today.year - _pupilIdentity.birthday.year;

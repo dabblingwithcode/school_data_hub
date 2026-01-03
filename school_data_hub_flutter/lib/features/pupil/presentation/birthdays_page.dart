@@ -17,8 +17,10 @@ class BirthdaysView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Set<DateTime> seenBirthdays = {};
-    final List<PupilProxy> pupils = di<PupilProxyManager>()
-        .getPupilsWithBirthdaySinceDate(selectedDate);
+    final pupilManager = di<PupilProxyManager>();
+    final List<PupilProxy> pupils = pupilManager.getPupilsWithBirthdaySinceDate(
+      selectedDate,
+    );
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
@@ -58,22 +60,15 @@ class BirthdaysView extends StatelessWidget {
                             itemCount: pupils.length,
                             itemBuilder: (context, int index) {
                               PupilProxy listedPupil = pupils[index];
+
+                              // Get the relevant birthday from the manager
+                              final DateTime relevantBirthday = pupilManager
+                                  .getRelevantBirthdayDate(listedPupil);
+
                               final bool isBirthdayPrinted = seenBirthdays
-                                  .contains(
-                                    DateTime(
-                                      DateTime.now().year,
-                                      listedPupil.birthday.month,
-                                      listedPupil.birthday.day,
-                                    ),
-                                  );
+                                  .contains(relevantBirthday);
                               if (!isBirthdayPrinted) {
-                                seenBirthdays.add(
-                                  DateTime(
-                                    DateTime.now().year,
-                                    listedPupil.birthday.month,
-                                    listedPupil.birthday.day,
-                                  ),
-                                );
+                                seenBirthdays.add(relevantBirthday);
                               }
                               return Column(
                                 children: [
@@ -86,7 +81,7 @@ class BirthdaysView extends StatelessWidget {
                                             children: [
                                               const Gap(5),
                                               Text(
-                                                '${DateTime(DateTime.now().year, listedPupil.birthday.month, listedPupil.birthday.day).asWeekdayName(context)}, ${DateTime(DateTime.now().year, listedPupil.birthday.month, listedPupil.birthday.day).formatDateForUser()}',
+                                                '${relevantBirthday.asWeekdayName(context)}, ${relevantBirthday.formatDateForUser()}',
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color:
