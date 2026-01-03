@@ -26,7 +26,12 @@ class AttendanceStatsView extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _hiddenSeries = createOnce(() => ValueNotifier<Set<String>>(Set()));
+    final _hiddenSeries = createOnce(() => ValueNotifier<Set<String>>({}));
+    final hiddenSeriesSet = watchPropertyValue(
+      (ValueNotifier<Set<String>> p0) => p0.value,
+      target: _hiddenSeries,
+    );
+
     void _onSelectionChanged(charts.SelectionModel<String> model) {
       final selectedDatum = model.selectedDatum;
 
@@ -96,18 +101,17 @@ class AttendanceStatsView extends WatchingWidget {
     }
 
     void _toggleSeries(String seriesId) {
-      final modifiedHiddenSeries = _hiddenSeries.value;
-      if (_hiddenSeries.value.contains(seriesId)) {
-        modifiedHiddenSeries.remove(seriesId);
-        _hiddenSeries.value = modifiedHiddenSeries;
+      final currentSet = Set<String>.from(_hiddenSeries.value);
+      if (currentSet.contains(seriesId)) {
+        currentSet.remove(seriesId);
       } else {
-        modifiedHiddenSeries.add(seriesId);
-        _hiddenSeries.value = modifiedHiddenSeries;
+        currentSet.add(seriesId);
       }
+      _hiddenSeries.value = currentSet;
     }
 
     Widget _buildLegendItem(String label, Color color, String seriesId) {
-      final isHidden = _hiddenSeries.value.contains(seriesId);
+      final isHidden = hiddenSeriesSet.contains(seriesId);
       return InkWell(
         onTap: () => _toggleSeries(seriesId),
         child: Opacity(
@@ -145,7 +149,7 @@ class AttendanceStatsView extends WatchingWidget {
     List<charts.Series<ChartData, String>> _createAttendanceSeries() {
       final List<charts.Series<ChartData, String>> series = [];
 
-      if (!_hiddenSeries.value.contains('excused')) {
+      if (!hiddenSeriesSet.contains('excused')) {
         final excusedData = sortedSchooldays.map((schoolday) {
           final data = attendanceChartData[schoolday.schoolday];
           final dateStr = _formatDateForChart(schoolday.schoolday);
@@ -168,7 +172,7 @@ class AttendanceStatsView extends WatchingWidget {
         );
       }
 
-      if (!_hiddenSeries.value.contains('unexcused')) {
+      if (!hiddenSeriesSet.contains('unexcused')) {
         final unexcusedData = sortedSchooldays.map((schoolday) {
           final data = attendanceChartData[schoolday.schoolday];
           final dateStr = _formatDateForChart(schoolday.schoolday);
@@ -191,7 +195,7 @@ class AttendanceStatsView extends WatchingWidget {
         );
       }
 
-      if (!_hiddenSeries.value.contains('goneHome')) {
+      if (!hiddenSeriesSet.contains('goneHome')) {
         final goneHomeData = sortedSchooldays.map((schoolday) {
           final data = attendanceChartData[schoolday.schoolday];
           final dateStr = _formatDateForChart(schoolday.schoolday);

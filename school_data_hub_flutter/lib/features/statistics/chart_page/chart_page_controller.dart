@@ -170,7 +170,7 @@ class _ChartPageControllerState extends State<ChartPageController> {
 
       DateTime? supportCreated;
       int? supportLevel;
-      if (pupil.latestSupportLevel != null) {
+      if (pupil.latestSupportLevel != null && pupil.specialNeeds == null) {
         supportLevel = pupil.latestSupportLevel!.level;
         final d = pupil.latestSupportLevel!.createdAt.toLocal();
         supportCreated = DateTime(d.year, d.month, d.day);
@@ -242,41 +242,34 @@ class _ChartPageControllerState extends State<ChartPageController> {
         // Enrolled check
         if (p.sinceDate.isAfter(dayDate)) continue;
 
-        // New Pupils
+        // New Pupils (this is separate - an overlay metric)
         if ((p.sinceDate.isBefore(dayDate) || p.sinceDate == dayDate) &&
             (p.sinceDate.isAfter(semesterStartDate) ||
                 p.sinceDate == semesterStartDate)) {
           newPupils++;
         }
 
-        // Special Needs
+        // Priority hierarchy for main categorization
+        // Each pupil is counted in exactly one category to avoid double-counting
+
+        // 1. Special Needs (highest priority)
         if (p.hasSpecialNeeds) {
           specialNeeds++;
         }
-
-        // Migration Support
-        bool isMigration = false;
-        if (p.migrationEnd != null) {
-          if (dayDate.isBefore(p.migrationEnd!) || dayDate == p.migrationEnd!) {
-            migrationSupport++;
-            isMigration = true;
-          }
+        // 2. Migration Support (only if not special needs)
+        else if (p.migrationEnd != null &&
+            (dayDate.isBefore(p.migrationEnd!) || dayDate == p.migrationEnd!)) {
+          migrationSupport++;
         }
-
-        // Support Level 3
-        bool isLevel3 = false;
-        if (!p.hasSpecialNeeds &&
-            p.supportLevel == 3 &&
-            p.supportCreated != null) {
-          if (p.supportCreated!.isBefore(dayDate) ||
-              p.supportCreated == dayDate) {
-            supportLevel3++;
-            isLevel3 = true;
-          }
+        // 3. Support Level 3 (only if not special needs or migration)
+        else if (p.supportLevel == 3 &&
+            p.supportCreated != null &&
+            (p.supportCreated!.isBefore(dayDate) ||
+                p.supportCreated == dayDate)) {
+          supportLevel3++;
         }
-
-        // Regular
-        if (!p.hasSpecialNeeds && !isMigration && !isLevel3) {
+        // 4. Regular pupils (everyone else)
+        else {
           regularPupils++;
         }
       }

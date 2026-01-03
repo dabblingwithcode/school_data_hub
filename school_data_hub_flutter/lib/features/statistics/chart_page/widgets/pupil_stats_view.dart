@@ -58,9 +58,12 @@ class _PupilStatsViewState extends State<PupilStatsView> {
 
       final buffer = StringBuffer();
       buffer.writeln('Datum: ${chartData.dateString}');
+      buffer.writeln(
+        'Gesamt: ${dateData.specialNeeds + dateData.migrationSupport + dateData.supportLevel3 + dateData.regularPupils}',
+      );
       buffer.writeln();
       buffer.writeln('Besonderer Förderbedarf: ${dateData.specialNeeds}');
-      buffer.writeln('Migrationsunterstützung: ${dateData.migrationSupport}');
+      buffer.writeln('Erstförderung Deutsch: ${dateData.migrationSupport}');
       buffer.writeln('Förderstufe 3: ${dateData.supportLevel3}');
       buffer.writeln('Reguläre Schüler: ${dateData.regularPupils}');
       buffer.writeln('Neue Schüler: ${dateData.newPupils}');

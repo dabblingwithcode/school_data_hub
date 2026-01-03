@@ -208,7 +208,7 @@ class PupilProxyManager extends ChangeNotifier {
   }
 
   Future<void> updatePupilList(List<PupilProxy> pupils) async {
-    await fetchPupilsByInternalId(pupils.map((e) => e.pupilId).toList());
+    await fetchPupilsByInternalId(pupils.map((e) => e.internalId).toList());
   }
 
   Future<void> updatePupilData(int pupilId) async {

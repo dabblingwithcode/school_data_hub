@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:school_data_hub_flutter/app_utils/logger/presentation/logs_page/logs_page.dart';
-import 'package:school_data_hub_flutter/app_utils/shorebird_code_push.dart';
+import 'package:school_data_hub_flutter/app_utils/shorebird_code_push_page.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
@@ -97,7 +97,7 @@ class SettingsPage extends StatelessWidget {
                     onPressed: (context) {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (ctx) => const CheckForUpdatesPage(),
+                          builder: (ctx) => const ShorebirdCodePushPage(),
                         ),
                       );
                     },

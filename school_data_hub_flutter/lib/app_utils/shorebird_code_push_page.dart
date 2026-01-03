@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/bottom_nav_bar_no_filter_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/core/updater/shorebird_update_manager.dart';
@@ -9,14 +10,14 @@ import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('CheckForUpdatesPage');
 
-class CheckForUpdatesPage extends StatefulWidget {
-  const CheckForUpdatesPage({super.key});
+class ShorebirdCodePushPage extends WatchingStatefulWidget {
+  const ShorebirdCodePushPage({super.key});
 
   @override
-  State<CheckForUpdatesPage> createState() => _CheckForUpdatesPageState();
+  State<ShorebirdCodePushPage> createState() => _ShorebirdCodePushPageState();
 }
 
-class _CheckForUpdatesPageState extends State<CheckForUpdatesPage> {
+class _ShorebirdCodePushPageState extends State<ShorebirdCodePushPage> {
   final _updater = di<ShorebirdUpdateManager>().shorebirdUpdater;
   late final bool _isUpdaterAvailable;
   var _currentTrack = UpdateTrack.stable;
@@ -123,26 +124,15 @@ class _CheckForUpdatesPageState extends State<CheckForUpdatesPage> {
   }
 
   void _showRestartBanner() {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentMaterialBanner()
-      ..showMaterialBanner(
-        MaterialBanner(
-          content: const Text(
-            'Ein neuer Patch ist verfügbar! Bitte starte die App neu.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
-              },
-              child: const Text('Verstanden'),
-            ),
-          ],
-        ),
-      );
+    di<NotificationService>().showInformationDialog(
+      'Ein neuer Patch ist verfügbar! Bitte starte die App neu.',
+    );
   }
 
   void _showErrorBanner(Object error) {
+    di<NotificationService>().showInformationDialog(
+      'Fehler beim Herunterladen des Updates: $error.',
+    );
     ScaffoldMessenger.of(context)
       ..hideCurrentMaterialBanner()
       ..showMaterialBanner(
