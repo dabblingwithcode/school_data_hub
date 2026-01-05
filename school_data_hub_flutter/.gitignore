@@ -29,6 +29,8 @@ test_enc.dart
 decrypt_files.dart
 **/scripts/
 cursor_docs/
+test_enc.dart
+.cursorrules
 
 # Flutter/Dart/Pub related
 **/doc/api/
