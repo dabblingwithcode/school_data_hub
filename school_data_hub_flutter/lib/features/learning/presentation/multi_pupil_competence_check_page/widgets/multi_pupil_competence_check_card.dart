@@ -3,12 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
-import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_helper.dart';
@@ -288,18 +288,20 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                 InkWell(
                   onTap: () async {
                     if (SessionHelper.isAuthorized(competenceCheck.createdBy)) {
-                      final String? comment = await longTextFieldDialog(
+                      final result = await longTextFieldDialog(
                         parentContext: context,
                         title: 'Kommentar',
                         labelText: 'Kommentar eingeben',
                         initialValue: competenceCheck.comment,
                       );
-                      if (comment != null) {
-                        await di<CompetenceManager>().updateCompetenceCheck(
-                          competenceCheckId: competenceCheck.checkId,
-                          competenceComment: (value: comment),
-                        );
+                      if (result == null ||
+                          result.value == competenceCheck.comment) {
+                        return;
                       }
+                      await di<CompetenceManager>().updateCompetenceCheck(
+                        competenceCheckId: competenceCheck.checkId,
+                        competenceComment: (value: result.value),
+                      );
                     }
                   },
                   child: Text(
@@ -318,18 +320,20 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                       if (SessionHelper.isAuthorized(
                         competenceCheck.createdBy,
                       )) {
-                        final String? comment = await longTextFieldDialog(
+                        final result = await longTextFieldDialog(
                           parentContext: context,
                           title: 'Kommentar',
                           labelText: 'Kommentar eingeben',
                           initialValue: competenceCheck.comment,
                         );
-                        if (comment != null) {
-                          await di<CompetenceManager>().updateCompetenceCheck(
-                            competenceCheckId: competenceCheck.checkId,
-                            competenceComment: (value: comment),
-                          );
+                        if (result == null ||
+                            result.value == competenceCheck.comment) {
+                          return;
                         }
+                        await di<CompetenceManager>().updateCompetenceCheck(
+                          competenceCheckId: competenceCheck.checkId,
+                          competenceComment: (value: result.value),
+                        );
                       }
                     },
                     child: Text(

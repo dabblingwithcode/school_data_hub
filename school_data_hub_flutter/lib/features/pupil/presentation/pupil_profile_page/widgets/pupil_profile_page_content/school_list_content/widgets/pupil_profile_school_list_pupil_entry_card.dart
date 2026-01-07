@@ -155,18 +155,19 @@ class PupilProfileSchoolListPupilEntryCard extends WatchingWidget {
                   Flexible(
                     child: InkWell(
                       onTap: () async {
-                        final String? comment = await longTextFieldDialog(
+                        final result = await longTextFieldDialog(
                           title: 'Kommentar',
                           initialValue: pupilListEntry.comment ?? '',
                           labelText: 'Kommentar eintragen',
                           parentContext: context,
                         );
-                        if (comment == null) {
+                        if (result == null ||
+                            result.value == pupilListEntry.comment) {
                           return;
                         }
                         await _schoolListManager.updatePupilListEntry(
                           entry: pupilListEntry,
-                          comment: (value: comment),
+                          comment: (value: result.value),
                         );
                       },
                       child: Text(

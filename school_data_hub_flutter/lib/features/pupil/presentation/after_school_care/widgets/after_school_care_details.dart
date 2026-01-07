@@ -502,16 +502,18 @@ class _OgsInfoCard extends StatelessWidget {
   const _OgsInfoCard({required this.pupil, required this.afterSchoolCare});
 
   Future<void> _editInfo(BuildContext context) async {
-    final String? ogsInfo = await longTextFieldDialog(
+    final result = await longTextFieldDialog(
       title: 'OGS Informationen',
       labelText: 'OGS Informationen',
       initialValue: afterSchoolCare.afterSchoolCareInfo ?? '',
       parentContext: context,
     );
-    if (ogsInfo == null) return;
+    if (result == null || result.value == afterSchoolCare.afterSchoolCareInfo) {
+      return;
+    }
     await PupilMutator().updateAfterSchoolCare(
       pupilId: pupil.pupilId,
-      afterSchoolCareInfo: (value: ogsInfo),
+      afterSchoolCareInfo: (value: result.value),
     );
   }
 

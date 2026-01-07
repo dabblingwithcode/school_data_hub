@@ -374,21 +374,19 @@ class AttendanceCard extends WatchingWidget {
                     Expanded(
                       child: InkWell(
                         onTap: () async {
-                          final String? commentValue =
-                              await longTextFieldDialog(
-                                title: 'Kommentar eintragen',
-                                labelText: 'Kommentar',
-                                initialValue: null,
-                                parentContext: context,
-                              );
-                          if (commentValue == null ||
-                              commentValue.isEmpty ||
-                              commentValue == attendanceInfo.commentValue) {
+                          final result = await longTextFieldDialog(
+                            title: 'Kommentar eintragen',
+                            labelText: 'Kommentar',
+                            initialValue: null,
+                            parentContext: context,
+                          );
+                          if (result == null ||
+                              result.value == attendanceInfo.commentValue) {
                             return;
                           }
                           _attendanceManager.updateCommentValue(
                             pupil.pupilId,
-                            commentValue,
+                            result.value,
                             thisDate,
                           );
                         },
@@ -777,19 +775,20 @@ class AttendanceCard extends WatchingWidget {
                   Expanded(
                     child: InkWell(
                       onTap: () async {
-                        final String? commentValue = await longTextFieldDialog(
+                        final result = await longTextFieldDialog(
                           title: 'Kommentar',
                           labelText: 'Kommentar',
                           initialValue: attendanceInfo.commentValue,
                           parentContext: context,
                         );
-                        if (commentValue == attendanceInfo.commentValue) {
+                        if (result == null ||
+                            result.value == attendanceInfo.commentValue) {
                           return;
                         }
 
                         _attendanceManager.updateCommentValue(
                           pupil.pupilId,
-                          commentValue ?? '',
+                          result.value,
                           thisDate,
                         );
                       },

@@ -224,22 +224,23 @@ class AuthorizationPupilCard extends WatchingWidget {
                 Expanded(
                   child: InkWell(
                     onTap: () async {
-                      final String? authorizationComment =
-                          await longTextFieldDialog(
-                            title: 'Kommentar ändern',
-                            labelText: 'Kommentar',
-                            initialValue: pupilAuthorization.comment,
-                            parentContext: context,
-                          );
-                      if (authorizationComment == null) return;
-                      if (authorizationComment == '') return;
+                      final result = await longTextFieldDialog(
+                        title: 'Kommentar ändern',
+                        labelText: 'Kommentar',
+                        initialValue: pupilAuthorization.comment,
+                        parentContext: context,
+                      );
+                      if (result == null ||
+                          result.value == pupilAuthorization.comment ||
+                          result.value == '') {
+                        return;
+                      }
+
                       await di<AuthorizationManager>().updatePupilAuthorization(
                         pupilId: pupil.pupilId,
                         authorizationId: authorization.id!,
                         status: null,
-                        comment: authorizationComment == ''
-                            ? null
-                            : authorizationComment,
+                        comment: result.value,
                       );
                     },
                     child: Text(

@@ -221,8 +221,8 @@ class PupilUpdateEndpoint extends Endpoint {
     return updatedPupil;
   }
 
-  Future<PupilData> updateStringProperty(
-      Session session, int pupilId, String property, String? value) async {
+  Future<PupilData> updateStringProperty(Session session, int pupilId,
+      String property, ({String? value})? propertyValue) async {
     final pupil = await PupilData.db
         .findById(session, pupilId, include: PupilSchemas.allInclude);
     if (pupil == null) {
@@ -230,13 +230,13 @@ class PupilUpdateEndpoint extends Endpoint {
     }
     switch (property) {
       case 'contact':
-        pupil.contact = value;
+        pupil.contact = propertyValue?.value;
         break;
       case 'specialInformation':
-        pupil.specialInformation = value;
+        pupil.specialInformation = propertyValue?.value;
         break;
       case 'swimmer':
-        pupil.swimmer = value;
+        pupil.swimmer = propertyValue?.value;
         break;
       default:
         throw Exception('Invalid property name');

@@ -4172,7 +4172,7 @@ class _PupilUpdateEndpoint {
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
     String property,
-    String? value,
+    ({String? value})? propertyValue,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -4188,7 +4188,7 @@ class _PupilUpdateEndpoint {
           parameters: _i1.testObjectToJson({
             'pupilId': pupilId,
             'property': property,
-            'value': value,
+            'propertyValue': _i15.mapRecordToJson(propertyValue),
           }),
           serializationManager: _serializationManager,
         );

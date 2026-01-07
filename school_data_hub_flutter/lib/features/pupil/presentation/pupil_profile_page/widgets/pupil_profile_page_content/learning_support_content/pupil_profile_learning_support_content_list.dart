@@ -190,20 +190,21 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
               InkWell(
                 //- TODO: implement long text field dialog
                 onTap: () async {
-                  final newKindergardenValue = await longTextFieldDialog(
+                  final result = await longTextFieldDialog(
                     title: 'Informationen zum Kindergartenbesuch',
                     labelText: 'Kindergartenbesuch',
                     initialValue: kindergarden?.name ?? 'Kein Eintrag',
                     parentContext: context,
                   );
-                  if (newKindergardenValue == null ||
-                      newKindergardenValue.isEmpty) {
+                  if (result == null ||
+                      result.value == kindergarden?.name ||
+                      result.value!.isEmpty) {
                     return;
                   }
                   await di<PupilMutator>().updateStringProperty(
                     pupilId: pupil.pupilId,
                     property: 'kindergarden',
-                    value: newKindergardenValue,
+                    propertyValue: (value: result.value),
                   );
                 },
                 child: Text(

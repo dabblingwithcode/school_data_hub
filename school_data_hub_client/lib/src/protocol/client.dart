@@ -1459,7 +1459,7 @@ class EndpointPupilUpdate extends _i1.EndpointRef {
   _i2.Future<_i5.PupilData> updateStringProperty(
     int pupilId,
     String property,
-    String? value,
+    ({String? value})? propertyValue,
   ) =>
       caller.callServerEndpoint<_i5.PupilData>(
         'pupilUpdate',
@@ -1467,7 +1467,7 @@ class EndpointPupilUpdate extends _i1.EndpointRef {
         {
           'pupilId': pupilId,
           'property': property,
-          'value': value,
+          'propertyValue': _i16.mapRecordToJson(propertyValue),
         },
       );
 

@@ -116,7 +116,7 @@ class MatrixUserManager extends ChangeNotifier {
         await PupilMutator().updateStringProperty(
           pupilId: pupil.pupilId,
           property: 'contact',
-          value: matrixId,
+          propertyValue: (value: matrixId),
         );
       } else {
         // it's a parent related matrix account

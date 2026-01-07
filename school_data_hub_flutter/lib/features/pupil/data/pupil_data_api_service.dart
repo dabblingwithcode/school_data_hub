@@ -87,11 +87,14 @@ class PupilDataApiService {
   Future<PupilData?> updateStringProperty({
     required int pupilId,
     required String property,
-    required String? value,
+    required ({String? value}) propertyValue,
   }) async {
     final updatedPupil = await ClientHelper.apiCall(
-      call: () =>
-          _client.pupilUpdate.updateStringProperty(pupilId, property, value),
+      call: () => _client.pupilUpdate.updateStringProperty(
+        pupilId,
+        property,
+        propertyValue,
+      ),
       errorMessage: 'Die Schüler konnten nicht aktualisiert werden',
     );
     return updatedPupil;

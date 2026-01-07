@@ -115,18 +115,19 @@ class SchoolListPupilEntryCard extends WatchingWidget {
                     const Gap(5),
                     InkWell(
                       onTap: () async {
-                        final listComment = await longTextFieldDialog(
+                        final result = await longTextFieldDialog(
                           title: 'Kommentar ändern',
                           labelText: 'Kommentar',
                           initialValue: pupilEntry.comment ?? '',
                           parentContext: context,
                         );
-                        if (listComment == null) {
+                        if (result == null ||
+                            result.value == pupilEntry.comment) {
                           return;
                         }
                         await _schoolListManager.updatePupilListEntry(
                           entry: pupilEntry,
-                          comment: (value: listComment),
+                          comment: (value: result.value),
                         );
                       },
                       onLongPress: () async {

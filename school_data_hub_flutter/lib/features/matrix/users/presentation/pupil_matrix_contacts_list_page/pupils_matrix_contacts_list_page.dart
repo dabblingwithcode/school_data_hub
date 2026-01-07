@@ -15,8 +15,8 @@ import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_man
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_page/new_matrix_user_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/widgets/credit_list_page_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/widgets/credit_list_searchbar.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
@@ -163,20 +163,25 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                             }
                                           },
                                           onLongPress: () async {
-                                            final String? contact =
+                                            final result =
                                                 await longTextFieldDialog(
                                                   title: 'Kontakt',
                                                   labelText: 'Kontakt',
                                                   initialValue: pupil.contact,
                                                   parentContext: context,
                                                 );
-                                            if (contact == null) return;
+                                            if (result == null ||
+                                                result.value == pupil.contact) {
+                                              return;
+                                            }
 
                                             await PupilMutator()
                                                 .updateStringProperty(
                                                   pupilId: pupil.pupilId,
                                                   property: 'contact',
-                                                  value: contact,
+                                                  propertyValue: (
+                                                    value: result.value,
+                                                  ),
                                                 );
                                           },
                                           child: Text(
@@ -285,7 +290,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                             }
                                           },
                                           onLongPress: () async {
-                                            final String? tutorContact =
+                                            final result =
                                                 await longTextFieldDialog(
                                                   title: 'Elternkontakt',
                                                   labelText: 'Elternkontakt',
@@ -294,12 +299,18 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                                       ?.parentsContact,
                                                   parentContext: context,
                                                 );
-                                            if (tutorContact == null) return;
+                                            if (result == null ||
+                                                result.value ==
+                                                    pupil
+                                                        .tutorInfo
+                                                        ?.parentsContact) {
+                                              return;
+                                            }
                                             final TutorInfo? tutorInfo =
                                                 pupil.tutorInfo == null
                                                 ? TutorInfo(
                                                     parentsContact:
-                                                        '@$tutorContact',
+                                                        '@${result.value}',
                                                     createdBy:
                                                         di<HubSessionManager>()
                                                             .signedInUser!
@@ -307,7 +318,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                                   )
                                                 : pupil.tutorInfo!.copyWith(
                                                     parentsContact:
-                                                        '@$tutorContact',
+                                                        '@${result.value}',
                                                   );
                                             await PupilMutator()
                                                 .updateTutorInfo(
