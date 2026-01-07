@@ -175,6 +175,30 @@ class AvatarWithBadges extends WatchingWidget {
                 ),
               ),
             ),
+            if (pupil.isBirthdayToday)
+              Positioned(
+                bottom: -_badgeOffset,
+                left: 0,
+                right: 0,
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    width: _badgeSize,
+                    height: _badgeSize,
+                    decoration: const BoxDecoration(
+                      color: Color.fromARGB(255, 228, 76, 99),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.cake_rounded,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             if (pupil.specialNeeds != null)
               Positioned(
                 top: 0,
@@ -227,10 +251,19 @@ class AvatarWithBadges extends WatchingWidget {
                         pupil.specialInformation!,
                       );
                     },
-                    child: const Icon(
-                      Icons.info_rounded,
-                      size: 25,
-                      color: Color.fromARGB(255, 6, 92, 163),
+                    child: Container(
+                      width: _badgeSize - 3,
+                      height: _badgeSize - 3,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 1),
+                      ),
+                      child: const Icon(
+                        Icons.info_rounded,
+                        size: 25,
+                        color: Color.fromARGB(255, 6, 92, 163),
+                      ),
                     ),
                   ),
                 ),

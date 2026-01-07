@@ -186,7 +186,7 @@ class SchooldayEventApiService {
         final fileStream = file.openRead();
 
         final fileLength = await file.length();
-        _log.info('File length: $fileLength');
+
         _notificationService.apiRunning(true);
         try {
           await uploader.upload(fileStream, fileLength);
@@ -228,8 +228,7 @@ class SchooldayEventApiService {
               StackTrace.current,
             );
 
-            _notificationService.showSnackBar(
-              NotificationType.error,
+            _notificationService.showInformationDialog(
               'Das Dokument konnte nicht aktualisiert werden: ${e.toString()}',
             );
 

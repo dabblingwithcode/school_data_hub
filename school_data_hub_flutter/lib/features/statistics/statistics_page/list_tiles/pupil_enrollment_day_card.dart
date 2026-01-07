@@ -46,7 +46,7 @@ class PupilEnrollmentDateCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      'Aufnahmedatum: ${pupil.pupilSince.formatDateForUser()}',
+                      'Aufnahmedatum: ${pupil.pupilSince.toLocal().formatDateForUser()}',
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,

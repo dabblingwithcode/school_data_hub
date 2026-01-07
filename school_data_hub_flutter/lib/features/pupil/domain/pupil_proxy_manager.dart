@@ -138,40 +138,47 @@ class PupilProxyManager extends ChangeNotifier {
     return pupilSiblings;
   }
 
+  /// Returns the relevant birthday date for a pupil, considering year boundaries.
+  /// If the birthday this year hasn't occurred yet, returns last year's birthday.
+  /// Otherwise, returns this year's birthday.
+  DateTime getRelevantBirthdayDate(PupilProxy pupil) {
+    final now = DateTime.now();
+    final birthdayToLocal = pupil.birthday.toLocal();
+    final birthdayThisYear = DateTime(
+      now.year,
+      birthdayToLocal.month,
+      birthdayToLocal.day,
+    );
+    final birthdayLastYear = DateTime(
+      now.year - 1,
+      birthdayToLocal.month,
+      birthdayToLocal.day,
+    );
+    return birthdayThisYear.isAfter(now) ? birthdayLastYear : birthdayThisYear;
+  }
+
   List<PupilProxy> getPupilsWithBirthdaySinceDate(DateTime date) {
     Map<int, PupilProxy> allPupils = Map<int, PupilProxy>.of(_pupilIdPupilsMap);
 
     final DateTime now = DateTime.now();
 
     allPupils.removeWhere((key, pupil) {
-      final birthdayToLocal = pupil.birthday.toLocal();
-      final birthdayThisYear = DateTime(
-        now.year,
-        birthdayToLocal.month,
-        birthdayToLocal.day,
-      );
+      final DateTime relevantBirthday = getRelevantBirthdayDate(pupil);
 
-      // Ensure the birthday this year is not before the specified date and not after today.
-      return !(birthdayThisYear.isSameDate(date) ||
-          (birthdayThisYear.isAfter(date) && birthdayThisYear.isBefore(now)));
+      // Check if the relevant birthday falls within the range [date, now]
+      return !(relevantBirthday.isSameDate(date) ||
+          relevantBirthday.isSameDate(now) ||
+          (relevantBirthday.isAfter(date) && relevantBirthday.isBefore(now)));
     });
 
     final pupilsWithBirthdaySinceDate = allPupils.values.toList();
 
+    // Sort by most recent birthday (descending)
     pupilsWithBirthdaySinceDate.sort((b, a) {
-      final birthdayA = DateTime(
-        DateTime.now().year,
-        a.birthday.month,
-        a.birthday.day,
-      );
+      final relevantBirthdayA = getRelevantBirthdayDate(a);
+      final relevantBirthdayB = getRelevantBirthdayDate(b);
 
-      final birthdayB = DateTime(
-        DateTime.now().year,
-        b.birthday.month,
-        b.birthday.day,
-      );
-
-      return birthdayA.compareTo(birthdayB);
+      return relevantBirthdayA.compareTo(relevantBirthdayB);
     });
 
     return pupilsWithBirthdaySinceDate;
@@ -201,7 +208,7 @@ class PupilProxyManager extends ChangeNotifier {
   }
 
   Future<void> updatePupilList(List<PupilProxy> pupils) async {
-    await fetchPupilsByInternalId(pupils.map((e) => e.pupilId).toList());
+    await fetchPupilsByInternalId(pupils.map((e) => e.internalId).toList());
   }
 
   Future<void> updatePupilData(int pupilId) async {

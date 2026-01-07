@@ -19,11 +19,11 @@ class EnrollmentListTiles extends WatchingWidget {
       DateTime(2025, 08, 01),
     )..sort((a, b) => b.pupilSince.compareTo(a.pupilSince));
     //- TODO: Make the date dynamic based on the current school year
-    final pupilsEnrolledLastYearAfterRegulatDate = controller
-        .pupilsEnrolledBetweenDates(
+    final pupilsEnrolledLastYearAfterRegulatDate =
+        controller.pupilsEnrolledBetweenDates(
           DateFormat('yyy-MM-dd').parse('2024-08-02'),
           DateFormat('yyy-MM-dd').parse('2025-07-31'),
-        );
+        )..sort((a, b) => b.pupilSince.compareTo(a.pupilSince));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

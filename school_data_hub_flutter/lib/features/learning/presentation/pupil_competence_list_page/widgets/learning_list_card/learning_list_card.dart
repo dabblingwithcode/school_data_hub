@@ -126,28 +126,29 @@ class LearningListCard extends WatchingWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.book,
-                                  size: 30,
-                                  color: AppColors.interactiveColor,
-                                ),
-                                const Gap(5),
-                                const Text(
-                                  'Gelesen: ',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                        if (selectedContent == SelectedContent.books)
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.book,
+                                    size: 30,
+                                    color: AppColors.interactiveColor,
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                                  const Gap(5),
+                                  const Text(
+                                    'Gelesen: ',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         Column(
                           children: [
                             if (selectedContent ==

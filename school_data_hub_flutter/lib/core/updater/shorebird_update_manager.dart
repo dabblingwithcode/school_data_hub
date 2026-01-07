@@ -37,7 +37,7 @@ class ShorebirdUpdateManager extends ChangeNotifier {
 
   // Auto-update settings
   bool _autoCheckEnabled = true;
-  Duration _autoCheckInterval = const Duration(hours: 6);
+  Duration _autoCheckInterval = const Duration(hours: 2);
   Timer? _autoCheckTimer;
 
   // Getters
@@ -137,8 +137,15 @@ class ShorebirdUpdateManager extends ChangeNotifier {
           _log.info('Update available');
           _updateAvailable = true;
           _setStatus(UpdateManagerStatus.updateAvailable);
+          di<NotificationService>().showSnackBar(
+            NotificationType.info,
+            'Ein Update wird heruntergeladen...',
+          );
           await _updater.update(track: _currentTrack);
-
+          di<NotificationService>().showInformationDialog(
+            'Ein Update wurde installiert. Bitte starten Sie die App neu, um die neueste Version der App zu verwenden.',
+          );
+          _setStatus(UpdateManagerStatus.restartRequired);
           return true;
 
         case UpdateStatus.restartRequired:
