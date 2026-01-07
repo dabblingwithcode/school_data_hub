@@ -49,17 +49,19 @@ List<Widget> pupilAfterSchoolCareContentList(
     const Gap(5),
     InkWell(
       onTap: () async {
-        final String? ogsInfo = await longTextFieldDialog(
+        final result = await longTextFieldDialog(
           title: 'OGS Informationen',
           labelText: 'OGS Informationen',
           initialValue: pupil.afterSchoolCareInfo,
           parentContext: context,
         );
-        if (ogsInfo == null) return;
+        if (result == null || result.value == pupil.afterSchoolCareInfo) {
+          return;
+        }
         await PupilMutator().updateStringProperty(
           pupilId: pupil.internalId,
           property: 'afterSchoolCareInfo',
-          value: ogsInfo,
+          propertyValue: (value: result.value),
         );
       },
       onLongPress: () async {
@@ -73,7 +75,7 @@ List<Widget> pupilAfterSchoolCareContentList(
         await PupilMutator().updateStringProperty(
           pupilId: pupil.internalId,
           property: 'afterSchoolCareInfo',
-          value: null,
+          propertyValue: (value: null),
         );
       },
       child: Row(

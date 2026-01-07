@@ -3064,9 +3064,9 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<String>(),
               nullable: false,
             ),
-            'value': _i1.ParameterDescription(
-              name: 'value',
-              type: _i1.getType<String?>(),
+            'propertyValue': _i1.ParameterDescription(
+              name: 'propertyValue',
+              type: _i1.getType<({String? value})?>(),
               nullable: true,
             ),
           },
@@ -3079,7 +3079,7 @@ class Endpoints extends _i1.EndpointDispatch {
             session,
             params['pupilId'],
             params['property'],
-            params['value'],
+            params['propertyValue'],
           ),
         ),
         'updateCredit': _i1.MethodConnector(

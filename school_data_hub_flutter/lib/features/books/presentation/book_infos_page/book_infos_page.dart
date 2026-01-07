@@ -176,22 +176,24 @@ class _BookInfosPageState extends State<BookInfosPage> {
             const Gap(8),
             InkWell(
               onTap: () async {
-                final String? description = await longTextFieldDialog(
+                final result = await longTextFieldDialog(
                   title: 'Beschreibung',
                   labelText: 'Beschreibung',
                   initialValue: bookProxy.description,
                   parentContext: context,
                 );
-                if (description != null &&
-                    description != bookProxy.description) {
-                  await di<BookManager>().updateLibraryBookAndBookProperties(
-                    isbn: bookProxy.isbn,
-                    libraryId: bookProxy.libraryId,
-                    description: description,
-                  );
-                  _loadBook(); // Reload to reflect changes
+                if (result == null || result.value == bookProxy.description) {
+                  return;
                 }
+
+                await di<BookManager>().updateLibraryBookAndBookProperties(
+                  isbn: bookProxy.isbn,
+                  libraryId: bookProxy.libraryId,
+                  description: result.value,
+                );
+                _loadBook(); // Reload to reflect changes
               },
+
               child: Text(
                 bookProxy.description.isNotEmpty
                     ? bookProxy.description

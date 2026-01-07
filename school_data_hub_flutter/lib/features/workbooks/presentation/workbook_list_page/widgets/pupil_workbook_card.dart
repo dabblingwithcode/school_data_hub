@@ -285,16 +285,19 @@ class PupilWorkbookCard extends WatchingWidget {
                 const Gap(5),
                 InkWell(
                   onTap: () async {
-                    final comment = await longTextFieldDialog(
+                    final result = await longTextFieldDialog(
                       title: 'Kommentar',
                       initialValue: pupilWorkbook.comment ?? '',
                       labelText: 'Kommentar eintragen',
                       parentContext: context,
                     );
-                    if (comment == null) return;
+                    if (result == null ||
+                        result.value == pupilWorkbook.comment) {
+                      return;
+                    }
                     di<PupilWorkbookManager>().updatePupilWorkbook(
                       pupilWorkbook: pupilWorkbook,
-                      comment: (value: comment),
+                      comment: (value: result.value),
                     );
                   },
                   child: Text(

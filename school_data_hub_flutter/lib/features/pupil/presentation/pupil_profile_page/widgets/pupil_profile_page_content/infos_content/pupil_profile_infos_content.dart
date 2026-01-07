@@ -55,17 +55,20 @@ class PupilProfileInfosContent extends WatchingWidget {
               title: 'Besondere Infos',
               child: InkWell(
                 onTap: () async {
-                  final String? specialInformation = await longTextFieldDialog(
+                  final result = await longTextFieldDialog(
                     title: 'Besondere Infos',
                     labelText: 'Besondere Infos',
                     initialValue: pupil.specialInformation ?? '',
                     parentContext: context,
                   );
-                  if (specialInformation == null) return;
+                  if (result == null ||
+                      result.value == pupil.specialInformation) {
+                    return;
+                  }
                   await PupilMutator().updateStringProperty(
                     pupilId: pupil.pupilId,
                     property: 'specialInformation',
-                    value: specialInformation,
+                    propertyValue: (value: result.value),
                   );
                 },
                 onLongPress: () async {
@@ -79,7 +82,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                   await PupilMutator().updateStringProperty(
                     pupilId: pupil.pupilId,
                     property: 'specialInformation',
-                    value: null,
+                    propertyValue: (value: null),
                   );
                 },
                 child: Container(
@@ -178,7 +181,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                       await PupilMutator().updateStringProperty(
                         pupilId: pupil.pupilId,
                         property: 'contact',
-                        value: contact,
+                        propertyValue: (value: contact),
                       );
                     },
                     actionButton:

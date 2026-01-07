@@ -187,16 +187,19 @@ class PupilBookLendingCard extends StatelessWidget {
                 ),
                 InkWell(
                   onTap: () async {
-                    final status = await longTextFieldDialog(
+                    final result = await longTextFieldDialog(
                       title: 'Status',
                       labelText: 'Status',
                       initialValue: pupilBookLending.status ?? '',
                       parentContext: context,
                     );
-                    if (status == null) return;
+                    if (result == null ||
+                        result.value == pupilBookLending.status) {
+                      return;
+                    }
                     await di<PupilProxyManager>().updatePupilBookLending(
                       pupilBookLending: pupilBookLending,
-                      status: (value: status),
+                      status: (value: result.value),
                     );
                   },
                   borderRadius: BorderRadius.circular(8),

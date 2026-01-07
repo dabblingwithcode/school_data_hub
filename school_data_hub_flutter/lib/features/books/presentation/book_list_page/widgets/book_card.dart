@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions/isbn_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
@@ -10,7 +11,6 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
-import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_helper.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
@@ -233,16 +233,20 @@ class BookCard extends WatchingWidget {
                   children: [
                     InkWell(
                       onTap: () async {
-                        final String? description = await longTextFieldDialog(
+                        final result = await longTextFieldDialog(
                           title: 'Beschreibung',
                           labelText: 'Beschreibung',
                           initialValue: bookProxy.description,
                           parentContext: context,
                         );
+                        if (result == null ||
+                            result.value == bookProxy.description) {
+                          return;
+                        }
                         di<BookManager>().updateLibraryBookAndBookProperties(
                           isbn: bookProxy.isbn,
                           libraryId: bookProxy.libraryId,
-                          description: description,
+                          description: result.value,
                         );
                       },
                       child: Text(

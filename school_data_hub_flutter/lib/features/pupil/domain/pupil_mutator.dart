@@ -28,13 +28,13 @@ class PupilMutator {
   Future<void> updateStringProperty({
     required int pupilId,
     required String property,
-    required String? value,
+    required ({String? value}) propertyValue,
   }) async {
     final PupilData? pupilData = await _pupilDataApiService
         .updateStringProperty(
           pupilId: pupilId,
           property: property,
-          value: value,
+          propertyValue: propertyValue,
         );
     if (pupilData == null) {
       return;

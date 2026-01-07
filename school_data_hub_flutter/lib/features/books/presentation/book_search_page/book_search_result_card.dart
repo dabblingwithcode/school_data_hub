@@ -183,16 +183,20 @@ class SearchResultBookCard extends WatchingWidget {
                   children: [
                     InkWell(
                       onTap: () async {
-                        final String? description = await longTextFieldDialog(
+                        final result = await longTextFieldDialog(
                           title: 'Beschreibung',
                           labelText: 'Beschreibung',
                           initialValue: bookProxy.description,
                           parentContext: context,
                         );
+                        if (result == null ||
+                            result.value == bookProxy.description) {
+                          return;
+                        }
                         di<BookManager>().updateLibraryBookAndBookProperties(
                           isbn: bookProxy.isbn,
                           libraryId: bookProxy.libraryId,
-                          description: description,
+                          description: result.value,
                         );
                       },
                       child: Text(

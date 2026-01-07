@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 
-Future<String?> longTextFieldDialog({
+Future<({String? value})?> longTextFieldDialog({
   required String title,
   required String? initialValue,
   required String labelText,
@@ -61,36 +61,32 @@ Future<String?> longTextFieldDialog({
                   ),
                 ),
               ),
-              // initialValue != null
-              //     ? Padding(
-              //         padding: const EdgeInsets.all(5.0),
-              //         child: ElevatedButton(
-              //           style: AppStyles.actionButtonStyle,
-              //           onPressed: () {
-              //             textEditingController.dispose();
-              //             Navigator.of(parentContext).pop(null);
-              //             return;
-              //           }, // Add onPressed
-              //           child: const Text(
-              //             "LÖSCHEN",
-              //             style: AppStyles.buttonTextStyle,
-              //           ),
-              //         ),
-              //       )
-              //     : const SizedBox.shrink(),
+              initialValue != null
+                  ? Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: ElevatedButton(
+                        style: AppStyles.actionButtonStyle,
+                        onPressed: () {
+                          textEditingController.dispose();
+                          Navigator.of(parentContext).pop((value: null));
+                          return;
+                        }, // Add onPressed
+                        child: const Text(
+                          "LÖSCHEN",
+                          style: AppStyles.buttonTextStyle,
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
               Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: ElevatedButton(
                   style: AppStyles.successButtonStyle,
                   onPressed: () {
-                    String? newSpecialInformation = textEditingController.text;
-
-                    if (newSpecialInformation.isEmpty) {
-                      return;
-                    }
+                    String? newPropertyValue = textEditingController.text;
 
                     textEditingController.dispose();
-                    Navigator.of(parentContext).pop(newSpecialInformation);
+                    Navigator.of(parentContext).pop((value: newPropertyValue));
                   }, // Add onPressed
                   child: const Text("OK", style: AppStyles.buttonTextStyle),
                 ),

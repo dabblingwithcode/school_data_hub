@@ -109,14 +109,15 @@ class SupportCategoryStatusEntry extends StatelessWidget {
                   authorizedToChangeStatus
                       ? InkWell(
                           onTap: () async {
-                            final String? correctedComment =
-                                await longTextFieldDialog(
-                                  title: 'Status korrigieren',
-                                  labelText: 'Status',
-                                  initialValue: status.comment,
-                                  parentContext: context,
-                                );
-                            if (correctedComment != null) {
+                            final result = await longTextFieldDialog(
+                              title: 'Status korrigieren',
+                              labelText: 'Status',
+                              initialValue: status.comment,
+                              parentContext: context,
+                            );
+                            if (result == null ||
+                                result.value == status.comment) {
+                              return;
                               // TODO: uncomment when ready
                               //  _learningSupportManager
                               //       .updateSupportCategoryStatusProperty(
