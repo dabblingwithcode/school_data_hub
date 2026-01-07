@@ -10,50 +10,48 @@ extension PupilIdentityExtension on PupilIdentity {
     final specialNeeds = this.specialNeeds ?? '';
 
     return [
-      this.id.toString(),
-      this.firstName,
-      this.lastName,
-      this.group,
-      this.groupTutor,
-      this.schoolGrade,
+      id.toString(),
+      firstName,
+      lastName,
+      group,
+      groupTutor,
+      schoolGrade,
       specialNeeds,
       '', // this is a placeholder for the second special needs field in the administrative data source
-      this.gender,
-      this.language,
-      this.family ?? '',
-      this.birthday.formatDateForJson(normalizeUtc: false),
+      gender,
+      language,
+      family ?? '',
+      birthday.formatDateForJson(normalizeUtc: false),
       migrationSupportEnds,
-      this.pupilSince.formatDateForJson(normalizeUtc: false),
-      this.afterSchoolCare ? 'OFFGANZ' : '',
-      this.religion ?? '',
-      this.religionLessonsSince?.formatDateForJson(normalizeUtc: false) ?? '',
-      this.religionLessonsCancelledAt?.formatDateForJson(normalizeUtc: false) ??
-          '',
-      this.familyLanguageLessonsSince?.formatDateForJson(normalizeUtc: false) ??
-          '',
-      this.leavingDate?.formatDateForJson(normalizeUtc: false) ?? '',
+      pupilSince.formatDateForJson(normalizeUtc: false),
+      afterSchoolCare ? 'OFFGANZ' : '',
+      religion ?? '',
+      religionLessonsSince?.formatDateForJson(normalizeUtc: false) ?? '',
+      religionLessonsCancelledAt?.formatDateForJson(normalizeUtc: false) ?? '',
+      familyLanguageLessonsSince?.formatDateForJson(normalizeUtc: false) ?? '',
+      leavingDate?.formatDateForJson(normalizeUtc: false) ?? '',
     ].join(',');
   }
 
   bool isEqual(PupilIdentity other) {
-    return this.id == other.id &&
-        this.firstName == other.firstName &&
-        this.lastName == other.lastName &&
-        this.group == other.group &&
-        this.groupTutor == other.groupTutor &&
-        this.schoolGrade == other.schoolGrade &&
-        this.specialNeeds == other.specialNeeds &&
-        this.gender == other.gender &&
-        this.language == other.language &&
-        this.family == other.family &&
-        this.birthday == other.birthday &&
-        this.migrationSupportEnds == other.migrationSupportEnds &&
-        this.pupilSince == other.pupilSince &&
-        this.afterSchoolCare == other.afterSchoolCare &&
-        this.religion == other.religion &&
-        this.religionLessonsSince == other.religionLessonsSince &&
-        this.religionLessonsCancelledAt == other.religionLessonsCancelledAt &&
-        this.familyLanguageLessonsSince == other.familyLanguageLessonsSince &&
-        this.leavingDate == other.leavingDate;
+    return id == other.id &&
+        firstName == other.firstName &&
+        lastName == other.lastName &&
+        group == other.group &&
+        groupTutor == other.groupTutor &&
+        schoolGrade == other.schoolGrade &&
+        specialNeeds == other.specialNeeds &&
+        gender == other.gender &&
+        language == other.language &&
+        family == other.family &&
+        birthday == other.birthday &&
+        migrationSupportEnds == other.migrationSupportEnds &&
+        pupilSince == other.pupilSince &&
+        afterSchoolCare == other.afterSchoolCare &&
+        religion == other.religion &&
+        religionLessonsSince == other.religionLessonsSince &&
+        religionLessonsCancelledAt == other.religionLessonsCancelledAt &&
+        familyLanguageLessonsSince == other.familyLanguageLessonsSince &&
+        leavingDate == other.leavingDate;
   }
 }

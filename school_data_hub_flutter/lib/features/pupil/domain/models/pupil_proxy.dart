@@ -130,7 +130,7 @@ class PupilProxy with ChangeNotifier {
   String get gender => _pupilIdentity.gender;
   String get language => _pupilIdentity.language;
   String? get family => _pupilIdentity.family;
-  DateTime get birthday => _pupilIdentity.birthday.add(const Duration(days: 1));
+  DateTime get birthday => _pupilIdentity.birthday;
 
   bool get isBirthdayToday {
     final today = DateTime.now();
@@ -150,17 +150,14 @@ class PupilProxy with ChangeNotifier {
 
   String? get groupTutor => _pupilIdentity.groupTutor;
 
-  DateTime? get migrationSupportEnds =>
-      _pupilIdentity.migrationSupportEnds?.add(const Duration(days: 1));
-  DateTime get pupilSince =>
-      _pupilIdentity.pupilSince.add(const Duration(days: 1));
+  DateTime? get migrationSupportEnds => _pupilIdentity.migrationSupportEnds;
+  DateTime get pupilSince => _pupilIdentity.pupilSince;
 
   DateTime? get familyLanguageLessonsSince =>
-      _pupilIdentity.familyLanguageLessonsSince?.add(const Duration(days: 1));
-  DateTime? get religionLessonsSince =>
-      _pupilIdentity.religionLessonsSince?.add(const Duration(days: 1));
+      _pupilIdentity.familyLanguageLessonsSince;
+  DateTime? get religionLessonsSince => _pupilIdentity.religionLessonsSince;
   DateTime? get religionLessonsCancelledAt =>
-      _pupilIdentity.religionLessonsCancelledAt?.add(const Duration(days: 1));
+      _pupilIdentity.religionLessonsCancelledAt;
 
   String? get religion => _pupilIdentity.religion;
   //- PUPIL DATA GETTERS

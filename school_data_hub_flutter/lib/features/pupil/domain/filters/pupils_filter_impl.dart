@@ -420,8 +420,9 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
         value: true,
       );
     }
-    notifyListeners();
+
     _textFilter.setFilterText(text ?? '');
+    notifyListeners();
     if (refresh) {
       refreshs();
     }

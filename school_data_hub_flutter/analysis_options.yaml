@@ -3,7 +3,7 @@ include: package:flutter_lints/flutter.yaml
 linter:
   rules:
     avoid_print: false # Allow print statements, useful for debugging
-    unused_local_variable: ignore # Ignore warnings about unused local variables
+    # unused_local_variable: ignore # Ignore warnings about unused local variables
     always_declare_return_types: true # Ensure all methods have a return type
     prefer_const_constructors: true # Prefer const constructors for better performance
     avoid_unnecessary_containers: true # Avoid redundant containers in UI
