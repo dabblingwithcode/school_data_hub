@@ -88,17 +88,49 @@ class CompetenceGoalCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const Gap(5),
-              Row(
-                children: [
-                  Flexible(
-                    child: Text(
-                      // TODO: add builder for the list of strings
-                      pupilGoal.strategies.toString(),
+              if (pupilGoal.strategies != null &&
+                  pupilGoal.strategies!.isNotEmpty) ...[
+                const Gap(5),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Strategien:',
+                      style: TextStyle(fontWeight: FontWeight.w500),
                     ),
-                  ),
-                ],
-              ),
+                    const Gap(10),
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (int i = 0; i < pupilGoal.strategies!.length; i++)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 4.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    '• ',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      pupilGoal.strategies![i],
+                                      style: const TextStyle(fontSize: 15),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
               const Gap(10),
               Row(
                 children: [
