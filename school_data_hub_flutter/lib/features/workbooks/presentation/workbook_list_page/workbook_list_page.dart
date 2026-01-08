@@ -33,16 +33,9 @@ class WorkbookListPage extends WatchingWidget {
         title: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.note_alt_rounded,
-              size: 25,
-              color: Colors.white,
-            ),
+            Icon(Icons.note_alt_rounded, size: 25, color: Colors.white),
             Gap(10),
-            Text(
-              'Arbeitshefte',
-              style: AppStyles.appBarTextStyle,
-            ),
+            Text('Arbeitshefte', style: AppStyles.appBarTextStyle),
           ],
         ),
       ),
@@ -66,14 +59,15 @@ class WorkbookListPage extends WatchingWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(
-                            left: 10.0, top: 15.0, right: 10.00),
+                          left: 10.0,
+                          top: 15.0,
+                          right: 10.00,
+                        ),
                         child: Row(
                           children: [
                             const Text(
                               'Gesamt:',
-                              style: TextStyle(
-                                fontSize: 13,
-                              ),
+                              style: TextStyle(fontSize: 13),
                             ),
                             const Gap(10),
                             Text(
@@ -93,10 +87,11 @@ class WorkbookListPage extends WatchingWidget {
                           children: [
                             Expanded(
                               child: PupilSearchTextField(
-                                  searchType: SearchType.workbook,
-                                  hintText: 'Arbeitsheft suchen',
-                                  refreshFunction:
-                                      di<WorkbookManager>().fetchWorkbooks),
+                                searchType: SearchType.workbook,
+                                hintText: 'Arbeitsheft suchen',
+                                refreshFunction:
+                                    di<WorkbookManager>().fetchWorkbooks,
+                              ),
                             ),
                             //---------------------------------
                             InkWell(
@@ -134,7 +129,9 @@ class WorkbookListPage extends WatchingWidget {
                                 itemCount: workbooks.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   return WorkbookCard(
-                                      workbook: workbooks[index]);
+                                    key: ValueKey(workbooks[index].isbn),
+                                    workbook: workbooks[index],
+                                  );
                                 },
                               ),
                             ),

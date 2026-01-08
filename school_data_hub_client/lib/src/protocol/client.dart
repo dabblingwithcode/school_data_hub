@@ -2431,12 +2431,12 @@ class EndpointPupilWorkbooks extends _i1.EndpointRef {
   @override
   String get name => 'pupilWorkbooks';
 
-  _i2.Future<_i53.PupilWorkbook> postPupilWorkbook(
+  _i2.Future<_i53.PupilWorkbook?> postPupilWorkbook(
     int isbn,
     int pupilId,
     String createdBy,
   ) =>
-      caller.callServerEndpoint<_i53.PupilWorkbook>(
+      caller.callServerEndpoint<_i53.PupilWorkbook?>(
         'pupilWorkbooks',
         'postPupilWorkbook',
         {

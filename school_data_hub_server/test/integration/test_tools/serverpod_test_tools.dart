@@ -7210,7 +7210,7 @@ class _PupilWorkbooksEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i54.PupilWorkbook> postPupilWorkbook(
+  _i3.Future<_i54.PupilWorkbook?> postPupilWorkbook(
     _i1.TestSessionBuilder sessionBuilder,
     int isbn,
     int pupilId,
@@ -7237,7 +7237,7 @@ class _PupilWorkbooksEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i54.PupilWorkbook>);
+        ) as _i3.Future<_i54.PupilWorkbook?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

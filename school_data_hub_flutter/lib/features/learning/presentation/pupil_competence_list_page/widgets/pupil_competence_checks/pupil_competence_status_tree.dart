@@ -3,8 +3,8 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
-import 'package:school_data_hub_flutter/features/learning/presentation/pupil_competence_list_page/widgets/pupil_competence_checks/pupil_competence_card.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_competence_list_page/widgets/pupil_competence_checks/competence_check_card.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/pupil_competence_list_page/widgets/pupil_competence_checks/pupil_competence_card.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -36,22 +36,25 @@ List<Widget> buildPupilCompetenceStatusTree({
     }
     double? averageCompetenceStatus;
     if (pupilCompetenceChecksMap.containsKey(competence.publicId)) {
-      final filteredChecks =
-          pupilCompetenceChecksMap[competence.publicId]!
-              .where((check) => check.score != 0)
-              .toList();
+      final filteredChecks = pupilCompetenceChecksMap[competence.publicId]!
+          .where((check) => check.score != 0)
+          .toList();
 
       if (filteredChecks.isNotEmpty) {
-        final totalStatus = filteredChecks
-            .map((check) => check.score)
+        final totalWeightedScore = filteredChecks
+            .map((check) => check.score * check.valueFactor)
             .reduce((a, b) => a + b);
-        averageCompetenceStatus = totalStatus / filteredChecks.length;
+        final totalValueFactor = filteredChecks
+            .map((check) => check.valueFactor)
+            .reduce((a, b) => a + b);
+        averageCompetenceStatus = totalWeightedScore / totalValueFactor;
       }
     }
 
     if (competence.parentCompetence == parentId) {
-      final isReport =
-          !di<CompetenceManager>().isCompetenceWithChildren(competence);
+      final isReport = !di<CompetenceManager>().isCompetenceWithChildren(
+        competence,
+      );
       final children = buildPupilCompetenceStatusTree(
         pupil: pupil,
         parentId: competence.publicId,
@@ -65,42 +68,41 @@ List<Widget> buildPupilCompetenceStatusTree({
           padding: EdgeInsets.only(left: indentation),
           child:
               children.isNotEmpty ||
-                      pupilCompetenceChecksMap.containsKey(competence.publicId)
-                  ? Wrap(
-                    children: [
-                      PupilCompetenceCard(
-                        backgroundColor: competenceBackgroundColor,
-                        competence: competence,
-                        pupil: pupil,
-                        isReport: isReport,
-                        competenceChecks:
-                            pupilCompetenceChecksMap.containsKey(
-                                  competence.publicId,
-                                )
-                                ? [
-                                  ...pupilCompetenceChecksMap[competence
-                                          .publicId]!
-                                      .map((check) {
-                                        return CompetenceCheckCard(
-                                          competenceCheck: check,
-                                        );
-                                      }),
-                                ]
-                                : [],
-                        checksAverageValue: averageCompetenceStatus,
-                        children: children,
-                      ),
-                    ],
-                  )
-                  : PupilCompetenceCard(
-                    backgroundColor: competenceBackgroundColor,
-                    isReport: isReport,
-                    competence: competence,
-                    pupil: pupil,
-                    competenceChecks: const [],
-                    checksAverageValue: averageCompetenceStatus,
-                    children: children,
-                  ),
+                  pupilCompetenceChecksMap.containsKey(competence.publicId)
+              ? Wrap(
+                  children: [
+                    PupilCompetenceCard(
+                      backgroundColor: competenceBackgroundColor,
+                      competence: competence,
+                      pupil: pupil,
+                      isReport: isReport,
+                      competenceChecks:
+                          pupilCompetenceChecksMap.containsKey(
+                            competence.publicId,
+                          )
+                          ? [
+                              ...pupilCompetenceChecksMap[competence.publicId]!
+                                  .map((check) {
+                                    return CompetenceCheckCard(
+                                      competenceCheck: check,
+                                    );
+                                  }),
+                            ]
+                          : [],
+                      checksAverageValue: averageCompetenceStatus,
+                      children: children,
+                    ),
+                  ],
+                )
+              : PupilCompetenceCard(
+                  backgroundColor: competenceBackgroundColor,
+                  isReport: isReport,
+                  competence: competence,
+                  pupil: pupil,
+                  competenceChecks: const [],
+                  checksAverageValue: averageCompetenceStatus,
+                  children: children,
+                ),
         ),
       );
     }

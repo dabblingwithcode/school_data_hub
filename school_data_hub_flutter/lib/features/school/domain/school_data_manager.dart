@@ -48,6 +48,7 @@ class SchoolDataMainManager extends ChangeNotifier {
     return this;
   }
 
+  @override
   void dispose() {
     _dataManager.dispose();
     _crudManager.dispose();

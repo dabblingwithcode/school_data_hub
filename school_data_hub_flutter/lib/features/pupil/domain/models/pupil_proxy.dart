@@ -10,6 +10,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_fil
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_identity_extensions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
+import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 typedef SiblingsResolver = List<PupilProxy> Function(PupilProxy pupil);
@@ -238,7 +239,8 @@ class PupilProxy with ChangeNotifier {
 
   List<CompetenceGoal>? get competenceGoals => _pupilData.competenceGoals;
 
-  List<PupilWorkbook>? get pupilWorkbooks => _pupilData.pupilWorkbooks;
+  List<PupilWorkbook>? get pupilWorkbooks =>
+      di<PupilWorkbookManager>().getPupilWorkbooks(pupilId);
 
   List<PupilBookLending>? get pupilBookLendings => _pupilData.pupilBookLendings;
 
