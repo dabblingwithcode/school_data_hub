@@ -22,8 +22,6 @@ class PupilIdentityStreamController {
   final String? importedChannelName;
   late String channelName;
 
-  final String thisUserName = di<HubSessionManager>().user!.userInfo!.userName!;
-
   final _notificationService = di<NotificationService>();
 
   // Controller creates and owns the state
@@ -107,6 +105,18 @@ class PupilIdentityStreamController {
     }
   }
 
+  /// Validate user session before sending a message to prevent null sender
+  String? _validateUserSession() {
+    final currentUser = di<HubSessionManager>().user?.userInfo?.userName;
+    if (currentUser == null || currentUser.isEmpty) {
+      _log.severe(
+        'Cannot send message: username is null or empty. User session may have expired.',
+      );
+      return null;
+    }
+    return currentUser;
+  }
+
   /// Reset sender state for new requests
   void resetSenderForNewRequest() {
     if (_isDisposed) {
@@ -147,11 +157,20 @@ class PupilIdentityStreamController {
     // Update local state to transmitting
     _handleRequestConfirmed();
 
+    // Validate user session before sending
+    final validatedSender = _validateUserSession();
+    if (validatedSender == null) {
+      _log.severe(
+        'Cannot confirm transfer for $userName: invalid user session',
+      );
+      return;
+    }
+
     // Notify receiver of confirmation (backward compatibility)
     await di<Client>().pupilIdentity.sendPupilIdentityMessage(
       channelName,
       PupilIdentityDto(
-        sender: thisUserName,
+        sender: validatedSender,
         type: 'confirmed',
         value: userName,
       ),
@@ -161,7 +180,7 @@ class PupilIdentityStreamController {
     await di<Client>().pupilIdentity.sendPupilIdentityMessage(
       channelName,
       PupilIdentityDto(
-        sender: thisUserName,
+        sender: validatedSender,
         type: 'data',
         dataTimeStamp: di<EnvManager>().activeEnv?.lastIdentitiesUpdate,
         value: '$userName:${dataToSend ?? ''}',
@@ -207,6 +226,13 @@ class PupilIdentityStreamController {
     String userName, {
     bool isAutoRejection = false,
   }) async {
+    // Validate user session before sending
+    final validatedSender = _validateUserSession();
+    if (validatedSender == null) {
+      _log.severe('Cannot send rejection to $userName: invalid user session');
+      return;
+    }
+
     final rejectionValue = isAutoRejection ? 'auto:$userName' : userName;
     int retryCount = 0;
     const maxRetries = 3;
@@ -220,7 +246,7 @@ class PupilIdentityStreamController {
         await di<Client>().pupilIdentity.sendPupilIdentityMessage(
           channelName,
           PupilIdentityDto(
-            sender: thisUserName,
+            sender: validatedSender,
             type: 'rejected',
             value: rejectionValue,
           ),
@@ -314,14 +340,21 @@ class PupilIdentityStreamController {
   void _sendReceiverMessages() {
     _log.info('Receiver sending joined message and data request...');
 
+    // Validate user session before sending
+    final validatedSender = _validateUserSession();
+    if (validatedSender == null) {
+      _log.severe('Cannot send receiver messages: invalid user session');
+      return;
+    }
+
     // First send joined message
     di<Client>().pupilIdentity
         .sendPupilIdentityMessage(
           channelName,
           PupilIdentityDto(
-            sender: thisUserName,
+            sender: validatedSender,
             type: 'joined',
-            value: thisUserName,
+            value: validatedSender,
           ),
         )
         .then((_) {
@@ -345,9 +378,9 @@ class PupilIdentityStreamController {
           return di<Client>().pupilIdentity.sendPupilIdentityMessage(
             channelName,
             PupilIdentityDto(
-              sender: thisUserName,
+              sender: validatedSender,
               type: 'request',
-              value: thisUserName,
+              value: validatedSender,
             ),
           );
         })
@@ -557,17 +590,21 @@ class PupilIdentityStreamController {
     // If receiver is leaving, send close message before disposing
     if (role == PupilIdentityStreamRole.receiver &&
         state.streamState.isConnected.value) {
-      // Send close message and ignore errors since we're disposing
-      di<Client>().pupilIdentity
-          .sendPupilIdentityMessage(
-            channelName,
-            PupilIdentityDto(
-              sender: thisUserName,
-              type: 'close',
-              value: thisUserName,
-            ),
-          )
-          .ignore();
+      // Validate user session before sending
+      final validatedSender = _validateUserSession();
+      if (validatedSender != null) {
+        // Send close message and ignore errors since we're disposing
+        di<Client>().pupilIdentity
+            .sendPupilIdentityMessage(
+              channelName,
+              PupilIdentityDto(
+                sender: validatedSender,
+                type: 'close',
+                value: validatedSender,
+              ),
+            )
+            .ignore();
+      }
     }
 
     _subscription?.cancel();
@@ -581,43 +618,50 @@ class PupilIdentityStreamController {
   }
 
   void stopStream() async {
+    // Validate user session before sending any messages
+    final validatedSender = _validateUserSession();
+
     // If sender is shutting down, notify all receivers
     if (role == PupilIdentityStreamRole.sender &&
         state.streamState.isConnected.value) {
-      try {
-        // Send shutdown message to all connected receivers
-        await di<Client>().pupilIdentity.sendPupilIdentityMessage(
-          channelName,
-          PupilIdentityDto(
-            sender: thisUserName,
-            type: 'shutdown',
-            value: 'Sender hat den Stream beendet',
-          ),
-        );
-        _log.info('Sent shutdown message to all receivers');
+      if (validatedSender != null) {
+        try {
+          // Send shutdown message to all connected receivers
+          await di<Client>().pupilIdentity.sendPupilIdentityMessage(
+            channelName,
+            PupilIdentityDto(
+              sender: validatedSender,
+              type: 'shutdown',
+              value: 'Sender hat den Stream beendet',
+            ),
+          );
+          _log.info('Sent shutdown message to all receivers');
 
-        // Wait a brief moment to ensure message is sent
-        await Future.delayed(const Duration(milliseconds: 200));
-      } catch (e) {
-        _log.warning('Failed to send shutdown message: $e');
+          // Wait a brief moment to ensure message is sent
+          await Future.delayed(const Duration(milliseconds: 200));
+        } catch (e) {
+          _log.warning('Failed to send shutdown message: $e');
+        }
       }
     }
 
     // If receiver is leaving, send close message to notify sender
     if (role == PupilIdentityStreamRole.receiver &&
         state.streamState.isConnected.value) {
-      try {
-        await di<Client>().pupilIdentity.sendPupilIdentityMessage(
-          channelName,
-          PupilIdentityDto(
-            sender: thisUserName,
-            type: 'close',
-            value: thisUserName,
-          ),
-        );
-        _log.info('Sent close message to sender before leaving');
-      } catch (e) {
-        _log.warning('Failed to send close message: $e');
+      if (validatedSender != null) {
+        try {
+          await di<Client>().pupilIdentity.sendPupilIdentityMessage(
+            channelName,
+            PupilIdentityDto(
+              sender: validatedSender,
+              type: 'close',
+              value: validatedSender,
+            ),
+          );
+          _log.info('Sent close message to sender before leaving');
+        } catch (e) {
+          _log.warning('Failed to send close message: $e');
+        }
       }
     }
 
