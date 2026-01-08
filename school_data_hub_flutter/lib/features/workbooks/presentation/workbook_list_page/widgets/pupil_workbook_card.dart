@@ -17,7 +17,6 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/enums.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/widgets/competence_check_dropdown.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
-import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 class PupilWorkbookCard extends WatchingWidget {
@@ -38,9 +37,7 @@ class PupilWorkbookCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Workbook workbook = di<WorkbookManager>().getWorkbookByIsbn(
-      pupilWorkbook.workbook!.isbn,
-    )!;
+    final Workbook workbook = pupilWorkbook.workbook!;
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Card(
