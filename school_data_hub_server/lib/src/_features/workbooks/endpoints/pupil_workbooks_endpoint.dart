@@ -8,7 +8,7 @@ class PupilWorkbooksEndpoint extends Endpoint {
 
   //- create
 
-  Future<PupilWorkbook> postPupilWorkbook(
+  Future<PupilWorkbook?> postPupilWorkbook(
       Session session, int isbn, int pupilId, String createdBy) async {
     // Insert a new pupil workbook into the database
     final result = await session.db.transaction((transaction) async {
@@ -49,8 +49,12 @@ class PupilWorkbooksEndpoint extends Endpoint {
       Workbook.db.attachRow.assignedPupils(
           session, workbook, pupilWorkbookInDatabase,
           transaction: transaction);
-
-      return pupilWorkbookInDatabase;
+      final pupilWorkbookWithWorkbook = await PupilWorkbook.db.findFirstRow(
+        session,
+        where: (t) => t.id.equals(pupilWorkbookInDatabase.id!),
+        include: PupilWorkbook.include(workbook: Workbook.include()),
+      );
+      return pupilWorkbookWithWorkbook;
     });
 
     return result;
@@ -60,7 +64,8 @@ class PupilWorkbooksEndpoint extends Endpoint {
 
   Future<List<PupilWorkbook>> fetchPupilWorkbooks(Session session) async {
     // Fetch all pupil workbooks
-    final pupilWorkbooks = await PupilWorkbook.db.find(session);
+    final pupilWorkbooks = await PupilWorkbook.db.find(session,
+        include: PupilWorkbook.include(workbook: Workbook.include()));
     return pupilWorkbooks;
   }
 

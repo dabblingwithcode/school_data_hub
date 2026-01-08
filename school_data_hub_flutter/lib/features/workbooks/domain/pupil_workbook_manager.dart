@@ -12,6 +12,19 @@ class PupilWorkbookManager with ChangeNotifier {
   final Map<int, List<PupilWorkbook>> _pupilWorkbooks = {};
   final _pupilWorkbookApiService = PupilWorkbookApiService();
 
+  Future<PupilWorkbookManager> init() async {
+    final pupilWorkbooks = await _pupilWorkbookApiService
+        .fetchAllPupilWorkbooks();
+    if (pupilWorkbooks == null) {
+      return this;
+    }
+    for (var pupilWorkbook in pupilWorkbooks) {
+      addPupilWorkbook(pupilWorkbook.pupilId, pupilWorkbook);
+    }
+
+    return this;
+  }
+
   List<PupilWorkbook> getPupilWorkbooks(int pupilId) {
     return _pupilWorkbooks[pupilId] ?? [];
   }
@@ -49,18 +62,26 @@ class PupilWorkbookManager with ChangeNotifier {
   //- create
 
   Future<void> postPupilWorkbook(
-      int pupilId, int isbn, String createdBy) async {
+    int pupilId,
+    int isbn,
+    String createdBy,
+  ) async {
     final createdBy = _hubSessionManager.userName!;
-    final PupilWorkbook? responsePupil =
-        await _pupilWorkbookApiService.postNewPupilWorkbook(
-            pupilId: pupilId, isbn: isbn, createdBy: createdBy);
+    final PupilWorkbook? responsePupil = await _pupilWorkbookApiService
+        .postNewPupilWorkbook(
+          pupilId: pupilId,
+          isbn: isbn,
+          createdBy: createdBy,
+        );
     if (responsePupil == null) {
       return;
     }
     addPupilWorkbook(pupilId, responsePupil);
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Arbeitsheft erstellt');
+      NotificationType.success,
+      'Arbeitsheft erstellt',
+    );
 
     return;
   }
@@ -81,13 +102,14 @@ class PupilWorkbookManager with ChangeNotifier {
 
   //- update
 
-  Future<void> updatePupilWorkbook(
-      {required PupilWorkbook pupilWorkbook,
-      ({String? value})? comment,
-      int? score,
-      String? createdBy,
-      DateTime? createdAt,
-      DateTime? finishedAt}) async {
+  Future<void> updatePupilWorkbook({
+    required PupilWorkbook pupilWorkbook,
+    ({String? value})? comment,
+    int? score,
+    String? createdBy,
+    DateTime? createdAt,
+    DateTime? finishedAt,
+  }) async {
     final PupilWorkbook pupilWorkbookToUpdate = pupilWorkbook.copyWith(
       comment: comment != null ? comment.value : pupilWorkbook.comment,
       score: score ?? pupilWorkbook.score,
@@ -109,8 +131,9 @@ class PupilWorkbookManager with ChangeNotifier {
     // - TODO: check this AI code
     //// Update the local collection
     if (_pupilWorkbooks.containsKey(pupilWorkbook.pupilId)) {
-      final index = _pupilWorkbooks[pupilWorkbook.pupilId]!
-          .indexWhere((wb) => wb.isbn == pupilWorkbook.isbn);
+      final index = _pupilWorkbooks[pupilWorkbook.pupilId]!.indexWhere(
+        (wb) => wb.isbn == pupilWorkbook.isbn,
+      );
       if (index != -1) {
         _pupilWorkbooks[pupilWorkbook.pupilId]![index] = updatedPupilWorkbook;
         notifyListeners();
@@ -121,7 +144,9 @@ class PupilWorkbookManager with ChangeNotifier {
     }
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Arbeitsheft aktualisiert');
+      NotificationType.success,
+      'Arbeitsheft aktualisiert',
+    );
 
     return;
   }
@@ -130,9 +155,7 @@ class PupilWorkbookManager with ChangeNotifier {
 
   Future<void> deletePupilWorkbook(int pupilId, int pupilWorkbookId) async {
     final response = await ClientHelper.apiCall(
-      call: () => _pupilWorkbookApiService.deletePupilWorkbook(
-        pupilWorkbookId,
-      ),
+      call: () => _pupilWorkbookApiService.deletePupilWorkbook(pupilWorkbookId),
       errorMessage: 'Fehler beim Löschen des Arbeitshefts',
     );
     if (response == null) {
@@ -149,7 +172,9 @@ class PupilWorkbookManager with ChangeNotifier {
     }
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Arbeitsheft gelöscht');
+      NotificationType.success,
+      'Arbeitsheft gelöscht',
+    );
 
     return;
   }

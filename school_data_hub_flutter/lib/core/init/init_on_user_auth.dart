@@ -29,6 +29,7 @@ import 'package:school_data_hub_flutter/features/school_lists/domain/school_list
 import 'package:school_data_hub_flutter/features/timetable/data/timetable_api_service.dart';
 import 'package:school_data_hub_flutter/features/timetable/timetable.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
+import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -178,6 +179,21 @@ class InitOnUserAuth {
         instance.dispose();
         return;
       },
+    );
+
+    di.registerSingletonAsync<PupilWorkbookManager>(
+      () async {
+        final pupilWorkbookManager = PupilWorkbookManager();
+        await pupilWorkbookManager.init();
+        _log.info('[PupilWorkbookManager] initialized ✅️');
+        return pupilWorkbookManager;
+      },
+      dispose: (instance) {
+        _log.info('[PupilWorkbookManager] disposed 🚮');
+        instance.dispose();
+        return;
+      },
+      dependsOn: [HubSessionManager, PupilProxyManager],
     );
 
     di.registerSingletonAsync<CompetenceManager>(
