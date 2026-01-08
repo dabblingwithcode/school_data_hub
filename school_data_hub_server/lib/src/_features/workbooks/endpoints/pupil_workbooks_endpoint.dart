@@ -1,5 +1,5 @@
-import 'package:school_data_hub_server/src/_features/workbooks/endpoints/workbooks_endpoint.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
+import 'package:school_data_hub_server/src/utils/isbn_api.dart';
 import 'package:serverpod/serverpod.dart';
 
 class PupilWorkbooksEndpoint extends Endpoint {
@@ -15,25 +15,28 @@ class PupilWorkbooksEndpoint extends Endpoint {
       Workbook? workbook = await Workbook.db.findFirstRow(
         session,
         where: (t) => t.isbn.equals(isbn),
+        transaction: transaction,
       );
       if (workbook == null) {
-        // If the workbook does not exist, create a new one
-        final workbooksEndpoint = session.server.endpoints
-            .getConnectorByName(
-              'WorkbooksEndpoint',
-            )
-            ?.endpoint as WorkbooksEndpoint;
+        // If the workbook does not exist, fetch data from ISBN API and create it
+        final IsbnApiData isbnApiData =
+            await IsbnApi.fetchIsbnApiData(session, isbn);
 
-        // Post the workbook using the WorkbooksEndpoint
-        await workbooksEndpoint.fetchWorkbookByIsbn(
+        workbook = await Workbook.db.insertRow(
           session,
-          isbn,
+          Workbook(
+            isbn: isbn,
+            name: isbnApiData.title,
+            imageUrl: isbnApiData.imagePath,
+          ),
+          transaction: transaction,
         );
       }
+
       final pupilWorkbook = PupilWorkbook(
         score: 0,
         pupilId: pupilId,
-        workbookId: workbook!.id!,
+        workbookId: workbook.id!,
         isbn: isbn,
         createdBy: createdBy,
         createdAt: DateTime.now().toUtc(),
@@ -73,6 +76,7 @@ class PupilWorkbooksEndpoint extends Endpoint {
   }
 
   //- update
+
   Future<PupilWorkbook> updatePupilWorkbook(
       Session session, PupilWorkbook pupilWorkbook) async {
     // Update an existing pupil workbook

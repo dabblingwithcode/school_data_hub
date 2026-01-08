@@ -18,7 +18,7 @@ class PupilLearningContentWorkbooks extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _hubSessionManager = di<HubSessionManager>();
+    final hubSessionManager = di<HubSessionManager>();
     return Column(
       children: [
         const Row(
@@ -35,38 +35,49 @@ class PupilLearningContentWorkbooks extends StatelessWidget {
           //- TODO: strip this logic and use a controller instead ?
           onPressed: () async {
             final scanResult = await qrScanner(
-                context: context, overlayText: 'ISBN code scannen');
+              context: context,
+              overlayText: 'ISBN code scannen',
+            );
             if (scanResult != null) {
               final scannedIsbn = int.parse(scanResult);
-              if (!di<WorkbookManager>()
-                  .workbooks
-                  .value
-                  .any((element) => element.isbn == scannedIsbn)) {
+              if (!di<WorkbookManager>().workbooks.value.any(
+                (element) => element.isbn == scannedIsbn,
+              )) {
                 if (context.mounted) {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) => NewWorkbookPage(
-                            isEdit: false,
-                            isbn: scannedIsbn,
-                          )));
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (ctx) =>
+                          NewWorkbookPage(isEdit: false, isbn: scannedIsbn),
+                    ),
+                  );
                 }
                 di<NotificationService>().showInformationDialog(
-                    'Das Arbeitsheft wurde noch nicht erfasst. Bitte hinzufügen!');
+                  'Das Arbeitsheft wurde noch nicht erfasst. Bitte hinzufügen!',
+                );
                 return;
               }
               if (pupil.pupilWorkbooks!.isNotEmpty) {
-                if (pupil.pupilWorkbooks!
-                    .any((element) => element.isbn == int.parse(scanResult))) {
-                  di<NotificationService>().showSnackBar(NotificationType.error,
-                      'Dieses Arbeitsheft ist schon erfasst!');
+                if (pupil.pupilWorkbooks!.any(
+                  (element) => element.isbn == int.parse(scanResult),
+                )) {
+                  di<NotificationService>().showSnackBar(
+                    NotificationType.error,
+                    'Dieses Arbeitsheft ist schon erfasst!',
+                  );
                   return;
                 }
               }
-              di<PupilWorkbookManager>().postPupilWorkbook(pupil.internalId,
-                  int.parse(scanResult), _hubSessionManager.userName!);
+              di<PupilWorkbookManager>().postPupilWorkbook(
+                pupil.internalId,
+                int.parse(scanResult),
+                hubSessionManager.userName!,
+              );
               return;
             }
-            di<NotificationService>()
-                .showSnackBar(NotificationType.error, 'Fehler beim Scannen');
+            di<NotificationService>().showSnackBar(
+              NotificationType.error,
+              'Fehler beim Scannen',
+            );
           },
           child: const Text(
             "NEUES ARBEITSHEFT",
@@ -89,8 +100,9 @@ class PupilLearningContentWorkbooks extends StatelessWidget {
                 child: Column(
                   children: [
                     PupilWorkbookCard(
-                        pupilWorkbook: pupilWorkbooks[index],
-                        pupilId: pupil.internalId),
+                      pupilWorkbook: pupilWorkbooks[index],
+                      pupilId: pupil.internalId,
+                    ),
                   ],
                 ),
               );

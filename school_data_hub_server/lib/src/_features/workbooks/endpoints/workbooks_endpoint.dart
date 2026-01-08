@@ -21,6 +21,8 @@ class WorkbooksEndpoint extends Endpoint {
     return result;
   }
 
+  //- read
+
   Future<Workbook> fetchWorkbookByIsbn(
     Session session,
     int isbn,
@@ -45,13 +47,13 @@ class WorkbooksEndpoint extends Endpoint {
     return book;
   }
 
-  //- read
   Future<List<Workbook>> fetchWorkbooks(Session session) async {
     final workbooks = await Workbook.db.find(session);
     return workbooks;
   }
 
   //- update
+
   Future<Workbook> updateWorkbook(Session session, Workbook workbook) async {
     final result = await session.db.transaction((transaction) async {
       final workbookId = await Workbook.db.updateRow(
@@ -66,6 +68,7 @@ class WorkbooksEndpoint extends Endpoint {
   }
 
   //- delete
+
   Future<bool> deleteWorkbook(Session session, int id) async {
     // Check if the workbook exists
     final workbook = await Workbook.db.findFirstRow(
