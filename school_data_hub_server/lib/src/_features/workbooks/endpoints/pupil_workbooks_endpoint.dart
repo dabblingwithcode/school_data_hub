@@ -53,6 +53,7 @@ class PupilWorkbooksEndpoint extends Endpoint {
         session,
         where: (t) => t.id.equals(pupilWorkbookInDatabase.id!),
         include: PupilWorkbook.include(workbook: Workbook.include()),
+        transaction: transaction,
       );
       return pupilWorkbookWithWorkbook;
     });

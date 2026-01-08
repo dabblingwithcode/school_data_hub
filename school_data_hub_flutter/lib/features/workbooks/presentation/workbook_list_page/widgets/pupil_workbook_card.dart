@@ -11,6 +11,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialo
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/grades_widget.dart';
+import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/enums.dart';
@@ -62,7 +63,7 @@ class PupilWorkbookCard extends WatchingWidget {
             if (result == true) {
               di<PupilWorkbookManager>().deletePupilWorkbook(
                 pupilId,
-                workbook.isbn,
+                pupilWorkbook.id!,
               );
             }
           },
@@ -104,37 +105,24 @@ class PupilWorkbookCard extends WatchingWidget {
                               NotificationType.warning,
                               'Not implemented yet',
                             );
-                            // await di<WorkbookManager>()
-                            //     .deleteAuthorizationFile(
-                            //   pupil.internalId,
-                            //   authorizationId,
-                            //   pupilAuthorization.fileId!,
-                            // );
                           },
-                          child:
-                              //  workbook.imageUrl != null
-                              //     ? Provider<DocumentImageData>.value(
-                              //         updateShouldNotify: (oldValue, newValue) =>
-                              //             oldValue.documentUrl !=
-                              //             newValue.documentUrl,
-                              //         value: DocumentImageData(
-                              //             documentTag: workbook.imageUrl!,
-                              //             documentUrl:
-                              //                 '${di<EnvManager>().env!.serverUrl}${WorkbookApiService().getWorkbookImage(workbook.isbn)}',
-                              //             size: 100),
-                              //         child: const DocumentImage(),
-                              //       )
-                              //     :
-                              SizedBox(
-                                height: 100,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(5),
-                                  child: Image.asset(
-                                    'assets/document_camera.png',
+                          child: pupilWorkbook.workbook!.imageUrl != null
+                              ? UnencryptedImageInCard(
+                                  cacheKey: pupilWorkbook.isbn.toString(),
+                                  path: pupilWorkbook.workbook!.imageUrl,
+                                  size: 100,
+                                )
+                              : SizedBox(
+                                  height: 100,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(5),
+                                    child: Image.asset(
+                                      'assets/document_camera.png',
+                                    ),
                                   ),
                                 ),
-                              ),
                         ),
+
                         const Gap(10),
                       ],
                     ),
@@ -186,9 +174,12 @@ class PupilWorkbookCard extends WatchingWidget {
                                     Row(
                                       children: [
                                         Text(
-                                          RootCompetenceType
-                                              .stringToValue[workbook.subject]!
-                                              .value,
+                                          workbook.subject != null
+                                              ? RootCompetenceType
+                                                    .stringToValue[workbook
+                                                        .subject]!
+                                                    .value
+                                              : 'Fach nicht bekannt',
                                           overflow: TextOverflow.fade,
                                           style: const TextStyle(
                                             fontSize: 16,
