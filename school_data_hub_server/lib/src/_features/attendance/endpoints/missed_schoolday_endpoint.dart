@@ -16,33 +16,107 @@ class MissedSchooldayEndpoint extends Endpoint {
     }
   }
 
-  Future<MissedSchoolday> postMissedSchoolday(
+  /// Helper method that handles upsert logic for a single MissedSchoolday record.
+  /// Returns a record containing the processed MissedSchoolday and the operation type.
+  Future<({MissedSchoolday record, String operation})> _upsertMissedSchoolday(
       Session session, MissedSchoolday missedClass) async {
-    final createdMissedSchoolday = await session.db.insertRow(missedClass);
+    late MissedSchoolday resultMissedSchoolday;
+    String operation = 'add';
+
+    try {
+      // Try to insert the record (optimistic case - no duplicate)
+      final createdMissedSchoolday = await session.db.insertRow(missedClass);
+      resultMissedSchoolday = createdMissedSchoolday;
+    } on DatabaseQueryException catch (e) {
+      // Check if this is a duplicate key error (code 23505)
+      if (e.toString().contains('23505') ||
+          e.toString().contains('duplicate key')) {
+        // Fetch the existing record with the same schooldayId and pupilId
+        final existingRecord = await MissedSchoolday.db.findFirstRow(
+          session,
+          where: (t) =>
+              t.schooldayId.equals(missedClass.schooldayId) &
+              t.pupilId.equals(missedClass.pupilId),
+        );
+
+        if (existingRecord != null) {
+          // Update the existing record with new data, preserving the ID
+          final updatedMissedSchoolday = existingRecord.copyWith(
+            missedType: missedClass.missedType,
+            unexcused: missedClass.unexcused,
+            contacted: missedClass.contacted,
+            returned: missedClass.returned,
+            returnedAt: missedClass.returnedAt,
+            writtenExcuse: missedClass.writtenExcuse,
+            minutesLate: missedClass.minutesLate,
+            modifiedBy: missedClass.modifiedBy,
+            comment: missedClass.comment,
+          );
+
+          resultMissedSchoolday =
+              await session.db.updateRow(updatedMissedSchoolday);
+          operation = 'update';
+        } else {
+          // If we can't find the existing record, rethrow the original error
+          rethrow;
+        }
+      } else {
+        // If it's not a duplicate key error, rethrow
+        rethrow;
+      }
+    }
+
     // Fetch the object again with the relation included
     final missedSchooldayWithRelation = await MissedSchoolday.db.findById(
       session,
-      createdMissedSchoolday.id!,
+      resultMissedSchoolday.id!,
       include: MissedSchoolday.include(
         schoolday: Schoolday.include(),
       ),
     );
-    final newMissedSchooldayDto = MissedSchooldayDto(
-      missedSchoolday: missedSchooldayWithRelation!,
-      operation: 'add',
+
+    return (record: missedSchooldayWithRelation!, operation: operation);
+  }
+
+  Future<MissedSchoolday> postMissedSchoolday(
+      Session session, MissedSchoolday missedClass) async {
+    final result = await _upsertMissedSchoolday(session, missedClass);
+
+    final missedSchooldayDto = MissedSchooldayDto(
+      missedSchoolday: result.record,
+      operation: result.operation,
     );
-    // Send the new missed class to the stream
+
+    // Send the missed class to the stream
     session.messages.postMessage(
       'missed_schooldays_stream',
-      newMissedSchooldayDto,
+      missedSchooldayDto,
     );
-    return missedSchooldayWithRelation;
+
+    return result.record;
   }
 
   Future<List<MissedSchoolday>> postMissedSchooldays(
       Session session, List<MissedSchoolday> missedClasses) async {
-    final createdMissedSchooldays = await session.db.insert(missedClasses);
-    return createdMissedSchooldays;
+    final results = <MissedSchoolday>[];
+
+    // Process each record individually to handle duplicates gracefully
+    for (final missedClass in missedClasses) {
+      final result = await _upsertMissedSchoolday(session, missedClass);
+
+      // Send stream notification for each record
+      session.messages.postMessage(
+        'missed_schooldays_stream',
+        MissedSchooldayDto(
+          missedSchoolday: result.record,
+          operation: result.operation,
+        ),
+      );
+
+      results.add(result.record);
+    }
+
+    return results;
   }
 
   Future<List<MissedSchoolday>> fetchAllMissedSchooldays(Session session) {

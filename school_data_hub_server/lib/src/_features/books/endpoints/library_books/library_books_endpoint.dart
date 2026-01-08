@@ -29,23 +29,69 @@ class LibraryBooksEndpoint extends Endpoint {
         throw Exception(
             'Library book location "${location.location}" not found.');
       }
-      final libraryBook = LibraryBook(
-        id: null,
-        bookId: book.id!,
-        libraryId: libraryId,
-        available: true,
-        book: book,
-        location: libraryBookLocation,
-        locationId: libraryBookLocation.id!,
-      );
 
-      final libraryBookInDatabase = await LibraryBook.db
-          .insertRow(session, libraryBook, transaction: transaction);
-      await LibraryBook.db.attachRow
-          .book(session, libraryBookInDatabase, book, transaction: transaction);
-      await LibraryBook.db.attachRow.location(
-          session, libraryBookInDatabase, libraryBookLocation,
-          transaction: transaction);
+      late LibraryBook libraryBookInDatabase;
+
+      try {
+        // Try to insert (optimistic case - no duplicate)
+        final libraryBook = LibraryBook(
+          id: null,
+          bookId: book.id!,
+          libraryId: libraryId,
+          available: true,
+          book: book,
+          location: libraryBookLocation,
+          locationId: libraryBookLocation.id!,
+        );
+
+        libraryBookInDatabase = await LibraryBook.db
+            .insertRow(session, libraryBook, transaction: transaction);
+
+        await LibraryBook.db.attachRow.book(
+            session, libraryBookInDatabase, book,
+            transaction: transaction);
+        await LibraryBook.db.attachRow.location(
+            session, libraryBookInDatabase, libraryBookLocation,
+            transaction: transaction);
+      } on DatabaseQueryException catch (e) {
+        // Check if this is a duplicate key error (code 23505)
+        if (e.toString().contains('23505') ||
+            e.toString().contains('duplicate key')) {
+          // Find the existing record with the same libraryId
+          final existingRecord = await LibraryBook.db.findFirstRow(
+            session,
+            where: (t) => t.libraryId.equals(libraryId),
+            transaction: transaction,
+          );
+
+          if (existingRecord != null) {
+            // Update the existing record with new data
+            final updatedLibraryBook = existingRecord.copyWith(
+              bookId: book.id!,
+              locationId: libraryBookLocation.id!,
+              available: true,
+            );
+
+            libraryBookInDatabase = await LibraryBook.db.updateRow(
+                session, updatedLibraryBook,
+                transaction: transaction);
+
+            // Update relations
+            await LibraryBook.db.attachRow.book(
+                session, libraryBookInDatabase, book,
+                transaction: transaction);
+            await LibraryBook.db.attachRow.location(
+                session, libraryBookInDatabase, libraryBookLocation,
+                transaction: transaction);
+          } else {
+            // If we can't find the existing record, rethrow the original error
+            rethrow;
+          }
+        } else {
+          // If it's not a duplicate key error, rethrow
+          rethrow;
+        }
+      }
 
       if (libraryBookInDatabase.id == null) {
         throw Exception('Failed to create library book - no ID assigned.');
