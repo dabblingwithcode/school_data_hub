@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_category_status_batches.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_goals_list.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -13,8 +12,6 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profil
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:watch_it/watch_it.dart';
-
-final _mainMenuBottomNavManager = di<BottomNavManager>();
 
 class LearningSupportCard extends WatchingStatefulWidget {
   final PupilProxy pupil;
@@ -63,12 +60,9 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                             scrollDirection: Axis.horizontal,
                             child: InkWell(
                               onTap: () {
-                                _mainMenuBottomNavManager
-                                    .setPupilProfileNavPage(
-                                      ProfileNavigationState
-                                          .learningSupport
-                                          .value,
-                                    );
+                                di<BottomNavManager>().setPupilProfileNavPage(
+                                  ProfileNavigationState.learningSupport.value,
+                                );
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (ctx) =>

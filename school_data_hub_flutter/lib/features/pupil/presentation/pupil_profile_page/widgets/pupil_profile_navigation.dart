@@ -5,8 +5,6 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _mainMenuBottomNavManager = di<BottomNavManager>();
-
 enum ProfileNavigationState {
   info(0),
   language(1),
@@ -77,7 +75,7 @@ class PupilProfileNavigation extends WatchingWidget {
         if (isSelected) {
           return;
         }
-        _mainMenuBottomNavManager.setPupilProfileNavPage(state.value);
+        di<BottomNavManager>().setPupilProfileNavPage(state.value);
       },
       child: child,
     );
@@ -124,7 +122,7 @@ class PupilProfileNavigation extends WatchingWidget {
                           child: Icon(
                             Icons.info_rounded,
                             color:
-                                _mainMenuBottomNavManager
+                                di<BottomNavManager>()
                                         .pupilProfileNavState
                                         .value ==
                                     ProfileNavigationState.info.value
@@ -142,7 +140,7 @@ class PupilProfileNavigation extends WatchingWidget {
                           child: Icon(
                             Icons.language_rounded,
                             color:
-                                _mainMenuBottomNavManager
+                                di<BottomNavManager>()
                                         .pupilProfileNavState
                                         .value ==
                                     ProfileNavigationState.language.value
@@ -160,7 +158,7 @@ class PupilProfileNavigation extends WatchingWidget {
                           child: Icon(
                             Icons.attach_money_rounded,
                             color:
-                                _mainMenuBottomNavManager
+                                di<BottomNavManager>()
                                         .pupilProfileNavState
                                         .value ==
                                     ProfileNavigationState.credit.value
@@ -178,7 +176,7 @@ class PupilProfileNavigation extends WatchingWidget {
                           child: Icon(
                             Icons.calendar_month_rounded,
                             color:
-                                _mainMenuBottomNavManager
+                                di<BottomNavManager>()
                                         .pupilProfileNavState
                                         .value ==
                                     ProfileNavigationState.attendance.value
@@ -196,7 +194,7 @@ class PupilProfileNavigation extends WatchingWidget {
                           child: Icon(
                             Icons.warning_rounded,
                             color:
-                                _mainMenuBottomNavManager
+                                di<BottomNavManager>()
                                         .pupilProfileNavState
                                         .value ==
                                     ProfileNavigationState.schooldayEvent.value
@@ -222,7 +220,7 @@ class PupilProfileNavigation extends WatchingWidget {
                             'OGS',
                             style: TextStyle(
                               color:
-                                  _mainMenuBottomNavManager
+                                  di<BottomNavManager>()
                                           .pupilProfileNavState
                                           .value ==
                                       ProfileNavigationState.ogs.value
@@ -243,7 +241,7 @@ class PupilProfileNavigation extends WatchingWidget {
                           child: Icon(
                             Icons.rule,
                             color:
-                                _mainMenuBottomNavManager
+                                di<BottomNavManager>()
                                         .pupilProfileNavState
                                         .value ==
                                     ProfileNavigationState.lists.value
@@ -261,7 +259,7 @@ class PupilProfileNavigation extends WatchingWidget {
                           child: Icon(
                             Icons.fact_check_rounded,
                             color:
-                                _mainMenuBottomNavManager
+                                di<BottomNavManager>()
                                         .pupilProfileNavState
                                         .value ==
                                     ProfileNavigationState.authorization.value
@@ -279,7 +277,7 @@ class PupilProfileNavigation extends WatchingWidget {
                           child: Icon(
                             Icons.support_rounded,
                             color:
-                                _mainMenuBottomNavManager
+                                di<BottomNavManager>()
                                         .pupilProfileNavState
                                         .value ==
                                     ProfileNavigationState.learningSupport.value
@@ -297,7 +295,7 @@ class PupilProfileNavigation extends WatchingWidget {
                           child: Icon(
                             Icons.lightbulb,
                             color:
-                                _mainMenuBottomNavManager
+                                di<BottomNavManager>()
                                         .pupilProfileNavState
                                         .value ==
                                     ProfileNavigationState.learning.value

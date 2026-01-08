@@ -52,6 +52,9 @@ class InitOnActiveEnv {
     );
 
     // Register BottomNavManager in active environment scope so it's always available
-    di.registerSingleton<BottomNavManager>(BottomNavManager());
+    di.registerSingleton<BottomNavManager>(
+      BottomNavManager(),
+      dispose: (bottomNavManager) => bottomNavManager.dispose(),
+    );
   }
 }
