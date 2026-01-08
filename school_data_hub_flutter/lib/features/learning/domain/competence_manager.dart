@@ -10,6 +10,7 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/data/competence_check_api_service.dart';
+import 'package:school_data_hub_flutter/features/learning/data/competence_goal_api_service.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
@@ -23,7 +24,7 @@ class CompetenceManager {
   final _notificationService = di<NotificationService>();
 
   final _competenceCheckApiService = CompetenceCheckApiService();
-
+  final _competenceGoalApiService = CompetenceGoalApiService();
   final _competences = ValueNotifier<List<Competence>>([]);
   ValueListenable<List<Competence>> get competences => _competences;
 
@@ -289,12 +290,20 @@ class CompetenceManager {
     required List<String> strategies,
   }) async {
     // TODO: Implement backend call when available
-    // Currently there is no endpoint for posting a competence goal
-    // We would need something like _client.competence.postCompetenceGoal(...)
+    final pupilData = await _competenceGoalApiService.postCompetenceGoal(
+      pupilId: pupilId,
+      competenceId: competenceId,
+      description: description,
+      strategies: strategies,
+    );
+    if (pupilData == null) {
+      return;
+    }
+    di<PupilProxyManager>().updatePupilProxyWithPupilData(pupilData);
 
     _notificationService.showSnackBar(
-      NotificationType.warning,
-      'Speichern nicht möglich: Backend-Endpunkt fehlt (CompetenceGoal)',
+      NotificationType.success,
+      'Lernziel erstellt',
     );
 
     return;
