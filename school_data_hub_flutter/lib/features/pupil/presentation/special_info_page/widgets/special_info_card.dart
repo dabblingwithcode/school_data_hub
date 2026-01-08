@@ -7,9 +7,6 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profil
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:watch_it/watch_it.dart';
 
-final _mainMenuBottomNavManager = di<BottomNavManager>();
-final _filterStateManager = di<FiltersStateManager>();
-
 class SpecialInfoCard extends WatchingWidget {
   final PupilProxy pupil;
   const SpecialInfoCard(this.pupil, {super.key});
@@ -20,8 +17,12 @@ class SpecialInfoCard extends WatchingWidget {
       surfaceTintColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       elevation: 1.0,
-      margin:
-          const EdgeInsets.only(left: 4.0, right: 4.0, top: 4.0, bottom: 4.0),
+      margin: const EdgeInsets.only(
+        left: 4.0,
+        right: 4.0,
+        top: 4.0,
+        bottom: 4.0,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,15 +50,15 @@ class SpecialInfoCard extends WatchingWidget {
                                   scrollDirection: Axis.horizontal,
                                   child: InkWell(
                                     onTap: () {
-                                      _filterStateManager.resetFilters();
-                                      _mainMenuBottomNavManager
+                                      di<FiltersStateManager>().resetFilters();
+                                      di<BottomNavManager>()
                                           .setPupilProfileNavPage(0);
-                                      Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                        builder: (ctx) => PupilProfilePage(
-                                          pupil: pupil,
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (ctx) =>
+                                              PupilProfilePage(pupil: pupil),
                                         ),
-                                      ));
+                                      );
                                     },
                                     child: Row(
                                       children: [
@@ -111,8 +112,10 @@ class SpecialInfoCard extends WatchingWidget {
                       child: InkWell(
                         onTap: () {},
                         child: Padding(
-                          padding:
-                              const EdgeInsets.only(right: 8.0, bottom: 15),
+                          padding: const EdgeInsets.only(
+                            right: 8.0,
+                            bottom: 15,
+                          ),
                           child: Text(
                             pupil.specialInformation ?? 'keine Infos',
                             overflow: TextOverflow.ellipsis,

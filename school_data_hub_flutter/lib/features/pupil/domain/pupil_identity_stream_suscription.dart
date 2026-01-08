@@ -52,6 +52,17 @@ class PupilIdentityStream {
         .listen(
           (PupilIdentityDto event) async {
             final eventSender = event.sender;
+
+            // Defensive null check - validate sender before processing
+            if (eventSender == null || eventSender.isEmpty) {
+              _log.severe(
+                '[${role.name.toUpperCase()}]: Received event with NULL/EMPTY sender! '
+                'Type: ${event.type}, Value: ${event.value}. Skipping malformed event.',
+              );
+              // Skip processing this malformed event
+              return;
+            }
+
             _log.info(
               '[${role.name.toUpperCase()}]: [${event.type}] Received event from $eventSender',
             );
@@ -94,6 +105,16 @@ class PupilIdentityStream {
                     final targetUser = event.value.isNotEmpty
                         ? event.value
                         : null;
+
+                    // Validate user session before sending data
+
+                    if (currentUser == null || currentUser.isEmpty) {
+                      _log.severe(
+                        '[${role.name.toUpperCase()}]: Cannot send data - username is null or empty',
+                      );
+                      break;
+                    }
+
                     if (targetUser == null) {
                       // Legacy: no targeting, proceed for any receiver
                       if (onRequestConfirmed != null) {
@@ -103,8 +124,7 @@ class PupilIdentityStream {
                       await _client.pupilIdentity.sendPupilIdentityMessage(
                         channelName,
                         PupilIdentityDto(
-                          sender:
-                              di<HubSessionManager>().user!.userInfo!.userName!,
+                          sender: currentUser,
                           dataTimeStamp:
                               di<EnvManager>().activeEnv?.lastIdentitiesUpdate,
                           type: 'data',
@@ -126,8 +146,7 @@ class PupilIdentityStream {
                       await _client.pupilIdentity.sendPupilIdentityMessage(
                         channelName,
                         PupilIdentityDto(
-                          sender:
-                              di<HubSessionManager>().user!.userInfo!.userName!,
+                          sender: currentUser,
                           type: 'data',
                           dataTimeStamp:
                               di<EnvManager>().activeEnv?.lastIdentitiesUpdate,
@@ -283,12 +302,21 @@ class PupilIdentityStream {
                         lastIdentitiesUpdate: event.dataTimeStamp?.toUtc(),
                       );
 
+                      // Validate user session before sending confirmation
+                      final confirmUser =
+                          di<HubSessionManager>().user?.userInfo?.userName;
+                      if (confirmUser == null || confirmUser.isEmpty) {
+                        _log.severe(
+                          '[${role.name.toUpperCase()}]: Cannot send confirmation - username is null or empty',
+                        );
+                        break;
+                      }
+
                       // Send confirmation
                       await _client.pupilIdentity.sendPupilIdentityMessage(
                         channelName,
                         PupilIdentityDto(
-                          sender:
-                              di<HubSessionManager>().user!.userInfo!.userName!,
+                          sender: confirmUser,
                           type: 'ok',
                           value: '',
                         ),

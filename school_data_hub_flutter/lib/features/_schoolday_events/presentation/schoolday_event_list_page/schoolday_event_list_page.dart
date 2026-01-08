@@ -18,7 +18,6 @@ class SchooldayEventListPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _schooldayEventManager = di<SchooldayEventManager>();
     //-TODO: Filterstate in SchooldayEventSearchbar and SchooldayEventListPageBottomNavBar
 
     List<PupilProxy> pupils = watchValue((PupilsFilter x) => x.filteredPupils);
@@ -30,7 +29,8 @@ class SchooldayEventListPage extends WatchingWidget {
         title: 'Ereignisse',
       ),
       body: RefreshIndicator(
-        onRefresh: () async => _schooldayEventManager.fetchSchooldayEvents(),
+        onRefresh: () async =>
+            di<SchooldayEventManager>().fetchSchooldayEvents(),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 700),

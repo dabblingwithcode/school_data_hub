@@ -7,6 +7,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper.dart';
@@ -33,10 +34,10 @@ class PupilProfileInfosContent extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _pupilManager = di<PupilProxyManager>();
+    final pupilManager = di<PupilProxyManager>();
 
-    final _hubSessionManager = di<HubSessionManager>();
-    final pupilSiblings = _pupilManager.getSiblings(pupil);
+    final hubSessionManager = di<HubSessionManager>();
+    final pupilSiblings = pupilManager.getSiblings(pupil);
     watch(pupil);
     return Container(
       decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
@@ -188,7 +189,12 @@ class PupilProfileInfosContent extends WatchingWidget {
                         pupil.contact == null || pupil.contact!.isEmpty
                         ? IconButton(
                             onPressed: () async {
-                              if (_isMatrixAuthorized == false) return;
+                              if (_isMatrixAuthorized() == false) {
+                                di<NotificationService>().showInformationDialog(
+                                  'Keine Berechtigung. Admin-Rechte erforderlich.',
+                                );
+                                return;
+                              }
                               final confirm = await confirmationDialog(
                                 context: context,
                                 title: 'Matrix-Admindaten erstellen',
@@ -196,19 +202,21 @@ class PupilProfileInfosContent extends WatchingWidget {
                                     'Möchten Sie die Matrix-Admindaten wirklich erstellen?',
                               );
                               if (confirm != true) return;
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (ctx) => NewMatrixUserPage(
-                                    pupil: pupil,
-                                    matrixId:
-                                        MatrixPolicyHelper.generateMatrixId(
-                                          isParent: false,
-                                        ),
-                                    displayName:
-                                        '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (${pupil.group})',
+                              if (context.mounted) {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (ctx) => NewMatrixUserPage(
+                                      pupil: pupil,
+                                      matrixId:
+                                          MatrixPolicyHelper.generateMatrixId(
+                                            isParent: false,
+                                          ),
+                                      displayName:
+                                          '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (${pupil.group})',
+                                    ),
                                   ),
-                                ),
-                              );
+                                );
+                              }
                             },
                             icon: Icon(
                               Icons.add_circle_outline,
@@ -218,7 +226,12 @@ class PupilProfileInfosContent extends WatchingWidget {
                           )
                         : IconButton(
                             onPressed: () async {
-                              if (_isMatrixAuthorized == false) return;
+                              if (_isMatrixAuthorized() == false) {
+                                di<NotificationService>().showInformationDialog(
+                                  'Keine Berechtigung. Admin-Rechte erforderlich.',
+                                );
+                                return;
+                              }
 
                               final confirmation = await confirmationDialog(
                                 context: context,
@@ -232,6 +245,9 @@ class PupilProfileInfosContent extends WatchingWidget {
                                   context,
                                 );
                                 if (logOutDevices == null) return;
+                                if (!di.isRegistered<MatrixPolicyManager>()) {
+                                  await InitManager.registerMatrixManagers();
+                                }
                                 final file = await di<MatrixPolicyManager>()
                                     .users
                                     .resetPasswordAndPrintCredentialsFile(
@@ -291,7 +307,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                               )
                             : TutorInfo(
                                 parentsContact: parentsContact,
-                                createdBy: _hubSessionManager.userName!,
+                                createdBy: hubSessionManager.userName!,
                               ),
                       );
                     },
@@ -301,7 +317,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                               String? pupilSiblingsGroups;
                               if (pupil.family != null) {
                                 pupilSiblingsGroups = [
-                                  ..._pupilManager.getSiblings(pupil),
+                                  ...pupilManager.getSiblings(pupil),
                                   pupil,
                                 ].map((e) => e.group).toList().join();
                               }
@@ -329,7 +345,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                           )
                         : IconButton(
                             onPressed: () async {
-                              if (_isMatrixAuthorized == false) return;
+                              if (_isMatrixAuthorized() == false) return;
                               final confirmation = await confirmationDialog(
                                 context: context,
                                 title: 'Passwort zurücksetzen',
@@ -342,6 +358,9 @@ class PupilProfileInfosContent extends WatchingWidget {
                                   context,
                                 );
                                 if (logOutDevices == null) return;
+                                if (!di.isRegistered<MatrixPolicyManager>()) {
+                                  await InitManager.registerMatrixManagers();
+                                }
                                 final file = await di<MatrixPolicyManager>()
                                     .users
                                     .resetPasswordAndPrintCredentialsFile(

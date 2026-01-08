@@ -1,4 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:logging/logging.dart';
+
+final _log = Logger('[BottomNavManager]');
 
 class BottomNavManager {
   final _bottomNavState = ValueNotifier<int>(0);
@@ -17,5 +20,12 @@ class BottomNavManager {
 
   void setPupilProfileNavPage(int index) {
     _pupilProfileNavState.value = index;
+    _log.info('PupilProfileNavPage set to $index');
+  }
+
+  void dispose() {
+    _bottomNavState.dispose();
+    _pupilProfileNavState.dispose();
+    _log.info('BottomNavManager disposed');
   }
 }
