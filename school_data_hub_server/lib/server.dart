@@ -188,8 +188,9 @@ void run(List<String> args) async {
     if (emailAdmin != null && emailAdmin.isNotEmpty) {
       final success = await MailerService.instance.sendNotification(
         recipient: emailAdmin,
-        subject: 'Server Started',
-        message: 'School Data Hub Server has started successfully.\n\n'
+        subject: '[${pod.runMode}] Server Started',
+        message:
+            'School Data Hub Server has started successfully in ${pod.runMode} mode.\n\n'
             'Timestamp: ${DateTime.now().toIso8601String()}\n'
             'User count: $userCount',
       );
