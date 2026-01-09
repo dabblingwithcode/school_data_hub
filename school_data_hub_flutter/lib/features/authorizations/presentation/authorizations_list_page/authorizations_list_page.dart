@@ -18,12 +18,13 @@ class AuthorizationsListPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _authorizationManager = di<AuthorizationManager>();
-    final _pupilsFilter = di<PupilsFilter>();
+    final authorizationManager = di<AuthorizationManager>();
+    final pupilsFilter = di<PupilsFilter>();
     bool filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);
 
-    List<Authorization> authorizations =
-        watchValue((AuthorizationFilterManager x) => x.filteredAuthorizations);
+    List<Authorization> authorizations = watchValue(
+      (AuthorizationFilterManager x) => x.filteredAuthorizations,
+    );
 
     //- TODO: implement slivers and separate the search bar from the list
 
@@ -38,15 +39,12 @@ class AuthorizationsListPage extends WatchingWidget {
           children: [
             Icon(Icons.fact_check_rounded, size: 25, color: Colors.white),
             Gap(10),
-            Text(
-              'Nachweis-Listen',
-              style: AppStyles.appBarTextStyle,
-            ),
+            Text('Nachweis-Listen', style: AppStyles.appBarTextStyle),
           ],
         ),
       ),
       body: RefreshIndicator(
-        onRefresh: () async => _authorizationManager.fetchAuthorizations(),
+        onRefresh: () async => authorizationManager.fetchAuthorizations(),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 700),
@@ -54,15 +52,13 @@ class AuthorizationsListPage extends WatchingWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(
-                      left: 10.0, top: 15.0, right: 10.00),
+                    left: 10.0,
+                    top: 15.0,
+                    right: 10.00,
+                  ),
                   child: Row(
                     children: [
-                      const Text(
-                        'Gesamt:',
-                        style: TextStyle(
-                          fontSize: 13,
-                        ),
-                      ),
+                      const Text('Gesamt:', style: TextStyle(fontSize: 13)),
                       const Gap(10),
                       Text(
                         authorizations.length.toString(),
@@ -81,16 +77,17 @@ class AuthorizationsListPage extends WatchingWidget {
                     children: [
                       Expanded(
                         child: AuthorizationListSearchTextField(
-                            searchType: SearchType.authorization,
-                            hintText: 'Liste suchen',
-                            refreshFunction:
-                                _authorizationManager.fetchAuthorizations),
+                          searchType: SearchType.authorization,
+                          hintText: 'Liste suchen',
+                          refreshFunction:
+                              authorizationManager.fetchAuthorizations,
+                        ),
                       ),
                       //---------------------------------
                       InkWell(
                         onTap: () {},
 
-                        onLongPress: () => _pupilsFilter.resetFilters(),
+                        onLongPress: () => pupilsFilter.resetFilters(),
                         // onPressed: () => showBottomSheetFilters(context),
                         child: Padding(
                           padding: const EdgeInsets.all(10.0),
@@ -119,7 +116,8 @@ class AuthorizationsListPage extends WatchingWidget {
                           itemCount: authorizations.length,
                           itemBuilder: (BuildContext context, int index) {
                             return AuthorizationCard(
-                                authorization: authorizations[index]);
+                              authorization: authorizations[index],
+                            );
                           },
                         ),
                       ),

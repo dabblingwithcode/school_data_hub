@@ -13,7 +13,7 @@ class AuthorizationApiService {
   //- getAuthorizations
 
   Future<List<Authorization>?> fetchAuthorizations() async {
-    final auths = ClientHelper.apiCall(
+    final auths = await ClientHelper.apiCall(
       call: () => _client.authorization.fetchAuthorizations(),
     );
     return auths;

@@ -240,7 +240,12 @@ class InitOnUserAuth {
       },
     );
     di.registerSingletonWithDependencies<AuthorizationFilterManager>(
-      () => AuthorizationFilterManager(),
+      () {
+        final authorizationFilterManager = AuthorizationFilterManager();
+        authorizationFilterManager.init();
+        _log.info('[AuthorizationFilterManager] initialized ✅️');
+        return authorizationFilterManager;
+      },
       dependsOn: [AuthorizationManager],
       dispose: (instance) {
         _log.info('[AuthorizationFilterManager] disposed 🚮');

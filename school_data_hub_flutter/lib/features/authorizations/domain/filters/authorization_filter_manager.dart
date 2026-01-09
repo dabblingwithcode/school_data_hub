@@ -16,6 +16,14 @@ class AuthorizationFilterManager {
   final _filterState = ValueNotifier<bool>(false);
 
   String _currentSearchText = '';
+
+  AuthorizationFilterManager init() {
+    _authorizationManager.authorizations.addListener(_onAuthorizationsChanged);
+
+    resetFilters();
+    return this;
+  }
+
   void dispose() {
     _authorizationManager.authorizations.removeListener(
       _onAuthorizationsChanged,
@@ -23,13 +31,6 @@ class AuthorizationFilterManager {
     _filterState.dispose();
     _filteredAuthorizations.dispose();
     return;
-  }
-
-  AuthorizationFilterManager init() {
-    _authorizationManager.authorizations.addListener(_onAuthorizationsChanged);
-
-    resetFilters();
-    return this;
   }
 
   void _onAuthorizationsChanged() {
@@ -43,7 +44,7 @@ class AuthorizationFilterManager {
     }
   }
 
-  resetFilters() {
+  void resetFilters() {
     _filterState.value = false;
     _filteredAuthorizations.value = _authorizationManager.authorizations.value;
     _filtersStateManager.setFilterState(
@@ -52,7 +53,7 @@ class AuthorizationFilterManager {
     );
   }
 
-  onSearchText(String text) {
+  void onSearchText(String text) {
     _currentSearchText = text;
     if (text.isEmpty) {
       _filteredAuthorizations.value =

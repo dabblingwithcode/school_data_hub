@@ -28,6 +28,7 @@ class AuthorizationManager with ChangeNotifier {
 
   AuthorizationManager();
 
+  @override
   void dispose() {
     _authorizations.dispose();
     _authorizationsMap.clear();
