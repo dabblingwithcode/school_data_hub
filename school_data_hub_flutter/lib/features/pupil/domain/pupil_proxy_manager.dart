@@ -32,6 +32,7 @@ class PupilProxyManager extends ChangeNotifier {
 
   PupilProxyManager();
 
+  @override
   void dispose() {
     // dispose all the pupil proxies
     for (final pupil in _pupilIdPupilsMap.values) {
@@ -39,6 +40,7 @@ class PupilProxyManager extends ChangeNotifier {
     }
     _pupilIdPupilsMap.clear();
     super.dispose();
+    _log.info('[PupilProxyManager] disposed ✅️');
     return;
   }
 
