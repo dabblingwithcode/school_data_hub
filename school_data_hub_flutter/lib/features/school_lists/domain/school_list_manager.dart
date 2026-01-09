@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
@@ -20,6 +21,18 @@ class SchoolListManager with ChangeNotifier {
 
   final _log = Logger('SchoolListManager');
 
+  @override
+  void dispose() {
+    clearData();
+    super.dispose();
+    return;
+  }
+
+  Future<SchoolListManager> init() async {
+    await fetchSchoolLists();
+    return this;
+  }
+
   final Map<int, SchoolList> _schoolListMap =
       {}; //-When created, copyWith with pupilEntries = null to avoid redundance!
 
@@ -34,17 +47,6 @@ class SchoolListManager with ChangeNotifier {
   void clearData() {
     _schoolListMap.clear();
     _schoolListIdPupilEntriesMap.clear();
-  }
-
-  void dispose() {
-    clearData();
-    super.dispose();
-    return;
-  }
-
-  Future<SchoolListManager> init() async {
-    await fetchSchoolLists();
-    return this;
   }
 
   //- Getters
@@ -66,67 +68,53 @@ class SchoolListManager with ChangeNotifier {
     required int pupilId,
     required int listId,
   }) {
-    if (!_schoolListIdPupilEntriesMap.containsKey(listId)) {
-      return null;
-    }
-    final pupilEntries = _schoolListIdPupilEntriesMap[listId]!.pupilEntries;
-    if (pupilEntries.isEmpty) {
-      return null;
-    }
-    return pupilEntries.values.firstWhere(
+    final proxyMap = _schoolListIdPupilEntriesMap[listId];
+    if (proxyMap == null) return null;
+
+    return proxyMap.pupilEntries.values.firstWhereOrNull(
       (element) => element.pupilEntry.pupilId == pupilId,
     );
   }
 
   List<PupilProxy> getPupilsinSchoolList(int listId) {
-    if (!_schoolListIdPupilEntriesMap.containsKey(listId)) {
-      return [];
-    }
-    final pupilEntries = _schoolListIdPupilEntriesMap[listId]!.pupilEntries;
-    if (pupilEntries.isEmpty) {
-      return [];
-    }
-    final pupilIdsInList = pupilEntries.values
-        .map((e) => e.pupilEntry.pupilId)
-        .toSet()
-        .toList();
+    final proxyMap = _schoolListIdPupilEntriesMap[listId];
+    if (proxyMap == null) return [];
 
-    return _pupilManager.getPupilsFromPupilIds(pupilIdsInList);
+    final pupilIdsInList = proxyMap.pupilEntries.values
+        .map((e) => e.pupilEntry.pupilId)
+        .toSet();
+
+    return _pupilManager.getPupilsFromPupilIds(pupilIdsInList.toList());
   }
 
   //- Update collections
 
-  void _updateCollectionsFromSchoolList(SchoolList schoolList) {
+  void _updateCollectionsFromSchoolList(
+    SchoolList schoolList, {
+    bool notify = true,
+  }) {
+    final listId = schoolList.id!;
     // First extract the pupil lists from the school list
-    final List<PupilListEntry> pupilEntries = schoolList.pupilEntries!;
+    final List<PupilListEntry> pupilEntries = schoolList.pupilEntries ?? [];
 
     // Now add the school list to the map
     // setting pupilEntries to null to avoid redundancy
-    _schoolListMap[schoolList.id!] = schoolList.copyWith(pupilEntries: null);
+    _schoolListMap[listId] = schoolList.copyWith(pupilEntries: null);
 
     // Next, we update the pupil entries map for the school list
     // with the key being the pupilId
-    if (_schoolListIdPupilEntriesMap.containsKey(schoolList.id!)) {
-      _schoolListIdPupilEntriesMap[schoolList.id!]!.setPupilEntries(
-        pupilEntries,
-      );
-      _log.info(
-        'Updated pupil entries map for school list number ${schoolList.id!}',
-      );
-    } else {
-      _schoolListIdPupilEntriesMap[schoolList.id!] =
-          SchoolListPupilEntriesProxyMap();
-      _schoolListIdPupilEntriesMap[schoolList.id!]!.setPupilEntries(
-        pupilEntries,
-      );
-      _log.info(
-        'Created new pupil entries map for school list number ${schoolList.id!}',
-      );
-    }
+    final proxyMap = _schoolListIdPupilEntriesMap.putIfAbsent(
+      listId,
+      () => SchoolListPupilEntriesProxyMap(),
+    );
 
-    notifyListeners();
+    proxyMap.setPupilEntries(pupilEntries);
+
+    if (notify) {
+      notifyListeners();
+    }
     _log.info(
-      'Finished updating School list number ${schoolList.id!} with ${pupilEntries.length} pupil entries',
+      'Updated School list $listId with ${pupilEntries.length} pupil entries',
     );
   }
 
@@ -137,16 +125,16 @@ class SchoolListManager with ChangeNotifier {
     if (responseSchoolLists == null) {
       return;
     }
+
     _notificationService.showSnackBar(
       NotificationType.success,
       '${responseSchoolLists.length} Schullisten geladen!',
     );
 
     for (final schoolList in responseSchoolLists) {
-      _schoolListMap[schoolList.id!] = schoolList;
       // go through the pupil lists and add them to the map
       // with the key being the pupilId
-      _updateCollectionsFromSchoolList(schoolList);
+      _updateCollectionsFromSchoolList(schoolList, notify: false);
     }
 
     notifyListeners();
@@ -171,6 +159,7 @@ class SchoolListManager with ChangeNotifier {
           updateMembers: operation,
         );
     if (updatedSchoolList == null) {
+      _log.warning('Failed to update school list $listId properties');
       return;
     }
     _updateCollectionsFromSchoolList(updatedSchoolList);
@@ -197,11 +186,13 @@ class SchoolListManager with ChangeNotifier {
     final PupilListEntry? updatedEntry = await _apiSchoolListService
         .updatePupilEntry(entry: entryToUpdate);
     if (updatedEntry == null) {
+      _log.warning('Failed to update pupil entry ${entry.id}');
       return;
     }
     _schoolListIdPupilEntriesMap[updatedEntry.schoolListId]!.updatePupilEntry(
       updatedEntry,
     );
+    _log.info('Updated pupil entry ${updatedEntry.id}');
 
     return;
   }
@@ -209,6 +200,7 @@ class SchoolListManager with ChangeNotifier {
   Future<void> deleteSchoolList(int listId) async {
     final success = await _apiSchoolListService.deleteSchoolList(listId);
     if (success == null) {
+      _log.warning('Failed to delete school list $listId');
       return;
     }
     _schoolListMap.remove(listId);
@@ -218,6 +210,7 @@ class SchoolListManager with ChangeNotifier {
       'Schulliste erfolgreich gelöscht',
     );
 
+    _log.info('Deleted school list $listId');
     notifyListeners();
   }
 
@@ -237,6 +230,7 @@ class SchoolListManager with ChangeNotifier {
       errorMessage: 'Fehler beim Erstellen der Schulliste',
     );
     if (schoolList == null) {
+      _log.warning('Failed to create new school list');
       return;
     }
     _schoolListMap[schoolList.id!] = schoolList;
@@ -246,6 +240,7 @@ class SchoolListManager with ChangeNotifier {
       NotificationType.success,
       'Schulliste erfolgreich erstellt',
     );
+    _log.info('Created new school list ${schoolList.id}');
 
     return;
   }

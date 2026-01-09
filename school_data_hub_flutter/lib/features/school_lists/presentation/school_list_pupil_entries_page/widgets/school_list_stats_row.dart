@@ -21,9 +21,9 @@ class SchoolListStatsRow extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _schoolListManager = di<SchoolListManager>();
+    final schoolListManager = di<SchoolListManager>();
     watch<SchoolListPupilEntriesProxyMap>(
-      _schoolListManager.getPupilEntriesProxyFromSchoolList(schoolList.id!),
+      schoolListManager.getPupilEntriesProxyFromSchoolList(schoolList.id!),
     );
     final Map<String, int> stats =
         SchoolListHelper.schoolListStatsForGivenPupils(schoolList, pupils);

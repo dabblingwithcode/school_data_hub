@@ -7,8 +7,12 @@ final _log = Logger('SchoolListPupilEntriesProxy');
 
 class SchoolListPupilEntriesProxyMap with ChangeNotifier {
   /// This class is used to manage the state of pupil entries in a school list.
-  /// key is the entry id, value is the list of pupil entries.
-  Map<int, PupilListEntryProxy> pupilEntries = {};
+  /// key is the entry id, value is the pupil list entry proxy.
+  final Map<int, PupilListEntryProxy> pupilEntries = {};
+
+  /// key is the pupilId, value is the pupil list entry proxy.
+  /// This allows for O(1) lookups by pupilId.
+  final Map<int, PupilListEntryProxy> pupilIdToEntryMap = {};
 
   void setPupilEntries(List<PupilListEntry> newEntries) {
     // 1. Find entry IDs to keep
@@ -21,7 +25,10 @@ class SchoolListPupilEntriesProxyMap with ChangeNotifier {
 
     // Remove entries that no longer exist
     for (final key in keysToRemove) {
-      pupilEntries.remove(key);
+      final proxy = pupilEntries.remove(key);
+      if (proxy != null) {
+        pupilIdToEntryMap.remove(proxy.pupilEntry.pupilId);
+      }
       _log.fine('Removed entry with ID: $key');
     }
 
@@ -33,18 +40,23 @@ class SchoolListPupilEntriesProxyMap with ChangeNotifier {
 
       // Case: entry is new, add it
       if (!pupilEntries.containsKey(entryId)) {
-        pupilEntries[entryId] = PupilListEntryProxy(pupilEntry: newEntry);
+        final proxy = PupilListEntryProxy(pupilEntry: newEntry);
+        pupilEntries[entryId] = proxy;
+        pupilIdToEntryMap[newEntry.pupilId] = proxy;
         hasChanges = true;
       }
       // Case: entry exists, check if it needs update
       else {
-        final existingEntry = pupilEntries[entryId]!.pupilEntry;
+        final proxy = pupilEntries[entryId]!;
+        final existingEntry = proxy.pupilEntry;
 
         // Only update if there are actual changes
         // (comparing meaningful fields; adjust as needed)
         if (existingEntry.status != newEntry.status ||
             existingEntry.comment != newEntry.comment) {
-          pupilEntries[entryId]!.setPupilEntry(newEntry);
+          proxy.setPupilEntry(newEntry);
+          // Update the pupilId map just in case pupilId changed (unlikely but safe)
+          pupilIdToEntryMap[newEntry.pupilId] = proxy;
           hasChanges = true;
         } else {
           _log.info('No changes for entry with ID: $entryId');
@@ -62,29 +74,34 @@ class SchoolListPupilEntriesProxyMap with ChangeNotifier {
   }
 
   void addPupilEntry(PupilListEntry entry) {
-    pupilEntries[entry.id!] = PupilListEntryProxy(pupilEntry: entry);
+    final proxy = PupilListEntryProxy(pupilEntry: entry);
+    pupilEntries[entry.id!] = proxy;
+    pupilIdToEntryMap[entry.pupilId] = proxy;
     notifyListeners();
     _log.info('Pupil entry added: ${entry.id}');
   }
 
   void updatePupilEntry(PupilListEntry entry) {
-    final entryProxy = pupilEntries[entry.id!];
-    entryProxy!.setPupilEntry(entry);
-
-    notifyListeners();
+    final proxy = pupilEntries[entry.id!];
+    if (proxy != null) {
+      proxy.setPupilEntry(entry);
+      pupilIdToEntryMap[entry.pupilId] = proxy;
+      notifyListeners();
+    }
   }
 
   void removePupilEntry(int entryId) {
-    if (pupilEntries[entryId] == null) return;
-
-    pupilEntries.remove(entryId);
-
-    notifyListeners();
-    _log.info('Pupil entries set: ${pupilEntries.length}');
+    final proxy = pupilEntries.remove(entryId);
+    if (proxy != null) {
+      pupilIdToEntryMap.remove(proxy.pupilEntry.pupilId);
+      notifyListeners();
+      _log.info('Pupil entries remaining: ${pupilEntries.length}');
+    }
   }
 
   void clear() {
     pupilEntries.clear();
+    pupilIdToEntryMap.clear();
     notifyListeners();
   }
 }
