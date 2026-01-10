@@ -6,7 +6,12 @@ import 'package:watch_it/watch_it.dart';
 
 class AddCompetenceGoalDialog extends WatchingStatefulWidget {
   final int pupilId;
-  const AddCompetenceGoalDialog({required this.pupilId, super.key});
+  final int competenceId;
+  const AddCompetenceGoalDialog({
+    required this.pupilId,
+    required this.competenceId,
+    super.key,
+  });
 
   @override
   State<AddCompetenceGoalDialog> createState() =>
@@ -18,8 +23,16 @@ class _AddCompetenceGoalDialogState extends State<AddCompetenceGoalDialog> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _strategiesController = TextEditingController();
 
-  Competence? _selectedCompetence;
+  Competence? _competence;
   List<String> _strategies = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _competence = di<CompetenceManager>().findCompetenceById(
+      widget.competenceId,
+    );
+  }
 
   @override
   void dispose() {
@@ -45,7 +58,12 @@ class _AddCompetenceGoalDialogState extends State<AddCompetenceGoalDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final competences = watchValue((CompetenceManager x) => x.competences);
+    if (_competence == null) {
+      return const AlertDialog(
+        title: Text('Fehler'),
+        content: Text('Kompetenz konnte nicht gefunden werden.'),
+      );
+    }
 
     return AlertDialog(
       title: const Text('Neues Lernziel'),
@@ -56,34 +74,20 @@ class _AddCompetenceGoalDialogState extends State<AddCompetenceGoalDialog> {
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                DropdownButtonFormField<Competence>(
-                  decoration: const InputDecoration(labelText: 'Kompetenz'),
-                  items: competences.map((c) {
-                    return DropdownMenuItem(
-                      value: c,
-                      child: Text(
-                        c.name.length > 50
-                            ? '${c.name.substring(0, 50)}...'
-                            : c.name,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (val) {
-                    setState(() {
-                      _selectedCompetence = val;
-                    });
-                  },
-                  validator: (val) =>
-                      val == null ? 'Bitte eine Kompetenz wählen' : null,
-                  isExpanded: true,
+                const Text(
+                  'Ausgewählte Kompetenz:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                const Gap(15),
+                const Gap(5),
+                Text(_competence!.name, style: const TextStyle(fontSize: 16)),
+                const Gap(20),
                 TextFormField(
                   controller: _descriptionController,
                   decoration: const InputDecoration(
                     labelText: 'Zielbeschreibung',
+                    border: OutlineInputBorder(),
                   ),
                   validator: (val) => val == null || val.isEmpty
                       ? 'Bitte eine Beschreibung eingeben'
@@ -143,11 +147,10 @@ class _AddCompetenceGoalDialogState extends State<AddCompetenceGoalDialog> {
         ),
         ElevatedButton(
           onPressed: () async {
-            if (_formKey.currentState!.validate() &&
-                _selectedCompetence != null) {
+            if (_formKey.currentState!.validate() && _competence != null) {
               await di<CompetenceManager>().postCompetenceGoal(
                 pupilId: widget.pupilId,
-                competenceId: _selectedCompetence!.publicId,
+                competenceId: _competence!.publicId,
                 description: _descriptionController.text,
                 strategies: _strategies,
               );

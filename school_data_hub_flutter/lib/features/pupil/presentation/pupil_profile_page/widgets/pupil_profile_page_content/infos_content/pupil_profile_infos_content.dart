@@ -39,6 +39,18 @@ class PupilProfileInfosContent extends WatchingWidget {
     final hubSessionManager = di<HubSessionManager>();
     final pupilSiblings = pupilManager.getSiblings(pupil);
     watch(pupil);
+
+    final specialInfoParts = pupil.specialInformation?.split('|') ?? [];
+    final specialInfo = specialInfoParts.isNotEmpty
+        ? specialInfoParts[0]
+        : null;
+    final specialInfoCreatedBy = specialInfoParts.length > 1
+        ? specialInfoParts[1]
+        : null;
+    final specialInfoCreatedAt = specialInfoParts.length > 2
+        ? specialInfoParts[2]
+        : null;
+
     return Container(
       decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
       child: SingleChildScrollView(
@@ -59,17 +71,24 @@ class PupilProfileInfosContent extends WatchingWidget {
                   final result = await longTextFieldDialog(
                     title: 'Besondere Infos',
                     labelText: 'Besondere Infos',
-                    initialValue: pupil.specialInformation ?? '',
+                    initialValue: specialInfo ?? '',
                     parentContext: context,
                   );
-                  if (result == null ||
-                      result.value == pupil.specialInformation) {
+                  if (result == null || result.value == specialInfo) {
                     return;
                   }
                   await PupilMutator().updateStringProperty(
                     pupilId: pupil.pupilId,
                     property: 'specialInformation',
-                    propertyValue: (value: result.value),
+                    propertyValue: result.value != null
+                        ? (
+                            value: [
+                              result.value,
+                              di<HubSessionManager>().userName,
+                              DateTime.now().formatDateForUser(),
+                            ].join('|'),
+                          )
+                        : (value: null),
                   );
                 },
                 onLongPress: () async {
@@ -101,21 +120,39 @@ class PupilProfileInfosContent extends WatchingWidget {
                       width: 1,
                     ),
                   ),
-                  child: Text(
-                    pupil.specialInformation ??
-                        'Tippen Sie hier, um besondere Informationen hinzuzufügen',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: pupil.specialInformation != null
-                          ? FontWeight.w500
-                          : FontWeight.normal,
-                      color: pupil.specialInformation != null
-                          ? AppColors.backgroundColor
-                          : AppColors.interactiveColor,
-                      fontStyle: pupil.specialInformation == null
-                          ? FontStyle.italic
-                          : FontStyle.normal,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        specialInfo ??
+                            'Tippen Sie hier, um besondere Informationen hinzuzufügen',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: specialInfo != null
+                              ? FontWeight.w500
+                              : FontWeight.normal,
+                          color: specialInfo != null
+                              ? AppColors.backgroundColor
+                              : AppColors.interactiveColor,
+                          fontStyle: specialInfo == null
+                              ? FontStyle.italic
+                              : FontStyle.normal,
+                        ),
+                      ),
+                      if (specialInfoCreatedBy != null &&
+                          specialInfoCreatedAt != null) ...[
+                        const Gap(8),
+                        Text(
+                          'Erstellt von $specialInfoCreatedBy am $specialInfoCreatedAt',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.backgroundColor.withValues(
+                              alpha: 0.6,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
               ),

@@ -3,6 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_competence_list_page/widgets/pupil_competence_goals/dialogs/add_competence_goal_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_competence_list_page/widgets/pupil_learning_content/pupil_learning_goals_widget.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/select_competence_page/select_competence_view_model.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
 class PupilLearningContentCompetenceGoals extends StatelessWidget {
@@ -29,12 +30,22 @@ class PupilLearningContentCompetenceGoals extends StatelessWidget {
             Expanded(
               child: ElevatedButton(
                 style: AppStyles.actionButtonStyle,
-                onPressed: () async {
-                  await showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AddCompetenceGoalDialog(pupilId: pupil.pupilId);
-                    },
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => SelectCompetence(
+                        onSelected: (ctx, competence) async {
+                          Navigator.of(ctx).pop();
+                          await showDialog(
+                            context: context,
+                            builder: (context) => AddCompetenceGoalDialog(
+                              pupilId: pupil.pupilId,
+                              competenceId: competence.publicId,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   );
                 },
                 child: const Text(

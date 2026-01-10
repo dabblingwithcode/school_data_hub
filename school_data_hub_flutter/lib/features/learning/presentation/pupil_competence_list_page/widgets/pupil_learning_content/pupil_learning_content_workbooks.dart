@@ -64,8 +64,7 @@ class PupilLearningContentWorkbooks extends WatchingWidget {
                 if (pupil.pupilWorkbooks!.any(
                   (element) => element.isbn == isbn,
                 )) {
-                  di<NotificationService>().showSnackBar(
-                    NotificationType.error,
+                  di<NotificationService>().showInformationDialog(
                     'Dieses Arbeitsheft ist schon erfasst!',
                   );
                   return;

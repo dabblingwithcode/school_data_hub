@@ -6,6 +6,7 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_helper.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/pupil_competence_list_page/widgets/learning_list_card/learning_goals_overview.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_competence_list_page/widgets/learning_list_card/workbooks_info_switch.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_competence_list_page/widgets/pupil_competence_checks/competence_checks_badges.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_competence_list_page/widgets/pupil_learning_content/pupil_learning_content_books.dart';
@@ -149,105 +150,106 @@ class LearningListCard extends WatchingWidget {
                               ),
                             ],
                           ),
-                        Column(
-                          children: [
-                            if (selectedContent ==
-                                SelectedContent.competenceStatuses) ...[
-                              CustomExpansionTileSwitch(
-                                includeSwitch: true,
-                                switchColor: AppColors.interactiveColor,
-                                customExpansionTileController:
-                                    expansionTileController,
-                                expansionSwitchWidget: CompetenceChecksBadges(
-                                  pupil: pupil,
-                                ),
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const Text('Items dokumentiert: '),
-                                  const Gap(5),
-                                  Text(
-                                    '$totalCompetencesChecked/$totalCompetencesToReport',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.backgroundColor,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              ...switch (selectedContent) {
+                                SelectedContent.competenceStatuses => [
+                                  CustomExpansionTileSwitch(
+                                    includeSwitch: true,
+                                    switchColor: AppColors.interactiveColor,
+                                    customExpansionTileController:
+                                        expansionTileController,
+                                    expansionSwitchWidget:
+                                        CompetenceChecksBadges(pupil: pupil),
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      const Text('Items dokumentiert: '),
+                                      const Gap(5),
+                                      Text(
+                                        '$totalCompetencesChecked/$totalCompetencesToReport',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.backgroundColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                                SelectedContent.competenceGoals => [
+                                  CustomExpansionTileSwitch(
+                                    customExpansionTileController:
+                                        expansionTileController,
+                                    expansionSwitchWidget:
+                                        LearningGoalsOverview(pupil: pupil),
+                                  ),
+                                ],
+                                SelectedContent.workbooks => [
+                                  CustomExpansionTileSwitch(
+                                    customExpansionTileController:
+                                        expansionTileController,
+                                    expansionSwitchWidget: WorkbooksInfoSwitch(
+                                      pupil: pupil,
+                                    ),
+                                    includeSwitch: true,
+                                    switchColor: AppColors.interactiveColor,
+                                  ),
+                                ],
+                                SelectedContent.books => [
+                                  CustomExpansionTileSwitch(
+                                    customExpansionTileController:
+                                        expansionTileController,
+                                    expansionSwitchWidget: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Gap(10),
+                                        Column(
+                                          children: [
+                                            Text(
+                                              totalLendings.toString(),
+                                              style: const TextStyle(
+                                                fontSize: 35,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.green,
+                                              ),
+                                            ),
+                                            const Text(
+                                              'gesamt',
+                                              style: TextStyle(fontSize: 10),
+                                            ),
+                                          ],
+                                        ),
+                                        const Gap(10),
+                                        Column(
+                                          children: [
+                                            Text(
+                                              notReturnedLendings.toString(),
+                                              style: const TextStyle(
+                                                fontSize: 35,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.orange,
+                                              ),
+                                            ),
+                                            const Text(
+                                              'aktiv',
+                                              style: TextStyle(fontSize: 10),
+                                            ),
+                                          ],
+                                        ),
+                                        const Gap(15),
+                                      ],
                                     ),
                                   ),
                                 ],
-                              ),
+                                SelectedContent.none => [],
+                              },
                             ],
-                            if (selectedContent ==
-                                SelectedContent.competenceGoals) ...[
-                              CustomExpansionTileSwitch(
-                                customExpansionTileController:
-                                    expansionTileController,
-                                expansionSwitchWidget: const Text(
-                                  'Lernziele sind noch nicht implementiert',
-                                ),
-                              ),
-                            ],
-                            if (selectedContent ==
-                                SelectedContent.workbooks) ...[
-                              CustomExpansionTileSwitch(
-                                customExpansionTileController:
-                                    expansionTileController,
-                                expansionSwitchWidget: WorkbooksInfoSwitch(
-                                  pupil: pupil,
-                                ),
-                                includeSwitch: true,
-                                switchColor: AppColors.interactiveColor,
-                              ),
-                            ],
-                            if (selectedContent == SelectedContent.books) ...[
-                              CustomExpansionTileSwitch(
-                                customExpansionTileController:
-                                    expansionTileController,
-                                expansionSwitchWidget: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Gap(10),
-
-                                    Column(
-                                      children: [
-                                        Text(
-                                          totalLendings.toString(),
-                                          style: const TextStyle(
-                                            fontSize: 35,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.green,
-                                          ),
-                                        ),
-                                        const Text(
-                                          'gesamt',
-                                          style: TextStyle(fontSize: 10),
-                                        ),
-                                      ],
-                                    ),
-                                    const Gap(10),
-                                    Column(
-                                      children: [
-                                        Text(
-                                          notReturnedLendings.toString(),
-                                          style: const TextStyle(
-                                            fontSize: 35,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.orange,
-                                          ),
-                                        ),
-                                        const Text(
-                                          'aktiv',
-                                          style: TextStyle(fontSize: 10),
-                                        ),
-                                      ],
-                                    ),
-                                    const Gap(15),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ],
+                          ),
                         ),
                       ],
                     ),
@@ -269,14 +271,21 @@ class LearningListCard extends WatchingWidget {
               title: null,
               tileController: expansionTileController,
               widgetList: [
-                if (selectedContent == SelectedContent.competenceStatuses)
-                  PupilLearningContentCompetenceStatuses(pupil: pupil),
-                if (selectedContent == SelectedContent.competenceGoals)
-                  PupilLearningContentCompetenceGoals(pupil: pupil),
-                if (selectedContent == SelectedContent.workbooks)
-                  PupilLearningContentWorkbooks(pupil: pupil),
-                if (selectedContent == SelectedContent.books)
-                  PupilLearningContentBooks(pupil: pupil),
+                ...switch (selectedContent) {
+                  SelectedContent.competenceStatuses => [
+                    PupilLearningContentCompetenceStatuses(pupil: pupil),
+                  ],
+                  SelectedContent.competenceGoals => [
+                    PupilLearningContentCompetenceGoals(pupil: pupil),
+                  ],
+                  SelectedContent.workbooks => [
+                    PupilLearningContentWorkbooks(pupil: pupil),
+                  ],
+                  SelectedContent.books => [
+                    PupilLearningContentBooks(pupil: pupil),
+                  ],
+                  SelectedContent.none => [],
+                },
               ],
             ),
           ),

@@ -38,12 +38,20 @@ class PupilWorkbookCard extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final Workbook workbook = pupilWorkbook.workbook!;
+    final pupilWorkbooks = watchPropertyValue(
+      (value) => di<PupilWorkbookManager>().getPupilWorkbooks(pupilId),
+      target: PupilWorkbookManager(),
+    );
+    final thisPupilWorkbook = pupilWorkbooks.firstWhere(
+      (pupilWorkbook) => pupilWorkbook.id == this.pupilWorkbook.id,
+    );
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Card(
         child: InkWell(
           onLongPress: () async {
-            if (pupilWorkbook.createdBy != di<HubSessionManager>().userName ||
+            if (thisPupilWorkbook.createdBy !=
+                    di<HubSessionManager>().userName ||
                 !di<HubSessionManager>().isAdmin) {
               informationDialog(
                 context,
@@ -103,10 +111,10 @@ class PupilWorkbookCard extends WatchingWidget {
                               'Not implemented yet',
                             );
                           },
-                          child: pupilWorkbook.workbook!.imageUrl != null
+                          child: thisPupilWorkbook.workbook!.imageUrl != null
                               ? UnencryptedImageInCard(
                                   cacheKey: pupilWorkbook.isbn.toString(),
-                                  path: pupilWorkbook.workbook!.imageUrl,
+                                  path: thisPupilWorkbook.workbook!.imageUrl,
                                   size: 100,
                                 )
                               : SizedBox(
@@ -199,7 +207,8 @@ class PupilWorkbookCard extends WatchingWidget {
                                           onTap: () async {
                                             if (!(di<HubSessionManager>()
                                                         .userName ==
-                                                    pupilWorkbook.createdBy) ||
+                                                    thisPupilWorkbook
+                                                        .createdBy) ||
                                                 di<HubSessionManager>()
                                                     .isAdmin) {
                                               informationDialog(
@@ -221,12 +230,13 @@ class PupilWorkbookCard extends WatchingWidget {
                                             if (createdBy == null) return;
                                             di<PupilWorkbookManager>()
                                                 .updatePupilWorkbook(
-                                                  pupilWorkbook: pupilWorkbook,
+                                                  pupilWorkbook:
+                                                      thisPupilWorkbook,
                                                   createdBy: createdBy,
                                                 );
                                           },
                                           child: Text(
-                                            pupilWorkbook.createdBy,
+                                            thisPupilWorkbook.createdBy,
                                             style: const TextStyle(
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -239,7 +249,7 @@ class PupilWorkbookCard extends WatchingWidget {
                                         ),
                                         const Gap(2),
                                         Text(
-                                          pupilWorkbook.createdAt
+                                          thisPupilWorkbook.createdAt
                                               .formatDateForUser(),
                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
@@ -254,7 +264,8 @@ class PupilWorkbookCard extends WatchingWidget {
                                 Column(
                                   children: [
                                     GrowthDropdown(
-                                      dropdownValue: 0,
+                                      dropdownValue:
+                                          thisPupilWorkbook.score ?? 0,
                                       onChangedFunction:
                                           onChangedGrowthDropdown,
                                     ),
@@ -275,24 +286,24 @@ class PupilWorkbookCard extends WatchingWidget {
                   onTap: () async {
                     final result = await longTextFieldDialog(
                       title: 'Kommentar',
-                      initialValue: pupilWorkbook.comment ?? '',
+                      initialValue: thisPupilWorkbook.comment ?? '',
                       labelText: 'Kommentar eintragen',
                       parentContext: context,
                     );
                     if (result == null ||
-                        result.value == pupilWorkbook.comment) {
+                        result.value == thisPupilWorkbook.comment) {
                       return;
                     }
                     di<PupilWorkbookManager>().updatePupilWorkbook(
-                      pupilWorkbook: pupilWorkbook,
+                      pupilWorkbook: thisPupilWorkbook,
                       comment: (value: result.value),
                     );
                   },
                   child: Text(
-                    pupilWorkbook.comment == null ||
-                            pupilWorkbook.comment! == ''
+                    thisPupilWorkbook.comment == null ||
+                            thisPupilWorkbook.comment! == ''
                         ? 'Kein Kommentar'
-                        : pupilWorkbook.comment!,
+                        : thisPupilWorkbook.comment!,
                     style: TextStyle(
                       fontSize: 16,
                       color: AppColors.interactiveColor,

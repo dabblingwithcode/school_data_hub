@@ -8,12 +8,14 @@ enum RootCompetenceType {
   sport('Sport'),
   socialAndWorkSkills('Arbeits- und Sozialverhalten'),
   motherLanguage('Herkunftsprachlicher Unterricht'),
-  german('Deutsch');
+  german('Deutsch'),
+  daz('DaZ');
 
   final String value;
 
   static const stringToValue = {
     'Deutsch': RootCompetenceType.german,
+    'DaZ': RootCompetenceType.daz,
     'Mathematik': RootCompetenceType.math,
     'Sachunterricht': RootCompetenceType.science,
     'Englisch': RootCompetenceType.english,

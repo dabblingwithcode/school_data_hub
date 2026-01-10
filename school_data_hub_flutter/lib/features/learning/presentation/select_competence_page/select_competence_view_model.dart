@@ -6,9 +6,8 @@ import 'package:school_data_hub_flutter/features/learning/presentation/select_co
 import 'package:watch_it/watch_it.dart';
 
 class SelectCompetence extends WatchingStatefulWidget {
-  const SelectCompetence({
-    super.key,
-  });
+  final void Function(BuildContext context, Competence competence)? onSelected;
+  const SelectCompetence({this.onSelected, super.key});
 
   @override
   SelectCompetenceViewModel createState() => SelectCompetenceViewModel();
@@ -28,8 +27,9 @@ class SelectCompetenceViewModel extends State<SelectCompetence> {
 
   @override
   Widget build(BuildContext context) {
-    competences =
-        watchValue((CompetenceFilterManager x) => x.filteredCompetences);
+    competences = watchValue(
+      (CompetenceFilterManager x) => x.filteredCompetences,
+    );
     return SelectCompetencePage(this);
   }
 }

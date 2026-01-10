@@ -12,6 +12,13 @@ class SpecialInfoCard extends WatchingWidget {
   const SpecialInfoCard(this.pupil, {super.key});
   @override
   Widget build(BuildContext context) {
+    final parts = pupil.specialInformation?.split('|') ?? [];
+    final info = parts.isNotEmpty
+        ? parts[0]
+        : (pupil.specialInformation ?? 'keine Infos');
+    final createdBy = parts.length > 1 ? parts[1] : null;
+    final createdAt = parts.length > 2 ? parts[2] : null;
+
     return Card(
       color: Colors.white,
       surfaceTintColor: Colors.white,
@@ -111,26 +118,40 @@ class SpecialInfoCard extends WatchingWidget {
                     Flexible(
                       child: InkWell(
                         onTap: () {},
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            right: 8.0,
-                            bottom: 15,
-                          ),
-                          child: Text(
-                            pupil.specialInformation ?? 'keine Infos',
-                            overflow: TextOverflow.ellipsis,
-                            softWrap: true,
-                            maxLines: 3,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              info,
+                              overflow: TextOverflow.ellipsis,
+                              softWrap: true,
+                              maxLines: 3,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
                     ),
                   ],
                 ),
+                if (createdBy != null && createdAt != null)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+
+                    children: [
+                      Text(
+                        '$createdBy, $createdAt',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.withValues(alpha: 0.7),
+                        ),
+                      ),
+                      const Gap(15),
+                    ],
+                  ),
               ],
             ),
           ),

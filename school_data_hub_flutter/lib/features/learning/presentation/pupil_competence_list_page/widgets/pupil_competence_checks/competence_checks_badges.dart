@@ -32,17 +32,16 @@ String getRootCompetenceShortName(int competenceId) {
       return 'AV';
     case RootCompetenceType.motherLanguage:
       return 'SV';
-    case null:
+    case RootCompetenceType.daz:
+      return 'DaZ';
+    default:
       return competence.name;
   }
 }
 
 class CompetenceChecksBadges extends StatelessWidget {
   final PupilProxy pupil;
-  const CompetenceChecksBadges({
-    super.key,
-    required this.pupil,
-  });
+  const CompetenceChecksBadges({super.key, required this.pupil});
 
   @override
   Widget build(BuildContext context) {
@@ -81,11 +80,14 @@ class CompetenceChecksBadges extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(getRootCompetenceShortName(competenceId),
-                  style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold)),
+              Text(
+                getRootCompetenceShortName(competenceId),
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const Gap(2),
               Container(
                 width: 21.0,
@@ -98,10 +100,12 @@ class CompetenceChecksBadges extends StatelessWidget {
                   child: Text(
                     count.toString(),
                     style: TextStyle(
-                        color: AppColors.bestContrastCompetenceFontColor(
-                            competenceColor),
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold),
+                      color: AppColors.bestContrastCompetenceFontColor(
+                        competenceColor,
+                      ),
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -109,9 +113,7 @@ class CompetenceChecksBadges extends StatelessWidget {
           ),
         ),
       );
-      widgetList.add(
-        const Gap(5),
-      );
+      widgetList.add(const Gap(5));
     });
     return Wrap(
       spacing: 5,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/pupil_competence_list_page/widgets/learning_list_card/workbooks_competence_overview.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -9,18 +10,6 @@ class WorkbooksInfoSwitch extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     watch(pupil);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Column(
-          children: [
-            Text('Anzahl: ${pupil.pupilWorkbooks?.length ?? 0}'),
-          ],
-        ),
-        Column(
-          children: [],
-        ),
-      ],
-    );
+    return WorkbooksCompetenceOverview(pupil: pupil);
   }
 }

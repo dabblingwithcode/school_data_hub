@@ -594,6 +594,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                           title: 'Kommentar',
                           labelText: 'Kommentar',
                           hintText: 'Kommentar',
+                          textinField: schooldayEvent.comment ?? '',
                           obscureText: false,
                         );
                         if (comment != null) {

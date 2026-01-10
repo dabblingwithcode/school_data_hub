@@ -69,24 +69,28 @@ class SelectCompetencePage extends StatelessWidget {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          backgroundColor:
-              viewModel.selectedCompetenceId != null
-                  ? AppColors.backgroundColor
-                  : Colors.grey,
+          backgroundColor: viewModel.selectedCompetenceId != null
+              ? AppColors.backgroundColor
+              : Colors.grey,
           child: const Icon(Icons.check, color: Colors.white, size: 35),
-          onPressed:
-              viewModel.selectedCompetenceId != null
-                  ? () {
+          onPressed: viewModel.selectedCompetenceId != null
+              ? () {
+                  if (viewModel.widget.onSelected != null) {
+                    viewModel.widget.onSelected!(
+                      context,
+                      viewModel.selectedCompetence!,
+                    );
+                  } else {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder:
-                            (ctx) => MultiPupilCompetenceCheck(
-                              competence: viewModel.selectedCompetence!,
-                            ),
+                        builder: (ctx) => MultiPupilCompetenceCheck(
+                          competence: viewModel.selectedCompetence!,
+                        ),
                       ),
                     );
                   }
-                  : null,
+                }
+              : null,
         ),
         bottomNavigationBar: CompetenceListPageBottomNavBar(
           competences: viewModel.competences,
