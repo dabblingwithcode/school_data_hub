@@ -44,7 +44,9 @@ class MatrixUser extends ChangeNotifier {
        _joinedRooms = joinedRooms {
     if (_joinedRooms.isNotEmpty) {
       for (var room in _joinedRooms) {
-        if (_matrixRooms.any((x) => x.id == room.roomId)) continue;
+        if (_matrixRooms.any((x) => x.id == room.roomId)) {
+          continue;
+        }
         _matrixRooms.add(MatrixRoom(id: room.roomId));
       }
     }
@@ -108,15 +110,14 @@ class MatrixUser extends ChangeNotifier {
 
       // Convert List<String> to List<JoinedRoom> format
       final List<String> roomIds = List<String>.from(json['joinedRoomIds']);
-      final List<Map<String, dynamic>> joinedRoomsJson =
-          roomIds
-              .map(
-                (roomId) => {
-                  'roomId': roomId,
-                  'powerLevel': 0, // Default power level for legacy data
-                },
-              )
-              .toList();
+      final List<Map<String, dynamic>> joinedRoomsJson = roomIds
+          .map(
+            (roomId) => {
+              'roomId': roomId,
+              'powerLevel': 0, // Default power level for legacy data
+            },
+          )
+          .toList();
 
       // Replace joinedRoomIds with joinedRooms in the correct format
       modifiedJson['joinedRooms'] = joinedRoomsJson;

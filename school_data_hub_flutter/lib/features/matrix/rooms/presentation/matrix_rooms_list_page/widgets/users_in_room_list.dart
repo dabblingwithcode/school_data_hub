@@ -5,23 +5,23 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/controller/select_matrix_users_list_controller.dart';
 import 'package:watch_it/watch_it.dart';
 
 class MatrixUsersInRoomList extends WatchingWidget {
-  final List<MatrixUser> matrixUsers;
-  final String roomId;
+  final MatrixRoom room;
 
-  const MatrixUsersInRoomList({
-    required this.matrixUsers,
-    required this.roomId,
-    super.key,
-  });
+  const MatrixUsersInRoomList({required this.room, super.key});
 
   @override
   Widget build(BuildContext context) {
-    final _matrixPolicyManager = di<MatrixPolicyManager>();
+    final matrixPolicyManager = di<MatrixPolicyManager>();
+    watch(di<MatrixPolicyManager>().users.matrixUsers);
+    final List<MatrixUser> matrixUsers = (MatrixRoomHelper.usersInRoom(
+      room.id,
+    ));
     return Column(
       children: [
         Padding(
@@ -48,8 +48,8 @@ class MatrixUsersInRoomList extends WatchingWidget {
                     [];
                 if (selectedUserIds.isNotEmpty) {
                   for (final String userId in selectedUserIds) {
-                    _matrixPolicyManager.users.addMatrixUserToRooms(userId, [
-                      roomId,
+                    matrixPolicyManager.users.addMatrixUserToRooms(userId, [
+                      room.id,
                     ]);
                   }
                 }
@@ -83,7 +83,7 @@ class MatrixUsersInRoomList extends WatchingWidget {
             MatrixUser matrixUser = matrixUsers[index];
             return MatrixUsersInRoomListItem(
               matrixUser: matrixUser,
-              roomId: roomId,
+              roomId: room.id,
             );
           },
         ),
@@ -103,10 +103,10 @@ class MatrixUsersInRoomListItem extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _matrixPolicyManager = di<MatrixPolicyManager>();
+    final matrixPolicyManager = di<MatrixPolicyManager>();
     watch(matrixUser);
     final MatrixRoom room = watch(
-      _matrixPolicyManager.rooms.getRoomById(roomId),
+      matrixPolicyManager.rooms.getRoomById(roomId),
     );
 
     return Padding(

@@ -194,7 +194,9 @@ class MatrixApiService {
     final Response response = await _apiClient.put(
       '$_matrixUrl$_putMatrixPolicy',
       data: bytes,
-      options: _apiClient.corporalOptions,
+      options: _apiClient.corporalOptions.copyWith(
+        contentType: 'application/json',
+      ),
     );
     //- TODO URGENT: uncomment this when the backend is ready
     //delete file, we don't need it anymore

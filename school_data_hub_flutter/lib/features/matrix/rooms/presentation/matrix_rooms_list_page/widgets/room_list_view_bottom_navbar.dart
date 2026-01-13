@@ -13,12 +13,14 @@ class RoomListPageBottomNavBar extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _matrixPolicyManager = di<MatrixPolicyManager>();
-    final _matrixPolicyFilterManager = di<MatrixPolicyFilterManager>();
-    final bool filtersOn =
-        watchValue((MatrixPolicyFilterManager x) => x.filtersOn);
-    final bool pendingChanges =
-        watchValue((MatrixPolicyManager x) => x.pendingChanges);
+    final matrixPolicyManager = di<MatrixPolicyManager>();
+    final matrixPolicyFilterManager = di<MatrixPolicyFilterManager>();
+    final bool filtersOn = watchValue(
+      (MatrixPolicyFilterManager x) => x.filtersOn,
+    );
+    final bool pendingChanges = watchValue(
+      (MatrixPolicyManager x) => x.pendingChanges,
+    );
 
     return BottomNavBarLayout(
       bottomNavBar: BottomAppBar(
@@ -34,10 +36,7 @@ class RoomListPageBottomNavBar extends WatchingWidget {
                 const Spacer(),
                 IconButton(
                   tooltip: 'zurück',
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    size: 30,
-                  ),
+                  icon: const Icon(Icons.arrow_back, size: 30),
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -46,63 +45,56 @@ class RoomListPageBottomNavBar extends WatchingWidget {
                   const Gap(30),
                   IconButton(
                     tooltip: 'Änderungen speichern',
-                    icon: const Icon(
-                      Icons.save,
-                      size: 30,
-                    ),
+                    icon: const Icon(Icons.save, size: 30),
                     onPressed: () {
-                      _matrixPolicyManager.applyPolicyChanges();
+                      matrixPolicyManager.applyPolicyChanges();
                     },
                   ),
                 ],
                 const Gap(30),
                 IconButton(
                   tooltip: 'Neuer Raum',
-                  icon: const Icon(
-                    Icons.add,
-                    size: 30,
-                  ),
+                  icon: const Icon(Icons.add, size: 30),
                   onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) => const NewMatrixRoomPage(),
-                    ));
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (ctx) => const NewMatrixRoomPage(),
+                      ),
+                    );
                   },
                 ),
                 const Gap(30),
                 IconButton(
                   tooltip: 'Matrix-Konten',
-                  icon: const Icon(
-                    Icons.people_alt_rounded,
-                    size: 30,
-                  ),
+                  icon: const Icon(Icons.people_alt_rounded, size: 30),
                   onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) => const MatrixUsersListPage(),
-                    ));
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (ctx) => const MatrixUsersListPage(),
+                      ),
+                    );
                   },
                 ),
                 const Gap(30),
                 IconButton(
-                    tooltip: 'Zur Startseite',
-                    onPressed: () =>
-                        Navigator.popUntil(context, (route) => route.isFirst),
-                    icon: const Icon(
-                      Icons.home,
-                      size: 35,
-                    )),
+                  tooltip: 'Zur Startseite',
+                  onPressed: () =>
+                      Navigator.popUntil(context, (route) => route.isFirst),
+                  icon: const Icon(Icons.home, size: 35),
+                ),
                 const Gap(30),
                 InkWell(
                   // TODO: implement this
                   // onTap: () => showRoomsFilterBottomSheet(context),
                   onLongPress: () =>
-                      _matrixPolicyFilterManager.resetAllMatrixFilters(),
+                      matrixPolicyFilterManager.resetAllMatrixFilters(),
                   child: Icon(
                     Icons.filter_list,
                     color: filtersOn ? Colors.deepOrange : Colors.white,
                     size: 30,
                   ),
                 ),
-                const Gap(15)
+                const Gap(15),
               ],
             ),
           ),

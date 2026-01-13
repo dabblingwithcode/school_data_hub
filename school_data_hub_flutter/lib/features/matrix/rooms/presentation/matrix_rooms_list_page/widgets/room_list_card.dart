@@ -7,7 +7,6 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/change_power_levels_dialog.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/users_in_room_list.dart';
@@ -19,18 +18,16 @@ class RoomListCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _matrixPolicyManager = di<MatrixPolicyManager>();
-    final _tileController = createOnce<CustomExpansionTileController>(
+    final matrixPolicyManager = di<MatrixPolicyManager>();
+    final tileController = createOnce<CustomExpansionTileController>(
       () => CustomExpansionTileController(),
     );
 
     final room = watch<MatrixRoom>(
       MatrixRoomHelper.roomsFromRoomIds([matrixRoom.id]).first,
     );
+    final matrixUsersInRoom = MatrixRoomHelper.usersInRoom(room.id);
 
-    final List<MatrixUser> matrixUsersInRoom = MatrixRoomHelper.usersInRoom(
-      room.id,
-    );
     return Card(
       color: Colors.white,
       surfaceTintColor: Colors.white,
@@ -71,7 +68,7 @@ class RoomListCard extends WatchingWidget {
                                   title: 'Raum aus der Policy rausnehmen',
                                 );
                                 if (confirm == true) {
-                                  await _matrixPolicyManager.rooms
+                                  await matrixPolicyManager.rooms
                                       .removeManagedRoom(room);
                                 }
                               },
@@ -151,7 +148,7 @@ class RoomListCard extends WatchingWidget {
                                         newPowerLevel < 0) {
                                       return;
                                     }
-                                    _matrixPolicyManager.rooms
+                                    matrixPolicyManager.rooms
                                         .changeRoomPowerLevels(
                                           roomId: room.id,
                                           eventsDefault: newPowerLevel,
@@ -180,7 +177,7 @@ class RoomListCard extends WatchingWidget {
                                         newPowerLevel < 0) {
                                       return;
                                     }
-                                    _matrixPolicyManager.rooms
+                                    matrixPolicyManager.rooms
                                         .changeRoomPowerLevels(
                                           roomId: room.id,
                                           reactions: newPowerLevel,
@@ -258,9 +255,9 @@ class RoomListCard extends WatchingWidget {
               const Gap(20),
               InkWell(
                 onTap: () {
-                  _tileController.isExpanded
-                      ? _tileController.collapse()
-                      : _tileController.expand();
+                  tileController.isExpanded
+                      ? tileController.collapse()
+                      : tileController.expand();
                 },
                 child: Column(
                   children: [
@@ -284,13 +281,8 @@ class RoomListCard extends WatchingWidget {
           ),
           CustomExpansionTileContent(
             title: null,
-            tileController: _tileController,
-            widgetList: [
-              MatrixUsersInRoomList(
-                matrixUsers: matrixUsersInRoom,
-                roomId: room.id,
-              ),
-            ],
+            tileController: tileController,
+            widgetList: [MatrixUsersInRoomList(room: room)],
           ),
         ],
       ),
