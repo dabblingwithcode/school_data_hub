@@ -10,6 +10,13 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
+enum PupilStringProperty {
+  specialInformation,
+  contact,
+  kindergarden,
+  afterSchoolCareInfo,
+}
+
 class PupilMutator {
   // Private constructor
   PupilMutator._internal();
@@ -27,13 +34,13 @@ class PupilMutator {
 
   Future<void> updateStringProperty({
     required int pupilId,
-    required String property,
+    required PupilStringProperty property,
     required ({String? value}) propertyValue,
   }) async {
     final PupilData? pupilData = await _pupilDataApiService
         .updateStringProperty(
           pupilId: pupilId,
-          property: property,
+          property: property.name,
           propertyValue: propertyValue,
         );
     if (pupilData == null) {

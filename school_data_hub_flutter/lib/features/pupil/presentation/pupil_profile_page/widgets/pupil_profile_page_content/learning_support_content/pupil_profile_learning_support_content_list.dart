@@ -203,7 +203,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                   }
                   await di<PupilMutator>().updateStringProperty(
                     pupilId: pupil.pupilId,
-                    property: 'kindergarden',
+                    property: PupilStringProperty.kindergarden,
                     propertyValue: (value: result.value),
                   );
                 },

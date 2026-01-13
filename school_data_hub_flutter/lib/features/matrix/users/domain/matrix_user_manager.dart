@@ -115,7 +115,7 @@ class MatrixUserManager extends ChangeNotifier {
         // it's a pupil related matrix account
         await PupilMutator().updateStringProperty(
           pupilId: pupil.pupilId,
-          property: 'contact',
+          property: PupilStringProperty.contact,
           propertyValue: (value: matrixId),
         );
       } else {

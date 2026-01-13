@@ -178,7 +178,8 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                             await PupilMutator()
                                                 .updateStringProperty(
                                                   pupilId: pupil.pupilId,
-                                                  property: 'contact',
+                                                  property: PupilStringProperty
+                                                      .contact,
                                                   propertyValue: (
                                                     value: result.value,
                                                   ),

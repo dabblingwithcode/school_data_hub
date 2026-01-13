@@ -60,7 +60,7 @@ List<Widget> pupilAfterSchoolCareContentList(
         }
         await PupilMutator().updateStringProperty(
           pupilId: pupil.internalId,
-          property: 'afterSchoolCareInfo',
+          property: PupilStringProperty.afterSchoolCareInfo,
           propertyValue: (value: result.value),
         );
       },
@@ -74,7 +74,7 @@ List<Widget> pupilAfterSchoolCareContentList(
         if (confirm == false || confirm == null) return;
         await PupilMutator().updateStringProperty(
           pupilId: pupil.internalId,
-          property: 'afterSchoolCareInfo',
+          property: PupilStringProperty.afterSchoolCareInfo,
           propertyValue: (value: null),
         );
       },

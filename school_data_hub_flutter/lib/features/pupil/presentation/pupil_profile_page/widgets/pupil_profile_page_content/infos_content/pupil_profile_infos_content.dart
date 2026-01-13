@@ -77,9 +77,10 @@ class PupilProfileInfosContent extends WatchingWidget {
                   if (result == null || result.value == specialInfo) {
                     return;
                   }
+
                   await PupilMutator().updateStringProperty(
                     pupilId: pupil.pupilId,
-                    property: 'specialInformation',
+                    property: PupilStringProperty.specialInformation,
                     propertyValue: result.value != null
                         ? (
                             value: [
@@ -101,7 +102,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                   if (confirm == false || confirm == null) return;
                   await PupilMutator().updateStringProperty(
                     pupilId: pupil.pupilId,
-                    property: 'specialInformation',
+                    property: PupilStringProperty.specialInformation,
                     propertyValue: (value: null),
                   );
                 },
@@ -218,7 +219,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                       if (contact == null) return;
                       await PupilMutator().updateStringProperty(
                         pupilId: pupil.pupilId,
-                        property: 'contact',
+                        property: PupilStringProperty.contact,
                         propertyValue: (value: contact),
                       );
                     },
