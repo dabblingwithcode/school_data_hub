@@ -68,6 +68,13 @@ class PupilProfileInfosContent extends WatchingWidget {
               title: 'Besondere Infos',
               child: InkWell(
                 onTap: () async {
+                  if (!di<HubSessionManager>().isAdmin ||
+                      di<HubSessionManager>().userName == pupil.groupTutor) {
+                    di<NotificationService>().showInformationDialog(
+                      'Nur Klassenleitungen und Admins können diese Informationen bearbeiten!',
+                    );
+                    return;
+                  }
                   final result = await longTextFieldDialog(
                     title: 'Besondere Infos',
                     labelText: 'Besondere Infos',
@@ -93,6 +100,13 @@ class PupilProfileInfosContent extends WatchingWidget {
                   );
                 },
                 onLongPress: () async {
+                  if (!di<HubSessionManager>().isAdmin ||
+                      di<HubSessionManager>().userName == pupil.groupTutor) {
+                    di<NotificationService>().showInformationDialog(
+                      'Nur Klassenleitungen und Admins können diese Informationen bearbeiten!',
+                    );
+                    return;
+                  }
                   if (pupil.specialInformation == null) return;
                   final bool? confirm = await confirmationDialog(
                     context: context,
@@ -146,7 +160,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                         Text(
                           'Erstellt von $specialInfoCreatedBy am $specialInfoCreatedAt',
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 14,
                             color: AppColors.backgroundColor.withValues(
                               alpha: 0.6,
                             ),

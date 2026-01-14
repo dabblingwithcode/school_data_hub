@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
@@ -121,6 +122,14 @@ class SpecialInfoCard extends WatchingWidget {
                     Flexible(
                       child: InkWell(
                         onTap: () async {
+                          if (!di<HubSessionManager>().isAdmin ||
+                              di<HubSessionManager>().userName ==
+                                  pupil.groupTutor) {
+                            di<NotificationService>().showInformationDialog(
+                              'Nur Klassenleitungen und Admins können diese Informationen bearbeiten!',
+                            );
+                            return;
+                          }
                           final result = await longTextFieldDialog(
                             title: 'Besondere Infos',
                             labelText: 'Besondere Infos',
@@ -171,6 +180,14 @@ class SpecialInfoCard extends WatchingWidget {
                     children: [
                       InkWell(
                         onTap: () async {
+                          if (!di<HubSessionManager>().isAdmin ||
+                              di<HubSessionManager>().userName ==
+                                  pupil.groupTutor) {
+                            di<NotificationService>().showInformationDialog(
+                              'Nur Klassenleitungen und Admins können diese Informationen bearbeiten!',
+                            );
+                            return;
+                          }
                           final newCreatedBy = await shortTextfieldDialog(
                             title: 'Erstellt von bearbeiten',
                             hintText: 'Name',
@@ -188,7 +205,7 @@ class SpecialInfoCard extends WatchingWidget {
                         child: Text(
                           viewModel.createdBy!,
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 14,
                             color: Colors.grey.withValues(alpha: 0.7),
                           ),
                         ),
@@ -196,12 +213,20 @@ class SpecialInfoCard extends WatchingWidget {
                       Text(
                         ', ',
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 14,
                           color: Colors.grey.withValues(alpha: 0.7),
                         ),
                       ),
                       InkWell(
                         onTap: () async {
+                          if (!di<HubSessionManager>().isAdmin ||
+                              di<HubSessionManager>().userName ==
+                                  pupil.groupTutor) {
+                            di<NotificationService>().showInformationDialog(
+                              'Nur Klassenleitungen und Admins können diese Informationen bearbeiten!',
+                            );
+                            return;
+                          }
                           final initialDate =
                               viewModel.createdAt?.tryParseDateForUser() ??
                               DateTime.now();
@@ -242,7 +267,7 @@ class SpecialInfoCard extends WatchingWidget {
                         child: Text(
                           viewModel.createdAt!,
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 14,
                             color: Colors.grey.withValues(alpha: 0.7),
                           ),
                         ),
