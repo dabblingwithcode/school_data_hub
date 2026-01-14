@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/special_info_page/widgets/special_info_card_view_model.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -12,12 +19,8 @@ class SpecialInfoCard extends WatchingWidget {
   const SpecialInfoCard(this.pupil, {super.key});
   @override
   Widget build(BuildContext context) {
-    final parts = pupil.specialInformation?.split('|') ?? [];
-    final info = parts.isNotEmpty
-        ? parts[0]
-        : (pupil.specialInformation ?? 'keine Infos');
-    final createdBy = parts.length > 1 ? parts[1] : null;
-    final createdAt = parts.length > 2 ? parts[2] : null;
+    watch(pupil);
+    final viewModel = SpecialInfoCardViewModel(pupil);
 
     return Card(
       color: Colors.white,
@@ -117,12 +120,37 @@ class SpecialInfoCard extends WatchingWidget {
                   children: [
                     Flexible(
                       child: InkWell(
-                        onTap: () {},
+                        onTap: () async {
+                          final result = await longTextFieldDialog(
+                            title: 'Besondere Infos',
+                            labelText: 'Besondere Infos',
+                            initialValue: viewModel.info,
+                            parentContext: context,
+                          );
+                          if (result == null ||
+                              result.value == viewModel.info) {
+                            return;
+                          }
+
+                          await PupilMutator().updateStringProperty(
+                            pupilId: pupil.pupilId,
+                            property: PupilStringProperty.specialInformation,
+                            propertyValue: result.value != null
+                                ? (
+                                    value: [
+                                      result.value,
+                                      di<HubSessionManager>().userName,
+                                      DateTime.now().formatDateForUser(),
+                                    ].join('|'),
+                                  )
+                                : (value: null),
+                          );
+                        },
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              info,
+                              viewModel.info,
                               overflow: TextOverflow.ellipsis,
                               softWrap: true,
                               maxLines: 3,
@@ -137,16 +165,86 @@ class SpecialInfoCard extends WatchingWidget {
                     ),
                   ],
                 ),
-                if (createdBy != null && createdAt != null)
+                if (viewModel.createdBy != null && viewModel.createdAt != null)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
-
                     children: [
+                      InkWell(
+                        onTap: () async {
+                          final newCreatedBy = await shortTextfieldDialog(
+                            title: 'Erstellt von bearbeiten',
+                            hintText: 'Name',
+                            labelText: 'Erstellt von',
+                            textinField: viewModel.createdBy ?? '',
+                            context: context,
+                          );
+                          if (newCreatedBy != null &&
+                              newCreatedBy != viewModel.createdBy) {
+                            await viewModel.updateMetadata(
+                              newCreatedBy: newCreatedBy,
+                            );
+                          }
+                        },
+                        child: Text(
+                          viewModel.createdBy!,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.withValues(alpha: 0.7),
+                          ),
+                        ),
+                      ),
                       Text(
-                        '$createdBy, $createdAt',
+                        ', ',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey.withValues(alpha: 0.7),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () async {
+                          final initialDate =
+                              viewModel.createdAt?.tryParseDateForUser() ??
+                              DateTime.now();
+                          final newDate = await showDatePicker(
+                            context: context,
+                            initialDate: initialDate,
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime.now().add(
+                              const Duration(days: 365),
+                            ),
+                            builder: (context, child) {
+                              return Theme(
+                                data: Theme.of(context).copyWith(
+                                  colorScheme: ColorScheme.light(
+                                    primary: AppColors.backgroundColor,
+                                    onPrimary: Colors.white,
+                                    onSurface: AppColors.interactiveColor,
+                                  ),
+                                  textButtonTheme: TextButtonThemeData(
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: AppColors.accentColor,
+                                    ),
+                                  ),
+                                ),
+                                child: child!,
+                              );
+                            },
+                          );
+                          if (newDate != null) {
+                            final newCreatedAt = newDate.formatDateForUser();
+                            if (newCreatedAt != viewModel.createdAt) {
+                              await viewModel.updateMetadata(
+                                newCreatedAt: newCreatedAt,
+                              );
+                            }
+                          }
+                        },
+                        child: Text(
+                          viewModel.createdAt!,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.withValues(alpha: 0.7),
+                          ),
                         ),
                       ),
                       const Gap(15),

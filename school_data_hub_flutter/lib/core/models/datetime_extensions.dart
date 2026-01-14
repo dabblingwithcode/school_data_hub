@@ -15,6 +15,16 @@ extension DateOnlyParsing on String {
     if (parsed == null) return null;
     return DateTime.utc(parsed.year, parsed.month, parsed.day);
   }
+
+  /// Try to parse a localized date string (dd.MM.yyyy) to a DateTime.
+  DateTime? tryParseDateForUser() {
+    try {
+      final dateFormat = DateFormat('dd.MM.yyyy');
+      return dateFormat.parse(this);
+    } catch (e) {
+      return null;
+    }
+  }
 }
 
 extension DateHubExtension on DateTime {
