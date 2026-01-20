@@ -8,6 +8,7 @@ import 'package:school_data_hub_flutter/app_utils/get_non_holiday_weekdays.dart'
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('SchooldayManager');
@@ -257,13 +258,13 @@ class SchoolCalendarManager {
     final SchoolSemester? newSemester = await ClientHelper.apiCall(
       call: () => _client.schooldayAdmin.createSchoolSemester(
         schoolYearName,
-        startDate.toUtc(),
-        endDate.toUtc(),
+        startDate.toDateOnlyUtc(),
+        endDate.toDateOnlyUtc(),
         isFirst,
-        classConferenceDate?.toUtc(),
-        supportConferenceDate?.toUtc(),
-        reportConferenceDate?.toUtc(),
-        reportSignedDate?.toUtc(),
+        classConferenceDate?.toDateOnlyUtc(),
+        supportConferenceDate?.toDateOnlyUtc(),
+        reportConferenceDate?.toDateOnlyUtc(),
+        reportSignedDate?.toDateOnlyUtc(),
       ),
     );
     if (newSemester == null) {

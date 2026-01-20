@@ -31,7 +31,7 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
 
   @override
   Widget build(BuildContext context) {
-    final _schoolCalendarManager = di<SchoolCalendarManager>();
+    final schoolCalendarManager = di<SchoolCalendarManager>();
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
       appBar: AppBar(
@@ -228,18 +228,17 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
                 ),
               ),
               ElevatedButton(
-                onPressed:
-                    () => _schoolCalendarManager.postSchoolSemester(
-                      schoolYearName:
-                          _textController.text, // Replace with actual input
-                      startDate: startDate!,
-                      endDate: endDate!,
-                      classConferenceDate: classConferenceDate,
-                      supportConferenceDate: supportConferenceDate,
-                      reportSignedDate: reportSignedDate,
-                      reportConferenceDate: reportConferenceDate,
-                      isFirst: true,
-                    ),
+                onPressed: () => schoolCalendarManager.postSchoolSemester(
+                  schoolYearName:
+                      _textController.text, // Replace with actual input
+                  startDate: startDate!,
+                  endDate: endDate!,
+                  classConferenceDate: classConferenceDate,
+                  supportConferenceDate: supportConferenceDate,
+                  reportSignedDate: reportSignedDate,
+                  reportConferenceDate: reportConferenceDate,
+                  isFirst: true,
+                ),
                 child: const Text('Senden'),
               ),
               ElevatedButton(

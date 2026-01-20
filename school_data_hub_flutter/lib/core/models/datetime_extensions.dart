@@ -28,6 +28,8 @@ extension DateOnlyParsing on String {
 }
 
 extension DateHubExtension on DateTime {
+  DateTime toDateOnlyUtc() => DateTime.utc(year, month, day);
+
   /// Ensure UTC without double converting.
   DateTime toUtcSafe() => isUtc ? this : toUtc();
 
