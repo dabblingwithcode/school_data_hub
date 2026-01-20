@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/cached_image_or_download_inage.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
@@ -9,6 +10,7 @@ import 'package:school_data_hub_flutter/features/_schoolday_events/domain/school
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_set_avatar.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:widget_zoom/widget_zoom.dart';
@@ -245,7 +247,7 @@ class AvatarWithBadges extends WatchingWidget {
                 child: Center(
                   child: InkWell(
                     onTap: () {
-                      informationDialog(
+                      _specialInformationDialog(
                         context,
                         'Besondere Information',
                         pupil.specialInformation!,
@@ -271,32 +273,39 @@ class AvatarWithBadges extends WatchingWidget {
             Positioned(
               bottom: -_badgeOffset,
               left: -_badgeOffset,
-              child: Container(
-                width: pupil.siblingIds.isNotEmpty
-                    ? _badgeSize + 3
-                    : _badgeSize,
-                height: pupil.siblingIds.isNotEmpty
-                    ? _badgeSize + 3
-                    : _badgeSize,
-                decoration: BoxDecoration(
-                  border: pupil.siblingIds.isNotEmpty
-                      ? Border.all(
-                          color: const Color.fromARGB(255, 120, 127, 216),
-                          width: 3,
-                        )
-                      : null,
-                  color: AttendanceHelper.pupilIsMissedToday(pupil)
-                      ? AppColors.warningButtonColor
-                      : AppColors.groupColor,
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: Text(
-                    pupil.group,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
+              child: InkWell(
+                onTap: () {
+                  if (pupil.siblings.isNotEmpty) {
+                    _siblingsDialog(context, pupil.siblings);
+                  }
+                },
+                child: Container(
+                  width: pupil.siblingIds.isNotEmpty
+                      ? _badgeSize + 3
+                      : _badgeSize,
+                  height: pupil.siblingIds.isNotEmpty
+                      ? _badgeSize + 3
+                      : _badgeSize,
+                  decoration: BoxDecoration(
+                    border: pupil.siblingIds.isNotEmpty
+                        ? Border.all(
+                            color: const Color.fromARGB(255, 120, 127, 216),
+                            width: 3,
+                          )
+                        : null,
+                    color: AttendanceHelper.pupilIsMissedToday(pupil)
+                        ? AppColors.warningButtonColor
+                        : AppColors.groupColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      pupil.group,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -381,4 +390,120 @@ class AvatarWithBadges extends WatchingWidget {
       ),
     );
   }
+}
+
+void _siblingsDialog(BuildContext context, List<PupilProxy> siblings) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      icon: Icon(
+        Icons.family_restroom,
+        color: AppColors.backgroundColor,
+        size: 50,
+      ),
+      title: const Text(
+        'Geschwister',
+        textAlign: TextAlign.center,
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      content: SizedBox(
+        width: double.maxFinite,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxHeight: 400),
+          child: ListView.separated(
+            shrinkWrap: true,
+            itemCount: siblings.length,
+            separatorBuilder: (context, index) => const Divider(),
+            itemBuilder: (context, index) {
+              final sibling = siblings[index];
+              return ListTile(
+                leading: AvatarImage(pupil: sibling, size: 40),
+                title: Text(
+                  '${sibling.firstName} ${sibling.lastName}',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text('Klasse ${sibling.group}'),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => PupilProfilePage(pupil: sibling),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ),
+      ),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: ElevatedButton(
+            style: AppStyles.successButtonStyle,
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text("OK", style: AppStyles.buttonTextStyle),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+void _specialInformationDialog(
+  BuildContext context,
+  String title,
+  String text,
+) {
+  final parts = text.split('|');
+  final info = parts.isNotEmpty ? parts[0] : text;
+  final createdBy = parts.length > 1 ? parts[1] : null;
+  final createdAt = parts.length > 2 ? parts[2] : null;
+
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      icon: Icon(Icons.info, color: AppColors.backgroundColor, size: 50),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 300),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(info, textAlign: TextAlign.center),
+              if (createdBy != null && createdAt != null) ...[
+                const SizedBox(height: 15),
+                Text(
+                  'Erstellt von $createdBy am $createdAt',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey.withValues(alpha: 0.7),
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: ElevatedButton(
+            style: AppStyles.successButtonStyle,
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            }, // Add onPressed
+            child: const Text("OK", style: AppStyles.buttonTextStyle),
+          ),
+        ),
+      ],
+    ),
+  );
 }
