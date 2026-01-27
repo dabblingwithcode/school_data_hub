@@ -6,6 +6,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/filter_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_stats_helper.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/missed_classes_pupil_list_page/widgets/missed_classes_filters.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/attendance_badges.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
@@ -54,8 +55,9 @@ class AttendanceRankingListSearchbar extends WatchingWidget {
                     excusedBadge(false),
                     const Gap(5),
                     Text(
-                      AttendanceHelper.pupilListMissedclassSum(pupils)
-                          .toString(),
+                      AttendanceStatsHelper.pupilListMissedclassSum(
+                        pupils,
+                      ).toString(),
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -66,7 +68,9 @@ class AttendanceRankingListSearchbar extends WatchingWidget {
                     excusedBadge(true),
                     const Gap(5),
                     Text(
-                      AttendanceHelper.pupilListUnexcusedSum(pupils).toString(),
+                      AttendanceStatsHelper.pupilListUnexcusedSum(
+                        pupils,
+                      ).toString(),
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -77,7 +81,7 @@ class AttendanceRankingListSearchbar extends WatchingWidget {
                     missedTypeBadge(MissedType.late),
                     const Gap(5),
                     Text(
-                      AttendanceHelper.pupilListPickedUpSum(pupils).toString(),
+                      AttendanceStatsHelper.pupilListLateSum(pupils).toString(),
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -88,7 +92,9 @@ class AttendanceRankingListSearchbar extends WatchingWidget {
                     contactedBadge(1),
                     const Gap(5),
                     Text(
-                      AttendanceHelper.pupilListContactedSum(pupils).toString(),
+                      AttendanceStatsHelper.pupilListContactedSum(
+                        pupils,
+                      ).toString(),
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -99,7 +105,9 @@ class AttendanceRankingListSearchbar extends WatchingWidget {
                     returnedBadge(true),
                     const Gap(5),
                     Text(
-                      AttendanceHelper.pupilListPickedUpSum(pupils).toString(),
+                      AttendanceStatsHelper.pupilListPickedUpSum(
+                        pupils,
+                      ).toString(),
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -116,10 +124,12 @@ class AttendanceRankingListSearchbar extends WatchingWidget {
             child: Row(
               children: [
                 Expanded(
-                    child: PupilSearchTextField(
-                        searchType: SearchType.pupil,
-                        hintText: 'Schüler/in suchen',
-                        refreshFunction: di<PupilsFilter>().refreshs)),
+                  child: PupilSearchTextField(
+                    searchType: SearchType.pupil,
+                    hintText: 'Schüler/in suchen',
+                    refreshFunction: di<PupilsFilter>().refreshs,
+                  ),
+                ),
                 const Gap(5),
                 FilterButton(
                   isSearchBar: true,
@@ -127,7 +137,7 @@ class AttendanceRankingListSearchbar extends WatchingWidget {
                     context: context,
                     filterList: [
                       const CommonPupilFiltersWidget(),
-                      const MissedSchooldayFilters()
+                      const MissedSchooldayFilters(),
                     ],
                   ),
                 ),

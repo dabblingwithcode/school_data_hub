@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_stats_helper.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/filters/attendance_pupil_filter.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_helper_functions.dart';
@@ -374,37 +374,37 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
 
       case PupilSortMode.sortByMissedUnexcused:
         filteredPupils.sort(
-          (a, b) => AttendanceHelper.missedclassUnexcusedSum(
+          (a, b) => AttendanceStatsHelper.missedclassUnexcusedSum(
             b,
-          ).compareTo(AttendanceHelper.missedclassUnexcusedSum(a)),
+          ).compareTo(AttendanceStatsHelper.missedclassUnexcusedSum(a)),
         );
 
       case PupilSortMode.sortByMissedExcused:
         filteredPupils.sort(
-          (a, b) => AttendanceHelper.missedclassExcusedSum(
+          (a, b) => AttendanceStatsHelper.missedclassExcusedSum(
             b,
-          ).compareTo(AttendanceHelper.missedclassExcusedSum(a)),
+          ).compareTo(AttendanceStatsHelper.missedclassExcusedSum(a)),
         );
 
       case PupilSortMode.sortByLate:
         filteredPupils.sort(
-          (a, b) => AttendanceHelper.lateUnexcusedSum(
+          (a, b) => AttendanceStatsHelper.lateUnexcusedSum(
             b,
-          ).compareTo(AttendanceHelper.lateUnexcusedSum(a)),
+          ).compareTo(AttendanceStatsHelper.lateUnexcusedSum(a)),
         );
 
       case PupilSortMode.sortByContacted:
         filteredPupils.sort(
-          (a, b) => AttendanceHelper.contactedSum(
+          (a, b) => AttendanceStatsHelper.contactedSum(
             b,
-          ).compareTo(AttendanceHelper.contactedSum(a)),
+          ).compareTo(AttendanceStatsHelper.contactedSum(a)),
         );
 
       case PupilSortMode.sortByGoneHome:
         filteredPupils.sort(
-          (a, b) => AttendanceHelper.goneHomeSum(
+          (a, b) => AttendanceStatsHelper.goneHomeSum(
             b,
-          ).compareTo(AttendanceHelper.goneHomeSum(a)),
+          ).compareTo(AttendanceStatsHelper.goneHomeSum(a)),
         );
     }
     _filteredPupils.value = filteredPupils;

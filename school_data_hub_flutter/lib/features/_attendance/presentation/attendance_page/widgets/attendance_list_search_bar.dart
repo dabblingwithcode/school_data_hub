@@ -6,6 +6,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
+import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_stats_helper.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/attendance_filters.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
@@ -59,15 +60,15 @@ class AttendanceListSearchBar extends WatchingWidget {
                   const Gap(15),
                   const Text(
                     'Anwesend: ',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 13,
-                    ),
+                    style: TextStyle(color: Colors.black, fontSize: 13),
                   ),
                   const Gap(5),
                   Text(
                     (pupils.length -
-                            AttendanceHelper.missedPupilsSum(pupils, thisDate))
+                            AttendanceStatsHelper.missedPupilsSum(
+                              pupils,
+                              thisDate,
+                            ))
                         .toString(),
                     style: const TextStyle(
                       color: Colors.black,
@@ -78,16 +79,14 @@ class AttendanceListSearchBar extends WatchingWidget {
                   const Gap(15),
                   const Text(
                     'Unent. ',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 13,
-                    ),
+                    style: TextStyle(color: Colors.black, fontSize: 13),
                   ),
                   const Gap(5),
                   Text(
-                    AttendanceHelper.missedAndUnexcusedPupilsSum(
-                            pupils, thisDate)
-                        .toString(),
+                    AttendanceStatsHelper.missedAndUnexcusedPupilsSum(
+                      pupils,
+                      thisDate,
+                    ).toString(),
                     style: const TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
@@ -103,17 +102,20 @@ class AttendanceListSearchBar extends WatchingWidget {
             child: Row(
               children: [
                 Expanded(
-                    child: PupilSearchTextField(
-                        searchType: SearchType.pupil,
-                        hintText: 'Schüler/in suchen',
-                        refreshFunction: _pupilsFilter.refreshs)),
+                  child: PupilSearchTextField(
+                    searchType: SearchType.pupil,
+                    hintText: 'Schüler/in suchen',
+                    refreshFunction: _pupilsFilter.refreshs,
+                  ),
+                ),
                 InkWell(
                   onTap: () => showGenericFilterBottomSheet(
-                      context: context,
-                      filterList: const [
-                        CommonPupilFiltersWidget(),
-                        AttendanceFilters(),
-                      ]),
+                    context: context,
+                    filterList: const [
+                      CommonPupilFiltersWidget(),
+                      AttendanceFilters(),
+                    ],
+                  ),
                   onLongPress: () => _filterStateManager.resetFilters(),
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
