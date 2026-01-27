@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/models/enums.dart';
@@ -9,6 +10,7 @@ import 'package:watch_it/watch_it.dart';
 
 class SchoolDataApiService {
   final _client = di<Client>();
+  final _cacheManager = di<DefaultCacheManager>();
 
   /// Fetch the current school data
   Future<SchoolData?> fetchSchoolData() async {
@@ -37,6 +39,9 @@ class SchoolDataApiService {
     );
 
     if (result.success && result.path != null) {
+      // Cache the uploaded file so it's immediately available
+      final bytes = await imageFile.readAsBytes();
+      await _cacheManager.putFile(result.path!, bytes);
       return result.path;
     }
     return null;
@@ -51,18 +56,45 @@ class SchoolDataApiService {
     );
 
     if (result.success && result.path != null) {
+      // Cache the uploaded file so it's immediately available
+      final bytes = await imageFile.readAsBytes();
+      await _cacheManager.putFile(result.path!, bytes);
       return result.path;
     }
     return null;
   }
 
-  /// Get school logo image
+  /// Get school logo image with caching
   Future<ByteData?> getLogoImage(String documentId) async {
-    return await _client.files.getImage(documentId);
+    // Check cache first
+    final fileInfo = await _cacheManager.getFileFromCache(documentId);
+    if (fileInfo != null && await fileInfo.file.exists()) {
+      final bytes = await fileInfo.file.readAsBytes();
+      return ByteData.view(bytes.buffer);
+    }
+
+    // Download if not in cache
+    final byteData = await _client.files.getImage(documentId);
+    if (byteData != null) {
+      await _cacheManager.putFile(documentId, byteData.buffer.asUint8List());
+    }
+    return byteData;
   }
 
-  /// Get official seal image
+  /// Get official seal image with caching
   Future<ByteData?> getOfficialSealImage(String documentId) async {
-    return await _client.files.getImage(documentId);
+    // Check cache first
+    final fileInfo = await _cacheManager.getFileFromCache(documentId);
+    if (fileInfo != null && await fileInfo.file.exists()) {
+      final bytes = await fileInfo.file.readAsBytes();
+      return ByteData.view(bytes.buffer);
+    }
+
+    // Download if not in cache
+    final byteData = await _client.files.getImage(documentId);
+    if (byteData != null) {
+      await _cacheManager.putFile(documentId, byteData.buffer.asUint8List());
+    }
+    return byteData;
   }
 }

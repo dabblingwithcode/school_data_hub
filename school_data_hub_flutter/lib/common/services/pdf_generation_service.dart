@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -14,8 +15,10 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
+import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_stats_helper.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/models/attendance_values.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('AttendancePdfGenerator');
@@ -26,8 +29,15 @@ class AttendancePdfGenerator {
     required DateTime date,
     required List<PupilProxy> pupils,
   }) async {
-    final data = await rootBundle.load('assets/foreground_windows.png');
-    final imageBytes = data.buffer.asUint8List();
+    // Use school logo if available, otherwise fall back to default asset
+    final logoData = di<SchoolDataMainManager>().logoImage.value;
+    final Uint8List imageBytes;
+    if (logoData != null) {
+      imageBytes = logoData.buffer.asUint8List();
+    } else {
+      final data = await rootBundle.load('assets/foreground_windows.png');
+      imageBytes = data.buffer.asUint8List();
+    }
     final image = pw.MemoryImage(imageBytes);
 
     // Load Unicode-supporting fonts
@@ -199,7 +209,11 @@ class AttendancePdfGenerator {
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.Text(
-                      'Schuldaten Hub',
+                      di<SchoolDataMainManager>()
+                              .schoolData
+                              .value
+                              ?.officialName ??
+                          'Schuldaten Hub',
                       style: pw.TextStyle(fontSize: 16, font: fontBold),
                     ),
                     pw.Text(
@@ -565,8 +579,15 @@ class MissedSchooldaysPdfGenerator {
   static Future<File> generateMissedSchooldaysPdf({
     required List<PupilProxy> pupils,
   }) async {
-    final data = await rootBundle.load('assets/foreground_windows.png');
-    final imageBytes = data.buffer.asUint8List();
+    // Use school logo if available, otherwise fall back to default asset
+    final logoData = di<SchoolDataMainManager>().logoImage.value;
+    final Uint8List imageBytes;
+    if (logoData != null) {
+      imageBytes = logoData.buffer.asUint8List();
+    } else {
+      final data = await rootBundle.load('assets/foreground_windows.png');
+      imageBytes = data.buffer.asUint8List();
+    }
     final image = pw.MemoryImage(imageBytes);
 
     // Load Unicode-supporting fonts
@@ -767,11 +788,11 @@ class MissedSchooldaysPdfGenerator {
     int totalGoneHomeSum = 0;
 
     for (var pupil in pupils) {
-      totalMissedSum += AttendanceHelper.missedclassExcusedSum(pupil);
-      totalUnexcusedSum += AttendanceHelper.missedclassUnexcusedSum(pupil);
-      totalLateSum += AttendanceHelper.lateUnexcusedSum(pupil);
-      totalContactedSum += AttendanceHelper.contactedSum(pupil);
-      totalGoneHomeSum += AttendanceHelper.goneHomeSum(pupil);
+      totalMissedSum += AttendanceStatsHelper.missedclassExcusedSum(pupil);
+      totalUnexcusedSum += AttendanceStatsHelper.missedclassUnexcusedSum(pupil);
+      totalLateSum += AttendanceStatsHelper.lateUnexcusedSum(pupil);
+      totalContactedSum += AttendanceStatsHelper.contactedSum(pupil);
+      totalGoneHomeSum += AttendanceStatsHelper.goneHomeSum(pupil);
     }
 
     return pw.Container(
@@ -876,9 +897,11 @@ class MissedSchooldaysPdfGenerator {
           final index = entry.key + 1;
           final pupil = entry.value;
 
-          final excusedSum = AttendanceHelper.missedclassExcusedSum(pupil);
-          final unexcusedSum = AttendanceHelper.missedclassUnexcusedSum(pupil);
-          final lateSum = AttendanceHelper.lateUnexcusedSum(pupil);
+          final excusedSum = AttendanceStatsHelper.missedclassExcusedSum(pupil);
+          final unexcusedSum = AttendanceStatsHelper.missedclassUnexcusedSum(
+            pupil,
+          );
+          final lateSum = AttendanceStatsHelper.lateUnexcusedSum(pupil);
           final missedHours =
               AttendanceHelper.missedHoursforSemesterOrSchoolyear(pupil);
 
@@ -934,7 +957,11 @@ class MissedSchooldaysPdfGenerator {
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.Text(
-                      'Schuldaten Hub',
+                      di<SchoolDataMainManager>()
+                              .schoolData
+                              .value
+                              ?.officialName ??
+                          'Schuldaten Hub',
                       style: pw.TextStyle(fontSize: 16, font: fontBold),
                     ),
                     pw.Text(
@@ -993,11 +1020,11 @@ class MissedSchooldaysPdfGenerator {
     pw.Font fontRegular,
     pw.Font fontBold,
   ) {
-    final excusedSum = AttendanceHelper.missedclassExcusedSum(pupil);
-    final unexcusedSum = AttendanceHelper.missedclassUnexcusedSum(pupil);
-    final lateSum = AttendanceHelper.lateUnexcusedSum(pupil);
-    final contactedSum = AttendanceHelper.contactedSum(pupil);
-    final goneHomeSum = AttendanceHelper.goneHomeSum(pupil);
+    final excusedSum = AttendanceStatsHelper.missedclassExcusedSum(pupil);
+    final unexcusedSum = AttendanceStatsHelper.missedclassUnexcusedSum(pupil);
+    final lateSum = AttendanceStatsHelper.lateUnexcusedSum(pupil);
+    final contactedSum = AttendanceStatsHelper.contactedSum(pupil);
+    final goneHomeSum = AttendanceStatsHelper.goneHomeSum(pupil);
     final missedHours = AttendanceHelper.missedHoursforSemesterOrSchoolyear(
       pupil,
     );

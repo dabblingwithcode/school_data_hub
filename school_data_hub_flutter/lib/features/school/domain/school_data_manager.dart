@@ -42,9 +42,10 @@ class SchoolDataMainManager extends ChangeNotifier {
 
   /// Initialize the school data manager
   Future<SchoolDataMainManager> init() async {
-    await refreshData();
     await _dataManager.init();
     await _uiManager.init();
+    await refreshData();
+
     return this;
   }
 
@@ -136,6 +137,8 @@ class SchoolDataMainManager extends ChangeNotifier {
           // Note: This would need to be updated when the API supports logo path storage
           _log.info('Logo uploaded successfully: $logoPath');
         }
+        // Load the new image data to show it in the UI
+        await _loadLogoImage(logoPath);
       }
     } catch (e) {
       _log.severe('Error uploading logo: $e');
@@ -157,6 +160,8 @@ class SchoolDataMainManager extends ChangeNotifier {
           // Note: This would need to be updated when the API supports seal path storage
           _log.info('Official seal uploaded successfully: $sealPath');
         }
+        // Load the new image data to show it in the UI
+        await _loadOfficialSealImage(sealPath);
       }
     } catch (e) {
       _log.severe('Error uploading official seal: $e');
