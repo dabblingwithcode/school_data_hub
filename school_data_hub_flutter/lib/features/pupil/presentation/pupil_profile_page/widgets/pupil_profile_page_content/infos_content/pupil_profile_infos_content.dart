@@ -101,7 +101,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                 },
                 onLongPress: () async {
                   if (!di<HubSessionManager>().isAdmin ||
-                      di<HubSessionManager>().userName == pupil.groupTutor) {
+                      di<HubSessionManager>().userName != pupil.groupTutor) {
                     di<NotificationService>().showInformationDialog(
                       'Nur Klassenleitungen und Admins können diese Informationen bearbeiten!',
                     );
