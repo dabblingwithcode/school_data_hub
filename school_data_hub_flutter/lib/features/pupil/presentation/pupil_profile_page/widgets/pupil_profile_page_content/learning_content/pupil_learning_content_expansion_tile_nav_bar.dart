@@ -1,0 +1,42 @@
+import 'package:flutter/material.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/pupil_list_learning_page.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_books.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_competence_goals.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_competence_statuses.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_workbooks.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_list_learning_content_nav_bar.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:watch_it/watch_it.dart';
+
+class PupilLearningContentExpansionTileNavBar extends WatchingWidget {
+  final PupilProxy pupil;
+
+  const PupilLearningContentExpansionTileNavBar({
+    required this.pupil,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final selectedContentNotifier = SelectedLearningContentNotifier();
+    final selectedContent = watch(selectedContentNotifier).selectedContent;
+
+    return Column(
+      children: [
+        const PupilListLearningContentNavBar(),
+        Padding(
+          padding: const EdgeInsets.only(top: 5),
+          child: (selectedContent == SelectedContent.competenceStatuses)
+              ? PupilLearningContentCompetenceStatuses(pupil: pupil)
+              : (selectedContent == SelectedContent.competenceGoals)
+              ? PupilLearningContentCompetenceGoals(pupil: pupil)
+              : (selectedContent == SelectedContent.workbooks)
+              ? PupilLearningContentWorkbooks(pupil: pupil)
+              :
+                //  (selectedContent == SelectedContent.books):
+                PupilLearningContentBooks(pupil: pupil),
+        ),
+      ],
+    );
+  }
+}

@@ -3,7 +3,10 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_enums.dart'
+    as workbookEnum;
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
+import 'package:school_data_hub_flutter/features/workbooks/presentation/common/workbook_image.dart';
 import 'package:watch_it/watch_it.dart';
 
 class NewWorkbookPage extends WatchingWidget {
@@ -31,11 +34,19 @@ class NewWorkbookPage extends WatchingWidget {
     final workbookNameTextFieldController = createOnce(
       () => TextEditingController(),
     );
-    final subjectTextFieldController = createOnce(
-      () => TextEditingController(),
+    final selectedSubject = createOnce<ValueNotifier<workbookEnum.Subject?>>(
+      () => ValueNotifier(null),
+      dispose: (notifier) => notifier.dispose(),
     );
-    final levelTextFieldController = createOnce(() => TextEditingController());
+    final selectedGrades = createOnce<ValueNotifier<Set<workbookEnum.Grade>>>(
+      () => ValueNotifier(<workbookEnum.Grade>{}),
+      dispose: (notifier) => notifier.dispose(),
+    );
     final amountTextFieldController = createOnce(() => TextEditingController());
+
+    // Watch at top level to avoid conditional watch errors
+    final currentSubject = watch(selectedSubject).value;
+    final currentGrades = watch(selectedGrades).value;
 
     callOnce((context) async {
       await di<WorkbookManager>().fetchWorkbookByIsbn(isbn);
@@ -45,8 +56,20 @@ class NewWorkbookPage extends WatchingWidget {
       //     .firstWhere((element) => element.isbn == isbn);
       if (isEdit) {
         workbookNameTextFieldController.text = name ?? '';
-        subjectTextFieldController.text = subject ?? '';
-        levelTextFieldController.text = level ?? '';
+        if (subject != null) {
+          selectedSubject.value = workbookEnum.Subject.values
+              .cast<workbookEnum.Subject?>()
+              .firstWhere(
+                (s) => s?.name == subject || s?.code == subject,
+                orElse: () => null,
+              );
+        }
+        if (level != null && level!.isNotEmpty) {
+          final levelNames = level!.split(',').map((l) => l.trim()).toSet();
+          selectedGrades.value = workbookEnum.Grade.values
+              .where((g) => levelNames.contains(g.name))
+              .toSet();
+        }
         amountTextFieldController.text = amount != null
             ? amount!.toString()
             : '';
@@ -58,12 +81,10 @@ class NewWorkbookPage extends WatchingWidget {
         name: workbookNameTextFieldController.text.isEmpty
             ? null
             : workbookNameTextFieldController.text,
-        subject: subjectTextFieldController.text.isEmpty
+        subject: selectedSubject.value?.name,
+        level: selectedGrades.value.isEmpty
             ? null
-            : subjectTextFieldController.text,
-        level: levelTextFieldController.text.isEmpty
-            ? null
-            : levelTextFieldController.text,
+            : selectedGrades.value.map((g) => g.name).join(','),
         amount: amountTextFieldController.text.isEmpty
             ? null
             : int.tryParse(amountTextFieldController.text),
@@ -93,33 +114,17 @@ class NewWorkbookPage extends WatchingWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  const Row(
+                  Row(
                     children: [
-                      Text('Image', style: AppStyles.subtitle),
-                      // if (controller.workbookImage != null) ...<Widget>[
-                      //   Expanded(
-                      //     flex: 1,
-                      //     child: Column(
-                      //       children: [
-                      //         ClipRRect(
-                      //             borderRadius: BorderRadius.circular(10.0),
-                      //             child: controller.workbookImage!),
-                      //         const Gap(20),
-                      //       ],
-                      //     ),
-                      //   ),
-                      //   const Gap(10),
-                      // ],
-                      const Expanded(
-                        flex: 2,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [const Gap(20), Text('Placeholder ISBN')],
-                        ),
+                      WorkbookImage(workbook: workbook!),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [Text(workbook!.isbn.toString())],
                       ),
                     ],
                   ),
+                  const Gap(20),
                   TextField(
                     style: const TextStyle(
                       color: Colors.black,
@@ -134,29 +139,52 @@ class NewWorkbookPage extends WatchingWidget {
                   ),
                   const Gap(20),
 
-                  TextField(
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    minLines: 1,
-                    maxLines: 1,
-                    controller: subjectTextFieldController,
+                  DropdownButtonFormField<workbookEnum.Subject>(
+                    initialValue: currentSubject,
                     decoration: AppStyles.textFieldDecoration(
                       labelText: 'Fach',
                     ),
-                  ),
-                  const Gap(20),
-                  TextField(
-                    minLines: 1,
-                    maxLines: 1,
-                    controller: levelTextFieldController,
                     style: const TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                     ),
+                    items: workbookEnum.Subject.values.map((subject) {
+                      return DropdownMenuItem<workbookEnum.Subject>(
+                        value: subject,
+                        child: Text(subject.name),
+                      );
+                    }).toList(),
+                    onChanged: (workbookEnum.Subject? newValue) {
+                      selectedSubject.value = newValue;
+                    },
+                  ),
+                  const Gap(20),
+                  InputDecorator(
                     decoration: AppStyles.textFieldDecoration(
                       labelText: 'Kompetenzstufe',
+                    ),
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      children: workbookEnum.Grade.values.map((grade) {
+                        final isSelected = currentGrades.contains(grade);
+                        return FilterChip(
+                          avatar: Image.asset(grade.imagePath, width: 20),
+                          label: Text(grade.name),
+                          selected: isSelected,
+                          onSelected: (selected) {
+                            final currentSet = Set<workbookEnum.Grade>.from(
+                              selectedGrades.value,
+                            );
+                            if (selected) {
+                              currentSet.add(grade);
+                            } else {
+                              currentSet.remove(grade);
+                            }
+                            selectedGrades.value = currentSet;
+                          },
+                        );
+                      }).toList(),
                     ),
                   ),
                   // const Gap(20),

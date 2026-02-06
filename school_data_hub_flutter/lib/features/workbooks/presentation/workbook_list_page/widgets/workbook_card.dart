@@ -1,24 +1,20 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions/isbn_extensions.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/grades_widget.dart';
-import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
+import 'package:school_data_hub_flutter/features/workbooks/presentation/common/workbook_image.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/new_workbook_page/new_workbook_page.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -81,43 +77,7 @@ class WorkbookCard extends WatchingWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         const Gap(10),
-                        InkWell(
-                          onTap: () async {
-                            final File? file = await createAndCropImageFile(
-                              context,
-                            );
-                            if (file == null) return;
-                            // TODO: implement when ready
-                            di<NotificationService>().showSnackBar(
-                              NotificationType.warning,
-                              'Not implemented yet',
-                            );
-                            // await di<WorkbookManager>()
-                            //     .postWorkbookFile(file, workbook.isbn);
-                          },
-                          onLongPress: () async {
-                            final bool? result = await confirmationDialog(
-                              context: context,
-                              title: 'Bild löschen',
-                              message: 'Bild löschen?',
-                            );
-                            if (result != true) return;
-                            // TODO: implement when ready
-                            di<NotificationService>().showSnackBar(
-                              NotificationType.warning,
-                              'Not implemented yet',
-                            );
-
-                            // await di<WorkbookManager>()
-                            //     .deleteWorkbookFile(workbook.isbn);
-                          },
-                          child: UnencryptedImageInCard(
-                            cacheKey: workbook.isbn.toString(),
-                            path: workbook.imageUrl,
-                            size: 75,
-                          ),
-                        ),
-                        const Gap(10),
+                        WorkbookImage(workbook: workbook),
                       ],
                     ),
                     Expanded(
@@ -179,6 +139,24 @@ class WorkbookCard extends WatchingWidget {
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black,
                                   ),
+                                ),
+                                const Gap(20),
+                                IconButton(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (ctx) => NewWorkbookPage(
+                                          workbook: workbook,
+                                          name: workbook.name,
+                                          isbn: workbook.isbn,
+                                          subject: workbook.subject,
+                                          level: workbook.level,
+                                          isEdit: true,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.edit),
                                 ),
                               ],
                             ),

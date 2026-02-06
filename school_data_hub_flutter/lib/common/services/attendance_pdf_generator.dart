@@ -441,7 +441,7 @@ class AttendancePdfGenerator {
                 ],
               );
             }
-          }).toList(),
+          }),
         ],
       );
     } catch (e) {
@@ -929,7 +929,7 @@ class MissedSchooldaysPdfGenerator {
               ),
             ],
           );
-        }).toList(),
+        }),
       ],
     );
   }
@@ -1154,7 +1154,7 @@ class MissedSchooldaysPdfGenerator {
               ),
             ],
           );
-        }).toList(),
+        }),
       ],
     );
   }
@@ -1357,7 +1357,7 @@ class _AttendancePdfViewPageState extends State<AttendancePdfViewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: GenericAppBar(
+      appBar: const GenericAppBar(
         iconData: Icons.list_alt_rounded,
         title: 'Anwesenheitsliste PDF',
       ),
@@ -1430,7 +1430,7 @@ class _MissedSchooldaysPdfViewPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: GenericAppBar(
+      appBar: const GenericAppBar(
         iconData: Icons.calendar_month_rounded,
         title: 'Fehlzeitenliste PDF',
       ),

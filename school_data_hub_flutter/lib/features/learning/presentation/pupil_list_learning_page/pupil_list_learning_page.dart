@@ -4,16 +4,16 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
-import 'package:school_data_hub_flutter/features/learning/presentation/pupil_competence_list_page/widgets/learning_list_card/learning_list_card.dart';
-import 'package:school_data_hub_flutter/features/learning/presentation/pupil_competence_list_page/widgets/pupil_competence_list_bottom_navbar.dart';
-import 'package:school_data_hub_flutter/features/learning/presentation/pupil_competence_list_page/widgets/pupil_competence_list_search_bar.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/learning_list_card/learning_list_card.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_list_learning_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_list_learning_search_bar.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:watch_it/watch_it.dart';
 
-class LearningPupilListPage extends WatchingWidget {
-  const LearningPupilListPage({super.key});
+class PupilListLearningPage extends WatchingWidget {
+  const PupilListLearningPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,7 @@ class LearningPupilListPage extends WatchingWidget {
               slivers: [
                 GenericSliverSearchAppBar(
                   height: 180,
-                  title: PupilCompetenceListSearchBar(
+                  title: PupilListLearningSearchBar(
                     pupils: pupils,
                     filtersOn: filtersOn,
                   ),
@@ -50,9 +50,38 @@ class LearningPupilListPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: PupilCompetenceListBottomNavBar(
-        filtersOn: filtersOn,
-      ),
+      bottomNavigationBar: PupilListLearningBottomNavBar(filtersOn: filtersOn),
     );
+  }
+}
+
+enum SelectedContent {
+  competenceStatuses,
+  competenceGoals,
+  workbooks,
+  books,
+  none,
+}
+
+class SelectedLearningContentNotifier extends ChangeNotifier {
+  // Private constructor
+  SelectedLearningContentNotifier._privateConstructor();
+
+  // Static instance
+  static final SelectedLearningContentNotifier _instance =
+      SelectedLearningContentNotifier._privateConstructor();
+
+  // Factory constructor
+  factory SelectedLearningContentNotifier() {
+    return _instance;
+  }
+
+  SelectedContent _selectedContent = SelectedContent.books;
+
+  SelectedContent get selectedContent => _selectedContent;
+
+  void select(SelectedContent content) {
+    _selectedContent = content;
+    notifyListeners();
   }
 }

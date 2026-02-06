@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:school_data_hub_flutter/common/services/pdf_generation_service.dart';
+import 'package:school_data_hub_flutter/common/services/attendance_pdf_generator.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_picker.dart';
@@ -19,10 +19,11 @@ class AttendanceListPageBottomNavBar extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _schoolCalendarManager = di<SchoolCalendarManager>();
-    final _filterStateManager = di<FiltersStateManager>();
-    DateTime thisDate =
-        watchValue((SchoolCalendarManager x) => x.thisDate).toLocal();
+    final schoolCalendarManager = di<SchoolCalendarManager>();
+    final filterStateManager = di<FiltersStateManager>();
+    DateTime thisDate = watchValue(
+      (SchoolCalendarManager x) => x.thisDate,
+    ).toLocal();
     bool filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);
     final pupils = watchValue((PupilsFilter x) => x.filteredPupils);
     return BottomNavBarLayout(
@@ -62,10 +63,10 @@ class AttendanceListPageBottomNavBar extends WatchingWidget {
                     thisDate,
                   );
                   if (newDate != null) {
-                    _schoolCalendarManager.setThisDate(newDate);
+                    schoolCalendarManager.setThisDate(newDate);
                   }
                 },
-                onLongPress: () => _schoolCalendarManager.getThisDate(),
+                onLongPress: () => schoolCalendarManager.getThisDate(),
                 child: const Icon(
                   Icons.today_rounded,
                   color: Colors.white,
@@ -74,15 +75,14 @@ class AttendanceListPageBottomNavBar extends WatchingWidget {
               ),
               const Gap(30),
               InkWell(
-                onTap:
-                    () => showGenericFilterBottomSheet(
-                      context: context,
-                      filterList: [
-                        const CommonPupilFiltersWidget(),
-                        const AttendanceFilters(),
-                      ],
-                    ),
-                onLongPress: () => _filterStateManager.resetFilters(),
+                onTap: () => showGenericFilterBottomSheet(
+                  context: context,
+                  filterList: [
+                    const CommonPupilFiltersWidget(),
+                    const AttendanceFilters(),
+                  ],
+                ),
+                onLongPress: () => filterStateManager.resetFilters(),
                 child: Icon(
                   Icons.filter_list,
                   color: filtersOn ? Colors.deepOrange : Colors.white,
@@ -104,9 +104,8 @@ class AttendanceListPageBottomNavBar extends WatchingWidget {
                       if (context.mounted) {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder:
-                                (context) =>
-                                    AttendancePdfViewPage(pdfFile: pdfFile),
+                            builder: (context) =>
+                                AttendancePdfViewPage(pdfFile: pdfFile),
                           ),
                         );
                       }
