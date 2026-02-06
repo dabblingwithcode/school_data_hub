@@ -172,6 +172,7 @@ class NewWorkbookPage extends WatchingWidget {
                           avatar: Image.asset(grade.imagePath, width: 20),
                           label: Text(grade.name),
                           selected: isSelected,
+                          showCheckmark: false,
                           onSelected: (selected) {
                             final currentSet = Set<workbookEnum.Grade>.from(
                               selectedGrades.value,

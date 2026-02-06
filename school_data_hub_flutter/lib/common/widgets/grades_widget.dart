@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_enums.dart'
+    as workbookEnum;
 
 class GradesWidget extends StatelessWidget {
   final String stringWithGrades;
@@ -7,36 +9,21 @@ class GradesWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (stringWithGrades.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final gradeNames = stringWithGrades.split(',').map((g) => g.trim()).toSet();
+    final matchedGrades = workbookEnum.Grade.values
+        .where((grade) => gradeNames.contains(grade.name))
+        .toList();
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        if (stringWithGrades.contains('E1')) ...[
-          Image.asset(
-            'assets/grade_1.png',
-            width: 25,
-          ),
-          const Gap(5)
-        ],
-        if (stringWithGrades.contains('E2')) ...[
-          Image.asset(
-            'assets/grade_2.png',
-            width: 25,
-          ),
-          const Gap(5)
-        ],
-        if (stringWithGrades.contains('K3')) ...[
-          Image.asset(
-            'assets/grade_3.png',
-            width: 25,
-          ),
-          const Gap(5)
-        ],
-        if (stringWithGrades.contains('K4')) ...[
-          Image.asset(
-            'assets/grade_4.png',
-            width: 25,
-          ),
-          const Gap(5)
+        for (int i = 0; i < matchedGrades.length; i++) ...[
+          Image.asset(matchedGrades[i].imagePath, width: 25),
+          if (i < matchedGrades.length - 1) const Gap(5),
         ],
       ],
     );
