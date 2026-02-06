@@ -59,9 +59,9 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
           title: const Text('Neuen User erstellen'),
           leading: const Icon(Icons.account_circle_rounded),
           onPressed: (context) {
-            Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (ctx) => const CreateUserPage()));
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (ctx) => const CreateOrEditUserPage()),
+            );
           },
         ),
         SettingsTile.navigation(

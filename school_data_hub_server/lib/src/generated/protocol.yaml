@@ -1,14 +1,18 @@
-admin:
+adminCategories:
+  - importCompetencesFromJsonFile:
+  - importSupportCategoriesFromJsonFile:
+adminPupil:
+  - updateBackendPupilDataState:
+adminSchoolData:
+  - postSchoolData:
+adminSchoolDay:
+adminUser:
   - createUser:
   - resetPassword:
   - deleteUser:
   - promoteUserScope:
   - demoteUserScope:
   - getUserById:
-  - updateBackendPupilDataState:
-  - importCompetencesFromJsonFile:
-  - importSupportCategoriesFromJsonFile:
-  - postSchoolData:
 missedSchoolday:
   - streamMissedSchooldays:
   - postMissedSchoolday:

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_page.dart';
 import 'package:watch_it/watch_it.dart';
 
 class UserListCard extends WatchingWidget {
@@ -40,14 +41,24 @@ class UserListCard extends WatchingWidget {
                 margin: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                   color: AppColors.backgroundColor,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(100),
                 ),
-                child: Icon(
-                  user.role == Role.admin
-                      ? Icons.admin_panel_settings
-                      : Icons.person,
-                  size: 40,
-                  color: Colors.white,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(100),
+                  child: (user.userInfo?.imageUrl?.isNotEmpty ?? false)
+                      ? Image.network(
+                          user.userInfo!.imageUrl!,
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(
+                                Icons.person,
+                                size: 40,
+                                color: Colors.white,
+                              ),
+                        )
+                      : const Icon(Icons.person, size: 40, color: Colors.white),
                 ),
               ),
               Expanded(
@@ -63,9 +74,12 @@ class UserListCard extends WatchingWidget {
                             scrollDirection: Axis.horizontal,
                             child: InkWell(
                               onTap: () {
-                                tileController.isExpanded
-                                    ? tileController.collapse()
-                                    : tileController.expand();
+                                Navigator.of(context).push(
+                                  MaterialPageRoute<void>(
+                                    builder: (ctx) =>
+                                        CreateOrEditUserPage(user: user),
+                                  ),
+                                );
                               },
                               child: Row(
                                 children: [

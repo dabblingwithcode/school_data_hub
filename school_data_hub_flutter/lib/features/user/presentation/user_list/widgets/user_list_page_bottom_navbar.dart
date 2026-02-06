@@ -46,7 +46,7 @@ class UserListPageBottomNavBar extends WatchingWidget {
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (ctx) => const CreateUserPage(),
+                        builder: (ctx) => const CreateOrEditUserPage(),
                       ),
                     );
                   },

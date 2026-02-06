@@ -10,17 +10,20 @@ import 'package:school_data_hub_flutter/features/user/presentation/create_user/w
 import 'package:school_data_hub_flutter/features/user/presentation/widgets/roles_dropdown.dart';
 import 'package:watch_it/watch_it.dart';
 
-class CreateUserPage extends WatchingWidget {
-  const CreateUserPage({super.key});
+class CreateOrEditUserPage extends WatchingWidget {
+  final User? user;
+  const CreateOrEditUserPage({this.user, super.key});
+
+  bool get _isEditing => user != null;
 
   @override
   Widget build(BuildContext context) {
     final _userManager = di<UserManager>();
     final TextEditingController fullNameController = createOnce(
-      () => TextEditingController(),
+      () => TextEditingController(text: user?.userInfo?.fullName ?? ''),
     );
     final TextEditingController userNameController = createOnce(
-      () => TextEditingController(),
+      () => TextEditingController(text: user?.userInfo?.userName ?? ''),
     );
     final TextEditingController passwordController = createOnce(
       () => TextEditingController(),
@@ -29,14 +32,20 @@ class CreateUserPage extends WatchingWidget {
       () => TextEditingController(),
     );
     final TextEditingController emailController = createOnce(
-      () => TextEditingController(),
+      () => TextEditingController(text: user?.userInfo?.email ?? ''),
     );
     final TextEditingController matrixIdController = createOnce(
-      () => TextEditingController(),
+      () => TextEditingController(text: user?.matrixUserId ?? ''),
     );
-    final setAsAdmin = createOnce(() => ValueNotifier<bool>(false));
-    final setAsTester = createOnce(() => ValueNotifier<bool>(false));
-    final role = createOnce(() => ValueNotifier<Role>(Role.notAssigned));
+    final setAsAdmin = createOnce(
+      () => ValueNotifier<bool>(user?.role == Role.admin ?? false),
+    );
+    final setAsTester = createOnce(
+      () => ValueNotifier<bool>(user?.userFlags.isTester ?? false),
+    );
+    final role = createOnce(
+      () => ValueNotifier<Role>(user?.role ?? Role.notAssigned),
+    );
     final scopeNames = createOnce(() => ValueNotifier<List<String>>([]));
     final watchedScopeNames = watch(scopeNames).value;
 
@@ -45,13 +54,19 @@ class CreateUserPage extends WatchingWidget {
     }
 
     final TextEditingController timeUnitsController = createOnce(
-      () => TextEditingController(),
+      () => TextEditingController(
+        text: user != null ? user!.timeUnits.toString() : '',
+      ),
     );
     final TextEditingController reliefTimeUnitsController = createOnce(
-      () => TextEditingController(),
+      () => TextEditingController(
+        text: user != null ? user!.reliefTimeUnits.toString() : '',
+      ),
     );
     final TextEditingController creditController = createOnce(
-      () => TextEditingController(),
+      () => TextEditingController(
+        text: user != null ? user!.credit.toString() : '',
+      ),
     );
     // final TextEditingController tutoringController =
     //     createOnce(() => TextEditingController());
@@ -64,12 +79,19 @@ class CreateUserPage extends WatchingWidget {
         automaticallyImplyLeading: false,
         centerTitle: true,
         backgroundColor: AppColors.backgroundColor,
-        title: const Row(
+        title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.account_box_rounded, size: 25, color: Colors.white),
-            Gap(10),
-            Text('Neues Team-Konto', style: AppStyles.appBarTextStyle),
+            const Icon(
+              Icons.account_box_rounded,
+              size: 25,
+              color: Colors.white,
+            ),
+            const Gap(10),
+            Text(
+              _isEditing ? 'Team-Konto bearbeiten' : 'Neues Team-Konto',
+              style: AppStyles.appBarTextStyle,
+            ),
           ],
         ),
       ),
@@ -328,6 +350,13 @@ class CreateUserPage extends WatchingWidget {
                   ElevatedButton(
                     style: AppStyles.successButtonStyle,
                     onPressed: () async {
+                      if (_isEditing) {
+                        // TODO: Implement updateUser in UserManager when API is available
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                        }
+                        return;
+                      }
                       if (passwordController.text !=
                           repeatPasswordController.text) {
                         informationDialog(
@@ -360,8 +389,8 @@ class CreateUserPage extends WatchingWidget {
                         Navigator.pop(context);
                       }
                     },
-                    child: const Text(
-                      'SENDEN',
+                    child: Text(
+                      _isEditing ? 'SPEICHERN' : 'SENDEN',
                       style: AppStyles.buttonTextStyle,
                     ),
                   ),

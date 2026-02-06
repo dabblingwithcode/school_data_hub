@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
@@ -138,47 +137,39 @@ class CompetenceManager {
   }
 
   Future<void> importCompetencesFromFile() async {
-    FilePickerResult? pickedFile = await FilePicker.platform.pickFiles();
-    if (pickedFile != null) {
-      File file = File(pickedFile.files.single.path!);
+    final fileResponse = await ClientFileUpload.uploadFile(
+      storageId: StorageId.private,
+      folder: ServerStorageFolder.temp,
+    );
 
-      final fileResponse = await ClientFileUpload.uploadFile(
-        file: file,
-        storageId: StorageId.private,
-        folder: ServerStorageFolder.temp,
-      );
-
-      if (fileResponse.success == false) {
-        _notificationService.showSnackBar(
-          NotificationType.error,
-          'Die Datei konnte nicht hochgeladen werden!',
-        );
-        return;
-      }
-      final List<Competence> importedCompetences = await _client.admin
-          .importCompetencesFromJsonFile(fileResponse.path!);
-
-      final sortedCompetences = CompetenceHelper.sortCompetences(
-        importedCompetences,
-      );
-      _competences.value = sortedCompetences;
-
-      _rootCompetencesMap.clear();
-
-      _rootCompetencesMap = CompetenceHelper.generateRootCompetencesMap(
-        sortedCompetences,
-      );
-
-      di<CompetenceFilterManager>().refreshFilteredCompetences(
-        sortedCompetences,
-      );
-      _envManager.setPopulatedEnvServerData(competences: true);
-
+    if (fileResponse.success == false) {
       _notificationService.showSnackBar(
-        NotificationType.success,
-        'Kompetenzen importiert',
+        NotificationType.error,
+        'Die Datei konnte nicht hochgeladen werden!',
       );
+      return;
     }
+    final List<Competence> importedCompetences = await _client.adminCategories
+        .importCompetencesFromJsonFile(fileResponse.path!);
+
+    final sortedCompetences = CompetenceHelper.sortCompetences(
+      importedCompetences,
+    );
+    _competences.value = sortedCompetences;
+
+    _rootCompetencesMap.clear();
+
+    _rootCompetencesMap = CompetenceHelper.generateRootCompetencesMap(
+      sortedCompetences,
+    );
+
+    di<CompetenceFilterManager>().refreshFilteredCompetences(sortedCompetences);
+    _envManager.setPopulatedEnvServerData(competences: true);
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Kompetenzen importiert',
+    );
   }
 
   Future<void> updateCompetenceProperty({

@@ -58,7 +58,7 @@ class UserManager {
     String? tutoring,
   }) async {
     //- TODO: Move to an api service in data folder!
-    await _client.admin.createUser(
+    await _client.adminUser.createUser(
       userName: userName,
       fullName: fullName,
       email: email,
@@ -82,7 +82,10 @@ class UserManager {
   }
 
   Future<void> resetPassword(String userEmail, String newPassword) async {
-    final success = await _client.admin.resetPassword(userEmail, newPassword);
+    final success = await _client.adminUser.resetPassword(
+      userEmail,
+      newPassword,
+    );
     if (!success) {
       _notificationService.showSnackBar(
         NotificationType.error,
@@ -126,7 +129,7 @@ class UserManager {
       );
       return;
     }
-    await _client.admin.deleteUser(user.userInfo!.id!);
+    await _client.adminUser.deleteUser(user.userInfo!.id!);
     removeUser(user);
     _notificationService.showSnackBar(
       NotificationType.success,

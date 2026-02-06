@@ -28,7 +28,7 @@ class PupilDataApiService {
     required String filePath,
   }) async {
     final pupils = await ClientHelper.apiCall(
-      call: () => _client.admin.updateBackendPupilDataState(filePath),
+      call: () => _client.adminPupil.updateBackendPupilDataState(filePath),
       errorMessage: 'Die Schüler konnten nicht aktualisiert werden',
     );
     return pupils?.toList();

@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
@@ -118,39 +115,36 @@ class SupportCategoryManager with ChangeNotifier {
   }
 
   Future<void> importSupportCategoriesFromFile() async {
-    FilePickerResult? pickedFile = await FilePicker.platform.pickFiles();
-    if (pickedFile != null) {
-      File file = File(pickedFile.files.single.path!);
+    final fileResponse = await ClientFileUpload.uploadFile(
+      storageId: StorageId.private,
+      folder: ServerStorageFolder.temp,
+    );
 
-      final fileResponse = await ClientFileUpload.uploadFile(
-        file: file,
-        storageId: StorageId.private,
-        folder: ServerStorageFolder.temp,
-      );
-
-      if (fileResponse.success == false) {
+    if (fileResponse.success == false || fileResponse.path == null) {
+      if (!fileResponse.cancelled) {
         _notificationService.showSnackBar(
           NotificationType.error,
           'Die Datei konnte nicht hochgeladen werden!',
         );
-        return;
       }
-      final List<SupportCategory> importedCategories = await _client.admin
-          .importSupportCategoriesFromJsonFile(fileResponse.path!);
-
-      importedCategories.sort((a, b) => a.categoryId.compareTo(b.categoryId));
-      _supportCategories.value = importedCategories;
-      _envManager.setPopulatedEnvServerData(supportCategories: true);
-      _rootCategoriesMap.clear();
-      _rootCategoriesMap = LearningSupportHelper.generateRootCategoryMap(
-        importedCategories,
-      );
-      _supportCategories.notifyListeners();
-
-      _notificationService.showSnackBar(
-        NotificationType.success,
-        'Förderkategorien importiert',
-      );
+      return;
     }
+    final List<SupportCategory> importedCategories = await _client
+        .adminCategories
+        .importSupportCategoriesFromJsonFile(fileResponse.path!);
+
+    importedCategories.sort((a, b) => a.categoryId.compareTo(b.categoryId));
+    _supportCategories.value = importedCategories;
+    _envManager.setPopulatedEnvServerData(supportCategories: true);
+    _rootCategoriesMap.clear();
+    _rootCategoriesMap = LearningSupportHelper.generateRootCategoryMap(
+      importedCategories,
+    );
+    _supportCategories.notifyListeners();
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Förderkategorien importiert',
+    );
   }
 }
