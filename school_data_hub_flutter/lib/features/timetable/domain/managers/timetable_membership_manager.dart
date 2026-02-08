@@ -1,8 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 
 /// Manages lesson group membership operations
-class TimetableMembershipManager extends ChangeNotifier {
+class TimetableMembershipManager {
   TimetableMembershipManager();
 
   /// Get all memberships for a specific lesson group

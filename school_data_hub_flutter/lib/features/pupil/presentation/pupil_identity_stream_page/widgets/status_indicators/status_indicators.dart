@@ -7,10 +7,10 @@ class StatusIndicators extends StatelessWidget {
   final bool isActive;
 
   const StatusIndicators({
-    Key? key,
+    super.key,
     required this.label,
     required this.isActive,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

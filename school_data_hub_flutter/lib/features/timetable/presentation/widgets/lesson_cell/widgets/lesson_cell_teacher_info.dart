@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class LessonCellTeacherInfo extends WatchingWidget {
   final ScheduledLesson lesson;
@@ -14,8 +14,9 @@ class LessonCellTeacherInfo extends WatchingWidget {
     final users = watchValue((UserManager m) => m.users);
 
     // Get main teacher
-    final mainTeacher =
-        users.where((user) => user.id == lesson.mainTeacherId).firstOrNull;
+    final mainTeacher = users
+        .where((user) => user.id == lesson.mainTeacherId)
+        .firstOrNull;
 
     // Get lesson teachers (excluding main teacher)
     final additionalTeachers =
@@ -34,8 +35,9 @@ class LessonCellTeacherInfo extends WatchingWidget {
 
     // Add additional teachers
     for (final lessonTeacher in additionalTeachers) {
-      final teacher =
-          users.where((user) => user.id == lessonTeacher.userId).firstOrNull;
+      final teacher = users
+          .where((user) => user.id == lessonTeacher.userId)
+          .firstOrNull;
       if (teacher != null) {
         allLessonTeachers.add(teacher);
       }
@@ -50,14 +52,11 @@ class LessonCellTeacherInfo extends WatchingWidget {
         if (index < displayTeachers.length) {
           final teacher = displayTeachers[index];
           final isMainTeacher = teacher.id == lesson.mainTeacherId;
-          final userName =
-              teacher.userInfo?.userName?.isNotEmpty == true
-                  ? teacher.userInfo!.userName!.length >= 3
-                      ? teacher.userInfo!.userName!
-                          .substring(0, 3)
-                          .toUpperCase()
-                      : teacher.userInfo!.userName!.toUpperCase()
-                  : 'TEA';
+          final userName = teacher.userInfo?.userName?.isNotEmpty == true
+              ? teacher.userInfo!.userName!.length >= 3
+                    ? teacher.userInfo!.userName!.substring(0, 3).toUpperCase()
+                    : teacher.userInfo!.userName!.toUpperCase()
+              : 'TEA';
 
           return Expanded(
             child: SizedBox(
@@ -68,10 +67,9 @@ class LessonCellTeacherInfo extends WatchingWidget {
                   color: isMainTeacher ? Colors.orange : Colors.blue,
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(
-                    color:
-                        isMainTeacher
-                            ? Colors.orange.shade700
-                            : Colors.blue.shade700,
+                    color: isMainTeacher
+                        ? Colors.orange.shade700
+                        : Colors.blue.shade700,
                     width: 1,
                   ),
                 ),

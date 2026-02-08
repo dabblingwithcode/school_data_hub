@@ -4,7 +4,7 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/data/pupil_workbook_api_service.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class PupilWorkbookManager with ChangeNotifier {
   HubSessionManager get _hubSessionManager => di<HubSessionManager>();

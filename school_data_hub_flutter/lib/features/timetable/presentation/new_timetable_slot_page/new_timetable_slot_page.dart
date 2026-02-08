@@ -4,7 +4,7 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 import 'widgets/action_buttons.dart';
 import 'widgets/end_time_field.dart';
@@ -37,7 +37,7 @@ class NewTimetableSlotPage extends WatchingWidget {
     final selectedWeekdayOption = createOnce(
       () => ValueNotifier<WeekdaySelection?>(
         timetableSlot?.day != null
-            ? _weekdayToSelection(timetableSlot!.day!)
+            ? _weekdayToSelection(timetableSlot!.day)
             : null,
       ),
     );

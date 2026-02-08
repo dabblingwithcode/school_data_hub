@@ -8,15 +8,15 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filt
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SelectPupilsFilterBottomSheet extends WatchingWidget {
   const SelectPupilsFilterBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final _learningSupportFilterManager = di<LearningSupportFilterManager>();
-    final _pupilFilterLocator = di<PupilFilterManager>();
+    final learningSupportFilterManager = di<LearningSupportFilterManager>();
+    final pupilFilterLocator = di<PupilFilterManager>();
     Map<PupilFilter, bool> activePupilFilters = watchValue(
       (PupilFilterManager x) => x.pupilFilterState,
     );
@@ -92,7 +92,7 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                     if (val == true) {
                       // in case ogs is selected, not ogs should be deselected
 
-                      _pupilFilterLocator.setPupilFilter(
+                      pupilFilterLocator.setPupilFilter(
                         pupilFilterRecords: [
                           (filter: PupilFilter.noAfterSchoolCare, value: false),
                           (filter: PupilFilter.afterSchoolCare, value: val),
@@ -101,7 +101,7 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                       return;
                     }
 
-                    _pupilFilterLocator.setPupilFilter(
+                    pupilFilterLocator.setPupilFilter(
                       pupilFilterRecords: [
                         (filter: PupilFilter.afterSchoolCare, value: val),
                       ],
@@ -114,7 +114,7 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                   onSelected: (val) {
                     if (val == true) {
                       // in case not ogs is selected, ogs should be deselected
-                      _pupilFilterLocator.setPupilFilter(
+                      pupilFilterLocator.setPupilFilter(
                         pupilFilterRecords: [
                           (filter: PupilFilter.afterSchoolCare, value: false),
                           (filter: PupilFilter.noAfterSchoolCare, value: val),
@@ -122,7 +122,7 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                       );
                       return;
                     }
-                    _pupilFilterLocator.setPupilFilter(
+                    pupilFilterLocator.setPupilFilter(
                       pupilFilterRecords: [
                         (filter: PupilFilter.noAfterSchoolCare, value: val),
                       ],
@@ -144,7 +144,7 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                   label: 'Ebene 1',
                   selected: valueSupportLevel1,
                   onSelected: (val) {
-                    _learningSupportFilterManager.setSupportLevelFilter(
+                    learningSupportFilterManager.setSupportLevelFilter(
                       supportLevelFilterRecords: [
                         (filter: SupportLevelType.supportLevel1, value: val),
                       ],
@@ -155,7 +155,7 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                   label: 'Ebene 2',
                   selected: valueSupportLevel2,
                   onSelected: (val) {
-                    _learningSupportFilterManager.setSupportLevelFilter(
+                    learningSupportFilterManager.setSupportLevelFilter(
                       supportLevelFilterRecords: [
                         (filter: SupportLevelType.supportLevel2, value: val),
                       ],
@@ -166,7 +166,7 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                   label: 'Ebene 3',
                   selected: valueSupportLevel3,
                   onSelected: (val) {
-                    _learningSupportFilterManager.setSupportLevelFilter(
+                    learningSupportFilterManager.setSupportLevelFilter(
                       supportLevelFilterRecords: [
                         (filter: SupportLevelType.supportLevel3, value: val),
                       ],
@@ -177,7 +177,7 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                   label: 'Regenbogen',
                   selected: valueSupportLevel4,
                   onSelected: (val) {
-                    _learningSupportFilterManager.setSupportLevelFilter(
+                    learningSupportFilterManager.setSupportLevelFilter(
                       supportLevelFilterRecords: [
                         (filter: SupportLevelType.supportLevel4, value: val),
                       ],
@@ -199,7 +199,7 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                   label: 'Motorik',
                   selected: valueSupportAreaMotorics,
                   onSelected: (val) {
-                    _learningSupportFilterManager.setSupportAreaFilter(
+                    learningSupportFilterManager.setSupportAreaFilter(
                       supportAreaFilterRecords: [
                         (filter: SupportArea.motorics, value: val),
                       ],
@@ -210,7 +210,7 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                   label: 'ES',
                   selected: valueSupportAreaEmotions,
                   onSelected: (val) {
-                    _learningSupportFilterManager.setSupportAreaFilter(
+                    learningSupportFilterManager.setSupportAreaFilter(
                       supportAreaFilterRecords: [
                         (filter: SupportArea.emotions, value: val),
                       ],
@@ -221,7 +221,7 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                   label: 'Mathe',
                   selected: valueSupportAreaMath,
                   onSelected: (val) {
-                    _learningSupportFilterManager.setSupportAreaFilter(
+                    learningSupportFilterManager.setSupportAreaFilter(
                       supportAreaFilterRecords: [
                         (filter: SupportArea.math, value: val),
                       ],
@@ -232,7 +232,7 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                   label: 'Lernen',
                   selected: valueSupportAreaLearning,
                   onSelected: (val) {
-                    _learningSupportFilterManager.setSupportAreaFilter(
+                    learningSupportFilterManager.setSupportAreaFilter(
                       supportAreaFilterRecords: [
                         (filter: SupportArea.learning, value: val),
                       ],
@@ -243,7 +243,7 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                   label: 'Deutsch',
                   selected: valueSupportAreaGerman,
                   onSelected: (val) {
-                    _learningSupportFilterManager.setSupportAreaFilter(
+                    learningSupportFilterManager.setSupportAreaFilter(
                       supportAreaFilterRecords: [
                         (filter: SupportArea.german, value: val),
                       ],
@@ -254,7 +254,7 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                   label: 'Sprache',
                   selected: valueSupportAreaLanguage,
                   onSelected: (val) {
-                    _learningSupportFilterManager.setSupportAreaFilter(
+                    learningSupportFilterManager.setSupportAreaFilter(
                       supportAreaFilterRecords: [
                         (filter: SupportArea.language, value: val),
                       ],
@@ -278,7 +278,7 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                   label: 'Erstförderung',
                   selected: valueMigrationSupport,
                   onSelected: (val) {
-                    _learningSupportFilterManager.setSupportLevelFilter(
+                    learningSupportFilterManager.setSupportLevelFilter(
                       supportLevelFilterRecords: [
                         (filter: SupportLevelType.migrationSupport, value: val),
                       ],
@@ -289,7 +289,7 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                   label: 'AO-SF',
                   selected: valueSpecialNeeds,
                   onSelected: (val) {
-                    _learningSupportFilterManager.setSupportLevelFilter(
+                    learningSupportFilterManager.setSupportLevelFilter(
                       supportLevelFilterRecords: [
                         (filter: SupportLevelType.specialNeeds, value: val),
                       ],

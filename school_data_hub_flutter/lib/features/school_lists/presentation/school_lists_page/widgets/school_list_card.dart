@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_page/school_list_pupil_entries_page.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_stats_row.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SchoolListCard extends WatchingWidget {
   final SchoolList schoolList;
@@ -16,8 +16,8 @@ class SchoolListCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _schoolListManager = di<SchoolListManager>();
-    final _hubSessionManager = di<HubSessionManager>();
+    final schoolListManager = di<SchoolListManager>();
+    final hubSessionManager = di<HubSessionManager>();
     final schoolList = watchPropertyValue(
       (SchoolListManager x) => x.schoolLists,
     ).firstWhere((element) => element.listId == this.schoolList.listId);
@@ -35,7 +35,7 @@ class SchoolListCard extends WatchingWidget {
             );
           },
           onLongPress: () async {
-            if (schoolList.createdBy != _hubSessionManager.userName) {
+            if (schoolList.createdBy != hubSessionManager.userName) {
               informationDialog(
                 context,
                 'Keine Berechtigung',
@@ -49,7 +49,7 @@ class SchoolListCard extends WatchingWidget {
               message: 'Liste "${schoolList.name}" wirklich löschen?',
             );
             if (result == true) {
-              await _schoolListManager.deleteSchoolList(schoolList.id!);
+              await schoolListManager.deleteSchoolList(schoolList.id!);
               if (context.mounted) {
                 informationDialog(
                   context,
@@ -152,7 +152,7 @@ class SchoolListCard extends WatchingWidget {
                                   padding: const EdgeInsets.only(right: 10.0),
                                   child: SchoolListStatsRow(
                                     schoolList: schoolList,
-                                    pupils: _schoolListManager
+                                    pupils: schoolListManager
                                         .getPupilsinSchoolList(schoolList.id!),
                                   ),
                                 ),

@@ -1,7 +1,7 @@
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SchoolListApiService {
   Client get _client => di<Client>();
@@ -10,9 +10,8 @@ class SchoolListApiService {
 
   Future<List<SchoolList>?> fetchSchoolLists() async {
     final response = await ClientHelper.apiCall(
-      call:
-          () =>
-              _client.schoolList.fetchSchoolLists(_hubSessionManager.userName!),
+      call: () =>
+          _client.schoolList.fetchSchoolLists(_hubSessionManager.userName!),
       errorMessage: 'Fehler beim Abrufen der Schullisten',
     );
     return response;
@@ -27,14 +26,13 @@ class SchoolListApiService {
     required bool public,
   }) async {
     final response = await ClientHelper.apiCall(
-      call:
-          () => _client.schoolList.postSchoolList(
-            name,
-            description,
-            pupilIds,
-            public,
-            _hubSessionManager.userName!,
-          ),
+      call: () => _client.schoolList.postSchoolList(
+        name,
+        description,
+        pupilIds,
+        public,
+        _hubSessionManager.userName!,
+      ),
       errorMessage: 'Fehler beim Erstellen der Schulliste',
     );
     return response;
@@ -59,16 +57,15 @@ class SchoolListApiService {
       'At least one property must be provided to update the school list.',
     );
     final response = await ClientHelper.apiCall(
-      call:
-          () => _client.schoolList.updateSchoolList(
-            listId,
-            name,
-            description,
-            authorizedUsers,
-            public,
+      call: () => _client.schoolList.updateSchoolList(
+        listId,
+        name,
+        description,
+        authorizedUsers,
+        public,
 
-            updateMembers,
-          ),
+        updateMembers,
+      ),
       errorMessage: 'Fehler beim Aktualisieren der Schulliste',
     );
     return response;

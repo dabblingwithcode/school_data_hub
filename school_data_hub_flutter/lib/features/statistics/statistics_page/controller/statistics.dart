@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/statistics_page.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class Statistics extends WatchingStatefulWidget {
   const Statistics({super.key});

@@ -13,7 +13,7 @@ import 'package:school_data_hub_flutter/features/timetable/presentation/new_sche
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_scheduled_lesson_page/widgets/subject_dropdown.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_scheduled_lesson_page/widgets/teacher_selection.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_scheduled_lesson_page/widgets/time_slot_dropdown.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class NewScheduledLessonPage extends WatchingWidget {
   final TimetableManager timetableManager;
@@ -138,7 +138,7 @@ class NewScheduledLessonPage extends WatchingWidget {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.schedule, size: 25, color: Colors.white),
+            const Icon(Icons.schedule, size: 25, color: Colors.white),
             const Gap(10),
             Text(
               _isEditing ? 'Stunde bearbeiten' : 'Neue Stunde',

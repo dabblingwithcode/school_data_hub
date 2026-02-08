@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/features/timetable/domain/timetable_mana
 import 'package:school_data_hub_flutter/features/timetable/presentation/classroom_list_page/classroom_list_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/lesson_cell/lesson_cell.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _log = Logger('TimetableGrid');
 
@@ -57,7 +57,7 @@ class TimetableGrid extends WatchingWidget {
       'TimetableGrid - total lesson groups: ${lessonGroupsForWeekday.length}',
     );
     _log.info(
-      'TimetableGrid - selected lesson group IDs: ${selectedLessonGroupIds}',
+      'TimetableGrid - selected lesson group IDs: $selectedLessonGroupIds',
     );
     _log.info(
       'TimetableGrid - scheduled lessons count: ${scheduledLessons.length}',
@@ -166,7 +166,7 @@ class TimetableGrid extends WatchingWidget {
                     onLessonTap: onLessonTap,
                     onEmptySlotTap: onEmptySlotTap,
                   );
-                }).toList(),
+                }),
               ],
             ),
           ),
@@ -249,7 +249,7 @@ class _TimetableRow extends StatelessWidget {
                   )
                 : const SizedBox.shrink(),
           );
-        }).toList(),
+        }),
         // Add new lesson button
         Container(
           width: 100,

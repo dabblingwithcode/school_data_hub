@@ -1,47 +1,181 @@
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:school_data_hub_flutter/features/user/data/user_api_service.dart';
+import 'package:flutter_it/flutter_it.dart';
+
+/// Data class for createUser command parameters.
+typedef CreateUserParams = ({
+  String userName,
+  String fullName,
+  String password,
+  String email,
+  String matrixUserId,
+  int timeUnits,
+  int reliefTimeUnits,
+  int credit,
+  List<String> scopeNames,
+  Role role,
+  bool isTester,
+  String? tutoring,
+});
+
+/// Data class for resetPassword command parameters.
+typedef ResetPasswordParams = ({String userEmail, String newPassword});
+
+/// Data class for changePassword command parameters.
+typedef ChangePasswordParams = ({String oldPassword, String newPassword});
 
 class UserManager {
-  final _log = Logger('UserManager');
-
-  Client get _client => di<Client>();
+  final _apiService = UserApiService();
   HubSessionManager get _sessionManager => di<HubSessionManager>();
   NotificationService get _notificationService => di<NotificationService>();
-  ValueListenable<List<User>> get users => _users;
+
   final _users = ValueNotifier<List<User>>([]);
+  ValueListenable<List<User>> get users => _users;
+
+  //-- Commands --
+
+  late final fetchUsersCommand = Command.createAsyncNoParamNoResult(
+    _fetchUsers,
+    debugName: 'fetchUsers',
+    errorFilter: const GlobalIfNoLocalErrorFilter(),
+  );
+
+  late final createUserCommand = Command.createAsyncNoResult<CreateUserParams>(
+    _createUser,
+    debugName: 'createUser',
+    errorFilter: const GlobalIfNoLocalErrorFilter(),
+  );
+
+  late final resetPasswordCommand =
+      Command.createAsyncNoResult<ResetPasswordParams>(
+    _resetPassword,
+    debugName: 'resetPassword',
+    errorFilter: const GlobalIfNoLocalErrorFilter(),
+  );
+
+  late final changePasswordCommand =
+      Command.createAsyncNoResult<ChangePasswordParams>(
+    _changePassword,
+    debugName: 'changePassword',
+    errorFilter: const GlobalIfNoLocalErrorFilter(),
+  );
+
+  late final blockUserCommand = Command.createAsyncNoResult<User>(
+    _blockUser,
+    debugName: 'blockUser',
+    errorFilter: const GlobalIfNoLocalErrorFilter(),
+  );
+
+  late final increaseUsersCreditCommand =
+      Command.createAsyncNoParamNoResult(
+    _increaseUsersCredit,
+    debugName: 'increaseUsersCredit',
+    errorFilter: const GlobalIfNoLocalErrorFilter(),
+  );
 
   UserManager();
+
   void dispose() {
     _users.dispose();
-    return;
   }
 
   Future<UserManager> init() async {
-    await fetchUsers();
+    await fetchUsersCommand.runAsync();
     return this;
   }
 
-  Future<void> fetchUsers() async {
-    try {
-      final List<User> responseUsers = await _client.user.getAllUsers();
+  //-- Command implementations --
 
-      // reorder the list alphabetically by the user's name
-      responseUsers.sort(
-        (a, b) => a.userInfo!.userName!.compareTo(b.userInfo!.userName!),
-      );
-      _users.value = responseUsers;
-    } catch (e) {
-      // Handle the error appropriately
-      _log.severe('Error fetching users: $e');
-      // You might want to set an error state or show a notification
-    }
-
-    return;
+  Future<void> _fetchUsers() async {
+    final List<User> responseUsers = await _apiService.getAllUsers();
+    responseUsers.sort(
+      (a, b) => a.userInfo!.userName!.compareTo(b.userInfo!.userName!),
+    );
+    _users.value = responseUsers;
   }
+
+  Future<void> _createUser(CreateUserParams params) async {
+    await _apiService.createUser(
+      userName: params.userName,
+      fullName: params.fullName,
+      email: params.email,
+      matrixUserId: params.matrixUserId,
+      password: params.password,
+      role: params.role,
+      timeUnits: params.timeUnits,
+      reliefTimeUnits: params.reliefTimeUnits,
+      scopeNames: params.scopeNames,
+      isTester: params.isTester,
+    );
+    final userWithDetails = await _apiService.getCurrentUser();
+    _addUser(userWithDetails!);
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'User erstellt!',
+    );
+  }
+
+  Future<void> _resetPassword(ResetPasswordParams params) async {
+    final success = await _apiService.resetPassword(
+      params.userEmail,
+      params.newPassword,
+    );
+    if (!success) {
+      throw Exception('Passwort konnte nicht zurückgesetzt werden!');
+    }
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Passwort erfolgreich zurückgesetzt!',
+    );
+  }
+
+  Future<void> _changePassword(ChangePasswordParams params) async {
+    final success = await _apiService.changePassword(
+      params.oldPassword,
+      params.newPassword,
+    );
+    if (!success) {
+      throw Exception('Passwort konnte nicht geändert werden!');
+    }
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Passwort erfolgreich geändert!',
+    );
+  }
+
+  Future<void> _blockUser(User user) async {
+    if (!_sessionManager.isAdmin) {
+      throw Exception('Sie sind kein Admin!');
+    }
+    await _apiService.deleteUser(user.userInfo!.id!);
+    removeUser(user);
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'User gelöscht!',
+    );
+  }
+
+  Future<void> _increaseUsersCredit() async {
+    final success = await _apiService.increaseStaffCredit();
+    if (!success) {
+      throw Exception('Guthaben konnte nicht erhöht werden!');
+    }
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Guthaben erfolgreich erhöht!',
+    );
+  }
+
+  //-- Convenience wrappers for backward compatibility --
+  //
+  // These allow existing UI code to call `await userManager.fetchUsers()`
+  // while the underlying implementation uses Commands.
+
+  Future<void> fetchUsers() => fetchUsersCommand.runAsync();
 
   Future<void> createUser({
     required String userName,
@@ -56,87 +190,36 @@ class UserManager {
     required Role role,
     required bool isTester,
     String? tutoring,
-  }) async {
-    //- TODO: Move to an api service in data folder!
-    await _client.adminUser.createUser(
-      userName: userName,
-      fullName: fullName,
-      email: email,
-      matrixUserId: matrixUserId,
-      password: password,
-      role: role,
-      timeUnits: timeUnits,
-      reliefTimeUnits: 0,
-      scopeNames: scopeNames,
-      isTester: isTester,
-    );
-    final userWithDetails = await _client.user.getCurrentUser();
+  }) =>
+      createUserCommand.runAsync((
+        userName: userName,
+        fullName: fullName,
+        password: password,
+        email: email,
+        matrixUserId: matrixUserId,
+        timeUnits: timeUnits,
+        reliefTimeUnits: reliefTimeUnits,
+        credit: credit,
+        scopeNames: scopeNames,
+        role: role,
+        isTester: isTester,
+        tutoring: tutoring,
+      ));
 
-    _addUser(userWithDetails!);
+  Future<void> resetPassword(String userEmail, String newPassword) =>
+      resetPasswordCommand
+          .runAsync((userEmail: userEmail, newPassword: newPassword));
 
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'User erstellt!',
-    );
-    return;
-  }
+  Future<void> changePassword(String oldPassword, String newPassword) =>
+      changePasswordCommand
+          .runAsync((oldPassword: oldPassword, newPassword: newPassword));
 
-  Future<void> resetPassword(String userEmail, String newPassword) async {
-    final success = await _client.adminUser.resetPassword(
-      userEmail,
-      newPassword,
-    );
-    if (!success) {
-      _notificationService.showSnackBar(
-        NotificationType.error,
-        'Passwort konnte nicht zurückgesetzt werden!',
-      );
-      return;
-    }
+  Future<void> blockUser(User user) => blockUserCommand.runAsync(user);
 
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Passwort erfolgreich zurückgesetzt!',
-    );
-    return;
-  }
+  Future<void> increaseUsersCredit() =>
+      increaseUsersCreditCommand.runAsync();
 
-  //- CHANGE PASSWORD
-  Future<void> changePassword(String oldPassword, String newPassword) async {
-    final success = await _client.user.changePassword(oldPassword, newPassword);
-    if (!success) {
-      _notificationService.showSnackBar(
-        NotificationType.error,
-        'Passwort konnte nicht geändert werden!',
-      );
-      return;
-    }
-
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Passwort erfolgreich geändert!',
-    );
-    return;
-  }
-
-  //- TODO: Implement updateUserProperties
-
-  Future<void> blockUser(User user) async {
-    if (!_sessionManager.isAdmin) {
-      _notificationService.showSnackBar(
-        NotificationType.error,
-        'Sie sind kein Admin!',
-      );
-      return;
-    }
-    await _client.adminUser.deleteUser(user.userInfo!.id!);
-    removeUser(user);
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'User gelöscht!',
-    );
-    return;
-  }
+  //-- Local state helpers --
 
   void setUsers(List<User> users) {
     _users.value = users;
@@ -145,7 +228,6 @@ class UserManager {
   void _addUser(User user) {
     final List<User> users = List.from(_users.value);
     users.add(user);
-
     users.sort(
       (a, b) => a.userInfo!.userName!.compareTo(b.userInfo!.userName!),
     );
@@ -157,12 +239,6 @@ class UserManager {
         .where((element) => element.id != user.id)
         .toList();
   }
-
-  // void updateUser(User user) {
-  //   _users.value = _users.value
-  //       .map((e) => e.publicId == user.publicId ? user : e)
-  //       .toList();
-  // }
 
   void clearUsers() {
     _users.value = [];
@@ -180,30 +256,5 @@ class UserManager {
 
   void updateUsers(List<User> users) {
     _users.value = users;
-  }
-
-  // void addOrUpdateUser(User user) {
-  //   if (_users.value.any((element) => element.publicId == user.publicId)) {
-  //     updateUser(user);
-  //   } else {
-  //     addUser(user);
-  //   }
-  // }
-
-  Future<void> increaseUsersCredit() async {
-    final success = await _client.user.increaseStaffCredit();
-    // TODO: This is not implemented yet
-    //  updateUsers(users);
-    if (!success) {
-      _notificationService.showSnackBar(
-        NotificationType.error,
-        'Guthaben konnte nicht erhöht werden!',
-      );
-      return;
-    }
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Guthaben erfolgreich erhöht!',
-    );
   }
 }

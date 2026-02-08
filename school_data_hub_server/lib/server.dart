@@ -34,7 +34,7 @@ void run(List<String> args) async {
     final colorFormatter = ColorFormatter();
     log(colorFormatter.format(record));
   });
-  final _logger = Logger('ServerpodInit');
+  final logger = Logger('ServerpodInit');
   // Also add a simple console output for Docker environments
 
   // Logger.root.onRecord.listen((record) {
@@ -132,10 +132,10 @@ void run(List<String> args) async {
         defaultRecipient: '',
       );
       mailerInitialized = true;
-      _logger.info(
+      logger.info(
           'MailerService initialized successfully from environment variables');
     } catch (e) {
-      _logger.severe('Failed to initialize MailerService: $e');
+      logger.severe('Failed to initialize MailerService: $e');
     }
   }
 
@@ -144,27 +144,27 @@ void run(List<String> args) async {
     final initialized = MailerService.instance.initializeFromSession(session);
     if (initialized) {
       mailerInitialized = true;
-      _logger.info(
+      logger.info(
           'MailerService initialized successfully from session passwords');
     } else {
-      _logger.warning(
+      logger.warning(
           'Mail configuration not found in session passwords. Email functionality will not be available.');
     }
   }
 
   // Check if there are any users in the database. If not, we need to populate the test environment.
   final userCount = await session.db.count<User>();
-  _logger.info('Current user count in database: $userCount');
+  logger.info('Current user count in database: $userCount');
 
   final adminUser = await auth.UserInfo.db.findFirstRow(
     session,
     where: (t) => t.fullName.equals('Administrator'),
   );
   if (adminUser == null) {
-    _logger.warning('No users found, populating test environment...');
+    logger.warning('No users found, populating test environment...');
     await populateTestEnvironment(session);
   } else {
-    _logger.info('Users already exist, skipping test environment population');
+    logger.info('Users already exist, skipping test environment population');
   }
 
   // TODO: uncomment in production
@@ -196,16 +196,16 @@ void run(List<String> args) async {
       );
 
       if (success) {
-        _logger.info('Startup notification email sent successfully');
+        logger.info('Startup notification email sent successfully');
       } else {
-        _logger.warning(
+        logger.warning(
             'Failed to send startup notification email (service may not be initialized)');
       }
     } else {
-      _logger.info(
+      logger.info(
           'Email admin address not configured, skipping startup notification');
     }
   } catch (e) {
-    _logger.severe('Error sending startup notification email: $e');
+    logger.severe('Error sending startup notification email: $e');
   }
 }

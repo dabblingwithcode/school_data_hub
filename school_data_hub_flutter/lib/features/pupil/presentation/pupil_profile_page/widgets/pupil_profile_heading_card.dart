@@ -4,7 +4,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class PupilProfileHeadingCard extends WatchingWidget {
   final PupilProxy passedPupil;
@@ -12,7 +12,7 @@ class PupilProfileHeadingCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _hubSessionManager = di<HubSessionManager>();
+    final hubSessionManager = di<HubSessionManager>();
     final pupil = watch<PupilProxy>(passedPupil);
     return Card(
       color: Colors.white,
@@ -80,7 +80,7 @@ class PupilProfileHeadingCard extends WatchingWidget {
                     const Gap(15),
                     if (pupil.specialInformation != null)
                       const Icon(Icons.warning_rounded, color: Colors.red),
-                    if (_hubSessionManager.isAdmin == true) ...<Widget>[
+                    if (hubSessionManager.isAdmin == true) ...<Widget>[
                       const Gap(10),
                       Text(
                         '${pupil.internalId}',

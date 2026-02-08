@@ -12,7 +12,7 @@ import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.
 import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/presentation/authorization_pupils_page/authorization_pupils_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class PupilContentAuthorizationEntryCard extends WatchingWidget {
   final Authorization authorization;
@@ -27,7 +27,7 @@ class PupilContentAuthorizationEntryCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _authorizationManager = di<AuthorizationManager>();
+    final authorizationManager = di<AuthorizationManager>();
     final thisAuthorization = watchValue(
       (AuthorizationManager x) => x.authorizations,
     ).firstWhere((authorization) => authorization.id == this.authorization.id);
@@ -68,7 +68,7 @@ class PupilContentAuthorizationEntryCard extends WatchingWidget {
                                       'Die Einwilligung von ${pupil.firstName} löschen?',
                                 );
                                 if (confirmation == true) {
-                                  _authorizationManager.updateAuthorization(
+                                  authorizationManager.updateAuthorization(
                                     authId: authorization.id!,
                                     membersToUpdate: (
                                       operation: MemberOperation.remove,
@@ -120,7 +120,7 @@ class PupilContentAuthorizationEntryCard extends WatchingWidget {
                                 context,
                               );
                               if (file == null) return;
-                              await _authorizationManager
+                              await authorizationManager
                                   .addFileToPupilAuthorization(
                                     file,
                                     pupilAuthorization.id!,
@@ -135,7 +135,7 @@ class PupilContentAuthorizationEntryCard extends WatchingWidget {
                                     'Dokument für die Einwilligung von ${pupil.firstName} ${pupil.lastName} löschen?',
                               );
                               if (result != true) return;
-                              await _authorizationManager
+                              await authorizationManager
                                   .removeFileFromPupilAuthorization(
                                     pupilAuthorization.id!,
                                     pupilAuthorization.file!.documentId,
@@ -189,7 +189,7 @@ class PupilContentAuthorizationEntryCard extends WatchingWidget {
                         representedBoolValue: false, // Red/negative checkbox
                         currentStatus: pupilAuthorization.status,
                         onStatusChanged: (newStatus) async {
-                          await _authorizationManager.updatePupilAuthorization(
+                          await authorizationManager.updatePupilAuthorization(
                             pupilId: pupil.pupilId,
                             authorizationId: authorization.id!,
                             status: (value: newStatus),
@@ -203,7 +203,7 @@ class PupilContentAuthorizationEntryCard extends WatchingWidget {
                         representedBoolValue: true, // Green/positive checkbox
                         currentStatus: pupilAuthorization.status,
                         onStatusChanged: (newStatus) async {
-                          await _authorizationManager.updatePupilAuthorization(
+                          await authorizationManager.updatePupilAuthorization(
                             pupilId: pupil.pupilId,
                             authorizationId: authorization.id!,
                             status: (value: newStatus),

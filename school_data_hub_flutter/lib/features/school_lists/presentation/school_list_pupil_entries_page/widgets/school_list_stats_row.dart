@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/features/school_lists/domain/models/scho
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/new_list_page/new_school_list_page.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SchoolListStatsRow extends WatchingWidget {
   final SchoolList schoolList;

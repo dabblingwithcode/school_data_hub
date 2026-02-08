@@ -12,7 +12,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/communication_content/communication_values.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/communication_content/dialogs/language_dialog.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class PupilProfileCommunicationContent extends WatchingWidget {
   final PupilProxy pupil;
@@ -20,7 +20,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _hubSessionManager = di<HubSessionManager>();
+    final hubSessionManager = di<HubSessionManager>();
     final communicationPupil = watchPropertyValue(
       (m) => m.communicationPupil,
       target: pupil,
@@ -92,7 +92,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                     CommunicationSubject.pupil,
                   ),
                   onLongPress: () async {
-                    if (_hubSessionManager.isAdmin == false) {
+                    if (hubSessionManager.isAdmin == false) {
                       informationDialog(
                         context,
                         'Keine Berechtigung',
@@ -135,7 +135,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                     CommunicationSubject.tutor1,
                   ),
                   onLongPress: () async {
-                    final isAdmin = _hubSessionManager.isAdmin;
+                    final isAdmin = hubSessionManager.isAdmin;
                     if (!isAdmin) {
                       informationDialog(
                         context,
@@ -181,7 +181,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                     CommunicationSubject.tutor2,
                   ),
                   onLongPress: () async {
-                    final isAdmin = _hubSessionManager.isAdmin;
+                    final isAdmin = hubSessionManager.isAdmin;
                     if (!isAdmin) {
                       informationDialog(
                         context,
@@ -201,7 +201,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                         tutorInfo: tutorInfo != null
                             ? tutorInfo.copyWith(communicationTutor2: null)
                             : TutorInfo(
-                                createdBy: _hubSessionManager.userName!,
+                                createdBy: hubSessionManager.userName!,
                               ),
                       );
                     }

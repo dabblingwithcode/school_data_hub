@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/features/timetable/presentation/new_subj
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_subject_page/widgets/description_field.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_subject_page/widgets/name_field.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_subject_page/widgets/public_id_field.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class NewSubjectPage extends WatchingWidget {
   final Subject? subject;
@@ -85,10 +85,9 @@ class NewSubjectPage extends WatchingWidget {
                   id: subject?.id,
                   publicId: publicIdController.text.trim(),
                   name: nameController.text.trim(),
-                  description:
-                      descriptionController.text.trim().isEmpty
-                          ? null
-                          : descriptionController.text.trim(),
+                  description: descriptionController.text.trim().isEmpty
+                      ? null
+                      : descriptionController.text.trim(),
                   color: selectedColor.value,
                   createdBy: subject?.createdBy ?? 'user',
                   createdAt: subject?.createdAt ?? DateTime.now().toUtc(),
@@ -110,17 +109,16 @@ class NewSubjectPage extends WatchingWidget {
               onCancel: () {
                 Navigator.pop(context);
               },
-              onDelete:
-                  _isEditing
-                      ? () async {
-                        if (subject?.id != null) {
-                          await timetableManager.removeSubject(subject!.id!);
-                          if (context.mounted) {
-                            Navigator.pop(context);
-                          }
+              onDelete: _isEditing
+                  ? () async {
+                      if (subject?.id != null) {
+                        await timetableManager.removeSubject(subject!.id!);
+                        if (context.mounted) {
+                          Navigator.pop(context);
                         }
                       }
-                      : null,
+                    }
+                  : null,
               isEditing: _isEditing,
             ),
           ],

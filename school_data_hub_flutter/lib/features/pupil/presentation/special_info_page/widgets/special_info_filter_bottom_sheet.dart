@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SpecialInfoFilterBottomSheet extends WatchingWidget {
   const SpecialInfoFilterBottomSheet({super.key});
@@ -17,11 +17,7 @@ class SpecialInfoFilterBottomSheet extends WatchingWidget {
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
-              child: Column(
-                children: [
-                  CommonPupilFiltersWidget(),
-                ],
-              ),
+              child: Column(children: [CommonPupilFiltersWidget()]),
             ),
           ),
         ],

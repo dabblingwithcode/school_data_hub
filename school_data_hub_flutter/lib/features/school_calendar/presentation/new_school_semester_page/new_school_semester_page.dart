@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_page/widgets/date_picker_button.dart';
-import 'package:watch_it/watch_it.dart';
 
-class NewSchoolSemesterPage extends StatefulWidget {
-  const NewSchoolSemesterPage({super.key});
+class NewSchoolSemesterPage extends WatchingStatefulWidget {
+  final SchoolSemester? semester;
+
+  const NewSchoolSemesterPage({super.key, this.semester});
 
   @override
   State<NewSchoolSemesterPage> createState() => _NewSchoolSemesterPageState();
@@ -24,6 +28,23 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
   final _textController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    // Pre-populate fields if editing
+    if (widget.semester != null) {
+      final semester = widget.semester!;
+      _textController.text = semester.schoolYear;
+      startDate = semester.startDate;
+      endDate = semester.endDate;
+      classConferenceDate = semester.classConferenceDate;
+      supportConferenceDate = semester.supportConferenceDate;
+      reportSignedDate = semester.reportSignedDate;
+      reportConferenceDate = semester.reportConferenceDate;
+      isFirst = semester.isFirst;
+    }
+  }
+
+  @override
   void dispose() {
     _textController.dispose();
     super.dispose();
@@ -32,22 +53,42 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
   @override
   Widget build(BuildContext context) {
     final schoolCalendarManager = di<SchoolCalendarManager>();
+    final List<SchoolSemester> semesters = watchValue(
+      (SchoolCalendarManager m) => m.schoolSemesters,
+    );
+
+    bool isNotInExistingSemesters(DateTime day) {
+      final dayUtc = day.toDateOnlyUtc();
+      for (final semester in semesters) {
+        final startUtc = semester.startDate.toDateOnlyUtc();
+        final endUtc = semester.endDate.toDateOnlyUtc();
+        final isInside = !dayUtc.isBefore(startUtc) && !dayUtc.isAfter(endUtc);
+        if (isInside) return false;
+      }
+      return true;
+    }
+
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         centerTitle: true,
         backgroundColor: AppColors.backgroundColor,
-        title: const Row(
+        title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.calendar_view_month_rounded,
               size: 25,
               color: Colors.white,
             ),
-            Gap(10),
-            Text('Neuer Schulsemester', style: AppStyles.appBarTextStyle),
+            const Gap(10),
+            Text(
+              widget.semester != null
+                  ? 'Schulhalbjahr bearbeiten'
+                  : 'Neues Schulhalbjahr',
+              style: AppStyles.appBarTextStyle,
+            ),
           ],
         ),
       ),
@@ -89,6 +130,7 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
                     const Gap(10),
                     DatePickerButton(
                       dateToSelect: startDate,
+                      selectableDayPredicate: isNotInExistingSemesters,
                       onDateSelected: (pickedDate) {
                         if (pickedDate != null) {
                           setState(() {
@@ -112,6 +154,8 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
                     const Gap(10),
                     DatePickerButton(
                       dateToSelect: endDate,
+                      firstDate: startDate ?? DateTime(2000),
+                      selectableDayPredicate: isNotInExistingSemesters,
                       onDateSelected: (pickedDate) {
                         if (pickedDate != null) {
                           setState(() {
@@ -138,6 +182,7 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
                     const Gap(10),
                     DatePickerButton(
                       dateToSelect: classConferenceDate,
+                      selectableDayPredicate: isNotInExistingSemesters,
                       onDateSelected: (pickedDate) {
                         if (pickedDate != null) {
                           setState(() {
@@ -164,6 +209,7 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
                     const Gap(10),
                     DatePickerButton(
                       dateToSelect: supportConferenceDate,
+                      selectableDayPredicate: isNotInExistingSemesters,
                       onDateSelected: (pickedDate) {
                         if (pickedDate != null) {
                           setState(() {
@@ -190,6 +236,7 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
                     const Gap(10),
                     DatePickerButton(
                       dateToSelect: reportConferenceDate,
+                      selectableDayPredicate: isNotInExistingSemesters,
                       onDateSelected: (pickedDate) {
                         if (pickedDate != null) {
                           setState(() {
@@ -216,6 +263,7 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
                     const Gap(10),
                     DatePickerButton(
                       dateToSelect: reportSignedDate,
+                      selectableDayPredicate: isNotInExistingSemesters,
                       onDateSelected: (pickedDate) {
                         if (pickedDate != null) {
                           setState(() {
@@ -228,18 +276,42 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
                 ),
               ),
               ElevatedButton(
-                onPressed: () => schoolCalendarManager.postSchoolSemester(
-                  schoolYearName:
-                      _textController.text, // Replace with actual input
-                  startDate: startDate!,
-                  endDate: endDate!,
-                  classConferenceDate: classConferenceDate,
-                  supportConferenceDate: supportConferenceDate,
-                  reportSignedDate: reportSignedDate,
-                  reportConferenceDate: reportConferenceDate,
-                  isFirst: true,
+                onPressed: () async {
+                  if (widget.semester != null) {
+                    // Update existing semester
+                    final updatedSemester = widget.semester!.copyWith(
+                      schoolYear: _textController.text,
+                      startDate: startDate ?? widget.semester!.startDate,
+                      endDate: endDate ?? widget.semester!.endDate,
+                      classConferenceDate: classConferenceDate,
+                      supportConferenceDate: supportConferenceDate,
+                      reportSignedDate: reportSignedDate,
+                      reportConferenceDate: reportConferenceDate,
+                      isFirst: isFirst,
+                    );
+                    await schoolCalendarManager.updateSchoolSemester(
+                      updatedSemester,
+                    );
+                  } else {
+                    // Create new semester
+                    await schoolCalendarManager.postSchoolSemester(
+                      schoolYearName: _textController.text,
+                      startDate: startDate!,
+                      endDate: endDate!,
+                      classConferenceDate: classConferenceDate,
+                      supportConferenceDate: supportConferenceDate,
+                      reportSignedDate: reportSignedDate,
+                      reportConferenceDate: reportConferenceDate,
+                      isFirst: true,
+                    );
+                  }
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: Text(
+                  widget.semester != null ? 'Aktualisieren' : 'Senden',
                 ),
-                child: const Text('Senden'),
               ),
               ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(),

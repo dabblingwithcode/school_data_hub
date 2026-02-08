@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profil
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_heading_card.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/pupil_profile_page_content.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class PupilProfilePage extends WatchingWidget {
   final PupilProxy pupil;
@@ -18,11 +18,11 @@ class PupilProfilePage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _pupilManager = di<PupilProxyManager>();
+    final pupilManager = di<PupilProxyManager>();
     return Scaffold(
       backgroundColor: AppColors.pupilProfileBackgroundColor,
       body: RefreshIndicator(
-        onRefresh: () async => _pupilManager.updatePupilData(pupil.pupilId),
+        onRefresh: () async => pupilManager.updatePupilData(pupil.pupilId),
         child: SafeArea(
           child: Center(
             child: ConstrainedBox(

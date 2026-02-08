@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_di
 import 'package:school_data_hub_flutter/features/school_lists/domain/models/pupil_list_entry_proxy.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_page/school_list_pupil_entries_page.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class PupilProfileSchoolListPupilEntryCard extends WatchingWidget {
   final PupilListEntryProxy pupilListEntryProxy;
@@ -19,9 +19,9 @@ class PupilProfileSchoolListPupilEntryCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _schoolListManager = di<SchoolListManager>();
+    final schoolListManager = di<SchoolListManager>();
     final pupilListEntry = watch(pupilListEntryProxy).pupilEntry;
-    final schoolList = _schoolListManager.getSchoolListById(
+    final schoolList = schoolListManager.getSchoolListById(
       pupilListEntry.schoolListId,
     );
     return InkWell(
@@ -34,7 +34,7 @@ class PupilProfileSchoolListPupilEntryCard extends WatchingWidget {
         if (confirm != true) {
           return;
         }
-        await _schoolListManager.updateSchoolListProperty(
+        await schoolListManager.updateSchoolListProperty(
           listId: pupilListEntry.schoolListId,
           operation: (
             pupilIds: [pupilListEntry.pupilId],
@@ -102,7 +102,7 @@ class PupilProfileSchoolListPupilEntryCard extends WatchingWidget {
                                 false, // Red/negative checkbox
                             currentStatus: pupilListEntry.status,
                             onStatusChanged: (newStatus) async {
-                              await _schoolListManager.updatePupilListEntry(
+                              await schoolListManager.updatePupilListEntry(
                                 entry: pupilListEntry,
                                 status: (value: newStatus),
                               );
@@ -119,7 +119,7 @@ class PupilProfileSchoolListPupilEntryCard extends WatchingWidget {
                                 true, // Green/positive checkbox
                             currentStatus: pupilListEntry.status,
                             onStatusChanged: (newStatus) async {
-                              await _schoolListManager.updatePupilListEntry(
+                              await schoolListManager.updatePupilListEntry(
                                 entry: pupilListEntry,
                                 status: (value: newStatus),
                               );
@@ -165,7 +165,7 @@ class PupilProfileSchoolListPupilEntryCard extends WatchingWidget {
                             result.value == pupilListEntry.comment) {
                           return;
                         }
-                        await _schoolListManager.updatePupilListEntry(
+                        await schoolListManager.updatePupilListEntry(
                           entry: pupilListEntry,
                           comment: (value: result.value),
                         );

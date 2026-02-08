@@ -13,7 +13,7 @@ import 'package:school_data_hub_flutter/features/school_lists/domain/school_list
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_pupil_entries_filters_widget.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_stats_row.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _pupilsFilter = di<PupilsFilter>();
 
@@ -71,16 +71,16 @@ class SchoolListPupilEntriesPageSearchBar extends WatchingWidget {
                       const Gap(10),
                       observedSchoolList.public != true
                           ? Text(
-                            observedSchoolList.createdBy,
-                            style: TextStyle(
-                              color: AppColors.backgroundColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
+                              observedSchoolList.createdBy,
+                              style: TextStyle(
+                                color: AppColors.backgroundColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )
                           : Icon(
-                            Icons.school_rounded,
-                            color: AppColors.backgroundColor,
-                          ),
+                              Icons.school_rounded,
+                              color: AppColors.backgroundColor,
+                            ),
                       Text(
                         SchoolListHelper.listOwners(observedSchoolList),
                         style: const TextStyle(
@@ -115,14 +115,13 @@ class SchoolListPupilEntriesPageSearchBar extends WatchingWidget {
                 const Gap(5),
                 FilterButton(
                   isSearchBar: true,
-                  showBottomSheetFunction:
-                      () => showGenericFilterBottomSheet(
-                        context: context,
-                        filterList: [
-                          const CommonPupilFiltersWidget(),
-                          const SchoolListPupilEntriesFiltersWidget(),
-                        ],
-                      ),
+                  showBottomSheetFunction: () => showGenericFilterBottomSheet(
+                    context: context,
+                    filterList: [
+                      const CommonPupilFiltersWidget(),
+                      const SchoolListPupilEntriesFiltersWidget(),
+                    ],
+                  ),
                 ),
               ],
             ),

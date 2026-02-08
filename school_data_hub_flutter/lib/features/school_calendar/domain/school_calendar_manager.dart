@@ -2,23 +2,23 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/get_non_holiday_weekdays.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:school_data_hub_flutter/features/school_calendar/data/school_calendar_api_service.dart';
 
 final _log = Logger('SchooldayManager');
 
 class SchoolCalendarManager {
-  Client get _client => di<Client>();
+  final _apiService = SchoolCalendarApiService();
   EnvManager get _envManager => di<EnvManager>();
   final _notificationService = di<NotificationService>();
   final _schooldays = ValueNotifier<List<Schoolday>>([]);
-  ValueNotifier<List<Schoolday>> get schooldays => _schooldays;
+  ValueListenable<List<Schoolday>> get schooldays => _schooldays;
 
   final _availableDates = ValueNotifier<List<DateTime>>([]);
   ValueListenable<List<DateTime>> get availableDates => _availableDates;
@@ -140,8 +140,9 @@ class SchoolCalendarManager {
   //- create
 
   Future<void> postSchoolday(DateTime schoolday) async {
-    final Schoolday? newSchoolday = await _client.schooldayAdmin
-        .createSchoolday(schoolday);
+    final Schoolday? newSchoolday = await _apiService.createSchoolday(
+      schoolday,
+    );
     if (newSchoolday == null) {
       _notificationService.showSnackBar(
         NotificationType.error,
@@ -164,8 +165,9 @@ class SchoolCalendarManager {
   Future<void> postMultipleSchooldays({required List<DateTime> dates}) async {
     // we need to transform the dates to utc for the server
     final List<DateTime> utcDates = dates.map((date) => date.toUtc()).toList();
-    final List<Schoolday> newSchooldays = await _client.schooldayAdmin
-        .createSchooldays(utcDates);
+    final List<Schoolday> newSchooldays = await _apiService.createSchooldays(
+      utcDates,
+    );
 
     _schooldays.value = [..._schooldays.value, ...newSchooldays];
 
@@ -182,7 +184,7 @@ class SchoolCalendarManager {
   //- read
 
   Future<void> fetchSchooldays() async {
-    final List<Schoolday> responseSchooldays = await _client.schoolday
+    final List<Schoolday> responseSchooldays = await _apiService
         .getSchooldays();
 
     if (responseSchooldays.isNotEmpty) {
@@ -213,7 +215,7 @@ class SchoolCalendarManager {
   //- delete
 
   Future<void> deleteSchoolday(DateTime date) async {
-    final bool isDeleted = await _client.schooldayAdmin.deleteSchoolday(date);
+    final bool isDeleted = await _apiService.deleteSchoolday(date);
 
     final Schoolday? schoolday = getSchooldayByDate(date);
     if (schoolday == null) {
@@ -255,17 +257,15 @@ class SchoolCalendarManager {
 
     required bool isFirst,
   }) async {
-    final SchoolSemester? newSemester = await ClientHelper.apiCall(
-      call: () => _client.schooldayAdmin.createSchoolSemester(
-        schoolYearName,
-        startDate.toDateOnlyUtc(),
-        endDate.toDateOnlyUtc(),
-        isFirst,
-        classConferenceDate?.toDateOnlyUtc(),
-        supportConferenceDate?.toDateOnlyUtc(),
-        reportConferenceDate?.toDateOnlyUtc(),
-        reportSignedDate?.toDateOnlyUtc(),
-      ),
+    final SchoolSemester? newSemester = await _apiService.createSchoolSemester(
+      schoolYearName: schoolYearName,
+      startDate: startDate.toDateOnlyUtc(),
+      endDate: endDate.toDateOnlyUtc(),
+      isFirst: isFirst,
+      classConferenceDate: classConferenceDate?.toDateOnlyUtc(),
+      supportConferenceDate: supportConferenceDate?.toDateOnlyUtc(),
+      reportConferenceDate: reportConferenceDate?.toDateOnlyUtc(),
+      reportSignedDate: reportSignedDate?.toDateOnlyUtc(),
     );
     if (newSemester == null) {
       return;
@@ -288,7 +288,7 @@ class SchoolCalendarManager {
   //- read
 
   Future<void> fetchSchoolSemesters() async {
-    final List<SchoolSemester> responseSchoolSemesters = await _client.schoolday
+    final List<SchoolSemester> responseSchoolSemesters = await _apiService
         .getSchoolSemesters();
 
     _notificationService.showSnackBar(
@@ -305,6 +305,79 @@ class SchoolCalendarManager {
         _envManager.populatedEnvServerData.schoolSemester == false) {
       _envManager.setPopulatedEnvServerData(schoolSemester: true);
     }
+    return;
+  }
+
+  //- update
+
+  Future<void> updateSchoolSemester(SchoolSemester semester) async {
+    final SchoolSemester? updatedSemester = await _apiService
+        .updateSchoolSemester(semester);
+
+    if (updatedSemester != null) {
+      final index = _schoolSemesters.value.indexWhere(
+        (s) => s.id == semester.id,
+      );
+      if (index != -1) {
+        final List<SchoolSemester> updatedList = List.from(
+          _schoolSemesters.value,
+        );
+        updatedList[index] = updatedSemester;
+        _schoolSemesters.value = updatedList;
+
+        // Update current semester if the updated one is current
+        if (_currentSemester.value?.id == semester.id) {
+          _currentSemester.value = updatedSemester;
+        }
+
+        _notificationService.showSnackBar(
+          NotificationType.success,
+          'Schulhalbjahr erfolgreich aktualisiert',
+        );
+      }
+
+      return;
+    }
+
+    _notificationService.showSnackBar(
+      NotificationType.error,
+      'Schulhalbjahr konnte nicht aktualisiert werden',
+    );
+
+    return;
+  }
+
+  //- delete
+
+  Future<void> deleteSchoolSemester(SchoolSemester semester) async {
+    final bool isDeleted = await _apiService.deleteSchoolSemester(semester);
+
+    if (isDeleted) {
+      _schoolSemesters.value = _schoolSemesters.value
+          .where((s) => s.id != semester.id)
+          .toList();
+
+      // Update current semester if the deleted one was current
+      if (_currentSemester.value?.id == semester.id) {
+        _currentSemester.value = getCurrentSchoolSemester();
+      }
+
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Schulhalbjahr erfolgreich gelöscht',
+      );
+
+      // Refresh schooldays to reflect the deletion
+      await fetchSchooldays();
+
+      return;
+    }
+
+    _notificationService.showSnackBar(
+      NotificationType.error,
+      'Schulhalbjahr konnte nicht gelöscht werden',
+    );
+
     return;
   }
 }

@@ -3,7 +3,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_lesson_group_page/new_lesson_group_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/timetable_utils.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 /// Dropdown widget for selecting a lesson group
 class LessonGroupDropdown extends WatchingWidget {
@@ -24,38 +24,36 @@ class LessonGroupDropdown extends WatchingWidget {
     final selectedSlot = watchValue((TimetableManager m) => m.selectedWeekday);
 
     // Filter out lesson groups that already have a lesson at the selected time slot
-    final availableLessonGroups =
-        lessonGroups.where((group) {
-          return !hasLessonGroupConflict(group);
-        }).toList();
+    final availableLessonGroups = lessonGroups.where((group) {
+      return !hasLessonGroupConflict(group);
+    }).toList();
 
     // Ensure the selected lesson group is available in the filtered list
     final validInitialValue =
         selectedLessonGroup != null &&
-                availableLessonGroups.any(
-                  (group) => group.id == selectedLessonGroup!.id,
-                )
-            ? selectedLessonGroup
-            : null;
+            availableLessonGroups.any(
+              (group) => group.id == selectedLessonGroup!.id,
+            )
+        ? selectedLessonGroup
+        : null;
 
     return Row(
       children: [
         Expanded(
           child: DropdownButtonFormField<LessonGroup>(
-            value: validInitialValue,
+            initialValue: validInitialValue,
             decoration: InputDecoration(
               labelText: 'Klasse *',
               border: const OutlineInputBorder(),
               helperText:
                   'Nur verfügbare Klassen für ${TimetableUtils.getWeekdayName(selectedSlot)}',
             ),
-            items:
-                availableLessonGroups.map((group) {
-                  return DropdownMenuItem<LessonGroup>(
-                    value: group,
-                    child: Text(group.name),
-                  );
-                }).toList(),
+            items: availableLessonGroups.map((group) {
+              return DropdownMenuItem<LessonGroup>(
+                value: group,
+                child: Text(group.name),
+              );
+            }).toList(),
             onChanged: onLessonGroupChanged,
             validator: (value) {
               if (value == null) {

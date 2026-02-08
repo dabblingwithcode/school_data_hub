@@ -3,7 +3,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_subject_page/new_subject_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/timetable_utils.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 /// Dropdown widget for selecting a subject
 class SubjectDropdown extends WatchingWidget {
@@ -23,41 +23,38 @@ class SubjectDropdown extends WatchingWidget {
     // Ensure the selectedSubject is in the subjects list
     final validSelectedSubject =
         selectedSubject != null &&
-                subjects.any((subject) => subject.id == selectedSubject!.id)
-            ? selectedSubject
-            : null;
+            subjects.any((subject) => subject.id == selectedSubject!.id)
+        ? selectedSubject
+        : null;
 
     return Row(
       children: [
         Expanded(
           child: DropdownButtonFormField<Subject>(
-            value: validSelectedSubject,
+            initialValue: validSelectedSubject,
             decoration: const InputDecoration(
               labelText: 'Fach *',
               border: OutlineInputBorder(),
             ),
-            items:
-                subjects.map((subject) {
-                  return DropdownMenuItem<Subject>(
-                    value: subject,
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 16,
-                          height: 16,
-                          decoration: BoxDecoration(
-                            color: TimetableUtils.parseColor(
-                              subject.color ?? '',
-                            ),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(subject.name),
-                      ],
+            items: subjects.map((subject) {
+              return DropdownMenuItem<Subject>(
+                value: subject,
+                child: Row(
+                  children: [
+                    Container(
+                      width: 16,
+                      height: 16,
+                      decoration: BoxDecoration(
+                        color: TimetableUtils.parseColor(subject.color ?? ''),
+                        shape: BoxShape.circle,
+                      ),
                     ),
-                  );
-                }).toList(),
+                    const SizedBox(width: 8),
+                    Text(subject.name),
+                  ],
+                ),
+              );
+            }).toList(),
             onChanged: onSubjectChanged,
             validator: (value) {
               if (value == null) {

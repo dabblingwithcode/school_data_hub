@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SchooldaysCalendarPage extends WatchingStatefulWidget {
   const SchooldaysCalendarPage({super.key});
@@ -32,6 +32,23 @@ class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
   SchoolCalendarManager get _schoolCalendarManager =>
       di<SchoolCalendarManager>();
 
+  @override
+  void initState() {
+    super.initState();
+
+    // Ensure semesters are available for the "first semester" badge.
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+
+      final manager = _schoolCalendarManager;
+      if (manager.schoolSemesters.value.isNotEmpty) return;
+
+      await manager.fetchSchoolSemesters();
+      if (!mounted) return;
+      setState(() {});
+    });
+  }
+
   List<String> _getEventsForDay(DateTime day) {
     final schooldays = _schoolCalendarManager.schooldays.value;
     if (schooldays.any((element) => element.schoolday == day)) {
@@ -41,9 +58,84 @@ class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
     return [];
   }
 
+  bool _isDayInFirstSemester({
+    required DateTime day,
+    required List semesters,
+  }) {
+    final dayUtc = day.toDateOnlyUtc();
+
+    for (final semester in semesters) {
+      // `SchoolSemester` from the client has `isFirst`, `startDate`, `endDate`.
+      // We keep this dynamic-friendly to avoid extra imports in this UI file.
+      if (semester.isFirst != true) continue;
+
+      final startUtc = (semester.startDate as DateTime).toDateOnlyUtc();
+      final endUtc = (semester.endDate as DateTime).toDateOnlyUtc();
+
+      final isInside = !dayUtc.isBefore(startUtc) && !dayUtc.isAfter(endUtc);
+      if (isInside) return true;
+    }
+
+    return false;
+  }
+
+  Widget _dayCell(
+    BuildContext context,
+    DateTime date, {
+    required bool showFirstSemesterBadge,
+    Color? backgroundColor,
+    Color? textColor,
+    bool fadedText = false,
+  }) {
+    final effectiveTextColor = fadedText
+        ? (Theme.of(context).disabledColor)
+        : (textColor ?? Theme.of(context).textTheme.bodyMedium?.color);
+
+    return Container(
+      margin: const EdgeInsets.all(4.0),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: Stack(
+        children: [
+          Center(
+            child: Text(
+              date.day.toString(),
+              style: TextStyle(color: effectiveTextColor),
+            ),
+          ),
+          if (showFirstSemesterBadge)
+            Positioned(
+              top: 2,
+              right: 2,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: const Text(
+                  '1',
+                  style: TextStyle(
+                    fontSize: 10,
+                    height: 1.0,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final schooldays = watchValue((SchoolCalendarManager x) => x.schooldays);
+    final semesters =
+        watchValue((SchoolCalendarManager x) => x.schoolSemesters);
     final schooldayDates = schooldays
         .map((e) => e.schoolday.toLocal())
         .toList();
@@ -149,6 +241,42 @@ class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
                     ),
                     calendarBuilders: CalendarBuilders(
                       singleMarkerBuilder: null,
+                      defaultBuilder: (context, date, focusedDay) => _dayCell(
+                        context,
+                        date,
+                        showFirstSemesterBadge: _isDayInFirstSemester(
+                          day: date,
+                          semesters: semesters,
+                        ),
+                      ),
+                      disabledBuilder: (context, date, focusedDay) => _dayCell(
+                        context,
+                        date,
+                        fadedText: true,
+                        showFirstSemesterBadge: _isDayInFirstSemester(
+                          day: date,
+                          semesters: semesters,
+                        ),
+                      ),
+                      outsideBuilder: (context, date, focusedDay) => _dayCell(
+                        context,
+                        date,
+                        fadedText: true,
+                        showFirstSemesterBadge: _isDayInFirstSemester(
+                          day: date,
+                          semesters: semesters,
+                        ),
+                      ),
+                      selectedBuilder: (context, date, focusedDay) => _dayCell(
+                        context,
+                        date,
+                        backgroundColor: Theme.of(context).primaryColor,
+                        textColor: Colors.white,
+                        showFirstSemesterBadge: _isDayInFirstSemester(
+                          day: date,
+                          semesters: semesters,
+                        ),
+                      ),
                       // singleMarkerBuilder: (context, date, events) =>
                       //     Container(
                       //   margin: const EdgeInsets.all(4.0),
@@ -171,16 +299,14 @@ class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
                       //       day.day.toString(),
                       //       style: TextStyle(color: Colors.white),
                       //     )),
-                      todayBuilder: (context, date, events) => Container(
-                        margin: const EdgeInsets.all(4.0),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).highlightColor,
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        child: Text(
-                          date.day.toString(),
-                          style: const TextStyle(color: Colors.white),
+                      todayBuilder: (context, date, focusedDay) => _dayCell(
+                        context,
+                        date,
+                        backgroundColor: Theme.of(context).highlightColor,
+                        textColor: Colors.white,
+                        showFirstSemesterBadge: _isDayInFirstSemester(
+                          day: date,
+                          semesters: semesters,
                         ),
                       ),
                     ),

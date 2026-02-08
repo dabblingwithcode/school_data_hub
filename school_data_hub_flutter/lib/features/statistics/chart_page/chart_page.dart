@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/a
 import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/chart_page_bottom_bar.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/event_stats_view.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/pupil_stats_view.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class ChartPage extends WatchingWidget {
   final Map<
@@ -65,7 +65,7 @@ class ChartPage extends WatchingWidget {
           title: 'Statistik Diagramm',
         ),
         body: const Center(child: Text('Keine Daten verfügbar')),
-        bottomNavigationBar: GenericBottomNavBarWithActions(),
+        bottomNavigationBar: const GenericBottomNavBarWithActions(),
       );
     }
 

@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialo
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/create_user/widgets/scope_names_selector.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/widgets/roles_dropdown.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class CreateOrEditUserPage extends WatchingWidget {
   final User? user;
@@ -18,7 +18,7 @@ class CreateOrEditUserPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _userManager = di<UserManager>();
+    final userManager = di<UserManager>();
     final TextEditingController fullNameController = createOnce(
       () => TextEditingController(text: user?.userInfo?.fullName ?? ''),
     );
@@ -367,7 +367,7 @@ class CreateOrEditUserPage extends WatchingWidget {
                         return;
                       }
 
-                      await _userManager.createUser(
+                      await userManager.createUser(
                         userName: userNameController.text,
                         fullName: fullNameController.text,
                         matrixUserId: matrixIdController.text,

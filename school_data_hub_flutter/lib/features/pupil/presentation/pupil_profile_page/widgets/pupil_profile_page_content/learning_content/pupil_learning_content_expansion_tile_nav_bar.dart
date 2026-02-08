@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/features/learning/presentation/pupil_lis
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_workbooks.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_list_learning_content_nav_bar.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class PupilLearningContentExpansionTileNavBar extends WatchingWidget {
   final PupilProxy pupil;

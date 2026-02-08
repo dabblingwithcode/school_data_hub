@@ -15,7 +15,7 @@ import 'package:school_data_hub_flutter/features/school_lists/presentation/schoo
 import 'package:school_data_hub_flutter/features/school_lists/services/school_list_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/select_users/select_users_page.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
   final int listId;
@@ -29,10 +29,10 @@ class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _schoolListManager = di<SchoolListManager>();
-    final _hubSessionManager = di<HubSessionManager>();
-    final _pupilManager = di<PupilProxyManager>();
-    final schoolList = _schoolListManager.getSchoolListById(listId);
+    final schoolListManager = di<SchoolListManager>();
+    final hubSessionManager = di<HubSessionManager>();
+    final pupilManager = di<PupilProxyManager>();
+    final schoolList = schoolListManager.getSchoolListById(listId);
     return BottomNavBarLayout(
       bottomNavBar: BottomAppBar(
         height: 60,
@@ -53,7 +53,7 @@ class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
                 },
               ),
               if (schoolList.public != true ||
-                  _hubSessionManager.userName == schoolList.createdBy)
+                  hubSessionManager.userName == schoolList.createdBy)
                 Row(
                   children: [
                     const Gap(30),
@@ -69,7 +69,7 @@ class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
                                       .where(
                                         (user) =>
                                             user.userInfo?.userName !=
-                                            _hubSessionManager.userName,
+                                            hubSessionManager.userName,
                                       )
                                       .toList(),
                                   authorizedUsers: schoolList.authorizedUsers,
@@ -84,7 +84,7 @@ class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
                                   .map((user) => user.userInfo!.userName!)
                                   .join('*');
 
-                        _schoolListManager.updateSchoolListProperty(
+                        schoolListManager.updateSchoolListProperty(
                           listId: listId,
                           authorizedUsers: (value: authorizedUsernames),
                         );
@@ -102,7 +102,7 @@ class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
                       await Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (ctx) => SelectPupilsListPage(
-                            selectablePupils: _pupilManager.getPupilsNotListed(
+                            selectablePupils: pupilManager.getPupilsNotListed(
                               pupilsInList,
                             ),
                           ),
@@ -110,7 +110,7 @@ class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
                       ) ??
                       [];
                   if (selectedPupilIds.isEmpty) return;
-                  _schoolListManager.updateSchoolListProperty(
+                  schoolListManager.updateSchoolListProperty(
                     listId: listId,
                     operation: (
                       pupilIds: selectedPupilIds,
@@ -124,7 +124,7 @@ class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
                 tooltip: 'Liste als PDF',
                 icon: const Icon(Icons.print, size: 30),
                 onPressed: () async {
-                  final pupils = _schoolListManager.getPupilsinSchoolList(
+                  final pupils = schoolListManager.getPupilsinSchoolList(
                     listId,
                   );
                   final pdfFile =

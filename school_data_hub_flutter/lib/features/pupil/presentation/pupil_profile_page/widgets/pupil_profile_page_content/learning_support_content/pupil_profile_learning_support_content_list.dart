@@ -30,7 +30,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/support_level_history_expansion_tile.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class PupilProfileLearningSupportContentList extends WatchingWidget {
   final PupilProxy pupil;
@@ -42,8 +42,8 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _hubSessionManager = di<HubSessionManager>();
-    final isAdmin = _hubSessionManager.isAdmin;
+    final hubSessionManager = di<HubSessionManager>();
+    final isAdmin = hubSessionManager.isAdmin;
 
     final kindergarden = watchPropertyValue(
       (m) => m.kindergarden,

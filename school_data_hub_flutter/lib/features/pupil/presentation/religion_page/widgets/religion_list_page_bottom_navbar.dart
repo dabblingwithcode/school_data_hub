@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.da
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/religion_page/widgets/religion_filter_bottom_sheet.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _pupilsFilter = di<PupilsFilter>();
 
@@ -29,20 +29,17 @@ class ReligionListPageBottomNavBar extends WatchingWidget {
               const Spacer(),
               IconButton(
                 tooltip: 'zurück',
-                icon: const Icon(
-                  Icons.arrow_back,
-                  size: 30,
-                ),
+                icon: const Icon(Icons.arrow_back, size: 30),
                 onPressed: () {
                   Navigator.pop(context);
                 },
               ),
               const Gap(30),
               InkWell(
-                onTap: () =>
-                    showGenericFilterBottomSheet(context: context, filterList: [
-                  const ReligionFilterBottomSheet(),
-                ]),
+                onTap: () => showGenericFilterBottomSheet(
+                  context: context,
+                  filterList: [const ReligionFilterBottomSheet()],
+                ),
                 onLongPress: () => _pupilsFilter.resetFilters(),
                 child: Icon(
                   Icons.filter_list,
@@ -50,7 +47,7 @@ class ReligionListPageBottomNavBar extends WatchingWidget {
                   size: 30,
                 ),
               ),
-              const Gap(15)
+              const Gap(15),
             ],
           ),
         ),
@@ -58,4 +55,3 @@ class ReligionListPageBottomNavBar extends WatchingWidget {
     );
   }
 }
-

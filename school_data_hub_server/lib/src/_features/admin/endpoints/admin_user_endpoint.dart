@@ -1,11 +1,4 @@
-import 'dart:convert';
-
-import 'package:collection/collection.dart';
-import 'package:school_data_hub_server/src/_features/learning/helpers/import_competences_from_json_file.dart';
-import 'package:school_data_hub_server/src/_features/learning_support/helpers/import_support_categories_from_file_content_json.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
-import 'package:school_data_hub_server/src/helpers/convert_file_to_content_string.dart';
-import 'package:school_data_hub_server/src/helpers/generate_pupil_from_admin_console_data.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/module.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;

@@ -1,23 +1,21 @@
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class PupilWorkbookApiService {
   final _notificationService = di<NotificationService>();
   Client get _client => di<Client>();
   //- create
 
-  Future<PupilWorkbook?> postNewPupilWorkbook(
-      {required int pupilId,
-      required int isbn,
-      required String createdBy}) async {
+  Future<PupilWorkbook?> postNewPupilWorkbook({
+    required int pupilId,
+    required int isbn,
+    required String createdBy,
+  }) async {
     final postedPupilWorkbook = await ClientHelper.apiCall(
-      call: () => _client.pupilWorkbooks.postPupilWorkbook(
-        isbn,
-        pupilId,
-        createdBy,
-      ),
+      call: () =>
+          _client.pupilWorkbooks.postPupilWorkbook(isbn, pupilId, createdBy),
       errorMessage: 'Fehler beim Erstellen des Arbeitshefts',
     );
     return postedPupilWorkbook;
@@ -28,36 +26,40 @@ class PupilWorkbookApiService {
   Future<List<PupilWorkbook>?> fetchAllPupilWorkbooks() async {
     final fetchedPupilWorkbooks =
         await ClientHelper.apiCall<List<PupilWorkbook>>(
-      call: () => _client.pupilWorkbooks.fetchPupilWorkbooks(),
-      errorMessage: 'Fehler beim Laden der Arbeitshefte',
-    );
+          call: () => _client.pupilWorkbooks.fetchPupilWorkbooks(),
+          errorMessage: 'Fehler beim Laden der Arbeitshefte',
+        );
 
     return fetchedPupilWorkbooks;
   }
 
-  Future<List<PupilWorkbook>?> fetchAllPupilWorkbooksFromPupil(
-      {required int pupilId}) async {
+  Future<List<PupilWorkbook>?> fetchAllPupilWorkbooksFromPupil({
+    required int pupilId,
+  }) async {
     final fetchedPupilWorkbooks =
         await ClientHelper.apiCall<List<PupilWorkbook>>(
-      call: () => _client.pupilWorkbooks.fetchPupilWorkbooksFromPupil(pupilId),
-      errorMessage: 'Fehler beim Laden der Arbeitshefte des Schülers',
-    );
+          call: () =>
+              _client.pupilWorkbooks.fetchPupilWorkbooksFromPupil(pupilId),
+          errorMessage: 'Fehler beim Laden der Arbeitshefte des Schülers',
+        );
     return fetchedPupilWorkbooks;
   }
 
   // - update
 
   Future<PupilWorkbook?> updatePupilWorkbook(
-      int pupilId, PupilWorkbook pupilWorkbook) async {
+    int pupilId,
+    PupilWorkbook pupilWorkbook,
+  ) async {
     final updatedPupilWorkbook = await ClientHelper.apiCall<PupilWorkbook>(
-      call: () => _client.pupilWorkbooks.updatePupilWorkbook(
-        pupilWorkbook,
-      ),
+      call: () => _client.pupilWorkbooks.updatePupilWorkbook(pupilWorkbook),
       errorMessage: 'Fehler beim Aktualisieren des Arbeitshefts',
     );
 
     _notificationService.showSnackBar(
-        NotificationType.success, 'Arbeitsheft erfolgreich aktualisiert');
+      NotificationType.success,
+      'Arbeitsheft erfolgreich aktualisiert',
+    );
 
     return updatedPupilWorkbook;
   }

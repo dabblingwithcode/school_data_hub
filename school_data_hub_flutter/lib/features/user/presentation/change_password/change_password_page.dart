@@ -4,7 +4,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 /// A page for users to change their password.
 ///
@@ -22,7 +22,7 @@ class UserChangePasswordPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _userManager = di<UserManager>();
+    final userManager = di<UserManager>();
     final TextEditingController oldPasswordController = createOnce(
       () => TextEditingController(),
     );
@@ -175,7 +175,7 @@ class UserChangePasswordPage extends WatchingWidget {
                     }
 
                     // Call the user manager to change password
-                    await _userManager.changePassword(
+                    await userManager.changePassword(
                       oldPasswordController.text,
                       newPasswordController.text,
                     );

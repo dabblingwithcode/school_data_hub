@@ -5,7 +5,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 final _log = Logger('SchoolDataManager');
 
 /// Manages local school data storage and state
-class SchoolDataManager extends ChangeNotifier {
+class SchoolDataManager {
   // Current school data
   final _schoolData = ValueNotifier<SchoolData?>(null);
   ValueListenable<SchoolData?> get schoolData => _schoolData;
@@ -27,6 +27,14 @@ class SchoolDataManager extends ChangeNotifier {
 
   SchoolDataManager();
 
+  void dispose() {
+    _schoolData.dispose();
+    _logoImage.dispose();
+    _officialSealImage.dispose();
+    _isLoading.dispose();
+    _isSaving.dispose();
+  }
+
   /// Initialize the manager
   Future<SchoolDataManager> init() async {
     return this;
@@ -44,34 +52,29 @@ class SchoolDataManager extends ChangeNotifier {
   /// Set school data
   void setSchoolData(SchoolData schoolData) {
     _schoolData.value = schoolData;
-    notifyListeners();
     _log.info('School data updated: ${schoolData.name}');
   }
 
   /// Set logo image
   void setLogoImage(ByteData? imageData) {
     _logoImage.value = imageData;
-    notifyListeners();
     _log.info('Logo image updated');
   }
 
   /// Set official seal image
   void setOfficialSealImage(ByteData? imageData) {
     _officialSealImage.value = imageData;
-    notifyListeners();
     _log.info('Official seal image updated');
   }
 
   /// Set loading state
   void setLoading(bool loading) {
     _isLoading.value = loading;
-    notifyListeners();
   }
 
   /// Set saving state
   void setSaving(bool saving) {
     _isSaving.value = saving;
-    notifyListeners();
   }
 
   /// Debug method to print current state

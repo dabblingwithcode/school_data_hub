@@ -15,7 +15,7 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _log = Logger('SchoolListPdfGenerator');
 
@@ -485,7 +485,7 @@ class SchoolListPdfGenerator {
                 ],
               );
             }
-          }).toList(),
+          }),
         ],
       );
     } catch (e) {

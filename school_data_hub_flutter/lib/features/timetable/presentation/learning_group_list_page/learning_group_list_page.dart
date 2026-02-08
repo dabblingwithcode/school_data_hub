@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/features/timetable/domain/timetable_mana
 import 'package:school_data_hub_flutter/features/timetable/presentation/learning_group_list_page/widgets/learning_group_list_card.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/learning_group_list_page/widgets/learning_group_list_page_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_lesson_group_page/new_lesson_group_page.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class LearningGroupListPage extends WatchingWidget {
   const LearningGroupListPage({super.key});
@@ -36,21 +36,16 @@ class LearningGroupListPage extends WatchingWidget {
                 const SliverGap(5),
                 GenericSliverListWithEmptyListCheck(
                   items: lessonGroups,
-                  itemBuilder:
-                      (_, lessonGroup) => LearningGroupListCard(
-                        lessonGroup: lessonGroup,
-                        onEdit:
-                            () => _navigateToEditLessonGroup(
-                              context,
-                              lessonGroup,
-                            ),
-                        onDelete:
-                            () => _showDeleteConfirmation(
-                              context,
-                              lessonGroup,
-                              timetableManager,
-                            ),
-                      ),
+                  itemBuilder: (_, lessonGroup) => LearningGroupListCard(
+                    lessonGroup: lessonGroup,
+                    onEdit: () =>
+                        _navigateToEditLessonGroup(context, lessonGroup),
+                    onDelete: () => _showDeleteConfirmation(
+                      context,
+                      lessonGroup,
+                      timetableManager,
+                    ),
+                  ),
                 ),
               ],
             ),

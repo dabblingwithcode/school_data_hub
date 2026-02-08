@@ -16,17 +16,17 @@ class TimetableSlotList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (timetableSlots.isEmpty) {
-      return Center(
+      return const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.schedule, size: 64, color: Colors.grey),
-            const Gap(16),
+            Gap(16),
             Text(
               'Keine Zeitslots verfügbar',
               style: TextStyle(fontSize: 18, color: Colors.grey),
             ),
-            const Gap(8),
+            Gap(8),
             Text(
               'Erstellen Sie Zeitslots um Unterrichtszeiten zu definieren',
               style: TextStyle(fontSize: 14, color: Colors.grey),

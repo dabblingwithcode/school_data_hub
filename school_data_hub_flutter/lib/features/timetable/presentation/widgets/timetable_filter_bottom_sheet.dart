@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/features/timetable/domain/timetable_mana
 import 'package:school_data_hub_flutter/features/timetable/presentation/learning_group_list_page/learning_group_list_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_lesson_group_page/new_lesson_group_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/timetable_utils.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class TimetableFilterBottomSheet extends WatchingWidget {
   const TimetableFilterBottomSheet({super.key});
@@ -19,7 +19,7 @@ class TimetableFilterBottomSheet extends WatchingWidget {
       (TimetableManager x) => x.selectedLessonGroupIds,
     );
 
-    void _toggleLessonGroupSelection(LessonGroup group) {
+    void toggleLessonGroupSelection(LessonGroup group) {
       if (selectedGroupIds.contains(group.id)) {
         timetableManager.removeLessonGroupFromSelection(group);
       } else {
@@ -27,17 +27,17 @@ class TimetableFilterBottomSheet extends WatchingWidget {
       }
     }
 
-    void _clearAllSelections() {
+    void clearAllSelections() {
       timetableManager.clearLessonGroupSelection();
     }
 
-    void _navigateToNewLessonGroup() {
+    void navigateToNewLessonGroup() {
       Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => const NewLessonGroupPage()),
       );
     }
 
-    void _navigateToLearningGroupList() {
+    void navigateToLearningGroupList() {
       Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => const LearningGroupListPage()),
       );
@@ -58,17 +58,17 @@ class TimetableFilterBottomSheet extends WatchingWidget {
                   IconButton(
                     tooltip: 'Neue Klasse hinzufügen',
                     icon: const Icon(Icons.add_circle_outline, size: 24),
-                    onPressed: _navigateToNewLessonGroup,
+                    onPressed: navigateToNewLessonGroup,
                   ),
                   IconButton(
                     tooltip: 'Klassen verwalten',
                     icon: const Icon(Icons.settings, size: 24),
-                    onPressed: _navigateToLearningGroupList,
+                    onPressed: navigateToLearningGroupList,
                   ),
                   IconButton.filled(
                     iconSize: 35,
                     color: Colors.amber,
-                    onPressed: _clearAllSelections,
+                    onPressed: clearAllSelections,
                     icon: const Icon(Icons.restart_alt_rounded),
                     tooltip: 'Alle Filter zurücksetzen',
                   ),
@@ -124,9 +124,9 @@ class TimetableFilterBottomSheet extends WatchingWidget {
                   ),
                   child: const Row(
                     children: [
-                      const Icon(Icons.info_outline, color: Colors.grey),
-                      const Gap(8),
-                      const Expanded(
+                      Icon(Icons.info_outline, color: Colors.grey),
+                      Gap(8),
+                      Expanded(
                         child: Text(
                           'Keine Klassen verfügbar. Erstellen Sie zuerst Klassen.',
                           style: TextStyle(color: Colors.grey),
@@ -149,14 +149,15 @@ class TimetableFilterBottomSheet extends WatchingWidget {
                           timetableManager.clearLessonGroupSelection();
                         }
                       },
-                      selectedColor:
-                          Theme.of(context).colorScheme.primaryContainer,
-                      checkmarkColor:
-                          Theme.of(context).colorScheme.onPrimaryContainer,
-                      avatar:
-                          selectedGroupIds.isEmpty
-                              ? const Icon(Icons.check, size: 16)
-                              : null,
+                      selectedColor: Theme.of(
+                        context,
+                      ).colorScheme.primaryContainer,
+                      checkmarkColor: Theme.of(
+                        context,
+                      ).colorScheme.onPrimaryContainer,
+                      avatar: selectedGroupIds.isEmpty
+                          ? const Icon(Icons.check, size: 16)
+                          : null,
                     ),
                     // Individual lesson groups
                     ...lessonGroups.map((group) {
@@ -165,24 +166,24 @@ class TimetableFilterBottomSheet extends WatchingWidget {
                         label: Text(group.name),
                         selected: isSelected,
                         onSelected: (selected) {
-                          _toggleLessonGroupSelection(group);
+                          toggleLessonGroupSelection(group);
                         },
-                        selectedColor:
-                            Theme.of(context).colorScheme.primaryContainer,
-                        checkmarkColor:
-                            Theme.of(context).colorScheme.onPrimaryContainer,
-                        backgroundColor:
-                            group.color != null
-                                ? TimetableUtils.parseColor(
-                                  group.color!,
-                                )?.withValues(alpha: 0.1)
-                                : null,
-                        avatar:
-                            isSelected
-                                ? const Icon(Icons.check, size: 16)
-                                : null,
+                        selectedColor: Theme.of(
+                          context,
+                        ).colorScheme.primaryContainer,
+                        checkmarkColor: Theme.of(
+                          context,
+                        ).colorScheme.onPrimaryContainer,
+                        backgroundColor: group.color != null
+                            ? TimetableUtils.parseColor(
+                                group.color!,
+                              )?.withValues(alpha: 0.1)
+                            : null,
+                        avatar: isSelected
+                            ? const Icon(Icons.check, size: 16)
+                            : null,
                       );
-                    }).toList(),
+                    }),
                   ],
                 ),
               const Gap(20),
@@ -206,7 +207,7 @@ class TimetableFilterBottomSheet extends WatchingWidget {
   }
 }
 
-showTimetableFilterBottomSheet(BuildContext context) {
+Future<dynamic> showTimetableFilterBottomSheet(BuildContext context) {
   return showModalBottomSheet(
     constraints: const BoxConstraints(maxWidth: 800),
     shape: const RoundedRectangleBorder(

@@ -10,7 +10,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manage
 import 'package:school_data_hub_flutter/features/school_lists/data/school_list_api_service.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/models/pupil_list_entry_proxy.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/models/school_list_pupil_entries_proxy.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SchoolListManager with ChangeNotifier {
   final _notificationService = di<NotificationService>();

@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/features/_attendance/domain/models/enums
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/attendance_list_page.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/chart_page.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class AttendanceStatsView extends WatchingWidget {
   final List<Schoolday> sortedSchooldays;
@@ -26,13 +26,13 @@ class AttendanceStatsView extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _hiddenSeries = createOnce(() => ValueNotifier<Set<String>>({}));
+    final hiddenSeries = createOnce(() => ValueNotifier<Set<String>>({}));
     final hiddenSeriesSet = watchPropertyValue(
       (ValueNotifier<Set<String>> p0) => p0.value,
-      target: _hiddenSeries,
+      target: hiddenSeries,
     );
 
-    void _onSelectionChanged(charts.SelectionModel<String> model) {
+    void onSelectionChanged(charts.SelectionModel<String> model) {
       final selectedDatum = model.selectedDatum;
 
       if (selectedDatum.isNotEmpty) {
@@ -53,7 +53,7 @@ class AttendanceStatsView extends WatchingWidget {
           context: context,
           builder: (context) => AlertDialog(
             title: Text(
-              '${chartData.date.formatWithWeekday()}',
+              chartData.date.formatWithWeekday(),
               style: AppStyles.title,
             ),
             content: Text(buffer.toString()),
@@ -100,20 +100,20 @@ class AttendanceStatsView extends WatchingWidget {
       }
     }
 
-    void _toggleSeries(String seriesId) {
-      final currentSet = Set<String>.from(_hiddenSeries.value);
+    void toggleSeries(String seriesId) {
+      final currentSet = Set<String>.from(hiddenSeries.value);
       if (currentSet.contains(seriesId)) {
         currentSet.remove(seriesId);
       } else {
         currentSet.add(seriesId);
       }
-      _hiddenSeries.value = currentSet;
+      hiddenSeries.value = currentSet;
     }
 
-    Widget _buildLegendItem(String label, Color color, String seriesId) {
+    Widget buildLegendItem(String label, Color color, String seriesId) {
       final isHidden = hiddenSeriesSet.contains(seriesId);
       return InkWell(
-        onTap: () => _toggleSeries(seriesId),
+        onTap: () => toggleSeries(seriesId),
         child: Opacity(
           opacity: isHidden ? 0.5 : 1.0,
           child: Row(
@@ -146,7 +146,7 @@ class AttendanceStatsView extends WatchingWidget {
       );
     }
 
-    List<charts.Series<ChartData, String>> _createAttendanceSeries() {
+    List<charts.Series<ChartData, String>> createAttendanceSeries() {
       final List<charts.Series<ChartData, String>> series = [];
 
       if (!hiddenSeriesSet.contains('excused')) {
@@ -221,7 +221,7 @@ class AttendanceStatsView extends WatchingWidget {
       return series;
     }
 
-    final attendanceSeries = _createAttendanceSeries();
+    final attendanceSeries = createAttendanceSeries();
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(5.0),
@@ -285,7 +285,7 @@ class AttendanceStatsView extends WatchingWidget {
                     selectionModels: [
                       charts.SelectionModelConfig(
                         type: charts.SelectionModelType.info,
-                        changedListener: _onSelectionChanged,
+                        changedListener: onSelectionChanged,
                       ),
                     ],
                     behaviors: [
@@ -307,9 +307,9 @@ class AttendanceStatsView extends WatchingWidget {
                 spacing: 20,
                 runSpacing: 10,
                 children: [
-                  _buildLegendItem('Entschuldigt', Colors.green, 'excused'),
-                  _buildLegendItem('Unentschuldigt', Colors.red, 'unexcused'),
-                  _buildLegendItem('abgeholt', Colors.orange, 'goneHome'),
+                  buildLegendItem('Entschuldigt', Colors.green, 'excused'),
+                  buildLegendItem('Unentschuldigt', Colors.red, 'unexcused'),
+                  buildLegendItem('abgeholt', Colors.orange, 'goneHome'),
                 ],
               ),
             ),

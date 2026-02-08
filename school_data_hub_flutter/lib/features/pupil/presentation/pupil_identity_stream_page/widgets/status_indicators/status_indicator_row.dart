@@ -15,7 +15,7 @@ class StatusIndicatorRow extends StatelessWidget {
   final int transferCounter;
 
   const StatusIndicatorRow({
-    Key? key,
+    super.key,
     required this.role,
     required this.isConnected,
     required this.requestReceived,
@@ -24,7 +24,7 @@ class StatusIndicatorRow extends StatelessWidget {
     required this.isProcessing,
     required this.isCompleted,
     required this.transferCounter,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

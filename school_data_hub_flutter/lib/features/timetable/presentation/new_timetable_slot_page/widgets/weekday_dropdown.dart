@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 // Custom enum for bulk selection
 enum WeekdaySelection {
@@ -11,56 +12,53 @@ enum WeekdaySelection {
   allWeekdays,
 }
 
-class WeekdayDropdown extends StatelessWidget {
+class WeekdayDropdown extends WatchingWidget {
   final ValueNotifier<Weekday?> selectedWeekday;
   final ValueNotifier<WeekdaySelection?> selectedWeekdayOption;
 
   const WeekdayDropdown({
-    super.key, 
+    super.key,
     required this.selectedWeekday,
     required this.selectedWeekdayOption,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<WeekdaySelection?>(
-      valueListenable: selectedWeekdayOption,
-      builder: (context, value, child) {
-        return DropdownButtonFormField<WeekdaySelection>(
-          value: value,
-          decoration: const InputDecoration(
-            labelText: 'Wochentag *',
-            border: OutlineInputBorder(),
-          ),
-          items: [
-            // Individual weekdays
-            ...Weekday.values.map((weekday) {
-              return DropdownMenuItem<WeekdaySelection>(
-                value: _weekdayToSelection(weekday),
-                child: Text(_getWeekdayName(weekday)),
-              );
-            }),
-            // Bulk option
-            const DropdownMenuItem<WeekdaySelection>(
-              value: WeekdaySelection.allWeekdays,
-              child: Text('Alle Wochentage (Bulk-Erstellung)'),
-            ),
-          ],
-          onChanged: (WeekdaySelection? newValue) {
-            selectedWeekdayOption.value = newValue;
-            if (newValue != null && newValue != WeekdaySelection.allWeekdays) {
-              selectedWeekday.value = _selectionToWeekday(newValue);
-            } else {
-              selectedWeekday.value = null;
-            }
-          },
-          validator: (value) {
-            if (value == null) {
-              return 'Bitte wählen Sie einen Wochentag aus.';
-            }
-            return null;
-          },
-        );
+    final value = watch(selectedWeekdayOption).value;
+
+    return DropdownButtonFormField<WeekdaySelection>(
+      initialValue: value,
+      decoration: const InputDecoration(
+        labelText: 'Wochentag *',
+        border: OutlineInputBorder(),
+      ),
+      items: [
+        // Individual weekdays
+        ...Weekday.values.map((weekday) {
+          return DropdownMenuItem<WeekdaySelection>(
+            value: _weekdayToSelection(weekday),
+            child: Text(_getWeekdayName(weekday)),
+          );
+        }),
+        // Bulk option
+        const DropdownMenuItem<WeekdaySelection>(
+          value: WeekdaySelection.allWeekdays,
+          child: Text('Alle Wochentage (Bulk-Erstellung)'),
+        ),
+      ],
+      onChanged: (WeekdaySelection? newValue) {
+        selectedWeekdayOption.value = newValue;
+        if (newValue != null && newValue != WeekdaySelection.allWeekdays) {
+          selectedWeekday.value = _selectionToWeekday(newValue);
+        } else {
+          selectedWeekday.value = null;
+        }
+      },
+      validator: (value) {
+        if (value == null) {
+          return 'Bitte wählen Sie einen Wochentag aus.';
+        }
+        return null;
       },
     );
   }

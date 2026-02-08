@@ -3,7 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/widgets/select_pupils_filter_bottom_sheet.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _pupilsFilter = di<PupilsFilter>();
 
@@ -14,14 +14,15 @@ class SelectPupilsPageBottomNavBar extends StatelessWidget {
   final List<int> selectedPupilIds;
   final Function cancelSelect;
   final Function toggleSelectAll;
-  const SelectPupilsPageBottomNavBar(
-      {required this.filtersOn,
-      required this.isSelectMode,
-      required this.isSelectAllMode,
-      required this.selectedPupilIds,
-      required this.cancelSelect,
-      required this.toggleSelectAll,
-      super.key});
+  const SelectPupilsPageBottomNavBar({
+    required this.filtersOn,
+    required this.isSelectMode,
+    required this.isSelectAllMode,
+    required this.selectedPupilIds,
+    required this.cancelSelect,
+    required this.toggleSelectAll,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +39,7 @@ class SelectPupilsPageBottomNavBar extends StatelessWidget {
               const Spacer(),
               IconButton(
                 tooltip: 'zurück',
-                icon: const Icon(
-                  Icons.arrow_back,
-                  size: 30,
-                ),
+                icon: const Icon(Icons.arrow_back, size: 30),
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -52,7 +50,8 @@ class SelectPupilsPageBottomNavBar extends StatelessWidget {
                       onPressed: () {
                         cancelSelect();
                       },
-                      icon: const Icon(Icons.close))
+                      icon: const Icon(Icons.close),
+                    )
                   : const SizedBox.shrink(),
               IconButton(
                 tooltip: 'alle auswählen',
@@ -86,7 +85,7 @@ class SelectPupilsPageBottomNavBar extends StatelessWidget {
                   ),
                 ),
               ),
-              const Gap(10)
+              const Gap(10),
             ],
           ),
         ),

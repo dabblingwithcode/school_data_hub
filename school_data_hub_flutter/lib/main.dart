@@ -10,18 +10,18 @@ import 'package:school_data_hub_flutter/app_utils/logger/domain/log_record_forma
 import 'package:school_data_hub_flutter/app_utils/logger/domain/log_service.dart';
 import 'package:school_data_hub_flutter/app_utils/logger/model/app_log.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/features/app_entry_point/global_overlay_host/global_overlay_host.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_monitor.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/entry_point/entry_point_controller.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/error_page.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/loading_page.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/no_connection_page.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/landing_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:signals/signals_flutter.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
@@ -86,12 +86,12 @@ void main() async {
 class MyApp extends WatchingWidget {
   const MyApp({super.key});
 
+  static final _log = Logger('MyApp');
+
   @override
   Widget build(BuildContext context) {
-    final log = Logger('MyApp');
-
-    // Watch the color palette signal to trigger rebuilds on color changes
-    AppColors.paletteSignal.watch(context);
+    // Watch the color palette to trigger rebuilds on color changes
+    watch(AppColors.paletteNotifier);
 
     // Update status bar color when palette changes
     SystemChrome.setSystemUIOverlayStyle(
@@ -102,12 +102,21 @@ class MyApp extends WatchingWidget {
       ),
     );
 
-    final bool envIsReady = di<EnvManager>().envIsReady.watch(context);
-    final bool userIsAuthenticated = di<EnvManager>().isAuthenticated.watch(
-      context,
+    final bool envIsReady = watchValue((EnvManager x) => x.envIsReady);
+    final bool userIsAuthenticated = watchValue(
+      (EnvManager x) => x.isAuthenticated,
     );
-    final bool isConnected = di<ServerpodConnectivityMonitor>().isConnected
-        .watch(context);
+    final bool isConnected = watchValue(
+      (ServerpodConnectivityMonitor x) => x.isConnected,
+    );
+
+    // Use watch_it's allReady() instead of FutureBuilder
+    final bool diReady = allReady(
+      timeout: const Duration(seconds: 30),
+      onError: (context, error) {
+        _log.shout('Dependency Injection Error: $error');
+      },
+    );
 
     return MaterialApp(
       localizationsDelegates: const <LocalizationsDelegate<Object>>[
@@ -124,31 +133,34 @@ class MyApp extends WatchingWidget {
       debugShowCheckedModeBanner: false,
       title: 'Schuldaten Hub',
       home: !isConnected
-          ? const NoConnectionPage()
-          : envIsReady
-          ? FutureBuilder(
-              future: di.allReady(timeout: const Duration(seconds: 30)),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  log.shout(
-                    'Dependency Injection Error: ${snapshot.error}',
-                    snapshot.stackTrace,
-                  );
-                  return ErrorPage(error: snapshot.error.toString());
-                } else if (snapshot.connectionState == ConnectionState.done) {
-                  if (userIsAuthenticated) {
-                    return const MainMenuBottomNavigation();
-                  } else {
-                    return const Login();
-                  }
-                } else {
-                  return const LoadingPage();
-                }
-              },
+          ? const GlobalOverlayHost(
+              phase: AppPhase.unlogged,
+              child: NoConnectionPage(),
             )
+          : envIsReady
+          ? !diReady
+                ? const GlobalOverlayHost(
+                    phase: AppPhase.loading,
+                    child: LoadingPage(),
+                  )
+                : userIsAuthenticated
+                ? const GlobalOverlayHost(
+                    phase: AppPhase.loggedIn,
+                    child: MainMenuBottomNavigation(),
+                  )
+                : const GlobalOverlayHost(
+                    phase: AppPhase.unlogged,
+                    child: Login(),
+                  )
           : di<EnvManager>().activeEnv != null
-          ? const LoadingPage()
-          : const EntryPoint(),
+          ? const GlobalOverlayHost(
+              phase: AppPhase.loading,
+              child: LoadingPage(),
+            )
+          : const GlobalOverlayHost(
+              phase: AppPhase.unlogged,
+              child: EntryPoint(),
+            ),
     );
   }
 }

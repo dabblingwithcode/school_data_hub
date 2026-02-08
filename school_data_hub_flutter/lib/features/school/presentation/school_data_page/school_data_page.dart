@@ -10,7 +10,7 @@ import 'package:school_data_hub_flutter/features/school/presentation/edit_school
 import 'package:school_data_hub_flutter/features/school/presentation/school_data_page/widgets/contact_info_card.dart';
 import 'package:school_data_hub_flutter/features/school/presentation/school_data_page/widgets/school_info_card.dart';
 import 'package:school_data_hub_flutter/features/school/presentation/school_data_page/widgets/school_logo_card.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SchoolDataPage extends WatchingWidget {
   const SchoolDataPage({super.key});
@@ -38,17 +38,16 @@ class SchoolDataPage extends WatchingWidget {
         iconData: Icons.school,
         title: 'Schulinformationen',
       ),
-      body:
-          isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : schoolData == null
-              ? _buildEmptyState(context, schoolDataManager)
-              : _buildSchoolDataContent(
-                context,
-                schoolData,
-                logoImage,
-                officialSealImage,
-              ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : schoolData == null
+          ? _buildEmptyState(context, schoolDataManager)
+          : _buildSchoolDataContent(
+              context,
+              schoolData,
+              logoImage,
+              officialSealImage,
+            ),
     );
   }
 

@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class PublicMediaAuthValues extends WatchingWidget {
   final PupilProxy pupil;
@@ -19,8 +19,8 @@ class PublicMediaAuthValues extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _hubSessionManager = di<HubSessionManager>();
-    final _notificationService = di<NotificationService>();
+    final hubSessionManager = di<HubSessionManager>();
+    final notificationService = di<NotificationService>();
     final publicMediaAuth = watchPropertyValue(
       (m) => m.publicMediaAuth,
       target: pupil,
@@ -92,7 +92,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                   );
                 },
                 onLongPress: () async {
-                  if (_hubSessionManager.isAdmin != true) return;
+                  if (hubSessionManager.isAdmin != true) return;
                   if (publicMediaAuthDocumentId == null) return;
                   final bool? result = await confirmationDialog(
                     context: context,
@@ -102,7 +102,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                   );
                   if (result != true) return;
                   await PupilMutator().resetPublicMediaAuth(pupil.pupilId);
-                  _notificationService.showSnackBar(
+                  notificationService.showSnackBar(
                     NotificationType.success,
                     'Die Einwilligung wurde geändert!',
                   );

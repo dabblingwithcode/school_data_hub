@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 /// Widget for selecting teachers for a lesson
 class TeacherSelection extends WatchingWidget {
@@ -51,28 +51,25 @@ class TeacherSelection extends WatchingWidget {
                       Wrap(
                         spacing: 8,
                         runSpacing: 8,
-                        children:
-                            selectedTeachers.asMap().entries.map((entry) {
-                              final index = entry.key;
-                              final teacher = entry.value;
-                              final isMainTeacher = index == 0;
+                        children: selectedTeachers.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final teacher = entry.value;
+                          final isMainTeacher = index == 0;
 
-                              return _TeacherChip(
-                                teacher: teacher,
-                                isMainTeacher: isMainTeacher,
-                                index: index,
-                                totalTeachers: selectedTeachers.length,
-                                onMoveUp:
-                                    index > 0
-                                        ? () => _moveTeacher(index, -1)
-                                        : null,
-                                onMoveDown:
-                                    index < selectedTeachers.length - 1
-                                        ? () => _moveTeacher(index, 1)
-                                        : null,
-                                onRemove: () => _removeTeacher(teacher),
-                              );
-                            }).toList(),
+                          return _TeacherChip(
+                            teacher: teacher,
+                            isMainTeacher: isMainTeacher,
+                            index: index,
+                            totalTeachers: selectedTeachers.length,
+                            onMoveUp: index > 0
+                                ? () => _moveTeacher(index, -1)
+                                : null,
+                            onMoveDown: index < selectedTeachers.length - 1
+                                ? () => _moveTeacher(index, 1)
+                                : null,
+                            onRemove: () => _removeTeacher(teacher),
+                          );
+                        }).toList(),
                       ),
                       if (selectedTeachers.length > 1)
                         const Padding(
@@ -94,29 +91,28 @@ class TeacherSelection extends WatchingWidget {
                 padding: const EdgeInsets.all(12),
                 child: DropdownButtonFormField<int>(
                   key: Key('teacher_dropdown_$dropdownKey'),
-                  value:
+                  initialValue:
                       null, // Always null since this is for adding new teachers
                   decoration: const InputDecoration(
                     labelText: 'Lehrer hinzufügen',
                     border: OutlineInputBorder(),
                   ),
-                  items:
-                      users
-                          .where(
-                            (user) =>
-                                user.role == Role.teacher &&
-                                user.id != null &&
-                                !selectedTeachers.any((t) => t.id == user.id),
-                          )
-                          .map((user) {
-                            return DropdownMenuItem<int>(
-                              value: user.id,
-                              child: Text(
-                                user.userInfo?.fullName ?? 'Unbekannter Lehrer',
-                              ),
-                            );
-                          })
-                          .toList(),
+                  items: users
+                      .where(
+                        (user) =>
+                            user.role == Role.teacher &&
+                            user.id != null &&
+                            !selectedTeachers.any((t) => t.id == user.id),
+                      )
+                      .map((user) {
+                        return DropdownMenuItem<int>(
+                          value: user.id,
+                          child: Text(
+                            user.userInfo?.fullName ?? 'Unbekannter Lehrer',
+                          ),
+                        );
+                      })
+                      .toList(),
                   onChanged: (userId) {
                     if (userId != null) {
                       final user = users.firstWhere((u) => u.id == userId);
@@ -174,15 +170,13 @@ class _TeacherChip extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color:
-            isMainTeacher
-                ? Colors.orange.withValues(alpha: 0.1)
-                : Theme.of(context).chipTheme.backgroundColor,
+        color: isMainTeacher
+            ? Colors.orange.withValues(alpha: 0.1)
+            : Theme.of(context).chipTheme.backgroundColor,
         border: Border.all(
-          color:
-              isMainTeacher
-                  ? Colors.orange
-                  : Colors.grey.withValues(alpha: 0.3),
+          color: isMainTeacher
+              ? Colors.orange
+              : Colors.grey.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -206,8 +200,9 @@ class _TeacherChip extends StatelessWidget {
                 Text(
                   teacher.userInfo?.fullName ?? 'Unbekannter Lehrer',
                   style: TextStyle(
-                    fontWeight:
-                        isMainTeacher ? FontWeight.bold : FontWeight.normal,
+                    fontWeight: isMainTeacher
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                   ),
                 ),
                 if (isMainTeacher)

@@ -17,7 +17,7 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/enums.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/widgets/competence_check_dropdown.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class PupilWorkbookCard extends WatchingWidget {
   const PupilWorkbookCard({
@@ -111,20 +111,10 @@ class PupilWorkbookCard extends WatchingWidget {
                               'Not implemented yet',
                             );
                           },
-                          child: thisPupilWorkbook.workbook!.imageUrl != null
-                              ? UnencryptedImageInCard(
+                          child: UnencryptedImageInCard(
                                   cacheKey: pupilWorkbook.isbn.toString(),
                                   path: thisPupilWorkbook.workbook!.imageUrl,
                                   size: 100,
-                                )
-                              : SizedBox(
-                                  height: 100,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(5),
-                                    child: Image.asset(
-                                      'assets/document_camera.png',
-                                    ),
-                                  ),
                                 ),
                         ),
 

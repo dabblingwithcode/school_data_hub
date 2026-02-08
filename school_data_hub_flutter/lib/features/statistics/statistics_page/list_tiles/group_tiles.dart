@@ -4,7 +4,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/list_tiles/group_card.dart';
 
-groupTiles(
+RenderObjectWidget groupTiles(
   context,
   StatisticsController controller,
   List<PupilProxy> group,

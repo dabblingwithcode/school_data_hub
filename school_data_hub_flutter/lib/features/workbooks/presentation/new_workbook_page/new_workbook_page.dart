@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_enums
     as workbookEnum;
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/common/workbook_image.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class NewWorkbookPage extends WatchingWidget {
   final String? name;

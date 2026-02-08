@@ -6,7 +6,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/school/data/school_data_api_service.dart';
 
 /// Manages CRUD operations for school data
-class SchoolInfoDataManager extends ChangeNotifier {
+class SchoolInfoDataManager {
   final _apiService = SchoolDataApiService();
   final _log = Logger('SchoolInfoDataManager');
 

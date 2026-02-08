@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/features/timetable/domain/models/timetab
 
 /// Main timetable manager that orchestrates all sub-managers
 /// This is the refactored version that breaks down the original large class
-class TimetableManager extends ChangeNotifier {
+class TimetableManager {
   // Sub-managers
   final TimetableDataManager _dataManager;
   final TimetableCrudManager _crudManager;
@@ -54,12 +54,7 @@ class TimetableManager extends ChangeNotifier {
 
   void dispose() {
     _dataManager.dispose();
-    _crudManager.dispose();
     _uiManager.dispose();
-    _lessonManager.dispose();
-    _membershipManager.dispose();
-    super.dispose();
-    return;
   }
 
   /// Initialize the timetable manager
@@ -73,7 +68,6 @@ class TimetableManager extends ChangeNotifier {
   Future<void> refreshData() async {
     await _dataManager.refreshData();
     _buildWeekdayProxies();
-    notifyListeners();
   }
 
   /// Debug method to print current state
@@ -99,31 +93,26 @@ class TimetableManager extends ChangeNotifier {
   // UI Management Methods
   void selectWeekday(Weekday weekday) {
     _uiManager.selectWeekday(weekday);
-    notifyListeners();
   }
 
   void selectLessonGroup(LessonGroup? lessonGroup) {
     _uiManager.selectLessonGroup(lessonGroup);
     _buildWeekdayProxies();
-    notifyListeners();
   }
 
   void addLessonGroupToSelection(LessonGroup lessonGroup) {
     _uiManager.addLessonGroupToSelection(lessonGroup);
     _buildWeekdayProxies();
-    notifyListeners();
   }
 
   void removeLessonGroupFromSelection(LessonGroup lessonGroup) {
     _uiManager.removeLessonGroupFromSelection(lessonGroup);
     _buildWeekdayProxies();
-    notifyListeners();
   }
 
   void clearLessonGroupSelection() {
     _uiManager.clearLessonGroupSelection();
     _buildWeekdayProxies();
-    notifyListeners();
   }
 
   // CRUD Operations for Scheduled Lessons
@@ -147,7 +136,6 @@ class TimetableManager extends ChangeNotifier {
     final createdSubject = await _crudManager.addSubject(subject);
     if (createdSubject != null) {
       _dataManager.addSubject(createdSubject);
-      notifyListeners();
     }
   }
 
@@ -155,14 +143,12 @@ class TimetableManager extends ChangeNotifier {
     final updatedSubject = await _crudManager.updateSubject(subject);
     if (updatedSubject != null) {
       _dataManager.updateSubject(updatedSubject);
-      notifyListeners();
     }
   }
 
   Future<void> removeSubject(int subjectId) async {
     await _crudManager.removeSubject(subjectId);
     _dataManager.removeSubject(subjectId);
-    notifyListeners();
   }
 
   // CRUD Operations for Classrooms
@@ -170,7 +156,6 @@ class TimetableManager extends ChangeNotifier {
     final createdClassroom = await _crudManager.addClassroom(classroom);
     if (createdClassroom != null) {
       _dataManager.addClassroom(createdClassroom);
-      notifyListeners();
     }
   }
 
@@ -178,14 +163,12 @@ class TimetableManager extends ChangeNotifier {
     final updatedClassroom = await _crudManager.updateClassroom(classroom);
     if (updatedClassroom != null) {
       _dataManager.updateClassroom(updatedClassroom);
-      notifyListeners();
     }
   }
 
   Future<void> removeClassroom(int classroomId) async {
     await _crudManager.removeClassroom(classroomId);
     _dataManager.removeClassroom(classroomId);
-    notifyListeners();
   }
 
   // CRUD Operations for Lesson Groups
@@ -193,7 +176,6 @@ class TimetableManager extends ChangeNotifier {
     final createdLessonGroup = await _crudManager.addLessonGroup(lessonGroup);
     if (createdLessonGroup != null) {
       _dataManager.addLessonGroup(createdLessonGroup);
-      notifyListeners();
     }
   }
 
@@ -203,14 +185,12 @@ class TimetableManager extends ChangeNotifier {
     );
     if (updatedLessonGroup != null) {
       _dataManager.updateLessonGroup(updatedLessonGroup);
-      notifyListeners();
     }
   }
 
   Future<void> removeLessonGroup(int lessonGroupId) async {
     await _crudManager.removeLessonGroup(lessonGroupId);
     _dataManager.removeLessonGroup(lessonGroupId);
-    notifyListeners();
   }
 
   // CRUD Operations for Timetable Slots
@@ -333,7 +313,6 @@ class TimetableManager extends ChangeNotifier {
       _dataManager.scheduledLessonGroupMemberships.value,
       (updatedMemberships) {
         _dataManager.updateScheduledLessonGroupMemberships(updatedMemberships);
-        notifyListeners();
       },
     );
   }
@@ -345,7 +324,6 @@ class TimetableManager extends ChangeNotifier {
       _dataManager.scheduledLessonGroupMemberships.value,
       (updatedMemberships) {
         _dataManager.updateScheduledLessonGroupMemberships(updatedMemberships);
-        notifyListeners();
       },
     );
   }
@@ -360,7 +338,6 @@ class TimetableManager extends ChangeNotifier {
       _dataManager.scheduledLessonGroupMemberships.value,
       (updatedMemberships) {
         _dataManager.updateScheduledLessonGroupMemberships(updatedMemberships);
-        notifyListeners();
       },
     );
   }
@@ -476,6 +453,5 @@ class TimetableManager extends ChangeNotifier {
     _dataManager.clearData();
     _uiManager.clearLessonGroupSelection();
     _buildWeekdayProxies();
-    notifyListeners();
   }
 }

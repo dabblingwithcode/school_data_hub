@@ -1,13 +1,10 @@
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
-import 'package:watch_it/watch_it.dart';
-
-final _log = Logger('SchoolListFilterManager');
 
 class SchoolListFilterManager {
   SchoolListManager get _schoolListManager => di<SchoolListManager>();

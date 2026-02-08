@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/features/timetable/domain/timetable_mana
 import 'package:school_data_hub_flutter/features/timetable/presentation/classroom_list_page/widgets/classroom_list_card.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/classroom_list_page/widgets/classroom_list_page_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_classroom_page/new_classroom_page.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class ClassroomListPage extends WatchingWidget {
   const ClassroomListPage({super.key});
@@ -36,18 +36,15 @@ class ClassroomListPage extends WatchingWidget {
                 const SliverGap(5),
                 GenericSliverListWithEmptyListCheck(
                   items: classrooms,
-                  itemBuilder:
-                      (_, classroom) => ClassroomListCard(
-                        classroom: classroom,
-                        onEdit:
-                            () => _navigateToEditClassroom(context, classroom),
-                        onDelete:
-                            () => _showDeleteConfirmation(
-                              context,
-                              classroom,
-                              timetableManager,
-                            ),
-                      ),
+                  itemBuilder: (_, classroom) => ClassroomListCard(
+                    classroom: classroom,
+                    onEdit: () => _navigateToEditClassroom(context, classroom),
+                    onDelete: () => _showDeleteConfirmation(
+                      context,
+                      classroom,
+                      timetableManager,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -69,7 +66,10 @@ class ClassroomListPage extends WatchingWidget {
     await di<TimetableManager>().refreshData();
   }
 
-  void _navigateToEditClassroom(BuildContext context, Classroom classroom) async {
+  void _navigateToEditClassroom(
+    BuildContext context,
+    Classroom classroom,
+  ) async {
     await Navigator.push(
       context,
       MaterialPageRoute(

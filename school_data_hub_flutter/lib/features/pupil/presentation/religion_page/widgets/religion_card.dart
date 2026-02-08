@@ -6,15 +6,15 @@ import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class ReligionCard extends WatchingWidget {
   final PupilProxy pupil;
   const ReligionCard(this.pupil, {super.key});
   @override
   Widget build(BuildContext context) {
-    final _filterStateManager = di<FiltersStateManager>();
-    final _mainMenuBottomNavManager = di<BottomNavManager>();
+    final filterStateManager = di<FiltersStateManager>();
+    final mainMenuBottomNavManager = di<BottomNavManager>();
     return Card(
       color: Colors.white,
       surfaceTintColor: Colors.white,
@@ -53,8 +53,8 @@ class ReligionCard extends WatchingWidget {
                                   scrollDirection: Axis.horizontal,
                                   child: InkWell(
                                     onTap: () {
-                                      _filterStateManager.resetFilters();
-                                      _mainMenuBottomNavManager
+                                      filterStateManager.resetFilters();
+                                      mainMenuBottomNavManager
                                           .setPupilProfileNavPage(0);
                                       Navigator.of(context).push(
                                         MaterialPageRoute(

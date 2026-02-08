@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manag
 import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/controller/workbook_list_view_model.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/widgets/workbook_card.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/widgets/workbook_list_bottom_navbar.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class WorkbookListPage extends WatchingWidget {
   final WorkbookListViewModel viewModel;

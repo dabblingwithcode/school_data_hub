@@ -15,7 +15,7 @@ class SchoolSemesterDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<SchoolSemester>(
-      value: selectedSemester.value,
+      initialValue: selectedSemester.value,
       decoration: AppStyles.textFieldDecoration(labelText: 'Schulsemester'),
       items:
           schoolSemesters.map((semester) {

@@ -14,7 +14,7 @@ final _log = Logger('SchoolDataMainManager');
 
 /// Main school data manager that orchestrates all sub-managers
 /// This follows the established pattern from the timetable feature
-class SchoolDataMainManager extends ChangeNotifier {
+class SchoolDataMainManager {
   // Sub-managers
   final data_manager.SchoolDataManager _dataManager;
   final SchoolInfoDataManager _crudManager;
@@ -49,13 +49,10 @@ class SchoolDataMainManager extends ChangeNotifier {
     return this;
   }
 
-  @override
   void dispose() {
     _dataManager.dispose();
-    _crudManager.dispose();
+
     _uiManager.dispose();
-    super.dispose();
-    return;
   }
 
   /// Refresh all data from API
@@ -115,7 +112,6 @@ class SchoolDataMainManager extends ChangeNotifier {
       if (savedData != null) {
         _dataManager.setSchoolData(savedData);
         _uiManager.clearFormChanges();
-        notifyListeners();
       }
     } catch (e) {
       _log.severe('Error saving school data: $e');
@@ -174,7 +170,6 @@ class SchoolDataMainManager extends ChangeNotifier {
   // UI Management Methods
   void initializeForm() {
     _uiManager.initializeForm(_dataManager.schoolData.value);
-    notifyListeners();
   }
 
   void updateFormField({
@@ -195,27 +190,22 @@ class SchoolDataMainManager extends ChangeNotifier {
       email: email,
       website: website,
     );
-    notifyListeners();
   }
 
   void setSelectedLogoFile(String? filePath) {
     _uiManager.setSelectedLogoFile(filePath);
-    notifyListeners();
   }
 
   void setSelectedSealFile(String? filePath) {
     _uiManager.setSelectedSealFile(filePath);
-    notifyListeners();
   }
 
   void clearFormChanges() {
     _uiManager.clearFormChanges();
-    notifyListeners();
   }
 
   void resetForm() {
     _uiManager.resetForm();
-    notifyListeners();
   }
 
   /// Check if there's school data

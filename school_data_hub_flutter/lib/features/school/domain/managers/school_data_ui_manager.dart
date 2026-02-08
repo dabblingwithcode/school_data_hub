@@ -5,7 +5,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 final _log = Logger('SchoolDataUiManager');
 
 /// Manages UI state and form data for school data
-class SchoolDataUiManager extends ChangeNotifier {
+class SchoolDataUiManager {
   // Form data
   final _formData = ValueNotifier<SchoolData?>(null);
   ValueListenable<SchoolData?> get formData => _formData;
@@ -27,6 +27,14 @@ class SchoolDataUiManager extends ChangeNotifier {
 
   SchoolDataUiManager();
 
+  void dispose() {
+    _formData.dispose();
+    _isFormValid.dispose();
+    _isFormDirty.dispose();
+    _selectedLogoFile.dispose();
+    _selectedSealFile.dispose();
+  }
+
   /// Initialize the UI manager
   Future<SchoolDataUiManager> init() async {
     return this;
@@ -37,7 +45,6 @@ class SchoolDataUiManager extends ChangeNotifier {
     _formData.value = schoolData;
     _isFormDirty.value = false;
     _validateForm();
-    notifyListeners();
   }
 
   /// Update form field
@@ -53,8 +60,7 @@ class SchoolDataUiManager extends ChangeNotifier {
     var currentData = _formData.value;
 
     // If no form data exists, create a default one
-    if (currentData == null) {
-      currentData = SchoolData(
+    currentData ??= SchoolData(
         name: '',
         officialName: '',
         address: '',
@@ -63,7 +69,6 @@ class SchoolDataUiManager extends ChangeNotifier {
         email: '',
         website: '',
       );
-    }
 
     final updatedData = currentData.copyWith(
       name: name,
@@ -77,21 +82,18 @@ class SchoolDataUiManager extends ChangeNotifier {
     _formData.value = updatedData;
     _isFormDirty.value = true;
     _isFormValid.value = true; // Always valid since we're not validating
-    notifyListeners();
   }
 
   /// Set selected logo file
   void setSelectedLogoFile(String? filePath) {
     _selectedLogoFile.value = filePath;
     _isFormDirty.value = true;
-    notifyListeners();
   }
 
   /// Set selected seal file
   void setSelectedSealFile(String? filePath) {
     _selectedSealFile.value = filePath;
     _isFormDirty.value = true;
-    notifyListeners();
   }
 
   /// Clear form changes
@@ -99,7 +101,6 @@ class SchoolDataUiManager extends ChangeNotifier {
     _isFormDirty.value = false;
     _selectedLogoFile.value = null;
     _selectedSealFile.value = null;
-    notifyListeners();
   }
 
   /// Reset form to original data
@@ -109,7 +110,6 @@ class SchoolDataUiManager extends ChangeNotifier {
     _selectedLogoFile.value = null;
     _selectedSealFile.value = null;
     _validateForm();
-    notifyListeners();
   }
 
   /// Validate form data

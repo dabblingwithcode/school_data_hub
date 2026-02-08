@@ -9,15 +9,15 @@ import 'package:school_data_hub_flutter/features/school_lists/domain/school_list
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_lists_page/widgets/school_list_card.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_lists_page/widgets/school_list_search_text_field.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_lists_page/widgets/school_lists_bottom_navbar.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SchoolListsPage extends WatchingWidget {
   const SchoolListsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final _schoolListFilterManager = di<SchoolListFilterManager>();
-    final _schoolListManager = di<SchoolListManager>();
+    final schoolListFilterManager = di<SchoolListFilterManager>();
+    final schoolListManager = di<SchoolListManager>();
     bool filtersOn = watchValue((SchoolListFilterManager x) => x.filterState);
     // List<SchoolList> schoolLists =
     //     watchPropertyValue((SchoolListManager x) => x.schoolLists);
@@ -40,7 +40,7 @@ class SchoolListsPage extends WatchingWidget {
       ),
 
       body: RefreshIndicator(
-        onRefresh: () async => _schoolListManager.fetchSchoolLists(),
+        onRefresh: () async => schoolListManager.fetchSchoolLists(),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 700),
@@ -75,7 +75,7 @@ class SchoolListsPage extends WatchingWidget {
                         child: SchoolListSearchTextField(
                           searchType: SearchType.list,
                           hintText: 'Liste suchen',
-                          refreshFunction: _schoolListManager.fetchSchoolLists,
+                          refreshFunction: schoolListManager.fetchSchoolLists,
                         ),
                       ),
 
@@ -83,7 +83,7 @@ class SchoolListsPage extends WatchingWidget {
                         onTap: () {},
 
                         onLongPress: () =>
-                            _schoolListFilterManager.resetFilters(),
+                            schoolListFilterManager.resetFilters(),
                         // onPressed: () => showBottomSheetFilters(context),
                         child: Padding(
                           padding: const EdgeInsets.all(10.0),

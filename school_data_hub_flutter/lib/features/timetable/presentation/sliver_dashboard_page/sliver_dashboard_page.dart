@@ -137,7 +137,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       controller.setCompactionType(value.first);
                     },
                     segments: [
-                      ButtonSegment(
+                      const ButtonSegment(
                         label: Text('None'),
                         value: CompactType.none,
                       ),
@@ -179,11 +179,11 @@ class _DashboardPageState extends State<DashboardPage> {
                       : ResizeBehavior.push;
                 }),
                 segments: [
-                  ButtonSegment(
+                  const ButtonSegment(
                     label: Text('Resize Push'),
                     value: ResizeBehavior.push,
                   ),
-                  ButtonSegment(
+                  const ButtonSegment(
                     label: Text('Resize Shrink'),
                     value: ResizeBehavior.shrink,
                   ),
@@ -354,16 +354,16 @@ class _DashboardPageState extends State<DashboardPage> {
                   return await showDialog<bool>(
                         context: context,
                         builder: (ctx) => AlertDialog(
-                          title: Text("Delete ?"),
+                          title: const Text("Delete ?"),
                           content: Text("Do you want remove item ${item.id} ?"),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(ctx, false),
-                              child: Text("No"),
+                              child: const Text("No"),
                             ),
                             TextButton(
                               onPressed: () => Navigator.pop(ctx, true),
-                              child: Text("Yes"),
+                              child: const Text("Yes"),
                             ),
                           ],
                         ),

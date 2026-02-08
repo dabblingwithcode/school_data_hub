@@ -1,9 +1,8 @@
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 
 /// Manages business logic for lesson operations
-class TimetableLessonManager extends ChangeNotifier {
+class TimetableLessonManager {
   TimetableLessonManager();
 
   /// Get all lessons for a specific time slot regardless of group

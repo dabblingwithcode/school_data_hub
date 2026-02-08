@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/features/_schoolday_events/domain/school
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/chart_page.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class ChartPageController extends StatefulWidget {
   const ChartPageController({super.key});
@@ -128,10 +128,8 @@ class _ChartPageControllerState extends State<ChartPageController> {
     final eventsByDateMap = <DateTime, List<SchooldayEvent>>{};
 
     for (final event in allEvents) {
-      if (event.schooldayId != null) {
-        eventsById.putIfAbsent(event.schooldayId!, () => []).add(event);
-      }
-
+      eventsById.putIfAbsent(event.schooldayId, () => []).add(event);
+    
       final d = event.schoolday!.schoolday.toLocal();
       final dayDate = DateTime(d.year, d.month, d.day);
       eventsByDateMap.putIfAbsent(dayDate, () => []).add(event);
@@ -143,10 +141,8 @@ class _ChartPageControllerState extends State<ChartPageController> {
     final missedByDate = <DateTime, List<MissedSchoolday>>{};
 
     for (final missed in allMissed) {
-      if (missed.schooldayId != null) {
-        missedById.putIfAbsent(missed.schooldayId!, () => []).add(missed);
-      }
-
+      missedById.putIfAbsent(missed.schooldayId, () => []).add(missed);
+    
       final d = missed.schoolday!.schoolday.toLocal();
       final dayDate = DateTime(d.year, d.month, d.day);
       missedByDate.putIfAbsent(dayDate, () => []).add(missed);

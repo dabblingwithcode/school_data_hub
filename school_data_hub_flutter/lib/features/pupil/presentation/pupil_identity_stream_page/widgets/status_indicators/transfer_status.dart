@@ -5,10 +5,10 @@ class TransferStatus extends StatelessWidget {
   final int transferCount;
 
   const TransferStatus({
-    Key? key,
+    super.key,
     required this.isTransmitting,
     required this.transferCount,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -16,7 +16,7 @@ import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/common/workbook_image.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/new_workbook_page/new_workbook_page.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class WorkbookCard extends WatchingWidget {
   const WorkbookCard({required this.workbook, super.key});
@@ -188,7 +188,7 @@ class WorkbookCard extends WatchingWidget {
                                     : const Text(
                                         'nicht angegeben',
                                         overflow: TextOverflow.fade,
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.black,

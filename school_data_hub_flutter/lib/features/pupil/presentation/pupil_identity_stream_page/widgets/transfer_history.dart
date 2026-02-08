@@ -5,10 +5,10 @@ class TransferHistoryWidget extends StatelessWidget {
   final int transferCounter;
 
   const TransferHistoryWidget({
-    Key? key,
+    super.key,
     required this.transferHistory,
     required this.transferCounter,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +59,7 @@ class TransferHistoryWidget extends StatelessWidget {
                     ),
                   ),
                 )
-                .toList(),
+                ,
             if (transferHistory.length > 5) ...[
               const SizedBox(height: 8),
               Text(

@@ -15,7 +15,7 @@ import 'package:school_data_hub_flutter/features/timetable/presentation/timetabl
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/timetable_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/timetable_grid.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/weekday_selector.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class TimetablePage extends WatchingWidget {
   // TODO: Implement a warning if there are no timetable slots created!
@@ -32,58 +32,7 @@ class TimetablePage extends WatchingWidget {
     final timetable = watch(timetableManager.timetable);
     final timetableSlots = watch(timetableManager.timetableSlots);
     final scheduledLessons = watch(timetableManager.scheduledLessons);
-
-    // Show loading or empty state if no timetable
-    if (timetable == null) {
-      return Scaffold(
-        backgroundColor: AppColors.canvasColor,
-        appBar: const GenericAppBar(
-          iconData: Icons.calendar_month,
-          title: 'Stundenplan',
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.schedule, size: 64, color: Colors.grey),
-              const SizedBox(height: 16),
-              const Text(
-                'Kein Stundenplan verfügbar',
-                style: TextStyle(fontSize: 18, color: Colors.grey),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Erstellen Sie einen neuen Stundenplan',
-                style: TextStyle(fontSize: 14, color: Colors.grey),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () async {
-                  timetableManager.debugPrintState();
-                  await timetableManager.refreshData();
-                },
-                child: const Text('Daten neu laden'),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () async {
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const NewTimetablePage(),
-                    ),
-                  );
-                  // Refresh data when returning from NewTimetablePage
-                  await timetableManager.refreshData();
-                },
-                child: const Text('Neuen Stundenplan erstellen'),
-              ),
-            ],
-          ),
-        ),
-        bottomNavigationBar: TimetableBottomNavBar(onManageLessonGroups: () {}),
-      );
-    }
-    void _navigateToNewLesson() {
+    void navigateToNewLesson() {
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) =>
@@ -92,7 +41,7 @@ class TimetablePage extends WatchingWidget {
       );
     }
 
-    void _navigateToNewLessonGroup() async {
+    void navigateToNewLessonGroup() async {
       await Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => const NewLessonGroupPage()),
       );
@@ -100,7 +49,7 @@ class TimetablePage extends WatchingWidget {
       await timetableManager.refreshData();
     }
 
-    void _onLessonTap(int lessonId) {
+    void onLessonTap(int lessonId) {
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => NewScheduledLessonPage(
@@ -111,7 +60,7 @@ class TimetablePage extends WatchingWidget {
       );
     }
 
-    void _onEmptySlotTap(int slotId) {
+    void onEmptySlotTap(int slotId) {
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => NewScheduledLessonPage(
@@ -151,14 +100,14 @@ class TimetablePage extends WatchingWidget {
           Expanded(
             child: TimetableGrid(
               timetableManager: timetableManager,
-              onLessonTap: _onLessonTap,
-              onEmptySlotTap: _onEmptySlotTap,
+              onLessonTap: onLessonTap,
+              onEmptySlotTap: onEmptySlotTap,
             ),
           ),
         ],
       ),
       bottomNavigationBar: TimetableBottomNavBar(
-        onManageLessonGroups: _navigateToNewLessonGroup,
+        onManageLessonGroups: navigateToNewLessonGroup,
       ),
     );
   }

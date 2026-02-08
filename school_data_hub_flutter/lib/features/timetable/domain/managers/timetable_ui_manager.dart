@@ -4,7 +4,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/models/timetable_proxy_models.dart';
 
 /// Manages UI state, filtering, and weekday selection for timetable
-class TimetableUiManager extends ChangeNotifier {
+class TimetableUiManager {
   // Current selected weekday
   final _selectedWeekday = ValueNotifier<Weekday>(Weekday.monday);
   ValueListenable<Weekday> get selectedWeekday => _selectedWeekday;
@@ -24,11 +24,17 @@ class TimetableUiManager extends ChangeNotifier {
 
   TimetableUiManager();
 
+  void dispose() {
+    _selectedWeekday.dispose();
+    _selectedLessonGroup.dispose();
+    _selectedLessonGroupIds.dispose();
+    _weekdays.dispose();
+  }
+
   /// Select a weekday
   void selectWeekday(Weekday weekday) {
     if (_selectedWeekday.value != weekday) {
       _selectedWeekday.value = weekday;
-      notifyListeners();
     }
   }
 
@@ -38,7 +44,6 @@ class TimetableUiManager extends ChangeNotifier {
       _selectedLessonGroup.value = lessonGroup;
       _selectedLessonGroupIds.value =
           lessonGroup != null ? {lessonGroup.id!} : {};
-      notifyListeners();
     }
   }
 
@@ -47,7 +52,6 @@ class TimetableUiManager extends ChangeNotifier {
     final updatedSelection = Set<int>.from(_selectedLessonGroupIds.value);
     updatedSelection.add(lessonGroup.id!);
     _selectedLessonGroupIds.value = updatedSelection;
-    notifyListeners();
   }
 
   /// Remove a lesson group from the selection
@@ -55,14 +59,12 @@ class TimetableUiManager extends ChangeNotifier {
     final updatedSelection = Set<int>.from(_selectedLessonGroupIds.value);
     updatedSelection.remove(lessonGroup.id!);
     _selectedLessonGroupIds.value = updatedSelection;
-    notifyListeners();
   }
 
   /// Clear all selected lesson groups
   void clearLessonGroupSelection() {
     _selectedLessonGroupIds.value = {};
     _selectedLessonGroup.value = null;
-    notifyListeners();
   }
 
   /// Build weekday proxies for UI display

@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/features/timetable/presentation/new_less
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_lesson_group_page/widgets/color_picker_field.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_lesson_group_page/widgets/name_field.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_lesson_group_page/widgets/pupil_management_section.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 // Barrel exports
 export 'widgets/action_buttons.dart';
@@ -94,31 +94,21 @@ class NewLessonGroupPage extends WatchingWidget {
                     const Gap(20),
 
                     // Color picker field
-                    ValueListenableBuilder<String>(
-                      valueListenable: selectedColor,
-                      builder: (context, color, child) {
-                        return ColorPickerField(
-                          selectedColor: color,
-                          onColorChanged: (newColor) {
-                            selectedColor.value = newColor;
-                          },
-                        );
+                    ColorPickerField(
+                      selectedColor: watch(selectedColor).value,
+                      onColorChanged: (newColor) {
+                        selectedColor.value = newColor;
                       },
                     ),
                     const Gap(20),
 
                     // Pupil Management Section
-                    ValueListenableBuilder<List<int>>(
-                      valueListenable: selectedPupilIds,
-                      builder: (context, pupilIds, child) {
-                        return PupilManagementSection(
-                          timetableManager: timetableManager,
-                          lessonGroupId: lessonGroup?.id,
-                          selectedPupilIds: pupilIds,
-                          onPupilIdsChanged: (newPupilIds) {
-                            selectedPupilIds.value = newPupilIds;
-                          },
-                        );
+                    PupilManagementSection(
+                      timetableManager: timetableManager,
+                      lessonGroupId: lessonGroup?.id,
+                      selectedPupilIds: watch(selectedPupilIds).value,
+                      onPupilIdsChanged: (newPupilIds) {
+                        selectedPupilIds.value = newPupilIds;
                       },
                     ),
                     const Gap(32),

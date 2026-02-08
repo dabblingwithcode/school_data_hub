@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/features/timetable/domain/timetable_mana
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_classroom_page/widgets/action_buttons.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_classroom_page/widgets/room_code_field.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_classroom_page/widgets/room_name_field.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 // Barrel exports
 export 'widgets/action_buttons.dart';
@@ -141,59 +141,55 @@ class NewClassroomPage extends WatchingWidget {
                       }
                     },
                     onCancel: () => Navigator.of(context).pop(),
-                    onDelete:
-                        _isEditing
-                            ? () {
-                              if (classroom?.id == null) return;
+                    onDelete: _isEditing
+                        ? () {
+                            if (classroom?.id == null) return;
 
-                              showDialog(
-                                context: context,
-                                builder:
-                                    (context) => AlertDialog(
-                                      title: const Text('Raum löschen'),
-                                      content: Text(
-                                        'Sind Sie sicher, dass Sie den Raum "${classroom!.roomCode} - ${classroom!.roomName}" löschen möchten?\n\n'
-                                        'Diese Aktion kann nicht rückgängig gemacht werden.',
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed:
-                                              () => Navigator.of(context).pop(),
-                                          child: const Text('Abbrechen'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            timetableManager.removeClassroom(
-                                              classroom!.id!,
-                                            );
-                                            Navigator.of(
-                                              context,
-                                            ).pop(); // Close dialog
-                                            Navigator.of(
-                                              context,
-                                            ).pop(); // Close page
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Raum löschen'),
+                                content: Text(
+                                  'Sind Sie sicher, dass Sie den Raum "${classroom!.roomCode} - ${classroom!.roomName}" löschen möchten?\n\n'
+                                  'Diese Aktion kann nicht rückgängig gemacht werden.',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
+                                    child: const Text('Abbrechen'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      timetableManager.removeClassroom(
+                                        classroom!.id!,
+                                      );
+                                      Navigator.of(
+                                        context,
+                                      ).pop(); // Close dialog
+                                      Navigator.of(context).pop(); // Close page
 
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                  'Raum "${classroom!.roomCode} - ${classroom!.roomName}" wurde gelöscht',
-                                                ),
-                                                backgroundColor: Colors.red,
-                                              ),
-                                            );
-                                          },
-                                          style: TextButton.styleFrom(
-                                            foregroundColor: Colors.red,
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Raum "${classroom!.roomCode} - ${classroom!.roomName}" wurde gelöscht',
                                           ),
-                                          child: const Text('Löschen'),
+                                          backgroundColor: Colors.red,
                                         ),
-                                      ],
+                                      );
+                                    },
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: Colors.red,
                                     ),
-                              );
-                            }
-                            : null,
+                                    child: const Text('Löschen'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        : null,
                   ),
                 ],
               ),

@@ -10,16 +10,16 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profil
 import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class NewSchoolListPage extends WatchingWidget {
   final SchoolList? initialSchoolList;
   const NewSchoolListPage({this.initialSchoolList, super.key});
   @override
   Widget build(BuildContext context) {
-    final _schoolListManager = di<SchoolListManager>();
-    final _pupilManager = di<PupilProxyManager>();
-    final _hubSessionManager = di<HubSessionManager>();
+    final schoolListManager = di<SchoolListManager>();
+    final pupilManager = di<PupilProxyManager>();
+    final hubSessionManager = di<HubSessionManager>();
     // Create text editing controllers using createOnce
     final schoolListNameController = createOnce<TextEditingController>(
       () => TextEditingController(),
@@ -50,7 +50,7 @@ class NewSchoolListPage extends WatchingWidget {
     final pupilIdsValue = watch(pupilIds).value;
 
     void postNewSchoolList() async {
-      await _schoolListManager.postSchoolListWithGroup(
+      await schoolListManager.postSchoolListWithGroup(
         name: schoolListNameController.text,
         description: schoolListDescriptionController.text,
         pupilIds: pupilIdsValue.toList(),
@@ -58,7 +58,7 @@ class NewSchoolListPage extends WatchingWidget {
       );
     }
 
-    List<PupilProxy> pupilsFromIds = _pupilManager.getPupilsFromPupilIds(
+    List<PupilProxy> pupilsFromIds = pupilManager.getPupilsFromPupilIds(
       pupilIdsValue.toList(),
     );
     return Scaffold(
@@ -100,7 +100,7 @@ class NewSchoolListPage extends WatchingWidget {
                   ),
                 ),
                 const Gap(10),
-                _hubSessionManager.isAdmin == true
+                hubSessionManager.isAdmin == true
                     ? Row(
                         children: [
                           const Text(
@@ -118,7 +118,7 @@ class NewSchoolListPage extends WatchingWidget {
                             onChanged: (newValue) {
                               isOn.value = newValue;
                             },
-                            activeColor: Colors.blue, // Change color if desired
+                            activeThumbColor: Colors.blue, // Change color if desired
                           ),
                         ],
                       )
@@ -284,7 +284,7 @@ class NewSchoolListPage extends WatchingWidget {
                         await Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (ctx) => SelectPupilsListPage(
-                              selectablePupils: _pupilManager
+                              selectablePupils: pupilManager
                                   .getPupilsNotListed(pupilIdsValue.toList()),
                             ),
                           ),

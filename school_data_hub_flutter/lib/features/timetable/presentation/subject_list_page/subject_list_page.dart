@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/features/timetable/domain/timetable_mana
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_subject_page/new_subject_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/subject_list_page/subject_list.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/subject_list_page/widgets/subject_list_page_bottom_navbar.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SubjectListPage extends WatchingWidget {
   const SubjectListPage({super.key});

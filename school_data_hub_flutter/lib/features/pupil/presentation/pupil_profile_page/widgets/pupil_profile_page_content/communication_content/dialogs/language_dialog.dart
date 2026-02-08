@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart'
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/communication_content/dialogs/language_dialog_dropdown.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 // based on https://mobikul.com/creating-stateful-dialog-form-in-flutter/
 // TODO: It must be a better way to do this
@@ -16,7 +16,7 @@ Future<void> languageDialog(
   PupilProxy pupil,
   CommunicationSubject subject,
 ) async {
-  final _hubSessionManager = di<HubSessionManager>();
+  final hubSessionManager = di<HubSessionManager>();
   CommunicationSkills? languageValue;
   switch (subject) {
     case CommunicationSubject.pupil:
@@ -112,7 +112,7 @@ Future<void> languageDialog(
                       understanding: dropdownUnderstandValue,
                       speaking: dropdownSpeakValue,
                       reading: dropdownReadValue,
-                      createdBy: _hubSessionManager.userName!,
+                      createdBy: hubSessionManager.userName!,
                       createdAt: DateTime.now(),
                     );
                     switch (subject) {
@@ -129,7 +129,7 @@ Future<void> languageDialog(
                               )
                             : TutorInfo(
                                 communicationTutor1: languageValue,
-                                createdBy: _hubSessionManager.userName!,
+                                createdBy: hubSessionManager.userName!,
                               );
                         PupilMutator().updateTutorInfo(
                           pupilId: pupil.pupilId,
@@ -143,7 +143,7 @@ Future<void> languageDialog(
                               )
                             : TutorInfo(
                                 communicationTutor2: languageValue,
-                                createdBy: _hubSessionManager.userName!,
+                                createdBy: hubSessionManager.userName!,
                               );
                         PupilMutator().updateTutorInfo(
                           pupilId: pupil.pupilId,

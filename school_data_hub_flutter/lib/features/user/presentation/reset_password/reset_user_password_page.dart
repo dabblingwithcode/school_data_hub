@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/reset_password/widgets/user_selection_dropdown.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 /// A page for admins to reset a user's password.
 ///
@@ -24,7 +24,7 @@ class ResetUserPasswordPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _userManager = di<UserManager>();
+    final userManager = di<UserManager>();
     final selectedUser = createOnce(() => ValueNotifier<User?>(null));
     final TextEditingController newPasswordController = createOnce(
       () => TextEditingController(),
@@ -162,7 +162,7 @@ class ResetUserPasswordPage extends WatchingWidget {
                     }
 
                     // Call the user manager to reset password
-                    await _userManager.resetPassword(
+                    await userManager.resetPassword(
                       userEmail,
                       newPasswordController.text,
                     );

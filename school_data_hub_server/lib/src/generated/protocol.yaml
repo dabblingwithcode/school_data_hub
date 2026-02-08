@@ -6,6 +6,13 @@ adminPupil:
 adminSchoolData:
   - postSchoolData:
 adminSchoolDay:
+  - createSchoolSemester:
+  - updateSchoolSemester:
+  - deleteSchoolSemester:
+  - createSchoolday:
+  - createSchooldays:
+  - updateSchoolday:
+  - deleteSchoolday:
 adminUser:
   - createUser:
   - resetPassword:
@@ -149,18 +156,9 @@ schoolList:
   - updateSchoolList:
   - deleteSchoolList:
   - updatePupilListEntry:
-schooldayAdmin:
-  - createSchoolSemester:
-  - getAllSchoolSemesters:
-  - getCurrentSchoolSemester:
-  - updateSchoolSemester:
-  - deleteSchoolSemester:
-  - createSchoolday:
-  - createSchooldays:
-  - deleteSchoolday:
-  - updateSchoolday:
 schoolday:
   - getSchoolSemesters:
+  - getCurrentSchoolSemester:
   - getSchooldays:
 schooldayEvent:
   - fetchSchooldayEvents:

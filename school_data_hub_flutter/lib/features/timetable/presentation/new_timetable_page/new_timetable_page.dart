@@ -14,7 +14,7 @@ import 'package:school_data_hub_flutter/features/timetable/presentation/new_time
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_timetable_page/widgets/name_field.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_timetable_page/widgets/school_semester_dropdown.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_timetable_page/widgets/start_date_field.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 // Barrel exports
 export 'widgets/action_buttons.dart';

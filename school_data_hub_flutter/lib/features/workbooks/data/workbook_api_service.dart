@@ -1,6 +1,6 @@
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class WorkbookApiService {
   Client get _client => di<Client>();
@@ -24,9 +24,7 @@ class WorkbookApiService {
 
   //- post new workbook
 
-  Future<Workbook?> updateWorkbook({
-    required Workbook workbook,
-  }) async {
+  Future<Workbook?> updateWorkbook({required Workbook workbook}) async {
     final updatedWorkbook = await ClientHelper.apiCall(
       call: () => _client.workbooks.updateWorkbook(workbook),
       errorMessage: 'Fehler beim Aktualisieren des Arbeitshefts',

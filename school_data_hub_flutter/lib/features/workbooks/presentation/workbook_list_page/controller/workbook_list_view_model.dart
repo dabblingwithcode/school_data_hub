@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/workbook_list_page.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class WorkbookList extends StatefulWidget {
-  const WorkbookList({
-    super.key,
-  });
+  const WorkbookList({super.key});
 
   @override
   WorkbookListViewModel createState() => WorkbookListViewModel();

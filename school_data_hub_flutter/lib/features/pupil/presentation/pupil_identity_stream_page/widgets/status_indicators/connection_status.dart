@@ -6,11 +6,11 @@ class ConnectionStatus extends StatelessWidget {
   final String statusMessage;
 
   const ConnectionStatus({
-    Key? key,
+    super.key,
     required this.isConnected,
     required this.isProcessing,
     required this.statusMessage,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

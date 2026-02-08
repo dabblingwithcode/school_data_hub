@@ -4,7 +4,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/lesson_cell/widgets/lesson_cell_teacher_info.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class LessonCell extends WatchingWidget {
   final ScheduledLesson? lesson;
@@ -22,8 +22,8 @@ class LessonCell extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _userManager = di<UserManager>();
-    final _timetableManager = di<TimetableManager>();
+    final userManager = di<UserManager>();
+    final timetableManager = di<TimetableManager>();
 
     // Watch scheduled lesson group memberships to update pupil count
     // final scheduledLessonGroupMemberships = watchValue(
@@ -35,9 +35,9 @@ class LessonCell extends WatchingWidget {
         data: lesson!,
         feedback: Material(
           elevation: 6.0,
-          child: Container(
+          child: SizedBox(
             width: 140,
-            child: _buildLessonContent(context, _userManager),
+            child: _buildLessonContent(context, userManager),
           ),
         ),
         childWhenDragging: Container(
@@ -63,12 +63,12 @@ class LessonCell extends WatchingWidget {
             return details.data.id != lesson!.id;
           },
           onAcceptWithDetails: (details) {
-            _swapLessonOrder(context, details.data, lesson!, _timetableManager);
+            _swapLessonOrder(context, details.data, lesson!, timetableManager);
           },
           builder: (context, candidateData, rejectedData) {
             return Material(
               child: InkWell(
-                onTap: () => _showTeacherSelection(context, _timetableManager),
+                onTap: () => _showTeacherSelection(context, timetableManager),
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(4.0),
@@ -78,7 +78,7 @@ class LessonCell extends WatchingWidget {
                           borderRadius: BorderRadius.circular(4),
                         )
                       : null,
-                  child: _buildLessonContent(context, _userManager),
+                  child: _buildLessonContent(context, userManager),
                 ),
               ),
             );
@@ -92,7 +92,7 @@ class LessonCell extends WatchingWidget {
           return details.data.scheduledAtId != slot.id;
         },
         onAcceptWithDetails: (details) {
-          _moveLessonToSlot(context, details.data, slot, _timetableManager);
+          _moveLessonToSlot(context, details.data, slot, timetableManager);
         },
         builder: (context, candidateData, rejectedData) {
           return Material(

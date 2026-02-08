@@ -1,13 +1,12 @@
-import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/timetable/data/timetable_api_service.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _log = Logger('TimetableCrudManager');
 
 /// Manages CRUD operations for timetable entities
-class TimetableCrudManager extends ChangeNotifier {
+class TimetableCrudManager {
   final _apiService = di<TimetableApiService>();
 
   TimetableCrudManager();
@@ -23,7 +22,6 @@ class TimetableCrudManager extends ChangeNotifier {
         _log.info(
           'Scheduled lesson created successfully: ${createdLesson.lessonId}',
         );
-        notifyListeners();
       }
     } catch (e) {
       _log.info('Error creating scheduled lesson: $e');
@@ -38,7 +36,6 @@ class TimetableCrudManager extends ChangeNotifier {
         _log.info(
           'Scheduled lesson updated successfully: ${updatedLesson.lessonId}',
         );
-        notifyListeners();
       }
     } catch (e) {
       _log.info('Error updating scheduled lesson: $e');
@@ -51,7 +48,6 @@ class TimetableCrudManager extends ChangeNotifier {
       final success = await _apiService.deleteScheduledLesson(lessonId);
       if (success == true) {
         _log.info('Scheduled lesson deleted successfully: $lessonId');
-        notifyListeners();
       }
     } catch (e) {
       _log.info('Error deleting scheduled lesson: $e');
@@ -65,7 +61,6 @@ class TimetableCrudManager extends ChangeNotifier {
       final createdSubject = await _apiService.createSubject(subject);
       if (createdSubject != null) {
         _log.info('Subject created successfully: ${createdSubject.name}');
-        notifyListeners();
       }
       return createdSubject;
     } catch (e) {
@@ -79,7 +74,6 @@ class TimetableCrudManager extends ChangeNotifier {
       final updatedSubject = await _apiService.updateSubject(subject);
       if (updatedSubject != null) {
         _log.info('Subject updated successfully: ${updatedSubject.name}');
-        notifyListeners();
       }
       return updatedSubject;
     } catch (e) {
@@ -93,7 +87,6 @@ class TimetableCrudManager extends ChangeNotifier {
       final success = await _apiService.deleteSubject(subjectId);
       if (success == true) {
         _log.info('Subject deleted successfully: $subjectId');
-        notifyListeners();
       }
     } catch (e) {
       _log.info('Error deleting subject: $e');
@@ -109,7 +102,6 @@ class TimetableCrudManager extends ChangeNotifier {
         _log.info(
           'Classroom created successfully: ${createdClassroom.roomName}',
         );
-        notifyListeners();
       }
       return createdClassroom;
     } catch (e) {
@@ -125,7 +117,6 @@ class TimetableCrudManager extends ChangeNotifier {
         _log.info(
           'Classroom updated successfully: ${updatedClassroom.roomName}',
         );
-        notifyListeners();
       }
       return updatedClassroom;
     } catch (e) {
@@ -139,7 +130,6 @@ class TimetableCrudManager extends ChangeNotifier {
       final success = await _apiService.deleteClassroom(classroomId);
       if (success == true) {
         _log.info('Classroom deleted successfully: $classroomId');
-        notifyListeners();
       }
     } catch (e) {
       _log.info('Error deleting classroom: $e');
@@ -158,7 +148,6 @@ class TimetableCrudManager extends ChangeNotifier {
         _log.info(
           'Lesson group created successfully: ${createdLessonGroup.name} (ID: ${createdLessonGroup.id})',
         );
-        notifyListeners();
       }
       return createdLessonGroup;
     } catch (e) {
@@ -176,7 +165,6 @@ class TimetableCrudManager extends ChangeNotifier {
         _log.info(
           'Lesson group updated successfully: ${updatedLessonGroup.name}',
         );
-        notifyListeners();
       }
       return updatedLessonGroup;
     } catch (e) {
@@ -190,7 +178,6 @@ class TimetableCrudManager extends ChangeNotifier {
       final success = await _apiService.deleteLessonGroup(lessonGroupId);
       if (success == true) {
         _log.info('Lesson group deleted successfully: $lessonGroupId');
-        notifyListeners();
       }
     } catch (e) {
       _log.info('Error deleting lesson group: $e');
@@ -207,7 +194,6 @@ class TimetableCrudManager extends ChangeNotifier {
         _log.info(
           'Timetable created successfully: ${createdTimetable.name} (ID: ${createdTimetable.id})',
         );
-        notifyListeners();
       }
     } catch (e) {
       _log.info('Error creating timetable: $e');
@@ -220,7 +206,6 @@ class TimetableCrudManager extends ChangeNotifier {
       final updatedTimetable = await _apiService.updateTimetable(timetable);
       if (updatedTimetable != null) {
         _log.info('Timetable updated successfully: ${updatedTimetable.name}');
-        notifyListeners();
       }
     } catch (e) {
       _log.info('Error updating timetable: $e');
@@ -233,7 +218,6 @@ class TimetableCrudManager extends ChangeNotifier {
       final success = await _apiService.deleteTimetable(timetableId);
       if (success == true) {
         _log.info('Timetable deleted successfully: $timetableId');
-        notifyListeners();
       }
     } catch (e) {
       _log.info('Error deleting timetable: $e');
@@ -249,7 +233,6 @@ class TimetableCrudManager extends ChangeNotifier {
         _log.info(
           'Timetable slot created successfully: ${createdSlot.day} ${createdSlot.startTime}-${createdSlot.endTime}',
         );
-        notifyListeners();
       }
     } catch (e) {
       _log.info('Error creating timetable slot: $e');
@@ -264,7 +247,6 @@ class TimetableCrudManager extends ChangeNotifier {
         _log.info(
           'Timetable slot updated successfully: ${updatedSlot.day} ${updatedSlot.startTime}-${updatedSlot.endTime}',
         );
-        notifyListeners();
       }
     } catch (e) {
       _log.info('Error updating timetable slot: $e');
@@ -277,7 +259,6 @@ class TimetableCrudManager extends ChangeNotifier {
       final success = await _apiService.deleteTimetableSlot(slotId);
       if (success == true) {
         _log.info('Timetable slot deleted successfully: $slotId');
-        notifyListeners();
       }
     } catch (e) {
       _log.info('Error deleting timetable slot: $e');

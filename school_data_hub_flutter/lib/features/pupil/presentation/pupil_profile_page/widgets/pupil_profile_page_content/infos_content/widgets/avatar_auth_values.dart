@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dar
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class AvatarAuthValues extends WatchingWidget {
   final PupilProxy pupil;
@@ -19,8 +19,8 @@ class AvatarAuthValues extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _hubSessionManager = di<HubSessionManager>();
-    final _notificationService = di<NotificationService>();
+    final hubSessionManager = di<HubSessionManager>();
+    final notificationService = di<NotificationService>();
     final avatarAuth = watchPropertyValue((m) => m.avatarAuth, target: pupil);
     final avatarAuthId = watchPropertyValue(
       (m) => m.avatarAuthId,
@@ -106,7 +106,7 @@ class AvatarAuthValues extends WatchingWidget {
               );
             },
             onLongPress: () async {
-              if (_hubSessionManager.isAdmin != true) return;
+              if (hubSessionManager.isAdmin != true) return;
               if (avatarAuth == null) return;
               final bool? result = await confirmationDialog(
                 context: context,
@@ -120,7 +120,7 @@ class AvatarAuthValues extends WatchingWidget {
                 avatarAuth.documentId,
                 PupilDocumentType.avatarAuth,
               );
-              _notificationService.showSnackBar(
+              notificationService.showSnackBar(
                 NotificationType.success,
                 'Die Einwilligung wurde geändert!',
               );

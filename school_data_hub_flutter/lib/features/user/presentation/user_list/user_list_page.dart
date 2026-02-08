@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/user_list/widgets/user_list_card.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/user_list/widgets/user_list_page_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/user_list/widgets/user_list_searchbar.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class UserListPage extends WatchingWidget {
   const UserListPage({super.key});

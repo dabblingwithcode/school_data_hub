@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dar
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class WorkbookImage extends WatchingWidget {
   final Workbook workbook;

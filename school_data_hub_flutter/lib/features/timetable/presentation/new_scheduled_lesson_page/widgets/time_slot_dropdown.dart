@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/timetable_utils.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 /// Dropdown widget for selecting a time slot
 class TimeSlotDropdown extends WatchingWidget {
@@ -24,20 +24,19 @@ class TimeSlotDropdown extends WatchingWidget {
     final slots = watchValue((TimetableManager m) => m.timetableSlots);
 
     return DropdownButtonFormField<TimetableSlot>(
-      value: selectedSlot,
+      initialValue: selectedSlot,
       decoration: const InputDecoration(
         labelText: 'Zeitslot *',
         border: OutlineInputBorder(),
       ),
-      items:
-          slots.map((slot) {
-            return DropdownMenuItem<TimetableSlot>(
-              value: slot,
-              child: Text(
-                '${TimetableUtils.getWeekdayName(slot.day)} ${slot.startTime} - ${slot.endTime}',
-              ),
-            );
-          }).toList(),
+      items: slots.map((slot) {
+        return DropdownMenuItem<TimetableSlot>(
+          value: slot,
+          child: Text(
+            '${TimetableUtils.getWeekdayName(slot.day)} ${slot.startTime} - ${slot.endTime}',
+          ),
+        );
+      }).toList(),
       onChanged: (slot) {
         // Reset lesson group if it conflicts with the new time slot
         if (slot != null) {

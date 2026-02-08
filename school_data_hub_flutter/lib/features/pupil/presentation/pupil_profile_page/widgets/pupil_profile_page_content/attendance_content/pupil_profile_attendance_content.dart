@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/features/_attendance/presentation/widget
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/missed_class_card.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class PupilAttendanceContent extends WatchingWidget {
   final PupilProxy pupil;
@@ -17,11 +17,11 @@ class PupilAttendanceContent extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _attendanceManager = di<AttendanceManager>();
+    final attendanceManager = di<AttendanceManager>();
     final missedHoursForActualReport =
         AttendanceHelper.missedHoursforSemesterOrSchoolyear(pupil);
     List<MissedSchoolday> missedSchooldays = watch(
-      _attendanceManager.getPupilMissedSchooldaysProxy(pupil.pupilId),
+      attendanceManager.getPupilMissedSchooldaysProxy(pupil.pupilId),
     ).missedSchooldays;
 
     // sort by missedDay

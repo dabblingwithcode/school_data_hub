@@ -15,7 +15,7 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profil
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SchoolListPupilEntryCard extends WatchingWidget {
   final int pupilId;
@@ -26,15 +26,15 @@ class SchoolListPupilEntryCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _pupilManager = di<PupilProxyManager>();
-    final _mainMenuBottomNavManager = di<BottomNavManager>();
-    final _hubSessionManager = di<HubSessionManager>();
-    final _notificationService = di<NotificationService>();
-    final _schoolListManager = di<SchoolListManager>();
-    final PupilProxy pupil = _pupilManager.getPupilByPupilId(pupilId)!;
+    final pupilManager = di<PupilProxyManager>();
+    final mainMenuBottomNavManager = di<BottomNavManager>();
+    final hubSessionManager = di<HubSessionManager>();
+    final notificationService = di<NotificationService>();
+    final schoolListManager = di<SchoolListManager>();
+    final PupilProxy pupil = pupilManager.getPupilByPupilId(pupilId)!;
 
     final PupilListEntry pupilEntry = watch(
-      _schoolListManager.getPupilSchoolListEntryProxy(
+      schoolListManager.getPupilSchoolListEntryProxy(
         pupilId: pupilId,
         listId: originListId,
       )!,
@@ -58,7 +58,7 @@ class SchoolListPupilEntryCard extends WatchingWidget {
                   children: [
                     InkWell(
                       onTap: () {
-                        _mainMenuBottomNavManager.setPupilProfileNavPage(6);
+                        mainMenuBottomNavManager.setPupilProfileNavPage(6);
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (ctx) => PupilProfilePage(pupil: pupil),
@@ -66,12 +66,12 @@ class SchoolListPupilEntryCard extends WatchingWidget {
                         );
                       },
                       onLongPress: () async {
-                        if (!_hubSessionManager.isAdmin) {
+                        if (!hubSessionManager.isAdmin) {
                           if (SchoolListHelper.listOwner(
                                 pupilEntry.schoolListId,
                               ) !=
-                              _hubSessionManager.userName) {
-                            _notificationService.showSnackBar(
+                              hubSessionManager.userName) {
+                            notificationService.showSnackBar(
                               NotificationType.error,
                               'Löschen nicht möglich - keine Berechtigung!',
                             );
@@ -88,7 +88,7 @@ class SchoolListPupilEntryCard extends WatchingWidget {
                         if (confirm != true) {
                           return;
                         }
-                        await _schoolListManager.updateSchoolListProperty(
+                        await schoolListManager.updateSchoolListProperty(
                           listId: originListId,
                           operation: (
                             operation: MemberOperation.remove,
@@ -125,7 +125,7 @@ class SchoolListPupilEntryCard extends WatchingWidget {
                             result.value == pupilEntry.comment) {
                           return;
                         }
-                        await _schoolListManager.updatePupilListEntry(
+                        await schoolListManager.updatePupilListEntry(
                           entry: pupilEntry,
                           comment: (value: result.value),
                         );
@@ -138,7 +138,7 @@ class SchoolListPupilEntryCard extends WatchingWidget {
                               'Möchten Sie wirklich den Kommentar löschen?',
                         );
                         if (confirm != true) return;
-                        await _schoolListManager.updatePupilListEntry(
+                        await schoolListManager.updatePupilListEntry(
                           entry: pupilEntry,
                           comment: (value: null),
                         );
@@ -172,7 +172,7 @@ class SchoolListPupilEntryCard extends WatchingWidget {
                       representedBoolValue: false, // Red/negative checkbox
                       currentStatus: pupilEntry.status,
                       onStatusChanged: (newStatus) async {
-                        await _schoolListManager.updatePupilListEntry(
+                        await schoolListManager.updatePupilListEntry(
                           entry: pupilEntry,
                           status: (value: newStatus),
                         );
@@ -189,7 +189,7 @@ class SchoolListPupilEntryCard extends WatchingWidget {
                       representedBoolValue: true, // Green/positive checkbox
                       currentStatus: pupilEntry.status,
                       onStatusChanged: (newStatus) async {
-                        await _schoolListManager.updatePupilListEntry(
+                        await schoolListManager.updatePupilListEntry(
                           entry: pupilEntry,
                           status: (value: newStatus),
                         );

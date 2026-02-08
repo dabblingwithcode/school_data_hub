@@ -11,10 +11,10 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manage
 import 'package:school_data_hub_flutter/features/pupil/presentation/special_info_page/widgets/special_info_card.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/special_info_page/widgets/special_info_list_page_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/special_info_page/widgets/special_info_list_search_bar.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 List<PupilProxy> specialInfoFilter(List<PupilProxy> pupils) {
-  final _filterStateManager = di<FiltersStateManager>();
+  final filterStateManager = di<FiltersStateManager>();
   List<PupilProxy> filteredPupils = [];
   bool filtersOn = false;
   for (PupilProxy pupil in pupils) {
@@ -26,7 +26,7 @@ List<PupilProxy> specialInfoFilter(List<PupilProxy> pupils) {
     filteredPupils.add(pupil);
   }
   if (filtersOn) {
-    _filterStateManager.setFilterState(
+    filterStateManager.setFilterState(
       filterState: FilterState.pupil,
       value: true,
     );
@@ -35,8 +35,8 @@ List<PupilProxy> specialInfoFilter(List<PupilProxy> pupils) {
 }
 
 void _onPop(bool didPop, dynamic result) {
-  final _filterStateManager = di<FiltersStateManager>();
-  _filterStateManager.resetFilters();
+  final filterStateManager = di<FiltersStateManager>();
+  filterStateManager.resetFilters();
 }
 
 class SpecialInfoListPage extends WatchingWidget {
@@ -44,14 +44,14 @@ class SpecialInfoListPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _filterStateManager = di<FiltersStateManager>();
-    final _pupilManager = di<PupilProxyManager>();
+    final filterStateManager = di<FiltersStateManager>();
+    final pupilManager = di<PupilProxyManager>();
     List<PupilProxy> filteredPupils = watchValue(
       (PupilsFilter x) => x.filteredPupils,
     );
     List<PupilProxy> pupils = specialInfoFilter(filteredPupils);
     onDispose(() {
-      _filterStateManager.resetFilters();
+      filterStateManager.resetFilters();
     });
     return PopScope(
       onPopInvokedWithResult: (didPop, result) => _onPop(didPop, result),
@@ -71,7 +71,7 @@ class SpecialInfoListPage extends WatchingWidget {
           automaticallyImplyLeading: false,
         ),
         body: RefreshIndicator(
-          onRefresh: () async => _pupilManager.updatePupilList(pupils),
+          onRefresh: () async => pupilManager.updatePupilList(pupils),
           child: Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 700),
@@ -91,7 +91,7 @@ class SpecialInfoListPage extends WatchingWidget {
             ),
           ),
         ),
-        bottomNavigationBar: SpecialInfoListPageBottomNavBar(),
+        bottomNavigationBar: const SpecialInfoListPageBottomNavBar(),
       ),
     );
   }
