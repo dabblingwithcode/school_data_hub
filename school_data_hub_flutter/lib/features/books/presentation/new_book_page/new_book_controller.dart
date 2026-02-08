@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart'
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_tag_management_page/book_tag_management_controller.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/new_book_page/new_book_page.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class NewBook extends WatchingStatefulWidget {
   final String? bookTitle;

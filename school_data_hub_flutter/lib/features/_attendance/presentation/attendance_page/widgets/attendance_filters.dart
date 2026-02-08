@@ -6,16 +6,16 @@ import 'package:school_data_hub_flutter/features/_attendance/domain/filters/atte
 import 'package:school_data_hub_flutter/features/_attendance/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class AttendanceFilters extends WatchingWidget {
   const AttendanceFilters({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final _pupilFilterLocator = di<PupilFilterManager>();
+    final pupilFilterLocator = di<PupilFilterManager>();
 
-    final _attendanceFilterLocator = di<AttendancePupilFilterManager>();
+    final attendanceFilterLocator = di<AttendancePupilFilterManager>();
     final Map<AttendancePupilFilter, bool> activeAttendanceFilters = watchValue(
       (AttendancePupilFilterManager x) => x.attendancePupilFilterState,
     );
@@ -52,7 +52,7 @@ class AttendanceFilters extends WatchingWidget {
                 // in case present is selected, not present and unexcused should be deselected
 
                 if (val) {
-                  _attendanceFilterLocator.setAttendancePupilFilter(
+                  attendanceFilterLocator.setAttendancePupilFilter(
                     attendancePupilFilterRecords: [
                       (
                         attendancePupilFilter: AttendancePupilFilter.notPresent,
@@ -70,7 +70,7 @@ class AttendanceFilters extends WatchingWidget {
                   );
                   return;
                 }
-                _attendanceFilterLocator.setAttendancePupilFilter(
+                attendanceFilterLocator.setAttendancePupilFilter(
                   attendancePupilFilterRecords: [
                     (
                       attendancePupilFilter: AttendancePupilFilter.present,
@@ -87,7 +87,7 @@ class AttendanceFilters extends WatchingWidget {
                 // in case not present is selected, present should be deselected
                 if (val) {
                   //_valuePresent = false;
-                  _attendanceFilterLocator.setAttendancePupilFilter(
+                  attendanceFilterLocator.setAttendancePupilFilter(
                     attendancePupilFilterRecords: [
                       (
                         attendancePupilFilter: AttendancePupilFilter.notPresent,
@@ -106,7 +106,7 @@ class AttendanceFilters extends WatchingWidget {
                   return;
                 }
 
-                _attendanceFilterLocator.setAttendancePupilFilter(
+                attendanceFilterLocator.setAttendancePupilFilter(
                   attendancePupilFilterRecords: [
                     (
                       attendancePupilFilter: AttendancePupilFilter.notPresent,
@@ -122,7 +122,7 @@ class AttendanceFilters extends WatchingWidget {
               onSelected: (val) {
                 // in case unexcused is selected, present should be deselected
                 if (val) {
-                  _attendanceFilterLocator.setAttendancePupilFilter(
+                  attendanceFilterLocator.setAttendancePupilFilter(
                     attendancePupilFilterRecords: [
                       (
                         attendancePupilFilter: AttendancePupilFilter.unexcused,
@@ -140,7 +140,7 @@ class AttendanceFilters extends WatchingWidget {
                   );
                   return;
                 }
-                _attendanceFilterLocator.setAttendancePupilFilter(
+                attendanceFilterLocator.setAttendancePupilFilter(
                   attendancePupilFilterRecords: [
                     (
                       attendancePupilFilter: AttendancePupilFilter.unexcused,
@@ -157,7 +157,7 @@ class AttendanceFilters extends WatchingWidget {
                 if (val == true) {
                   // in case ogs is selected, not ogs should be deselected
 
-                  _pupilFilterLocator.setPupilFilter(
+                  pupilFilterLocator.setPupilFilter(
                     pupilFilterRecords: [
                       (filter: PupilFilter.noAfterSchoolCare, value: false),
                       (filter: PupilFilter.afterSchoolCare, value: val),
@@ -166,7 +166,7 @@ class AttendanceFilters extends WatchingWidget {
                   return;
                 }
 
-                _pupilFilterLocator.setPupilFilter(
+                pupilFilterLocator.setPupilFilter(
                   pupilFilterRecords: [
                     (filter: PupilFilter.afterSchoolCare, value: val),
                   ],
@@ -179,7 +179,7 @@ class AttendanceFilters extends WatchingWidget {
               onSelected: (val) {
                 if (val == true) {
                   // in case not ogs is selected, ogs should be deselected
-                  _pupilFilterLocator.setPupilFilter(
+                  pupilFilterLocator.setPupilFilter(
                     pupilFilterRecords: [
                       (filter: PupilFilter.afterSchoolCare, value: false),
                       (filter: PupilFilter.noAfterSchoolCare, value: val),
@@ -187,7 +187,7 @@ class AttendanceFilters extends WatchingWidget {
                   );
                   return;
                 }
-                _pupilFilterLocator.setPupilFilter(
+                pupilFilterLocator.setPupilFilter(
                   pupilFilterRecords: [
                     (filter: PupilFilter.noAfterSchoolCare, value: val),
                   ],

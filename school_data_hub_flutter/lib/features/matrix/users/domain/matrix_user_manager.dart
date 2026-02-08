@@ -11,9 +11,9 @@ import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_use
 import 'package:school_data_hub_flutter/features/matrix/services/matrix_credentials_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
-class MatrixUserManager extends ChangeNotifier {
+class MatrixUserManager {
   final _log = Logger('MatrixUserManager');
   final _notificationService = di<NotificationService>();
 
@@ -32,9 +32,12 @@ class MatrixUserManager extends ChangeNotifier {
   final _matrixUsers = ValueNotifier<List<MatrixUser>>([]);
   ValueListenable<List<MatrixUser>> get matrixUsers => _matrixUsers;
 
+  void dispose() {
+    _matrixUsers.dispose();
+  }
+
   void setUsers(List<MatrixUser> users) {
     _matrixUsers.value = users;
-    notifyListeners();
   }
 
   MatrixUser getUserById(String userId) {
@@ -83,7 +86,6 @@ class MatrixUserManager extends ChangeNotifier {
     );
 
     _onPolicyChanges(true);
-    notifyListeners();
     return file;
   }
 
@@ -171,7 +173,6 @@ class MatrixUserManager extends ChangeNotifier {
       NotificationType.success,
       'Benutzer gelöscht',
     );
-    notifyListeners();
   }
 
   Future<String?> resetPassword(MatrixUser user) async {
@@ -241,7 +242,6 @@ class MatrixUserManager extends ChangeNotifier {
     }
 
     _onPolicyChanges(true);
-    notifyListeners();
   }
 
   void removeRoomFromUsers(MatrixRoom room) {
@@ -253,6 +253,5 @@ class MatrixUserManager extends ChangeNotifier {
     _matrixUsers.value = List.from(_matrixUsers.value);
 
     // Notify listeners about the change
-    notifyListeners();
   }
 }

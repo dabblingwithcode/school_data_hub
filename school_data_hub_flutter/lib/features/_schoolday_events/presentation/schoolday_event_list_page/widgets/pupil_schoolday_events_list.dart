@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/features/_schoolday_events/domain/school
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/new_schoolday_event_page/new_schoolday_event_page.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/pupil_schoolday_event_card.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class PupilSchooldayEventsList extends WatchingWidget {
   final PupilProxy pupil;
@@ -16,15 +16,15 @@ class PupilSchooldayEventsList extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _schooldayEventFilterManager = di<SchooldayEventFilterManager>();
-    final _schooldayEventManager = di<SchooldayEventManager>();
-    final _notificationService = di<NotificationService>();
+    final schooldayEventFilterManager = di<SchooldayEventFilterManager>();
+    final schooldayEventManager = di<SchooldayEventManager>();
+    final notificationService = di<NotificationService>();
     final pupil = this.pupil;
     final unfilteredEvents = watch(
-      _schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId),
+      schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId),
     ).schooldayEvents;
     final List<SchooldayEvent> filteredSchooldayEvents =
-        _schooldayEventFilterManager.filteredSchooldayEvents(
+        schooldayEventFilterManager.filteredSchooldayEvents(
           unfilteredEvents.values.toList(),
         );
     return Column(
@@ -75,7 +75,7 @@ class PupilSchooldayEventsList extends WatchingWidget {
                 },
                 onLongPress: () async {
                   if (filteredSchooldayEvents[index].processed) {
-                    _notificationService.showSnackBar(
+                    notificationService.showSnackBar(
                       NotificationType.error,
                       'Ereignis wurde bereits bearbeitet!',
                     );
@@ -88,10 +88,10 @@ class PupilSchooldayEventsList extends WatchingWidget {
                     message: 'Das Ereignis löschen?',
                   );
                   if (confirm! == false) return;
-                  await _schooldayEventManager.deleteSchooldayEvent(
+                  await schooldayEventManager.deleteSchooldayEvent(
                     filteredSchooldayEvents[index].id!,
                   );
-                  _notificationService.showSnackBar(
+                  notificationService.showSnackBar(
                     NotificationType.success,
                     'Das Ereignis wurde gelöscht!',
                   );

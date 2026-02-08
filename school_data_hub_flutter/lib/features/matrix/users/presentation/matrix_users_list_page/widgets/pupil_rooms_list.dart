@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class MatrixUserRoomsList extends WatchingWidget {
   final MatrixUser matrixUser;
@@ -20,8 +20,8 @@ class MatrixUserRoomsList extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _matrixPolicyManager = di<MatrixPolicyManager>();
-    List<MatrixRoom> namedMatrixRooms = _matrixPolicyManager.matrixRooms.value;
+    final matrixPolicyManager = di<MatrixPolicyManager>();
+    List<MatrixRoom> namedMatrixRooms = matrixPolicyManager.matrixRooms.value;
     final user = watch<MatrixUser>(matrixUser);
 
     return Column(
@@ -154,8 +154,8 @@ List<Widget> roomsList(
   List<MatrixRoom> matrixRooms,
   BuildContext context,
 ) {
-  final _matrixPolicyManager = di<MatrixPolicyManager>();
-  List<MatrixRoom> namedMatrixRooms = _matrixPolicyManager.matrixRooms.value;
+  final matrixPolicyManager = di<MatrixPolicyManager>();
+  List<MatrixRoom> namedMatrixRooms = matrixPolicyManager.matrixRooms.value;
 
   return [
     Padding(

@@ -3,7 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SelectBookTagsPage extends WatchingWidget {
   final List<BookTag> initialSelectedTags;
@@ -84,49 +84,41 @@ class SelectBookTagsPage extends WatchingWidget {
                   return Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children:
-                        sortedTags.map((tag) {
-                          final isSelected = currentSelectedTags.any(
-                            (selectedTag) => selectedTag.id == tag.id,
-                          );
+                    children: sortedTags.map((tag) {
+                      final isSelected = currentSelectedTags.any(
+                        (selectedTag) => selectedTag.id == tag.id,
+                      );
 
-                          return FilterChip(
-                            label: Text(
-                              tag.name,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            selected: isSelected,
-                            onSelected: (bool selected) {
-                              if (selected) {
-                                selectedTags.value = [
-                                  ...currentSelectedTags,
-                                  tag,
-                                ];
-                              } else {
-                                selectedTags.value =
-                                    currentSelectedTags
-                                        .where(
-                                          (selectedTag) =>
-                                              selectedTag.id != tag.id,
-                                        )
-                                        .toList();
-                              }
-                            },
-                            selectedColor: AppColors.interactiveColor
-                                .withValues(alpha: 0.2),
-                            checkmarkColor: AppColors.interactiveColor,
-                                avatar:
-                                isSelected
-                                    ? Icon(
-                                      Icons.check,
-                                      color: AppColors.successButtonColor,
-                                      size: 18,
-                                    )
-                                    : const SizedBox.shrink(),
-                          );
-                        }).toList(),
+                      return FilterChip(
+                        label: Text(
+                          tag.name,
+                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                        selected: isSelected,
+                        onSelected: (bool selected) {
+                          if (selected) {
+                            selectedTags.value = [...currentSelectedTags, tag];
+                          } else {
+                            selectedTags.value = currentSelectedTags
+                                .where(
+                                  (selectedTag) => selectedTag.id != tag.id,
+                                )
+                                .toList();
+                          }
+                        },
+                        selectedColor: AppColors.interactiveColor.withValues(
+                          alpha: 0.2,
+                        ),
+                        checkmarkColor: AppColors.interactiveColor,
+                        avatar: isSelected
+                            ? Icon(
+                                Icons.check,
+                                color: AppColors.successButtonColor,
+                                size: 18,
+                              )
+                            : const SizedBox.shrink(),
+                      );
+                    }).toList(),
                   );
                 },
               ),

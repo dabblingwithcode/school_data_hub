@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/features/learning/domain/competence_help
 import 'package:school_data_hub_flutter/features/learning/presentation/multi_pupil_competence_check_page/multi_pupil_competence_check_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class MultiPupilCompetenceCheck extends WatchingStatefulWidget {
   final Competence competence;
@@ -23,9 +23,10 @@ class MultiPupilCompetenceCheckViewModel
   List<PupilProxy> competenceFilteredPupils = [];
 
   // We filter the pupils based on the competence after the pupils have gone through the other filters
-  List<PupilProxy> getFilteredPupilsWithCompetence(
-      {required Competence competence,
-      required List<PupilProxy> pupilsToBeFiltered}) {
+  List<PupilProxy> getFilteredPupilsWithCompetence({
+    required Competence competence,
+    required List<PupilProxy> pupilsToBeFiltered,
+  }) {
     List<PupilProxy> pupils = [];
 
     for (PupilProxy pupil in pupilsToBeFiltered) {
@@ -49,11 +50,14 @@ class MultiPupilCompetenceCheckViewModel
 
   @override
   Widget build(BuildContext context) {
-    List<PupilProxy> filteredPupils =
-        watchValue((PupilsFilter x) => x.filteredPupils);
+    List<PupilProxy> filteredPupils = watchValue(
+      (PupilsFilter x) => x.filteredPupils,
+    );
 
     competenceFilteredPupils = getFilteredPupilsWithCompetence(
-        competence: widget.competence, pupilsToBeFiltered: filteredPupils);
+      competence: widget.competence,
+      pupilsToBeFiltered: filteredPupils,
+    );
 
     return MultiPupilCompetenceCheckPage(viewModel: this);
   }

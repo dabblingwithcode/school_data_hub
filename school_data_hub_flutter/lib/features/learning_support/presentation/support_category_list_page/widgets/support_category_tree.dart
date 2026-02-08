@@ -1,218 +1,153 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
+/// Displays the full support category hierarchy as a collapsible tree.
+///
+/// Root categories are color-coded. Branch nodes render as [ExpansionTile]s,
+/// leaf nodes render as plain text rows.
 class SupportCategoryTree extends StatelessWidget {
   final int? parentId;
   final int indentation;
   final Color? backGroundColor;
-  const SupportCategoryTree(
-      {required this.parentId,
-      required this.indentation,
-      this.backGroundColor,
-      super.key});
+
+  const SupportCategoryTree({
+    required this.parentId,
+    required this.indentation,
+    this.backGroundColor,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final _learningSupportManager = di<SupportCategoryManager>();
-    List<Widget> goalCategoryWidgets = [];
+    final supportCategories =
+        di<SupportCategoryManager>().supportCategories.value;
 
-    List<SupportCategory> goalCategories =
-        _learningSupportManager.supportCategories.value;
-    Color categoryBackgroundColor = backGroundColor ?? Colors.blue;
-    for (var goalCategory in goalCategories) {
-      if (backGroundColor == null) {
-        if (goalCategory.name == 'Körper, Wahrnehmung, Motorik') {
-          categoryBackgroundColor = AppColors.koerperWahrnehmungMotorikColor;
-        } else if (goalCategory.name == 'Sozialkompetenz / Emotionalität') {
-          categoryBackgroundColor = AppColors.sozialEmotionalColor;
-        } else if (goalCategory.name == 'Mathematik') {
-          categoryBackgroundColor = AppColors.mathematikColor;
-        } else if (goalCategory.name == 'Lernen und Leisten') {
-          categoryBackgroundColor = AppColors.lernenLeistenColor;
-        } else if (goalCategory.name == 'Deutsch') {
-          categoryBackgroundColor = AppColors.deutschColor;
-        } else if (goalCategory.name == 'Sprache und Sprechen') {
-          categoryBackgroundColor = AppColors.spracheSprechenColor;
-        }
-      } else {
-        categoryBackgroundColor = backGroundColor!;
-      }
-
-      if (goalCategory.parentCategory == parentId) {
-        final children = buildCategoryTree(
-            goalCategory.categoryId, indentation + 1, categoryBackgroundColor);
-
-        goalCategoryWidgets.add(
-          Padding(
-            padding: EdgeInsets.only(top: 10, left: 5.0 * indentation),
-            child: children.isNotEmpty
-                ? Wrap(
-                    children: [
-                      Card(
-                        color: categoryBackgroundColor,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        clipBehavior: Clip.antiAlias,
-                        margin: EdgeInsets.zero,
-                        child: ExpansionTile(
-                          iconColor: Colors.white,
-                          collapsedTextColor: Colors.white,
-                          collapsedIconColor: Colors.white,
-                          textColor: Colors.white,
-                          maintainState: true,
-                          backgroundColor: categoryBackgroundColor,
-                          title: Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Row(
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    goalCategory.name,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          goalCategory.parentCategory == null
-                                              ? 20
-                                              : 16,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          collapsedBackgroundColor: categoryBackgroundColor,
-                          children: children,
-                        ),
-                      ),
-                    ],
-                  )
-                : Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            goalCategory.name,
-                            textAlign: TextAlign.start,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+    final nodes = [
+      for (final category in supportCategories)
+        if (category.parentCategory == parentId)
+          _CategoryNode(
+            category: category,
+            indentation: indentation,
+            inheritedColor: backGroundColor,
           ),
-        );
+    ];
 
-        //return goalCategoryWidgets;
-      }
-    }
-    return Column(
-      children: goalCategoryWidgets,
+    return Column(children: nodes);
+  }
+}
+
+/// A single node in the category tree.
+///
+/// Determines if the category has children and renders as a
+/// [_BranchNode] (expandable) or [_LeafNode] (plain text) accordingly.
+class _CategoryNode extends StatelessWidget {
+  final SupportCategory category;
+  final int indentation;
+  final Color? inheritedColor;
+
+  const _CategoryNode({
+    required this.category,
+    required this.indentation,
+    required this.inheritedColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = inheritedColor ??
+        LearningSupportHelper.getRootSupportCategoryColor(category);
+
+    final supportCategories =
+        di<SupportCategoryManager>().supportCategories.value;
+
+    final hasChildren = supportCategories
+        .any((c) => c.parentCategory == category.categoryId);
+
+    return Padding(
+      padding: EdgeInsets.only(top: 10, left: 5.0 * indentation),
+      child: hasChildren
+          ? _BranchNode(
+              category: category,
+              indentation: indentation,
+              color: color,
+            )
+          : _LeafNode(category: category),
     );
   }
 }
 
-List<Widget> buildCategoryTree(
-    int? parentId, int indentation, Color? backGroundColor) {
-  final _learningSupportManager = di<SupportCategoryManager>();
-  List<Widget> goalCategoryWidgets = [];
+/// An expandable branch node containing a nested [SupportCategoryTree].
+class _BranchNode extends StatelessWidget {
+  final SupportCategory category;
+  final int indentation;
+  final Color color;
 
-  List<SupportCategory> supportCategories =
-      _learningSupportManager.supportCategories.value;
-  Color categoryBackgroundColor = backGroundColor ?? Colors.blue;
-  for (var goalCategory in supportCategories) {
-    if (backGroundColor == null) {
-      if (goalCategory.name == 'Körper, Wahrnehmung, Motorik') {
-        categoryBackgroundColor = const Color.fromARGB(255, 156, 76, 149);
-      } else if (goalCategory.name == 'Sozialkompetenz / Emotionalität') {
-        categoryBackgroundColor = const Color.fromARGB(255, 233, 127, 22);
-      } else if (goalCategory.name == 'Mathematik') {
-        categoryBackgroundColor = const Color.fromARGB(255, 5, 118, 172);
-      } else if (goalCategory.name == 'Lernen und Leisten') {
-        categoryBackgroundColor = const Color.fromARGB(255, 5, 155, 88);
-      } else if (goalCategory.name == 'Deutsch') {
-        categoryBackgroundColor = const Color.fromARGB(255, 228, 70, 60);
-      } else if (goalCategory.name == 'Sprache und Sprechen') {
-        categoryBackgroundColor = const Color.fromARGB(255, 244, 198, 17);
-      }
-    } else {
-      categoryBackgroundColor = backGroundColor;
-    }
+  const _BranchNode({
+    required this.category,
+    required this.indentation,
+    required this.color,
+  });
 
-    if (goalCategory.parentCategory == parentId) {
-      final children = buildCategoryTree(
-          goalCategory.categoryId, indentation + 1, categoryBackgroundColor);
+  @override
+  Widget build(BuildContext context) {
+    final isRoot = category.parentCategory == null;
 
-      goalCategoryWidgets.add(
-        Padding(
-          padding: EdgeInsets.only(top: 10, left: 5.0 * indentation),
-          child: children.isNotEmpty
-              ? Wrap(
-                  children: [
-                    Card(
-                      color: categoryBackgroundColor,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                      clipBehavior: Clip.antiAlias,
-                      margin: EdgeInsets.zero,
-                      child: ExpansionTile(
-                        iconColor: Colors.white,
-                        collapsedTextColor: Colors.white,
-                        collapsedIconColor: Colors.white,
-                        textColor: Colors.white,
-                        maintainState: true,
-                        backgroundColor: categoryBackgroundColor,
-                        title: Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Row(
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  goalCategory.name,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        collapsedBackgroundColor: categoryBackgroundColor,
-                        children: children,
-                      ),
-                    ),
-                  ],
-                )
-              : Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          goalCategory.name,
-                          textAlign: TextAlign.start,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+    return Card(
+      color: color,
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      clipBehavior: Clip.antiAlias,
+      margin: EdgeInsets.zero,
+      child: ExpansionTile(
+        iconColor: Colors.white,
+        collapsedTextColor: Colors.white,
+        collapsedIconColor: Colors.white,
+        textColor: Colors.white,
+        maintainState: true,
+        backgroundColor: color,
+        collapsedBackgroundColor: color,
+        title: Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Text(
+            category.name,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: isRoot ? 20 : 16,
+            ),
+          ),
         ),
-      );
-
-      //return goalCategoryWidgets;
-    }
+        children: [
+          SupportCategoryTree(
+            parentId: category.categoryId,
+            indentation: indentation + 1,
+            backGroundColor: color,
+          ),
+        ],
+      ),
+    );
   }
+}
 
-  return goalCategoryWidgets;
+/// A leaf node displaying the category name as plain text.
+class _LeafNode extends StatelessWidget {
+  final SupportCategory category;
+
+  const _LeafNode({required this.category});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        category.name,
+        textAlign: TextAlign.start,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 15,
+        ),
+      ),
+    );
+  }
 }

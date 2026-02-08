@@ -5,14 +5,14 @@ import 'package:school_data_hub_flutter/common/theme/paddings.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/presentation/new_authorization_page/new_authorization_page.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class AuthorizationListBottomNavBar extends StatelessWidget {
   const AuthorizationListBottomNavBar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final _hubSessionManager = di<HubSessionManager>();
+    final hubSessionManager = di<HubSessionManager>();
     return BottomNavBarLayout(
       bottomNavBar: BottomAppBar(
         height: 60,
@@ -26,30 +26,26 @@ class AuthorizationListBottomNavBar extends StatelessWidget {
               const Spacer(),
               IconButton(
                 tooltip: 'zurück',
-                icon: const Icon(
-                  Icons.arrow_back,
-                  size: 35,
-                ),
+                icon: const Icon(Icons.arrow_back, size: 35),
                 onPressed: () {
                   Navigator.pop(context);
                 },
               ),
-              if (_hubSessionManager.isAdmin == true) ...[
+              if (hubSessionManager.isAdmin == true) ...[
                 const Gap(AppPaddings.bottomNavBarButtonGap),
                 IconButton(
                   tooltip: 'Neue Liste',
-                  icon: const Icon(
-                    Icons.add,
-                    size: 35,
-                  ),
+                  icon: const Icon(Icons.add, size: 35),
                   onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) => const NewAuthorizationPage(),
-                    ));
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (ctx) => const NewAuthorizationPage(),
+                      ),
+                    );
                   },
                 ),
               ],
-              const Gap(15)
+              const Gap(15),
             ],
           ),
         ),

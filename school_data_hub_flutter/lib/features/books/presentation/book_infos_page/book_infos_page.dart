@@ -12,7 +12,7 @@ import 'package:school_data_hub_flutter/features/books/domain/models/library_boo
 import 'package:school_data_hub_flutter/features/books/presentation/book_infos_page/widgets/book_header.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_list_page/widgets/book_pupil_card.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/new_book_page/new_book_controller.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class BookInfosPage extends WatchingStatefulWidget {
   final String libraryId;
@@ -313,7 +313,7 @@ class _BookInfosPageState extends State<BookInfosPage> {
         const Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const Gap(10),
+            Gap(10),
             Text(
               'Ausleihen:',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

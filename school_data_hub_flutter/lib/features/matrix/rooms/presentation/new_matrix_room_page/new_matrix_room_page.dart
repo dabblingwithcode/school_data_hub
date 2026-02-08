@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/data/matrix_room_api_service.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class NewMatrixRoomPage extends StatefulWidget {
   const NewMatrixRoomPage({super.key});
@@ -58,10 +58,9 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
       await _matrixPolicyManager.rooms.createNewRoom(
         name: nameController.text.trim(),
         topic: topicController.text.trim(),
-        aliasName:
-            aliasController.text.trim().isEmpty
-                ? null
-                : aliasController.text.trim(),
+        aliasName: aliasController.text.trim().isEmpty
+            ? null
+            : aliasController.text.trim(),
         chatTypePreset: selectedRoomType,
       );
 
@@ -229,22 +228,22 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
                                 ),
                                 const Gap(16),
                                 DropdownButtonFormField<ChatTypePreset>(
-                                  value: selectedRoomType,
+                                  initialValue: selectedRoomType,
                                   decoration: const InputDecoration(
                                     border: OutlineInputBorder(),
                                   ),
                                   items: [
                                     const DropdownMenuItem(
                                       value: ChatTypePreset.private,
-                                      child: const Text('Privat'),
+                                      child: Text('Privat'),
                                     ),
                                     const DropdownMenuItem(
                                       value: ChatTypePreset.public,
-                                      child: const Text('Öffentlich'),
+                                      child: Text('Öffentlich'),
                                     ),
                                     const DropdownMenuItem(
                                       value: ChatTypePreset.trustedPrivate,
-                                      child: const Text(
+                                      child: Text(
                                         'Vertrauenswürdig Privat',
                                       ),
                                     ),
@@ -279,10 +278,9 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
                         width: 150, // Fixed width
                         child: ElevatedButton(
                           style: AppStyles.cancelButtonStyle,
-                          onPressed:
-                              isProcessing
-                                  ? null
-                                  : () => Navigator.of(context).pop(),
+                          onPressed: isProcessing
+                              ? null
+                              : () => Navigator.of(context).pop(),
                           child: const Text(
                             'ABBRECHEN',
                             style: AppStyles.buttonTextStyle,
@@ -296,20 +294,19 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
                         child: ElevatedButton(
                           style: AppStyles.successButtonStyle,
                           onPressed: isProcessing ? null : createRoom,
-                          child:
-                              isProcessing
-                                  ? const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                  : const Text(
-                                    'RAUM ERSTELLEN',
-                                    style: AppStyles.buttonTextStyle,
+                          child: isProcessing
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
                                   ),
+                                )
+                              : const Text(
+                                  'RAUM ERSTELLEN',
+                                  style: AppStyles.buttonTextStyle,
+                                ),
                         ),
                       ),
                     ],

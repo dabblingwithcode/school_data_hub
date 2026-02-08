@@ -14,7 +14,7 @@ import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:serverpod_auth_client/serverpod_auth_client.dart'
     as auth_client;
 import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 /// The [SessionManager] keeps track of and manages the signed-in state of the
 /// user. Use the [instance] method to get access to the singleton instance.

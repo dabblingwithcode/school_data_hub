@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_po
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/matrix_users_list_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/new_matrix_room_page/new_matrix_room_page.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class RoomListPageBottomNavBar extends WatchingWidget {
   const RoomListPageBottomNavBar({super.key});

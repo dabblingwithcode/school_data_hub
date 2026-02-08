@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class PupilBookCard extends WatchingWidget {
   const PupilBookCard({
@@ -24,7 +24,7 @@ class PupilBookCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _hubSessionManager = di<HubSessionManager>();
+    final hubSessionManager = di<HubSessionManager>();
     final LibraryBookProxy bookProxy = di<BookManager>().getLibraryBookById(
       pupilBook.libraryBookId,
     )!;
@@ -40,8 +40,8 @@ class PupilBookCard extends WatchingWidget {
           //   ));
           // },
           onLongPress: () async {
-            if (pupilBook.lentBy != _hubSessionManager.userName ||
-                !_hubSessionManager.isAdmin) {
+            if (pupilBook.lentBy != hubSessionManager.userName ||
+                !hubSessionManager.isAdmin) {
               informationDialog(
                 context,
                 'Keine Berechtigung',

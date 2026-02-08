@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _log = Logger('SchooldayEventApiService');
 
@@ -45,13 +45,11 @@ class SchooldayEventApiService {
         tutor: tutor ?? '',
       );
 
-      if (eventTime != null) {
-        event = await updateSchooldayEvent(
-          schooldayEvent: event,
-          eventTime: eventTime,
-        );
-      }
-
+      event = await updateSchooldayEvent(
+        schooldayEvent: event,
+        eventTime: eventTime,
+      );
+    
       _notificationService.apiRunning(false);
 
       return event;
@@ -138,8 +136,8 @@ class SchooldayEventApiService {
             changedProcessedStatus,
             '${pupil.firstName} (${pupil.group})',
             '${pupil.groupTutor}',
-            '${di<HubSessionManager>().userName!}',
-            '${DateTime.now().formatDateForUser()}',
+            di<HubSessionManager>().userName!,
+            DateTime.now().formatDateForUser(),
           );
       _notificationService.apiRunning(false);
       return updatedSchooldayEvent;

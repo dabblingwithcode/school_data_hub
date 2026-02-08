@@ -74,7 +74,7 @@
 // import 'package:school_data_hub_flutter/features/user/presentation/reset_password/reset_user_password_page.dart';
 // import 'package:school_data_hub_flutter/features/user/presentation/user_list/user_list_page.dart';
 // import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/controller/workbook_list_view_model.dart';
-// import 'package:watch_it/watch_it.dart';
+// import 'package:flutter_it/flutter_it.dart';
 
 // class AppRouter {
 //   static final GlobalKey<NavigatorState> rootNavigatorKey =

@@ -4,14 +4,14 @@ import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/filters/attendance_pupil_filter.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class AfterSchoolCareFilterBottomSheet extends WatchingWidget {
   const AfterSchoolCareFilterBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final _attendanceFilterLocator = di<AttendancePupilFilterManager>();
+    final attendanceFilterLocator = di<AttendancePupilFilterManager>();
     final Map<AttendancePupilFilter, bool> activeAttendanceFilters = watchValue(
       (AttendancePupilFilterManager x) => x.attendancePupilFilterState,
     );
@@ -45,7 +45,7 @@ class AfterSchoolCareFilterBottomSheet extends WatchingWidget {
                           // in case present is selected, not present and unexcused should be deselected
 
                           if (val) {
-                            _attendanceFilterLocator.setAttendancePupilFilter(
+                            attendanceFilterLocator.setAttendancePupilFilter(
                               attendancePupilFilterRecords: [
                                 (
                                   attendancePupilFilter:
@@ -66,7 +66,7 @@ class AfterSchoolCareFilterBottomSheet extends WatchingWidget {
                             );
                             return;
                           }
-                          _attendanceFilterLocator.setAttendancePupilFilter(
+                          attendanceFilterLocator.setAttendancePupilFilter(
                             attendancePupilFilterRecords: [
                               (
                                 attendancePupilFilter:
@@ -84,7 +84,7 @@ class AfterSchoolCareFilterBottomSheet extends WatchingWidget {
                           // in case not present is selected, present should be deselected
                           if (val) {
                             //_valuePresent = false;
-                            _attendanceFilterLocator.setAttendancePupilFilter(
+                            attendanceFilterLocator.setAttendancePupilFilter(
                               attendancePupilFilterRecords: [
                                 (
                                   attendancePupilFilter:
@@ -106,7 +106,7 @@ class AfterSchoolCareFilterBottomSheet extends WatchingWidget {
                             return;
                           }
 
-                          _attendanceFilterLocator.setAttendancePupilFilter(
+                          attendanceFilterLocator.setAttendancePupilFilter(
                             attendancePupilFilterRecords: [
                               (
                                 attendancePupilFilter:
@@ -129,7 +129,7 @@ class AfterSchoolCareFilterBottomSheet extends WatchingWidget {
   }
 }
 
-showOgsFilterBottomSheet(BuildContext context) {
+Future<dynamic> showOgsFilterBottomSheet(BuildContext context) {
   return showModalBottomSheet(
     constraints: const BoxConstraints(maxWidth: 800),
     shape: const RoundedRectangleBorder(

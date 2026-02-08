@@ -13,7 +13,7 @@ import 'package:school_data_hub_flutter/core/updater/shorebird_update_manager.da
 import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 enum InitScope { onActiveEnvScope, onAuthScope, onMatrixEnvScope }
 

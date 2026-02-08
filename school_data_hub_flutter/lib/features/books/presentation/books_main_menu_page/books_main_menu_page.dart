@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart'
 import 'package:school_data_hub_flutter/features/books/presentation/book_infos_page/book_infos_page.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_search_form/book_search_form_page.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_tag_management_page/book_tag_management_controller.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 import '../../../../common/theme/app_colors.dart';
 import '../../../../common/widgets/dialogs/short_textfield_dialog.dart';

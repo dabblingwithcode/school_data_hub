@@ -1,6 +1,6 @@
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class LearningSupportApiService {
   Client get _client => di<Client>();
@@ -166,6 +166,13 @@ class LearningSupportApiService {
       errorMessage: 'Fehler beim Importieren der Förderstufen',
     );
     return response ?? false;
+  }
+
+  /// Import support categories from a previously-uploaded JSON file.
+  Future<List<SupportCategory>> importSupportCategoriesFromJsonFile(
+    String filePath,
+  ) async {
+    return _client.adminCategories.importSupportCategoriesFromJsonFile(filePath);
   }
 
   //- NOT IMPLEMENTED ------------------------------------------------------

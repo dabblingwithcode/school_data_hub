@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manage
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class NewAuthorizationPage extends StatefulWidget {
   const NewAuthorizationPage({super.key});
@@ -70,7 +70,7 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
                   maxLines: 3,
                   controller: authorizationNameController,
                   decoration: InputDecoration(
-                    contentPadding: EdgeInsets.all(10),
+                    contentPadding: const EdgeInsets.all(10),
                     border: OutlineInputBorder(
                       borderSide: BorderSide(
                         color: AppColors.backgroundColor,
@@ -93,7 +93,7 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
                   maxLines: 3,
                   controller: authorizationDescriptionController,
                   decoration: InputDecoration(
-                    contentPadding: EdgeInsets.all(10),
+                    contentPadding: const EdgeInsets.all(10),
                     border: OutlineInputBorder(
                       borderSide: BorderSide(
                         color: AppColors.backgroundColor,

@@ -1,7 +1,7 @@
 // lib/app_utils/logger/signals_logger.dart
 import 'package:school_data_hub_flutter/app_utils/logger/domain/log_service.dart';
 import 'package:signals/signals_flutter.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class AppSignalsObserver extends SignalsObserver {
   bool _forwarding = false;

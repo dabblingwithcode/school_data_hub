@@ -10,7 +10,7 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/features/_schoolday_events/data/schoolday_event_api_service.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/models/pupil_schoolday_events_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SchooldayEventManager with ChangeNotifier {
   final _cacheManager = di<DefaultCacheManager>();

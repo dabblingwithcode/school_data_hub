@@ -3,7 +3,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/select_competence_page/select_competence_page.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SelectCompetence extends WatchingStatefulWidget {
   final void Function(BuildContext context, Competence competence)? onSelected;

@@ -4,8 +4,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:signals/signals_flutter.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 /// Copied from [FlutterConnectivityMonitor] in the serverpod package
 /// and added a ValueNotifier to the class to be able to observe it with watch_it
@@ -15,8 +14,8 @@ class ServerpodConnectivityMonitor extends ConnectivityMonitor {
   bool _receivedFirstEvent = false;
   final _notificationService = di<NotificationService>();
   // value notifier to observe with watch_it
-  final Signal<bool> _isConnected = signal(false);
-  Signal<bool> get isConnected => _isConnected;
+  final ValueNotifier<bool> _isConnected = ValueNotifier<bool>(false);
+  ValueNotifier<bool> get isConnected => _isConnected;
 
   /// Creates a new connectivity monitor.
   ServerpodConnectivityMonitor() {

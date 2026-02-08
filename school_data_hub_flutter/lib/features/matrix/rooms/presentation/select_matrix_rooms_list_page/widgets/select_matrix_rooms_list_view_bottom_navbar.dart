@@ -3,20 +3,23 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/controller/select_matrix_rooms_list_controller.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _matrixPolicyFilterManager = di<MatrixPolicyFilterManager>();
 
 class SelectMatrixRoomsListViewBottomNavBar extends WatchingWidget {
   final SelectMatrixRoomsListController controller;
 
-  const SelectMatrixRoomsListViewBottomNavBar(
-      {required this.controller, super.key});
+  const SelectMatrixRoomsListViewBottomNavBar({
+    required this.controller,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final bool filtersOn =
-        watchValue((MatrixPolicyFilterManager x) => x.filtersOn);
+    final bool filtersOn = watchValue(
+      (MatrixPolicyFilterManager x) => x.filtersOn,
+    );
     return BottomAppBar(
       padding: const EdgeInsets.all(9),
       shape: null,
@@ -30,10 +33,7 @@ class SelectMatrixRoomsListViewBottomNavBar extends WatchingWidget {
               const Spacer(),
               IconButton(
                 tooltip: 'zurück',
-                icon: const Icon(
-                  Icons.arrow_back,
-                  size: 30,
-                ),
+                icon: const Icon(Icons.arrow_back, size: 30),
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -44,7 +44,8 @@ class SelectMatrixRoomsListViewBottomNavBar extends WatchingWidget {
                       onPressed: () {
                         controller.cancelSelect();
                       },
-                      icon: const Icon(Icons.close))
+                      icon: const Icon(Icons.close),
+                    )
                   : const SizedBox.shrink(),
               IconButton(
                 tooltip: 'alle auswählen',
@@ -86,7 +87,7 @@ class SelectMatrixRoomsListViewBottomNavBar extends WatchingWidget {
                   ),
                 ),
               ),
-              const Gap(10)
+              const Gap(10),
             ],
           ),
         ),

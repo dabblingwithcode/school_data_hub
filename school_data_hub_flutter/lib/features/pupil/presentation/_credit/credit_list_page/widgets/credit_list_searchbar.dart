@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/widgets/credit_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_search_text_field.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class CreditListSearchBar extends WatchingWidget {
   final List<PupilProxy> pupils;

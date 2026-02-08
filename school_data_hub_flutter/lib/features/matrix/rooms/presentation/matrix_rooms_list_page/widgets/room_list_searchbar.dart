@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_po
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/rooms_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/widgets/matrix_search_text_field.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _matrixPolicyFilterManager = di<MatrixPolicyFilterManager>();
 

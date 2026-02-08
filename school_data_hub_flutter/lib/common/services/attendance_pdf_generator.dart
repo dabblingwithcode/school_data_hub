@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
@@ -19,7 +20,6 @@ import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_s
 import 'package:school_data_hub_flutter/features/_attendance/domain/models/attendance_values.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
-import 'package:watch_it/watch_it.dart';
 
 final _log = Logger('AttendancePdfGenerator');
 

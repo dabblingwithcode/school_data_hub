@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/common/domain/filters/filters_state_mana
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/models/schoolday_event_enums.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 typedef SchooldayEventFilterRecord = ({
   SchooldayEventFilter filter,

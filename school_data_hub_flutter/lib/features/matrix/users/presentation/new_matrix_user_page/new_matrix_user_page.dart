@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/controller/select_matrix_rooms_list_controller.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class NewMatrixUserPage extends StatefulWidget {
   final String? matrixId;

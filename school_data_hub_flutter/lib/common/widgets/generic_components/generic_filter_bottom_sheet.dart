@@ -24,7 +24,7 @@ class GenericFilterBottomSheet extends StatelessWidget {
   }
 }
 
-showGenericFilterBottomSheet({
+Future<dynamic> showGenericFilterBottomSheet({
   required BuildContext context,
   required List<Widget> filterList,
 }) {

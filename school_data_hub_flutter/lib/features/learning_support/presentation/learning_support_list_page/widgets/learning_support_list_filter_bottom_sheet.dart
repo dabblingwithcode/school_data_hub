@@ -5,14 +5,14 @@ import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/models/learning_support_enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class LearningSupportFilterBottomSheet extends WatchingWidget {
   const LearningSupportFilterBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final _learningSupportFilterManager = di<LearningSupportFilterManager>();
+    final learningSupportFilterManager = di<LearningSupportFilterManager>();
     Map<SupportLevelType, bool> supportLevelFilters = watchValue(
       (LearningSupportFilterManager x) => x.supportLevelFilterState,
     );
@@ -61,7 +61,7 @@ class LearningSupportFilterBottomSheet extends WatchingWidget {
                         label: 'Ebene 1',
                         selected: valueSupportLevel1,
                         onSelected: (val) {
-                          _learningSupportFilterManager.setSupportLevelFilter(
+                          learningSupportFilterManager.setSupportLevelFilter(
                             supportLevelFilterRecords: [
                               (
                                 filter: SupportLevelType.supportLevel1,
@@ -75,7 +75,7 @@ class LearningSupportFilterBottomSheet extends WatchingWidget {
                         label: 'Ebene 2',
                         selected: valueSupportLevel2,
                         onSelected: (val) {
-                          _learningSupportFilterManager.setSupportLevelFilter(
+                          learningSupportFilterManager.setSupportLevelFilter(
                             supportLevelFilterRecords: [
                               (
                                 filter: SupportLevelType.supportLevel2,
@@ -89,7 +89,7 @@ class LearningSupportFilterBottomSheet extends WatchingWidget {
                         label: 'Ebene 3',
                         selected: valueSupportLevel3,
                         onSelected: (val) {
-                          _learningSupportFilterManager.setSupportLevelFilter(
+                          learningSupportFilterManager.setSupportLevelFilter(
                             supportLevelFilterRecords: [
                               (
                                 filter: SupportLevelType.supportLevel3,
@@ -103,7 +103,7 @@ class LearningSupportFilterBottomSheet extends WatchingWidget {
                         label: 'Regenbogen',
                         selected: valueSupportLevel4,
                         onSelected: (val) {
-                          _learningSupportFilterManager.setSupportLevelFilter(
+                          learningSupportFilterManager.setSupportLevelFilter(
                             supportLevelFilterRecords: [
                               (
                                 filter: SupportLevelType.supportLevel4,
@@ -130,7 +130,7 @@ class LearningSupportFilterBottomSheet extends WatchingWidget {
                         label: 'Motorik',
                         selected: valueSupportAreaMotorics,
                         onSelected: (val) {
-                          _learningSupportFilterManager.setSupportAreaFilter(
+                          learningSupportFilterManager.setSupportAreaFilter(
                             supportAreaFilterRecords: [
                               (filter: SupportArea.motorics, value: val),
                             ],
@@ -141,7 +141,7 @@ class LearningSupportFilterBottomSheet extends WatchingWidget {
                         label: 'ES',
                         selected: valueSupportAreaEmotions,
                         onSelected: (val) {
-                          _learningSupportFilterManager.setSupportAreaFilter(
+                          learningSupportFilterManager.setSupportAreaFilter(
                             supportAreaFilterRecords: [
                               (filter: SupportArea.emotions, value: val),
                             ],
@@ -152,7 +152,7 @@ class LearningSupportFilterBottomSheet extends WatchingWidget {
                         label: 'Mathe',
                         selected: valueSupportAreaMath,
                         onSelected: (val) {
-                          _learningSupportFilterManager.setSupportAreaFilter(
+                          learningSupportFilterManager.setSupportAreaFilter(
                             supportAreaFilterRecords: [
                               (filter: SupportArea.math, value: val),
                             ],
@@ -163,7 +163,7 @@ class LearningSupportFilterBottomSheet extends WatchingWidget {
                         label: 'Lernen',
                         selected: valueSupportAreaLearning,
                         onSelected: (val) {
-                          _learningSupportFilterManager.setSupportAreaFilter(
+                          learningSupportFilterManager.setSupportAreaFilter(
                             supportAreaFilterRecords: [
                               (filter: SupportArea.learning, value: val),
                             ],
@@ -174,7 +174,7 @@ class LearningSupportFilterBottomSheet extends WatchingWidget {
                         label: 'Deutsch',
                         selected: valueSupportAreaGerman,
                         onSelected: (val) {
-                          _learningSupportFilterManager.setSupportAreaFilter(
+                          learningSupportFilterManager.setSupportAreaFilter(
                             supportAreaFilterRecords: [
                               (filter: SupportArea.german, value: val),
                             ],
@@ -185,7 +185,7 @@ class LearningSupportFilterBottomSheet extends WatchingWidget {
                         label: 'Sprache',
                         selected: valueSupportAreaLanguage,
                         onSelected: (val) {
-                          _learningSupportFilterManager.setSupportAreaFilter(
+                          learningSupportFilterManager.setSupportAreaFilter(
                             supportAreaFilterRecords: [
                               (filter: SupportArea.language, value: val),
                             ],
@@ -209,7 +209,7 @@ class LearningSupportFilterBottomSheet extends WatchingWidget {
                         label: 'Erstförderung',
                         selected: valueMigrationSupport,
                         onSelected: (val) {
-                          _learningSupportFilterManager.setSupportLevelFilter(
+                          learningSupportFilterManager.setSupportLevelFilter(
                             supportLevelFilterRecords: [
                               (
                                 filter: SupportLevelType.migrationSupport,
@@ -223,7 +223,7 @@ class LearningSupportFilterBottomSheet extends WatchingWidget {
                         label: 'AO-SF',
                         selected: valueSpecialNeeds,
                         onSelected: (val) {
-                          _learningSupportFilterManager.setSupportLevelFilter(
+                          learningSupportFilterManager.setSupportLevelFilter(
                             supportLevelFilterRecords: [
                               (
                                 filter: SupportLevelType.specialNeeds,
@@ -246,7 +246,7 @@ class LearningSupportFilterBottomSheet extends WatchingWidget {
   }
 }
 
-showLearningSupportFilterBottomSheet(BuildContext context) {
+Future<dynamic> showLearningSupportFilterBottomSheet(BuildContext context) {
   return showModalBottomSheet(
     constraints: const BoxConstraints(maxWidth: 800),
     shape: const RoundedRectangleBorder(

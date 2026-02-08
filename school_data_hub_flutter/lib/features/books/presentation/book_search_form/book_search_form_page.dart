@@ -8,9 +8,9 @@ import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart'
 import 'package:school_data_hub_flutter/features/books/presentation/book_list_page/widgets/book_list_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_search_form/select_book_tags_page.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_search_page/book_search_results_page.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
-class BookSearchFormPage extends StatefulWidget {
+class BookSearchFormPage extends WatchingStatefulWidget {
   const BookSearchFormPage({super.key});
 
   @override
@@ -39,6 +39,13 @@ class _BookSearchFormPageState extends State<BookSearchFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    final locations = watchValue((BookManager x) => x.locations);
+    final List<LibraryBookLocation> locationItems = [
+      LibraryBookLocation(location: "Alle Räume"),
+      ...locations.where((loc) => loc.location != "Alle Räume"),
+    ];
+    selectedLocation ??= locationItems.first;
+
     return Scaffold(
       appBar: const GenericAppBar(
         iconData: Icons.search,
@@ -230,52 +237,30 @@ class _BookSearchFormPageState extends State<BookSearchFormPage> {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child:
-                            ValueListenableBuilder<List<LibraryBookLocation>>(
-                              valueListenable: bookManager.locations,
-                              builder: (context, locations, _) {
-                                final List<LibraryBookLocation> locationItems =
-                                    [
-                                      LibraryBookLocation(
-                                        location: "Alle Räume",
-                                      ),
-                                      ...locations.where(
-                                        (loc) => loc.location != "Alle Räume",
-                                      ),
-                                    ];
-                                selectedLocation ??= locationItems.first;
-
-                                return DropdownButtonFormField<
-                                  LibraryBookLocation
-                                >(
-                                  decoration: InputDecoration(
-                                    fillColor: Colors.white,
-                                    filled: true,
-                                    border: UnderlineInputBorder(
-                                      borderSide: BorderSide.none,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    labelText: 'Ablageort',
-                                  ),
-                                  items: locationItems
-                                      .map(
-                                        (loc) =>
-                                            DropdownMenuItem<
-                                              LibraryBookLocation
-                                            >(
-                                              value: loc,
-                                              child: Text(loc.location),
-                                            ),
-                                      )
-                                      .toList(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedLocation = value;
-                                    });
-                                  },
-                                );
-                              },
+                        child: DropdownButtonFormField<LibraryBookLocation>(
+                          decoration: InputDecoration(
+                            fillColor: Colors.white,
+                            filled: true,
+                            border: UnderlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius: BorderRadius.circular(12),
                             ),
+                            labelText: 'Ablageort',
+                          ),
+                          items: locationItems
+                              .map(
+                                (loc) => DropdownMenuItem<LibraryBookLocation>(
+                                  value: loc,
+                                  child: Text(loc.location),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedLocation = value;
+                            });
+                          },
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),

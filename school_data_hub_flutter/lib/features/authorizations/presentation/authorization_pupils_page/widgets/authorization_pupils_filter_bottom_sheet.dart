@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _pupilFilterManager = di<PupilFilterManager>();
 
@@ -14,8 +14,9 @@ class AuthorizationPupilsFilterBottomSheet extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    Map<PupilFilter, bool> activeFilters =
-        watchValue((PupilFilterManager x) => x.pupilFilterState);
+    Map<PupilFilter, bool> activeFilters = watchValue(
+      (PupilFilterManager x) => x.pupilFilterState,
+    );
     bool valueYesResponse = activeFilters[PupilFilter.authorizationPositive]!;
     bool valueNoResponse = activeFilters[PupilFilter.authorizationNegative]!;
     bool valueNullResponse = activeFilters[PupilFilter.authorizationNoValue]!;
@@ -35,12 +36,7 @@ class AuthorizationPupilsFilterBottomSheet extends WatchingWidget {
                 children: [
                   const CommonPupilFiltersWidget(),
                   const Row(
-                    children: [
-                      Text(
-                        'Antwort:',
-                        style: AppStyles.subtitle,
-                      )
-                    ],
+                    children: [Text('Antwort:', style: AppStyles.subtitle)],
                   ),
                   const Gap(5),
                   Wrap(
@@ -53,64 +49,67 @@ class AuthorizationPupilsFilterBottomSheet extends WatchingWidget {
                         selected: valueYesResponse,
                         onSelected: (val) {
                           if (val) {
-                            _pupilFilterManager
-                                .setPupilFilter(pupilFilterRecords: [
-                              (
-                                filter: PupilFilter.authorizationPositive,
-                                value: true
-                              ),
-                              (
-                                filter: PupilFilter.authorizationNegative,
-                                value: false
-                              ),
-                              (
-                                filter: PupilFilter.authorizationNoValue,
-                                value: false
-                              ),
-                            ]);
-                            return;
-                          }
-                          _pupilFilterManager.setPupilFilter(
+                            _pupilFilterManager.setPupilFilter(
                               pupilFilterRecords: [
                                 (
                                   filter: PupilFilter.authorizationPositive,
-                                  value: val
-                                )
-                              ]);
+                                  value: true,
+                                ),
+                                (
+                                  filter: PupilFilter.authorizationNegative,
+                                  value: false,
+                                ),
+                                (
+                                  filter: PupilFilter.authorizationNoValue,
+                                  value: false,
+                                ),
+                              ],
+                            );
+                            return;
+                          }
+                          _pupilFilterManager.setPupilFilter(
+                            pupilFilterRecords: [
+                              (
+                                filter: PupilFilter.authorizationPositive,
+                                value: val,
+                              ),
+                            ],
+                          );
                         },
                       ),
                       ThemedFilterChip(
-                          label: 'Nein',
-                          selected: valueNoResponse,
-                          onSelected: (val) {
-                            if (val) {
-                              _pupilFilterManager.setPupilFilter(
-                                pupilFilterRecords: [
-                                  (
-                                    filter: PupilFilter.authorizationNegative,
-                                    value: true
-                                  ),
-                                  (
-                                    filter: PupilFilter.authorizationPositive,
-                                    value: false
-                                  ),
-                                  (
-                                    filter: PupilFilter.authorizationNoValue,
-                                    value: false
-                                  ),
-                                ],
-                              );
-                              return;
-                            }
+                        label: 'Nein',
+                        selected: valueNoResponse,
+                        onSelected: (val) {
+                          if (val) {
                             _pupilFilterManager.setPupilFilter(
                               pupilFilterRecords: [
                                 (
                                   filter: PupilFilter.authorizationNegative,
-                                  value: val
-                                )
+                                  value: true,
+                                ),
+                                (
+                                  filter: PupilFilter.authorizationPositive,
+                                  value: false,
+                                ),
+                                (
+                                  filter: PupilFilter.authorizationNoValue,
+                                  value: false,
+                                ),
                               ],
                             );
-                          }),
+                            return;
+                          }
+                          _pupilFilterManager.setPupilFilter(
+                            pupilFilterRecords: [
+                              (
+                                filter: PupilFilter.authorizationNegative,
+                                value: val,
+                              ),
+                            ],
+                          );
+                        },
+                      ),
                       ThemedFilterChip(
                         label: 'keine Antwort',
                         selected: valueNullResponse,
@@ -120,15 +119,15 @@ class AuthorizationPupilsFilterBottomSheet extends WatchingWidget {
                               pupilFilterRecords: [
                                 (
                                   filter: PupilFilter.authorizationNoValue,
-                                  value: true
+                                  value: true,
                                 ),
                                 (
                                   filter: PupilFilter.authorizationPositive,
-                                  value: false
+                                  value: false,
                                 ),
                                 (
                                   filter: PupilFilter.authorizationNegative,
-                                  value: false
+                                  value: false,
                                 ),
                               ],
                             );
@@ -139,8 +138,8 @@ class AuthorizationPupilsFilterBottomSheet extends WatchingWidget {
                             pupilFilterRecords: [
                               (
                                 filter: PupilFilter.authorizationNoValue,
-                                value: val
-                              )
+                                value: val,
+                              ),
                             ],
                           );
                         },
@@ -153,7 +152,7 @@ class AuthorizationPupilsFilterBottomSheet extends WatchingWidget {
                             pupilFilterRecords: [
                               (
                                 filter: PupilFilter.authorizationComment,
-                                value: val
+                                value: val,
                               ),
                             ],
                           );
@@ -168,7 +167,7 @@ class AuthorizationPupilsFilterBottomSheet extends WatchingWidget {
                             pupilFilterRecords: [
                               (
                                 filter: PupilFilter.authorizationNoFile,
-                                value: val
+                                value: val,
                               ),
                             ],
                           );
@@ -187,7 +186,7 @@ class AuthorizationPupilsFilterBottomSheet extends WatchingWidget {
   }
 }
 
-showAuthorizationPupilsFilterBottomSheet(BuildContext context) {
+Future<dynamic> showAuthorizationPupilsFilterBottomSheet(BuildContext context) {
   return showModalBottomSheet(
     constraints: const BoxConstraints(maxWidth: 800),
     shape: const RoundedRectangleBorder(

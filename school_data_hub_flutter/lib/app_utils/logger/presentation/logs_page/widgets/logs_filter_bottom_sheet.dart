@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/app_utils/logger/domain/log_service.dart
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:signals_hooks/signals_hooks.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 Future<void> showLogsFilterBottomSheet(BuildContext context) {
   return showModalBottomSheet<void>(
@@ -47,7 +47,7 @@ class LogsFilterBottomSheet extends HookWidget {
             children: [
               Row(
                 children: [
-                  Text('Filter', style: AppStyles.subtitle),
+                  const Text('Filter', style: AppStyles.subtitle),
                   const Spacer(),
                   if (filtersActive)
                     TextButton.icon(
@@ -233,7 +233,7 @@ class _LoggerFilterSection extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text('Logger-Quellen', style: AppStyles.subtitle),
+                const Text('Logger-Quellen', style: AppStyles.subtitle),
                 const Spacer(),
                 if (hasSelection)
                   TextButton(
@@ -244,7 +244,7 @@ class _LoggerFilterSection extends StatelessWidget {
             ),
             const Gap(12),
             if (loggerNames.isEmpty)
-              Text(
+              const Text(
                 'Noch keine Logger-Namen vorhanden',
                 style: AppStyles.textLabel,
               )

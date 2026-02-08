@@ -13,7 +13,7 @@ import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_roo
 import 'package:school_data_hub_flutter/features/matrix/domain/models/policy.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _log = Logger('MatrixPolicyHelperFunctions');
 
@@ -30,13 +30,13 @@ class MatrixPolicyHelper {
     // (and they are not stored in secure storage yet)
     // if they are null, we will read them from secure storage
 
-    final _secureStorageKey = _envManager.storageKeyForMatrixCredentials;
+    final secureStorageKey = _envManager.storageKeyForMatrixCredentials;
     if (passedCredentials == null) {
       _log.warning(
         'No matrix credentials passed, the app is initializing\nreading matrix credentials from secure storage',
       );
       final String? matrixStoredValues = await _secureStorage.getString(
-        _secureStorageKey,
+        secureStorageKey,
       );
 
       if (matrixStoredValues == null) {
@@ -46,7 +46,7 @@ class MatrixPolicyHelper {
       _log.info('Matrix credentials passed, storing them in secure storage');
 
       await _secureStorage.setString(
-        _secureStorageKey,
+        secureStorageKey,
         jsonEncode(
           MatrixCredentials(
             url: passedCredentials.url,

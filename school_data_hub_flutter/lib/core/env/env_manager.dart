@@ -12,8 +12,7 @@ import 'package:school_data_hub_flutter/core/env/models/env.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:school_data_hub_flutter/core/models/populated_server_session_data.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:signals/signals_flutter.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class EnvManager with ChangeNotifier {
   final _log = Logger('EnvManager');
@@ -26,7 +25,7 @@ class EnvManager with ChangeNotifier {
 
   /// TODO ADVICE: is this proxy authentication flag a hack or is this acceptable?
 
-  final _isAuthenticated = signal(false);
+  final _isAuthenticated = ValueNotifier<bool>(false);
 
   /// We need to observe in [MaterialApp] if a user is authenticated
   /// without accessing [HubSessionManager], because if there is not
@@ -35,7 +34,7 @@ class EnvManager with ChangeNotifier {
   ///
   /// **CAUTION**: Handle this value only with [HubSessionManager] every time
   /// it makes an authentication status change.
-  Signal<bool> get isAuthenticated => _isAuthenticated;
+  ValueNotifier<bool> get isAuthenticated => _isAuthenticated;
 
   /// **WARNING:**
   ///
@@ -56,8 +55,8 @@ class EnvManager with ChangeNotifier {
   String _defaultEnv = '';
   String get defaultEnv => _defaultEnv;
 
-  final _envIsReady = signal(false);
-  Signal<bool> get envIsReady => _envIsReady;
+  final _envIsReady = ValueNotifier<bool>(false);
+  ValueNotifier<bool> get envIsReady => _envIsReady;
 
   void _syncPaletteWithActiveEnv() {
     AppColors.setPaletteByKeyString(_activeEnv?.colorSchemeKey);
@@ -129,14 +128,10 @@ class EnvManager with ChangeNotifier {
         _populatedEnvServerData.supportCategories == false;
   }
 
+  @override
   void dispose() {
     _isAuthenticated.dispose();
     _envIsReady.dispose();
-    _packageInfo;
-    _populatedEnvServerData;
-    _environments;
-    _defaultEnv;
-    _storageKeyForEnvironments;
 
     super.dispose();
     return;
@@ -463,7 +458,7 @@ class EnvManager with ChangeNotifier {
   }
 
   Future<void> deleteNotActivatedEnv(Env env) async {
-    await _environments.remove(env.serverName);
+    _environments.remove(env.serverName);
     return;
   }
 
@@ -472,7 +467,7 @@ class EnvManager with ChangeNotifier {
 
     // delete _env.value from _envs
 
-    await _environments.remove(_activeEnv!.serverName);
+    _environments.remove(_activeEnv!.serverName);
 
     // write _envs to secure storage
 

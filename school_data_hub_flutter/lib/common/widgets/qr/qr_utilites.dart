@@ -12,7 +12,7 @@ import 'package:pasteboard/pasteboard.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _notificationService = di<NotificationService>();
 
@@ -65,7 +65,7 @@ Future<void> showQrCode(String qr, BuildContext context) async {
                   },
                   child: const Text('fertig'),
                 ),
-                const Gap(10)
+                const Gap(10),
               ],
             ),
           ],
@@ -76,14 +76,18 @@ Future<void> showQrCode(String qr, BuildContext context) async {
 }
 
 Future<void> saveQrCode(
-    String qr, BuildContext context, GlobalKey qrKey) async {
+  String qr,
+  BuildContext context,
+  GlobalKey qrKey,
+) async {
   final RenderRepaintBoundary boundary =
       qrKey.currentContext!.findRenderObject()
           as RenderRepaintBoundary; //final repaintBoundary = RepaintBoundary();
   // Wrap the QR image with a Container or SizedBox
   ui.Image image = await boundary.toImage();
-  String? filePath =
-      await FilePicker.platform.saveFile(allowedExtensions: ['png']);
+  String? filePath = await FilePicker.platform.saveFile(
+    allowedExtensions: ['png'],
+  );
   if (filePath == null) {
     // User canceled the file picker
     return;
@@ -95,11 +99,16 @@ Future<void> saveQrCode(
 
   // Show a success message
   _notificationService.showSnackBar(
-      NotificationType.success, ' QR-Code gespeichert');
+    NotificationType.success,
+    ' QR-Code gespeichert',
+  );
 }
 
 Future<void> copyQrCodeToClipboard(
-    String qr, BuildContext context, GlobalKey qrKey) async {
+  String qr,
+  BuildContext context,
+  GlobalKey qrKey,
+) async {
   final RenderRepaintBoundary boundary =
       qrKey.currentContext!.findRenderObject()
           as RenderRepaintBoundary; //final repaintBoundary = RepaintBoundary();
@@ -132,5 +141,7 @@ Future<void> copyQrCodeToClipboard(
   }
   // Show a success message
   _notificationService.showSnackBar(
-      NotificationType.success, ' QR-Code gespeichert');
+    NotificationType.success,
+    ' QR-Code gespeichert',
+  );
 }

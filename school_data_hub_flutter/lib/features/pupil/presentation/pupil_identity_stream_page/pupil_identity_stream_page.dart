@@ -5,7 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:signals/signals_flutter.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 import 'controllers/stream_controller.dart';
 // Import our modular components
@@ -28,13 +28,13 @@ class PupilIdentityStreamPage extends WatchingWidget {
   final String? importedChannelName;
   final List<int>? selectedPupilIds;
 
-  PupilIdentityStreamPage({
-    Key? key,
+  const PupilIdentityStreamPage({
+    super.key,
     required this.role,
     this.encryptedData,
     this.importedChannelName,
     this.selectedPupilIds,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -343,7 +343,7 @@ class PupilIdentityStreamPage extends WatchingWidget {
                   : null,
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }

@@ -11,14 +11,14 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/l
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class LearningSupportListPage extends WatchingWidget {
   const LearningSupportListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final _pupilManager = di<PupilProxyManager>();
+    final pupilManager = di<PupilProxyManager>();
     bool filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);
     // These come from the PupilFilterManager
 
@@ -30,7 +30,7 @@ class LearningSupportListPage extends WatchingWidget {
         title: 'Förderung',
       ),
       body: RefreshIndicator(
-        onRefresh: () async => _pupilManager.updatePupilList(pupils),
+        onRefresh: () async => pupilManager.updatePupilList(pupils),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 700),

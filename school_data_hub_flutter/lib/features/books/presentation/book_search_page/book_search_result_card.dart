@@ -9,12 +9,12 @@ import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart'
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_list_page/widgets/library_book_card.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/edit_book_page/edit_book_controller.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SearchResultBookCard extends WatchingWidget {
   final List<LibraryBookProxy> group;
 
-  const SearchResultBookCard({Key? key, required this.group}) : super(key: key);
+  const SearchResultBookCard({super.key, required this.group});
 
   @override
   Widget build(BuildContext context) {

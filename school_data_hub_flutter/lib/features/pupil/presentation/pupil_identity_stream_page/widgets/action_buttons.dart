@@ -9,13 +9,13 @@ class StreamActionButtons extends StatelessWidget {
   final VoidCallback? onStopStream;
 
   const StreamActionButtons({
-    Key? key,
+    super.key,
     required this.isConnected,
     required this.hasActiveTransfers,
     required this.isProcessing,
     this.onStartStream,
     this.onStopStream,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

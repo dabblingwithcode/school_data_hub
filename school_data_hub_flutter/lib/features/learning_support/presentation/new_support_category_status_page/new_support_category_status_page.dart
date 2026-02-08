@@ -5,12 +5,12 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/select_support_category_page/controller/select_support_category_controller.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/select_support_category_page/select_support_category_page.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/goal_examples_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_category_parents_names.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_category_widgets/support_category_status_dropdown.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class NewSupportCategoryStatusPage extends StatelessWidget {
   final NewSupportCategoryStatusController controller;
@@ -18,9 +18,9 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _pupilManager = di<PupilProxyManager>();
-    final _learningSupportPlanManager = di<LearningSupportManager>();
-    final _supportCategoryManager = di<SupportCategoryManager>();
+    final pupilManager = di<PupilProxyManager>();
+    final learningSupportPlanManager = di<LearningSupportManager>();
+    final supportCategoryManager = di<SupportCategoryManager>();
     return Theme(
       data: ThemeData(
         unselectedWidgetColor: Colors.white,
@@ -76,8 +76,8 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                                   final int?
                                   categoryId = await Navigator.of(context).push(
                                     MaterialPageRoute(
-                                      builder: (ctx) => SelectSupportCategory(
-                                        pupil: _pupilManager.getPupilByPupilId(
+                                      builder: (ctx) => SelectSupportCategoryPage(
+                                        pupil: pupilManager.getPupilByPupilId(
                                           controller.widget.pupilId,
                                         )!,
                                         elementType:
@@ -99,7 +99,7 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5.0),
-                                    color: _supportCategoryManager
+                                    color: supportCategoryManager
                                         .getCategoryColor(
                                           controller.goalCategoryId!,
                                         ),
@@ -133,14 +133,14 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                                 children: [
                                   Flexible(
                                     child: Text(
-                                      _supportCategoryManager
+                                      supportCategoryManager
                                           .getSupportCategory(
                                             controller.goalCategoryId!,
                                           )
                                           .name,
                                       style: TextStyle(
                                         fontSize: 20,
-                                        color: _supportCategoryManager
+                                        color: supportCategoryManager
                                             .getCategoryColor(
                                               controller.goalCategoryId!,
                                             ),
@@ -255,7 +255,7 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                   child: Column(
                     children: [
                       if (controller.goalCategoryId != null)
-                        if (_supportCategoryManager
+                        if (supportCategoryManager
                             .getGoalsForSupportCategory(
                               controller.goalCategoryId!,
                             )
@@ -267,7 +267,7 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                                   await goalExamplesDialog(
                                     context,
                                     'Beispiele',
-                                    _supportCategoryManager
+                                    supportCategoryManager
                                         .getGoalsForSupportCategory(
                                           controller.goalCategoryId!,
                                         ),
@@ -293,7 +293,7 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                               'Neues Förderziel') {
                             controller.postCategoryGoal();
                           } else {
-                            _learningSupportPlanManager
+                            learningSupportPlanManager
                                 .postSupportCategoryStatus(
                                   pupilId: controller.widget.pupilId,
                                   supportCategoryId: controller.goalCategoryId!,

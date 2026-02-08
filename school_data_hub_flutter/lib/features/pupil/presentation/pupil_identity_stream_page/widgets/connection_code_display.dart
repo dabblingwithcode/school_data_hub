@@ -8,10 +8,10 @@ class ConnectionCodeDisplay extends StatelessWidget {
   final String? description;
 
   const ConnectionCodeDisplay({
-    Key? key,
+    super.key,
     required this.channelName,
     this.description,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

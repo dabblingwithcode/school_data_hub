@@ -8,17 +8,18 @@ import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/data/competence_api_service.dart';
 import 'package:school_data_hub_flutter/features/learning/data/competence_check_api_service.dart';
 import 'package:school_data_hub_flutter/features/learning/data/competence_goal_api_service.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class CompetenceManager {
   final _envManager = di<EnvManager>();
 
-  final _client = di<Client>();
+  final _competenceApiService = CompetenceApiService();
 
   final _notificationService = di<NotificationService>();
 
@@ -58,12 +59,9 @@ class CompetenceManager {
   //- the CompetenceFilterManager is not registered in the di yet
 
   Future<void> firstFetchCompetences() async {
-    final List<Competence> competences = await _client.competence
+    final List<Competence> competences = await _competenceApiService
         .getAllCompetences();
     if (competences.isNotEmpty) {
-      //- Do we need to sort the competences here?
-      //   competences.sort((a, b) => a.publicId.compareTo(b.publicId));
-
       _competences.value = competences;
 
       _envManager.setPopulatedEnvServerData(competences: true);
@@ -84,7 +82,7 @@ class CompetenceManager {
   }
 
   Future<void> fetchCompetences() async {
-    final List<Competence> competences = await _client.competence
+    final List<Competence> competences = await _competenceApiService
         .getAllCompetences();
 
     final sortedCompetences = CompetenceHelper.sortCompetences(competences);
@@ -112,7 +110,7 @@ class CompetenceManager {
     required List<String> competenceLevel,
     required List<String> indicators,
   }) async {
-    final newCompetence = await _client.competence.postCompetence(
+    final newCompetence = await _competenceApiService.postCompetence(
       name: competenceName,
       level: competenceLevel,
       indicators: indicators,
@@ -149,7 +147,7 @@ class CompetenceManager {
       );
       return;
     }
-    final List<Competence> importedCompetences = await _client.adminCategories
+    final List<Competence> importedCompetences = await _competenceApiService
         .importCompetencesFromJsonFile(fileResponse.path!);
 
     final sortedCompetences = CompetenceHelper.sortCompetences(
@@ -199,9 +197,8 @@ class CompetenceManager {
       indicators: indicators != null ? indicators.value : competence.indicators,
       order: order != null ? order.value : competence.order,
     );
-    final verifiedUpdatedCompetence = await _client.competence.updateCompetence(
-      updatedCompetence,
-    );
+    final verifiedUpdatedCompetence = await _competenceApiService
+        .updateCompetence(updatedCompetence);
 
     final List<Competence> competences = List.from(_competences.value);
 
@@ -222,7 +219,7 @@ class CompetenceManager {
   }
 
   Future<void> deleteCompetence(int publicId) async {
-    final bool success = await _client.competence.deleteCompetence(publicId);
+    final bool success = await _competenceApiService.deleteCompetence(publicId);
 
     if (success) {
       final List<Competence> competences = List.from(_competences.value);

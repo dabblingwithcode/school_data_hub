@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/cached_image_or_download_inage.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
-import 'package:watch_it/watch_it.dart';
 import 'package:widget_zoom/widget_zoom.dart';
 
 class UnencryptedImageInCard extends HookWidget {

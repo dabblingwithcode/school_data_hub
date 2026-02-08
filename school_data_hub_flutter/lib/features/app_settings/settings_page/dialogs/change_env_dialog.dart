@@ -7,12 +7,12 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _envManager = di<EnvManager>();
 
 Future<bool?> changeEnvironmentDialog({required BuildContext context}) async {
-  final _log = Logger('ChangeEnvDialog');
+  final log = Logger('ChangeEnvDialog');
   return showDialog<bool>(
     context: context,
     builder: (BuildContext context) {
@@ -77,11 +77,7 @@ Future<bool?> changeEnvironmentDialog({required BuildContext context}) async {
                     ),
                     const Gap(10),
                     _envManager.activeEnv?.serverName == envs[index].serverName
-                        ? Icon(
-                            Icons.check,
-                            color: Colors.green,
-                            weight: 20,
-                          )
+                        ? const Icon(Icons.check, color: Colors.green, weight: 20)
                         : const SizedBox(),
                   ],
                 ),
@@ -97,12 +93,12 @@ Future<bool?> changeEnvironmentDialog({required BuildContext context}) async {
               style: AppStyles.successButtonStyle,
               onPressed: () async {
                 Navigator.of(context).pop();
-                _log.info(
+                log.info(
                   '[DI] User wants to add a new environment frpm the dialog: dropping logged in user scope first',
                 );
                 InitManager.dropOnLoggedInUserScope();
                 //  await di<HubSessionManager>().signOutDevice();
-                _log.warning(
+                log.warning(
                   '[DI] User signed out, setting env not ready from the dialog',
                 );
                 _envManager.deactivateEnv();

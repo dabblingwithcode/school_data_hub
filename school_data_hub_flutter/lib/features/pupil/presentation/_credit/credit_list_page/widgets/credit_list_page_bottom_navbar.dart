@@ -5,15 +5,16 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/show_generic_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/widgets/credit_filter_bottom_sheet.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class CreditListPageBottomNavBar extends WatchingWidget {
   const CreditListPageBottomNavBar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final filtersActive =
-        watchValue((FiltersStateManager x) => x.filtersActive);
+    final filtersActive = watchValue(
+      (FiltersStateManager x) => x.filtersActive,
+    );
     return BottomNavBarLayout(
       bottomNavBar: BottomAppBar(
         height: 60,
@@ -29,10 +30,7 @@ class CreditListPageBottomNavBar extends WatchingWidget {
                 const Spacer(),
                 IconButton(
                   tooltip: 'zurück',
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    size: 30,
-                  ),
+                  icon: const Icon(Icons.arrow_back, size: 30),
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -40,7 +38,9 @@ class CreditListPageBottomNavBar extends WatchingWidget {
                 const Gap(30),
                 InkWell(
                   onTap: () => showGenericBottomSheet(
-                      context, const CreditFilterBottomSheet()),
+                    context,
+                    const CreditFilterBottomSheet(),
+                  ),
                   onLongPress: () {
                     di<FiltersStateManager>().resetFilters();
                   },

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _notificationService = di<NotificationService>();
 

@@ -13,7 +13,7 @@ class HubExpansionTile extends StatefulWidget {
   final EdgeInsetsGeometry? tilePadding;
 
   const HubExpansionTile({
-    Key? key,
+    super.key,
     required this.title,
     this.subtitle,
     this.leading,
@@ -24,7 +24,7 @@ class HubExpansionTile extends StatefulWidget {
     this.backgroundColor,
     this.collapsedBackgroundColor,
     this.tilePadding,
-  }) : super(key: key);
+  });
 
   @override
   HubExpansionTileState createState() => HubExpansionTileState();

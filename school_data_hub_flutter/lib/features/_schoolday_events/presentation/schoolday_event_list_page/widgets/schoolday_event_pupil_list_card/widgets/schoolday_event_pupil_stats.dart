@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SchooldayEventPupilStats extends WatchingWidget {
   final PupilProxy pupil;
@@ -13,14 +13,14 @@ class SchooldayEventPupilStats extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _schooldayEventFilterManager = di<SchooldayEventFilterManager>();
-    final _schooldayEventManager = di<SchooldayEventManager>();
+    final schooldayEventFilterManager = di<SchooldayEventFilterManager>();
+    final schooldayEventManager = di<SchooldayEventManager>();
     Color admonitionsColor = AppColors.backgroundColor;
     Color afternoonAdmonitionsColor = AppColors.backgroundColor;
     final unfilteredEvents = watch(
-      _schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId),
+      schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId),
     ).schooldayEvents;
-    final schooldavEvents = _schooldayEventFilterManager
+    final schooldavEvents = schooldayEventFilterManager
         .filteredSchooldayEvents(unfilteredEvents.values.toList());
     final admonitions = schooldavEvents
         .where(

@@ -5,7 +5,7 @@
 // import 'package:school_data_hub_flutter/common/theme/styles.dart';
 // import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 // import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
-// import 'package:watch_it/watch_it.dart';
+// import 'package:flutter_it/flutter_it.dart';
 
 // class BarcodeStreamScanner extends StatefulWidget {
 //   const BarcodeStreamScanner({super.key});

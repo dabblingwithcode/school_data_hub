@@ -16,7 +16,7 @@ import 'package:school_data_hub_flutter/features/app_settings/settings_page/dial
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _log = Logger('EnvManager');
 
@@ -30,17 +30,17 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
     });
 
     final serverName = watchPropertyValue((EnvManager x) => x.activeEnv);
-    final _cacheManager = di<DefaultCacheManager>();
+    final cacheManager = di<DefaultCacheManager>();
 
     final pupilIdentityManager = di.isRegistered<PupilIdentityManager>()
         ? di<PupilIdentityManager>()
         : null;
     final remoteUpdate = pupilIdentityManager?.remoteLastIdentitiesUpdate.value;
 
-    final _notificationService = di<NotificationService>();
+    final notificationService = di<NotificationService>();
 
     final locale = AppLocalizations.of(context)!;
-    final _hubSessionManager = di<HubSessionManager>();
+    final hubSessionManager = di<HubSessionManager>();
 
     final activeEnv = serverName;
     final activeSchemeKey = appColorSchemeKeyFromString(
@@ -52,7 +52,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
       orElse: () => palettes.first,
     );
 
-    Future<void> _openColorSchemePicker() async {
+    Future<void> openColorSchemePicker() async {
       var tempSelection = activeSchemeKey;
       final selected = await showDialog<AppColorSchemeKey>(
         context: context,
@@ -118,7 +118,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
 
       await di<EnvManager>().updateActiveEnv(colorSchemeKey: selected.name);
       AppColors.setPalette(selected);
-      _notificationService.showSnackBar(
+      notificationService.showSnackBar(
         NotificationType.success,
         'Farbschema aktualisiert',
       );
@@ -138,13 +138,13 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
           trailing: null,
         ),
         SettingsTile.navigation(
-          onPressed: (context) => _openColorSchemePicker(),
+          onPressed: (context) => openColorSchemePicker(),
           leading: const Icon(Icons.color_lens_outlined),
           title: const Text('Farbschema'),
           value: Text(currentPalette.displayName),
           trailing: null,
         ),
-        if (_hubSessionManager.isAdmin)
+        if (hubSessionManager.isAdmin)
           SettingsTile.navigation(
             onPressed: (context) => changeEnvironmentDialog(context: context),
             leading: const Icon(Icons.http),
@@ -199,7 +199,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
               PupilIdentityHelper.deletePupilIdentitiesForEnv(
                 di<EnvManager>().storageKeyForPupilIdentities,
               );
-              _notificationService.showSnackBar(
+              notificationService.showSnackBar(
                 NotificationType.success,
                 'Kinder-Ids gelöscht',
               );
@@ -226,12 +226,12 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
                 '[DI] Env deleted, calling [unregisterMaagersDependentOnEnv] from the settings section!',
               );
               InitManager.dropAllScopes();
-              _notificationService.showSnackBar(
+              notificationService.showSnackBar(
                 NotificationType.success,
                 'Instanz-ID-Schlüssel gelöscht',
               );
 
-              await _cacheManager.emptyCache();
+              await cacheManager.emptyCache();
               if (context.mounted) {
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (ctx) => const Login()),
@@ -255,8 +255,8 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
                 message: 'Cached Bilder löschen?',
               );
               if (confirm == true && context.mounted) {
-                await _cacheManager.emptyCache();
-                _notificationService.showSnackBar(
+                await cacheManager.emptyCache();
+                notificationService.showSnackBar(
                   NotificationType.success,
                   'der Bilder-Cache wurde gelöscht',
                 );
@@ -310,7 +310,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
             if (confirm == true && context.mounted) {
               di<HubSessionManager>().signOutDevice();
 
-              _notificationService.showSnackBar(
+              notificationService.showSnackBar(
                 NotificationType.success,
                 'Erfolgreich ausgeloggt!',
               );

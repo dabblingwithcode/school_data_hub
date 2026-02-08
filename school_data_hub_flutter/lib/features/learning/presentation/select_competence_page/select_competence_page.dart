@@ -72,7 +72,6 @@ class SelectCompetencePage extends StatelessWidget {
           backgroundColor: viewModel.selectedCompetenceId != null
               ? AppColors.backgroundColor
               : Colors.grey,
-          child: const Icon(Icons.check, color: Colors.white, size: 35),
           onPressed: viewModel.selectedCompetenceId != null
               ? () {
                   if (viewModel.widget.onSelected != null) {
@@ -91,6 +90,7 @@ class SelectCompetencePage extends StatelessWidget {
                   }
                 }
               : null,
+          child: const Icon(Icons.check, color: Colors.white, size: 35),
         ),
         bottomNavigationBar: CompetenceListPageBottomNavBar(
           competences: viewModel.competences,

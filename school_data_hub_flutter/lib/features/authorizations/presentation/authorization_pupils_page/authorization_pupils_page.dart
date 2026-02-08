@@ -12,7 +12,7 @@ import 'package:school_data_hub_flutter/features/authorizations/presentation/aut
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class AuthorizationPupilsPage extends WatchingWidget {
   final Authorization authorization;
@@ -21,8 +21,8 @@ class AuthorizationPupilsPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _pupilManager = di<PupilProxyManager>();
-    final _pupilAuthorizationFilterManager =
+    final pupilManager = di<PupilProxyManager>();
+    final pupilAuthorizationFilterManager =
         di<PupilAuthorizationFilterManager>();
     // final filters = watchValue((PupilFilterManager x) => x.filterState);
 
@@ -33,7 +33,7 @@ class AuthorizationPupilsPage extends WatchingWidget {
     final filteredPupils = watchValue((PupilsFilter x) => x.filteredPupils);
 
     final List<PupilAuthorization> pupilAuthorizations =
-        _pupilAuthorizationFilterManager
+        pupilAuthorizationFilterManager
             .applyAuthorizationFiltersToPupilAuthorizations(
               thisAuthorization.authorizedPupils!,
             );
@@ -97,7 +97,7 @@ class AuthorizationPupilsPage extends WatchingWidget {
       ),
       bottomNavigationBar: AuthorizationPupilsBottomNavBar(
         authorization: authorization,
-        pupilsInAuthorization: _pupilManager.getPupilIdsFromPupils(
+        pupilsInAuthorization: pupilManager.getPupilIdsFromPupils(
           pupilsInList,
         ),
       ),

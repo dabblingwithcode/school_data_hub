@@ -6,7 +6,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/features/books/data/book_api_service.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class BookManager {
   final _bookApiService = BookApiService();
@@ -411,9 +411,9 @@ class BookManager {
         title: title?.isNotEmpty == true ? title : null,
         author: author?.isNotEmpty == true ? author : null,
         keywords: keywords?.isNotEmpty == true ? keywords : null,
-        location: location ?? null,
+        location: location,
         readingLevel: readingLevel?.isNotEmpty == true ? readingLevel : null,
-        available: available ?? null,
+        available: available,
         tags: tags,
         page: _currentPage,
         perPage: _perPage,
@@ -467,9 +467,9 @@ class BookManager {
         title: title?.isNotEmpty == true ? title : null,
         author: author?.isNotEmpty == true ? author : null,
         keywords: keywords?.isNotEmpty == true ? keywords : null,
-        location: location ?? null,
+        location: location,
         readingLevel: readingLevel?.isNotEmpty == true ? readingLevel : null,
-        available: available ?? null,
+        available: available,
         tags: tags,
         page: _currentPage,
         perPage: _perPage,

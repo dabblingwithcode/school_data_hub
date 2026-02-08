@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/new_support_category_status_page.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class NewSupportCategoryStatus extends StatefulWidget {
   final String appBarTitle;

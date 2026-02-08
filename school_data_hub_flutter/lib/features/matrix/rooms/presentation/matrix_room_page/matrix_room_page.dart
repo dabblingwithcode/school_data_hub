@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_use
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/widgets/matrix_user_list_card.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/widgets/matrix_user_list_searchbar.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/widgets/matrix_users_list_view_bottom_navbar.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class MatrixRoomPage extends WatchingWidget {
   final MatrixRoom matrixRoom;
@@ -19,13 +19,16 @@ class MatrixRoomPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<MatrixUser> matrixUsers =
-        watchValue((MatrixPolicyManager x) => x.matrixUsers);
-    List<MatrixUser> filteredMatrixUsers =
-        watchValue((MatrixPolicyFilterManager x) => x.filteredMatrixUsers);
+    List<MatrixUser> matrixUsers = watchValue(
+      (MatrixPolicyManager x) => x.matrixUsers,
+    );
+    List<MatrixUser> filteredMatrixUsers = watchValue(
+      (MatrixPolicyFilterManager x) => x.filteredMatrixUsers,
+    );
     final List<MatrixUser> matrixUsersInRoom = filteredMatrixUsers
-        .where((user) =>
-            MatrixRoomHelper.usersInRoom(matrixRoom.id).contains(user))
+        .where(
+          (user) => MatrixRoomHelper.usersInRoom(matrixRoom.id).contains(user),
+        )
         .toList();
 
     return Scaffold(
@@ -40,9 +43,11 @@ class MatrixRoomPage extends WatchingWidget {
               slivers: [
                 const SliverGap(5),
                 GenericSliverSearchAppBar(
-                    title: MatrixUsersListSearchBar(
-                        matrixUsers: matrixUsersInRoom),
-                    height: 110),
+                  title: MatrixUsersListSearchBar(
+                    matrixUsers: matrixUsersInRoom,
+                  ),
+                  height: 110,
+                ),
                 matrixUsers.isEmpty
                     ? const SliverToBoxAdapter(
                         child: Center(
@@ -60,7 +65,8 @@ class MatrixRoomPage extends WatchingWidget {
                           (BuildContext context, int index) {
                             // Your list view items go here
                             return MatrixUsersListCard(
-                                matrixUsersInRoom[index]);
+                              matrixUsersInRoom[index],
+                            );
                           },
                           childCount: matrixUsersInRoom
                               .length, // Adjust this based on your data

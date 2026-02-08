@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/features/learning/domain/filters/compete
 import 'package:school_data_hub_flutter/features/learning/presentation/competence_list_page/widgets/competence_list_view_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/competence_list_sortable_page/widgets/competence_tree_sortable.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/post_or_patch_competence_page/post_or_patch_competence_page.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class CompetenceListSortablePage extends WatchingWidget {
   const CompetenceListSortablePage({super.key});

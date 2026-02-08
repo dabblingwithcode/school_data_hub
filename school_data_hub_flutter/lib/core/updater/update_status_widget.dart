@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/updater/shorebird_update_manager.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 /// Widget that displays update status and provides update controls
 class UpdateStatusWidget extends WatchingWidget {

@@ -27,7 +27,7 @@ class AppAsyncActionButton extends StatelessWidget {
           },
           child: Text(
             title,
-            style: TextStyle(fontSize: 17.0),
+            style: const TextStyle(fontSize: 17.0),
           ),
         ),
       ),

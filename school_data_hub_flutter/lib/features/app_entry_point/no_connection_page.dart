@@ -14,7 +14,7 @@ class NoConnectionPage extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.backgroundColor,
         ),
-        child: Center(
+        child: const Center(
           child: SizedBox(
             height: 500,
             width: 600,
@@ -22,14 +22,14 @@ class NoConnectionPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(
+                SizedBox(
                   height: 300,
                   width: 300,
                   child: Image(
                     image: AssetImage('assets/foreground.png'),
                   ),
                 ),
-                const Text(
+                Text(
                   "Schuldaten App",
                   style: TextStyle(
                     color: Colors.white,
@@ -37,8 +37,8 @@ class NoConnectionPage extends StatelessWidget {
                     fontSize: 30,
                   ),
                 ),
-                const Gap(30),
-                const Text(
+                Gap(30),
+                Text(
                   'Keine Internetverbindung!',
                   style: TextStyle(
                     color: Colors.white,

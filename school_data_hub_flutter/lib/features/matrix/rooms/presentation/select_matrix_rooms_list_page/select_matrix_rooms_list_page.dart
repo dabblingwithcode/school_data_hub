@@ -7,13 +7,16 @@ import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/selec
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/widgets/select_matrix_room_card.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/widgets/select_matrix_rooms_list_view_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/widgets/select_room_list_searchbar.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SelectMatrixRoomsListPage extends WatchingWidget {
   final SelectMatrixRoomsListController controller;
   final List<MatrixRoom> filteredRoomsInLIst;
-  const SelectMatrixRoomsListPage(this.controller, this.filteredRoomsInLIst,
-      {super.key});
+  const SelectMatrixRoomsListPage(
+    this.controller,
+    this.filteredRoomsInLIst, {
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,19 +28,15 @@ class SelectMatrixRoomsListPage extends WatchingWidget {
                 onPressed: () {
                   controller.cancelSelect();
                 },
-                icon: const Icon(
-                  Icons.close,
-                  color: Colors.white,
-                ))
+                icon: const Icon(Icons.close, color: Colors.white),
+              )
             : null,
         automaticallyImplyLeading: false,
         centerTitle: true,
         backgroundColor: AppColors.backgroundColor,
         title: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Räume auswählen', style: AppStyles.appBarTextStyle),
-          ],
+          children: [Text('Räume auswählen', style: AppStyles.appBarTextStyle)],
         ),
       ),
       body: RefreshIndicator(
@@ -61,11 +60,16 @@ class SelectMatrixRoomsListPage extends WatchingWidget {
                   elevation: 0,
                   flexibleSpace: FlexibleSpaceBar(
                     titlePadding: const EdgeInsets.only(
-                        left: 5, top: 5, right: 5, bottom: 5),
+                      left: 5,
+                      top: 5,
+                      right: 5,
+                      bottom: 5,
+                    ),
                     collapseMode: CollapseMode.none,
                     title: SelectRoomListSearchBar(
-                        matrixRooms: filteredRoomsInLIst,
-                        controller: controller),
+                      matrixRooms: filteredRoomsInLIst,
+                      controller: controller,
+                    ),
                   ),
                 ),
                 filteredRoomsInLIst.isEmpty
@@ -81,22 +85,25 @@ class SelectMatrixRoomsListPage extends WatchingWidget {
                         ),
                       )
                     : SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (BuildContext context, int index) {
-                            // Your list view items go here
-                            return SelectMatrixRoomCard(
-                                controller, filteredRoomsInLIst[index]);
-                          },
-                          childCount: filteredRoomsInLIst.length,
-                        ),
+                        delegate: SliverChildBuilderDelegate((
+                          BuildContext context,
+                          int index,
+                        ) {
+                          // Your list view items go here
+                          return SelectMatrixRoomCard(
+                            controller,
+                            filteredRoomsInLIst[index],
+                          );
+                        }, childCount: filteredRoomsInLIst.length),
                       ),
               ],
             ),
           ),
         ),
       ),
-      bottomNavigationBar:
-          SelectMatrixRoomsListViewBottomNavBar(controller: controller),
+      bottomNavigationBar: SelectMatrixRoomsListViewBottomNavBar(
+        controller: controller,
+      ),
     );
   }
 }

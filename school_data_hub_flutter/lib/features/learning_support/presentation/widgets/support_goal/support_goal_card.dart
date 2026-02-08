@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/features/learning_support/domain/support
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_symbol.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_goal/support_goal_card_banner.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SupportGoalCard extends StatelessWidget {
   final PupilProxy pupil;
@@ -21,7 +21,7 @@ class SupportGoalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _learningSupportManager = di<SupportCategoryManager>();
+    final learningSupportManager = di<SupportCategoryManager>();
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: ClipRRect(
@@ -63,7 +63,7 @@ class SupportGoalCard extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       color: LearningSupportHelper.getRootSupportCategoryColor(
-                        _learningSupportManager.getRootSupportCategory(
+                        learningSupportManager.getRootSupportCategory(
                           pupil.supportGoals![goalIndex].supportCategoryId,
                         ),
                       ),
@@ -90,7 +90,7 @@ class SupportGoalCard extends StatelessWidget {
                       const Gap(10),
                       Flexible(
                         child: Text(
-                          _learningSupportManager
+                          learningSupportManager
                               .getSupportCategory(
                                 pupil
                                     .supportGoals![goalIndex]

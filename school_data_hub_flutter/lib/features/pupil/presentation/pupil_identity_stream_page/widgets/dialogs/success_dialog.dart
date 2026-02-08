@@ -6,10 +6,10 @@ class SuccessDialog extends StatelessWidget {
   final int totalCount;
 
   const SuccessDialog({
-    Key? key,
+    super.key,
     required this.newCount,
     required this.totalCount,
-  }) : super(key: key);
+  });
 
   static Future<void> show(
     BuildContext context,

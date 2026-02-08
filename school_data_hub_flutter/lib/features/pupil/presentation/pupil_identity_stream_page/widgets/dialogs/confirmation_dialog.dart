@@ -6,11 +6,11 @@ class ConfirmationDialog extends StatelessWidget {
   final VoidCallback onReject;
 
   const ConfirmationDialog({
-    Key? key,
+    super.key,
     required this.userName,
     required this.onConfirm,
     required this.onReject,
-  }) : super(key: key);
+  });
 
   static Future<bool?> show(BuildContext context, String userName) async {
     return showDialog<bool>(

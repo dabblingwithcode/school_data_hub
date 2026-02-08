@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 class RejectionDialog extends StatelessWidget {
   final bool wasAutoRejected;
 
-  const RejectionDialog({Key? key, this.wasAutoRejected = false})
-    : super(key: key);
+  const RejectionDialog({super.key, this.wasAutoRejected = false});
 
   static Future<void> show(
     BuildContext context, {

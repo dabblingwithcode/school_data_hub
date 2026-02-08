@@ -15,7 +15,7 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/family_langu
 import 'package:school_data_hub_flutter/features/pupil/presentation/religion_page/religion_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/special_info_page/special_info_list_page.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class PupilListButtons extends WatchingWidget {
   final double screenWidth;
@@ -158,7 +158,7 @@ class PupilListButtons extends WatchingWidget {
             buttonText: locale.matrixRooms,
           ),
         MainMenuButton(
-          destinationPage: PupilsMatrixContactsListPage(),
+          destinationPage: const PupilsMatrixContactsListPage(),
           buttonIcon: Icon(
             Icons.group,
             size: 50,

@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/new_book_page/new_book_controller.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class NewBookPage extends StatelessWidget {
   final NewBookController controller;
@@ -17,7 +17,7 @@ class NewBookPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _hubSessionManager = di<HubSessionManager>();
+    final hubSessionManager = di<HubSessionManager>();
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -123,7 +123,7 @@ class NewBookPage extends StatelessWidget {
                                             .onChangedLocationDropDown(value!),
                                       ),
                                 ),
-                                if (_hubSessionManager.isAdmin) ...[
+                                if (hubSessionManager.isAdmin) ...[
                                   const Gap(10),
                                   InkWell(
                                     onTap: () => controller.addLocation(),

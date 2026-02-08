@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manage
 import 'package:school_data_hub_flutter/features/pupil/presentation/after_school_care/widgets/after_school_care_list_card.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/after_school_care/widgets/after_school_care_list_search_bar.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/after_school_care/widgets/after_school_care_view_bottom_navbar.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 List<PupilProxy> _afterSchoolCareFilter(List<PupilProxy> pupils) {
   List<PupilProxy> filteredPupils = [];

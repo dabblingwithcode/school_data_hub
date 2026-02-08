@@ -4,7 +4,7 @@
 // import 'package:schuldaten_hub/common/widgets/bottom_nav_bar_layouts.dart';
 // import 'package:schuldaten_hub/common/widgets/filter_button.dart';
 // import 'package:schuldaten_hub/features/schoolday_events/pages/schoolday_event_list_page/widgets/schoolday_event_filter_bottom_sheet.dart';
-// import 'package:watch_it/watch_it.dart';
+// import 'package:flutter_it/flutter_it.dart';
 
 // class SchooldayEventListPageBottomNavBar extends WatchingWidget {
 //   const SchooldayEventListPageBottomNavBar({super.key});

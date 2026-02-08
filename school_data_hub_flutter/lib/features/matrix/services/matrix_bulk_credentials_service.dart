@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _log = Logger('MatrixBulkCredentialsService');
 
@@ -68,16 +68,10 @@ class MatrixBulkCredentialsService {
         isStaff: isStaff,
       );
 
-      if (pdfFile != null) {
-        _log.info('PDF generated successfully: ${pdfFile.path}');
-        onProgress('PDF erfolgreich generiert');
-        return pdfFile;
-      } else {
-        _log.severe('PDF generation failed - returned null');
-        onError('PDF-Generierung fehlgeschlagen');
-        return null;
-      }
-    } catch (e) {
+      _log.info('PDF generated successfully: ${pdfFile.path}');
+      onProgress('PDF erfolgreich generiert');
+      return pdfFile;
+        } catch (e) {
       onError('Fehler bei der Bulk-Credentials-Generierung: $e');
       _log.severe('Error in bulk credentials generation: $e');
       return null;

@@ -21,7 +21,7 @@ import 'package:school_data_hub_flutter/features/statistics/chart_page/chart_pag
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/sliver_dashboard_page/sliver_dashboard_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_page/timetable_page.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class ToolsPage extends WatchingWidget {
   const ToolsPage({super.key});

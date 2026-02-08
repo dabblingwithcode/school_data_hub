@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/features/learning/domain/competence_help
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/competence_list_sortable_page/widgets/common_competence_card_sortable.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/competence_list_sortable_page/widgets/last_child_competence_card_sortable.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 List<Widget> buildCommonCompetenceTreeSortable({
   required Function({int? competenceId, Competence? competence})

@@ -21,7 +21,7 @@ import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/select_users/select_users_page.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class PupilSchooldayEventCard extends StatelessWidget {
   final SchooldayEvent schooldayEvent;
@@ -29,12 +29,12 @@ class PupilSchooldayEventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _hubSessionManager = di<HubSessionManager>();
-    final _schooldayEventManager = di<SchooldayEventManager>();
-    final _schoolCalendarManager = di<SchoolCalendarManager>();
-    final _notificationService = di<NotificationService>();
+    final hubSessionManager = di<HubSessionManager>();
+    final schooldayEventManager = di<SchooldayEventManager>();
+    final schoolCalendarManager = di<SchoolCalendarManager>();
+    final notificationService = di<NotificationService>();
     final isAuthorized = SessionHelper.isAuthorized(schooldayEvent.createdBy);
-    final isAdmin = _hubSessionManager.isAdmin;
+    final isAdmin = hubSessionManager.isAdmin;
 
     return Card(
       color: !schooldayEvent.processed
@@ -77,21 +77,21 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                         DateTime?
                                         date = await selectSchooldayDate(
                                           context,
-                                          _schoolCalendarManager.thisDate.value,
+                                          schoolCalendarManager.thisDate.value,
                                         );
                                         if (date == null) return;
                                         final schooldayId =
-                                            _schoolCalendarManager
+                                            schoolCalendarManager
                                                 .getSchooldayByDate(date)
                                                 ?.id;
 
-                                        await _schooldayEventManager
+                                        await schooldayEventManager
                                             .updateSchooldayEvent(
                                               eventToUpdate: schooldayEvent,
 
                                               schooldayId: schooldayId,
                                             );
-                                        _notificationService.showSnackBar(
+                                        notificationService.showSnackBar(
                                           NotificationType.success,
                                           'Ereignis als bearbeitet markiert!',
                                         );
@@ -151,12 +151,12 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                         if (picked != null) {
                                           final newEventTime =
                                               '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
-                                          await _schooldayEventManager
+                                          await schooldayEventManager
                                               .updateSchooldayEvent(
                                                 eventToUpdate: schooldayEvent,
                                                 eventTime: newEventTime,
                                               );
-                                          _notificationService.showSnackBar(
+                                          notificationService.showSnackBar(
                                             NotificationType.success,
                                             'Uhrzeit erfolgreich geändert!',
                                           );
@@ -185,7 +185,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                   if (!SessionHelper.isAuthorized(
                                     schooldayEvent.createdBy,
                                   )) {
-                                    _notificationService.showSnackBar(
+                                    notificationService.showSnackBar(
                                       NotificationType.error,
                                       'Nicht berechtigt!',
                                     );
@@ -213,7 +213,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                         InkWell(
                           onTap: () {
                             if (!isAuthorized) {
-                              _notificationService.showSnackBar(
+                              notificationService.showSnackBar(
                                 NotificationType.error,
                                 'Nicht berechtigt!',
                               );
@@ -264,8 +264,9 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                             ),
                                           );
                                       if (selectedUsers == null ||
-                                          selectedUsers.isEmpty)
+                                          selectedUsers.isEmpty) {
                                         return;
+                                      }
                                       if (selectedUsers
                                               .first
                                               .userInfo!
@@ -274,7 +275,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                         return;
                                       }
 
-                                      await _schooldayEventManager
+                                      await schooldayEventManager
                                           .updateSchooldayEvent(
                                             eventToUpdate: schooldayEvent,
                                             createdBy: selectedUsers
@@ -319,7 +320,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                               context,
                             );
                             if (file == null) return;
-                            await _schooldayEventManager
+                            await schooldayEventManager
                                 .updateSchooldayEventFile(
                                   imageFile: file,
                                   schooldayEventId: schooldayEvent.id!,
@@ -328,7 +329,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                           },
                           onLongPress: () async {
                             if (schooldayEvent.processedDocumentId == null) {
-                              _notificationService.showSnackBar(
+                              notificationService.showSnackBar(
                                 NotificationType.error,
                                 'Kein Dokument vorhanden!',
                               );
@@ -342,13 +343,13 @@ class PupilSchooldayEventCard extends StatelessWidget {
                             if (confirm != true) {
                               return;
                             }
-                            await _schooldayEventManager
+                            await schooldayEventManager
                                 .deleteSchooldayEventFile(
                                   schooldayEvent.id!,
                                   schooldayEvent.processedDocument!.documentId,
                                   true,
                                 );
-                            _notificationService.showSnackBar(
+                            notificationService.showSnackBar(
                               NotificationType.success,
                               'Dokument gelöscht!',
                             );
@@ -383,7 +384,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                             context,
                           );
                           if (file == null) return;
-                          await _schooldayEventManager.updateSchooldayEventFile(
+                          await schooldayEventManager.updateSchooldayEventFile(
                             imageFile: file,
                             schooldayEventId: schooldayEvent.id!,
                             isProcessed: false,
@@ -391,7 +392,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                         },
                         onLongPress: () async {
                           if (schooldayEvent.documentId == null) {
-                            _notificationService.showSnackBar(
+                            notificationService.showSnackBar(
                               NotificationType.error,
                               'Kein Dokument vorhanden!',
                             );
@@ -405,12 +406,12 @@ class PupilSchooldayEventCard extends StatelessWidget {
                           if (confirm != true) {
                             return;
                           }
-                          await _schooldayEventManager.deleteSchooldayEventFile(
+                          await schooldayEventManager.deleteSchooldayEventFile(
                             schooldayEvent.id!,
                             schooldayEvent.document!.documentId,
                             false,
                           );
-                          _notificationService.showSnackBar(
+                          notificationService.showSnackBar(
                             NotificationType.success,
                             'Dokument gelöscht!',
                           );
@@ -450,11 +451,11 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                 message: 'Ereignis als bearbeitet markieren?',
                               );
                               if (confirm! == false) return;
-                              await _schooldayEventManager.updateSchooldayEvent(
+                              await schooldayEventManager.updateSchooldayEvent(
                                 eventToUpdate: schooldayEvent,
                                 processed: true,
                               );
-                              _notificationService.showSnackBar(
+                              notificationService.showSnackBar(
                                 NotificationType.success,
                                 'Ereignis als bearbeitet markiert!',
                               );
@@ -466,7 +467,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                 message: 'Ereignis als unbearbeitet markieren?',
                               );
                               if (confirm! == false) return;
-                              await _schooldayEventManager.updateSchooldayEvent(
+                              await schooldayEventManager.updateSchooldayEvent(
                                 eventToUpdate: schooldayEvent,
                                 processed: false,
                                 processedBy: (value: null),
@@ -501,8 +502,9 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                             ),
                                           );
                                       if (selectedUsers == null ||
-                                          selectedUsers.isEmpty)
+                                          selectedUsers.isEmpty) {
                                         return;
+                                      }
                                       if (selectedUsers
                                               .first
                                               .userInfo!
@@ -511,7 +513,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                         return;
                                       }
 
-                                      await _schooldayEventManager
+                                      await schooldayEventManager
                                           .updateSchooldayEvent(
                                             eventToUpdate: schooldayEvent,
                                             processedBy: (
@@ -540,7 +542,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                   ),
                           if (schooldayEvent.processedAt != null) const Gap(10),
                           if (schooldayEvent.processedAt != null)
-                            _hubSessionManager.isAdmin
+                            hubSessionManager.isAdmin
                                 ? InkWell(
                                     onTap: () async {
                                       final DateTime? newDate =
@@ -550,7 +552,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                           );
 
                                       if (newDate != null) {
-                                        await _schooldayEventManager
+                                        await schooldayEventManager
                                             .updateSchooldayEvent(
                                               eventToUpdate: schooldayEvent,
                                               processedAt: (value: newDate),
@@ -598,7 +600,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                           obscureText: false,
                         );
                         if (comment != null) {
-                          await _schooldayEventManager.updateSchooldayEvent(
+                          await schooldayEventManager.updateSchooldayEvent(
                             eventToUpdate: schooldayEvent,
                             comment: (value: comment),
                           );

@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_mes
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/services/api/api_client.dart';
 import 'package:school_data_hub_flutter/features/matrix/services/api/api_settings.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 enum ChatTypePreset {
   public('public_chat'),
@@ -533,8 +533,8 @@ class MatrixRoomApiService {
         "creation_content": {"m.federate": false},
         "power_level_content_override": {
           "users": {
-            "$currentUserId": 100, // Admin has full permissions
-            "$targetUserId": 0, // User has read-only permissions
+            currentUserId: 100, // Admin has full permissions
+            targetUserId: 0, // User has read-only permissions
           },
           "events": {
             "m.room.name": 50,

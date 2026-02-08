@@ -3,7 +3,7 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/filters/enums.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _log = Logger('CompetenceFilterManager');
 
@@ -32,12 +32,12 @@ class CompetenceFilterManager {
     return;
   }
 
-  refreshFilteredCompetences(List<Competence> competences) {
+  void refreshFilteredCompetences(List<Competence> competences) {
     _filteredCompetences.value = competences;
     _log.info('refreshed filtered competences');
   }
 
-  resetFilters() {
+  void resetFilters() {
     _filteredCompetences.value = _competenceManager.competences.value;
 
     _filterState.value = {...initialCompetenceFilterValues};

@@ -2,7 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class MatrixRoomHelper {
   static MatrixPolicyManager get _matrixPolicyManager =>
@@ -11,10 +11,9 @@ class MatrixRoomHelper {
     final List<MatrixUser> users = List.from(
       _matrixPolicyManager.matrixUsers.value,
     );
-    final usersInRoom =
-        users
-            .where((user) => user.matrixRooms.any((room) => room.id == roomId))
-            .toList();
+    final usersInRoom = users
+        .where((user) => user.matrixRooms.any((room) => room.id == roomId))
+        .toList();
     return usersInRoom;
   }
 
@@ -42,12 +41,11 @@ class MatrixRoomHelper {
     final List<MatrixRoom> rooms = List.from(
       _matrixPolicyManager.matrixRooms.value,
     );
-    final roomsFromRoomIds =
-        rooms
-            .where(
-              (room) => joinedRooms.any((element) => element.roomId == room.id),
-            )
-            .toList();
+    final roomsFromRoomIds = rooms
+        .where(
+          (room) => joinedRooms.any((element) => element.roomId == room.id),
+        )
+        .toList();
     return roomsFromRoomIds;
   }
 
@@ -55,8 +53,9 @@ class MatrixRoomHelper {
     final List<MatrixRoom> rooms = List.from(
       _matrixPolicyManager.matrixRooms.value,
     );
-    final roomsFromRoomIds =
-        rooms.where((room) => roomIds.contains(room.id)).toList();
+    final roomsFromRoomIds = rooms
+        .where((room) => roomIds.contains(room.id))
+        .toList();
     return roomsFromRoomIds;
   }
 

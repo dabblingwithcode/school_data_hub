@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:school_data_hub_flutter/app_utils/app_helpers.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
@@ -16,23 +17,23 @@ import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_man
 import 'package:school_data_hub_flutter/features/matrix/presentation/set_matrix_environment_page/set_matrix_environment_controller.dart';
 import 'package:school_data_hub_flutter/features/school/presentation/edit_school_data_page/edit_school_data_page.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_page/new_school_semester_page.dart';
-import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_page/schooldays_calendar_page/schooldays_calendar_page.dart';
+import 'package:school_data_hub_flutter/features/school_calendar/presentation/school_semester_list_page/school_semester_list.dart';
+import 'package:school_data_hub_flutter/features/school_calendar/presentation/schooldays_calendar_page/schooldays_calendar_page.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_page.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/reset_password/reset_user_password_page.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/user_list/user_list_page.dart';
-import 'package:watch_it/watch_it.dart';
 
 class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
   const SettingsAdminSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final _envManager = di<EnvManager>();
+    final envManager = di<EnvManager>();
 
-    final _notificationService = di<NotificationService>();
+    final notificationService = di<NotificationService>();
 
-    final _userManager = di<UserManager>();
+    final userManager = di<UserManager>();
 
     final bool matrixPolicyManagerIsRegistered = watchPropertyValue(
       (HubSessionManager x) => x.matrixPolicyManagerRegistrationStatus,
@@ -117,14 +118,14 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
             if (confirmed != true) {
               return;
             }
-            await _userManager.increaseUsersCredit();
+            await userManager.increaseUsersCredit();
           },
         ),
         SettingsTile.navigation(
           leading: const Icon(Icons.qr_code_rounded),
           title: const Text('Schulschlüssel zeigen'),
           onPressed: (context) {
-            final Map<String, dynamic> json = _envManager.activeEnv!.toJson();
+            final Map<String, dynamic> json = envManager.activeEnv!.toJson();
 
             final String jsonString = jsonEncode(json);
 
@@ -140,7 +141,7 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
               : const Text('Raumverwaltung initialisieren'),
           onPressed: (context) async {
             if (matrixPolicyManagerIsRegistered) {
-              _notificationService.showSnackBar(
+              notificationService.showSnackBar(
                 NotificationType.info,
                 'Raumverwaltung ist bereits initialisiert',
               );
@@ -172,6 +173,17 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (ctx) => const SchooldaysCalendarPage(),
+              ),
+            );
+          },
+        ),
+        SettingsTile.navigation(
+          leading: const Icon(Icons.calendar_view_month_rounded),
+          title: const Text('Schulhalbjahre verwalten'),
+          onPressed: (context) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (ctx) => const SchoolSemesterListPage(),
               ),
             );
           },

@@ -68,7 +68,7 @@ extension DateHubExtension on DateTime {
     final date = toLocalSafe();
     final dateFormat = DateFormat('dd.MM.yyyy HH:mm');
     final formattedDate = dateFormat.format(date);
-    return '${formattedDate} Uhr';
+    return '$formattedDate Uhr';
   }
 
   /// UI: time only (HH:mm) in local time.

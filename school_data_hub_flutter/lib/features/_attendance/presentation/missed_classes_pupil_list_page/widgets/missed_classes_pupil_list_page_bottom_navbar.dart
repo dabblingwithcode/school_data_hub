@@ -10,7 +10,7 @@ import 'package:school_data_hub_flutter/features/_attendance/presentation/missed
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/missed_classes_badges_info_dialog.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class AttendanceRankingListPageBottomNavBar extends WatchingWidget {
   const AttendanceRankingListPageBottomNavBar({super.key});

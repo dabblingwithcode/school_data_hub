@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 part 'matrix_user.g.dart';
 
@@ -27,7 +27,7 @@ class MatrixUser extends ChangeNotifier {
   String _displayName;
   List<JoinedRoom> _joinedRooms;
   @JsonKey(includeFromJson: false, includeToJson: false)
-  List<MatrixRoom> _matrixRooms = [];
+  final List<MatrixRoom> _matrixRooms = [];
 
   MatrixUser({
     required String id,

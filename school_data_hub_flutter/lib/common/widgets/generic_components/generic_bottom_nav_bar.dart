@@ -4,21 +4,23 @@ import 'package:school_data_hub_flutter/common/domain/filters/filters_state_mana
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/paddings.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class GenericBottomNavBar extends WatchingWidget {
   final Function specificFilterBottomSheetFunction;
   final Widget? bottomNavBarButtons;
 
-  const GenericBottomNavBar(
-      {required this.specificFilterBottomSheetFunction,
-      required this.bottomNavBarButtons,
-      super.key});
+  const GenericBottomNavBar({
+    required this.specificFilterBottomSheetFunction,
+    required this.bottomNavBarButtons,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final filtersActive =
-        watchValue((FiltersStateManager x) => x.filtersActive);
+    final filtersActive = watchValue(
+      (FiltersStateManager x) => x.filtersActive,
+    );
     return BottomNavBarLayout(
       bottomNavBar: BottomAppBar(
         height: 60,
@@ -34,10 +36,7 @@ class GenericBottomNavBar extends WatchingWidget {
                 const Spacer(),
                 IconButton(
                   tooltip: 'zurück',
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    size: 30,
-                  ),
+                  icon: const Icon(Icons.arrow_back, size: 30),
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -55,7 +54,7 @@ class GenericBottomNavBar extends WatchingWidget {
                     size: 30,
                   ),
                 ),
-                const Gap(15)
+                const Gap(15),
               ],
             ),
           ),

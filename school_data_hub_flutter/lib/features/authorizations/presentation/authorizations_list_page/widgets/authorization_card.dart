@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/presentation/authorization_pupils_page/authorization_pupils_page.dart';
 import 'package:school_data_hub_flutter/features/authorizations/presentation/authorizations_list_page/widgets/authorization_list_stats_row.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class AuthorizationCard extends WatchingWidget {
   final Authorization authorization;
@@ -21,17 +21,18 @@ class AuthorizationCard extends WatchingWidget {
         padding: const EdgeInsets.all(15.0),
         child: InkWell(
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (ctx) => AuthorizationPupilsPage(
-                authorization,
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (ctx) => AuthorizationPupilsPage(authorization),
               ),
-            ));
+            );
           },
           onLongPress: () async {
             final confirm = await confirmationDialog(
-                context: context,
-                title: 'Nachweis-Liste löschen',
-                message: 'Möchten Sie diese Nachweis-Liste löschen?');
+              context: context,
+              title: 'Nachweis-Liste löschen',
+              message: 'Möchten Sie diese Nachweis-Liste löschen?',
+            );
             if (confirm != true) {
               return;
             }
@@ -57,9 +58,7 @@ class AuthorizationCard extends WatchingWidget {
                       authorization.description,
                       maxLines: 2,
                       overflow: TextOverflow.fade,
-                      style: const TextStyle(
-                        fontSize: 14,
-                      ),
+                      style: const TextStyle(fontSize: 14),
                     ),
                   ),
                   const Gap(5),

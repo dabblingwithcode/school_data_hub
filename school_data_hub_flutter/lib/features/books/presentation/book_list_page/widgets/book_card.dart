@@ -17,7 +17,7 @@ import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart'
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_list_page/widgets/library_book_card.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class BookCard extends WatchingWidget {
   const BookCard({required this.isbn, super.key});

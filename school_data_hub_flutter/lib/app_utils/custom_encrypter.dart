@@ -8,7 +8,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final customEncrypter = CustomEncrypter();
 final _envManager = di<EnvManager>();
@@ -43,10 +43,9 @@ class CustomEncrypter {
   final iv = enc.IV.fromUtf8(_envManager.activeEnv!.iv!);
 
   String encryptMatrixString(String nonEncryptedString) {
-    final encryptedString =
-        matrixCredentialsEncrypter
-            .encrypt(nonEncryptedString, iv: matrixIv)
-            .base64;
+    final encryptedString = matrixCredentialsEncrypter
+        .encrypt(nonEncryptedString, iv: matrixIv)
+        .base64;
     return encryptedString;
   }
 
@@ -60,8 +59,9 @@ class CustomEncrypter {
   }
 
   String encryptString(String nonEncryptedString) {
-    final encryptedString =
-        encrypter.encrypt(nonEncryptedString, iv: iv).base64;
+    final encryptedString = encrypter
+        .encrypt(nonEncryptedString, iv: iv)
+        .base64;
     return encryptedString;
   }
 
@@ -89,10 +89,9 @@ class CustomEncrypter {
     final encryptedBytes = await file.readAsBytes();
 
     // Decrypt the bytes
-    final decryptedBytes =
-        (kReleaseMode || kProfileMode)
-            ? await compute(customEncrypter.decryptTheseBytes, encryptedBytes)
-            : customEncrypter.decryptTheseBytes(encryptedBytes);
+    final decryptedBytes = (kReleaseMode || kProfileMode)
+        ? await compute(customEncrypter.decryptTheseBytes, encryptedBytes)
+        : customEncrypter.decryptTheseBytes(encryptedBytes);
     return Image.memory(decryptedBytes);
   }
 

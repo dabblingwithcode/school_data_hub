@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/after_school_care/widgets/dialogs/after_school_care_pickup_time_dialog.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 List<Widget> pupilAfterSchoolCareContentList(
   PupilProxy pupil,

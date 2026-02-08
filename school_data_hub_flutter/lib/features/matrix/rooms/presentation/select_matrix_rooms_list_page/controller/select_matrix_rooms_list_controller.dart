@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_roo
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/select_matrix_rooms_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SelectMatrixRoomsList extends WatchingStatefulWidget {
   final List<String>? selectableRooms;
@@ -99,13 +99,13 @@ class SelectMatrixRoomsListController extends State<SelectMatrixRoomsList> {
   Widget build(BuildContext context) {
     // List<MatrixRoom> rooms =
     //     watchValue((MatrixPolicyManager x) => x.matrixRooms);
-    List<MatrixRoom> filteredRooms =
-        watchValue((MatrixPolicyFilterManager x) => x.filteredMatrixRooms);
+    List<MatrixRoom> filteredRooms = watchValue(
+      (MatrixPolicyFilterManager x) => x.filteredMatrixRooms,
+    );
 
-    List<MatrixRoom> filteredListedRooms =
-        MatrixRoomHelper.roomsFromRoomIds(widget.selectableRooms!)
-            .where((room) => filteredRooms.contains(room))
-            .toList();
+    List<MatrixRoom> filteredListedRooms = MatrixRoomHelper.roomsFromRoomIds(
+      widget.selectableRooms!,
+    ).where((room) => filteredRooms.contains(room)).toList();
     return SelectMatrixRoomsListPage(this, filteredListedRooms);
   }
 }

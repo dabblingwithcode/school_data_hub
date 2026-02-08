@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/attendance_badges.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class MissedSchooldayCard extends StatelessWidget {
   final PupilProxy pupil;
@@ -106,12 +106,11 @@ class MissedSchooldayCard extends StatelessWidget {
                         style: DefaultTextStyle.of(context).style,
                         children: <TextSpan>[
                           TextSpan(
-                            text:
-                                missedSchoolday.returnedAt != null
-                                    ? DateFormat('HH:mm')
-                                        .format(missedSchoolday.returnedAt!)
-                                        .toString()
-                                    : 'kein Eintrag',
+                            text: missedSchoolday.returnedAt != null
+                                ? DateFormat('HH:mm')
+                                      .format(missedSchoolday.returnedAt!)
+                                      .toString()
+                                : 'kein Eintrag',
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],

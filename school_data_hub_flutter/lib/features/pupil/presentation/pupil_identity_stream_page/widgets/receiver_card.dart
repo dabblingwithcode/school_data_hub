@@ -10,13 +10,13 @@ class ReceiverCard extends StatelessWidget {
   final bool isAnyTransferInProgress;
 
   const ReceiverCard({
-    Key? key,
+    super.key,
     required this.receiverName,
     required this.status,
     this.onConfirm,
     this.onReject,
     required this.isAnyTransferInProgress,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

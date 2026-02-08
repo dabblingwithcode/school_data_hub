@@ -3,7 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SelectMatrixUsersFilterBottomSheet extends WatchingWidget {
   const SelectMatrixUsersFilterBottomSheet({super.key});
@@ -23,30 +23,23 @@ class SelectMatrixUsersFilterBottomSheet extends WatchingWidget {
             children: [
               Row(
                 children: [
-                  const Text(
-                    'Filter',
-                    style: AppStyles.title,
-                  ),
+                  const Text('Filter', style: AppStyles.title),
                   const Spacer(),
                   IconButton.filled(
-                      iconSize: 35,
-                      color: Colors.amber,
-                      onPressed: () {
-                        di<PupilFilterManager>().resetFilters();
+                    iconSize: 35,
+                    color: Colors.amber,
+                    onPressed: () {
+                      di<PupilFilterManager>().resetFilters();
 
-                        //Navigator.pop(context);
-                      },
-                      icon: const Icon(Icons.restart_alt_rounded)),
+                      //Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.restart_alt_rounded),
+                  ),
                 ],
               ),
               const CommonPupilFiltersWidget(),
               const Row(
-                children: [
-                  Text(
-                    'Sortieren',
-                    style: AppStyles.subtitle,
-                  )
-                ],
+                children: [Text('Sortieren', style: AppStyles.subtitle)],
               ),
               const Gap(5),
               const Wrap(
@@ -63,7 +56,7 @@ class SelectMatrixUsersFilterBottomSheet extends WatchingWidget {
   }
 }
 
-showSelectMatrixUsersFilterBottomSheet(BuildContext context) {
+Future<dynamic> showSelectMatrixUsersFilterBottomSheet(BuildContext context) {
   return showModalBottomSheet(
     constraints: const BoxConstraints(maxWidth: 800),
     shape: const RoundedRectangleBorder(

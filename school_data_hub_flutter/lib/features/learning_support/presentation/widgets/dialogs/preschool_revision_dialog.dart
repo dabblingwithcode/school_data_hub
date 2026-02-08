@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 // based on https://mobikul.com/creating-stateful-dialog-form-in-flutter/
 Future<void> preschoolRevisionDialog(
@@ -13,7 +13,7 @@ Future<void> preschoolRevisionDialog(
   PupilProxy pupil,
   PreSchoolMedicalStatus? value,
 ) async {
-  final _hubSessionManager = di<HubSessionManager>();
+  final hubSessionManager = di<HubSessionManager>();
   return await showDialog(
     context: context,
     builder: (context) {
@@ -130,7 +130,7 @@ Future<void> preschoolRevisionDialog(
                   await PupilMutator().updatePreSchoolMedicalStatus(
                     pupilId: pupil.pupilId,
                     preSchoolMedicalStatus: dialogdropdownValue,
-                    createdBy: _hubSessionManager.userName!,
+                    createdBy: hubSessionManager.userName!,
                   );
 
                   Navigator.of(context).pop();

@@ -3,15 +3,16 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class MultiPupilCompetenceCheckPageBottomNavBar extends WatchingWidget {
   const MultiPupilCompetenceCheckPageBottomNavBar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final filtersActive =
-        watchValue((FiltersStateManager x) => x.filtersActive);
+    final filtersActive = watchValue(
+      (FiltersStateManager x) => x.filtersActive,
+    );
     return BottomNavBarLayout(
       bottomNavBar: BottomAppBar(
         height: 60,
@@ -27,24 +28,19 @@ class MultiPupilCompetenceCheckPageBottomNavBar extends WatchingWidget {
                 const Spacer(),
                 IconButton(
                   tooltip: 'zurück',
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    size: 30,
-                  ),
+                  icon: const Icon(Icons.arrow_back, size: 30),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
                 const Gap(30),
                 IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(
-                      Icons.check,
-                      size: 30,
-                    )),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.check, size: 30),
+                ),
                 const Gap(30),
                 InkWell(
                   // TODO: Implement filters

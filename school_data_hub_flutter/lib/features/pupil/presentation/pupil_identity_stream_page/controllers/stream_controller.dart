@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_hel
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_stream_suscription.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identity_stream_page/models/stream_state.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_identity_stream_page/utils/stream_utils.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _log = Logger('StreamController');
 
@@ -293,7 +293,7 @@ class PupilIdentityStreamController {
       }
 
       _log.info('Creating stream subscription...');
-      _subscription = await PupilIdentityStream()
+      _subscription = PupilIdentityStream()
           .encryptedPupilIdsStreamSubscription(
             channelName: channelName,
             role: role,

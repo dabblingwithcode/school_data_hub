@@ -4,7 +4,7 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class MissedSchooldayFilters extends WatchingWidget {
   const MissedSchooldayFilters({super.key});
@@ -14,14 +14,7 @@ class MissedSchooldayFilters extends WatchingWidget {
     PupilSortMode sortMode = watchValue((PupilsFilter x) => x.sortMode);
     return Column(
       children: [
-        const Row(
-          children: [
-            Text(
-              'Sortieren',
-              style: AppStyles.subtitle,
-            )
-          ],
-        ),
+        const Row(children: [Text('Sortieren', style: AppStyles.subtitle)]),
         const Gap(5),
         Wrap(
           spacing: 5,
@@ -51,8 +44,9 @@ class MissedSchooldayFilters extends WatchingWidget {
                   return;
                 }
                 // set the filter
-                di<PupilsFilter>()
-                    .setSortMode(PupilSortMode.sortByMissedExcused);
+                di<PupilsFilter>().setSortMode(
+                  PupilSortMode.sortByMissedExcused,
+                );
               },
             ),
             ThemedFilterChip(
@@ -65,8 +59,9 @@ class MissedSchooldayFilters extends WatchingWidget {
                   return;
                 }
                 // set the filter
-                di<PupilsFilter>()
-                    .setSortMode(PupilSortMode.sortByMissedUnexcused);
+                di<PupilsFilter>().setSortMode(
+                  PupilSortMode.sortByMissedUnexcused,
+                );
               },
             ),
             ThemedFilterChip(

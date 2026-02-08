@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _matrixPolicyFilterManager = di<MatrixPolicyFilterManager>();
 
@@ -9,11 +9,12 @@ class MatrixSearchTextField extends WatchingStatefulWidget {
   final SearchType searchType;
   final String hintText;
   final Function refreshFunction;
-  const MatrixSearchTextField(
-      {required this.searchType,
-      required this.hintText,
-      required this.refreshFunction,
-      super.key});
+  const MatrixSearchTextField({
+    required this.searchType,
+    required this.hintText,
+    required this.refreshFunction,
+    super.key,
+  });
 
   @override
   State<MatrixSearchTextField> createState() => _SearchTextFieldState();
@@ -45,17 +46,13 @@ class _SearchTextFieldState extends State<MatrixSearchTextField> {
         filled: true,
         border: UnderlineInputBorder(
           borderSide: BorderSide.none,
-          borderRadius: BorderRadius.circular(
-            12,
-          ),
+          borderRadius: BorderRadius.circular(12),
         ),
         hintText: widget.hintText,
         floatingLabelBehavior: FloatingLabelBehavior.never,
         prefixIcon: filtersOn
             ? IconButton(
-                icon: const Icon(
-                  Icons.close_outlined,
-                ),
+                icon: const Icon(Icons.close_outlined),
                 onPressed: () {
                   textEditingController.clear();
                   _matrixPolicyFilterManager.resetAllMatrixFilters();
@@ -64,10 +61,7 @@ class _SearchTextFieldState extends State<MatrixSearchTextField> {
               )
             : IconButton(
                 onPressed: () => widget.refreshFunction,
-                icon: const Icon(
-                  Icons.search_outlined,
-                  color: Colors.black45,
-                ),
+                icon: const Icon(Icons.search_outlined, color: Colors.black45),
               ),
         suffixIcon: const SizedBox.shrink(),
       ),

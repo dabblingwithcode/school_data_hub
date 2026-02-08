@@ -5,18 +5,18 @@ import 'package:school_data_hub_flutter/features/learning/domain/competence_help
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/competence_list_page/widgets/common_competence_card.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/competence_list_page/widgets/last_child_competence_card.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 List<Widget> buildCommonCompetenceTree({
   required Function({int? competenceId, Competence? competence})
-      navigateToNewOrPatchCompetencePage,
+  navigateToNewOrPatchCompetencePage,
   required int? parentId,
   required int indentation,
   required Color? backgroundColor,
   required List<Competence> competences,
   required BuildContext context,
 }) {
-  final _competenceManager = di<CompetenceManager>();
+  final competenceManager = di<CompetenceManager>();
   // Separate competences into two lists: one for those without a parent competence and one for those with a parent competence
   List<Competence> rootCompetences = [];
   List<Competence> childCompetences = [];
@@ -43,7 +43,7 @@ List<Widget> buildCommonCompetenceTree({
   // Combine the root competences and sorted child competences
   List<Competence> sortedCompetences = [
     ...rootCompetences,
-    ...childCompetences
+    ...childCompetences,
   ];
 
   List<Widget> competenceWidgets = [];
@@ -51,8 +51,9 @@ List<Widget> buildCommonCompetenceTree({
   late Color competenceBackgroundColor;
   for (var competence in sortedCompetences) {
     if (backgroundColor == null) {
-      competenceBackgroundColor =
-          CompetenceHelper.getCompetenceColor(competence.publicId);
+      competenceBackgroundColor = CompetenceHelper.getCompetenceColor(
+        competence.publicId,
+      );
     } else {
       competenceBackgroundColor = backgroundColor;
     }
@@ -60,24 +61,25 @@ List<Widget> buildCommonCompetenceTree({
       // Get the children of the current competence and sort them by the 'order' field
 
       final children = buildCommonCompetenceTree(
-          navigateToNewOrPatchCompetencePage:
-              navigateToNewOrPatchCompetencePage,
-          parentId: competence.publicId,
-          indentation: indentation + 1,
-          backgroundColor: competenceBackgroundColor,
-          competences: sortedCompetences,
-          context: context);
+        navigateToNewOrPatchCompetencePage: navigateToNewOrPatchCompetencePage,
+        parentId: competence.publicId,
+        indentation: indentation + 1,
+        backgroundColor: competenceBackgroundColor,
+        competences: sortedCompetences,
+        context: context,
+      );
 
       competenceWidgets.add(
         children.isNotEmpty
             ? Wrap(
                 children: [
                   CommonCompetenceCard(
-                      competence: competence,
-                      competenceBackgroundColor: competenceBackgroundColor,
-                      navigateToNewOrPatchCompetencePage:
-                          navigateToNewOrPatchCompetencePage,
-                      children: children)
+                    competence: competence,
+                    competenceBackgroundColor: competenceBackgroundColor,
+                    navigateToNewOrPatchCompetencePage:
+                        navigateToNewOrPatchCompetencePage,
+                    children: children,
+                  ),
                 ],
               )
             : Padding(
@@ -85,11 +87,12 @@ List<Widget> buildCommonCompetenceTree({
                 child: InkWell(
                   onLongPress: () async {
                     final confirm = await confirmationDialog(
-                        context: context,
-                        title: 'Kompetenz löschen',
-                        message: 'Sind Sie sicher?');
+                      context: context,
+                      title: 'Kompetenz löschen',
+                      message: 'Sind Sie sicher?',
+                    );
                     if (confirm!) {
-                      _competenceManager.deleteCompetence(competence.publicId);
+                      competenceManager.deleteCompetence(competence.publicId);
                     }
                   },
                   child: LastChildCompetenceCard(

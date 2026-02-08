@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/loading_page.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_page.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _envManager = di<EnvManager>();
 
@@ -145,16 +145,9 @@ class LoginController extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: di.allReady(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return LoginPage(controller: this);
-        } else {
-          return const LoadingPage();
-        }
-      },
-    );
+    final ready = allReady();
+    if (!ready) return const LoadingPage();
+    return LoginPage(controller: this);
   }
 
   @override

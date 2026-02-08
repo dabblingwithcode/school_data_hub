@@ -3,7 +3,7 @@ import 'package:school_data_hub_flutter/common/models/enums.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
-snackbar(BuildContext context, snackbarType, message) {
+void snackbar(BuildContext context, snackbarType, message) {
   switch (snackbarType) {
     case NotificationType.error:
       snackbarError(context, message);
@@ -20,7 +20,7 @@ snackbar(BuildContext context, snackbarType, message) {
   }
 }
 
-snackbarInfo(BuildContext context, message) {
+void snackbarInfo(BuildContext context, message) {
   if (context.mounted) {
     showTopSnackBar(
       Overlay.of(context),
@@ -50,7 +50,7 @@ snackbarInfo(BuildContext context, message) {
   }
 }
 
-snackbarSuccess(context, message) {
+void snackbarSuccess(context, message) {
   if (context.mounted) {
     showTopSnackBar(
       Overlay.of(context),
@@ -80,7 +80,7 @@ snackbarSuccess(context, message) {
   }
 }
 
-snackbarWarning(context, message) {
+void snackbarWarning(context, message) {
   if (context.mounted) {
     showTopSnackBar(
       Overlay.of(context),
@@ -110,7 +110,7 @@ snackbarWarning(context, message) {
   }
 }
 
-snackbarError(context, message) {
+void snackbarError(context, message) {
   if (context.mounted) {
     showTopSnackBar(
       Overlay.of(context),

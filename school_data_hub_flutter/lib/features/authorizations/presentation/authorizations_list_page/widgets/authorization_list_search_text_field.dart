@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/filters/authorization_filter_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _authorizationFilterManager = di<AuthorizationFilterManager>();
 final _filtersStateManager = di<FiltersStateManager>();
@@ -11,11 +11,12 @@ class AuthorizationListSearchTextField extends WatchingStatefulWidget {
   final SearchType searchType;
   final String hintText;
   final Function refreshFunction;
-  const AuthorizationListSearchTextField(
-      {required this.searchType,
-      required this.hintText,
-      required this.refreshFunction,
-      super.key});
+  const AuthorizationListSearchTextField({
+    required this.searchType,
+    required this.hintText,
+    required this.refreshFunction,
+    super.key,
+  });
 
   @override
   State<AuthorizationListSearchTextField> createState() =>
@@ -32,8 +33,9 @@ class _AuthorizationListSearchTextFieldState
   @override
   Widget build(BuildContext context) {
     // final textFilter = watch(locator<PupilsFilter>().textFilter);
-    final filtersOn =
-        watchValue((AuthorizationFilterManager x) => x.filterState);
+    final filtersOn = watchValue(
+      (AuthorizationFilterManager x) => x.filterState,
+    );
 
     return TextField(
       focusNode: focusNode,
@@ -45,17 +47,13 @@ class _AuthorizationListSearchTextFieldState
         filled: true,
         border: UnderlineInputBorder(
           borderSide: BorderSide.none,
-          borderRadius: BorderRadius.circular(
-            12,
-          ),
+          borderRadius: BorderRadius.circular(12),
         ),
         hintText: widget.hintText,
         floatingLabelBehavior: FloatingLabelBehavior.never,
         prefixIcon: filtersOn
             ? IconButton(
-                icon: const Icon(
-                  Icons.close_outlined,
-                ),
+                icon: const Icon(Icons.close_outlined),
                 onPressed: () {
                   _filtersStateManager.resetFilters();
 
@@ -65,10 +63,7 @@ class _AuthorizationListSearchTextFieldState
               )
             : IconButton(
                 onPressed: () => widget.refreshFunction,
-                icon: const Icon(
-                  Icons.search_outlined,
-                  color: Colors.black45,
-                ),
+                icon: const Icon(Icons.search_outlined, color: Colors.black45),
               ),
         suffixIcon: const SizedBox.shrink(),
       ),

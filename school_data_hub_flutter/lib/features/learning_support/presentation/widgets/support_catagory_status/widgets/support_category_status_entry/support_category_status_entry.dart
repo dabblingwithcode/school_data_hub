@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/features/learning_support/domain/learnin
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_symbol.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SupportCategoryStatusEntry extends StatelessWidget {
   final PupilProxy pupil;
@@ -25,7 +25,7 @@ class SupportCategoryStatusEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _learningSupportPlanManager = di<LearningSupportManager>();
+    final learningSupportPlanManager = di<LearningSupportManager>();
     final bool authorizedToChangeStatus =
         LearningSupportHelper.isAuthorizedToChangeStatus(status);
     return Padding(
@@ -47,7 +47,7 @@ class SupportCategoryStatusEntry extends StatelessWidget {
           );
           if (confirm != true) return;
 
-          _learningSupportPlanManager.deleteSupportCategoryStatus(
+          learningSupportPlanManager.deleteSupportCategoryStatus(
             pupil.pupilId,
             status.id!,
           );

@@ -9,14 +9,12 @@ import 'package:school_data_hub_flutter/features/learning_support/data/learning_
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
-class SupportCategoryManager with ChangeNotifier {
+class SupportCategoryManager {
   final _notificationService = di<NotificationService>();
 
   final _envManager = di<EnvManager>();
-
-  final _client = di<Client>();
 
   final _log = Logger('LearningSupportManager');
 
@@ -34,8 +32,6 @@ class SupportCategoryManager with ChangeNotifier {
 
   void dispose() {
     _supportCategories.dispose();
-
-    super.dispose();
   }
 
   Future<SupportCategoryManager> init() async {
@@ -103,7 +99,6 @@ class SupportCategoryManager with ChangeNotifier {
         supportCategories,
       );
 
-      _supportCategories.notifyListeners();
 
       _notificationService.showSnackBar(
         NotificationType.success,
@@ -129,9 +124,9 @@ class SupportCategoryManager with ChangeNotifier {
       }
       return;
     }
-    final List<SupportCategory> importedCategories = await _client
-        .adminCategories
-        .importSupportCategoriesFromJsonFile(fileResponse.path!);
+    final List<SupportCategory> importedCategories =
+        await _learningSupportApiService
+            .importSupportCategoriesFromJsonFile(fileResponse.path!);
 
     importedCategories.sort((a, b) => a.categoryId.compareTo(b.categoryId));
     _supportCategories.value = importedCategories;
@@ -140,7 +135,6 @@ class SupportCategoryManager with ChangeNotifier {
     _rootCategoriesMap = LearningSupportHelper.generateRootCategoryMap(
       importedCategories,
     );
-    _supportCategories.notifyListeners();
 
     _notificationService.showSnackBar(
       NotificationType.success,

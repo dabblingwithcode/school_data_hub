@@ -9,16 +9,17 @@ import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_roo
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/room_list_card.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/room_list_searchbar.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/room_list_view_bottom_navbar.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class MatrixRoomsListPage extends WatchingWidget {
   const MatrixRoomsListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final _matrixPolicyManager = di<MatrixPolicyManager>();
-    List<MatrixRoom> matrixRooms =
-        watchValue((MatrixPolicyFilterManager x) => x.filteredMatrixRooms);
+    final matrixPolicyManager = di<MatrixPolicyManager>();
+    List<MatrixRoom> matrixRooms = watchValue(
+      (MatrixPolicyFilterManager x) => x.filteredMatrixRooms,
+    );
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
@@ -29,21 +30,14 @@ class MatrixRoomsListPage extends WatchingWidget {
         title: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.chat_rounded,
-              size: 25,
-              color: Colors.white,
-            ),
+            Icon(Icons.chat_rounded, size: 25, color: Colors.white),
             Gap(10),
-            Text(
-              'Matrix-Räume',
-              style: AppStyles.appBarTextStyle,
-            ),
+            Text('Matrix-Räume', style: AppStyles.appBarTextStyle),
           ],
         ),
       ),
       body: RefreshIndicator(
-        onRefresh: () async => _matrixPolicyManager.fetchMatrixPolicy(),
+        onRefresh: () async => matrixPolicyManager.fetchMatrixPolicy(),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 800),
@@ -63,7 +57,11 @@ class MatrixRoomsListPage extends WatchingWidget {
                   elevation: 0,
                   flexibleSpace: FlexibleSpaceBar(
                     titlePadding: const EdgeInsets.only(
-                        left: 5, top: 5, right: 5, bottom: 5),
+                      left: 5,
+                      top: 5,
+                      right: 5,
+                      bottom: 5,
+                    ),
                     collapseMode: CollapseMode.none,
                     title: RoomListSearchBar(matrixRooms: matrixRooms),
                   ),

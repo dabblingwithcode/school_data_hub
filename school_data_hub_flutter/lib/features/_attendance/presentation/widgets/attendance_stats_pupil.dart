@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_stats_helper.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/attendance_badges.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';

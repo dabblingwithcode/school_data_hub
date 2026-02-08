@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.da
 
 class GenericBottomNavBarWithActions extends StatelessWidget {
   final List<Widget>? actions;
-  GenericBottomNavBarWithActions({this.actions, super.key});
+  const GenericBottomNavBarWithActions({this.actions, super.key});
 
   @override
   Widget build(BuildContext context) {

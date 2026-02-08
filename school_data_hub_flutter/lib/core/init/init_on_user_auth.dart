@@ -31,7 +31,7 @@ import 'package:school_data_hub_flutter/features/timetable/timetable.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _log = Logger('[Init][OnUserAuth]');
 
@@ -53,73 +53,30 @@ class InitOnUserAuth {
     } else {
       _log.info(' No matrix credentials found');
     }
+
     di.registerSingletonAsync<PupilIdentityManager>(
-      () async {
-        final pupilIdentityManager = PupilIdentityManager();
-
-        await pupilIdentityManager.init();
-
-        _log.info('[PupilIdentityManager] initialized ✅️');
-
-        return pupilIdentityManager;
-      },
-      dispose: (instance) {
-        _log.info('[PupilIdentityManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      () => PupilIdentityManager().init(),
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonAsync<SchoolCalendarManager>(
-      () async {
-        final schoolCalendarManager = SchoolCalendarManager();
-
-        await schoolCalendarManager.init();
-
-        _log.info('[SchoolCalendarManager] initialized ✅️');
-
-        return schoolCalendarManager;
-      },
-      dispose: (instance) {
-        _log.info('[SchoolCalendarManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      () => SchoolCalendarManager().init(),
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonAsync<SupportCategoryManager>(
-      () async {
-        final supportCategoryManager = SupportCategoryManager();
-
-        await supportCategoryManager.init();
-
-        _log.info('[SupportCategoryManager] initialized ✅️');
-
-        return supportCategoryManager;
-      },
-      dispose: (instance) {
-        _log.info('[SupportCategoryManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      () => SupportCategoryManager().init(),
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonAsync<PupilProxyManager>(
       () async {
-        final pupilManager = PupilProxyManager();
-
-        await pupilManager.init();
-
-        _log.info('[PupilProxyManager] initialized ✅️');
-
-        return pupilManager;
+        final manager = PupilProxyManager();
+        await manager.init();
+        return manager;
       },
       dependsOn: [PupilIdentityManager, HubSessionManager],
-      dispose: (instance) {
-        _log.info('[PupilProxyManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonWithDependencies<LearningSupportManager>(
@@ -129,295 +86,139 @@ class InitOnUserAuth {
         SchoolCalendarManager,
         SupportCategoryManager,
       ],
-      dispose: (instance) {
-        _log.info('[LearningSupportManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonAsync<BookManager>(
-      () async {
-        final bookManager = BookManager();
-        await bookManager.init();
-        _log.info('[BookManager] initialized ✅️');
-        return bookManager;
-      },
-      dependsOn: [],
-      dispose: (instance) {
-        _log.info('[BookManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      () => BookManager().init(),
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonAsync<SchoolDataMainManager>(
-      () async {
-        final schoolDataManager = SchoolDataMainManager();
-        await schoolDataManager.init();
-        _log.info('[SchoolDataMainManager] initialized ✅️');
-        return schoolDataManager;
-      },
-      dependsOn: [],
-      dispose: (instance) {
-        _log.info('[SchoolDataMainManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      () => SchoolDataMainManager().init(),
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonAsync<WorkbookManager>(
-      () async {
-        final workbookManager = WorkbookManager();
-        await workbookManager.init();
-        _log.info('[WorkbookManager] initialized ✅️');
-        return workbookManager;
-      },
+      () => WorkbookManager().init(),
       dependsOn: [HubSessionManager, PupilProxyManager],
-      dispose: (instance) {
-        _log.info('[WorkbookManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonAsync<PupilWorkbookManager>(
-      () async {
-        final pupilWorkbookManager = PupilWorkbookManager();
-        await pupilWorkbookManager.init();
-        _log.info('[PupilWorkbookManager] initialized ✅️');
-        return pupilWorkbookManager;
-      },
-      dispose: (instance) {
-        _log.info('[PupilWorkbookManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      () => PupilWorkbookManager().init(),
       dependsOn: [HubSessionManager, PupilProxyManager],
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonAsync<CompetenceManager>(
-      () async {
-        final competenceManager = CompetenceManager();
-
-        await competenceManager.init();
-
-        _log.info('[CompetenceManager] initialized ✅️');
-
-        return competenceManager;
-      },
-      dispose: (instance) {
-        _log.info('[CompetenceManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      () => CompetenceManager().init(),
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonWithDependencies<CompetenceFilterManager>(
-      () {
-        return CompetenceFilterManager();
-      },
+      () => CompetenceFilterManager(),
       dependsOn: [CompetenceManager],
-      dispose: (instance) {
-        _log.info('[CompetenceFilterManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonAsync<AuthorizationManager>(
-      () async {
-        final authorizationManager = AuthorizationManager();
-        await authorizationManager.init();
-        _log.info('[AuthorizationManager] initialized ✅️');
-        return authorizationManager;
-      },
+      () => AuthorizationManager().init(),
       dependsOn: [HubSessionManager],
-      dispose: (instance) {
-        _log.info('[AuthorizationManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      dispose: (m) => m.dispose(),
     );
+
     di.registerSingletonWithDependencies<AuthorizationFilterManager>(
-      () {
-        final authorizationFilterManager = AuthorizationFilterManager();
-        authorizationFilterManager.init();
-        _log.info('[AuthorizationFilterManager] initialized ✅️');
-        return authorizationFilterManager;
-      },
+      () => AuthorizationFilterManager()..init(),
       dependsOn: [AuthorizationManager],
-      dispose: (instance) {
-        _log.info('[AuthorizationFilterManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonWithDependencies<PupilAuthorizationFilterManager>(
       () => PupilAuthorizationFilterManager(),
       dependsOn: [AuthorizationManager],
-      dispose: (instance) {
-        _log.info('[PupilAuthorizationFilterManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonWithDependencies<PupilFilterManager>(
       () => PupilFilterManager(),
-      dispose: (instance) {
-        _log.info('[PupilFilterManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
       dependsOn: [PupilProxyManager],
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingleton<FiltersStateManager>(
       FiltersStateManagerImplementation(),
-      dispose: (instance) {
-        _log.info('[FiltersStateManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonWithDependencies<LearningSupportFilterManager>(
       () => LearningSupportFilterManager(),
       dependsOn: [PupilProxyManager, PupilFilterManager],
-      dispose: (instance) {
-        _log.info('[LearningSupportFilterManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonWithDependencies<SchooldayEventManager>(
       () => SchooldayEventManager(),
       dependsOn: [SchoolCalendarManager, PupilProxyManager],
-      dispose: (instance) {
-        _log.info('[SchooldayEventManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonWithDependencies<SchooldayEventFilterManager>(
-      () {
-        final schooldayEventFilterManager = SchooldayEventFilterManager();
-
-        _log.info('[SchooldayEventFilterManager] initialized ✅️');
-        return schooldayEventFilterManager;
-      },
-      dispose: (instance) {
-        _log.info('[SchooldayEventFilterManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      () => SchooldayEventFilterManager(),
       dependsOn: [PupilProxyManager, PupilFilterManager, SchooldayEventManager],
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonWithDependencies<AttendanceManager>(
       () => AttendanceManager(),
       dependsOn: [PupilProxyManager, SchoolCalendarManager],
-      dispose: (instance) {
-        _log.info('[AttendanceManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonWithDependencies<AttendancePupilFilterManager>(
-      () {
-        final attendancePupilFilterManager = AttendancePupilFilterManager();
-        return attendancePupilFilterManager.init();
-      },
-      dispose: (instance) => instance.dispose(),
+      () => AttendancePupilFilterManager().init(),
       dependsOn: [AttendanceManager],
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonWithDependencies<PupilsFilter>(
       () => PupilsFilterImplementation(di<PupilProxyManager>()),
-      dispose: (instance) {
-        instance.dispose();
-        _log.info('[PupilsFilterImplementation] disposed 🚮');
-        return;
-      },
       dependsOn: [
         PupilProxyManager,
-
         PupilFilterManager,
         LearningSupportFilterManager,
         SchooldayEventFilterManager,
         AttendancePupilFilterManager,
       ],
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonAsync<SchoolListManager>(
-      () async {
-        final schoolListManager = SchoolListManager();
-        await schoolListManager.init();
-        _log.info('[SchoolListManager] initialized ✅️');
-        return schoolListManager;
-      },
-      dispose: (instance) {
-        _log.info('[SchoolListManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      () => SchoolListManager().init(),
       dependsOn: [HubSessionManager, PupilProxyManager],
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonWithDependencies<SchoolListFilterManager>(
-      () {
-        final schoolListFilterManager = SchoolListFilterManager();
-        schoolListFilterManager.init();
-        _log.info('[SchoolListFilterManager] initialized ✅️');
-        return schoolListFilterManager;
-      },
-      dispose: (instance) {
-        _log.info('[SchoolListFilterManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      () => SchoolListFilterManager()..init(),
       dependsOn: [PupilsFilter, SchoolListManager],
+      dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonAsync<UserManager>(
-      () async {
-        final userManager = UserManager();
-        await userManager.init();
-        _log.info('[UserManager] initialized ✅️');
-        return userManager;
-      },
-      dispose: (instance) {
-        _log.info('[UserManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      () => UserManager().init(),
       dependsOn: [HubSessionManager],
+      dispose: (m) => m.dispose(),
     );
 
-    di.registerSingletonAsync<TimetableApiService>(() async {
-      final timetableApiService = TimetableApiService();
-      _log.info('[TimetableApiService] initialized ✅️');
-      return timetableApiService;
-    });
+    di.registerSingletonAsync<TimetableApiService>(
+      () async => TimetableApiService(),
+    );
 
     di.registerSingletonAsync<TimetableManager>(
-      () async {
-        final timetableManager = TimetableManager();
-        await timetableManager.init();
-        _log.info('[TimetableManager] initialized ✅️');
-        return timetableManager;
-      },
-      dispose: (instance) {
-        _log.info('[TimetableManager] disposed 🚮');
-        instance.dispose();
-        return;
-      },
+      () => TimetableManager().init(),
       dependsOn: [HubSessionManager, TimetableApiService],
+      dispose: (m) => m.dispose(),
     );
 
     _log.info('Managers depending on authentication are being initialized...');

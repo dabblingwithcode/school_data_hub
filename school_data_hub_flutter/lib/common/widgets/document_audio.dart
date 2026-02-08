@@ -63,7 +63,7 @@ class _DocumentAudioState extends State<DocumentAudio> {
               print("Error setting file path: $e");
             }
             // Fallback or retry if needed, but usually setFilePath is robust.
-            throw e;
+            rethrow;
           }
         } else {
           _errorMessage = 'Fehler beim Laden';

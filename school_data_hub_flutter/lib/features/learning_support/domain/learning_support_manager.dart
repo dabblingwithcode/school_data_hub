@@ -12,9 +12,9 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/data/learning_support_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
-class LearningSupportManager with ChangeNotifier {
+class LearningSupportManager {
   //- IMPORTS -//
 
   final _schoolCalendarManager = di<SchoolCalendarManager>();
@@ -30,8 +30,6 @@ class LearningSupportManager with ChangeNotifier {
   //- OBSERVABLES -//
   void dispose() {
     _learningSupportPlans.dispose();
-    super.dispose();
-    return;
   }
 
   final _learningSupportPlans =
@@ -101,7 +99,6 @@ class LearningSupportManager with ChangeNotifier {
 
     _learningSupportPlans.value = plansToUpdate;
 
-    notifyListeners();
     _notificationService.showSnackBar(
       NotificationType.success,
       'Förderplan erstellt',
@@ -313,7 +310,7 @@ class LearningSupportManager with ChangeNotifier {
       if (importedSupportLevels) {
         _notificationService.showSnackBar(
           NotificationType.success,
-          '${importedSupportLevels} Förderstufen erfolgreich importiert',
+          '$importedSupportLevels Förderstufen erfolgreich importiert',
         );
       } else {
         _notificationService.showSnackBar(

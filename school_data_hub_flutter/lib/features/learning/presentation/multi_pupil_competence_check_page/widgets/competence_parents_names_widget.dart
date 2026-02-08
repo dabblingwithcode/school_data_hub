@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
-List<Widget> competenceTreeAncestorsNames(
-    {required int competenceId, required Color categoryColor}) {
+List<Widget> competenceTreeAncestorsNames({
+  required int competenceId,
+  required Color categoryColor,
+}) {
   // Create an empty list to store ancestors
   List<Widget> ancestors = [];
 
   // Use a recursive helper function to collect ancestors
   void collectAncestors(int currentCompetenceId) {
-    final Competence currentCompetence =
-        di<CompetenceManager>().findCompetenceById(currentCompetenceId);
+    final Competence currentCompetence = di<CompetenceManager>()
+        .findCompetenceById(currentCompetenceId);
 
     // Check if parent category exists before recursion
     if (currentCompetence.parentCompetence != null) {
@@ -27,15 +29,16 @@ List<Widget> competenceTreeAncestorsNames(
             const Gap(10),
             Flexible(
               child: Text(
-                  di<CompetenceManager>()
-                      .findRootCompetenceById(competenceId)
-                      .name,
-                  style: const TextStyle(
-                    overflow: TextOverflow.fade,
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  )),
+                di<CompetenceManager>()
+                    .findRootCompetenceById(competenceId)
+                    .name,
+                style: const TextStyle(
+                  overflow: TextOverflow.fade,
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             const Gap(10),
           ],
@@ -72,8 +75,8 @@ List<Widget> competenceTreeAncestorsNames(
   collectAncestors(competenceId);
 
   // Add the current category at the end
-  final Competence currentCompetence =
-      di<CompetenceManager>().findCompetenceById(competenceId);
+  final Competence currentCompetence = di<CompetenceManager>()
+      .findCompetenceById(competenceId);
   ancestors.add(
     Row(
       children: [

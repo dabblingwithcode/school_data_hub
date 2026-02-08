@@ -10,7 +10,7 @@ import 'package:school_data_hub_flutter/features/matrix/rooms/data/matrix_room_a
 import 'package:school_data_hub_flutter/features/matrix/services/api/api_client.dart';
 import 'package:school_data_hub_flutter/features/matrix/services/api/api_settings.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/data/matrix_user_api_service.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 enum MatrixAuthType { matrix, corporal }
 

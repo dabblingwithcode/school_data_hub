@@ -15,7 +15,7 @@ import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SchooldayEventPupilListCard extends WatchingStatefulWidget {
   final PupilProxy passedPupil;
@@ -37,19 +37,19 @@ class _SchooldayEventListCardState extends State<SchooldayEventPupilListCard> {
 
   @override
   Widget build(BuildContext context) {
-    final _schooldayEventFilterManager = di<SchooldayEventFilterManager>();
-    final _schooldayEventManager = di<SchooldayEventManager>();
-    final _mainMenuBottomNavManager = di<BottomNavManager>();
+    final schooldayEventFilterManager = di<SchooldayEventFilterManager>();
+    final schooldayEventManager = di<SchooldayEventManager>();
+    final mainMenuBottomNavManager = di<BottomNavManager>();
     final PupilProxy pupil = widget.passedPupil;
     final unfilteredEvents = watch(
-      _schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId),
+      schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId),
     ).schooldayEvents;
-    schooldayEvents = _schooldayEventFilterManager.filteredSchooldayEvents(
+    schooldayEvents = schooldayEventFilterManager.filteredSchooldayEvents(
       unfilteredEvents.values.toList(),
     );
     // TODO: This is a workaround for the filter manager. It should be moved to
     // - SchooldayEventListPage or to the filter manager.
-    if (_schooldayEventFilterManager.schooldayEventsFilterState.value.values
+    if (schooldayEventFilterManager.schooldayEventsFilterState.value.values
         .any((x) => x == true)) {
       if (schooldayEvents.isEmpty) {
         return const SizedBox.shrink();
@@ -77,7 +77,7 @@ class _SchooldayEventListCardState extends State<SchooldayEventPupilListCard> {
                             scrollDirection: Axis.horizontal,
                             child: InkWell(
                               onTap: () {
-                                _mainMenuBottomNavManager
+                                mainMenuBottomNavManager
                                     .setPupilProfileNavPage(4);
                                 Navigator.of(context).push(
                                   MaterialPageRoute(

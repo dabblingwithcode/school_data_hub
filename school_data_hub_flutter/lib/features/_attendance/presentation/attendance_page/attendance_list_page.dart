@@ -19,7 +19,7 @@ import 'package:school_data_hub_flutter/features/app_entry_point/login_page/logi
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _log = Logger('AttendanceListPage');
 
@@ -27,15 +27,15 @@ class AttendanceListPage extends WatchingWidget {
   const AttendanceListPage({super.key});
   @override
   Widget build(BuildContext context) {
-    final _attendanceManager = di<AttendanceManager>();
-    final _notificationService = di<NotificationService>();
+    final attendanceManager = di<AttendanceManager>();
+    final notificationService = di<NotificationService>();
     final bool isAuthenticated = watchPropertyValue(
       (HubSessionManager x) => x.isSignedIn,
     );
 
     // If not authenticated, redirect to login page
     if (!isAuthenticated) {
-      _notificationService.showInformationDialog(
+      notificationService.showInformationDialog(
         'Die Sitzung ist abgelaufen.\nBitte erneut anmelden.',
       );
       // Use Future.microtask to avoid build-phase navigation issues
@@ -49,7 +49,7 @@ class AttendanceListPage extends WatchingWidget {
     }
     createOnce<StreamSubscription<MissedSchooldayDto>>(
       () {
-        return _attendanceManager.missedSchooldayStreamSubscription();
+        return attendanceManager.missedSchooldayStreamSubscription();
       },
       dispose: (value) {
         _log.info('Cancelling missed class stream subscription');
@@ -61,7 +61,7 @@ class AttendanceListPage extends WatchingWidget {
     ).toLocal();
 
     callOnce((context) {
-      _attendanceManager.fetchMissedSchooldayesOnASchoolday(thisDate);
+      attendanceManager.fetchMissedSchooldayesOnASchoolday(thisDate);
     });
 
     watchValue((AttendanceManager x) => x.missedSchooldays);
@@ -100,7 +100,7 @@ class AttendanceListPage extends WatchingWidget {
       ),
       body: RefreshIndicator(
         onRefresh: () async =>
-            _attendanceManager.fetchMissedSchooldayesOnASchoolday(thisDate),
+            attendanceManager.fetchMissedSchooldayesOnASchoolday(thisDate),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),

@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/features/authorizations/presentation/aut
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class AuthorizationPupilsBottomNavBar extends WatchingWidget {
   final Authorization authorization;
@@ -25,8 +25,8 @@ class AuthorizationPupilsBottomNavBar extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _hubSessionManager = di<HubSessionManager>();
-    final _authorizationManager = di<AuthorizationManager>();
+    final hubSessionManager = di<HubSessionManager>();
+    final authorizationManager = di<AuthorizationManager>();
     final filtersActive = watchValue(
       (FiltersStateManager x) => x.filtersActive,
     );
@@ -49,7 +49,7 @@ class AuthorizationPupilsBottomNavBar extends WatchingWidget {
                 },
               ),
               if (di<HubSessionManager>().userName == authorization.createdBy ||
-                  _hubSessionManager.isAdmin) ...[
+                  hubSessionManager.isAdmin) ...[
                 const Gap(AppPaddings.bottomNavBarButtonGap),
                 IconButton(
                   tooltip: 'Kinder hinzufügen',
@@ -68,7 +68,7 @@ class AuthorizationPupilsBottomNavBar extends WatchingWidget {
                       return;
                     }
                     if (selectedPupilIds.isNotEmpty) {
-                      _authorizationManager.updateAuthorization(
+                      authorizationManager.updateAuthorization(
                         authId: authorization.id!,
                         membersToUpdate: (
                           operation: MemberOperation.add,
@@ -106,7 +106,7 @@ BottomAppBar authorizationPupilsBottomNavBar(
   bool filtersOn,
   List<int> pupilsInAuthorization,
 ) {
-  final _authorizationManager = di<AuthorizationManager>();
+  final authorizationManager = di<AuthorizationManager>();
   return BottomAppBar(
     padding: const EdgeInsets.all(9),
     shape: null,
@@ -142,7 +142,7 @@ BottomAppBar authorizationPupilsBottomNavBar(
                       return;
                     }
                     if (selectedPupilIds.isNotEmpty) {
-                      _authorizationManager.updateAuthorization(
+                      authorizationManager.updateAuthorization(
                         authId: authorization.id!,
                         membersToUpdate: (
                           operation: MemberOperation.add,

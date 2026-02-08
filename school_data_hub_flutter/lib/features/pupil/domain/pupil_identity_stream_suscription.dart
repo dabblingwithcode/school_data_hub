@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 // enum PupilIdentityDtoType { request, data, ok }
 
@@ -36,25 +36,25 @@ class PupilIdentityStream {
     Function(int newCount, int totalCount)?
     onDataReceived, // New callback for showing success info
   }) {
-    final _notificationService = di<NotificationService>();
+    final notificationService = di<NotificationService>();
 
     _log.info(
       'encryptedPupilIdsStreamSubscription called with channelName: $channelName and role: $role',
     );
-    final _client = di<Client>();
+    final client = di<Client>();
     _log.info(
       '[${role.name.toUpperCase()}]: starting encryptedPupilIdsStreamSubscription',
     );
     // just in case we have a previous subscription, we cancel it first
     _encryptedPupilIdsSubscription?.cancel();
-    _encryptedPupilIdsSubscription = _client.pupilIdentity
+    _encryptedPupilIdsSubscription = client.pupilIdentity
         .streamEncryptedPupilIds(channelName)
         .listen(
           (PupilIdentityDto event) async {
             final eventSender = event.sender;
 
             // Defensive null check - validate sender before processing
-            if (eventSender == null || eventSender.isEmpty) {
+            if (eventSender.isEmpty) {
               _log.severe(
                 '[${role.name.toUpperCase()}]: Received event with NULL/EMPTY sender! '
                 'Type: ${event.type}, Value: ${event.value}. Skipping malformed event.',
@@ -121,7 +121,7 @@ class PupilIdentityStream {
                         onRequestConfirmed();
                       }
                       onStatusUpdate('Sende Daten...');
-                      await _client.pupilIdentity.sendPupilIdentityMessage(
+                      await client.pupilIdentity.sendPupilIdentityMessage(
                         channelName,
                         PupilIdentityDto(
                           sender: currentUser,
@@ -143,7 +143,7 @@ class PupilIdentityStream {
                         '[${role.name.toUpperCase()}] [${event.type}] from $eventSender: Sending data to $targetUser',
                       );
                       onStatusUpdate('Sende Daten an $targetUser...');
-                      await _client.pupilIdentity.sendPupilIdentityMessage(
+                      await client.pupilIdentity.sendPupilIdentityMessage(
                         channelName,
                         PupilIdentityDto(
                           sender: currentUser,
@@ -313,7 +313,7 @@ class PupilIdentityStream {
                       }
 
                       // Send confirmation
-                      await _client.pupilIdentity.sendPupilIdentityMessage(
+                      await client.pupilIdentity.sendPupilIdentityMessage(
                         channelName,
                         PupilIdentityDto(
                           sender: confirmUser,
@@ -370,7 +370,7 @@ class PupilIdentityStream {
             )) {
               // TODO: Implement server not responding
               //- This is very buggy
-              _notificationService.showInformationDialog(
+              notificationService.showInformationDialog(
                 'Der Server konnte nicht gefunden werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.',
               );
             } else {
@@ -405,7 +405,7 @@ class PupilIdentityStream {
             );
           },
           onDone: () {
-            _notificationService.showSnackBar(
+            notificationService.showSnackBar(
               NotificationType.success,
               'Verbindung zum Client geschlossen.',
             );

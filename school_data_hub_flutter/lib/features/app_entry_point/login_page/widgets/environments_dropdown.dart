@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class EnvironmentsDropdown extends StatelessWidget {
   final String selectedEnv;
   final Function changeEnv;
-  const EnvironmentsDropdown(
-      {required this.selectedEnv, required this.changeEnv, super.key});
+  const EnvironmentsDropdown({
+    required this.selectedEnv,
+    required this.changeEnv,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     final envManager = di<EnvManager>();
     return DropdownButton<String>(
       value: selectedEnv,
-      hint: const Text(
-        'Select Server',
-        style: TextStyle(color: Colors.white),
-      ),
+      hint: const Text('Select Server', style: TextStyle(color: Colors.white)),
       dropdownColor: Colors.grey[800],
       icon: const Icon(Icons.arrow_downward, color: Colors.white),
       iconSize: 24,

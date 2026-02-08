@@ -4,9 +4,9 @@ import 'package:school_data_hub_flutter/features/matrix/data/matrix_api_service.
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/data/matrix_room_api_service.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
-class MatrixRoomManager extends ChangeNotifier {
+class MatrixRoomManager {
   final _notificationService = di<NotificationService>();
 
   final MatrixApiService _matrixApiService;
@@ -22,9 +22,12 @@ class MatrixRoomManager extends ChangeNotifier {
   final _matrixRooms = ValueNotifier<List<MatrixRoom>>([]);
   ValueListenable<List<MatrixRoom>> get matrixRooms => _matrixRooms;
 
+  void dispose() {
+    _matrixRooms.dispose();
+  }
+
   void setRooms(List<MatrixRoom> rooms) {
     _matrixRooms.value = rooms;
-    notifyListeners();
   }
 
   MatrixRoom getRoomById(String roomId) {
@@ -45,7 +48,7 @@ class MatrixRoomManager extends ChangeNotifier {
     );
 
     if (room == null) {
-      return null;
+      return;
     }
     MatrixRoom namedRoom = await _matrixApiService.roomApi
         .fetchAdditionalRoomInfos(room.id);
@@ -59,7 +62,6 @@ class MatrixRoomManager extends ChangeNotifier {
     _matrixRooms.value = matrixRooms;
     di<MatrixPolicyManager>().applyPolicyChanges();
     // _onPolicyChanges(true);
-    notifyListeners();
     _notificationService.showSnackBar(
       NotificationType.success,
       'Raum ${newRoom.name} erstellt',
@@ -67,17 +69,17 @@ class MatrixRoomManager extends ChangeNotifier {
   }
 
   Future<void> removeManagedRoom(MatrixRoom room) async {
-    final _matrixPolicyManager = di<MatrixPolicyManager>();
-    final matrixRooms =
-        _matrixRooms.value.where((r) => r.id != room.id).toList();
+    final matrixPolicyManager = di<MatrixPolicyManager>();
+    final matrixRooms = _matrixRooms.value
+        .where((r) => r.id != room.id)
+        .toList();
 
     _matrixRooms.value = matrixRooms;
 
-    _matrixPolicyManager.users.removeRoomFromUsers(room);
+    matrixPolicyManager.users.removeRoomFromUsers(room);
 
-    _matrixPolicyManager.pendingChangesHandler(true);
+    matrixPolicyManager.pendingChangesHandler(true);
 
-    notifyListeners();
     _notificationService.showSnackBar(
       NotificationType.success,
       'Raum ${room.name} von der Verwaltung entfernt.',
@@ -103,18 +105,20 @@ class MatrixRoomManager extends ChangeNotifier {
           reactions: reactions,
           matrixAdmin: _matrixAdminId,
         );
-    if (currentRoom.roomAdmins != null)
+    if (currentRoom.roomAdmins != null) {
       currentRoom.roomAdmins = room.roomAdmins;
-    if (currentRoom.eventsDefault != null)
+    }
+    if (currentRoom.eventsDefault != null) {
       currentRoom.eventsDefault = room.eventsDefault;
-    if (currentRoom.powerLevelReactions != null)
+    }
+    if (currentRoom.powerLevelReactions != null) {
       currentRoom.powerLevelReactions = room.powerLevelReactions;
+    }
 
     _notificationService.showSnackBar(
       NotificationType.success,
       'Power Levels gesetzt',
     );
-    notifyListeners();
   }
 
   Future<void> loadRoomsFromPolicy(List<String> managedRoomIds) async {

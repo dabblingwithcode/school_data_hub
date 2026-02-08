@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/features/_attendance/data/attendance_api
 import 'package:school_data_hub_flutter/features/_attendance/domain/models/pupil_missed_classes_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class AttendanceManager with ChangeNotifier {
   // Lazy getters to avoid accessing dependencies during construction
@@ -44,6 +44,7 @@ class AttendanceManager with ChangeNotifier {
     init();
   }
 
+  @override
   void dispose() {
     _closeStreamSubscription();
 
@@ -197,7 +198,6 @@ class AttendanceManager with ChangeNotifier {
           },
           onError: (error) async {
             final errorString = error.toString();
-            ;
             _log.severe('Error in missedSchoolday stream: $error');
             if (error.toString().contains('Unauthorized')) {
               _missedSchooldaySubscription!.cancel();

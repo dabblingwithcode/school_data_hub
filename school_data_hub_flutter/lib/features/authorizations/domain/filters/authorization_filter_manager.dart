@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class AuthorizationFilterManager {
   AuthorizationManager get _authorizationManager => di<AuthorizationManager>();

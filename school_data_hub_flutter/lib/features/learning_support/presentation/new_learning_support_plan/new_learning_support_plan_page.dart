@@ -4,7 +4,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan/controller/new_learning_support_plan_controller.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class NewLearningSupportPlanPage extends WatchingWidget {
   final NewLearningSupportPlanController controller;
@@ -26,6 +26,9 @@ class NewLearningSupportPlanPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentSemester = watch(controller.semesterInfoNotifier).value;
+    final isValid = watch(controller.isValidNotifier).value;
+
     return Theme(
       data: ThemeData(
         unselectedWidgetColor: Colors.white,
@@ -113,48 +116,39 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                   const Gap(15),
 
                   // Semester Information
-                  ValueListenableBuilder<String>(
-                    valueListenable: controller.semesterInfoNotifier,
-                    builder: (context, currentSemester, child) {
-                      return Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 12.0,
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 12.0,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.backgroundColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10.0),
+                      border: Border.all(
+                        color: AppColors.backgroundColor.withValues(alpha: 0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          color: AppColors.backgroundColor,
+                          size: 16,
                         ),
-                        decoration: BoxDecoration(
-                          color: AppColors.backgroundColor.withValues(
-                            alpha: 0.1,
+                        const Gap(8),
+                        Expanded(
+                          child: Text(
+                            currentSemester,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
                           ),
-                          borderRadius: BorderRadius.circular(10.0),
-                          border: Border.all(
-                            color: AppColors.backgroundColor.withValues(
-                              alpha: 0.3,
-                            ),
-                            width: 1,
-                          ),
                         ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.info_outline,
-                              color: AppColors.backgroundColor,
-                              size: 16,
-                            ),
-                            const Gap(8),
-                            Expanded(
-                              child: Text(
-                                currentSemester,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                      ],
+                    ),
                   ),
 
                   const Gap(20),
@@ -222,7 +216,7 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                   const Gap(20),
 
                   // Comment Field
-                  Text('Kommentar', style: AppStyles.title),
+                  const Text('Kommentar', style: AppStyles.title),
                   const Gap(10),
                   TextField(
                     controller: controller.commentController,
@@ -241,9 +235,7 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                           width: 2,
                         ),
                       ),
-                      labelStyle: TextStyle(
-                        color: AppColors.backgroundColor,
-                      ),
+                      labelStyle: TextStyle(color: AppColors.backgroundColor),
                       labelText: 'Kommentar',
                       hintText:
                           'Zusätzliche Bemerkungen zum Förderplan (Kann später ausgefüllt werden)',
@@ -253,7 +245,7 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                   const Gap(20),
 
                   // Social Pedagogue Field
-                  Text('Sozialpädagoge', style: AppStyles.title),
+                  const Text('Sozialpädagoge', style: AppStyles.title),
                   const Gap(10),
                   TextField(
                     controller: controller.socialPedagogueController,
@@ -271,9 +263,7 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                           width: 2,
                         ),
                       ),
-                      labelStyle: TextStyle(
-                        color: AppColors.backgroundColor,
-                      ),
+                      labelStyle: TextStyle(color: AppColors.backgroundColor),
                       labelText: 'Sozialpädagoge',
                       hintText:
                           'Name des Sozialpädagogen (Kann später ausgefüllt werden)',
@@ -283,7 +273,7 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                   const Gap(20),
 
                   // Professionals Involved Field
-                  Text('Beteiligte Fachkräfte', style: AppStyles.title),
+                  const Text('Beteiligte Fachkräfte', style: AppStyles.title),
                   const Gap(10),
                   TextField(
                     controller: controller.proffesionalsInvolvedController,
@@ -312,7 +302,7 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                   const Gap(20),
 
                   // Strengths Description Field
-                  Text('Stärkenbeschreibung', style: AppStyles.title),
+                  const Text('Stärkenbeschreibung', style: AppStyles.title),
                   const Gap(10),
                   TextField(
                     controller: controller.strengthsDescriptionController,
@@ -331,9 +321,7 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                           width: 2,
                         ),
                       ),
-                      labelStyle: TextStyle(
-                        color: AppColors.backgroundColor,
-                      ),
+                      labelStyle: TextStyle(color: AppColors.backgroundColor),
                       labelText: 'Stärkenbeschreibung',
                       hintText:
                           'Beschreibung der Stärken des Schülers (Kann später ausgefüllt werden)',
@@ -343,7 +331,7 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                   const Gap(20),
 
                   // Problems Description Field
-                  Text('Problembeschreibung', style: AppStyles.title),
+                  const Text('Problembeschreibung', style: AppStyles.title),
                   const Gap(10),
                   TextField(
                     controller: controller.problemsDescriptionController,
@@ -362,9 +350,7 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                           width: 2,
                         ),
                       ),
-                      labelStyle: TextStyle(
-                        color: AppColors.backgroundColor,
-                      ),
+                      labelStyle: TextStyle(color: AppColors.backgroundColor),
                       labelText: 'Problembeschreibung',
                       hintText:
                           'Beschreibung der Probleme und Herausforderungen (Kann später ausgefüllt werden)',
@@ -374,47 +360,40 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                   const Gap(30),
 
                   // Action Buttons
-                  ValueListenableBuilder<bool>(
-                    valueListenable: controller.isValidNotifier,
-                    builder: (context, isValid, child) {
-                      return Column(
-                        children: [
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              style: isValid
-                                  ? AppStyles.actionButtonStyle
-                                  : ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.grey,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          10.0,
-                                        ),
-                                      ),
-                                      minimumSize: const Size.fromHeight(50),
-                                    ),
-                              onPressed: isValid ? controller.createPlan : null,
-                              child: const Text(
-                                'FÖRDERPLAN ERSTELLEN',
-                                style: AppStyles.buttonTextStyle,
-                              ),
-                            ),
+                  Column(
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: isValid
+                              ? AppStyles.actionButtonStyle
+                              : ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.grey,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  minimumSize: const Size.fromHeight(50),
+                                ),
+                          onPressed: isValid ? controller.createPlan : null,
+                          child: const Text(
+                            'FÖRDERPLAN ERSTELLEN',
+                            style: AppStyles.buttonTextStyle,
                           ),
-                          const Gap(15),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              style: AppStyles.cancelButtonStyle,
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: const Text(
-                                'ABBRECHEN',
-                                style: AppStyles.buttonTextStyle,
-                              ),
-                            ),
+                        ),
+                      ),
+                      const Gap(15),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: AppStyles.cancelButtonStyle,
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text(
+                            'ABBRECHEN',
+                            style: AppStyles.buttonTextStyle,
                           ),
-                        ],
-                      );
-                    },
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

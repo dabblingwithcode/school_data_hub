@@ -21,14 +21,14 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/cred
 import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/widgets/credit_list_searchbar.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class PupilsMatrixContactsListPage extends WatchingWidget {
   const PupilsMatrixContactsListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final _pupilManager = di<PupilProxyManager>();
+    final pupilManager = di<PupilProxyManager>();
     List<PupilProxy> pupils = watchValue((PupilsFilter x) => x.filteredPupils);
     return Scaffold(
       appBar: const GenericAppBar(
@@ -244,7 +244,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                               if (pupil.family != null) {
                                                 pupilSiblingsGroups =
                                                     [
-                                                          ..._pupilManager
+                                                          ...pupilManager
                                                               .getSiblings(
                                                                 pupil,
                                                               ),
@@ -307,7 +307,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                                         ?.parentsContact) {
                                               return;
                                             }
-                                            final TutorInfo? tutorInfo =
+                                            final TutorInfo tutorInfo =
                                                 pupil.tutorInfo == null
                                                 ? TutorInfo(
                                                     parentsContact:

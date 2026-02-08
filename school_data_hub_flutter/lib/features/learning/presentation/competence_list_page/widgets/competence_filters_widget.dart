@@ -4,7 +4,7 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/filters/enums.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _competenceFilterManager = di<CompetenceFilterManager>();
 
@@ -13,8 +13,9 @@ class CompetenceFilters extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    Map<CompetenceFilter, bool> activeFilters =
-        watchValue((CompetenceFilterManager x) => x.filterState);
+    Map<CompetenceFilter, bool> activeFilters = watchValue(
+      (CompetenceFilterManager x) => x.filterState,
+    );
     bool valueE1 = activeFilters[CompetenceFilter.E1]!;
     bool valueE2 = activeFilters[CompetenceFilter.E2]!;
     bool valueS3 = activeFilters[CompetenceFilter.S3]!;
@@ -22,14 +23,7 @@ class CompetenceFilters extends WatchingWidget {
 
     return Column(
       children: [
-        const Row(
-          children: [
-            Text(
-              'Jahrgang',
-              style: AppStyles.subtitle,
-            )
-          ],
-        ),
+        const Row(children: [Text('Jahrgang', style: AppStyles.subtitle)]),
         const Gap(5),
         Wrap(
           spacing: 5,

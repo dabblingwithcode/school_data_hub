@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/searchbar/schoolday_event_list_search_bar.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SchooldayEventListPage extends WatchingWidget {
   const SchooldayEventListPage({super.key});

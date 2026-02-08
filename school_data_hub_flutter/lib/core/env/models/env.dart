@@ -50,7 +50,7 @@ class Env {
     runMode: runMode ?? this.runMode,
     key: key ?? this.key,
     iv: iv ?? this.iv,
-    serverUrl: this.serverUrl,
+    serverUrl: serverUrl,
     lastIdentitiesUpdate: lastIdentitiesUpdate ?? this.lastIdentitiesUpdate,
     colorSchemeKey: colorSchemeKey ?? this.colorSchemeKey,
   );

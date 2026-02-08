@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manage
 import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/widgets/credit_list_card.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/widgets/credit_list_page_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/widgets/credit_list_searchbar.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class CreditListPage extends WatchingWidget {
   const CreditListPage({super.key});

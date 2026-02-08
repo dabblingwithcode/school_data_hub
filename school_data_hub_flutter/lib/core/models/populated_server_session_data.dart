@@ -11,7 +11,7 @@ class PopulatedServerSessionData {
     required this.supportCategories,
   });
 
-  copyWith({
+  PopulatedServerSessionData copyWith({
     bool? schoolSemester,
     bool? schooldays,
     bool? competences,

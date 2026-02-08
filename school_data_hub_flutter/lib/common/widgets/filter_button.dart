@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:watch_it/watch_it.dart';
 
 class FilterButton extends WatchingWidget {
   final bool isSearchBar;
 
   final Function showBottomSheetFunction;
-  const FilterButton(
-      {required this.isSearchBar,
-      required this.showBottomSheetFunction,
-      super.key});
+  const FilterButton({
+    required this.isSearchBar,
+    required this.showBottomSheetFunction,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final filtersActive =
-        watchValue((FiltersStateManager x) => x.filtersActive);
+    final filtersActive = watchValue(
+      (FiltersStateManager x) => x.filtersActive,
+    );
 
     return InkWell(
       onTap: () => showBottomSheetFunction(),
@@ -26,8 +28,8 @@ class FilterButton extends WatchingWidget {
         color: filtersActive
             ? Colors.deepOrange
             : isSearchBar
-                ? Colors.grey
-                : Colors.white,
+            ? Colors.grey
+            : Colors.white,
         size: 30,
       ),
     );

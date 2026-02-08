@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 /// Update status with additional context
 enum UpdateManagerStatus {

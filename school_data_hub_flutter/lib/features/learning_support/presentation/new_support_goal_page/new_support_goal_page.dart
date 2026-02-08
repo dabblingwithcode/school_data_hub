@@ -4,11 +4,11 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/select_support_category_page/controller/select_support_category_controller.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/select_support_category_page/select_support_category_page.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_category_parents_names.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_category_widgets/support_category_status_dropdown.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class NewSupportGoalPage extends StatelessWidget {
   final NewSupportCategoryStatusController controller;
@@ -16,8 +16,8 @@ class NewSupportGoalPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _pupilManager = di<PupilProxyManager>();
-    final _learningSupportManager = di<SupportCategoryManager>();
+    final pupilManager = di<PupilProxyManager>();
+    final learningSupportManager = di<SupportCategoryManager>();
     return Theme(
       data: ThemeData(
         unselectedWidgetColor: Colors.white,
@@ -66,8 +66,8 @@ class NewSupportGoalPage extends StatelessWidget {
                               final int? categoryId =
                                   await Navigator.of(context).push(
                                     MaterialPageRoute(
-                                      builder: (ctx) => SelectSupportCategory(
-                                        pupil: _pupilManager.getPupilByPupilId(
+                                      builder: (ctx) => SelectSupportCategoryPage(
+                                        pupil: pupilManager.getPupilByPupilId(
                                           controller.widget.pupilId,
                                         )!,
                                         elementType:
@@ -86,7 +86,7 @@ class NewSupportGoalPage extends StatelessWidget {
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5.0),
-                                color: _learningSupportManager.getCategoryColor(
+                                color: learningSupportManager.getCategoryColor(
                                   controller.goalCategoryId!,
                                 ),
                               ),
@@ -101,7 +101,7 @@ class NewSupportGoalPage extends StatelessWidget {
                                   children: [
                                     ...categoryTreeAncestorsNames(
                                       categoryId: controller.goalCategoryId!,
-                                      categoryColor: _learningSupportManager
+                                      categoryColor: learningSupportManager
                                           .getCategoryColor(
                                             controller.goalCategoryId!,
                                           ),
@@ -120,14 +120,14 @@ class NewSupportGoalPage extends StatelessWidget {
                             children: [
                               Flexible(
                                 child: Text(
-                                  _learningSupportManager
+                                  learningSupportManager
                                       .getSupportCategory(
                                         controller.goalCategoryId!,
                                       )
                                       .name,
                                   style: TextStyle(
                                     fontSize: 20,
-                                    color: _learningSupportManager
+                                    color: learningSupportManager
                                         .getCategoryColor(
                                           controller.goalCategoryId!,
                                         ),

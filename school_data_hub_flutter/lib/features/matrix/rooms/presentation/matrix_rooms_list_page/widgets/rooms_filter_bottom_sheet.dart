@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class RoomsFilterBottomSheet extends WatchingWidget {
   const RoomsFilterBottomSheet({super.key});
@@ -14,8 +14,9 @@ class RoomsFilterBottomSheet extends WatchingWidget {
   Widget build(BuildContext context) {
     // Map<PupilFilter, bool> activeFilters =
     //     watchValue((PupilFilterManager x) => x.filterState);
-    Map<PupilSortMode, bool> sortMode =
-        watchValue((PupilFilterManager x) => x.sortMode);
+    Map<PupilSortMode, bool> sortMode = watchValue(
+      (PupilFilterManager x) => x.sortMode,
+    );
     bool valueSortByName = sortMode[PupilSortMode.sortByName]!;
     bool valueSortByCredit = sortMode[PupilSortMode.sortByCredit]!;
     bool valueSortByCreditEarned = sortMode[PupilSortMode.sortByCreditEarned]!;
@@ -30,12 +31,7 @@ class RoomsFilterBottomSheet extends WatchingWidget {
             children: [
               const CommonPupilFiltersWidget(),
               const Row(
-                children: [
-                  Text(
-                    'Sortieren',
-                    style: AppStyles.subtitle,
-                  )
-                ],
+                children: [Text('Sortieren', style: AppStyles.subtitle)],
               ),
               const Gap(5),
               Wrap(
@@ -85,7 +81,7 @@ class RoomsFilterBottomSheet extends WatchingWidget {
   }
 }
 
-showRoomsFilterBottomSheet(BuildContext context) {
+Future<dynamic> showRoomsFilterBottomSheet(BuildContext context) {
   return showModalBottomSheet(
     constraints: const BoxConstraints(maxWidth: 800),
     shape: const RoundedRectangleBorder(

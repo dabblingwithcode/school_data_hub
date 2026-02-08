@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
@@ -16,9 +17,8 @@ import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_use
 import 'package:school_data_hub_flutter/features/matrix/domain/models/policy.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_manager.dart';
-import 'package:watch_it/watch_it.dart';
 
-class MatrixPolicyManager extends ChangeNotifier {
+class MatrixPolicyManager {
   final _notificationService = di<NotificationService>();
 
   final _sessionManager = di<HubSessionManager>();
@@ -38,7 +38,7 @@ class MatrixPolicyManager extends ChangeNotifier {
         matrixUrl: _matrixUrl,
         corporalToken: _corporalToken,
         matrixToken: _matrixToken,
-      ) {}
+      );
 
   final _secureStorageKey = di<EnvManager>().storageKeyForMatrixCredentials;
 
@@ -116,8 +116,6 @@ class MatrixPolicyManager extends ChangeNotifier {
     _roomManager.dispose();
     _userManager.dispose();
     _policyPendingChanges.dispose();
-    super.dispose();
-    return;
   }
 
   void pendingChangesHandler(bool newValue) {

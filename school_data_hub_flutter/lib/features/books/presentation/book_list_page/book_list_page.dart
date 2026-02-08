@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/features/books/domain/models/library_boo
 import 'package:school_data_hub_flutter/features/books/presentation/book_list_page/widgets/book_card.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_list_page/widgets/book_list_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_search_text_field.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class BookListPage extends WatchingWidget {
   const BookListPage({super.key});
@@ -17,8 +17,9 @@ class BookListPage extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     bool filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);
-    final Map<int, List<LibraryBookProxy>> isbnBooks =
-        watchValue((BookManager x) => x.isbnLibraryBooksMap);
+    final Map<int, List<LibraryBookProxy>> isbnBooks = watchValue(
+      (BookManager x) => x.isbnLibraryBooksMap,
+    );
 
     //List<Book> books = watchValue((BookManager x) => x.books);
     callOnce((context) async {
@@ -33,16 +34,9 @@ class BookListPage extends WatchingWidget {
         title: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.note_alt_rounded,
-              size: 25,
-              color: Colors.white,
-            ),
+            Icon(Icons.note_alt_rounded, size: 25, color: Colors.white),
             Gap(10),
-            Text(
-              'Bücherei',
-              style: AppStyles.appBarTextStyle,
-            ),
+            Text('Bücherei', style: AppStyles.appBarTextStyle),
           ],
         ),
       ),
@@ -66,14 +60,15 @@ class BookListPage extends WatchingWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(
-                            left: 10.0, top: 15.0, right: 10.00),
+                          left: 10.0,
+                          top: 15.0,
+                          right: 10.00,
+                        ),
                         child: Row(
                           children: [
                             const Text(
                               'Gesamt:',
-                              style: TextStyle(
-                                fontSize: 13,
-                              ),
+                              style: TextStyle(fontSize: 13),
                             ),
                             const Gap(10),
                             Text(

@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/features/learning/domain/competence_mana
 import 'package:school_data_hub_flutter/features/learning/presentation/widgets/competence_check_symbols.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/widgets/dialogues/new_competence_check_dialog.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class PupilCompetenceCard extends WatchingWidget {
   final Color backgroundColor;
@@ -44,7 +44,7 @@ class PupilCompetenceCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _competenceManager = di<CompetenceManager>();
+    final competenceManager = di<CompetenceManager>();
     watch(pupil);
     final isExpandedValue = createOnce<ValueNotifier<bool>>(
       () => ValueNotifier(false),
@@ -68,21 +68,19 @@ class PupilCompetenceCard extends WatchingWidget {
       competence.publicId,
     );
     return Padding(
-      padding:
-          isReport
-              ? const EdgeInsets.symmetric(vertical: 4, horizontal: 4)
-              : EdgeInsets.symmetric(
-                vertical: competence.parentCompetence == null ? 3 : 0,
-              ),
+      padding: isReport
+          ? const EdgeInsets.symmetric(vertical: 4, horizontal: 4)
+          : EdgeInsets.symmetric(
+              vertical: competence.parentCompetence == null ? 3 : 0,
+            ),
       child: Card(
         color: isReport ? Colors.white : competenceColor,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
-          side:
-              isReport
-                  ? const BorderSide(color: Colors.white, width: 2)
-                  : BorderSide.none,
+          side: isReport
+              ? const BorderSide(color: Colors.white, width: 2)
+              : BorderSide.none,
         ),
         clipBehavior: Clip.antiAlias,
         margin: EdgeInsets.zero,
@@ -95,36 +93,33 @@ class PupilCompetenceCard extends WatchingWidget {
                 children: [
                   const Gap(10),
                   Expanded(
-                    child:
-                        isReport
-                            ? Text(
-                              competence.name,
-                              maxLines: 4,
-                              softWrap: true,
-                              textAlign: TextAlign.start,
-                              style: TextStyle(
-                                color: isReport ? Colors.black : Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                              ),
-                            )
-                            : Text(
-                              competence.name,
-                              maxLines: 3,
-                              softWrap: true,
-                              textAlign: TextAlign.start,
-                              style: TextStyle(
-                                fontSize:
-                                    competence.parentCompetence == null
-                                        ? 20
-                                        : 16,
-                                fontWeight: FontWeight.bold,
-                                color:
-                                    AppColors.bestContrastCompetenceFontColor(
-                                      competenceColor,
-                                    ),
+                    child: isReport
+                        ? Text(
+                            competence.name,
+                            maxLines: 4,
+                            softWrap: true,
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              color: isReport ? Colors.black : Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          )
+                        : Text(
+                            competence.name,
+                            maxLines: 3,
+                            softWrap: true,
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              fontSize: competence.parentCompetence == null
+                                  ? 20
+                                  : 16,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.bestContrastCompetenceFontColor(
+                                competenceColor,
                               ),
                             ),
+                          ),
                   ),
                   Row(
                     children: [
@@ -134,12 +129,11 @@ class PupilCompetenceCard extends WatchingWidget {
                           customExpansionTileController: checksController,
                           expansionSwitchWidget: Icon(
                             Icons.remove_red_eye,
-                            color:
-                                isReport
-                                    ? AppColors.backgroundColor
-                                    : AppColors.bestContrastCompetenceFontColor(
-                                      competenceColor,
-                                    ),
+                            color: isReport
+                                ? AppColors.backgroundColor
+                                : AppColors.bestContrastCompetenceFontColor(
+                                    competenceColor,
+                                  ),
                           ),
                         ),
                         const Gap(10),
@@ -159,7 +153,7 @@ class PupilCompetenceCard extends WatchingWidget {
                       InkWell(
                         onTap: () async {
                           // TODO: Uncomment and implement the competence check posting
-                          await _competenceManager.postCompetenceCheck(
+                          await competenceManager.postCompetenceCheck(
                             pupilId: pupil.pupilId,
                             competenceId: competence.publicId,
                             score: 0,
@@ -173,10 +167,9 @@ class PupilCompetenceCard extends WatchingWidget {
                         },
                         child: Icon(
                           Icons.edit_note_rounded,
-                          color:
-                              isReport
-                                  ? AppColors.backgroundColor
-                                  : Colors.white,
+                          color: isReport
+                              ? AppColors.backgroundColor
+                              : Colors.white,
                         ),
                       ),
                       const Gap(5),

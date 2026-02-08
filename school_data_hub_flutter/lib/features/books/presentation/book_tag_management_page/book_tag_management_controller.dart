@@ -4,7 +4,7 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_tag_management_page/book_tag_management_page.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class BookTagManagement extends WatchingStatefulWidget {
   const BookTagManagement({super.key});
@@ -97,50 +97,45 @@ class BookTagManagementController extends State<BookTagManagement> {
     }
   }
 
-  Widget watchBookTags(BuildContext context) {
-    return ValueListenableBuilder<List<BookTag>>(
-      valueListenable: _bookManager.bookTags,
-      builder: (context, bookTags, child) {
-        if (bookTags.isEmpty) {
-          return const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.label_outline, size: 64, color: Colors.grey),
-                SizedBox(height: 16),
-                Text(
-                  'Keine Buch-Tags vorhanden',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'Tippen Sie auf das + Symbol, um ein neues Tag zu erstellen',
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+  Widget buildBookTags(BuildContext context, List<BookTag> bookTags) {
+    if (bookTags.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.label_outline, size: 64, color: Colors.grey),
+            SizedBox(height: 16),
+            Text(
+              'Keine Buch-Tags vorhanden',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
-          );
-        }
+            SizedBox(height: 8),
+            Text(
+              'Tippen Sie auf das + Symbol, um ein neues Tag zu erstellen',
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
 
-        return SingleChildScrollView(
-          child: Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: bookTags.map((tag) {
-              return Chip(
-                label: Text(tag.name),
-                deleteIcon: const Icon(Icons.more_horiz, size: 18),
-                onDeleted: () {
-                  // Using onDeleted to trigger the context menu for edit/delete
-                  // because Chip doesn't support context menu directly
-                  _showTagOptions(context, tag);
-                },
-              );
-            }).toList(),
-          ),
-        );
-      },
+    return SingleChildScrollView(
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: bookTags.map((tag) {
+          return Chip(
+            label: Text(tag.name),
+            deleteIcon: const Icon(Icons.more_horiz, size: 18),
+            onDeleted: () {
+              // Using onDeleted to trigger the context menu for edit/delete
+              // because Chip doesn't support context menu directly
+              _showTagOptions(context, tag);
+            },
+          );
+        }).toList(),
+      ),
     );
   }
 
@@ -203,6 +198,7 @@ class BookTagManagementController extends State<BookTagManagement> {
 
   @override
   Widget build(BuildContext context) {
-    return BookTagManagementPage(this);
+    final bookTags = watchValue((BookManager x) => x.bookTags);
+    return BookTagManagementPage(this, bookTags: bookTags);
   }
 }

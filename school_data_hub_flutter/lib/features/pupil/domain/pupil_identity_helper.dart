@@ -12,7 +12,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_fil
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_identity_extensions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _log = Logger('PupilIdentityHelper');
 
@@ -159,7 +159,7 @@ class PupilIdentityHelper {
       PupilIdentity pupilIdentity = di<PupilIdentityManager>()
           .getPupilIdentityByInternalId(internalId)!;
 
-      final String pupilIdentityString = pupilIdentity.toTextLine() + ',\n';
+      final String pupilIdentityString = '${pupilIdentity.toTextLine()},\n';
       transferString = transferString + pupilIdentityString;
     }
     final encryptedString = customEncrypter.encryptString(transferString);

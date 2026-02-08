@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/l
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_search_text_field.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _pupilsFilter = di<PupilsFilter>();
 final _filtersStateManager = di<FiltersStateManager>();
@@ -16,8 +16,11 @@ final _filtersStateManager = di<FiltersStateManager>();
 class LearningSupportListSearchBar extends StatelessWidget {
   final List<PupilProxy> pupils;
   final bool filtersOn;
-  const LearningSupportListSearchBar(
-      {required this.filtersOn, required this.pupils, super.key});
+  const LearningSupportListSearchBar({
+    required this.filtersOn,
+    required this.pupils,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -52,15 +55,13 @@ class LearningSupportListSearchBar extends StatelessWidget {
                     const Gap(15),
                     const Text(
                       'Ebene 1: ',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 13,
-                      ),
+                      style: TextStyle(color: Colors.black, fontSize: 13),
                     ),
                     const Gap(5),
                     Text(
-                      (LearningSupportHelper.developmentPlan1Pupils(pupils))
-                          .toString(),
+                      (LearningSupportHelper.developmentPlan1Pupils(
+                        pupils,
+                      )).toString(),
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -70,15 +71,13 @@ class LearningSupportListSearchBar extends StatelessWidget {
                     const Gap(15),
                     const Text(
                       '2: ',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 13,
-                      ),
+                      style: TextStyle(color: Colors.black, fontSize: 13),
                     ),
                     const Gap(5),
                     Text(
-                      (LearningSupportHelper.developmentPlan2Pupils(pupils))
-                          .toString(),
+                      (LearningSupportHelper.developmentPlan2Pupils(
+                        pupils,
+                      )).toString(),
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -88,15 +87,13 @@ class LearningSupportListSearchBar extends StatelessWidget {
                     const Gap(15),
                     const Text(
                       '3: ',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 13,
-                      ),
+                      style: TextStyle(color: Colors.black, fontSize: 13),
                     ),
                     const Gap(5),
                     Text(
-                      (LearningSupportHelper.developmentPlan3Pupils(pupils))
-                          .toString(),
+                      (LearningSupportHelper.developmentPlan3Pupils(
+                        pupils,
+                      )).toString(),
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -113,10 +110,12 @@ class LearningSupportListSearchBar extends StatelessWidget {
             child: Row(
               children: [
                 Expanded(
-                    child: PupilSearchTextField(
-                        searchType: SearchType.pupil,
-                        hintText: 'Schüler/in suchen',
-                        refreshFunction: _pupilsFilter.refreshs)),
+                  child: PupilSearchTextField(
+                    searchType: SearchType.pupil,
+                    hintText: 'Schüler/in suchen',
+                    refreshFunction: _pupilsFilter.refreshs,
+                  ),
+                ),
                 InkWell(
                   onTap: () => showLearningSupportFilterBottomSheet(context),
                   onLongPress: () => _filtersStateManager.resetFilters(),

@@ -15,7 +15,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class AuthorizationPupilCard extends WatchingWidget {
   final int pupilId;
@@ -23,9 +23,9 @@ class AuthorizationPupilCard extends WatchingWidget {
   const AuthorizationPupilCard(this.pupilId, this.authorization, {super.key});
   @override
   Widget build(BuildContext context) {
-    final _pupilManager = di<PupilProxyManager>();
-    final _authorizationManager = di<AuthorizationManager>();
-    final PupilProxy pupil = _pupilManager.getPupilByPupilId(pupilId)!;
+    final pupilManager = di<PupilProxyManager>();
+    final authorizationManager = di<AuthorizationManager>();
+    final PupilProxy pupil = pupilManager.getPupilByPupilId(pupilId)!;
 
     final thisAuthorization = watchValue(
       (AuthorizationManager x) => x.authorizations,
@@ -72,7 +72,7 @@ class AuthorizationPupilCard extends WatchingWidget {
                                   'Die Einwilligung von ${pupil.firstName} löschen?',
                             );
                             if (confirmation == true) {
-                              _authorizationManager.updateAuthorization(
+                              authorizationManager.updateAuthorization(
                                 authId: authorization.id!,
                                 membersToUpdate: (
                                   operation: MemberOperation.remove,
@@ -115,7 +115,7 @@ class AuthorizationPupilCard extends WatchingWidget {
                                   false, // Red/negative checkbox
                               currentStatus: pupilAuthorization.status,
                               onStatusChanged: (newStatus) async {
-                                await _authorizationManager
+                                await authorizationManager
                                     .updatePupilAuthorization(
                                       pupilId: pupil.pupilId,
                                       authorizationId: authorization.id!,
@@ -131,7 +131,7 @@ class AuthorizationPupilCard extends WatchingWidget {
                                   true, // Green/positive checkbox
                               currentStatus: pupilAuthorization.status,
                               onStatusChanged: (newStatus) async {
-                                await _authorizationManager
+                                await authorizationManager
                                     .updatePupilAuthorization(
                                       pupilId: pupil.pupilId,
                                       authorizationId: authorization.id!,
@@ -165,7 +165,7 @@ class AuthorizationPupilCard extends WatchingWidget {
                           context,
                         );
                         if (file == null) return;
-                        await _authorizationManager.addFileToPupilAuthorization(
+                        await authorizationManager.addFileToPupilAuthorization(
                           file,
                           pupilAuthorization.id!,
                         );
@@ -180,7 +180,7 @@ class AuthorizationPupilCard extends WatchingWidget {
                         );
                         if (result != true) return;
 
-                        await _authorizationManager
+                        await authorizationManager
                             .removeFileFromPupilAuthorization(
                               pupilAuthorization.id!,
                               pupilAuthorization.file!.documentId,

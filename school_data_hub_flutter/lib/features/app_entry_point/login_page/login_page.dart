@@ -3,42 +3,30 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/snackbars.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/widgets/environments_dropdown.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/landing_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
-import 'package:signals/signals_flutter.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class LoginPage extends WatchingWidget {
   final LoginController controller;
   const LoginPage({super.key, required this.controller});
 
+  static final _log = Logger('LoginPage');
+
   @override
   Widget build(BuildContext context) {
-    final log = Logger('LoginPage');
-    // TODO: check if we nees another entry point for notifications here
-    // There is already one in MainMenuBottomNavigation
-    registerHandler(
-      select: (NotificationService x) => x.notification,
-      handler: (context, value, cancel) => value.type == NotificationType.dialog
-          ? informationDialog(context, 'Info', value.message)
-          : snackbar(context, value.type, value.message),
-    );
-
-    final bool isAuthenticated = di<EnvManager>().isAuthenticated.watch(
-      context,
+    final bool isAuthenticated = watchValue(
+      (EnvManager x) => x.isAuthenticated,
     );
 
     final locale = AppLocalizations.of(context)!;
-    log.info('isAuthenticated: $isAuthenticated');
+    _log.info('isAuthenticated: $isAuthenticated');
     final bool keyboardOn = MediaQuery.of(context).viewInsets.vertical > 0.0;
     //FocusScopeNode currentFocus = FocusScope.of(context);
 

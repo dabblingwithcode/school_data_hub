@@ -13,6 +13,7 @@
 ///   ),
 /// );
 /// ```
+library;
 
 export 'controller/new_learning_support_plan_controller.dart';
 export 'new_learning_support_plan.dart';

@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SelectMatrixUserCard extends WatchingWidget {
   final SelectMatrixUsersListController controller;
@@ -28,20 +28,16 @@ class SelectMatrixUserCard extends WatchingWidget {
 
     return GestureDetector(
       onLongPress: () => controller.onCardPress(matrixUser.id!),
-      onTap:
-          () =>
-              controller.isSelectMode
-                  ? controller.onCardPress(matrixUser.id!)
-                  : {},
+      onTap: () =>
+          controller.isSelectMode ? controller.onCardPress(matrixUser.id!) : {},
       child: Card(
-        color:
-            controller.selectedUsers.contains(matrixUser.id!)
-                ? AppColors.selectedCardColor
-                : userRelationship != null && userRelationship.isParent
-                ? const Color.fromARGB(255, 202, 252, 187)
-                : !matrixUser.id!.contains('_')
-                ? const Color.fromARGB(255, 219, 170, 211)
-                : Colors.white,
+        color: controller.selectedUsers.contains(matrixUser.id!)
+            ? AppColors.selectedCardColor
+            : userRelationship != null && userRelationship.isParent
+            ? const Color.fromARGB(255, 202, 252, 187)
+            : !matrixUser.id!.contains('_')
+            ? const Color.fromARGB(255, 219, 170, 211)
+            : Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         elevation: 1.0,
         margin: const EdgeInsets.only(
@@ -71,45 +67,43 @@ class SelectMatrixUserCard extends WatchingWidget {
               ),
             (userRelationship?.pupil != null)
                 ? InkWell(
-                  onTap: () {
-                    di<BottomNavManager>().setPupilProfileNavPage(
-                      ProfileNavigationState.info.value,
-                    );
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder:
-                            (ctx) => PupilProfilePage(
-                              pupil: userRelationship.pupil!,
-                            ),
-                      ),
-                    );
-                  },
-                  child: AvatarWithBadges(
-                    pupil: userRelationship!.pupil!,
-                    size: 70,
-                  ),
-                )
+                    onTap: () {
+                      di<BottomNavManager>().setPupilProfileNavPage(
+                        ProfileNavigationState.info.value,
+                      );
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (ctx) =>
+                              PupilProfilePage(pupil: userRelationship.pupil!),
+                        ),
+                      );
+                    },
+                    child: AvatarWithBadges(
+                      pupil: userRelationship!.pupil!,
+                      size: 70,
+                    ),
+                  )
                 : (userRelationship?.isTeacher == true)
                 ? const SizedBox(
-                  width: 90,
-                  height: 90,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 5, right: 14),
-                    child: Icon(Icons.school_rounded, size: 60),
-                  ),
-                )
+                    width: 90,
+                    height: 90,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 5, right: 14),
+                      child: Icon(Icons.school_rounded, size: 60),
+                    ),
+                  )
                 : const SizedBox(
-                  width: 90,
-                  height: 90,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 5, right: 14),
-                    child: Icon(
-                      Icons.question_mark_rounded,
-                      size: 70,
-                      color: Colors.red,
+                    width: 90,
+                    height: 90,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 5, right: 14),
+                      child: Icon(
+                        Icons.question_mark_rounded,
+                        size: 70,
+                        color: Colors.red,
+                      ),
                     ),
                   ),
-                ),
             Column(
               children: [
                 InkWell(

@@ -4,18 +4,15 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SupportCategoryStatusBatches extends StatelessWidget {
   final PupilProxy pupil;
-  const SupportCategoryStatusBatches({
-    super.key,
-    required this.pupil,
-  });
+  const SupportCategoryStatusBatches({super.key, required this.pupil});
 
   @override
   Widget build(BuildContext context) {
-    final _learningSupportManager = di<SupportCategoryManager>();
+    final learningSupportManager = di<SupportCategoryManager>();
     List<SupportCategoryStatus> supportCategoryStatuses =
         pupil.supportCategoryStatuses!;
     List<Widget> widgetList = [];
@@ -25,12 +22,13 @@ class SupportCategoryStatusBatches extends StatelessWidget {
     // Calculate counts
     for (SupportCategoryStatus supportCategoryStatus
         in supportCategoryStatuses) {
-      if (countedCategoryIds
-          .contains(supportCategoryStatus.supportCategoryId)) {
+      if (countedCategoryIds.contains(
+        supportCategoryStatus.supportCategoryId,
+      )) {
         continue;
       }
       countedCategoryIds.add(supportCategoryStatus.supportCategoryId);
-      int rootCategoryId = _learningSupportManager
+      int rootCategoryId = learningSupportManager
           .getRootSupportCategory(supportCategoryStatus.supportCategoryId)
           .categoryId;
       if (categoryCounts.containsKey(rootCategoryId)) {
@@ -47,23 +45,23 @@ class SupportCategoryStatusBatches extends StatelessWidget {
           height: 21.0,
           decoration: BoxDecoration(
             color: LearningSupportHelper.getRootSupportCategoryColor(
-                _learningSupportManager.getRootSupportCategory(categoryId)),
+              learningSupportManager.getRootSupportCategory(categoryId),
+            ),
             shape: BoxShape.circle,
           ),
           child: Center(
             child: Text(
               count.toString(),
               style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold),
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),
       );
-      widgetList.add(
-        const Gap(5),
-      );
+      widgetList.add(const Gap(5));
     });
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,

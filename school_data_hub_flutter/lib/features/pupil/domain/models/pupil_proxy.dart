@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart'
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_identity_extensions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 typedef SiblingsResolver = List<PupilProxy> Function(PupilProxy pupil);
 

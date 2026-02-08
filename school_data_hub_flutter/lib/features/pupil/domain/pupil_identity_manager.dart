@@ -19,7 +19,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:signals/signals_flutter.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class PupilIdentityManager {
   final _log = Logger('PupilIdentityManager');
@@ -77,7 +77,7 @@ class PupilIdentityManager {
   }
 
   Future<void> _getPupilIdentitiesForEnv() async {
-    final _activeEnv = _envManager.activeEnv!;
+    final activeEnv = _envManager.activeEnv!;
 
     final Map<int, PupilIdentity> pupilIdentities =
         await PupilIdentityHelper.readPupilIdentitiesFromStorage(
@@ -88,11 +88,11 @@ class PupilIdentityManager {
     _pupilIdentities = pupilIdentities;
     if (pupilIdentities.isEmpty) {
       _log.warning(
-        'No stored pupil identities found for ${_activeEnv.serverName}',
+        'No stored pupil identities found for ${activeEnv.serverName}',
       );
     } else {
       _log.info(
-        '${pupilIdentities.length} Pupil identities for [${_activeEnv.serverName}] loaded from secure storage: ${_pupilIdentities.length}',
+        '${pupilIdentities.length} Pupil identities for [${activeEnv.serverName}] loaded from secure storage: ${_pupilIdentities.length}',
       );
     }
 
@@ -124,7 +124,7 @@ class PupilIdentityManager {
     required String pupilIdentityTextLines,
     required DateTime? updateTimestamp,
   }) async {
-    final normalizedUpdateTimestamp = updateTimestamp?.toUtc() ?? null;
+    final normalizedUpdateTimestamp = updateTimestamp?.toUtc();
 
     // The pupils in the string are separated by a '\n' - let's split them apart
     List<String> pupilIdentityTextLineList = pupilIdentityTextLines.split('\n');
@@ -150,8 +150,7 @@ class PupilIdentityManager {
         //- add the new pupil to the pupilIdentities map
         _pupilIdentities[newPupilIdentity.id] = newPupilIdentity;
         pupilIdentitiesWithBirthday =
-            pupilIdentitiesWithBirthday +
-            '${newPupilIdentity.group}, ${newPupilIdentity.firstName}, Geburtstag: ${newPupilIdentity.birthday},\n ';
+            '$pupilIdentitiesWithBirthday${newPupilIdentity.group}, ${newPupilIdentity.firstName}, Geburtstag: ${newPupilIdentity.birthday},\n ';
       }
     }
     _log.info('Pupil identities with birthday:\n$pupilIdentitiesWithBirthday');

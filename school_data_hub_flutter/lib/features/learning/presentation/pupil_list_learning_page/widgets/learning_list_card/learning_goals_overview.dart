@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/features/learning/domain/competence_help
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class LearningGoalsOverview extends StatelessWidget {
   final PupilProxy pupil;

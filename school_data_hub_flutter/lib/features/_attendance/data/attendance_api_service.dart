@@ -3,7 +3,7 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class AttendanceApiService {
   final _client = di<Client>();
@@ -59,8 +59,8 @@ class AttendanceApiService {
       unexcused: unexcused ?? false,
       contacted: contactedType ?? ContactedType.notSet,
       returned: returned ?? false,
-      minutesLate: minutesLate ?? null,
-      returnedAt: returnedAt ?? null,
+      minutesLate: minutesLate,
+      returnedAt: returnedAt,
       writtenExcuse: writtenExcuse ?? false,
       createdBy: _session.signedInUser!.userName!,
       schooldayId: schoolday!.id!,

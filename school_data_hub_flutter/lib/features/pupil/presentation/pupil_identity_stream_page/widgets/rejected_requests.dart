@@ -5,10 +5,10 @@ class RejectedRequestsWidget extends StatelessWidget {
   final VoidCallback? onClearRejected;
 
   const RejectedRequestsWidget({
-    Key? key,
+    super.key,
     required this.rejectedUsers,
     this.onClearRejected,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +67,7 @@ class RejectedRequestsWidget extends StatelessWidget {
                     ),
                   ),
                 )
-                .toList(),
+                ,
             if (rejectedUsers.length > 5) ...[
               const SizedBox(height: 8),
               Text(

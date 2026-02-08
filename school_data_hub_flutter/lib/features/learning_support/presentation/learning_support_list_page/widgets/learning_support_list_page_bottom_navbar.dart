@@ -4,14 +4,16 @@ import 'package:school_data_hub_flutter/common/domain/filters/filters_state_mana
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/learning_support_list_filter_bottom_sheet.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 final _filtersStateManager = di<FiltersStateManager>();
 
 class LearningSupportListPageBottomNavBar extends StatelessWidget {
   final bool filtersOn;
-  const LearningSupportListPageBottomNavBar(
-      {required this.filtersOn, super.key});
+  const LearningSupportListPageBottomNavBar({
+    required this.filtersOn,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +30,7 @@ class LearningSupportListPageBottomNavBar extends StatelessWidget {
               const Spacer(),
               InkWell(
                 onTap: () => Navigator.pop(context),
-                child: const Icon(
-                  Icons.arrow_back,
-                  size: 30,
-                ),
+                child: const Icon(Icons.arrow_back, size: 30),
               ),
               const Gap(30),
               InkWell(
@@ -43,7 +42,7 @@ class LearningSupportListPageBottomNavBar extends StatelessWidget {
                   size: 30,
                 ),
               ),
-              const Gap(15)
+              const Gap(15),
             ],
           ),
         ),

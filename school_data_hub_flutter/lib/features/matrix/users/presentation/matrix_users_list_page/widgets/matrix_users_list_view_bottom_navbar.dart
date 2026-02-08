@@ -7,15 +7,15 @@ import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_man
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/matrix_rooms_list_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_page/new_matrix_user_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/controller/select_matrix_users_list_controller.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class MatrixUsersListViewBottomNavbar extends WatchingWidget {
   const MatrixUsersListViewBottomNavbar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final _matrixPolicyManager = di<MatrixPolicyManager>();
-    final _matrixPolicyFilterManager = di<MatrixPolicyFilterManager>();
+    final matrixPolicyManager = di<MatrixPolicyManager>();
+    final matrixPolicyFilterManager = di<MatrixPolicyFilterManager>();
     final bool filtersOn = watchValue(
       (MatrixPolicyFilterManager x) => x.filtersOn,
     );
@@ -47,7 +47,7 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                     tooltip: 'Änderungen speichern',
                     icon: const Icon(Icons.save, size: 30),
                     onPressed: () {
-                      _matrixPolicyManager.applyPolicyChanges();
+                      matrixPolicyManager.applyPolicyChanges();
                     },
                   ),
                 ],
@@ -79,9 +79,8 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                 const Gap(30),
                 IconButton(
                   tooltip: 'Zur Startseite',
-                  onPressed:
-                      () =>
-                          Navigator.popUntil(context, (route) => route.isFirst),
+                  onPressed: () =>
+                      Navigator.popUntil(context, (route) => route.isFirst),
                   icon: const Icon(Icons.home, size: 35),
                 ),
                 const Gap(30),
@@ -89,11 +88,11 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                   tooltip: 'Mehrere neue Benutzer-Codes generieren',
                   icon: const Icon(Icons.print, color: Colors.orange, size: 30),
                   onPressed: () {
-                    final matrixUsers = _matrixPolicyManager.matrixUsers.value;
+                    final matrixUsers = matrixPolicyManager.matrixUsers.value;
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder:
-                            (context) => SelectMatrixUsersList(matrixUsers),
+                        builder: (context) =>
+                            SelectMatrixUsersList(matrixUsers),
                       ),
                     );
                   },
@@ -102,8 +101,8 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                 InkWell(
                   // TODO: this needs to be implemented
                   //   onTap: () => showCreditFilterBottomSheet(context),
-                  onLongPress:
-                      () => _matrixPolicyFilterManager.resetAllMatrixFilters(),
+                  onLongPress: () =>
+                      matrixPolicyFilterManager.resetAllMatrixFilters(),
                   child: Icon(
                     Icons.filter_list,
                     color: filtersOn ? Colors.deepOrange : Colors.white,

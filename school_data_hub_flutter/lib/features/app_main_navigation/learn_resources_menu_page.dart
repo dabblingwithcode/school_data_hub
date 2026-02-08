@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/features/learning/presentation/competenc
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_page/controller/category_list_controller.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/controller/workbook_list_view_model.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class LearnResourcesMenuPage extends StatelessWidget {
   const LearnResourcesMenuPage({super.key});

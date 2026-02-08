@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/app_utils/app_helpers.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/app_utils/app_helpers.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/entry_point/entry_point_controller.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class EntryPointPage extends WatchingWidget {
   final EntryPointController controller;
@@ -28,9 +28,10 @@ class EntryPointPage extends WatchingWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
-                    padding: Platform.isWindows
-                        ? const EdgeInsets.only(top: 0)
-                        : const EdgeInsets.only(top: 0)),
+                  padding: Platform.isWindows
+                      ? const EdgeInsets.only(top: 0)
+                      : const EdgeInsets.only(top: 0),
+                ),
                 const SizedBox(
                   height: 250,
                   width: 250,
@@ -48,9 +49,7 @@ class EntryPointPage extends WatchingWidget {
                   ),
                 ),
                 const Gap(10),
-                const SizedBox(
-                  height: 15,
-                ),
+                const SizedBox(height: 15),
                 Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: Center(
@@ -82,13 +81,16 @@ class EntryPointPage extends WatchingWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     //margin: const EdgeInsets.only(bottom: 16),
                     child: ElevatedButton(
-                        style: AppStyles.actionButtonStyle,
-                        onPressed: () async {
-                          AppHelpers.generateSchoolKeys(context);
-                        },
-                        child: const Text('SCHULSCHLÜSSEL ERSTELLEN',
-                            textAlign: TextAlign.center,
-                            style: AppStyles.buttonTextStyle)),
+                      style: AppStyles.actionButtonStyle,
+                      onPressed: () async {
+                        AppHelpers.generateSchoolKeys(context);
+                      },
+                      child: const Text(
+                        'SCHULSCHLÜSSEL ERSTELLEN',
+                        textAlign: TextAlign.center,
+                        style: AppStyles.buttonTextStyle,
+                      ),
+                    ),
                   ),
                 ),
                 const Gap(10),
@@ -98,19 +100,22 @@ class EntryPointPage extends WatchingWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     //margin: const EdgeInsets.only(bottom: 16),
                     child: ElevatedButton(
-                        style: AppStyles.actionButtonStyle,
-                        onPressed: () {
-                          Platform.isWindows || Platform.isMacOS
-                              ? controller.importEnvFromTxt()
-                              : controller.scanEnv(context);
-                        },
-                        child: Platform.isWindows || Platform.isMacOS
-                            ? const Text('SCHULSCHLÜSSEL IMPORTIEREN',
-                                style: AppStyles.buttonTextStyle)
-                            : Text(
-                                locale.scanButton,
-                                style: AppStyles.buttonTextStyle,
-                              )),
+                      style: AppStyles.actionButtonStyle,
+                      onPressed: () {
+                        Platform.isWindows || Platform.isMacOS
+                            ? controller.importEnvFromTxtFile()
+                            : controller.importEnvDataFromQrCode(context);
+                      },
+                      child: Platform.isWindows || Platform.isMacOS
+                          ? const Text(
+                              'SCHULSCHLÜSSEL IMPORTIEREN',
+                              style: AppStyles.buttonTextStyle,
+                            )
+                          : Text(
+                              locale.scanButton,
+                              style: AppStyles.buttonTextStyle,
+                            ),
+                    ),
                   ),
                 ),
               ],

@@ -7,9 +7,9 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/entry_point/entry_point_page.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
-class EntryPoint extends StatefulWidget {
+class EntryPoint extends WatchingStatefulWidget {
   const EntryPoint({super.key});
 
   @override
@@ -20,7 +20,7 @@ class EntryPointController extends State<EntryPoint> {
   final _envManager = di<EnvManager>();
   final _notificationService = di<NotificationService>();
 
-  Future<void> scanEnv(BuildContext context) async {
+  Future<void> importEnvDataFromQrCode(BuildContext context) async {
     final locale = AppLocalizations.of(context)!;
     final String? scanResponse = await qrScanner(
       context: context,
@@ -39,7 +39,7 @@ class EntryPointController extends State<EntryPoint> {
     }
   }
 
-  Future<void> importEnvFromTxt() async {
+  Future<void> importEnvFromTxtFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result != null) {
       File file = File(result.files.single.path!);

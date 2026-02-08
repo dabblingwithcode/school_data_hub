@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/core/updater/shorebird_update_manager.dart';
 import 'package:school_data_hub_flutter/core/updater/update_status_widget.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 /// Example of how to use the ShorebirdUpdateManager
 class UpdateManagerExample extends StatefulWidget {

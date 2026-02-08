@@ -16,7 +16,7 @@ import 'package:school_data_hub_flutter/features/learning/domain/competence_mana
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class MultiPupilCompetenceCheckCard extends WatchingWidget {
   final String groupId;

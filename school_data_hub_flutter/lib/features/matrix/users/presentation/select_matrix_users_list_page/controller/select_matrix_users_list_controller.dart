@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/features/matrix/services/matrix_bulk_cre
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/select_matrix_users_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SelectMatrixUsersList extends WatchingStatefulWidget {
   final List<MatrixUser>? selectableMatrixUsers;

@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filt
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 typedef SupportLevelFilterRecord = ({SupportLevelType filter, bool value});
 typedef SupportAreaFilterRecord = ({SupportArea filter, bool value});

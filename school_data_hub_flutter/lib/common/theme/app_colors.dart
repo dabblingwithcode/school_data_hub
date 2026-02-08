@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:signals/signals_flutter.dart';
 
 enum AppColorSchemeKey { standard, lila, darkBlue, turquoise, blue }
 
@@ -386,12 +385,12 @@ class AppColorPalettes {
 }
 
 class AppColors {
-  static final Signal<AppColorPalette> _activePalette = signal(
+  static final ValueNotifier<AppColorPalette> _activePalette = ValueNotifier(
     AppColorPalettes.classic,
   );
 
   static AppColorPalette get palette => _activePalette.value;
-  static Signal<AppColorPalette> get paletteSignal => _activePalette;
+  static ValueNotifier<AppColorPalette> get paletteNotifier => _activePalette;
 
   static AppColorSchemeKey get activeSchemeKey => palette.key;
 

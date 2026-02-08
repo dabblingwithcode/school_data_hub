@@ -3,7 +3,7 @@ import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_hel
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/set_matrix_environment_page/set_matrix_environment_page.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class SetMatrixEnvironment extends StatefulWidget {
   const SetMatrixEnvironment({super.key});

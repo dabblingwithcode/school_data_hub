@@ -10,7 +10,7 @@ import 'package:school_data_hub_flutter/features/learning/presentation/multi_pup
 import 'package:school_data_hub_flutter/features/learning/presentation/multi_pupil_competence_check_page/widgets/multi_pupil_competence_check_page_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/widgets/credit_list_searchbar.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 class MultiPupilCompetenceCheckPage extends StatelessWidget {
   final MultiPupilCompetenceCheckViewModel viewModel;
