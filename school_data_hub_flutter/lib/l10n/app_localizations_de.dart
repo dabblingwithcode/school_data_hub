@@ -99,7 +99,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get matrixRooms => 'Matrix-Räume';
 
   @override
-  String get learningresources => 'Lernresourcen';
+  String get learningresources => 'Lernressourcen';
 
   @override
   String get competences => 'Kompetenzen';

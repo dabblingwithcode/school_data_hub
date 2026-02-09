@@ -277,7 +277,7 @@ abstract class AppLocalizations {
   /// No description provided for @learningresources.
   ///
   /// In de, this message translates to:
-  /// **'Lernresourcen'**
+  /// **'Lernressourcen'**
   String get learningresources;
 
   /// No description provided for @competences.

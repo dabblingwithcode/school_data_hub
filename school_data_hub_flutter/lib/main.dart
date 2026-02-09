@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
@@ -10,18 +11,18 @@ import 'package:school_data_hub_flutter/app_utils/logger/domain/log_record_forma
 import 'package:school_data_hub_flutter/app_utils/logger/domain/log_service.dart';
 import 'package:school_data_hub_flutter/app_utils/logger/model/app_log.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/global_overlay_host/global_overlay_host.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_monitor.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/entry_point/entry_point_controller.dart';
+import 'package:school_data_hub_flutter/features/app_entry_point/error_page.dart';
+import 'package:school_data_hub_flutter/features/app_entry_point/global_overlay_host/global_overlay_host.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/loading_page.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/no_connection_page.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/landing_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:signals/signals_flutter.dart';
-import 'package:flutter_it/flutter_it.dart';
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
@@ -110,14 +111,6 @@ class MyApp extends WatchingWidget {
       (ServerpodConnectivityMonitor x) => x.isConnected,
     );
 
-    // Use watch_it's allReady() instead of FutureBuilder
-    final bool diReady = allReady(
-      timeout: const Duration(seconds: 30),
-      onError: (context, error) {
-        _log.shout('Dependency Injection Error: $error');
-      },
-    );
-
     return MaterialApp(
       localizationsDelegates: const <LocalizationsDelegate<Object>>[
         AppLocalizations.delegate,
@@ -138,20 +131,38 @@ class MyApp extends WatchingWidget {
               child: NoConnectionPage(),
             )
           : envIsReady
-          ? !diReady
-                ? const GlobalOverlayHost(
-                    phase: AppPhase.loading,
-                    child: LoadingPage(),
-                  )
-                : userIsAuthenticated
-                ? const GlobalOverlayHost(
-                    phase: AppPhase.loggedIn,
-                    child: MainMenuBottomNavigation(),
-                  )
-                : const GlobalOverlayHost(
+          ? FutureBuilder(
+              future: di.allReady(timeout: const Duration(seconds: 30)),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  _log.shout(
+                    'Dependency Injection Error: ${snapshot.error}',
+                    snapshot.stackTrace,
+                  );
+                  return GlobalOverlayHost(
                     phase: AppPhase.unlogged,
-                    child: Login(),
-                  )
+                    child: ErrorPage(error: snapshot.error.toString()),
+                  );
+                }
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (userIsAuthenticated) {
+                    return const GlobalOverlayHost(
+                      phase: AppPhase.loggedIn,
+                      child: MainMenuBottomNavigation(),
+                    );
+                  } else {
+                    return const GlobalOverlayHost(
+                      phase: AppPhase.unlogged,
+                      child: Login(),
+                    );
+                  }
+                }
+                return const GlobalOverlayHost(
+                  phase: AppPhase.loading,
+                  child: LoadingPage(),
+                );
+              },
+            )
           : di<EnvManager>().activeEnv != null
           ? const GlobalOverlayHost(
               phase: AppPhase.loading,
