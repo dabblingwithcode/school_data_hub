@@ -15,6 +15,7 @@ adminSchoolDay:
   - deleteSchoolday:
 adminUser:
   - createUser:
+  - updateUser:
   - resetPassword:
   - deleteUser:
   - promoteUserScope:
@@ -239,6 +240,7 @@ timetableSlot:
 user:
   - getCurrentUser:
   - getAllUsers:
+  - getAllUsersWithDevices:
   - changePassword:
   - increaseStaffCredit:
 pupilWorkbooks:

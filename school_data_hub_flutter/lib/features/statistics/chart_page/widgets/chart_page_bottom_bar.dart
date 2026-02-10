@@ -75,6 +75,11 @@ class ChartPageBottomBar extends StatelessWidget {
                         selectedIcon: Icon(Icons.access_time),
                         label: 'Anwesenheit',
                       ),
+                      NavigationDestination(
+                        icon: Icon(Icons.menu_book_outlined),
+                        selectedIcon: Icon(Icons.menu_book),
+                        label: 'Ausleihen',
+                      ),
                     ],
                   ),
                 ),

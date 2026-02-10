@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/chart_page.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class ChartPageController extends StatefulWidget {
   const ChartPageController({super.key});
@@ -50,6 +50,8 @@ class _ChartPageControllerState extends State<ChartPageController> {
   Map<DateTime, ({int excused, int unexcused, int goneHome})>
   _attendanceChartData = {};
 
+  Map<DateTime, ({int currentlyLent})> _bookLendingChartData = {};
+
   @override
   void initState() {
     super.initState();
@@ -69,7 +71,16 @@ class _ChartPageControllerState extends State<ChartPageController> {
     }
 
     final allSchooldays = _schoolCalendarManager.schooldays.value;
-    final semesterStart = currentSemester.startDate.toLocal();
+    final semesterStart = currentSemester.isFirst
+        ? currentSemester.startDate.toLocal()
+        : _schoolCalendarManager.schoolSemesters.value
+              .firstWhere(
+                (semester) =>
+                    semester.isFirst &&
+                    semester.schoolYear == currentSemester.schoolYear,
+              )
+              .startDate
+              .toLocal();
     final semesterEnd = currentSemester.endDate.toLocal();
     final now = DateTime.now().toLocal();
     final today = DateTime(now.year, now.month, now.day);
@@ -116,6 +127,7 @@ class _ChartPageControllerState extends State<ChartPageController> {
           _chartData = {};
           _eventChartData = {};
           _attendanceChartData = {};
+          _bookLendingChartData = {};
           _isLoading = false;
         });
       }
@@ -129,7 +141,7 @@ class _ChartPageControllerState extends State<ChartPageController> {
 
     for (final event in allEvents) {
       eventsById.putIfAbsent(event.schooldayId, () => []).add(event);
-    
+
       final d = event.schoolday!.schoolday.toLocal();
       final dayDate = DateTime(d.year, d.month, d.day);
       eventsByDateMap.putIfAbsent(dayDate, () => []).add(event);
@@ -142,10 +154,42 @@ class _ChartPageControllerState extends State<ChartPageController> {
 
     for (final missed in allMissed) {
       missedById.putIfAbsent(missed.schooldayId, () => []).add(missed);
-    
+
       final d = missed.schoolday!.schoolday.toLocal();
       final dayDate = DateTime(d.year, d.month, d.day);
       missedByDate.putIfAbsent(dayDate, () => []).add(missed);
+    }
+
+    // 3b. Pre-process Book Lendings
+    // Normalize each lending to (lentDate, returnedDate?) for efficient
+    // per-schoolday counting of currently outstanding books.
+    final normalizedLendings = <({DateTime lentDate, DateTime? returnedDate})>[];
+    for (final pupil in _pupilManager.allPupils) {
+      final lendings = pupil.pupilBookLendings;
+      if (lendings == null) continue;
+      for (final lending in lendings) {
+        final lentLocal = lending.lentAt.toLocal();
+        final lentDate = DateTime(
+          lentLocal.year,
+          lentLocal.month,
+          lentLocal.day,
+        );
+
+        DateTime? returnedDate;
+        if (lending.returnedAt != null) {
+          final returnedLocal = lending.returnedAt!.toLocal();
+          returnedDate = DateTime(
+            returnedLocal.year,
+            returnedLocal.month,
+            returnedLocal.day,
+          );
+        }
+
+        normalizedLendings.add((
+          lentDate: lentDate,
+          returnedDate: returnedDate,
+        ));
+      }
     }
 
     // 4. Pre-process Pupils
@@ -221,6 +265,7 @@ class _ChartPageControllerState extends State<ChartPageController> {
         >{};
     final attendanceChartData =
         <DateTime, ({int excused, int unexcused, int goneHome})>{};
+    final bookLendingChartData = <DateTime, ({int currentlyLent})>{};
 
     // 5. Iterate Schooldays
     for (final schoolday in schooldays) {
@@ -375,6 +420,24 @@ class _ChartPageControllerState extends State<ChartPageController> {
         unexcused: unexcused,
         goneHome: goneHome,
       );
+
+      // --- Book Lendings ---
+      // Count books that are currently lent on this day:
+      // lentAt <= dayDate AND (returnedAt is null OR returnedAt > dayDate)
+      int currentlyLent = 0;
+      for (final lending in normalizedLendings) {
+        final lentOnOrBefore = lending.lentDate.isBefore(dayDate) ||
+            lending.lentDate == dayDate;
+        final notYetReturned = lending.returnedDate == null ||
+            lending.returnedDate!.isAfter(dayDate);
+        if (lentOnOrBefore && notYetReturned) {
+          currentlyLent++;
+        }
+      }
+
+      bookLendingChartData[schoolday.schoolday] = (
+        currentlyLent: currentlyLent,
+      );
     }
 
     if (mounted) {
@@ -383,6 +446,7 @@ class _ChartPageControllerState extends State<ChartPageController> {
         _chartData = chartData;
         _eventChartData = eventChartData;
         _attendanceChartData = attendanceChartData;
+        _bookLendingChartData = bookLendingChartData;
         _isLoading = false;
       });
     }
@@ -440,6 +504,7 @@ class _ChartPageControllerState extends State<ChartPageController> {
       chartData: _chartData,
       eventChartData: _eventChartData,
       attendanceChartData: _attendanceChartData,
+      bookLendingChartData: _bookLendingChartData,
       schooldays: _schooldays,
     );
   }

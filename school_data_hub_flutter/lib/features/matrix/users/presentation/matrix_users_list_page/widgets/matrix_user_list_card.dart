@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -11,6 +12,7 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/widgets/dialogues/logout_devices_dialog.dart';
@@ -24,7 +26,9 @@ import 'package:flutter_it/flutter_it.dart';
 
 class MatrixUsersListCard extends WatchingStatefulWidget {
   final MatrixUser matrixUser;
-  const MatrixUsersListCard(this.matrixUser, {super.key});
+  final UserWithDevices? appUser;
+
+  const MatrixUsersListCard(this.matrixUser, {super.key, this.appUser});
 
   @override
   State<MatrixUsersListCard> createState() => _MatrixUsersListCardState();
@@ -443,6 +447,10 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
             title: null,
             tileController: _tileController,
             widgetList: [
+              if (widget.appUser != null) ...[
+                _AppUserInfoSection(appUser: widget.appUser!),
+                const Divider(height: 24),
+              ],
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Container(
@@ -485,6 +493,130 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                 matrixRooms: matrixUser.matrixRooms,
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AppUserInfoSection extends StatelessWidget {
+  final UserWithDevices appUser;
+
+  const _AppUserInfoSection({required this.appUser});
+
+  @override
+  Widget build(BuildContext context) {
+    final u = appUser.user;
+    final info = u.userInfo;
+    final devices = appUser.userDevices;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'App-Benutzer',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const Gap(8),
+          if (info != null) ...[
+            _InfoRow('Kürzel', info.userName ?? '–'),
+            _InfoRow('Name', info.fullName ?? '–'),
+            _InfoRow('E-Mail', info.email ?? '–'),
+            if (info.created != null)
+              _InfoRow(
+                'Erstellt',
+                info.created!.formatDateForUser(),
+              ),
+            const Gap(8),
+          ],
+          _InfoRow('Rolle', u.role.name),
+          _InfoRow('User-ID', '${u.id ?? u.userInfoId}'),
+          _InfoRow('Stunden', '${u.timeUnits}'),
+          _InfoRow('Entlastung', '${u.reliefTimeUnits}'),
+          _InfoRow('Guthaben', '${u.credit}'),
+          _InfoRow('Tester', u.userFlags.isTester ? 'Ja' : 'Nein'),
+          const Gap(12),
+          const Text(
+            'Geräte / Sitzungen',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const Gap(6),
+          if (devices.isEmpty)
+            const Text('Keine Geräte', style: TextStyle(fontSize: 12))
+          else
+            ...devices.map(
+              (d) => Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            d.deviceName.isNotEmpty
+                                ? d.deviceName
+                                : d.deviceId,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
+                          Text(
+                            'Zuletzt: ${d.lastLogin.formatDateForUser()} · '
+                            '${d.isActive ? "Aktiv" : "Inaktiv"}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _InfoRow(this.label, this.value);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 90,
+            child: Text(
+              '$label:',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[700],
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(value, style: const TextStyle(fontSize: 12)),
           ),
         ],
       ),

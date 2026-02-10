@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/change_password/change_password_page.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class SettingsAccountSection extends AbstractSettingsSection with WatchItMixin {
   const SettingsAccountSection({super.key});

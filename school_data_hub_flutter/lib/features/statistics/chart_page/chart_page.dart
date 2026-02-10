@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/bottom_nav_bar_no_filter_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/attendance_stats_view.dart';
+import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/book_lending_stats_view.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/chart_page_bottom_bar.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/event_stats_view.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/pupil_stats_view.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class ChartPage extends WatchingWidget {
   final Map<
@@ -34,6 +35,7 @@ class ChartPage extends WatchingWidget {
   eventChartData;
   final Map<DateTime, ({int excused, int unexcused, int goneHome})>
   attendanceChartData;
+  final Map<DateTime, ({int currentlyLent})> bookLendingChartData;
   final List<Schoolday> schooldays;
 
   const ChartPage({
@@ -41,6 +43,7 @@ class ChartPage extends WatchingWidget {
     required this.chartData,
     required this.eventChartData,
     required this.attendanceChartData,
+    required this.bookLendingChartData,
     required this.schooldays,
   });
 
@@ -104,6 +107,11 @@ class ChartPage extends WatchingWidget {
         return AttendanceStatsView(
           sortedSchooldays: sortedSchooldays,
           attendanceChartData: attendanceChartData,
+        );
+      case 3:
+        return BookLendingStatsView(
+          sortedSchooldays: sortedSchooldays,
+          bookLendingChartData: bookLendingChartData,
         );
       default:
         return const SizedBox.shrink();

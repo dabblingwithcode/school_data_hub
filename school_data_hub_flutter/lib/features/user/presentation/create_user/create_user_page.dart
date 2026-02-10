@@ -351,7 +351,23 @@ class CreateOrEditUserPage extends WatchingWidget {
                     style: AppStyles.successButtonStyle,
                     onPressed: () async {
                       if (_isEditing) {
-                        // TODO: Implement updateUser in UserManager when API is available
+                        final userInfoId = user!.userInfo!.id!;
+                        await userManager.updateUser((
+                          userInfoId: userInfoId,
+                          userName: userNameController.text,
+                          fullName: fullNameController.text,
+                          email: emailController.text,
+                          role: watchedSetAsAdmin ? Role.admin : watchedRole,
+                          matrixUserId: matrixIdController.text.trim().isEmpty
+                              ? null
+                              : matrixIdController.text.trim(),
+                          timeUnits:
+                              int.tryParse(timeUnitsController.text) ?? 0,
+                          reliefTimeUnits:
+                              int.tryParse(reliefTimeUnitsController.text) ?? 0,
+                          credit: int.tryParse(creditController.text) ?? 0,
+                          isTester: setAsTester.value,
+                        ));
                         if (context.mounted) {
                           Navigator.pop(context);
                         }

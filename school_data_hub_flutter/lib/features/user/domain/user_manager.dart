@@ -27,6 +27,20 @@ typedef ResetPasswordParams = ({String userEmail, String newPassword});
 /// Data class for changePassword command parameters.
 typedef ChangePasswordParams = ({String oldPassword, String newPassword});
 
+/// Data class for updateUser command parameters.
+typedef UpdateUserParams = ({
+  int userInfoId,
+  String userName,
+  String fullName,
+  String email,
+  Role role,
+  String? matrixUserId,
+  int timeUnits,
+  int reliefTimeUnits,
+  int credit,
+  bool isTester,
+});
+
 class UserManager {
   final _apiService = UserApiService();
   HubSessionManager get _sessionManager => di<HubSessionManager>();
@@ -66,6 +80,12 @@ class UserManager {
   late final blockUserCommand = Command.createAsyncNoResult<User>(
     _blockUser,
     debugName: 'blockUser',
+    errorFilter: const GlobalIfNoLocalErrorFilter(),
+  );
+
+  late final updateUserCommand = Command.createAsyncNoResult<UpdateUserParams>(
+    _updateUser,
+    debugName: 'updateUser',
     errorFilter: const GlobalIfNoLocalErrorFilter(),
   );
 
@@ -159,6 +179,26 @@ class UserManager {
     );
   }
 
+  Future<void> _updateUser(UpdateUserParams params) async {
+    await _apiService.updateUser(
+      userId: params.userInfoId,
+      userName: params.userName,
+      fullName: params.fullName,
+      email: params.email,
+      role: params.role,
+      matrixUserId: params.matrixUserId,
+      timeUnits: params.timeUnits,
+      reliefTimeUnits: params.reliefTimeUnits,
+      credit: params.credit,
+      isTester: params.isTester,
+    );
+    await fetchUsersCommand.runAsync();
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Benutzer aktualisiert!',
+    );
+  }
+
   Future<void> _increaseUsersCredit() async {
     final success = await _apiService.increaseStaffCredit();
     if (!success) {
@@ -215,6 +255,9 @@ class UserManager {
           .runAsync((oldPassword: oldPassword, newPassword: newPassword));
 
   Future<void> blockUser(User user) => blockUserCommand.runAsync(user);
+
+  Future<void> updateUser(UpdateUserParams params) =>
+      updateUserCommand.runAsync(params);
 
   Future<void> increaseUsersCredit() =>
       increaseUsersCreditCommand.runAsync();

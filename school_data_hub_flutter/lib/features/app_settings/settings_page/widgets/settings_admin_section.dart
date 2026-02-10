@@ -13,16 +13,7 @@ import 'package:school_data_hub_flutter/features/books/utils/book_ids_pdf_genera
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/presentation/set_matrix_environment_page/set_matrix_environment_controller.dart';
-import 'package:school_data_hub_flutter/features/school/presentation/edit_school_data_page/edit_school_data_page.dart';
-import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_page/new_school_semester_page.dart';
-import 'package:school_data_hub_flutter/features/school_calendar/presentation/school_semester_list_page/school_semester_list.dart';
-import 'package:school_data_hub_flutter/features/school_calendar/presentation/schooldays_calendar_page/schooldays_calendar_page.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_page.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/reset_password/reset_user_password_page.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/user_list/user_list_page.dart';
 
 class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
   const SettingsAdminSection({super.key});
@@ -47,44 +38,6 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
         ),
       ),
       tiles: <SettingsTile>[
-        SettingsTile.navigation(
-          title: const Text('Schuldaten eintragen'),
-          leading: const Icon(Icons.account_circle_rounded),
-          onPressed: (context) {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (ctx) => const EditSchoolDataPage()),
-            );
-          },
-        ),
-        SettingsTile.navigation(
-          title: const Text('Neuen User erstellen'),
-          leading: const Icon(Icons.account_circle_rounded),
-          onPressed: (context) {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (ctx) => const CreateOrEditUserPage()),
-            );
-          },
-        ),
-        SettingsTile.navigation(
-          title: const Text('User-Verwaltung'),
-          leading: const Icon(Icons.account_circle_rounded),
-          onPressed: (context) {
-            Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (ctx) => const UserListPage()));
-          },
-        ),
-        SettingsTile.navigation(
-          title: const Text('User-Passwort zurücksetzen'),
-          leading: const Icon(Icons.lock_reset),
-          onPressed: (context) {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (ctx) => const ResetUserPasswordPage(),
-              ),
-            );
-          },
-        ),
         SettingsTile.navigation(
           title: const Text('Buch IDs generieren'),
           leading: const Icon(Icons.qr_code_rounded),
@@ -132,92 +85,7 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
             showQrCode(jsonString, context);
           },
         ),
-        SettingsTile.navigation(
-          leading: matrixPolicyManagerIsRegistered
-              ? const Icon(Icons.check_circle_rounded, color: Colors.green)
-              : const Icon(Icons.chat_rounded),
-          title: matrixPolicyManagerIsRegistered
-              ? const Text('Raumverwaltung initialisiert')
-              : const Text('Raumverwaltung initialisieren'),
-          onPressed: (context) async {
-            if (matrixPolicyManagerIsRegistered) {
-              notificationService.showSnackBar(
-                NotificationType.info,
-                'Raumverwaltung ist bereits initialisiert',
-              );
-              return;
-            }
 
-            if (context.mounted) {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (ctx) => const SetMatrixEnvironment(),
-                ),
-              );
-            }
-          },
-        ),
-        SettingsTile.navigation(
-          leading: const Icon(Icons.chat_rounded),
-          title: const Text('Raumverwaltung löschen'),
-          onPressed: (context) async {
-            await di<MatrixPolicyManager>()
-                .deleteAndDeregisterMatrixPolicyManager();
-          },
-        ),
-
-        SettingsTile.navigation(
-          leading: const Icon(Icons.calendar_month_rounded),
-          title: const Text('Schultage-Kalender'),
-          onPressed: (context) {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (ctx) => const SchooldaysCalendarPage(),
-              ),
-            );
-          },
-        ),
-        SettingsTile.navigation(
-          leading: const Icon(Icons.calendar_view_month_rounded),
-          title: const Text('Schulhalbjahre verwalten'),
-          onPressed: (context) {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (ctx) => const SchoolSemesterListPage(),
-              ),
-            );
-          },
-        ),
-        SettingsTile.navigation(
-          leading: const Icon(Icons.calendar_month_rounded),
-          title: const Text('Schulsemester hinzufügen'),
-          onPressed: (context) {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (ctx) => const NewSchoolSemesterPage(),
-              ),
-            );
-          },
-        ),
-
-        SettingsTile.navigation(
-          onPressed: (context) async {
-            final confirm = await confirmationDialog(
-              context: context,
-              title: 'Alles löschen',
-              message:
-                  'Wirklich alles löschen?\n\nAlle Informationen im Server werden gelöscht!',
-            );
-            if (confirm == true) {
-              // TODO: Implement delete all functionality
-            }
-          },
-          leading: const Icon(Icons.logout),
-          title: const Text('Alles löschen und ausloggen'),
-          description: const Text('Es wird alles gelöscht!'),
-
-          //onPressed:
-        ),
         SettingsTile.navigation(
           onPressed: (context) async {
             await di<CompetenceManager>().importCompetencesFromFile();

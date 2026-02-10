@@ -109,12 +109,14 @@ import 'package:school_data_hub_client/src/protocol/_features/timetable/models/s
     as _i51;
 import 'package:school_data_hub_client/src/protocol/_features/timetable/models/scheduled_lesson/weekday_enum.dart'
     as _i52;
-import 'package:school_data_hub_client/src/protocol/_features/workbooks/models/pupil_workbook.dart'
+import 'package:school_data_hub_client/src/protocol/_features/user/models/user_with_devices.dart'
     as _i53;
-import 'package:school_data_hub_client/src/protocol/_features/workbooks/models/workbook.dart'
+import 'package:school_data_hub_client/src/protocol/_features/workbooks/models/pupil_workbook.dart'
     as _i54;
-import 'dart:typed_data' as _i55;
-import 'protocol.dart' as _i56;
+import 'package:school_data_hub_client/src/protocol/_features/workbooks/models/workbook.dart'
+    as _i55;
+import 'dart:typed_data' as _i56;
+import 'protocol.dart' as _i57;
 
 /// {@category Endpoint}
 class EndpointAdminCategories extends _i1.EndpointRef {
@@ -285,6 +287,36 @@ class EndpointAdminUser extends _i1.EndpointRef {
           'schooldayEventsProcessingTeam': schooldayEventsProcessingTeam,
           'matrixUserId': matrixUserId,
           'credit': credit,
+        },
+      );
+
+  /// Updates both User and UserInfo in one go. [userId] is the UserInfo id.
+  _i2.Future<_i9.User> updateUser(
+    int userId, {
+    required String userName,
+    required String fullName,
+    required String email,
+    required _i10.Role role,
+    String? matrixUserId,
+    required int timeUnits,
+    required int reliefTimeUnits,
+    required int credit,
+    required bool isTester,
+  }) =>
+      caller.callServerEndpoint<_i9.User>(
+        'adminUser',
+        'updateUser',
+        {
+          'userId': userId,
+          'userName': userName,
+          'fullName': fullName,
+          'email': email,
+          'role': role,
+          'matrixUserId': matrixUserId,
+          'timeUnits': timeUnits,
+          'reliefTimeUnits': reliefTimeUnits,
+          'credit': credit,
+          'isTester': isTester,
         },
       );
 
@@ -2422,6 +2454,13 @@ class EndpointUser extends _i1.EndpointRef {
         {},
       );
 
+  _i2.Future<List<_i53.UserWithDevices>> getAllUsersWithDevices() =>
+      caller.callServerEndpoint<List<_i53.UserWithDevices>>(
+        'user',
+        'getAllUsersWithDevices',
+        {},
+      );
+
   _i2.Future<bool> changePassword(
     String oldPassword,
     String newPassword,
@@ -2449,12 +2488,12 @@ class EndpointPupilWorkbooks extends _i1.EndpointRef {
   @override
   String get name => 'pupilWorkbooks';
 
-  _i2.Future<_i53.PupilWorkbook?> postPupilWorkbook(
+  _i2.Future<_i54.PupilWorkbook?> postPupilWorkbook(
     int isbn,
     int pupilId,
     String createdBy,
   ) =>
-      caller.callServerEndpoint<_i53.PupilWorkbook?>(
+      caller.callServerEndpoint<_i54.PupilWorkbook?>(
         'pupilWorkbooks',
         'postPupilWorkbook',
         {
@@ -2464,24 +2503,24 @@ class EndpointPupilWorkbooks extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<List<_i53.PupilWorkbook>> fetchPupilWorkbooks() =>
-      caller.callServerEndpoint<List<_i53.PupilWorkbook>>(
+  _i2.Future<List<_i54.PupilWorkbook>> fetchPupilWorkbooks() =>
+      caller.callServerEndpoint<List<_i54.PupilWorkbook>>(
         'pupilWorkbooks',
         'fetchPupilWorkbooks',
         {},
       );
 
-  _i2.Future<List<_i53.PupilWorkbook>> fetchPupilWorkbooksFromPupil(
+  _i2.Future<List<_i54.PupilWorkbook>> fetchPupilWorkbooksFromPupil(
           int pupilId) =>
-      caller.callServerEndpoint<List<_i53.PupilWorkbook>>(
+      caller.callServerEndpoint<List<_i54.PupilWorkbook>>(
         'pupilWorkbooks',
         'fetchPupilWorkbooksFromPupil',
         {'pupilId': pupilId},
       );
 
-  _i2.Future<_i53.PupilWorkbook> updatePupilWorkbook(
-          _i53.PupilWorkbook pupilWorkbook) =>
-      caller.callServerEndpoint<_i53.PupilWorkbook>(
+  _i2.Future<_i54.PupilWorkbook> updatePupilWorkbook(
+          _i54.PupilWorkbook pupilWorkbook) =>
+      caller.callServerEndpoint<_i54.PupilWorkbook>(
         'pupilWorkbooks',
         'updatePupilWorkbook',
         {'pupilWorkbook': pupilWorkbook},
@@ -2502,29 +2541,29 @@ class EndpointWorkbooks extends _i1.EndpointRef {
   @override
   String get name => 'workbooks';
 
-  _i2.Future<_i54.Workbook> postWorkbook(_i54.Workbook workbook) =>
-      caller.callServerEndpoint<_i54.Workbook>(
+  _i2.Future<_i55.Workbook> postWorkbook(_i55.Workbook workbook) =>
+      caller.callServerEndpoint<_i55.Workbook>(
         'workbooks',
         'postWorkbook',
         {'workbook': workbook},
       );
 
-  _i2.Future<_i54.Workbook> fetchWorkbookByIsbn(int isbn) =>
-      caller.callServerEndpoint<_i54.Workbook>(
+  _i2.Future<_i55.Workbook> fetchWorkbookByIsbn(int isbn) =>
+      caller.callServerEndpoint<_i55.Workbook>(
         'workbooks',
         'fetchWorkbookByIsbn',
         {'isbn': isbn},
       );
 
-  _i2.Future<List<_i54.Workbook>> fetchWorkbooks() =>
-      caller.callServerEndpoint<List<_i54.Workbook>>(
+  _i2.Future<List<_i55.Workbook>> fetchWorkbooks() =>
+      caller.callServerEndpoint<List<_i55.Workbook>>(
         'workbooks',
         'fetchWorkbooks',
         {},
       );
 
-  _i2.Future<_i54.Workbook> updateWorkbook(_i54.Workbook workbook) =>
-      caller.callServerEndpoint<_i54.Workbook>(
+  _i2.Future<_i55.Workbook> updateWorkbook(_i55.Workbook workbook) =>
+      caller.callServerEndpoint<_i55.Workbook>(
         'workbooks',
         'updateWorkbook',
         {'workbook': workbook},
@@ -2575,15 +2614,15 @@ class EndpointFiles extends _i1.EndpointRef {
       );
 
   /// As described in https://docs.serverpod.dev/concepts/file-uploads#client-side-code
-  _i2.Future<_i55.ByteData?> getImage(String documentId) =>
-      caller.callServerEndpoint<_i55.ByteData?>(
+  _i2.Future<_i56.ByteData?> getImage(String documentId) =>
+      caller.callServerEndpoint<_i56.ByteData?>(
         'files',
         'getImage',
         {'documentId': documentId},
       );
 
-  _i2.Future<_i55.ByteData?> getUnencryptedImage(String path) =>
-      caller.callServerEndpoint<_i55.ByteData?>(
+  _i2.Future<_i56.ByteData?> getUnencryptedImage(String path) =>
+      caller.callServerEndpoint<_i56.ByteData?>(
         'files',
         'getUnencryptedImage',
         {'path': path},
@@ -2614,7 +2653,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
           host,
-          _i56.Protocol(),
+          _i57.Protocol(),
           securityContext: securityContext,
           authenticationKeyManager: authenticationKeyManager,
           streamingConnectionTimeout: streamingConnectionTimeout,

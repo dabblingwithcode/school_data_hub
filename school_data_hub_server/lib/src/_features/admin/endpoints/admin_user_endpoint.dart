@@ -75,6 +75,42 @@ class AdminUserEndpoint extends Endpoint {
     return newUser;
   }
 
+  /// Updates both User and UserInfo in one go. [userId] is the UserInfo id.
+  Future<User> updateUser(
+    Session session,
+    int userId, {
+    required String userName,
+    required String fullName,
+    required String email,
+    required Role role,
+    String? matrixUserId,
+    required int timeUnits,
+    required int reliefTimeUnits,
+    required int credit,
+    required bool isTester,
+  }) async {
+    final user = await User.db
+        .findFirstRow(session, where: (t) => t.userInfoId.equals(userId));
+    if (user == null) throw Exception('User not found');
+    final userInfo = await UserInfo.db
+        .findFirstRow(session, where: (t) => t.id.equals(userId));
+    if (userInfo == null) throw Exception('UserInfo not found');
+
+    userInfo.userName = userName;
+    userInfo.fullName = fullName;
+    userInfo.email = email;
+    await UserInfo.db.updateRow(session, userInfo);
+
+    user.role = role;
+    user.matrixUserId = matrixUserId;
+    user.timeUnits = timeUnits;
+    user.reliefTimeUnits = reliefTimeUnits;
+    user.credit = credit;
+    user.userFlags = user.userFlags.copyWith(isTester: isTester);
+    await User.db.updateRow(session, user);
+    return user;
+  }
+
   Future<bool> resetPassword(
       Session session, String userEmail, String newPassword) async {
     final emailAuth = await EmailAuth.db.findFirstRow(

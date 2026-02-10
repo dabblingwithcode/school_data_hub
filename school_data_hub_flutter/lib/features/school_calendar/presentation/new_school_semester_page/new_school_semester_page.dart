@@ -126,6 +126,27 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
                 ),
                 child: Row(
                   children: [
+                    const Text('1. Halbjahr:', style: TextStyle(fontSize: 13)),
+                    const Gap(10),
+                    Checkbox(
+                      value: isFirst,
+                      onChanged: (value) {
+                        setState(() {
+                          isFirst = value ?? false;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 10.0,
+                  top: 15.0,
+                  right: 10.00,
+                ),
+                child: Row(
+                  children: [
                     const Text('Startdatum:', style: TextStyle(fontSize: 13)),
                     const Gap(10),
                     DatePickerButton(
@@ -302,7 +323,7 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
                       supportConferenceDate: supportConferenceDate,
                       reportSignedDate: reportSignedDate,
                       reportConferenceDate: reportConferenceDate,
-                      isFirst: true,
+                      isFirst: isFirst,
                     );
                   }
                   if (context.mounted) {

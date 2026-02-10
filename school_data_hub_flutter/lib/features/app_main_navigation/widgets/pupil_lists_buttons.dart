@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/attendance_list_page.dart';
@@ -11,6 +12,7 @@ import 'package:school_data_hub_flutter/features/matrix/users/presentation/matri
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/pupil_matrix_contacts_list_page/pupils_matrix_contacts_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/credit_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/after_school_care/after_school_care_list_page.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/birthdays_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/family_language_lessons_page/family_language_lessons_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/religion_page/religion_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/special_info_page/special_info_list_page.dart';
@@ -165,6 +167,56 @@ class PupilListButtons extends WatchingWidget {
             color: AppColors.gridViewColor,
           ),
           buttonText: 'Matrix Kontakte',
+        ),
+        Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: InkWell(
+            onTap: () async {
+              final DateTime? selectedDate = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(2000),
+                lastDate: DateTime.now(),
+              );
+              if (selectedDate == null) return;
+              if (context.mounted) {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (ctx) => BirthdaysView(selectedDate: selectedDate),
+                  ),
+                );
+              }
+            },
+            child: SizedBox(
+              width: 150,
+              height: 150,
+              child: Card(
+                color: AppColors.backgroundColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.cake_rounded,
+                      size: 50,
+                      color: AppColors.gridViewColor,
+                    ),
+                    const Gap(10),
+                    const Text(
+                      'Geburtstage',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ),
       ],
     );

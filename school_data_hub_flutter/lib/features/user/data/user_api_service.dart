@@ -10,6 +10,11 @@ class UserApiService {
     return _client.user.getAllUsers();
   }
 
+  /// Fetch all users with UserInfo and list of UserDevices per user.
+  Future<List<UserWithDevices>> getAllUsersWithDevices() async {
+    return _client.user.getAllUsersWithDevices();
+  }
+
   /// Get the currently authenticated user.
   Future<User?> getCurrentUser() async {
     return _client.user.getCurrentUser();
@@ -41,7 +46,32 @@ class UserApiService {
       isTester: isTester,
     );
   }
-
+  /// Update user and UserInfo in one go. [userId] is the UserInfo id.
+  Future<void> updateUser({
+    required int userId,
+    required String userName,
+    required String fullName,
+    required String email,
+    required Role role,
+    String? matrixUserId,
+    required int timeUnits,
+    required int reliefTimeUnits,
+    required int credit,
+    required bool isTester,
+  }) async {
+    await _client.adminUser.updateUser(
+      userId,
+      userName: userName,
+      fullName: fullName,
+      email: email,
+      role: role,
+      matrixUserId: matrixUserId,
+      timeUnits: timeUnits,
+      reliefTimeUnits: reliefTimeUnits,
+      credit: credit,
+      isTester: isTester,
+    );
+  }
   /// Reset a user's password. Returns `true` on success.
   Future<bool> resetPassword(String userEmail, String newPassword) async {
     return _client.adminUser.resetPassword(userEmail, newPassword);

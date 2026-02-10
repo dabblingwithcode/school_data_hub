@@ -749,6 +749,78 @@ class Endpoints extends _i1.EndpointDispatch {
             credit: params['credit'],
           ),
         ),
+        'updateUser': _i1.MethodConnector(
+          name: 'updateUser',
+          params: {
+            'userId': _i1.ParameterDescription(
+              name: 'userId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'userName': _i1.ParameterDescription(
+              name: 'userName',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'fullName': _i1.ParameterDescription(
+              name: 'fullName',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'email': _i1.ParameterDescription(
+              name: 'email',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'role': _i1.ParameterDescription(
+              name: 'role',
+              type: _i1.getType<_i44.Role>(),
+              nullable: false,
+            ),
+            'matrixUserId': _i1.ParameterDescription(
+              name: 'matrixUserId',
+              type: _i1.getType<String?>(),
+              nullable: true,
+            ),
+            'timeUnits': _i1.ParameterDescription(
+              name: 'timeUnits',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'reliefTimeUnits': _i1.ParameterDescription(
+              name: 'reliefTimeUnits',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'credit': _i1.ParameterDescription(
+              name: 'credit',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'isTester': _i1.ParameterDescription(
+              name: 'isTester',
+              type: _i1.getType<bool>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['adminUser'] as _i6.AdminUserEndpoint).updateUser(
+            session,
+            params['userId'],
+            userName: params['userName'],
+            fullName: params['fullName'],
+            email: params['email'],
+            role: params['role'],
+            matrixUserId: params['matrixUserId'],
+            timeUnits: params['timeUnits'],
+            reliefTimeUnits: params['reliefTimeUnits'],
+            credit: params['credit'],
+            isTester: params['isTester'],
+          ),
+        ),
         'resetPassword': _i1.MethodConnector(
           name: 'resetPassword',
           params: {
@@ -5062,6 +5134,16 @@ class Endpoints extends _i1.EndpointDispatch {
             Map<String, dynamic> params,
           ) async =>
               (endpoints['user'] as _i37.UserEndpoint).getAllUsers(session),
+        ),
+        'getAllUsersWithDevices': _i1.MethodConnector(
+          name: 'getAllUsersWithDevices',
+          params: {},
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['user'] as _i37.UserEndpoint)
+                  .getAllUsersWithDevices(session),
         ),
         'changePassword': _i1.MethodConnector(
           name: 'changePassword',

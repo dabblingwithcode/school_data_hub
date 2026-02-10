@@ -1,5 +1,6 @@
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
+import 'package:school_data_hub_server/src/_features/user/helpers/get_user_devices.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart';
 
@@ -40,6 +41,26 @@ class UserEndpoint extends Endpoint {
       ),
     );
     return users;
+  }
+
+  Future<List<UserWithDevices>> getAllUsersWithDevices(Session session) async {
+    final users = await User.db.find(
+      session,
+      include: User.include(
+        userInfo: UserInfo.include(),
+      ),
+    );
+    final userInfoIds = users.map((u) => u.userInfoId).toList();
+    final devicesByUserInfoId =
+        await getUserDevicesByUserInfoIds(session, userInfoIds);
+    return users
+        .map(
+          (user) => UserWithDevices(
+            user: user,
+            userDevices: devicesByUserInfoId[user.userInfoId] ?? [],
+          ),
+        )
+        .toList();
   }
 
   Future<bool> changePassword(

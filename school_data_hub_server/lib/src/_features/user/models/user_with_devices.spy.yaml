@@ -1,0 +1,6 @@
+# Serializable response type: user with included UserInfo and list of UserDevices.
+# No table - used for getAllUsersWithDevices endpoint only.
+class: UserWithDevices
+fields:
+  user: User
+  userDevices: List<UserDevice>
