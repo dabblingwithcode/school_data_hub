@@ -68,12 +68,6 @@ class UserManager {
     errorFilter: const GlobalIfNoLocalErrorFilter(),
   );
 
-  late final createUserCommand = Command.createAsyncNoResult<CreateUserParams>(
-    _createUser,
-    debugName: 'createUser',
-    errorFilter: const GlobalIfNoLocalErrorFilter(),
-  );
-
   late final resetPasswordCommand =
       Command.createAsyncNoResult<ResetPasswordParams>(
         _resetPassword,
@@ -261,20 +255,22 @@ class UserManager {
     required Role role,
     required bool isTester,
     String? tutoring,
-  }) => createUserCommand.runAsync((
-    userName: userName,
-    fullName: fullName,
-    password: password,
-    email: email,
-    matrixUserId: matrixUserId,
-    timeUnits: timeUnits,
-    reliefTimeUnits: reliefTimeUnits,
-    credit: credit,
-    scopeNames: scopeNames,
-    role: role,
-    isTester: isTester,
-    tutoring: tutoring,
-  ));
+  }) async {
+    await _createUser((
+      userName: userName,
+      fullName: fullName,
+      password: password,
+      email: email,
+      matrixUserId: matrixUserId,
+      timeUnits: timeUnits,
+      reliefTimeUnits: reliefTimeUnits,
+      credit: credit,
+      scopeNames: scopeNames,
+      role: role,
+      isTester: isTester,
+      tutoring: tutoring,
+    ));
+  }
 
   Future<void> resetPassword(String userEmail, String newPassword) =>
       resetPasswordCommand.runAsync((

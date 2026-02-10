@@ -608,24 +608,24 @@ class MissedSchooldaysPdfGenerator {
 
     if (sortedPupils.isEmpty) {
       // If no pupils, still create one page
-      pdf.addPage(
-        _buildSummaryPage(
-          image: image,
-          pupils: [],
-          fontRegular: fontRegular,
-          fontBold: fontBold,
-        ),
-      );
+      // pdf.addPage(
+      //   _buildSummaryPage(
+      //     image: image,
+      //     pupils: [],
+      //     fontRegular: fontRegular,
+      //     fontBold: fontBold,
+      //   ),
+      // );
     } else {
       // First, add a summary page
-      pdf.addPage(
-        _buildSummaryPage(
-          image: image,
-          pupils: sortedPupils,
-          fontRegular: fontRegular,
-          fontBold: fontBold,
-        ),
-      );
+      // pdf.addPage(
+      //   _buildSummaryPage(
+      //     image: image,
+      //     pupils: sortedPupils,
+      //     fontRegular: fontRegular,
+      //     fontBold: fontBold,
+      //   ),
+      // );
 
       // Then add detailed pages for each pupil
       for (var pupil in sortedPupils) {

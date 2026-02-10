@@ -4,11 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/create_user/widgets/scope_names_selector.dart';
@@ -498,23 +498,55 @@ class CreateOrEditUserPage extends WatchingWidget {
                         );
                         return;
                       }
-                      await userManager.createUser(
-                        userName: userNameController.text,
-                        fullName: fullNameController.text,
-                        matrixUserId: matrixIdController.text,
-                        email: emailController.text,
-                        password: passwordController.text,
-                        role: watchedSetAsAdmin ? Role.admin : watchedRole,
-                        timeUnits: int.tryParse(timeUnitsController.text) ?? 0,
-                        reliefTimeUnits:
-                            int.tryParse(reliefTimeUnitsController.text) ?? 0,
-                        credit: int.tryParse(creditController.text) ?? 0,
-                        isTester: setAsTester.value,
-                        scopeNames: watchedScopeNames.isNotEmpty
-                            ? watchedScopeNames
-                            : (watchedSetAsAdmin ? ['admin'] : ['standard']),
-                      );
-                      if (context.mounted) Navigator.pop(context);
+                      if (userManager.users.value.any(
+                        (u) => u.userInfo?.email == emailController.text.trim(),
+                      )) {
+                        informationDialog(
+                          context,
+                          'E-Mail-Adresse ist bereits in Verwendung',
+                          'Bitte eine andere E-Mail-Adresse eingeben',
+                        );
+                        return;
+                      }
+                      if (userManager.users.value.any(
+                        (u) =>
+                            u.userInfo?.userName ==
+                            userNameController.text.trim(),
+                      )) {
+                        informationDialog(
+                          context,
+                          'Kürzel ist bereits in Verwendung',
+                          'Bitte einen anderen Kürzel eingeben',
+                        );
+                        return;
+                      }
+                      try {
+                        await userManager.createUser(
+                          userName: userNameController.text,
+                          fullName: fullNameController.text,
+                          matrixUserId: matrixIdController.text,
+                          email: emailController.text,
+                          password: passwordController.text,
+                          role: watchedSetAsAdmin ? Role.admin : watchedRole,
+                          timeUnits:
+                              int.tryParse(timeUnitsController.text) ?? 0,
+                          reliefTimeUnits:
+                              int.tryParse(reliefTimeUnitsController.text) ?? 0,
+                          credit: int.tryParse(creditController.text) ?? 0,
+                          isTester: setAsTester.value,
+                          scopeNames: watchedScopeNames.isNotEmpty
+                              ? watchedScopeNames
+                              : (watchedSetAsAdmin ? ['admin'] : ['standard']),
+                        );
+                        if (context.mounted) Navigator.pop(context);
+                      } catch (e) {
+                        if (context.mounted) {
+                          di<NotificationService>().showSnackBar(
+                            NotificationType.error,
+                            'Benutzer konnte nicht erstellt werden.',
+                          );
+                        }
+                      }
                     },
                     child: Text(
                       _isEditing ? 'SPEICHERN' : 'SENDEN',

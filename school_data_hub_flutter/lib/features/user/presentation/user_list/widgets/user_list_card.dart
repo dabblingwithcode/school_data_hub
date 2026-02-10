@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -6,7 +7,6 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_page.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class UserListCard extends WatchingWidget {
   final UserWithDevices userWithDevices;
@@ -93,10 +93,7 @@ class UserListCard extends WatchingWidget {
                     children: [
                       Text(
                         'Guthaben',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),
                       Text(
                         u.credit.toString(),
@@ -117,7 +114,10 @@ class UserListCard extends WatchingWidget {
             tileController: tileController,
             widgetList: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -126,10 +126,7 @@ class UserListCard extends WatchingWidget {
                       _InfoRow('Kürzel', info.userName ?? '–'),
                       _InfoRow('Name', info.fullName ?? '–'),
                       _InfoRow('E-Mail', info.email ?? '–'),
-                      _InfoRow(
-                        'Erstellt',
-                        info.created.formatDateForUser(),
-                      ),
+                      _InfoRow('Erstellt', info.created.formatDateForUser()),
                       const Gap(10),
                     ],
                     _SectionTitle('Rolle & Zeiten'),
@@ -155,9 +152,7 @@ class UserListCard extends WatchingWidget {
                         style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       )
                     else
-                      ...devices.map(
-                        (d) => _DeviceTile(device: d),
-                      ),
+                      ...devices.map((d) => _DeviceTile(device: d)),
                   ],
                 ),
               ),
@@ -192,11 +187,8 @@ class _UserAvatar extends StatelessWidget {
                 width: 72,
                 height: 72,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const Icon(
-                  Icons.person,
-                  size: 36,
-                  color: Colors.white,
-                ),
+                errorBuilder: (_, __, ___) =>
+                    const Icon(Icons.person, size: 36, color: Colors.white),
               )
             : const Icon(Icons.person, size: 36, color: Colors.white),
       ),
@@ -250,10 +242,7 @@ class _Chip extends StatelessWidget {
           ),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
           ),
@@ -274,10 +263,7 @@ class _SectionTitle extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 6),
       child: Text(
         title,
-        style: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
-        ),
+        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -303,9 +289,7 @@ class _InfoRow extends StatelessWidget {
               style: TextStyle(fontSize: 12, color: Colors.grey[700]),
             ),
           ),
-          Expanded(
-            child: Text(value, style: const TextStyle(fontSize: 12)),
-          ),
+          Expanded(child: Text(value, style: const TextStyle(fontSize: 12))),
         ],
       ),
     );
@@ -346,10 +330,7 @@ class _DeviceTile extends StatelessWidget {
                 Text(
                   'Zuletzt: ${device.lastLogin.formatDateForUser()} · '
                   '${device.isActive ? "Aktiv" : "Inaktiv"}',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 11, color: Colors.grey[600]),
                 ),
               ],
             ),
