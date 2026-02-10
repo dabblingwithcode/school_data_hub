@@ -17,6 +17,7 @@ adminUser:
   - createUser:
   - updateUser:
   - resetPassword:
+  - deleteAuthKeyAssociatedWithDevice:
   - deleteUser:
   - promoteUserScope:
   - demoteUserScope:

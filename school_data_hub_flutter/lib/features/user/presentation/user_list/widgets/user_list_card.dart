@@ -9,12 +9,16 @@ import 'package:school_data_hub_flutter/features/user/presentation/create_user/c
 import 'package:flutter_it/flutter_it.dart';
 
 class UserListCard extends WatchingWidget {
-  final User user;
-  const UserListCard(this.user, {super.key});
+  final UserWithDevices userWithDevices;
+
+  const UserListCard(this.userWithDevices, {super.key});
 
   @override
   Widget build(BuildContext context) {
     final tileController = createOnce(() => CustomExpansionTileController());
+    final u = userWithDevices.user;
+    final info = u.userInfo;
+    final devices = userWithDevices.userDevices;
 
     return Card(
       color: Colors.white,
@@ -29,224 +33,326 @@ class UserListCard extends WatchingWidget {
       ),
       child: Column(
         children: [
+          // Header row: avatar, primary info, credit expand trigger
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              // User avatar/icon
-              Container(
-                width: 80,
-                height: 80,
-                margin: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: AppColors.backgroundColor,
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(100),
-                  child: (user.userInfo?.imageUrl?.isNotEmpty ?? false)
-                      ? Image.network(
-                          user.userInfo!.imageUrl!,
-                          width: 80,
-                          height: 80,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const Icon(
-                                Icons.person,
-                                size: 40,
-                                color: Colors.white,
-                              ),
-                        )
-                      : const Icon(Icons.person, size: 40, color: Colors.white),
-                ),
-              ),
+              _UserAvatar(info: info),
               Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Gap(10),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (ctx) =>
-                                        CreateOrEditUserPage(user: user),
-                                  ),
-                                );
-                              },
-                              child: Row(
-                                children: [
-                                  Text(
-                                    user.userInfo?.userName ?? 'Unknown User',
-                                    overflow: TextOverflow.fade,
-                                    softWrap: false,
-                                    textAlign: TextAlign.left,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  const Gap(5),
-                                ],
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8, right: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (ctx) => CreateOrEditUserPage(
+                                userWithDevices: userWithDevices,
                               ),
                             ),
+                          );
+                        },
+                        child: Text(
+                          info?.userName ?? 'Unbekannt',
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
                           ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ],
-                    ),
-                    const Gap(5),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: [
-                                Text(user.userInfo?.fullName ?? 'N/A'),
-                              ],
-                            ),
+                      ),
+                      if (info?.fullName != null && info!.fullName!.isNotEmpty)
+                        Text(
+                          info.fullName!,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[700],
                           ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: [Text('Rolle: ${user.role.name}')],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: [
-                                const Text('Email:'),
-                                const Gap(10),
-                                Text(
-                                  user.userInfo?.email ?? 'N/A',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: [
-                                const Text('Matrix-Id:'),
-                                const Gap(10),
-                                Text(
-                                  user.matrixUserId ?? 'N/A',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: [
-                                const Text('Stunden:'),
-                                const Gap(5),
-                                Text(
-                                  user.timeUnits.toString(),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const Gap(10),
-                                const Text('Entlastung:'),
-                                const Gap(5),
-
-                                Text(
-                                  user.reliefTimeUnits.toString(),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Gap(5),
-                  ],
+                      const Gap(6),
+                      _CompactInfoChips(user: u),
+                    ],
+                  ),
                 ),
               ),
-              const Gap(20),
               InkWell(
                 onTap: () {
                   tileController.isExpanded
                       ? tileController.collapse()
                       : tileController.expand();
                 },
-                child: Column(
-                  children: [
-                    const Gap(20),
-                    const Text('Credit'),
-                    Center(
-                      child: Text(
-                        user.credit.toString(),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 12, right: 12),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Guthaben',
                         style: TextStyle(
-                          fontSize: 23,
+                          fontSize: 12,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                      Text(
+                        u.credit.toString(),
+                        style: TextStyle(
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: AppColors.backgroundColor,
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-              const Gap(20),
             ],
           ),
           CustomExpansionTileContent(
             title: null,
             tileController: tileController,
             widgetList: [
-              Row(children: [Text('User ID: ${user.id ?? 'N/A'}')]),
-              const Gap(5),
-              Text('User Info ID: ${user.userInfoId}'),
-              const Gap(5),
-              Text(
-                'Erstellt: ${user.userInfo?.created != null ? user.userInfo!.created.formatDateForUser() : 'N/A'}',
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _SectionTitle('Benutzerinfo'),
+                    if (info != null) ...[
+                      _InfoRow('Kürzel', info.userName ?? '–'),
+                      _InfoRow('Name', info.fullName ?? '–'),
+                      _InfoRow('E-Mail', info.email ?? '–'),
+                      _InfoRow(
+                        'Erstellt',
+                        info.created.formatDateForUser(),
+                      ),
+                      const Gap(10),
+                    ],
+                    _SectionTitle('Rolle & Zeiten'),
+                    _InfoRow('Rolle', u.role.name),
+                    _InfoRow('User-ID', '${u.id ?? u.userInfoId}'),
+                    _InfoRow('Stunden', '${u.timeUnits}'),
+                    _InfoRow('Entlastung', '${u.reliefTimeUnits}'),
+                    _InfoRow('Guthaben', '${u.credit}'),
+                    _InfoRow('Tester', u.userFlags.isTester ? 'Ja' : 'Nein'),
+                    if (u.matrixUserId != null && u.matrixUserId!.isNotEmpty)
+                      _InfoRow('Matrix-ID', u.matrixUserId!),
+                    if (u.pupilsAuth != null)
+                      _InfoRow(
+                        'Autorisierte Schüler',
+                        '${u.pupilsAuth!.length}',
+                      ),
+                    const Gap(12),
+                    _SectionTitle('Geräte / Sitzungen'),
+                    const Gap(6),
+                    if (devices.isEmpty)
+                      Text(
+                        'Keine Geräte',
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      )
+                    else
+                      ...devices.map(
+                        (d) => _DeviceTile(device: d),
+                      ),
+                  ],
+                ),
               ),
-              const Gap(5),
-              Text('Autorisierte Schüler: ${user.pupilsAuth?.length ?? 0}'),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _UserAvatar extends StatelessWidget {
+  final dynamic info;
+
+  const _UserAvatar({this.info});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 72,
+      height: 72,
+      margin: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: AppColors.backgroundColor,
+        borderRadius: BorderRadius.circular(100),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(100),
+        child: (info?.imageUrl?.isNotEmpty ?? false)
+            ? Image.network(
+                info!.imageUrl!,
+                width: 72,
+                height: 72,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => const Icon(
+                  Icons.person,
+                  size: 36,
+                  color: Colors.white,
+                ),
+              )
+            : const Icon(Icons.person, size: 36, color: Colors.white),
+      ),
+    );
+  }
+}
+
+class _CompactInfoChips extends StatelessWidget {
+  final User user;
+
+  const _CompactInfoChips({required this.user});
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 4,
+      children: [
+        _Chip(label: 'Rolle', value: user.role.name),
+        if ((user.userInfo?.email ?? '').isNotEmpty)
+          _Chip(label: 'E-Mail', value: user.userInfo?.email ?? ''),
+        if (user.matrixUserId != null && user.matrixUserId!.isNotEmpty)
+          _Chip(label: 'Matrix', value: user.matrixUserId!),
+        _Chip(label: 'Stunden', value: '${user.timeUnits}'),
+        _Chip(label: 'Entlastung', value: '${user.reliefTimeUnits}'),
+      ],
+    );
+  }
+}
+
+class _Chip extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _Chip({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '$label: ',
+            style: TextStyle(fontSize: 11, color: Colors.grey[700]),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  final String title;
+
+  const _SectionTitle(this.title);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _InfoRow(this.label, this.value);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 140,
+            child: Text(
+              '$label:',
+              style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+            ),
+          ),
+          Expanded(
+            child: Text(value, style: const TextStyle(fontSize: 12)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DeviceTile extends StatelessWidget {
+  final UserDevice device;
+
+  const _DeviceTile({required this.device});
+
+  @override
+  Widget build(BuildContext context) {
+    final displayName = device.deviceName.isNotEmpty
+        ? device.deviceName
+        : device.deviceId;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          Icon(
+            device.isActive ? Icons.devices : Icons.devices_other,
+            size: 20,
+            color: device.isActive ? Colors.green : Colors.grey,
+          ),
+          const Gap(8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  displayName,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
+                ),
+                Text(
+                  'Zuletzt: ${device.lastLogin.formatDateForUser()} · '
+                  '${device.isActive ? "Aktiv" : "Inaktiv"}',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

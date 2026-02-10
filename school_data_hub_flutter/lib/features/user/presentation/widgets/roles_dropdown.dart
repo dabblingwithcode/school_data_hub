@@ -1,6 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 
+/// Display labels for [Role] in the UI (German).
+const Map<Role, String> _roleLabels = {
+  Role.admin: 'Admin',
+  Role.teacher: 'Lehrkraft',
+  Role.specialEducatorE: 'SoFa',
+  Role.specialEducatorK: 'MPT',
+  Role.educator: 'Päd. Personal',
+  Role.trainee: 'Praktikant*in',
+  Role.afterSchoolCare: 'OGS-Personal',
+  Role.socialWorker: 'Schulsozialarbeit',
+  Role.notAssigned: 'Nicht zugewiesen',
+};
+
 class RolesDropdown extends StatelessWidget {
   final Role selectedRole;
   final Function changeRole;
@@ -53,7 +66,7 @@ class RolesDropdown extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
               child: Text(
-                role.name,
+                _roleLabels[role] ?? role.name,
                 style: TextStyle(
                   color: colorScheme.onSurface,
                   fontWeight: FontWeight.w500,

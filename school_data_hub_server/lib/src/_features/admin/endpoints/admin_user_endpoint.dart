@@ -125,7 +125,27 @@ class AdminUserEndpoint extends Endpoint {
     if (user == null) throw Exception('User not found');
     user.userFlags = user.userFlags.copyWith(changedPassword: true);
     await User.db.updateRow(session, user);
+
     return true;
+  }
+
+  Future<UserWithDevices?> deleteAuthKeyAssociatedWithDevice(
+      Session session, UserDevice device) async {
+    final authenticationInfo = await session.authenticated;
+    if (authenticationInfo == null) {
+      return null; // User is not authenticated
+    }
+
+    final authKey = await auth.AuthKey.db
+        .findFirstRow(session, where: (t) => t.id.equals(device.authId));
+    if (authKey == null) throw Exception('AuthKey not found');
+    await auth.AuthKey.db.deleteRow(session, authKey);
+    final user = await User.db.findFirstRow(session,
+        where: (t) => t.userInfoId.equals(authenticationInfo.userId));
+    if (user == null) throw Exception('User not found');
+    final userDevices = await UserDevice.db.find(session,
+        where: (t) => t.userInfoId.equals(authenticationInfo.userId));
+    return UserWithDevices(user: user, userDevices: userDevices);
   }
 
   Future<User?> updateUserInfo(

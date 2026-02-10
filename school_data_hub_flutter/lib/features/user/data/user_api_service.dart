@@ -47,6 +47,7 @@ class UserApiService {
     );
   }
   /// Update user and UserInfo in one go. [userId] is the UserInfo id.
+  /// [imageUrl] is stored in UserInfo when the server endpoint supports it.
   Future<void> updateUser({
     required int userId,
     required String userName,
@@ -58,6 +59,7 @@ class UserApiService {
     required int reliefTimeUnits,
     required int credit,
     required bool isTester,
+    String? imageUrl,
   }) async {
     await _client.adminUser.updateUser(
       userId,
@@ -71,6 +73,8 @@ class UserApiService {
       credit: credit,
       isTester: isTester,
     );
+    // TODO: when server supports UserInfo.imageUrl, add imageUrl to the
+    // endpoint and pass it here (client must be regenerated).
   }
   /// Reset a user's password. Returns `true` on success.
   Future<bool> resetPassword(String userEmail, String newPassword) async {
@@ -88,6 +92,14 @@ class UserApiService {
   /// Delete (block) a user by ID.
   Future<void> deleteUser(int userId) async {
     await _client.adminUser.deleteUser(userId);
+  }
+
+  /// Delete the auth key associated with a device. Returns updated user+devices
+  /// for the session user (or null if not authenticated).
+  Future<UserWithDevices?> deleteAuthKeyAssociatedWithDevice(
+    UserDevice device,
+  ) async {
+    return _client.adminUser.deleteAuthKeyAssociatedWithDevice(device);
   }
 
   /// Increase staff credit for all users. Returns `true` on success.

@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/user/data/user_api_service.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 /// Data class for createUser command parameters.
 typedef CreateUserParams = ({
@@ -39,6 +39,7 @@ typedef UpdateUserParams = ({
   int reliefTimeUnits,
   int credit,
   bool isTester,
+  String? imageUrl,
 });
 
 class UserManager {
@@ -46,8 +47,18 @@ class UserManager {
   HubSessionManager get _sessionManager => di<HubSessionManager>();
   NotificationService get _notificationService => di<NotificationService>();
 
+  final _usersWithDevices = ValueNotifier<List<UserWithDevices>>([]);
   final _users = ValueNotifier<List<User>>([]);
+
+  ValueListenable<List<UserWithDevices>> get usersWithDevices =>
+      _usersWithDevices;
+
+  /// Derived list of users for search bar and backward compatibility.
   ValueListenable<List<User>> get users => _users;
+
+  void _syncUsersFromDevices() {
+    _users.value = _usersWithDevices.value.map((e) => e.user).toList();
+  }
 
   //-- Commands --
 
@@ -65,17 +76,17 @@ class UserManager {
 
   late final resetPasswordCommand =
       Command.createAsyncNoResult<ResetPasswordParams>(
-    _resetPassword,
-    debugName: 'resetPassword',
-    errorFilter: const GlobalIfNoLocalErrorFilter(),
-  );
+        _resetPassword,
+        debugName: 'resetPassword',
+        errorFilter: const GlobalIfNoLocalErrorFilter(),
+      );
 
   late final changePasswordCommand =
       Command.createAsyncNoResult<ChangePasswordParams>(
-    _changePassword,
-    debugName: 'changePassword',
-    errorFilter: const GlobalIfNoLocalErrorFilter(),
-  );
+        _changePassword,
+        debugName: 'changePassword',
+        errorFilter: const GlobalIfNoLocalErrorFilter(),
+      );
 
   late final blockUserCommand = Command.createAsyncNoResult<User>(
     _blockUser,
@@ -89,8 +100,13 @@ class UserManager {
     errorFilter: const GlobalIfNoLocalErrorFilter(),
   );
 
-  late final increaseUsersCreditCommand =
-      Command.createAsyncNoParamNoResult(
+  late final deleteDeviceCommand = Command.createAsyncNoResult<UserDevice>(
+    _deleteDevice,
+    debugName: 'deleteDevice',
+    errorFilter: const LocalErrorFilter(),
+  );
+
+  late final increaseUsersCreditCommand = Command.createAsyncNoParamNoResult(
     _increaseUsersCredit,
     debugName: 'increaseUsersCredit',
     errorFilter: const GlobalIfNoLocalErrorFilter(),
@@ -99,6 +115,7 @@ class UserManager {
   UserManager();
 
   void dispose() {
+    _usersWithDevices.dispose();
     _users.dispose();
   }
 
@@ -110,11 +127,15 @@ class UserManager {
   //-- Command implementations --
 
   Future<void> _fetchUsers() async {
-    final List<User> responseUsers = await _apiService.getAllUsers();
-    responseUsers.sort(
-      (a, b) => a.userInfo!.userName!.compareTo(b.userInfo!.userName!),
+    final List<UserWithDevices> list = await _apiService
+        .getAllUsersWithDevices();
+    list.sort(
+      (a, b) => (a.user.userInfo?.userName ?? '').compareTo(
+        b.user.userInfo?.userName ?? '',
+      ),
     );
-    _users.value = responseUsers;
+    _usersWithDevices.value = list;
+    _syncUsersFromDevices();
   }
 
   Future<void> _createUser(CreateUserParams params) async {
@@ -191,11 +212,21 @@ class UserManager {
       reliefTimeUnits: params.reliefTimeUnits,
       credit: params.credit,
       isTester: params.isTester,
+      imageUrl: params.imageUrl,
     );
     await fetchUsersCommand.runAsync();
     _notificationService.showSnackBar(
       NotificationType.success,
       'Benutzer aktualisiert!',
+    );
+  }
+
+  Future<void> _deleteDevice(UserDevice device) async {
+    await _apiService.deleteAuthKeyAssociatedWithDevice(device);
+    await fetchUsersCommand.runAsync();
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Gerät gelöscht.',
     );
   }
 
@@ -230,74 +261,129 @@ class UserManager {
     required Role role,
     required bool isTester,
     String? tutoring,
-  }) =>
-      createUserCommand.runAsync((
-        userName: userName,
-        fullName: fullName,
-        password: password,
-        email: email,
-        matrixUserId: matrixUserId,
-        timeUnits: timeUnits,
-        reliefTimeUnits: reliefTimeUnits,
-        credit: credit,
-        scopeNames: scopeNames,
-        role: role,
-        isTester: isTester,
-        tutoring: tutoring,
-      ));
+  }) => createUserCommand.runAsync((
+    userName: userName,
+    fullName: fullName,
+    password: password,
+    email: email,
+    matrixUserId: matrixUserId,
+    timeUnits: timeUnits,
+    reliefTimeUnits: reliefTimeUnits,
+    credit: credit,
+    scopeNames: scopeNames,
+    role: role,
+    isTester: isTester,
+    tutoring: tutoring,
+  ));
 
   Future<void> resetPassword(String userEmail, String newPassword) =>
-      resetPasswordCommand
-          .runAsync((userEmail: userEmail, newPassword: newPassword));
+      resetPasswordCommand.runAsync((
+        userEmail: userEmail,
+        newPassword: newPassword,
+      ));
 
   Future<void> changePassword(String oldPassword, String newPassword) =>
-      changePasswordCommand
-          .runAsync((oldPassword: oldPassword, newPassword: newPassword));
+      changePasswordCommand.runAsync((
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+      ));
 
   Future<void> blockUser(User user) => blockUserCommand.runAsync(user);
+
+  Future<void> deleteDevice(UserDevice device) =>
+      deleteDeviceCommand.runAsync(device);
 
   Future<void> updateUser(UpdateUserParams params) =>
       updateUserCommand.runAsync(params);
 
-  Future<void> increaseUsersCredit() =>
-      increaseUsersCreditCommand.runAsync();
+  Future<void> increaseUsersCredit() => increaseUsersCreditCommand.runAsync();
 
   //-- Local state helpers --
 
   void setUsers(List<User> users) {
-    _users.value = users;
+    final list = users
+        .map((u) => UserWithDevices(user: u, userDevices: []))
+        .toList();
+    list.sort(
+      (a, b) => (a.user.userInfo?.userName ?? '').compareTo(
+        b.user.userInfo?.userName ?? '',
+      ),
+    );
+    _usersWithDevices.value = list;
+    _syncUsersFromDevices();
   }
 
   void _addUser(User user) {
-    final List<User> users = List.from(_users.value);
-    users.add(user);
-    users.sort(
-      (a, b) => a.userInfo!.userName!.compareTo(b.userInfo!.userName!),
+    final list = List<UserWithDevices>.from(_usersWithDevices.value);
+    list.add(UserWithDevices(user: user, userDevices: []));
+    list.sort(
+      (a, b) => (a.user.userInfo?.userName ?? '').compareTo(
+        b.user.userInfo?.userName ?? '',
+      ),
     );
-    _users.value = users;
+    _usersWithDevices.value = list;
+    _syncUsersFromDevices();
   }
 
   void removeUser(User user) {
-    _users.value = _users.value
-        .where((element) => element.id != user.id)
+    _usersWithDevices.value = _usersWithDevices.value
+        .where(
+          (e) => e.user.id != user.id && e.user.userInfoId != user.userInfoId,
+        )
         .toList();
+    _syncUsersFromDevices();
   }
 
   void clearUsers() {
-    _users.value = [];
+    _usersWithDevices.value = [];
+    _syncUsersFromDevices();
   }
 
   void removeUsers(List<User> users) {
-    _users.value = _users.value
-        .where((element) => !users.contains(element))
+    final ids = users.map((u) => u.id).toSet();
+    final infoIds = users.map((u) => u.userInfoId).toSet();
+    _usersWithDevices.value = _usersWithDevices.value
+        .where(
+          (e) =>
+              !ids.contains(e.user.id) && !infoIds.contains(e.user.userInfoId),
+        )
         .toList();
+    _syncUsersFromDevices();
   }
 
   void addUsers(List<User> users) {
-    _users.value = [..._users.value, ...users];
+    final list = List<UserWithDevices>.from(_usersWithDevices.value);
+    for (final u in users) {
+      list.add(UserWithDevices(user: u, userDevices: []));
+    }
+    list.sort(
+      (a, b) => (a.user.userInfo?.userName ?? '').compareTo(
+        b.user.userInfo?.userName ?? '',
+      ),
+    );
+    _usersWithDevices.value = list;
+    _syncUsersFromDevices();
   }
 
   void updateUsers(List<User> users) {
-    _users.value = users;
+    final byInfoId = {
+      for (final uwd in _usersWithDevices.value) uwd.user.userInfoId: uwd,
+    };
+    final newList = <UserWithDevices>[];
+    for (final u in users) {
+      final existing = byInfoId[u.userInfoId];
+      newList.add(
+        existing != null
+            ? UserWithDevices(user: u, userDevices: existing.userDevices)
+            : UserWithDevices(user: u, userDevices: []),
+      );
+    }
+    newList.sort(
+      (a, b) => (a.user.userInfo?.userName ?? '').compareTo(
+        b.user.userInfo?.userName ?? '',
+      ),
+    );
+    _usersWithDevices.value = newList;
+    _syncUsersFromDevices();
   }
 }
