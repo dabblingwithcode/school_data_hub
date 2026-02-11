@@ -102,10 +102,7 @@ class WorkbookCard extends WatchingWidget {
                                                 builder: (ctx) =>
                                                     NewWorkbookPage(
                                                       workbook: workbook,
-                                                      name: workbook.name,
                                                       isbn: workbook.isbn,
-                                                      subject: workbook.subject,
-                                                      level: workbook.level,
                                                       isEdit: true,
                                                     ),
                                               ),
@@ -147,10 +144,7 @@ class WorkbookCard extends WatchingWidget {
                                       MaterialPageRoute(
                                         builder: (ctx) => NewWorkbookPage(
                                           workbook: workbook,
-                                          name: workbook.name,
                                           isbn: workbook.isbn,
-                                          subject: workbook.subject,
-                                          level: workbook.level,
                                           isEdit: true,
                                         ),
                                       ),
