@@ -37,9 +37,11 @@ class LearningGoalsPdfGenerator {
     }
     final image = pw.MemoryImage(imageBytes);
 
-    // Load Unicode-supporting fonts
-    final fontRegular = await PdfGoogleFonts.robotoRegular();
-    final fontBold = await PdfGoogleFonts.robotoBold();
+    // Load Grundschrift font from assets (per pdf package: pw.Font.ttf(ByteData))
+    final fontData = await rootBundle.load('assets/fonts/grundschrift.ttf');
+    final fontGrundschrift = pw.Font.ttf(fontData);
+    final fontRegular = fontGrundschrift;
+    final fontBold = fontGrundschrift;
 
     final pdf = pw.Document();
 
@@ -70,14 +72,14 @@ class LearningGoalsPdfGenerator {
       );
     } else {
       // First, add a summary page
-      pdf.addPage(
-        _buildSummaryPage(
-          image: image,
-          pupils: pupilsWithGoals,
-          fontRegular: fontRegular,
-          fontBold: fontBold,
-        ),
-      );
+      // pdf.addPage(
+      //   _buildSummaryPage(
+      //     image: image,
+      //     pupils: pupilsWithGoals,
+      //     fontRegular: fontRegular,
+      //     fontBold: fontBold,
+      //   ),
+      // );
 
       // Then add detailed pages for each pupil with goals
       for (var pupil in pupilsWithGoals) {
@@ -228,19 +230,23 @@ class LearningGoalsPdfGenerator {
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
             // Header with pupil info
-            _buildPupilDetailHeader(
-              image,
-              pupil,
-              pageNumber,
-              totalPages,
-              fontRegular,
-              fontBold,
-            ),
-            pw.SizedBox(height: 15),
+            // _buildPupilDetailHeader(
+            //   image,
+            //   pupil,
+            //   pageNumber,
+            //   totalPages,
+            //   fontRegular,
+            //   fontBold,
+            // ),
+            // pw.SizedBox(height: 15),
 
             // Pupil statistics
-            _buildPupilStatistics(pupil, fontRegular, fontBold),
-            pw.SizedBox(height: 12),
+            // _buildPupilStatistics(pupil, fontRegular, fontBold),
+            // pw.SizedBox(height: 12),
+
+            // Pupil info row (name, group, grade, date) at start of learning goals list
+            _buildPupilInfoRow(pupil, fontRegular, fontBold),
+            pw.SizedBox(height: 4),
 
             // Detailed goals list
             pw.Expanded(
@@ -677,6 +683,39 @@ class LearningGoalsPdfGenerator {
     );
   }
 
+  /// Builds a single row with pupil name (bold), group, grade and date at the
+  /// beginning of the learning goals list. Uses same font size as table rows.
+  static pw.Widget _buildPupilInfoRow(
+    PupilProxy pupil,
+    pw.Font fontRegular,
+    pw.Font fontBold,
+  ) {
+    const double fontSize = 9;
+    return pw.Row(
+      children: [
+        pw.Text(
+          '${pupil.firstName} ${pupil.lastName}',
+          style: pw.TextStyle(fontSize: fontSize, font: fontBold),
+        ),
+        pw.SizedBox(width: 12),
+        pw.Text(
+          pupil.group,
+          style: pw.TextStyle(fontSize: fontSize, font: fontRegular),
+        ),
+        pw.SizedBox(width: 12),
+        pw.Text(
+          pupil.schoolGrade.name,
+          style: pw.TextStyle(fontSize: fontSize, font: fontRegular),
+        ),
+        pw.Spacer(),
+        pw.Text(
+          DateTime.now().formatDateForUser(),
+          style: pw.TextStyle(fontSize: fontSize, font: fontRegular),
+        ),
+      ],
+    );
+  }
+
   /// Builds detailed goals table for a pupil
   static pw.Widget _buildDetailedGoalsTable(
     List<CompetenceGoal> competenceGoals,
@@ -703,18 +742,16 @@ class LearningGoalsPdfGenerator {
     return pw.Table(
       border: pw.TableBorder.all(color: PdfColors.grey400),
       columnWidths: const {
-        0: pw.FixedColumnWidth(30), // Nr.
-        1: pw.FixedColumnWidth(45), // Fach
-        2: pw.FlexColumnWidth(4), // Beschreibung
-        3: pw.FixedColumnWidth(50), // Status
-        4: pw.FlexColumnWidth(2), // Strategien
+        0: pw.FixedColumnWidth(45), // Fach
+        1: pw.FlexColumnWidth(4), // Beschreibung
+        2: pw.FixedColumnWidth(50), // Status
+        3: pw.FlexColumnWidth(2), // Strategien
       },
       children: [
         // Header row
         pw.TableRow(
           decoration: const pw.BoxDecoration(color: PdfColors.grey200),
           children: [
-            _buildTableCell('Nr.', fontRegular, fontBold, isHeader: true),
             _buildTableCell('Fach', fontRegular, fontBold, isHeader: true),
             _buildTableCell(
               'Beschreibung',
@@ -744,7 +781,6 @@ class LearningGoalsPdfGenerator {
 
           return pw.TableRow(
             children: [
-              _buildTableCell(index.toString(), fontRegular, fontBold),
               _buildTableCell(shortName, fontRegular, fontBold),
               _buildTableCell(
                 goal.description,

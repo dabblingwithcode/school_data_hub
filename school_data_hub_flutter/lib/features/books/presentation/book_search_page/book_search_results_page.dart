@@ -87,7 +87,7 @@ class BookSearchResultsPage extends WatchingWidget {
                           if (group.isEmpty) {
                             return const SizedBox.shrink();
                           }
-                          return SearchResultBookCard(group: group);
+                          return BookSearchResultCard(group: group);
                         } else {
                           if (bookManager.hasMorePages &&
                               bookManager.isLoadingMore) {

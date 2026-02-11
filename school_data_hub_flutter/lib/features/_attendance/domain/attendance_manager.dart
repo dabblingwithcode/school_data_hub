@@ -93,6 +93,22 @@ class AttendanceManager with ChangeNotifier {
     return _pupilMissedSchooldaysMap[pupilId]!;
   }
 
+  /// Missed schooldays grouped by date (local date-only key). Null schoolday skipped.
+  Map<DateTime, List<MissedSchoolday>> get missedSchooldaysByDate {
+    final byDate = <DateTime, List<MissedSchoolday>>{};
+    for (final missed in _missedSchooldays.value) {
+      if (missed.schoolday == null) continue;
+      final d = missed.schoolday!.schoolday.toLocal();
+      final key = DateTime(d.year, d.month, d.day);
+      byDate.putIfAbsent(key, () => []).add(missed);
+    }
+    return byDate;
+  }
+
+  /// Count of missed schooldays per date (derived from [missedSchooldaysByDate]).
+  Map<DateTime, int> get missedSchooldaysCountByDate =>
+      missedSchooldaysByDate.map((k, v) => MapEntry(k, v.length));
+
   // - Handle collections -
 
   void _updateMissedSchooldayesInCollections(

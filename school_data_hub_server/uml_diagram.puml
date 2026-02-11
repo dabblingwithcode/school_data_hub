@@ -149,6 +149,19 @@ class Book <<table: <b>book</b>>> #e2f0fb##[bold] {
 
 }
 
+class LibraryBookStatsDto ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/books/models/book_stats_dto.spy.yaml</size></b>
+--
+  <i>totalCatalogedBooks</i>: <b><color:#ff962f>int</color></b>
+  <i>totalBooksWithReadingLevel1</i>: <b><color:#ff962f>int</color></b>
+  <i>booksWithReadingLevel2</i>: <b><color:#ff962f>int</color></b>
+  <i>booksWithReadingLevel3</i>: <b><color:#ff962f>int</color></b>
+  <i>totalLibraryBooks</i>: <b><color:#ff962f>int</color></b>
+  <i>totalReadBooks</i>: <b><color:#ff962f>int</color></b>
+  <i>actuallyBorrowedBooks</i>: <b><color:#ff962f>int</color></b>
+
+}
+
 class BookTag <<table: <b>book_tag</b>>> #e2f0fb##[bold] {
 <size:14>📁</size> <b><size:12> /_features/books/models/book_tagging/book_tag.spy.yaml</size></b>
 --
@@ -672,6 +685,7 @@ class PupilIdentity ##[bold]  {
   <i>afterSchoolCare</i>: <b><color:#ff962f>bool</color></b>
   <i>religion</i>: <b><color:#ff962f>String?</color></b>
   <i>religionLessonsSince</i>: <b><color:#ff962f>DateTime?</color></b>
+  <i>religionLessonsCancelledAt</i>: <b><color:#ff962f>DateTime?</color></b>
   <i>familyLanguageLessonsSince</i>: <b><color:#ff962f>DateTime?</color></b>
   <i>leavingDate</i>: <b><color:#ff962f>DateTime?</color></b>
 
@@ -680,7 +694,9 @@ class PupilIdentity ##[bold]  {
 class PupilIdentityDto ##[bold]  {
 <size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_identity/pupil_identity_dto.spy.yaml</size></b>
 --
+  <i>sender</i>: <b><color:#ff962f>String</color></b>
   <i>type</i>: <b><color:#ff962f>String</color></b>
+  <i>dataTimeStamp</i>: <b><color:#ff962f>DateTime?</color></b>
   <i>value</i>: <b><color:#ff962f>String</color></b>
 
 }
@@ -727,6 +743,7 @@ class SchooldayEvent <<table: <b>schoolday_event</b>>> #e2f0fb##[bold] {
   <i>eventId</i>: <b><color:#ff962f>String</color></b>
   <i>eventType</i>: <b><color:#ff962f>SchooldayEventType</color></b>
   <i>eventReason</i>: <b><color:#ff962f>String</color></b>
+  <i>eventTime</i>: <b><color:#ff962f>String?</color></b>
   <i>createdBy</i>: <b><color:#ff962f>String</color></b>
   <i>processed</i>: <b><color:#ff962f>bool</color></b>
   <i>processedBy</i>: <b><color:#ff962f>String?</color></b>
@@ -735,6 +752,8 @@ class SchooldayEvent <<table: <b>schoolday_event</b>>> #e2f0fb##[bold] {
  ➡️ <i>processedDocument</i> : <b><color:#ff962f>HubDocument?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
  ➡️ <i>schoolday</i> : <b><color:#ff962f>Schoolday?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>schoolday_event_schoolday<color:#ff962f>)</color>
  ➡️ <i>pupil</i> : <b><color:#ff962f>PupilData?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>schoolday_event_pupil<color:#ff962f>)</color>
+<color:#93c47d>## TODO: Add eventTime</color>
+  <i>comment</i>: <b><color:#ff962f>String?</color></b>
 
 }
 
@@ -963,6 +982,8 @@ class User <<table: <b>user</b>>> #e2f0fb##[bold] {
  ➡️ <i>scheduledLessonsTeacher</i> : <b><color:#ff962f>List<ScheduledLessonTeacher>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>user_scheduled_lesson<color:#ff962f>)</color>
  ➡️ <i>lessonsTeacher</i> : <b><color:#ff962f>List<LessonTeacher>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>user_lesson<color:#ff962f>)</color>
   <i>pupilsAuth</i>: <b><color:#ff962f>Set<int>?</color></b>
+<color:#93c47d>## DEPRECATED: schoolday events processing team is deprecated and will be removed in the future</color>
+<color:#93c47d>## Use scopes instead</color>
   <i>schooldayEventsProcessingTeam</i>: <b><color:#ff962f>String?</color></b>
   <i>credit</i>: <b><color:#ff962f>int</color></b>
   <i>userFlags</i>: <b><color:#ff962f>UserFlags</color></b>
@@ -980,6 +1001,15 @@ class UserFlags ##[bold]  {
   <i>changedPassword</i>: <b><color:#ff962f>bool</color></b>
   <i>madeFirstSteps</i>: <b><color:#ff962f>bool</color></b>
   <i>isTester</i>: <b><color:#ff962f>bool</color></b>
+
+}
+
+class UserWithDevices ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/user/models/user_with_devices.spy.yaml</size></b>
+--
+  <i># Serializable response type</i>: <b><color:#ff962f>user with included UserInfo and list of UserDevices.</color></b>
+  <i>user</i>: <b><color:#ff962f>User</color></b>
+  <i>userDevices</i>: <b><color:#ff962f>List<UserDevice></color></b>
 
 }
 
@@ -1141,4 +1171,6 @@ SchooldayEvent - SchooldayEventType
 TimetableSlot - Weekday
 User - Role
 User - UserFlags
+UserWithDevices - UserDevice
+UserWithDevices - User
 @enduml

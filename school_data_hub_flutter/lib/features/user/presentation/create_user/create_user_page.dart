@@ -536,7 +536,7 @@ class CreateOrEditUserPage extends WatchingWidget {
                           isTester: setAsTester.value,
                           scopeNames: watchedScopeNames.isNotEmpty
                               ? watchedScopeNames
-                              : (watchedSetAsAdmin ? ['admin'] : ['standard']),
+                              : (watchedSetAsAdmin ? ['Serverpod.admin'] : []),
                         );
                         if (context.mounted) Navigator.pop(context);
                       } catch (e) {

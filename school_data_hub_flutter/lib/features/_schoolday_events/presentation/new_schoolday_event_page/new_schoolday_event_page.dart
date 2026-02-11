@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -11,164 +12,179 @@ import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/models/schoolday_event_enums.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/new_schoolday_event_page/widgets/schoolday_event_filter_chip.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_type_icon.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
+
+/// Holds all local form state for creating a new schoolday event.
+///
+/// Created once per page lifetime via [createOnce] so that
+/// ValueNotifiers are auto-disposed when the page is removed.
+class _NewEventFormState {
+  _NewEventFormState({required DateTime initialDate}) {
+    final now = DateTime.now();
+    eventType = ValueNotifier<SchooldayEventType>(SchooldayEventType.notSet);
+    selectedDate = ValueNotifier<DateTime>(initialDate);
+    eventTime = ValueNotifier<String>(
+      '${now.hour.toString().padLeft(2, '0')}:'
+      '${now.minute.toString().padLeft(2, '0')}',
+    );
+
+    // Build reason notifiers for admonition-type events
+    for (final reason in _admonitionReasons) {
+      reasonNotifiers[reason] = ValueNotifier<bool>(false);
+    }
+    // Build reason notifiers for parents-meeting events
+    for (final reason in _parentsMeetingReasons) {
+      reasonNotifiers[reason] = ValueNotifier<bool>(false);
+    }
+  }
+
+  late final ValueNotifier<SchooldayEventType> eventType;
+  late final ValueNotifier<DateTime> selectedDate;
+  late final ValueNotifier<String> eventTime;
+
+  /// Every possible reason has a [ValueNotifier<bool>] keyed by its enum.
+  final Map<SchooldayEventReason, ValueNotifier<bool>> reasonNotifiers = {};
+
+  // ── Reason groups ──────────────────────────────────────────────────
+
+  static const _admonitionReasons = [
+    SchooldayEventReason.violenceAgainstPupils,
+    SchooldayEventReason.violenceAgainstTeachers,
+    SchooldayEventReason.violenceAgainstThings,
+    SchooldayEventReason.insultOthers,
+    SchooldayEventReason.annoyOthers,
+    SchooldayEventReason.dangerousBehaviour,
+    SchooldayEventReason.ignoreInstructions,
+    SchooldayEventReason.disturbLesson,
+    SchooldayEventReason.other,
+  ];
+
+  static const _parentsMeetingReasons = [
+    SchooldayEventReason.learningDevelopmentInfo,
+    SchooldayEventReason.learningSupportInfo,
+    SchooldayEventReason.transitionAdvice,
+    SchooldayEventReason.admonitionInfo,
+    SchooldayEventReason.other,
+  ];
+
+  List<SchooldayEventReason> reasonsForType(SchooldayEventType type) {
+    if (type == SchooldayEventType.parentsMeeting) {
+      return _parentsMeetingReasons;
+    }
+    return _admonitionReasons;
+  }
+
+  // ── Derived helpers ────────────────────────────────────────────────
+
+  bool get hasAnyReasonSelected =>
+      reasonNotifiers.values.any((n) => n.value == true);
+
+  /// Builds the `*`-separated reason string expected by the API.
+  String buildReasonString() {
+    final buffer = StringBuffer();
+    for (final entry in reasonNotifiers.entries) {
+      if (entry.value.value) {
+        buffer.write('${entry.key.value}*');
+      }
+    }
+    return buffer.toString();
+  }
+
+  void dispose() {
+    eventType.dispose();
+    selectedDate.dispose();
+    eventTime.dispose();
+    for (final n in reasonNotifiers.values) {
+      n.dispose();
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Display text for the event type dropdown
+// ═══════════════════════════════════════════════════════════════════════
+
+String _eventTypeDisplayText(SchooldayEventType type) {
+  return switch (type) {
+    SchooldayEventType.notSet => 'bitte wählen',
+    SchooldayEventType.admonition => 'rote Karte',
+    SchooldayEventType.afternoonCareAdmonition => 'rote Karte - OGS',
+    SchooldayEventType.admonitionAndBanned => 'rote Karte + abholen',
+    SchooldayEventType.parentsMeeting => 'Elterngespräch',
+    SchooldayEventType.otherEvent => 'sonstiges',
+  };
+}
+
+/// Display text + emoji for each reason chip.
+({String emoji, String label}) _reasonChipData(SchooldayEventReason reason) {
+  return switch (reason) {
+    SchooldayEventReason.violenceAgainstPupils => (
+      emoji: '🤜🤕',
+      label: 'Gewalt gegen Kinder',
+    ),
+    SchooldayEventReason.violenceAgainstTeachers => (
+      emoji: '🤜🎓️',
+      label: 'Gewalt gegen Erwachsene',
+    ),
+    SchooldayEventReason.violenceAgainstThings => (
+      emoji: '🤜🏫',
+      label: 'Gewalt gegen Sachen',
+    ),
+    SchooldayEventReason.insultOthers => (emoji: '🤬💔', label: 'Beleidigen'),
+    SchooldayEventReason.annoyOthers => (emoji: '😈😖', label: 'Ärgern'),
+    SchooldayEventReason.dangerousBehaviour => (
+      emoji: '🚨😱',
+      label: 'Gefahr für sich/andere',
+    ),
+    SchooldayEventReason.ignoreInstructions => (
+      emoji: '🎓️🙉',
+      label: 'Anweisungen ignorieren',
+    ),
+    SchooldayEventReason.disturbLesson => (
+      emoji: '🛑🎓️',
+      label: 'Unterricht stören',
+    ),
+    SchooldayEventReason.learningDevelopmentInfo => (
+      emoji: '💡🧠',
+      label: 'Lernentwicklung',
+    ),
+    SchooldayEventReason.learningSupportInfo => (
+      emoji: '🛟🧠',
+      label: 'Förderung',
+    ),
+    SchooldayEventReason.transitionAdvice => (
+      emoji: '🧠🗺️',
+      label: 'Übergang',
+    ),
+    SchooldayEventReason.admonitionInfo => (
+      emoji: '⚠️ℹ️',
+      label: 'Regelverstoß',
+    ),
+    SchooldayEventReason.other => (emoji: '📝', label: 'Sonstiges'),
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Page widget (top-level, doesn't watch anything itself)
+// ═══════════════════════════════════════════════════════════════════════
 
 class NewSchooldayEventPage extends WatchingWidget {
   final int pupilId;
 
   const NewSchooldayEventPage({super.key, required this.pupilId});
 
-  SchoolCalendarManager get _schoolCalendarManager =>
-      di<SchoolCalendarManager>();
-  SchooldayEventManager get _schooldayEventManager =>
-      di<SchooldayEventManager>();
-
-  String _getDropdownItemText(SchooldayEventType reason) {
-    switch (reason) {
-      case SchooldayEventType.notSet:
-        return 'bitte wählen';
-      case SchooldayEventType.admonition:
-        return 'rote Karte';
-      case SchooldayEventType.afternoonCareAdmonition:
-        return 'rote Karte - OGS';
-      case SchooldayEventType.admonitionAndBanned:
-        return 'rote Karte + abholen';
-      case SchooldayEventType.parentsMeeting:
-        return 'Elterngespräch';
-      case SchooldayEventType.otherEvent:
-        return 'sonstiges';
-    }
-  }
-
-  Future<void> postSchooldayEvent({
-    required SchooldayEventType schooldayEventType,
-    required DateTime thisDate,
-    required bool violenceAgainstPupils,
-    required bool violenceAgainstTeacher,
-    required bool violenceAgainstThings,
-    required bool imminentDanger,
-    required bool insultOthers,
-    required bool annoyOthers,
-    required bool ignoreTeacherInstructions,
-    required bool disturbLesson,
-    required bool learningDevelopmentInfo,
-    required bool learningSupportInfo,
-    required bool admonitionInfo,
-    required bool transitionAdvice,
-    required bool other,
-    required String eventTime,
-  }) async {
-    Set<String> schooldayEventReason = {};
-    String schooldayEventReasons = '';
-    if (violenceAgainstPupils == true) {
-      schooldayEventReason.add(
-        SchooldayEventReason.violenceAgainstPupils.value,
-      );
-    }
-
-    if (violenceAgainstTeacher == true) {
-      schooldayEventReason.add(
-        SchooldayEventReason.violenceAgainstTeachers.value,
-      );
-    }
-
-    if (violenceAgainstThings == true) {
-      schooldayEventReason.add(
-        SchooldayEventReason.violenceAgainstThings.value,
-      );
-    }
-
-    if (imminentDanger == true) {
-      schooldayEventReason.add(SchooldayEventReason.dangerousBehaviour.value);
-    }
-
-    if (insultOthers == true) {
-      schooldayEventReason.add(SchooldayEventReason.insultOthers.value);
-    }
-
-    if (annoyOthers == true) {
-      schooldayEventReason.add(SchooldayEventReason.annoyOthers.value);
-    }
-
-    if (ignoreTeacherInstructions == true) {
-      schooldayEventReason.add(SchooldayEventReason.ignoreInstructions.value);
-    }
-
-    if (disturbLesson == true) {
-      schooldayEventReason.add(SchooldayEventReason.disturbLesson.value);
-    }
-
-    if (learningDevelopmentInfo == true) {
-      schooldayEventReason.add(
-        SchooldayEventReason.learningDevelopmentInfo.value,
-      );
-    }
-
-    if (learningSupportInfo == true) {
-      schooldayEventReason.add(SchooldayEventReason.learningSupportInfo.value);
-    }
-
-    if (admonitionInfo == true) {
-      schooldayEventReason.add(SchooldayEventReason.admonitionInfo.value);
-    }
-
-    if (other == true) {
-      schooldayEventReason.add(SchooldayEventReason.other.value);
-    }
-    if (transitionAdvice == true) {
-      schooldayEventReason.add(SchooldayEventReason.transitionAdvice.value);
-    }
-    for (final reason in schooldayEventReason) {
-      schooldayEventReasons = '$schooldayEventReasons$reason*';
-    }
-
-    final Schoolday? schoolday = _schoolCalendarManager.getSchooldayByDate(
-      thisDate,
-    );
-
-    // TODO: This is very optimistic. We should check if the schoolday is null and handle it properly.
-
-    await _schooldayEventManager.postSchooldayEvent(
-      pupilId: pupilId,
-      schooldayId: schoolday!.id!,
-      dateTime: thisDate,
-      type: schooldayEventType,
-      reason: schooldayEventReasons,
-      eventTime: eventTime,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final schooldayEventTypeDropdown = createOnce(
-      () => ValueNotifier<SchooldayEventType>(SchooldayEventType.notSet),
+    final formState = createOnce(
+      () => _NewEventFormState(
+        initialDate: di<SchoolCalendarManager>().thisDate.value,
+      ),
+      dispose: (s) => s.dispose(),
     );
-    final thisDate = createOnce(
-      () => ValueNotifier<DateTime>(_schoolCalendarManager.thisDate.value),
-    );
-    final now = DateTime.now();
-    final defaultTime =
-        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
-    final eventTime = createOnce(() => ValueNotifier<String>(defaultTime));
-    final violenceAgainstPupils = createOnce(() => ValueNotifier<bool>(false));
-    final violenceAgainstTeacher = createOnce(() => ValueNotifier<bool>(false));
-    final violenceAgainstThings = createOnce(() => ValueNotifier<bool>(false));
-    final insultOthers = createOnce(() => ValueNotifier<bool>(false));
-    final annoyOthers = createOnce(() => ValueNotifier<bool>(false));
-    final imminentDanger = createOnce(() => ValueNotifier<bool>(false));
-    final ignoreTeacherInstructions = createOnce(
-      () => ValueNotifier<bool>(false),
-    );
-    final disturbLesson = createOnce(() => ValueNotifier<bool>(false));
-    final other = createOnce(() => ValueNotifier<bool>(false));
-    final learningDevelopmentInfo = createOnce(
-      () => ValueNotifier<bool>(false),
-    );
-    final learningSupportInfo = createOnce(() => ValueNotifier<bool>(false));
-    final transitionAdvice = createOnce(() => ValueNotifier<bool>(false));
-    final admonitionInfo = createOnce(() => ValueNotifier<bool>(false));
-    final schooldayEventType = watch(schooldayEventTypeDropdown).value;
+
+    final eventType = watch(formState.eventType).value;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -176,429 +192,424 @@ class NewSchooldayEventPage extends WatchingWidget {
         backgroundColor: AppColors.backgroundColor,
         title: const Text('Neues Ereignis', style: AppStyles.appBarTextStyle),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 800),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Ereignis-Art',
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                const Gap(10),
-                DropdownButton<SchooldayEventType>(
-                  isDense: true,
-                  underline: Container(),
-                  style: AppStyles.subtitle,
-                  value: schooldayEventType,
-                  onChanged: (SchooldayEventType? newValue) {
-                    schooldayEventTypeDropdown.value = newValue!;
-                  },
-                  items: SchooldayEventType.values
-                      .map<DropdownMenuItem<SchooldayEventType>>((
-                        SchooldayEventType value,
-                      ) {
-                        return DropdownMenuItem<SchooldayEventType>(
-                          value: value,
-                          child: Text(
-                            _getDropdownItemText(value),
-                            style: TextStyle(
-                              color: value == SchooldayEventType.notSet
-                                  ? Colors.red
-                                  : AppColors.backgroundColor,
-                              fontSize: 20,
-                            ),
-                          ),
-                        );
-                      })
-                      .toList(),
-                ),
-                const Gap(10),
-                const Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Datum',
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: () async {
-                        final DateTime? newDate = await selectSchooldayDate(
-                          context,
-                          thisDate.value,
-                        );
-                        if (newDate != null) {
-                          thisDate.value = newDate;
-                        }
-                      },
-                      icon: Icon(
-                        Icons.calendar_today_rounded,
-                        color: AppColors.interactiveColor,
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () async {
-                        final DateTime? newDate = await selectSchooldayDate(
-                          context,
-                          thisDate.value,
-                        );
-                        if (newDate != null) {
-                          thisDate.value = newDate;
-                        }
-                      },
-                      child: Text(
-                        watch(thisDate).value.formatDateForUser(),
-                        style: AppStyles.title.copyWith(
-                          color: AppColors.interactiveColor,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 800),
+              child: Column(
+                children: [
+                  // ── Scrollable form content ──
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        _EventTypeSection(formState: formState),
+                        const Gap(16),
+                        _DateTimeSection(formState: formState),
+                        const Gap(16),
+                        _ReasonSection(
+                          formState: formState,
+                          eventType: eventType,
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-                const Gap(5),
-                const Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Uhrzeit',
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: () async {
-                        final TimeOfDay? picked = await showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay(
-                            hour: int.parse(eventTime.value.split(':')[0]),
-                            minute: int.parse(eventTime.value.split(':')[1]),
-                          ),
-                          builder: (BuildContext context, Widget? child) {
-                            return MediaQuery(
-                              data: MediaQuery.of(
-                                context,
-                              ).copyWith(alwaysUse24HourFormat: true),
-                              child: child!,
-                            );
-                          },
-                        );
-                        if (picked != null) {
-                          eventTime.value =
-                              '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
-                        }
-                      },
-                      icon: Icon(
-                        Icons.access_time_rounded,
-                        color: AppColors.interactiveColor,
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () async {
-                        final TimeOfDay? picked = await showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay(
-                            hour: int.parse(eventTime.value.split(':')[0]),
-                            minute: int.parse(eventTime.value.split(':')[1]),
-                          ),
-                          builder: (BuildContext context, Widget? child) {
-                            return MediaQuery(
-                              data: MediaQuery.of(
-                                context,
-                              ).copyWith(alwaysUse24HourFormat: true),
-                              child: child!,
-                            );
-                          },
-                        );
-                        if (picked != null) {
-                          eventTime.value =
-                              '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
-                        }
-                      },
-                      child: Text(
-                        watch(eventTime).value,
-                        style: AppStyles.title.copyWith(
-                          color: AppColors.interactiveColor,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const Gap(5),
-                const Text(
-                  'Grund',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-                ),
-                const Gap(5),
-                Expanded(
-                  child: schooldayEventType == SchooldayEventType.notSet
-                      ? const Center(
-                          child: Text(
-                            'Bitte eine Ereignis-Art auswählen!',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        )
-                      : schooldayEventType == SchooldayEventType.parentsMeeting
-                      ? SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Wrap(
-                                children: [
-                                  SchooldayEventReasonFilterChip(
-                                    isReason: watch(
-                                      learningDevelopmentInfo,
-                                    ).value,
-                                    onSelected: (value) {
-                                      learningDevelopmentInfo.value = value;
-                                    },
-                                    emojis: '💡🧠',
-                                    text: 'Lernentwicklung',
-                                  ),
-                                  const Gap(5),
-                                  SchooldayEventReasonFilterChip(
-                                    isReason: watch(learningSupportInfo).value,
-                                    onSelected: (value) {
-                                      learningSupportInfo.value = value;
-                                    },
-                                    emojis: '🛟🧠',
-                                    text: 'Förderung',
-                                  ),
-                                  SchooldayEventReasonFilterChip(
-                                    isReason: watch(transitionAdvice).value,
-                                    onSelected: (value) {
-                                      transitionAdvice.value = value;
-                                    },
-                                    emojis: '🧠🗺️',
-                                    text: 'Übergang',
-                                  ),
-                                  const Gap(5),
-                                  SchooldayEventReasonFilterChip(
-                                    isReason: watch(admonitionInfo).value,
-                                    onSelected: (value) {
-                                      admonitionInfo.value = value;
-                                    },
-                                    emojis: '⚠️ℹ️',
-                                    text: 'Regelverstoß',
-                                  ),
-                                  const Gap(5),
-                                  SchooldayEventReasonFilterChip(
-                                    isReason: watch(other).value,
-                                    onSelected: (value) {
-                                      other.value = value;
-                                    },
-                                    emojis: '📝',
-                                    text: 'Sonstiges',
-                                  ),
-                                  const Gap(5),
-                                ],
-                              ),
-                            ],
-                          ),
-                        )
-                      : SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Wrap(
-                                children: [
-                                  const Gap(5),
-                                  SchooldayEventReasonFilterChip(
-                                    isReason: watch(
-                                      violenceAgainstPupils,
-                                    ).value,
-                                    onSelected: (value) {
-                                      violenceAgainstPupils.value = value;
-                                    },
-                                    emojis: '🤜🤕',
-                                    text: 'Gewalt gegen Kinder',
-                                  ),
-                                  const Gap(5),
-                                  SchooldayEventReasonFilterChip(
-                                    isReason: watch(
-                                      violenceAgainstTeacher,
-                                    ).value,
-                                    onSelected: (value) {
-                                      violenceAgainstTeacher.value = value;
-                                    },
-                                    emojis: '🤜🎓️',
-                                    text: 'Gewalt gegen Erwachsene',
-                                  ),
-                                  const Gap(5),
-                                  SchooldayEventReasonFilterChip(
-                                    isReason: watch(
-                                      violenceAgainstThings,
-                                    ).value,
-                                    onSelected: (value) {
-                                      violenceAgainstThings.value = value;
-                                    },
-                                    emojis: '🤜🏫',
-                                    text: 'Gewalt gegen Sachen',
-                                  ),
-                                  const Gap(5),
-                                  SchooldayEventReasonFilterChip(
-                                    isReason: watch(insultOthers).value,
-                                    onSelected: (value) {
-                                      insultOthers.value = value;
-                                    },
-                                    emojis: '🤬💔',
-                                    text: 'Beleidigen',
-                                  ),
-                                  const Gap(5),
-                                  SchooldayEventReasonFilterChip(
-                                    isReason: watch(annoyOthers).value,
-                                    onSelected: (value) {
-                                      annoyOthers.value = value;
-                                    },
-                                    emojis: '😈😖',
-                                    text: 'Ärgern',
-                                  ),
-                                  const Gap(5),
-                                  SchooldayEventReasonFilterChip(
-                                    isReason: watch(imminentDanger).value,
-                                    onSelected: (value) {
-                                      imminentDanger.value = value;
-                                    },
-                                    emojis: '🚨😱',
-                                    text: 'Gefahr für sich/andere',
-                                  ),
-                                  const Gap(5),
-                                  SchooldayEventReasonFilterChip(
-                                    isReason: watch(
-                                      ignoreTeacherInstructions,
-                                    ).value,
-                                    onSelected: (value) {
-                                      ignoreTeacherInstructions.value = value;
-                                    },
-                                    emojis: '🎓️🙉',
-                                    text: 'Anweisungen ignorieren',
-                                  ),
-                                  const Gap(5),
-                                  SchooldayEventReasonFilterChip(
-                                    isReason: watch(disturbLesson).value,
-                                    onSelected: (value) {
-                                      disturbLesson.value = value;
-                                    },
-                                    emojis: '🛑🎓️',
-                                    text: 'Unterricht stören',
-                                  ),
-                                  const Gap(5),
-                                  SchooldayEventReasonFilterChip(
-                                    isReason: watch(other).value,
-                                    onSelected: (value) {
-                                      other.value = value;
-                                    },
-                                    emojis: '📝',
-                                    text: 'Sonstiges',
-                                  ),
-                                  const Gap(5),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                ),
-                const Gap(10),
-                ElevatedButton(
-                  style: AppStyles.successButtonStyle,
-                  onPressed: () async {
-                    if (schooldayEventType == SchooldayEventType.notSet) {
-                      informationDialog(
-                        context,
-                        'Kein Ereignis ausgewählt',
-                        'Bitte eine Ereignis-Art auswählen!',
-                      );
-                      return;
-                    }
-                    if (violenceAgainstPupils.value == false &&
-                        violenceAgainstTeacher.value == false &&
-                        violenceAgainstThings.value == false &&
-                        insultOthers.value == false &&
-                        annoyOthers.value == false &&
-                        imminentDanger.value == false &&
-                        ignoreTeacherInstructions.value == false &&
-                        disturbLesson.value == false &&
-                        learningDevelopmentInfo.value == false &&
-                        learningSupportInfo.value == false &&
-                        admonitionInfo.value == false &&
-                        transitionAdvice.value == false &&
-                        other.value == false) {
-                      informationDialog(
-                        context,
-                        'Kein Grund ausgewählt',
-                        'Bitte mindestens einen Grund auswählen!',
-                      );
-                      return;
-                    }
-                    unawaited(
-                      postSchooldayEvent(
-                        schooldayEventType: schooldayEventType,
-                        thisDate: thisDate.value,
-                        violenceAgainstPupils: violenceAgainstPupils.value,
-                        violenceAgainstTeacher: violenceAgainstTeacher.value,
-                        violenceAgainstThings: violenceAgainstThings.value,
-                        imminentDanger: imminentDanger.value,
+                  ),
+                  const Gap(12),
+                  // ── Action buttons pinned at bottom ──
+                  _ActionButtons(formState: formState, pupilId: pupilId),
+                  const Gap(8),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
-                        insultOthers: insultOthers.value,
-                        annoyOthers: annoyOthers.value,
-                        ignoreTeacherInstructions:
-                            ignoreTeacherInstructions.value,
-                        disturbLesson: disturbLesson.value,
-                        learningDevelopmentInfo: learningDevelopmentInfo.value,
-                        learningSupportInfo: learningSupportInfo.value,
-                        admonitionInfo: admonitionInfo.value,
-                        transitionAdvice: transitionAdvice.value,
-                        other: other.value,
-                        eventTime: eventTime.value,
-                      ),
-                    );
-                    Navigator.pop(context);
-                  },
-                  child: const Text('SENDEN', style: AppStyles.buttonTextStyle),
+// ═══════════════════════════════════════════════════════════════════════
+// Section: Event type dropdown
+// ═══════════════════════════════════════════════════════════════════════
+
+class _EventTypeSection extends WatchingWidget {
+  final _NewEventFormState formState;
+  const _EventTypeSection({required this.formState});
+
+  @override
+  Widget build(BuildContext context) {
+    final eventType = watch(formState.eventType).value;
+
+    return _SectionCard(
+      icon: Icons.warning_rounded,
+      title: 'Ereignis-Art',
+      child: InputDecorator(
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 4,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: AppColors.backgroundColor),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: AppColors.backgroundColor, width: 2),
+          ),
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<SchooldayEventType>(
+            isDense: true,
+            isExpanded: true,
+            value: eventType,
+            onChanged: (SchooldayEventType? newValue) {
+              if (newValue != null) {
+                formState.eventType.value = newValue;
+              }
+            },
+            items: SchooldayEventType.values
+                .map(
+                  (type) => DropdownMenuItem<SchooldayEventType>(
+                    value: type,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SchooldayEventTypeIcon(type: type),
+                        const Gap(8),
+                        Text(
+                          _eventTypeDisplayText(type),
+                          style: TextStyle(
+                            color: type == SchooldayEventType.notSet
+                                ? Colors.red
+                                : AppColors.backgroundColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Section: Date & Time pickers
+// ═══════════════════════════════════════════════════════════════════════
+
+class _DateTimeSection extends WatchingWidget {
+  final _NewEventFormState formState;
+  const _DateTimeSection({required this.formState});
+
+  Future<void> _pickDate(BuildContext context) async {
+    final newDate = await selectSchooldayDate(
+      context,
+      formState.selectedDate.value,
+    );
+    if (newDate != null) {
+      formState.selectedDate.value = newDate;
+    }
+  }
+
+  Future<void> _pickTime(BuildContext context) async {
+    final parts = formState.eventTime.value.split(':');
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(
+        hour: int.parse(parts[0]),
+        minute: int.parse(parts[1]),
+      ),
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+        child: child!,
+      ),
+    );
+    if (picked != null) {
+      formState.eventTime.value =
+          '${picked.hour.toString().padLeft(2, '0')}:'
+          '${picked.minute.toString().padLeft(2, '0')}';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final date = watch(formState.selectedDate).value;
+    final time = watch(formState.eventTime).value;
+
+    return _SectionCard(
+      icon: Icons.schedule_rounded,
+      title: 'Datum & Uhrzeit',
+      child: Row(
+        children: [
+          // ── Date ──
+          Expanded(
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () => _pickDate(context),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 14,
                 ),
-                const Gap(15),
-                ElevatedButton(
-                  style: AppStyles.cancelButtonStyle,
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text(
-                    'ABBRECHEN',
-                    style: AppStyles.buttonTextStyle,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.calendar_today_rounded,
+                      color: AppColors.interactiveColor,
+                      size: 20,
+                    ),
+                    const Gap(8),
+                    Expanded(
+                      child: Text(
+                        date.formatDateForUser(),
+                        style: AppStyles.subtitle.copyWith(
+                          color: AppColors.interactiveColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const Gap(12),
+          // ── Time ──
+          InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () => _pickTime(context),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.access_time_rounded,
+                    color: AppColors.interactiveColor,
+                    size: 20,
+                  ),
+                  const Gap(8),
+                  Text(
+                    time,
+                    style: AppStyles.subtitle.copyWith(
+                      color: AppColors.interactiveColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Section: Reason chips
+// ═══════════════════════════════════════════════════════════════════════
+
+class _ReasonSection extends WatchingWidget {
+  final _NewEventFormState formState;
+  final SchooldayEventType eventType;
+  const _ReasonSection({required this.formState, required this.eventType});
+
+  @override
+  Widget build(BuildContext context) {
+    if (eventType == SchooldayEventType.notSet) {
+      return _SectionCard(
+        icon: Icons.help_outline_rounded,
+        title: 'Grund',
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          child: Center(
+            child: Text(
+              'Bitte zuerst eine Ereignis-Art auswählen',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey.shade600,
+                fontStyle: FontStyle.italic,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      );
+    }
+
+    final reasons = formState.reasonsForType(eventType);
+
+    // Watch every reason notifier so this widget rebuilds on toggles
+    for (final reason in reasons) {
+      watch(formState.reasonNotifiers[reason]!);
+    }
+
+    return _SectionCard(
+      icon: Icons.checklist_rounded,
+      title: 'Grund',
+      child: Wrap(
+        spacing: 4,
+        runSpacing: 0,
+        children: reasons.map((reason) {
+          final notifier = formState.reasonNotifiers[reason]!;
+          final chipData = _reasonChipData(reason);
+          return SchooldayEventReasonFilterChip(
+            isReason: notifier.value,
+            onSelected: (value) => notifier.value = value,
+            emojis: chipData.emoji,
+            text: chipData.label,
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Action buttons (pinned at bottom)
+// ═══════════════════════════════════════════════════════════════════════
+
+class _ActionButtons extends StatelessWidget {
+  final _NewEventFormState formState;
+  final int pupilId;
+  const _ActionButtons({required this.formState, required this.pupilId});
+
+  Future<void> _submit(BuildContext context) async {
+    if (formState.eventType.value == SchooldayEventType.notSet) {
+      informationDialog(
+        context,
+        'Kein Ereignis ausgewählt',
+        'Bitte eine Ereignis-Art auswählen!',
+      );
+      return;
+    }
+    if (!formState.hasAnyReasonSelected) {
+      informationDialog(
+        context,
+        'Kein Grund ausgewählt',
+        'Bitte mindestens einen Grund auswählen!',
+      );
+      return;
+    }
+
+    final calendarManager = di<SchoolCalendarManager>();
+    final schoolday = calendarManager.getSchooldayByDate(
+      formState.selectedDate.value,
+    );
+
+    if (schoolday == null) {
+      informationDialog(
+        context,
+        'Kein Schultag',
+        'Das ausgewählte Datum ist kein gültiger Schultag!',
+      );
+      return;
+    }
+
+    unawaited(
+      di<SchooldayEventManager>().postSchooldayEvent(
+        pupilId: pupilId,
+        schooldayId: schoolday.id!,
+        dateTime: formState.selectedDate.value,
+        type: formState.eventType.value,
+        reason: formState.buildReasonString(),
+        eventTime: formState.eventTime.value,
+      ),
+    );
+
+    if (context.mounted) {
+      Navigator.pop(context);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            style: AppStyles.successButtonStyle,
+            onPressed: () => _submit(context),
+            icon: const Icon(Icons.send_rounded, color: Colors.white),
+            label: const Text('SENDEN', style: AppStyles.buttonTextStyle),
+          ),
+        ),
+        const Gap(10),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            style: AppStyles.cancelButtonStyle,
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.close_rounded, color: Colors.white),
+            label: const Text('ABBRECHEN', style: AppStyles.buttonTextStyle),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Reusable card wrapper for each form section
+// ═══════════════════════════════════════════════════════════════════════
+
+class _SectionCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final Widget child;
+
+  const _SectionCard({
+    required this.icon,
+    required this.title,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: Colors.grey.shade200),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, color: AppColors.backgroundColor, size: 22),
+                const Gap(8),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.backgroundColor,
                   ),
                 ),
               ],
             ),
-          ),
+            const Gap(12),
+            child,
+          ],
         ),
       ),
     );

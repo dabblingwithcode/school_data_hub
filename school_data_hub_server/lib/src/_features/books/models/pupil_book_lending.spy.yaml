@@ -4,6 +4,7 @@ fields:
   lendingId: String
   status: String?
   score: int
+  bookScore: int?
   lentAt: DateTime
   lentBy: String
   returnedAt: DateTime?

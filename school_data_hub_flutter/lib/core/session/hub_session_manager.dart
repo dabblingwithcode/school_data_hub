@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
@@ -14,7 +15,6 @@ import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:serverpod_auth_client/serverpod_auth_client.dart'
     as auth_client;
 import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 /// The [SessionManager] keeps track of and manages the signed-in state of the
 /// user. Use the [instance] method to get access to the singleton instance.
@@ -172,7 +172,7 @@ class HubSessionManager with ChangeNotifier {
       /// to get to the login screen.
       _log.info('User signed out ');
 
-      _envManager.setUserAuthenticatedOnlyByHubSessionManager(false);
+      _envManager.setUserAuthenticatedFlagOnlyByHubSessionManager(false);
 
       return true;
     } catch (e) {
@@ -208,7 +208,7 @@ class HubSessionManager with ChangeNotifier {
 
         /// Don't forget to set the flag in [EnvManager] to false
         /// to get to the login screen.
-        _envManager.setUserAuthenticatedOnlyByHubSessionManager(true);
+        _envManager.setUserAuthenticatedFlagOnlyByHubSessionManager(true);
         return;
       } else {
         _notificationService.showInformationDialog(
@@ -233,6 +233,7 @@ class HubSessionManager with ChangeNotifier {
   /// Returns true if successful.
   Future<bool> signOutDevice() async {
     final signOut = await _signOut(allDevices: false);
+    await _storage.remove(_userInfoStorageKey);
     await di.dropScope(InitScope.onAuthScope.name);
 
     return signOut;
@@ -252,7 +253,7 @@ class HubSessionManager with ChangeNotifier {
       if (_signedInUser != null) {
         /// Don't forget to set the flag in [EnvManager] to false
         /// to get to the login screen.
-        _envManager.setUserAuthenticatedOnlyByHubSessionManager(true);
+        _envManager.setUserAuthenticatedFlagOnlyByHubSessionManager(true);
 
         _log.info(
           'User was authenticated by the server. Registering managers depending on authentication...',
@@ -289,7 +290,7 @@ class HubSessionManager with ChangeNotifier {
 
       /// Don't forget to set the flag in [EnvManager] to false
       /// to get to the login screen.
-      _envManager.setUserAuthenticatedOnlyByHubSessionManager(false);
+      _envManager.setUserAuthenticatedFlagOnlyByHubSessionManager(false);
 
       return false;
     }

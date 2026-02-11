@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
@@ -21,7 +22,6 @@ import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/select_users/select_users_page.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class PupilSchooldayEventCard extends StatelessWidget {
   final SchooldayEvent schooldayEvent;
@@ -417,9 +417,34 @@ class PupilSchooldayEventCard extends StatelessWidget {
                           );
                         },
                         child: schooldayEvent.document != null
-                            ? EncryptedDocumentImage(
-                                documentId: schooldayEvent.document!.documentId,
-                                size: 70,
+                            ? Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    schooldayEvent.document!.createdAt
+                                        .formatDateForUser(),
+                                    style: const TextStyle(
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  EncryptedDocumentImage(
+                                    documentId:
+                                        schooldayEvent.document!.documentId,
+                                    size: 70,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        schooldayEvent.document!.createdBy,
+                                        style: const TextStyle(
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               )
                             : SizedBox(
                                 height: 70,

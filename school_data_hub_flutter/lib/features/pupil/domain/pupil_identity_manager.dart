@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
@@ -18,8 +19,6 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_fil
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
-import 'package:signals/signals_flutter.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class PupilIdentityManager {
   final _log = Logger('PupilIdentityManager');
@@ -38,8 +37,10 @@ class PupilIdentityManager {
   final _groups = ValueNotifier<Set<String>>({});
   ValueListenable<Set<String>> get groups => _groups;
 
-  final Signal<DateTime?> _remoteLastIdentitiesUpdate = signal(null);
-  Signal<DateTime?> get remoteLastIdentitiesUpdate =>
+  final ValueNotifier<DateTime?> _remoteLastIdentitiesUpdate = ValueNotifier(
+    null,
+  );
+  ValueNotifier<DateTime?> get remoteLastIdentitiesUpdate =>
       _remoteLastIdentitiesUpdate;
 
   List<PupilIdentity> get pupilIdentities => _pupilIdentities.values.toList();

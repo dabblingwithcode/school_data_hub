@@ -1,29 +1,29 @@
-import 'package:signals/signals_flutter.dart';
+import 'package:flutter/foundation.dart';
 
 /// Model representing the state of the pupil identity stream
 class StreamState {
-  final Signal<bool> isConnected;
-  final Signal<bool> isProcessing;
-  final Signal<bool> isCompleted;
-  final Signal<String> statusMessage;
-  final Signal<bool> receiverJoined;
-  final Signal<String> receiverUserName;
-  final Signal<bool> requestReceived;
-  final Signal<bool> requestSent;
-  final Signal<bool> isTransmitting;
-  final Signal<bool> autoConfirmEnabled;
+  final ValueNotifier<bool> isConnected;
+  final ValueNotifier<bool> isProcessing;
+  final ValueNotifier<bool> isCompleted;
+  final ValueNotifier<String> statusMessage;
+  final ValueNotifier<bool> receiverJoined;
+  final ValueNotifier<String> receiverUserName;
+  final ValueNotifier<bool> requestReceived;
+  final ValueNotifier<bool> requestSent;
+  final ValueNotifier<bool> isTransmitting;
+  final ValueNotifier<bool> autoConfirmEnabled;
 
   StreamState()
-    : isConnected = signal(false),
-      isProcessing = signal(false),
-      isCompleted = signal(false),
-      statusMessage = signal(''),
-      receiverJoined = signal(false),
-      receiverUserName = signal(''),
-      requestReceived = signal(false),
-      requestSent = signal(false),
-      isTransmitting = signal(false),
-      autoConfirmEnabled = signal(false);
+    : isConnected = ValueNotifier(false),
+      isProcessing = ValueNotifier(false),
+      isCompleted = ValueNotifier(false),
+      statusMessage = ValueNotifier(''),
+      receiverJoined = ValueNotifier(false),
+      receiverUserName = ValueNotifier(''),
+      requestReceived = ValueNotifier(false),
+      requestSent = ValueNotifier(false),
+      isTransmitting = ValueNotifier(false),
+      autoConfirmEnabled = ValueNotifier(false);
 
   void dispose() {
     isConnected.dispose();
@@ -41,12 +41,12 @@ class StreamState {
 
 /// Model representing transfer statistics and history
 class TransferState {
-  final Signal<int> transferCounter;
-  final Signal<List<String>> transferHistory;
+  final ValueNotifier<int> transferCounter;
+  final ValueNotifier<List<String>> transferHistory;
 
   TransferState()
-    : transferCounter = signal(0),
-      transferHistory = signal(<String>[]);
+    : transferCounter = ValueNotifier(0),
+      transferHistory = ValueNotifier(<String>[]);
 
   void dispose() {
     transferCounter.dispose();
@@ -56,16 +56,16 @@ class TransferState {
 
 /// Model representing multi-receiver management state
 class ReceiverManagementState {
-  final Signal<Set<String>> connectedReceivers;
-  final Signal<Map<String, DateTime>> pendingRequests;
-  final Signal<Set<String>> activeTransfers;
-  final Signal<Set<String>> rejectedUsers;
+  final ValueNotifier<Set<String>> connectedReceivers;
+  final ValueNotifier<Map<String, DateTime>> pendingRequests;
+  final ValueNotifier<Set<String>> activeTransfers;
+  final ValueNotifier<Set<String>> rejectedUsers;
 
   ReceiverManagementState()
-    : connectedReceivers = signal(<String>{}),
-      pendingRequests = signal(<String, DateTime>{}),
-      activeTransfers = signal(<String>{}),
-      rejectedUsers = signal(<String>{});
+    : connectedReceivers = ValueNotifier(<String>{}),
+      pendingRequests = ValueNotifier(<String, DateTime>{}),
+      activeTransfers = ValueNotifier(<String>{}),
+      rejectedUsers = ValueNotifier(<String>{});
 
   void dispose() {
     connectedReceivers.dispose();

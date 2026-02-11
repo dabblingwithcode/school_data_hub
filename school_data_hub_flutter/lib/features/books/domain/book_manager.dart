@@ -135,23 +135,35 @@ class BookManager {
   }
 
   void _updateLibraryBookProxyInCollections(LibraryBook libraryBook) {
-    final LibraryBookProxy libraryBookProxy = LibraryBookProxy(
-      librarybook: libraryBook,
+    final libraryId = libraryBook.libraryId;
+    final isbn = libraryBook.book!.isbn;
+
+    // Update existing proxy in _libraryBookProxies (notifies watchers)
+    final existingProxy = _libraryBookProxies.value.firstWhereOrNull(
+      (item) => item.libraryId == libraryId,
     );
-    final List<LibraryBookProxy> libraryBookProxies = _libraryBookProxies.value
-        .toList();
-    int index = libraryBookProxies.indexWhere(
-      (item) => item.libraryId == libraryBookProxy.libraryId,
-    );
-    if (index != -1) {
-      libraryBookProxies[index] = libraryBookProxy;
-      _libraryBookProxies.value = libraryBookProxies;
+    if (existingProxy != null) {
+      existingProxy.updateLibraryBook(libraryBook);
     }
-    // Update the isbnLibraryBooksMap
-    if (_isbnLibraryBooksMap.value.containsKey(libraryBook.book!.isbn)) {
-      _isbnLibraryBooksMap.value[libraryBook.book!.isbn] = libraryBookProxies;
-    } else {
-      _isbnLibraryBooksMap.value[libraryBook.book!.isbn] = [libraryBookProxy];
+
+    // Update existing proxy in _isbnLibraryBooksMap (notifies watchers)
+    final isbnList = _isbnLibraryBooksMap.value[isbn];
+    if (isbnList != null) {
+      final isbnProxy = isbnList.firstWhereOrNull(
+        (item) => item.libraryId == libraryId,
+      );
+      if (isbnProxy != null && isbnProxy != existingProxy) {
+        isbnProxy.updateLibraryBook(libraryBook);
+      }
+    }
+
+    // Update existing proxy in _searchResults (notifies watchers)
+    final searchProxy = _searchResults.value.firstWhereOrNull(
+      (item) => item.libraryId == libraryId,
+    );
+    if (searchProxy != null &&
+        searchProxy != existingProxy) {
+      searchProxy.updateLibraryBook(libraryBook);
     }
   }
 

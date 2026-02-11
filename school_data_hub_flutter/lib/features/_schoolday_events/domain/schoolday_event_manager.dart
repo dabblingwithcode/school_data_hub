@@ -69,6 +69,22 @@ class SchooldayEventManager with ChangeNotifier {
     return _pupilSchooldayEventsMap[pupilId]!;
   }
 
+  /// Schoolday events grouped by date (local date-only key). Null schoolday skipped.
+  Map<DateTime, List<SchooldayEvent>> get schooldayEventsByDate {
+    final byDate = <DateTime, List<SchooldayEvent>>{};
+    for (final event in schooldayEvents) {
+      if (event.schoolday == null) continue;
+      final d = event.schoolday!.schoolday.toLocal();
+      final key = DateTime(d.year, d.month, d.day);
+      byDate.putIfAbsent(key, () => []).add(event);
+    }
+    return byDate;
+  }
+
+  /// Count of schoolday events per date (derived from [schooldayEventsByDate]).
+  Map<DateTime, int> get schooldayEventsCountByDate =>
+      schooldayEventsByDate.map((k, v) => MapEntry(k, v.length));
+
   //- Handle collections
 
   void _updateSchooldayEventCollections(SchooldayEvent event) {

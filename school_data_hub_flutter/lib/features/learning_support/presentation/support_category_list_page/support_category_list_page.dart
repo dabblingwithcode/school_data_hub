@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_page/controller/category_list_controller.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_page/widgets/support_category_list_page_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_bottom_nav_bar_no_filter.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_page/widgets/support_category_tree.dart';
 
 class CategoryListPage extends StatelessWidget {
@@ -36,7 +36,7 @@ class CategoryListPage extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const SupportCategoryListPageBottomNavBar(),
+      bottomNavigationBar: const GenericBottomNavBarNoFilter(),
     );
   }
 }

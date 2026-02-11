@@ -22,13 +22,10 @@ import 'package:school_data_hub_flutter/features/app_entry_point/login_page/logi
 import 'package:school_data_hub_flutter/features/app_entry_point/no_connection_page.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/landing_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
-import 'package:signals/signals_flutter.dart';
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
   GetIt.instance.debugEventsEnabled = true;
-  // Disable Signals debug logging
-  SignalsObserver.instance = null; // AppSignalsObserver();
   WidgetsFlutterBinding.ensureInitialized();
   // Set the global logging level
   Logger.root.level = Level.ALL;

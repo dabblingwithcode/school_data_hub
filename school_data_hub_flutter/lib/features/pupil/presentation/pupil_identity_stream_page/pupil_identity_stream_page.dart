@@ -1,11 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
-import 'package:signals/signals_flutter.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 import 'controllers/stream_controller.dart';
 // Import our modular components
@@ -64,20 +63,19 @@ class PupilIdentityStreamPage extends WatchingWidget {
 
     final state = controller.state;
 
-    final isConnected = state.streamState.isConnected.watch(context);
-    final isProcessing = state.streamState.isProcessing.watch(context);
-    final receivers = state.receiverState.connectedReceivers.watch(context);
-    final pendingRequests = state.receiverState.pendingRequests.watch(context);
-    final activeTransfers = state.receiverState.activeTransfers.watch(context);
-    final transferHistory = state.transferState.transferHistory.watch(context);
-    final transferCounter = state.transferState.transferCounter.watch(context);
-    final rejectedUsers = state.receiverState.rejectedUsers.watch(context);
-    final receiverJoined = state.streamState.receiverJoined.watch(context);
-    final requestSent = state.streamState.requestSent.watch(context);
-    final isTransmitting = state.streamState.isTransmitting.watch(context);
-    final autoConfirmEnabled = state.streamState.autoConfirmEnabled.watch(
-      context,
-    );
+    final isConnected = watch(state.streamState.isConnected).value;
+    final isProcessing = watch(state.streamState.isProcessing).value;
+    final receivers = watch(state.receiverState.connectedReceivers).value;
+    final pendingRequests = watch(state.receiverState.pendingRequests).value;
+    final activeTransfers = watch(state.receiverState.activeTransfers).value;
+    final transferHistory = watch(state.transferState.transferHistory).value;
+    final transferCounter = watch(state.transferState.transferCounter).value;
+    final rejectedUsers = watch(state.receiverState.rejectedUsers).value;
+    final receiverJoined = watch(state.streamState.receiverJoined).value;
+    final requestSent = watch(state.streamState.requestSent).value;
+    final isTransmitting = watch(state.streamState.isTransmitting).value;
+    final autoConfirmEnabled =
+        watch(state.streamState.autoConfirmEnabled).value;
 
     // Update overlay when receiver-related signals change
     if (role == PupilIdentityStreamRole.receiver) {

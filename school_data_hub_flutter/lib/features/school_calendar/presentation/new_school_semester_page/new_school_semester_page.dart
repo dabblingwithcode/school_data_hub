@@ -68,6 +68,12 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
       return true;
     }
 
+    bool isWithinSemesterStartDateAndEndDate(DateTime day) {
+      final dayUtc = day.toDateOnlyUtc();
+      if (dayUtc.isBefore(startDate!) || dayUtc.isAfter(endDate!)) return false;
+      return true;
+    }
+
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
       appBar: AppBar(
@@ -97,252 +103,286 @@ class _NewSchoolSemesterPageState extends State<NewSchoolSemesterPage> {
           constraints: const BoxConstraints(maxWidth: 800),
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 10.0,
-                  top: 15.0,
-                  right: 10.00,
-                ),
-                child: Row(
-                  children: [
-                    const Text('Schuljahr:', style: TextStyle(fontSize: 13)),
-                    const Gap(10),
-                    Expanded(
-                      child: TextField(
-                        controller: _textController,
-                        decoration: const InputDecoration(
-                          hintText: 'z.B. 2023/2024',
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _SectionCard(
+                        title: 'Schulhalbjahr',
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _LabeledField(
+                              label: 'Schuljahr',
+                              child: TextField(
+                                controller: _textController,
+                                decoration: AppStyles.textFieldDecoration(
+                                  labelText: 'z.B. 2023/2024',
+                                ),
+                                minLines: 1,
+                                maxLines: 1,
+                              ),
+                            ),
+                            const Gap(12),
+                            Row(
+                              children: [
+                                Checkbox(
+                                  value: isFirst,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      isFirst = value ?? false;
+                                    });
+                                  },
+                                ),
+                                Text(
+                                  '1. Halbjahr',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey[800],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
+                      ),
+                      const Gap(16),
+                      _SectionCard(
+                        title: 'Zeitraum',
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _LabeledField(
+                              label: 'Startdatum',
+                              child: DatePickerButton(
+                                dateToSelect: startDate,
+                                selectableDayPredicate:
+                                    isNotInExistingSemesters,
+                                onDateSelected: (pickedDate) {
+                                  if (pickedDate != null) {
+                                    setState(() {
+                                      startDate = pickedDate;
+                                    });
+                                  }
+                                },
+                              ),
+                            ),
+                            const Gap(16),
+                            _LabeledField(
+                              label: 'Enddatum',
+                              child: DatePickerButton(
+                                dateToSelect: endDate,
+                                firstDate: startDate ?? DateTime(2000),
+                                selectableDayPredicate:
+                                    isNotInExistingSemesters,
+                                onDateSelected: (pickedDate) {
+                                  if (pickedDate != null) {
+                                    setState(() {
+                                      endDate = pickedDate;
+                                    });
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Gap(16),
+                      _SectionCard(
+                        title: 'Konferenzen & Zeugnis',
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _LabeledField(
+                              label: 'Klassenkonferenzdatum',
+                              child: DatePickerButton(
+                                dateToSelect: classConferenceDate,
+                                selectableDayPredicate:
+                                    isWithinSemesterStartDateAndEndDate,
+                                onDateSelected: (pickedDate) {
+                                  if (pickedDate != null) {
+                                    setState(() {
+                                      classConferenceDate = pickedDate;
+                                    });
+                                  }
+                                },
+                              ),
+                            ),
+                            const Gap(16),
+                            _LabeledField(
+                              label: 'Förderkonferenzdatum',
+                              child: DatePickerButton(
+                                dateToSelect: supportConferenceDate,
+                                selectableDayPredicate:
+                                    isWithinSemesterStartDateAndEndDate,
+                                onDateSelected: (pickedDate) {
+                                  if (pickedDate != null) {
+                                    setState(() {
+                                      supportConferenceDate = pickedDate;
+                                    });
+                                  }
+                                },
+                              ),
+                            ),
+                            const Gap(16),
+                            _LabeledField(
+                              label: 'Zeugniskonferenzdatum',
+                              child: DatePickerButton(
+                                dateToSelect: reportConferenceDate,
+                                selectableDayPredicate:
+                                    isWithinSemesterStartDateAndEndDate,
+                                onDateSelected: (pickedDate) {
+                                  if (pickedDate != null) {
+                                    setState(() {
+                                      reportConferenceDate = pickedDate;
+                                    });
+                                  }
+                                },
+                              ),
+                            ),
+                            const Gap(16),
+                            _LabeledField(
+                              label: 'Zeugnisausgabe',
+                              child: DatePickerButton(
+                                dateToSelect: reportSignedDate,
+                                selectableDayPredicate:
+                                    isWithinSemesterStartDateAndEndDate,
+                                onDateSelected: (pickedDate) {
+                                  if (pickedDate != null) {
+                                    setState(() {
+                                      reportSignedDate = pickedDate;
+                                    });
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ElevatedButton(
+                      style: AppStyles.actionButtonStyle,
+                      onPressed: () async {
+                        if (widget.semester != null) {
+                          final updatedSemester = widget.semester!.copyWith(
+                            schoolYear: _textController.text,
+                            startDate: startDate ?? widget.semester!.startDate,
+                            endDate: endDate ?? widget.semester!.endDate,
+                            classConferenceDate: classConferenceDate,
+                            supportConferenceDate: supportConferenceDate,
+                            reportSignedDate: reportSignedDate,
+                            reportConferenceDate: reportConferenceDate,
+                            isFirst: isFirst,
+                          );
+                          await schoolCalendarManager.updateSchoolSemester(
+                            updatedSemester,
+                          );
+                        } else {
+                          await schoolCalendarManager.postSchoolSemester(
+                            schoolYearName: _textController.text,
+                            startDate: startDate!,
+                            endDate: endDate!,
+                            classConferenceDate: classConferenceDate,
+                            supportConferenceDate: supportConferenceDate,
+                            reportSignedDate: reportSignedDate,
+                            reportConferenceDate: reportConferenceDate,
+                            isFirst: isFirst,
+                          );
+                        }
+                        if (context.mounted) {
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      child: Text(
+                        widget.semester != null ? 'AKTUALISIEREN' : 'SENDEN',
+                        style: AppStyles.buttonTextStyle,
+                      ),
+                    ),
+                    const Gap(12),
+                    ElevatedButton(
+                      style: AppStyles.cancelButtonStyle,
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text(
+                        'ABBRECHEN',
+                        style: AppStyles.buttonTextStyle,
                       ),
                     ),
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 10.0,
-                  top: 15.0,
-                  right: 10.00,
-                ),
-                child: Row(
-                  children: [
-                    const Text('1. Halbjahr:', style: TextStyle(fontSize: 13)),
-                    const Gap(10),
-                    Checkbox(
-                      value: isFirst,
-                      onChanged: (value) {
-                        setState(() {
-                          isFirst = value ?? false;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 10.0,
-                  top: 15.0,
-                  right: 10.00,
-                ),
-                child: Row(
-                  children: [
-                    const Text('Startdatum:', style: TextStyle(fontSize: 13)),
-                    const Gap(10),
-                    DatePickerButton(
-                      dateToSelect: startDate,
-                      selectableDayPredicate: isNotInExistingSemesters,
-                      onDateSelected: (pickedDate) {
-                        if (pickedDate != null) {
-                          setState(() {
-                            startDate = pickedDate;
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 10.0,
-                  top: 15.0,
-                  right: 10.00,
-                ),
-                child: Row(
-                  children: [
-                    const Text('Enddatum:', style: TextStyle(fontSize: 13)),
-                    const Gap(10),
-                    DatePickerButton(
-                      dateToSelect: endDate,
-                      firstDate: startDate ?? DateTime(2000),
-                      selectableDayPredicate: isNotInExistingSemesters,
-                      onDateSelected: (pickedDate) {
-                        if (pickedDate != null) {
-                          setState(() {
-                            endDate = pickedDate;
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 10.0,
-                  top: 15.0,
-                  right: 10.00,
-                ),
-                child: Row(
-                  children: [
-                    const Text(
-                      'Klassenkonferenzdatum:',
-                      style: TextStyle(fontSize: 13),
-                    ),
-                    const Gap(10),
-                    DatePickerButton(
-                      dateToSelect: classConferenceDate,
-                      selectableDayPredicate: isNotInExistingSemesters,
-                      onDateSelected: (pickedDate) {
-                        if (pickedDate != null) {
-                          setState(() {
-                            classConferenceDate = pickedDate;
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 10.0,
-                  top: 15.0,
-                  right: 10.00,
-                ),
-                child: Row(
-                  children: [
-                    const Text(
-                      'Förderkonferenzdatum:',
-                      style: TextStyle(fontSize: 13),
-                    ),
-                    const Gap(10),
-                    DatePickerButton(
-                      dateToSelect: supportConferenceDate,
-                      selectableDayPredicate: isNotInExistingSemesters,
-                      onDateSelected: (pickedDate) {
-                        if (pickedDate != null) {
-                          setState(() {
-                            supportConferenceDate = pickedDate;
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 10.0,
-                  top: 15.0,
-                  right: 10.00,
-                ),
-                child: Row(
-                  children: [
-                    const Text(
-                      'Zeugniskonferenzdatum:',
-                      style: TextStyle(fontSize: 13),
-                    ),
-                    const Gap(10),
-                    DatePickerButton(
-                      dateToSelect: reportConferenceDate,
-                      selectableDayPredicate: isNotInExistingSemesters,
-                      onDateSelected: (pickedDate) {
-                        if (pickedDate != null) {
-                          setState(() {
-                            reportConferenceDate = pickedDate;
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 10.0,
-                  top: 15.0,
-                  right: 10.00,
-                ),
-                child: Row(
-                  children: [
-                    const Text(
-                      'Zeugnisausgabe:',
-                      style: TextStyle(fontSize: 13),
-                    ),
-                    const Gap(10),
-                    DatePickerButton(
-                      dateToSelect: reportSignedDate,
-                      selectableDayPredicate: isNotInExistingSemesters,
-                      onDateSelected: (pickedDate) {
-                        if (pickedDate != null) {
-                          setState(() {
-                            reportSignedDate = pickedDate;
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  if (widget.semester != null) {
-                    // Update existing semester
-                    final updatedSemester = widget.semester!.copyWith(
-                      schoolYear: _textController.text,
-                      startDate: startDate ?? widget.semester!.startDate,
-                      endDate: endDate ?? widget.semester!.endDate,
-                      classConferenceDate: classConferenceDate,
-                      supportConferenceDate: supportConferenceDate,
-                      reportSignedDate: reportSignedDate,
-                      reportConferenceDate: reportConferenceDate,
-                      isFirst: isFirst,
-                    );
-                    await schoolCalendarManager.updateSchoolSemester(
-                      updatedSemester,
-                    );
-                  } else {
-                    // Create new semester
-                    await schoolCalendarManager.postSchoolSemester(
-                      schoolYearName: _textController.text,
-                      startDate: startDate!,
-                      endDate: endDate!,
-                      classConferenceDate: classConferenceDate,
-                      supportConferenceDate: supportConferenceDate,
-                      reportSignedDate: reportSignedDate,
-                      reportConferenceDate: reportConferenceDate,
-                      isFirst: isFirst,
-                    );
-                  }
-                  if (context.mounted) {
-                    Navigator.of(context).pop();
-                  }
-                },
-                child: Text(
-                  widget.semester != null ? 'Aktualisieren' : 'Senden',
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Abbrechen'),
-              ),
             ],
           ),
         ),
       ),
-      // bottomNavigationBar: const SchoolListsBottomNavBar(),
+    );
+  }
+}
+
+class _SectionCard extends StatelessWidget {
+  final String title;
+  final Widget child;
+
+  const _SectionCard({required this.title, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide(color: Colors.grey.shade300),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.backgroundColor,
+              ),
+            ),
+            const Gap(12),
+            child,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LabeledField extends StatelessWidget {
+  final String label;
+  final Widget child;
+
+  const _LabeledField({required this.label, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        const Gap(6),
+        child,
+      ],
     );
   }
 }

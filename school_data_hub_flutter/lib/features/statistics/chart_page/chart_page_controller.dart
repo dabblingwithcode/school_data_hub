@@ -137,28 +137,18 @@ class _ChartPageControllerState extends State<ChartPageController> {
     // 2. Pre-process Events
     final allEvents = _schooldayEventManager.schooldayEvents;
     final eventsById = <int, List<SchooldayEvent>>{};
-    final eventsByDateMap = <DateTime, List<SchooldayEvent>>{};
-
     for (final event in allEvents) {
       eventsById.putIfAbsent(event.schooldayId, () => []).add(event);
-
-      final d = event.schoolday!.schoolday.toLocal();
-      final dayDate = DateTime(d.year, d.month, d.day);
-      eventsByDateMap.putIfAbsent(dayDate, () => []).add(event);
     }
+    final eventsByDateMap = _schooldayEventManager.schooldayEventsByDate;
 
     // 3. Pre-process Attendance
     final allMissed = _attendanceManager.missedSchooldays.value;
     final missedById = <int, List<MissedSchoolday>>{};
-    final missedByDate = <DateTime, List<MissedSchoolday>>{};
-
     for (final missed in allMissed) {
       missedById.putIfAbsent(missed.schooldayId, () => []).add(missed);
-
-      final d = missed.schoolday!.schoolday.toLocal();
-      final dayDate = DateTime(d.year, d.month, d.day);
-      missedByDate.putIfAbsent(dayDate, () => []).add(missed);
     }
+    final missedByDate = _attendanceManager.missedSchooldaysByDate;
 
     // 3b. Pre-process Book Lendings
     // Normalize each lending to (lentDate, returnedDate?) for efficient

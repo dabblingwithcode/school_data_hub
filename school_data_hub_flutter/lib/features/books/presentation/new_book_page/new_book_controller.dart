@@ -116,12 +116,20 @@ class NewBookController extends State<NewBook> {
     super.initState();
     fetchBookData();
     _createDropdownItems();
+    // Ensure lastLocationValue uses the exact instance from the dropdown items
+    // (LibraryBookLocation doesn't override == / hashCode)
+    lastLocationValue = _findMatchingLocation(lastLocationValue);
     if (widget.isEdit) {
       bookIdTextFieldController.text = widget.libraryId ?? '';
       bookTitleTextFieldController.text = widget.bookTitle ?? '';
       authorTextFieldController.text = widget.bookAuthor ?? '';
-      lastLocationValue =
+
+      // Find the matching location instance from the dropdown items
+      // to avoid identity mismatch (LibraryBookLocation doesn't override ==)
+      final widgetLocation =
           widget.location ?? di<BookManager>().lastLocationValue.value;
+      lastLocationValue = _findMatchingLocation(widgetLocation);
+
       readingLevel = widget.bookReadingLevel ?? ReadingLevel.notSet.value;
 
       bookDescriptionTextFieldController.text = widget.bookDescription ?? '';
@@ -129,6 +137,21 @@ class NewBookController extends State<NewBook> {
         bookTagSelection[tag.bookTag!] = true;
       }
     }
+  }
+
+  /// Finds the matching [LibraryBookLocation] instance from [locationDropdownItems]
+  /// by comparing [id]. This is necessary because [LibraryBookLocation] (Serverpod
+  /// generated) doesn't override == / hashCode, so the dropdown requires the exact
+  /// same object instance.
+  LibraryBookLocation _findMatchingLocation(LibraryBookLocation target) {
+    for (final item in locationDropdownItems) {
+      if (item.value?.id == target.id) {
+        return item.value!;
+      }
+    }
+    // Fallback: return the target itself (will be added by _createDropdownItems
+    // if not already present)
+    return target;
   }
 
   void onChangedReadingLevelDropDown(ReadingLevel? value) {

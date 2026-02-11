@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
@@ -12,7 +13,6 @@ import 'package:school_data_hub_flutter/core/env/models/env.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:school_data_hub_flutter/core/models/populated_server_session_data.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class EnvManager with ChangeNotifier {
   final _log = Logger('EnvManager');
@@ -39,7 +39,7 @@ class EnvManager with ChangeNotifier {
   /// **WARNING:**
   ///
   /// This method should only be called from [HubSessionManager]
-  void setUserAuthenticatedOnlyByHubSessionManager(bool value) {
+  void setUserAuthenticatedFlagOnlyByHubSessionManager(bool value) {
     _log.info('setUserAuthenticated: $value');
     _isAuthenticated.value = value;
   }

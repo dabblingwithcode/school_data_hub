@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/app_utils/logger/domain/log_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:signals_hooks/signals_hooks.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 Future<void> showLogsFilterBottomSheet(BuildContext context) {
   return showModalBottomSheet<void>(
@@ -22,20 +20,20 @@ Future<void> showLogsFilterBottomSheet(BuildContext context) {
   );
 }
 
-class LogsFilterBottomSheet extends HookWidget {
+class LogsFilterBottomSheet extends WatchingWidget {
   const LogsFilterBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
     final logService = di<LogService>();
-    final showFine = useSignalValue(logService.showFine);
-    final showInfo = useSignalValue(logService.showInfo);
-    final showWarning = useSignalValue(logService.showWarning);
-    final showSevere = useSignalValue(logService.showSevere);
-    final showShout = useSignalValue(logService.showShout);
-    final loggerNames = useSignalValue(logService.loggerNamesSorted);
-    final selectedLoggers = useSignalValue(logService.selectedLoggerFilters);
-    final filtersActive = useSignalValue(logService.filtersActive);
+    final showFine = watch(logService.showFine).value;
+    final showInfo = watch(logService.showInfo).value;
+    final showWarning = watch(logService.showWarning).value;
+    final showSevere = watch(logService.showSevere).value;
+    final showShout = watch(logService.showShout).value;
+    final loggerNames = watch(logService.loggerNamesSorted).value;
+    final selectedLoggers = watch(logService.selectedLoggerFilters).value;
+    final filtersActive = watch(logService.filtersActive).value;
 
     return SafeArea(
       child: Padding(

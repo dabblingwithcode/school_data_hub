@@ -1,34 +1,65 @@
 // lib/services/log_service.dart
+import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
-import 'package:signals/signals.dart';
 
 import '../model/app_log.dart';
 
-// Service to manage the list of logs backed by signals
+// Service to manage the list of logs backed by ValueNotifiers
 class LogService {
   // Define a max number of logs to keep in memory
   static const int _maxLogs = 1000;
 
-  final Signal<List<AppLog>> _logs = signal(
-    <AppLog>[],
-    debugLabel: 'LogService._logs',
-  );
-  final Signal<String> _searchQuery = signal(
-    '',
-    debugLabel: 'LogService._searchQuery',
-  );
-  final Signal<Map<Level, bool>> _levelVisibility = signal(
-    {},
-    debugLabel: 'LogService._levelVisibility',
-  );
-  final Signal<Set<String>> _loggerNames = signal(
+  final ValueNotifier<List<AppLog>> _logs = ValueNotifier(<AppLog>[]);
+  final ValueNotifier<String> _searchQuery = ValueNotifier('');
+  final ValueNotifier<Map<Level, bool>> _levelVisibility = ValueNotifier({});
+  final ValueNotifier<Set<String>> _loggerNames = ValueNotifier(<String>{});
+  final ValueNotifier<Set<String>> _selectedLoggerFilters = ValueNotifier(
     <String>{},
-    debugLabel: 'LogService._loggerNames',
   );
-  final Signal<Set<String>> _selectedLoggerFilters = signal(
+
+  // Derived state (replaces Computed signals)
+  final ValueNotifier<List<AppLog>> filteredLogs = ValueNotifier(<AppLog>[]);
+  final ValueNotifier<bool> showInfo = ValueNotifier(true);
+  final ValueNotifier<bool> showWarning = ValueNotifier(true);
+  final ValueNotifier<bool> showSevere = ValueNotifier(true);
+  final ValueNotifier<bool> showShout = ValueNotifier(true);
+  final ValueNotifier<bool> showFine = ValueNotifier(true);
+  final ValueNotifier<List<String>> loggerNamesSorted = ValueNotifier(
+    <String>[],
+  );
+  final ValueNotifier<Set<String>> selectedLoggerFilters = ValueNotifier(
     <String>{},
-    debugLabel: 'LogService._selectedLoggerFilters',
   );
+  final ValueNotifier<bool> filtersActive = ValueNotifier(false);
+
+  ValueNotifier<String> get searchQuery => _searchQuery;
+  ValueNotifier<Set<String>> get loggerNames => _loggerNames;
+
+  LogService() {
+    // Wire up derived state updates
+    _logs.addListener(_recompute);
+    _searchQuery.addListener(_recompute);
+    _levelVisibility.addListener(_recompute);
+    _selectedLoggerFilters.addListener(_recompute);
+    _loggerNames.addListener(_recomputeLoggerNames);
+  }
+
+  void _recompute() {
+    filteredLogs.value = _computeFilteredLogs();
+    showInfo.value = _isLevelVisible(Level.INFO);
+    showWarning.value = _isLevelVisible(Level.WARNING);
+    showSevere.value = _isLevelVisible(Level.SEVERE);
+    showShout.value = _isLevelVisible(Level.SHOUT);
+    showFine.value = _isLevelVisible(Level.FINE);
+    selectedLoggerFilters.value = _selectedLoggerFilters.value;
+    filtersActive.value =
+        _selectedLoggerFilters.value.isNotEmpty ||
+        _levelVisibility.value.values.any((isVisible) => !isVisible);
+  }
+
+  void _recomputeLoggerNames() {
+    loggerNamesSorted.value = _loggerNames.value.toList()..sort();
+  }
 
   void addLogString({
     required String message,
@@ -41,40 +72,6 @@ class LogService {
     );
     addLog(AppLog(level, message, loggerName));
   }
-
-  late final Computed<List<AppLog>> filteredLogs = computed(
-    _computeFilteredLogs,
-  );
-
-  late final Computed<bool> showInfo = computed(
-    () => _isLevelVisible(Level.INFO),
-  );
-  late final Computed<bool> showWarning = computed(
-    () => _isLevelVisible(Level.WARNING),
-  );
-  late final Computed<bool> showSevere = computed(
-    () => _isLevelVisible(Level.SEVERE),
-  );
-  late final Computed<bool> showShout = computed(
-    () => _isLevelVisible(Level.SHOUT),
-  );
-  late final Computed<bool> showFine = computed(
-    () => _isLevelVisible(Level.FINE),
-  );
-  late final Computed<List<String>> loggerNamesSorted = computed(
-    () => _loggerNames.value.toList()..sort(),
-  );
-  late final Computed<Set<String>> selectedLoggerFilters = computed(
-    () => _selectedLoggerFilters.value,
-  );
-  late final Computed<bool> filtersActive = computed(
-    () =>
-        _selectedLoggerFilters.value.isNotEmpty ||
-        _levelVisibility.value.values.any((isVisible) => !isVisible),
-  );
-
-  Signal<String> get searchQuery => _searchQuery;
-  Signal<Set<String>> get loggerNames => _loggerNames;
 
   /// Ingest a [LogRecord] and fan out aggregated console strings into
   /// individual app logs when needed.

@@ -1,146 +1,82 @@
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
-import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
+import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/atendance_list_card.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_pupil_list_card/schoolday_event_pupil_list_card.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
+import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_helper.dart'
+    show SchoolCalendarHelper;
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
+import 'package:school_data_hub_flutter/features/school_calendar/presentation/schooldays_calendar_page/widgets/schoolday_calendar_day_cell.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:flutter_it/flutter_it.dart';
 
-class SchooldaysCalendarPage extends WatchingStatefulWidget {
+class SchooldaysCalendarPage extends WatchingWidget {
   const SchooldaysCalendarPage({super.key});
 
   @override
-  SchooldaysCalendarState createState() => SchooldaysCalendarState();
-}
-
-class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
-  CalendarFormat _calendarFormat = CalendarFormat.month;
-  DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay = DateTime.now();
-
-  final kFirstDay = DateTime(
-    DateTime.now().toLocal().year,
-    DateTime.now().toLocal().month - 10,
-    DateTime.now().toLocal().day,
-  );
-  final kLastDay = DateTime(DateTime.now().toLocal().year + 2, 8, 31);
-
-  SchoolCalendarManager get _schoolCalendarManager =>
-      di<SchoolCalendarManager>();
-
-  @override
-  void initState() {
-    super.initState();
-
-    // Ensure semesters are available for the "first semester" badge.
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!mounted) return;
-
-      final manager = _schoolCalendarManager;
-      if (manager.schoolSemesters.value.isNotEmpty) return;
-
-      await manager.fetchSchoolSemesters();
-      if (!mounted) return;
-      setState(() {});
-    });
-  }
-
-  List<String> _getEventsForDay(DateTime day) {
-    final schooldays = _schoolCalendarManager.schooldays.value;
-    if (schooldays.any((element) => element.schoolday == day)) {
-      return ['Schule'];
-    }
-
-    return [];
-  }
-
-  bool _isDayInFirstSemester({
-    required DateTime day,
-    required List semesters,
-  }) {
-    final dayUtc = day.toDateOnlyUtc();
-
-    for (final semester in semesters) {
-      // `SchoolSemester` from the client has `isFirst`, `startDate`, `endDate`.
-      // We keep this dynamic-friendly to avoid extra imports in this UI file.
-      if (semester.isFirst != true) continue;
-
-      final startUtc = (semester.startDate as DateTime).toDateOnlyUtc();
-      final endUtc = (semester.endDate as DateTime).toDateOnlyUtc();
-
-      final isInside = !dayUtc.isBefore(startUtc) && !dayUtc.isAfter(endUtc);
-      if (isInside) return true;
-    }
-
-    return false;
-  }
-
-  Widget _dayCell(
-    BuildContext context,
-    DateTime date, {
-    required bool showFirstSemesterBadge,
-    Color? backgroundColor,
-    Color? textColor,
-    bool fadedText = false,
-  }) {
-    final effectiveTextColor = fadedText
-        ? (Theme.of(context).disabledColor)
-        : (textColor ?? Theme.of(context).textTheme.bodyMedium?.color);
-
-    return Container(
-      margin: const EdgeInsets.all(4.0),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      child: Stack(
-        children: [
-          Center(
-            child: Text(
-              date.day.toString(),
-              style: TextStyle(color: effectiveTextColor),
-            ),
-          ),
-          if (showFirstSemesterBadge)
-            Positioned(
-              top: 2,
-              right: 2,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: const Text(
-                  '1',
-                  style: TextStyle(
-                    fontSize: 10,
-                    height: 1.0,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // -- Local mutable state via createOnce -----------------------------------
+    final calendarFormat = createOnce(
+      () => ValueNotifier<CalendarFormat>(CalendarFormat.month),
+    );
+    final focusedDay = createOnce(
+      () => ValueNotifier<DateTime>(DateTime.now()),
+    );
+    final selectedDay = createOnce(
+      () => ValueNotifier<DateTime?>(DateTime.now()),
+    );
+
+    // false = show missed schooldays, true = show schoolday events
+    final showEvents = createOnce(() => ValueNotifier<bool>(false));
+
+    final kFirstDay = createOnce(() {
+      final now = DateTime.now().toLocal();
+      return DateTime(now.year, now.month - 10, now.day);
+    });
+    final kLastDay = createOnce(
+      () => DateTime(DateTime.now().toLocal().year + 2, 8, 31),
+    );
+
+    // -- Watch local notifiers ------------------------------------------------
+    final calendarFormatValue = watch(calendarFormat).value;
+    final focusedDayValue = watch(focusedDay).value;
+    final selectedDayValue = watch(selectedDay).value;
+    final showEventsValue = watch(showEvents).value;
+
+    // -- Watch manager data ---------------------------------------------------
     final schooldays = watchValue((SchoolCalendarManager x) => x.schooldays);
-    final semesters =
-        watchValue((SchoolCalendarManager x) => x.schoolSemesters);
+    final semesters = watchValue(
+      (SchoolCalendarManager x) => x.schoolSemesters,
+    );
+    watchValue((AttendanceManager x) => x.missedSchooldays);
+    final missedCountByDate =
+        di<AttendanceManager>().missedSchooldaysCountByDate;
+    final eventManager = watchIt<SchooldayEventManager>();
+    final eventCountByDate = eventManager.schooldayEventsCountByDate;
+
     final schooldayDates = schooldays
         .map((e) => e.schoolday.toLocal())
         .toList();
-    // List<MissedSchoolday> missedSchooldays =
-    //     di<AttendanceManager>().getMissedSchooldayesOnADay(_selectedDay!);
+
+    // -- One-time init (replaces initState) -----------------------------------
+    callOnce((context) {
+      final manager = di<SchoolCalendarManager>();
+      if (manager.schoolSemesters.value.isEmpty) {
+        manager.fetchSchoolSemesters();
+      }
+    });
+
+    // -- Build ----------------------------------------------------------------
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.white,
@@ -152,44 +88,36 @@ class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
           IconButton(
             icon: const Icon(Icons.today),
             onPressed: () {
-              setState(() {
-                _focusedDay = DateTime.now().toLocal();
-                _selectedDay = DateTime.now().toLocal();
-              });
+              focusedDay.value = DateTime.now().toLocal();
+              selectedDay.value = DateTime.now().toLocal();
             },
           ),
-          // IconButton(
-          //   icon: const Icon(Icons.arrow_back),
-          //   onPressed: () {
-          //     setState(() {
-          //       _focusedDay = _focusedDay.subtract(const Duration(days: 7));
-          //       _selectedDay = _selectedDay!.subtract(const Duration(days: 7));
-          //     });
-          //   },
-          // ),
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () async {
-              var results = await showCalendarDatePicker2Dialog(
-                context: context,
-                config: CalendarDatePicker2WithActionButtonsConfig(
-                  selectableDayPredicate: (day) =>
-                      !schooldayDates.any((element) => element.isSameDate(day)),
-                  calendarType: CalendarDatePicker2Type.multi,
-                ),
-                dialogSize: const Size(325, 400),
-                value: [], //schooldayDates,
-                borderRadius: BorderRadius.circular(15),
-              );
-              if (results == null) return;
-              if (results.isEmpty) return;
-              final newSchooldayDates = results.whereType<DateTime>().toList();
-              await _schoolCalendarManager.postMultipleSchooldays(
-                dates: newSchooldayDates.map((e) => e.toLocal()).toList(),
-              );
-              setState(() {});
-            },
-          ),
+          if (di<HubSessionManager>().isAdmin)
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () async {
+                var results = await showCalendarDatePicker2Dialog(
+                  context: context,
+                  config: CalendarDatePicker2WithActionButtonsConfig(
+                    selectableDayPredicate: (day) => !schooldayDates.any(
+                      (element) => element.isSameDate(day),
+                    ),
+                    calendarType: CalendarDatePicker2Type.multi,
+                  ),
+                  dialogSize: const Size(325, 400),
+                  value: [],
+                  borderRadius: BorderRadius.circular(15),
+                );
+                if (results == null) return;
+                if (results.isEmpty) return;
+                final newSchooldayDates = results
+                    .whereType<DateTime>()
+                    .toList();
+                await di<SchoolCalendarManager>().postMultipleSchooldays(
+                  dates: newSchooldayDates.map((e) => e.toLocal()).toList(),
+                );
+              },
+            ),
         ],
       ),
       body: Center(
@@ -203,9 +131,9 @@ class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
                 automaticallyImplyLeading: false,
                 leading: const SizedBox.shrink(),
                 backgroundColor: Colors.white,
-                collapsedHeight: 450,
-                expandedHeight: 450,
-                toolbarHeight: 450,
+                collapsedHeight: 452,
+                expandedHeight: 452,
+                toolbarHeight: 452,
                 stretch: true,
                 elevation: 0,
                 flexibleSpace: FlexibleSpaceBar(
@@ -219,170 +147,278 @@ class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
                     bottom: 0,
                   ),
                   collapseMode: CollapseMode.none,
-                  title: TableCalendar<String>(
-                    daysOfWeekHeight: 52,
-                    startingDayOfWeek: StartingDayOfWeek.monday,
-                    calendarStyle: const CalendarStyle(
-                      canMarkersOverflow: false,
+                  title: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Card(
+                      color: Colors.white,
+                      child: TableCalendar<String>(
+                        daysOfWeekHeight: 52,
+                        startingDayOfWeek: StartingDayOfWeek.monday,
+                        calendarStyle: const CalendarStyle(
+                          canMarkersOverflow: false,
+                        ),
+                        selectedDayPredicate: (day) {
+                          return schooldays.any(
+                            (element) => element.schoolday.isSameDate(day),
+                          );
+                        },
+                        locale: 'de_DE',
+                        availableCalendarFormats: const {
+                          CalendarFormat.month: 'Month',
+                        },
+                        enabledDayPredicate: (day) => schooldayDates.any(
+                          (element) => element.isSameDate(day),
+                        ),
+                        calendarBuilders: CalendarBuilders(
+                          markerBuilder: (context, date, events) =>
+                              const SizedBox.shrink(),
+                          singleMarkerBuilder: null,
+                          defaultBuilder: (context, date, focusedDay) {
+                            final key = DateTime(
+                              date.year,
+                              date.month,
+                              date.day,
+                            );
+                            return schooldayCalendarDayCell(
+                              context,
+                              date,
+                              isFirstSemester:
+                                  SchoolCalendarHelper.isDayInFirstSemester(
+                                    day: date,
+                                    semesters: semesters,
+                                    schooldays: schooldays,
+                                  ),
+                              showSemesterBadge:
+                                  SchoolCalendarHelper.isDayInSemester(
+                                    day: date,
+                                    semesters: semesters,
+                                    schooldays: schooldays,
+                                  ),
+                              missedCount: missedCountByDate[key] ?? 0,
+                              eventCount: eventCountByDate[key] ?? 0,
+                            );
+                          },
+                          disabledBuilder: (context, date, focusedDay) {
+                            final key = DateTime(
+                              date.year,
+                              date.month,
+                              date.day,
+                            );
+                            return schooldayCalendarDayCell(
+                              context,
+                              date,
+                              fadedText: true,
+                              isFirstSemester:
+                                  SchoolCalendarHelper.isDayInFirstSemester(
+                                    day: date,
+                                    semesters: semesters,
+                                    schooldays: schooldays,
+                                  ),
+                              showSemesterBadge:
+                                  SchoolCalendarHelper.isDayInSemester(
+                                    day: date,
+                                    semesters: semesters,
+                                    schooldays: schooldays,
+                                  ),
+                              missedCount: missedCountByDate[key] ?? 0,
+                              eventCount: eventCountByDate[key] ?? 0,
+                            );
+                          },
+                          outsideBuilder: (context, date, focusedDay) {
+                            final key = DateTime(
+                              date.year,
+                              date.month,
+                              date.day,
+                            );
+                            return schooldayCalendarDayCell(
+                              context,
+                              date,
+                              fadedText: true,
+                              isFirstSemester:
+                                  SchoolCalendarHelper.isDayInFirstSemester(
+                                    day: date,
+                                    semesters: semesters,
+                                    schooldays: schooldays,
+                                  ),
+                              showSemesterBadge:
+                                  SchoolCalendarHelper.isDayInSemester(
+                                    day: date,
+                                    semesters: semesters,
+                                    schooldays: schooldays,
+                                  ),
+                              missedCount: missedCountByDate[key] ?? 0,
+                              eventCount: eventCountByDate[key] ?? 0,
+                            );
+                          },
+                          selectedBuilder: (context, date, focusedDay) {
+                            final key = DateTime(
+                              date.year,
+                              date.month,
+                              date.day,
+                            );
+                            return schooldayCalendarDayCell(
+                              context,
+                              date,
+                              backgroundColor: Theme.of(context).primaryColor,
+                              textColor: Colors.white,
+                              isFirstSemester:
+                                  SchoolCalendarHelper.isDayInFirstSemester(
+                                    day: date,
+                                    semesters: semesters,
+                                    schooldays: schooldays,
+                                  ),
+                              showSemesterBadge:
+                                  SchoolCalendarHelper.isDayInSemester(
+                                    day: date,
+                                    semesters: semesters,
+                                    schooldays: schooldays,
+                                  ),
+                              missedCount: missedCountByDate[key] ?? 0,
+                              eventCount: eventCountByDate[key] ?? 0,
+                            );
+                          },
+                          todayBuilder: (context, date, focusedDay) {
+                            final key = DateTime(
+                              date.year,
+                              date.month,
+                              date.day,
+                            );
+                            return schooldayCalendarDayCell(
+                              context,
+                              date,
+                              backgroundColor: Theme.of(context).highlightColor,
+                              textColor: Colors.white,
+                              isFirstSemester:
+                                  SchoolCalendarHelper.isDayInFirstSemester(
+                                    day: date,
+                                    semesters: semesters,
+                                    schooldays: schooldays,
+                                  ),
+                              showSemesterBadge:
+                                  SchoolCalendarHelper.isDayInSemester(
+                                    day: date,
+                                    semesters: semesters,
+                                    schooldays: schooldays,
+                                  ),
+                              missedCount: missedCountByDate[key] ?? 0,
+                              eventCount: eventCountByDate[key] ?? 0,
+                            );
+                          },
+                        ),
+                        firstDay: kFirstDay,
+                        lastDay: kLastDay,
+                        focusedDay: focusedDayValue,
+                        eventLoader: (day) =>
+                            SchoolCalendarHelper.getEventsForDay(
+                              day,
+                              schooldays,
+                            ),
+                        calendarFormat: calendarFormatValue,
+                        onDaySelected: (selected, focused) {
+                          if (!isSameDay(selectedDayValue, selected)) {
+                            selectedDay.value = selected;
+                            focusedDay.value = focused;
+                          }
+                        },
+                        onDayLongPressed: (selected, focused) async {
+                          if (!di<HubSessionManager>().isAdmin) {
+                            di<NotificationService>().showInformationDialog(
+                              'Keine Berechtigung für das Löschen von Schultagen.',
+                            );
+                            return;
+                          }
+                          final bool? confirm = await confirmationDialog(
+                            context: context,
+                            title: 'Schultag löschen',
+                            message:
+                                'Möchtest du den Schultag ${selected.formatDateForUser()} wirklich löschen?',
+                          );
+                          if (confirm == null || !confirm) return;
+                          await di<SchoolCalendarManager>().deleteSchoolday(
+                            selected,
+                          );
+                        },
+                        onFormatChanged: (format) {
+                          if (calendarFormatValue != format) {
+                            calendarFormat.value = format;
+                          }
+                        },
+                        onPageChanged: (focused) {
+                          focusedDay.value = focused;
+                        },
+                      ),
                     ),
-                    selectedDayPredicate: (day) {
-                      // check if the day is in schooldays
-                      bool isSchoolday = schooldays.any(
-                        (element) => element.schoolday.isSameDate(day),
-                      );
-                      return isSchoolday;
-                    },
-                    locale: 'de_DE',
-                    availableCalendarFormats: const {
-                      CalendarFormat.month: 'Month',
-                    },
-                    enabledDayPredicate: (day) => schooldayDates.any(
-                      (element) => element.isSameDate(day),
-                    ),
-                    calendarBuilders: CalendarBuilders(
-                      singleMarkerBuilder: null,
-                      defaultBuilder: (context, date, focusedDay) => _dayCell(
-                        context,
-                        date,
-                        showFirstSemesterBadge: _isDayInFirstSemester(
-                          day: date,
-                          semesters: semesters,
-                        ),
-                      ),
-                      disabledBuilder: (context, date, focusedDay) => _dayCell(
-                        context,
-                        date,
-                        fadedText: true,
-                        showFirstSemesterBadge: _isDayInFirstSemester(
-                          day: date,
-                          semesters: semesters,
-                        ),
-                      ),
-                      outsideBuilder: (context, date, focusedDay) => _dayCell(
-                        context,
-                        date,
-                        fadedText: true,
-                        showFirstSemesterBadge: _isDayInFirstSemester(
-                          day: date,
-                          semesters: semesters,
-                        ),
-                      ),
-                      selectedBuilder: (context, date, focusedDay) => _dayCell(
-                        context,
-                        date,
-                        backgroundColor: Theme.of(context).primaryColor,
-                        textColor: Colors.white,
-                        showFirstSemesterBadge: _isDayInFirstSemester(
-                          day: date,
-                          semesters: semesters,
-                        ),
-                      ),
-                      // singleMarkerBuilder: (context, date, events) =>
-                      //     Container(
-                      //   margin: const EdgeInsets.all(4.0),
-                      //   alignment: Alignment.center,
-                      //   decoration: BoxDecoration(
-                      //       color: Theme.of(context).primaryColor,
-                      //       borderRadius: BorderRadius.circular(20.0)),
-                      //   child: Text(
-                      //     date.day.toString(),
-                      //     style: const TextStyle(color: Colors.white),
-                      //   ),
-                      // ),
-                      // selectedBuilder: (context, day, focusedDay) => Container(
-                      //     margin: const EdgeInsets.all(4.0),
-                      //     alignment: Alignment.center,
-                      //     decoration: BoxDecoration(
-                      //         color: Theme.of(context).primaryColor,
-                      //         borderRadius: BorderRadius.circular(25.0)),
-                      //     child: Text(
-                      //       day.day.toString(),
-                      //       style: TextStyle(color: Colors.white),
-                      //     )),
-                      todayBuilder: (context, date, focusedDay) => _dayCell(
-                        context,
-                        date,
-                        backgroundColor: Theme.of(context).highlightColor,
-                        textColor: Colors.white,
-                        showFirstSemesterBadge: _isDayInFirstSemester(
-                          day: date,
-                          semesters: semesters,
-                        ),
-                      ),
-                    ),
-                    firstDay: kFirstDay,
-                    lastDay: kLastDay,
-                    focusedDay: _focusedDay,
-                    eventLoader: _getEventsForDay,
-                    calendarFormat: _calendarFormat,
-                    onDaySelected: (selectedDay, focusedDay) {
-                      if (!isSameDay(_selectedDay, selectedDay)) {
-                        // Call `setState()` when updating the selected day
-                        setState(() {
-                          _selectedDay = selectedDay;
-                          _focusedDay = focusedDay;
-                        });
-                      }
-                    },
-                    onDayLongPressed: (selectedDay, focusedDay) async {
-                      final bool? confirm = await confirmationDialog(
-                        context: context,
-                        title: 'Schultag löschen',
-                        message:
-                            'Möchtest du den Schultag ${selectedDay.formatDateForUser()} wirklich löschen?',
-                      );
-                      if (confirm == null || !confirm) return;
-                      await _schoolCalendarManager.deleteSchoolday(selectedDay);
-                    },
-                    onFormatChanged: (format) {
-                      if (_calendarFormat != format) {
-                        // Call `setState()` when updating calendar format
-                        setState(() {
-                          _calendarFormat = format;
-                        });
-                      }
-                    },
-                    onPageChanged: (focusedDay) {
-                      // No need to call `setState()` here
-                      _focusedDay = focusedDay;
-                    },
                   ),
                 ),
               ),
               SliverToBoxAdapter(
-                child: _selectedDay != null
-                    ? Row(
-                        children: [
-                          const Gap(15),
-                          Text(
-                            DateFormat(
-                              'EEEE',
-                              Localizations.localeOf(context).toString(),
-                            ).format(_selectedDay!),
-                            style: const TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const Gap(5),
-                          Text(
-                            ' ${_selectedDay?.formatDateForUser()}',
-                            style: const TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const Gap(40),
-                          // Text(
-                          //     missedSchooldays
-                          //         .where((missedSchoolday) =>
-                          //             missedSchoolday.missedType == 'missed')
-                          //         .length
-                          //         .toString(),
-                          //     style: const TextStyle(
-                          //         fontSize: 28.0, fontWeight: FontWeight.bold)),
-                          // const Gap(20)
-                        ],
+                child: selectedDayValue != null
+                    ? Builder(
+                        builder: (context) {
+                          final key = DateTime(
+                            selectedDayValue.year,
+                            selectedDayValue.month,
+                            selectedDayValue.day,
+                          );
+                          final missed = missedCountByDate[key] ?? 0;
+                          final events = eventCountByDate[key] ?? 0;
+                          return Row(
+                            children: [
+                              const Gap(15),
+                              Expanded(
+                                child: Text(
+                                  '${DateFormat('EEEE', Localizations.localeOf(context).toString()).format(selectedDayValue)} ${selectedDayValue.formatDateForUser()}',
+                                  style: const TextStyle(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const Gap(10),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.person_off,
+                                  color: !showEventsValue
+                                      ? AppColors.backgroundColor
+                                      : null,
+                                ),
+                                onPressed: () => showEvents.value = false,
+                              ),
+                              Text(
+                                '$missed',
+                                style: TextStyle(
+                                  fontSize: 22.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: !showEventsValue
+                                      ? AppColors.backgroundColor
+                                      : null,
+                                ),
+                              ),
+                              const Gap(10),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.warning_rounded,
+                                  color: showEventsValue
+                                      ? AppColors.cancelButtonColor
+                                      : null,
+                                ),
+                                onPressed: () => showEvents.value = true,
+                              ),
+                              Text(
+                                '$events',
+                                style: TextStyle(
+                                  fontSize: 22.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: showEventsValue
+                                      ? AppColors.cancelButtonColor
+                                      : null,
+                                ),
+                              ),
+                              const Gap(15),
+                            ],
+                          );
+                        },
                       )
                     : const Row(
                         children: [
@@ -397,17 +433,56 @@ class SchooldaysCalendarState extends State<SchooldaysCalendarPage> {
                         ],
                       ),
               ),
-              // SliverList(
-              //   delegate: SliverChildBuilderDelegate(
-              //     (BuildContext context, int index) {
-              //       return AttendanceCard(
-              //           locator<PupilManager>()
-              //               .getPupilById(missedSchooldays[index].missedPupilId)!,
-              //           _selectedDay!);
-              //     },
-              //     childCount: missedSchooldays.length,
-              //   ),
-              // )
+              if (selectedDayValue != null)
+                Builder(
+                  builder: (context) {
+                    final key = DateTime(
+                      selectedDayValue.year,
+                      selectedDayValue.month,
+                      selectedDayValue.day,
+                    );
+                    if (showEventsValue) {
+                      // -- Schoolday events mode --
+                      final eventsForDay =
+                          eventManager.schooldayEventsByDate[key] ?? [];
+                      // Deduplicate by pupilId to show one card per pupil.
+                      final uniquePupilIds = eventsForDay
+                          .map((e) => e.pupilId)
+                          .toSet()
+                          .toList();
+                      return SliverList(
+                        delegate: SliverChildBuilderDelegate((
+                          BuildContext context,
+                          int index,
+                        ) {
+                          final pupil = di<PupilProxyManager>()
+                              .getPupilByPupilId(uniquePupilIds[index]);
+                          if (pupil == null) return const SizedBox.shrink();
+                          return SchooldayEventPupilListCard(pupil);
+                        }, childCount: uniquePupilIds.length),
+                      );
+                    } else {
+                      // -- Missed schooldays mode --
+                      final missedForDay =
+                          di<AttendanceManager>().missedSchooldaysByDate[key] ??
+                          [];
+                      return SliverList(
+                        delegate: SliverChildBuilderDelegate((
+                          BuildContext context,
+                          int index,
+                        ) {
+                          final missed = missedForDay[index];
+                          final pupil = di<PupilProxyManager>()
+                              .getPupilByPupilId(missed.pupilId);
+                          if (pupil == null) return const SizedBox.shrink();
+                          return AttendanceCard(pupil, selectedDayValue);
+                        }, childCount: missedForDay.length),
+                      );
+                    }
+                  },
+                )
+              else
+                const SliverToBoxAdapter(child: SizedBox.shrink()),
             ],
           ),
         ),

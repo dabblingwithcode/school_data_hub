@@ -82,9 +82,6 @@ dependencies:
   community_charts_flutter: ^1.0.4
   go_router: ^17.0.0
   just_audio: ^0.10.5
-  signals: ^6.3.0
-  signals_hooks: ^0.4.0
-  flutter_hooks: ^0.20.5
   sliver_dashboard: ^0.1.3
 
 
@@ -109,7 +106,7 @@ flutter:
   assets:
     - assets/
     - shorebird.yaml
-    # - shorebird.yaml
+    - assets/fonts/
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

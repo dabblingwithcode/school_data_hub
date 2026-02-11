@@ -20,6 +20,7 @@ abstract class PupilBookLending implements _i1.SerializableModel {
     required this.lendingId,
     this.status,
     required this.score,
+    this.bookScore,
     required this.lentAt,
     required this.lentBy,
     this.returnedAt,
@@ -37,6 +38,7 @@ abstract class PupilBookLending implements _i1.SerializableModel {
     required String lendingId,
     String? status,
     required int score,
+    int? bookScore,
     required DateTime lentAt,
     required String lentBy,
     DateTime? returnedAt,
@@ -55,6 +57,7 @@ abstract class PupilBookLending implements _i1.SerializableModel {
       lendingId: jsonSerialization['lendingId'] as String,
       status: jsonSerialization['status'] as String?,
       score: jsonSerialization['score'] as int,
+      bookScore: jsonSerialization['bookScore'] as int?,
       lentAt: _i1.DateTimeJsonExtension.fromJson(jsonSerialization['lentAt']),
       lentBy: jsonSerialization['lentBy'] as String,
       returnedAt: jsonSerialization['returnedAt'] == null
@@ -90,6 +93,8 @@ abstract class PupilBookLending implements _i1.SerializableModel {
 
   int score;
 
+  int? bookScore;
+
   DateTime lentAt;
 
   String lentBy;
@@ -118,6 +123,7 @@ abstract class PupilBookLending implements _i1.SerializableModel {
     String? lendingId,
     String? status,
     int? score,
+    int? bookScore,
     DateTime? lentAt,
     String? lentBy,
     DateTime? returnedAt,
@@ -136,6 +142,7 @@ abstract class PupilBookLending implements _i1.SerializableModel {
       'lendingId': lendingId,
       if (status != null) 'status': status,
       'score': score,
+      if (bookScore != null) 'bookScore': bookScore,
       'lentAt': lentAt.toJson(),
       'lentBy': lentBy,
       if (returnedAt != null) 'returnedAt': returnedAt?.toJson(),
@@ -165,6 +172,7 @@ class _PupilBookLendingImpl extends PupilBookLending {
     required String lendingId,
     String? status,
     required int score,
+    int? bookScore,
     required DateTime lentAt,
     required String lentBy,
     DateTime? returnedAt,
@@ -180,6 +188,7 @@ class _PupilBookLendingImpl extends PupilBookLending {
           lendingId: lendingId,
           status: status,
           score: score,
+          bookScore: bookScore,
           lentAt: lentAt,
           lentBy: lentBy,
           returnedAt: returnedAt,
@@ -201,6 +210,7 @@ class _PupilBookLendingImpl extends PupilBookLending {
     String? lendingId,
     Object? status = _Undefined,
     int? score,
+    Object? bookScore = _Undefined,
     DateTime? lentAt,
     String? lentBy,
     Object? returnedAt = _Undefined,
@@ -217,6 +227,7 @@ class _PupilBookLendingImpl extends PupilBookLending {
       lendingId: lendingId ?? this.lendingId,
       status: status is String? ? status : this.status,
       score: score ?? this.score,
+      bookScore: bookScore is int? ? bookScore : this.bookScore,
       lentAt: lentAt ?? this.lentAt,
       lentBy: lentBy ?? this.lentBy,
       returnedAt: returnedAt is DateTime? ? returnedAt : this.returnedAt,

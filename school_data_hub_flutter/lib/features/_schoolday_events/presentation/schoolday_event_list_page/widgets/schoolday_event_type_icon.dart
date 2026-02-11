@@ -11,45 +11,38 @@ class SchooldayEventTypeIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     switch (type) {
       case SchooldayEventType.parentsMeeting:
+        return const Row(children: [Text('👪️')]);
+      case SchooldayEventType.admonition:
+        return const Icon(Icons.sim_card_alert_rounded, color: Colors.red);
+      case SchooldayEventType.afternoonCareAdmonition:
         return const Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text('👪️'),
+            Icon(Icons.sim_card_alert_rounded, color: Colors.red),
+            Gap(5),
+            Text(
+              'OGS',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         );
-      case SchooldayEventType.admonition:
-        return const Icon(
-          Icons.sim_card_alert_rounded,
-          color: Colors.red,
-        );
-      case SchooldayEventType.afternoonCareAdmonition:
-        return const Row(mainAxisSize: MainAxisSize.min, children: [
-          Icon(
-            Icons.sim_card_alert_rounded,
-            color: Colors.red,
-          ),
-          Gap(5),
-          Text('OGS',
-              style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold)),
-        ]);
       case SchooldayEventType.otherEvent:
         return Icon(Icons.assignment_rounded, color: AppColors.backgroundColor);
       case SchooldayEventType.notSet:
-        return Image.asset('assets/choose.png');
+        return Icon(Icons.touch_app_rounded, color: Colors.grey.shade400);
       case SchooldayEventType.admonitionAndBanned:
-        return Row(mainAxisSize: MainAxisSize.min, children: [
-          const Icon(
-            Icons.sim_card_alert_rounded,
-            color: Colors.red,
-          ),
-          const Gap(5),
-          Icon(
-            Icons.home,
-            color: AppColors.accentColor,
-          )
-        ]);
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.sim_card_alert_rounded, color: Colors.red),
+            const Gap(5),
+            Icon(Icons.home, color: AppColors.accentColor),
+          ],
+        );
     }
   }
 }

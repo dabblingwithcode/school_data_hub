@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -10,7 +9,7 @@ import 'package:school_data_hub_flutter/common/widgets/cached_image_or_download_
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:widget_zoom/widget_zoom.dart';
 
-class UnencryptedImageInCard extends HookWidget {
+class UnencryptedImageInCard extends WatchingWidget {
   final String cacheKey;
   final String path;
   final double size;
@@ -23,14 +22,26 @@ class UnencryptedImageInCard extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final refreshState = useState(0);
-    final randomPart = useMemoized(() => UniqueKey().toString(), []);
-    final imageFuture = useMemoized(
-      () => cachedPublicImageOrDownloadPublicImage(
-        path: path,
-        cacheKey: cacheKey,
+    final refreshState = createOnce(() => ValueNotifier(0));
+    final randomPart = createOnce(() => UniqueKey().toString());
+    // Watch refreshState so rebuilds happen when it changes
+    watch(refreshState);
+
+    // Recompute imageFuture whenever path, cacheKey, or refreshCount changes
+    final imageFuture = createOnce(
+      () => ValueNotifier(
+        cachedPublicImageOrDownloadPublicImage(path: path, cacheKey: cacheKey),
       ),
-      [path, cacheKey, refreshState.value],
+    );
+    // Update the future when refresh changes
+    registerHandler(
+      target: refreshState,
+      handler: (context, value, cancel) {
+        imageFuture.value = cachedPublicImageOrDownloadPublicImage(
+          path: path,
+          cacheKey: cacheKey,
+        );
+      },
     );
 
     return SizedBox(
@@ -52,7 +63,7 @@ class UnencryptedImageInCard extends HookWidget {
           child: WidgetZoom(
             heroAnimationTag: '$cacheKey$randomPart',
             zoomWidget: FutureBuilder<Image>(
-              future: imageFuture,
+              future: watch(imageFuture).value,
               builder: (context, snapshot) {
                 Widget child;
                 if (snapshot.connectionState == ConnectionState.waiting) {

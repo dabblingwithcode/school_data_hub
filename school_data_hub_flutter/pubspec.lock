@@ -526,14 +526,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.4.1"
-  flutter_hooks:
-    dependency: "direct main"
-    description:
-      name: flutter_hooks
-      sha256: cde36b12f7188c85286fba9b38cc5a902e7279f36dd676967106c041dc9dde70
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.20.5"
   flutter_it:
     dependency: "direct main"
     description:
@@ -1182,14 +1174,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.1"
-  preact_signals:
-    dependency: transitive
-    description:
-      name: preact_signals
-      sha256: ad45313c86b2228536a16d3dfc86da8263705d4acb4136c42907378de6910d8c
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.9.4"
   printing:
     dependency: "direct main"
     description:
@@ -1421,38 +1405,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.5"
-  signals:
-    dependency: "direct main"
-    description:
-      name: signals
-      sha256: "0d644f4ec8ce4862c61e3d3d1168d08a7b9b6ecbe067d4f96e26dd35287f5dcd"
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.3.0"
-  signals_core:
-    dependency: transitive
-    description:
-      name: signals_core
-      sha256: ea427bd53619e69e6f6cf244177e3b72870e433065c807600fb496fd80611c9f
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.2.1"
-  signals_flutter:
-    dependency: transitive
-    description:
-      name: signals_flutter
-      sha256: "7c83418f47e3538685217e583f0fbd17a29716fa1a9ce2247e2455786e8ea81a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.3.0"
-  signals_hooks:
-    dependency: "direct main"
-    description:
-      name: signals_hooks
-      sha256: "31f561507886ae27ee9bb0ea19454417e3cf2f007c87dc11dcec12acbe95e02a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.4.0"
   simple_gesture_detector:
     dependency: transitive
     description:

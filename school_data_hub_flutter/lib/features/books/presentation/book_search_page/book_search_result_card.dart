@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions/isbn_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -9,12 +10,11 @@ import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart'
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_list_page/widgets/library_book_card.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/edit_book_page/edit_book_controller.dart';
-import 'package:flutter_it/flutter_it.dart';
 
-class SearchResultBookCard extends WatchingWidget {
+class BookSearchResultCard extends WatchingWidget {
   final List<LibraryBookProxy> group;
 
-  const SearchResultBookCard({super.key, required this.group});
+  const BookSearchResultCard({super.key, required this.group});
 
   @override
   Widget build(BuildContext context) {
