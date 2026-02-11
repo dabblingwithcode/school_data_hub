@@ -1351,12 +1351,13 @@ class Protocol extends _i1.SerializationManager {
                   : deserialize<int>(data['n']['value']),
             ) as T;
     }
-    if (t == _i1.getType<({DateTime value})?>()) {
+    if (t == _i1.getType<({DateTime? value})?>()) {
       return (data == null)
           ? null as T
           : (
-              value:
-                  deserialize<DateTime>(((data as Map)['n'] as Map)['value']),
+              value: ((data as Map)['n'] as Map)['value'] == null
+                  ? null
+                  : deserialize<DateTime>(data['n']['value']),
             ) as T;
     }
     if (t == List<_i95.LearningSupportPlan>) {
@@ -2075,13 +2076,6 @@ Map<String, dynamic>? mapRecordToJson(Record? record) {
     };
   }
   if (record is ({int? value})) {
-    return {
-      "n": {
-        "value": record.value,
-      },
-    };
-  }
-  if (record is ({DateTime value})) {
     return {
       "n": {
         "value": record.value,

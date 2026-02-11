@@ -74,15 +74,16 @@ class CompetenceGoalEndpoint extends Endpoint {
     String publicId, {
     ({String value})? description,
     ({List<String>? value})? strategies,
-    ({String value})? modifiedBy,
+    ({String? value})? modifiedBy,
     ({int? value})? score,
-    ({DateTime value})? achievedAt,
+    ({DateTime? value})? achievedAt,
   }) async {
     final competenceGoal = await CompetenceGoal.db
         .findFirstRow(session, where: (t) => t.publicId.equals(publicId));
     if (competenceGoal == null) {
       throw Exception('Competence goal with id $publicId not found.');
     }
+
     if (description != null) {
       competenceGoal.description = description.value;
     }
@@ -109,15 +110,57 @@ class CompetenceGoalEndpoint extends Endpoint {
 
   Future<PupilData> deleteCompetenceGoal(
       Session session, String publicId) async {
-    final competenceGoal = await CompetenceGoal.db
-        .findFirstRow(session, where: (t) => t.publicId.equals(publicId));
+    final competenceGoal = await CompetenceGoal.db.findFirstRow(
+      session,
+      where: (t) => t.publicId.equals(publicId),
+      include: CompetenceGoal.include(
+        documents: HubDocument.includeList(),
+      ),
+    );
     if (competenceGoal == null) {
       throw Exception('Competence goal with id $publicId not found.');
     }
-    await CompetenceGoal.db.deleteRow(session, competenceGoal);
+
+    final pupilId = competenceGoal.pupilId;
+
+    await session.db.transaction((transaction) async {
+      // Delete attached documents first
+      final documents = competenceGoal.documents;
+      if (documents != null && documents.isNotEmpty) {
+        for (final document in documents) {
+          // Detach the document from the competence goal
+          await CompetenceGoal.db.detachRow.documents(
+            session,
+            document,
+            transaction: transaction,
+          );
+          // Delete the document row from the database
+          await HubDocument.db.deleteRow(
+            session,
+            document,
+            transaction: transaction,
+          );
+          // Delete the file from storage
+          if (document.documentPath != null) {
+            await session.storage.deleteFile(
+              storageId: 'private',
+              path: document.documentPath!,
+            );
+          }
+        }
+      }
+
+      // Delete the competence goal
+      await CompetenceGoal.db.deleteRow(
+        session,
+        competenceGoal,
+        transaction: transaction,
+      );
+    });
+
     final pupil = await PupilData.db.findById(
       session,
-      competenceGoal.pupilId,
+      pupilId,
       include: PupilSchemas.allInclude,
     );
     return pupil!;

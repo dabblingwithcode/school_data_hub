@@ -20,6 +20,7 @@ import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_competence_goals/new_competence_goal_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
 class CompetenceGoalCard extends StatelessWidget {
@@ -37,6 +38,14 @@ class CompetenceGoalCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(25.0),
       child: Card(
         child: InkWell(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) =>
+                    NewCompetenceGoalPage(existingGoal: pupilGoal),
+              ),
+            );
+          },
           onLongPress: () async {
             final isAuthorized =
                 di<HubSessionManager>().isAdmin ||
@@ -217,7 +226,7 @@ class _AchievedAtRow extends StatelessWidget {
 
   bool get _isAchieved {
     // A "zero" date (year <= 1) means not yet achieved
-    return pupilGoal.achievedAt.year > 1;
+    return pupilGoal.achievedAt != null;
   }
 
   @override
@@ -250,7 +259,7 @@ class _AchievedAtRow extends StatelessWidget {
           const Gap(10),
           Text(
             _isAchieved
-                ? pupilGoal.achievedAt.formatDateForUser()
+                ? pupilGoal.achievedAt!.formatDateForUser()
                 : 'Nicht erreicht - Tippen zum Setzen',
             style: TextStyle(
               fontWeight: FontWeight.bold,

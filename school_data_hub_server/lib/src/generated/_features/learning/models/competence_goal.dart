@@ -25,9 +25,9 @@ abstract class CompetenceGoal
     this.strategies,
     required this.createdBy,
     required this.createdAt,
-    required this.modifiedBy,
+    this.modifiedBy,
     this.score,
-    required this.achievedAt,
+    this.achievedAt,
     required this.pupilId,
     this.pupil,
     required this.competenceId,
@@ -42,9 +42,9 @@ abstract class CompetenceGoal
     List<String>? strategies,
     required String createdBy,
     required DateTime createdAt,
-    required String modifiedBy,
+    String? modifiedBy,
     int? score,
-    required DateTime achievedAt,
+    DateTime? achievedAt,
     required int pupilId,
     _i2.PupilData? pupil,
     required int competenceId,
@@ -63,10 +63,11 @@ abstract class CompetenceGoal
       createdBy: jsonSerialization['createdBy'] as String,
       createdAt:
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
-      modifiedBy: jsonSerialization['modifiedBy'] as String,
+      modifiedBy: jsonSerialization['modifiedBy'] as String?,
       score: jsonSerialization['score'] as int?,
-      achievedAt:
-          _i1.DateTimeJsonExtension.fromJson(jsonSerialization['achievedAt']),
+      achievedAt: jsonSerialization['achievedAt'] == null
+          ? null
+          : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['achievedAt']),
       pupilId: jsonSerialization['pupilId'] as int,
       pupil: jsonSerialization['pupil'] == null
           ? null
@@ -100,11 +101,11 @@ abstract class CompetenceGoal
 
   DateTime createdAt;
 
-  String modifiedBy;
+  String? modifiedBy;
 
   int? score;
 
-  DateTime achievedAt;
+  DateTime? achievedAt;
 
   int pupilId;
 
@@ -147,9 +148,9 @@ abstract class CompetenceGoal
       if (strategies != null) 'strategies': strategies?.toJson(),
       'createdBy': createdBy,
       'createdAt': createdAt.toJson(),
-      'modifiedBy': modifiedBy,
+      if (modifiedBy != null) 'modifiedBy': modifiedBy,
       if (score != null) 'score': score,
-      'achievedAt': achievedAt.toJson(),
+      if (achievedAt != null) 'achievedAt': achievedAt?.toJson(),
       'pupilId': pupilId,
       if (pupil != null) 'pupil': pupil?.toJson(),
       'competenceId': competenceId,
@@ -168,9 +169,9 @@ abstract class CompetenceGoal
       if (strategies != null) 'strategies': strategies?.toJson(),
       'createdBy': createdBy,
       'createdAt': createdAt.toJson(),
-      'modifiedBy': modifiedBy,
+      if (modifiedBy != null) 'modifiedBy': modifiedBy,
       if (score != null) 'score': score,
-      'achievedAt': achievedAt.toJson(),
+      if (achievedAt != null) 'achievedAt': achievedAt?.toJson(),
       'pupilId': pupilId,
       if (pupil != null) 'pupil': pupil?.toJsonForProtocol(),
       'competenceId': competenceId,
@@ -229,9 +230,9 @@ class _CompetenceGoalImpl extends CompetenceGoal {
     List<String>? strategies,
     required String createdBy,
     required DateTime createdAt,
-    required String modifiedBy,
+    String? modifiedBy,
     int? score,
-    required DateTime achievedAt,
+    DateTime? achievedAt,
     required int pupilId,
     _i2.PupilData? pupil,
     required int competenceId,
@@ -265,9 +266,9 @@ class _CompetenceGoalImpl extends CompetenceGoal {
     Object? strategies = _Undefined,
     String? createdBy,
     DateTime? createdAt,
-    String? modifiedBy,
+    Object? modifiedBy = _Undefined,
     Object? score = _Undefined,
-    DateTime? achievedAt,
+    Object? achievedAt = _Undefined,
     int? pupilId,
     Object? pupil = _Undefined,
     int? competenceId,
@@ -283,9 +284,9 @@ class _CompetenceGoalImpl extends CompetenceGoal {
           : this.strategies?.map((e0) => e0).toList(),
       createdBy: createdBy ?? this.createdBy,
       createdAt: createdAt ?? this.createdAt,
-      modifiedBy: modifiedBy ?? this.modifiedBy,
+      modifiedBy: modifiedBy is String? ? modifiedBy : this.modifiedBy,
       score: score is int? ? score : this.score,
-      achievedAt: achievedAt ?? this.achievedAt,
+      achievedAt: achievedAt is DateTime? ? achievedAt : this.achievedAt,
       pupilId: pupilId ?? this.pupilId,
       pupil: pupil is _i2.PupilData? ? pupil : this.pupil?.copyWith(),
       competenceId: competenceId ?? this.competenceId,

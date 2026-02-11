@@ -6,9 +6,9 @@ fields:
   strategies: List<String>?
   createdBy: String
   createdAt: DateTime
-  modifiedBy: String
+  modifiedBy: String?
   score: int?
-  achievedAt: DateTime
+  achievedAt: DateTime?
   pupil: PupilData?, relation(name=competence_goal_pupil)
   competence: Competence?, relation(name=competence_goal_competence)
   documents: List<HubDocument>?, relation

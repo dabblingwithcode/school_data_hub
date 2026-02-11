@@ -3022,9 +3022,9 @@ class _CompetenceGoalEndpoint {
     String publicId, {
     ({String value})? description,
     ({List<String>? value})? strategies,
-    ({String value})? modifiedBy,
+    ({String? value})? modifiedBy,
     ({int? value})? score,
-    ({DateTime value})? achievedAt,
+    ({DateTime? value})? achievedAt,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =

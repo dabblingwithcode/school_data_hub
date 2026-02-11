@@ -299,7 +299,7 @@ class CompetenceManager {
   Future<void> updateCompetenceGoal({
     required String publicId,
     ({int? value})? score,
-    ({DateTime value})? achievedAt,
+    ({DateTime? value})? achievedAt,
     ({String value})? description,
     ({List<String>? value})? strategies,
   }) async {

@@ -1064,9 +1064,9 @@ class EndpointCompetenceGoal extends _i1.EndpointRef {
     String publicId, {
     ({String value})? description,
     ({List<String>? value})? strategies,
-    ({String value})? modifiedBy,
+    ({String? value})? modifiedBy,
     ({int? value})? score,
-    ({DateTime value})? achievedAt,
+    ({DateTime? value})? achievedAt,
   }) =>
       caller.callServerEndpoint<_i5.PupilData>(
         'competenceGoal',

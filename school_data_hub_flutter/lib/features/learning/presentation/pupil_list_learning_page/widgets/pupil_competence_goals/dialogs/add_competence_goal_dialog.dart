@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class AddCompetenceGoalDialog extends WatchingStatefulWidget {
   final int pupilId;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_competence_goals/dialogs/add_competence_goal_dialog.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_competence_goals/new_competence_goal_page.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_goals_widget.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/select_competence_page/select_competence_view_model.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -34,13 +34,13 @@ class PupilLearningContentCompetenceGoals extends StatelessWidget {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => SelectCompetence(
-                        onSelected: (ctx, competence) async {
-                          Navigator.of(ctx).pop();
-                          await showDialog(
-                            context: context,
-                            builder: (context) => AddCompetenceGoalDialog(
-                              pupilId: pupil.pupilId,
-                              competenceId: competence.publicId,
+                        onSelected: (ctx, competence) {
+                          Navigator.of(ctx).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) => NewCompetenceGoalPage(
+                                pupilId: pupil.pupilId,
+                                competenceId: competence.publicId,
+                              ),
                             ),
                           );
                         },

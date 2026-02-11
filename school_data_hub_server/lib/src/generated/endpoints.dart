@@ -2318,7 +2318,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'modifiedBy': _i1.ParameterDescription(
               name: 'modifiedBy',
-              type: _i1.getType<({String value})?>(),
+              type: _i1.getType<({String? value})?>(),
               nullable: true,
             ),
             'score': _i1.ParameterDescription(
@@ -2328,7 +2328,7 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'achievedAt': _i1.ParameterDescription(
               name: 'achievedAt',
-              type: _i1.getType<({DateTime value})?>(),
+              type: _i1.getType<({DateTime? value})?>(),
               nullable: true,
             ),
           },
