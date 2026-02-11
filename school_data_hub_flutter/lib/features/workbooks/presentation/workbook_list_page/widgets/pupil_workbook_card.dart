@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
@@ -17,7 +18,7 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/enums.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/widgets/competence_check_dropdown.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_flutter/features/workbooks/presentation/new_workbook_page/new_workbook_page.dart';
 
 class PupilWorkbookCard extends WatchingWidget {
   const PupilWorkbookCard({
@@ -42,7 +43,7 @@ class PupilWorkbookCard extends WatchingWidget {
       (value) => di<PupilWorkbookManager>().getPupilWorkbooks(pupilId),
       target: PupilWorkbookManager(),
     );
-    final thisPupilWorkbook = pupilWorkbooks.firstWhere(
+    final PupilWorkbook thisPupilWorkbook = pupilWorkbooks.firstWhere(
       (pupilWorkbook) => pupilWorkbook.id == this.pupilWorkbook.id,
     );
     return ClipRRect(
@@ -112,10 +113,10 @@ class PupilWorkbookCard extends WatchingWidget {
                             );
                           },
                           child: UnencryptedImageInCard(
-                                  cacheKey: pupilWorkbook.isbn.toString(),
-                                  path: thisPupilWorkbook.workbook!.imageUrl,
-                                  size: 100,
-                                ),
+                            cacheKey: pupilWorkbook.isbn.toString(),
+                            path: thisPupilWorkbook.workbook!.imageUrl,
+                            size: 100,
+                          ),
                         ),
 
                         const Gap(10),
@@ -130,14 +131,29 @@ class PupilWorkbookCard extends WatchingWidget {
                           children: [
                             Row(
                               children: [
-                                Expanded(
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Text(
-                                      workbook.name,
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
+                                InkWell(
+                                  onLongPress: () {
+                                    //navigate to edit workbook page
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => NewWorkbookPage(
+                                          isbn: workbook.isbn,
+                                          isEdit: true,
+                                          workbook: workbook,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Expanded(
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Text(
+                                        workbook.name,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -163,99 +179,104 @@ class PupilWorkbookCard extends WatchingWidget {
                             // const Gap(5),
                             Row(
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          workbook.subject != null
-                                              ? RootCompetenceType
-                                                    .stringToValue[workbook
-                                                        .subject]!
-                                                    .value
-                                              : 'Fach nicht bekannt',
-                                          overflow: TextOverflow.fade,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            workbook.subject != null
+                                                ? RootCompetenceType
+                                                      .stringToValue[workbook
+                                                          .subject]!
+                                                      .value
+                                                : 'Fach nicht bekannt',
+                                            overflow: TextOverflow.fade,
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                        const Gap(5),
-                                        workbook.level != null
-                                            ? GradesWidget(
-                                                stringWithGrades:
-                                                    workbook.level!,
-                                              )
-                                            : const Text('nicht vorhanden'),
-                                      ],
-                                    ),
-                                    const Gap(5),
-                                    Row(
-                                      children: [
-                                        InkWell(
-                                          onTap: () async {
-                                            if (!(di<HubSessionManager>()
-                                                        .userName ==
-                                                    thisPupilWorkbook
-                                                        .createdBy) ||
-                                                di<HubSessionManager>()
-                                                    .isAdmin) {
-                                              informationDialog(
-                                                context,
-                                                'Keine Berechtigung',
-                                                'Arbeitshefte können nur von der eingetragenen Person oder von einem Admin bearbeitet werden!',
-                                              );
-                                              return;
-                                            }
-                                            final createdBy =
-                                                await shortTextfieldDialog(
-                                                  context: context,
-                                                  title: 'Betreuer:in ändern',
-                                                  labelText:
-                                                      'Betreuer:in eintragen',
-                                                  hintText:
-                                                      'Wer soll das Arbeitsheft betreuen?',
+                                          const Gap(5),
+                                          workbook.level != null
+                                              ? GradesWidget(
+                                                  stringWithGrades:
+                                                      workbook.level!,
+                                                )
+                                              : const Text('nicht vorhanden'),
+                                        ],
+                                      ),
+                                      const Gap(5),
+                                      Row(
+                                        children: [
+                                          InkWell(
+                                            onTap: () async {
+                                              if (!(di<HubSessionManager>()
+                                                          .userName ==
+                                                      thisPupilWorkbook
+                                                          .createdBy) ||
+                                                  di<HubSessionManager>()
+                                                      .isAdmin) {
+                                                informationDialog(
+                                                  context,
+                                                  'Keine Berechtigung',
+                                                  'Arbeitshefte können nur von der eingetragenen Person oder von einem Admin bearbeitet werden!',
                                                 );
-                                            if (createdBy == null) return;
-                                            di<PupilWorkbookManager>()
-                                                .updatePupilWorkbook(
-                                                  pupilWorkbook:
-                                                      thisPupilWorkbook,
-                                                  createdBy: createdBy,
-                                                );
-                                          },
-                                          child: Text(
-                                            thisPupilWorkbook.createdBy,
+                                                return;
+                                              }
+                                              final createdBy =
+                                                  await shortTextfieldDialog(
+                                                    context: context,
+                                                    title: 'Betreuer:in ändern',
+                                                    labelText:
+                                                        'Betreuer:in eintragen',
+                                                    hintText:
+                                                        'Wer soll das Arbeitsheft betreuen?',
+                                                  );
+                                              if (createdBy == null) return;
+                                              di<PupilWorkbookManager>()
+                                                  .updatePupilWorkbook(
+                                                    pupilWorkbook:
+                                                        thisPupilWorkbook,
+                                                    createdBy: createdBy,
+                                                  );
+                                            },
+                                            child: Text(
+                                              thisPupilWorkbook.createdBy,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                          const Gap(2),
+                                          const Icon(
+                                            Icons.arrow_circle_right_rounded,
+                                            color: Colors.orange,
+                                          ),
+                                          const Gap(2),
+                                          Text(
+                                            thisPupilWorkbook.createdAt
+                                                .formatDateForUser(),
                                             style: const TextStyle(
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                        ),
-                                        const Gap(2),
-                                        const Icon(
-                                          Icons.arrow_circle_right_rounded,
-                                          color: Colors.orange,
-                                        ),
-                                        const Gap(2),
-                                        Text(
-                                          thisPupilWorkbook.createdAt
-                                              .formatDateForUser(),
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const Gap(10),
-                                  ],
+                                        ],
+                                      ),
+                                      const Gap(5),
+
+                                      const Gap(10),
+                                    ],
+                                  ),
                                 ),
-                                const Spacer(),
+                                const Gap(10),
                                 Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     GrowthDropdown(
-                                      dropdownValue:
-                                          thisPupilWorkbook.score ?? 0,
+                                      dropdownValue: thisPupilWorkbook.score,
                                       onChangedFunction:
                                           onChangedGrowthDropdown,
                                     ),
@@ -263,6 +284,7 @@ class PupilWorkbookCard extends WatchingWidget {
                                 ),
                               ],
                             ),
+                            _FinishedAtRow(pupilWorkbook: thisPupilWorkbook),
                           ],
                         ),
                       ),
@@ -304,6 +326,71 @@ class PupilWorkbookCard extends WatchingWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Displays the finished-at date with a tappable date picker.
+class _FinishedAtRow extends StatelessWidget {
+  const _FinishedAtRow({required this.pupilWorkbook});
+
+  final PupilWorkbook pupilWorkbook;
+
+  bool get _isFinished =>
+      pupilWorkbook.finishedAt != null && pupilWorkbook.finishedAt!.year > 1;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () async {
+        final picked = await showDatePicker(
+          context: context,
+          initialDate: _isFinished ? pupilWorkbook.finishedAt! : DateTime.now(),
+          firstDate: DateTime(2020),
+          lastDate: DateTime.now().add(const Duration(days: 365)),
+        );
+        if (picked == null) return;
+
+        di<PupilWorkbookManager>().updatePupilWorkbook(
+          pupilWorkbook: pupilWorkbook,
+          finishedAt: (value: picked),
+        );
+      },
+      borderRadius: BorderRadius.circular(8),
+      child: Row(
+        children: [
+          Icon(
+            _isFinished ? Icons.check_circle : Icons.radio_button_unchecked,
+            color: _isFinished ? Colors.green : Colors.grey,
+            size: 22,
+          ),
+          const Gap(8),
+          if (_isFinished) const Text('Abgeschlossen am:'),
+          const Gap(10),
+          Text(
+            _isFinished
+                ? pupilWorkbook.finishedAt!.formatDateForUser()
+                : 'Als abgeschlossen markieren',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: _isFinished ? Colors.green : AppColors.interactiveColor,
+            ),
+          ),
+          if (_isFinished) ...[
+            const Gap(20),
+            IconButton(
+              icon: const Icon(Icons.clear, color: Colors.red, size: 20),
+              tooltip: 'Datum entfernen',
+              onPressed: () {
+                di<PupilWorkbookManager>().updatePupilWorkbook(
+                  pupilWorkbook: pupilWorkbook,
+                  finishedAt: (value: null),
+                );
+              },
+            ),
+          ],
+        ],
       ),
     );
   }

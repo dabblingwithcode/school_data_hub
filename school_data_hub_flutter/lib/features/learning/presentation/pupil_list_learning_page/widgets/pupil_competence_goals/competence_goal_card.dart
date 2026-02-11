@@ -255,12 +255,12 @@ class _AchievedAtRow extends StatelessWidget {
             size: 22,
           ),
           const Gap(8),
-          const Text('Erreicht am:'),
+          if (_isAchieved) const Text('Erreicht am:'),
           const Gap(10),
           Text(
             _isAchieved
                 ? pupilGoal.achievedAt!.formatDateForUser()
-                : 'Nicht erreicht - Tippen zum Setzen',
+                : 'Als erreicht markieren',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: _isAchieved ? Colors.green : AppColors.interactiveColor,

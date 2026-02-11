@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -7,23 +8,19 @@ import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_enums
     as workbookEnum;
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/common/workbook_image.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class NewWorkbookPage extends WatchingWidget {
-  final String? name;
   final int isbn;
-  final String? subject;
-  final String? level;
+
   final int? amount;
   final bool isEdit;
   final Workbook? workbook;
 
   const NewWorkbookPage({
     required this.isEdit,
-    this.name,
+
     required this.isbn,
-    this.subject,
-    this.level,
+
     this.amount,
     this.workbook,
     super.key,
@@ -50,27 +47,29 @@ class NewWorkbookPage extends WatchingWidget {
 
     callOnce((context) async {
       await di<WorkbookManager>().fetchWorkbookByIsbn(isbn);
-      // final workbook = di<WorkbookManager>()
-      //     .workbooks
-      //     .value
-      //     .firstWhere((element) => element.isbn == isbn);
+
       if (isEdit) {
-        workbookNameTextFieldController.text = name ?? '';
-        if (subject != null) {
+        workbookNameTextFieldController.text = workbook!.name ?? '';
+        if (workbook!.subject != null) {
           selectedSubject.value = workbookEnum.Subject.values
               .cast<workbookEnum.Subject?>()
               .firstWhere(
-                (s) => s?.name == subject || s?.code == subject,
+                (s) =>
+                    s?.name == workbook!.subject ||
+                    s?.code == workbook!.subject,
                 orElse: () => null,
               );
         }
-        if (level != null && level!.isNotEmpty) {
-          final levelNames = level!.split(',').map((l) => l.trim()).toSet();
+        if (workbook!.level != null && workbook!.level!.isNotEmpty) {
+          final levelNames = workbook!.level!
+              .split(',')
+              .map((l) => l.trim())
+              .toSet();
           selectedGrades.value = workbookEnum.Grade.values
               .where((g) => levelNames.contains(g.name))
               .toSet();
         }
-        amountTextFieldController.text = amount != null
+        amountTextFieldController.text = workbook!.amount != null
             ? amount!.toString()
             : '';
       }

@@ -108,14 +108,15 @@ class PupilWorkbookManager with ChangeNotifier {
     int? score,
     String? createdBy,
     DateTime? createdAt,
-    DateTime? finishedAt,
+    /// Use [finishedAt: (value: date)] to set, [finishedAt: (value: null)] to clear.
+    ({DateTime? value})? finishedAt,
   }) async {
     final PupilWorkbook pupilWorkbookToUpdate = pupilWorkbook.copyWith(
       comment: comment != null ? comment.value : pupilWorkbook.comment,
       score: score ?? pupilWorkbook.score,
       createdBy: createdBy ?? pupilWorkbook.createdBy,
       createdAt: createdAt ?? pupilWorkbook.createdAt,
-      finishedAt: finishedAt ?? pupilWorkbook.finishedAt,
+      finishedAt: finishedAt != null ? finishedAt.value : pupilWorkbook.finishedAt,
     );
 
     final updatedPupilWorkbook = await ClientHelper.apiCall(

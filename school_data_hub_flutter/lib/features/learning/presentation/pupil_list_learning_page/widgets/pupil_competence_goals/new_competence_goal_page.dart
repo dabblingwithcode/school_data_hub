@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 
@@ -128,8 +129,9 @@ class _NewCompetenceGoalPageState extends State<NewCompetenceGoalPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_isEditMode ? 'Lernziel bearbeiten' : 'Neues Lernziel'),
+      appBar: GenericAppBar(
+        iconData: Icons.emoji_nature_rounded,
+        title: _isEditMode ? 'Lernziel bearbeiten' : 'Neues Lernziel',
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -289,7 +291,7 @@ class _NewCompetenceGoalPageState extends State<NewCompetenceGoalPage> {
                   ),
                 ),
               ],
-              const Gap(30),
+              const Gap(40),
               Row(
                 children: [
                   Expanded(
@@ -298,6 +300,21 @@ class _NewCompetenceGoalPageState extends State<NewCompetenceGoalPage> {
                       onPressed: _save,
                       child: Text(
                         _isEditMode ? 'SPEICHERN' : 'LERNZIEL ERSTELLEN',
+                        style: AppStyles.buttonTextStyle,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const Gap(10),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: AppStyles.cancelButtonStyle,
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text(
+                        'ABBRECHEN',
                         style: AppStyles.buttonTextStyle,
                       ),
                     ),
