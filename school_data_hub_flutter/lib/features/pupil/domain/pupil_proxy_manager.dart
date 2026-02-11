@@ -365,6 +365,7 @@ class PupilProxyManager extends ChangeNotifier {
     String? lentBy,
     ({String? value})? status,
     ({int? value})? score,
+    ({int? value})? bookScore,
     ({DateTime? value})? returnedAt,
     ({String? value})? receivedBy,
   }) async {
@@ -373,6 +374,9 @@ class PupilProxyManager extends ChangeNotifier {
       lentBy: lentBy ?? pupilBookLending.lentBy,
       status: status != null ? status.value : pupilBookLending.status,
       score: score != null ? score.value : pupilBookLending.score,
+      bookScore: bookScore != null
+          ? bookScore.value
+          : pupilBookLending.bookScore,
       returnedAt: returnedAt != null
           ? returnedAt.value
           : pupilBookLending.returnedAt,

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_tag_management_page/book_tag_management_page.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class BookTagManagement extends WatchingStatefulWidget {
   const BookTagManagement({super.key});
@@ -125,41 +125,30 @@ class BookTagManagementController extends State<BookTagManagement> {
         spacing: 8,
         runSpacing: 8,
         children: bookTags.map((tag) {
-          return Chip(
-            label: Text(tag.name),
-            deleteIcon: const Icon(Icons.more_horiz, size: 18),
-            onDeleted: () {
-              // Using onDeleted to trigger the context menu for edit/delete
-              // because Chip doesn't support context menu directly
-              _showTagOptions(context, tag);
-            },
+          return _BookTagChip(
+            tag: tag,
+            onShowOptions: (offset) => _showTagOptions(context, tag, offset),
           );
         }).toList(),
       ),
     );
   }
 
-  Future<void> _showTagOptions(BuildContext context, BookTag tag) async {
-    final RenderBox? button = context.findRenderObject() as RenderBox?;
-    final overlay =
-        Overlay.of(context).context.findRenderObject() as RenderBox?;
-
-    if (button == null || overlay == null) return;
-
-    final relativePosition = RelativeRect.fromRect(
-      Rect.fromPoints(
-        button.localToGlobal(Offset.zero, ancestor: overlay),
-        button.localToGlobal(
-          button.size.bottomRight(Offset.zero),
-          ancestor: overlay,
-        ),
-      ),
-      Offset.zero & overlay.size,
+  Future<void> _showTagOptions(
+    BuildContext context,
+    BookTag tag,
+    Offset globalPosition,
+  ) async {
+    final position = RelativeRect.fromLTRB(
+      globalPosition.dx,
+      globalPosition.dy,
+      globalPosition.dx,
+      globalPosition.dy,
     );
 
     final result = await showMenu<String>(
       context: context,
-      position: relativePosition,
+      position: position,
       items: [
         const PopupMenuItem<String>(
           value: 'edit',
@@ -200,5 +189,34 @@ class BookTagManagementController extends State<BookTagManagement> {
   Widget build(BuildContext context) {
     final bookTags = watchValue((BookManager x) => x.bookTags);
     return BookTagManagementPage(this, bookTags: bookTags);
+  }
+}
+
+class _BookTagChip extends StatelessWidget {
+  final BookTag tag;
+  final ValueChanged<Offset> onShowOptions;
+
+  const _BookTagChip({required this.tag, required this.onShowOptions});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onLongPressStart: (details) {
+        onShowOptions(details.globalPosition);
+      },
+      onSecondaryTapUp: (details) {
+        onShowOptions(details.globalPosition);
+      },
+      child: Chip(
+        label: Text(tag.name),
+        deleteIcon: const Icon(Icons.more_horiz, size: 18),
+        onDeleted: () {
+          final RenderBox? box = context.findRenderObject() as RenderBox?;
+          if (box == null) return;
+          final offset = box.localToGlobal(box.size.centerRight(Offset.zero));
+          onShowOptions(offset);
+        },
+      ),
+    );
   }
 }

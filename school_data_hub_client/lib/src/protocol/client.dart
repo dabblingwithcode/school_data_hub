@@ -867,6 +867,36 @@ class EndpointPupilBookLending extends _i1.EndpointRef {
         'deletePupilBookLending',
         {'lendingId': lendingId},
       );
+
+  /// Add a file to a PupilBookLending record
+  _i2.Future<_i5.PupilData> addFileToPupilBookLending(
+    String lendingId,
+    String filePath,
+    String createdBy,
+  ) =>
+      caller.callServerEndpoint<_i5.PupilData>(
+        'pupilBookLending',
+        'addFileToPupilBookLending',
+        {
+          'lendingId': lendingId,
+          'filePath': filePath,
+          'createdBy': createdBy,
+        },
+      );
+
+  /// Remove a file from a PupilBookLending record
+  _i2.Future<bool> removeFileFromPupilBookLending(
+    String lendingId,
+    String documentId,
+  ) =>
+      caller.callServerEndpoint<bool>(
+        'pupilBookLending',
+        'removeFileFromPupilBookLending',
+        {
+          'lendingId': lendingId,
+          'documentId': documentId,
+        },
+      );
 }
 
 /// {@category Endpoint}

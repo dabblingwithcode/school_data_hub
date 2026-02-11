@@ -2571,6 +2571,74 @@ class _PupilBookLendingEndpoint {
       }
     });
   }
+
+  _i3.Future<_i6.PupilData> addFileToPupilBookLending(
+    _i1.TestSessionBuilder sessionBuilder,
+    String lendingId,
+    String filePath,
+    String createdBy,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'pupilBookLending',
+        method: 'addFileToPupilBookLending',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'pupilBookLending',
+          methodName: 'addFileToPupilBookLending',
+          parameters: _i1.testObjectToJson({
+            'lendingId': lendingId,
+            'filePath': filePath,
+            'createdBy': createdBy,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i6.PupilData>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<bool> removeFileFromPupilBookLending(
+    _i1.TestSessionBuilder sessionBuilder,
+    String lendingId,
+    String documentId,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'pupilBookLending',
+        method: 'removeFileFromPupilBookLending',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'pupilBookLending',
+          methodName: 'removeFileFromPupilBookLending',
+          parameters: _i1.testObjectToJson({
+            'lendingId': lendingId,
+            'documentId': documentId,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<bool>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
 }
 
 class _CompetenceCheckEndpoint {
