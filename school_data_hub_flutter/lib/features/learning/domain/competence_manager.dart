@@ -277,7 +277,6 @@ class CompetenceManager {
     required String description,
     required List<String> strategies,
   }) async {
-    // TODO: Implement backend call when available
     final pupilData = await _competenceGoalApiService.postCompetenceGoal(
       pupilId: pupilId,
       competenceId: competenceId,
@@ -295,6 +294,72 @@ class CompetenceManager {
     );
 
     return;
+  }
+
+  Future<void> updateCompetenceGoal({
+    required String publicId,
+    ({int? value})? score,
+    ({DateTime value})? achievedAt,
+    ({String value})? description,
+    ({List<String>? value})? strategies,
+  }) async {
+    final updatedPupilData = await _competenceGoalApiService
+        .updateCompetenceGoal(
+          publicId: publicId,
+          score: score,
+          achievedAt: achievedAt,
+          description: description,
+          strategies: strategies,
+        );
+    di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Lernziel aktualisiert',
+    );
+
+    return;
+  }
+
+  Future<void> deleteCompetenceGoal(String publicId) async {
+    final PupilData pupilData = await _competenceGoalApiService
+        .deleteCompetenceGoal(publicId);
+
+    di<PupilProxyManager>().updatePupilProxyWithPupilData(pupilData);
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Lernziel gelöscht',
+    );
+
+    return;
+  }
+
+  Future<void> addFileToCompetenceGoal({
+    required String publicId,
+    required File file,
+  }) async {
+    final encryptedFile = await customEncrypter.encryptFile(file);
+    final createdBy = di<HubSessionManager>().userName;
+    final updatedPupilData = await _competenceGoalApiService
+        .addFileToCompetenceGoal(publicId, encryptedFile, createdBy!);
+    di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Datei zum Lernziel hinzugefügt',
+    );
+
+    return;
+  }
+
+  Future<void> removeFileFromCompetenceGoal({
+    required String publicId,
+    required String documentId,
+  }) async {
+    final updatedPupilData = await _competenceGoalApiService
+        .removeFileFromCompetenceGoal(publicId, documentId);
+    di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
   }
 
   Future<void> updateCompetenceCheck({

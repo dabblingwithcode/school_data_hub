@@ -228,6 +228,7 @@ class PupilBookLending <<table: <b>pupil_book_lending</b>>> #e2f0fb##[bold] {
   <i>lendingId</i>: <b><color:#ff962f>String</color></b>
   <i>status</i>: <b><color:#ff962f>String?</color></b>
   <i>score</i>: <b><color:#ff962f>int</color></b>
+  <i>bookScore</i>: <b><color:#ff962f>int?</color></b>
   <i>lentAt</i>: <b><color:#ff962f>DateTime</color></b>
   <i>lentBy</i>: <b><color:#ff962f>String</color></b>
   <i>returnedAt</i>: <b><color:#ff962f>DateTime?</color></b>
