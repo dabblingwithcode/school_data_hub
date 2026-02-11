@@ -12,12 +12,13 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
 
-class PupilLearningContentBooks extends StatelessWidget {
+class PupilLearningContentBooks extends WatchingWidget {
   final PupilProxy pupil;
   const PupilLearningContentBooks({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {
+    watch(pupil);
     return Column(
       children: [
         const Row(

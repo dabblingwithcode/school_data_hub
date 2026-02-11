@@ -17,7 +17,8 @@ class HubDocumentHelper {
     required String createdBy,
     required String path,
   }) {
-    final documentId = Uuid().v4();
+    final fileExtension = path.split('.').last;
+    final documentId = '${Uuid().v4()}.$fileExtension';
 
     // Create a HubDocument with the file path
     final document = HubDocument(

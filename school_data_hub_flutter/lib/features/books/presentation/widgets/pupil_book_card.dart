@@ -3,8 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:path/path.dart' as p;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
+import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
+import 'package:school_data_hub_flutter/app_utils/record_audio_file.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -12,6 +15,7 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/encrypted_document_audio.dart';
 import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
@@ -464,7 +468,13 @@ String _bookScoreLabel(int score) {
   return 'Ausgezeichnet';
 }
 
-/// Displays existing documents and a button to add new ones.
+/// Whether [doc] represents an audio file based on its extension.
+bool _isAudioDocument(HubDocument doc) {
+  final ext = p.extension(doc.documentId).toLowerCase();
+  return {'.m4a', '.aac', '.wav', '.mp3', '.ogg'}.contains(ext);
+}
+
+/// Displays existing documents/audio and buttons to add new ones.
 class _DocumentsSection extends StatelessWidget {
   const _DocumentsSection({
     required this.pupilBookLending,
@@ -478,6 +488,9 @@ class _DocumentsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final files = pupilBookLending.pupilBookLendingFiles;
     final isAdmin = di<HubSessionManager>().isAdmin;
+    final imageFiles = files?.where((f) => !_isAudioDocument(f)).toList() ?? [];
+    final audioFiles = files?.where((f) => _isAudioDocument(f)).toList() ?? [];
+    final totalCount = (files?.length ?? 0);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -486,56 +499,55 @@ class _DocumentsSection extends StatelessWidget {
         const Gap(4),
         Row(
           children: [
-            if (files != null)
-              for (final file in files) ...[
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => Dialog(
-                            child: Container(
-                              constraints: const BoxConstraints(
-                                maxWidth: 600,
-                                maxHeight: 800,
-                              ),
-                              child: EncryptedDocumentImage(
-                                documentId: file.documentId,
-                                size: 400,
-                              ),
+            for (final file in imageFiles) ...[
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => Dialog(
+                          child: Container(
+                            constraints: const BoxConstraints(
+                              maxWidth: 600,
+                              maxHeight: 800,
+                            ),
+                            child: EncryptedDocumentImage(
+                              documentId: file.documentId,
+                              size: 400,
                             ),
                           ),
+                        ),
+                      );
+                    },
+                    onLongPress: () async {
+                      if (!isAdmin) {
+                        di<NotificationService>().showSnackBar(
+                          NotificationType.error,
+                          'Nur Admins können Dokumente löschen',
                         );
-                      },
-                      onLongPress: () async {
-                        if (!isAdmin) {
-                          di<NotificationService>().showSnackBar(
-                            NotificationType.error,
-                            'Nur Admins können Dokumente löschen',
-                          );
-                          return;
-                        }
-                        final confirm = await confirmationDialog(
-                          context: context,
-                          title: 'Dokument löschen',
-                          message: 'Dokument wirklich löschen?',
-                        );
-                        if (confirm != true) return;
+                        return;
+                      }
+                      final confirm = await confirmationDialog(
+                        context: context,
+                        title: 'Dokument löschen',
+                        message: 'Dokument wirklich löschen?',
+                      );
+                      if (confirm != true) return;
 
-                        await _removeFile(file);
-                      },
-                      child: EncryptedDocumentImage(
-                        documentId: file.documentId,
-                        size: 70,
-                      ),
+                      await _removeFile(file);
+                    },
+                    child: EncryptedDocumentImage(
+                      documentId: file.documentId,
+                      size: 70,
                     ),
-                  ],
-                ),
-                const Gap(10),
-              ],
-            if (files == null || files.length < 4)
+                  ),
+                ],
+              ),
+              const Gap(10),
+            ],
+            if (totalCount < 4) ...[
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -556,8 +568,75 @@ class _DocumentsSection extends StatelessWidget {
                   ),
                 ],
               ),
+              const Gap(10),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    onTap: () async {
+                      final File? file = await recordAudioFile(context);
+                      if (file == null) return;
+
+                      await _uploadFile(file);
+                    },
+                    child: SizedBox(
+                      height: 70,
+                      width: 70,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: AppColors.interactiveColor.withValues(
+                            alpha: 0.1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(
+                            color: AppColors.interactiveColor.withValues(
+                              alpha: 0.3,
+                            ),
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.mic,
+                          size: 36,
+                          color: AppColors.interactiveColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
+        if (audioFiles.isNotEmpty) ...[
+          const Gap(8),
+          for (final file in audioFiles)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: InkWell(
+                onLongPress: () async {
+                  if (!isAdmin) {
+                    di<NotificationService>().showSnackBar(
+                      NotificationType.error,
+                      'Nur Admins können Dokumente löschen',
+                    );
+                    return;
+                  }
+                  final confirm = await confirmationDialog(
+                    context: context,
+                    title: 'Audio löschen',
+                    message: 'Audioaufnahme wirklich löschen?',
+                  );
+                  if (confirm != true) return;
+
+                  await _removeFile(file);
+                },
+                borderRadius: BorderRadius.circular(8),
+                child: EncryptedDocumentAudio(
+                  documentId: file.documentId,
+                ),
+              ),
+            ),
+        ],
       ],
     );
   }
@@ -569,8 +648,9 @@ class _DocumentsSection extends StatelessWidget {
     final pupilManager = di<PupilProxyManager>();
 
     try {
+      final encryptedFile = await customEncrypter.encryptFile(file);
       final fileResponse = await ClientFileUpload.uploadFile(
-        file: file,
+        file: encryptedFile,
         storageId: StorageId.private,
         folder: ServerStorageFolder.documents,
       );

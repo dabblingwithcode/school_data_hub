@@ -22,6 +22,8 @@ class _DocumentAudioState extends State<DocumentAudio> {
   final AudioPlayer _player = AudioPlayer();
   bool _isLoading = true;
   bool _isPlaying = false;
+  Duration _position = Duration.zero;
+  Duration _duration = Duration.zero;
   String? _errorMessage;
 
   @override
@@ -29,11 +31,30 @@ class _DocumentAudioState extends State<DocumentAudio> {
     super.initState();
     _loadAudio();
     _player.playerStateStream.listen((state) {
+      if (!mounted) return;
+      final playing =
+          state.playing &&
+          state.processingState != ProcessingState.completed;
+      setState(() {
+        _isPlaying = playing;
+      });
+      // Seek to start when playback completes so the user can replay.
+      if (state.processingState == ProcessingState.completed) {
+        _player.seek(Duration.zero);
+        _player.pause();
+      }
+    });
+    _player.positionStream.listen((pos) {
       if (mounted) {
         setState(() {
-          _isPlaying =
-              state.playing &&
-              state.processingState != ProcessingState.completed;
+          _position = pos;
+        });
+      }
+    });
+    _player.durationStream.listen((dur) {
+      if (mounted && dur != null) {
+        setState(() {
+          _duration = dur;
         });
       }
     });
@@ -47,22 +68,12 @@ class _DocumentAudioState extends State<DocumentAudio> {
       );
       if (mounted) {
         if (file != null) {
-          // Use LockCachingAudioSource to avoid platform channel threading issues on Windows
-          // and for better performance with potentially large files.
-          // However, since we already have a decrypted file, we can just use AudioSource.file
-          // But given the threading errors, we might need to be careful.
-          // The errors "channel sent a message from native to Flutter on a non-platform thread"
-          // are usually harmless warnings in recent Flutter versions on Windows with just_audio,
-          // but "Broadcast playback event error" suggests an issue.
-          // Let's try wrap in try-catch for setFilePath and use AudioSource.file explicitly.
-
           try {
             await _player.setFilePath(file.path);
           } catch (e) {
             if (kDebugMode) {
               print("Error setting file path: $e");
             }
-            // Fallback or retry if needed, but usually setFilePath is robust.
             rethrow;
           }
         } else {
@@ -88,34 +99,88 @@ class _DocumentAudioState extends State<DocumentAudio> {
     super.dispose();
   }
 
+  String _formatDuration(Duration d) {
+    final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$minutes:$seconds';
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const SizedBox(
-        width: 40,
-        height: 40,
-        child: CircularProgressIndicator(strokeWidth: 2),
+      return Container(
+        decoration: BoxDecoration(
+          color: AppColors.interactiveColor.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: AppColors.interactiveColor.withValues(alpha: 0.2),
+          ),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppColors.interactiveColor,
+              ),
+            ),
+            const SizedBox(width: 8),
+            const Text('Lädt Audio...', style: TextStyle(fontSize: 13)),
+          ],
+        ),
       );
     }
 
     if (_errorMessage != null) {
-      return Text(_errorMessage!, style: const TextStyle(color: Colors.red));
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.red.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline, color: Colors.red, size: 20),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                _errorMessage!,
+                style: const TextStyle(color: Colors.red, fontSize: 13),
+              ),
+            ),
+          ],
+        ),
+      );
     }
+
+    final progress =
+        _duration.inMilliseconds > 0
+            ? _position.inMilliseconds / _duration.inMilliseconds
+            : 0.0;
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.backgroundColor.withValues(alpha: 0.1),
+        color: AppColors.interactiveColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: AppColors.backgroundColor.withValues(alpha: 0.2),
+          color: AppColors.interactiveColor.withValues(alpha: 0.2),
         ),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(
-            icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
+            icon: Icon(
+              _isPlaying ? Icons.pause : Icons.play_arrow,
+              color: AppColors.interactiveColor,
+            ),
             onPressed: () {
               if (_isPlaying) {
                 _player.pause();
@@ -123,7 +188,45 @@ class _DocumentAudioState extends State<DocumentAudio> {
                 _player.play();
               }
             },
+            iconSize: 28,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
           ),
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(2),
+                  child: LinearProgressIndicator(
+                    value: progress,
+                    minHeight: 4,
+                    backgroundColor: AppColors.interactiveColor.withValues(
+                      alpha: 0.15,
+                    ),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      AppColors.interactiveColor,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      _formatDuration(_position),
+                      style: const TextStyle(fontSize: 11, color: Colors.grey),
+                    ),
+                    Text(
+                      _formatDuration(_duration),
+                      style: const TextStyle(fontSize: 11, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
         ],
       ),
     );
