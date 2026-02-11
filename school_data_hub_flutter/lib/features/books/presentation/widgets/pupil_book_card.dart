@@ -3,10 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:path/path.dart' as p;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
+import 'package:school_data_hub_flutter/app_utils/download_and_decrypt_file.dart';
 import 'package:school_data_hub_flutter/app_utils/record_audio_file.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
@@ -15,7 +17,7 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/encrypted_document_audio.dart';
+import 'package:school_data_hub_flutter/common/widgets/document_audio.dart';
 import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
@@ -501,8 +503,15 @@ class _DocumentsSection extends StatelessWidget {
           children: [
             for (final file in imageFiles) ...[
               Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
+                  Text(
+                    file.createdAt.formatDateForUser(),
+                    style: const TextStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   InkWell(
                     onTap: () {
                       showDialog(
@@ -543,6 +552,62 @@ class _DocumentsSection extends StatelessWidget {
                       size: 70,
                     ),
                   ),
+                  Text(
+                    file.createdBy,
+                    style: const TextStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              const Gap(10),
+            ],
+            for (final file in audioFiles) ...[
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    file.createdAt.formatDateForUser(),
+                    style: const TextStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) =>
+                            _AudioPlayerDialog(document: file),
+                      );
+                    },
+                    onLongPress: () async {
+                      if (!isAdmin) {
+                        di<NotificationService>().showSnackBar(
+                          NotificationType.error,
+                          'Nur Admins können Dokumente löschen',
+                        );
+                        return;
+                      }
+                      final confirm = await confirmationDialog(
+                        context: context,
+                        title: 'Audio löschen',
+                        message: 'Audioaufnahme wirklich löschen?',
+                      );
+                      if (confirm != true) return;
+
+                      await _removeFile(file);
+                    },
+                    child: _AudioThumbnail(documentId: file.documentId),
+                  ),
+                  Text(
+                    file.createdBy,
+                    style: const TextStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
               const Gap(10),
@@ -581,24 +646,9 @@ class _DocumentsSection extends StatelessWidget {
                     },
                     child: SizedBox(
                       height: 70,
-                      width: 70,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: AppColors.interactiveColor.withValues(
-                            alpha: 0.1,
-                          ),
-                          borderRadius: BorderRadius.circular(5),
-                          border: Border.all(
-                            color: AppColors.interactiveColor.withValues(
-                              alpha: 0.3,
-                            ),
-                          ),
-                        ),
-                        child: Icon(
-                          Icons.mic,
-                          size: 36,
-                          color: AppColors.interactiveColor,
-                        ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: Image.asset('assets/document_mic.png'),
                       ),
                     ),
                   ),
@@ -607,36 +657,6 @@ class _DocumentsSection extends StatelessWidget {
             ],
           ],
         ),
-        if (audioFiles.isNotEmpty) ...[
-          const Gap(8),
-          for (final file in audioFiles)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: InkWell(
-                onLongPress: () async {
-                  if (!isAdmin) {
-                    di<NotificationService>().showSnackBar(
-                      NotificationType.error,
-                      'Nur Admins können Dokumente löschen',
-                    );
-                    return;
-                  }
-                  final confirm = await confirmationDialog(
-                    context: context,
-                    title: 'Audio löschen',
-                    message: 'Audioaufnahme wirklich löschen?',
-                  );
-                  if (confirm != true) return;
-
-                  await _removeFile(file);
-                },
-                borderRadius: BorderRadius.circular(8),
-                child: EncryptedDocumentAudio(
-                  documentId: file.documentId,
-                ),
-              ),
-            ),
-        ],
       ],
     );
   }
@@ -714,5 +734,176 @@ class _DocumentsSection extends StatelessWidget {
         'Fehler beim Löschen der Datei: $e',
       );
     }
+  }
+}
+
+/// A dialog that hosts a [DocumentAudio] player and ensures the player is
+/// fully shut down before the dialog is removed from the widget tree.
+class _AudioPlayerDialog extends StatefulWidget {
+  const _AudioPlayerDialog({required this.document});
+
+  final HubDocument document;
+
+  @override
+  State<_AudioPlayerDialog> createState() => _AudioPlayerDialogState();
+}
+
+class _AudioPlayerDialogState extends State<_AudioPlayerDialog> {
+  final _audioKey = GlobalKey<DocumentAudioState>();
+  bool _closing = false;
+
+  Future<void> _close() async {
+    if (_closing) return;
+    _closing = true;
+
+    // Shut down the native audio player before popping.
+    await _audioKey.currentState?.shutdown();
+
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) {
+          _close();
+        }
+      },
+      child: Dialog(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Audioaufnahme',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const Gap(4),
+              Text(
+                '${widget.document.createdBy}, ${widget.document.createdAt.formatDateForUser()}',
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+              const Gap(16),
+              DocumentAudio(
+                key: _audioKey,
+                documentId: widget.document.documentId,
+                decrypt: true,
+              ),
+              const Gap(16),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: _close,
+                  child: const Text('Schließen'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A small thumbnail for audio files that loads the duration in the background
+/// and displays it below the audio icon.
+class _AudioThumbnail extends StatefulWidget {
+  const _AudioThumbnail({required this.documentId});
+
+  final String documentId;
+
+  @override
+  State<_AudioThumbnail> createState() => _AudioThumbnailState();
+}
+
+class _AudioThumbnailState extends State<_AudioThumbnail> {
+  Duration? _duration;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDuration();
+  }
+
+  Future<void> _loadDuration() async {
+    try {
+      final file = await downloadAndDecryptFile(
+        documentId: widget.documentId,
+        decrypt: true,
+      );
+      if (!mounted) return;
+      if (file != null) {
+        final player = AudioPlayer();
+        try {
+          final duration = await player.setFilePath(file.path);
+          if (mounted) {
+            setState(() {
+              _duration = duration;
+              _loading = false;
+            });
+          }
+        } finally {
+          await player.dispose();
+        }
+      } else {
+        if (mounted) setState(() => _loading = false);
+      }
+    } catch (_) {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  String _formatDuration(Duration d) {
+    final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$minutes:$seconds';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 70,
+      width: (21 / 30) * 70,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: AppColors.interactiveColor.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(
+            color: AppColors.interactiveColor.withValues(alpha: 0.3),
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.audiotrack, size: 30, color: AppColors.interactiveColor),
+            const SizedBox(height: 2),
+            if (_loading)
+              SizedBox(
+                width: 10,
+                height: 10,
+                child: CircularProgressIndicator(
+                  strokeWidth: 1.5,
+                  color: AppColors.interactiveColor,
+                ),
+              )
+            else if (_duration != null)
+              Text(
+                _formatDuration(_duration!),
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.interactiveColor,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
   }
 }

@@ -214,8 +214,13 @@ class PupilProxyManager extends ChangeNotifier {
   }
 
   Future<void> updatePupilData(int pupilId) async {
+    final proxy = _pupilIdPupilsMap[pupilId];
+    if (proxy == null) {
+      _log.warning('Cannot update pupil data: pupil $pupilId not found');
+      return;
+    }
     final fetchedPupil = await _pupilDataApiService.fetchListOfPupils(
-      pupilInternalIds: [pupilId],
+      pupilInternalIds: [proxy.internalId],
     );
     if (fetchedPupil == null) {
       return;

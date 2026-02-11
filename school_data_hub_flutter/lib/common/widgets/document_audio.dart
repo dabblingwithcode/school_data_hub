@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
@@ -15,49 +17,81 @@ class DocumentAudio extends StatefulWidget {
   final bool decrypt;
 
   @override
-  State<DocumentAudio> createState() => _DocumentAudioState();
+  State<DocumentAudio> createState() => DocumentAudioState();
 }
 
-class _DocumentAudioState extends State<DocumentAudio> {
-  final AudioPlayer _player = AudioPlayer();
+class DocumentAudioState extends State<DocumentAudio> {
+  AudioPlayer? _player;
   bool _isLoading = true;
   bool _isPlaying = false;
+  bool _shutDown = false;
   Duration _position = Duration.zero;
   Duration _duration = Duration.zero;
   String? _errorMessage;
 
+  final List<StreamSubscription<dynamic>> _subscriptions = [];
+
+  /// Stops playback, cancels subscriptions, and disposes the native player.
+  /// Must be awaited before the widget is removed from the tree (e.g. before
+  /// popping a dialog) to avoid the just_audio_windows threading crash.
+  Future<void> shutdown() async {
+    if (_shutDown) return;
+    _shutDown = true;
+
+    for (final sub in _subscriptions) {
+      sub.cancel();
+    }
+    _subscriptions.clear();
+
+    final player = _player;
+    _player = null;
+
+    if (player != null) {
+      try {
+        await player.stop();
+      } catch (_) {}
+      try {
+        await player.dispose();
+      } catch (_) {}
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    _loadAudio();
-    _player.playerStateStream.listen((state) {
-      if (!mounted) return;
-      final playing =
-          state.playing &&
-          state.processingState != ProcessingState.completed;
-      setState(() {
-        _isPlaying = playing;
-      });
-      // Seek to start when playback completes so the user can replay.
-      if (state.processingState == ProcessingState.completed) {
-        _player.seek(Duration.zero);
-        _player.pause();
-      }
-    });
-    _player.positionStream.listen((pos) {
-      if (mounted) {
+    _player = AudioPlayer();
+    _subscriptions.add(
+      _player!.playerStateStream.listen((state) {
+        if (_shutDown || !mounted) return;
+        final playing =
+            state.playing && state.processingState != ProcessingState.completed;
+        setState(() {
+          _isPlaying = playing;
+        });
+        if (state.processingState == ProcessingState.completed) {
+          _player?.seek(Duration.zero).then((_) => _player?.pause());
+        }
+      }),
+    );
+    _subscriptions.add(
+      _player!.positionStream.listen((pos) {
+        if (_shutDown || !mounted) return;
         setState(() {
           _position = pos;
         });
-      }
-    });
-    _player.durationStream.listen((dur) {
-      if (mounted && dur != null) {
-        setState(() {
-          _duration = dur;
-        });
-      }
-    });
+      }),
+    );
+    _subscriptions.add(
+      _player!.durationStream.listen((dur) {
+        if (_shutDown || !mounted) return;
+        if (dur != null) {
+          setState(() {
+            _duration = dur;
+          });
+        }
+      }),
+    );
+    _loadAudio();
   }
 
   Future<void> _loadAudio() async {
@@ -66,26 +100,25 @@ class _DocumentAudioState extends State<DocumentAudio> {
         documentId: widget.documentId,
         decrypt: widget.decrypt,
       );
-      if (mounted) {
-        if (file != null) {
-          try {
-            await _player.setFilePath(file.path);
-          } catch (e) {
-            if (kDebugMode) {
-              print("Error setting file path: $e");
-            }
-            rethrow;
+      if (_shutDown || !mounted) return;
+      if (file != null) {
+        try {
+          await _player?.setFilePath(file.path);
+        } catch (e) {
+          if (kDebugMode) {
+            print("Error setting file path: $e");
           }
-        } else {
+          if (_shutDown || !mounted) return;
           _errorMessage = 'Fehler beim Laden';
         }
+      } else {
+        _errorMessage = 'Fehler beim Laden';
       }
     } catch (e) {
-      if (mounted) {
-        _errorMessage = 'Fehler: $e';
-      }
+      if (_shutDown || !mounted) return;
+      _errorMessage = 'Fehler: $e';
     } finally {
-      if (mounted) {
+      if (!_shutDown && mounted) {
         setState(() {
           _isLoading = false;
         });
@@ -95,7 +128,19 @@ class _DocumentAudioState extends State<DocumentAudio> {
 
   @override
   void dispose() {
-    _player.dispose();
+    // Fallback: if shutdown() was not called explicitly, clean up now.
+    if (!_shutDown) {
+      _shutDown = true;
+      for (final sub in _subscriptions) {
+        sub.cancel();
+      }
+      _subscriptions.clear();
+      final player = _player;
+      _player = null;
+      if (player != null) {
+        player.stop().then((_) => player.dispose()).ignore();
+      }
+    }
     super.dispose();
   }
 
@@ -159,10 +204,9 @@ class _DocumentAudioState extends State<DocumentAudio> {
       );
     }
 
-    final progress =
-        _duration.inMilliseconds > 0
-            ? _position.inMilliseconds / _duration.inMilliseconds
-            : 0.0;
+    final progress = _duration.inMilliseconds > 0
+        ? _position.inMilliseconds / _duration.inMilliseconds
+        : 0.0;
 
     return Container(
       decoration: BoxDecoration(
@@ -183,9 +227,9 @@ class _DocumentAudioState extends State<DocumentAudio> {
             ),
             onPressed: () {
               if (_isPlaying) {
-                _player.pause();
+                _player?.pause();
               } else {
-                _player.play();
+                _player?.play();
               }
             },
             iconSize: 28,
@@ -196,37 +240,62 @@ class _DocumentAudioState extends State<DocumentAudio> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(2),
-                  child: LinearProgressIndicator(
-                    value: progress,
-                    minHeight: 4,
-                    backgroundColor: AppColors.interactiveColor.withValues(
+                SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                    activeTrackColor: AppColors.interactiveColor,
+                    inactiveTrackColor: AppColors.interactiveColor.withValues(
                       alpha: 0.15,
                     ),
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      AppColors.interactiveColor,
+                    thumbColor: AppColors.interactiveColor,
+                    overlayColor: AppColors.interactiveColor.withValues(
+                      alpha: 0.2,
+                    ),
+                    trackHeight: 4,
+                    thumbShape: const RoundSliderThumbShape(
+                      enabledThumbRadius: 6,
+                    ),
+                    overlayShape: const RoundSliderOverlayShape(
+                      overlayRadius: 14,
                     ),
                   ),
+                  child: Slider(
+                    value: progress.clamp(0.0, 1.0),
+                    onChanged: (value) {
+                      if (_duration.inMilliseconds > 0) {
+                        final position = Duration(
+                          milliseconds: (value * _duration.inMilliseconds)
+                              .round(),
+                        );
+                        _player?.seek(position);
+                      }
+                    },
+                  ),
                 ),
-                const SizedBox(height: 2),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      _formatDuration(_position),
-                      style: const TextStyle(fontSize: 11, color: Colors.grey),
-                    ),
-                    Text(
-                      _formatDuration(_duration),
-                      style: const TextStyle(fontSize: 11, color: Colors.grey),
-                    ),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _formatDuration(_position),
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      Text(
+                        _formatDuration(_duration),
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 8),
         ],
       ),
     );

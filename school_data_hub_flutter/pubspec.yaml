@@ -82,6 +82,8 @@ dependencies:
   community_charts_flutter: ^1.0.4
   go_router: ^17.0.0
   just_audio: ^0.10.5
+  just_audio_media_kit: ^2.1.0
+  media_kit_libs_windows_audio: any
   sliver_dashboard: ^0.1.3
 
 

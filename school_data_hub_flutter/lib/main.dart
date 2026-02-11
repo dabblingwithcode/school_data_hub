@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
@@ -27,6 +28,8 @@ import 'package:window_manager/window_manager.dart';
 void main() async {
   GetIt.instance.debugEventsEnabled = true;
   WidgetsFlutterBinding.ensureInitialized();
+  // Initialize media_kit backend for just_audio on Windows/Linux
+  JustAudioMediaKit.ensureInitialized();
   // Set the global logging level
   Logger.root.level = Level.ALL;
   di.registerSingleton<LogService>(LogService());
