@@ -310,9 +310,65 @@ class LearningSupportManager {
     final goalIndex = goals.indexWhere((g) => g.id == updatedGoal.id);
     if (goalIndex != -1) {
       goals[goalIndex] = updatedGoal;
-      // Trigger UI update by marking the pupil as dirty
-      pupil.pupilIsDirty = true;
+      pupil.notifyChanged();
     }
+  }
+
+  //- GOAL CHECK DOCUMENTS --------------------------------------------------
+
+  Future<void> addFileToSupportGoalCheck({
+    required int supportGoalId,
+    required int supportGoalCheckId,
+    required int pupilId,
+    required File file,
+    String? fileInfo,
+  }) async {
+    final encryptedFile = await customEncrypter.encryptFile(file);
+    final createdBy = _hubSessionManager.userName!;
+    final updatedGoal = await _learningSupportApiService
+        .addFileToSupportGoalCheck(
+          supportGoalId: supportGoalId,
+          supportGoalCheckId: supportGoalCheckId,
+          file: encryptedFile,
+          createdBy: createdBy,
+          fileInfo: fileInfo,
+        );
+
+    if (updatedGoal == null) {
+      return;
+    }
+
+    _updatePupilSupportGoal(pupilId, updatedGoal);
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Datei hinzugefügt',
+    );
+  }
+
+  Future<void> removeFileFromSupportGoalCheck({
+    required int supportGoalId,
+    required int supportGoalCheckId,
+    required int pupilId,
+    required String documentId,
+  }) async {
+    final updatedGoal = await _learningSupportApiService
+        .removeFileFromSupportGoalCheck(
+          supportGoalId: supportGoalId,
+          supportGoalCheckId: supportGoalCheckId,
+          documentId: documentId,
+        );
+
+    if (updatedGoal == null) {
+      return;
+    }
+
+    _updatePupilSupportGoal(pupilId, updatedGoal);
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Datei entfernt',
+    );
   }
 
   //- BULK IMPORT SUPPORT LEVELS ------------------------------------------

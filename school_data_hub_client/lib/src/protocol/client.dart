@@ -1295,6 +1295,38 @@ class EndpointLearningSupportPlan extends _i1.EndpointRef {
           'supportGoalCheckId': supportGoalCheckId,
         },
       );
+
+  _i2.Future<_i30.SupportGoal> addFileToSupportGoalCheck(
+    int supportGoalId,
+    int supportGoalCheckId,
+    String filePath,
+    String createdBy,
+  ) =>
+      caller.callServerEndpoint<_i30.SupportGoal>(
+        'learningSupportPlan',
+        'addFileToSupportGoalCheck',
+        {
+          'supportGoalId': supportGoalId,
+          'supportGoalCheckId': supportGoalCheckId,
+          'filePath': filePath,
+          'createdBy': createdBy,
+        },
+      );
+
+  _i2.Future<_i30.SupportGoal> removeFileFromSupportGoalCheck(
+    int supportGoalId,
+    int supportGoalCheckId,
+    String documentId,
+  ) =>
+      caller.callServerEndpoint<_i30.SupportGoal>(
+        'learningSupportPlan',
+        'removeFileFromSupportGoalCheck',
+        {
+          'supportGoalId': supportGoalId,
+          'supportGoalCheckId': supportGoalCheckId,
+          'documentId': documentId,
+        },
+      );
 }
 
 /// {@category Endpoint}

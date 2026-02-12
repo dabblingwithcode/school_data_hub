@@ -2817,6 +2817,76 @@ class Endpoints extends _i1.EndpointDispatch {
             params['supportGoalCheckId'],
           ),
         ),
+        'addFileToSupportGoalCheck': _i1.MethodConnector(
+          name: 'addFileToSupportGoalCheck',
+          params: {
+            'supportGoalId': _i1.ParameterDescription(
+              name: 'supportGoalId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'supportGoalCheckId': _i1.ParameterDescription(
+              name: 'supportGoalCheckId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'filePath': _i1.ParameterDescription(
+              name: 'filePath',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'createdBy': _i1.ParameterDescription(
+              name: 'createdBy',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['learningSupportPlan']
+                      as _i19.LearningSupportPlanEndpoint)
+                  .addFileToSupportGoalCheck(
+            session,
+            params['supportGoalId'],
+            params['supportGoalCheckId'],
+            params['filePath'],
+            params['createdBy'],
+          ),
+        ),
+        'removeFileFromSupportGoalCheck': _i1.MethodConnector(
+          name: 'removeFileFromSupportGoalCheck',
+          params: {
+            'supportGoalId': _i1.ParameterDescription(
+              name: 'supportGoalId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'supportGoalCheckId': _i1.ParameterDescription(
+              name: 'supportGoalCheckId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'documentId': _i1.ParameterDescription(
+              name: 'documentId',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['learningSupportPlan']
+                      as _i19.LearningSupportPlanEndpoint)
+                  .removeFileFromSupportGoalCheck(
+            session,
+            params['supportGoalId'],
+            params['supportGoalCheckId'],
+            params['documentId'],
+          ),
+        ),
       },
     );
     connectors['preSchoolMedical'] = _i1.EndpointConnector(

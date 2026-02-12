@@ -1,4 +1,5 @@
 import 'package:school_data_hub_server/src/generated/protocol.dart';
+import 'package:school_data_hub_server/src/helpers/hub_document_helper.dart';
 import 'package:school_data_hub_server/src/schemas/pupil_schemas.dart';
 import 'package:serverpod/serverpod.dart';
 
@@ -190,6 +191,14 @@ class LearningSupportPlanEndpoint extends Endpoint {
     return updatedPupil!;
   }
 
+  static final _supportGoalInclude = SupportGoal.include(
+    goalChecks: SupportGoalCheck.includeList(
+      include: SupportGoalCheck.include(
+        documents: HubDocument.includeList(),
+      ),
+    ),
+  );
+
   Future<SupportGoal> postSupportGoalCheck(
     Session session,
     int supportGoalId,
@@ -200,9 +209,7 @@ class LearningSupportPlanEndpoint extends Endpoint {
     final supportGoal = await SupportGoal.db.findById(
       session,
       supportGoalId,
-      include: SupportGoal.include(
-        goalChecks: SupportGoalCheck.includeList(),
-      ),
+      include: _supportGoalInclude,
     );
     if (supportGoal == null) {
       throw Exception('SupportGoal not found for id: $supportGoalId');
@@ -228,9 +235,7 @@ class LearningSupportPlanEndpoint extends Endpoint {
     final updatedSupportGoal = await SupportGoal.db.findById(
       session,
       supportGoalId,
-      include: SupportGoal.include(
-        goalChecks: SupportGoalCheck.includeList(),
-      ),
+      include: _supportGoalInclude,
     );
     return updatedSupportGoal!;
   }
@@ -269,9 +274,7 @@ class LearningSupportPlanEndpoint extends Endpoint {
     final supportGoal = await SupportGoal.db.findById(
       session,
       supportGoalId,
-      include: SupportGoal.include(
-        goalChecks: SupportGoalCheck.includeList(),
-      ),
+      include: _supportGoalInclude,
     );
     if (supportGoal == null) {
       throw Exception('SupportGoal not found for id: $supportGoalId');
@@ -290,13 +293,111 @@ class LearningSupportPlanEndpoint extends Endpoint {
     final updatedSupportGoal = await SupportGoal.db.findById(
       session,
       supportGoalId,
-      include: SupportGoal.include(
-        goalChecks: SupportGoalCheck.includeList(),
-      ),
+      include: _supportGoalInclude,
     );
     if (updatedSupportGoal == null) {
       throw Exception('SupportGoal not found after deletion');
     }
     return updatedSupportGoal;
+  }
+
+  //- GOAL CHECK DOCUMENTS --------------------------------------------------
+
+  Future<SupportGoal> addFileToSupportGoalCheck(
+    Session session,
+    int supportGoalId,
+    int supportGoalCheckId,
+    String filePath,
+    String createdBy,
+  ) async {
+    final goalCheck = await SupportGoalCheck.db.findById(
+      session,
+      supportGoalCheckId,
+      include: SupportGoalCheck.include(
+        documents: HubDocument.includeList(),
+      ),
+    );
+    if (goalCheck == null) {
+      throw Exception(
+          'SupportGoalCheck not found for id: $supportGoalCheckId');
+    }
+
+    final document = HubDocumentHelper().createHubDocumentObject(
+      session: session,
+      createdBy: createdBy,
+      path: filePath,
+    );
+
+    final documentInDatabase = await HubDocument.db.insertRow(
+      session,
+      document,
+    );
+
+    await SupportGoalCheck.db.attachRow.documents(
+      session,
+      goalCheck,
+      documentInDatabase,
+    );
+
+    final updatedSupportGoal = await SupportGoal.db.findById(
+      session,
+      supportGoalId,
+      include: _supportGoalInclude,
+    );
+    return updatedSupportGoal!;
+  }
+
+  Future<SupportGoal> removeFileFromSupportGoalCheck(
+    Session session,
+    int supportGoalId,
+    int supportGoalCheckId,
+    String documentId,
+  ) async {
+    final goalCheck = await SupportGoalCheck.db.findById(
+      session,
+      supportGoalCheckId,
+      include: SupportGoalCheck.include(
+        documents: HubDocument.includeList(),
+      ),
+    );
+    if (goalCheck == null) {
+      throw Exception(
+          'SupportGoalCheck not found for id: $supportGoalCheckId');
+    }
+
+    final documentToRemove = goalCheck.documents?.firstWhere(
+      (doc) => doc.documentId == documentId,
+      orElse: () => throw Exception(
+          'Document with id $documentId not found in goal check'),
+    );
+
+    if (documentToRemove == null) {
+      throw Exception(
+          'Document with id $documentId not found in goal check');
+    }
+
+    await session.db.transaction((transaction) async {
+      await SupportGoalCheck.db.detachRow.documents(
+        session,
+        documentToRemove,
+        transaction: transaction,
+      );
+      await HubDocument.db.deleteRow(
+        session,
+        documentToRemove,
+        transaction: transaction,
+      );
+      await session.storage.deleteFile(
+        storageId: 'private',
+        path: documentToRemove.documentPath!,
+      );
+    });
+
+    final updatedSupportGoal = await SupportGoal.db.findById(
+      session,
+      supportGoalId,
+      include: _supportGoalInclude,
+    );
+    return updatedSupportGoal!;
   }
 }

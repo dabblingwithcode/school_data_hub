@@ -14,7 +14,11 @@ class PupilSchemas {
     supportCategoryStatuses: SupportCategoryStatus.includeList(),
     supportGoals: SupportGoal.includeList(
       include: SupportGoal.include(
-        goalChecks: SupportGoalCheck.includeList(),
+        goalChecks: SupportGoalCheck.includeList(
+          include: SupportGoalCheck.include(
+            documents: HubDocument.includeList(),
+          ),
+        ),
       ),
     ),
     competenceGoals: CompetenceGoal.includeList(

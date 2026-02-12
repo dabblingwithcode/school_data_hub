@@ -79,6 +79,12 @@ class PupilProxy with ChangeNotifier {
     notifyListeners();
   }
 
+  /// Notify listeners after an in-place mutation of pupil data.
+  void notifyChanged() {
+    pupilIsDirty = true;
+    notifyListeners();
+  }
+
   /// Cached siblings based on family identifier; resolves once per family value.
   List<PupilProxy> get siblings {
     _siblingsResolver ??= di<PupilProxyManager>().getSiblings;

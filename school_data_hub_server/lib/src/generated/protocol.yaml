@@ -108,6 +108,8 @@ learningSupportPlan:
   - postSupportGoalCheck:
   - updateSupportGoalCheck:
   - deleteSupportGoalCheck:
+  - addFileToSupportGoalCheck:
+  - removeFileFromSupportGoalCheck:
 preSchoolMedical:
   - createPreSchoolMedical:
   - updatePreSchoolMedical:

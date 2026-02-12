@@ -1,10 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
+import 'package:school_data_hub_flutter/app_utils/record_audio_file.dart';
+import 'package:school_data_hub_flutter/common/audio/audio.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/support_goal_check_dialog.dart';
@@ -12,7 +20,7 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/w
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_goal/support_category_badge.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
-class SupportGoalCard extends StatelessWidget {
+class SupportGoalCard extends WatchingWidget {
   final PupilProxy pupil;
   final int goalIndex;
   const SupportGoalCard({
@@ -23,6 +31,7 @@ class SupportGoalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    watch(pupil);
     final learningSupportManager = di<SupportCategoryManager>();
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
@@ -264,6 +273,11 @@ class _GoalChecksSection extends StatelessWidget {
   }
 }
 
+/// Whether [doc] represents an audio file based on its extension.
+bool _isAudioDocument(HubDocument doc) {
+  return isAudioDocument(doc.documentId);
+}
+
 /// A single goal check entry display.
 class _GoalCheckEntry extends StatelessWidget {
   final SupportGoalCheck check;
@@ -304,42 +318,253 @@ class _GoalCheckEntry extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: AppColors.cardInCardBorderColor),
           ),
-          child: Row(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Score icon
-              SizedBox(
-                width: 40,
-                height: 40,
-                child: Image.asset(
-                  'assets/images/growth_icons/growth_${check.score}-4.png',
-                  fit: BoxFit.contain,
-                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Score icon
+                  SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: Image.asset(
+                      'assets/images/growth_icons/growth_${check.score}-4.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  const Gap(10),
+                  // Comment and metadata
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          check.comment,
+                          style: const TextStyle(fontSize: 14),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const Gap(4),
+                        Text(
+                          '${check.createdBy} - ${check.createdAt.toLocal().formatDateForUser()}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              const Gap(10),
-              // Comment and metadata
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      check.comment,
-                      style: const TextStyle(fontSize: 14),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const Gap(4),
-                    Text(
-                      '${check.createdBy} - ${check.createdAt.toLocal().formatDateForUser()}',
-                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                    ),
-                  ],
-                ),
+              const Gap(8),
+              _GoalCheckDocumentsSection(
+                check: check,
+                supportGoalId: supportGoalId,
+                pupilId: pupilId,
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Displays existing documents/audio and buttons to add new ones for a
+/// support goal check.
+class _GoalCheckDocumentsSection extends StatelessWidget {
+  const _GoalCheckDocumentsSection({
+    required this.check,
+    required this.supportGoalId,
+    required this.pupilId,
+  });
+
+  final SupportGoalCheck check;
+  final int supportGoalId;
+  final int pupilId;
+
+  @override
+  Widget build(BuildContext context) {
+    final files = check.documents;
+    final isAdmin = di<HubSessionManager>().isAdmin;
+    final imageFiles = files?.where((f) => !_isAudioDocument(f)).toList() ?? [];
+    final audioFiles = files?.where((f) => _isAudioDocument(f)).toList() ?? [];
+    final totalCount = files?.length ?? 0;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Dokumente:',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+        ),
+        const Gap(4),
+        Row(
+          children: [
+            for (final file in imageFiles) ...[
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    file.createdAt.formatDateForUser(),
+                    style: const TextStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => Dialog(
+                          child: Container(
+                            constraints: const BoxConstraints(
+                              maxWidth: 600,
+                              maxHeight: 800,
+                            ),
+                            child: EncryptedDocumentImage(
+                              documentId: file.documentId,
+                              size: 400,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    onLongPress: () async {
+                      if (!isAdmin) {
+                        di<NotificationService>().showSnackBar(
+                          NotificationType.error,
+                          'Nur Admins können Dokumente löschen',
+                        );
+                        return;
+                      }
+                      final confirm = await confirmationDialog(
+                        context: context,
+                        title: 'Dokument löschen',
+                        message: 'Dokument wirklich löschen?',
+                      );
+                      if (confirm != true) return;
+
+                      await di<LearningSupportManager>()
+                          .removeFileFromSupportGoalCheck(
+                            supportGoalId: supportGoalId,
+                            supportGoalCheckId: check.id!,
+                            pupilId: pupilId,
+                            documentId: file.documentId,
+                          );
+                    },
+                    child: EncryptedDocumentImage(
+                      documentId: file.documentId,
+                      size: 70,
+                    ),
+                  ),
+                  Text(
+                    file.createdBy,
+                    style: const TextStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              const Gap(10),
+            ],
+            for (final file in audioFiles) ...[
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    file.createdAt.formatDateForUser(),
+                    style: const TextStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  AudioButton(
+                    file: file,
+                    onDelete: (file) async {
+                      await di<LearningSupportManager>()
+                          .removeFileFromSupportGoalCheck(
+                            supportGoalId: supportGoalId,
+                            supportGoalCheckId: check.id!,
+                            pupilId: pupilId,
+                            documentId: file.documentId,
+                          );
+                    },
+                  ),
+                  Text(
+                    file.createdBy,
+                    style: const TextStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              const Gap(10),
+            ],
+            if (totalCount < 4) ...[
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    onTap: () async {
+                      final File? file = await createAndCropImageFile(context);
+                      if (file == null) return;
+
+                      await di<LearningSupportManager>()
+                          .addFileToSupportGoalCheck(
+                            supportGoalId: supportGoalId,
+                            supportGoalCheckId: check.id!,
+                            pupilId: pupilId,
+                            file: file,
+                          );
+                    },
+                    child: SizedBox(
+                      height: 70,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: Image.asset('assets/document_camera.png'),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const Gap(10),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    onTap: () async {
+                      final ({File? file, String? fileInfo})? result =
+                          await recordAudioFile(context);
+                      if (result == null) return;
+
+                      await di<LearningSupportManager>()
+                          .addFileToSupportGoalCheck(
+                            supportGoalId: supportGoalId,
+                            supportGoalCheckId: check.id!,
+                            pupilId: pupilId,
+                            file: result.file!,
+                            fileInfo: result.fileInfo!,
+                          );
+                    },
+                    child: SizedBox(
+                      height: 70,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: Image.asset('assets/document_mic.png'),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ],
     );
   }
 }

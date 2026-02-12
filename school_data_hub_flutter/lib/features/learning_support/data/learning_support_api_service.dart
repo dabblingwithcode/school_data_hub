@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
+import 'package:school_data_hub_flutter/common/models/enums.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:flutter_it/flutter_it.dart';
 
@@ -227,5 +231,48 @@ class LearningSupportApiService {
       errorMessage: 'Fehler beim Löschen des Ziel-Checks',
     );
     return response;
+  }
+
+  //- GOAL CHECK DOCUMENTS ---------------------------------------------------
+
+  Future<SupportGoal?> addFileToSupportGoalCheck({
+    required int supportGoalId,
+    required int supportGoalCheckId,
+    required File file,
+    required String createdBy,
+    String? fileInfo,
+  }) async {
+    final path = await ClientFileUpload.uploadFile(
+      file: file,
+      fileInfo: fileInfo,
+      storageId: StorageId.private,
+      folder: ServerStorageFolder.documents,
+    );
+    final result = await ClientHelper.apiCall(
+      call: () => _client.learningSupportPlan.addFileToSupportGoalCheck(
+        supportGoalId,
+        supportGoalCheckId,
+        path.path!,
+        createdBy,
+      ),
+      errorMessage: 'Fehler beim Hinzufügen der Datei zum Ziel-Check',
+    );
+    return result;
+  }
+
+  Future<SupportGoal?> removeFileFromSupportGoalCheck({
+    required int supportGoalId,
+    required int supportGoalCheckId,
+    required String documentId,
+  }) async {
+    final result = await ClientHelper.apiCall(
+      call: () => _client.learningSupportPlan.removeFileFromSupportGoalCheck(
+        supportGoalId,
+        supportGoalCheckId,
+        documentId,
+      ),
+      errorMessage: 'Fehler beim Entfernen der Datei vom Ziel-Check',
+    );
+    return result;
   }
 }
