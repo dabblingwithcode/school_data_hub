@@ -156,8 +156,8 @@ class LibraryBooksEndpoint extends Endpoint {
     // query author
     if (libraryBookQuery.author != null) {
       query = (query == null)
-          ? t.book.author.equals(libraryBookQuery.author)
-          : query & t.book.author.equals(libraryBookQuery.author);
+          ? t.book.author.ilike('%${libraryBookQuery.author}%')
+          : query & t.book.author.ilike('%${libraryBookQuery.author}%');
     }
     // query location
     if (libraryBookQuery.location != null) {
