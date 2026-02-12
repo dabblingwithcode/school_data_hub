@@ -18,12 +18,18 @@ class HubDocumentHelper {
     required String path,
   }) {
     final fileExtension = path.split('.').last;
+    // If the file is an audio file, we sent the duration in the file name as a prefix
+    // Example: 00-00_1234567890.m4a
+    // We need to extract the duration from the file name
+    // and use it as a prefix for the document ID
+    // so that we can access the value later in the client
+    // without having to initialize the document object
     String? duration;
     if (fileExtension == 'm4a') {
       duration = path.split('_').first;
     }
     final documentId = duration != null
-        ? '$duration-${Uuid().v4()}.$fileExtension'
+        ? '${duration}_${Uuid().v4()}.$fileExtension'
         : '${Uuid().v4()}.$fileExtension';
 
     // Create a HubDocument with the file path
