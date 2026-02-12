@@ -9,8 +9,10 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 
 /// Shows a dialog that records audio from the microphone.
 /// Returns the recorded [File] or `null` if the user cancelled.
-Future<File?> recordAudioFile(BuildContext context) {
-  return showDialog<File>(
+Future<({File? file, String? fileInfo})?> recordAudioFile(
+  BuildContext context,
+) {
+  return showDialog<({File? file, String? fileInfo})>(
     context: context,
     barrierDismissible: false,
     builder: (context) => const _AudioRecordDialog(),
@@ -101,7 +103,9 @@ class _AudioRecordDialogState extends State<_AudioRecordDialog> {
 
   void _confirm() {
     if (_filePath != null) {
-      Navigator.of(context).pop(File(_filePath!));
+      Navigator.of(
+        context,
+      ).pop((file: File(_filePath!), fileInfo: _formatDuration(_elapsed)));
     }
   }
 

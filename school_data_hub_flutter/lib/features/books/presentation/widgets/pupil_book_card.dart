@@ -531,7 +531,8 @@ class _DocumentsSection extends StatelessWidget {
                       );
                     },
                     onLongPress: () async {
-                      if (!isAdmin) {
+                      if (!isAdmin ||
+                          file.createdBy != di<HubSessionManager>().userName) {
                         di<NotificationService>().showSnackBar(
                           NotificationType.error,
                           'Nur Admins können Dokumente löschen',
@@ -639,10 +640,14 @@ class _DocumentsSection extends StatelessWidget {
                 children: [
                   InkWell(
                     onTap: () async {
-                      final File? file = await recordAudioFile(context);
-                      if (file == null) return;
+                      final ({File? file, String? fileInfo})? result =
+                          await recordAudioFile(context);
+                      if (result == null) return;
 
-                      await _uploadFile(file);
+                      await _uploadFile(
+                        result.file!,
+                        fileInfo: result.fileInfo,
+                      );
                     },
                     child: SizedBox(
                       height: 70,
@@ -661,7 +666,7 @@ class _DocumentsSection extends StatelessWidget {
     );
   }
 
-  Future<void> _uploadFile(File file) async {
+  Future<void> _uploadFile(File file, {String? fileInfo}) async {
     final client = di<Client>();
     final notificationService = di<NotificationService>();
     final hubSessionManager = di<HubSessionManager>();
@@ -673,6 +678,7 @@ class _DocumentsSection extends StatelessWidget {
         file: encryptedFile,
         storageId: StorageId.private,
         folder: ServerStorageFolder.documents,
+        fileInfo: fileInfo,
       );
 
       if (!fileResponse.success) {
@@ -881,7 +887,11 @@ class _AudioThumbnailState extends State<_AudioThumbnail> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.audiotrack, size: 30, color: AppColors.interactiveColor),
+            Icon(
+              Icons.record_voice_over_rounded,
+              size: 30,
+              color: AppColors.interactiveColor,
+            ),
             const SizedBox(height: 2),
             if (_loading)
               SizedBox(

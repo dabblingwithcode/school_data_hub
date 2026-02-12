@@ -18,7 +18,13 @@ class HubDocumentHelper {
     required String path,
   }) {
     final fileExtension = path.split('.').last;
-    final documentId = '${Uuid().v4()}.$fileExtension';
+    String? duration;
+    if (fileExtension == 'm4a') {
+      duration = path.split('_').first;
+    }
+    final documentId = duration != null
+        ? '$duration-${Uuid().v4()}.$fileExtension'
+        : '${Uuid().v4()}.$fileExtension';
 
     // Create a HubDocument with the file path
     final document = HubDocument(
@@ -51,8 +57,11 @@ class HubDocumentHelper {
       storageId: 'private',
       path: hubDocument.documentPath!,
     );
-    await HubDocument.db
-        .deleteRow(session, hubDocument, transaction: transaction);
+    await HubDocument.db.deleteRow(
+      session,
+      hubDocument,
+      transaction: transaction,
+    );
 
     return true; // Document deleted successfully
   }

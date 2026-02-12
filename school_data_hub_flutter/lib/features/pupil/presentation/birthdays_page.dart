@@ -13,7 +13,12 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avat
 
 class BirthdaysView extends StatelessWidget {
   final DateTime selectedDate;
-  const BirthdaysView({required this.selectedDate, super.key});
+  final bool futureBirthdays;
+  const BirthdaysView({
+    required this.selectedDate,
+    this.futureBirthdays = false,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

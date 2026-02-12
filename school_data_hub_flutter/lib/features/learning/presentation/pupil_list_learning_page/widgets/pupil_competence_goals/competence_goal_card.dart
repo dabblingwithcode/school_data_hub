@@ -449,12 +449,14 @@ class _GoalDocumentsSection extends StatelessWidget {
                 children: [
                   InkWell(
                     onTap: () async {
-                      final File? file = await recordAudioFile(context);
-                      if (file == null) return;
+                      final ({File? file, String? fileInfo})? result =
+                          await recordAudioFile(context);
+                      if (result == null) return;
 
                       await di<CompetenceManager>().addFileToCompetenceGoal(
                         publicId: pupilGoal.publicId,
-                        file: file,
+                        file: result.file!,
+                        fileInfo: result.fileInfo!,
                       );
                     },
                     child: SizedBox(

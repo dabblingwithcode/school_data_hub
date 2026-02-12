@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
@@ -13,7 +14,6 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_fil
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter_impl.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class PupilProxyManager extends ChangeNotifier {
   final _log = Logger('PupilManager');
@@ -140,6 +140,22 @@ class PupilProxyManager extends ChangeNotifier {
     return pupilSiblings;
   }
 
+  /// Returns the next birthday date for a pupil (next occurrence of month/day on or after today).
+  DateTime getNextBirthdayDate(PupilProxy pupil) {
+    final now = DateTime.now();
+    final birthdayToLocal = pupil.birthday.toLocal();
+    final today = DateTime(now.year, now.month, now.day);
+    final birthdayThisYear = DateTime(
+      now.year,
+      birthdayToLocal.month,
+      birthdayToLocal.day,
+    );
+    if (birthdayThisYear.isAfter(today) || birthdayThisYear.isSameDate(today)) {
+      return birthdayThisYear;
+    }
+    return DateTime(now.year + 1, birthdayToLocal.month, birthdayToLocal.day);
+  }
+
   /// Returns the relevant birthday date for a pupil, considering year boundaries.
   /// If the birthday this year hasn't occurred yet, returns last year's birthday.
   /// Otherwise, returns this year's birthday.
@@ -184,6 +200,33 @@ class PupilProxyManager extends ChangeNotifier {
     });
 
     return pupilsWithBirthdaySinceDate;
+  }
+
+  /// Returns pupils whose next birthday falls in the range [today, date] (future birthdays from now until [date]).
+  List<PupilProxy> getPupilsWithBirthdayUntilDate(DateTime date) {
+    Map<int, PupilProxy> allPupils = Map<int, PupilProxy>.of(_pupilIdPupilsMap);
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final dateOnly = DateTime(date.year, date.month, date.day);
+
+    allPupils.removeWhere((key, pupil) {
+      final DateTime nextBirthday = getNextBirthdayDate(pupil);
+      // Keep only pupils whose next birthday is in [today, date]
+      return nextBirthday.isBeforeDate(today) ||
+          nextBirthday.isAfterDate(dateOnly);
+    });
+
+    final pupilsWithBirthdayUntilDate = allPupils.values.toList();
+
+    // Sort by next birthday ascending (soonest first)
+    pupilsWithBirthdayUntilDate.sort((a, b) {
+      final nextA = getNextBirthdayDate(a);
+      final nextB = getNextBirthdayDate(b);
+      return nextA.compareTo(nextB);
+    });
+
+    return pupilsWithBirthdayUntilDate;
   }
 
   /// **TODO:** Do we need this?

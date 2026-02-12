@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -17,7 +18,6 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/family_langu
 import 'package:school_data_hub_flutter/features/pupil/presentation/religion_page/religion_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/special_info_page/special_info_list_page.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class PupilListButtons extends WatchingWidget {
   final double screenWidth;

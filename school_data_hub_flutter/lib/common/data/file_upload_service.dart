@@ -14,10 +14,18 @@ class ClientFileUpload {
   static final _instance = ClientFileUpload.__internal();
   factory ClientFileUpload() => _instance;
 
+  /// Uploads a file to the server.
+  ///
+  /// [file] is the file to upload.
+  /// [storageId] is the storage id to upload the file to.
+  /// [folder] is the folder to upload the file to.
+  /// [fileInfo] is optional file information like audio duration
+  /// to be included in the documentId string to upload the file to.
   static Future<({String? path, bool success, bool cancelled})> uploadFile({
     File? file,
     required StorageId storageId,
     required ServerStorageFolder folder,
+    String? fileInfo,
   }) async {
     File? fileToUpload = file;
     if (fileToUpload == null) {
@@ -29,7 +37,9 @@ class ClientFileUpload {
       }
       fileToUpload = File(pickedFile.files.single.path!);
     }
-    final documentId = const Uuid().v4();
+    final documentId = fileInfo != null
+        ? '${fileInfo.replaceAll(':', '-')}_${const Uuid().v4()}'
+        : const Uuid().v4();
     final path = p.join(
       folder.name,
       '$documentId${p.extension(fileToUpload.path)}',

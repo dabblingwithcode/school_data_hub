@@ -76,9 +76,11 @@ class CompetenceGoalApiService {
     String publicId,
     File file,
     String createdBy,
+    String? fileInfo,
   ) async {
     final path = await ClientFileUpload.uploadFile(
       file: file,
+      fileInfo: fileInfo,
       storageId: StorageId.private,
       folder: ServerStorageFolder.documents,
     );

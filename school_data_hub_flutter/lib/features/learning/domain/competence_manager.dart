@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
@@ -14,7 +15,6 @@ import 'package:school_data_hub_flutter/features/learning/data/competence_goal_a
 import 'package:school_data_hub_flutter/features/learning/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class CompetenceManager {
   final _envManager = di<EnvManager>();
@@ -338,11 +338,12 @@ class CompetenceManager {
   Future<void> addFileToCompetenceGoal({
     required String publicId,
     required File file,
+    String? fileInfo,
   }) async {
     final encryptedFile = await customEncrypter.encryptFile(file);
     final createdBy = di<HubSessionManager>().userName;
     final updatedPupilData = await _competenceGoalApiService
-        .addFileToCompetenceGoal(publicId, encryptedFile, createdBy!);
+        .addFileToCompetenceGoal(publicId, encryptedFile, createdBy!, fileInfo);
     di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
 
     _notificationService.showSnackBar(

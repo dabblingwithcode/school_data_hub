@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/services/learning_goals_pdf_generator.dart';
@@ -6,10 +7,9 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/pupil_list_learning_page.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/learning_list_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/select_competence_page/select_competence_view_model.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/learning_support_list_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class PupilListLearningBottomNavBar extends WatchingWidget {
   final bool filtersOn;
@@ -50,38 +50,12 @@ class PupilListLearningBottomNavBar extends WatchingWidget {
                   child: const Icon(Icons.add_a_photo_rounded, size: 30),
                 ),
               ],
-              if ((di<HubSessionManager>().isAdmin ||
-                      di<HubSessionManager>().isTester) &&
-                  selectedContent == SelectedContent.competenceGoals) ...[
-                const Gap(30),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (ctx) => const SelectCompetence(),
-                      ),
-                    );
-                  },
-                  child: const Icon(Icons.add_a_photo_rounded, size: 30),
-                ),
-              ],
-              const Gap(30),
-              InkWell(
-                onTap: () => showLearningSupportFilterBottomSheet(context),
-                onLongPress: () => di<FiltersStateManager>().resetFilters(),
-                child: Icon(
-                  Icons.filter_list,
-                  color: filtersOn ? Colors.deepOrange : Colors.white,
-                  size: 30,
-                ),
-              ),
+
               if (di<HubSessionManager>().isAdmin &&
                   selectedContent == SelectedContent.competenceGoals) ...[
                 const Gap(30),
-                IconButton(
-                  tooltip: 'PDF drucken',
-                  icon: const Icon(Icons.print_rounded, size: 30),
-                  onPressed: () async {
+                InkWell(
+                  onTap: () async {
                     try {
                       final pdfFile =
                           await LearningGoalsPdfGenerator.generateLearningGoalsPdf(
@@ -106,8 +80,25 @@ class PupilListLearningBottomNavBar extends WatchingWidget {
                       }
                     }
                   },
+                  child: const Icon(Icons.print_rounded, size: 30),
                 ),
+                // IconButton(
+                //   tooltip: 'PDF drucken',
+                //   icon: const Icon(Icons.print_rounded, size: 30),
+                //   onPressed:
+                // ),
               ],
+              const Gap(30),
+              InkWell(
+                onTap: () => showLearningFilterBottomSheet(context),
+                onLongPress: () => di<FiltersStateManager>().resetFilters(),
+                child: Icon(
+                  Icons.filter_list,
+                  color: filtersOn ? Colors.deepOrange : Colors.white,
+                  size: 30,
+                ),
+              ),
+
               const Gap(15),
             ],
           ),
