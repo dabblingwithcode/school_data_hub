@@ -8,9 +8,6 @@
 		},
 		{
 			"path": "../../test_data"
-		},
-		{
-			"path": "../../private"
 		}
 	],
 	"settings": {}

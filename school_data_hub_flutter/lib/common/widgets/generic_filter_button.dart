@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 
-class FilterButton extends WatchingWidget {
+class GenericFilterButton extends WatchingWidget {
   final bool isSearchBar;
 
   final Function showBottomSheetFunction;
-  const FilterButton({
+  const GenericFilterButton({
     required this.isSearchBar,
     required this.showBottomSheetFunction,
     super.key,

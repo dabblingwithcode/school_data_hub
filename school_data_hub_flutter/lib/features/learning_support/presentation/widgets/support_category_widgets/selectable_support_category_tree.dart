@@ -114,7 +114,7 @@ class _CategoryNode extends StatelessWidget {
 }
 
 /// A branch node displayed as an [ExpansionTile] containing a nested
-/// [SelectableSupportCategoryTree].
+/// [SelectableSupportCategoryTree]. The category itself is also selectable.
 class _BranchNode extends StatelessWidget {
   final SupportCategory category;
   final PupilProxy pupil;
@@ -148,9 +148,24 @@ class _BranchNode extends StatelessWidget {
         maintainState: false,
         backgroundColor: color,
         collapsedBackgroundColor: color,
-        title: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(category.name, maxLines: 3, style: _categoryTextStyle),
+        title: Row(
+          children: [
+            Radio<int>(value: category.categoryId),
+            const Gap(5),
+            Expanded(
+              child: InkWell(
+                onTap: () => manager.selectCategory(category.categoryId),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text(
+                    category.name,
+                    maxLines: 3,
+                    style: _categoryTextStyle,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
         children: [
           SelectableSupportCategoryTree(

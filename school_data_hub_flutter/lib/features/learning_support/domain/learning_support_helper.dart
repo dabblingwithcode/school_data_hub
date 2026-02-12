@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class LearningSupportHelper {
   static HubSessionManager get _sessionManager => di<HubSessionManager>();
@@ -172,5 +172,22 @@ class LearningSupportHelper {
       return AppColors.spracheSprechenColor;
     }
     return Colors.deepPurple;
+  }
+
+  static String getRootSupportCategoryIcon(SupportCategory goalCategory) {
+    if (goalCategory.name == 'Körper, Wahrnehmung, Motorik') {
+      return 'assets/images/support_categories_icons/support_category_sensorik_motorik.png';
+    } else if (goalCategory.name == 'Sozialkompetenz / Emotionalität') {
+      return 'assets/images/support_categories_icons/support_category_emotional_sozial.png';
+    } else if (goalCategory.name == 'Mathematik') {
+      return 'assets/images/support_categories_icons/support_category_mathe.png';
+    } else if (goalCategory.name == 'Lernen und Leisten') {
+      return 'assets/images/support_categories_icons/support_category_lernen_leisten.png';
+    } else if (goalCategory.name == 'Deutsch') {
+      return 'assets/images/support_categories_icons/support_category_german.png';
+    } else if (goalCategory.name == 'Sprache und Sprechen') {
+      return 'assets/images/support_categories_icons/support_category_sprache_sprechen.png';
+    }
+    return 'assets/images/support_categories_icons/default.png';
   }
 }

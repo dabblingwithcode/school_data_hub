@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav_bar_layouts.dart';
 
 class BookTagManagementBottomNavBar extends StatelessWidget {
   final VoidCallback onAddPressed;
 
-  const BookTagManagementBottomNavBar({
-    super.key,
-    required this.onAddPressed,
-  });
+  const BookTagManagementBottomNavBar({super.key, required this.onAddPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -46,4 +43,3 @@ class BookTagManagementBottomNavBar extends StatelessWidget {
     );
   }
 }
-

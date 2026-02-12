@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/paddings.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
-import 'package:school_data_hub_flutter/common/widgets/filter_button.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav_bar_layouts.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_filter_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
@@ -15,7 +16,6 @@ import 'package:school_data_hub_flutter/features/school_lists/presentation/schoo
 import 'package:school_data_hub_flutter/features/school_lists/services/school_list_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/select_users/select_users_page.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
   final int listId;
@@ -144,7 +144,7 @@ class SchoolListPupilEntriesBottomNavBar extends StatelessWidget {
                 },
               ),
               const Gap(AppPaddings.bottomNavBarButtonGap),
-              FilterButton(
+              GenericFilterButton(
                 isSearchBar: false,
                 showBottomSheetFunction: () {
                   return showGenericFilterBottomSheet(

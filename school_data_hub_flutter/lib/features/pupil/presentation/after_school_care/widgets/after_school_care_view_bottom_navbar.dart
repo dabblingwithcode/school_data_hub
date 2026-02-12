@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
-import 'package:school_data_hub_flutter/common/widgets/filter_button.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav_bar_layouts.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_filter_button.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/after_school_care/widgets/after_school_care_filter_bottom_sheet.dart';
 
 class AfterSchoolCareListPageBottomNavBar extends StatelessWidget {
@@ -33,7 +33,7 @@ class AfterSchoolCareListPageBottomNavBar extends StatelessWidget {
                 },
               ),
               const Gap(30),
-              FilterButton(
+              GenericFilterButton(
                 isSearchBar: true,
                 showBottomSheetFunction: () =>
                     showOgsFilterBottomSheet(context),

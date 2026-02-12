@@ -11,12 +11,12 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/growth_score_dropdown.dart';
 import 'package:school_data_hub_flutter/common/widgets/grades_widget.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/enums.dart';
-import 'package:school_data_hub_flutter/features/learning/presentation/widgets/competence_check_dropdown.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/new_workbook_page/new_workbook_page.dart';
 
@@ -50,6 +50,10 @@ class PupilWorkbookCard extends WatchingWidget {
       borderRadius: BorderRadius.circular(20),
       child: Card(
         child: InkWell(
+          focusColor: Colors.transparent,
+          hoverColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          canRequestFocus: false,
           onLongPress: () async {
             if (thisPupilWorkbook.createdBy !=
                     di<HubSessionManager>().userName ||
@@ -131,30 +135,28 @@ class PupilWorkbookCard extends WatchingWidget {
                           children: [
                             Row(
                               children: [
-                                InkWell(
-                                  onLongPress: () {
-                                    //navigate to edit workbook page
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => NewWorkbookPage(
-                                          isbn: workbook.isbn,
-                                          isEdit: true,
-                                          workbook: workbook,
+                                Expanded(
+                                  child: InkWell(
+                                    onLongPress: () {
+                                      //navigate to edit workbook page
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => NewWorkbookPage(
+                                            isbn: workbook.isbn,
+                                            isEdit: true,
+                                            workbook: workbook,
+                                          ),
                                         ),
+                                      );
+                                    },
+                                    child: Text(
+                                      workbook.name,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                    );
-                                  },
-                                  child: Expanded(
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Text(
-                                        workbook.name,
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ),
@@ -275,10 +277,15 @@ class PupilWorkbookCard extends WatchingWidget {
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    GrowthDropdown(
-                                      dropdownValue: thisPupilWorkbook.score,
-                                      onChangedFunction:
-                                          onChangedGrowthDropdown,
+                                    GestureDetector(
+                                      behavior: HitTestBehavior.opaque,
+                                      onTap:
+                                          () {}, // Absorb tap to prevent parent InkWell activation
+                                      child: GrowthDropdown(
+                                        dropdownValue: thisPupilWorkbook.score,
+                                        onChangedFunction:
+                                            onChangedGrowthDropdown,
+                                      ),
                                     ),
                                   ],
                                 ),

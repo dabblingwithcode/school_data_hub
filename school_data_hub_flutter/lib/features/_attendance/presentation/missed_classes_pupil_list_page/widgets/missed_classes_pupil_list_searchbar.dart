@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/filter_button.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_filter_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_stats_helper.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/missed_classes_pupil_list_page/widgets/missed_classes_filters.dart';
@@ -12,7 +13,6 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_fil
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_search_text_field.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class AttendanceRankingListSearchbar extends WatchingWidget {
   final List<PupilProxy> pupils;
@@ -130,7 +130,7 @@ class AttendanceRankingListSearchbar extends WatchingWidget {
                   ),
                 ),
                 const Gap(5),
-                FilterButton(
+                GenericFilterButton(
                   isSearchBar: true,
                   showBottomSheetFunction: () => showGenericFilterBottomSheet(
                     context: context,

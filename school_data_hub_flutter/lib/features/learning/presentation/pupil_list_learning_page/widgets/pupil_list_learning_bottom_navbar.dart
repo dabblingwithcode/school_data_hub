@@ -4,7 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/services/learning_goals_pdf_generator.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar_layouts.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/pupil_list_learning_page.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/learning_list_filter_bottom_sheet.dart';
