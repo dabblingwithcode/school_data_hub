@@ -5,6 +5,8 @@ adminPupil:
   - updateBackendPupilDataState:
 adminSchoolData:
   - postSchoolData:
+  - uploadLogo:
+  - uploadOfficialSeal:
 adminSchoolDay:
   - createSchoolSemester:
   - updateSchoolSemester:

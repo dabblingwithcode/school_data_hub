@@ -478,7 +478,69 @@ class Endpoints extends _i1.EndpointDispatch {
             session,
             params['schoolData'],
           ),
-        )
+        ),
+        'uploadLogo': _i1.MethodConnector(
+          name: 'uploadLogo',
+          params: {
+            'schoolDataId': _i1.ParameterDescription(
+              name: 'schoolDataId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'filePath': _i1.ParameterDescription(
+              name: 'filePath',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'createdBy': _i1.ParameterDescription(
+              name: 'createdBy',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['adminSchoolData'] as _i4.AdminSchoolDataEndpoint)
+                  .uploadLogo(
+            session,
+            params['schoolDataId'],
+            params['filePath'],
+            params['createdBy'],
+          ),
+        ),
+        'uploadOfficialSeal': _i1.MethodConnector(
+          name: 'uploadOfficialSeal',
+          params: {
+            'schoolDataId': _i1.ParameterDescription(
+              name: 'schoolDataId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'filePath': _i1.ParameterDescription(
+              name: 'filePath',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'createdBy': _i1.ParameterDescription(
+              name: 'createdBy',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['adminSchoolData'] as _i4.AdminSchoolDataEndpoint)
+                  .uploadOfficialSeal(
+            session,
+            params['schoolDataId'],
+            params['filePath'],
+            params['createdBy'],
+          ),
+        ),
       },
     );
     connectors['adminSchoolDay'] = _i1.EndpointConnector(

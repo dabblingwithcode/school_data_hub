@@ -38,28 +38,48 @@ class SchoolInfoDataManager {
     }
   }
 
-  /// Upload school logo
-  Future<String?> uploadLogo(File imageFile) async {
+  /// Upload school logo and link to SchoolData
+  Future<SchoolData?> uploadLogo(
+    File imageFile,
+    int schoolDataId,
+    String createdBy,
+  ) async {
     try {
-      final logoPath = await _apiService.uploadLogo(imageFile);
-      if (logoPath != null) {
-        _log.info('Logo uploaded successfully: $logoPath');
+      final updatedSchoolData = await _apiService.uploadLogo(
+        imageFile,
+        schoolDataId,
+        createdBy,
+      );
+      if (updatedSchoolData != null) {
+        _log.info(
+          'Logo uploaded and linked successfully. LogoId: ${updatedSchoolData.logoId}',
+        );
       }
-      return logoPath;
+      return updatedSchoolData;
     } catch (e) {
       _log.info('Error uploading logo: $e');
       rethrow;
     }
   }
 
-  /// Upload official seal
-  Future<String?> uploadOfficialSeal(File imageFile) async {
+  /// Upload official seal and link to SchoolData
+  Future<SchoolData?> uploadOfficialSeal(
+    File imageFile,
+    int schoolDataId,
+    String createdBy,
+  ) async {
     try {
-      final sealPath = await _apiService.uploadOfficialSeal(imageFile);
-      if (sealPath != null) {
-        _log.info('Official seal uploaded successfully: $sealPath');
+      final updatedSchoolData = await _apiService.uploadOfficialSeal(
+        imageFile,
+        schoolDataId,
+        createdBy,
+      );
+      if (updatedSchoolData != null) {
+        _log.info(
+          'Official seal uploaded and linked successfully. SealId: ${updatedSchoolData.officialSealId}',
+        );
       }
-      return sealPath;
+      return updatedSchoolData;
     } catch (e) {
       _log.info('Error uploading official seal: $e');
       rethrow;

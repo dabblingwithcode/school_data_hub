@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/school/domain/managers/school_data_crud_manager.dart';
 import 'package:school_data_hub_flutter/features/school/domain/managers/school_data_manager.dart'
     as data_manager;
@@ -63,12 +65,12 @@ class SchoolDataMainManager {
       if (schoolData != null) {
         _dataManager.setSchoolData(schoolData);
 
-        // Load images if they exist
-        if (schoolData.logoId != null) {
-          await _loadLogoImage(schoolData.logoId.toString());
+        // Load images if they exist (using the HubDocument's documentId)
+        if (schoolData.logo != null) {
+          await _loadLogoImage(schoolData.logo!.documentId);
         }
-        if (schoolData.officialSealId != null) {
-          await _loadOfficialSealImage(schoolData.officialSealId.toString());
+        if (schoolData.officialSeal != null) {
+          await _loadOfficialSealImage(schoolData.officialSeal!.documentId);
         }
       }
     } catch (e) {
@@ -123,18 +125,33 @@ class SchoolDataMainManager {
 
   /// Upload logo
   Future<void> uploadLogo(File imageFile) async {
+    final currentSchoolData = _dataManager.schoolData.value;
+    if (currentSchoolData?.id == null) {
+      throw Exception('SchoolData must be saved before uploading a logo');
+    }
+
+    final createdBy =
+        di<HubSessionManager>().userName ?? 'unknown';
+
     _dataManager.setSaving(true);
     try {
-      final logoPath = await _crudManager.uploadLogo(imageFile);
-      if (logoPath != null) {
-        // Update the form data with the new logo path
-        final currentData = _uiManager.getCurrentFormData();
-        if (currentData != null) {
-          // Note: This would need to be updated when the API supports logo path storage
-          _log.info('Logo uploaded successfully: $logoPath');
-        }
+      final updatedSchoolData = await _crudManager.uploadLogo(
+        imageFile,
+        currentSchoolData!.id!,
+        createdBy,
+      );
+      if (updatedSchoolData != null) {
+        _log.info(
+          'Logo uploaded and linked successfully. LogoId: ${updatedSchoolData.logoId}',
+        );
+        // Update local state with the returned SchoolData
+        _dataManager.setSchoolData(updatedSchoolData);
         // Load the new image data to show it in the UI
-        await _loadLogoImage(logoPath);
+        if (updatedSchoolData.logo != null) {
+          await _loadLogoImage(updatedSchoolData.logo!.documentId);
+        }
+        // Re-initialize the form so it reflects the updated SchoolData
+        _uiManager.initializeForm(updatedSchoolData);
       }
     } catch (e) {
       _log.severe('Error uploading logo: $e');
@@ -146,18 +163,37 @@ class SchoolDataMainManager {
 
   /// Upload official seal
   Future<void> uploadOfficialSeal(File imageFile) async {
+    final currentSchoolData = _dataManager.schoolData.value;
+    if (currentSchoolData?.id == null) {
+      throw Exception(
+        'SchoolData must be saved before uploading an official seal',
+      );
+    }
+
+    final createdBy =
+        di<HubSessionManager>().userName ?? 'unknown';
+
     _dataManager.setSaving(true);
     try {
-      final sealPath = await _crudManager.uploadOfficialSeal(imageFile);
-      if (sealPath != null) {
-        // Update the form data with the new seal path
-        final currentData = _uiManager.getCurrentFormData();
-        if (currentData != null) {
-          // Note: This would need to be updated when the API supports seal path storage
-          _log.info('Official seal uploaded successfully: $sealPath');
-        }
+      final updatedSchoolData = await _crudManager.uploadOfficialSeal(
+        imageFile,
+        currentSchoolData!.id!,
+        createdBy,
+      );
+      if (updatedSchoolData != null) {
+        _log.info(
+          'Official seal uploaded and linked successfully. SealId: ${updatedSchoolData.officialSealId}',
+        );
+        // Update local state with the returned SchoolData
+        _dataManager.setSchoolData(updatedSchoolData);
         // Load the new image data to show it in the UI
-        await _loadOfficialSealImage(sealPath);
+        if (updatedSchoolData.officialSeal != null) {
+          await _loadOfficialSealImage(
+            updatedSchoolData.officialSeal!.documentId,
+          );
+        }
+        // Re-initialize the form so it reflects the updated SchoolData
+        _uiManager.initializeForm(updatedSchoolData);
       }
     } catch (e) {
       _log.severe('Error uploading official seal: $e');

@@ -5,12 +5,14 @@ class SchoolDataEndpoint extends Endpoint {
   @override
   bool get requireLogin => true;
 
-  /// TODO: we should be specific about which school data to get
   Future<SchoolData?> getSchoolData(Session session) async {
-    var schoolData = await SchoolData.db.findFirstRow(session);
+    var schoolData = await SchoolData.db.findFirstRow(
+      session,
+      include: SchoolData.include(
+        logo: HubDocument.include(),
+        officialSeal: HubDocument.include(),
+      ),
+    );
     return schoolData;
   }
-
-  // TODO: rest of the endpoint methods
-  // Endpoint implementation
 }

@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class SchoolDataForm extends WatchingWidget {
   const SchoolDataForm({super.key});

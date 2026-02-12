@@ -30,8 +30,13 @@ class SchoolDataApiService {
     return createdSchoolData;
   }
 
-  /// Upload school logo
-  Future<String?> uploadLogo(File imageFile) async {
+  /// Upload school logo - uploads file to storage and links to SchoolData
+  Future<SchoolData?> uploadLogo(
+    File imageFile,
+    int schoolDataId,
+    String createdBy,
+  ) async {
+    // First upload the file to cloud storage
     final result = await ClientFileUpload.uploadFile(
       file: imageFile,
       storageId: StorageId.private,
@@ -42,13 +47,28 @@ class SchoolDataApiService {
       // Cache the uploaded file so it's immediately available
       final bytes = await imageFile.readAsBytes();
       await _cacheManager.putFile(result.path!, bytes);
-      return result.path;
+
+      // Call the backend endpoint to create HubDocument and link to SchoolData
+      final updatedSchoolData = await ClientHelper.apiCall(
+        call: () => _client.adminSchoolData.uploadLogo(
+          schoolDataId,
+          result.path!,
+          createdBy,
+        ),
+        errorMessage: 'Fehler beim Verknüpfen des Logos',
+      );
+      return updatedSchoolData;
     }
     return null;
   }
 
-  /// Upload official seal
-  Future<String?> uploadOfficialSeal(File imageFile) async {
+  /// Upload official seal - uploads file to storage and links to SchoolData
+  Future<SchoolData?> uploadOfficialSeal(
+    File imageFile,
+    int schoolDataId,
+    String createdBy,
+  ) async {
+    // First upload the file to cloud storage
     final result = await ClientFileUpload.uploadFile(
       file: imageFile,
       storageId: StorageId.private,
@@ -59,7 +79,17 @@ class SchoolDataApiService {
       // Cache the uploaded file so it's immediately available
       final bytes = await imageFile.readAsBytes();
       await _cacheManager.putFile(result.path!, bytes);
-      return result.path;
+
+      // Call the backend endpoint to create HubDocument and link to SchoolData
+      final updatedSchoolData = await ClientHelper.apiCall(
+        call: () => _client.adminSchoolData.uploadOfficialSeal(
+          schoolDataId,
+          result.path!,
+          createdBy,
+        ),
+        errorMessage: 'Fehler beim Verknüpfen des Dienstsiegels',
+      );
+      return updatedSchoolData;
     }
     return null;
   }

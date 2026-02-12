@@ -174,6 +174,38 @@ class EndpointAdminSchoolData extends _i1.EndpointRef {
         'postSchoolData',
         {'schoolData': schoolData},
       );
+
+  /// Upload a logo image and link it to the SchoolData record
+  _i2.Future<_i6.SchoolData> uploadLogo(
+    int schoolDataId,
+    String filePath,
+    String createdBy,
+  ) =>
+      caller.callServerEndpoint<_i6.SchoolData>(
+        'adminSchoolData',
+        'uploadLogo',
+        {
+          'schoolDataId': schoolDataId,
+          'filePath': filePath,
+          'createdBy': createdBy,
+        },
+      );
+
+  /// Upload an official seal image and link it to the SchoolData record
+  _i2.Future<_i6.SchoolData> uploadOfficialSeal(
+    int schoolDataId,
+    String filePath,
+    String createdBy,
+  ) =>
+      caller.callServerEndpoint<_i6.SchoolData>(
+        'adminSchoolData',
+        'uploadOfficialSeal',
+        {
+          'schoolDataId': schoolDataId,
+          'filePath': filePath,
+          'createdBy': createdBy,
+        },
+      );
 }
 
 /// {@category Endpoint}
