@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
@@ -21,204 +23,393 @@ Future<({File? file, String? fileInfo})?> recordAudioFile(
 
 enum _RecordState { idle, recording, done }
 
-class _AudioRecordDialog extends StatefulWidget {
+/// Simple flag class that won't be auto-disposed by createOnce
+class _ShutdownFlag {
+  bool value = false;
+}
+
+class _AudioRecordDialog extends WatchingWidget {
   const _AudioRecordDialog();
 
   @override
-  State<_AudioRecordDialog> createState() => _AudioRecordDialogState();
-}
+  Widget build(BuildContext context) {
+    // Use a simple flag (not ValueNotifier) to avoid disposal issues
+    // Created FIRST so it's disposed LAST (createOnce disposes in reverse order)
+    final isShutDown = createOnce(() => _ShutdownFlag());
 
-class _AudioRecordDialogState extends State<_AudioRecordDialog> {
-  final AudioRecorder _recorder = AudioRecorder();
-  _RecordState _state = _RecordState.idle;
-  Duration _elapsed = Duration.zero;
-  Timer? _timer;
-  String? _filePath;
-  String? _errorMessage;
+    // State notifiers - created early so they're disposed late
+    final state = createOnce(() => ValueNotifier(_RecordState.idle));
+    final elapsed = createOnce(() => ValueNotifier(Duration.zero));
+    final filePath = createOnce(() => ValueNotifier<String?>(null));
+    final errorMessage = createOnce(() => ValueNotifier<String?>(null));
+    final recordingTimer = createOnce(() => ValueNotifier<Timer?>(null));
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    _recorder.dispose();
-    super.dispose();
-  }
+    // Player state notifiers for preview
+    final isPlaying = createOnce(() => ValueNotifier(false));
+    final position = createOnce(() => ValueNotifier(Duration.zero));
+    final duration = createOnce(() => ValueNotifier(Duration.zero));
 
-  Future<void> _startRecording() async {
-    final hasPermission = await _recorder.hasPermission();
-    if (!hasPermission) {
-      setState(() {
-        _errorMessage = 'Mikrofonberechtigung wurde nicht erteilt.';
-      });
-      return;
-    }
-
-    final tempDir = await getTemporaryDirectory();
-    final filePath = p.join(
-      tempDir.path,
-      'recording_${DateTime.now().millisecondsSinceEpoch}.m4a',
+    // Create recorder and player AFTER ValueNotifiers
+    // So they're disposed FIRST (reverse order), setting isShutDown before
+    // ValueNotifiers are disposed
+    final recorder = createOnce(
+      () => AudioRecorder(),
+      dispose: (r) {
+        isShutDown.value = true;
+        r.dispose();
+      },
+    );
+    final player = createOnce(
+      () => AudioPlayer(),
+      dispose: (p) {
+        isShutDown.value = true;
+        p.stop().then((_) => p.dispose()).ignore();
+      },
     );
 
-    await _recorder.start(
-      const RecordConfig(encoder: AudioEncoder.aacLc),
-      path: filePath,
+    // Watch all state notifiers
+    final currentState = watch(state).value;
+    final currentElapsed = watch(elapsed).value;
+    final error = watch(errorMessage).value;
+    final playing = watch(isPlaying).value;
+    final pos = watch(position).value;
+    final dur = watch(duration).value;
+
+    // Register stream handlers for player state changes (for preview)
+    // Wrap entire handler in try-catch to handle race conditions during disposal
+    registerStreamHandler(
+      target: player,
+      select: (AudioPlayer p) => p.playerStateStream,
+      handler: (context, snapshot, cancel) {
+        try {
+          if (isShutDown.value || !snapshot.hasData) return;
+          final playerState = snapshot.data!;
+          final nowPlaying =
+              playerState.playing &&
+              playerState.processingState != ProcessingState.completed;
+          isPlaying.value = nowPlaying;
+          if (playerState.processingState == ProcessingState.completed) {
+            player.seek(Duration.zero).then((_) => player.pause()).ignore();
+          }
+        } catch (_) {
+          // Ignore errors during disposal
+        }
+      },
     );
 
-    _filePath = filePath;
-    _elapsed = Duration.zero;
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      setState(() {
-        _elapsed += const Duration(seconds: 1);
+    registerStreamHandler(
+      target: player,
+      select: (AudioPlayer p) => p.positionStream,
+      handler: (context, snapshot, cancel) {
+        try {
+          if (isShutDown.value || !snapshot.hasData) return;
+          position.value = snapshot.data!;
+        } catch (_) {
+          // Ignore errors during disposal
+        }
+      },
+    );
+
+    registerStreamHandler(
+      target: player,
+      select: (AudioPlayer p) => p.durationStream,
+      handler: (context, snapshot, cancel) {
+        try {
+          if (isShutDown.value || !snapshot.hasData) return;
+          if (snapshot.data != null) {
+            duration.value = snapshot.data!;
+          }
+        } catch (_) {
+          // Ignore errors during disposal
+        }
+      },
+    );
+
+    // Cleanup timer on dispose (recorder/player handled by createOnce dispose)
+    onDispose(() {
+      recordingTimer.value?.cancel();
+    });
+
+    // Helper functions
+    Future<void> startRecording() async {
+      final hasPermission = await recorder.hasPermission();
+      if (!hasPermission) {
+        errorMessage.value = 'Mikrofonberechtigung wurde nicht erteilt.';
+        return;
+      }
+
+      final tempDir = await getTemporaryDirectory();
+      final path = p.join(
+        tempDir.path,
+        'recording_${DateTime.now().millisecondsSinceEpoch}.m4a',
+      );
+
+      await recorder.start(
+        const RecordConfig(encoder: AudioEncoder.aacLc),
+        path: path,
+      );
+
+      filePath.value = path;
+      elapsed.value = Duration.zero;
+      recordingTimer.value = Timer.periodic(const Duration(seconds: 1), (_) {
+        elapsed.value = elapsed.value + const Duration(seconds: 1);
       });
-    });
 
-    setState(() {
-      _state = _RecordState.recording;
-      _errorMessage = null;
-    });
-  }
-
-  Future<void> _stopRecording() async {
-    _timer?.cancel();
-    final path = await _recorder.stop();
-
-    if (path != null) {
-      _filePath = path;
+      state.value = _RecordState.recording;
+      errorMessage.value = null;
     }
 
-    setState(() {
-      _state = _RecordState.done;
-    });
-  }
+    Future<void> stopRecording() async {
+      recordingTimer.value?.cancel();
+      final path = await recorder.stop();
 
-  void _cancel() {
-    // Clean up temp file if it exists
-    if (_filePath != null) {
-      final file = File(_filePath!);
-      if (file.existsSync()) {
-        file.deleteSync();
+      if (path != null) {
+        filePath.value = path;
+        // Load the recorded file into the player for preview
+        await player.setFilePath(path);
+      }
+
+      state.value = _RecordState.done;
+    }
+
+    void cancel() {
+      // Stop playback if playing
+      player.stop();
+      // Clean up temp file if it exists
+      final path = filePath.value;
+      if (path != null) {
+        final file = File(path);
+        if (file.existsSync()) {
+          file.deleteSync();
+        }
+      }
+      Navigator.of(context).pop();
+    }
+
+    void confirm() {
+      final path = filePath.value;
+      if (path != null) {
+        // Stop playback before confirming
+        player.stop();
+        Navigator.of(
+          context,
+        ).pop((file: File(path), fileInfo: _formatDuration(currentElapsed)));
       }
     }
-    Navigator.of(context).pop();
-  }
 
-  void _confirm() {
-    if (_filePath != null) {
-      Navigator.of(
-        context,
-      ).pop((file: File(_filePath!), fileInfo: _formatDuration(_elapsed)));
+    void togglePlayback() {
+      if (playing) {
+        player.pause();
+      } else {
+        player.play();
+      }
     }
-  }
 
-  String _formatDuration(Duration d) {
-    final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
-    final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
-    return '$minutes:$seconds';
-  }
+    // Build state content
+    Widget buildStateContent() {
+      switch (currentState) {
+        case _RecordState.idle:
+          return Column(
+            key: const ValueKey('idle'),
+            children: [
+              Icon(
+                Icons.mic,
+                size: 48,
+                color: AppColors.interactiveColor.withValues(alpha: 0.5),
+              ),
+              const SizedBox(height: 8),
+              const Text('Auf Aufnahme tippen, um zu starten.'),
+            ],
+          );
+        case _RecordState.recording:
+          return Column(
+            key: const ValueKey('recording'),
+            children: [
+              const Icon(Icons.mic, size: 48, color: Colors.red),
+              const SizedBox(height: 8),
+              Text(
+                _formatDuration(currentElapsed),
+                style: const TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                'Aufnahme läuft...',
+                style: TextStyle(color: Colors.red),
+              ),
+            ],
+          );
+        case _RecordState.done:
+          final progress = dur.inMilliseconds > 0
+              ? pos.inMilliseconds / dur.inMilliseconds
+              : 0.0;
+          return Column(
+            key: const ValueKey('done'),
+            children: [
+              Icon(Icons.check_circle, size: 48, color: Colors.green.shade600),
+              const SizedBox(height: 8),
+              Text(
+                _formatDuration(currentElapsed),
+                style: const TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 4),
+              const Text('Aufnahme fertig!'),
+              const SizedBox(height: 12),
+              // Audio preview player
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.interactiveColor.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: AppColors.interactiveColor.withValues(alpha: 0.2),
+                  ),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        playing ? Icons.pause : Icons.play_arrow,
+                        color: AppColors.interactiveColor,
+                      ),
+                      onPressed: togglePlayback,
+                      iconSize: 28,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(
+                        minWidth: 36,
+                        minHeight: 36,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 150,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                              activeTrackColor: AppColors.interactiveColor,
+                              inactiveTrackColor: AppColors.interactiveColor
+                                  .withValues(alpha: 0.15),
+                              thumbColor: AppColors.interactiveColor,
+                              overlayColor: AppColors.interactiveColor
+                                  .withValues(alpha: 0.2),
+                              trackHeight: 4,
+                              thumbShape: const RoundSliderThumbShape(
+                                enabledThumbRadius: 6,
+                              ),
+                              overlayShape: const RoundSliderOverlayShape(
+                                overlayRadius: 14,
+                              ),
+                            ),
+                            child: Slider(
+                              value: progress.clamp(0.0, 1.0),
+                              onChanged: (value) {
+                                if (dur.inMilliseconds > 0) {
+                                  final newPosition = Duration(
+                                    milliseconds: (value * dur.inMilliseconds)
+                                        .round(),
+                                  );
+                                  player.seek(newPosition);
+                                }
+                              },
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  _formatDuration(pos),
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                Text(
+                                  _formatDuration(dur),
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+      }
+    }
 
-  @override
-  Widget build(BuildContext context) {
+    // Build actions
+    List<Widget> buildActions() {
+      switch (currentState) {
+        case _RecordState.idle:
+          return [
+            TextButton(onPressed: cancel, child: const Text('Abbrechen')),
+            ElevatedButton.icon(
+              onPressed: startRecording,
+              icon: const Icon(Icons.mic),
+              label: const Text('Aufnahme'),
+            ),
+          ];
+        case _RecordState.recording:
+          return [
+            TextButton(onPressed: cancel, child: const Text('Abbrechen')),
+            ElevatedButton.icon(
+              onPressed: stopRecording,
+              icon: const Icon(Icons.stop),
+              label: const Text('Stopp'),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            ),
+          ];
+        case _RecordState.done:
+          return [
+            TextButton(onPressed: cancel, child: const Text('Verwerfen')),
+            ElevatedButton.icon(
+              onPressed: confirm,
+              icon: const Icon(Icons.check),
+              label: const Text('Speichern'),
+            ),
+          ];
+      }
+    }
+
     return AlertDialog(
       title: const Text('Audio aufnehmen'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (_errorMessage != null)
+          if (error != null)
             Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: Text(
-                _errorMessage!,
-                style: const TextStyle(color: Colors.red),
-              ),
+              child: Text(error, style: const TextStyle(color: Colors.red)),
             ),
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
-            child: _buildStateContent(),
+            child: buildStateContent(),
           ),
         ],
       ),
-      actions: _buildActions(),
+      actions: buildActions(),
     );
   }
+}
 
-  Widget _buildStateContent() {
-    switch (_state) {
-      case _RecordState.idle:
-        return Column(
-          key: const ValueKey('idle'),
-          children: [
-            Icon(
-              Icons.mic,
-              size: 48,
-              color: AppColors.interactiveColor.withValues(alpha: 0.5),
-            ),
-            const SizedBox(height: 8),
-            const Text('Tippen Sie auf Aufnahme, um zu starten.'),
-          ],
-        );
-      case _RecordState.recording:
-        return Column(
-          key: const ValueKey('recording'),
-          children: [
-            const Icon(Icons.mic, size: 48, color: Colors.red),
-            const SizedBox(height: 8),
-            Text(
-              _formatDuration(_elapsed),
-              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              'Aufnahme läuft...',
-              style: TextStyle(color: Colors.red),
-            ),
-          ],
-        );
-      case _RecordState.done:
-        return Column(
-          key: const ValueKey('done'),
-          children: [
-            Icon(Icons.check_circle, size: 48, color: Colors.green.shade600),
-            const SizedBox(height: 8),
-            Text(
-              _formatDuration(_elapsed),
-              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 4),
-            const Text('Aufnahme fertig.'),
-          ],
-        );
-    }
-  }
-
-  List<Widget> _buildActions() {
-    switch (_state) {
-      case _RecordState.idle:
-        return [
-          TextButton(onPressed: _cancel, child: const Text('Abbrechen')),
-          ElevatedButton.icon(
-            onPressed: _startRecording,
-            icon: const Icon(Icons.mic),
-            label: const Text('Aufnahme'),
-          ),
-        ];
-      case _RecordState.recording:
-        return [
-          TextButton(onPressed: _cancel, child: const Text('Abbrechen')),
-          ElevatedButton.icon(
-            onPressed: _stopRecording,
-            icon: const Icon(Icons.stop),
-            label: const Text('Stopp'),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-          ),
-        ];
-      case _RecordState.done:
-        return [
-          TextButton(onPressed: _cancel, child: const Text('Verwerfen')),
-          ElevatedButton.icon(
-            onPressed: _confirm,
-            icon: const Icon(Icons.check),
-            label: const Text('Speichern'),
-          ),
-        ];
-    }
-  }
+String _formatDuration(Duration d) {
+  final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+  final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+  return '$minutes:$seconds';
 }
