@@ -84,6 +84,7 @@ class AttendanceHelper {
     final bool unexcused = missedSchoolday.unexcused;
     final bool returned = missedSchoolday.returned;
     final DateTime? returnedTime = missedSchoolday.returnedAt;
+    final int? minutesLate = missedSchoolday.minutesLate;
     final String? comment = missedSchoolday.comment;
 
     return AttendanceValues(
@@ -93,6 +94,7 @@ class AttendanceHelper {
       unexcusedValue: unexcused,
       returnedValue: returned,
       returnedTimeValue: returnedTime,
+      minutesLateValue: minutesLate,
       commentValue: comment,
     );
   }

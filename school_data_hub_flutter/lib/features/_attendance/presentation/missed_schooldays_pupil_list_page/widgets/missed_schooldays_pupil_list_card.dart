@@ -14,17 +14,17 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avat
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/attendance_content/pupil_profile_attendance_content.dart';
 import 'package:flutter_it/flutter_it.dart';
 
-class MissedClassesPupilListCard extends WatchingStatefulWidget {
+class MissedSchooldaysPupilListCard extends WatchingStatefulWidget {
   final PupilProxy pupil;
-  const MissedClassesPupilListCard(this.pupil, {super.key});
+  const MissedSchooldaysPupilListCard(this.pupil, {super.key});
 
   @override
-  State<MissedClassesPupilListCard> createState() =>
+  State<MissedSchooldaysPupilListCard> createState() =>
       _AttendanceRankingListCardState();
 }
 
 class _AttendanceRankingListCardState
-    extends State<MissedClassesPupilListCard> {
+    extends State<MissedSchooldaysPupilListCard> {
   late CustomExpansionTileController _tileController;
   @override
   void initState() {

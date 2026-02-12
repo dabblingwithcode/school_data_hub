@@ -7,6 +7,7 @@ class AttendanceValues {
   final bool unexcusedValue;
   final bool returnedValue;
   final DateTime? returnedTimeValue;
+  final int? minutesLateValue;
   final String? commentValue;
 
   AttendanceValues({
@@ -16,6 +17,7 @@ class AttendanceValues {
     required this.unexcusedValue,
     this.returnedValue = false,
     this.returnedTimeValue,
+    this.minutesLateValue,
     this.commentValue,
   });
 }

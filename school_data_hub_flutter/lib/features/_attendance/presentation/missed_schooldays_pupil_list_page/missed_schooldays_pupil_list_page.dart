@@ -4,16 +4,16 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
-import 'package:school_data_hub_flutter/features/_attendance/presentation/missed_classes_pupil_list_page/widgets/missed_classes_pupil_list_card.dart';
-import 'package:school_data_hub_flutter/features/_attendance/presentation/missed_classes_pupil_list_page/widgets/missed_classes_pupil_list_page_bottom_navbar.dart';
-import 'package:school_data_hub_flutter/features/_attendance/presentation/missed_classes_pupil_list_page/widgets/missed_classes_pupil_list_searchbar.dart';
+import 'package:school_data_hub_flutter/features/_attendance/presentation/missed_schooldays_pupil_list_page/widgets/missed_schooldays_pupil_list_card.dart';
+import 'package:school_data_hub_flutter/features/_attendance/presentation/missed_schooldays_pupil_list_page/widgets/attendance_ranking_pupil_list_page_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/features/_attendance/presentation/missed_schooldays_pupil_list_page/widgets/attendance_ranking_pupil_list_searchbar.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
 
-class MissedSchooldayesPupilListPage extends WatchingWidget {
-  const MissedSchooldayesPupilListPage({super.key});
+class MissedSchooldaysPupilListPage extends WatchingWidget {
+  const MissedSchooldaysPupilListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,8 @@ class MissedSchooldayesPupilListPage extends WatchingWidget {
                 ),
                 GenericSliverListWithEmptyListCheck(
                   items: pupils,
-                  itemBuilder: (_, pupil) => MissedClassesPupilListCard(pupil),
+                  itemBuilder: (_, pupil) =>
+                      MissedSchooldaysPupilListCard(pupil),
                 ),
               ],
             ),
