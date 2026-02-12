@@ -251,6 +251,70 @@ class LearningSupportManager {
   //   return;
   // }
 
+  //- GOAL CHECKS ----------------------------------------------------------
+
+  Future<void> postSupportGoalCheck({
+    required int supportGoalId,
+    required int pupilId,
+    required int score,
+    required String comment,
+  }) async {
+    final updatedGoal = await _learningSupportApiService.postSupportGoalCheck(
+      supportGoalId: supportGoalId,
+      score: score,
+      comment: comment,
+      createdBy: _hubSessionManager.userName!,
+    );
+
+    if (updatedGoal == null) {
+      return;
+    }
+
+    _updatePupilSupportGoal(pupilId, updatedGoal);
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Ziel-Check hinzugefügt',
+    );
+  }
+
+  Future<void> deleteSupportGoalCheck({
+    required int supportGoalId,
+    required int supportGoalCheckId,
+    required int pupilId,
+  }) async {
+    final updatedGoal = await _learningSupportApiService.deleteSupportGoalCheck(
+      supportGoalId: supportGoalId,
+      supportGoalCheckId: supportGoalCheckId,
+    );
+
+    if (updatedGoal == null) {
+      return;
+    }
+
+    _updatePupilSupportGoal(pupilId, updatedGoal);
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Ziel-Check gelöscht',
+    );
+  }
+
+  void _updatePupilSupportGoal(int pupilId, SupportGoal updatedGoal) {
+    final pupil = _pupilManager.getPupilByPupilId(pupilId);
+    if (pupil == null) return;
+
+    final goals = pupil.supportGoals;
+    if (goals == null) return;
+
+    final goalIndex = goals.indexWhere((g) => g.id == updatedGoal.id);
+    if (goalIndex != -1) {
+      goals[goalIndex] = updatedGoal;
+      // Trigger UI update by marking the pupil as dirty
+      pupil.pupilIsDirty = true;
+    }
+  }
+
   //- BULK IMPORT SUPPORT LEVELS ------------------------------------------
 
   Future<void> importSupportLevelsFromFile() async {

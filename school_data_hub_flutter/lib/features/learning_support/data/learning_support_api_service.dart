@@ -175,15 +175,57 @@ class LearningSupportApiService {
     return _client.adminCategories.importSupportCategoriesFromJsonFile(filePath);
   }
 
-  //- NOT IMPLEMENTED ------------------------------------------------------
+  //- GOAL CHECKS ------------------------------------------------------------
 
-  // Future<SupportGoalCheck> postGoalCheck(int goalId) async {
-  //   _notificationService.apiRunning(true);
+  Future<SupportGoal?> postSupportGoalCheck({
+    required int supportGoalId,
+    required int score,
+    required String comment,
+    required String createdBy,
+  }) async {
+    final response = await ClientHelper.apiCall(
+      call: () => _client.learningSupportPlan.postSupportGoalCheck(
+        supportGoalId,
+        score,
+        comment,
+        createdBy,
+      ),
+      errorMessage: 'Fehler beim Erstellen des Ziel-Checks',
+    );
+    return response;
+  }
 
-  //   final Response response = await _client.post(
-  //     '${_baseUrl()}${_postGoalCheck(goalId)}',
-  //     data: data,
-  //     options: _client.hubOptions,
-  //   );
-  // }
+  Future<SupportGoalCheck?> updateSupportGoalCheck({
+    required int supportGoalCheckId,
+    int? score,
+    String? comment,
+    String? createdBy,
+    DateTime? createdAt,
+  }) async {
+    final response = await ClientHelper.apiCall(
+      call: () => _client.learningSupportPlan.updateSupportGoalCheck(
+        supportGoalCheckId,
+        score,
+        comment,
+        createdBy,
+        createdAt,
+      ),
+      errorMessage: 'Fehler beim Aktualisieren des Ziel-Checks',
+    );
+    return response;
+  }
+
+  Future<SupportGoal?> deleteSupportGoalCheck({
+    required int supportGoalId,
+    required int supportGoalCheckId,
+  }) async {
+    final response = await ClientHelper.apiCall(
+      call: () => _client.learningSupportPlan.deleteSupportGoalCheck(
+        supportGoalId,
+        supportGoalCheckId,
+      ),
+      errorMessage: 'Fehler beim Löschen des Ziel-Checks',
+    );
+    return response;
+  }
 }

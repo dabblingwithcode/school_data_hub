@@ -66,59 +66,63 @@ import 'package:school_data_hub_server/src/generated/_features/learning_support/
     as _i29;
 import 'package:school_data_hub_server/src/generated/_features/learning_support/models/support_category_status.dart'
     as _i30;
-import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/preschool/pre_school_medical.dart'
+import 'package:school_data_hub_server/src/generated/_features/learning_support/models/support_goal/support_goal.dart'
     as _i31;
-import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/preschool/pre_school_medical_status.dart'
+import 'package:school_data_hub_server/src/generated/_features/learning_support/models/support_goal/support_goal_check.dart'
     as _i32;
-import 'package:school_data_hub_server/src/generated/_features/matrix/compulsory_room.dart'
+import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/preschool/pre_school_medical.dart'
     as _i33;
-import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/dto/pupil_document_type.dart'
+import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/preschool/pre_school_medical_status.dart'
     as _i34;
-import 'package:school_data_hub_server/src/generated/_features/learning_support/models/support_level_legacy_dto.dart'
+import 'package:school_data_hub_server/src/generated/_features/matrix/compulsory_room.dart'
     as _i35;
-import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_identity/pupil_identity_dto.dart'
+import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/dto/pupil_document_type.dart'
     as _i36;
-import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/communication/communication_skills.dart'
+import 'package:school_data_hub_server/src/generated/_features/learning_support/models/support_level_legacy_dto.dart'
     as _i37;
-import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/communication/tutor_info.dart'
+import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_identity/pupil_identity_dto.dart'
     as _i38;
-import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/dto/siblings_tutor_info_dto.dart'
+import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/communication/communication_skills.dart'
     as _i39;
-import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/communication/public_media_auth.dart'
+import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/communication/tutor_info.dart'
     as _i40;
-import 'package:school_data_hub_server/src/generated/_features/learning_support/models/support_level.dart'
+import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/dto/siblings_tutor_info_dto.dart'
     as _i41;
-import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/after_school_care/after_school_care.dart'
+import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/communication/public_media_auth.dart'
     as _i42;
-import 'package:school_data_hub_server/src/generated/_features/school_lists/models/school_list.dart'
+import 'package:school_data_hub_server/src/generated/_features/learning_support/models/support_level.dart'
     as _i43;
-import 'package:school_data_hub_server/src/generated/_features/school_lists/models/pupil_entry.dart'
+import 'package:school_data_hub_server/src/generated/_features/pupil/models/pupil_data/after_school_care/after_school_care.dart'
     as _i44;
-import 'package:school_data_hub_server/src/generated/_features/schoolday_events/models/schoolday_event.dart'
+import 'package:school_data_hub_server/src/generated/_features/school_lists/models/school_list.dart'
     as _i45;
-import 'package:school_data_hub_server/src/generated/_features/schoolday_events/models/schoolday_event_type.dart'
+import 'package:school_data_hub_server/src/generated/_features/school_lists/models/pupil_entry.dart'
     as _i46;
-import 'package:school_data_hub_server/src/generated/_features/timetable/models/classroom.dart'
+import 'package:school_data_hub_server/src/generated/_features/schoolday_events/models/schoolday_event.dart'
     as _i47;
-import 'package:school_data_hub_server/src/generated/_features/timetable/models/lesson/lesson_group.dart'
+import 'package:school_data_hub_server/src/generated/_features/schoolday_events/models/schoolday_event_type.dart'
     as _i48;
-import 'package:school_data_hub_server/src/generated/_features/timetable/models/scheduled_lesson/scheduled_lesson.dart'
+import 'package:school_data_hub_server/src/generated/_features/timetable/models/classroom.dart'
     as _i49;
-import 'package:school_data_hub_server/src/generated/_features/timetable/models/scheduled_lesson/lesson_group_membership.dart'
+import 'package:school_data_hub_server/src/generated/_features/timetable/models/lesson/lesson_group.dart'
     as _i50;
-import 'package:school_data_hub_server/src/generated/_features/timetable/models/scheduled_lesson/subject.dart'
+import 'package:school_data_hub_server/src/generated/_features/timetable/models/scheduled_lesson/scheduled_lesson.dart'
     as _i51;
-import 'package:school_data_hub_server/src/generated/_features/timetable/models/timetable.dart'
+import 'package:school_data_hub_server/src/generated/_features/timetable/models/scheduled_lesson/lesson_group_membership.dart'
     as _i52;
-import 'package:school_data_hub_server/src/generated/_features/timetable/models/scheduled_lesson/timetable_slot.dart'
+import 'package:school_data_hub_server/src/generated/_features/timetable/models/scheduled_lesson/subject.dart'
     as _i53;
-import 'package:school_data_hub_server/src/generated/_features/timetable/models/scheduled_lesson/weekday_enum.dart'
+import 'package:school_data_hub_server/src/generated/_features/timetable/models/timetable.dart'
     as _i54;
-import 'package:school_data_hub_server/src/generated/_features/workbooks/models/pupil_workbook.dart'
+import 'package:school_data_hub_server/src/generated/_features/timetable/models/scheduled_lesson/timetable_slot.dart'
     as _i55;
-import 'package:school_data_hub_server/src/generated/_features/workbooks/models/workbook.dart'
+import 'package:school_data_hub_server/src/generated/_features/timetable/models/scheduled_lesson/weekday_enum.dart'
     as _i56;
-import 'dart:typed_data' as _i57;
+import 'package:school_data_hub_server/src/generated/_features/workbooks/models/pupil_workbook.dart'
+    as _i57;
+import 'package:school_data_hub_server/src/generated/_features/workbooks/models/workbook.dart'
+    as _i58;
+import 'dart:typed_data' as _i59;
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -3492,6 +3496,115 @@ class _LearningSupportPlanEndpoint {
       }
     });
   }
+
+  _i3.Future<_i31.SupportGoal> postSupportGoalCheck(
+    _i1.TestSessionBuilder sessionBuilder,
+    int supportGoalId,
+    int score,
+    String comment,
+    String createdBy,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'learningSupportPlan',
+        method: 'postSupportGoalCheck',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'learningSupportPlan',
+          methodName: 'postSupportGoalCheck',
+          parameters: _i1.testObjectToJson({
+            'supportGoalId': supportGoalId,
+            'score': score,
+            'comment': comment,
+            'createdBy': createdBy,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i31.SupportGoal>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i32.SupportGoalCheck> updateSupportGoalCheck(
+    _i1.TestSessionBuilder sessionBuilder,
+    int supportGoalCheckId,
+    int? score,
+    String? comment,
+    String? createdBy,
+    DateTime? createdAt,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'learningSupportPlan',
+        method: 'updateSupportGoalCheck',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'learningSupportPlan',
+          methodName: 'updateSupportGoalCheck',
+          parameters: _i1.testObjectToJson({
+            'supportGoalCheckId': supportGoalCheckId,
+            'score': score,
+            'comment': comment,
+            'createdBy': createdBy,
+            'createdAt': createdAt,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i32.SupportGoalCheck>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i31.SupportGoal> deleteSupportGoalCheck(
+    _i1.TestSessionBuilder sessionBuilder,
+    int supportGoalId,
+    int supportGoalCheckId,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'learningSupportPlan',
+        method: 'deleteSupportGoalCheck',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'learningSupportPlan',
+          methodName: 'deleteSupportGoalCheck',
+          parameters: _i1.testObjectToJson({
+            'supportGoalId': supportGoalId,
+            'supportGoalCheckId': supportGoalCheckId,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i31.SupportGoal>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
 }
 
 class _PreSchoolMedicalEndpoint {
@@ -3504,10 +3617,10 @@ class _PreSchoolMedicalEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i31.PreSchoolMedical> createPreSchoolMedical(
+  _i3.Future<_i33.PreSchoolMedical> createPreSchoolMedical(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
-    _i32.PreSchoolMedicalStatus? preschoolMedicalStatus,
+    _i34.PreSchoolMedicalStatus? preschoolMedicalStatus,
     String createdBy,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -3531,7 +3644,7 @@ class _PreSchoolMedicalEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i31.PreSchoolMedical>);
+        ) as _i3.Future<_i33.PreSchoolMedical>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3539,10 +3652,10 @@ class _PreSchoolMedicalEndpoint {
     });
   }
 
-  _i3.Future<_i31.PreSchoolMedical> updatePreSchoolMedical(
+  _i3.Future<_i33.PreSchoolMedical> updatePreSchoolMedical(
     _i1.TestSessionBuilder sessionBuilder,
     int preSchoolMedicalId,
-    _i32.PreSchoolMedicalStatus? preschoolMedicalStatus,
+    _i34.PreSchoolMedicalStatus? preschoolMedicalStatus,
     String updatedBy,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -3566,7 +3679,7 @@ class _PreSchoolMedicalEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i31.PreSchoolMedical>);
+        ) as _i3.Future<_i33.PreSchoolMedical>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3574,7 +3687,7 @@ class _PreSchoolMedicalEndpoint {
     });
   }
 
-  _i3.Future<_i31.PreSchoolMedical?> getPreSchoolMedical(
+  _i3.Future<_i33.PreSchoolMedical?> getPreSchoolMedical(
     _i1.TestSessionBuilder sessionBuilder,
     int preSchoolMedicalId,
   ) async {
@@ -3596,7 +3709,7 @@ class _PreSchoolMedicalEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i31.PreSchoolMedical?>);
+        ) as _i3.Future<_i33.PreSchoolMedical?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3604,7 +3717,7 @@ class _PreSchoolMedicalEndpoint {
     });
   }
 
-  _i3.Future<_i31.PreSchoolMedical?> getPreSchoolMedicalByPupilId(
+  _i3.Future<_i33.PreSchoolMedical?> getPreSchoolMedicalByPupilId(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
   ) async {
@@ -3625,7 +3738,7 @@ class _PreSchoolMedicalEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i31.PreSchoolMedical?>);
+        ) as _i3.Future<_i33.PreSchoolMedical?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3663,7 +3776,7 @@ class _PreSchoolMedicalEndpoint {
     });
   }
 
-  _i3.Future<_i31.PreSchoolMedical> addFileToPreSchoolMedical(
+  _i3.Future<_i33.PreSchoolMedical> addFileToPreSchoolMedical(
     _i1.TestSessionBuilder sessionBuilder,
     int preSchoolMedicalId,
     String filePath,
@@ -3690,7 +3803,7 @@ class _PreSchoolMedicalEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i31.PreSchoolMedical>);
+        ) as _i3.Future<_i33.PreSchoolMedical>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3731,7 +3844,7 @@ class _PreSchoolMedicalEndpoint {
     });
   }
 
-  _i3.Future<List<_i31.PreSchoolMedical>> getAllPreSchoolMedicalRecords(
+  _i3.Future<List<_i33.PreSchoolMedical>> getAllPreSchoolMedicalRecords(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -3750,7 +3863,7 @@ class _PreSchoolMedicalEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i31.PreSchoolMedical>>);
+        ) as _i3.Future<List<_i33.PreSchoolMedical>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3758,9 +3871,9 @@ class _PreSchoolMedicalEndpoint {
     });
   }
 
-  _i3.Future<List<_i31.PreSchoolMedical>> getPreSchoolMedicalByStatus(
+  _i3.Future<List<_i33.PreSchoolMedical>> getPreSchoolMedicalByStatus(
     _i1.TestSessionBuilder sessionBuilder,
-    _i32.PreSchoolMedicalStatus status,
+    _i34.PreSchoolMedicalStatus status,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -3779,7 +3892,7 @@ class _PreSchoolMedicalEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i31.PreSchoolMedical>>);
+        ) as _i3.Future<List<_i33.PreSchoolMedical>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3952,7 +4065,7 @@ class _MatrixEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<List<_i33.CompulsoryRoom>?> getCompulsoryRooms(
+  _i3.Future<List<_i35.CompulsoryRoom>?> getCompulsoryRooms(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -3971,7 +4084,7 @@ class _MatrixEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i33.CompulsoryRoom>?>);
+        ) as _i3.Future<List<_i35.CompulsoryRoom>?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -3979,9 +4092,9 @@ class _MatrixEndpoint {
     });
   }
 
-  _i3.Future<List<_i33.CompulsoryRoom>> setCompulsoryRooms(
+  _i3.Future<List<_i35.CompulsoryRoom>> setCompulsoryRooms(
     _i1.TestSessionBuilder sessionBuilder,
-    List<_i33.CompulsoryRoom> compulsoryRooms,
+    List<_i35.CompulsoryRoom> compulsoryRooms,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -4001,7 +4114,7 @@ class _MatrixEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i33.CompulsoryRoom>>);
+        ) as _i3.Future<List<_i35.CompulsoryRoom>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -4138,7 +4251,7 @@ class _PupilEndpoint {
   _i3.Future<_i6.PupilData> deletePupilDocument(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
-    _i34.PupilDocumentType documentType,
+    _i36.PupilDocumentType documentType,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -4236,7 +4349,7 @@ class _PupilEndpoint {
 
   _i3.Future<bool> bulkAddSupportLevels(
     _i1.TestSessionBuilder sessionBuilder,
-    List<_i35.SupportLevelLegacyDto> supportLevelData,
+    List<_i37.SupportLevelLegacyDto> supportLevelData,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -4275,12 +4388,12 @@ class _PupilIdentityEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Stream<_i36.PupilIdentityDto> streamEncryptedPupilIds(
+  _i3.Stream<_i38.PupilIdentityDto> streamEncryptedPupilIds(
     _i1.TestSessionBuilder sessionBuilder,
     String channelName,
   ) {
     var _localTestStreamManager =
-        _i1.TestStreamManager<_i36.PupilIdentityDto>();
+        _i1.TestStreamManager<_i38.PupilIdentityDto>();
     _i1.callStreamFunctionAndHandleExceptions(
       () async {
         var _localUniqueSession =
@@ -4311,7 +4424,7 @@ class _PupilIdentityEndpoint {
   _i3.Future<bool> sendPupilIdentityMessage(
     _i1.TestSessionBuilder sessionBuilder,
     String pupilIdentityChannel,
-    _i36.PupilIdentityDto pupilIdentityMessage,
+    _i38.PupilIdentityDto pupilIdentityMessage,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -4467,7 +4580,7 @@ class _PupilUpdateEndpoint {
   _i3.Future<_i6.PupilData> updateCommunicationSkills(
     _i1.TestSessionBuilder sessionBuilder, {
     required int pupilId,
-    required _i37.CommunicationSkills? communicationSkills,
+    required _i39.CommunicationSkills? communicationSkills,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -4500,7 +4613,7 @@ class _PupilUpdateEndpoint {
   _i3.Future<_i6.PupilData> updateTutorInfo(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
-    _i38.TutorInfo? tutorInfo,
+    _i40.TutorInfo? tutorInfo,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -4532,7 +4645,7 @@ class _PupilUpdateEndpoint {
 
   _i3.Future<List<_i6.PupilData>> updateSiblingsTutorInfo(
     _i1.TestSessionBuilder sessionBuilder,
-    _i39.SiblingsTutorInfo siblingsTutorInfo,
+    _i41.SiblingsTutorInfo siblingsTutorInfo,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -4565,7 +4678,7 @@ class _PupilUpdateEndpoint {
     int pupilId,
     String filePath,
     String createdBy,
-    _i34.PupilDocumentType documentType,
+    _i36.PupilDocumentType documentType,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -4672,7 +4785,7 @@ class _PupilUpdateEndpoint {
   _i3.Future<_i6.PupilData> updatePreSchoolMedicalStatus(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
-    _i32.PreSchoolMedicalStatus preSchoolMedicalStatus,
+    _i34.PreSchoolMedicalStatus preSchoolMedicalStatus,
     String updatedBy,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -4707,7 +4820,7 @@ class _PupilUpdateEndpoint {
   _i3.Future<_i6.PupilData> updatePublicMediaAuth(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
-    _i40.PublicMediaAuth publicMediaAuth,
+    _i42.PublicMediaAuth publicMediaAuth,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -4739,7 +4852,7 @@ class _PupilUpdateEndpoint {
 
   _i3.Future<_i6.PupilData> updateSupportLevel(
     _i1.TestSessionBuilder sessionBuilder,
-    _i41.SupportLevel supportLevel,
+    _i43.SupportLevel supportLevel,
     int pupilId,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -4807,7 +4920,7 @@ class _PupilUpdateEndpoint {
   _i3.Future<_i6.PupilData> updateAfterSchoolCare(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
-    _i42.AfterSchoolCare afterSchoolCare,
+    _i44.AfterSchoolCare afterSchoolCare,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -4886,7 +4999,7 @@ class _SchoolListEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<List<_i43.SchoolList>> fetchSchoolLists(
+  _i3.Future<List<_i45.SchoolList>> fetchSchoolLists(
     _i1.TestSessionBuilder sessionBuilder,
     String userName,
   ) async {
@@ -4907,7 +5020,7 @@ class _SchoolListEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i43.SchoolList>>);
+        ) as _i3.Future<List<_i45.SchoolList>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -4915,7 +5028,7 @@ class _SchoolListEndpoint {
     });
   }
 
-  _i3.Future<_i43.SchoolList> postSchoolList(
+  _i3.Future<_i45.SchoolList> postSchoolList(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
     String description,
@@ -4946,7 +5059,7 @@ class _SchoolListEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i43.SchoolList>);
+        ) as _i3.Future<_i45.SchoolList>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -4954,7 +5067,7 @@ class _SchoolListEndpoint {
     });
   }
 
-  _i3.Future<_i43.SchoolList> updateSchoolList(
+  _i3.Future<_i45.SchoolList> updateSchoolList(
     _i1.TestSessionBuilder sessionBuilder,
     int listId,
     String? name,
@@ -4987,7 +5100,7 @@ class _SchoolListEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i43.SchoolList>);
+        ) as _i3.Future<_i45.SchoolList>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5024,9 +5137,9 @@ class _SchoolListEndpoint {
     });
   }
 
-  _i3.Future<_i44.PupilListEntry> updatePupilListEntry(
+  _i3.Future<_i46.PupilListEntry> updatePupilListEntry(
     _i1.TestSessionBuilder sessionBuilder,
-    _i44.PupilListEntry entry,
+    _i46.PupilListEntry entry,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -5045,7 +5158,7 @@ class _SchoolListEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i44.PupilListEntry>);
+        ) as _i3.Future<_i46.PupilListEntry>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5156,7 +5269,7 @@ class _SchooldayEventEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<List<_i45.SchooldayEvent>> fetchSchooldayEvents(
+  _i3.Future<List<_i47.SchooldayEvent>> fetchSchooldayEvents(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -5175,7 +5288,7 @@ class _SchooldayEventEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i45.SchooldayEvent>>);
+        ) as _i3.Future<List<_i47.SchooldayEvent>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5183,13 +5296,13 @@ class _SchooldayEventEndpoint {
     });
   }
 
-  _i3.Future<_i45.SchooldayEvent> createSchooldayEvent(
+  _i3.Future<_i47.SchooldayEvent> createSchooldayEvent(
     _i1.TestSessionBuilder sessionBuilder, {
     required int pupilId,
     required String pupilNameAndGroup,
     required String dateAsString,
     required int schooldayId,
-    required _i46.SchooldayEventType type,
+    required _i48.SchooldayEventType type,
     required String reason,
     required String createdBy,
     required String eventTime,
@@ -5222,7 +5335,7 @@ class _SchooldayEventEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i45.SchooldayEvent>);
+        ) as _i3.Future<_i47.SchooldayEvent>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5230,9 +5343,9 @@ class _SchooldayEventEndpoint {
     });
   }
 
-  _i3.Future<_i45.SchooldayEvent> updateSchooldayEvent(
+  _i3.Future<_i47.SchooldayEvent> updateSchooldayEvent(
     _i1.TestSessionBuilder sessionBuilder,
-    _i45.SchooldayEvent schooldayEvent,
+    _i47.SchooldayEvent schooldayEvent,
     bool changedProcessedStatus,
     String pupilNameAndGroup,
     String tutor,
@@ -5263,7 +5376,7 @@ class _SchooldayEventEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i45.SchooldayEvent>);
+        ) as _i3.Future<_i47.SchooldayEvent>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5301,7 +5414,7 @@ class _SchooldayEventEndpoint {
     });
   }
 
-  _i3.Future<_i45.SchooldayEvent> updateSchooldayEventFile(
+  _i3.Future<_i47.SchooldayEvent> updateSchooldayEventFile(
     _i1.TestSessionBuilder sessionBuilder,
     int schooldayEventId,
     String filePath,
@@ -5330,7 +5443,7 @@ class _SchooldayEventEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i45.SchooldayEvent>);
+        ) as _i3.Future<_i47.SchooldayEvent>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5338,7 +5451,7 @@ class _SchooldayEventEndpoint {
     });
   }
 
-  _i3.Future<_i45.SchooldayEvent> deleteSchooldayEventFile(
+  _i3.Future<_i47.SchooldayEvent> deleteSchooldayEventFile(
     _i1.TestSessionBuilder sessionBuilder,
     int schooldayEventId,
     bool isProcessed,
@@ -5363,7 +5476,7 @@ class _SchooldayEventEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i45.SchooldayEvent>);
+        ) as _i3.Future<_i47.SchooldayEvent>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5382,9 +5495,9 @@ class _ClassroomEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i47.Classroom> createClassroom(
+  _i3.Future<_i49.Classroom> createClassroom(
     _i1.TestSessionBuilder sessionBuilder,
-    _i47.Classroom classroom,
+    _i49.Classroom classroom,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -5403,7 +5516,7 @@ class _ClassroomEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i47.Classroom>);
+        ) as _i3.Future<_i49.Classroom>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5411,7 +5524,7 @@ class _ClassroomEndpoint {
     });
   }
 
-  _i3.Future<List<_i47.Classroom>> fetchClassrooms(
+  _i3.Future<List<_i49.Classroom>> fetchClassrooms(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -5430,7 +5543,7 @@ class _ClassroomEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i47.Classroom>>);
+        ) as _i3.Future<List<_i49.Classroom>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5438,7 +5551,7 @@ class _ClassroomEndpoint {
     });
   }
 
-  _i3.Future<_i47.Classroom?> fetchClassroomById(
+  _i3.Future<_i49.Classroom?> fetchClassroomById(
     _i1.TestSessionBuilder sessionBuilder,
     int id,
   ) async {
@@ -5459,7 +5572,7 @@ class _ClassroomEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i47.Classroom?>);
+        ) as _i3.Future<_i49.Classroom?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5467,7 +5580,7 @@ class _ClassroomEndpoint {
     });
   }
 
-  _i3.Future<_i47.Classroom?> fetchClassroomByRoomCode(
+  _i3.Future<_i49.Classroom?> fetchClassroomByRoomCode(
     _i1.TestSessionBuilder sessionBuilder,
     String roomCode,
   ) async {
@@ -5488,7 +5601,7 @@ class _ClassroomEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i47.Classroom?>);
+        ) as _i3.Future<_i49.Classroom?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5496,7 +5609,7 @@ class _ClassroomEndpoint {
     });
   }
 
-  _i3.Future<List<_i47.Classroom>> fetchClassroomsByRoomName(
+  _i3.Future<List<_i49.Classroom>> fetchClassroomsByRoomName(
     _i1.TestSessionBuilder sessionBuilder,
     String roomName,
   ) async {
@@ -5517,7 +5630,7 @@ class _ClassroomEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i47.Classroom>>);
+        ) as _i3.Future<List<_i49.Classroom>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5525,9 +5638,9 @@ class _ClassroomEndpoint {
     });
   }
 
-  _i3.Future<_i47.Classroom> updateClassroom(
+  _i3.Future<_i49.Classroom> updateClassroom(
     _i1.TestSessionBuilder sessionBuilder,
-    _i47.Classroom classroom,
+    _i49.Classroom classroom,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -5546,7 +5659,7 @@ class _ClassroomEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i47.Classroom>);
+        ) as _i3.Future<_i49.Classroom>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5594,9 +5707,9 @@ class _LearningGroupEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i48.LessonGroup> createLessonGroup(
+  _i3.Future<_i50.LessonGroup> createLessonGroup(
     _i1.TestSessionBuilder sessionBuilder,
-    _i48.LessonGroup lessonGroup,
+    _i50.LessonGroup lessonGroup,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -5615,7 +5728,7 @@ class _LearningGroupEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i48.LessonGroup>);
+        ) as _i3.Future<_i50.LessonGroup>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5623,7 +5736,7 @@ class _LearningGroupEndpoint {
     });
   }
 
-  _i3.Future<List<_i48.LessonGroup>> fetchLessonGroups(
+  _i3.Future<List<_i50.LessonGroup>> fetchLessonGroups(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -5642,7 +5755,7 @@ class _LearningGroupEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i48.LessonGroup>>);
+        ) as _i3.Future<List<_i50.LessonGroup>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5650,7 +5763,7 @@ class _LearningGroupEndpoint {
     });
   }
 
-  _i3.Future<_i48.LessonGroup?> fetchLessonGroupById(
+  _i3.Future<_i50.LessonGroup?> fetchLessonGroupById(
     _i1.TestSessionBuilder sessionBuilder,
     int id,
   ) async {
@@ -5671,7 +5784,7 @@ class _LearningGroupEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i48.LessonGroup?>);
+        ) as _i3.Future<_i50.LessonGroup?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5679,7 +5792,7 @@ class _LearningGroupEndpoint {
     });
   }
 
-  _i3.Future<_i48.LessonGroup?> fetchLessonGroupByPublicId(
+  _i3.Future<_i50.LessonGroup?> fetchLessonGroupByPublicId(
     _i1.TestSessionBuilder sessionBuilder,
     String publicId,
   ) async {
@@ -5700,7 +5813,7 @@ class _LearningGroupEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i48.LessonGroup?>);
+        ) as _i3.Future<_i50.LessonGroup?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5708,7 +5821,7 @@ class _LearningGroupEndpoint {
     });
   }
 
-  _i3.Future<List<_i48.LessonGroup>> fetchLessonGroupsByName(
+  _i3.Future<List<_i50.LessonGroup>> fetchLessonGroupsByName(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -5729,7 +5842,7 @@ class _LearningGroupEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i48.LessonGroup>>);
+        ) as _i3.Future<List<_i50.LessonGroup>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5737,7 +5850,7 @@ class _LearningGroupEndpoint {
     });
   }
 
-  _i3.Future<List<_i48.LessonGroup>> fetchLessonGroupsByCreator(
+  _i3.Future<List<_i50.LessonGroup>> fetchLessonGroupsByCreator(
     _i1.TestSessionBuilder sessionBuilder,
     String createdBy,
   ) async {
@@ -5758,7 +5871,7 @@ class _LearningGroupEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i48.LessonGroup>>);
+        ) as _i3.Future<List<_i50.LessonGroup>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5766,7 +5879,7 @@ class _LearningGroupEndpoint {
     });
   }
 
-  _i3.Future<List<_i48.LessonGroup>> fetchLessonGroupsByTimetable(
+  _i3.Future<List<_i50.LessonGroup>> fetchLessonGroupsByTimetable(
     _i1.TestSessionBuilder sessionBuilder,
     int timetableId,
   ) async {
@@ -5787,7 +5900,7 @@ class _LearningGroupEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i48.LessonGroup>>);
+        ) as _i3.Future<List<_i50.LessonGroup>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5795,9 +5908,9 @@ class _LearningGroupEndpoint {
     });
   }
 
-  _i3.Future<_i48.LessonGroup> updateLessonGroup(
+  _i3.Future<_i50.LessonGroup> updateLessonGroup(
     _i1.TestSessionBuilder sessionBuilder,
-    _i48.LessonGroup lessonGroup,
+    _i50.LessonGroup lessonGroup,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -5816,7 +5929,7 @@ class _LearningGroupEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i48.LessonGroup>);
+        ) as _i3.Future<_i50.LessonGroup>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5864,9 +5977,9 @@ class _ScheduledLessonEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i49.ScheduledLesson?> createScheduledLesson(
+  _i3.Future<_i51.ScheduledLesson?> createScheduledLesson(
     _i1.TestSessionBuilder sessionBuilder,
-    _i49.ScheduledLesson scheduledLesson,
+    _i51.ScheduledLesson scheduledLesson,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -5886,7 +5999,7 @@ class _ScheduledLessonEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i49.ScheduledLesson?>);
+        ) as _i3.Future<_i51.ScheduledLesson?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5894,7 +6007,7 @@ class _ScheduledLessonEndpoint {
     });
   }
 
-  _i3.Future<List<_i49.ScheduledLesson>> fetchScheduledLessons(
+  _i3.Future<List<_i51.ScheduledLesson>> fetchScheduledLessons(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -5913,7 +6026,7 @@ class _ScheduledLessonEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i49.ScheduledLesson>>);
+        ) as _i3.Future<List<_i51.ScheduledLesson>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5921,7 +6034,7 @@ class _ScheduledLessonEndpoint {
     });
   }
 
-  _i3.Future<_i49.ScheduledLesson?> fetchScheduledLessonById(
+  _i3.Future<_i51.ScheduledLesson?> fetchScheduledLessonById(
     _i1.TestSessionBuilder sessionBuilder,
     int id,
   ) async {
@@ -5942,7 +6055,7 @@ class _ScheduledLessonEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i49.ScheduledLesson?>);
+        ) as _i3.Future<_i51.ScheduledLesson?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5950,7 +6063,7 @@ class _ScheduledLessonEndpoint {
     });
   }
 
-  _i3.Future<List<_i49.ScheduledLesson>> fetchScheduledLessonsByTimetable(
+  _i3.Future<List<_i51.ScheduledLesson>> fetchScheduledLessonsByTimetable(
     _i1.TestSessionBuilder sessionBuilder,
     int timetableId,
   ) async {
@@ -5971,7 +6084,7 @@ class _ScheduledLessonEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i49.ScheduledLesson>>);
+        ) as _i3.Future<List<_i51.ScheduledLesson>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -5979,7 +6092,7 @@ class _ScheduledLessonEndpoint {
     });
   }
 
-  _i3.Future<List<_i49.ScheduledLesson>> fetchScheduledLessonsBySubject(
+  _i3.Future<List<_i51.ScheduledLesson>> fetchScheduledLessonsBySubject(
     _i1.TestSessionBuilder sessionBuilder,
     int subjectId,
   ) async {
@@ -6000,7 +6113,7 @@ class _ScheduledLessonEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i49.ScheduledLesson>>);
+        ) as _i3.Future<List<_i51.ScheduledLesson>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6008,7 +6121,7 @@ class _ScheduledLessonEndpoint {
     });
   }
 
-  _i3.Future<List<_i49.ScheduledLesson>> fetchScheduledLessonsByRoom(
+  _i3.Future<List<_i51.ScheduledLesson>> fetchScheduledLessonsByRoom(
     _i1.TestSessionBuilder sessionBuilder,
     int roomId,
   ) async {
@@ -6029,7 +6142,7 @@ class _ScheduledLessonEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i49.ScheduledLesson>>);
+        ) as _i3.Future<List<_i51.ScheduledLesson>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6037,7 +6150,7 @@ class _ScheduledLessonEndpoint {
     });
   }
 
-  _i3.Future<List<_i49.ScheduledLesson>> fetchScheduledLessonsBySlotId(
+  _i3.Future<List<_i51.ScheduledLesson>> fetchScheduledLessonsBySlotId(
     _i1.TestSessionBuilder sessionBuilder,
     int slotId,
   ) async {
@@ -6058,7 +6171,7 @@ class _ScheduledLessonEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i49.ScheduledLesson>>);
+        ) as _i3.Future<List<_i51.ScheduledLesson>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6066,7 +6179,7 @@ class _ScheduledLessonEndpoint {
     });
   }
 
-  _i3.Future<List<_i49.ScheduledLesson>> fetchActiveScheduledLessons(
+  _i3.Future<List<_i51.ScheduledLesson>> fetchActiveScheduledLessons(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -6085,7 +6198,7 @@ class _ScheduledLessonEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i49.ScheduledLesson>>);
+        ) as _i3.Future<List<_i51.ScheduledLesson>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6093,9 +6206,9 @@ class _ScheduledLessonEndpoint {
     });
   }
 
-  _i3.Future<_i49.ScheduledLesson?> updateScheduledLesson(
+  _i3.Future<_i51.ScheduledLesson?> updateScheduledLesson(
     _i1.TestSessionBuilder sessionBuilder,
-    _i49.ScheduledLesson scheduledLesson,
+    _i51.ScheduledLesson scheduledLesson,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -6115,7 +6228,7 @@ class _ScheduledLessonEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i49.ScheduledLesson?>);
+        ) as _i3.Future<_i51.ScheduledLesson?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6123,7 +6236,7 @@ class _ScheduledLessonEndpoint {
     });
   }
 
-  _i3.Future<_i49.ScheduledLesson?> deactivateScheduledLesson(
+  _i3.Future<_i51.ScheduledLesson?> deactivateScheduledLesson(
     _i1.TestSessionBuilder sessionBuilder,
     int id,
   ) async {
@@ -6144,7 +6257,7 @@ class _ScheduledLessonEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i49.ScheduledLesson?>);
+        ) as _i3.Future<_i51.ScheduledLesson?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6192,10 +6305,10 @@ class _ScheduledLessonGroupMembershipEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i50.ScheduledLessonGroupMembership>
+  _i3.Future<_i52.ScheduledLessonGroupMembership>
       createScheduledLessonGroupMembership(
     _i1.TestSessionBuilder sessionBuilder,
-    _i50.ScheduledLessonGroupMembership membership,
+    _i52.ScheduledLessonGroupMembership membership,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -6214,7 +6327,7 @@ class _ScheduledLessonGroupMembershipEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i50.ScheduledLessonGroupMembership>);
+        ) as _i3.Future<_i52.ScheduledLessonGroupMembership>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6222,7 +6335,7 @@ class _ScheduledLessonGroupMembershipEndpoint {
     });
   }
 
-  _i3.Future<List<_i50.ScheduledLessonGroupMembership>>
+  _i3.Future<List<_i52.ScheduledLessonGroupMembership>>
       fetchScheduledLessonGroupMemberships(
           _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
@@ -6242,7 +6355,7 @@ class _ScheduledLessonGroupMembershipEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i50.ScheduledLessonGroupMembership>>);
+        ) as _i3.Future<List<_i52.ScheduledLessonGroupMembership>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6250,7 +6363,7 @@ class _ScheduledLessonGroupMembershipEndpoint {
     });
   }
 
-  _i3.Future<_i50.ScheduledLessonGroupMembership?>
+  _i3.Future<_i52.ScheduledLessonGroupMembership?>
       fetchScheduledLessonGroupMembershipById(
     _i1.TestSessionBuilder sessionBuilder,
     int id,
@@ -6272,7 +6385,7 @@ class _ScheduledLessonGroupMembershipEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i50.ScheduledLessonGroupMembership?>);
+        ) as _i3.Future<_i52.ScheduledLessonGroupMembership?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6280,7 +6393,7 @@ class _ScheduledLessonGroupMembershipEndpoint {
     });
   }
 
-  _i3.Future<List<_i50.ScheduledLessonGroupMembership>>
+  _i3.Future<List<_i52.ScheduledLessonGroupMembership>>
       fetchMembershipsByLessonGroupId(
     _i1.TestSessionBuilder sessionBuilder,
     int lessonGroupId,
@@ -6302,7 +6415,7 @@ class _ScheduledLessonGroupMembershipEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i50.ScheduledLessonGroupMembership>>);
+        ) as _i3.Future<List<_i52.ScheduledLessonGroupMembership>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6310,7 +6423,7 @@ class _ScheduledLessonGroupMembershipEndpoint {
     });
   }
 
-  _i3.Future<List<_i50.ScheduledLessonGroupMembership>>
+  _i3.Future<List<_i52.ScheduledLessonGroupMembership>>
       fetchMembershipsByPupilDataId(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilDataId,
@@ -6332,7 +6445,7 @@ class _ScheduledLessonGroupMembershipEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i50.ScheduledLessonGroupMembership>>);
+        ) as _i3.Future<List<_i52.ScheduledLessonGroupMembership>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6340,7 +6453,7 @@ class _ScheduledLessonGroupMembershipEndpoint {
     });
   }
 
-  _i3.Future<_i50.ScheduledLessonGroupMembership?>
+  _i3.Future<_i52.ScheduledLessonGroupMembership?>
       fetchMembershipByLessonGroupAndPupil(
     _i1.TestSessionBuilder sessionBuilder,
     int lessonGroupId,
@@ -6366,7 +6479,7 @@ class _ScheduledLessonGroupMembershipEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i50.ScheduledLessonGroupMembership?>);
+        ) as _i3.Future<_i52.ScheduledLessonGroupMembership?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6374,10 +6487,10 @@ class _ScheduledLessonGroupMembershipEndpoint {
     });
   }
 
-  _i3.Future<_i50.ScheduledLessonGroupMembership>
+  _i3.Future<_i52.ScheduledLessonGroupMembership>
       updateScheduledLessonGroupMembership(
     _i1.TestSessionBuilder sessionBuilder,
-    _i50.ScheduledLessonGroupMembership membership,
+    _i52.ScheduledLessonGroupMembership membership,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -6396,7 +6509,7 @@ class _ScheduledLessonGroupMembershipEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i50.ScheduledLessonGroupMembership>);
+        ) as _i3.Future<_i52.ScheduledLessonGroupMembership>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6510,9 +6623,9 @@ class _SubjectEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i51.Subject> createSubject(
+  _i3.Future<_i53.Subject> createSubject(
     _i1.TestSessionBuilder sessionBuilder,
-    _i51.Subject subject,
+    _i53.Subject subject,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -6531,7 +6644,7 @@ class _SubjectEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i51.Subject>);
+        ) as _i3.Future<_i53.Subject>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6539,7 +6652,7 @@ class _SubjectEndpoint {
     });
   }
 
-  _i3.Future<List<_i51.Subject>> fetchSubjects(
+  _i3.Future<List<_i53.Subject>> fetchSubjects(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -6558,7 +6671,7 @@ class _SubjectEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i51.Subject>>);
+        ) as _i3.Future<List<_i53.Subject>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6566,7 +6679,7 @@ class _SubjectEndpoint {
     });
   }
 
-  _i3.Future<_i51.Subject?> fetchSubjectById(
+  _i3.Future<_i53.Subject?> fetchSubjectById(
     _i1.TestSessionBuilder sessionBuilder,
     int id,
   ) async {
@@ -6587,7 +6700,7 @@ class _SubjectEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i51.Subject?>);
+        ) as _i3.Future<_i53.Subject?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6595,7 +6708,7 @@ class _SubjectEndpoint {
     });
   }
 
-  _i3.Future<_i51.Subject?> fetchSubjectByPublicId(
+  _i3.Future<_i53.Subject?> fetchSubjectByPublicId(
     _i1.TestSessionBuilder sessionBuilder,
     String publicId,
   ) async {
@@ -6616,7 +6729,7 @@ class _SubjectEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i51.Subject?>);
+        ) as _i3.Future<_i53.Subject?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6624,7 +6737,7 @@ class _SubjectEndpoint {
     });
   }
 
-  _i3.Future<List<_i51.Subject>> fetchSubjectsByName(
+  _i3.Future<List<_i53.Subject>> fetchSubjectsByName(
     _i1.TestSessionBuilder sessionBuilder,
     String name,
   ) async {
@@ -6645,7 +6758,7 @@ class _SubjectEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i51.Subject>>);
+        ) as _i3.Future<List<_i53.Subject>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6653,7 +6766,7 @@ class _SubjectEndpoint {
     });
   }
 
-  _i3.Future<List<_i51.Subject>> fetchSubjectsByCreator(
+  _i3.Future<List<_i53.Subject>> fetchSubjectsByCreator(
     _i1.TestSessionBuilder sessionBuilder,
     String createdBy,
   ) async {
@@ -6674,7 +6787,7 @@ class _SubjectEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i51.Subject>>);
+        ) as _i3.Future<List<_i53.Subject>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6682,9 +6795,9 @@ class _SubjectEndpoint {
     });
   }
 
-  _i3.Future<_i51.Subject> updateSubject(
+  _i3.Future<_i53.Subject> updateSubject(
     _i1.TestSessionBuilder sessionBuilder,
-    _i51.Subject subject,
+    _i53.Subject subject,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -6703,7 +6816,7 @@ class _SubjectEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i51.Subject>);
+        ) as _i3.Future<_i53.Subject>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6751,9 +6864,9 @@ class _TimetableEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i52.Timetable> createTimetable(
+  _i3.Future<_i54.Timetable> createTimetable(
     _i1.TestSessionBuilder sessionBuilder,
-    _i52.Timetable timetable,
+    _i54.Timetable timetable,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -6772,7 +6885,7 @@ class _TimetableEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i52.Timetable>);
+        ) as _i3.Future<_i54.Timetable>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6780,7 +6893,7 @@ class _TimetableEndpoint {
     });
   }
 
-  _i3.Future<List<_i52.Timetable>> fetchTimetables(
+  _i3.Future<List<_i54.Timetable>> fetchTimetables(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -6799,7 +6912,7 @@ class _TimetableEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i52.Timetable>>);
+        ) as _i3.Future<List<_i54.Timetable>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6807,7 +6920,7 @@ class _TimetableEndpoint {
     });
   }
 
-  _i3.Future<_i52.Timetable?> fetchTimetableById(
+  _i3.Future<_i54.Timetable?> fetchTimetableById(
     _i1.TestSessionBuilder sessionBuilder,
     int id,
   ) async {
@@ -6828,7 +6941,7 @@ class _TimetableEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i52.Timetable?>);
+        ) as _i3.Future<_i54.Timetable?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6836,7 +6949,7 @@ class _TimetableEndpoint {
     });
   }
 
-  _i3.Future<_i52.Timetable?> fetchTimetable(
+  _i3.Future<_i54.Timetable?> fetchTimetable(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -6855,7 +6968,7 @@ class _TimetableEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i52.Timetable?>);
+        ) as _i3.Future<_i54.Timetable?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6863,7 +6976,7 @@ class _TimetableEndpoint {
     });
   }
 
-  _i3.Future<_i52.Timetable?> fetchCompleteTimetableData(
+  _i3.Future<_i54.Timetable?> fetchCompleteTimetableData(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -6882,7 +6995,7 @@ class _TimetableEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i52.Timetable?>);
+        ) as _i3.Future<_i54.Timetable?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6890,7 +7003,7 @@ class _TimetableEndpoint {
     });
   }
 
-  _i3.Future<List<_i52.Timetable>> fetchActiveTimetables(
+  _i3.Future<List<_i54.Timetable>> fetchActiveTimetables(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -6909,7 +7022,7 @@ class _TimetableEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i52.Timetable>>);
+        ) as _i3.Future<List<_i54.Timetable>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6917,7 +7030,7 @@ class _TimetableEndpoint {
     });
   }
 
-  _i3.Future<List<_i52.Timetable>> fetchTimetablesBySemester(
+  _i3.Future<List<_i54.Timetable>> fetchTimetablesBySemester(
     _i1.TestSessionBuilder sessionBuilder,
     int schoolSemesterId,
   ) async {
@@ -6939,7 +7052,7 @@ class _TimetableEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i52.Timetable>>);
+        ) as _i3.Future<List<_i54.Timetable>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6947,9 +7060,9 @@ class _TimetableEndpoint {
     });
   }
 
-  _i3.Future<_i52.Timetable> updateTimetable(
+  _i3.Future<_i54.Timetable> updateTimetable(
     _i1.TestSessionBuilder sessionBuilder,
-    _i52.Timetable timetable,
+    _i54.Timetable timetable,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -6968,7 +7081,7 @@ class _TimetableEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i52.Timetable>);
+        ) as _i3.Future<_i54.Timetable>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -6976,7 +7089,7 @@ class _TimetableEndpoint {
     });
   }
 
-  _i3.Future<_i52.Timetable> deactivateTimetable(
+  _i3.Future<_i54.Timetable> deactivateTimetable(
     _i1.TestSessionBuilder sessionBuilder,
     int id,
   ) async {
@@ -6997,7 +7110,7 @@ class _TimetableEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i52.Timetable>);
+        ) as _i3.Future<_i54.Timetable>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -7045,9 +7158,9 @@ class _TimetableSlotEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i53.TimetableSlot> createTimetableSlot(
+  _i3.Future<_i55.TimetableSlot> createTimetableSlot(
     _i1.TestSessionBuilder sessionBuilder,
-    _i53.TimetableSlot timetableSlot,
+    _i55.TimetableSlot timetableSlot,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -7066,7 +7179,7 @@ class _TimetableSlotEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i53.TimetableSlot>);
+        ) as _i3.Future<_i55.TimetableSlot>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -7074,7 +7187,7 @@ class _TimetableSlotEndpoint {
     });
   }
 
-  _i3.Future<List<_i53.TimetableSlot>> fetchTimetableSlots(
+  _i3.Future<List<_i55.TimetableSlot>> fetchTimetableSlots(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -7093,7 +7206,7 @@ class _TimetableSlotEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i53.TimetableSlot>>);
+        ) as _i3.Future<List<_i55.TimetableSlot>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -7101,7 +7214,7 @@ class _TimetableSlotEndpoint {
     });
   }
 
-  _i3.Future<_i53.TimetableSlot?> fetchTimetableSlotById(
+  _i3.Future<_i55.TimetableSlot?> fetchTimetableSlotById(
     _i1.TestSessionBuilder sessionBuilder,
     int id,
   ) async {
@@ -7122,7 +7235,7 @@ class _TimetableSlotEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i53.TimetableSlot?>);
+        ) as _i3.Future<_i55.TimetableSlot?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -7130,7 +7243,7 @@ class _TimetableSlotEndpoint {
     });
   }
 
-  _i3.Future<List<_i53.TimetableSlot>> fetchTimetableSlotsByTimetableId(
+  _i3.Future<List<_i55.TimetableSlot>> fetchTimetableSlotsByTimetableId(
     _i1.TestSessionBuilder sessionBuilder,
     int timetableId,
   ) async {
@@ -7151,7 +7264,7 @@ class _TimetableSlotEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i53.TimetableSlot>>);
+        ) as _i3.Future<List<_i55.TimetableSlot>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -7159,9 +7272,9 @@ class _TimetableSlotEndpoint {
     });
   }
 
-  _i3.Future<List<_i53.TimetableSlot>> fetchTimetableSlotsByDay(
+  _i3.Future<List<_i55.TimetableSlot>> fetchTimetableSlotsByDay(
     _i1.TestSessionBuilder sessionBuilder,
-    _i54.Weekday day,
+    _i56.Weekday day,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -7180,7 +7293,7 @@ class _TimetableSlotEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i53.TimetableSlot>>);
+        ) as _i3.Future<List<_i55.TimetableSlot>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -7188,9 +7301,9 @@ class _TimetableSlotEndpoint {
     });
   }
 
-  _i3.Future<_i53.TimetableSlot> updateTimetableSlot(
+  _i3.Future<_i55.TimetableSlot> updateTimetableSlot(
     _i1.TestSessionBuilder sessionBuilder,
-    _i53.TimetableSlot timetableSlot,
+    _i55.TimetableSlot timetableSlot,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -7209,7 +7322,7 @@ class _TimetableSlotEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i53.TimetableSlot>);
+        ) as _i3.Future<_i55.TimetableSlot>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -7409,7 +7522,7 @@ class _PupilWorkbooksEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i55.PupilWorkbook?> postPupilWorkbook(
+  _i3.Future<_i57.PupilWorkbook?> postPupilWorkbook(
     _i1.TestSessionBuilder sessionBuilder,
     int isbn,
     int pupilId,
@@ -7436,7 +7549,7 @@ class _PupilWorkbooksEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i55.PupilWorkbook?>);
+        ) as _i3.Future<_i57.PupilWorkbook?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -7444,7 +7557,7 @@ class _PupilWorkbooksEndpoint {
     });
   }
 
-  _i3.Future<List<_i55.PupilWorkbook>> fetchPupilWorkbooks(
+  _i3.Future<List<_i57.PupilWorkbook>> fetchPupilWorkbooks(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -7463,7 +7576,7 @@ class _PupilWorkbooksEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i55.PupilWorkbook>>);
+        ) as _i3.Future<List<_i57.PupilWorkbook>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -7471,7 +7584,7 @@ class _PupilWorkbooksEndpoint {
     });
   }
 
-  _i3.Future<List<_i55.PupilWorkbook>> fetchPupilWorkbooksFromPupil(
+  _i3.Future<List<_i57.PupilWorkbook>> fetchPupilWorkbooksFromPupil(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
   ) async {
@@ -7492,7 +7605,7 @@ class _PupilWorkbooksEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i55.PupilWorkbook>>);
+        ) as _i3.Future<List<_i57.PupilWorkbook>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -7500,9 +7613,9 @@ class _PupilWorkbooksEndpoint {
     });
   }
 
-  _i3.Future<_i55.PupilWorkbook> updatePupilWorkbook(
+  _i3.Future<_i57.PupilWorkbook> updatePupilWorkbook(
     _i1.TestSessionBuilder sessionBuilder,
-    _i55.PupilWorkbook pupilWorkbook,
+    _i57.PupilWorkbook pupilWorkbook,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -7521,7 +7634,7 @@ class _PupilWorkbooksEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i55.PupilWorkbook>);
+        ) as _i3.Future<_i57.PupilWorkbook>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -7570,9 +7683,9 @@ class _WorkbooksEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i56.Workbook> postWorkbook(
+  _i3.Future<_i58.Workbook> postWorkbook(
     _i1.TestSessionBuilder sessionBuilder,
-    _i56.Workbook workbook,
+    _i58.Workbook workbook,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -7591,7 +7704,7 @@ class _WorkbooksEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i56.Workbook>);
+        ) as _i3.Future<_i58.Workbook>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -7599,7 +7712,7 @@ class _WorkbooksEndpoint {
     });
   }
 
-  _i3.Future<_i56.Workbook> fetchWorkbookByIsbn(
+  _i3.Future<_i58.Workbook> fetchWorkbookByIsbn(
     _i1.TestSessionBuilder sessionBuilder,
     int isbn,
   ) async {
@@ -7620,7 +7733,7 @@ class _WorkbooksEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i56.Workbook>);
+        ) as _i3.Future<_i58.Workbook>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -7628,7 +7741,7 @@ class _WorkbooksEndpoint {
     });
   }
 
-  _i3.Future<List<_i56.Workbook>> fetchWorkbooks(
+  _i3.Future<List<_i58.Workbook>> fetchWorkbooks(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -7647,7 +7760,7 @@ class _WorkbooksEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i56.Workbook>>);
+        ) as _i3.Future<List<_i58.Workbook>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -7655,9 +7768,9 @@ class _WorkbooksEndpoint {
     });
   }
 
-  _i3.Future<_i56.Workbook> updateWorkbook(
+  _i3.Future<_i58.Workbook> updateWorkbook(
     _i1.TestSessionBuilder sessionBuilder,
-    _i56.Workbook workbook,
+    _i58.Workbook workbook,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -7676,7 +7789,7 @@ class _WorkbooksEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i56.Workbook>);
+        ) as _i3.Future<_i58.Workbook>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -7790,7 +7903,7 @@ class _FilesEndpoint {
     });
   }
 
-  _i3.Future<_i57.ByteData?> getImage(
+  _i3.Future<_i59.ByteData?> getImage(
     _i1.TestSessionBuilder sessionBuilder,
     String documentId,
   ) async {
@@ -7811,7 +7924,7 @@ class _FilesEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i57.ByteData?>);
+        ) as _i3.Future<_i59.ByteData?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -7819,7 +7932,7 @@ class _FilesEndpoint {
     });
   }
 
-  _i3.Future<_i57.ByteData?> getUnencryptedImage(
+  _i3.Future<_i59.ByteData?> getUnencryptedImage(
     _i1.TestSessionBuilder sessionBuilder,
     String path,
   ) async {
@@ -7840,7 +7953,7 @@ class _FilesEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i57.ByteData?>);
+        ) as _i3.Future<_i59.ByteData?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

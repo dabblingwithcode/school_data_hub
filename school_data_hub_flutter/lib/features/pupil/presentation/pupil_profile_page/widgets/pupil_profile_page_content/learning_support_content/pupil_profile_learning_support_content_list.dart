@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
@@ -30,7 +31,6 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/support_level_history_expansion_tile.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class PupilProfileLearningSupportContentList extends WatchingWidget {
   final PupilProxy pupil;
@@ -412,8 +412,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                   onPressed: () {
                     if (pupil.supportLevelHistory == null ||
                         pupil.supportLevelHistory!.isEmpty) {
-                      di<NotificationService>().showSnackBar(
-                        NotificationType.error,
+                      di<NotificationService>().showInformationDialog(
                         'Förderebene nicht festgelegt',
                       );
                       return;

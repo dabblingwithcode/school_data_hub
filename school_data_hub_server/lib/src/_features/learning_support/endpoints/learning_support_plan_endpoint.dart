@@ -189,4 +189,114 @@ class LearningSupportPlanEndpoint extends Endpoint {
     );
     return updatedPupil!;
   }
+
+  Future<SupportGoal> postSupportGoalCheck(
+    Session session,
+    int supportGoalId,
+    int score,
+    String comment,
+    String createdBy,
+  ) async {
+    final supportGoal = await SupportGoal.db.findById(
+      session,
+      supportGoalId,
+      include: SupportGoal.include(
+        goalChecks: SupportGoalCheck.includeList(),
+      ),
+    );
+    if (supportGoal == null) {
+      throw Exception('SupportGoal not found for id: $supportGoalId');
+    }
+    final checkId = Uuid().v4().toString();
+    final newSupportGoalCheck = SupportGoalCheck(
+      checkId: checkId,
+      supportGoalId: supportGoalId,
+      score: score,
+      comment: comment,
+      createdBy: createdBy,
+      createdAt: DateTime.now().toUtc(),
+    );
+    final checkInDatabase = await SupportGoalCheck.db.insertRow(
+      session,
+      newSupportGoalCheck,
+    );
+    await SupportGoal.db.attach.goalChecks(
+      session,
+      supportGoal,
+      [checkInDatabase],
+    );
+    final updatedSupportGoal = await SupportGoal.db.findById(
+      session,
+      supportGoalId,
+      include: SupportGoal.include(
+        goalChecks: SupportGoalCheck.includeList(),
+      ),
+    );
+    return updatedSupportGoal!;
+  }
+
+  Future<SupportGoalCheck> updateSupportGoalCheck(
+    Session session,
+    int supportGoalCheckId,
+    int? score,
+    String? comment,
+    String? createdBy,
+    DateTime? createdAt,
+  ) async {
+    final existingCheck = await SupportGoalCheck.db.findById(
+      session,
+      supportGoalCheckId,
+    );
+    if (existingCheck == null) {
+      throw Exception(
+          'SupportGoalCheck not found for id: $supportGoalCheckId');
+    }
+    final updatedCheck = existingCheck.copyWith(
+      score: score ?? existingCheck.score,
+      comment: comment ?? existingCheck.comment,
+      createdBy: createdBy ?? existingCheck.createdBy,
+      createdAt: createdAt ?? existingCheck.createdAt,
+    );
+    await session.db.updateRow(updatedCheck);
+    return updatedCheck;
+  }
+
+  Future<SupportGoal> deleteSupportGoalCheck(
+    Session session,
+    int supportGoalId,
+    int supportGoalCheckId,
+  ) async {
+    final supportGoal = await SupportGoal.db.findById(
+      session,
+      supportGoalId,
+      include: SupportGoal.include(
+        goalChecks: SupportGoalCheck.includeList(),
+      ),
+    );
+    if (supportGoal == null) {
+      throw Exception('SupportGoal not found for id: $supportGoalId');
+    }
+    final existingCheck = await SupportGoalCheck.db.findById(
+      session,
+      supportGoalCheckId,
+    );
+    if (existingCheck == null) {
+      throw Exception(
+          'SupportGoalCheck not found for id: $supportGoalCheckId');
+    }
+    await SupportGoal.db.detach.goalChecks(session, [existingCheck]);
+    await session.db.deleteRow<SupportGoalCheck>(existingCheck);
+
+    final updatedSupportGoal = await SupportGoal.db.findById(
+      session,
+      supportGoalId,
+      include: SupportGoal.include(
+        goalChecks: SupportGoalCheck.includeList(),
+      ),
+    );
+    if (updatedSupportGoal == null) {
+      throw Exception('SupportGoal not found after deletion');
+    }
+    return updatedSupportGoal;
+  }
 }

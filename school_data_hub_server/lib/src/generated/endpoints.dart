@@ -2709,6 +2709,114 @@ class Endpoints extends _i1.EndpointDispatch {
             params['createdBy'],
           ),
         ),
+        'postSupportGoalCheck': _i1.MethodConnector(
+          name: 'postSupportGoalCheck',
+          params: {
+            'supportGoalId': _i1.ParameterDescription(
+              name: 'supportGoalId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'score': _i1.ParameterDescription(
+              name: 'score',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'comment': _i1.ParameterDescription(
+              name: 'comment',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'createdBy': _i1.ParameterDescription(
+              name: 'createdBy',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['learningSupportPlan']
+                      as _i19.LearningSupportPlanEndpoint)
+                  .postSupportGoalCheck(
+            session,
+            params['supportGoalId'],
+            params['score'],
+            params['comment'],
+            params['createdBy'],
+          ),
+        ),
+        'updateSupportGoalCheck': _i1.MethodConnector(
+          name: 'updateSupportGoalCheck',
+          params: {
+            'supportGoalCheckId': _i1.ParameterDescription(
+              name: 'supportGoalCheckId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'score': _i1.ParameterDescription(
+              name: 'score',
+              type: _i1.getType<int?>(),
+              nullable: true,
+            ),
+            'comment': _i1.ParameterDescription(
+              name: 'comment',
+              type: _i1.getType<String?>(),
+              nullable: true,
+            ),
+            'createdBy': _i1.ParameterDescription(
+              name: 'createdBy',
+              type: _i1.getType<String?>(),
+              nullable: true,
+            ),
+            'createdAt': _i1.ParameterDescription(
+              name: 'createdAt',
+              type: _i1.getType<DateTime?>(),
+              nullable: true,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['learningSupportPlan']
+                      as _i19.LearningSupportPlanEndpoint)
+                  .updateSupportGoalCheck(
+            session,
+            params['supportGoalCheckId'],
+            params['score'],
+            params['comment'],
+            params['createdBy'],
+            params['createdAt'],
+          ),
+        ),
+        'deleteSupportGoalCheck': _i1.MethodConnector(
+          name: 'deleteSupportGoalCheck',
+          params: {
+            'supportGoalId': _i1.ParameterDescription(
+              name: 'supportGoalId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'supportGoalCheckId': _i1.ParameterDescription(
+              name: 'supportGoalCheckId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['learningSupportPlan']
+                      as _i19.LearningSupportPlanEndpoint)
+                  .deleteSupportGoalCheck(
+            session,
+            params['supportGoalId'],
+            params['supportGoalCheckId'],
+          ),
+        ),
       },
     );
     connectors['preSchoolMedical'] = _i1.EndpointConnector(

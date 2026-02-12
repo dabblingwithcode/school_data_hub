@@ -12,7 +12,11 @@ class PupilSchemas {
       preschoolMedicalFiles: HubDocument.includeList(),
     ),
     supportCategoryStatuses: SupportCategoryStatus.includeList(),
-    supportGoals: SupportGoal.includeList(),
+    supportGoals: SupportGoal.includeList(
+      include: SupportGoal.include(
+        goalChecks: SupportGoalCheck.includeList(),
+      ),
+    ),
     competenceGoals: CompetenceGoal.includeList(
         include: CompetenceGoal.include(
       documents: HubDocument.includeList(),

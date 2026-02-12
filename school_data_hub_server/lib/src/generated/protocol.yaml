@@ -105,6 +105,9 @@ learningSupportPlan:
   - updateCategoryStatus:
   - deleteSupportCategoryStatus:
   - postCategoryGoal:
+  - postSupportGoalCheck:
+  - updateSupportGoalCheck:
+  - deleteSupportGoalCheck:
 preSchoolMedical:
   - createPreSchoolMedical:
   - updatePreSchoolMedical:
