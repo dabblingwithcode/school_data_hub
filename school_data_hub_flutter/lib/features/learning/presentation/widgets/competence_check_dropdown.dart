@@ -20,8 +20,9 @@ class GrowthDropdown extends StatelessWidget {
               visible: false,
               child: Icon(Icons.arrow_downward),
             ),
+            focusColor: Colors.transparent,
             onTap: () {
-              FocusManager.instance.primaryFocus!.unfocus();
+              FocusManager.instance.primaryFocus?.unfocus();
             },
             value: dropdownValue,
             items: competenceCheckDropdownItems,
@@ -29,6 +30,8 @@ class GrowthDropdown extends StatelessWidget {
               if (value != dropdownValue) {
                 onChangedFunction(value!);
               }
+              // Unfocus after selection to prevent parent InkWell focus issues
+              FocusManager.instance.primaryFocus?.unfocus();
             },
             alignment: Alignment.center,
           ),
