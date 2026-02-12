@@ -26,7 +26,7 @@ class HubDocumentHelper {
     // without having to initialize the document object
     String? duration;
     if (fileExtension == 'm4a') {
-      duration = path.split('_').first;
+      duration = path.split('/').last.split('_').first;
     }
     final documentId = duration != null
         ? '${duration}_${Uuid().v4()}.$fileExtension'

@@ -3,11 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:path/path.dart' as p;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
-import 'package:school_data_hub_flutter/app_utils/download_and_decrypt_file.dart';
 import 'package:school_data_hub_flutter/app_utils/record_audio_file.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -550,56 +548,28 @@ class _AudioPlayerDialogState extends State<_AudioPlayerDialog> {
   }
 }
 
-/// A small thumbnail for audio files that loads the duration in the background
-/// and displays it below the audio icon.
-class _AudioThumbnail extends StatefulWidget {
+/// A small thumbnail for audio files that parses the duration from the
+/// documentId and displays it below the audio icon.
+class _AudioThumbnail extends StatelessWidget {
   const _AudioThumbnail({required this.documentId});
 
   final String documentId;
 
-  @override
-  State<_AudioThumbnail> createState() => _AudioThumbnailState();
-}
-
-class _AudioThumbnailState extends State<_AudioThumbnail> {
-  Duration? _duration;
-  bool _loading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadDuration();
-  }
-
-  Future<void> _loadDuration() async {
+  /// Parses duration from documentId format: "00-01_839400e1-12c2-4d3a-894f-a715eac9b1ee.m4a"
+  /// Returns null if parsing fails.
+  static Duration? _parseDuration(String documentId) {
     try {
-      final file = await downloadAndDecryptFile(
-        documentId: widget.documentId,
-        decrypt: true,
-      );
-      if (!mounted) return;
-      if (file != null) {
-        final player = AudioPlayer();
-        try {
-          final duration = await player.setFilePath(file.path);
-          if (mounted) {
-            setState(() {
-              _duration = duration;
-              _loading = false;
-            });
-          }
-        } finally {
-          await player.dispose();
-        }
-      } else {
-        if (mounted) setState(() => _loading = false);
+      final match = RegExp(r'^(\d{2})-(\d{2})_').firstMatch(documentId);
+      if (match != null) {
+        final minutes = int.parse(match.group(1)!);
+        final seconds = int.parse(match.group(2)!);
+        return Duration(minutes: minutes, seconds: seconds);
       }
-    } catch (_) {
-      if (mounted) setState(() => _loading = false);
-    }
+    } catch (_) {}
+    return null;
   }
 
-  String _formatDuration(Duration d) {
+  static String _formatDuration(Duration d) {
     final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
     final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
     return '$minutes:$seconds';
@@ -607,6 +577,8 @@ class _AudioThumbnailState extends State<_AudioThumbnail> {
 
   @override
   Widget build(BuildContext context) {
+    final duration = _parseDuration(documentId);
+
     return SizedBox(
       height: 70,
       width: (21 / 30) * 70,
@@ -623,18 +595,9 @@ class _AudioThumbnailState extends State<_AudioThumbnail> {
           children: [
             Icon(Icons.audiotrack, size: 30, color: AppColors.interactiveColor),
             const SizedBox(height: 2),
-            if (_loading)
-              SizedBox(
-                width: 10,
-                height: 10,
-                child: CircularProgressIndicator(
-                  strokeWidth: 1.5,
-                  color: AppColors.interactiveColor,
-                ),
-              )
-            else if (_duration != null)
+            if (duration != null)
               Text(
-                _formatDuration(_duration!),
+                _formatDuration(duration),
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.bold,

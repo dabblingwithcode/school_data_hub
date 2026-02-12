@@ -40,7 +40,7 @@ class ClientFileUpload {
     final documentId = fileInfo != null
         ? '${fileInfo.replaceAll(':', '-')}_${const Uuid().v4()}'
         : const Uuid().v4();
-    final path = p.join(
+    final path = p.posix.join(
       folder.name,
       '$documentId${p.extension(fileToUpload.path)}',
     );

@@ -153,24 +153,24 @@ class CompetenceHelper {
       case 1:
         return SizedBox(
           width: size,
-          child: Image.asset('assets/growth_1-4.png'),
+          child: Image.asset('assets/images/growth_icons/growth_1-4.png'),
         );
       case 2:
         return SizedBox(
           width: size,
-          child: Image.asset('assets/growth_2-4.png'),
+          child: Image.asset('assets/images/growth_icons/growth_2-4.png'),
         );
       case 3:
         return SizedBox(
           width: size,
-          child: Image.asset('assets/growth_3-4.png'),
+          child: Image.asset('assets/images/growth_icons/growth_3-4.png'),
         );
       // case 'orange':
       //   return Colors.orange;
       case 4:
         return SizedBox(
           width: size,
-          child: Image.asset('assets/growth_4-4.png'),
+          child: Image.asset('assets/images/growth_icons/growth_4-4.png'),
         );
     }
     return SizedBox(

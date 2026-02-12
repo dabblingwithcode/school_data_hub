@@ -17,14 +17,14 @@ enum Subject {
 }
 
 enum Grade {
-  e1('E1', 'assets/grade_1.png'),
-  e1F('E1F', 'assets/grade_1_f.png'),
-  e2('E2', 'assets/grade_2.png'),
-  e2F('E2F', 'assets/grade_2_f.png'),
-  k3('K3', 'assets/grade_3.png'),
-  k3F('K3F', 'assets/grade_3_f.png'),
-  k4('K4', 'assets/grade_4.png'),
-  k4F('K4F', 'assets/grade_4_f.png');
+  e1('E1', 'assets/images/grade_icons/grade_1.png'),
+  e1F('E1F', 'assets/images/grade_icons/grade_1_f.png'),
+  e2('E2', 'assets/images/grade_icons/grade_2.png'),
+  e2F('E2F', 'assets/images/grade_icons/grade_2_f.png'),
+  k3('K3', 'assets/images/grade_icons/grade_3.png'),
+  k3F('K3F', 'assets/images/grade_icons/grade_3_f.png'),
+  k4('K4', 'assets/images/grade_icons/grade_4.png'),
+  k4F('K4F', 'assets/images/grade_icons/grade_4_f.png');
 
   final String name;
   final String imagePath;
