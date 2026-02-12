@@ -69,19 +69,20 @@ class LearningSupportHelper {
     }
   }
 
-  // static List<SupportGoal> getGoalsForCategory(
-  //     PupilProxy pupil, int categoryId) {
-  //   List<SupportGoal> goals = [];
-  //   if (pupil.supportGoals != null) {
-  //     for (SupportGoal goal in pupil.supportGoals!) {
-  //       if (goal.supportCategoryId == categoryId) {
-  //         goals.add(goal);
-  //       }
-  //       return goals;
-  //     }
-  //   }
-  //   return [];
-  // }
+  static List<SupportGoal> getGoalsForCategory(
+    PupilProxy pupil,
+    int categoryId,
+  ) {
+    final goals = <SupportGoal>[];
+    if (pupil.supportGoals != null) {
+      for (final goal in pupil.supportGoals!) {
+        if (goal.supportCategoryId == categoryId) {
+          goals.add(goal);
+        }
+      }
+    }
+    return goals;
+  }
 
   // //- TODO: Is this necessary?
   // static SupportGoal? getGoalForCategory(PupilProxy pupil, int goalCategoryId) {

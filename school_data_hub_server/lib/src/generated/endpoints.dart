@@ -2709,6 +2709,32 @@ class Endpoints extends _i1.EndpointDispatch {
             params['createdBy'],
           ),
         ),
+        'deleteCategoryGoal': _i1.MethodConnector(
+          name: 'deleteCategoryGoal',
+          params: {
+            'pupilId': _i1.ParameterDescription(
+              name: 'pupilId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'supportGoalId': _i1.ParameterDescription(
+              name: 'supportGoalId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['learningSupportPlan']
+                      as _i19.LearningSupportPlanEndpoint)
+                  .deleteCategoryGoal(
+            session,
+            params['pupilId'],
+            params['supportGoalId'],
+          ),
+        ),
         'postSupportGoalCheck': _i1.MethodConnector(
           name: 'postSupportGoalCheck',
           params: {

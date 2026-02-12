@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_category_status_batches.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_goal_batches.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_goals_list.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
@@ -132,7 +132,7 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                                 ? _tileController.collapse()
                                 : _tileController.expand();
                           },
-                          child: SupportCategoryStatusBatches(pupil: pupil),
+                          child: SupportGoalBatches(pupil: pupil),
                         ),
                   ],
                 ),

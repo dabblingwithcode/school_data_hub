@@ -3497,6 +3497,39 @@ class _LearningSupportPlanEndpoint {
     });
   }
 
+  _i3.Future<_i6.PupilData> deleteCategoryGoal(
+    _i1.TestSessionBuilder sessionBuilder,
+    int pupilId,
+    int supportGoalId,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'learningSupportPlan',
+        method: 'deleteCategoryGoal',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'learningSupportPlan',
+          methodName: 'deleteCategoryGoal',
+          parameters: _i1.testObjectToJson({
+            'pupilId': pupilId,
+            'supportGoalId': supportGoalId,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i6.PupilData>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
   _i3.Future<_i31.SupportGoal> postSupportGoalCheck(
     _i1.TestSessionBuilder sessionBuilder,
     int supportGoalId,

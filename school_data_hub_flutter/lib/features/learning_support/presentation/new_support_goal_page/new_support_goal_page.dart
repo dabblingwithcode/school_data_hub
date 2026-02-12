@@ -95,18 +95,8 @@ class NewSupportGoalPage extends StatelessWidget {
                                   top: 5.0,
                                   bottom: 8,
                                 ),
-                                child: Wrap(
-                                  crossAxisAlignment: WrapCrossAlignment.center,
-                                  alignment: WrapAlignment.center,
-                                  children: [
-                                    ...categoryTreeAncestorsNames(
-                                      categoryId: controller.goalCategoryId!,
-                                      categoryColor: learningSupportManager
-                                          .getCategoryColor(
-                                            controller.goalCategoryId!,
-                                          ),
-                                    ),
-                                  ],
+                                child: CategoryTreeAncestors(
+                                  categoryId: controller.goalCategoryId!,
                                 ),
                               ),
                             ),

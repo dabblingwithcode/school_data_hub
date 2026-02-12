@@ -131,33 +131,19 @@ class LearningSupportApiService {
 
   //- delete category goal
 
-  // String _deleteGoalUrl(String goalId) {
-  //   return '/support_goals/$goalId/delete';
-  // }
-
-  // Future deleteGoal(String goalId) async {
-  //   _notificationService.apiRunning(true);
-
-  //   final Response response = await _client.delete(
-  //     '${_baseUrl()}${_deleteGoalUrl(goalId)}',
-  //     options: _client.hubOptions,
-  //   );
-
-  //   if (response.statusCode != 200) {
-  //     _notificationService.showSnackBar(
-  //         NotificationType.error, 'Fehler beim Löschen des Ziels');
-
-  //     _notificationService.apiRunning(false);
-
-  //     throw ApiException('Failed to delete category goal', response.statusCode);
-  //   }
-
-  //   final PupilData pupil = PupilData.fromJson(response.data);
-
-  //   _notificationService.apiRunning(false);
-
-  //   return pupil;
-  // }
+  Future<PupilData?> deleteCategoryGoal({
+    required int pupilId,
+    required int supportGoalId,
+  }) async {
+    final updatedPupil = await ClientHelper.apiCall(
+      call: () => _client.learningSupportPlan.deleteCategoryGoal(
+        pupilId,
+        supportGoalId,
+      ),
+      errorMessage: 'Fehler beim Löschen des Ziels',
+    );
+    return updatedPupil;
+  }
 
   //- BULK IMPORT SUPPORT LEVELS ------------------------------------------
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
@@ -8,7 +9,6 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/n
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_entry.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_category_parents_names.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class SupportCategoryStatusCard extends StatelessWidget {
   final PupilProxy pupil;
@@ -38,60 +38,26 @@ class SupportCategoryStatusCard extends StatelessWidget {
             children: [
               const Gap(10),
               Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5.0),
-                    color: LearningSupportHelper.getRootSupportCategoryColor(
-                      learningSupportManager.getRootSupportCategory(
-                        supportCategoryId,
+                child: InkWell(
+                  onLongPress: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (ctx) => NewSupportCategoryStatus(
+                          appBarTitle: 'Neuer Status',
+                          pupilId: pupil.pupilId,
+                          goalCategoryId: supportCategoryId,
+                          elementType: 'status',
+                        ),
                       ),
-                    ),
-                  ),
-                  child: InkWell(
-                    onLongPress: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (ctx) => NewSupportCategoryStatus(
-                            appBarTitle: 'Neuer Status',
-                            pupilId: pupil.pupilId,
-                            goalCategoryId: supportCategoryId,
-                            elementType: 'status',
-                          ),
-                        ),
-                      );
-                    },
-                    child: Column(
-                      children: [
-                        ...categoryTreeAncestorsNames(
-                          categoryId: supportCategoryId,
-                          categoryColor: supportCategoryColor,
-                        ),
-                      ],
-                    ),
-                  ),
+                    );
+                  },
+                  child: CategoryTreeAncestors(categoryId: supportCategoryId),
                 ),
               ),
               const Gap(10),
             ],
           ),
-          const Gap(5),
-          Row(
-            children: [
-              const Gap(10),
-              Flexible(
-                child: Text(
-                  learningSupportManager
-                      .getSupportCategory(supportCategoryId)
-                      .name,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: supportCategoryColor,
-                  ),
-                ),
-              ),
-            ],
-          ),
+
           const Gap(10),
           for (
             int i = 0;
@@ -103,25 +69,26 @@ class SupportCategoryStatusCard extends StatelessWidget {
               status: statusesWithSameGoalCategory[i],
             ),
           ],
-          // TODO: Uncomment this when the goal category is implemented
-          // if (LearningSupportHelper.getGoalsForCategory(pupil, supportCategoryId)
-          //     .isEmpty)
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.warning, color: Colors.red),
-              Gap(5),
-              Text(
-                'Noch keine Förderziele formuliert!',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
+          if (LearningSupportHelper.getGoalsForCategory(
+            pupil,
+            supportCategoryId,
+          ).isEmpty)
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.warning, color: Colors.red),
+                Gap(5),
+                Text(
+                  'Noch keine Förderziele formuliert!',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              Gap(10),
-            ],
-          ),
+                Gap(10),
+              ],
+            ),
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: ElevatedButton(

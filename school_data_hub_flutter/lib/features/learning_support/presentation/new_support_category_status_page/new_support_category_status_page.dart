@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
@@ -10,7 +11,6 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/w
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_category_parents_names.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_category_widgets/support_category_status_dropdown.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class NewSupportCategoryStatusPage extends StatelessWidget {
   final NewSupportCategoryStatusController controller;
@@ -73,18 +73,21 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                                   minimumSize: const Size.fromHeight(60),
                                 ),
                                 onPressed: () async {
-                                  final int?
-                                  categoryId = await Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (ctx) => SelectSupportCategoryPage(
-                                        pupil: pupilManager.getPupilByPupilId(
-                                          controller.widget.pupilId,
-                                        )!,
-                                        elementType:
-                                            controller.widget.elementType,
-                                      ),
-                                    ),
-                                  );
+                                  final int? categoryId =
+                                      await Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (ctx) =>
+                                              SelectSupportCategoryPage(
+                                                pupil: pupilManager
+                                                    .getPupilByPupilId(
+                                                      controller.widget.pupilId,
+                                                    )!,
+                                                elementType: controller
+                                                    .widget
+                                                    .elementType,
+                                              ),
+                                        ),
+                                      );
                                   if (categoryId == null) {
                                     return;
                                   }
@@ -95,61 +98,11 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                                   style: AppStyles.buttonTextStyle,
                                 ),
                               )
-                            : InkWell(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5.0),
-                                    color: supportCategoryManager
-                                        .getCategoryColor(
-                                          controller.goalCategoryId!,
-                                        ),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      top: 5.0,
-                                      bottom: 8,
-                                    ),
-                                    child: Wrap(
-                                      crossAxisAlignment:
-                                          WrapCrossAlignment.center,
-                                      children: [
-                                        ...categoryTreeAncestorsNames(
-                                          categoryId:
-                                              controller.goalCategoryId!,
-                                          categoryColor: Colors
-                                              .white, //locator<LearningSupportManager>().getCategoryColor(controller.goalCategoryId!),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                            : CategoryTreeAncestors(
+                                categoryId: controller.goalCategoryId!,
                               ),
                         const Gap(5),
-                        controller.goalCategoryId == null
-                            ? const SizedBox.shrink()
-                            : controller.goalCategoryId == 0
-                            ? const SizedBox.shrink()
-                            : Row(
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      supportCategoryManager
-                                          .getSupportCategory(
-                                            controller.goalCategoryId!,
-                                          )
-                                          .name,
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        color: supportCategoryManager
-                                            .getCategoryColor(
-                                              controller.goalCategoryId!,
-                                            ),
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+
                         const Gap(5),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,

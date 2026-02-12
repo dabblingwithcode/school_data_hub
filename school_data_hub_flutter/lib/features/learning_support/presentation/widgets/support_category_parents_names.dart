@@ -1,153 +1,79 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_goal/support_category_badge.dart';
 
-// class CategoryTreeParentsNames extends StatelessWidget {
-//   final int categoryId;
-//   final Color categoryColor;
+class CategoryTreeAncestors extends StatelessWidget {
+  final int categoryId;
 
-//   const CategoryTreeParentsNames(
-//       {required this.categoryColor, required this.categoryId, super.key});
+  const CategoryTreeAncestors({required this.categoryId, super.key});
 
-//   @override
-//   Widget build(BuildContext context) {
-//     List<Widget> ancestors = [];
-//     void collectAncestors(int currentCategoryId) {
-//       final SupportCategory currentCategory = _learningSupportManager
-//           .getSupportCategory(currentCategoryId);
+  @override
+  Widget build(BuildContext context) {
+    final learningSupportManager = di<SupportCategoryManager>();
+    final rootCategoryId = learningSupportManager
+        .getRootSupportCategory(categoryId)
+        .categoryId;
 
-//       // Check if parent category exists before recursion
-//       if (currentCategory.parentCategory != null) {
-//         collectAncestors(currentCategory.parentCategory!);
-//       }
-//       if (currentCategory.categoryId ==
-//           _learningSupportManager
-//               .getRootSupportCategory(categoryId)
-//               .categoryId) {
-//         ancestors.add(
-//           Row(
-//             children: [
-//               const Gap(10),
-//               Flexible(
-//                 child: Text(
-//                     _learningSupportManager
-//                         .getRootSupportCategory(categoryId)
-//                         .categoryName,
-//                     style: const TextStyle(
-//                       overflow: TextOverflow.fade,
-//                       color: Colors.white,
-//                       fontSize: 18,
-//                       fontWeight: FontWeight.bold,
-//                     )),
-//               ),
-//               const Gap(10),
-//             ],
-//           ),
-//         );
-//       }
-//       // Add current category name to the list after recursion
-//       if (currentCategory.categoryId !=
-//           _learningSupportManager
-//               .getRootSupportCategory(categoryId)
-//               .categoryId) {
-//         if (currentCategory.categoryId != categoryId) {
-//           ancestors.add(
-//             Row(
-//               children: [
-//                 const Gap(10),
-//                 Flexible(
-//                   child: Text(
-//                     currentCategory.categoryName,
-//                     style: const TextStyle(
-//                       color: Colors.white,
-//                       fontWeight: FontWeight.bold,
-//                       fontSize: 14,
-//                     ),
-//                   ),
-//                 ),
-//                 const Gap(10),
-//               ],
-//             ),
-//           );
-//         }
-//       }
-//     }
+    final ancestorNames = <Widget>[];
 
-//     return Container();
-//   }
-// }
+    void collectAncestors(int currentCategoryId) {
+      final SupportCategory currentCategory = learningSupportManager
+          .getSupportCategory(currentCategoryId);
 
-List<Widget> categoryTreeAncestorsNames({
-  required int categoryId,
-  required Color categoryColor,
-}) {
-  final learningSupportManager = di<SupportCategoryManager>();
-  // Create an empty list to store ancestors
-  List<Widget> ancestors = [];
+      // Recurse into parent first so ancestors are ordered root -> leaf
+      if (currentCategory.parentCategory != null) {
+        collectAncestors(currentCategory.parentCategory!);
+      }
 
-  // Use a recursive helper function to collect ancestors
-  void collectAncestors(int currentCategoryId) {
-    final SupportCategory currentCategory = learningSupportManager
-        .getSupportCategory(currentCategoryId);
-
-    // Check if parent category exists before recursion
-    if (currentCategory.parentCategory != null) {
-      collectAncestors(currentCategory.parentCategory!);
-    }
-
-    if (currentCategory.categoryId ==
-        learningSupportManager.getRootSupportCategory(categoryId).categoryId) {
-      ancestors.add(
-        Row(
-          children: [
-            const Gap(10),
-            Flexible(
-              child: Text(
-                learningSupportManager.getRootSupportCategory(categoryId).name,
-                style: const TextStyle(
-                  overflow: TextOverflow.fade,
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+      // Intermediate ancestors (not root, not current category)
+      if (currentCategory.categoryId != rootCategoryId &&
+          currentCategory.categoryId != categoryId) {
+        ancestorNames.add(
+          Text(
+            currentCategory.name,
+            style: const TextStyle(
+              //color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
             ),
-            const Gap(10),
-          ],
-        ),
-      );
-    }
-    // Add current category name to the list after recursion
-    if (currentCategory.categoryId !=
-        learningSupportManager.getRootSupportCategory(categoryId).categoryId) {
-      if (currentCategory.categoryId != categoryId) {
-        ancestors.add(
-          Row(
-            children: [
-              const Gap(10),
-              Flexible(
-                child: Text(
-                  currentCategory.name,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ),
-              ),
-              const Gap(10),
-            ],
           ),
         );
       }
     }
+
+    collectAncestors(categoryId);
+
+    // Add the current category name as the last entry
+    final currentCategory =
+        learningSupportManager.getSupportCategory(categoryId);
+    final categoryColor =
+        learningSupportManager.getCategoryColor(categoryId);
+    ancestorNames.add(
+      Text(
+        currentCategory.name,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+          color: categoryColor,
+        ),
+      ),
+    );
+
+    return Row(
+      children: [
+        SupportCategoryBadge(categoryId: categoryId),
+        const Gap(10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: ancestorNames,
+          ),
+        ),
+      ],
+    );
   }
-
-  // Start the recursion from the input category
-  collectAncestors(categoryId);
-
-  ancestors.add(const Gap(5));
-  return ancestors;
 }

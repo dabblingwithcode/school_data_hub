@@ -191,6 +191,85 @@ class LearningSupportPlanEndpoint extends Endpoint {
     return updatedPupil!;
   }
 
+  Future<PupilData> deleteCategoryGoal(
+    Session session,
+    int pupilId,
+    int supportGoalId,
+  ) async {
+    final pupil = await PupilData.db.findById(
+      session,
+      pupilId,
+      include: PupilSchemas.allInclude,
+    );
+    if (pupil == null) {
+      throw Exception('Pupil not found for id: $pupilId');
+    }
+    final existingGoal = await SupportGoal.db.findById(
+      session,
+      supportGoalId,
+      include: _supportGoalInclude,
+    );
+    if (existingGoal == null) {
+      throw Exception('SupportGoal not found for id: $supportGoalId');
+    }
+
+    await session.db.transaction((transaction) async {
+      // Delete all documents from all goal checks
+      for (final check in existingGoal.goalChecks ?? <SupportGoalCheck>[]) {
+        for (final doc in check.documents ?? <HubDocument>[]) {
+          await SupportGoalCheck.db.detachRow.documents(
+            session,
+            doc,
+            transaction: transaction,
+          );
+          await HubDocument.db.deleteRow(
+            session,
+            doc,
+            transaction: transaction,
+          );
+          if (doc.documentPath != null) {
+            await session.storage.deleteFile(
+              storageId: 'private',
+              path: doc.documentPath!,
+            );
+          }
+        }
+        // Detach and delete the goal check
+        await SupportGoal.db.detach.goalChecks(
+          session,
+          [check],
+          transaction: transaction,
+        );
+        await SupportGoalCheck.db.deleteRow(
+          session,
+          check,
+          transaction: transaction,
+        );
+      }
+      // Detach and delete the goal itself
+      await PupilData.db.detach.supportGoals(
+        session,
+        [existingGoal],
+        transaction: transaction,
+      );
+      await SupportGoal.db.deleteRow(
+        session,
+        existingGoal,
+        transaction: transaction,
+      );
+    });
+
+    final updatedPupil = await PupilData.db.findById(
+      session,
+      pupilId,
+      include: PupilSchemas.allInclude,
+    );
+    if (updatedPupil == null) {
+      throw Exception('Pupil not found after deletion');
+    }
+    return updatedPupil;
+  }
+
   static final _supportGoalInclude = SupportGoal.include(
     goalChecks: SupportGoalCheck.includeList(
       include: SupportGoalCheck.include(

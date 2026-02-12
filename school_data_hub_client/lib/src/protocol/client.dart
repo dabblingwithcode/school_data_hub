@@ -1247,6 +1247,19 @@ class EndpointLearningSupportPlan extends _i1.EndpointRef {
         },
       );
 
+  _i2.Future<_i5.PupilData> deleteCategoryGoal(
+    int pupilId,
+    int supportGoalId,
+  ) =>
+      caller.callServerEndpoint<_i5.PupilData>(
+        'learningSupportPlan',
+        'deleteCategoryGoal',
+        {
+          'pupilId': pupilId,
+          'supportGoalId': supportGoalId,
+        },
+      );
+
   _i2.Future<_i30.SupportGoal> postSupportGoalCheck(
     int supportGoalId,
     int score,

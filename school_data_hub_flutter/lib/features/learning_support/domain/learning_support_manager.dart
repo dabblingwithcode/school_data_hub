@@ -239,17 +239,24 @@ class LearningSupportManager {
   //   return;
   // }
 
-  // Future deleteGoal(String goalId) async {
-  //   final PupilData responsePupil =
-  //       await _learningSupportApiService.deleteGoal(goalId);
+  Future<void> deleteSupportGoal({
+    required int pupilId,
+    required int supportGoalId,
+  }) async {
+    final updatedPupil = await _learningSupportApiService.deleteCategoryGoal(
+      pupilId: pupilId,
+      supportGoalId: supportGoalId,
+    );
+    if (updatedPupil == null) {
+      return;
+    }
+    _pupilManager.updatePupilProxyWithPupilData(updatedPupil);
 
-  //   locator<PupilManager>().updatePupilProxyWithPupilData(responsePupil);
-
-  //   _notificationService.showSnackBar(
-  //       NotificationType.success, 'Ziel gelöscht');
-
-  //   return;
-  // }
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Ziel gelöscht',
+    );
+  }
 
   //- GOAL CHECKS ----------------------------------------------------------
 

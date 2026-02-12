@@ -9,6 +9,9 @@ import 'package:school_data_hub_flutter/app_utils/record_audio_file.dart';
 import 'package:school_data_hub_flutter/common/audio/audio.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
@@ -16,6 +19,7 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/support_goal_check_dialog.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_entry.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_symbol.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_goal/support_category_badge.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -45,10 +49,11 @@ class SupportGoalCard extends WatchingWidget {
               message: 'Förderziel löschen?',
             );
             if (delete == true) {
-              // TODO: uncomment when ready
-              // await _learningSupportManager
-              //     .deleteGoal(pupil.supportGoals![goalIndex].goalId);
-              // return;
+              await di<LearningSupportManager>().deleteSupportGoal(
+                pupilId: pupil.pupilId,
+                supportGoalId: pupil.supportGoals![goalIndex].id!,
+              );
+              return;
             }
             return;
           },
@@ -81,15 +86,109 @@ class SupportGoalCard extends WatchingWidget {
                       ),
                     ),
                     const Gap(10),
-                    Text(
-                      learningSupportManager
-                          .getSupportCategory(
-                            pupil.supportGoals![goalIndex].supportCategoryId,
-                          )
-                          .name,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                    Flexible(
+                      child: InkWell(
+                        onTap: () {
+                          final categoryId =
+                              pupil.supportGoals![goalIndex].supportCategoryId;
+                          final statuses =
+                              pupil.supportCategoryStatuses
+                                  ?.where(
+                                    (s) => s.supportCategoryId == categoryId,
+                                  )
+                                  .toList() ??
+                              [];
+                          showDialog(
+                            context: context,
+                            builder: (context) => Dialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  maxWidth: 500,
+                                  maxHeight: 600,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          SupportCategoryBadge(
+                                            categoryId: categoryId,
+                                          ),
+                                          const Gap(10),
+                                          Flexible(
+                                            child: Text(
+                                              learningSupportManager
+                                                  .getSupportCategory(
+                                                    categoryId,
+                                                  )
+                                                  .name,
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const Divider(),
+                                      if (statuses.isEmpty)
+                                        const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            vertical: 16,
+                                          ),
+                                          child: Text(
+                                            'Keine Status vorhanden',
+                                            style: TextStyle(
+                                              fontStyle: FontStyle.italic,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        )
+                                      else
+                                        Flexible(
+                                          child: ListView.builder(
+                                            shrinkWrap: true,
+                                            itemCount: statuses.length,
+                                            itemBuilder: (context, index) {
+                                              return SupportCategoryStatusEntry(
+                                                pupil: pupil,
+                                                status: statuses[index],
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          learningSupportManager
+                              .getSupportCategory(
+                                pupil
+                                    .supportGoals![goalIndex]
+                                    .supportCategoryId,
+                              )
+                              .name,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.interactiveColor,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -157,23 +256,24 @@ class SupportGoalCard extends WatchingWidget {
                 ),
                 const Gap(5),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const Gap(15),
                     const Text('Erstellt von:'),
-                    const Gap(10),
+                    const Gap(5),
                     Text(
                       pupil.supportGoals![goalIndex].createdBy,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    const Gap(15),
-                    const Text('am'),
                     const Gap(10),
+                    const Text('am'),
+                    const Gap(5),
                     Text(
                       pupil.supportGoals![goalIndex].createdAt
                           .toLocal()
                           .formatDateForUser(),
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
+                    const Gap(10),
                   ],
                 ),
                 const Gap(10),
@@ -194,80 +294,103 @@ class SupportGoalCard extends WatchingWidget {
 }
 
 /// Section displaying existing goal checks and a button to add new ones.
-class _GoalChecksSection extends StatelessWidget {
+///
+/// Uses [CustomExpansionTileContent] to make the checks list collapsible.
+/// The title row is always visible and acts as an expansion toggle.
+class _GoalChecksSection extends StatefulWidget {
   final SupportGoal goal;
   final int pupilId;
 
-  const _GoalChecksSection({
-    required this.goal,
-    required this.pupilId,
-  });
+  const _GoalChecksSection({required this.goal, required this.pupilId});
+
+  @override
+  State<_GoalChecksSection> createState() => _GoalChecksSectionState();
+}
+
+class _GoalChecksSectionState extends State<_GoalChecksSection> {
+  final CustomExpansionTileController _tileController =
+      CustomExpansionTileController();
 
   @override
   Widget build(BuildContext context) {
     final learningSupportManager = di<LearningSupportManager>();
-    final goalChecks = goal.goalChecks ?? [];
+    final goalChecks = widget.goal.goalChecks ?? [];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Divider(),
-        Row(
-          children: [
-            const Gap(15),
-            const Text(
-              'Ziel-Checks:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const Spacer(),
+        InkWell(
+          onTap: () {
+            _tileController.isExpanded
+                ? _tileController.collapse()
+                : _tileController.expand();
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                goalChecks.isEmpty
+                    ? 'keine Ziel-Checks:'
+                    : '${goalChecks.length} Ziel-Checks',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Gap(10),
+            ],
+          ),
+        ),
+        const Gap(8),
+        CustomExpansionTileContent(
+          tileController: _tileController,
+          widgetList: [
             Padding(
-              padding: const EdgeInsets.only(right: 10),
-              child: ElevatedButton.icon(
+              padding: const EdgeInsets.only(right: 10, left: 10),
+              child: ElevatedButton(
+                style: AppStyles.actionButtonStyle,
                 onPressed: () async {
                   final check = await supportGoalCheckDialog(
                     context: context,
-                    goal: goal,
+                    goal: widget.goal,
                   );
                   if (check != null) {
                     await learningSupportManager.postSupportGoalCheck(
-                      supportGoalId: goal.id!,
-                      pupilId: pupilId,
+                      supportGoalId: widget.goal.id!,
+                      pupilId: widget.pupilId,
                       score: check.score,
                       comment: check.comment,
                     );
                   }
                 },
-                icon: const Icon(Icons.add, size: 18),
-                label: const Text('Neuer Check'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.successButtonColor,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
+
+                child: const Text(
+                  'NEUER CHECK',
+                  style: AppStyles.buttonTextStyle,
                 ),
               ),
             ),
+            if (goalChecks.isEmpty) ...[
+              const Padding(
+                padding: EdgeInsets.only(top: 15, left: 15, bottom: 8),
+                child: Text(
+                  'Noch keine Checks vorhanden',
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+            ] else
+              ...goalChecks.map<Widget>(
+                (check) => _GoalCheckEntry(
+                  check: check,
+                  supportGoalId: widget.goal.id!,
+                  pupilId: widget.pupilId,
+                ),
+              ),
           ],
         ),
-        const Gap(8),
-        if (goalChecks.isEmpty)
-          const Padding(
-            padding: EdgeInsets.only(left: 15, bottom: 8),
-            child: Text(
-              'Noch keine Checks vorhanden',
-              style: TextStyle(fontStyle: FontStyle.italic, color: Colors.grey),
-            ),
-          )
-        else
-          ...goalChecks.map<Widget>(
-            (check) => _GoalCheckEntry(
-              check: check,
-              supportGoalId: goal.id!,
-              pupilId: pupilId,
-            ),
-          ),
       ],
     );
   }

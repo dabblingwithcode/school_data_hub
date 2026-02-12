@@ -1,41 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
-class SupportCategoryStatusBatches extends StatelessWidget {
+class SupportGoalBatches extends StatelessWidget {
   final PupilProxy pupil;
-  const SupportCategoryStatusBatches({super.key, required this.pupil});
+  const SupportGoalBatches({super.key, required this.pupil});
 
   @override
   Widget build(BuildContext context) {
     final learningSupportManager = di<SupportCategoryManager>();
-    List<SupportCategoryStatus> supportCategoryStatuses =
-        pupil.supportCategoryStatuses!;
+    final supportGoals = pupil.supportGoals ?? [];
     List<Widget> widgetList = [];
     Map<int, int> categoryCounts = {};
-    Set<int> countedCategoryIds = {};
 
-    // Calculate counts
-    for (SupportCategoryStatus supportCategoryStatus
-        in supportCategoryStatuses) {
-      if (countedCategoryIds.contains(
-        supportCategoryStatus.supportCategoryId,
-      )) {
-        continue;
-      }
-      countedCategoryIds.add(supportCategoryStatus.supportCategoryId);
+    // Calculate counts of support goals per root category
+    for (final supportGoal in supportGoals) {
       int rootCategoryId = learningSupportManager
-          .getRootSupportCategory(supportCategoryStatus.supportCategoryId)
+          .getRootSupportCategory(supportGoal.supportCategoryId)
           .categoryId;
-      if (categoryCounts.containsKey(rootCategoryId)) {
-        categoryCounts[rootCategoryId] = categoryCounts[rootCategoryId]! + 1;
-      } else {
-        categoryCounts[rootCategoryId] = 1;
-      }
+      categoryCounts[rootCategoryId] =
+          (categoryCounts[rootCategoryId] ?? 0) + 1;
     }
 
     categoryCounts.forEach((categoryId, count) {
@@ -47,8 +34,8 @@ class SupportCategoryStatusBatches extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 35.0,
-              height: 35.0,
+              width: 30.0,
+              height: 30.0,
               decoration: BoxDecoration(
                 color: LearningSupportHelper.getRootSupportCategoryColor(
                   rootCategory,
@@ -60,15 +47,15 @@ class SupportCategoryStatusBatches extends StatelessWidget {
                   LearningSupportHelper.getRootSupportCategoryIcon(
                     rootCategory,
                   ),
-                  width: 40.0,
-                  height: 40.0,
+                  width: 35.0,
+                  height: 35.0,
                 ),
               ),
             ),
             const Gap(2),
             Text(
               count.toString(),
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
             ),
           ],
         ),
