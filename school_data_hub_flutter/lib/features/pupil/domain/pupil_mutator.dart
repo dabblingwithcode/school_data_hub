@@ -103,6 +103,21 @@ class PupilMutator {
     // _pupils[pupilId]!.clearAvatar();
   }
 
+  Future<void> updateKindergardenInfo({
+    required int pupilId,
+    required KindergardenInfo? kindergardenInfo,
+  }) async {
+    final PupilData? pupilData = await _pupilDataApiService
+        .updateKindergardenInfo(
+          pupilId: pupilId,
+          kindergardenInfo: kindergardenInfo,
+        );
+    if (pupilData == null) {
+      return;
+    }
+    _pupilManager.updatePupilProxyWithPupilData(pupilData);
+  }
+
   Future<void> updatePreSchoolMedicalStatus({
     required int pupilId,
     required PreSchoolMedicalStatus preSchoolMedicalStatus,

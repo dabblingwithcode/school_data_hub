@@ -13,9 +13,11 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avat
 
 class BirthdaysView extends StatelessWidget {
   final DateTime selectedDate;
+  final DateTime? endDate;
   final bool futureBirthdays;
   const BirthdaysView({
     required this.selectedDate,
+    this.endDate,
     this.futureBirthdays = false,
     super.key,
   });
@@ -26,6 +28,7 @@ class BirthdaysView extends StatelessWidget {
     final pupilManager = di<PupilProxyManager>();
     final List<PupilProxy> pupils = pupilManager.getPupilsWithBirthdaySinceDate(
       selectedDate,
+      untilDate: endDate,
     );
 
     return Scaffold(
@@ -53,7 +56,9 @@ class BirthdaysView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Geburtstage seit dem ${selectedDate.formatDateForUser()}',
+                            endDate != null
+                                ? 'Geburtstage vom ${selectedDate.formatDateForUser()} bis ${endDate!.formatDateForUser()}'
+                                : 'Geburtstage seit dem ${selectedDate.formatDateForUser()}',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 20,
@@ -67,9 +72,13 @@ class BirthdaysView extends StatelessWidget {
                             itemBuilder: (context, int index) {
                               PupilProxy listedPupil = pupils[index];
 
-                              // Get the relevant birthday from the manager
+                              // Get the display birthday from the manager
                               final DateTime relevantBirthday = pupilManager
-                                  .getRelevantBirthdayDate(listedPupil);
+                                  .getBirthdayDisplayDate(
+                                    listedPupil,
+                                    selectedDate,
+                                    untilDate: endDate,
+                                  );
 
                               final bool isBirthdayPrinted = seenBirthdays
                                   .contains(relevantBirthday);

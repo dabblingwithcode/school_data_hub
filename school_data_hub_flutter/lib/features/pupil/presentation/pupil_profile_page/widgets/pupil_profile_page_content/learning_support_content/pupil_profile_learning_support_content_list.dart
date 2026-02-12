@@ -13,7 +13,6 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -21,12 +20,12 @@ import 'package:school_data_hub_flutter/features/learning_support/domain/support
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_goals_list.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan/controller/new_learning_support_plan_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/kindergarden_info_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/preschool_revision_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/support_level_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/support_category_statuses_list.dart';
 import 'package:school_data_hub_flutter/features/learning_support/services/learning_support_plan_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/support_level_history_expansion_tile.dart';
@@ -45,8 +44,8 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
     final hubSessionManager = di<HubSessionManager>();
     final isAdmin = hubSessionManager.isAdmin;
 
-    final kindergarden = watchPropertyValue(
-      (m) => m.kindergarden,
+    final kindergardenInfo = watchPropertyValue(
+      (m) => m.kindergardenInfo,
       target: pupil,
     );
     final latestSupportLevel = watchPropertyValue(
@@ -184,39 +183,55 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
             ],
           ),
           const Gap(10),
-
-          Row(
-            children: [
-              InkWell(
-                //- TODO: implement long text field dialog
-                onTap: () async {
-                  final result = await longTextFieldDialog(
-                    title: 'Informationen zum Kindergartenbesuch',
-                    labelText: 'Kindergartenbesuch',
-                    initialValue: kindergarden?.name ?? 'Kein Eintrag',
-                    parentContext: context,
-                  );
-                  if (result == null ||
-                      result.value == kindergarden?.name ||
-                      result.value!.isEmpty) {
-                    return;
-                  }
-                  await di<PupilMutator>().updateStringProperty(
-                    pupilId: pupil.pupilId,
-                    property: PupilStringProperty.kindergarden,
-                    propertyValue: (value: result.value),
-                  );
-                },
-                child: Text(
-                  kindergarden?.name ?? 'kein Eintrag',
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.interactiveColor,
-                  ),
+          InkWell(
+            onTap: () =>
+                kindergardenInfoDialog(context, pupil, kindergardenInfo),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Text(
+                      'Besuchte Monate: ',
+                      style: TextStyle(fontSize: 15.0),
+                    ),
+                    Text(
+                      kindergardenInfo != null
+                          ? '${kindergardenInfo.attendedMonths} Monate'
+                          : 'kein Eintrag',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.interactiveColor,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+                if (kindergardenInfo != null &&
+                    kindergardenInfo.comments.isNotEmpty) ...[
+                  const Gap(5),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Anmerkungen: ',
+                        style: TextStyle(fontSize: 15.0),
+                      ),
+                      Expanded(
+                        child: Text(
+                          kindergardenInfo.comments,
+                          style: TextStyle(
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.interactiveColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
           ),
         ],
         const Gap(10),

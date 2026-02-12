@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
@@ -22,7 +23,6 @@ import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/widgets/pupil_rooms_list.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class MatrixUsersListCard extends WatchingStatefulWidget {
   final MatrixUser matrixUser;
@@ -518,21 +518,15 @@ class _AppUserInfoSection extends StatelessWidget {
         children: [
           const Text(
             'App-Benutzer',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const Gap(8),
           if (info != null) ...[
             _InfoRow('Kürzel', info.userName ?? '–'),
             _InfoRow('Name', info.fullName ?? '–'),
             _InfoRow('E-Mail', info.email ?? '–'),
-            if (info.created != null)
-              _InfoRow(
-                'Erstellt',
-                info.created!.formatDateForUser(),
-              ),
+
+            _InfoRow('Erstellt', info.created.formatDateForUser()),
             const Gap(8),
           ],
           _InfoRow('Rolle', u.role.name),
@@ -544,10 +538,7 @@ class _AppUserInfoSection extends StatelessWidget {
           const Gap(12),
           const Text(
             'Geräte / Sitzungen',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
           const Gap(6),
           if (devices.isEmpty)
@@ -563,9 +554,7 @@ class _AppUserInfoSection extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            d.deviceName.isNotEmpty
-                                ? d.deviceName
-                                : d.deviceId,
+                            d.deviceName.isNotEmpty ? d.deviceName : d.deviceId,
                             style: const TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 13,
@@ -609,15 +598,10 @@ class _InfoRow extends StatelessWidget {
             width: 90,
             child: Text(
               '$label:',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[700],
-              ),
+              style: TextStyle(fontSize: 12, color: Colors.grey[700]),
             ),
           ),
-          Expanded(
-            child: Text(value, style: const TextStyle(fontSize: 12)),
-          ),
+          Expanded(child: Text(value, style: const TextStyle(fontSize: 12))),
         ],
       ),
     );

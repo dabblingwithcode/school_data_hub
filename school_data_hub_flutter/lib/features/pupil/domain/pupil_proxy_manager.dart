@@ -175,31 +175,77 @@ class PupilProxyManager extends ChangeNotifier {
     return birthdayThisYear.isAfter(now) ? birthdayLastYear : birthdayThisYear;
   }
 
-  List<PupilProxy> getPupilsWithBirthdaySinceDate(DateTime date) {
-    Map<int, PupilProxy> allPupils = Map<int, PupilProxy>.of(_pupilIdPupilsMap);
+  /// Returns the birthday date to display for a pupil given the query range.
+  /// If the relevant (past) birthday falls within [sinceDate, today], returns that.
+  /// Otherwise returns the next (future) birthday.
+  DateTime getBirthdayDisplayDate(
+    PupilProxy pupil,
+    DateTime sinceDate, {
+    DateTime? untilDate,
+  }) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final relevantBirthday = getRelevantBirthdayDate(pupil);
 
+    if ((relevantBirthday.isSameDate(sinceDate) ||
+            relevantBirthday.isAfter(sinceDate)) &&
+        (relevantBirthday.isSameDate(today) ||
+            relevantBirthday.isBefore(now))) {
+      return relevantBirthday;
+    }
+
+    return getNextBirthdayDate(pupil);
+  }
+
+  /// Returns pupils whose birthday falls in the range [sinceDate, today].
+  /// When [untilDate] is provided, also includes pupils whose next birthday
+  /// falls in [today, untilDate].
+  List<PupilProxy> getPupilsWithBirthdaySinceDate(
+    DateTime sinceDate, {
+    DateTime? untilDate,
+  }) {
     final DateTime now = DateTime.now();
+    final DateTime today = DateTime(now.year, now.month, now.day);
+    final Map<int, PupilProxy> matchingPupils = {};
 
-    allPupils.removeWhere((key, pupil) {
-      final DateTime relevantBirthday = getRelevantBirthdayDate(pupil);
+    // Past birthdays: [sinceDate, today]
+    for (final entry in _pupilIdPupilsMap.entries) {
+      final relevantBirthday = getRelevantBirthdayDate(entry.value);
+      if (relevantBirthday.isSameDate(sinceDate) ||
+          relevantBirthday.isSameDate(today) ||
+          (relevantBirthday.isAfter(sinceDate) &&
+              relevantBirthday.isBefore(now))) {
+        matchingPupils[entry.key] = entry.value;
+      }
+    }
 
-      // Check if the relevant birthday falls within the range [date, now]
-      return !(relevantBirthday.isSameDate(date) ||
-          relevantBirthday.isSameDate(now) ||
-          (relevantBirthday.isAfter(date) && relevantBirthday.isBefore(now)));
+    // Future birthdays: [today, untilDate] if provided
+    if (untilDate != null) {
+      final untilDateOnly = DateTime(
+        untilDate.year,
+        untilDate.month,
+        untilDate.day,
+      );
+      for (final entry in _pupilIdPupilsMap.entries) {
+        if (matchingPupils.containsKey(entry.key)) continue;
+        final nextBirthday = getNextBirthdayDate(entry.value);
+        if (!nextBirthday.isBeforeDate(today) &&
+            !nextBirthday.isAfterDate(untilDateOnly)) {
+          matchingPupils[entry.key] = entry.value;
+        }
+      }
+    }
+
+    final result = matchingPupils.values.toList();
+
+    // Sort chronologically by display birthday date
+    result.sort((a, b) {
+      final dateA = getBirthdayDisplayDate(a, sinceDate, untilDate: untilDate);
+      final dateB = getBirthdayDisplayDate(b, sinceDate, untilDate: untilDate);
+      return dateA.compareTo(dateB);
     });
 
-    final pupilsWithBirthdaySinceDate = allPupils.values.toList();
-
-    // Sort by most recent birthday (descending)
-    pupilsWithBirthdaySinceDate.sort((b, a) {
-      final relevantBirthdayA = getRelevantBirthdayDate(a);
-      final relevantBirthdayB = getRelevantBirthdayDate(b);
-
-      return relevantBirthdayA.compareTo(relevantBirthdayB);
-    });
-
-    return pupilsWithBirthdaySinceDate;
+    return result;
   }
 
   /// Returns pupils whose next birthday falls in the range [today, date] (future birthdays from now until [date]).

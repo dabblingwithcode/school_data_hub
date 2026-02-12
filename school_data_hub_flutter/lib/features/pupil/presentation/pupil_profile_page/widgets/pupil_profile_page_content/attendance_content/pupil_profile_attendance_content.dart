@@ -4,7 +4,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
-import 'package:school_data_hub_flutter/features/_attendance/presentation/missed_classes_pupil_list_page/missed_classes_pupil_list_page.dart';
+import 'package:school_data_hub_flutter/features/_attendance/presentation/missed_schooldays_pupil_list_page/missed_schooldays_pupil_list_page.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/attendance_stats_pupil.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/missed_class_card.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -38,7 +38,7 @@ class PupilAttendanceContent extends WatchingWidget {
             onTitleTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (ctx) => const MissedSchooldayesPupilListPage(),
+                  builder: (ctx) => const MissedSchooldaysPupilListPage(),
                 ),
               );
             },

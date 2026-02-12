@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
@@ -11,7 +12,6 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class LearningSupportCard extends WatchingStatefulWidget {
   final PupilProxy pupil;
@@ -126,13 +126,16 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                     const Gap(15),
                     if (pupil.supportCategoryStatuses != null)
                       if (pupil.supportCategoryStatuses!.isNotEmpty)
-                        InkWell(
-                          onTap: () {
-                            _tileController.isExpanded
-                                ? _tileController.collapse()
-                                : _tileController.expand();
-                          },
-                          child: SupportGoalBatches(pupil: pupil),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: InkWell(
+                            onTap: () {
+                              _tileController.isExpanded
+                                  ? _tileController.collapse()
+                                  : _tileController.expand();
+                            },
+                            child: SupportGoalBatches(pupil: pupil),
+                          ),
                         ),
                   ],
                 ),

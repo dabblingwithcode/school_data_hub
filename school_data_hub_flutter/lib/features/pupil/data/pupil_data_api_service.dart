@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:school_data_hub_client/school_data_hub_client.dart';
@@ -138,6 +139,28 @@ class PupilDataApiService {
       errorMessage: 'Die Geschwister konnten nicht aktualisiert werden',
     );
     return updatedSiblings;
+  }
+
+  //- kindergarden info
+
+  Future<PupilData?> updateKindergardenInfo({
+    required int pupilId,
+    required KindergardenInfo? kindergardenInfo,
+  }) async {
+    final updatedPupil = await ClientHelper.apiCall(
+      call: () => _client.pupilUpdate.updateStringProperty(
+        pupilId,
+        'kindergardenData',
+        (
+          value: kindergardenInfo != null
+              ? jsonEncode(kindergardenInfo.toJson())
+              : null,
+        ),
+      ),
+      errorMessage:
+          'Der Kindergartenbesuch konnte nicht aktualisiert werden',
+    );
+    return updatedPupil;
   }
 
   //- preschool medical
