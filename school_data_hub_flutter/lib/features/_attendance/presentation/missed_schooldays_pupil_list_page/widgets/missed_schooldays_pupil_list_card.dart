@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/attendance_stats_pupil.dart';
+import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/missed_class_card.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/attendance_content/pupil_profile_attendance_content.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class MissedSchooldaysPupilListCard extends WatchingStatefulWidget {
   final PupilProxy pupil;
@@ -35,6 +37,15 @@ class _AttendanceRankingListCardState
   @override
   Widget build(BuildContext context) {
     final PupilProxy pupil = watch(widget.pupil);
+    final attendanceManager = di<AttendanceManager>();
+    List<MissedSchoolday> missedSchooldays = watch(
+      attendanceManager.getPupilMissedSchooldaysProxy(pupil.pupilId),
+    ).missedSchooldays;
+
+    // sort by missedDay
+    missedSchooldays.sort(
+      (b, a) => a.schoolday!.schoolday.compareTo(b.schoolday!.schoolday),
+    );
     final missedHoursForActualReport =
         AttendanceHelper.missedHoursforSemesterOrSchoolyear(pupil);
     return Card(
@@ -183,7 +194,20 @@ class _AttendanceRankingListCardState
           CustomExpansionTileContent(
             title: null,
             tileController: _tileController,
-            widgetList: [PupilAttendanceContent(pupil: pupil)],
+            widgetList: [
+              ListView.builder(
+                padding: const EdgeInsets.only(top: 5, bottom: 5),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: missedSchooldays.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return MissedSchooldayCard(
+                    pupil: pupil,
+                    missedSchoolday: missedSchooldays[index],
+                  );
+                },
+              ),
+            ],
           ),
         ],
       ),

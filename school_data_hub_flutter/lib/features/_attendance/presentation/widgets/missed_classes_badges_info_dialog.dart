@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/attendance_badges.dart';
 
 void missedSchooldaysBadgesInformationDialog({
@@ -137,13 +138,11 @@ void missedSchooldaysBadgesInformationDialog({
       ),
     ),
     actions: [
-      TextButton(
+      ElevatedButton(
+        style: AppStyles.successButtonStyle,
         child: const Padding(
           padding: EdgeInsets.only(right: 10.0),
-          child: Text(
-            'OK',
-            style: TextStyle(color: Color.fromRGBO(74, 76, 161, 1)),
-          ),
+          child: Text('OK', style: AppStyles.buttonTextStyle),
         ),
         onPressed: () {
           Navigator.pop(context);

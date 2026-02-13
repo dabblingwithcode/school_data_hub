@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 
 class SchooldayEventTypeDialog extends WatchingWidget {
   // Change HookWidget to HookConsumerWidget
@@ -74,11 +75,12 @@ class SchooldayEventTypeDialog extends WatchingWidget {
             .toList(),
       ),
       actions: [
-        TextButton(
+        ElevatedButton(
+          style: AppStyles.cancelButtonStyle,
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: const Text('Cancel'),
+          child: const Text('ABBRECHEN', style: AppStyles.buttonTextStyle),
         ),
       ],
     );

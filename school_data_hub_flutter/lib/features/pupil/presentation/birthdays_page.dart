@@ -64,127 +64,148 @@ class BirthdaysView extends StatelessWidget {
                               fontSize: 20,
                             ),
                           ),
-                          ListView.builder(
-                            padding: const EdgeInsets.only(top: 10, bottom: 10),
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: pupils.length,
-                            itemBuilder: (context, int index) {
-                              PupilProxy listedPupil = pupils[index];
+                          if (pupils.isEmpty)
+                            const Padding(
+                              padding: EdgeInsets.only(top: 100),
+                              child: Center(
+                                child: Text(
+                                  'Keine Geburtstage gefunden!',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          if (pupils.isNotEmpty)
+                            ListView.builder(
+                              padding: const EdgeInsets.only(
+                                top: 10,
+                                bottom: 10,
+                              ),
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: pupils.length,
+                              itemBuilder: (context, int index) {
+                                PupilProxy listedPupil = pupils[index];
 
-                              // Get the display birthday from the manager
-                              final DateTime relevantBirthday = pupilManager
-                                  .getBirthdayDisplayDate(
-                                    listedPupil,
-                                    selectedDate,
-                                    untilDate: endDate,
-                                  );
+                                // Get the display birthday from the manager
+                                final DateTime relevantBirthday = pupilManager
+                                    .getBirthdayDisplayDate(
+                                      listedPupil,
+                                      selectedDate,
+                                      untilDate: endDate,
+                                    );
 
-                              final bool isBirthdayPrinted = seenBirthdays
-                                  .contains(relevantBirthday);
-                              if (!isBirthdayPrinted) {
-                                seenBirthdays.add(relevantBirthday);
-                              }
-                              return Column(
-                                children: [
-                                  !isBirthdayPrinted
-                                      ? Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 5.0,
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              const Gap(5),
-                                              Text(
-                                                '${relevantBirthday.asWeekdayName(context)}, ${relevantBirthday.formatDateForUser()}',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color:
-                                                      AppColors.backgroundColor,
-                                                  fontSize: 18,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      : const SizedBox.shrink(),
-                                  InkWell(
-                                    onTap: () {
-                                      di<BottomNavManager>()
-                                          .setPupilProfileNavPage(0);
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (ctx) => PupilProfilePage(
-                                            pupil: listedPupil,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    child: Card(
-                                      color: AppColors.cardInCardColor,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Row(
-                                          children: [
-                                            AvatarWithBadges(
-                                              pupil: listedPupil,
-                                              size: 80,
+                                final bool isBirthdayPrinted = seenBirthdays
+                                    .contains(relevantBirthday);
+                                if (!isBirthdayPrinted) {
+                                  seenBirthdays.add(relevantBirthday);
+                                }
+                                return Column(
+                                  children: [
+                                    !isBirthdayPrinted
+                                        ? Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 5.0,
                                             ),
-                                            const Gap(10),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                            child: Row(
                                               children: [
-                                                Text(
-                                                  listedPupil.firstName,
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 18,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  listedPupil.lastName,
-                                                  style: const TextStyle(
-                                                    fontSize: 18,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const Spacer(),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  listedPupil.age.toString(),
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                    fontSize: 24,
-                                                  ),
-                                                ),
                                                 const Gap(5),
-                                                const Text(
-                                                  'Jahre alt',
+                                                Text(
+                                                  '${relevantBirthday.asWeekdayName(context)}, ${relevantBirthday.formatDateForUser()}',
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
+                                                    color: AppColors
+                                                        .backgroundColor,
                                                     fontSize: 18,
                                                   ),
                                                 ),
                                               ],
                                             ),
-                                            const Gap(20),
-                                          ],
+                                          )
+                                        : const SizedBox.shrink(),
+                                    InkWell(
+                                      onTap: () {
+                                        di<BottomNavManager>()
+                                            .setPupilProfileNavPage(0);
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (ctx) => PupilProfilePage(
+                                              pupil: listedPupil,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Card(
+                                        color: AppColors.cardInCardColor,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Row(
+                                            children: [
+                                              AvatarWithBadges(
+                                                pupil: listedPupil,
+                                                size: 80,
+                                              ),
+                                              const Gap(10),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    listedPupil.firstName,
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 18,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    listedPupil.lastName,
+                                                    style: const TextStyle(
+                                                      fontSize: 18,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const Spacer(),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    listedPupil.age.toString(),
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black,
+                                                      fontSize: 24,
+                                                    ),
+                                                  ),
+                                                  const Gap(5),
+                                                  const Text(
+                                                    'Jahre alt',
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black,
+                                                      fontSize: 18,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const Gap(20),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  const Gap(5),
-                                ],
-                              );
-                            },
-                          ),
+                                    const Gap(5),
+                                  ],
+                                );
+                              },
+                            ),
                         ],
                       ),
                     ),

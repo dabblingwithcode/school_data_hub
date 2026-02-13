@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
@@ -8,7 +9,6 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/attendance_badges.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class MissedSchooldayCard extends StatelessWidget {
   final PupilProxy pupil;
@@ -50,7 +50,6 @@ class MissedSchooldayCard extends StatelessWidget {
           child: Column(
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
                     DateFormat(
@@ -71,15 +70,13 @@ class MissedSchooldayCard extends StatelessWidget {
                   const Gap(3),
                   returnedBadge(missedSchoolday.returned),
                   const Spacer(),
-                  Flexible(
-                    child: Text(
-                      missedSchoolday.createdBy,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                      overflow: TextOverflow.ellipsis,
+                  Text(
+                    missedSchoolday.createdBy,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),

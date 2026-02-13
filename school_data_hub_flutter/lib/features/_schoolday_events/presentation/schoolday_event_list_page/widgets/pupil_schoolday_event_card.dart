@@ -71,115 +71,49 @@ class PupilSchooldayEventCard extends StatelessWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              isAuthorized
-                                  ? InkWell(
-                                      onTap: () async {
-                                        DateTime?
-                                        date = await selectSchooldayDate(
-                                          context,
-                                          schoolCalendarManager.thisDate.value,
-                                        );
-                                        if (date == null) return;
-                                        final schooldayId =
-                                            schoolCalendarManager
-                                                .getSchooldayByDate(date)
-                                                ?.id;
+                              InkWell(
+                                onTap: () async {
+                                  if (!isAuthorized) {
+                                    notificationService.showSnackBar(
+                                      NotificationType.error,
+                                      'Nicht berechtigt!',
+                                    );
+                                    return;
+                                  }
+                                  DateTime? date = await selectSchooldayDate(
+                                    context,
+                                    schoolCalendarManager.thisDate.value,
+                                  );
+                                  if (date == null) return;
+                                  final schooldayId = schoolCalendarManager
+                                      .getSchooldayByDate(date)
+                                      ?.id;
 
-                                        await schooldayEventManager
-                                            .updateSchooldayEvent(
-                                              eventToUpdate: schooldayEvent,
+                                  await schooldayEventManager
+                                      .updateSchooldayEvent(
+                                        eventToUpdate: schooldayEvent,
 
-                                              schooldayId: schooldayId,
-                                            );
-                                        notificationService.showSnackBar(
-                                          NotificationType.success,
-                                          'Ereignis als bearbeitet markiert!',
-                                        );
-                                      },
-                                      child: Text(
-                                        schooldayEvent.schoolday!.schoolday
-                                            .formatDateForUser(),
+                                        schooldayId: schooldayId,
+                                      );
+                                  notificationService.showSnackBar(
+                                    NotificationType.success,
+                                    'Ereignis als bearbeitet markiert!',
+                                  );
+                                },
+                                child: Text(
+                                  schooldayEvent.schoolday!.schoolday
+                                      .formatDateForUser(),
 
-                                        style: TextStyle(
-                                          color: AppColors.interactiveColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                    )
-                                  : Text(
-                                      schooldayEvent.schoolday!.schoolday
-                                          .formatDateForUser(),
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20,
-                                      ),
-                                    ),
+                                  style: TextStyle(
+                                    color: isAuthorized
+                                        ? AppColors.interactiveColor
+                                        : Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ),
                               const Gap(10),
-                              isAuthorized
-                                  ? InkWell(
-                                      onTap: () async {
-                                        final eventTime =
-                                            schooldayEvent.eventTime ?? '00:00';
-                                        final TimeOfDay?
-                                        picked = await showTimePicker(
-                                          context: context,
-                                          initialTime: TimeOfDay(
-                                            hour: int.parse(
-                                              eventTime.split(':')[0],
-                                            ),
-                                            minute: int.parse(
-                                              eventTime.split(':')[1],
-                                            ),
-                                          ),
-                                          builder:
-                                              (
-                                                BuildContext context,
-                                                Widget? child,
-                                              ) {
-                                                return MediaQuery(
-                                                  data: MediaQuery.of(context)
-                                                      .copyWith(
-                                                        alwaysUse24HourFormat:
-                                                            true,
-                                                      ),
-                                                  child: child!,
-                                                );
-                                              },
-                                        );
-                                        if (picked != null) {
-                                          final newEventTime =
-                                              '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
-                                          await schooldayEventManager
-                                              .updateSchooldayEvent(
-                                                eventToUpdate: schooldayEvent,
-                                                eventTime: newEventTime,
-                                              );
-                                          notificationService.showSnackBar(
-                                            NotificationType.success,
-                                            'Uhrzeit erfolgreich geändert!',
-                                          );
-                                        }
-                                      },
-                                      child: Text(
-                                        schooldayEvent.eventTime ?? '--:--',
-                                        style: TextStyle(
-                                          color: AppColors.interactiveColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                    )
-                                  : Text(
-                                      schooldayEvent.eventTime ?? '--:--',
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                              const Gap(5),
                               InkWell(
                                 onLongPress: () {
                                   if (!SessionHelper.isAuthorized(
@@ -208,8 +142,69 @@ class PupilSchooldayEventCard extends StatelessWidget {
                             ],
                           ),
                         ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.access_time,
+                              color: AppColors.interactiveColor,
+                              size: 20,
+                            ),
+                            const Gap(5),
+                            InkWell(
+                              onTap: () async {
+                                if (!isAuthorized) {
+                                  notificationService.showSnackBar(
+                                    NotificationType.error,
+                                    'Nicht berechtigt!',
+                                  );
+                                  return;
+                                }
+                                final eventTime =
+                                    schooldayEvent.eventTime ?? '00:00';
+                                final TimeOfDay? picked = await showTimePicker(
+                                  context: context,
+                                  initialTime: TimeOfDay(
+                                    hour: int.parse(eventTime.split(':')[0]),
+                                    minute: int.parse(eventTime.split(':')[1]),
+                                  ),
+                                  builder:
+                                      (BuildContext context, Widget? child) {
+                                        return MediaQuery(
+                                          data: MediaQuery.of(context).copyWith(
+                                            alwaysUse24HourFormat: true,
+                                          ),
+                                          child: child!,
+                                        );
+                                      },
+                                );
+                                if (picked != null) {
+                                  final newEventTime =
+                                      '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+                                  await schooldayEventManager
+                                      .updateSchooldayEvent(
+                                        eventToUpdate: schooldayEvent,
+                                        eventTime: newEventTime,
+                                      );
+                                  notificationService.showSnackBar(
+                                    NotificationType.success,
+                                    'Uhrzeit erfolgreich geändert!',
+                                  );
+                                }
+                              },
+                              child: Text(
+                                schooldayEvent.eventTime ?? '--:--',
+                                style: TextStyle(
+                                  color: isAuthorized
+                                      ? AppColors.interactiveColor
+                                      : Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                         const Gap(5),
-                        //-TODO: Add the possibility to change the admonishing reasons
                         InkWell(
                           onTap: () {
                             if (!isAuthorized) {

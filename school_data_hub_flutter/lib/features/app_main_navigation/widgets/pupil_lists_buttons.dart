@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/attendance_list_page.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/missed_schooldays_pupil_list_page/missed_schooldays_pupil_list_page.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/schoolday_event_list_page.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/birthday_date_range_dialog.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/pupil_list_learning_page.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/learning_support_list_page.dart';
@@ -174,17 +173,20 @@ class PupilListButtons extends WatchingWidget {
           padding: const EdgeInsets.all(4.0),
           child: InkWell(
             onTap: () async {
-              final result = await showDialog<(DateTime, DateTime)>(
-                context: context,
-                builder: (ctx) => const _BirthdayDateRangeDialog(),
-              );
+              final result =
+                  await showDialog<
+                    ({DateTime pastDayValue, DateTime futureDayValue})?
+                  >(
+                    context: context,
+                    builder: (ctx) => const BirthdayDateRangeDialog(),
+                  );
               if (result == null) return;
               if (context.mounted) {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (ctx) => BirthdaysView(
-                      selectedDate: result.$1,
-                      endDate: result.$2,
+                      selectedDate: result.pastDayValue,
+                      endDate: result.futureDayValue,
                     ),
                   ),
                 );
@@ -222,137 +224,6 @@ class PupilListButtons extends WatchingWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _BirthdayDateRangeDialog extends WatchingWidget {
-  const _BirthdayDateRangeDialog();
-
-  @override
-  Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final pastDate = createOnce(() => ValueNotifier<DateTime>(now));
-    final futureDate = createOnce(() => ValueNotifier<DateTime>(now));
-
-    final pastDateValue = watch(pastDate).value;
-    final futureDateValue = watch(futureDate).value;
-
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.cake_rounded,
-                  size: 20,
-                  color: AppColors.accentColor,
-                ),
-                const Gap(10),
-                Text(
-                  'Geburtstage',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.backgroundColor,
-                  ),
-                ),
-              ],
-            ),
-            const Gap(20),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('von ', style: TextStyle(fontSize: 16)),
-                InkWell(
-                  onTap: () async {
-                    final selected = await showDatePicker(
-                      context: context,
-                      initialDate: pastDateValue,
-                      firstDate: DateTime(now.year - 1, now.month, now.day),
-                      lastDate: now,
-                    );
-                    if (selected != null) {
-                      pastDate.value = selected;
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.backgroundColor,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      pastDateValue == now
-                          ? 'Heute'
-                          : pastDateValue.formatDateForUser(),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const Gap(12),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('bis  ', style: TextStyle(fontSize: 16)),
-                InkWell(
-                  onTap: () async {
-                    final selected = await showDatePicker(
-                      context: context,
-                      initialDate: futureDateValue,
-                      firstDate: now,
-                      lastDate: DateTime(now.year + 1, now.month, now.day),
-                    );
-                    if (selected != null) {
-                      futureDate.value = selected;
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.backgroundColor,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      futureDateValue == now
-                          ? 'Heute'
-                          : futureDateValue.formatDateForUser(),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const Gap(20),
-            ElevatedButton(
-              style: AppStyles.actionButtonStyle,
-              onPressed: () {
-                Navigator.of(context).pop((pastDateValue, futureDateValue));
-              },
-              child: const Text('Anzeigen', style: AppStyles.buttonTextStyle),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

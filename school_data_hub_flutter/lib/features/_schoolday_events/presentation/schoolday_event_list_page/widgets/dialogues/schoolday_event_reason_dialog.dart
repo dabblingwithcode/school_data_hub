@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/models/schoolday_event_enums.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/new_schoolday_event_page/widgets/schoolday_event_filter_chip.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class SchooldayEventReasonDialog extends WatchingWidget {
   final SchooldayEvent schooldayEvent;
@@ -260,11 +260,14 @@ class SchooldayEventReasonDialog extends WatchingWidget {
               ),
       ),
       actions: [
-        TextButton(
+        ElevatedButton(
+          style: AppStyles.cancelButtonStyle,
           onPressed: () => Navigator.pop(context),
-          child: const Text('ABBRECHEN', style: TextStyle(color: Colors.grey)),
+          child: const Text('ABBRECHEN', style: AppStyles.buttonTextStyle),
         ),
-        TextButton(
+        const SizedBox(height: 10),
+        ElevatedButton(
+          style: AppStyles.successButtonStyle,
           onPressed: () async {
             Set<String> schooldayEventReason = {};
             String schooldayEventReasons = '';
