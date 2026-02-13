@@ -4,7 +4,7 @@ fields:
   score: int
   createdBy: String
   createdAt: DateTime
-  comment: String
+  comment: String?
   documents: List<HubDocument>?, relation
   pupil: PupilData?, relation
   supportCategory: SupportCategory?, relation

@@ -1864,7 +1864,6 @@ class EndpointSchoolData extends _i1.EndpointRef {
   @override
   String get name => 'schoolData';
 
-  /// TODO: we should be specific about which school data to get
   _i2.Future<_i6.SchoolData?> getSchoolData() =>
       caller.callServerEndpoint<_i6.SchoolData?>(
         'schoolData',

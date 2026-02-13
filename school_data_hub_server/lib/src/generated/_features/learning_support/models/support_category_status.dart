@@ -26,7 +26,7 @@ abstract class SupportCategoryStatus
     required this.score,
     required this.createdBy,
     required this.createdAt,
-    required this.comment,
+    this.comment,
     this.documents,
     required this.pupilId,
     this.pupil,
@@ -43,7 +43,7 @@ abstract class SupportCategoryStatus
     required int score,
     required String createdBy,
     required DateTime createdAt,
-    required String comment,
+    String? comment,
     List<_i2.HubDocument>? documents,
     required int pupilId,
     _i3.PupilData? pupil,
@@ -61,7 +61,7 @@ abstract class SupportCategoryStatus
       createdBy: jsonSerialization['createdBy'] as String,
       createdAt:
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
-      comment: jsonSerialization['comment'] as String,
+      comment: jsonSerialization['comment'] as String?,
       documents: (jsonSerialization['documents'] as List?)
           ?.map((e) => _i2.HubDocument.fromJson((e as Map<String, dynamic>)))
           .toList(),
@@ -107,7 +107,7 @@ abstract class SupportCategoryStatus
 
   DateTime createdAt;
 
-  String comment;
+  String? comment;
 
   List<_i2.HubDocument>? documents;
 
@@ -156,7 +156,7 @@ abstract class SupportCategoryStatus
       'score': score,
       'createdBy': createdBy,
       'createdAt': createdAt.toJson(),
-      'comment': comment,
+      if (comment != null) 'comment': comment,
       if (documents != null)
         'documents': documents?.toJson(valueToJson: (v) => v.toJson()),
       'pupilId': pupilId,
@@ -186,7 +186,7 @@ abstract class SupportCategoryStatus
       'score': score,
       'createdBy': createdBy,
       'createdAt': createdAt.toJson(),
-      'comment': comment,
+      if (comment != null) 'comment': comment,
       if (documents != null)
         'documents':
             documents?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
@@ -249,7 +249,7 @@ class _SupportCategoryStatusImpl extends SupportCategoryStatus {
     required int score,
     required String createdBy,
     required DateTime createdAt,
-    required String comment,
+    String? comment,
     List<_i2.HubDocument>? documents,
     required int pupilId,
     _i3.PupilData? pupil,
@@ -281,7 +281,7 @@ class _SupportCategoryStatusImpl extends SupportCategoryStatus {
     int? score,
     String? createdBy,
     DateTime? createdAt,
-    String? comment,
+    Object? comment = _Undefined,
     Object? documents = _Undefined,
     int? pupilId,
     Object? pupil = _Undefined,
@@ -295,7 +295,7 @@ class _SupportCategoryStatusImpl extends SupportCategoryStatus {
       score: score ?? this.score,
       createdBy: createdBy ?? this.createdBy,
       createdAt: createdAt ?? this.createdAt,
-      comment: comment ?? this.comment,
+      comment: comment is String? ? comment : this.comment,
       documents: documents is List<_i2.HubDocument>?
           ? documents
           : this.documents?.map((e0) => e0.copyWith()).toList(),
@@ -326,7 +326,7 @@ class SupportCategoryStatusImplicit extends _SupportCategoryStatusImpl {
     required int score,
     required String createdBy,
     required DateTime createdAt,
-    required String comment,
+    String? comment,
     List<_i2.HubDocument>? documents,
     required int pupilId,
     _i3.PupilData? pupil,

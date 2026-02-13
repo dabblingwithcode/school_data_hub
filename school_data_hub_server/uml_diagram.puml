@@ -279,9 +279,9 @@ class CompetenceGoal <<table: <b>competence_goal</b>>> #e2f0fb##[bold] {
   <i>strategies</i>: <b><color:#ff962f>List<String>?</color></b>
   <i>createdBy</i>: <b><color:#ff962f>String</color></b>
   <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
-  <i>modifiedBy</i>: <b><color:#ff962f>String</color></b>
+  <i>modifiedBy</i>: <b><color:#ff962f>String?</color></b>
   <i>score</i>: <b><color:#ff962f>int?</color></b>
-  <i>achievedAt</i>: <b><color:#ff962f>DateTime</color></b>
+  <i>achievedAt</i>: <b><color:#ff962f>DateTime?</color></b>
  ➡️ <i>pupil</i> : <b><color:#ff962f>PupilData?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_goal_pupil<color:#ff962f>)</color>
  ➡️ <i>competence</i> : <b><color:#ff962f>Competence?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_goal_competence<color:#ff962f>)</color>
  ➡️ <i>documents</i> : <b><color:#ff962f>List<HubDocument>?</color></b>,  <b><color:#0164aa>relation</color></b>
@@ -366,7 +366,7 @@ class SupportCategoryStatus <<table: <b>support_category_status</b>>> #e2f0fb##[
   <i>score</i>: <b><color:#ff962f>int</color></b>
   <i>createdBy</i>: <b><color:#ff962f>String</color></b>
   <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
-  <i>comment</i>: <b><color:#ff962f>String</color></b>
+  <i>comment</i>: <b><color:#ff962f>String?</color></b>
  ➡️ <i>documents</i> : <b><color:#ff962f>List<HubDocument>?</color></b>,  <b><color:#0164aa>relation</color></b>
  ➡️ <i>pupil</i> : <b><color:#ff962f>PupilData?</color></b>,  <b><color:#0164aa>relation</color></b>
  ➡️ <i>supportCategory</i> : <b><color:#ff962f>SupportCategory?</color></b>,  <b><color:#0164aa>relation</color></b>
