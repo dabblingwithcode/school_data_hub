@@ -1,5 +1,6 @@
 // ignore_for_file: constant_identifier_names
 
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
@@ -267,6 +268,24 @@ class PupilProxy with ChangeNotifier {
 
   List<SupportCategoryStatus>? get supportCategoryStatuses =>
       _pupilData.supportCategoryStatuses;
+
+  /// Returns the score for a specific support category status by its ID.
+  /// Returns null if the status is not found.
+  int? getSupportCategoryStatusScore(int categoryId, int statusId) {
+    return supportCategoryStatuses
+        ?.firstWhereOrNull(
+          (s) => s.supportCategoryId == categoryId && s.id == statusId,
+        )
+        ?.score;
+  }
+
+  /// Returns the score of the most recent status for a given support category.
+  /// Returns null if no status exists for the category.
+  int? getLastSupportCategoryStatusScore(int categoryId) {
+    return supportCategoryStatuses
+        ?.lastWhereOrNull((s) => s.supportCategoryId == categoryId)
+        ?.score;
+  }
 
   List<SupportGoal>? get supportGoals => _pupilData.supportGoals;
 

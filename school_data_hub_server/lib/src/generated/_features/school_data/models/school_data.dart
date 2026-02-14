@@ -21,6 +21,8 @@ abstract class SchoolData
     required this.name,
     required this.officialName,
     required this.address,
+    this.zipCode,
+    this.city,
     required this.schoolNumber,
     required this.telephoneNumber,
     required this.email,
@@ -36,6 +38,8 @@ abstract class SchoolData
     required String name,
     required String officialName,
     required String address,
+    String? zipCode,
+    String? city,
     required String schoolNumber,
     required String telephoneNumber,
     required String email,
@@ -52,6 +56,8 @@ abstract class SchoolData
       name: jsonSerialization['name'] as String,
       officialName: jsonSerialization['officialName'] as String,
       address: jsonSerialization['address'] as String,
+      zipCode: jsonSerialization['zipCode'] as String?,
+      city: jsonSerialization['city'] as String?,
       schoolNumber: jsonSerialization['schoolNumber'] as String,
       telephoneNumber: jsonSerialization['telephoneNumber'] as String,
       email: jsonSerialization['email'] as String,
@@ -82,6 +88,10 @@ abstract class SchoolData
 
   String address;
 
+  String? zipCode;
+
+  String? city;
+
   String schoolNumber;
 
   String telephoneNumber;
@@ -109,6 +119,8 @@ abstract class SchoolData
     String? name,
     String? officialName,
     String? address,
+    String? zipCode,
+    String? city,
     String? schoolNumber,
     String? telephoneNumber,
     String? email,
@@ -125,6 +137,8 @@ abstract class SchoolData
       'name': name,
       'officialName': officialName,
       'address': address,
+      if (zipCode != null) 'zipCode': zipCode,
+      if (city != null) 'city': city,
       'schoolNumber': schoolNumber,
       'telephoneNumber': telephoneNumber,
       'email': email,
@@ -143,6 +157,8 @@ abstract class SchoolData
       'name': name,
       'officialName': officialName,
       'address': address,
+      if (zipCode != null) 'zipCode': zipCode,
+      if (city != null) 'city': city,
       'schoolNumber': schoolNumber,
       'telephoneNumber': telephoneNumber,
       'email': email,
@@ -199,6 +215,8 @@ class _SchoolDataImpl extends SchoolData {
     required String name,
     required String officialName,
     required String address,
+    String? zipCode,
+    String? city,
     required String schoolNumber,
     required String telephoneNumber,
     required String email,
@@ -212,6 +230,8 @@ class _SchoolDataImpl extends SchoolData {
           name: name,
           officialName: officialName,
           address: address,
+          zipCode: zipCode,
+          city: city,
           schoolNumber: schoolNumber,
           telephoneNumber: telephoneNumber,
           email: email,
@@ -231,6 +251,8 @@ class _SchoolDataImpl extends SchoolData {
     String? name,
     String? officialName,
     String? address,
+    Object? zipCode = _Undefined,
+    Object? city = _Undefined,
     String? schoolNumber,
     String? telephoneNumber,
     String? email,
@@ -245,6 +267,8 @@ class _SchoolDataImpl extends SchoolData {
       name: name ?? this.name,
       officialName: officialName ?? this.officialName,
       address: address ?? this.address,
+      zipCode: zipCode is String? ? zipCode : this.zipCode,
+      city: city is String? ? city : this.city,
       schoolNumber: schoolNumber ?? this.schoolNumber,
       telephoneNumber: telephoneNumber ?? this.telephoneNumber,
       email: email ?? this.email,
@@ -272,6 +296,14 @@ class SchoolDataTable extends _i1.Table<int?> {
     );
     address = _i1.ColumnString(
       'address',
+      this,
+    );
+    zipCode = _i1.ColumnString(
+      'zipCode',
+      this,
+    );
+    city = _i1.ColumnString(
+      'city',
       this,
     );
     schoolNumber = _i1.ColumnString(
@@ -305,6 +337,10 @@ class SchoolDataTable extends _i1.Table<int?> {
   late final _i1.ColumnString officialName;
 
   late final _i1.ColumnString address;
+
+  late final _i1.ColumnString zipCode;
+
+  late final _i1.ColumnString city;
 
   late final _i1.ColumnString schoolNumber;
 
@@ -354,6 +390,8 @@ class SchoolDataTable extends _i1.Table<int?> {
         name,
         officialName,
         address,
+        zipCode,
+        city,
         schoolNumber,
         telephoneNumber,
         email,

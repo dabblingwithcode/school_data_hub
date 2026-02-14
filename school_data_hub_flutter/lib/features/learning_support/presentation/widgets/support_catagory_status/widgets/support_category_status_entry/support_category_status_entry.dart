@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -11,7 +12,6 @@ import 'package:school_data_hub_flutter/features/learning_support/domain/learnin
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_symbol.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class SupportCategoryStatusEntry extends StatelessWidget {
   final PupilProxy pupil;
@@ -55,15 +55,6 @@ class SupportCategoryStatusEntry extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              children: [
-                getSupportCategoryStatusSymbol(
-                  pupil,
-                  status.supportCategoryId,
-                  status.id!,
-                ),
-              ],
-            ),
             const Gap(10),
             Expanded(
               child: Column(
@@ -105,41 +96,12 @@ class SupportCategoryStatusEntry extends StatelessWidget {
                             fontSize: 18,
                           ),
                         ),
-                  const Gap(5),
-                  authorizedToChangeStatus
-                      ? InkWell(
-                          onTap: () async {
-                            final result = await longTextFieldDialog(
-                              title: 'Status korrigieren',
-                              labelText: 'Status',
-                              initialValue: status.comment,
-                              parentContext: context,
-                            );
-                            if (result == null ||
-                                result.value == status.comment) {
-                              return;
-                              // TODO: uncomment when ready
-                              //  _learningSupportManager
-                              //       .updateSupportCategoryStatusProperty(
-                              //     pupil: pupil,
-                              //     statusId: status.statusId,
-                              //     comment: correctedComment,
-                              //   );
-                            }
-                          },
-                          child: Text(
-                            status.comment,
-                            style: TextStyle(
-                              color: AppColors.interactiveColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        )
-                      : Text(status.comment),
-                  const Gap(5),
                   Wrap(
                     children: [
-                      const Text('Eingetragen von '),
+                      const Text(
+                        'Eingetragen von ',
+                        style: TextStyle(fontSize: 14),
+                      ),
                       const Gap(5),
                       authorizedToChangeStatus
                           ? InkWell(
@@ -178,8 +140,51 @@ class SupportCategoryStatusEntry extends StatelessWidget {
                             ),
                     ],
                   ),
+
+                  const Gap(5),
+                  authorizedToChangeStatus
+                      ? InkWell(
+                          onTap: () async {
+                            final result = await longTextFieldDialog(
+                              title: 'Status korrigieren',
+                              labelText: 'Status',
+                              initialValue: status.comment,
+                              parentContext: context,
+                            );
+                            if (result == null ||
+                                result.value == status.comment) {
+                              return;
+                              // TODO: uncomment when ready
+                              //  _learningSupportManager
+                              //       .updateSupportCategoryStatusProperty(
+                              //     pupil: pupil,
+                              //     statusId: status.statusId,
+                              //     comment: correctedComment,
+                              //   );
+                            }
+                          },
+                          child: Text(
+                            status.comment ?? 'nicht vorhanden',
+                            style: TextStyle(
+                              color: AppColors.interactiveColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        )
+                      : Text(status.comment ?? 'nicht vorhanden'),
+                  const Gap(5),
                 ],
               ),
+            ),
+            Column(
+              children: [
+                SupportCategoryStatusSymbol(
+                  size: 60,
+                  pupil: pupil,
+                  categoryId: status.supportCategoryId,
+                  statusId: status.id!,
+                ),
+              ],
             ),
           ],
         ),

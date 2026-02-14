@@ -18,6 +18,8 @@ abstract class SchoolData implements _i1.SerializableModel {
     required this.name,
     required this.officialName,
     required this.address,
+    this.zipCode,
+    this.city,
     required this.schoolNumber,
     required this.telephoneNumber,
     required this.email,
@@ -33,6 +35,8 @@ abstract class SchoolData implements _i1.SerializableModel {
     required String name,
     required String officialName,
     required String address,
+    String? zipCode,
+    String? city,
     required String schoolNumber,
     required String telephoneNumber,
     required String email,
@@ -49,6 +53,8 @@ abstract class SchoolData implements _i1.SerializableModel {
       name: jsonSerialization['name'] as String,
       officialName: jsonSerialization['officialName'] as String,
       address: jsonSerialization['address'] as String,
+      zipCode: jsonSerialization['zipCode'] as String?,
+      city: jsonSerialization['city'] as String?,
       schoolNumber: jsonSerialization['schoolNumber'] as String,
       telephoneNumber: jsonSerialization['telephoneNumber'] as String,
       email: jsonSerialization['email'] as String,
@@ -77,6 +83,10 @@ abstract class SchoolData implements _i1.SerializableModel {
 
   String address;
 
+  String? zipCode;
+
+  String? city;
+
   String schoolNumber;
 
   String telephoneNumber;
@@ -101,6 +111,8 @@ abstract class SchoolData implements _i1.SerializableModel {
     String? name,
     String? officialName,
     String? address,
+    String? zipCode,
+    String? city,
     String? schoolNumber,
     String? telephoneNumber,
     String? email,
@@ -117,6 +129,8 @@ abstract class SchoolData implements _i1.SerializableModel {
       'name': name,
       'officialName': officialName,
       'address': address,
+      if (zipCode != null) 'zipCode': zipCode,
+      if (city != null) 'city': city,
       'schoolNumber': schoolNumber,
       'telephoneNumber': telephoneNumber,
       'email': email,
@@ -142,6 +156,8 @@ class _SchoolDataImpl extends SchoolData {
     required String name,
     required String officialName,
     required String address,
+    String? zipCode,
+    String? city,
     required String schoolNumber,
     required String telephoneNumber,
     required String email,
@@ -155,6 +171,8 @@ class _SchoolDataImpl extends SchoolData {
           name: name,
           officialName: officialName,
           address: address,
+          zipCode: zipCode,
+          city: city,
           schoolNumber: schoolNumber,
           telephoneNumber: telephoneNumber,
           email: email,
@@ -174,6 +192,8 @@ class _SchoolDataImpl extends SchoolData {
     String? name,
     String? officialName,
     String? address,
+    Object? zipCode = _Undefined,
+    Object? city = _Undefined,
     String? schoolNumber,
     String? telephoneNumber,
     String? email,
@@ -188,6 +208,8 @@ class _SchoolDataImpl extends SchoolData {
       name: name ?? this.name,
       officialName: officialName ?? this.officialName,
       address: address ?? this.address,
+      zipCode: zipCode is String? ? zipCode : this.zipCode,
+      city: city is String? ? city : this.city,
       schoolNumber: schoolNumber ?? this.schoolNumber,
       telephoneNumber: telephoneNumber ?? this.telephoneNumber,
       email: email ?? this.email,

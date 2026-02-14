@@ -369,6 +369,10 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                               ? AppStyles.actionButtonStyle
                               : ElevatedButton.styleFrom(
                                   backgroundColor: Colors.grey,
+                                  textStyle: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),

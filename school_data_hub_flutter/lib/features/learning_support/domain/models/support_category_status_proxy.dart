@@ -9,7 +9,7 @@ class SupportCategoryStatusProxy with ChangeNotifier {
   }
 
   int get status => supportCategoryStatus.score;
-  String get comment => supportCategoryStatus.comment;
+  String? get comment => supportCategoryStatus.comment;
   String get createdBy => supportCategoryStatus.createdBy;
   DateTime get createdAt => supportCategoryStatus.createdAt;
   int get pupilId => supportCategoryStatus.pupilId;

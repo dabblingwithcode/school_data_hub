@@ -4,6 +4,12 @@ fields:
   name: String
   officialName: String
   address: String
+  ## TODO: zipCode is optional to avoid a forced migration
+  ## This should be fixed in a future migration
+  zipCode: String?
+  ## TODO: city is optional to avoid a forced migration
+  ## This should be fixed in a future migration
+  city: String?
   schoolNumber: String
   telephoneNumber: String
   email: String

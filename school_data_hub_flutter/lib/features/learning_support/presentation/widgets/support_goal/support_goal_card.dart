@@ -217,9 +217,9 @@ class SupportGoalCard extends WatchingWidget {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(top: 4.0),
-                            child: getLastCategoryStatusSymbol(
-                              pupil,
-                              pupil.supportGoals![goalIndex].supportCategoryId,
+                            child: LastSupportCategoryStatusSymbol(
+                              pupil: pupil,
+                              categoryId: pupil.supportGoals![goalIndex].supportCategoryId,
                             ),
                           ),
                           const Gap(10),

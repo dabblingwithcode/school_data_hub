@@ -57,8 +57,7 @@ class SupportCategoryStatusCard extends StatelessWidget {
               const Gap(10),
             ],
           ),
-
-          const Gap(10),
+          const Gap(5),
           for (
             int i = 0;
             i < statusesWithSameGoalCategory.length;

@@ -20,11 +20,12 @@ import 'package:school_data_hub_flutter/features/learning_support/domain/support
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_goals_list.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan/controller/new_learning_support_plan_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/score_support_category_page/score_support_category_page.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/kindergarden_info_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/preschool_revision_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/support_level_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/support_category_statuses_list.dart';
-import 'package:school_data_hub_flutter/features/learning_support/services/learning_support_plan_pdf_generator.dart';
+import 'package:school_data_hub_flutter/features/learning_support/services/pdf/learning_support_plan_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
@@ -298,13 +299,22 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
         // Learning Support Plans Section
         _buildLearningSupportPlansSection(context),
         const Gap(10),
-        const Row(
-          children: [
-            Text(
-              'Förderbereiche',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ],
+        InkWell(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (ctx) => ScoreSupportCategoryPage(pupil: pupil),
+              ),
+            );
+          },
+          child: const Row(
+            children: [
+              Text(
+                'Förderbereiche',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
         ),
 
         const Gap(5),

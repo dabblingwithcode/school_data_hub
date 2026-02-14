@@ -1,96 +1,69 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
-Widget getSupportCategoryStatusSymbol(
-  PupilProxy pupil,
-  int goalCategoryId,
-  int statusId,
-) {
-  if (pupil.supportCategoryStatuses!.isNotEmpty) {
-    final SupportCategoryStatus categoryStatus = pupil.supportCategoryStatuses!
-        .firstWhere(
-          (element) =>
-              element.supportCategoryId == goalCategoryId &&
-              element.id! == statusId,
-        );
+/// Displays a growth icon based on a score (1-4).
+/// Shows a question mark icon when score is null or invalid.
+class GrowthIcon extends StatelessWidget {
+  final int? score;
+  final double size;
 
-    switch (categoryStatus.score) {
-      case 1:
-        return SizedBox(
-          width: 50,
-          child: Image.asset('assets/images/growth_icons/growth_1-4.png'),
-        );
-      case 4:
-        return SizedBox(
-          width: 50,
-          child: Image.asset('assets/images/growth_icons/growth_4-4.png'),
-        );
-      case 3:
-        return SizedBox(
-          width: 50,
-          child: Image.asset('assets/images/growth_icons/growth_3-4.png'),
-        );
-      case 2:
-        return SizedBox(
-          width: 50,
-          child: Image.asset('assets/images/growth_icons/growth_2-4.png'),
-        );
-    }
+  const GrowthIcon({
+    required this.score,
+    this.size = 50,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final validScore = score != null && score! >= 1 && score! <= 4;
+
     return SizedBox(
-      width: 50,
-      child: Image.asset('assets/images/growth_icons/growth_1-4.png'),
+      width: size,
+      child: validScore
+          ? Image.asset('assets/images/growth_icons/growth_$score-4.png')
+          : Icon(Icons.question_mark_rounded, color: Colors.black, size: size),
     );
   }
-
-  return const SizedBox(
-    width: 50,
-    child: Icon(Icons.question_mark_rounded, color: Colors.black, size: 50),
-  );
 }
 
-Widget getLastCategoryStatusSymbol(PupilProxy pupil, int goalCategoryId) {
-  if (pupil.supportCategoryStatuses!.isNotEmpty) {
-    final SupportCategoryStatus? categoryStatus = pupil.supportCategoryStatuses!
-        .lastWhereOrNull(
-          (element) => element.supportCategoryId == goalCategoryId,
-        );
+/// Displays the growth icon for a specific support category status.
+class SupportCategoryStatusSymbol extends StatelessWidget {
+  final PupilProxy pupil;
+  final int categoryId;
+  final int statusId;
+  final double size;
 
-    if (categoryStatus != null) {
-      switch (categoryStatus.score) {
-        case 1:
-          return SizedBox(
-            width: 50,
-            child: Image.asset('assets/images/growth_icons/growth_1-4.png'),
-          );
-        case 4:
-          return SizedBox(
-            width: 50,
-            child: Image.asset('assets/images/growth_icons/growth_4-4.png'),
-          );
-        case 3:
-          return SizedBox(
-            width: 50,
-            child: Image.asset('assets/images/growth_icons/growth_3-4.png'),
-          );
-        // case 'orange':
-        //   return Colors.orange;
-        case 2:
-          return SizedBox(
-            width: 50,
-            child: Image.asset('assets/images/growth_icons/growth_2-4.png'),
-          );
-      }
-    }
-    return const SizedBox(
-      width: 50,
-      child: Icon(Icons.question_mark_rounded, color: Colors.black, size: 50),
-    );
+  const SupportCategoryStatusSymbol({
+    required this.pupil,
+    required this.categoryId,
+    required this.statusId,
+    this.size = 50,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final score = pupil.getSupportCategoryStatusScore(categoryId, statusId);
+    return GrowthIcon(score: score, size: size);
   }
+}
 
-  return const SizedBox(
-    width: 50,
-    child: Icon(Icons.question_mark_rounded, color: Colors.black, size: 50),
-  );
+/// Displays the growth icon for the most recent status of a support category.
+class LastSupportCategoryStatusSymbol extends StatelessWidget {
+  final PupilProxy pupil;
+  final int categoryId;
+  final double size;
+
+  const LastSupportCategoryStatusSymbol({
+    required this.pupil,
+    required this.categoryId,
+    this.size = 50,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final score = pupil.getLastSupportCategoryStatusScore(categoryId);
+    return GrowthIcon(score: score, size: size);
+  }
 }

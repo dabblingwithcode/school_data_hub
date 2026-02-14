@@ -37,7 +37,7 @@
 // import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan/controller/new_learning_support_plan_controller.dart';
 // import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
 // import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_page/controller/category_list_controller.dart';
-// import 'package:school_data_hub_flutter/features/learning_support/services/learning_support_plan_pdf_generator.dart';
+// import 'package:school_data_hub_flutter/features/learning_support/services/pdf/learning_support_plan_pdf_generator.dart';
 // import 'package:school_data_hub_flutter/features/matrix/presentation/set_matrix_environment_page/set_matrix_environment_controller.dart';
 // import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/matrix_users_list_page.dart';
 // import 'package:school_data_hub_flutter/features/matrix/users/presentation/pupil_matrix_contacts_list_page/pupils_matrix_contacts_list_page.dart';

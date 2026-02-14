@@ -47,10 +47,10 @@ class CategoryTreeAncestors extends StatelessWidget {
     collectAncestors(categoryId);
 
     // Add the current category name as the last entry
-    final currentCategory =
-        learningSupportManager.getSupportCategory(categoryId);
-    final categoryColor =
-        learningSupportManager.getCategoryColor(categoryId);
+    final currentCategory = learningSupportManager.getSupportCategory(
+      categoryId,
+    );
+    final categoryColor = learningSupportManager.getCategoryColor(categoryId);
     ancestorNames.add(
       Text(
         currentCategory.name,
@@ -64,7 +64,7 @@ class CategoryTreeAncestors extends StatelessWidget {
 
     return Row(
       children: [
-        SupportCategoryBadge(categoryId: categoryId),
+        SupportCategoryBadge(categoryId: categoryId, size: 40.0),
         const Gap(10),
         Expanded(
           child: Column(

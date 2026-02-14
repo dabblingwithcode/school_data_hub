@@ -5,7 +5,12 @@ import 'package:school_data_hub_flutter/features/learning_support/domain/support
 
 class SupportCategoryBadge extends StatelessWidget {
   final int categoryId;
-  const SupportCategoryBadge({required this.categoryId, super.key});
+  final double? size;
+  const SupportCategoryBadge({
+    required this.categoryId,
+    this.size = 35.0,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +28,8 @@ class SupportCategoryBadge extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
-          width: 35.0,
-          height: 35.0,
+          width: size,
+          height: size,
           decoration: BoxDecoration(
             color: rootCategoryColor,
             shape: BoxShape.circle,
