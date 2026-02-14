@@ -25,8 +25,9 @@ class PdfPage2 {
     }
 
     // Find root categories (parentCategory == null)
-    final roots =
-        supportCategories.where((c) => c.parentCategory == null).toList();
+    final roots = supportCategories
+        .where((c) => c.parentCategory == null)
+        .toList();
 
     return pw.Page(
       pageFormat: PdfPageFormat.a4.landscape,
@@ -61,10 +62,7 @@ class PdfPage2 {
                       ),
                     ),
                     if (i < roots.length - 1)
-                      pw.Container(
-                        width: 0.5,
-                        color: PdfColors.black,
-                      ),
+                      pw.Container(width: 0.5, color: PdfColors.black),
                   ],
                 ],
               ),
@@ -138,8 +136,9 @@ class PdfPage2 {
           ),
           // Body items
           ...items.map((item) {
-            final hasChildren = allCategories
-                .any((c) => c.parentCategory == item.category.categoryId);
+            final hasChildren = allCategories.any(
+              (c) => c.parentCategory == item.category.categoryId,
+            );
             final status = statusMap[item.category.categoryId];
             final prefix = hasChildren ? '' : '- ';
             final indent = item.depth * 6.0;
@@ -178,14 +177,19 @@ class PdfPage2 {
   }
 
   /// Recursively collect categories into a flat list with depth info.
+  /// [maxDepth] limits how deep to recurse (root = depth 1, so children = 2,
+  /// grandchildren = 3). Items at depth >= maxDepth are not collected.
   static void _collectCategoryTree({
     required int parentId,
     required List<SupportCategory> allCategories,
     required int depth,
     required List<CategoryTreeItem> items,
+    int maxDepth = 2,
   }) {
-    final children =
-        allCategories.where((c) => c.parentCategory == parentId).toList();
+    if (depth >= maxDepth) return;
+    final children = allCategories
+        .where((c) => c.parentCategory == parentId)
+        .toList();
     for (final child in children) {
       items.add(CategoryTreeItem(category: child, depth: depth));
       _collectCategoryTree(
@@ -193,6 +197,7 @@ class PdfPage2 {
         allCategories: allCategories,
         depth: depth + 1,
         items: items,
+        maxDepth: maxDepth,
       );
     }
   }

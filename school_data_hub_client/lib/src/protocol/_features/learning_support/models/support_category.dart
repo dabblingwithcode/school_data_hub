@@ -21,6 +21,8 @@ abstract class SupportCategory implements _i1.SerializableModel {
     required this.name,
     required this.categoryId,
     this.parentCategory,
+    this.order,
+    this.printable,
     this.categoryGoals,
     this.categoryStatues,
   });
@@ -30,6 +32,8 @@ abstract class SupportCategory implements _i1.SerializableModel {
     required String name,
     required int categoryId,
     int? parentCategory,
+    int? order,
+    bool? printable,
     List<_i2.SupportGoal>? categoryGoals,
     List<_i3.SupportCategoryStatus>? categoryStatues,
   }) = _SupportCategoryImpl;
@@ -40,6 +44,8 @@ abstract class SupportCategory implements _i1.SerializableModel {
       name: jsonSerialization['name'] as String,
       categoryId: jsonSerialization['categoryId'] as int,
       parentCategory: jsonSerialization['parentCategory'] as int?,
+      order: jsonSerialization['order'] as int?,
+      printable: jsonSerialization['printable'] as bool?,
       categoryGoals: (jsonSerialization['categoryGoals'] as List?)
           ?.map((e) => _i2.SupportGoal.fromJson((e as Map<String, dynamic>)))
           .toList(),
@@ -61,6 +67,10 @@ abstract class SupportCategory implements _i1.SerializableModel {
 
   int? parentCategory;
 
+  int? order;
+
+  bool? printable;
+
   List<_i2.SupportGoal>? categoryGoals;
 
   List<_i3.SupportCategoryStatus>? categoryStatues;
@@ -73,6 +83,8 @@ abstract class SupportCategory implements _i1.SerializableModel {
     String? name,
     int? categoryId,
     int? parentCategory,
+    int? order,
+    bool? printable,
     List<_i2.SupportGoal>? categoryGoals,
     List<_i3.SupportCategoryStatus>? categoryStatues,
   });
@@ -83,6 +95,8 @@ abstract class SupportCategory implements _i1.SerializableModel {
       'name': name,
       'categoryId': categoryId,
       if (parentCategory != null) 'parentCategory': parentCategory,
+      if (order != null) 'order': order,
+      if (printable != null) 'printable': printable,
       if (categoryGoals != null)
         'categoryGoals': categoryGoals?.toJson(valueToJson: (v) => v.toJson()),
       if (categoryStatues != null)
@@ -105,6 +119,8 @@ class _SupportCategoryImpl extends SupportCategory {
     required String name,
     required int categoryId,
     int? parentCategory,
+    int? order,
+    bool? printable,
     List<_i2.SupportGoal>? categoryGoals,
     List<_i3.SupportCategoryStatus>? categoryStatues,
   }) : super._(
@@ -112,6 +128,8 @@ class _SupportCategoryImpl extends SupportCategory {
           name: name,
           categoryId: categoryId,
           parentCategory: parentCategory,
+          order: order,
+          printable: printable,
           categoryGoals: categoryGoals,
           categoryStatues: categoryStatues,
         );
@@ -125,6 +143,8 @@ class _SupportCategoryImpl extends SupportCategory {
     String? name,
     int? categoryId,
     Object? parentCategory = _Undefined,
+    Object? order = _Undefined,
+    Object? printable = _Undefined,
     Object? categoryGoals = _Undefined,
     Object? categoryStatues = _Undefined,
   }) {
@@ -134,6 +154,8 @@ class _SupportCategoryImpl extends SupportCategory {
       categoryId: categoryId ?? this.categoryId,
       parentCategory:
           parentCategory is int? ? parentCategory : this.parentCategory,
+      order: order is int? ? order : this.order,
+      printable: printable is bool? ? printable : this.printable,
       categoryGoals: categoryGoals is List<_i2.SupportGoal>?
           ? categoryGoals
           : this.categoryGoals?.map((e0) => e0.copyWith()).toList(),
