@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_entry.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_category_parents_names.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_goal/support_goal_card.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
 class SupportCategoryStatusCard extends StatelessWidget {
@@ -22,12 +20,19 @@ class SupportCategoryStatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final learningSupportManager = di<SupportCategoryManager>();
     final int supportCategoryId =
         statusesWithSameGoalCategory[0].supportCategoryId;
-    // final Color supportCategoryColor = learningSupportManager.getCategoryColor(
-    //   supportCategoryId,
-    // );
+
+    // Find the indices of goals matching this category
+    final goalIndices = <int>[];
+    if (pupil.supportGoals != null) {
+      for (int i = 0; i < pupil.supportGoals!.length; i++) {
+        if (pupil.supportGoals![i].supportCategoryId == supportCategoryId) {
+          goalIndices.add(i);
+        }
+      }
+    }
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       child: Column(
@@ -58,20 +63,10 @@ class SupportCategoryStatusCard extends StatelessWidget {
             ],
           ),
           const Gap(5),
-          for (
-            int i = 0;
-            i < statusesWithSameGoalCategory.length;
-            i++
-          ) ...<Widget>[
-            SupportCategoryStatusEntry(
-              pupil: pupil,
-              status: statusesWithSameGoalCategory[i],
-            ),
-          ],
-          if (LearningSupportHelper.getGoalsForCategory(
-            pupil,
-            supportCategoryId,
-          ).isEmpty)
+          for (final status in statusesWithSameGoalCategory)
+            SupportCategoryStatusEntry(pupil: pupil, status: status),
+          const Gap(5),
+          if (goalIndices.isEmpty)
             const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -87,7 +82,10 @@ class SupportCategoryStatusCard extends StatelessWidget {
                 ),
                 Gap(10),
               ],
-            ),
+            )
+          else
+            for (final goalIndex in goalIndices)
+              SupportGoalCard(pupil: pupil, goalIndex: goalIndex),
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: ElevatedButton(

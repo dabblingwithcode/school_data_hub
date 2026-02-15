@@ -20,9 +20,7 @@ class LearningSupportApiService {
     return response;
   }
 
-  Future<bool> updateLearningSupportPlan(
-    LearningSupportPlan plan,
-  ) async {
+  Future<bool> updateLearningSupportPlan(LearningSupportPlan plan) async {
     final response = await ClientHelper.apiCall(
       call: () => _client.learningSupportPlan.updateLearningSupportPlan(plan),
       errorMessage: 'Fehler beim Aktualisieren des Förderplans',
@@ -149,6 +147,28 @@ class LearningSupportApiService {
     return updatedPupil;
   }
 
+  //- update category goal
+
+  Future<PupilData?> updateCategoryGoal({
+    required int pupilId,
+    required int supportGoalId,
+    String? description,
+    String? strategies,
+    int? supportCategoryId,
+  }) async {
+    final updatedPupil = await ClientHelper.apiCall(
+      call: () => _client.learningSupportPlan.updateCategoryGoal(
+        pupilId,
+        supportGoalId,
+        description,
+        strategies,
+        supportCategoryId,
+      ),
+      errorMessage: 'Fehler beim Aktualisieren des Ziels',
+    );
+    return updatedPupil;
+  }
+
   //- delete category goal
 
   Future<PupilData?> deleteCategoryGoal({
@@ -182,7 +202,9 @@ class LearningSupportApiService {
   Future<List<SupportCategory>> importSupportCategoriesFromJsonFile(
     String filePath,
   ) async {
-    return _client.adminCategories.importSupportCategoriesFromJsonFile(filePath);
+    return _client.adminCategories.importSupportCategoriesFromJsonFile(
+      filePath,
+    );
   }
 
   //- GOAL CHECKS ------------------------------------------------------------

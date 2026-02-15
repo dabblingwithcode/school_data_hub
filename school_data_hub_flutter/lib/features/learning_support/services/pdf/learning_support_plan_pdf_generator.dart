@@ -17,6 +17,7 @@ import 'package:school_data_hub_flutter/features/learning_support/services/pdf/p
 import 'package:school_data_hub_flutter/features/learning_support/services/pdf/pages/pdf_page3.dart';
 import 'package:school_data_hub_flutter/features/learning_support/services/pdf/pages/pdf_page4.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
 
 final _log = Logger('LearningSupportPlanPdfGenerator');
 
@@ -26,12 +27,13 @@ class LearningSupportPlanPdfGenerator {
     required PupilProxy pupil,
     required List<SupportCategory> supportCategories,
   }) async {
-    final regularData =
-        await rootBundle.load('assets/fonts/Roboto-Regular.ttf');
+    final regularData = await rootBundle.load(
+      'assets/fonts/Roboto-Regular.ttf',
+    );
     final boldData = await rootBundle.load('assets/fonts/Roboto-Bold.ttf');
     final fontRegular = pw.Font.ttf(regularData);
     final fontBold = pw.Font.ttf(boldData);
-
+    final schoolData = di<SchoolDataMainManager>().schoolData.value!;
     final pdf = pw.Document();
 
     di<NotificationService>().setHeavyLoadingValue(true);
@@ -42,6 +44,7 @@ class LearningSupportPlanPdfGenerator {
         PdfPage1.build(
           plan: plan,
           pupil: pupil,
+          schoolData: schoolData,
           fontRegular: fontRegular,
           fontBold: fontBold,
         ),

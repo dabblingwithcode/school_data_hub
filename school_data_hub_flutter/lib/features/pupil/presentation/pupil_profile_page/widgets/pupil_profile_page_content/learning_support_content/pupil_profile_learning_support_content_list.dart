@@ -16,7 +16,6 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_goals_list.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan/controller/new_learning_support_plan_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/score_support_category_page/score_support_category_page.dart';
@@ -344,14 +343,9 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
             ),
           ),
         const Gap(5),
-        ...pupilCategoryStatusesList(pupil, context),
+        SupportCategoryStatusesList(pupil: pupil),
 
         const Gap(5),
-        SupportGoalsList(pupil: pupil),
-
-        // const Gap(10),
-        // ...buildPupilCategoryTree(context, pupil, null, 0, null),
-        const Gap(15),
       ],
     );
   }

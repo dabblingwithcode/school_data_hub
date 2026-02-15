@@ -10,6 +10,7 @@ class PdfPage1 {
 
   static pw.Page build({
     required LearningSupportPlan plan,
+    required SchoolData schoolData,
     required PupilProxy pupil,
     required pw.Font fontRegular,
     required pw.Font fontBold,
@@ -27,17 +28,35 @@ class PdfPage1 {
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
             // ── Title ──
-            pw.Center(
-              child: pw.Text(
-                'GGS Hermannstraße Stolberg',
-                style: pw.TextStyle(
-                  font: fontBold,
-                  fontSize: 11,
-                  fontStyle: pw.FontStyle.italic,
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text(
+                  schoolData.officialName,
+                  style: pw.TextStyle(
+                    font: fontBold,
+                    fontSize: 15,
+                    fontStyle: pw.FontStyle.italic,
+                  ),
                 ),
-              ),
+                pw.Text(
+                  schoolData.schoolNumber,
+                  style: pw.TextStyle(
+                    font: fontRegular,
+                    fontSize: 10,
+                    fontStyle: pw.FontStyle.italic,
+                  ),
+                ),
+                pw.Text(
+                  'Förderplan',
+                  style: pw.TextStyle(
+                    font: fontBold,
+                    fontSize: 15,
+                    fontStyle: pw.FontStyle.italic,
+                  ),
+                ),
+              ],
             ),
-            pw.SizedBox(height: 6),
 
             // ── 1. Name + Birthday ──
             pw.Container(
@@ -119,8 +138,9 @@ class PdfPage1 {
                   ),
                   pw.SizedBox(width: 4),
                   PdfHelpers.fillField(
-                    text: PdfHelpers.calculateSchulbesuchsjahr(pupil)
-                        .toString(),
+                    text: PdfHelpers.calculateSchulbesuchsjahr(
+                      pupil,
+                    ).toString(),
                     font: fontRegular,
                     width: 30,
                   ),
@@ -324,11 +344,15 @@ class PdfPage1 {
                   ),
                   pw.SizedBox(width: 10),
                   pw.Text(
-                    'SoL.:',
+                    'Sonderpäd. Fachkraft:',
                     style: pw.TextStyle(font: fontBold, fontSize: 9),
                   ),
                   pw.SizedBox(width: 4),
-                  PdfHelpers.fillField(font: fontRegular, width: 100),
+                  PdfHelpers.fillField(
+                    text: PdfHelpers.resolveUserName(plan.specialNeedsTeacher),
+                    font: fontRegular,
+                    width: 100,
+                  ),
                 ],
               ),
             ),

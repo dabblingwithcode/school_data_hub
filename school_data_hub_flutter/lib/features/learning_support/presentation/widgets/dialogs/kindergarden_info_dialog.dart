@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 Future<void> kindergardenInfoDialog(
   BuildContext context,
@@ -96,11 +96,7 @@ Future<void> kindergardenInfoDialog(
             ),
             title: Row(
               children: [
-                Icon(
-                  Icons.child_care,
-                  color: AppColors.accentColor,
-                  size: 24,
-                ),
+                Icon(Icons.child_care, color: AppColors.accentColor, size: 24),
                 const Gap(8),
                 const Text('Kindergartenbesuch'),
               ],
@@ -150,7 +146,7 @@ Future<void> kindergardenInfoDialog(
                   );
                   monthsController.dispose();
                   commentsController.dispose();
-                  await di<PupilMutator>().updateKindergardenInfo(
+                  await PupilMutator().updateKindergardenInfo(
                     pupilId: pupil.pupilId,
                     kindergardenInfo: newInfo,
                   );

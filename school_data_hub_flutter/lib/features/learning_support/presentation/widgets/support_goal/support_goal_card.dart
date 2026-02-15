@@ -21,6 +21,7 @@ import 'package:school_data_hub_flutter/features/learning_support/domain/support
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/support_goal_check_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_entry.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_symbol.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_goal/support_category_badge.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
@@ -191,6 +192,24 @@ class SupportGoalCard extends WatchingWidget {
                         ),
                       ),
                     ),
+                    IconButton(
+                      icon: const Icon(Icons.edit, size: 20),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (ctx) => NewSupportCategoryStatus(
+                              appBarTitle: 'Förderziel bearbeiten',
+                              pupilId: pupil.pupilId,
+                              goalCategoryId: pupil
+                                  .supportGoals![goalIndex]
+                                  .supportCategoryId,
+                              elementType: 'goal',
+                              existingGoal: pupil.supportGoals![goalIndex],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ],
                 ),
 
@@ -219,7 +238,9 @@ class SupportGoalCard extends WatchingWidget {
                             padding: const EdgeInsets.only(top: 4.0),
                             child: LastSupportCategoryStatusSymbol(
                               pupil: pupil,
-                              categoryId: pupil.supportGoals![goalIndex].supportCategoryId,
+                              categoryId: pupil
+                                  .supportGoals![goalIndex]
+                                  .supportCategoryId,
                             ),
                           ),
                           const Gap(10),

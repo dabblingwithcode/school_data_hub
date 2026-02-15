@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/new_support_category_status_page.dart';
 import 'package:flutter_it/flutter_it.dart';
@@ -8,6 +9,7 @@ class NewSupportCategoryStatus extends StatefulWidget {
   final int pupilId;
   final int goalCategoryId;
   final String elementType;
+  final SupportGoal? existingGoal;
 
   const NewSupportCategoryStatus({
     super.key,
@@ -15,6 +17,7 @@ class NewSupportCategoryStatus extends StatefulWidget {
     required this.pupilId,
     required this.goalCategoryId,
     required this.elementType,
+    this.existingGoal,
   });
 
   @override
@@ -27,10 +30,16 @@ class NewSupportCategoryStatusController
   LearningSupportManager get _learningSupportPlanManager =>
       di<LearningSupportManager>();
 
+  bool get isEditMode => widget.existingGoal != null;
+
   @override
   void initState() {
     super.initState();
     goalCategoryId = widget.goalCategoryId;
+    if (widget.existingGoal != null) {
+      descriptionTextFieldController.text = widget.existingGoal!.description;
+      strategiesTextField2Controller.text = widget.existingGoal!.strategies;
+    }
   }
 
   final TextEditingController descriptionTextFieldController =
@@ -82,6 +91,20 @@ class NewSupportCategoryStatusController
       pupilId: widget.pupilId,
       description: descriptionTextFieldController.text,
       strategies: strategiesTextField2Controller.text,
+    );
+  }
+
+  Future updateCategoryGoal() async {
+    if (widget.existingGoal == null) {
+      return;
+    }
+
+    await _learningSupportPlanManager.updateSupportGoal(
+      pupilId: widget.pupilId,
+      supportGoalId: widget.existingGoal!.id!,
+      description: descriptionTextFieldController.text,
+      strategies: strategiesTextField2Controller.text,
+      supportCategoryId: goalCategoryId,
     );
   }
 

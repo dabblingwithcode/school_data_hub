@@ -194,6 +194,37 @@ class LearningSupportPlanEndpoint extends Endpoint {
     return updatedPupil!;
   }
 
+  Future<PupilData> updateCategoryGoal(
+    Session session,
+    int pupilId,
+    int supportGoalId,
+    String? description,
+    String? strategies,
+    int? supportCategoryId,
+  ) async {
+    final existingGoal = await SupportGoal.db.findById(
+      session,
+      supportGoalId,
+    );
+    if (existingGoal == null) {
+      throw Exception('SupportGoal not found for id: $supportGoalId');
+    }
+
+    final updatedGoal = existingGoal.copyWith(
+      description: description ?? existingGoal.description,
+      strategies: strategies ?? existingGoal.strategies,
+      supportCategoryId: supportCategoryId ?? existingGoal.supportCategoryId,
+    );
+    await SupportGoal.db.updateRow(session, updatedGoal);
+
+    final updatedPupil = await PupilData.db.findById(
+      session,
+      pupilId,
+      include: PupilSchemas.allInclude,
+    );
+    return updatedPupil!;
+  }
+
   Future<PupilData> deleteCategoryGoal(
     Session session,
     int pupilId,

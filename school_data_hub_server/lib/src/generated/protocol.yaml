@@ -107,6 +107,7 @@ learningSupportPlan:
   - updateCategoryStatus:
   - deleteSupportCategoryStatus:
   - postCategoryGoal:
+  - updateCategoryGoal:
   - deleteCategoryGoal:
   - postSupportGoalCheck:
   - updateSupportGoalCheck:

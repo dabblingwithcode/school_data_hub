@@ -34,7 +34,7 @@ class SupportCategoryBadge extends StatelessWidget {
             color: rootCategoryColor,
             shape: BoxShape.circle,
           ),
-          child: Image.asset(rootCategoryIcon, width: 35.0, height: 35.0),
+          child: Image.asset(rootCategoryIcon, width: size, height: size),
         ),
       ],
     );

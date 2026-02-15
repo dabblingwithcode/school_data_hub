@@ -109,7 +109,8 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                           children: [
                             Text(
                               (controller.widget.appBarTitle ==
-                                      'Neues Förderziel')
+                                          'Neues Förderziel' ||
+                                      controller.isEditMode)
                                   ? 'Förderziel'
                                   : 'Beobachtungen',
                               style: const TextStyle(
@@ -122,7 +123,8 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                         ),
                         const Gap(10),
                         if (controller.widget.appBarTitle ==
-                            'Neues Förderziel') ...[
+                                'Neues Förderziel' ||
+                            controller.isEditMode) ...[
                           TextField(
                             minLines: 1,
                             maxLines: 3,
@@ -154,13 +156,16 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                           decoration: AppStyles.textFieldDecoration(
                             labelText:
                                 (controller.widget.appBarTitle ==
-                                    'Neues Förderziel')
+                                        'Neues Förderziel' ||
+                                    controller.isEditMode)
                                 ? 'Hilfen für das Erreichen des Zieles'
                                 : 'Beschreibung des Ist-Zustandes',
                           ),
                         ),
                         const Gap(20),
-                        if (controller.widget.appBarTitle != 'Neues Förderziel')
+                        if (controller.widget.appBarTitle !=
+                                'Neues Förderziel' &&
+                            !controller.isEditMode)
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -242,7 +247,9 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                       ElevatedButton(
                         style: AppStyles.successButtonStyle,
                         onPressed: () {
-                          if (controller.widget.appBarTitle ==
+                          if (controller.isEditMode) {
+                            controller.updateCategoryGoal();
+                          } else if (controller.widget.appBarTitle ==
                               'Neues Förderziel') {
                             controller.postCategoryGoal();
                           } else {
@@ -258,8 +265,8 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                           }
                           Navigator.pop(context);
                         },
-                        child: const Text(
-                          'SENDEN',
+                        child: Text(
+                          controller.isEditMode ? 'SPEICHERN' : 'SENDEN',
                           style: AppStyles.buttonTextStyle,
                         ),
                       ),

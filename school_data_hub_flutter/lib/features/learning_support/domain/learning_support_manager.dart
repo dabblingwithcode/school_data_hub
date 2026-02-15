@@ -109,8 +109,9 @@ class LearningSupportManager {
   Future<bool> updateLearningSupportPlan({
     required LearningSupportPlan plan,
   }) async {
-    final success =
-        await _learningSupportApiService.updateLearningSupportPlan(plan);
+    final success = await _learningSupportApiService.updateLearningSupportPlan(
+      plan,
+    );
 
     if (!success) {
       _notificationService.showSnackBar(
@@ -257,6 +258,32 @@ class LearningSupportManager {
 
     return;
   }
+
+  Future<void> updateSupportGoal({
+    required int pupilId,
+    required int supportGoalId,
+    String? description,
+    String? strategies,
+    int? supportCategoryId,
+  }) async {
+    final responsePupil = await _learningSupportApiService.updateCategoryGoal(
+      pupilId: pupilId,
+      supportGoalId: supportGoalId,
+      description: description,
+      strategies: strategies,
+      supportCategoryId: supportCategoryId,
+    );
+    if (responsePupil == null) {
+      return;
+    }
+    _pupilManager.updatePupilProxyWithPupilData(responsePupil);
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Ziel aktualisiert',
+    );
+  }
+
   // Future postNewSupportCategoryGoal(
   //     {required int goalCategoryId,
   //     required int pupilId,

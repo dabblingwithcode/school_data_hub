@@ -1279,6 +1279,25 @@ class EndpointLearningSupportPlan extends _i1.EndpointRef {
         },
       );
 
+  _i2.Future<_i5.PupilData> updateCategoryGoal(
+    int pupilId,
+    int supportGoalId,
+    String? description,
+    String? strategies,
+    int? supportCategoryId,
+  ) =>
+      caller.callServerEndpoint<_i5.PupilData>(
+        'learningSupportPlan',
+        'updateCategoryGoal',
+        {
+          'pupilId': pupilId,
+          'supportGoalId': supportGoalId,
+          'description': description,
+          'strategies': strategies,
+          'supportCategoryId': supportCategoryId,
+        },
+      );
+
   _i2.Future<_i5.PupilData> deleteCategoryGoal(
     int pupilId,
     int supportGoalId,

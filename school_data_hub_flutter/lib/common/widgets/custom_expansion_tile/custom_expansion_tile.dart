@@ -25,6 +25,9 @@ class CustomExpansionTileController {
 
   _ExpansionTileState? _state;
 
+  /// Whether this controller is currently attached to an [ExpansionTile].
+  bool get isAttached => _state != null;
+
   /// Whether the [ExpansionTile] built with this controller is in expanded state.
   ///
   /// This property doesn't take the animation into account. It reports `true`
