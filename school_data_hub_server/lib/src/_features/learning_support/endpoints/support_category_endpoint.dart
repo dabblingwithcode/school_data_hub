@@ -19,12 +19,22 @@ class SupportCategoryEndpoint extends Endpoint {
     final categories =
         await helper.importSupportCategoriesFromFileContentJson(fileContent);
     await SupportCategory.db.insert(session, categories);
+
+    // Reset the auto-increment sequence so that future inserts don't collide
+    // with the imported IDs.
+    await session.db.unsafeExecute(
+      "SELECT setval('support_category_id_seq', "
+      "(SELECT COALESCE(MAX(id), 0) FROM support_category));",
+    );
+
     return categories;
   }
 
   Future<bool> createSupportCategory(
       Session session, SupportCategory category) async {
-    await session.db.insertRow(category);
+    // Ensure id is null so the database auto-generates it.
+    final newCategory = category.copyWith(id: null);
+    await SupportCategory.db.insertRow(session, newCategory);
     return true;
   }
 

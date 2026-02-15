@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 /// Displays the full support category hierarchy as a collapsible tree.
 ///
@@ -56,14 +56,16 @@ class _CategoryNode extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = inheritedColor ??
+    final color =
+        inheritedColor ??
         LearningSupportHelper.getRootSupportCategoryColor(category);
 
     final supportCategories =
         di<SupportCategoryManager>().supportCategories.value;
 
-    final hasChildren = supportCategories
-        .any((c) => c.parentCategory == category.categoryId);
+    final hasChildren = supportCategories.any(
+      (c) => c.parentCategory == category.categoryId,
+    );
 
     return Padding(
       padding: EdgeInsets.only(top: 10, left: 5.0 * indentation),
@@ -143,10 +145,7 @@ class _LeafNode extends StatelessWidget {
       child: Text(
         category.name,
         textAlign: TextAlign.start,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 15,
-        ),
+        style: const TextStyle(color: Colors.white, fontSize: 15),
       ),
     );
   }

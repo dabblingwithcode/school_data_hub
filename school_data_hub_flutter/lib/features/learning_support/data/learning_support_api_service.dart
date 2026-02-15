@@ -32,6 +32,16 @@ class LearningSupportApiService {
     return response ?? false;
   }
 
+  //- UPDATE
+
+  Future<bool> updateSupportCategory(SupportCategory category) async {
+    final response = await ClientHelper.apiCall(
+      call: () => _client.supportCategory.updateSupportCategory(category),
+      errorMessage: 'Fehler beim Aktualisieren der Kategorie',
+    );
+    return response ?? false;
+  }
+
   //- READ
   Future<List<SupportCategory>?> fetchSupportCategories() async {
     final response = await ClientHelper.apiCall(

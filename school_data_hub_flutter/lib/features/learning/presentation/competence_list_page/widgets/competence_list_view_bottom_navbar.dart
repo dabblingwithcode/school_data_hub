@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/competence_list_page/widgets/competence_filters_widget.dart';
-import 'package:school_data_hub_flutter/features/learning/presentation/competence_list_sortable_page/competence_list_sortable_page.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/competence_list_sortable_page/sortable_competence_list_page.dart';
 import 'package:flutter_it/flutter_it.dart';
 
 final _competenceFilterManager = di<CompetenceFilterManager>();
@@ -42,7 +42,7 @@ class CompetenceListPageBottomNavBar extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (ctx) => const CompetenceListSortablePage(),
+                      builder: (ctx) => const SortableCompetenceListPage(),
                     ),
                   );
                 },

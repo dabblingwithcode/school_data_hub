@@ -128,6 +128,8 @@ class _BranchNode extends WatchingWidget {
     // Watch pending scores to react to changes
     watch(manager.pendingScores);
 
+    final isScorable =
+        category.parentCategory != null && category.printable == true;
     final currentScore = manager.getScoreForCategory(category.categoryId) ?? 0;
     final hasExisting = manager.hasExistingStatus(category.categoryId);
 
@@ -147,15 +149,10 @@ class _BranchNode extends WatchingWidget {
         collapsedBackgroundColor: color,
         title: Row(
           children: [
-            _ScoreIndicator(hasExisting: hasExisting),
-            const Gap(5),
-            GrowthDropdown(
-              dropdownValue: currentScore,
-              onChangedFunction: (value) {
-                manager.setScore(category.categoryId, value);
-              },
-            ),
-            const Gap(5),
+            if (isScorable) ...[
+              _ScoreIndicator(hasExisting: hasExisting),
+              const Gap(5),
+            ],
             Expanded(
               child: Text(
                 category.name,
@@ -163,6 +160,15 @@ class _BranchNode extends WatchingWidget {
                 style: _categoryTextStyle,
               ),
             ),
+            if (isScorable) ...[
+              const Gap(5),
+              GrowthDropdown(
+                dropdownValue: currentScore,
+                onChangedFunction: (value) {
+                  manager.setScore(category.categoryId, value);
+                },
+              ),
+            ],
           ],
         ),
         children: [
@@ -198,6 +204,8 @@ class _LeafNode extends WatchingWidget {
     // Watch pending scores to react to changes
     watch(manager.pendingScores);
 
+    final isScorable =
+        category.parentCategory != null && category.printable == true;
     final currentScore = manager.getScoreForCategory(category.categoryId) ?? 0;
     final hasExisting = manager.hasExistingStatus(category.categoryId);
 
@@ -205,16 +213,11 @@ class _LeafNode extends WatchingWidget {
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
-          _ScoreIndicator(hasExisting: hasExisting),
-          const Gap(5),
-          GrowthDropdown(
-            dropdownValue: currentScore,
-            onChangedFunction: (value) {
-              manager.setScore(category.categoryId, value);
-            },
-          ),
-          const Gap(10),
-          Flexible(
+          if (isScorable) ...[
+            _ScoreIndicator(hasExisting: hasExisting),
+            const Gap(5),
+          ],
+          Expanded(
             child: Text(
               category.name,
               maxLines: 4,
@@ -222,6 +225,15 @@ class _LeafNode extends WatchingWidget {
               style: _categoryTextStyle,
             ),
           ),
+          if (isScorable) ...[
+            const Gap(10),
+            GrowthDropdown(
+              dropdownValue: currentScore,
+              onChangedFunction: (value) {
+                manager.setScore(category.categoryId, value);
+              },
+            ),
+          ],
         ],
       ),
     );

@@ -7,10 +7,12 @@ class CustomExpansionTileSwitch extends StatefulWidget {
   final bool? includeSwitch;
   final Color? switchColor;
   final CustomExpansionTileController customExpansionTileController;
+  final ValueChanged<bool>? onChanged;
   const CustomExpansionTileSwitch({
     this.expansionSwitchWidget,
     this.includeSwitch,
     this.switchColor,
+    this.onChanged,
     required this.customExpansionTileController,
     super.key,
   });
@@ -44,6 +46,7 @@ class CustomExpansionTileSwitchState extends State<CustomExpansionTileSwitch> {
             isExpanded = true;
           });
         }
+        widget.onChanged?.call(isExpanded);
       },
       child:
           widget.expansionSwitchWidget != null &&

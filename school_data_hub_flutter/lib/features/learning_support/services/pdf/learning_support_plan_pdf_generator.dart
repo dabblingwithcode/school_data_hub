@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
@@ -25,8 +26,11 @@ class LearningSupportPlanPdfGenerator {
     required PupilProxy pupil,
     required List<SupportCategory> supportCategories,
   }) async {
-    final fontRegular = pw.Font.helvetica();
-    final fontBold = pw.Font.helveticaBold();
+    final regularData =
+        await rootBundle.load('assets/fonts/Roboto-Regular.ttf');
+    final boldData = await rootBundle.load('assets/fonts/Roboto-Bold.ttf');
+    final fontRegular = pw.Font.ttf(regularData);
+    final fontBold = pw.Font.ttf(boldData);
 
     final pdf = pw.Document();
 
@@ -45,7 +49,7 @@ class LearningSupportPlanPdfGenerator {
 
       // Page 2: Support category status grid
       pdf.addPage(
-        PdfPage2.build(
+        await PdfPage2.build(
           plan: plan,
           pupil: pupil,
           supportCategories: supportCategories,

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
@@ -9,7 +10,6 @@ import 'package:school_data_hub_flutter/features/learning_support/data/learning_
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class SupportCategoryManager {
   final _notificationService = di<NotificationService>();
@@ -89,8 +89,15 @@ class SupportCategoryManager {
       return;
     }
     if (supportCategories.isNotEmpty) {
-      // let's sort the categories by their category id to make sure they are in the right order
-      supportCategories.sort((a, b) => a.categoryId.compareTo(b.categoryId));
+      // Sort by order first (nulls last), then fall back to categoryId
+      supportCategories.sort((a, b) {
+        if (a.order != null && b.order != null) {
+          return a.order!.compareTo(b.order!);
+        }
+        if (a.order != null) return -1;
+        if (b.order != null) return 1;
+        return a.categoryId.compareTo(b.categoryId);
+      });
 
       _supportCategories.value = supportCategories;
       _envManager.setPopulatedEnvServerData(supportCategories: true);
@@ -98,7 +105,6 @@ class SupportCategoryManager {
       _rootCategoriesMap = LearningSupportHelper.generateRootCategoryMap(
         supportCategories,
       );
-
 
       _notificationService.showSnackBar(
         NotificationType.success,
@@ -125,10 +131,19 @@ class SupportCategoryManager {
       return;
     }
     final List<SupportCategory> importedCategories =
-        await _learningSupportApiService
-            .importSupportCategoriesFromJsonFile(fileResponse.path!);
+        await _learningSupportApiService.importSupportCategoriesFromJsonFile(
+          fileResponse.path!,
+        );
 
-    importedCategories.sort((a, b) => a.categoryId.compareTo(b.categoryId));
+    // Sort by order first (nulls last), then fall back to categoryId
+    importedCategories.sort((a, b) {
+      if (a.order != null && b.order != null) {
+        return a.order!.compareTo(b.order!);
+      }
+      if (a.order != null) return -1;
+      if (b.order != null) return 1;
+      return a.categoryId.compareTo(b.categoryId);
+    });
     _supportCategories.value = importedCategories;
     _envManager.setPopulatedEnvServerData(supportCategories: true);
     _rootCategoriesMap.clear();
@@ -140,5 +155,192 @@ class SupportCategoryManager {
       NotificationType.success,
       'Förderkategorien importiert',
     );
+  }
+
+  Future<bool> createSupportCategory({
+    required String name,
+    int? parentCategory,
+  }) async {
+    // Generate next categoryId as max(existing) + 1
+    final maxId = _supportCategories.value.fold<int>(
+      0,
+      (max, c) => c.categoryId > max ? c.categoryId : max,
+    );
+    final newCategoryId = maxId + 1;
+
+    // Compute order: count of siblings with the same parent (appends at end)
+    final siblingCount = _supportCategories.value
+        .where((c) => c.parentCategory == parentCategory)
+        .length;
+
+    final newCategory = SupportCategory(
+      name: name,
+      categoryId: newCategoryId,
+      parentCategory: parentCategory,
+      order: siblingCount,
+      printable: false,
+    );
+
+    final success = await _learningSupportApiService.createSupportCategory(
+      newCategory,
+    );
+
+    if (success) {
+      final categories = List<SupportCategory>.from(_supportCategories.value)
+        ..add(newCategory);
+      _supportCategories.value = categories;
+
+      // Rebuild the root category map since the hierarchy changed
+      _rootCategoriesMap.clear();
+      _rootCategoriesMap = LearningSupportHelper.generateRootCategoryMap(
+        categories,
+      );
+
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Kategorie "$name" erstellt',
+      );
+    }
+
+    return success;
+  }
+
+  Future<void> updateSupportCategoryOrder({
+    required int categoryId,
+    required int order,
+  }) async {
+    final index = _supportCategories.value.indexWhere(
+      (c) => c.categoryId == categoryId,
+    );
+    if (index == -1) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Kategorie nicht gefunden',
+      );
+      return;
+    }
+
+    final category = _supportCategories.value[index];
+    final updatedCategory = category.copyWith(order: order);
+
+    final success = await _learningSupportApiService.updateSupportCategory(
+      updatedCategory,
+    );
+
+    if (success) {
+      _log.info(
+        'Support category order updated: ${updatedCategory.name} is now at position ${updatedCategory.order}',
+      );
+      // Update the item in-place without notifying listeners.
+      // The sortable widgets manage their own visual order via local state.
+      // Call sortAndNotifyCategories() when done (e.g. on page dispose)
+      // to commit the sorted order for other widgets.
+      _supportCategories.value[index] = updatedCategory;
+    }
+  }
+
+  /// Sorts the categories list by order and notifies listeners.
+  /// Call this after order updates are complete (e.g. when leaving the
+  /// sortable page) so other pages see the correct order.
+  void sortAndNotifyCategories() {
+    final categories = List<SupportCategory>.from(_supportCategories.value);
+    categories.sort((a, b) {
+      if (a.order != null && b.order != null) {
+        return a.order!.compareTo(b.order!);
+      }
+      if (a.order != null) return -1;
+      if (b.order != null) return 1;
+      return a.categoryId.compareTo(b.categoryId);
+    });
+    _supportCategories.value = categories;
+  }
+
+  Future<void> updateSupportCategoryParent({
+    required int categoryId,
+    required int? parentCategory,
+  }) async {
+    final index = _supportCategories.value.indexWhere(
+      (c) => c.categoryId == categoryId,
+    );
+    if (index == -1) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Kategorie nicht gefunden',
+      );
+      return;
+    }
+
+    final category = _supportCategories.value[index];
+    final updatedCategory = category.copyWith(parentCategory: parentCategory);
+
+    final success = await _learningSupportApiService.updateSupportCategory(
+      updatedCategory,
+    );
+
+    if (success) {
+      final categories = List<SupportCategory>.from(_supportCategories.value);
+      categories[index] = updatedCategory;
+      _supportCategories.value = categories;
+
+      // Rebuild the root category map since the hierarchy changed
+      _rootCategoriesMap.clear();
+      _rootCategoriesMap = LearningSupportHelper.generateRootCategoryMap(
+        categories,
+      );
+
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Kategorie verschoben',
+      );
+    }
+  }
+
+  /// Returns the set of category IDs that are descendants of [categoryId]
+  /// (including [categoryId] itself). Used to prevent circular references
+  /// when reparenting.
+  Set<int> getDescendantCategoryIds(int categoryId) {
+    final descendants = <int>{categoryId};
+    bool added = true;
+    while (added) {
+      added = false;
+      for (final cat in _supportCategories.value) {
+        if (cat.parentCategory != null &&
+            descendants.contains(cat.parentCategory) &&
+            !descendants.contains(cat.categoryId)) {
+          descendants.add(cat.categoryId);
+          added = true;
+        }
+      }
+    }
+    return descendants;
+  }
+
+  Future<void> updateSupportCategoryPrintable({
+    required int categoryId,
+    required bool printable,
+  }) async {
+    final index = _supportCategories.value.indexWhere(
+      (c) => c.categoryId == categoryId,
+    );
+    if (index == -1) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Kategorie nicht gefunden',
+      );
+      return;
+    }
+
+    final category = _supportCategories.value[index];
+    final updatedCategory = category.copyWith(printable: printable);
+
+    final success = await _learningSupportApiService.updateSupportCategory(
+      updatedCategory,
+    );
+
+    if (success) {
+      final categories = List<SupportCategory>.from(_supportCategories.value);
+      categories[index] = updatedCategory;
+      _supportCategories.value = categories;
+    }
   }
 }

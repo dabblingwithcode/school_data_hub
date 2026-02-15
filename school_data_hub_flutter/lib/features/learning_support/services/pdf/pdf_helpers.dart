@@ -59,8 +59,9 @@ class PdfHelpers {
     return '${dt.day.toString().padLeft(2, '0')}.${dt.month.toString().padLeft(2, '0')}.${dt.year}';
   }
 
-  /// Checkbox character: filled circle if checked, empty "O" if not.
-  static String checkbox(bool checked) => checked ? '\u25CF' : 'O';
+  /// Checkbox character: filled square if checked, empty square if not.
+  /// Uses geometric shapes that Roboto renders cleanly.
+  static String checkbox(bool checked) => checked ? '\u25A0' : '\u25A1';
 
   /// Build a standard underlined fill field.
   /// When [text] is non-empty the underline is omitted and plain text is

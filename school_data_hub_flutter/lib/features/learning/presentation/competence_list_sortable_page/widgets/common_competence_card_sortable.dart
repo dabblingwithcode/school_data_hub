@@ -4,10 +4,10 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
 
-class CommonCompetenceCardSortable extends WatchingStatefulWidget {
+class CommonCompetenceCardSortable extends StatefulWidget {
   final Color competenceBackgroundColor;
   final Function({int? competenceId, Competence? competence})
-  navigateToNewOrPatchCompetencePage;
+      navigateToNewOrPatchCompetencePage;
   final Competence competence;
   final List<Widget> children;
   const CommonCompetenceCardSortable({
@@ -24,29 +24,46 @@ class CommonCompetenceCardSortable extends WatchingStatefulWidget {
 }
 
 class _CommonCompetenceCardState extends State<CommonCompetenceCardSortable> {
+  late List<Widget> _children;
+
+  @override
+  void initState() {
+    super.initState();
+    _children = List.of(widget.children);
+  }
+
+  @override
+  void didUpdateWidget(CommonCompetenceCardSortable oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.children != oldWidget.children) {
+      _children = List.of(widget.children);
+    }
+  }
+
   void _onReorder(int oldIndex, int newIndex) {
     setState(() {
       if (newIndex > oldIndex) {
         newIndex -= 1;
       }
-      final item = widget.children.removeAt(oldIndex);
-      widget.children.insert(newIndex, item);
-      for (final competenceId in widget.children) {
+      final item = _children.removeAt(oldIndex);
+      _children.insert(newIndex, item);
+
+      for (int i = 0; i < _children.length; i++) {
         final competence = di<CompetenceManager>().getCompetenceById(
-          (competenceId.key as ValueKey<int>).value,
+          (_children[i].key as ValueKey<int>).value,
         );
-        di<CompetenceManager>().updateCompetenceProperty(
-          publicId: competence.publicId,
-          order: (value: widget.children.indexOf(competenceId)),
-        );
+        if (competence.order != i) {
+          di<CompetenceManager>().updateCompetenceProperty(
+            publicId: competence.publicId,
+            order: (value: i),
+          );
+        }
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // final childrenController = useCustomExpansionTileController();
-
     return Padding(
       padding: EdgeInsets.symmetric(
         vertical: widget.competence.parentCompetence == null ? 3 : 0,
@@ -73,8 +90,8 @@ class _CommonCompetenceCardState extends State<CommonCompetenceCardSortable> {
                       ),
                       onLongPress: () =>
                           widget.navigateToNewOrPatchCompetencePage(
-                            competenceId: widget.competence.publicId,
-                          ),
+                        competenceId: widget.competence.publicId,
+                      ),
                       child: Text(
                         widget.competence.name,
                         maxLines: 4,
@@ -90,41 +107,15 @@ class _CommonCompetenceCardState extends State<CommonCompetenceCardSortable> {
                       ),
                     ),
                   ),
-
-                  // CustomExpansionTileSwitch(
-                  //   customExpansionTileController: pupilListController,
-                  //   expansionSwitchWidget: const Icon(
-                  //     Icons.add,
-                  //     color: Colors.white,
-                  //   ),
-                  // ),
                 ],
               ),
             ),
-            if (widget.children.isNotEmpty)
+            if (_children.isNotEmpty)
               ReorderableListView(
                 shrinkWrap: true,
                 onReorder: _onReorder,
-                children: widget.children,
+                children: _children,
               ),
-
-            // Padding(
-            //   padding: const EdgeInsets.only(
-            //       left: 5.0, right: 5.0, bottom: 2.5, top: 2.5),
-            //   child: CustomExpansionTileContent(
-            //       tileController: pupilListController,
-            //       widgetList: [
-            //         ListView.builder(
-            //           shrinkWrap: true,
-            //           physics: const NeverScrollableScrollPhysics(),
-            //           itemCount: competenceFilteredPupils.length,
-            //           itemBuilder: (context, index) {
-            //             final pupil = competenceFilteredPupils[index];
-            //             return MultiPupilCompetenceCheckCard(pupil: pupil);
-            //           },
-            //         ),
-            //       ]),
-            // ),
           ],
         ),
       ),

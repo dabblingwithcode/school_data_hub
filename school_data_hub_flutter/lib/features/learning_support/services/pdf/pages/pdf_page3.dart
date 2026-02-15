@@ -16,10 +16,14 @@ class PdfPage3 {
     required pw.Font fontBold,
   }) {
     // Build status lookup for "Ist-Stand" column
+    // Statuses live on the pupil, not on the plan object. Filter for this plan.
     final statusMap = <int, SupportCategoryStatus>{};
-    if (plan.supportCategoryStatuses != null) {
-      for (final status in plan.supportCategoryStatuses!) {
-        statusMap[status.supportCategoryId] = status;
+    final allStatuses = pupil.supportCategoryStatuses;
+    if (allStatuses != null) {
+      for (final status in allStatuses) {
+        if (status.learningSupportPlanId == plan.id) {
+          statusMap[status.supportCategoryId] = status;
+        }
       }
     }
 

@@ -9,7 +9,12 @@ class LearningSupportPlanEndpoint extends Endpoint {
 
   Future<List<LearningSupportPlan>> fetchLearningSupportPlans(
       Session session) async {
-    final plans = await LearningSupportPlan.db.find(session);
+    final plans = await LearningSupportPlan.db.find(
+      session,
+      include: LearningSupportPlan.include(
+        schoolSemester: SchoolSemester.include(),
+      ),
+    );
     return plans;
   }
 
@@ -332,8 +337,7 @@ class LearningSupportPlanEndpoint extends Endpoint {
       supportGoalCheckId,
     );
     if (existingCheck == null) {
-      throw Exception(
-          'SupportGoalCheck not found for id: $supportGoalCheckId');
+      throw Exception('SupportGoalCheck not found for id: $supportGoalCheckId');
     }
     final updatedCheck = existingCheck.copyWith(
       score: score ?? existingCheck.score,
@@ -363,8 +367,7 @@ class LearningSupportPlanEndpoint extends Endpoint {
       supportGoalCheckId,
     );
     if (existingCheck == null) {
-      throw Exception(
-          'SupportGoalCheck not found for id: $supportGoalCheckId');
+      throw Exception('SupportGoalCheck not found for id: $supportGoalCheckId');
     }
     await SupportGoal.db.detach.goalChecks(session, [existingCheck]);
     await session.db.deleteRow<SupportGoalCheck>(existingCheck);
@@ -397,8 +400,7 @@ class LearningSupportPlanEndpoint extends Endpoint {
       ),
     );
     if (goalCheck == null) {
-      throw Exception(
-          'SupportGoalCheck not found for id: $supportGoalCheckId');
+      throw Exception('SupportGoalCheck not found for id: $supportGoalCheckId');
     }
 
     final document = HubDocumentHelper().createHubDocumentObject(
@@ -440,8 +442,7 @@ class LearningSupportPlanEndpoint extends Endpoint {
       ),
     );
     if (goalCheck == null) {
-      throw Exception(
-          'SupportGoalCheck not found for id: $supportGoalCheckId');
+      throw Exception('SupportGoalCheck not found for id: $supportGoalCheckId');
     }
 
     final documentToRemove = goalCheck.documents?.firstWhere(
@@ -451,8 +452,7 @@ class LearningSupportPlanEndpoint extends Endpoint {
     );
 
     if (documentToRemove == null) {
-      throw Exception(
-          'Document with id $documentId not found in goal check');
+      throw Exception('Document with id $documentId not found in goal check');
     }
 
     await session.db.transaction((transaction) async {
