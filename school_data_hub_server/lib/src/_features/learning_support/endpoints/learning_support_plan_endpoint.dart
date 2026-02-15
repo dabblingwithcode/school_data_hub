@@ -97,21 +97,19 @@ class LearningSupportPlanEndpoint extends Endpoint {
   Future<SupportCategoryStatus> updateCategoryStatus(
     Session session,
     int pupilId,
-    int supportCategoryId,
+    int statusId,
     int? status,
     String? comment,
     String? createdBy,
     DateTime? createdAt,
   ) async {
-    final existingStatus = await SupportCategoryStatus.db.findFirstRow(
+    final existingStatus = await SupportCategoryStatus.db.findById(
       session,
-      where: (t) =>
-          t.pupilId.equals(pupilId) &
-          t.supportCategoryId.equals(supportCategoryId),
+      statusId,
     );
     if (existingStatus == null) {
       throw Exception(
-          'SupportCategoryStatus not found for pupilId: $pupilId and supportCategoryId: $supportCategoryId');
+          'SupportCategoryStatus not found for statusId: $statusId');
     }
     final updatedStatus = existingStatus.copyWith(
       score: status ?? existingStatus.score,

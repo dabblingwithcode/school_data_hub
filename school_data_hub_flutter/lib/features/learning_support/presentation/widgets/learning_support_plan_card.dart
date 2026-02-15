@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
@@ -8,7 +9,6 @@ import 'package:school_data_hub_flutter/features/learning_support/domain/learnin
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/services/pdf/learning_support_plan_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 /// A card widget for displaying and editing a learning support plan.
 ///
@@ -51,14 +51,18 @@ class _LearningSupportPlanCardState extends State<LearningSupportPlanCard> {
 
   void _initControllers() {
     _commentController = TextEditingController(text: plan.comment ?? '');
-    _socialPedagogueController =
-        TextEditingController(text: plan.socialPedagogue ?? '');
-    _professionalsInvolvedController =
-        TextEditingController(text: plan.proffesionalsInvolved ?? '');
-    _strengthsDescriptionController =
-        TextEditingController(text: plan.strengthsDescription ?? '');
-    _problemsDescriptionController =
-        TextEditingController(text: plan.problemsDescription ?? '');
+    _socialPedagogueController = TextEditingController(
+      text: plan.socialPedagogue ?? '',
+    );
+    _professionalsInvolvedController = TextEditingController(
+      text: plan.proffesionalsInvolved ?? '',
+    );
+    _strengthsDescriptionController = TextEditingController(
+      text: plan.strengthsDescription ?? '',
+    );
+    _problemsDescriptionController = TextEditingController(
+      text: plan.problemsDescription ?? '',
+    );
   }
 
   @override
@@ -67,12 +71,9 @@ class _LearningSupportPlanCardState extends State<LearningSupportPlanCard> {
     if (oldWidget.plan != widget.plan && !_isEditing) {
       _commentController.text = plan.comment ?? '';
       _socialPedagogueController.text = plan.socialPedagogue ?? '';
-      _professionalsInvolvedController.text =
-          plan.proffesionalsInvolved ?? '';
-      _strengthsDescriptionController.text =
-          plan.strengthsDescription ?? '';
-      _problemsDescriptionController.text =
-          plan.problemsDescription ?? '';
+      _professionalsInvolvedController.text = plan.proffesionalsInvolved ?? '';
+      _strengthsDescriptionController.text = plan.strengthsDescription ?? '';
+      _problemsDescriptionController.text = plan.problemsDescription ?? '';
     }
   }
 
@@ -90,12 +91,9 @@ class _LearningSupportPlanCardState extends State<LearningSupportPlanCard> {
     setState(() {
       _commentController.text = plan.comment ?? '';
       _socialPedagogueController.text = plan.socialPedagogue ?? '';
-      _professionalsInvolvedController.text =
-          plan.proffesionalsInvolved ?? '';
-      _strengthsDescriptionController.text =
-          plan.strengthsDescription ?? '';
-      _problemsDescriptionController.text =
-          plan.problemsDescription ?? '';
+      _professionalsInvolvedController.text = plan.proffesionalsInvolved ?? '';
+      _strengthsDescriptionController.text = plan.strengthsDescription ?? '';
+      _problemsDescriptionController.text = plan.problemsDescription ?? '';
       _isEditing = true;
     });
   }
@@ -118,16 +116,14 @@ class _LearningSupportPlanCardState extends State<LearningSupportPlanCard> {
           : _socialPedagogueController.text.trim(),
       proffesionalsInvolved:
           _professionalsInvolvedController.text.trim().isEmpty
-              ? null
-              : _professionalsInvolvedController.text.trim(),
-      strengthsDescription:
-          _strengthsDescriptionController.text.trim().isEmpty
-              ? null
-              : _strengthsDescriptionController.text.trim(),
-      problemsDescription:
-          _problemsDescriptionController.text.trim().isEmpty
-              ? null
-              : _problemsDescriptionController.text.trim(),
+          ? null
+          : _professionalsInvolvedController.text.trim(),
+      strengthsDescription: _strengthsDescriptionController.text.trim().isEmpty
+          ? null
+          : _strengthsDescriptionController.text.trim(),
+      problemsDescription: _problemsDescriptionController.text.trim().isEmpty
+          ? null
+          : _problemsDescriptionController.text.trim(),
     );
 
     final success = await di<LearningSupportManager>()
@@ -150,10 +146,10 @@ class _LearningSupportPlanCardState extends State<LearningSupportPlanCard> {
 
       final file =
           await LearningSupportPlanPdfGenerator.generateLearningSupportPlanPdf(
-        plan: plan,
-        pupil: pupil,
-        supportCategories: supportCategories,
-      );
+            plan: plan,
+            pupil: pupil,
+            supportCategories: supportCategories,
+          );
 
       if (mounted) {
         Navigator.of(context).push(
@@ -173,7 +169,7 @@ class _LearningSupportPlanCardState extends State<LearningSupportPlanCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+      margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 4.0),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -199,34 +195,11 @@ class _LearningSupportPlanCardState extends State<LearningSupportPlanCard> {
       children: [
         Expanded(
           child: Text(
-            plan.planId,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            'Förderplan Nr. ${plan.planId}',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 8.0,
-            vertical: 4.0,
-          ),
-          decoration: BoxDecoration(
-            color: AppColors.backgroundColor.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12.0),
-            border: Border.all(
-              color: AppColors.backgroundColor.withValues(alpha: 0.3),
-            ),
-          ),
-          child: Text(
-            'Förderebene ${plan.learningSupportLevelId}',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: AppColors.backgroundColor,
-            ),
-          ),
-        ),
+
         const Gap(10),
         // Edit Button
         InkWell(
@@ -299,15 +272,6 @@ class _LearningSupportPlanCardState extends State<LearningSupportPlanCard> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (plan.comment?.isNotEmpty ?? false) ...[
-          const Gap(8),
-          const Text(
-            'Kommentar:',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-          ),
-          const Gap(2),
-          Text(plan.comment!, style: const TextStyle(fontSize: 12)),
-        ],
         if (plan.socialPedagogue?.isNotEmpty ?? false) ...[
           const Gap(8),
           const Text(
@@ -348,10 +312,16 @@ class _LearningSupportPlanCardState extends State<LearningSupportPlanCard> {
             style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
           ),
           const Gap(2),
-          Text(
-            plan.problemsDescription!,
-            style: const TextStyle(fontSize: 12),
+          Text(plan.problemsDescription!, style: const TextStyle(fontSize: 12)),
+        ],
+        if (plan.comment?.isNotEmpty ?? false) ...[
+          const Gap(8),
+          const Text(
+            'Ergänzende Hinweise und Absprachen:',
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
           ),
+          const Gap(2),
+          Text(plan.comment!, style: const TextStyle(fontSize: 12)),
         ],
       ],
     );
@@ -366,14 +336,15 @@ class _LearningSupportPlanCardState extends State<LearningSupportPlanCard> {
         const Gap(8),
 
         // Comment field
-        const Text('Kommentar:', style: AppStyles.textLabel),
+        const Text(
+          'Ergänze Hinweise und Absprachen:',
+          style: AppStyles.textLabel,
+        ),
         const Gap(4),
         TextField(
           controller: _commentController,
           maxLines: 3,
-          decoration: AppStyles.textFieldDecoration(
-            labelText: 'Kommentar',
-          ),
+          decoration: AppStyles.textFieldDecoration(labelText: 'Kommentar'),
         ),
 
         const Gap(12),
@@ -456,10 +427,7 @@ class _LearningSupportPlanCardState extends State<LearningSupportPlanCard> {
                           color: Colors.white,
                         ),
                       )
-                    : const Text(
-                        'SPEICHERN',
-                        style: AppStyles.buttonTextStyle,
-                      ),
+                    : const Text('SPEICHERN', style: AppStyles.buttonTextStyle),
               ),
             ),
           ],

@@ -1228,7 +1228,7 @@ class EndpointLearningSupportPlan extends _i1.EndpointRef {
 
   _i2.Future<_i29.SupportCategoryStatus> updateCategoryStatus(
     int pupilId,
-    int supportCategoryId,
+    int statusId,
     int? status,
     String? comment,
     String? createdBy,
@@ -1239,7 +1239,7 @@ class EndpointLearningSupportPlan extends _i1.EndpointRef {
         'updateCategoryStatus',
         {
           'pupilId': pupilId,
-          'supportCategoryId': supportCategoryId,
+          'statusId': statusId,
           'status': status,
           'comment': comment,
           'createdBy': createdBy,

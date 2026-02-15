@@ -3457,7 +3457,7 @@ class _LearningSupportPlanEndpoint {
   _i3.Future<_i30.SupportCategoryStatus> updateCategoryStatus(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
-    int supportCategoryId,
+    int statusId,
     int? status,
     String? comment,
     String? createdBy,
@@ -3476,7 +3476,7 @@ class _LearningSupportPlanEndpoint {
           methodName: 'updateCategoryStatus',
           parameters: _i1.testObjectToJson({
             'pupilId': pupilId,
-            'supportCategoryId': supportCategoryId,
+            'statusId': statusId,
             'status': status,
             'comment': comment,
             'createdBy': createdBy,

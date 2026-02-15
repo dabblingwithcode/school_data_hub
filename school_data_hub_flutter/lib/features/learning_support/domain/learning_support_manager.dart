@@ -186,36 +186,50 @@ class LearningSupportManager {
     _pupilManager.updatePupilProxyWithPupilData(updatedPupil);
     return;
   }
-  // Future<void> updateSupportCategoryStatusProperty({
-  //   required PupilProxy pupil,
-  //   required String statusId,
-  //   String? state,
-  //   String? comment,
-  //   String? createdBy,
-  //   String? createdAt,
-  // }) async {
-  //   final PupilData responsePupil =
-  //       await _learningSupportApiService.updateCategoryStatusProperty(
-  //           pupil, statusId, state, comment, createdBy, createdAt);
 
-  //   locator<PupilManager>().updatePupilProxyWithPupilData(responsePupil);
+  Future<void> updateSupportCategoryStatus({
+    required int pupilId,
+    required int statusId,
+    int? score,
+    String? comment,
+    String? createdBy,
+    DateTime? createdAt,
+  }) async {
+    final updatedStatus = await _learningSupportApiService.updateCategoryStatus(
+      pupilId,
+      statusId,
+      score,
+      comment,
+      createdBy,
+      createdAt,
+    );
 
-  //   _notificationService.showSnackBar(
-  //       NotificationType.success, 'Status aktualisiert');
+    if (updatedStatus == null) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Aktualisieren des Status.',
+      );
+      return;
+    }
 
-  //   return;
-  // }
+    // Update the status in-place on the pupil proxy
+    final pupil = _pupilManager.getPupilByPupilId(pupilId);
+    if (pupil != null) {
+      final statuses = pupil.supportCategoryStatuses;
+      if (statuses != null) {
+        final index = statuses.indexWhere((s) => s.id == statusId);
+        if (index != -1) {
+          statuses[index] = updatedStatus;
+          pupil.notifyChanged();
+        }
+      }
+    }
 
-  // Future<void> deleteSupportCategoryStatus(String statusId) async {
-  //   final PupilData responsePupil =
-  //       await _learningSupportApiService.deleteCategoryStatus(statusId);
-
-  //   _notificationService.showSnackBar(
-  //       NotificationType.success, 'Status gelöscht');
-
-  //   locator<PupilManager>().updatePupilProxyWithPupilData(responsePupil);
-  //   return;
-  // }
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Status aktualisiert',
+    );
+  }
 
   Future<void> postNewSupportCategoryGoal({
     required int goalCategoryId,

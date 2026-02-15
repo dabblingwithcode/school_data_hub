@@ -2659,8 +2659,8 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<int>(),
               nullable: false,
             ),
-            'supportCategoryId': _i1.ParameterDescription(
-              name: 'supportCategoryId',
+            'statusId': _i1.ParameterDescription(
+              name: 'statusId',
               type: _i1.getType<int>(),
               nullable: false,
             ),
@@ -2694,7 +2694,7 @@ class Endpoints extends _i1.EndpointDispatch {
                   .updateCategoryStatus(
             session,
             params['pupilId'],
-            params['supportCategoryId'],
+            params['statusId'],
             params['status'],
             params['comment'],
             params['createdBy'],

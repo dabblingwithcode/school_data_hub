@@ -277,7 +277,10 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
         const Gap(10),
         Row(
           children: [
-            const Text('Förderschwerpunkt: ', style: TextStyle(fontSize: 15.0)),
+            const Text(
+              'Förderschwerpunkt(e): ',
+              style: TextStyle(fontSize: 15.0),
+            ),
             const Gap(5),
             pupil.specialNeeds == '' || pupil.specialNeeds == null
                 ? const Text(

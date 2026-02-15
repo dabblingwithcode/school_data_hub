@@ -25,170 +25,268 @@ class SupportCategoryStatusEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final learningSupportPlanManager = di<LearningSupportManager>();
+    final learningSupportManager = di<LearningSupportManager>();
     final bool authorizedToChangeStatus =
         LearningSupportHelper.isAuthorizedToChangeStatus(status);
     return Padding(
       padding: const EdgeInsets.only(left: 8.0, right: 8, bottom: 8),
-      child: InkWell(
-        onLongPress: () async {
-          if (!authorizedToChangeStatus) {
-            informationDialog(
-              context,
-              'Keine Berechtigung',
-              'Keine Berechtigung für das Löschen des Status!',
-            );
-            return;
-          }
-          bool? confirm = await confirmationDialog(
-            context: context,
-            title: 'Status löschen?',
-            message: 'Status löschen?',
-          );
-          if (confirm != true) return;
-
-          learningSupportPlanManager.deleteSupportCategoryStatus(
-            pupil.pupilId,
-            status.id!,
-          );
-        },
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Gap(10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  authorizedToChangeStatus
-                      ? InkWell(
-                          onTap: () async {
-                            final DateTime? correctedCreatedAt =
-                                await showDatePicker(
-                                  context: context,
-                                  initialDate: status.createdAt,
-                                  firstDate: DateTime(2000),
-                                  lastDate: DateTime.now().toUtc(),
-                                );
-                            if (correctedCreatedAt != null) {
-                              // TODO: uncomment when ready
-                              // _learningSupportManager
-                              //     .updateSupportCategoryStatusProperty(
-                              //   pupil: pupil,
-                              //   statusId: status.statusId,
-                              //   createdAt: correctedCreatedAt.formatForJson(),
-                              // );
-                            }
-                          },
-                          child: Text(
-                            status.createdAt.formatDateForUser(),
-                            style: TextStyle(
-                              color: AppColors.interactiveColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                        )
-                      : Text(
-                          status.createdAt.formatDateForUser(),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                  Wrap(
-                    children: [
-                      const Text(
-                        'Eingetragen von ',
-                        style: TextStyle(fontSize: 14),
-                      ),
-                      const Gap(5),
-                      authorizedToChangeStatus
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Gap(10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Date row
+                Row(
+                  children: [
+                    Expanded(
+                      child: authorizedToChangeStatus
                           ? InkWell(
                               onTap: () async {
-                                final String? correctedCreatedBy =
-                                    await shortTextfieldDialog(
-                                      title: 'Ersteller ändern',
-                                      obscureText: false,
-                                      hintText: 'Kürzel eintragen',
-                                      labelText: status.createdBy,
+                                final DateTime? correctedCreatedAt =
+                                    await showDatePicker(
                                       context: context,
+                                      initialDate: status.createdAt,
+                                      firstDate: DateTime(2000),
+                                      lastDate: DateTime.now().toUtc(),
                                     );
-                                if (correctedCreatedBy != null) {
-                                  // TODO: uncomment when ready
-                                  // di<LearningSupportManager>().
-                                  //     .updateSupportCategoryStatusProperty(
-                                  //       pupil: pupil,
-                                  //       statusId: status.statusId,
-                                  //       createdBy: correctedCreatedBy,
-                                  //     );
+                                if (correctedCreatedAt != null &&
+                                    correctedCreatedAt != status.createdAt) {
+                                  await learningSupportManager
+                                      .updateSupportCategoryStatus(
+                                        pupilId: pupil.pupilId,
+                                        statusId: status.id!,
+                                        createdAt: correctedCreatedAt,
+                                      );
                                 }
                               },
                               child: Text(
-                                status.createdBy,
+                                status.createdAt.formatDateForUser(),
+                                style: TextStyle(
+                                  color: AppColors.interactiveColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            )
+                          : Text(
+                              status.createdAt.formatDateForUser(),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                    ),
+                    if (authorizedToChangeStatus)
+                      IconButton(
+                        icon: const Icon(Icons.delete_outline, size: 20),
+                        color: Colors.red,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        tooltip: 'Status löschen',
+                        onPressed: () async {
+                          bool? confirm = await confirmationDialog(
+                            context: context,
+                            title: 'Status löschen?',
+                            message: 'Status löschen?',
+                          );
+                          if (confirm != true) return;
+                          learningSupportManager.deleteSupportCategoryStatus(
+                            pupil.pupilId,
+                            status.id!,
+                          );
+                        },
+                      ),
+                  ],
+                ),
+
+                // Created by row
+                Wrap(
+                  children: [
+                    const Text(
+                      'Eingetragen von ',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    const Gap(5),
+                    authorizedToChangeStatus
+                        ? InkWell(
+                            onTap: () async {
+                              final String? correctedCreatedBy =
+                                  await shortTextfieldDialog(
+                                    title: 'Ersteller ändern',
+                                    obscureText: false,
+                                    hintText: 'Kürzel eintragen',
+                                    labelText: status.createdBy,
+                                    context: context,
+                                  );
+                              if (correctedCreatedBy != null &&
+                                  correctedCreatedBy != status.createdBy) {
+                                await learningSupportManager
+                                    .updateSupportCategoryStatus(
+                                      pupilId: pupil.pupilId,
+                                      statusId: status.id!,
+                                      createdBy: correctedCreatedBy,
+                                    );
+                              }
+                            },
+                            child: Text(
+                              status.createdBy,
+                              style: TextStyle(
+                                color: AppColors.interactiveColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          )
+                        : Text(
+                            status.createdBy,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                  ],
+                ),
+
+                const Gap(5),
+
+                // Comment row with edit icon
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: authorizedToChangeStatus
+                          ? InkWell(
+                              onTap: () => _editComment(
+                                context,
+                                learningSupportManager,
+                              ),
+                              child: Text(
+                                status.comment ?? 'nicht vorhanden',
                                 style: TextStyle(
                                   color: AppColors.interactiveColor,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                             )
-                          : Text(
-                              status.createdBy,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                    ],
-                  ),
-
-                  const Gap(5),
-                  authorizedToChangeStatus
-                      ? InkWell(
-                          onTap: () async {
-                            final result = await longTextFieldDialog(
-                              title: 'Status korrigieren',
-                              labelText: 'Status',
-                              initialValue: status.comment,
-                              parentContext: context,
-                            );
-                            if (result == null ||
-                                result.value == status.comment) {
-                              return;
-                              // TODO: uncomment when ready
-                              //  _learningSupportManager
-                              //       .updateSupportCategoryStatusProperty(
-                              //     pupil: pupil,
-                              //     statusId: status.statusId,
-                              //     comment: correctedComment,
-                              //   );
-                            }
-                          },
-                          child: Text(
-                            status.comment ?? 'nicht vorhanden',
-                            style: TextStyle(
-                              color: AppColors.interactiveColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        )
-                      : Text(status.comment ?? 'nicht vorhanden'),
-                  const Gap(5),
-                ],
-              ),
-            ),
-            Column(
-              children: [
-                SupportCategoryStatusSymbol(
-                  size: 60,
-                  pupil: pupil,
-                  categoryId: status.supportCategoryId,
-                  statusId: status.id!,
+                          : Text(status.comment ?? 'nicht vorhanden'),
+                    ),
+                    if (authorizedToChangeStatus)
+                      IconButton(
+                        icon: const Icon(Icons.edit, size: 18),
+                        color: AppColors.interactiveColor,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        tooltip: 'Kommentar bearbeiten',
+                        onPressed: () => _editComment(
+                          context,
+                          learningSupportManager,
+                        ),
+                      ),
+                  ],
                 ),
+                const Gap(5),
               ],
             ),
-          ],
-        ),
+          ),
+          Column(
+            children: [
+              authorizedToChangeStatus
+                  ? InkWell(
+                      onTap: () async {
+                        final int? newScore =
+                            await _showScoreEditDialog(context, status.score);
+                        if (newScore != null && newScore != status.score) {
+                          await learningSupportManager
+                              .updateSupportCategoryStatus(
+                                pupilId: pupil.pupilId,
+                                statusId: status.id!,
+                                score: newScore,
+                              );
+                        }
+                      },
+                      child: SupportCategoryStatusSymbol(
+                        size: 60,
+                        pupil: pupil,
+                        categoryId: status.supportCategoryId,
+                        statusId: status.id!,
+                      ),
+                    )
+                  : SupportCategoryStatusSymbol(
+                      size: 60,
+                      pupil: pupil,
+                      categoryId: status.supportCategoryId,
+                      statusId: status.id!,
+                    ),
+            ],
+          ),
+        ],
       ),
+    );
+  }
+
+  Future<void> _editComment(
+    BuildContext context,
+    LearningSupportManager learningSupportManager,
+  ) async {
+    final result = await longTextFieldDialog(
+      title: 'Status korrigieren',
+      labelText: 'Kommentar',
+      initialValue: status.comment,
+      parentContext: context,
+    );
+    if (result == null) return;
+    // result.value is null when the user taps "LÖSCHEN"
+    if (result.value == status.comment) return;
+    await learningSupportManager.updateSupportCategoryStatus(
+      pupilId: pupil.pupilId,
+      statusId: status.id!,
+      comment: result.value ?? '',
+    );
+  }
+
+  Future<int?> _showScoreEditDialog(
+    BuildContext context,
+    int currentScore,
+  ) async {
+    return showDialog<int>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text(
+            'Ist-Zustand ändern',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: List.generate(4, (index) {
+              final score = index + 1;
+              final isSelected = score == currentScore;
+              return GestureDetector(
+                onTap: () => Navigator.of(context).pop(score),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    border: isSelected
+                        ? Border.all(
+                            color: AppColors.interactiveColor,
+                            width: 3,
+                          )
+                        : null,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Image.asset(
+                    'assets/images/growth_icons/growth_$score-4.png',
+                    width: 50,
+                    height: 50,
+                  ),
+                ),
+              );
+            }),
+          ),
+        );
+      },
     );
   }
 }

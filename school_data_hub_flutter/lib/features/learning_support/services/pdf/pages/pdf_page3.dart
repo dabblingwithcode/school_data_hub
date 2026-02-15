@@ -27,7 +27,7 @@ class PdfPage3 {
       }
     }
 
-    final goals = plan.supportGoals ?? [];
+    final goals = pupil.supportGoals ?? [];
 
     return pw.Page(
       pageFormat: PdfPageFormat.a4.landscape,
@@ -49,8 +49,7 @@ class PdfPage3 {
             // Goals table
             pw.Expanded(
               child: pw.Table(
-                border:
-                    pw.TableBorder.all(color: PdfColors.black, width: 0.5),
+                border: pw.TableBorder.all(color: PdfColors.black, width: 0.5),
                 columnWidths: const {
                   0: pw.FlexColumnWidth(8),
                   1: pw.FlexColumnWidth(10),
@@ -62,8 +61,9 @@ class PdfPage3 {
                 children: [
                   // Header row
                   pw.TableRow(
-                    decoration:
-                        const pw.BoxDecoration(color: PdfColors.grey200),
+                    decoration: const pw.BoxDecoration(
+                      color: PdfColors.grey200,
+                    ),
                     children: [
                       PdfHelpers.tableHeaderCell('Datum', fontBold),
                       PdfHelpers.tableHeaderCell('Bereich', fontBold),
@@ -88,8 +88,7 @@ class PdfPage3 {
                   // Data rows
                   ...goals.map((goal) {
                     final category = supportCategories
-                        .where(
-                            (c) => c.categoryId == goal.supportCategoryId)
+                        .where((c) => c.categoryId == goal.supportCategoryId)
                         .firstOrNull;
                     final categoryName = category?.name ?? 'Unbekannt';
                     final status = statusMap[goal.supportCategoryId];
@@ -101,14 +100,13 @@ class PdfPage3 {
                     return pw.TableRow(
                       children: [
                         PdfHelpers.tableDataCell(
-                            PdfHelpers.formatDate(goal.createdAt),
-                            fontRegular),
+                          PdfHelpers.formatDate(goal.createdAt),
+                          fontRegular,
+                        ),
                         PdfHelpers.tableDataCell(categoryName, fontRegular),
                         PdfHelpers.tableDataCell(istStand, fontRegular),
-                        PdfHelpers.tableDataCell(
-                            goal.description, fontRegular),
-                        PdfHelpers.tableDataCell(
-                            goal.strategies, fontRegular),
+                        PdfHelpers.tableDataCell(goal.description, fontRegular),
+                        PdfHelpers.tableDataCell(goal.strategies, fontRegular),
                         PdfHelpers.tableDataCell(achievedText, fontRegular),
                       ],
                     );
@@ -118,8 +116,11 @@ class PdfPage3 {
                     pw.TableRow(
                       children: [
                         for (int i = 0; i < 6; i++)
-                          PdfHelpers.tableDataCell('', fontRegular,
-                              minHeight: 80),
+                          PdfHelpers.tableDataCell(
+                            '',
+                            fontRegular,
+                            minHeight: 80,
+                          ),
                       ],
                     ),
                 ],
