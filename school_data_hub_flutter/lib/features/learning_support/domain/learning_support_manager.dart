@@ -106,6 +106,30 @@ class LearningSupportManager {
     return;
   }
 
+  Future<bool> updateLearningSupportPlan({
+    required LearningSupportPlan plan,
+  }) async {
+    final success =
+        await _learningSupportApiService.updateLearningSupportPlan(plan);
+
+    if (!success) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Aktualisieren des Förderplans.',
+      );
+      return false;
+    }
+
+    // Update the local plan in the pupil's data
+    await _pupilManager.updatePupilData(plan.pupilId);
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Förderplan aktualisiert',
+    );
+    return true;
+  }
+
   LearningSupportPlan? getCurrentLearningSupportPlan(int pupilId) {
     return di<PupilProxyManager>()
         .getPupilByPupilId(pupilId)!

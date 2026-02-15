@@ -111,24 +111,19 @@ class PdfPage1 {
                     font: fontRegular,
                     width: 30,
                   ),
-                  pw.Text(
-                    ' / ',
-                    style: pw.TextStyle(font: fontBold, fontSize: 9),
-                  ),
-                  PdfHelpers.fillField(
-                    text: semester != null
-                        ? (semester.isFirst ? '1' : '2')
-                        : '',
-                    font: fontRegular,
-                    width: 20,
-                  ),
+
                   pw.SizedBox(width: 10),
                   pw.Text(
                     'Schulbesuchsjahr:',
                     style: pw.TextStyle(font: fontBold, fontSize: 9),
                   ),
                   pw.SizedBox(width: 4),
-                  PdfHelpers.fillField(font: fontRegular, width: 30),
+                  PdfHelpers.fillField(
+                    text: PdfHelpers.calculateSchulbesuchsjahr(pupil)
+                        .toString(),
+                    font: fontRegular,
+                    width: 30,
+                  ),
                   pw.SizedBox(width: 10),
                   pw.Text(
                     'Klasse:',

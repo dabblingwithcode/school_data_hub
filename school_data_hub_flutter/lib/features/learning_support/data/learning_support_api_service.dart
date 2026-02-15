@@ -20,6 +20,16 @@ class LearningSupportApiService {
     return response;
   }
 
+  Future<bool> updateLearningSupportPlan(
+    LearningSupportPlan plan,
+  ) async {
+    final response = await ClientHelper.apiCall(
+      call: () => _client.learningSupportPlan.updateLearningSupportPlan(plan),
+      errorMessage: 'Fehler beim Aktualisieren des Förderplans',
+    );
+    return response ?? false;
+  }
+
   //- SUPPORT CATEGORIES --------------------------------------------------
 
   //- CREATE

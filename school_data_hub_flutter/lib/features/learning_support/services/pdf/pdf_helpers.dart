@@ -29,6 +29,26 @@ class PdfHelpers {
     return years;
   }
 
+  /// Calculate the "Schulbesuchsjahr" from the pupil's school grade,
+  /// adding one extra year if the pupil was held back.
+  static int calculateSchulbesuchsjahr(PupilProxy pupil) {
+    int base;
+    switch (pupil.schoolGrade) {
+      case SchoolGrade.E1:
+        base = 1;
+      case SchoolGrade.E2:
+        base = 2;
+      case SchoolGrade.E3:
+        base = 3;
+      case SchoolGrade.K3:
+        base = 3;
+      case SchoolGrade.K4:
+        base = 4;
+    }
+    if (pupil.schoolyearHeldBackAt != null) base += 1;
+    return base;
+  }
+
   static String getStatusSymbol(int score) {
     switch (score) {
       case 1:

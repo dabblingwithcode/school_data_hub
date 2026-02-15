@@ -16,7 +16,6 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_goals_list.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan/controller/new_learning_support_plan_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
@@ -24,8 +23,8 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/s
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/kindergarden_info_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/preschool_revision_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/support_level_dialog.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/learning_support_plan_card.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/support_category_statuses_list.dart';
-import 'package:school_data_hub_flutter/features/learning_support/services/pdf/learning_support_plan_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
@@ -394,7 +393,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
 
         // Active plan card (always visible)
         if (activePlan != null)
-          _buildPlanCard(context, activePlan)
+          LearningSupportPlanCard(plan: activePlan, pupil: pupil)
         else
           const Padding(
             padding: EdgeInsets.all(16.0),
@@ -425,7 +424,9 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                 ),
               )
             else
-              ...otherPlans.map((plan) => _buildPlanCard(context, plan)),
+              ...otherPlans.map(
+                (plan) => LearningSupportPlanCard(plan: plan, pupil: pupil),
+              ),
             const Gap(10),
             // New Learning Support Plan Button
             // TODO: show if special educator or group tutor
@@ -458,188 +459,6 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
         ),
       ],
     );
-  }
-
-  /// Build a card widget for displaying a learning support plan
-  Widget _buildPlanCard(BuildContext context, LearningSupportPlan plan) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Plan ID and Support Level
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    plan.planId,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8.0,
-                    vertical: 4.0,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.backgroundColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12.0),
-                    border: Border.all(
-                      color: AppColors.backgroundColor.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: Text(
-                    'Förderebene ${plan.learningSupportLevelId}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.backgroundColor,
-                    ),
-                  ),
-                ),
-                const Gap(10),
-                // PDF Generation Button
-                InkWell(
-                  onTap: () => _generatePlanPdf(context, plan),
-                  child: Container(
-                    padding: const EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      color: AppColors.accentColor.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8.0),
-                      border: Border.all(
-                        color: AppColors.accentColor.withValues(alpha: 0.3),
-                      ),
-                    ),
-                    child: Icon(
-                      Icons.picture_as_pdf,
-                      size: 20,
-                      color: AppColors.accentColor,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const Gap(8),
-
-            // Created info
-            Row(
-              children: [
-                const Icon(Icons.person, size: 16, color: Colors.grey),
-                const Gap(4),
-                Text(
-                  'Erstellt von: ${plan.createdBy}',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-                const Spacer(),
-                const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
-                const Gap(4),
-                Text(
-                  '${plan.createdAt.day}.${plan.createdAt.month}.${plan.createdAt.year}',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-              ],
-            ),
-
-            // Optional fields if they exist
-            if (plan.comment?.isNotEmpty ?? false) ...[
-              const Gap(8),
-              const Text(
-                'Kommentar:',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-              ),
-              const Gap(2),
-              Text(plan.comment!, style: const TextStyle(fontSize: 12)),
-            ],
-
-            if (plan.socialPedagogue?.isNotEmpty ?? false) ...[
-              const Gap(8),
-              const Text(
-                'Sozialpädagoge:',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-              ),
-              const Gap(2),
-              Text(plan.socialPedagogue!, style: const TextStyle(fontSize: 12)),
-            ],
-
-            if (plan.proffesionalsInvolved?.isNotEmpty ?? false) ...[
-              const Gap(8),
-              const Text(
-                'Beteiligte Fachkräfte:',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-              ),
-              const Gap(2),
-              Text(
-                plan.proffesionalsInvolved!,
-                style: const TextStyle(fontSize: 12),
-              ),
-            ],
-
-            if (plan.strengthsDescription?.isNotEmpty ?? false) ...[
-              const Gap(8),
-              const Text(
-                'Stärken:',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-              ),
-              const Gap(2),
-              Text(
-                plan.strengthsDescription!,
-                style: const TextStyle(fontSize: 12),
-              ),
-            ],
-
-            if (plan.problemsDescription?.isNotEmpty ?? false) ...[
-              const Gap(8),
-              const Text(
-                'Probleme:',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-              ),
-              const Gap(2),
-              Text(
-                plan.problemsDescription!,
-                style: const TextStyle(fontSize: 12),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// Generate PDF for a learning support plan
-  Future<void> _generatePlanPdf(
-    BuildContext context,
-    LearningSupportPlan plan,
-  ) async {
-    try {
-      final supportCategoryManager = di<SupportCategoryManager>();
-      final supportCategories = supportCategoryManager.supportCategories.value;
-
-      final file =
-          await LearningSupportPlanPdfGenerator.generateLearningSupportPlanPdf(
-            plan: plan,
-            pupil: pupil,
-            supportCategories: supportCategories,
-          );
-
-      // Navigate to PDF viewer
-      if (context.mounted) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (ctx) => LearningSupportPlanPdfViewPage(pdfFile: file),
-          ),
-        );
-      }
-    } catch (e) {
-      di<NotificationService>().showSnackBar(
-        NotificationType.error,
-        'Fehler beim Erstellen des PDFs: $e',
-      );
-    }
   }
 
   /// Upload a file to PreSchoolMedical record
