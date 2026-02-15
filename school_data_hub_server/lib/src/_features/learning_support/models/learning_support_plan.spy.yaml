@@ -4,6 +4,7 @@ fields:
   planId: String
   number: int?
   createdBy: String
+  specialNeedsTeacher: String?
   socialPedagogue: String?
   proffesionalsInvolved: String?
   strengthsDescription: String?

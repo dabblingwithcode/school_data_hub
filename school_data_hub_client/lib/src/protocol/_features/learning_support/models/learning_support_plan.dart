@@ -24,6 +24,7 @@ abstract class LearningSupportPlan implements _i1.SerializableModel {
     required this.planId,
     this.number,
     required this.createdBy,
+    this.specialNeedsTeacher,
     this.socialPedagogue,
     this.proffesionalsInvolved,
     this.strengthsDescription,
@@ -45,6 +46,7 @@ abstract class LearningSupportPlan implements _i1.SerializableModel {
     required String planId,
     int? number,
     required String createdBy,
+    String? specialNeedsTeacher,
     String? socialPedagogue,
     String? proffesionalsInvolved,
     String? strengthsDescription,
@@ -67,6 +69,7 @@ abstract class LearningSupportPlan implements _i1.SerializableModel {
       planId: jsonSerialization['planId'] as String,
       number: jsonSerialization['number'] as int?,
       createdBy: jsonSerialization['createdBy'] as String,
+      specialNeedsTeacher: jsonSerialization['specialNeedsTeacher'] as String?,
       socialPedagogue: jsonSerialization['socialPedagogue'] as String?,
       proffesionalsInvolved:
           jsonSerialization['proffesionalsInvolved'] as String?,
@@ -114,6 +117,8 @@ abstract class LearningSupportPlan implements _i1.SerializableModel {
 
   String createdBy;
 
+  String? specialNeedsTeacher;
+
   String? socialPedagogue;
 
   String? proffesionalsInvolved;
@@ -150,6 +155,7 @@ abstract class LearningSupportPlan implements _i1.SerializableModel {
     String? planId,
     int? number,
     String? createdBy,
+    String? specialNeedsTeacher,
     String? socialPedagogue,
     String? proffesionalsInvolved,
     String? strengthsDescription,
@@ -172,6 +178,8 @@ abstract class LearningSupportPlan implements _i1.SerializableModel {
       'planId': planId,
       if (number != null) 'number': number,
       'createdBy': createdBy,
+      if (specialNeedsTeacher != null)
+        'specialNeedsTeacher': specialNeedsTeacher,
       if (socialPedagogue != null) 'socialPedagogue': socialPedagogue,
       if (proffesionalsInvolved != null)
         'proffesionalsInvolved': proffesionalsInvolved,
@@ -210,6 +218,7 @@ class _LearningSupportPlanImpl extends LearningSupportPlan {
     required String planId,
     int? number,
     required String createdBy,
+    String? specialNeedsTeacher,
     String? socialPedagogue,
     String? proffesionalsInvolved,
     String? strengthsDescription,
@@ -229,6 +238,7 @@ class _LearningSupportPlanImpl extends LearningSupportPlan {
           planId: planId,
           number: number,
           createdBy: createdBy,
+          specialNeedsTeacher: specialNeedsTeacher,
           socialPedagogue: socialPedagogue,
           proffesionalsInvolved: proffesionalsInvolved,
           strengthsDescription: strengthsDescription,
@@ -254,6 +264,7 @@ class _LearningSupportPlanImpl extends LearningSupportPlan {
     String? planId,
     Object? number = _Undefined,
     String? createdBy,
+    Object? specialNeedsTeacher = _Undefined,
     Object? socialPedagogue = _Undefined,
     Object? proffesionalsInvolved = _Undefined,
     Object? strengthsDescription = _Undefined,
@@ -274,6 +285,9 @@ class _LearningSupportPlanImpl extends LearningSupportPlan {
       planId: planId ?? this.planId,
       number: number is int? ? number : this.number,
       createdBy: createdBy ?? this.createdBy,
+      specialNeedsTeacher: specialNeedsTeacher is String?
+          ? specialNeedsTeacher
+          : this.specialNeedsTeacher,
       socialPedagogue:
           socialPedagogue is String? ? socialPedagogue : this.socialPedagogue,
       proffesionalsInvolved: proffesionalsInvolved is String?

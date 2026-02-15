@@ -25,9 +25,9 @@ class SupportCategoryStatusCard extends StatelessWidget {
     final learningSupportManager = di<SupportCategoryManager>();
     final int supportCategoryId =
         statusesWithSameGoalCategory[0].supportCategoryId;
-    final Color supportCategoryColor = learningSupportManager.getCategoryColor(
-      supportCategoryId,
-    );
+    // final Color supportCategoryColor = learningSupportManager.getCategoryColor(
+    //   supportCategoryId,
+    // );
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       child: Column(

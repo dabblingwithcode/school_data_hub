@@ -1533,6 +1533,12 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'String',
         ),
         _i2.ColumnDefinition(
+          name: 'specialNeedsTeacher',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
           name: 'socialPedagogue',
           columnType: _i2.ColumnType.text,
           isNullable: true,

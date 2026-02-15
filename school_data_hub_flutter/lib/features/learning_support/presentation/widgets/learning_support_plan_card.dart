@@ -332,22 +332,6 @@ class _LearningSupportPlanCardState extends State<LearningSupportPlanCard> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Gap(12),
-        const Divider(),
-        const Gap(8),
-
-        // Comment field
-        const Text(
-          'Ergänze Hinweise und Absprachen:',
-          style: AppStyles.textLabel,
-        ),
-        const Gap(4),
-        TextField(
-          controller: _commentController,
-          maxLines: 3,
-          decoration: AppStyles.textFieldDecoration(labelText: 'Kommentar'),
-        ),
-
-        const Gap(12),
 
         // Social Pedagogue field
         const Text('Sozialpädagoge:', style: AppStyles.textLabel),
@@ -397,7 +381,17 @@ class _LearningSupportPlanCardState extends State<LearningSupportPlanCard> {
             labelText: 'Problembeschreibung',
           ),
         ),
-
+        // Comment field
+        const Text(
+          'Ergänze Hinweise und Absprachen:',
+          style: AppStyles.textLabel,
+        ),
+        const Gap(4),
+        TextField(
+          controller: _commentController,
+          maxLines: 3,
+          decoration: AppStyles.textFieldDecoration(labelText: 'Kommentar'),
+        ),
         const Gap(16),
 
         // Save / Cancel buttons
