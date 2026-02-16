@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_sortable_page/select_parent_category_page.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_sortable_page/widgets/support_category_leaf_card_sortable.dart';
 
-class SupportCategoryCardSortable extends StatefulWidget {
+class SupportCategoryCardSortable extends WatchingStatefulWidget {
   final SupportCategory category;
   final Color backgroundColor;
   final int index;
@@ -31,14 +31,11 @@ class SupportCategoryCardSortable extends StatefulWidget {
 class _SupportCategoryCardSortableState
     extends State<SupportCategoryCardSortable> {
   late List<int> _childOrder;
-  late final CustomExpansionTileController _expansionController;
-  bool _isExpanded = false;
 
   @override
   void initState() {
     super.initState();
     _childOrder = _buildChildOrder();
-    _expansionController = CustomExpansionTileController();
   }
 
   @override
@@ -50,17 +47,18 @@ class _SupportCategoryCardSortableState
   }
 
   List<int> _buildChildOrder() {
-    final children = widget.allCategories
-        .where((c) => c.parentCategory == widget.category.categoryId)
-        .toList()
-      ..sort((a, b) {
-        if (a.order != null && b.order != null) {
-          return a.order!.compareTo(b.order!);
-        }
-        if (a.order != null) return -1;
-        if (b.order != null) return 1;
-        return a.categoryId.compareTo(b.categoryId);
-      });
+    final children =
+        widget.allCategories
+            .where((c) => c.parentCategory == widget.category.categoryId)
+            .toList()
+          ..sort((a, b) {
+            if (a.order != null && b.order != null) {
+              return a.order!.compareTo(b.order!);
+            }
+            if (a.order != null) return -1;
+            if (b.order != null) return 1;
+            return a.categoryId.compareTo(b.categoryId);
+          });
     return children.map((c) => c.categoryId).toList();
   }
 
@@ -135,6 +133,10 @@ class _SupportCategoryCardSortableState
 
   @override
   Widget build(BuildContext context) {
+    final _expansionController = createOnce(
+      () => CustomExpansionTileController(),
+    );
+    final isExpanded = watch(_expansionController.isExpanded).value;
     final isRoot = widget.category.parentCategory == null;
 
     return Padding(
@@ -185,14 +187,9 @@ class _SupportCategoryCardSortableState
                   if (_childOrder.isNotEmpty) ...[
                     CustomExpansionTileSwitch(
                       customExpansionTileController: _expansionController,
-                      onChanged: (expanded) {
-                        setState(() {
-                          _isExpanded = expanded;
-                        });
-                      },
                     ),
                   ],
-                  if (_isExpanded)
+                  if (isExpanded)
                     const SizedBox(width: 36)
                   else
                     ReorderableDragStartListener(

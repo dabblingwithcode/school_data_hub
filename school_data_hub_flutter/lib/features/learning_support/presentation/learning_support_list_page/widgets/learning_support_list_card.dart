@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
@@ -13,20 +13,14 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profil
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 
-class LearningSupportCard extends WatchingStatefulWidget {
+class LearningSupportCard extends WatchingWidget {
   final PupilProxy pupil;
   const LearningSupportCard(this.pupil, {super.key});
 
   @override
-  State<LearningSupportCard> createState() => _LearningSupportCardState();
-}
-
-class _LearningSupportCardState extends State<LearningSupportCard> {
-  final CustomExpansionTileController _tileController =
-      CustomExpansionTileController();
-  @override
   Widget build(BuildContext context) {
-    final PupilProxy pupil = watch(widget.pupil);
+    final _tileController = createOnce(() => CustomExpansionTileController());
+    final PupilProxy pupil = watch(this.pupil);
 
     return Card(
       color: Colors.white,
@@ -129,11 +123,7 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: InkWell(
-                            onTap: () {
-                              _tileController.isExpanded
-                                  ? _tileController.collapse()
-                                  : _tileController.expand();
-                            },
+                            onTap: () => _tileController.toggle(),
                             child: SupportGoalBatches(pupil: pupil),
                           ),
                         ),
@@ -142,11 +132,7 @@ class _LearningSupportCardState extends State<LearningSupportCard> {
               ),
               const Gap(8),
               InkWell(
-                onTap: () {
-                  _tileController.isExpanded
-                      ? _tileController.collapse()
-                      : _tileController.expand();
-                },
+                onTap: () => _tileController.toggle(),
                 onLongPress: () async {
                   // TODO: uncomment when ready
                   //    supportLevelDialog(context, pupil, pupil.latestSupportLevel);

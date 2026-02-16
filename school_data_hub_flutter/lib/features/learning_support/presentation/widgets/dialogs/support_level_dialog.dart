@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -13,15 +15,26 @@ import 'package:flutter_it/flutter_it.dart';
 Future<void> supportLevelDialog(
   BuildContext context,
   PupilProxy pupil,
-  int? value,
-) async {
+  int? value, {
+  SupportLevel? existingSupportLevel,
+}) async {
   return await showDialog(
     context: context,
     builder: (context) {
-      int dialogDropdownValue = value ?? 0;
+      final bool isEditing = existingSupportLevel != null;
+      int dialogDropdownValue =
+          isEditing ? existingSupportLevel.level : (value ?? 0);
 
-      DateTime selectedDate = DateTime.now().toUtc();
-      String textValue = '';
+      DateTime selectedDate =
+          isEditing ? existingSupportLevel.createdAt : DateTime.now().toUtc();
+      String textValue =
+          isEditing
+              ? (existingSupportLevel.comment.isNotEmpty
+                  ? customEncrypter.decryptString(
+                    existingSupportLevel.comment,
+                  )
+                  : '')
+              : '';
       return StatefulBuilder(
         builder: (context, setState) {
           final hubSessionManager = di<HubSessionManager>();
@@ -145,6 +158,7 @@ Future<void> supportLevelDialog(
                   ),
                   const Gap(10),
                   TextFormField(
+                    initialValue: textValue,
                     onChanged: (newTextValue) {
                       setState(() {
                         textValue = newTextValue;
@@ -165,7 +179,11 @@ Future<void> supportLevelDialog(
                 ],
               ),
             ),
-            title: const Text('Förderebene ändern'),
+            title: Text(
+              isEditing
+                  ? 'Förderebene bearbeiten'
+                  : 'Förderebene ändern',
+            ),
             actions: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(15.0),
@@ -194,12 +212,18 @@ Future<void> supportLevelDialog(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  onTap: () {
+                  onTap: () async {
                     if (textValue.isEmpty) {
                       notificationService.showInformationDialog(
                         'Das Kommentarfeld darf nicht leer sein.',
                       );
                       return;
+                    }
+                    if (isEditing) {
+                      await PupilMutator().deleteSupportLevelHistoryItem(
+                        pupilId: pupil.pupilId,
+                        supportLevelId: existingSupportLevel.id!,
+                      );
                     }
                     PupilMutator().updatePupilSupportLevel(
                       pupilId: pupil.pupilId,
@@ -209,7 +233,9 @@ Future<void> supportLevelDialog(
                       createdBy: hubSessionManager.userName!,
                     );
 
-                    Navigator.of(context).pop();
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                    }
                   },
                 ),
               ),

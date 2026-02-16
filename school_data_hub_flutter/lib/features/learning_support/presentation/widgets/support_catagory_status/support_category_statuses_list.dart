@@ -83,12 +83,16 @@ class _RootCategoryHeader extends StatelessWidget {
         children: [
           SupportCategoryBadge(categoryId: rootCategoryId, size: 40.0),
           const Gap(10),
-          Text(
-            rootCategory.name,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: color,
+          Expanded(
+            child: Text(
+              rootCategory.name,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
             ),
           ),
         ],

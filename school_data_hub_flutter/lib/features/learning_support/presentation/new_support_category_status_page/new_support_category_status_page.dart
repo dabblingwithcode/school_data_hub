@@ -39,7 +39,7 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
         body: Center(
           heightFactor: 1,
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(10.0),
             child: Column(
               children: [
                 SingleChildScrollView(
@@ -61,7 +61,7 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const Gap(10),
+                        const Gap(5),
                         controller.goalCategoryId == null ||
                                 controller.goalCategoryId == 0
                             ? ElevatedButton(
@@ -99,9 +99,9 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                                 ),
                               )
                             : CategoryTreeAncestors(
+                                showBadge: true,
                                 categoryId: controller.goalCategoryId!,
                               ),
-                        const Gap(5),
 
                         const Gap(5),
                         Row(
@@ -121,7 +121,7 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const Gap(10),
+                        const Gap(5),
                         if (controller.widget.appBarTitle ==
                                 'Neues Förderziel' ||
                             controller.isEditMode) ...[

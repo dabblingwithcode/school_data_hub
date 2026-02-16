@@ -18,14 +18,13 @@ Future<void> kindergardenInfoDialog(
     builder: (context) {
       int attendedMonths = currentInfo?.attendedMonths ?? 0;
       String comments = currentInfo?.comments ?? '';
+      final monthsController = TextEditingController(
+        text: attendedMonths > 0 ? attendedMonths.toString() : '',
+      );
+      final commentsController = TextEditingController(text: comments);
 
       return StatefulBuilder(
         builder: (context, setState) {
-          final monthsController = TextEditingController(
-            text: attendedMonths > 0 ? attendedMonths.toString() : '',
-          );
-          final commentsController = TextEditingController(text: comments);
-
           return AlertDialog(
             contentPadding: const EdgeInsets.all(20),
             content: Form(
@@ -104,8 +103,6 @@ Future<void> kindergardenInfoDialog(
             actions: <Widget>[
               TextButton(
                 onPressed: () {
-                  monthsController.dispose();
-                  commentsController.dispose();
                   Navigator.of(context).pop();
                 },
                 child: Text(
@@ -121,8 +118,6 @@ Future<void> kindergardenInfoDialog(
               if (currentInfo != null)
                 TextButton(
                   onPressed: () async {
-                    monthsController.dispose();
-                    commentsController.dispose();
                     await di<PupilMutator>().updateKindergardenInfo(
                       pupilId: pupil.pupilId,
                       kindergardenInfo: null,
@@ -144,8 +139,6 @@ Future<void> kindergardenInfoDialog(
                     attendedMonths: attendedMonths,
                     comments: comments,
                   );
-                  monthsController.dispose();
-                  commentsController.dispose();
                   await PupilMutator().updateKindergardenInfo(
                     pupilId: pupil.pupilId,
                     kindergardenInfo: newInfo,

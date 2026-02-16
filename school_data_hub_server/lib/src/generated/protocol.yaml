@@ -154,6 +154,7 @@ pupilUpdate:
   - updatePupil:
   - updateCommunicationSkills:
   - updateTutorInfo:
+  - updateKindergardenData:
   - updateSiblingsTutorInfo:
   - updatePupilDocument:
   - updateStringProperty:

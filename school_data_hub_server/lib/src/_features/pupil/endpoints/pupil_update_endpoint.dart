@@ -56,6 +56,25 @@ class PupilUpdateEndpoint extends Endpoint {
     return updatedPupilWithRelation!;
   }
 
+  Future<PupilData> updateKindergardenData(
+      Session session, int pupilId, KindergardenInfo? kindergardenData) async {
+    final pupil = await PupilData.db
+        .findById(session, pupilId, include: PupilSchemas.allInclude);
+    if (pupil == null) {
+      throw Exception('Pupil not found');
+    }
+    pupil.kindergardenData = kindergardenData;
+    // Update the pupil in the database
+    await PupilData.db.updateRow(session, pupil);
+    // Fetch the object again with the relation included
+    final updatedPupilWithRelation = await PupilData.db.findById(
+      session,
+      pupil.id!,
+      include: PupilSchemas.allInclude,
+    );
+    return updatedPupilWithRelation!;
+  }
+
   Future<List<PupilData>> updateSiblingsTutorInfo(
       Session session, SiblingsTutorInfo siblingsTutorInfo) async {
     final List<PupilData> updatedSiblings = [];

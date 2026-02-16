@@ -5,12 +5,13 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
+import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.dart';
@@ -28,18 +29,22 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/support_level_history_expansion_tile.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
 class PupilProfileLearningSupportContentList extends WatchingWidget {
   final PupilProxy pupil;
-  late final CustomExpansionTileController _plansExpansionController;
 
-  PupilProfileLearningSupportContentList({required this.pupil, super.key}) {
-    _plansExpansionController = CustomExpansionTileController();
-  }
+  const PupilProfileLearningSupportContentList({
+    required this.pupil,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final plansExpansionController = createOnce(
+      () => CustomExpansionTileController(),
+    );
     final hubSessionManager = di<HubSessionManager>();
     final isAdmin = hubSessionManager.isAdmin;
 
@@ -59,247 +64,180 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Row(
-          children: [
-            Text('Eingangsuntersuchung: ', style: TextStyle(fontSize: 15.0)),
-            Gap(5),
-          ],
-        ),
-        const Gap(10),
-
-        Row(
-          children: [
-            Expanded(
-              child: InkWell(
+        PupilProfileContentRow(
+          icon: Icons.medical_services_outlined,
+          label: 'Eingangsuntersuchung',
+          valueWidget: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              InkWell(
                 onTap: () => preschoolRevisionDialog(
                   context,
                   pupil,
                   pupil.preSchoolMedical?.preschoolMedicalStatus,
                 ),
+                borderRadius: BorderRadius.circular(8),
                 child: Text(
                   PupilProxyHelper.preschoolRevisionPredicate(
                     pupil.preSchoolMedical,
                   ),
                   style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.interactiveColor,
                   ),
                 ),
               ),
-            ),
-            // HubDocument files display (following competence check pattern)
-            if (pupil.preSchoolMedical?.preschoolMedicalFiles != null)
-              for (HubDocument file
-                  in pupil.preSchoolMedical!.preschoolMedicalFiles!) ...[
-                const Gap(10),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    InkWell(
-                      onTap: () async {
-                        // Show document in full screen dialog
-                        showDialog(
-                          context: context,
-                          builder: (context) => Dialog(
-                            child: Container(
-                              constraints: const BoxConstraints(
-                                maxWidth: 600,
-                                maxHeight: 800,
-                              ),
-                              child: EncryptedDocumentImage(
-                                documentId: file.documentId,
-                                size: 400,
+              const Gap(8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  if (pupil.preSchoolMedical?.preschoolMedicalFiles != null)
+                    for (HubDocument file
+                        in pupil.preSchoolMedical!.preschoolMedicalFiles!)
+                      InkWell(
+                        onTap: () async {
+                          showDialog(
+                            context: context,
+                            builder: (context) => Dialog(
+                              child: Container(
+                                constraints: const BoxConstraints(
+                                  maxWidth: 600,
+                                  maxHeight: 800,
+                                ),
+                                child: EncryptedDocumentImage(
+                                  documentId: file.documentId,
+                                  size: 400,
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                      onLongPress: () async {
-                        if (!isAdmin) {
-                          di<NotificationService>().showSnackBar(
-                            NotificationType.error,
-                            'Nur Admins können Dokumente ansehen',
                           );
-                          return;
-                        }
-                        bool? confirm = await confirmationDialog(
-                          context: context,
-                          title: 'Dokument löschen',
-                          message: 'Dokument löschen?',
-                        );
-                        if (confirm != true) {
-                          return;
-                        }
-
-                        await _removeFileFromPreSchoolMedical(file, pupil);
-                      },
-                      child: EncryptedDocumentImage(
-                        documentId: file.documentId,
-                        size: 70,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            // Upload button (following competence check pattern)
-            if (pupil.preSchoolMedical?.preschoolMedicalFiles == null ||
-                (pupil.preSchoolMedical?.preschoolMedicalFiles?.length ?? 0) <
-                    4)
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  InkWell(
-                    onTap: () async {
-                      if (!isAdmin) {
-                        di<NotificationService>().showSnackBar(
-                          NotificationType.error,
-                          'Nur Admins können Dokumente hochladen',
-                        );
-                        return;
-                      }
-                      final File? file = await createAndCropImageFile(context);
-                      if (file == null) return;
-
-                      await _uploadFileToPreSchoolMedical(file, pupil);
-                    },
-                    child: SizedBox(
-                      height: 70,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: Image.asset('assets/document_camera.png'),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-          ],
-        ),
-        if (isAdmin) ...[
-          const Row(
-            children: [
-              Text('Kindergartenbesuch: ', style: TextStyle(fontSize: 15.0)),
-              Gap(5),
-            ],
-          ),
-          const Gap(10),
-          InkWell(
-            onTap: () =>
-                kindergardenInfoDialog(context, pupil, kindergardenInfo),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Text(
-                      'Besuchte Monate: ',
-                      style: TextStyle(fontSize: 15.0),
-                    ),
-                    Text(
-                      kindergardenInfo != null
-                          ? '${kindergardenInfo.attendedMonths} Monate'
-                          : 'kein Eintrag',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.interactiveColor,
-                      ),
-                    ),
-                  ],
-                ),
-                if (kindergardenInfo != null &&
-                    kindergardenInfo.comments.isNotEmpty) ...[
-                  const Gap(5),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Anmerkungen: ',
-                        style: TextStyle(fontSize: 15.0),
-                      ),
-                      Expanded(
-                        child: Text(
-                          kindergardenInfo.comments,
-                          style: TextStyle(
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.interactiveColor,
+                        },
+                        onLongPress: () async {
+                          if (!isAdmin) {
+                            di<NotificationService>().showSnackBar(
+                              NotificationType.error,
+                              'Nur Admins können Dokumente ansehen',
+                            );
+                            return;
+                          }
+                          bool? confirm = await confirmationDialog(
+                            context: context,
+                            title: 'Dokument löschen',
+                            message: 'Dokument löschen?',
+                          );
+                          if (confirm != true) return;
+                          await _removeFileFromPreSchoolMedical(file, pupil);
+                        },
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: EncryptedDocumentImage(
+                            documentId: file.documentId,
+                            size: 70,
                           ),
                         ),
                       ),
-                    ],
+                  if (pupil.preSchoolMedical?.preschoolMedicalFiles == null ||
+                      (pupil.preSchoolMedical?.preschoolMedicalFiles?.length ??
+                              0) <
+                          4)
+                    InkWell(
+                      onTap: () async {
+                        if (!isAdmin) {
+                          di<NotificationService>().showSnackBar(
+                            NotificationType.error,
+                            'Nur Admins können Dokumente hochladen',
+                          );
+                          return;
+                        }
+                        final File? file = await createAndCropImageFile(
+                          context,
+                        );
+                        if (file == null) return;
+                        final encryptedFile = await customEncrypter.encryptFile(
+                          file,
+                        );
+                        await _uploadFileToPreSchoolMedical(
+                          encryptedFile,
+                          pupil,
+                        );
+                      },
+                      child: SizedBox(
+                        height: 70,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: Image.asset('assets/document_camera.png'),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        if (isAdmin) ...[
+          const Gap(8),
+          PupilProfileContentRow(
+            icon: Icons.child_care,
+            label: 'Kindergartenbesuch',
+            onTap: () =>
+                kindergardenInfoDialog(context, pupil, kindergardenInfo),
+            valueWidget: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  kindergardenInfo != null
+                      ? '${kindergardenInfo.attendedMonths} Monate'
+                      : 'kein Eintrag',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.interactiveColor,
+                  ),
+                ),
+                if (kindergardenInfo != null &&
+                    kindergardenInfo.comments.isNotEmpty) ...[
+                  const Gap(4),
+                  Text(
+                    kindergardenInfo.comments,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.interactiveColor.withValues(alpha: 0.8),
+                    ),
                   ),
                 ],
               ],
             ),
           ),
         ],
-        const Gap(10),
+        const Gap(8),
         if (supportLevelHistory != null)
           supportLevelHistory.isNotEmpty
               ? SupportLevelHistoryExpansionTile(pupil: pupil)
-              : Row(
-                  children: [
-                    const Text(
-                      'Förderebene:',
-                      style: TextStyle(fontSize: 15.0),
-                    ),
-                    const Gap(10),
-                    InkWell(
-                      onTap: () => supportLevelDialog(
-                        context,
-                        pupil,
-                        pupil.latestSupportLevel?.level,
-                      ),
-                      child: Text(
-                        latestSupportLevel == null
-                            ? 'kein Eintrag'
-                            : latestSupportLevel.level == 0
-                            ? 'Förderebene 0'
-                            : latestSupportLevel.level == 1
-                            ? 'Förderebene 1'
-                            : latestSupportLevel.level == 2
-                            ? 'Förderebene 2'
-                            : latestSupportLevel.level == 3
-                            ? 'Förderebene 3'
-                            : latestSupportLevel.level == 4
-                            ? 'Regenbogenförderung'
-                            : 'unbekannt',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.interactiveColor,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-        const Gap(10),
-        Row(
-          children: [
-            const Text(
-              'Förderschwerpunkt(e): ',
-              style: TextStyle(fontSize: 15.0),
-            ),
-            const Gap(5),
-            pupil.specialNeeds == '' || pupil.specialNeeds == null
-                ? const Text(
-                    'keins',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  )
-                : Text(
-                    '${pupil.specialNeeds}',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+              : PupilProfileContentRow(
+                  icon: Icons.layers_outlined,
+                  label: 'Förderebene',
+                  onTap: () => supportLevelDialog(
+                    context,
+                    pupil,
+                    pupil.latestSupportLevel?.level,
                   ),
-          ],
+                  value: _supportLevelText(latestSupportLevel),
+                ),
+        const Gap(8),
+        PupilProfileContentRow(
+          icon: Icons.accessibility_new,
+          label: 'Förderschwerpunkt(e)',
+          value: pupil.specialNeeds == '' || pupil.specialNeeds == null
+              ? 'keins'
+              : pupil.specialNeeds!,
         ),
-
         const Gap(10),
         // Learning Support Plans Section
-        _buildLearningSupportPlansSection(context),
+        _buildLearningSupportPlansSection(context, plansExpansionController),
         const Gap(10),
         InkWell(
           onTap: () {
@@ -309,13 +247,33 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
               ),
             );
           },
-          child: const Row(
-            children: [
-              Text(
-                'Förderbereiche',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-            ],
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.category_outlined,
+                  color: AppColors.backgroundColor,
+                  size: 22,
+                ),
+                const Gap(8),
+                Text(
+                  'Förderbereiche',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.backgroundColor,
+                  ),
+                ),
+                const Spacer(),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                  color: AppColors.backgroundColor.withValues(alpha: 0.5),
+                ),
+              ],
+            ),
           ),
         ),
 
@@ -352,7 +310,10 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
   }
 
   /// Build the learning support plans section with active plan and expansion tile
-  Widget _buildLearningSupportPlansSection(BuildContext context) {
+  Widget _buildLearningSupportPlansSection(
+    BuildContext context,
+    CustomExpansionTileController _plansExpansionController,
+  ) {
     final schoolCalendarManager = di<SchoolCalendarManager>();
     final currentSemester = schoolCalendarManager.currentSemester.value;
 
@@ -457,6 +418,18 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
         ),
       ],
     );
+  }
+
+  String _supportLevelText(SupportLevel? level) {
+    if (level == null) return 'kein Eintrag';
+    return switch (level.level) {
+      0 => 'Förderebene 0',
+      1 => 'Förderebene 1',
+      2 => 'Förderebene 2',
+      3 => 'Förderebene 3',
+      4 => 'Regenbogenförderung',
+      _ => 'unbekannt',
+    };
   }
 
   /// Upload a file to PreSchoolMedical record

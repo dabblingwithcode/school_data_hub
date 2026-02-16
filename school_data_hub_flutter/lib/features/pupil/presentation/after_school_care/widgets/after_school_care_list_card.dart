@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
@@ -11,7 +12,6 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profil
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class AfterSchoolCareCard extends WatchingWidget {
   final PupilProxy pupil;
@@ -103,11 +103,7 @@ class AfterSchoolCareCard extends WatchingWidget {
               ),
               const Gap(20),
               InkWell(
-                onTap: () {
-                  tileController.isExpanded
-                      ? tileController.collapse()
-                      : tileController.expand();
-                },
+                onTap: () => tileController.toggle(),
                 child: Column(
                   children: [
                     const Gap(20),

@@ -14,10 +14,15 @@ class SessionLogCard extends StatelessWidget {
     final hasError = entry.error != null;
     final isSlow = entry.slow == true;
     final isOpen = entry.isOpen == true;
-    final borderColor = _borderColor(hasError: hasError, isSlow: isSlow, isOpen: isOpen);
+    final borderColor = _borderColor(
+      hasError: hasError,
+      isSlow: isSlow,
+      isOpen: isOpen,
+    );
 
-    final endpointLabel =
-        entry.endpoint != null ? '${entry.endpoint}.${entry.method ?? '?'}' : '–';
+    final endpointLabel = entry.endpoint != null
+        ? '${entry.endpoint}.${entry.method ?? '?'}'
+        : '–';
     final timestamp = entry.time
         .toLocal()
         .toIso8601String()
@@ -55,6 +60,7 @@ class SessionLogCard extends StatelessWidget {
                     style: AppStyles.subtitle.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
+                    maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -89,23 +95,16 @@ class SessionLogCard extends StatelessWidget {
             ),
             if (hasError) ...[
               const SizedBox(height: 6),
-              Text(
-                entry.error!,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontFamily: 'monospace',
-                  fontSize: 12,
-                  color: Colors.red,
-                ),
-              ),
+              _ExpandableErrorText(error: entry.error!),
             ],
           ],
         ),
         children: [
           if (info.logs.isNotEmpty) _LogEntriesSection(logs: info.logs),
-          if (info.queries.isNotEmpty) _QueryEntriesSection(queries: info.queries),
-          if (entry.stackTrace != null) _StackTraceSection(stackTrace: entry.stackTrace!),
+          if (info.queries.isNotEmpty)
+            _QueryEntriesSection(queries: info.queries),
+          if (entry.stackTrace != null)
+            _StackTraceSection(stackTrace: entry.stackTrace!),
         ],
       ),
     );
@@ -120,6 +119,48 @@ class SessionLogCard extends StatelessWidget {
     if (isSlow) return AppColors.warningButtonColor;
     if (isOpen) return Colors.blue.shade700;
     return Colors.green.shade700;
+  }
+}
+
+class _ExpandableErrorText extends StatelessWidget {
+  const _ExpandableErrorText({required this.error});
+
+  final String error;
+
+  @override
+  Widget build(BuildContext context) {
+    return _ExpandableMonoText(text: error, color: Colors.red);
+  }
+}
+
+class _ExpandableMonoText extends StatefulWidget {
+  const _ExpandableMonoText({required this.text, this.color = Colors.black87});
+
+  final String text;
+  final Color color;
+
+  @override
+  State<_ExpandableMonoText> createState() => _ExpandableMonoTextState();
+}
+
+class _ExpandableMonoTextState extends State<_ExpandableMonoText> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => setState(() => _expanded = !_expanded),
+      child: Text(
+        widget.text,
+        maxLines: _expanded ? null : 2,
+        overflow: _expanded ? null : TextOverflow.ellipsis,
+        style: TextStyle(
+          fontFamily: 'monospace',
+          fontSize: 12,
+          color: widget.color,
+        ),
+      ),
+    );
   }
 }
 
@@ -174,7 +215,10 @@ class _LogEntriesSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionHeader(icon: Icons.article_outlined, label: 'Log-Einträge'),
+        const _SectionHeader(
+          icon: Icons.article_outlined,
+          label: 'Log-Einträge',
+        ),
         const SizedBox(height: 4),
         ...logs.map(
           (log) => Padding(
@@ -274,16 +318,7 @@ class _QueryEntriesSection extends StatelessWidget {
                     ],
                   ],
                 ),
-                Text(
-                  q.query,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontFamily: 'monospace',
-                    fontSize: 11,
-                    color: Colors.black87,
-                  ),
-                ),
+                _ExpandableMonoText(text: q.query),
               ],
             ),
           ),

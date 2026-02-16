@@ -3,7 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_page.dart';
@@ -82,11 +82,7 @@ class UserListCard extends WatchingWidget {
                 ),
               ),
               InkWell(
-                onTap: () {
-                  tileController.isExpanded
-                      ? tileController.collapse()
-                      : tileController.expand();
-                },
+                onTap: () => tileController.toggle(),
                 child: Padding(
                   padding: const EdgeInsets.only(top: 12, right: 12),
                   child: Column(

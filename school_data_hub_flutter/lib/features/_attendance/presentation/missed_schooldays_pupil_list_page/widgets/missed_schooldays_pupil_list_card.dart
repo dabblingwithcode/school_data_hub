@@ -3,7 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
@@ -16,27 +16,14 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profil
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 
-class MissedSchooldaysPupilListCard extends WatchingStatefulWidget {
+class MissedSchooldaysPupilListCard extends WatchingWidget {
   final PupilProxy pupil;
   const MissedSchooldaysPupilListCard(this.pupil, {super.key});
 
   @override
-  State<MissedSchooldaysPupilListCard> createState() =>
-      _AttendanceRankingListCardState();
-}
-
-class _AttendanceRankingListCardState
-    extends State<MissedSchooldaysPupilListCard> {
-  late CustomExpansionTileController _tileController;
-  @override
-  void initState() {
-    super.initState();
-    _tileController = CustomExpansionTileController();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final PupilProxy pupil = watch(widget.pupil);
+    final _tileController = createOnce(() => CustomExpansionTileController());
+    final PupilProxy pupil = watch(this.pupil);
     final attendanceManager = di<AttendanceManager>();
     List<MissedSchoolday> missedSchooldays = watch(
       attendanceManager.getPupilMissedSchooldaysProxy(pupil.pupilId),

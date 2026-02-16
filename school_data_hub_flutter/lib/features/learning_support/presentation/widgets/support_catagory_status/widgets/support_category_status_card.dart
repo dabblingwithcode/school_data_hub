@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_entry.dart';
@@ -82,11 +83,14 @@ class SupportCategoryStatusCard extends WatchingWidget {
                 switchColor: Colors.black,
                 expansionSwitchWidget: Text(
                   goalIndices.isEmpty
-                      ? 'Förderziele'
+                      ? 'Noch keine Förderziele festgelegt!'
                       : 'Förderziele (${goalIndices.length})',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
+                    color: goalIndices.isEmpty
+                        ? AppColors.accentColor
+                        : Colors.black,
                   ),
                 ),
                 includeSwitch: true,
@@ -94,27 +98,11 @@ class SupportCategoryStatusCard extends WatchingWidget {
               const Gap(10),
             ],
           ),
+          const Gap(5),
           CustomExpansionTileContent(
             tileController: expansionController,
             widgetList: [
-              if (goalIndices.isEmpty)
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.warning, color: Colors.red),
-                    Gap(5),
-                    Text(
-                      'Noch keine Förderziele formuliert!',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Gap(10),
-                  ],
-                )
-              else
+              if (goalIndices.isNotEmpty)
                 for (final goalIndex in goalIndices)
                   SupportGoalCard(
                     pupil: pupil,

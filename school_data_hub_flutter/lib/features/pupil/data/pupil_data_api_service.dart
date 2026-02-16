@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:school_data_hub_client/school_data_hub_client.dart';
@@ -148,14 +147,9 @@ class PupilDataApiService {
     required KindergardenInfo? kindergardenInfo,
   }) async {
     final updatedPupil = await ClientHelper.apiCall(
-      call: () => _client.pupilUpdate.updateStringProperty(
+      call: () => _client.pupilUpdate.updateKindergardenData(
         pupilId,
-        'kindergardenData',
-        (
-          value: kindergardenInfo != null
-              ? jsonEncode(kindergardenInfo.toJson())
-              : null,
-        ),
+        kindergardenInfo,
       ),
       errorMessage:
           'Der Kindergartenbesuch konnte nicht aktualisiert werden',

@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_goal/support_category_badge.dart';
 
 class CategoryTreeAncestors extends StatelessWidget {
+  final bool? showBadge;
   final int categoryId;
 
-  const CategoryTreeAncestors({required this.categoryId, super.key});
+  const CategoryTreeAncestors({
+    required this.categoryId,
+    this.showBadge = false,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -62,8 +69,11 @@ class CategoryTreeAncestors extends StatelessWidget {
 
     return Row(
       children: [
-        // SupportCategoryBadge(categoryId: categoryId, size: 40.0),
-        // const Gap(10),
+        if (showBadge == true) ...[
+          SupportCategoryBadge(categoryId: categoryId, size: 40.0),
+          const Gap(10),
+        ],
+
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

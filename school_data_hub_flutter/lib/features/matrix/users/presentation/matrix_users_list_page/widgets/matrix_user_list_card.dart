@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
@@ -35,13 +35,6 @@ class MatrixUsersListCard extends WatchingStatefulWidget {
 }
 
 class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
-  late CustomExpansionTileController _tileController;
-  @override
-  void initState() {
-    super.initState();
-    _tileController = CustomExpansionTileController();
-  }
-
   PupilProxy? pupil;
 
   MatrixPolicyManager get _matrixPolicyManager => di<MatrixPolicyManager>();
@@ -156,6 +149,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
 
   @override
   Widget build(BuildContext context) {
+    final _tileController = createOnce(() => CustomExpansionTileController());
     final matrixUser = watch<MatrixUser>(widget.matrixUser);
     // TODO: implement this
     final MatrixUserRelationship? userRelationship =
@@ -418,11 +412,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
               ),
               const Gap(20),
               InkWell(
-                onTap: () {
-                  _tileController.isExpanded
-                      ? _tileController.collapse()
-                      : _tileController.expand();
-                },
+                onTap: () => _tileController.toggle(),
                 child: Column(
                   children: [
                     const Gap(20),

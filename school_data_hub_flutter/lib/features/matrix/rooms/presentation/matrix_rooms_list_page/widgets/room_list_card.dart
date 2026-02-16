@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
@@ -254,11 +254,7 @@ class RoomListCard extends WatchingWidget {
               ),
               const Gap(20),
               InkWell(
-                onTap: () {
-                  tileController.isExpanded
-                      ? tileController.collapse()
-                      : tileController.expand();
-                },
+                onTap: () => tileController.toggle(),
                 child: Column(
                   children: [
                     const Gap(20),
