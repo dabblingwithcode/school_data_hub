@@ -18,14 +18,17 @@ class SupportCategoryEndpoint extends Endpoint {
     final fileContent = await convertFileToContentString(session, jsonFilePath);
     final categories =
         await helper.importSupportCategoriesFromFileContentJson(fileContent);
-    await SupportCategory.db.insert(session, categories);
+    await session.db.transaction((transaction) async {
+      await SupportCategory.db
+          .insert(session, categories, transaction: transaction);
 
-    // Reset the auto-increment sequence so that future inserts don't collide
-    // with the imported IDs.
-    await session.db.unsafeExecute(
-      "SELECT setval('support_category_id_seq', "
-      "(SELECT COALESCE(MAX(id), 0) FROM support_category));",
-    );
+      // Reset the auto-increment sequence so that future inserts don't collide
+      // with the imported IDs.
+      await session.db.unsafeExecute(
+        "SELECT setval('support_category_id_seq', "
+        "(SELECT COALESCE(MAX(id), 0) FROM support_category));",
+      );
+    });
 
     return categories;
   }

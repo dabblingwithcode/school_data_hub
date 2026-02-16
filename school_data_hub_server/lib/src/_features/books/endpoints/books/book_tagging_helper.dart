@@ -5,17 +5,17 @@ class BookTaggingHelper {
   static Future<Book> updateBookWithTags(
       Session session, Book book, List<BookTag> tags,
       {Transaction? transaction}) async {
-    await session.db.transaction((transaction) async {
+    Future<Book> doWork(Transaction txn) async {
       // 1. Insert or update tags, collect their IDs
       List<BookTag> updatedTags = [];
 
       for (var tag in tags) {
         if (tag.id == null) {
-          updatedTags.add(await BookTag.db
-              .insertRow(session, tag, transaction: transaction));
+          updatedTags
+              .add(await BookTag.db.insertRow(session, tag, transaction: txn));
         } else {
-          updatedTags.add(await BookTag.db
-              .updateRow(session, tag, transaction: transaction));
+          updatedTags
+              .add(await BookTag.db.updateRow(session, tag, transaction: txn));
         }
       }
 
@@ -23,10 +23,10 @@ class BookTaggingHelper {
       await BookTagging.db.deleteWhere(
         session,
         where: (t) => t.bookId.equals(book.id),
-        transaction: transaction,
+        transaction: txn,
       );
 
-      // 4. Insert new taggings
+      // 3. Insert new taggings
       var newTaggings = updatedTags.map((tag) {
         return BookTagging(
           bookId: book.id!,
@@ -34,16 +34,24 @@ class BookTaggingHelper {
         );
       }).toList();
 
-      await BookTagging.db
-          .insert(session, newTaggings, transaction: transaction);
-    });
-    // return the updated book
-    final updatedBook = await Book.db.findFirstRow(
-      session,
-      where: (t) => t.id.equals(book.id),
-      include: Book.include(tags: BookTagging.includeList()),
-    );
+      await BookTagging.db.insert(session, newTaggings, transaction: txn);
 
-    return updatedBook!;
+      // Return the updated book
+      final updatedBook = await Book.db.findFirstRow(
+        session,
+        where: (t) => t.id.equals(book.id),
+        include: Book.include(tags: BookTagging.includeList()),
+        transaction: txn,
+      );
+
+      return updatedBook!;
+    }
+
+    if (transaction != null) {
+      return await doWork(transaction);
+    }
+    return await session.db.transaction((txn) async {
+      return await doWork(txn);
+    });
   }
 }

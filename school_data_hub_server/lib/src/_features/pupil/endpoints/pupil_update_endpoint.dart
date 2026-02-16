@@ -266,26 +266,31 @@ class PupilUpdateEndpoint extends Endpoint {
       dateTime: DateTime.now(),
       description: description,
     );
-    // Save the credit transaction to the database
-    final creditTransaction =
-        await CreditTransaction.db.insertRow(session, creditTransactionToAdd);
-    // Update the pupil's credit balance
-    PupilData.db.attachRow
-        .creditTransactions(session, pupil, creditTransaction);
 
     pupil.credit += value;
     if (value > 0) {
       pupil.creditEarned += value;
     }
-    // Update the pupil in the database
-    await PupilData.db.updateRow(session, pupil);
-    // Fetch the object again with the relation included
-    final updatedPupil = await PupilData.db.findById(
-      session,
-      pupil.id!,
-      include: PupilSchemas.allInclude,
-    );
-    return updatedPupil!;
+
+    return await session.db.transaction((transaction) async {
+      // Save the credit transaction to the database
+      final creditTransaction = await CreditTransaction.db
+          .insertRow(session, creditTransactionToAdd, transaction: transaction);
+      // Update the pupil's credit balance
+      await PupilData.db.attachRow.creditTransactions(
+          session, pupil, creditTransaction,
+          transaction: transaction);
+      // Update the pupil in the database
+      await PupilData.db.updateRow(session, pupil, transaction: transaction);
+      // Fetch the object again with the relation included
+      final updatedPupil = await PupilData.db.findById(
+        session,
+        pupil.id!,
+        include: PupilSchemas.allInclude,
+        transaction: transaction,
+      );
+      return updatedPupil!;
+    });
   }
 
   Future<PupilData> updatePreSchoolMedicalStatus(
@@ -299,34 +304,40 @@ class PupilUpdateEndpoint extends Endpoint {
     if (pupil == null) {
       throw Exception('Pupil not found');
     }
-    // TODO: preschoolmedical should never be null, so this should be removed
-    if (pupil.preSchoolMedical == null) {
-      final preSchoolMedicalInDatabase = await PreSchoolMedical.db.insertRow(
-          session,
-          PreSchoolMedical(
-            preschoolMedicalStatus: preSchoolMedicalStatus,
-            createdBy: updatedBy,
-            createdAt: DateTime.now().toUtc(),
-          ));
+    return await session.db.transaction((transaction) async {
+      // TODO: preschoolmedical should never be null, so this should be removed
+      if (pupil.preSchoolMedical == null) {
+        final preSchoolMedicalInDatabase = await PreSchoolMedical.db.insertRow(
+            session,
+            PreSchoolMedical(
+              preschoolMedicalStatus: preSchoolMedicalStatus,
+              createdBy: updatedBy,
+              createdAt: DateTime.now().toUtc(),
+            ),
+            transaction: transaction);
 
-      await PupilData.db.attachRow
-          .preSchoolMedical(session, pupil, preSchoolMedicalInDatabase);
-    } else {
-      final updatedPreSchoolMedicalStatus = pupil.preSchoolMedical!.copyWith(
-        preschoolMedicalStatus: preSchoolMedicalStatus,
-        updatedBy: updatedBy,
-        updatedAt: DateTime.now().toUtc(),
+        await PupilData.db.attachRow.preSchoolMedical(
+            session, pupil, preSchoolMedicalInDatabase,
+            transaction: transaction);
+      } else {
+        final updatedPreSchoolMedicalStatus = pupil.preSchoolMedical!.copyWith(
+          preschoolMedicalStatus: preSchoolMedicalStatus,
+          updatedBy: updatedBy,
+          updatedAt: DateTime.now().toUtc(),
+        );
+        await PreSchoolMedical.db.updateRow(
+            session, updatedPreSchoolMedicalStatus,
+            transaction: transaction);
+      }
+
+      final updatedPupil = await PupilData.db.findById(
+        session,
+        pupil.id!,
+        include: PupilSchemas.allInclude,
+        transaction: transaction,
       );
-      await PreSchoolMedical.db
-          .updateRow(session, updatedPreSchoolMedicalStatus);
-    }
-
-    final updatedPupil = await PupilData.db.findById(
-      session,
-      pupil.id!,
-      include: PupilSchemas.allInclude,
-    );
-    return updatedPupil!;
+      return updatedPupil!;
+    });
   }
 
   Future<PupilData> updatePublicMediaAuth(
@@ -357,20 +368,22 @@ class PupilUpdateEndpoint extends Endpoint {
       throw Exception('Pupil not found');
     }
 
-    final supportLevelInDatabase =
-        await SupportLevel.db.insertRow(session, supportLevel);
-    // Update the pupil's credit balance
-    PupilData.db.attachRow
-        .supportLevelHistory(session, pupil, supportLevelInDatabase);
+    return await session.db.transaction((transaction) async {
+      final supportLevelInDatabase = await SupportLevel.db
+          .insertRow(session, supportLevel, transaction: transaction);
+      await PupilData.db.attachRow.supportLevelHistory(
+          session, pupil, supportLevelInDatabase,
+          transaction: transaction);
 
-    // await PupilData.db.updateRow(session, pupil);
-    // Fetch the object again with the relation included
-    final updatedPupilWithRelation = await PupilData.db.findById(
-      session,
-      pupil.id!,
-      include: PupilSchemas.allInclude,
-    );
-    return updatedPupilWithRelation!;
+      // Fetch the object again with the relation included
+      final updatedPupilWithRelation = await PupilData.db.findById(
+        session,
+        pupil.id!,
+        include: PupilSchemas.allInclude,
+        transaction: transaction,
+      );
+      return updatedPupilWithRelation!;
+    });
   }
 
   Future<PupilData> updateSchoolyearHeldBackDate(Session session, int pupilId,

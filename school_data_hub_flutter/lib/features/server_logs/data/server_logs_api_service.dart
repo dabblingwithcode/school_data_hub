@@ -1,0 +1,10 @@
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:flutter_it/flutter_it.dart';
+
+class ServerLogsApiService {
+  Client get _client => di<Client>();
+
+  Future<HubSessionLogResult> getSessionLogs(HubSessionLogFilter filter) async {
+    return _client.adminLogs.getSessionLogs(filter);
+  }
+}

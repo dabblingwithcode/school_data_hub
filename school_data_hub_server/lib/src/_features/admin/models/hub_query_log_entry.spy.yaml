@@ -1,0 +1,8 @@
+class: HubQueryLogEntry
+fields:
+  query: String
+  duration: double
+  numRows: int?
+  error: String?
+  slow: bool
+  order: int

@@ -135,23 +135,28 @@ class CompetenceCheckEndpoint extends Endpoint {
       path: filePath,
     );
 
-    final documentInDatabase = await HubDocument.db.insertRow(
-      session,
-      document,
-    );
+    return await session.db.transaction((transaction) async {
+      final documentInDatabase = await HubDocument.db.insertRow(
+        session,
+        document,
+        transaction: transaction,
+      );
 
-    await CompetenceCheck.db.attachRow.documents(
-      session,
-      competenceCheck,
-      documentInDatabase,
-    );
+      await CompetenceCheck.db.attachRow.documents(
+        session,
+        competenceCheck,
+        documentInDatabase,
+        transaction: transaction,
+      );
 
-    final pupil = await PupilData.db.findById(
-      session,
-      competenceCheck.pupilId,
-      include: PupilSchemas.allInclude,
-    );
-    return pupil!;
+      final pupil = await PupilData.db.findById(
+        session,
+        competenceCheck.pupilId,
+        include: PupilSchemas.allInclude,
+        transaction: transaction,
+      );
+      return pupil!;
+    });
   }
 
   Future<PupilData> removeFileFromCompetenceCheck(

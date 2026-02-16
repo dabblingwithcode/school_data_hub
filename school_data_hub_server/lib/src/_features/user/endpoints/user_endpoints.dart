@@ -83,21 +83,23 @@ class UserEndpoint extends Endpoint {
     // TODO: this code is duplicated in the future call
     // and still does not have any checks!
     final List<User> allStaff = await User.db.find(session);
-    for (var staff in allStaff) {
-      final amount = staff.timeUnits + 2;
+    await session.db.transaction((transaction) async {
+      for (var staff in allStaff) {
+        final amount = staff.timeUnits + 2;
 
-      staff.credit += amount;
+        staff.credit += amount;
 
-      final CreditTransaction transaction = CreditTransaction(
-          sender: 'Admin',
-          receiver: staff.userInfoId,
-          amount: amount,
-          dateTime: DateTime.now());
+        final creditTransaction = CreditTransaction(
+            sender: 'Admin',
+            receiver: staff.userInfoId,
+            amount: amount,
+            dateTime: DateTime.now());
 
-      await session.db.updateRow(staff);
-
-      await CreditTransaction.db.insertRow(session, transaction);
-    }
+        await User.db.updateRow(session, staff, transaction: transaction);
+        await CreditTransaction.db
+            .insertRow(session, creditTransaction, transaction: transaction);
+      }
+    });
     return true;
   }
 }

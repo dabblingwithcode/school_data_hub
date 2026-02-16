@@ -74,28 +74,31 @@ class SchooldayEventEndpoint extends Endpoint {
     String modifiedBy,
     String dateTimeAsString,
   ) async {
-    // If processed is false We need to detach and delete the processed document if it exists
-    if (changedProcessedStatus && schooldayEvent.processed == false) {
-      if (schooldayEvent.processedDocumentId != null) {
-        final file = await HubDocument.db
-            .findById(session, schooldayEvent.processedDocumentId!);
-        // Delete the file if it exists
+    await session.db.transaction((transaction) async {
+      // If processed is false we need to detach and delete the processed document if it exists
+      if (changedProcessedStatus && schooldayEvent.processed == false) {
+        if (schooldayEvent.processedDocumentId != null) {
+          final file = await HubDocument.db.findById(
+              session, schooldayEvent.processedDocumentId!,
+              transaction: transaction);
 
-        if (file != null) {
-          final filePath = file.documentPath!;
-          await SchooldayEvent.db.detachRow
-              .processedDocument(session, schooldayEvent);
-          schooldayEvent.processedDocumentId = null;
-          // delete the file with the file path from storage
-          await session.storage
-              .deleteFile(storageId: 'private', path: filePath);
-
-          await session.db.deleteRow(file);
+          if (file != null) {
+            final filePath = file.documentPath!;
+            await SchooldayEvent.db.detachRow.processedDocument(
+                session, schooldayEvent,
+                transaction: transaction);
+            schooldayEvent.processedDocumentId = null;
+            await session.storage
+                .deleteFile(storageId: 'private', path: filePath);
+            await HubDocument.db
+                .deleteRow(session, file, transaction: transaction);
+          }
         }
       }
-    }
 
-    await session.db.updateRow(schooldayEvent);
+      await SchooldayEvent.db
+          .updateRow(session, schooldayEvent, transaction: transaction);
+    });
     final updatedSchooldayEventInDatabase =
         await SchooldayEvent.db.findById(session, schooldayEvent.id!,
             include: SchooldayEvent.include(
@@ -126,34 +129,39 @@ class SchooldayEventEndpoint extends Endpoint {
     if (schooldayEvent == null) {
       throw Exception('Schoolday event not found');
     }
-    if (schooldayEvent.documentId != null) {
-      final file =
-          await HubDocument.db.findById(session, schooldayEvent.documentId!);
-      // Delete the file if it exists
+    await session.db.transaction((transaction) async {
+      if (schooldayEvent.documentId != null) {
+        final file = await HubDocument.db.findById(
+            session, schooldayEvent.documentId!,
+            transaction: transaction);
 
-      if (file != null) {
-        // delete the file with the file path from storage
-        await session.storage
-            .deleteFile(storageId: 'private', path: file.documentPath!);
-        await SchooldayEvent.db.detachRow.document(session, schooldayEvent);
-        await session.db.deleteRow(file);
+        if (file != null) {
+          await session.storage
+              .deleteFile(storageId: 'private', path: file.documentPath!);
+          await SchooldayEvent.db.detachRow
+              .document(session, schooldayEvent, transaction: transaction);
+          await HubDocument.db
+              .deleteRow(session, file, transaction: transaction);
+        }
       }
-    }
-    if (schooldayEvent.processedDocumentId != null) {
-      final hubDocument = await HubDocument.db
-          .findById(session, schooldayEvent.processedDocumentId!);
-      // Delete the file if it exists
+      if (schooldayEvent.processedDocumentId != null) {
+        final hubDocument = await HubDocument.db.findById(
+            session, schooldayEvent.processedDocumentId!,
+            transaction: transaction);
 
-      if (hubDocument != null) {
-        // delete the file with the file path from storage
-        await session.storage
-            .deleteFile(storageId: 'private', path: hubDocument.documentPath!);
-        await SchooldayEvent.db.detachRow
-            .processedDocument(session, schooldayEvent);
-        await session.db.deleteRow(hubDocument);
+        if (hubDocument != null) {
+          await session.storage.deleteFile(
+              storageId: 'private', path: hubDocument.documentPath!);
+          await SchooldayEvent.db.detachRow.processedDocument(
+              session, schooldayEvent,
+              transaction: transaction);
+          await HubDocument.db
+              .deleteRow(session, hubDocument, transaction: transaction);
+        }
       }
-    }
-    await session.db.deleteRow(schooldayEvent);
+      await SchooldayEvent.db
+          .deleteRow(session, schooldayEvent, transaction: transaction);
+    });
     return true;
   }
 

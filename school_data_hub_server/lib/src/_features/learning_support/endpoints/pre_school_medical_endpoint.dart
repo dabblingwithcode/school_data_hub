@@ -35,19 +35,23 @@ class PreSchoolMedicalEndpoint extends Endpoint {
       createdAt: DateTime.now().toUtc(),
     );
 
-    final createdPreSchoolMedical = await PreSchoolMedical.db.insertRow(
-      session,
-      newPreSchoolMedical,
-    );
+    return await session.db.transaction((transaction) async {
+      final createdPreSchoolMedical = await PreSchoolMedical.db.insertRow(
+        session,
+        newPreSchoolMedical,
+        transaction: transaction,
+      );
 
-    // Attach the PreSchoolMedical to the pupil
-    await PupilData.db.attachRow.preSchoolMedical(
-      session,
-      pupil,
-      createdPreSchoolMedical,
-    );
+      // Attach the PreSchoolMedical to the pupil
+      await PupilData.db.attachRow.preSchoolMedical(
+        session,
+        pupil,
+        createdPreSchoolMedical,
+        transaction: transaction,
+      );
 
-    return createdPreSchoolMedical;
+      return createdPreSchoolMedical;
+    });
   }
 
   /// Update an existing PreSchoolMedical record
@@ -147,24 +151,29 @@ class PreSchoolMedicalEndpoint extends Endpoint {
       path: filePath,
     );
 
-    final createdDocument = await HubDocument.db.insertRow(
-      session,
-      hubDocument,
-    );
+    return await session.db.transaction((transaction) async {
+      final createdDocument = await HubDocument.db.insertRow(
+        session,
+        hubDocument,
+        transaction: transaction,
+      );
 
-    // Attach the document to the PreSchoolMedical record
-    await PreSchoolMedical.db.attachRow.preschoolMedicalFiles(
-      session,
-      preSchoolMedical,
-      createdDocument,
-    );
+      // Attach the document to the PreSchoolMedical record
+      await PreSchoolMedical.db.attachRow.preschoolMedicalFiles(
+        session,
+        preSchoolMedical,
+        createdDocument,
+        transaction: transaction,
+      );
 
-    // Return the updated PreSchoolMedical record
-    return await PreSchoolMedical.db.findById(
-          session,
-          preSchoolMedicalId,
-        ) ??
-        preSchoolMedical;
+      // Return the updated PreSchoolMedical record
+      return await PreSchoolMedical.db.findById(
+            session,
+            preSchoolMedicalId,
+            transaction: transaction,
+          ) ??
+          preSchoolMedical;
+    });
   }
 
   /// Remove a file from a PreSchoolMedical record

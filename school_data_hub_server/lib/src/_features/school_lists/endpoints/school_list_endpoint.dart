@@ -94,47 +94,52 @@ class SchoolListEndpoint extends Endpoint {
     if (authorizedUsers != null) {
       schoolList.authorizedUsers = authorizedUsers.value;
     }
-    if (updateMembers != null) {
-      if (updateMembers.operation == MemberOperation.add) {
-        // Add new pupils to the list
-        List<PupilListEntry> pupilEntries = updateMembers.pupilIds
-            .map((pupilId) => PupilListEntry(
-                  pupilId: pupilId,
-                  schoolListId: schoolList.id!,
-                ))
-            .toList();
-        var createdPupilListEntrys =
-            await PupilListEntry.db.insert(session, pupilEntries);
-        await SchoolList.db.attach
-            .pupilEntries(session, schoolList, createdPupilListEntrys);
-      } else if (updateMembers.operation == MemberOperation.remove) {
-        // Remove pupils from the list
-        for (var pupilId in updateMembers.pupilIds) {
-          final pupilEntry = await PupilListEntry.db.findFirstRow(
-            session,
-            where: (t) =>
-                t.pupilId.equals(pupilId) &
-                t.schoolListId.equals(schoolList.id!),
-          );
-          if (pupilEntry != null) {
-            // Detach the PupilListEntry from the SchoolList
-
-            await PupilListEntry.db.deleteRow(session, pupilEntry);
+    return await session.db.transaction((transaction) async {
+      if (updateMembers != null) {
+        if (updateMembers.operation == MemberOperation.add) {
+          // Add new pupils to the list
+          List<PupilListEntry> pupilEntries = updateMembers.pupilIds
+              .map((pupilId) => PupilListEntry(
+                    pupilId: pupilId,
+                    schoolListId: schoolList.id!,
+                  ))
+              .toList();
+          var createdPupilListEntrys = await PupilListEntry.db
+              .insert(session, pupilEntries, transaction: transaction);
+          await SchoolList.db.attach.pupilEntries(
+              session, schoolList, createdPupilListEntrys,
+              transaction: transaction);
+        } else if (updateMembers.operation == MemberOperation.remove) {
+          // Remove pupils from the list
+          for (var pupilId in updateMembers.pupilIds) {
+            final pupilEntry = await PupilListEntry.db.findFirstRow(
+              session,
+              where: (t) =>
+                  t.pupilId.equals(pupilId) &
+                  t.schoolListId.equals(schoolList.id!),
+              transaction: transaction,
+            );
+            if (pupilEntry != null) {
+              await PupilListEntry.db
+                  .deleteRow(session, pupilEntry, transaction: transaction);
+            }
           }
         }
       }
-    }
-    await SchoolList.db.updateRow(session, schoolList);
-    // Fetch the updated SchoolList with PupilListEntry relations
-    final updatedSchoolList = await SchoolList.db.findFirstRow(
-      session,
-      where: (t) => t.id.equals(schoolList.id!),
-      include: SchoolList.include(pupilEntries: PupilListEntry.includeList()),
-    );
-    if (updatedSchoolList == null) {
-      throw Exception('Failed to update SchoolList');
-    }
-    return updatedSchoolList;
+      await SchoolList.db
+          .updateRow(session, schoolList, transaction: transaction);
+      // Fetch the updated SchoolList with PupilListEntry relations
+      final updatedSchoolList = await SchoolList.db.findFirstRow(
+        session,
+        where: (t) => t.id.equals(schoolList.id!),
+        include: SchoolList.include(pupilEntries: PupilListEntry.includeList()),
+        transaction: transaction,
+      );
+      if (updatedSchoolList == null) {
+        throw Exception('Failed to update SchoolList');
+      }
+      return updatedSchoolList;
+    });
   }
 
   Future<bool> deleteSchoolList(Session session, int listId) async {

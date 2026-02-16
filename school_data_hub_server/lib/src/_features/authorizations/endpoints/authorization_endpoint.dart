@@ -44,33 +44,41 @@ class AuthorizationEndpoint extends Endpoint {
       description: description,
       createdBy: createdBy,
     );
-    final authorizationInDatabase =
-        await Authorization.db.insertRow(session, authorization);
-    final List<PupilAuthorization> pupilAuths = pupilIds.map((pupilId) {
-      return PupilAuthorization(
-        pupilId: pupilId,
-        authorizationId: authorizationInDatabase.id!,
+    return await session.db.transaction((transaction) async {
+      final authorizationInDatabase = await Authorization.db.insertRow(
+        session,
+        authorization,
+        transaction: transaction,
       );
-    }).toList();
+      final List<PupilAuthorization> pupilAuths = pupilIds.map((pupilId) {
+        return PupilAuthorization(
+          pupilId: pupilId,
+          authorizationId: authorizationInDatabase.id!,
+        );
+      }).toList();
 
-    var createdPupilAuths = await PupilAuthorization.db.insert(
-      session,
-      pupilAuths,
-    );
-    // Attach all the PupilAuthorizations to the Authorization
-    await Authorization.db.attach.authorizedPupils(
-      session,
-      authorizationInDatabase,
-      createdPupilAuths,
-    );
-    // recall the authorization with the pupil authorizations
-    final authorizationWithPupils = await Authorization.db.findById(
-      session,
-      authorizationInDatabase.id!,
-      include: Authorization.include(
-          authorizedPupils: PupilAuthorization.includeList()),
-    );
-    return authorizationWithPupils!;
+      var createdPupilAuths = await PupilAuthorization.db.insert(
+        session,
+        pupilAuths,
+        transaction: transaction,
+      );
+      // Attach all the PupilAuthorizations to the Authorization
+      await Authorization.db.attach.authorizedPupils(
+        session,
+        authorizationInDatabase,
+        createdPupilAuths,
+        transaction: transaction,
+      );
+      // recall the authorization with the pupil authorizations
+      final authorizationWithPupils = await Authorization.db.findById(
+        session,
+        authorizationInDatabase.id!,
+        include: Authorization.include(
+            authorizedPupils: PupilAuthorization.includeList()),
+        transaction: transaction,
+      );
+      return authorizationWithPupils!;
+    });
   }
 
   Future<Authorization> updateAuthorization(
@@ -94,51 +102,57 @@ class AuthorizationEndpoint extends Endpoint {
     if (description != null) {
       authorization.description = description;
     }
-    if (updateMembers != null) {
-      if (updateMembers.operation == MemberOperation.add) {
-        // Create PupilAuthorization objects from the pupil IDs
-        List<PupilAuthorization> pupilAuths = updateMembers.pupilIds
-            .map((pupilId) => PupilAuthorization(
-                  pupilId: pupilId,
-                  authorizationId: authorization.id!,
-                ))
-            .toList();
-        // Bulk insert the PupilAuthorization objects
-        var createdPupilAuths = await PupilAuthorization.db.insert(
-          session,
-          pupilAuths,
-        );
-        // Attach all the PupilAuthorizations to the Authorization
-        await Authorization.db.attach.authorizedPupils(
-          session,
-          authorization,
-          createdPupilAuths,
-        );
-      } else if (updateMembers.operation == MemberOperation.remove) {
-        // Remove the PupilAuthorizations from the Authorization
-        for (var pupilId in updateMembers.pupilIds) {
-          final pupilAuth = await PupilAuthorization.db.findFirstRow(
+    return await session.db.transaction((transaction) async {
+      if (updateMembers != null) {
+        if (updateMembers.operation == MemberOperation.add) {
+          // Create PupilAuthorization objects from the pupil IDs
+          List<PupilAuthorization> pupilAuths = updateMembers.pupilIds
+              .map((pupilId) => PupilAuthorization(
+                    pupilId: pupilId,
+                    authorizationId: authorization.id!,
+                  ))
+              .toList();
+          // Bulk insert the PupilAuthorization objects
+          var createdPupilAuths = await PupilAuthorization.db.insert(
             session,
-            where: (t) =>
-                t.pupilId.equals(pupilId) &
-                t.authorizationId.equals(authorization.id!),
+            pupilAuths,
+            transaction: transaction,
           );
-          if (pupilAuth != null) {
-            // Detach the PupilListEntry from the SchoolList
-
-            await PupilAuthorization.db.deleteRow(session, pupilAuth);
+          // Attach all the PupilAuthorizations to the Authorization
+          await Authorization.db.attach.authorizedPupils(
+            session,
+            authorization,
+            createdPupilAuths,
+            transaction: transaction,
+          );
+        } else if (updateMembers.operation == MemberOperation.remove) {
+          // Remove the PupilAuthorizations from the Authorization
+          for (var pupilId in updateMembers.pupilIds) {
+            final pupilAuth = await PupilAuthorization.db.findFirstRow(
+              session,
+              where: (t) =>
+                  t.pupilId.equals(pupilId) &
+                  t.authorizationId.equals(authorization.id!),
+              transaction: transaction,
+            );
+            if (pupilAuth != null) {
+              await PupilAuthorization.db
+                  .deleteRow(session, pupilAuth, transaction: transaction);
+            }
           }
         }
       }
-    }
-    await Authorization.db.updateRow(session, authorization);
+      await Authorization.db
+          .updateRow(session, authorization, transaction: transaction);
 
-    final updatedAuthorization = await Authorization.db.findById(
-      session,
-      authorization.id!,
-      include: authInclude,
-    );
-    return updatedAuthorization!;
+      final updatedAuthorization = await Authorization.db.findById(
+        session,
+        authorization.id!,
+        include: authInclude,
+        transaction: transaction,
+      );
+      return updatedAuthorization!;
+    });
   }
 
   Future<bool> deleteAuthorization(Session session, int authId) async {
@@ -151,12 +165,16 @@ class AuthorizationEndpoint extends Endpoint {
     if (authorization == null) {
       throw Exception('Authorization not found');
     }
-    // Delete all the PupilAuthorizations associated with the Authorization
-    for (var pupilAuth in authorization.authorizedPupils!) {
-      await PupilAuthorization.db.deleteRow(session, pupilAuth);
-    }
-    // Delete the Authorization itself
-    await Authorization.db.deleteRow(session, authorization);
+    await session.db.transaction((transaction) async {
+      // Delete all the PupilAuthorizations associated with the Authorization
+      for (var pupilAuth in authorization.authorizedPupils!) {
+        await PupilAuthorization.db
+            .deleteRow(session, pupilAuth, transaction: transaction);
+      }
+      // Delete the Authorization itself
+      await Authorization.db
+          .deleteRow(session, authorization, transaction: transaction);
+    });
 
     return true;
   }

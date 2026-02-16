@@ -98,23 +98,71 @@ class MissedSchooldayEndpoint extends Endpoint {
 
   Future<List<MissedSchoolday>> postMissedSchooldays(
       Session session, List<MissedSchoolday> missedClasses) async {
-    final results = <MissedSchoolday>[];
+    final results = await session.db.transaction((transaction) async {
+      final processed = <MissedSchoolday>[];
 
-    // Process each record individually to handle duplicates gracefully
-    for (final missedClass in missedClasses) {
-      final result = await _upsertMissedSchoolday(session, missedClass);
+      for (final missedClass in missedClasses) {
+        // Check if record exists to avoid exception-based upsert inside txn
+        final existing = await MissedSchoolday.db.findFirstRow(
+          session,
+          where: (t) =>
+              t.schooldayId.equals(missedClass.schooldayId) &
+              t.pupilId.equals(missedClass.pupilId),
+          transaction: transaction,
+        );
 
-      // Send stream notification for each record
-      session.messages.postMessage(
-        'missed_schooldays_stream',
-        MissedSchooldayDto(
-          missedSchoolday: result.record,
-          operation: result.operation,
-        ),
-      );
+        late MissedSchoolday resultRecord;
+        String operation;
 
-      results.add(result.record);
-    }
+        if (existing != null) {
+          final updated = existing.copyWith(
+            missedType: missedClass.missedType,
+            unexcused: missedClass.unexcused,
+            contacted: missedClass.contacted,
+            returned: missedClass.returned,
+            returnedAt: missedClass.returnedAt,
+            writtenExcuse: missedClass.writtenExcuse,
+            minutesLate: missedClass.minutesLate,
+            modifiedBy: missedClass.modifiedBy,
+            comment: missedClass.comment,
+          );
+          resultRecord = await MissedSchoolday.db.updateRow(
+            session,
+            updated,
+            transaction: transaction,
+          );
+          operation = 'update';
+        } else {
+          resultRecord = await MissedSchoolday.db.insertRow(
+            session,
+            missedClass,
+            transaction: transaction,
+          );
+          operation = 'add';
+        }
+
+        final withRelation = await MissedSchoolday.db.findById(
+          session,
+          resultRecord.id!,
+          include: MissedSchoolday.include(
+            schoolday: Schoolday.include(),
+          ),
+          transaction: transaction,
+        );
+
+        session.messages.postMessage(
+          'missed_schooldays_stream',
+          MissedSchooldayDto(
+            missedSchoolday: withRelation!,
+            operation: operation,
+          ),
+        );
+
+        processed.add(withRelation);
+      }
+
+      return processed;
+    });
 
     return results;
   }

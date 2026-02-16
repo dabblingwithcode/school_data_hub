@@ -13,6 +13,7 @@ import 'package:school_data_hub_flutter/features/books/utils/book_ids_pdf_genera
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
+import 'package:school_data_hub_flutter/features/server_logs/presentation/server_logs_page.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 
 class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
@@ -38,6 +39,18 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
         ),
       ),
       tiles: <SettingsTile>[
+        SettingsTile.navigation(
+          leading: const Icon(Icons.dns_outlined),
+          title: const Text('Server-Logs'),
+          onPressed: (context) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const ServerLogsPage(),
+              ),
+            );
+          },
+        ),
         SettingsTile.navigation(
           title: const Text('Buch IDs generieren'),
           leading: const Icon(Icons.qr_code_rounded),

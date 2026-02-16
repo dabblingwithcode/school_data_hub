@@ -1,6 +1,8 @@
 adminCategories:
   - importCompetencesFromJsonFile:
   - importSupportCategoriesFromJsonFile:
+adminLogs:
+  - getSessionLogs:
 adminPupil:
   - updateBackendPupilDataState:
 adminSchoolData:

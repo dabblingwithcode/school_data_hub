@@ -34,15 +34,9 @@ class AdminUserEndpoint extends Endpoint {
     if (userInfo?.id == null) {
       throw 'Failed to create user';
     }
-    // We need to do some updates to the user info object
-
-    userInfo!.fullName = fullName;
-
-    await auth.UserInfo.db.updateRow(session, userInfo);
 
     // Convert string scopes to Scope objects
     Set<Scope> scopes = {};
-
     for (final scope in scopeNames) {
       if (scope == 'admin') {
         scopes.add(Scope('serverpod.admin'));
@@ -50,27 +44,37 @@ class AdminUserEndpoint extends Endpoint {
         scopes.add(Scope(scope));
       }
     }
-    // Update scopes if provided
-    await auth.Users.updateUserScopes(session, userInfo.id!, scopes);
-    // Create a new User object and insert it into the database
-    final newUser = User(
-      userInfoId: userInfo.id!,
-      userFlags: UserFlags(
-        isTester: isTester,
-        confirmedTermsOfUse: false,
-        confirmedPrivacyPolicy: false,
-        changedPassword: false,
-        madeFirstSteps: false,
-      ),
-      pupilsAuth: {},
-      role: role,
-      timeUnits: timeUnits,
-      reliefTimeUnits: reliefTimeUnits,
-      credit: credit ?? 50,
-      matrixUserId: matrixUserId,
-    );
 
-    await User.db.insertRow(session, newUser);
+    final newUser = await session.db.transaction((transaction) async {
+      // Update the user info object
+      userInfo!.fullName = fullName;
+      await auth.UserInfo.db
+          .updateRow(session, userInfo, transaction: transaction);
+
+      // Update scopes if provided
+      await auth.Users.updateUserScopes(session, userInfo.id!, scopes);
+
+      // Create a new User object and insert it into the database
+      final user = User(
+        userInfoId: userInfo.id!,
+        userFlags: UserFlags(
+          isTester: isTester,
+          confirmedTermsOfUse: false,
+          confirmedPrivacyPolicy: false,
+          changedPassword: false,
+          madeFirstSteps: false,
+        ),
+        pupilsAuth: {},
+        role: role,
+        timeUnits: timeUnits,
+        reliefTimeUnits: reliefTimeUnits,
+        credit: credit ?? 50,
+        matrixUserId: matrixUserId,
+      );
+
+      await User.db.insertRow(session, user, transaction: transaction);
+      return user;
+    });
 
     return newUser;
   }
@@ -96,19 +100,21 @@ class AdminUserEndpoint extends Endpoint {
         .findFirstRow(session, where: (t) => t.id.equals(userId));
     if (userInfo == null) throw Exception('UserInfo not found');
 
-    userInfo.userName = userName;
-    userInfo.fullName = fullName;
-    userInfo.email = email;
-    await UserInfo.db.updateRow(session, userInfo);
+    return await session.db.transaction((transaction) async {
+      userInfo.userName = userName;
+      userInfo.fullName = fullName;
+      userInfo.email = email;
+      await UserInfo.db.updateRow(session, userInfo, transaction: transaction);
 
-    user.role = role;
-    user.matrixUserId = matrixUserId;
-    user.timeUnits = timeUnits;
-    user.reliefTimeUnits = reliefTimeUnits;
-    user.credit = credit;
-    user.userFlags = user.userFlags.copyWith(isTester: isTester);
-    await User.db.updateRow(session, user);
-    return user;
+      user.role = role;
+      user.matrixUserId = matrixUserId;
+      user.timeUnits = timeUnits;
+      user.reliefTimeUnits = reliefTimeUnits;
+      user.credit = credit;
+      user.userFlags = user.userFlags.copyWith(isTester: isTester);
+      await User.db.updateRow(session, user, transaction: transaction);
+      return user;
+    });
   }
 
   Future<bool> resetPassword(
@@ -119,12 +125,17 @@ class AdminUserEndpoint extends Endpoint {
     );
     if (emailAuth == null) throw Exception('EmailAuth not found');
     emailAuth.hash = await auth.Emails.generatePasswordHash(newPassword);
-    await auth.EmailAuth.db.updateRow(session, emailAuth);
+
     final user = await User.db.findFirstRow(session,
         where: (t) => t.userInfoId.equals(emailAuth.userId));
     if (user == null) throw Exception('User not found');
-    user.userFlags = user.userFlags.copyWith(changedPassword: true);
-    await User.db.updateRow(session, user);
+
+    await session.db.transaction((transaction) async {
+      await auth.EmailAuth.db
+          .updateRow(session, emailAuth, transaction: transaction);
+      user.userFlags = user.userFlags.copyWith(changedPassword: true);
+      await User.db.updateRow(session, user, transaction: transaction);
+    });
 
     return true;
   }
@@ -220,9 +231,10 @@ class AdminUserEndpoint extends Endpoint {
       throw Exception('User not found.');
     }
 
-    // TODO; for now no flow to delete user from all tables, so just set blocked to true
+    // TODO: for now no flow to delete user from all tables, so just set blocked to true
     // await session.db.deleteRow(user);
     user.blocked = true;
+    await auth.UserInfo.db.updateRow(session, user);
   }
 
   Future<void> promoteUserScope(

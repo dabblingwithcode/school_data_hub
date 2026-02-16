@@ -29,6 +29,8 @@ import 'package:school_data_hub_flutter/features/school_lists/domain/school_list
 import 'package:school_data_hub_flutter/features/timetable/data/timetable_api_service.dart';
 import 'package:school_data_hub_flutter/features/timetable/timetable.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
+import 'package:school_data_hub_flutter/features/server_logs/data/server_logs_api_service.dart';
+import 'package:school_data_hub_flutter/features/server_logs/domain/server_logs_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
@@ -218,6 +220,15 @@ class InitOnUserAuth {
     di.registerSingletonAsync<TimetableManager>(
       () => TimetableManager().init(),
       dependsOn: [HubSessionManager, TimetableApiService],
+      dispose: (m) => m.dispose(),
+    );
+
+    di.registerLazySingleton<ServerLogsApiService>(
+      () => ServerLogsApiService(),
+    );
+
+    di.registerLazySingleton<ServerLogsManager>(
+      () => ServerLogsManager(),
       dispose: (m) => m.dispose(),
     );
 

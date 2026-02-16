@@ -16,25 +16,31 @@ class MatrixEndpoint extends Endpoint {
 
   Future<List<CompulsoryRoom>> setCompulsoryRooms(
       Session session, List<CompulsoryRoom> compulsoryRooms) async {
-    var oldCompulsoryRooms = await CompulsoryRoom.db.find(session);
-    if (oldCompulsoryRooms.isEmpty) {
+    await session.db.transaction((transaction) async {
+      var oldCompulsoryRooms =
+          await CompulsoryRoom.db.find(session, transaction: transaction);
+      if (oldCompulsoryRooms.isEmpty) {
+        for (var room in compulsoryRooms) {
+          await CompulsoryRoom.db
+              .insertRow(session, room, transaction: transaction);
+        }
+        return;
+      }
       for (var room in compulsoryRooms) {
-        await CompulsoryRoom.db.insertRow(session, room);
+        var existingRoom = oldCompulsoryRooms.firstWhereOrNull(
+          (r) => r.roomId == room.roomId,
+        );
+        if (existingRoom == null) {
+          await CompulsoryRoom.db
+              .insertRow(session, room, transaction: transaction);
+        } else {
+          existingRoom.roomId = room.roomId;
+          existingRoom.roomType = room.roomType;
+          await CompulsoryRoom.db
+              .updateRow(session, room, transaction: transaction);
+        }
       }
-      return compulsoryRooms;
-    }
-    for (var room in compulsoryRooms) {
-      var existingRoom = oldCompulsoryRooms.firstWhereOrNull(
-        (r) => r.roomId == room.roomId,
-      );
-      if (existingRoom == null) {
-        await CompulsoryRoom.db.insertRow(session, room);
-      } else {
-        existingRoom.roomId = room.roomId;
-        existingRoom.roomType = room.roomType;
-        await CompulsoryRoom.db.updateRow(session, room);
-      }
-    }
+    });
     return compulsoryRooms;
   }
 

@@ -80,21 +80,26 @@ class PupilBookLendingEndpoint extends Endpoint {
   //-update
   Future<PupilData> updatePupilBookLending(
       Session session, PupilBookLending pupilBookLending) async {
-    final updatedPupilBookLending =
-        await PupilBookLending.db.updateRow(session, pupilBookLending);
+    return await session.db.transaction((transaction) async {
+      final updatedPupilBookLending = await PupilBookLending.db
+          .updateRow(session, pupilBookLending, transaction: transaction);
 
-    // if the book was returned, set the library book available to true
-    if (pupilBookLending.returnedAt != null) {
-      final libraryBook = await LibraryBook.db.findFirstRow(session,
-          where: (t) => t.id.equals(updatedPupilBookLending.libraryBookId));
-      libraryBook!.available = true;
-      await LibraryBook.db.updateRow(session, libraryBook);
-    }
+      // if the book was returned, set the library book available to true
+      if (pupilBookLending.returnedAt != null) {
+        final libraryBook = await LibraryBook.db.findFirstRow(session,
+            where: (t) => t.id.equals(updatedPupilBookLending.libraryBookId),
+            transaction: transaction);
+        libraryBook!.available = true;
+        await LibraryBook.db
+            .updateRow(session, libraryBook, transaction: transaction);
+      }
 
-    final pupil = await PupilData.db.findFirstRow(session,
-        where: (t) => t.id.equals(updatedPupilBookLending.pupilId),
-        include: PupilSchemas.allInclude);
-    return pupil!;
+      final pupil = await PupilData.db.findFirstRow(session,
+          where: (t) => t.id.equals(updatedPupilBookLending.pupilId),
+          include: PupilSchemas.allInclude,
+          transaction: transaction);
+      return pupil!;
+    });
   }
 
   //- delete
@@ -141,24 +146,29 @@ class PupilBookLendingEndpoint extends Endpoint {
       path: filePath,
     );
 
-    final createdDocument = await HubDocument.db.insertRow(
-      session,
-      hubDocument,
-    );
+    return await session.db.transaction((transaction) async {
+      final createdDocument = await HubDocument.db.insertRow(
+        session,
+        hubDocument,
+        transaction: transaction,
+      );
 
-    // Attach the document to the PupilBookLending record
-    await PupilBookLending.db.attachRow.pupilBookLendingFiles(
-      session,
-      pupilBookLending,
-      createdDocument,
-    );
+      // Attach the document to the PupilBookLending record
+      await PupilBookLending.db.attachRow.pupilBookLendingFiles(
+        session,
+        pupilBookLending,
+        createdDocument,
+        transaction: transaction,
+      );
 
-    final pupil = await PupilData.db.findFirstRow(
-      session,
-      where: (t) => t.id.equals(pupilBookLending.pupilId),
-      include: PupilSchemas.allInclude,
-    );
-    return pupil!;
+      final pupil = await PupilData.db.findFirstRow(
+        session,
+        where: (t) => t.id.equals(pupilBookLending.pupilId),
+        include: PupilSchemas.allInclude,
+        transaction: transaction,
+      );
+      return pupil!;
+    });
   }
 
   /// Remove a file from a PupilBookLending record

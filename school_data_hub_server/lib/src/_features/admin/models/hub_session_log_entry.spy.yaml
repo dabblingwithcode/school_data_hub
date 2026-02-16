@@ -1,0 +1,14 @@
+class: HubSessionLogEntry
+fields:
+  sessionId: int
+  serverId: String
+  time: DateTime
+  endpoint: String?
+  method: String?
+  duration: double?
+  numQueries: int?
+  slow: bool?
+  error: String?
+  stackTrace: String?
+  authenticatedUserId: int?
+  isOpen: bool?

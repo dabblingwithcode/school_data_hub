@@ -1,0 +1,8 @@
+class: HubSessionLogFilter
+fields:
+  endpoint: String?
+  method: String?
+  slow: bool
+  error: bool
+  open: bool
+  lastSessionLogId: int?

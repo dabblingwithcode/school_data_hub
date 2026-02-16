@@ -43,22 +43,27 @@ class PupilAuthorizationEndpoint extends Endpoint {
       createdBy: createdBy,
       path: filePath,
     );
-    final documentInDatabase = await HubDocument.db.insertRow(
-      session,
-      document,
-    );
-    final updatedPupilAuth = pupilAuth.copyWith(
-      fileId: documentInDatabase.id,
-    );
-    await PupilAuthorization.db.updateRow(session, updatedPupilAuth);
-    final authWithInclude = await PupilAuthorization.db.findById(
-      session,
-      updatedPupilAuth.id!,
-      include: PupilAuthorization.include(
-        file: HubDocument.include(),
-      ),
-    );
-    return authWithInclude!;
+    return await session.db.transaction((transaction) async {
+      final documentInDatabase = await HubDocument.db.insertRow(
+        session,
+        document,
+        transaction: transaction,
+      );
+      final updatedPupilAuth = pupilAuth.copyWith(
+        fileId: documentInDatabase.id,
+      );
+      await PupilAuthorization.db
+          .updateRow(session, updatedPupilAuth, transaction: transaction);
+      final authWithInclude = await PupilAuthorization.db.findById(
+        session,
+        updatedPupilAuth.id!,
+        include: PupilAuthorization.include(
+          file: HubDocument.include(),
+        ),
+        transaction: transaction,
+      );
+      return authWithInclude!;
+    });
   }
 
   Future<PupilAuthorization> removeFileFromPupilAuthorization(
@@ -76,12 +81,13 @@ class PupilAuthorizationEndpoint extends Endpoint {
       throw Exception('PupilAuthorization not found');
     }
 
-    // use a transaction
     await session.db.transaction((transaction) async {
       // detach the file from the pupil authorization
-      await PupilAuthorization.db.detachRow.file(session, pupilAuth);
+      await PupilAuthorization.db.detachRow
+          .file(session, pupilAuth, transaction: transaction);
       // delete the file from the database
-      await HubDocument.db.deleteRow(session, pupilAuth.file!);
+      await HubDocument.db
+          .deleteRow(session, pupilAuth.file!, transaction: transaction);
       // delete the file from the storage
       await session.storage.deleteFile(
         storageId: 'private',

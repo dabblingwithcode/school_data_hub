@@ -102,11 +102,15 @@ class BooksEndpoint extends Endpoint {
     if (book == null) {
       throw Exception('Book with isbn $isbn does not exist.');
     }
-    if (tags != null) {
-      await BookTaggingHelper.updateBookWithTags(session, book, tags);
-    }
-    final updatedBook = await Book.db.updateRow(session, book);
-    return updatedBook;
+    return await session.db.transaction((transaction) async {
+      if (tags != null) {
+        await BookTaggingHelper.updateBookWithTags(session, book, tags,
+            transaction: transaction);
+      }
+      final updatedBook =
+          await Book.db.updateRow(session, book, transaction: transaction);
+      return updatedBook;
+    });
   }
 
   //- delete

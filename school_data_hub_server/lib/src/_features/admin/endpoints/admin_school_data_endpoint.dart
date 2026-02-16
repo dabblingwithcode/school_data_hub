@@ -32,40 +32,49 @@ class AdminSchoolDataEndpoint extends Endpoint {
       throw Exception('SchoolData not found');
     }
 
-    // Delete old logo if exists
-    if (schoolData.logoId != null && schoolData.logo != null) {
-      await HubDocumentHelper().deleteHubDocumentAndFile(
+    final result = await session.db.transaction((transaction) async {
+      // Delete old logo if exists
+      if (schoolData.logoId != null && schoolData.logo != null) {
+        await HubDocumentHelper().deleteHubDocumentAndFile(
+          session: session,
+          documentId: schoolData.logo!.documentId,
+          transaction: transaction,
+        );
+      }
+
+      // Create new HubDocument for the logo
+      final document = HubDocumentHelper().createHubDocumentObject(
         session: session,
-        documentId: schoolData.logo!.documentId,
+        createdBy: createdBy,
+        path: filePath,
       );
-    }
+      final documentInDatabase = await HubDocument.db.insertRow(
+        session,
+        document,
+        transaction: transaction,
+      );
 
-    // Create new HubDocument for the logo
-    final document = HubDocumentHelper().createHubDocumentObject(
-      session: session,
-      createdBy: createdBy,
-      path: filePath,
-    );
-    final documentInDatabase = await HubDocument.db.insertRow(
-      session,
-      document,
-    );
+      // Update SchoolData with the new logoId
+      final updatedSchoolData = schoolData.copyWith(
+        logoId: documentInDatabase.id,
+      );
+      await SchoolData.db.updateRow(
+        session,
+        updatedSchoolData,
+        transaction: transaction,
+      );
 
-    // Update SchoolData with the new logoId
-    final updatedSchoolData = schoolData.copyWith(
-      logoId: documentInDatabase.id,
-    );
-    await SchoolData.db.updateRow(session, updatedSchoolData);
-
-    // Return the updated SchoolData with includes
-    final result = await SchoolData.db.findById(
-      session,
-      schoolDataId,
-      include: SchoolData.include(
-        logo: HubDocument.include(),
-        officialSeal: HubDocument.include(),
-      ),
-    );
+      // Return the updated SchoolData with includes
+      return await SchoolData.db.findById(
+        session,
+        schoolDataId,
+        include: SchoolData.include(
+          logo: HubDocument.include(),
+          officialSeal: HubDocument.include(),
+        ),
+        transaction: transaction,
+      );
+    });
     return result!;
   }
 
@@ -87,40 +96,50 @@ class AdminSchoolDataEndpoint extends Endpoint {
       throw Exception('SchoolData not found');
     }
 
-    // Delete old seal if exists
-    if (schoolData.officialSealId != null && schoolData.officialSeal != null) {
-      await HubDocumentHelper().deleteHubDocumentAndFile(
+    final result = await session.db.transaction((transaction) async {
+      // Delete old seal if exists
+      if (schoolData.officialSealId != null &&
+          schoolData.officialSeal != null) {
+        await HubDocumentHelper().deleteHubDocumentAndFile(
+          session: session,
+          documentId: schoolData.officialSeal!.documentId,
+          transaction: transaction,
+        );
+      }
+
+      // Create new HubDocument for the seal
+      final document = HubDocumentHelper().createHubDocumentObject(
         session: session,
-        documentId: schoolData.officialSeal!.documentId,
+        createdBy: createdBy,
+        path: filePath,
       );
-    }
+      final documentInDatabase = await HubDocument.db.insertRow(
+        session,
+        document,
+        transaction: transaction,
+      );
 
-    // Create new HubDocument for the seal
-    final document = HubDocumentHelper().createHubDocumentObject(
-      session: session,
-      createdBy: createdBy,
-      path: filePath,
-    );
-    final documentInDatabase = await HubDocument.db.insertRow(
-      session,
-      document,
-    );
+      // Update SchoolData with the new officialSealId
+      final updatedSchoolData = schoolData.copyWith(
+        officialSealId: documentInDatabase.id,
+      );
+      await SchoolData.db.updateRow(
+        session,
+        updatedSchoolData,
+        transaction: transaction,
+      );
 
-    // Update SchoolData with the new officialSealId
-    final updatedSchoolData = schoolData.copyWith(
-      officialSealId: documentInDatabase.id,
-    );
-    await SchoolData.db.updateRow(session, updatedSchoolData);
-
-    // Return the updated SchoolData with includes
-    final result = await SchoolData.db.findById(
-      session,
-      schoolDataId,
-      include: SchoolData.include(
-        logo: HubDocument.include(),
-        officialSeal: HubDocument.include(),
-      ),
-    );
+      // Return the updated SchoolData with includes
+      return await SchoolData.db.findById(
+        session,
+        schoolDataId,
+        include: SchoolData.include(
+          logo: HubDocument.include(),
+          officialSeal: HubDocument.include(),
+        ),
+        transaction: transaction,
+      );
+    });
     return result!;
   }
 }

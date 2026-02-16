@@ -1,0 +1,8 @@
+class: HubLogEntry
+fields:
+  logLevel: int
+  message: String
+  error: String?
+  stackTrace: String?
+  time: DateTime
+  order: int

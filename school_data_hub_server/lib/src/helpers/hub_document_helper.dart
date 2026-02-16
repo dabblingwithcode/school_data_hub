@@ -52,6 +52,7 @@ class HubDocumentHelper {
     final hubDocument = await HubDocument.db.findFirstRow(
       session,
       where: (t) => t.documentId.equals(documentId),
+      transaction: transaction,
     );
 
     if (hubDocument == null) {

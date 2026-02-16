@@ -66,19 +66,27 @@ class LearningSupportPlanEndpoint extends Endpoint {
       createdBy: createdBy,
       createdAt: DateTime.now().toUtc(),
     );
-    final categoryStatusInDataBase = await SupportCategoryStatus.db.insertRow(
-      session,
-      newSupportCategoryStatus,
-    );
-    await PupilData.db.attach.supportCategoryStatuses(session, pupil!, [
-      categoryStatusInDataBase,
-    ]);
-    final updatedPupil = await PupilData.db.findById(
-      session,
-      pupilId,
-      include: PupilSchemas.allInclude,
-    );
-    return updatedPupil!;
+    return await session.db.transaction((transaction) async {
+      final categoryStatusInDataBase = await SupportCategoryStatus.db.insertRow(
+        session,
+        newSupportCategoryStatus,
+        transaction: transaction,
+      );
+      await PupilData.db.attach.supportCategoryStatuses(
+          session,
+          pupil!,
+          [
+            categoryStatusInDataBase,
+          ],
+          transaction: transaction);
+      final updatedPupil = await PupilData.db.findById(
+        session,
+        pupilId,
+        include: PupilSchemas.allInclude,
+        transaction: transaction,
+      );
+      return updatedPupil!;
+    });
   }
 
   Future<List<SupportCategoryStatus>> fetchSupportCategoryStatus(
@@ -154,20 +162,27 @@ class LearningSupportPlanEndpoint extends Endpoint {
         'SupportCategoryStatus not found for pupilId: $pupilId and supportCategoryId: $statusId',
       );
     }
-    await PupilData.db.detach.supportCategoryStatuses(session, [
-      existingStatus,
-    ]);
-    await session.db.deleteRow<SupportCategoryStatus>(existingStatus);
+    return await session.db.transaction((transaction) async {
+      await PupilData.db.detach.supportCategoryStatuses(
+          session,
+          [
+            existingStatus,
+          ],
+          transaction: transaction);
+      await SupportCategoryStatus.db
+          .deleteRow(session, existingStatus, transaction: transaction);
 
-    final updatedPupil = await PupilData.db.findById(
-      session,
-      pupilId,
-      include: PupilSchemas.allInclude,
-    );
-    if (updatedPupil == null) {
-      throw Exception('Pupil not found after deletion');
-    }
-    return updatedPupil;
+      final updatedPupil = await PupilData.db.findById(
+        session,
+        pupilId,
+        include: PupilSchemas.allInclude,
+        transaction: transaction,
+      );
+      if (updatedPupil == null) {
+        throw Exception('Pupil not found after deletion');
+      }
+      return updatedPupil;
+    });
   }
 
   Future<PupilData> postCategoryGoal(
@@ -194,17 +209,22 @@ class LearningSupportPlanEndpoint extends Endpoint {
       createdBy: createdBy,
       createdAt: DateTime.now().toUtc(),
     );
-    final goalInDataBase = await SupportGoal.db.insertRow(
-      session,
-      newSupportGoal,
-    );
-    await PupilData.db.attach.supportGoals(session, pupil!, [goalInDataBase]);
-    final updatedPupil = await PupilData.db.findById(
-      session,
-      pupilId,
-      include: PupilSchemas.allInclude,
-    );
-    return updatedPupil!;
+    return await session.db.transaction((transaction) async {
+      final goalInDataBase = await SupportGoal.db.insertRow(
+        session,
+        newSupportGoal,
+        transaction: transaction,
+      );
+      await PupilData.db.attach.supportGoals(session, pupil!, [goalInDataBase],
+          transaction: transaction);
+      final updatedPupil = await PupilData.db.findById(
+        session,
+        pupilId,
+        include: PupilSchemas.allInclude,
+        transaction: transaction,
+      );
+      return updatedPupil!;
+    });
   }
 
   Future<PupilData> updateCategoryGoal(
@@ -269,8 +289,7 @@ class LearningSupportPlanEndpoint extends Endpoint {
           ),
           transaction: transaction,
         );
-        for (final doc
-            in checkWithDocs?.documents ?? <HubDocument>[]) {
+        for (final doc in checkWithDocs?.documents ?? <HubDocument>[]) {
           await SupportGoalCheck.db.detachRow.documents(
             session,
             doc,
@@ -289,9 +308,12 @@ class LearningSupportPlanEndpoint extends Endpoint {
           }
         }
         // Detach and delete the goal check
-        await SupportGoal.db.detach.goalChecks(session, [
-          check,
-        ], transaction: transaction);
+        await SupportGoal.db.detach.goalChecks(
+            session,
+            [
+              check,
+            ],
+            transaction: transaction);
         await SupportGoalCheck.db.deleteRow(
           session,
           check,
@@ -299,9 +321,12 @@ class LearningSupportPlanEndpoint extends Endpoint {
         );
       }
       // Detach and delete the goal itself
-      await PupilData.db.detach.supportGoals(session, [
-        existingGoal,
-      ], transaction: transaction);
+      await PupilData.db.detach.supportGoals(
+          session,
+          [
+            existingGoal,
+          ],
+          transaction: transaction);
       await SupportGoal.db.deleteRow(
         session,
         existingGoal,
@@ -350,19 +375,27 @@ class LearningSupportPlanEndpoint extends Endpoint {
       createdBy: createdBy,
       createdAt: DateTime.now().toUtc(),
     );
-    final checkInDatabase = await SupportGoalCheck.db.insertRow(
-      session,
-      newSupportGoalCheck,
-    );
-    await SupportGoal.db.attach.goalChecks(session, supportGoal, [
-      checkInDatabase,
-    ]);
-    final updatedSupportGoal = await SupportGoal.db.findById(
-      session,
-      supportGoalId,
-      include: _supportGoalInclude,
-    );
-    return updatedSupportGoal!;
+    return await session.db.transaction((transaction) async {
+      final checkInDatabase = await SupportGoalCheck.db.insertRow(
+        session,
+        newSupportGoalCheck,
+        transaction: transaction,
+      );
+      await SupportGoal.db.attach.goalChecks(
+          session,
+          supportGoal,
+          [
+            checkInDatabase,
+          ],
+          transaction: transaction);
+      final updatedSupportGoal = await SupportGoal.db.findById(
+        session,
+        supportGoalId,
+        include: _supportGoalInclude,
+        transaction: transaction,
+      );
+      return updatedSupportGoal!;
+    });
   }
 
   Future<SupportGoalCheck> updateSupportGoalCheck(
@@ -479,23 +512,28 @@ class LearningSupportPlanEndpoint extends Endpoint {
       path: filePath,
     );
 
-    final documentInDatabase = await HubDocument.db.insertRow(
-      session,
-      document,
-    );
+    return await session.db.transaction((transaction) async {
+      final documentInDatabase = await HubDocument.db.insertRow(
+        session,
+        document,
+        transaction: transaction,
+      );
 
-    await SupportGoalCheck.db.attachRow.documents(
-      session,
-      goalCheck,
-      documentInDatabase,
-    );
+      await SupportGoalCheck.db.attachRow.documents(
+        session,
+        goalCheck,
+        documentInDatabase,
+        transaction: transaction,
+      );
 
-    final updatedSupportGoal = await SupportGoal.db.findById(
-      session,
-      supportGoalId,
-      include: _supportGoalInclude,
-    );
-    return updatedSupportGoal!;
+      final updatedSupportGoal = await SupportGoal.db.findById(
+        session,
+        supportGoalId,
+        include: _supportGoalInclude,
+        transaction: transaction,
+      );
+      return updatedSupportGoal!;
+    });
   }
 
   Future<SupportGoal> removeFileFromSupportGoalCheck(

@@ -16,33 +16,38 @@ class AdminCategoriesEndpoint extends Endpoint {
 
     final competences = await importCompetencesFromFileContentJson(content);
 
-    final List<Competence> processedCompetences = [];
+    return await session.db.transaction((transaction) async {
+      final List<Competence> processedCompetences = [];
 
-    for (final competence in competences) {
-      // Check if competence exists by publicId
-      final existingCompetence = await Competence.db.findFirstRow(
-        session,
-        where: (t) => t.publicId.equals(competence.publicId),
-      );
-
-      if (existingCompetence != null) {
-        // Update existing competence
-        final updatedCompetence = existingCompetence.copyWith(
-          name: competence.name,
-          parentCompetence: competence.parentCompetence,
-          level: competence.level,
-          indicators: competence.indicators,
+      for (final competence in competences) {
+        // Check if competence exists by publicId
+        final existingCompetence = await Competence.db.findFirstRow(
+          session,
+          where: (t) => t.publicId.equals(competence.publicId),
+          transaction: transaction,
         );
-        await session.db.updateRow(updatedCompetence);
-        processedCompetences.add(updatedCompetence);
-      } else {
-        // Create new competence
-        await session.db.insertRow(competence);
-        processedCompetences.add(competence);
-      }
-    }
 
-    return processedCompetences;
+        if (existingCompetence != null) {
+          // Update existing competence
+          final updatedCompetence = existingCompetence.copyWith(
+            name: competence.name,
+            parentCompetence: competence.parentCompetence,
+            level: competence.level,
+            indicators: competence.indicators,
+          );
+          await Competence.db
+              .updateRow(session, updatedCompetence, transaction: transaction);
+          processedCompetences.add(updatedCompetence);
+        } else {
+          // Create new competence
+          final inserted = await Competence.db
+              .insertRow(session, competence, transaction: transaction);
+          processedCompetences.add(inserted);
+        }
+      }
+
+      return processedCompetences;
+    });
   }
 
   Future<List<SupportCategory>> importSupportCategoriesFromJsonFile(
@@ -52,30 +57,35 @@ class AdminCategoriesEndpoint extends Endpoint {
     final categories =
         await importSupportCategoriesFromFileContentJson(content);
 
-    final List<SupportCategory> processedCategories = [];
+    return await session.db.transaction((transaction) async {
+      final List<SupportCategory> processedCategories = [];
 
-    for (final category in categories) {
-      // Check if support category exists by categoryId
-      final existingCategory = await SupportCategory.db.findFirstRow(
-        session,
-        where: (t) => t.categoryId.equals(category.categoryId),
-      );
-
-      if (existingCategory != null) {
-        // Update existing category
-        final updatedCategory = existingCategory.copyWith(
-          name: category.name,
-          parentCategory: category.parentCategory,
+      for (final category in categories) {
+        // Check if support category exists by categoryId
+        final existingCategory = await SupportCategory.db.findFirstRow(
+          session,
+          where: (t) => t.categoryId.equals(category.categoryId),
+          transaction: transaction,
         );
-        await session.db.updateRow(updatedCategory);
-        processedCategories.add(updatedCategory);
-      } else {
-        // Create new category
-        await session.db.insertRow(category);
-        processedCategories.add(category);
-      }
-    }
 
-    return processedCategories;
+        if (existingCategory != null) {
+          // Update existing category
+          final updatedCategory = existingCategory.copyWith(
+            name: category.name,
+            parentCategory: category.parentCategory,
+          );
+          await SupportCategory.db
+              .updateRow(session, updatedCategory, transaction: transaction);
+          processedCategories.add(updatedCategory);
+        } else {
+          // Create new category
+          final inserted = await SupportCategory.db
+              .insertRow(session, category, transaction: transaction);
+          processedCategories.add(inserted);
+        }
+      }
+
+      return processedCategories;
+    });
   }
 }

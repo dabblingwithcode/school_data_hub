@@ -63,68 +63,78 @@ class PupilEndpoint extends Endpoint {
     }
 
     try {
-      switch (documentType) {
-        case PupilDocumentType.avatar:
-          if (pupil.avatar == null) {
-            throw Exception('Avatar not found for pupil');
-          }
+      await session.db.transaction((transaction) async {
+        switch (documentType) {
+          case PupilDocumentType.avatar:
+            if (pupil.avatar == null) {
+              throw Exception('Avatar not found for pupil');
+            }
 
-          final avatarPath = pupil.avatar!.documentPath;
-          if (avatarPath != null) {
-            await session.storage
-                .deleteFile(storageId: 'private', path: avatarPath);
-          }
-
-          await PupilData.db.detachRow.avatar(session, pupil);
-          await HubDocument.db.deleteRow(session, pupil.avatar!);
-          _logger.info('Deleted avatar for pupil ${pupil.id}');
-          break;
-
-        case PupilDocumentType.avatarAuth:
-          if (pupil.avatarAuth == null) {
-            throw Exception('Avatar auth not found for pupil');
-          }
-
-          final avatarAuthPath = pupil.avatarAuth!.documentPath;
-          if (avatarAuthPath != null) {
-            await session.storage
-                .deleteFile(storageId: 'private', path: avatarAuthPath);
-          }
-
-          await PupilData.db.detachRow.avatarAuth(session, pupil);
-          await HubDocument.db.deleteRow(session, pupil.avatarAuth!);
-          _logger.info('Deleted avatar auth for pupil ${pupil.id}');
-
-          // If the avatar auth is revoked, delete the avatar as well
-          if (pupil.avatar != null) {
             final avatarPath = pupil.avatar!.documentPath;
             if (avatarPath != null) {
               await session.storage
                   .deleteFile(storageId: 'private', path: avatarPath);
             }
-            await PupilData.db.detachRow.avatar(session, pupil);
-            await HubDocument.db.deleteRow(session, pupil.avatar!);
+
+            await PupilData.db.detachRow
+                .avatar(session, pupil, transaction: transaction);
+            await HubDocument.db
+                .deleteRow(session, pupil.avatar!, transaction: transaction);
             _logger.info('Deleted avatar for pupil ${pupil.id}');
-          }
-          break;
+            break;
 
-        case PupilDocumentType.publicMediaAuth:
-          if (pupil.publicMediaAuthDocument == null) {
-            throw Exception('Public media auth document not found for pupil');
-          }
+          case PupilDocumentType.avatarAuth:
+            if (pupil.avatarAuth == null) {
+              throw Exception('Avatar auth not found for pupil');
+            }
 
-          final publicMediaPath = pupil.publicMediaAuthDocument!.documentPath;
-          if (publicMediaPath != null) {
-            await session.storage
-                .deleteFile(storageId: 'private', path: publicMediaPath);
-          }
+            final avatarAuthPath = pupil.avatarAuth!.documentPath;
+            if (avatarAuthPath != null) {
+              await session.storage
+                  .deleteFile(storageId: 'private', path: avatarAuthPath);
+            }
 
-          await PupilData.db.detachRow.publicMediaAuthDocument(session, pupil);
-          await HubDocument.db
-              .deleteRow(session, pupil.publicMediaAuthDocument!);
-          _logger.info('Deleted public media auth for pupil ${pupil.id}');
-          break;
-      }
+            await PupilData.db.detachRow
+                .avatarAuth(session, pupil, transaction: transaction);
+            await HubDocument.db.deleteRow(session, pupil.avatarAuth!,
+                transaction: transaction);
+            _logger.info('Deleted avatar auth for pupil ${pupil.id}');
+
+            // If the avatar auth is revoked, delete the avatar as well
+            if (pupil.avatar != null) {
+              final avatarPath = pupil.avatar!.documentPath;
+              if (avatarPath != null) {
+                await session.storage
+                    .deleteFile(storageId: 'private', path: avatarPath);
+              }
+              await PupilData.db.detachRow
+                  .avatar(session, pupil, transaction: transaction);
+              await HubDocument.db
+                  .deleteRow(session, pupil.avatar!, transaction: transaction);
+              _logger.info('Deleted avatar for pupil ${pupil.id}');
+            }
+            break;
+
+          case PupilDocumentType.publicMediaAuth:
+            if (pupil.publicMediaAuthDocument == null) {
+              throw Exception('Public media auth document not found for pupil');
+            }
+
+            final publicMediaPath = pupil.publicMediaAuthDocument!.documentPath;
+            if (publicMediaPath != null) {
+              await session.storage
+                  .deleteFile(storageId: 'private', path: publicMediaPath);
+            }
+
+            await PupilData.db.detachRow.publicMediaAuthDocument(session, pupil,
+                transaction: transaction);
+            await HubDocument.db.deleteRow(
+                session, pupil.publicMediaAuthDocument!,
+                transaction: transaction);
+            _logger.info('Deleted public media auth for pupil ${pupil.id}');
+            break;
+        }
+      });
 
       // Get the updated pupil
       final updatedPupil = await PupilData.db.findById(
@@ -184,26 +194,26 @@ class PupilEndpoint extends Endpoint {
       createdBy: createdBy,
     );
 
-    if (pupil.publicMediaAuthDocument != null) {
-      final documentId = pupil.publicMediaAuthDocument!.documentId;
-      await session.db.transaction((transaction) async {
+    await session.db.transaction((transaction) async {
+      if (pupil.publicMediaAuthDocument != null) {
+        final documentId = pupil.publicMediaAuthDocument!.documentId;
         await PupilData.db.detachRow
             .publicMediaAuthDocument(session, pupil, transaction: transaction);
         await HubDocumentHelper().deleteHubDocumentAndFile(
             session: session, documentId: documentId, transaction: transaction);
-      });
-    }
-    final releasedPupil = await PupilData.db.findFirstRow(
-      session,
-      where: (t) => t.id.equals(pupilId),
-      include: PupilData.include(
-        publicMediaAuthDocument: HubDocument.include(),
-      ),
-    );
-    // pupil.publicMediaAuthDocument = null;
-    // pupil.publicMediaAuthDocumentId = null;
-    releasedPupil!.publicMediaAuth = publicMediaAuthReset;
-    await PupilData.db.updateRow(session, releasedPupil);
+      }
+      final releasedPupil = await PupilData.db.findFirstRow(
+        session,
+        where: (t) => t.id.equals(pupilId),
+        include: PupilData.include(
+          publicMediaAuthDocument: HubDocument.include(),
+        ),
+        transaction: transaction,
+      );
+      releasedPupil!.publicMediaAuth = publicMediaAuthReset;
+      await PupilData.db
+          .updateRow(session, releasedPupil, transaction: transaction);
+    });
     final updatedPupil = await PupilData.db
         .findById(session, pupilId, include: PupilSchemas.allInclude);
     return updatedPupil!;

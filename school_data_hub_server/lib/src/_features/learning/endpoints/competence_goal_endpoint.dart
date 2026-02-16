@@ -189,23 +189,28 @@ class CompetenceGoalEndpoint extends Endpoint {
       path: filePath,
     );
 
-    final documentInDatabase = await HubDocument.db.insertRow(
-      session,
-      document,
-    );
+    return await session.db.transaction((transaction) async {
+      final documentInDatabase = await HubDocument.db.insertRow(
+        session,
+        document,
+        transaction: transaction,
+      );
 
-    await CompetenceGoal.db.attachRow.documents(
-      session,
-      competenceGoal,
-      documentInDatabase,
-    );
+      await CompetenceGoal.db.attachRow.documents(
+        session,
+        competenceGoal,
+        documentInDatabase,
+        transaction: transaction,
+      );
 
-    final pupil = await PupilData.db.findById(
-      session,
-      competenceGoal.pupilId,
-      include: PupilSchemas.allInclude,
-    );
-    return pupil!;
+      final pupil = await PupilData.db.findById(
+        session,
+        competenceGoal.pupilId,
+        include: PupilSchemas.allInclude,
+        transaction: transaction,
+      );
+      return pupil!;
+    });
   }
 
   Future<PupilData> removeFileFromCompetenceGoal(

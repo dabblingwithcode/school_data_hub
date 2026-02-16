@@ -1,0 +1,5 @@
+class: HubSessionLogInfo
+fields:
+  sessionLogEntry: HubSessionLogEntry
+  logs: List<HubLogEntry>
+  queries: List<HubQueryLogEntry>
