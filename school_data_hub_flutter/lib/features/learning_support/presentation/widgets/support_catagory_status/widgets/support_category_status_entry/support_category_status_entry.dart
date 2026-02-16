@@ -4,7 +4,6 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
@@ -62,6 +61,20 @@ class SupportCategoryStatusEntry extends StatelessWidget {
                                       );
                                 }
                               },
+                              onLongPress: () async {
+                                if (!authorizedToChangeStatus) return;
+                                bool? confirm = await confirmationDialog(
+                                  context: context,
+                                  title: 'Status löschen?',
+                                  message: 'Status löschen?',
+                                );
+                                if (confirm != true) return;
+                                learningSupportManager
+                                    .deleteSupportCategoryStatus(
+                                      pupil.pupilId,
+                                      status.id!,
+                                    );
+                              },
                               child: Text(
                                 status.createdAt.formatDateForUser(),
                                 style: TextStyle(
@@ -79,26 +92,6 @@ class SupportCategoryStatusEntry extends StatelessWidget {
                               ),
                             ),
                     ),
-                    if (authorizedToChangeStatus)
-                      IconButton(
-                        icon: const Icon(Icons.delete_outline, size: 20),
-                        color: Colors.red,
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        tooltip: 'Status löschen',
-                        onPressed: () async {
-                          bool? confirm = await confirmationDialog(
-                            context: context,
-                            title: 'Status löschen?',
-                            message: 'Status löschen?',
-                          );
-                          if (confirm != true) return;
-                          learningSupportManager.deleteSupportCategoryStatus(
-                            pupil.pupilId,
-                            status.id!,
-                          );
-                        },
-                      ),
                   ],
                 ),
 
@@ -141,9 +134,7 @@ class SupportCategoryStatusEntry extends StatelessWidget {
                           )
                         : Text(
                             status.createdBy,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                   ],
                 ),
@@ -157,10 +148,8 @@ class SupportCategoryStatusEntry extends StatelessWidget {
                     Expanded(
                       child: authorizedToChangeStatus
                           ? InkWell(
-                              onTap: () => _editComment(
-                                context,
-                                learningSupportManager,
-                              ),
+                              onTap: () =>
+                                  _editComment(context, learningSupportManager),
                               child: Text(
                                 status.comment ?? 'nicht vorhanden',
                                 style: TextStyle(
@@ -178,10 +167,8 @@ class SupportCategoryStatusEntry extends StatelessWidget {
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                         tooltip: 'Kommentar bearbeiten',
-                        onPressed: () => _editComment(
-                          context,
-                          learningSupportManager,
-                        ),
+                        onPressed: () =>
+                            _editComment(context, learningSupportManager),
                       ),
                   ],
                 ),
@@ -194,8 +181,10 @@ class SupportCategoryStatusEntry extends StatelessWidget {
               authorizedToChangeStatus
                   ? InkWell(
                       onTap: () async {
-                        final int? newScore =
-                            await _showScoreEditDialog(context, status.score);
+                        final int? newScore = await _showScoreEditDialog(
+                          context,
+                          status.score,
+                        );
                         if (newScore != null && newScore != status.score) {
                           await learningSupportManager
                               .updateSupportCategoryStatus(
@@ -206,7 +195,7 @@ class SupportCategoryStatusEntry extends StatelessWidget {
                         }
                       },
                       child: SupportCategoryStatusSymbol(
-                        size: 60,
+                        size: 40,
                         pupil: pupil,
                         categoryId: status.supportCategoryId,
                         statusId: status.id!,

@@ -192,10 +192,20 @@ class PdfPage2 {
                   if (hasStatus)
                     pw.Padding(
                       padding: const pw.EdgeInsets.only(left: 4),
-                      child: pw.Image(
-                        growthIcons[status!.score]!,
-                        width: 16,
-                        height: 16,
+                      child: pw.Container(
+                        width: 18,
+                        height: 18,
+                        alignment: pw.Alignment.center,
+                        decoration: pw.BoxDecoration(
+                          color: PdfHelpers.getGrowthIconBackgroundColor(
+                              status.score),
+                          shape: pw.BoxShape.circle,
+                        ),
+                        child: pw.Image(
+                          growthIcons[status.score]!,
+                          width: 14,
+                          height: 14,
+                        ),
                       ),
                     ),
                 ],

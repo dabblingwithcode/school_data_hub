@@ -2,20 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan/controller/new_learning_support_plan_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/services/pdf/learning_support_plan_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
-/// A card widget for displaying and editing a learning support plan.
+/// A display-only card for a learning support plan.
 ///
-/// Shows plan details in display mode with an edit button that switches
-/// to inline editing of the plan's text fields. Changes are saved to the
-/// server via [LearningSupportManager].
-class LearningSupportPlanCard extends StatefulWidget {
+/// Shows plan details and provides an edit button that navigates to the
+/// [NewLearningSupportPlan] page in edit mode, and a PDF generation button.
+/// Encrypted fields (comment, strengthsDescription, problemsDescription)
+/// are decrypted once at build time.
+class LearningSupportPlanCard extends StatelessWidget {
   final LearningSupportPlan plan;
   final PupilProxy pupil;
 
@@ -25,121 +26,16 @@ class LearningSupportPlanCard extends StatefulWidget {
     super.key,
   });
 
-  @override
-  State<LearningSupportPlanCard> createState() =>
-      _LearningSupportPlanCardState();
-}
-
-class _LearningSupportPlanCardState extends State<LearningSupportPlanCard> {
-  bool _isEditing = false;
-  bool _isSaving = false;
-
-  late final TextEditingController _commentController;
-  late final TextEditingController _socialPedagogueController;
-  late final TextEditingController _professionalsInvolvedController;
-  late final TextEditingController _strengthsDescriptionController;
-  late final TextEditingController _problemsDescriptionController;
-
-  LearningSupportPlan get plan => widget.plan;
-  PupilProxy get pupil => widget.pupil;
-
-  @override
-  void initState() {
-    super.initState();
-    _initControllers();
-  }
-
-  void _initControllers() {
-    _commentController = TextEditingController(text: plan.comment ?? '');
-    _socialPedagogueController = TextEditingController(
-      text: plan.socialPedagogue ?? '',
-    );
-    _professionalsInvolvedController = TextEditingController(
-      text: plan.proffesionalsInvolved ?? '',
-    );
-    _strengthsDescriptionController = TextEditingController(
-      text: plan.strengthsDescription ?? '',
-    );
-    _problemsDescriptionController = TextEditingController(
-      text: plan.problemsDescription ?? '',
+  void _editPlan(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) =>
+            NewLearningSupportPlan(pupil: pupil, existingPlan: plan),
+      ),
     );
   }
 
-  @override
-  void didUpdateWidget(LearningSupportPlanCard oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.plan != widget.plan && !_isEditing) {
-      _commentController.text = plan.comment ?? '';
-      _socialPedagogueController.text = plan.socialPedagogue ?? '';
-      _professionalsInvolvedController.text = plan.proffesionalsInvolved ?? '';
-      _strengthsDescriptionController.text = plan.strengthsDescription ?? '';
-      _problemsDescriptionController.text = plan.problemsDescription ?? '';
-    }
-  }
-
-  @override
-  void dispose() {
-    _commentController.dispose();
-    _socialPedagogueController.dispose();
-    _professionalsInvolvedController.dispose();
-    _strengthsDescriptionController.dispose();
-    _problemsDescriptionController.dispose();
-    super.dispose();
-  }
-
-  void _startEditing() {
-    setState(() {
-      _commentController.text = plan.comment ?? '';
-      _socialPedagogueController.text = plan.socialPedagogue ?? '';
-      _professionalsInvolvedController.text = plan.proffesionalsInvolved ?? '';
-      _strengthsDescriptionController.text = plan.strengthsDescription ?? '';
-      _problemsDescriptionController.text = plan.problemsDescription ?? '';
-      _isEditing = true;
-    });
-  }
-
-  void _cancelEditing() {
-    setState(() {
-      _isEditing = false;
-    });
-  }
-
-  Future<void> _saveChanges() async {
-    setState(() => _isSaving = true);
-
-    final updatedPlan = plan.copyWith(
-      comment: _commentController.text.trim().isEmpty
-          ? null
-          : _commentController.text.trim(),
-      socialPedagogue: _socialPedagogueController.text.trim().isEmpty
-          ? null
-          : _socialPedagogueController.text.trim(),
-      proffesionalsInvolved:
-          _professionalsInvolvedController.text.trim().isEmpty
-          ? null
-          : _professionalsInvolvedController.text.trim(),
-      strengthsDescription: _strengthsDescriptionController.text.trim().isEmpty
-          ? null
-          : _strengthsDescriptionController.text.trim(),
-      problemsDescription: _problemsDescriptionController.text.trim().isEmpty
-          ? null
-          : _problemsDescriptionController.text.trim(),
-    );
-
-    final success = await di<LearningSupportManager>()
-        .updateLearningSupportPlan(plan: updatedPlan);
-
-    if (mounted) {
-      setState(() {
-        _isSaving = false;
-        if (success) {
-          _isEditing = false;
-        }
-      });
-    }
-  }
-
-  Future<void> _generatePlanPdf() async {
+  Future<void> _generatePlanPdf(BuildContext context) async {
     try {
       final supportCategoryManager = di<SupportCategoryManager>();
       final supportCategories = supportCategoryManager.supportCategories.value;
@@ -151,7 +47,7 @@ class _LearningSupportPlanCardState extends State<LearningSupportPlanCard> {
             supportCategories: supportCategories,
           );
 
-      if (mounted) {
+      if (context.mounted) {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (ctx) => LearningSupportPlanPdfViewPage(pdfFile: file),
@@ -168,6 +64,17 @@ class _LearningSupportPlanCardState extends State<LearningSupportPlanCard> {
 
   @override
   Widget build(BuildContext context) {
+    // Decrypt encrypted fields once for display
+    final decryptedComment = plan.comment != null
+        ? customEncrypter.decryptString(plan.comment!)
+        : null;
+    final decryptedStrengths = plan.strengthsDescription != null
+        ? customEncrypter.decryptString(plan.strengthsDescription!)
+        : null;
+    final decryptedProblems = plan.problemsDescription != null
+        ? customEncrypter.decryptString(plan.problemsDescription!)
+        : null;
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 4.0),
       child: Padding(
@@ -175,59 +82,51 @@ class _LearningSupportPlanCardState extends State<LearningSupportPlanCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header: Plan ID, Support Level, action buttons
-            _buildHeader(),
+            _buildHeader(context),
             const Gap(8),
-
-            // Created info
             _buildCreatedInfo(),
-
-            // Content: either display or edit mode
-            if (_isEditing) _buildEditMode() else _buildDisplayMode(),
+            _buildDisplayMode(
+              decryptedComment: decryptedComment,
+              decryptedStrengths: decryptedStrengths,
+              decryptedProblems: decryptedProblems,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Row(
       children: [
         Expanded(
           child: Text(
-            'Förderplan Nr. ${plan.planId}',
+            'Förderplan Nr. ${plan.number}',
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
-
         const Gap(10),
-        // Edit Button
         InkWell(
-          onTap: _isEditing ? null : _startEditing,
+          onTap: () => _editPlan(context),
           child: Container(
             padding: const EdgeInsets.all(8.0),
             decoration: BoxDecoration(
-              color: _isEditing
-                  ? Colors.grey.withValues(alpha: 0.1)
-                  : AppColors.interactiveColor.withValues(alpha: 0.1),
+              color: AppColors.interactiveColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8.0),
               border: Border.all(
-                color: _isEditing
-                    ? Colors.grey.withValues(alpha: 0.3)
-                    : AppColors.interactiveColor.withValues(alpha: 0.3),
+                color: AppColors.interactiveColor.withValues(alpha: 0.3),
               ),
             ),
             child: Icon(
               Icons.edit,
               size: 20,
-              color: _isEditing ? Colors.grey : AppColors.interactiveColor,
+              color: AppColors.interactiveColor,
             ),
           ),
         ),
         const Gap(6),
-        // PDF Generation Button
         InkWell(
-          onTap: _generatePlanPdf,
+          onTap: () => _generatePlanPdf(context),
           child: Container(
             padding: const EdgeInsets.all(8.0),
             decoration: BoxDecoration(
@@ -268,7 +167,11 @@ class _LearningSupportPlanCardState extends State<LearningSupportPlanCard> {
     );
   }
 
-  Widget _buildDisplayMode() {
+  Widget _buildDisplayMode({
+    required String? decryptedComment,
+    required String? decryptedStrengths,
+    required String? decryptedProblems,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -281,6 +184,16 @@ class _LearningSupportPlanCardState extends State<LearningSupportPlanCard> {
           const Gap(2),
           Text(plan.socialPedagogue!, style: const TextStyle(fontSize: 12)),
         ],
+        if (plan.specialNeedsTeacher?.isNotEmpty ?? false) ...[
+          const Gap(8),
+          const Text(
+            'Sonderpädagog*in:',
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+          ),
+          const Gap(2),
+          Text(plan.specialNeedsTeacher!, style: const TextStyle(fontSize: 12)),
+        ],
+
         if (plan.proffesionalsInvolved?.isNotEmpty ?? false) ...[
           const Gap(8),
           const Text(
@@ -293,139 +206,33 @@ class _LearningSupportPlanCardState extends State<LearningSupportPlanCard> {
             style: const TextStyle(fontSize: 12),
           ),
         ],
-        if (plan.strengthsDescription?.isNotEmpty ?? false) ...[
+        if (decryptedStrengths?.isNotEmpty ?? false) ...[
           const Gap(8),
           const Text(
             'Stärken:',
             style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
           ),
           const Gap(2),
-          Text(
-            plan.strengthsDescription!,
-            style: const TextStyle(fontSize: 12),
-          ),
+          Text(decryptedStrengths!, style: const TextStyle(fontSize: 12)),
         ],
-        if (plan.problemsDescription?.isNotEmpty ?? false) ...[
+        if (decryptedProblems?.isNotEmpty ?? false) ...[
           const Gap(8),
           const Text(
             'Probleme:',
             style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
           ),
           const Gap(2),
-          Text(plan.problemsDescription!, style: const TextStyle(fontSize: 12)),
+          Text(decryptedProblems!, style: const TextStyle(fontSize: 12)),
         ],
-        if (plan.comment?.isNotEmpty ?? false) ...[
+        if (decryptedComment?.isNotEmpty ?? false) ...[
           const Gap(8),
           const Text(
             'Ergänzende Hinweise und Absprachen:',
             style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
           ),
           const Gap(2),
-          Text(plan.comment!, style: const TextStyle(fontSize: 12)),
+          Text(decryptedComment!, style: const TextStyle(fontSize: 12)),
         ],
-      ],
-    );
-  }
-
-  Widget _buildEditMode() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Gap(12),
-
-        // Social Pedagogue field
-        const Text('Sozialpädagoge:', style: AppStyles.textLabel),
-        const Gap(4),
-        TextField(
-          controller: _socialPedagogueController,
-          decoration: AppStyles.textFieldDecoration(
-            labelText: 'Sozialpädagoge',
-          ),
-        ),
-
-        const Gap(12),
-
-        // Professionals Involved field
-        const Text('Beteiligte Fachkräfte:', style: AppStyles.textLabel),
-        const Gap(4),
-        TextField(
-          controller: _professionalsInvolvedController,
-          maxLines: 3,
-          decoration: AppStyles.textFieldDecoration(
-            labelText: 'Beteiligte Fachkräfte',
-          ),
-        ),
-
-        const Gap(12),
-
-        // Strengths Description field
-        const Text('Stärken:', style: AppStyles.textLabel),
-        const Gap(4),
-        TextField(
-          controller: _strengthsDescriptionController,
-          maxLines: 4,
-          decoration: AppStyles.textFieldDecoration(
-            labelText: 'Stärkenbeschreibung',
-          ),
-        ),
-
-        const Gap(12),
-
-        // Problems Description field
-        const Text('Probleme:', style: AppStyles.textLabel),
-        const Gap(4),
-        TextField(
-          controller: _problemsDescriptionController,
-          maxLines: 4,
-          decoration: AppStyles.textFieldDecoration(
-            labelText: 'Problembeschreibung',
-          ),
-        ),
-        // Comment field
-        const Text(
-          'Ergänze Hinweise und Absprachen:',
-          style: AppStyles.textLabel,
-        ),
-        const Gap(4),
-        TextField(
-          controller: _commentController,
-          maxLines: 3,
-          decoration: AppStyles.textFieldDecoration(labelText: 'Kommentar'),
-        ),
-        const Gap(16),
-
-        // Save / Cancel buttons
-        Row(
-          children: [
-            Expanded(
-              child: ElevatedButton(
-                style: AppStyles.cancelButtonStyle,
-                onPressed: _isSaving ? null : _cancelEditing,
-                child: const Text(
-                  'ABBRECHEN',
-                  style: AppStyles.buttonTextStyle,
-                ),
-              ),
-            ),
-            const Gap(10),
-            Expanded(
-              child: ElevatedButton(
-                style: AppStyles.actionButtonStyle,
-                onPressed: _isSaving ? null : _saveChanges,
-                child: _isSaving
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : const Text('SPEICHERN', style: AppStyles.buttonTextStyle),
-              ),
-            ),
-          ],
-        ),
       ],
     );
   }

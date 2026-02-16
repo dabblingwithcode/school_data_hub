@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/logger/presentation/logs_page/logs_page.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 final _envManager = di<EnvManager>();
 
@@ -60,7 +60,9 @@ class LoadingPageState extends State<LoadingPage> {
                           child: InkWell(
                             onTap: () {
                               Navigator.of(context).push(
-                                MaterialPageRoute(builder: (ctx) => const LogsPage()),
+                                MaterialPageRoute(
+                                  builder: (ctx) => const LogsPage(),
+                                ),
                               );
                             },
                             child: const Image(

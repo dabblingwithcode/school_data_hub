@@ -49,7 +49,7 @@ class LearningSupportPlanEndpoint extends Endpoint {
     int supportCategoryId,
     int learningSupportPlanId,
     int status,
-    String comment,
+    String? comment,
     String createdBy,
   ) async {
     final pupil = await PupilData.db.findById(

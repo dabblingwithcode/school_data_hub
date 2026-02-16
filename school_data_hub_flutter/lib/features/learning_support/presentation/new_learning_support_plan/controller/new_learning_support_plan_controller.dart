@@ -1,28 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan/new_learning_support_plan_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
-/// StatefulWidget for creating a new learning support plan for a pupil.
+/// StatefulWidget for creating or editing a learning support plan for a pupil.
 ///
 /// This widget provides a form interface for:
 /// - Selecting the support level (1-3)
 /// - Entering a plan ID/name
-/// - Adding optional comments
-/// - Creating the plan for the current semester
+/// - Adding optional comments, strengths, problems, professionals, etc.
+/// - Creating or updating the plan for the current semester
 ///
-/// The plan is created with the pupil's support level history and
-/// linked to the current school semester.
+/// When [existingPlan] is provided, the widget operates in edit mode:
+/// encrypted fields are decrypted once and pre-populated into the form.
 class NewLearningSupportPlan extends StatefulWidget {
   final PupilProxy pupil;
+  final LearningSupportPlan? existingPlan;
 
-  const NewLearningSupportPlan({super.key, required this.pupil});
+  const NewLearningSupportPlan({
+    super.key,
+    required this.pupil,
+    this.existingPlan,
+  });
 
   @override
   NewLearningSupportPlanController createState() =>
@@ -31,13 +37,14 @@ class NewLearningSupportPlan extends StatefulWidget {
 
 class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
   late final TextEditingController planIdController;
+  late final TextEditingController numberController;
   late final TextEditingController commentController;
   late final TextEditingController socialPedagogueController;
+  late final TextEditingController specialNeedsTeacherController;
   late final TextEditingController proffesionalsInvolvedController;
   late final TextEditingController strengthsDescriptionController;
   late final TextEditingController problemsDescriptionController;
 
-  // Fixed support level - not selectable
   late final int fixedSupportLevel;
   final ValueNotifier<bool> isValidNotifier = ValueNotifier<bool>(false);
   final ValueNotifier<String> semesterInfoNotifier = ValueNotifier<String>(
@@ -45,6 +52,7 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
   );
 
   PupilProxy get pupil => widget.pupil;
+  bool get isEditing => widget.existingPlan != null;
 
   LearningSupportManager get _learningSupportPlanManager =>
       di<LearningSupportManager>();
@@ -57,26 +65,67 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
   @override
   void initState() {
     super.initState();
-    planIdController = TextEditingController();
-    commentController = TextEditingController();
-    socialPedagogueController = TextEditingController();
-    proffesionalsInvolvedController = TextEditingController();
-    strengthsDescriptionController = TextEditingController();
-    problemsDescriptionController = TextEditingController();
 
-    // Initialize fixed support level from pupil's history
-    fixedSupportLevel = pupil.supportLevelHistory?.last.level ?? 1;
+    final existingPlan = widget.existingPlan;
 
-    // Generate default plan ID
-    final currentSemester = _schoolCalendarManager.currentSemester.value;
-    if (currentSemester != null) {
-      final semesterName =
-          '${currentSemester.schoolYear}/${currentSemester.isFirst ? '1' : '2'}';
-      planIdController.text =
-          'Förderplan $semesterName - ${pupil.firstName} ${pupil.lastName}';
+    if (existingPlan != null) {
+      // Edit mode: decrypt encrypted fields once and pre-populate controllers
+      final decryptedComment = existingPlan.comment != null
+          ? customEncrypter.decryptString(existingPlan.comment!)
+          : '';
+      final decryptedStrengths = existingPlan.strengthsDescription != null
+          ? customEncrypter.decryptString(existingPlan.strengthsDescription!)
+          : '';
+      final decryptedProblems = existingPlan.problemsDescription != null
+          ? customEncrypter.decryptString(existingPlan.problemsDescription!)
+          : '';
+
+      planIdController = TextEditingController(text: existingPlan.planId);
+      numberController = TextEditingController(
+        text: existingPlan.number.toString(),
+      );
+      commentController = TextEditingController(text: decryptedComment);
+      socialPedagogueController = TextEditingController(
+        text: existingPlan.socialPedagogue ?? '',
+      );
+      specialNeedsTeacherController = TextEditingController(
+        text: existingPlan.specialNeedsTeacher ?? '',
+      );
+      proffesionalsInvolvedController = TextEditingController(
+        text: existingPlan.proffesionalsInvolved ?? '',
+      );
+      strengthsDescriptionController = TextEditingController(
+        text: decryptedStrengths,
+      );
+      problemsDescriptionController = TextEditingController(
+        text: decryptedProblems,
+      );
+
+      fixedSupportLevel = existingPlan.learningSupportLevelId;
+    } else {
+      // Create mode
+      planIdController = TextEditingController();
+      numberController = TextEditingController();
+      specialNeedsTeacherController = TextEditingController();
+      commentController = TextEditingController();
+      socialPedagogueController = TextEditingController();
+      proffesionalsInvolvedController = TextEditingController();
+      strengthsDescriptionController = TextEditingController();
+      problemsDescriptionController = TextEditingController();
+
+      fixedSupportLevel = pupil.supportLevelHistory?.last.level ?? 1;
+
+      final currentSemester = _schoolCalendarManager.currentSemester.value;
+      if (currentSemester != null) {
+        final semesterName =
+            '${currentSemester.schoolYear}/${currentSemester.isFirst ? '1' : '2'}';
+        planIdController.text =
+            'Förderplan $semesterName - ${pupil.firstName} ${pupil.lastName}';
+      }
     }
 
     planIdController.addListener(validateForm);
+    validateForm();
 
     _updateSemesterInfo();
   }
@@ -92,8 +141,9 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
       final semesterName = currentSemester.isFirst
           ? '1. Halbjahr'
           : '2. Halbjahr';
-      semesterInfoNotifier.value =
-          'Der Förderplan wird für das $semesterName ${currentSemester.schoolYear} erstellt.';
+      semesterInfoNotifier.value = isEditing
+          ? 'Förderplan für $semesterName ${currentSemester.schoolYear} bearbeiten.'
+          : 'Der Förderplan wird für das $semesterName ${currentSemester.schoolYear} erstellt.';
     } else {
       semesterInfoNotifier.value =
           'Kein aktives Semester gefunden. Bitte wenden Sie sich an den Administrator.';
@@ -103,27 +153,40 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
   String? get groupTutorDisplayName {
     final groupTutorUsername = pupil.groupTutor;
     if (groupTutorUsername != null && groupTutorUsername.isNotEmpty) {
-      // Find user by username in the UserManager's user list
       final users = _userManager.users.value;
       try {
         final user = users.firstWhere(
           (u) => u.userInfo?.userName == groupTutorUsername,
         );
-
-        // Get the full name from userInfo
         final fullName = user.userInfo?.fullName;
         return fullName ?? groupTutorUsername;
       } catch (e) {
-        // User not found, fall back to username
         return groupTutorUsername;
       }
     }
     return null;
   }
 
-  Future<void> createPlan() async {
+  String? _trimOrNull(String text) {
+    final trimmed = text.trim();
+    return trimmed.isEmpty ? null : trimmed;
+  }
+
+  Future<void> savePlan() async {
     if (!isValidNotifier.value) return;
 
+    if (isEditing) {
+      await _updatePlan();
+    } else {
+      await _createPlan();
+    }
+
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
+  Future<void> _createPlan() async {
     final currentSemester = _schoolCalendarManager.currentSemester.value;
     if (currentSemester == null) {
       _notificationService.showSnackBar(
@@ -133,41 +196,37 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
       return;
     }
 
-    // First create a support level entry for this pupil
-    await PupilMutator().updatePupilSupportLevel(
-      pupilId: pupil.pupilId,
-      level: fixedSupportLevel,
-      createdAt: DateTime.now().toUtc(),
-      createdBy: _hubSessionManager.userName!,
-      comment: 'Förderstufe $fixedSupportLevel für Förderplan',
-    );
-
-    // Create the learning support plan (plan object is created internally by the manager)
+    // await PupilMutator().updatePupilSupportLevel(
+    //   pupilId: pupil.pupilId,
+    //   level: fixedSupportLevel,
+    //   createdAt: DateTime.now().toUtc(),
+    //   createdBy: _hubSessionManager.userName!,
+    //   comment: 'Förderstufe $fixedSupportLevel für Förderplan',
+    // );
 
     await _learningSupportPlanManager.postNewLearningSupportPlan(
       pupilId: pupil.pupilId,
       planId: planIdController.text.trim(),
       supportLevelId: fixedSupportLevel,
-      comment: commentController.text.trim().isEmpty
-          ? null
-          : commentController.text.trim(),
-      socialPedagogue: socialPedagogueController.text.trim().isEmpty
-          ? null
-          : socialPedagogueController.text.trim(),
-      proffesionalsInvolved: proffesionalsInvolvedController.text.trim().isEmpty
-          ? null
-          : proffesionalsInvolvedController.text.trim(),
-      strengthsDescription: strengthsDescriptionController.text.trim().isEmpty
-          ? null
-          : strengthsDescriptionController.text.trim(),
-      problemsDescription: problemsDescriptionController.text.trim().isEmpty
-          ? null
-          : problemsDescriptionController.text.trim(),
+      number: int.tryParse(numberController.text.trim()) ?? 1,
+      specialNeedsTeacher: _trimOrNull(specialNeedsTeacherController.text),
+      comment: _trimOrNull(commentController.text),
+      socialPedagogue: _trimOrNull(socialPedagogueController.text),
+      proffesionalsInvolved: _trimOrNull(proffesionalsInvolvedController.text),
+      strengthsDescription: _trimOrNull(strengthsDescriptionController.text),
+      problemsDescription: _trimOrNull(problemsDescriptionController.text),
     );
+  }
 
-    if (mounted) {
-      Navigator.of(context).pop();
-    }
+  Future<void> _updatePlan() async {
+    await _learningSupportPlanManager.updateLearningSupportPlan(
+      plan: widget.existingPlan!,
+      comment: _trimOrNull(commentController.text),
+      socialPedagogue: _trimOrNull(socialPedagogueController.text),
+      proffesionalsInvolved: _trimOrNull(proffesionalsInvolvedController.text),
+      strengthsDescription: _trimOrNull(strengthsDescriptionController.text),
+      problemsDescription: _trimOrNull(problemsDescriptionController.text),
+    );
   }
 
   @override

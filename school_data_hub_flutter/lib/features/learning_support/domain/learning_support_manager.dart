@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
@@ -12,7 +13,6 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/data/learning_support_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class LearningSupportManager {
   //- IMPORTS -//
@@ -42,6 +42,8 @@ class LearningSupportManager {
     required int pupilId,
     required int supportLevelId,
     required String planId,
+    required int number,
+    String? specialNeedsTeacher,
     String? comment,
     String? socialPedagogue,
     String? proffesionalsInvolved,
@@ -71,16 +73,27 @@ class LearningSupportManager {
       );
       return;
     }
+    final encryptedComment = comment != null
+        ? customEncrypter.encryptString(comment)
+        : null;
+    final encryptedStrengthsDescription = strengthsDescription != null
+        ? customEncrypter.encryptString(strengthsDescription)
+        : null;
+    final encryptedProblemsDescription = problemsDescription != null
+        ? customEncrypter.encryptString(problemsDescription)
+        : null;
     final plan = await _learningSupportApiService.postLearningSupportPlan(
       LearningSupportPlan(
         pupilId: pupilId,
+        number: number,
         learningSupportLevelId: supportLevelId,
         planId: planId,
-        comment: comment,
+        comment: encryptedComment,
         socialPedagogue: socialPedagogue,
+        specialNeedsTeacher: specialNeedsTeacher,
         proffesionalsInvolved: proffesionalsInvolved,
-        strengthsDescription: strengthsDescription,
-        problemsDescription: problemsDescription,
+        strengthsDescription: encryptedStrengthsDescription,
+        problemsDescription: encryptedProblemsDescription,
         schoolSemesterId: currentSemester.id!,
         createdBy: _hubSessionManager.userName!,
         createdAt: DateTime.now(),
@@ -110,9 +123,30 @@ class LearningSupportManager {
 
   Future<bool> updateLearningSupportPlan({
     required LearningSupportPlan plan,
+    required String? comment,
+    required String? socialPedagogue,
+    required String? proffesionalsInvolved,
+    required String? strengthsDescription,
+    required String? problemsDescription,
   }) async {
+    final encryptedComment = comment != null
+        ? customEncrypter.encryptString(comment)
+        : null;
+    final encryptedStrengthsDescription = strengthsDescription != null
+        ? customEncrypter.encryptString(strengthsDescription)
+        : null;
+    final encryptedProblemsDescription = problemsDescription != null
+        ? customEncrypter.encryptString(problemsDescription)
+        : null;
+    final updatedPlan = plan.copyWith(
+      comment: encryptedComment,
+      socialPedagogue: socialPedagogue,
+      proffesionalsInvolved: proffesionalsInvolved,
+      strengthsDescription: encryptedStrengthsDescription,
+      problemsDescription: encryptedProblemsDescription,
+    );
     final success = await _learningSupportApiService.updateLearningSupportPlan(
-      plan,
+      updatedPlan,
     );
 
     if (!success) {
@@ -163,13 +197,16 @@ class LearningSupportManager {
       );
       return;
     }
+    final encryptedComment = comment != null
+        ? customEncrypter.encryptString(comment)
+        : null;
     final updatedPupil = await ClientHelper.apiCall(
       call: () => _learningSupportApiService.postSupportCategoryStatus(
         pupilId: pupilId,
         supportCategoryId: supportCategoryId,
         learningSupportPlanId: learningSupportPlan.id!,
         status: status,
-        comment: comment,
+        comment: encryptedComment,
         createdBy: _hubSessionManager.userName!,
       ),
     );

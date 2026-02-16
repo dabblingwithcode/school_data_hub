@@ -69,6 +69,10 @@ class AppColorPalette {
     required this.schooldayEventReasonChipUnselectedColor,
     required this.schooldayEventReasonChipSelectedColor,
     required this.schooldayEventReasonChipSelectedCheckColor,
+    required this.growthIconColor1,
+    required this.growthIconColor2,
+    required this.growthIconColor3,
+    required this.growthIconColor4,
   });
 
   final AppColorSchemeKey key;
@@ -129,6 +133,10 @@ class AppColorPalette {
   final Color schooldayEventReasonChipUnselectedColor;
   final Color schooldayEventReasonChipSelectedColor;
   final Color schooldayEventReasonChipSelectedCheckColor;
+  final Color growthIconColor1;
+  final Color growthIconColor2;
+  final Color growthIconColor3;
+  final Color growthIconColor4;
 
   AppColorPalette copyWith({
     AppColorSchemeKey? key,
@@ -189,6 +197,10 @@ class AppColorPalette {
     Color? schooldayEventReasonChipUnselectedColor,
     Color? schooldayEventReasonChipSelectedColor,
     Color? schooldayEventReasonChipSelectedCheckColor,
+    Color? growthIconColor1,
+    Color? growthIconColor2,
+    Color? growthIconColor3,
+    Color? growthIconColor4,
   }) {
     return AppColorPalette(
       key: key ?? this.key,
@@ -265,6 +277,10 @@ class AppColorPalette {
       schooldayEventReasonChipSelectedCheckColor:
           schooldayEventReasonChipSelectedCheckColor ??
           this.schooldayEventReasonChipSelectedCheckColor,
+      growthIconColor1: growthIconColor1 ?? this.growthIconColor1,
+      growthIconColor2: growthIconColor2 ?? this.growthIconColor2,
+      growthIconColor3: growthIconColor3 ?? this.growthIconColor3,
+      growthIconColor4: growthIconColor4 ?? this.growthIconColor4,
     );
   }
 }
@@ -334,6 +350,10 @@ class AppColorPalettes {
       56,
       56,
     ),
+    growthIconColor1: Color.fromARGB(255, 255, 140, 0),
+    growthIconColor2: Color.fromARGB(255, 255, 215, 0),
+    growthIconColor3: Color.fromARGB(255, 217, 242, 58),
+    growthIconColor4: Color.fromARGB(255, 132, 185, 79),
   );
 
   static final lila = classic.copyWith(
@@ -456,6 +476,10 @@ class AppColors {
   static Color get lernenLeistenColor => palette.lernenLeistenColor;
   static Color get deutschColor => palette.deutschColor;
   static Color get spracheSprechenColor => palette.spracheSprechenColor;
+  static Color get growthIconColor1 => palette.growthIconColor1;
+  static Color get growthIconColor2 => palette.growthIconColor2;
+  static Color get growthIconColor3 => palette.growthIconColor3;
+  static Color get growthIconColor4 => palette.growthIconColor4;
 
   //- Competence colors
 

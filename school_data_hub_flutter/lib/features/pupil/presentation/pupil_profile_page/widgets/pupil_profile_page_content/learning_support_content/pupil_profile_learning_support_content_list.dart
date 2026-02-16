@@ -42,6 +42,19 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool hasActivePlan() {
+      if (pupil.learningSupportPlans != null &&
+          pupil.learningSupportPlans!.any(
+            (plan) =>
+                plan.schoolSemesterId ==
+                di<SchoolCalendarManager>().currentSemester.value?.id,
+          ) &&
+          di<SchoolCalendarManager>().currentSemester.value != null) {
+        return true;
+      }
+      return false;
+    }
+
     final plansExpansionController = createOnce(
       () => CustomExpansionTileController(),
     );
@@ -239,46 +252,50 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
         // Learning Support Plans Section
         _buildLearningSupportPlansSection(context, plansExpansionController),
         const Gap(10),
-        InkWell(
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (ctx) => ScoreSupportCategoryPage(pupil: pupil),
-              ),
-            );
-          },
-          borderRadius: BorderRadius.circular(8),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.category_outlined,
-                  color: AppColors.backgroundColor,
-                  size: 22,
-                ),
-                const Gap(8),
-                Text(
-                  'Förderbereiche',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.backgroundColor,
+        if (hasActivePlan()) ...[
+          ...[
+            InkWell(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (ctx) => ScoreSupportCategoryPage(pupil: pupil),
                   ),
+                );
+              },
+              borderRadius: BorderRadius.circular(8),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.category_outlined,
+                      color: AppColors.backgroundColor,
+                      size: 22,
+                    ),
+                    const Gap(8),
+                    Text(
+                      'Förderbereiche',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.backgroundColor,
+                      ),
+                    ),
+                    const Spacer(),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 16,
+                      color: AppColors.backgroundColor.withValues(alpha: 0.5),
+                    ),
+                  ],
                 ),
-                const Spacer(),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
-                  color: AppColors.backgroundColor.withValues(alpha: 0.5),
-                ),
-              ],
+              ),
             ),
-          ),
-        ),
+          ],
+        ],
 
         const Gap(5),
-        if (pupil.learningSupportPlans?.isNotEmpty ?? true)
+        if (hasActivePlan())
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: ElevatedButton(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 
 class GrowthDropdown extends StatelessWidget {
   final int dropdownValue;
@@ -48,34 +49,58 @@ List<DropdownMenuItem<int>> competenceCheckDropdownItems = [
   ),
   DropdownMenuItem(
     value: 1,
-    child: Image.asset(
-      'assets/images/growth_icons/growth_1-4.png',
-      width: 50,
-      height: 50,
+    child: Container(
+      decoration: BoxDecoration(
+        color: AppColors.growthIconColor1,
+        shape: BoxShape.circle,
+      ),
+      child: Image.asset(
+        'assets/images/growth_icons/growth_1-4.png',
+        width: 50,
+        height: 50,
+      ),
     ),
   ),
   DropdownMenuItem(
     value: 2,
-    child: Image.asset(
-      'assets/images/growth_icons/growth_2-4.png',
-      width: 50,
-      height: 50,
+    child: Container(
+      decoration: BoxDecoration(
+        color: AppColors.growthIconColor2,
+        shape: BoxShape.circle,
+      ),
+      child: Image.asset(
+        'assets/images/growth_icons/growth_2-4.png',
+        width: 50,
+        height: 50,
+      ),
     ),
   ),
   DropdownMenuItem(
     value: 3,
-    child: Image.asset(
-      'assets/images/growth_icons/growth_3-4.png',
-      width: 50,
-      height: 50,
+    child: Container(
+      decoration: BoxDecoration(
+        color: AppColors.growthIconColor3,
+        shape: BoxShape.circle,
+      ),
+      child: Image.asset(
+        'assets/images/growth_icons/growth_3-4.png',
+        width: 50,
+        height: 50,
+      ),
     ),
   ),
   DropdownMenuItem(
     value: 4,
-    child: Image.asset(
-      'assets/images/growth_icons/growth_4-4.png',
-      width: 50,
-      height: 50,
+    child: Container(
+      decoration: BoxDecoration(
+        color: AppColors.growthIconColor4,
+        shape: BoxShape.circle,
+      ),
+      child: Image.asset(
+        'assets/images/growth_icons/growth_4-4.png',
+        width: 50,
+        height: 50,
+      ),
     ),
   ),
 ];

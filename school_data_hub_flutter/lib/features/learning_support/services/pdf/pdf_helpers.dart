@@ -49,6 +49,17 @@ class PdfHelpers {
     return base;
   }
 
+  /// Background color for PDF growth icons, matching AppColors.growthIconColor.
+  static PdfColor getGrowthIconBackgroundColor(int score) {
+    return switch (score) {
+      1 => const PdfColor.fromInt(0xFFFF8C00),
+      2 => const PdfColor.fromInt(0xFFFFD700),
+      3 => const PdfColor.fromInt(0xFFD9F23A),
+      4 => const PdfColor.fromInt(0xFF84B94F),
+      _ => PdfColors.grey,
+    };
+  }
+
   static String getStatusSymbol(int score) {
     switch (score) {
       case 1:

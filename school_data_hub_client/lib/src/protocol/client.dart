@@ -1216,7 +1216,7 @@ class EndpointLearningSupportPlan extends _i1.EndpointRef {
     int supportCategoryId,
     int learningSupportPlanId,
     int status,
-    String comment,
+    String? comment,
     String createdBy,
   ) =>
       caller.callServerEndpoint<_i7.PupilData>(

@@ -2621,8 +2621,8 @@ class Endpoints extends _i1.EndpointDispatch {
             ),
             'comment': _i1.ParameterDescription(
               name: 'comment',
-              type: _i1.getType<String>(),
-              nullable: false,
+              type: _i1.getType<String?>(),
+              nullable: true,
             ),
             'createdBy': _i1.ParameterDescription(
               name: 'createdBy',

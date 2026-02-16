@@ -1,6 +1,7 @@
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/features/learning_support/services/pdf/pdf_helpers.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
@@ -19,6 +20,14 @@ class PdfPage1 {
     final lernjahr = PdfHelpers.calculateLernjahr(pupil);
     final schoolYear = plan.schoolSemester?.schoolYear ?? '';
     final semester = plan.schoolSemester;
+
+    // Decrypt encrypted fields once for the PDF
+    final decryptedStrengths = plan.strengthsDescription != null
+        ? customEncrypter.decryptString(plan.strengthsDescription!)
+        : '';
+    final decryptedProblems = plan.problemsDescription != null
+        ? customEncrypter.decryptString(plan.problemsDescription!)
+        : '';
 
     return pw.Page(
       pageFormat: PdfPageFormat.a4.landscape,
@@ -441,7 +450,7 @@ class PdfPage1 {
                     ),
                     pw.SizedBox(height: 4),
                     pw.Text(
-                      plan.strengthsDescription ?? '',
+                      decryptedStrengths,
                       style: pw.TextStyle(font: fontRegular, fontSize: 8),
                     ),
                   ],
@@ -477,7 +486,7 @@ class PdfPage1 {
                     ),
                     pw.SizedBox(height: 4),
                     pw.Text(
-                      plan.problemsDescription ?? '',
+                      decryptedProblems,
                       style: pw.TextStyle(font: fontRegular, fontSize: 8),
                     ),
                   ],

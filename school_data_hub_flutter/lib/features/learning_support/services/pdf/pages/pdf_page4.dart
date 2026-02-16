@@ -1,6 +1,7 @@
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/features/learning_support/services/pdf/pdf_helpers.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
@@ -14,6 +15,11 @@ class PdfPage4 {
     required pw.Font fontRegular,
     required pw.Font fontBold,
   }) {
+    // Decrypt encrypted comment once for the PDF
+    final decryptedComment = plan.comment != null
+        ? customEncrypter.decryptString(plan.comment!)
+        : '';
+
     return pw.Page(
       pageFormat: PdfPageFormat.a4.landscape,
       margin: const pw.EdgeInsets.all(20),
@@ -44,7 +50,7 @@ class PdfPage4 {
                   border: pw.Border.all(color: PdfColors.black, width: 0.5),
                 ),
                 child: pw.Text(
-                  plan.comment ?? '',
+                  decryptedComment,
                   style: pw.TextStyle(font: fontRegular, fontSize: 9),
                 ),
               ),

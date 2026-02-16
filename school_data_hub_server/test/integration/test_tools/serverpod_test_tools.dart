@@ -3412,7 +3412,7 @@ class _LearningSupportPlanEndpoint {
     int supportCategoryId,
     int learningSupportPlanId,
     int status,
-    String comment,
+    String? comment,
     String createdBy,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {

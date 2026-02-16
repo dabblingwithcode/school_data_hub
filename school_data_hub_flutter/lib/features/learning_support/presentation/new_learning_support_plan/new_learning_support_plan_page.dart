@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan/controller/new_learning_support_plan_controller.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class NewLearningSupportPlanPage extends WatchingWidget {
   final NewLearningSupportPlanController controller;
@@ -36,9 +36,11 @@ class NewLearningSupportPlanPage extends WatchingWidget {
       ),
       child: Scaffold(
         backgroundColor: AppColors.canvasColor,
-        appBar: const GenericAppBar(
+        appBar: GenericAppBar(
           iconData: Icons.support_rounded,
-          title: 'Neuer Förderplan',
+          title: controller.isEditing
+              ? 'Förderplan bearbeiten'
+              : 'Neuer Förderplan',
         ),
         body: Center(
           child: ConstrainedBox(
@@ -202,46 +204,43 @@ class NewLearningSupportPlanPage extends WatchingWidget {
 
                   const Gap(20),
 
+                  // Number Field
+                  const Text('Plan-Nummer *', style: AppStyles.title),
+                  const Gap(10),
+                  TextField(
+                    controller: controller.numberController,
+                    keyboardType: TextInputType.number,
+                    decoration: AppStyles.textFieldDecoration(
+                      labelText: 'Plan-Nummer',
+                    ),
+                    onChanged: (_) => controller.validateForm(),
+                  ),
+                  const Gap(20),
+
                   // Plan ID Field
                   const Text('Plan-Bezeichnung *', style: AppStyles.title),
                   const Gap(10),
                   TextField(
                     controller: controller.planIdController,
+                    readOnly: controller.isEditing,
                     decoration: AppStyles.textFieldDecoration(
                       labelText: 'z.B. Förderplan 2024/1 - Max Mustermann',
                     ),
                     onChanged: (_) => controller.validateForm(),
                   ),
-
                   const Gap(20),
 
-                  // Comment Field
-                  const Text('Kommentar', style: AppStyles.title),
+                  // Special Needs Teacher Field
+                  const Text('Sonderpädagog*in', style: AppStyles.title),
                   const Gap(10),
                   TextField(
-                    controller: controller.commentController,
-                    maxLines: 4,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.all(10),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: AppColors.backgroundColor,
-                          width: 2,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: AppColors.backgroundColor,
-                          width: 2,
-                        ),
-                      ),
-                      labelStyle: TextStyle(color: AppColors.backgroundColor),
-                      labelText: 'Kommentar',
-                      hintText:
-                          'Zusätzliche Bemerkungen zum Förderplan (Kann später ausgefüllt werden)',
+                    controller: controller.specialNeedsTeacherController,
+                    decoration: AppStyles.textFieldDecoration(
+                      labelText:
+                          'Name des Fachlehrers für besondere Bedürfnisse',
                     ),
+                    onChanged: (_) => controller.validateForm(),
                   ),
-
                   const Gap(20),
 
                   // Social Pedagogue Field
@@ -356,7 +355,37 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                           'Beschreibung der Probleme und Herausforderungen (Kann später ausgefüllt werden)',
                     ),
                   ),
+                  const Gap(20),
 
+                  // Comment Field
+                  const Text(
+                    'Ergänzende Hinweise und Absprachen',
+                    style: AppStyles.title,
+                  ),
+                  const Gap(10),
+                  TextField(
+                    controller: controller.commentController,
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.all(10),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.backgroundColor,
+                          width: 2,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.backgroundColor,
+                          width: 2,
+                        ),
+                      ),
+                      labelStyle: TextStyle(color: AppColors.backgroundColor),
+                      labelText: 'Hinweise und Absprachen',
+                      hintText:
+                          'Zusätzliche Bemerkungen zum Förderplan (Kann später ausgefüllt werden)',
+                    ),
+                  ),
                   const Gap(30),
 
                   // Action Buttons
@@ -378,9 +407,11 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                                   ),
                                   minimumSize: const Size.fromHeight(50),
                                 ),
-                          onPressed: isValid ? controller.createPlan : null,
-                          child: const Text(
-                            'FÖRDERPLAN ERSTELLEN',
+                          onPressed: isValid ? controller.savePlan : null,
+                          child: Text(
+                            controller.isEditing
+                                ? 'FÖRDERPLAN SPEICHERN'
+                                : 'FÖRDERPLAN ERSTELLEN',
                             style: AppStyles.buttonTextStyle,
                           ),
                         ),
