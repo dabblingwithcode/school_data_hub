@@ -99,6 +99,8 @@ class LearningSupportManager {
 
     _learningSupportPlans.value = plansToUpdate;
 
+    await _pupilManager.updatePupilData(pupilId);
+
     _notificationService.showSnackBar(
       NotificationType.success,
       'Förderplan erstellt',

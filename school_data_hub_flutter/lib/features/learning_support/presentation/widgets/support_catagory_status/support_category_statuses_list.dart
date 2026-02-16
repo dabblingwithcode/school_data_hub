@@ -8,13 +8,14 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/w
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_goal/support_category_badge.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
-class SupportCategoryStatusesList extends StatelessWidget {
+class SupportCategoryStatusesList extends WatchingWidget {
   final PupilProxy pupil;
 
   const SupportCategoryStatusesList({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {
+    watch(pupil);
     final statuses = pupil.supportCategoryStatuses;
     if (statuses == null || statuses.isEmpty) {
       return const SizedBox.shrink();

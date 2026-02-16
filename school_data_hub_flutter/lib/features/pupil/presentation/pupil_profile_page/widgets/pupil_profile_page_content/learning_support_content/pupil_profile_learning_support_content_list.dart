@@ -55,6 +55,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
       (m) => m.supportLevelHistory,
       target: pupil,
     );
+    watchPropertyValue((m) => m.learningSupportPlans, target: pupil);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

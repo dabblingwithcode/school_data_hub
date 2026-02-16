@@ -8,7 +8,8 @@ class LearningSupportPlanEndpoint extends Endpoint {
   bool get requireLogin => true;
 
   Future<List<LearningSupportPlan>> fetchLearningSupportPlans(
-      Session session) async {
+    Session session,
+  ) async {
     final plans = await LearningSupportPlan.db.find(
       session,
       include: LearningSupportPlan.include(
@@ -19,19 +20,25 @@ class LearningSupportPlanEndpoint extends Endpoint {
   }
 
   Future<LearningSupportPlan> createLearningSupportPlan(
-      Session session, LearningSupportPlan plan) async {
+    Session session,
+    LearningSupportPlan plan,
+  ) async {
     final newPlan = await session.db.insertRow(plan);
     return newPlan;
   }
 
   Future<bool> updateLearningSupportPlan(
-      Session session, LearningSupportPlan plan) async {
+    Session session,
+    LearningSupportPlan plan,
+  ) async {
     await session.db.updateRow(plan);
     return true;
   }
 
   Future<bool> deleteLearningSupportPlan(
-      Session session, LearningSupportPlan plan) async {
+    Session session,
+    LearningSupportPlan plan,
+  ) async {
     await session.db.deleteRow<LearningSupportPlan>(plan);
     return true;
   }
@@ -59,10 +66,13 @@ class LearningSupportPlanEndpoint extends Endpoint {
       createdBy: createdBy,
       createdAt: DateTime.now().toUtc(),
     );
-    final categoryStatusInDataBase = await SupportCategoryStatus.db
-        .insertRow(session, newSupportCategoryStatus);
-    await PupilData.db.attach
-        .supportCategoryStatuses(session, pupil!, [categoryStatusInDataBase]);
+    final categoryStatusInDataBase = await SupportCategoryStatus.db.insertRow(
+      session,
+      newSupportCategoryStatus,
+    );
+    await PupilData.db.attach.supportCategoryStatuses(session, pupil!, [
+      categoryStatusInDataBase,
+    ]);
     final updatedPupil = await PupilData.db.findById(
       session,
       pupilId,
@@ -109,7 +119,8 @@ class LearningSupportPlanEndpoint extends Endpoint {
     );
     if (existingStatus == null) {
       throw Exception(
-          'SupportCategoryStatus not found for statusId: $statusId');
+        'SupportCategoryStatus not found for statusId: $statusId',
+      );
     }
     final updatedStatus = existingStatus.copyWith(
       score: status ?? existingStatus.score,
@@ -140,10 +151,12 @@ class LearningSupportPlanEndpoint extends Endpoint {
     );
     if (existingStatus == null) {
       throw Exception(
-          'SupportCategoryStatus not found for pupilId: $pupilId and supportCategoryId: $statusId');
+        'SupportCategoryStatus not found for pupilId: $pupilId and supportCategoryId: $statusId',
+      );
     }
-    await PupilData.db.detach
-        .supportCategoryStatuses(session, [existingStatus]);
+    await PupilData.db.detach.supportCategoryStatuses(session, [
+      existingStatus,
+    ]);
     await session.db.deleteRow<SupportCategoryStatus>(existingStatus);
 
     final updatedPupil = await PupilData.db.findById(
@@ -202,10 +215,7 @@ class LearningSupportPlanEndpoint extends Endpoint {
     String? strategies,
     int? supportCategoryId,
   ) async {
-    final existingGoal = await SupportGoal.db.findById(
-      session,
-      supportGoalId,
-    );
+    final existingGoal = await SupportGoal.db.findById(session, supportGoalId);
     if (existingGoal == null) {
       throw Exception('SupportGoal not found for id: $supportGoalId');
     }
@@ -250,7 +260,17 @@ class LearningSupportPlanEndpoint extends Endpoint {
     await session.db.transaction((transaction) async {
       // Delete all documents from all goal checks
       for (final check in existingGoal.goalChecks ?? <SupportGoalCheck>[]) {
-        for (final doc in check.documents ?? <HubDocument>[]) {
+        // Re-fetch each check with documents to ensure we have all documents
+        final checkWithDocs = await SupportGoalCheck.db.findById(
+          session,
+          check.id!,
+          include: SupportGoalCheck.include(
+            documents: HubDocument.includeList(),
+          ),
+          transaction: transaction,
+        );
+        for (final doc
+            in checkWithDocs?.documents ?? <HubDocument>[]) {
           await SupportGoalCheck.db.detachRow.documents(
             session,
             doc,
@@ -269,11 +289,9 @@ class LearningSupportPlanEndpoint extends Endpoint {
           }
         }
         // Detach and delete the goal check
-        await SupportGoal.db.detach.goalChecks(
-          session,
-          [check],
-          transaction: transaction,
-        );
+        await SupportGoal.db.detach.goalChecks(session, [
+          check,
+        ], transaction: transaction);
         await SupportGoalCheck.db.deleteRow(
           session,
           check,
@@ -281,11 +299,9 @@ class LearningSupportPlanEndpoint extends Endpoint {
         );
       }
       // Detach and delete the goal itself
-      await PupilData.db.detach.supportGoals(
-        session,
-        [existingGoal],
-        transaction: transaction,
-      );
+      await PupilData.db.detach.supportGoals(session, [
+        existingGoal,
+      ], transaction: transaction);
       await SupportGoal.db.deleteRow(
         session,
         existingGoal,
@@ -306,9 +322,7 @@ class LearningSupportPlanEndpoint extends Endpoint {
 
   static final _supportGoalInclude = SupportGoal.include(
     goalChecks: SupportGoalCheck.includeList(
-      include: SupportGoalCheck.include(
-        documents: HubDocument.includeList(),
-      ),
+      include: SupportGoalCheck.include(documents: HubDocument.includeList()),
     ),
   );
 
@@ -340,11 +354,9 @@ class LearningSupportPlanEndpoint extends Endpoint {
       session,
       newSupportGoalCheck,
     );
-    await SupportGoal.db.attach.goalChecks(
-      session,
-      supportGoal,
-      [checkInDatabase],
-    );
+    await SupportGoal.db.attach.goalChecks(session, supportGoal, [
+      checkInDatabase,
+    ]);
     final updatedSupportGoal = await SupportGoal.db.findById(
       session,
       supportGoalId,
@@ -394,12 +406,43 @@ class LearningSupportPlanEndpoint extends Endpoint {
     final existingCheck = await SupportGoalCheck.db.findById(
       session,
       supportGoalCheckId,
+      include: SupportGoalCheck.include(documents: HubDocument.includeList()),
     );
     if (existingCheck == null) {
       throw Exception('SupportGoalCheck not found for id: $supportGoalCheckId');
     }
-    await SupportGoal.db.detach.goalChecks(session, [existingCheck]);
-    await session.db.deleteRow<SupportGoalCheck>(existingCheck);
+    await session.db.transaction((transaction) async {
+      // Delete all documents from the goal check
+      for (final doc in existingCheck.documents ?? <HubDocument>[]) {
+        await SupportGoalCheck.db.detachRow.documents(
+          session,
+          doc,
+          transaction: transaction,
+        );
+        await HubDocument.db.deleteRow(
+          session,
+          doc,
+          transaction: transaction,
+        );
+        if (doc.documentPath != null) {
+          await session.storage.deleteFile(
+            storageId: 'private',
+            path: doc.documentPath!,
+          );
+        }
+      }
+      // Detach and delete the goal check
+      await SupportGoal.db.detach.goalChecks(
+        session,
+        [existingCheck],
+        transaction: transaction,
+      );
+      await SupportGoalCheck.db.deleteRow(
+        session,
+        existingCheck,
+        transaction: transaction,
+      );
+    });
 
     final updatedSupportGoal = await SupportGoal.db.findById(
       session,
@@ -424,9 +467,7 @@ class LearningSupportPlanEndpoint extends Endpoint {
     final goalCheck = await SupportGoalCheck.db.findById(
       session,
       supportGoalCheckId,
-      include: SupportGoalCheck.include(
-        documents: HubDocument.includeList(),
-      ),
+      include: SupportGoalCheck.include(documents: HubDocument.includeList()),
     );
     if (goalCheck == null) {
       throw Exception('SupportGoalCheck not found for id: $supportGoalCheckId');
@@ -466,9 +507,7 @@ class LearningSupportPlanEndpoint extends Endpoint {
     final goalCheck = await SupportGoalCheck.db.findById(
       session,
       supportGoalCheckId,
-      include: SupportGoalCheck.include(
-        documents: HubDocument.includeList(),
-      ),
+      include: SupportGoalCheck.include(documents: HubDocument.includeList()),
     );
     if (goalCheck == null) {
       throw Exception('SupportGoalCheck not found for id: $supportGoalCheckId');
@@ -477,7 +516,8 @@ class LearningSupportPlanEndpoint extends Endpoint {
     final documentToRemove = goalCheck.documents?.firstWhere(
       (doc) => doc.documentId == documentId,
       orElse: () => throw Exception(
-          'Document with id $documentId not found in goal check'),
+        'Document with id $documentId not found in goal check',
+      ),
     );
 
     if (documentToRemove == null) {

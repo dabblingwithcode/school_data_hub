@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/theme/styles.dart';
 
 final GlobalKey<FormState> _goalCheckFormKey = GlobalKey<FormState>();
 
@@ -136,41 +137,24 @@ Future<SupportGoalCheck?> supportGoalCheckDialog({
             actions: [
               // Cancel button
               Padding(
-                padding: const EdgeInsets.only(
-                  left: 15,
-                  right: 15,
-                  bottom: 10,
-                ),
+                padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.dangerButtonColor,
-                    minimumSize: const Size.fromHeight(50),
-                  ),
+                  style: AppStyles.cancelButtonStyle,
                   onPressed: () {
                     Navigator.of(dialogContext).pop(null);
                   },
                   child: const Text(
                     'ABBRECHEN',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 17,
-                    ),
+                    style: AppStyles.buttonTextStyle,
                   ),
                 ),
               ),
 
               // Confirm button
               Padding(
-                padding: const EdgeInsets.only(
-                  left: 15,
-                  right: 15,
-                  bottom: 10,
-                ),
+                padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.successButtonColor,
-                    minimumSize: const Size.fromHeight(50),
-                  ),
+                  style: AppStyles.successButtonStyle,
                   onPressed: () {
                     if (_goalCheckFormKey.currentState!.validate()) {
                       final check = SupportGoalCheck(
@@ -186,11 +170,7 @@ Future<SupportGoalCheck?> supportGoalCheckDialog({
                   },
                   child: const Text(
                     'SPEICHERN',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 17,
-                      color: Colors.white,
-                    ),
+                    style: AppStyles.buttonTextStyle,
                   ),
                 ),
               ),

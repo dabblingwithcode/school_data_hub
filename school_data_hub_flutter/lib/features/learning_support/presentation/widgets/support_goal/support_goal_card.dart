@@ -18,19 +18,21 @@ import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/support_goal_check_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_entry.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_symbol.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_goal/support_category_badge.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
 class SupportGoalCard extends WatchingWidget {
   final PupilProxy pupil;
   final int goalIndex;
+  final bool showCategoryBadge;
   const SupportGoalCard({
     required this.pupil,
     required this.goalIndex,
+    this.showCategoryBadge = true,
     super.key,
   });
 
@@ -74,19 +76,21 @@ class SupportGoalCard extends WatchingWidget {
                 Row(
                   children: [
                     const Gap(10),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: 8.0,
-                        bottom: 8,
-                        left: 10,
-                        right: 10,
+                    if (showCategoryBadge) ...[
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 8.0,
+                          bottom: 8,
+                          left: 10,
+                          right: 10,
+                        ),
+                        child: SupportCategoryBadge(
+                          categoryId:
+                              pupil.supportGoals![goalIndex].supportCategoryId,
+                        ),
                       ),
-                      child: SupportCategoryBadge(
-                        categoryId:
-                            pupil.supportGoals![goalIndex].supportCategoryId,
-                      ),
-                    ),
-                    const Gap(10),
+                      const Gap(10),
+                    ],
                     Flexible(
                       child: InkWell(
                         onTap: () {

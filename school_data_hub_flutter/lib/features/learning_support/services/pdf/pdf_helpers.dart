@@ -20,7 +20,7 @@ class PdfHelpers {
   /// Returns null if the pupil is not a migration pupil.
   static int? calculateLernjahr(PupilProxy pupil) {
     final migrationEnd = pupil.migrationSupportEnds;
-    if (migrationEnd == null || migrationEnd.isBefore(DateTime.now())) {
+    if (migrationEnd == null) {
       return null;
     }
     final years = DateTime.now().difference(pupil.pupilSince).inDays ~/ 365;
@@ -81,7 +81,7 @@ class PdfHelpers {
 
   /// Checkbox character: filled square if checked, empty square if not.
   /// Uses geometric shapes that Roboto renders cleanly.
-  static String checkbox(bool checked) => checked ? '\u25A0' : '\u25A1';
+  static String checkbox(bool checked) => checked ? 'X' : '0';
 
   /// Build a standard underlined fill field.
   /// When [text] is non-empty the underline is omitted and plain text is
@@ -91,7 +91,7 @@ class PdfHelpers {
     pw.Font? font,
     double? width,
     double height = 16,
-    double fontSize = 9,
+    double fontSize = 12,
   }) {
     // Filled: plain text, no underline
     if (text.isNotEmpty) {
@@ -143,23 +143,20 @@ class PdfHelpers {
   static pw.Widget tableHeaderCell(String text, pw.Font fontBold) {
     return pw.Padding(
       padding: const pw.EdgeInsets.all(4),
-      child: pw.Text(
-        text,
-        style: pw.TextStyle(font: fontBold, fontSize: 7),
-      ),
+      child: pw.Text(text, style: pw.TextStyle(font: fontBold, fontSize: 7)),
     );
   }
 
   /// Table data cell used on Page 3.
-  static pw.Widget tableDataCell(String text, pw.Font fontRegular,
-      {double minHeight = 0}) {
+  static pw.Widget tableDataCell(
+    String text,
+    pw.Font fontRegular, {
+    double minHeight = 0,
+  }) {
     return pw.Container(
       constraints: pw.BoxConstraints(minHeight: minHeight),
       padding: const pw.EdgeInsets.all(4),
-      child: pw.Text(
-        text,
-        style: pw.TextStyle(font: fontRegular, fontSize: 7),
-      ),
+      child: pw.Text(text, style: pw.TextStyle(font: fontRegular, fontSize: 7)),
     );
   }
 }

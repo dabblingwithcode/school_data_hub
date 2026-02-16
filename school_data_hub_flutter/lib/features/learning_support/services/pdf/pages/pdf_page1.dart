@@ -40,7 +40,7 @@ class PdfPage1 {
                   ),
                 ),
                 pw.Text(
-                  schoolData.schoolNumber,
+                  'Schulnr.: ${schoolData.schoolNumber}',
                   style: pw.TextStyle(
                     font: fontRegular,
                     fontSize: 10,
@@ -57,12 +57,13 @@ class PdfPage1 {
                 ),
               ],
             ),
-
+            pw.SizedBox(height: 2),
             // ── 1. Name + Birthday ──
             pw.Container(
               padding: const pw.EdgeInsets.all(6),
               decoration: pw.BoxDecoration(
                 border: pw.Border.all(color: PdfColors.black, width: 0.5),
+                //  borderRadius: pw.BorderRadius.circular(4),
               ),
               child: pw.Row(
                 children: [
@@ -89,7 +90,7 @@ class PdfPage1 {
                 ],
               ),
             ),
-            pw.SizedBox(height: 2),
+            pw.SizedBox(height: 3),
 
             // ── 2. Förderplan Nr. + metadata ──
             pw.Container(
@@ -98,122 +99,153 @@ class PdfPage1 {
                 border: pw.Border.all(color: PdfColors.black, width: 0.5),
               ),
               child: pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Text(
-                    'Förderplan Nr.:',
-                    style: pw.TextStyle(font: fontBold, fontSize: 9),
+                  pw.Row(
+                    children: [
+                      pw.Text(
+                        'Förderplan Nr.:',
+                        style: pw.TextStyle(font: fontBold, fontSize: 9),
+                      ),
+                      pw.SizedBox(width: 4),
+                      PdfHelpers.fillField(
+                        text: plan.number?.toString() ?? plan.planId,
+                        font: fontRegular,
+                        width: 40,
+                      ),
+                    ],
                   ),
-                  pw.SizedBox(width: 4),
-                  PdfHelpers.fillField(
-                    text: plan.number?.toString() ?? plan.planId,
-                    font: fontRegular,
-                    width: 40,
+                  pw.Row(
+                    children: [
+                      pw.Text(
+                        'vom:',
+                        style: pw.TextStyle(font: fontBold, fontSize: 9),
+                      ),
+                      pw.SizedBox(width: 4),
+                      PdfHelpers.fillField(
+                        text: PdfHelpers.formatDate(plan.createdAt),
+                        font: fontRegular,
+                        width: 70,
+                      ),
+                    ],
                   ),
-                  pw.SizedBox(width: 10),
-                  pw.Text(
-                    'vom:',
-                    style: pw.TextStyle(font: fontBold, fontSize: 9),
+                  pw.Row(
+                    children: [
+                      pw.Text(
+                        'Schuljahr:',
+                        style: pw.TextStyle(font: fontBold, fontSize: 9),
+                      ),
+                      pw.SizedBox(width: 4),
+                      PdfHelpers.fillField(
+                        text: schoolYear,
+                        font: fontRegular,
+                        width: 70,
+                      ),
+                    ],
                   ),
-                  pw.SizedBox(width: 4),
-                  PdfHelpers.fillField(
-                    text: PdfHelpers.formatDate(plan.createdAt),
-                    font: fontRegular,
-                    width: 70,
+                  pw.Row(
+                    children: [
+                      pw.Text(
+                        'Schulbesuchsjahr:',
+                        style: pw.TextStyle(font: fontBold, fontSize: 9),
+                      ),
+                      pw.SizedBox(width: 4),
+                      PdfHelpers.fillField(
+                        text: PdfHelpers.calculateSchulbesuchsjahr(
+                          pupil,
+                        ).toString(),
+                        font: fontRegular,
+                        width: 30,
+                      ),
+                    ],
                   ),
-                  pw.SizedBox(width: 10),
-                  pw.Text(
-                    'Schuljahr',
-                    style: pw.TextStyle(font: fontBold, fontSize: 9),
+                  pw.Row(
+                    children: [
+                      pw.Text(
+                        'Jahrgang:',
+                        style: pw.TextStyle(font: fontBold, fontSize: 9),
+                      ),
+                      pw.SizedBox(width: 4),
+                      PdfHelpers.fillField(
+                        text: pupil.schoolGrade.name,
+                        font: fontRegular,
+                        width: 30,
+                      ),
+                    ],
                   ),
-                  PdfHelpers.fillField(
-                    text: schoolYear,
-                    font: fontRegular,
-                    width: 30,
-                  ),
-
-                  pw.SizedBox(width: 10),
-                  pw.Text(
-                    'Schulbesuchsjahr:',
-                    style: pw.TextStyle(font: fontBold, fontSize: 9),
-                  ),
-                  pw.SizedBox(width: 4),
-                  PdfHelpers.fillField(
-                    text: PdfHelpers.calculateSchulbesuchsjahr(
-                      pupil,
-                    ).toString(),
-                    font: fontRegular,
-                    width: 30,
-                  ),
-                  pw.SizedBox(width: 10),
-                  pw.Text(
-                    'Klasse:',
-                    style: pw.TextStyle(font: fontBold, fontSize: 9),
-                  ),
-                  pw.SizedBox(width: 4),
-                  PdfHelpers.fillField(
-                    text: pupil.group,
-                    font: fontRegular,
-                    width: 40,
+                  pw.Row(
+                    children: [
+                      pw.Text(
+                        'Klasse:',
+                        style: pw.TextStyle(font: fontBold, fontSize: 9),
+                      ),
+                      pw.SizedBox(width: 4),
+                      PdfHelpers.fillField(
+                        text: pupil.group,
+                        font: fontRegular,
+                        width: 40,
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-            pw.SizedBox(height: 2),
+            pw.SizedBox(height: 3),
 
-            // ── 3. Plan type checkboxes + support codes (side by side) ──
+            // ── 3. Plan type checkboxes + support codes ──
             pw.Container(
+              padding: const pw.EdgeInsets.all(6),
               decoration: pw.BoxDecoration(
                 border: pw.Border.all(color: PdfColors.black, width: 0.5),
               ),
-              child: pw.Row(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
+              child: pw.Column(
                 children: [
-                  // Left: checkboxes
-                  pw.Expanded(
-                    flex: 3,
-                    child: pw.Container(
-                      padding: const pw.EdgeInsets.all(6),
-                      decoration: const pw.BoxDecoration(
-                        border: pw.Border(
-                          right: pw.BorderSide(
-                            color: PdfColors.black,
-                            width: 0.5,
-                          ),
-                        ),
-                      ),
-                      child: pw.Column(
-                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  // Checkboxes row
+                  pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Column(
                         children: [
                           pw.Text(
-                            '${PdfHelpers.checkbox(supportLevel == 1)} Individueller Förderplan (FE I)',
+                            '${PdfHelpers.checkbox(supportLevel == 1)}  Individueller Förderplan (FE I)',
                             style: pw.TextStyle(font: fontRegular, fontSize: 8),
                           ),
                           pw.Text(
                             '   falls Schriftform gewünscht',
-                            style: pw.TextStyle(font: fontRegular, fontSize: 7),
+                            style: pw.TextStyle(font: fontRegular, fontSize: 6),
                           ),
-                          pw.SizedBox(height: 4),
+                        ],
+                      ),
+                      pw.Column(
+                        children: [
                           pw.Text(
-                            '${PdfHelpers.checkbox(supportLevel == 2)} Individuell erweiterter Förderplan [FE II]',
+                            '${PdfHelpers.checkbox(supportLevel == 2)}  Individuell erweiterter Förderplan [FE II]',
                             style: pw.TextStyle(font: fontRegular, fontSize: 8),
                           ),
                           pw.Text(
-                            '   z.B. LRS, Rechenschwäche, AD(H)S, Hochbegabung',
-                            style: pw.TextStyle(font: fontRegular, fontSize: 7),
+                            'z.B. LRS, Rechenschwäche, AD(H)S, Hochbegabung',
+                            style: pw.TextStyle(font: fontRegular, fontSize: 6),
                           ),
-                          pw.SizedBox(height: 4),
+                        ],
+                      ),
+                      pw.Column(
+                        children: [
                           pw.Text(
-                            '${PdfHelpers.checkbox(supportLevel == 3)} Förderplan gemäß AO-SF § 21(7) mit sonder-',
+                            '${PdfHelpers.checkbox(supportLevel == 3)}  Förderplan gemäß AO-SF § 21(7) mit sonder-',
                             style: pw.TextStyle(font: fontRegular, fontSize: 8),
                           ),
                           pw.Text(
-                            '   pädagogischer Unterstützung (FE III)',
+                            'pädagogischer Unterstützung (FE III)',
                             style: pw.TextStyle(font: fontRegular, fontSize: 8),
                           ),
-                          pw.SizedBox(height: 3),
+                        ],
+                      ),
+                      pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
                           pw.Row(
                             children: [
-                              pw.SizedBox(width: 16),
                               pw.Text(
                                 'O mit Bescheid vom',
                                 style: pw.TextStyle(
@@ -230,57 +262,44 @@ class PdfPage1 {
                             ],
                           ),
                           pw.SizedBox(height: 2),
-                          pw.Padding(
-                            padding: const pw.EdgeInsets.only(left: 16),
-                            child: pw.Text(
-                              'O ohne Bescheid',
-                              style: pw.TextStyle(
-                                font: fontRegular,
-                                fontSize: 8,
-                              ),
-                            ),
+                          pw.Text(
+                            'O ohne Bescheid',
+                            style: pw.TextStyle(font: fontRegular, fontSize: 8),
                           ),
                         ],
                       ),
-                    ),
+                    ],
                   ),
-                  // Right: support codes
-                  pw.Expanded(
-                    flex: 2,
-                    child: pw.Padding(
-                      padding: const pw.EdgeInsets.all(6),
-                      child: pw.Column(
-                        crossAxisAlignment: pw.CrossAxisAlignment.center,
-                        children: [
-                          pw.SizedBox(height: 4),
-                          pw.Row(
-                            mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
-                            children: [
-                              _buildCodeBox('LE', pupil.specialNeeds, fontBold),
-                              _buildCodeBox(
-                                'ESE',
-                                pupil.specialNeeds,
-                                fontBold,
-                              ),
-                              _buildCodeBox('SQ', pupil.specialNeeds, fontBold),
-                              _buildCodeBox(
-                                'KME',
-                                pupil.specialNeeds,
-                                fontBold,
-                              ),
-                              _buildCodeBox('GE', pupil.specialNeeds, fontBold),
-                              _buildCodeBox('SE', pupil.specialNeeds, fontBold),
-                              _buildCodeBox('HK', pupil.specialNeeds, fontBold),
-                            ],
-                          ),
-                        ],
+                  pw.SizedBox(height: 6),
+                  // Support codes row
+                  pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.end,
+                    children: [
+                      pw.Text(
+                        'Förderschwerpunkt(e):',
+                        style: pw.TextStyle(font: fontBold, fontSize: 9),
                       ),
-                    ),
+                      pw.SizedBox(width: 6),
+                      _buildCodeBox('LE', pupil.specialNeeds, fontBold),
+                      pw.SizedBox(width: 6),
+                      _buildCodeBox('ESE', pupil.specialNeeds, fontBold),
+                      pw.SizedBox(width: 6),
+                      _buildCodeBox('SQ', pupil.specialNeeds, fontBold),
+                      pw.SizedBox(width: 6),
+                      _buildCodeBox('KME', pupil.specialNeeds, fontBold),
+                      pw.SizedBox(width: 6),
+                      _buildCodeBox('GE', pupil.specialNeeds, fontBold),
+                      pw.SizedBox(width: 6),
+                      _buildCodeBox('SE', pupil.specialNeeds, fontBold),
+                      pw.SizedBox(width: 6),
+                      _buildCodeBox('HK', pupil.specialNeeds, fontBold),
+                      pw.SizedBox(width: 6),
+                    ],
                   ),
                 ],
               ),
             ),
-            pw.SizedBox(height: 2),
+            pw.SizedBox(height: 3),
 
             // ── 4. Phone + Contacts ──
             pw.Container(
@@ -313,7 +332,7 @@ class PdfPage1 {
                 ],
               ),
             ),
-            pw.SizedBox(height: 2),
+            pw.SizedBox(height: 3),
 
             // ── 5. Personnel ──
             pw.Container(
@@ -356,97 +375,84 @@ class PdfPage1 {
                 ],
               ),
             ),
-            pw.SizedBox(height: 2),
+            pw.SizedBox(height: 3),
 
-            // ── 6. Beteiligte + Stärken (side by side) ──
+            // ── 6. Beteiligte ──
             pw.Expanded(
+              flex: 1,
               child: pw.Container(
-                decoration: pw.BoxDecoration(
-                  border: pw.Border.all(color: PdfColors.black, width: 0.5),
+                width: double.infinity,
+                padding: const pw.EdgeInsets.all(6),
+                decoration: const pw.BoxDecoration(
+                  border: pw.Border(
+                    top: pw.BorderSide(color: PdfColors.black, width: 0.5),
+                    left: pw.BorderSide(color: PdfColors.black, width: 0.5),
+                    right: pw.BorderSide(color: PdfColors.black, width: 0.5),
+                  ),
                 ),
-                child: pw.Row(
+                child: pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
-                    pw.Expanded(
-                      child: pw.Container(
-                        padding: const pw.EdgeInsets.all(6),
-                        decoration: const pw.BoxDecoration(
-                          border: pw.Border(
-                            right: pw.BorderSide(
-                              color: PdfColors.black,
-                              width: 0.5,
-                            ),
-                          ),
-                        ),
-                        child: pw.Column(
-                          crossAxisAlignment: pw.CrossAxisAlignment.start,
-                          children: [
-                            pw.Text(
-                              'Weitere beteiligte\nPersonen und\nOrganisationen',
-                              style: pw.TextStyle(font: fontBold, fontSize: 8),
-                            ),
-                            pw.SizedBox(height: 4),
-                            pw.Text(
-                              plan.proffesionalsInvolved ?? '',
-                              style: pw.TextStyle(
-                                font: fontRegular,
-                                fontSize: 8,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                    pw.Text(
+                      'Weitere beteiligte Personen und Organisationen',
+                      style: pw.TextStyle(font: fontBold, fontSize: 8),
                     ),
-                    pw.Expanded(
-                      flex: 2,
-                      child: pw.Padding(
-                        padding: const pw.EdgeInsets.all(6),
-                        child: pw.Column(
-                          crossAxisAlignment: pw.CrossAxisAlignment.start,
-                          children: [
-                            pw.Row(
-                              children: [
-                                for (int i = 0; i < 6; i++) ...[
-                                  pw.Container(
-                                    width: 10,
-                                    height: 10,
-                                    decoration: const pw.BoxDecoration(
-                                      color: PdfColors.amber,
-                                      shape: pw.BoxShape.circle,
-                                    ),
-                                  ),
-                                  if (i < 5) pw.SizedBox(width: 4),
-                                ],
-                                pw.SizedBox(width: 10),
-                                pw.Text(
-                                  ' Stärken',
-                                  style: pw.TextStyle(
-                                    font: fontBold,
-                                    fontSize: 10,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            pw.SizedBox(height: 4),
-                            pw.Text(
-                              plan.strengthsDescription ?? '',
-                              style: pw.TextStyle(
-                                font: fontRegular,
-                                fontSize: 8,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                    pw.SizedBox(height: 4),
+                    pw.Text(
+                      plan.proffesionalsInvolved ?? '',
+                      style: pw.TextStyle(font: fontRegular, fontSize: 8),
                     ),
                   ],
                 ),
               ),
             ),
-            pw.SizedBox(height: 2),
-
-            // ── 7. Problematik ──
+            pw.SizedBox(height: 3),
+            // ── 7. Stärken ──
             pw.Expanded(
+              flex: 3,
+              child: pw.Container(
+                width: double.infinity,
+                padding: const pw.EdgeInsets.all(6),
+                decoration: pw.BoxDecoration(
+                  border: pw.Border.all(color: PdfColors.black, width: 0.5),
+                ),
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Row(
+                      children: [
+                        for (int i = 0; i < 6; i++) ...[
+                          pw.Container(
+                            width: 10,
+                            height: 10,
+                            decoration: const pw.BoxDecoration(
+                              color: PdfColors.amber,
+                              shape: pw.BoxShape.circle,
+                            ),
+                          ),
+                          if (i < 5) pw.SizedBox(width: 4),
+                        ],
+                        pw.SizedBox(width: 10),
+                        pw.Text(
+                          'Stärken',
+                          style: pw.TextStyle(font: fontBold, fontSize: 10),
+                        ),
+                      ],
+                    ),
+                    pw.SizedBox(height: 4),
+                    pw.Text(
+                      plan.strengthsDescription ?? '',
+                      style: pw.TextStyle(font: fontRegular, fontSize: 8),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            pw.SizedBox(height: 3),
+
+            // ── 8. Problematik ──
+            pw.Expanded(
+              flex: 3,
               child: pw.Container(
                 width: double.infinity,
                 padding: const pw.EdgeInsets.all(6),
@@ -478,9 +484,9 @@ class PdfPage1 {
                 ),
               ),
             ),
-            pw.SizedBox(height: 2),
+            pw.SizedBox(height: 3),
 
-            // ── 8. Sprachbiografie ──
+            // ── 9. Sprachbiografie ──
             pw.Container(
               padding: const pw.EdgeInsets.all(6),
               decoration: pw.BoxDecoration(
@@ -568,7 +574,7 @@ class PdfPage1 {
           code,
           style: pw.TextStyle(
             font: font,
-            fontSize: 7,
+            fontSize: 10,
             fontWeight: isActive ? pw.FontWeight.bold : pw.FontWeight.normal,
           ),
         ),

@@ -1,6 +1,7 @@
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/learning_support/services/pdf/pdf_helpers.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
@@ -93,9 +94,14 @@ class PdfPage3 {
                     final categoryName = category?.name ?? 'Unbekannt';
                     final status = statusMap[goal.supportCategoryId];
                     final istStand = status?.comment ?? '';
-                    final achievedText = goal.achievedAt != null
-                        ? '${PdfHelpers.getStatusSymbol(goal.score)} ${PdfHelpers.formatDate(goal.achievedAt!)}'
-                        : PdfHelpers.getStatusSymbol(goal.score);
+                    final achievedText = goal.goalChecks != null
+                        ? goal.goalChecks!
+                              .map(
+                                (check) =>
+                                    ('${check.comment} (${check.createdAt.formatDateForUser()} von ${check.createdBy})'),
+                              )
+                              .join('\n')
+                        : '';
 
                     return pw.TableRow(
                       children: [
