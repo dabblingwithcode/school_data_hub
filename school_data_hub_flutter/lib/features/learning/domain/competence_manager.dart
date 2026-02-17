@@ -262,6 +262,7 @@ class CompetenceManager {
     required int score,
     required String? competenceComment,
     required String? groupId,
+    String? groupCheckName,
   }) async {
     final createdBy = di<HubSessionManager>().userName;
     final PupilData? updatedPupilData = await _competenceCheckApiService
@@ -273,6 +274,7 @@ class CompetenceManager {
           score: score,
           valueFactor: 1,
           groupCheckId: groupId,
+          groupCheckName: groupCheckName,
         );
     if (updatedPupilData == null) {
       return;
@@ -293,6 +295,7 @@ class CompetenceManager {
     required int score,
     required String? competenceComment,
     required String? groupId,
+    String? groupCheckName,
     required File file,
   }) async {
     final createdBy = di<HubSessionManager>().userName;
@@ -307,6 +310,7 @@ class CompetenceManager {
           score: score,
           valueFactor: 1,
           groupCheckId: groupId,
+          groupCheckName: groupCheckName,
         );
     
     if (updatedPupilData == null) {

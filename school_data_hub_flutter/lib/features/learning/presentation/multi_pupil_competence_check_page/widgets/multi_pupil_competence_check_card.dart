@@ -20,11 +20,13 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avat
 
 class MultiPupilCompetenceCheckCard extends WatchingWidget {
   final String groupId;
+  final String? groupCheckName;
   final int competenceId;
   final PupilProxy passedPupil;
   const MultiPupilCompetenceCheckCard({
     required this.passedPupil,
     required this.groupId,
+    this.groupCheckName,
     required this.competenceId,
     super.key,
   });
@@ -145,6 +147,7 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                                         competenceId: competenceId,
                                         competenceComment: '',
                                         groupId: groupId,
+                                        groupCheckName: groupCheckName,
                                         score: value!,
                                       );
                                 },
@@ -254,6 +257,7 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                                         competenceId: competenceId,
                                         competenceComment: '',
                                         groupId: groupId,
+                                        groupCheckName: groupCheckName,
                                         score: 0,
                                         file: file,
                                       );

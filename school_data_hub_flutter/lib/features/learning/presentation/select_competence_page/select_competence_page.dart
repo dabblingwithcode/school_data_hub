@@ -3,7 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/competence_list_page/widgets/competence_list_view_bottom_navbar.dart';
-import 'package:school_data_hub_flutter/features/learning/presentation/multi_pupil_competence_check_page/multi_pupil_competence_check_view_model.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/multi_pupil_competence_check_page/multi_pupil_competence_check_page.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/select_competence_page/select_competence_view_model.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/select_competence_page/selectable_competence_tree.dart';
 
@@ -82,7 +82,7 @@ class SelectCompetencePage extends StatelessWidget {
                   } else {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (ctx) => MultiPupilCompetenceCheck(
+                        builder: (ctx) => MultiPupilCompetenceCheckPage(
                           competence: viewModel.selectedCompetence!,
                         ),
                       ),

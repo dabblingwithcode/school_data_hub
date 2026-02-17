@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
@@ -18,7 +19,6 @@ import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class CompetenceCheckCard extends StatelessWidget {
   final CompetenceCheck competenceCheck;
@@ -98,7 +98,7 @@ class CompetenceCheckCard extends StatelessWidget {
                     const Spacer(),
                     const Text('Erstellt von:', style: TextStyle(fontSize: 16)),
                     const Gap(5),
-                    // only admin can change the admonishing user
+                    // only admin can change the docummenting user
                     isAuthorized
                         ? InkWell(
                             onTap: () async {
@@ -137,6 +137,43 @@ class CompetenceCheckCard extends StatelessWidget {
                     const Gap(5),
                   ],
                 ),
+                if (competenceCheck.groupCheckName != null &&
+                    competenceCheck.groupCheckName!.isNotEmpty) ...[
+                  const Gap(5),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.backgroundColor.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: AppColors.backgroundColor.withValues(alpha: 0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.label_outline,
+                          size: 16,
+                          color: AppColors.backgroundColor,
+                        ),
+                        const Gap(6),
+                        Text(
+                          competenceCheck.groupCheckName!,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.backgroundColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 const Gap(10),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
