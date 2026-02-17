@@ -1,8 +1,11 @@
+import 'package:logging/logging.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_helper.dart';
+
+final _log = Logger('PdfHelpers');
 
 /// Shared helpers used by all PDF page builders.
 class PdfHelpers {
@@ -13,6 +16,7 @@ class PdfHelpers {
   static String resolveUserName(String? userName) {
     if (userName == null || userName.isEmpty) return '';
     final user = UserHelper.getUserByUserName(userName);
+    _log.info('Resolved userName: $userName to ${user?.userInfo?.fullName}');
     return user?.userInfo?.fullName ?? userName;
   }
 

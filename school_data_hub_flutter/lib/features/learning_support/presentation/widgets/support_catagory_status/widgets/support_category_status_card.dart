@@ -76,8 +76,9 @@ class SupportCategoryStatusCard extends WatchingWidget {
             SupportCategoryStatusEntry(pupil: pupil, status: status),
           const Gap(5),
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              const Gap(10),
               CustomExpansionTileSwitch(
                 customExpansionTileController: expansionController,
                 switchColor: Colors.black,
@@ -86,7 +87,7 @@ class SupportCategoryStatusCard extends WatchingWidget {
                       ? 'Noch keine Förderziele festgelegt!'
                       : 'Förderziele (${goalIndices.length})',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: goalIndices.isEmpty
                         ? AppColors.accentColor

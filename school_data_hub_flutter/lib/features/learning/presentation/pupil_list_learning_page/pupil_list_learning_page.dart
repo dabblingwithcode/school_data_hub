@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
@@ -10,7 +11,6 @@ import 'package:school_data_hub_flutter/features/learning/presentation/pupil_lis
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class PupilListLearningPage extends WatchingWidget {
   const PupilListLearningPage({super.key});
@@ -52,36 +52,5 @@ class PupilListLearningPage extends WatchingWidget {
       ),
       bottomNavigationBar: PupilListLearningBottomNavBar(filtersOn: filtersOn),
     );
-  }
-}
-
-enum SelectedContent {
-  competenceStatuses,
-  competenceGoals,
-  workbooks,
-  books,
-  none,
-}
-
-class SelectedLearningContentNotifier extends ChangeNotifier {
-  // Private constructor
-  SelectedLearningContentNotifier._privateConstructor();
-
-  // Static instance
-  static final SelectedLearningContentNotifier _instance =
-      SelectedLearningContentNotifier._privateConstructor();
-
-  // Factory constructor
-  factory SelectedLearningContentNotifier() {
-    return _instance;
-  }
-
-  SelectedContent _selectedContent = SelectedContent.books;
-
-  SelectedContent get selectedContent => _selectedContent;
-
-  void select(SelectedContent content) {
-    _selectedContent = content;
-    notifyListeners();
   }
 }

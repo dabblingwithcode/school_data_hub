@@ -15,11 +15,30 @@ class PdfPage1 {
     required PupilProxy pupil,
     required pw.Font fontRegular,
     required pw.Font fontBold,
+    required pw.MemoryImage checkboxImage,
+    required pw.MemoryImage checkboxCheckImage,
   }) {
     final supportLevel = pupil.latestSupportLevel?.level;
     final lernjahr = PdfHelpers.calculateLernjahr(pupil);
     final schoolYear = plan.schoolSemester?.schoolYear ?? '';
-    final semester = plan.schoolSemester;
+
+    pw.Widget checkbox(bool checked, String label, {double fontSize = 8}) {
+      return pw.Row(
+        mainAxisSize: pw.MainAxisSize.min,
+        children: [
+          pw.Image(
+            checked ? checkboxCheckImage : checkboxImage,
+            width: fontSize + 2,
+            height: fontSize + 2,
+          ),
+          pw.SizedBox(width: 3),
+          pw.Text(
+            label,
+            style: pw.TextStyle(font: fontRegular, fontSize: fontSize),
+          ),
+        ],
+      );
+    }
 
     // Decrypt encrypted fields once for the PDF
     final decryptedStrengths = plan.strengthsDescription != null
@@ -216,9 +235,9 @@ class PdfPage1 {
                     children: [
                       pw.Column(
                         children: [
-                          pw.Text(
-                            '${PdfHelpers.checkbox(supportLevel == 1)}  Individueller Förderplan (FE I)',
-                            style: pw.TextStyle(font: fontRegular, fontSize: 8),
+                          checkbox(
+                            supportLevel == 1,
+                            'Individueller Förderplan (FE I)',
                           ),
                           pw.Text(
                             '   falls Schriftform gewünscht',
@@ -228,9 +247,9 @@ class PdfPage1 {
                       ),
                       pw.Column(
                         children: [
-                          pw.Text(
-                            '${PdfHelpers.checkbox(supportLevel == 2)}  Individuell erweiterter Förderplan [FE II]',
-                            style: pw.TextStyle(font: fontRegular, fontSize: 8),
+                          checkbox(
+                            supportLevel == 2,
+                            'Individuell erweiterter Förderplan [FE II]',
                           ),
                           pw.Text(
                             'z.B. LRS, Rechenschwäche, AD(H)S, Hochbegabung',
@@ -240,9 +259,9 @@ class PdfPage1 {
                       ),
                       pw.Column(
                         children: [
-                          pw.Text(
-                            '${PdfHelpers.checkbox(supportLevel == 3)}  Förderplan gemäß AO-SF § 21(7) mit sonder-',
-                            style: pw.TextStyle(font: fontRegular, fontSize: 8),
+                          checkbox(
+                            supportLevel == 3,
+                            'Förderplan gemäß AO-SF § 21(7) mit sonder-',
                           ),
                           pw.Text(
                             'pädagogischer Unterstützung (FE III)',
@@ -350,36 +369,51 @@ class PdfPage1 {
                 border: pw.Border.all(color: PdfColors.black, width: 0.5),
               ),
               child: pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Text(
-                    'Sozialpäd. Fachkraft:',
-                    style: pw.TextStyle(font: fontBold, fontSize: 9),
+                  pw.Row(
+                    children: [
+                      pw.Text(
+                        'Sozialpäd. Fachkraft:',
+                        style: pw.TextStyle(font: fontBold, fontSize: 9),
+                      ),
+                      pw.SizedBox(width: 4),
+                      PdfHelpers.fillField(
+                        text: PdfHelpers.resolveUserName(plan.socialPedagogue),
+                        font: fontRegular,
+                        width: 120,
+                      ),
+                    ],
                   ),
-                  pw.SizedBox(width: 4),
-                  PdfHelpers.fillField(
-                    text: PdfHelpers.resolveUserName(plan.socialPedagogue),
-                    font: fontRegular,
+                  pw.Row(
+                    children: [
+                      pw.Text(
+                        'Klassenlehrer*in:',
+                        style: pw.TextStyle(font: fontBold, fontSize: 9),
+                      ),
+                      pw.SizedBox(width: 4),
+                      PdfHelpers.fillField(
+                        text: PdfHelpers.resolveUserName(pupil.groupTutor),
+                        font: fontRegular,
+                        width: 120,
+                      ),
+                    ],
                   ),
-                  pw.SizedBox(width: 10),
-                  pw.Text(
-                    'Klassenlehrer*in:',
-                    style: pw.TextStyle(font: fontBold, fontSize: 9),
-                  ),
-                  pw.SizedBox(width: 4),
-                  PdfHelpers.fillField(
-                    text: PdfHelpers.resolveUserName(pupil.groupTutor),
-                    font: fontRegular,
-                  ),
-                  pw.SizedBox(width: 10),
-                  pw.Text(
-                    'Sonderpäd. Fachkraft:',
-                    style: pw.TextStyle(font: fontBold, fontSize: 9),
-                  ),
-                  pw.SizedBox(width: 4),
-                  PdfHelpers.fillField(
-                    text: PdfHelpers.resolveUserName(plan.specialNeedsTeacher),
-                    font: fontRegular,
-                    width: 100,
+                  pw.Row(
+                    children: [
+                      pw.Text(
+                        'Sonderpäd. Fachkraft:',
+                        style: pw.TextStyle(font: fontBold, fontSize: 9),
+                      ),
+                      pw.SizedBox(width: 4),
+                      PdfHelpers.fillField(
+                        text: PdfHelpers.resolveUserName(
+                          plan.specialNeedsTeacher,
+                        ),
+                        font: fontRegular,
+                        width: 120,
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -508,25 +542,13 @@ class PdfPage1 {
                     style: pw.TextStyle(font: fontBold, fontSize: 9),
                   ),
                   pw.SizedBox(width: 10),
-                  pw.Text(
-                    '${PdfHelpers.checkbox(lernjahr == 1)} 1. Lernjahr Deutsch',
-                    style: pw.TextStyle(font: fontRegular, fontSize: 8),
-                  ),
+                  checkbox(lernjahr == 1, '1. Lernjahr Deutsch'),
                   pw.SizedBox(width: 8),
-                  pw.Text(
-                    '${PdfHelpers.checkbox(lernjahr == 2)} 2. Lernjahr Deutsch',
-                    style: pw.TextStyle(font: fontRegular, fontSize: 8),
-                  ),
+                  checkbox(lernjahr == 2, '2. Lernjahr Deutsch'),
                   pw.SizedBox(width: 8),
-                  pw.Text(
-                    '${PdfHelpers.checkbox(lernjahr == 3)} 3. Lernjahr Deutsch',
-                    style: pw.TextStyle(font: fontRegular, fontSize: 8),
-                  ),
+                  checkbox(lernjahr == 3, '3. Lernjahr Deutsch'),
                   pw.SizedBox(width: 8),
-                  pw.Text(
-                    '${PdfHelpers.checkbox(lernjahr == 4)} >3. Lernjahr Deutsch',
-                    style: pw.TextStyle(font: fontRegular, fontSize: 8),
-                  ),
+                  checkbox(lernjahr == 4, '>3. Lernjahr Deutsch'),
                   pw.Spacer(),
                   pw.Text(
                     'Herkunftssprache:',

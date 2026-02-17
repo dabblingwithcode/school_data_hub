@@ -206,7 +206,7 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
 
     await _learningSupportPlanManager.postNewLearningSupportPlan(
       pupilId: pupil.pupilId,
-      planId: planIdController.text.trim(),
+
       supportLevelId: fixedSupportLevel,
       number: int.tryParse(numberController.text.trim()) ?? 1,
       specialNeedsTeacher: _trimOrNull(specialNeedsTeacherController.text),
@@ -221,6 +221,8 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
   Future<void> _updatePlan() async {
     await _learningSupportPlanManager.updateLearningSupportPlan(
       plan: widget.existingPlan!,
+      number: int.tryParse(numberController.text.trim()) ?? 1,
+      specialNeedsTeacher: _trimOrNull(specialNeedsTeacherController.text),
       comment: _trimOrNull(commentController.text),
       socialPedagogue: _trimOrNull(socialPedagogueController.text),
       proffesionalsInvolved: _trimOrNull(proffesionalsInvolvedController.text),

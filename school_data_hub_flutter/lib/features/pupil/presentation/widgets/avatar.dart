@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
@@ -12,7 +13,6 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_set_avatar.dart';
-import 'package:flutter_it/flutter_it.dart';
 import 'package:widget_zoom/widget_zoom.dart';
 
 class AvatarImage extends WatchingWidget {
@@ -108,10 +108,11 @@ class AvatarWithBadges extends WatchingWidget {
   Widget build(BuildContext context) {
     final badgeMargin = (_badgeSize / 2) + _badgeOffset;
     final containerSize = size + (badgeMargin * 2);
+
     final specialNeedsText = pupil.specialNeeds != null
-        ? pupil.specialNeeds!.length == 4
-              ? '${pupil.specialNeeds!.substring(0, 2)}\n${pupil.specialNeeds!.substring(2, 4)}'
-              : pupil.specialNeeds!.substring(0, 2)
+        ? pupil.specialNeeds!.contains('*')
+              ? '${pupil.specialNeeds!.split('*').first.replaceAll('ESE', 'ES')}\n${pupil.specialNeeds!.split('*').last.replaceAll('ESE', 'ES')}'
+              : pupil.specialNeeds!.replaceAll('ESE', 'ES')
         : '';
 
     return Padding(

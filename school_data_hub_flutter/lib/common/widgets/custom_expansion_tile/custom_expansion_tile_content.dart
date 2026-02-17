@@ -23,6 +23,7 @@ class CustomExpansionTileContent extends WatchingStatefulWidget {
 class _CustomExpansionTileContentState extends State<CustomExpansionTileContent>
     with TickerProviderStateMixin {
   late AnimationController _animController;
+  bool _isAnimationDismissed = true;
 
   @override
   void initState() {
@@ -31,6 +32,19 @@ class _CustomExpansionTileContentState extends State<CustomExpansionTileContent>
       vsync: this, // 'this' works because of the Mixin
       duration: const Duration(milliseconds: 200),
     );
+
+    // Listen to animation status to know when it's fully collapsed
+    _animController.addStatusListener((status) {
+      if (status == AnimationStatus.dismissed) {
+        setState(() {
+          _isAnimationDismissed = true;
+        });
+      } else if (_isAnimationDismissed) {
+        setState(() {
+          _isAnimationDismissed = false;
+        });
+      }
+    });
   }
 
   @override
@@ -57,10 +71,14 @@ class _CustomExpansionTileContentState extends State<CustomExpansionTileContent>
         curve: Curves.easeIn,
       ),
       axisAlignment: -1.0,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: widget.widgetList,
-      ),
+      // Only build children when expanded OR when animation is in progress
+      // This ensures smooth animation while still saving performance when fully collapsed
+      child: _isAnimationDismissed
+          ? const SizedBox.shrink()
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: widget.widgetList,
+            ),
     );
   }
 }

@@ -10,8 +10,8 @@ import 'package:school_data_hub_flutter/common/audio/audio.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
@@ -73,146 +73,149 @@ class SupportGoalCard extends WatchingWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 const Gap(5),
-                Row(
-                  children: [
-                    const Gap(10),
-                    if (showCategoryBadge) ...[
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 8.0,
-                          bottom: 8,
-                          left: 10,
-                          right: 10,
-                        ),
-                        child: SupportCategoryBadge(
-                          categoryId:
-                              pupil.supportGoals![goalIndex].supportCategoryId,
-                        ),
-                      ),
+                if (showCategoryBadge)
+                  Row(
+                    children: [
                       const Gap(10),
-                    ],
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          final categoryId =
-                              pupil.supportGoals![goalIndex].supportCategoryId;
-                          final statuses =
-                              pupil.supportCategoryStatuses
-                                  ?.where(
-                                    (s) => s.supportCategoryId == categoryId,
-                                  )
-                                  .toList() ??
-                              [];
-                          showDialog(
-                            context: context,
-                            builder: (context) => Dialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              child: ConstrainedBox(
-                                constraints: const BoxConstraints(
-                                  maxWidth: 500,
-                                  maxHeight: 600,
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          SupportCategoryBadge(
-                                            categoryId: categoryId,
-                                          ),
-                                          const Gap(10),
-                                          Flexible(
-                                            child: Text(
-                                              learningSupportManager
-                                                  .getSupportCategory(
-                                                    categoryId,
-                                                  )
-                                                  .name,
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const Divider(),
-                                      if (statuses.isEmpty)
-                                        const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            vertical: 16,
-                                          ),
-                                          child: Text(
-                                            'Keine Status vorhanden',
-                                            style: TextStyle(
-                                              fontStyle: FontStyle.italic,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                        )
-                                      else
-                                        Flexible(
-                                          child: ListView.builder(
-                                            shrinkWrap: true,
-                                            itemCount: statuses.length,
-                                            itemBuilder: (context, index) {
-                                              return SupportCategoryStatusEntry(
-                                                pupil: pupil,
-                                                status: statuses[index],
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          learningSupportManager
-                              .getSupportCategory(
-                                pupil
-                                    .supportGoals![goalIndex]
-                                    .supportCategoryId,
-                              )
-                              .name,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.interactiveColor,
+                      ...[
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 8.0,
+                            bottom: 8,
+                            left: 10,
+                            right: 10,
                           ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 5, right: 10.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          LastSupportCategoryStatusSymbol(
-                            size: 40,
-                            pupil: pupil,
+                          child: SupportCategoryBadge(
                             categoryId: pupil
                                 .supportGoals![goalIndex]
                                 .supportCategoryId,
                           ),
-                        ],
+                        ),
+                        const Gap(10),
+                      ],
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            final categoryId = pupil
+                                .supportGoals![goalIndex]
+                                .supportCategoryId;
+                            final statuses =
+                                pupil.supportCategoryStatuses
+                                    ?.where(
+                                      (s) => s.supportCategoryId == categoryId,
+                                    )
+                                    .toList() ??
+                                [];
+                            showDialog(
+                              context: context,
+                              builder: (context) => Dialog(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                child: ConstrainedBox(
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 500,
+                                    maxHeight: 600,
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            SupportCategoryBadge(
+                                              categoryId: categoryId,
+                                            ),
+                                            const Gap(10),
+                                            Flexible(
+                                              child: Text(
+                                                learningSupportManager
+                                                    .getSupportCategory(
+                                                      categoryId,
+                                                    )
+                                                    .name,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const Divider(),
+                                        if (statuses.isEmpty)
+                                          const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                              vertical: 16,
+                                            ),
+                                            child: Text(
+                                              'Keine Status vorhanden',
+                                              style: TextStyle(
+                                                fontStyle: FontStyle.italic,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          )
+                                        else
+                                          Flexible(
+                                            child: ListView.builder(
+                                              shrinkWrap: true,
+                                              itemCount: statuses.length,
+                                              itemBuilder: (context, index) {
+                                                return SupportCategoryStatusEntry(
+                                                  pupil: pupil,
+                                                  status: statuses[index],
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            learningSupportManager
+                                .getSupportCategory(
+                                  pupil
+                                      .supportGoals![goalIndex]
+                                      .supportCategoryId,
+                                )
+                                .name,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.interactiveColor,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 5, right: 10.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            LastSupportCategoryStatusSymbol(
+                              size: 40,
+                              pupil: pupil,
+                              categoryId: pupil
+                                  .supportGoals![goalIndex]
+                                  .supportCategoryId,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
 
                 const Gap(5),
                 Row(
@@ -422,6 +425,7 @@ class _GoalChecksSection extends WatchingWidget {
                 ),
               ),
             ),
+            const Gap(5),
             if (goalChecks.isEmpty) ...[
               const Padding(
                 padding: EdgeInsets.only(top: 15, left: 15, bottom: 8),
@@ -470,7 +474,7 @@ class _GoalCheckEntry extends StatelessWidget {
     final learningSupportManager = di<LearningSupportManager>();
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       child: InkWell(
         onLongPress: () async {
           final delete = await confirmationDialog(
@@ -500,14 +504,6 @@ class _GoalCheckEntry extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Score icon
-                  SizedBox(
-                    width: 40,
-                    height: 40,
-                    child: Image.asset(
-                      'assets/images/growth_icons/growth_${check.score}-4.png',
-                      fit: BoxFit.contain,
-                    ),
-                  ),
                   const Gap(10),
                   // Comment and metadata
                   Expanded(
@@ -531,6 +527,8 @@ class _GoalCheckEntry extends StatelessWidget {
                       ],
                     ),
                   ),
+                  GrowthIcon(score: check.score, size: 40),
+                  const Gap(4),
                 ],
               ),
               const Gap(8),

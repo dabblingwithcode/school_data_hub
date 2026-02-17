@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/pupil_list_learning_page.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_books.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_competence_goals.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_competence_statuses.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_workbooks.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_list_learning_content_nav_bar.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class PupilLearningContentExpansionTileNavBar extends WatchingWidget {
   final PupilProxy pupil;
@@ -18,8 +18,9 @@ class PupilLearningContentExpansionTileNavBar extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedContentNotifier = SelectedLearningContentNotifier();
-    final selectedContent = watch(selectedContentNotifier).selectedContent;
+    final selectedContent = watchValue(
+      (CompetenceManager m) => m.selectedLearningContent,
+    );
 
     return Column(
       children: [

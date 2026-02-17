@@ -6,11 +6,12 @@ class MainMenuButton extends StatelessWidget {
   final Widget? destinationPage;
   final Widget buttonIcon;
   final String buttonText;
-  const MainMenuButton(
-      {this.destinationPage,
-      required this.buttonIcon,
-      required this.buttonText,
-      super.key});
+  const MainMenuButton({
+    this.destinationPage,
+    required this.buttonIcon,
+    required this.buttonText,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +21,9 @@ class MainMenuButton extends StatelessWidget {
       child: InkWell(
         onTap: () {
           if (destinationPage != null) {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (ctx) => destinationPage!,
-            ));
+            Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (ctx) => destinationPage!));
           }
         },
         child: SizedBox(
@@ -42,7 +43,9 @@ class MainMenuButton extends StatelessWidget {
                   buttonText,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),

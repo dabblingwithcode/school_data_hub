@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 String getRootCompetenceShortName(int competenceId) {
   final competence = di<CompetenceManager>().findCompetenceById(competenceId);
@@ -43,34 +42,22 @@ class CompetenceChecksBadges extends StatelessWidget {
   final PupilProxy pupil;
   const CompetenceChecksBadges({super.key, required this.pupil});
 
+  static const TextStyle _competenceNameStyle = TextStyle(
+    color: Colors.black,
+    fontSize: 11,
+    fontWeight: FontWeight.bold,
+  );
+
+  static const TextStyle _countBaseStyle = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.bold,
+  );
+
   @override
   Widget build(BuildContext context) {
-    List<CompetenceCheck> competenceChecks = pupil.competenceChecks ?? [];
+    // Use cached competenceBadgeCounts from PupilProxy
+    final competenceCounts = pupil.competenceBadgeCounts;
     List<Widget> widgetList = [];
-    Map<int, int> competenceCounts = {};
-    Set<int> countedCompetenceIds = {};
-    Map<int, int> rootCompetences = di<CompetenceManager>().rootCompetencesMap;
-    for (int competenceId in rootCompetences.keys) {
-      if (rootCompetences[competenceId] == competenceId) {
-        competenceCounts[competenceId] = 0;
-      }
-    }
-    // Calculate counts
-    for (CompetenceCheck competenceCheck in competenceChecks) {
-      if (countedCompetenceIds.contains(competenceCheck.competenceId)) {
-        continue;
-      }
-      countedCompetenceIds.add(competenceCheck.competenceId);
-      int rootCompetenceId = di<CompetenceManager>()
-          .findRootCompetenceById(competenceCheck.competenceId)
-          .publicId;
-      if (competenceCounts.containsKey(rootCompetenceId)) {
-        competenceCounts[rootCompetenceId] =
-            competenceCounts[rootCompetenceId]! + 1;
-      } else {
-        competenceCounts[rootCompetenceId] = 1;
-      }
-    }
 
     competenceCounts.forEach((competenceId, count) {
       Color competenceColor = CompetenceHelper.getCompetenceColor(competenceId);
@@ -82,11 +69,7 @@ class CompetenceChecksBadges extends StatelessWidget {
             children: [
               Text(
                 getRootCompetenceShortName(competenceId),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: _competenceNameStyle,
               ),
               const Gap(2),
               Container(
@@ -99,12 +82,10 @@ class CompetenceChecksBadges extends StatelessWidget {
                 child: Center(
                   child: Text(
                     count.toString(),
-                    style: TextStyle(
+                    style: _countBaseStyle.copyWith(
                       color: AppColors.bestContrastCompetenceFontColor(
                         competenceColor,
                       ),
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),

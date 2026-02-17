@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
@@ -12,7 +13,6 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_fil
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_identity_extensions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 final _log = Logger('PupilIdentityHelper');
 
@@ -119,7 +119,7 @@ class PupilIdentityHelper {
       // and concatenated to form the full special needs string.
       specialNeeds: pupilIdentityStringItems[6] == ''
           ? null
-          : '${pupilIdentityStringItems[6]}${pupilIdentityStringItems[7]}',
+          : '${pupilIdentityStringItems[6]}*${pupilIdentityStringItems[7]}',
       //
       gender: pupilIdentityStringItems[8],
       language: pupilIdentityStringItems[9],
@@ -148,6 +148,7 @@ class PupilIdentityHelper {
           ? null
           : pupilIdentityStringItems[19].tryToDateOnlyUtc(),
     );
+
     return newPupilIdentity;
   }
 

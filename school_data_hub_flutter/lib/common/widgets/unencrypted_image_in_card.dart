@@ -23,7 +23,10 @@ class UnencryptedImageInCard extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final refreshState = createOnce(() => ValueNotifier(0));
-    final randomPart = createOnce(() => UniqueKey().toString());
+    final randomPart = createOnce(
+      () => UniqueKey().toString(),
+      dispose: (randomPart) => (),
+    );
     // Watch refreshState so rebuilds happen when it changes
     watch(refreshState);
 

@@ -16,6 +16,14 @@ import 'package:school_data_hub_flutter/features/learning/domain/competence_help
 import 'package:school_data_hub_flutter/features/learning/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 
+enum SelectedContent {
+  competenceStatuses,
+  competenceGoals,
+  workbooks,
+  books,
+  none,
+}
+
 class CompetenceManager {
   final _envManager = di<EnvManager>();
 
@@ -27,6 +35,9 @@ class CompetenceManager {
   final _competenceGoalApiService = CompetenceGoalApiService();
   final _competences = ValueNotifier<List<Competence>>([]);
   ValueListenable<List<Competence>> get competences => _competences;
+
+  // Learning content selection state
+  final selectedLearningContent = ValueNotifier<SelectedContent>(SelectedContent.books);
 
   Map<int, int> _rootCompetencesMap = {};
   Map<int, int> get rootCompetencesMap => _rootCompetencesMap;
@@ -40,6 +51,7 @@ class CompetenceManager {
   CompetenceManager();
   void dispose() {
     _competences.dispose();
+    selectedLearningContent.dispose();
 
     return;
   }

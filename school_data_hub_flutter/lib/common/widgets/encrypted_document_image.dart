@@ -16,7 +16,10 @@ class EncryptedDocumentImage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final randomPart = createOnce(() => UniqueKey().toString());
+    final randomPart = createOnce(
+      () => UniqueKey().toString(),
+      dispose: (randomPart) {},
+    );
     return SizedBox(
       height: size,
       width: (21 / 30) * size,

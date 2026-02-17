@@ -6,6 +6,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:pdfrx/pdfrx.dart';
 import 'package:printing/printing.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
@@ -33,6 +34,19 @@ class LearningSupportPlanPdfGenerator {
     final boldData = await rootBundle.load('assets/fonts/Roboto-Bold.ttf');
     final fontRegular = pw.Font.ttf(regularData);
     final fontBold = pw.Font.ttf(boldData);
+
+    // Load checkbox images for Page 1
+    final checkboxData = await rootBundle.load(
+      'assets/images/support_categories_icons/checkbox.png',
+    );
+    final checkboxCheckData = await rootBundle.load(
+      'assets/images/support_categories_icons/checkbox_check.png',
+    );
+    final checkboxImage = pw.MemoryImage(checkboxData.buffer.asUint8List());
+    final checkboxCheckImage = pw.MemoryImage(
+      checkboxCheckData.buffer.asUint8List(),
+    );
+
     final schoolData = di<SchoolDataMainManager>().schoolData.value!;
     final pdf = pw.Document();
 
@@ -47,6 +61,8 @@ class LearningSupportPlanPdfGenerator {
           schoolData: schoolData,
           fontRegular: fontRegular,
           fontBold: fontBold,
+          checkboxImage: checkboxImage,
+          checkboxCheckImage: checkboxCheckImage,
         ),
       );
 
@@ -168,8 +184,31 @@ class _LearningSupportPlanPdfViewPageState
               }
             },
           ),
+          IconButton(
+            icon: const Icon(Icons.zoom_in),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => PdfZoomableImage(file: widget.pdfFile),
+                ),
+              );
+            },
+          ),
         ],
       ),
+    );
+  }
+}
+
+class PdfZoomableImage extends StatelessWidget {
+  final File file;
+  const PdfZoomableImage({required this.file, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Pdfrx example')),
+      body: PdfViewer.file(file.path),
     );
   }
 }

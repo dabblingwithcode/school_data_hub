@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_goal_batches.dart';
@@ -157,8 +157,8 @@ class LearningSupportCard extends WatchingWidget {
                     ),
                     Text(
                       pupil.specialNeeds != null
-                          ? pupil.specialNeeds!.length == 4
-                                ? '${pupil.specialNeeds!.substring(0, 2)} ${pupil.specialNeeds!.substring(2, 4)}'
+                          ? pupil.specialNeeds!.contains('*')
+                                ? '${pupil.specialNeeds!.split('*').first} ${pupil.specialNeeds!.split('*').last}'
                                 : pupil.specialNeeds!.substring(0, 2)
                           : '',
                       style: TextStyle(

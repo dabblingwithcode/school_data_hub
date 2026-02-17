@@ -41,7 +41,7 @@ class LearningSupportManager {
   Future<void> postNewLearningSupportPlan({
     required int pupilId,
     required int supportLevelId,
-    required String planId,
+
     required int number,
     String? specialNeedsTeacher,
     String? comment,
@@ -87,7 +87,7 @@ class LearningSupportManager {
         pupilId: pupilId,
         number: number,
         learningSupportLevelId: supportLevelId,
-        planId: planId,
+        planId: const Uuid().v4(),
         comment: encryptedComment,
         socialPedagogue: socialPedagogue,
         specialNeedsTeacher: specialNeedsTeacher,
@@ -123,8 +123,10 @@ class LearningSupportManager {
 
   Future<bool> updateLearningSupportPlan({
     required LearningSupportPlan plan,
+    required int number,
     required String? comment,
     required String? socialPedagogue,
+    required String? specialNeedsTeacher,
     required String? proffesionalsInvolved,
     required String? strengthsDescription,
     required String? problemsDescription,
@@ -132,6 +134,7 @@ class LearningSupportManager {
     final encryptedComment = comment != null
         ? customEncrypter.encryptString(comment)
         : null;
+
     final encryptedStrengthsDescription = strengthsDescription != null
         ? customEncrypter.encryptString(strengthsDescription)
         : null;
@@ -140,6 +143,8 @@ class LearningSupportManager {
         : null;
     final updatedPlan = plan.copyWith(
       comment: encryptedComment,
+      specialNeedsTeacher: specialNeedsTeacher,
+      number: number,
       socialPedagogue: socialPedagogue,
       proffesionalsInvolved: proffesionalsInvolved,
       strengthsDescription: encryptedStrengthsDescription,
@@ -186,7 +191,7 @@ class LearningSupportManager {
     required int pupilId,
     required int supportCategoryId,
     required int status,
-    required String comment,
+    required String? comment,
   }) async {
     final learningSupportPlan = getCurrentLearningSupportPlan(pupilId);
 

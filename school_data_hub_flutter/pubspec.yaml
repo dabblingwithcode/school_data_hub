@@ -93,6 +93,7 @@ dependencies:
   connectivity_plus: any
   uuid: any
   record: ^6.2.0
+  pdfrx: ^2.2.24
 dev_dependencies:
   flutter_lints: '>=3.0.0 <6.0.0'
   flutter_test:

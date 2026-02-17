@@ -14,11 +14,11 @@ class NewLearningSupportPlanPage extends WatchingWidget {
   String _getSupportLevelDescription(int level) {
     switch (level) {
       case 1:
-        return 'Präventive Förderung';
+        return 'Individueller Förderplan';
       case 2:
-        return 'Erweiterte Förderung';
+        return 'individuell erweiterter Förderplan';
       case 3:
-        return 'Intensive Förderung';
+        return 'Förderplan gemäß AO-SF § 21 (7)';
       default:
         return 'Unbekannte Förderebene';
     }
@@ -218,17 +218,17 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                   const Gap(20),
 
                   // Plan ID Field
-                  const Text('Plan-Bezeichnung *', style: AppStyles.title),
-                  const Gap(10),
-                  TextField(
-                    controller: controller.planIdController,
-                    readOnly: controller.isEditing,
-                    decoration: AppStyles.textFieldDecoration(
-                      labelText: 'z.B. Förderplan 2024/1 - Max Mustermann',
-                    ),
-                    onChanged: (_) => controller.validateForm(),
-                  ),
-                  const Gap(20),
+                  // const Text('Plan-Bezeichnung *', style: AppStyles.title),
+                  // const Gap(10),
+                  // TextField(
+                  //   controller: controller.planIdController,
+                  //   readOnly: controller.isEditing,
+                  //   decoration: AppStyles.textFieldDecoration(
+                  //     labelText: 'z.B. Förderplan 2024/1 - Max Mustermann',
+                  //   ),
+                  //   onChanged: (_) => controller.validateForm(),
+                  // ),
+                  // const Gap(20),
 
                   // Special Needs Teacher Field
                   const Text('Sonderpädagog*in', style: AppStyles.title),
