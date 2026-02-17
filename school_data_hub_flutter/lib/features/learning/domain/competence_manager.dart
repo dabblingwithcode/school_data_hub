@@ -269,6 +269,10 @@ class CompetenceManager {
           pupilId: pupilId,
           competenceId: competenceId,
           createdBy: createdBy!,
+          comment: competenceComment,
+          score: score,
+          valueFactor: 1,
+          groupCheckId: groupId,
         );
     if (updatedPupilData == null) {
       return;
@@ -278,6 +282,60 @@ class CompetenceManager {
     _notificationService.showSnackBar(
       NotificationType.success,
       'Kompetenzcheck erstellt',
+    );
+
+    return;
+  }
+
+  Future<void> postCompetenceCheckWithFile({
+    required int pupilId,
+    required int competenceId,
+    required int score,
+    required String? competenceComment,
+    required String? groupId,
+    required File file,
+  }) async {
+    final createdBy = di<HubSessionManager>().userName;
+    
+    // First, create the competence check
+    final PupilData? updatedPupilData = await _competenceCheckApiService
+        .postCompetenceCheck(
+          pupilId: pupilId,
+          competenceId: competenceId,
+          createdBy: createdBy!,
+          comment: competenceComment,
+          score: score,
+          valueFactor: 1,
+          groupCheckId: groupId,
+        );
+    
+    if (updatedPupilData == null) {
+      return;
+    }
+    
+    // Find the newly created competence check
+    final newCheck = updatedPupilData.competenceChecks
+        ?.where((check) => check.competenceId == competenceId)
+        .lastOrNull;
+    
+    if (newCheck == null) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Erstellen des Kompetenzchecks',
+      );
+      return;
+    }
+    
+    // Encrypt and add the file
+    final File encryptedFile = await customEncrypter.encryptFile(file);
+    final PupilData updatedPupilDataWithFile = await _competenceCheckApiService
+        .addFileToCompetenceCheck(newCheck.checkId, encryptedFile, createdBy);
+    
+    di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilDataWithFile);
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Kompetenzcheck mit Datei erstellt',
     );
 
     return;

@@ -1,10 +1,10 @@
 import 'dart:io';
 
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/models/enums.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class CompetenceCheckApiService {
   Client get _client => di<Client>();
@@ -15,15 +15,21 @@ class CompetenceCheckApiService {
     required int pupilId,
     required String createdBy,
     String? comment,
+    int? score,
+    double? valueFactor,
+    String? groupCheckId,
+    String? groupCheckName,
   }) async {
     final PupilData? pupil = await ClientHelper.apiCall(
       call: () => _client.competenceCheck.postCompetenceCheck(
         competenceId: competenceId,
         pupilId: pupilId,
-        score: 0,
-        valueFactor: 1,
+        score: score ?? 0,
+        valueFactor: valueFactor ?? 1,
         comment: comment,
         createdBy: createdBy,
+        groupCheckId: groupCheckId,
+        groupCheckName: groupCheckName,
       ),
     );
     return pupil;

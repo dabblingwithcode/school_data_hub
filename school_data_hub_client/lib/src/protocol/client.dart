@@ -971,6 +971,8 @@ class EndpointCompetenceCheck extends _i1.EndpointRef {
     String? comment,
     required double valueFactor,
     required String createdBy,
+    String? groupCheckId,
+    String? groupCheckName,
   }) =>
       caller.callServerEndpoint<_i7.PupilData>(
         'competenceCheck',
@@ -982,6 +984,8 @@ class EndpointCompetenceCheck extends _i1.EndpointRef {
           'comment': comment,
           'valueFactor': valueFactor,
           'createdBy': createdBy,
+          'groupCheckId': groupCheckId,
+          'groupCheckName': groupCheckName,
         },
       );
 

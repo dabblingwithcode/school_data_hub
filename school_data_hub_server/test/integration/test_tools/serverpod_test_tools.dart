@@ -2785,6 +2785,8 @@ class _CompetenceCheckEndpoint {
     String? comment,
     required double valueFactor,
     required String createdBy,
+    String? groupCheckId,
+    String? groupCheckName,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -2804,6 +2806,8 @@ class _CompetenceCheckEndpoint {
             'comment': comment,
             'valueFactor': valueFactor,
             'createdBy': createdBy,
+            'groupCheckId': groupCheckId,
+            'groupCheckName': groupCheckName,
           }),
           serializationManager: _serializationManager,
         );

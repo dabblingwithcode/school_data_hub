@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
+import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
 final GlobalKey<FormState> _competenceStatusKey = GlobalKey<FormState>();
@@ -85,18 +87,15 @@ Future newCompetenceCheckDialog(
                 padding: const EdgeInsets.only(bottom: 10.0),
                 child: ElevatedButton(
                   style: AppStyles.successButtonStyle,
-                  onPressed: () {
+                  onPressed: () async {
                     if (_competenceStatusKey.currentState!.validate()) {
-                      // TODO: Uncomment and implement the competence check posting
-                      // di<CompetenceManager>().postCompetenceCheck(
-                      //   pupilId: pupil.internalId,
-                      //   competenceId: competenceId,
-                      //   competenceStatus: competenceCheckStatusValue,
-                      //   competenceComment: _textEditingController.text,
-                      //   groupId: null,
-                      // );
-                      // reportId:
-                      //     di<SchooldayManager>().currentReportId);
+                      await di<CompetenceManager>().postCompetenceCheck(
+                        pupilId: pupil.pupilId,
+                        competenceId: competenceId,
+                        score: competenceCheckStatusValue,
+                        competenceComment: _textEditingController.text,
+                        groupId: null,
+                      );
 
                       _textEditingController.clear();
                       Navigator.of(parentContext).pop();

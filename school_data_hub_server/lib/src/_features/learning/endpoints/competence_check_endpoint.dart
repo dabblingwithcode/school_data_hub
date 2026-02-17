@@ -16,6 +16,8 @@ class CompetenceCheckEndpoint extends Endpoint {
     String? comment,
     required double valueFactor,
     required String createdBy,
+    String? groupCheckId,
+    String? groupCheckName,
   }) async {
     final competenceCheck = CompetenceCheck(
       checkId: Uuid().v4(),
@@ -26,6 +28,8 @@ class CompetenceCheckEndpoint extends Endpoint {
       pupilId: pupilId,
       competenceId: competenceId,
       comment: comment,
+      groupCheckId: groupCheckId,
+      groupCheckName: groupCheckName,
     );
 
     var transactionResult = await session.db.transaction((transaction) async {

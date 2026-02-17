@@ -2103,6 +2103,16 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<String>(),
               nullable: false,
             ),
+            'groupCheckId': _i1.ParameterDescription(
+              name: 'groupCheckId',
+              type: _i1.getType<String?>(),
+              nullable: true,
+            ),
+            'groupCheckName': _i1.ParameterDescription(
+              name: 'groupCheckName',
+              type: _i1.getType<String?>(),
+              nullable: true,
+            ),
           },
           call: (
             _i1.Session session,
@@ -2117,6 +2127,8 @@ class Endpoints extends _i1.EndpointDispatch {
             comment: params['comment'],
             valueFactor: params['valueFactor'],
             createdBy: params['createdBy'],
+            groupCheckId: params['groupCheckId'],
+            groupCheckName: params['groupCheckName'],
           ),
         ),
         'updateCompetenceCheck': _i1.MethodConnector(

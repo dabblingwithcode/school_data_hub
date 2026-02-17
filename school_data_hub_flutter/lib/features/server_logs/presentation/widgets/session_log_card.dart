@@ -150,10 +150,9 @@ class _ExpandableMonoTextState extends State<_ExpandableMonoText> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => setState(() => _expanded = !_expanded),
-      child: Text(
+      child: SelectableText(
         widget.text,
         maxLines: _expanded ? null : 2,
-        overflow: _expanded ? null : TextOverflow.ellipsis,
         style: TextStyle(
           fontFamily: 'monospace',
           fontSize: 12,
