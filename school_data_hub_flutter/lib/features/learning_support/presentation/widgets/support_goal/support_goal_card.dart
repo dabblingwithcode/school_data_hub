@@ -76,7 +76,7 @@ class SupportGoalCard extends WatchingWidget {
                 if (showCategoryBadge)
                   Row(
                     children: [
-                      const Gap(10),
+                      const Gap(5),
                       ...[
                         Padding(
                           padding: const EdgeInsets.only(
@@ -89,9 +89,10 @@ class SupportGoalCard extends WatchingWidget {
                             categoryId: pupil
                                 .supportGoals![goalIndex]
                                 .supportCategoryId,
+                            size: 40,
                           ),
                         ),
-                        const Gap(10),
+                        const Gap(5),
                       ],
                       Expanded(
                         child: InkWell(

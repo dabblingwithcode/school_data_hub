@@ -129,7 +129,7 @@ msix_config:
   display_name: Schuldaten Hub
   publisher_display_name: Medien-Sandkasten
   build_windows: false
-  identity_name: de.medien-sandkasten.schuldaten-hub
+  identity_name: de.mediensandkasten.schuldatahub
   msix_version: 0.5.1.1
   app_installer: #<-- app installer configuration
     publish_folder_path: V:\

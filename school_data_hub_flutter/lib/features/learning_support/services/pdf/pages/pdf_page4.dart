@@ -14,6 +14,9 @@ class PdfPage4 {
     required PupilProxy pupil,
     required pw.Font fontRegular,
     required pw.Font fontBold,
+    required String location,
+    required pw.MemoryImage checkboxImage,
+    required pw.MemoryImage checkboxCheckImage,
   }) {
     // Decrypt encrypted comment once for the PDF
     final decryptedComment = plan.comment != null
@@ -38,8 +41,10 @@ class PdfPage4 {
             pw.SizedBox(height: 6),
 
             // 1. Ergänzende Hinweise und Absprachen
-            pw.Text('Ergänzende Hinweise und Absprachen',
-                style: pw.TextStyle(font: fontBold, fontSize: 10)),
+            pw.Text(
+              'Ergänzende Hinweise und Absprachen',
+              style: pw.TextStyle(font: fontBold, fontSize: 10),
+            ),
             pw.SizedBox(height: 4),
             pw.Expanded(
               flex: 3,
@@ -71,15 +76,18 @@ class PdfPage4 {
                       decoration: const pw.BoxDecoration(
                         border: pw.Border(
                           right: pw.BorderSide(
-                              color: PdfColors.black, width: 0.5),
+                            color: PdfColors.black,
+                            width: 0.5,
+                          ),
                         ),
                       ),
                       child: pw.Column(
                         crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
-                          pw.Text('Informationen an beteiligte Personen',
-                              style:
-                                  pw.TextStyle(font: fontBold, fontSize: 9)),
+                          pw.Text(
+                            'Informationen an beteiligte Personen',
+                            style: pw.TextStyle(font: fontBold, fontSize: 9),
+                          ),
                           pw.SizedBox(height: 20),
                         ],
                       ),
@@ -91,9 +99,10 @@ class PdfPage4 {
                       child: pw.Column(
                         crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
-                          pw.Text('Die Information erfolgt durch',
-                              style:
-                                  pw.TextStyle(font: fontBold, fontSize: 9)),
+                          pw.Text(
+                            'Die Information erfolgt durch',
+                            style: pw.TextStyle(font: fontBold, fontSize: 9),
+                          ),
                           pw.SizedBox(height: 20),
                         ],
                       ),
@@ -113,39 +122,88 @@ class PdfPage4 {
               ),
               child: pw.Row(
                 children: [
-                  pw.Text('Verantwortlich für die Dokumentation:',
-                      style: pw.TextStyle(font: fontBold, fontSize: 9)),
+                  pw.Text(
+                    'Verantwortlich für die Dokumentation:',
+                    style: pw.TextStyle(font: fontBold, fontSize: 9),
+                  ),
                   pw.SizedBox(width: 10),
-                  pw.Text('O Klassenlehrer*in',
-                      style: pw.TextStyle(font: fontRegular, fontSize: 8)),
+                  PdfHelpers.checkboxWidget(
+                    checked: false,
+                    label: 'Klassenlehrer*in',
+                    checkboxImage: checkboxImage,
+                    checkboxCheckImage: checkboxCheckImage,
+                    fontSize: 8,
+                    font: fontRegular,
+                  ),
+
                   pw.SizedBox(width: 10),
-                  pw.Text('O Sonderpädagogische Lehrkraft',
-                      style: pw.TextStyle(font: fontRegular, fontSize: 8)),
+                  PdfHelpers.checkboxWidget(
+                    checked: false,
+                    label: 'Sonderpädagogische Lehrkraft',
+                    checkboxImage: checkboxImage,
+                    checkboxCheckImage: checkboxCheckImage,
+                    fontSize: 8,
+                    font: fontRegular,
+                  ),
+
                   pw.SizedBox(width: 10),
-                  pw.Text('O Sozialpädagogische Fachkraft',
-                      style: pw.TextStyle(font: fontRegular, fontSize: 8)),
+                  PdfHelpers.checkboxWidget(
+                    checked: false,
+                    label: 'Sozialpädagogische Fachkraft',
+                    checkboxImage: checkboxImage,
+                    checkboxCheckImage: checkboxCheckImage,
+                    fontSize: 8,
+                    font: fontRegular,
+                  ),
+
                   pw.SizedBox(width: 10),
-                  pw.Text('O ',
-                      style: pw.TextStyle(font: fontRegular, fontSize: 8)),
+                  PdfHelpers.checkboxWidget(
+                    checked: false,
+                    label: 'andere (bitte angeben)',
+                    checkboxImage: checkboxImage,
+                    checkboxCheckImage: checkboxCheckImage,
+                    fontSize: 8,
+                    font: fontRegular,
+                  ),
+                  pw.SizedBox(width: 5),
                   PdfHelpers.fillField(
-                      font: fontRegular, width: 100, fontSize: 8),
+                    font: fontRegular,
+                    width: 100,
+                    fontSize: 8,
+                  ),
                 ],
               ),
             ),
-            pw.SizedBox(height: 16),
-
+            pw.SizedBox(height: 8),
+            pw.Text(
+              '$location, ${PdfHelpers.formatDate(plan.createdAt)}',
+              style: pw.TextStyle(font: fontRegular, fontSize: 12),
+            ),
+            pw.SizedBox(height: 8),
             // 4. Signature block (4 columns)
             pw.Row(
               crossAxisAlignment: pw.CrossAxisAlignment.end,
               children: [
                 _buildSignatureColumn(
-                    'Ort, Datum', 'Klassenlehrer*in', fontRegular, fontBold),
+                  '',
+                  'Klassenlehrer*in',
+                  fontRegular,
+                  fontBold,
+                ),
                 pw.SizedBox(width: 20),
                 _buildSignatureColumn(
-                    '', 'Sonderpäd. Lehrkraft', fontRegular, fontBold),
+                  '',
+                  'Sonderpäd. Lehrkraft',
+                  fontRegular,
+                  fontBold,
+                ),
                 pw.SizedBox(width: 20),
                 _buildSignatureColumn(
-                    '', 'Schulleitung', fontRegular, fontBold),
+                  '',
+                  'Schulleitung',
+                  fontRegular,
+                  fontBold,
+                ),
                 pw.SizedBox(width: 20),
                 _buildSignatureColumn('', 'Eltern', fontRegular, fontBold),
               ],
@@ -167,17 +225,18 @@ class PdfPage4 {
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
           if (topLabel.isNotEmpty)
-            pw.Text(topLabel,
-                style: pw.TextStyle(font: fontRegular, fontSize: 8)),
+            pw.Text(
+              topLabel,
+              style: pw.TextStyle(font: fontRegular, fontSize: 8),
+            ),
           if (topLabel.isNotEmpty) pw.SizedBox(height: 4),
           pw.Text(role, style: pw.TextStyle(font: fontBold, fontSize: 9)),
-          pw.Text('Unterschrift',
-              style: pw.TextStyle(font: fontRegular, fontSize: 8)),
-          pw.SizedBox(height: 20),
-          pw.Container(
-            height: 0.5,
-            color: PdfColors.black,
+          pw.Text(
+            'Unterschrift',
+            style: pw.TextStyle(font: fontRegular, fontSize: 8),
           ),
+          pw.SizedBox(height: 20),
+          pw.Container(height: 0.5, color: PdfColors.black),
         ],
       ),
     );

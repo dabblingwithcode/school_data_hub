@@ -12,6 +12,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
 class LearningSupportCard extends WatchingWidget {
   final PupilProxy pupil;
@@ -151,7 +152,23 @@ class LearningSupportCard extends WatchingWidget {
                         style: TextStyle(
                           fontSize: 23,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.backgroundColor,
+                          color:
+                              (pupil.learningSupportPlans != null &&
+                                  pupil.learningSupportPlans!.isNotEmpty &&
+                                  pupil
+                                          .learningSupportPlans!
+                                          .last
+                                          .schoolSemester!
+                                          .id! ==
+                                      di<SchoolCalendarManager>()
+                                          .currentSemester
+                                          .value!
+                                          .id!)
+                              ? AppColors.successButtonColor
+                              : pupil.latestSupportLevel != null &&
+                                    pupil.latestSupportLevel!.level != 0
+                              ? AppColors.cancelButtonColor
+                              : AppColors.backgroundColor,
                         ),
                       ),
                     ),

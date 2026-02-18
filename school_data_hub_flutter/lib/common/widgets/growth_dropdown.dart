@@ -32,6 +32,8 @@ class GrowthDropdown extends StatelessWidget {
               }
             },
             alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+            itemHeight: 55, // Controls vertical spacing between items
           ),
         ),
       ),
@@ -49,57 +51,69 @@ List<DropdownMenuItem<int>> competenceCheckDropdownItems = [
   ),
   DropdownMenuItem(
     value: 1,
-    child: Container(
-      decoration: BoxDecoration(
-        color: AppColors.growthIconColor1,
-        shape: BoxShape.circle,
-      ),
-      child: Image.asset(
-        'assets/images/growth_icons/growth_1-4.png',
-        width: 50,
-        height: 50,
+    child: Padding(
+      padding: const EdgeInsets.all(4),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.growthIconColor1,
+          shape: BoxShape.circle,
+        ),
+        child: Image.asset(
+          'assets/images/growth_icons/growth_1-4.png',
+          width: 50,
+          height: 50,
+        ),
       ),
     ),
   ),
   DropdownMenuItem(
     value: 2,
-    child: Container(
-      decoration: BoxDecoration(
-        color: AppColors.growthIconColor2,
-        shape: BoxShape.circle,
-      ),
-      child: Image.asset(
-        'assets/images/growth_icons/growth_2-4.png',
-        width: 50,
-        height: 50,
+    child: Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.growthIconColor2,
+          shape: BoxShape.circle,
+        ),
+        child: Image.asset(
+          'assets/images/growth_icons/growth_2-4.png',
+          width: 50,
+          height: 50,
+        ),
       ),
     ),
   ),
   DropdownMenuItem(
     value: 3,
-    child: Container(
-      decoration: BoxDecoration(
-        color: AppColors.growthIconColor3,
-        shape: BoxShape.circle,
-      ),
-      child: Image.asset(
-        'assets/images/growth_icons/growth_3-4.png',
-        width: 50,
-        height: 50,
+    child: Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.growthIconColor3,
+          shape: BoxShape.circle,
+        ),
+        child: Image.asset(
+          'assets/images/growth_icons/growth_3-4.png',
+          width: 50,
+          height: 50,
+        ),
       ),
     ),
   ),
   DropdownMenuItem(
     value: 4,
-    child: Container(
-      decoration: BoxDecoration(
-        color: AppColors.growthIconColor4,
-        shape: BoxShape.circle,
-      ),
-      child: Image.asset(
-        'assets/images/growth_icons/growth_4-4.png',
-        width: 50,
-        height: 50,
+    child: Padding(
+      padding: const EdgeInsets.all(2.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.growthIconColor4,
+          shape: BoxShape.circle,
+        ),
+        child: Image.asset(
+          'assets/images/growth_icons/growth_4-4.png',
+          width: 50,
+          height: 50,
+        ),
       ),
     ),
   ),

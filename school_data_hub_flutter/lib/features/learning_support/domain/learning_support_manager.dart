@@ -202,7 +202,7 @@ class LearningSupportManager {
       );
       return;
     }
-    final encryptedComment = comment != null
+    final encryptedComment = comment != null && comment != ''
         ? customEncrypter.encryptString(comment)
         : null;
     final updatedPupil = await ClientHelper.apiCall(

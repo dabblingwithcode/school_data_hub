@@ -1,8 +1,10 @@
+import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_helper.dart';
 
 final _log = Logger('PdfHelpers');
@@ -143,11 +145,15 @@ class PdfHelpers {
       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
       children: [
         pw.Text(
-          'GGS Hermannstraße Stolberg',
+          di<SchoolDataMainManager>().schoolData.value!.officialName,
           style: pw.TextStyle(font: fontRegular, fontSize: 9),
         ),
         pw.Text(
-          'Stand ${formatDate(plan.createdAt)} ${pupil.firstName} ${pupil.lastName}, Förderplan SJ $schoolYear    Seite $pageNumber von 4',
+          'Förderplan Nr. ${plan.number}  |  ${pupil.firstName} ${pupil.lastName}  |  Stand ${formatDate(plan.createdAt)}',
+          style: pw.TextStyle(font: fontRegular, fontSize: 9),
+        ),
+        pw.Text(
+          'Seite $pageNumber von 4',
           style: pw.TextStyle(font: fontRegular, fontSize: 9),
         ),
       ],
@@ -162,6 +168,24 @@ class PdfHelpers {
     );
   }
 
+  static pw.Widget tableHeaderCell2TextStyles({
+    required String text1,
+    required pw.Font font1,
+    required String text2,
+    required pw.Font font2,
+  }) {
+    return pw.Padding(
+      padding: const pw.EdgeInsets.all(4),
+      child: pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Text(text1, style: pw.TextStyle(font: font1, fontSize: 7)),
+          pw.Text(text2, style: pw.TextStyle(font: font2, fontSize: 6)),
+        ],
+      ),
+    );
+  }
+
   /// Table data cell used on Page 3.
   static pw.Widget tableDataCell(
     String text,
@@ -172,6 +196,32 @@ class PdfHelpers {
       constraints: pw.BoxConstraints(minHeight: minHeight),
       padding: const pw.EdgeInsets.all(4),
       child: pw.Text(text, style: pw.TextStyle(font: fontRegular, fontSize: 7)),
+    );
+  }
+
+  /// Checkbox widget for PDF forms.
+  static pw.Widget checkboxWidget({
+    required bool checked,
+    required String label,
+    required pw.MemoryImage checkboxImage,
+    required pw.MemoryImage checkboxCheckImage,
+    required pw.Font font,
+    double fontSize = 8,
+  }) {
+    return pw.Row(
+      mainAxisSize: pw.MainAxisSize.min,
+      children: [
+        pw.Image(
+          checked ? checkboxCheckImage : checkboxImage,
+          width: fontSize + 2,
+          height: fontSize + 2,
+        ),
+        pw.SizedBox(width: 3),
+        pw.Text(
+          label,
+          style: pw.TextStyle(font: font, fontSize: fontSize),
+        ),
+      ],
     );
   }
 }

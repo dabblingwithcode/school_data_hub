@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
@@ -17,7 +18,6 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
   final _log = Logger('PupilsFilterImplementation');
@@ -145,6 +145,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
         _learningSupportFilterManager.supportAreaFilterState.value.values.any(
           (x) => x == true,
         ) ||
+        _learningSupportFilterManager.currentLearningSupportPlanFiltersActive ||
         _filtersStateManager.getFilterState(FilterState.attendance);
 
     // If no filters are active, just sort
@@ -304,6 +305,15 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
           if (filtersOn == false) filtersOn = true;
           continue;
         }
+      }
+
+      // learning support plan filters
+      if (di<LearningSupportFilterManager>()
+              .currentLearningSupportPlanFiltersActive &&
+          !di<LearningSupportFilterManager>()
+              .matchCurrentLearningSupportPlanFilters(pupil)) {
+        if (filtersOn == false) filtersOn = true;
+        continue;
       }
 
       // language support filters

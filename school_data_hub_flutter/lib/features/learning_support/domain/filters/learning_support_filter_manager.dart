@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/models/learning_support_enums.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
@@ -8,10 +9,14 @@ import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filt
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper.dart';
-import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
 typedef SupportLevelFilterRecord = ({SupportLevelType filter, bool value});
 typedef SupportAreaFilterRecord = ({SupportArea filter, bool value});
+typedef CurrentLearningSupportPlanFilterRecord = ({
+  CurrentLearningSupportPlan filter,
+  bool value,
+});
 
 class LearningSupportFilterManager {
   FiltersStateManager get _filtersStateManager => di<FiltersStateManager>();
@@ -28,6 +33,18 @@ class LearningSupportFilterManager {
   final _supportAreaFiltersState = ValueNotifier<Map<SupportArea, bool>>(
     initialSupportAreaFilterValues,
   );
+
+  ValueListenable<Map<CurrentLearningSupportPlan, bool>>
+  get currentLearningSupportFilterState =>
+      _currentLearningSupportPlanFilterState;
+
+  final _currentLearningSupportPlanFilterState =
+      ValueNotifier<Map<CurrentLearningSupportPlan, bool>>(
+        initialCurrentLearningSupportPlanFilterValues,
+      );
+  bool get currentLearningSupportPlanFiltersActive =>
+      _currentLearningSupportPlanFilterState.value.containsValue(true);
+
   ValueListenable<Map<SupportArea, bool>> get supportAreaFilterState =>
       _supportAreaFiltersState;
   bool get supportLevelFiltersActive =>
@@ -40,6 +57,7 @@ class LearningSupportFilterManager {
   void dispose() {
     _supportLevelFilterState.dispose();
     _supportAreaFiltersState.dispose();
+    _currentLearningSupportPlanFilterState.dispose();
     return;
   }
 
@@ -69,9 +87,9 @@ class LearningSupportFilterManager {
     _pupilsFilter.refreshs();
   }
 
-  // We pass a list of [SupportAreaFilterRecord] to this function
-  // because we want to be able to set multiple filters at once
-  // in the case of filters that are mutually exclusive
+  /// We pass a list of [SupportAreaFilterRecord] to this function
+  /// because we want to be able to set multiple filters at once
+  /// in the case of filters that are mutually exclusive
   void setSupportAreaFilter({
     required List<SupportAreaFilterRecord> supportAreaFilterRecords,
   }) {
@@ -101,9 +119,43 @@ class LearningSupportFilterManager {
     _pupilsFilter.refreshs();
   }
 
+  void setCurrentLearningSupportPlanFilter({
+    required List<CurrentLearningSupportPlanFilterRecord>
+    currentLearningSupportPlanFilterRecords,
+  }) {
+    for (final record in currentLearningSupportPlanFilterRecords) {
+      _currentLearningSupportPlanFilterState.value = {
+        ..._currentLearningSupportPlanFilterState.value,
+        record.filter: record.value,
+      };
+    }
+    final bool currentLearningSupportPlanFilterStateEqualsInitialState =
+        const MapEquality().equals(
+          _currentLearningSupportPlanFilterState.value,
+          initialCurrentLearningSupportPlanFilterValues,
+        );
+
+    if (currentLearningSupportPlanFilterStateEqualsInitialState) {
+      _filtersStateManager.setFilterState(
+        filterState: FilterState.pupilLegacy,
+        value: false,
+      );
+    } else {
+      _filtersStateManager.setFilterState(
+        filterState: FilterState.pupilLegacy,
+        value: true,
+      );
+    }
+
+    _pupilsFilter.refreshs();
+  }
+
   void resetFilters() {
     _supportLevelFilterState.value = {...initialSupportLevelFilterValues};
     _supportAreaFiltersState.value = {...initialSupportAreaFilterValues};
+    _currentLearningSupportPlanFilterState.value = {
+      ...initialCurrentLearningSupportPlanFilterValues,
+    };
   }
 
   bool matchSupportLevelFilters(PupilProxy pupil) {
@@ -275,6 +327,33 @@ class LearningSupportFilterManager {
         return true;
       }
     }
+    return false;
+  }
+
+  bool matchCurrentLearningSupportPlanFilters(PupilProxy pupil) {
+    final Map<CurrentLearningSupportPlan, bool> activeFilters =
+        _currentLearningSupportPlanFilterState.value;
+    final bool needsCurrentLearningSupportPlan =
+        pupil.latestSupportLevel != null;
+    final bool hasCurrentLearningSupportPlan =
+        needsCurrentLearningSupportPlan &&
+        pupil.learningSupportPlans != null &&
+        pupil.learningSupportPlans!.any(
+          (element) =>
+              element.schoolSemester != null &&
+              element.schoolSemester!.id ==
+                  di<SchoolCalendarManager>().currentSemester.value!.id,
+        );
+    if (activeFilters[CurrentLearningSupportPlan.available]! &&
+        hasCurrentLearningSupportPlan) {
+      return true;
+    }
+    if (activeFilters[CurrentLearningSupportPlan.notAvailable]! &&
+        !hasCurrentLearningSupportPlan &&
+        needsCurrentLearningSupportPlan) {
+      return true;
+    }
+
     return false;
   }
 }

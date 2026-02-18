@@ -189,25 +189,26 @@ class PdfPage2 {
                       ),
                     ),
                   ),
-                  if (hasStatus)
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.only(left: 4),
-                      child: pw.Container(
-                        width: 18,
-                        height: 18,
-                        alignment: pw.Alignment.center,
-                        decoration: pw.BoxDecoration(
-                          color: PdfHelpers.getGrowthIconBackgroundColor(
-                              status.score),
-                          shape: pw.BoxShape.circle,
-                        ),
-                        child: pw.Image(
-                          growthIcons[status.score]!,
-                          width: 14,
-                          height: 14,
-                        ),
-                      ),
-                    ),
+                  // if (hasStatus)
+                  //   pw.Padding(
+                  //     padding: const pw.EdgeInsets.only(left: 4),
+                  //     child: pw.Container(
+                  //       width: 18,
+                  //       height: 18,
+                  //       alignment: pw.Alignment.center,
+                  //       decoration: pw.BoxDecoration(
+                  //         color: PdfHelpers.getGrowthIconBackgroundColor(
+                  //           status.score,
+                  //         ),
+                  //         shape: pw.BoxShape.circle,
+                  //       ),
+                  //       child: pw.Image(
+                  //         growthIcons[status.score]!,
+                  //         width: 14,
+                  //         height: 14,
+                  //       ),
+                  //     ),
+                  //   ),
                 ],
               );
 
@@ -230,10 +231,10 @@ class PdfPage2 {
                               vertical: 2,
                             ),
                             decoration: pw.BoxDecoration(
-                              border: pw.Border.all(
-                                color: PdfColors.grey400,
-                                width: 0.5,
+                              color: PdfHelpers.getGrowthIconBackgroundColor(
+                                status.score,
                               ),
+
                               borderRadius: const pw.BorderRadius.all(
                                 pw.Radius.circular(4),
                               ),

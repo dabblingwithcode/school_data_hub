@@ -17,28 +17,11 @@ class PdfPage1 {
     required pw.Font fontBold,
     required pw.MemoryImage checkboxImage,
     required pw.MemoryImage checkboxCheckImage,
+    required pw.MemoryImage strengthImage,
   }) {
     final supportLevel = pupil.latestSupportLevel?.level;
     final lernjahr = PdfHelpers.calculateLernjahr(pupil);
     final schoolYear = plan.schoolSemester?.schoolYear ?? '';
-
-    pw.Widget checkbox(bool checked, String label, {double fontSize = 8}) {
-      return pw.Row(
-        mainAxisSize: pw.MainAxisSize.min,
-        children: [
-          pw.Image(
-            checked ? checkboxCheckImage : checkboxImage,
-            width: fontSize + 2,
-            height: fontSize + 2,
-          ),
-          pw.SizedBox(width: 3),
-          pw.Text(
-            label,
-            style: pw.TextStyle(font: fontRegular, fontSize: fontSize),
-          ),
-        ],
-      );
-    }
 
     // Decrypt encrypted fields once for the PDF
     final decryptedStrengths = plan.strengthsDescription != null
@@ -85,7 +68,7 @@ class PdfPage1 {
                 ),
               ],
             ),
-            pw.SizedBox(height: 2),
+            pw.SizedBox(height: 4),
             // ── 1. Name + Birthday ──
             pw.Container(
               padding: const pw.EdgeInsets.all(6),
@@ -235,9 +218,13 @@ class PdfPage1 {
                     children: [
                       pw.Column(
                         children: [
-                          checkbox(
-                            supportLevel == 1,
-                            'Individueller Förderplan (FE I)',
+                          PdfHelpers.checkboxWidget(
+                            checked: supportLevel == 1,
+                            label: 'Individueller Förderplan (FE I)',
+                            checkboxImage: checkboxImage,
+                            checkboxCheckImage: checkboxCheckImage,
+                            font: fontRegular,
+                            fontSize: 9,
                           ),
                           pw.Text(
                             '   falls Schriftform gewünscht',
@@ -247,9 +234,13 @@ class PdfPage1 {
                       ),
                       pw.Column(
                         children: [
-                          checkbox(
-                            supportLevel == 2,
-                            'Individuell erweiterter Förderplan [FE II]',
+                          PdfHelpers.checkboxWidget(
+                            checked: supportLevel == 2,
+                            label: 'Individuell erweiterter Förderplan (FE II)',
+                            checkboxImage: checkboxImage,
+                            checkboxCheckImage: checkboxCheckImage,
+                            font: fontRegular,
+                            fontSize: 9,
                           ),
                           pw.Text(
                             'z.B. LRS, Rechenschwäche, AD(H)S, Hochbegabung',
@@ -259,13 +250,17 @@ class PdfPage1 {
                       ),
                       pw.Column(
                         children: [
-                          checkbox(
-                            supportLevel == 3,
-                            'Förderplan gemäß AO-SF § 21(7) mit sonder-',
+                          PdfHelpers.checkboxWidget(
+                            checked: supportLevel == 3,
+                            label: 'Förderplan gemäß AO-SF § 21(7) mit sonder-',
+                            checkboxImage: checkboxImage,
+                            checkboxCheckImage: checkboxCheckImage,
+                            font: fontRegular,
+                            fontSize: 9,
                           ),
                           pw.Text(
                             'pädagogischer Unterstützung (FE III)',
-                            style: pw.TextStyle(font: fontRegular, fontSize: 8),
+                            style: pw.TextStyle(font: fontRegular, fontSize: 9),
                           ),
                         ],
                       ),
@@ -278,7 +273,7 @@ class PdfPage1 {
                                 'O mit Bescheid vom',
                                 style: pw.TextStyle(
                                   font: fontRegular,
-                                  fontSize: 8,
+                                  fontSize: 9,
                                 ),
                               ),
                               pw.SizedBox(width: 4),
@@ -464,28 +459,18 @@ class PdfPage1 {
                   children: [
                     pw.Row(
                       children: [
-                        for (int i = 0; i < 6; i++) ...[
-                          pw.Container(
-                            width: 10,
-                            height: 10,
-                            decoration: const pw.BoxDecoration(
-                              color: PdfColors.amber,
-                              shape: pw.BoxShape.circle,
-                            ),
-                          ),
-                          if (i < 5) pw.SizedBox(width: 4),
-                        ],
-                        pw.SizedBox(width: 10),
+                        pw.Image(strengthImage, width: 18, height: 20),
+                        pw.SizedBox(width: 5),
                         pw.Text(
                           'Stärken',
-                          style: pw.TextStyle(font: fontBold, fontSize: 10),
+                          style: pw.TextStyle(font: fontBold, fontSize: 20),
                         ),
                       ],
                     ),
                     pw.SizedBox(height: 4),
                     pw.Text(
                       decryptedStrengths,
-                      style: pw.TextStyle(font: fontRegular, fontSize: 8),
+                      style: pw.TextStyle(font: fontRegular, fontSize: 11),
                     ),
                   ],
                 ),
@@ -509,7 +494,7 @@ class PdfPage1 {
                       children: [
                         pw.Text(
                           'Problematik',
-                          style: pw.TextStyle(font: fontBold, fontSize: 10),
+                          style: pw.TextStyle(font: fontBold, fontSize: 20),
                         ),
                         pw.SizedBox(width: 6),
                         pw.Text(
@@ -521,7 +506,7 @@ class PdfPage1 {
                     pw.SizedBox(height: 4),
                     pw.Text(
                       decryptedProblems,
-                      style: pw.TextStyle(font: fontRegular, fontSize: 8),
+                      style: pw.TextStyle(font: fontRegular, fontSize: 11),
                     ),
                   ],
                 ),
@@ -539,16 +524,40 @@ class PdfPage1 {
                 children: [
                   pw.Text(
                     'Sprachbiografie',
-                    style: pw.TextStyle(font: fontBold, fontSize: 9),
+                    style: pw.TextStyle(font: fontBold, fontSize: 12),
                   ),
                   pw.SizedBox(width: 10),
-                  checkbox(lernjahr == 1, '1. Lernjahr Deutsch'),
+                  PdfHelpers.checkboxWidget(
+                    checked: lernjahr == 1,
+                    label: '1. Lernjahr Deutsch',
+                    checkboxImage: checkboxImage,
+                    checkboxCheckImage: checkboxCheckImage,
+                    font: fontRegular,
+                  ),
                   pw.SizedBox(width: 8),
-                  checkbox(lernjahr == 2, '2. Lernjahr Deutsch'),
+                  PdfHelpers.checkboxWidget(
+                    checked: lernjahr == 2,
+                    label: '2. Lernjahr Deutsch',
+                    checkboxImage: checkboxImage,
+                    checkboxCheckImage: checkboxCheckImage,
+                    font: fontRegular,
+                  ),
                   pw.SizedBox(width: 8),
-                  checkbox(lernjahr == 3, '3. Lernjahr Deutsch'),
+                  PdfHelpers.checkboxWidget(
+                    checked: lernjahr == 3,
+                    label: '3. Lernjahr Deutsch',
+                    checkboxImage: checkboxImage,
+                    checkboxCheckImage: checkboxCheckImage,
+                    font: fontRegular,
+                  ),
                   pw.SizedBox(width: 8),
-                  checkbox(lernjahr == 4, '>3. Lernjahr Deutsch'),
+                  PdfHelpers.checkboxWidget(
+                    checked: lernjahr == 4,
+                    label: '>3. Lernjahr Deutsch',
+                    checkboxImage: checkboxImage,
+                    checkboxCheckImage: checkboxCheckImage,
+                    font: fontRegular,
+                  ),
                   pw.Spacer(),
                   pw.Text(
                     'Herkunftssprache:',
@@ -567,12 +576,8 @@ class PdfPage1 {
 
             // ── Footer ──
             pw.Row(
-              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: pw.MainAxisAlignment.end,
               children: [
-                pw.Text(
-                  'Stand ${PdfHelpers.formatDate(plan.createdAt)}  ${pupil.firstName} ${pupil.lastName}, Förderplan SJ',
-                  style: pw.TextStyle(font: fontRegular, fontSize: 8),
-                ),
                 pw.Text(
                   'Seite 1 von 4',
                   style: pw.TextStyle(font: fontRegular, fontSize: 8),
@@ -590,11 +595,14 @@ class PdfPage1 {
     String? specialNeeds,
     pw.Font font,
   ) {
+    final parts = specialNeeds?.split('*');
+    final upperCode = code.toUpperCase();
     final isActive =
-        specialNeeds != null &&
-        specialNeeds.toUpperCase().contains(code.toUpperCase());
+        parts != null &&
+        (parts.first.toUpperCase() == upperCode ||
+            parts.last.toUpperCase() == upperCode);
     return pw.Container(
-      width: 28,
+      width: 40,
       height: 22,
       decoration: pw.BoxDecoration(
         border: pw.Border.all(color: PdfColors.black, width: 0.5),
@@ -605,7 +613,7 @@ class PdfPage1 {
           code,
           style: pw.TextStyle(
             font: font,
-            fontSize: 10,
+            fontSize: 15,
             fontWeight: isActive ? pw.FontWeight.bold : pw.FontWeight.normal,
           ),
         ),

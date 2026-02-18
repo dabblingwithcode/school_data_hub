@@ -16,6 +16,14 @@ Map<SupportLevelType, bool> initialSupportLevelFilterValues = {
   SupportLevelType.migrationSupport: false,
 };
 
+enum CurrentLearningSupportPlan { available, notAvailable }
+
+Map<CurrentLearningSupportPlan, bool>
+initialCurrentLearningSupportPlanFilterValues = {
+  CurrentLearningSupportPlan.available: false,
+  CurrentLearningSupportPlan.notAvailable: false,
+};
+
 enum SupportArea {
   motorics(1),
   emotions(2),

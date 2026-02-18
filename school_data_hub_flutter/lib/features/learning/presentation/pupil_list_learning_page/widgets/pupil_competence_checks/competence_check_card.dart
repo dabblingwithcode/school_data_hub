@@ -59,6 +59,7 @@ class CompetenceCheckCard extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -156,11 +157,6 @@ class CompetenceCheckCard extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          Icons.label_outline,
-                          size: 16,
-                          color: AppColors.backgroundColor,
-                        ),
                         const Gap(6),
                         Text(
                           competenceCheck.groupCheckName!,

@@ -40,17 +40,14 @@ class LearningSupportPlanCard extends StatelessWidget {
       final supportCategoryManager = di<SupportCategoryManager>();
       final supportCategories = supportCategoryManager.supportCategories.value;
 
-      final file =
-          await LearningSupportPlanPdfGenerator.generateLearningSupportPlanPdf(
-            plan: plan,
-            pupil: pupil,
-            supportCategories: supportCategories,
-          );
-
       if (context.mounted) {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (ctx) => LearningSupportPlanPdfViewPage(pdfFile: file),
+            builder: (ctx) => LearningSupportPlanPdfViewPage(
+              plan: plan,
+              pupil: pupil,
+              supportCategories: supportCategories,
+            ),
           ),
         );
       }

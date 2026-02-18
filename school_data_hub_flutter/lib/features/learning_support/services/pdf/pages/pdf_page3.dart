@@ -56,8 +56,8 @@ class PdfPage3 {
                   1: pw.FlexColumnWidth(10),
                   2: pw.FlexColumnWidth(20),
                   3: pw.FlexColumnWidth(20),
-                  4: pw.FlexColumnWidth(30),
-                  5: pw.FlexColumnWidth(12),
+                  4: pw.FlexColumnWidth(25),
+                  5: pw.FlexColumnWidth(17),
                 },
                 children: [
                   // Header row
@@ -69,19 +69,24 @@ class PdfPage3 {
                       PdfHelpers.tableHeaderCell('Datum', fontBold),
                       PdfHelpers.tableHeaderCell('Bereich', fontBold),
                       PdfHelpers.tableHeaderCell(
-                        '\u201EIst-Stand\u201C\nStärken, Bedürfnisse, Probleme\ndes / der Schülers/in',
+                        '\u201EIst-Stand\u201C: Stärken, Bedürfnisse, Probleme\ndes / der Schülers/in',
                         fontBold,
                       ),
                       PdfHelpers.tableHeaderCell(
-                        '\u201EDas will ich noch lernen\u201C\nTeilaspekte der\nZielschwerpunkte',
+                        '\u201EDas will ich noch lernen\u201C\nTeilaspekte der Zielschwerpunkte',
                         fontBold,
                       ),
-                      PdfHelpers.tableHeaderCell(
-                        '\u201EDas kann mir dabei helfen\u201C\nSchulische Fördermethoden\na) Innerhalb des Klassenverbandes\nb) Außerhalb des Klassenverbandes\nc) Fördermaterialien bzw. \u2013programme\nd) Absprachen mit Eltern / anderen Diensten',
-                        fontBold,
+                      PdfHelpers.tableHeaderCell2TextStyles(
+                        text1:
+                            '\u201EDas kann mir dabei helfen\u201C - Schulische Fördermethoden\n ',
+                        font1: fontBold,
+                        text2:
+                            'Innerhalb/ausßerhalb des Klassenverbandes, Fördermaterialien bzw. \u2013programme, Absprachen mit Eltern / anderen Diensten',
+                        font2: fontRegular,
                       ),
+
                       PdfHelpers.tableHeaderCell(
-                        '\u201EDas hat sich\nverbessert\u201C\nErgebnis der\nFörderung',
+                        '\u201EDas hat sich verbessert\u201C\nErgebnis der Förderung',
                         fontBold,
                       ),
                     ],
