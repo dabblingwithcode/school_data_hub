@@ -17,64 +17,46 @@ class PupilLearningContentCompetenceStatuses extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Row(
+        Row(
           children: [
-            Text(
+            const Gap(5),
+            const Text(
               'Status Kompetenzen',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
+            const Spacer(),
+            InkWell(
+              onTap: () {
+                final parentContext =
+                    context; // Capture context before navigation
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (ctx) => SelectCompetence(
+                      onSelected: (_, competence) {
+                        Navigator.of(ctx).pop(); // Close SelectCompetence page
+                        newCompetenceCheckDialog(
+                          pupil: pupil,
+                          competenceId: competence.publicId,
+                          isReport: false,
+                          parentContext: parentContext, // Use captured context
+                        );
+                      },
+                    ),
+                  ),
+                );
+              },
+              borderRadius: BorderRadius.circular(8),
+              child: Icon(
+                Icons.add_circle_rounded,
+                color: AppColors.backgroundColor,
+                size: 25,
+              ),
+            ),
+            const Gap(5),
           ],
         ),
-        const Gap(10),
-        InkWell(
-          onTap: () {
-            final parentContext = context; // Capture context before navigation
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (ctx) => SelectCompetence(
-                  onSelected: (_, competence) {
-                    Navigator.of(ctx).pop(); // Close SelectCompetence page
-                    newCompetenceCheckDialog(
-                      pupil: pupil,
-                      competenceId: competence.publicId,
-                      isReport: false,
-                      parentContext: parentContext, // Use captured context
-                    );
-                  },
-                ),
-              ),
-            );
-          },
-          borderRadius: BorderRadius.circular(8),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.add_circle_outline,
-                  color: AppColors.backgroundColor,
-                  size: 22,
-                ),
-                const Gap(8),
-                Text(
-                  'Kompetenzcheck hinzufügen',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.backgroundColor,
-                  ),
-                ),
-                const Spacer(),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
-                  color: AppColors.backgroundColor.withValues(alpha: 0.5),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const Gap(10),
+        const Gap(5),
+
         PupilCompetenceStatusesList(pupil: pupil),
         const Gap(15),
       ],

@@ -504,6 +504,16 @@ class AppColors {
     return Colors.white;
   }
 
+  static Color readableOnWhiteBackgroungColor(Color color) {
+    if (color == palette.musicColor) {
+      return const Color.fromARGB(255, 99, 179, 103);
+    }
+    if (color == palette.artColor) {
+      return const Color.fromARGB(255, 252, 134, 0);
+    }
+    return color;
+  }
+
   //- text colors
   static Color get ogsColor => palette.ogsColor;
   static Color get groupColor => palette.groupColor;

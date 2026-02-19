@@ -111,7 +111,7 @@ class _RootCompetenceExpansionTile extends WatchingWidget {
     );
 
     return Card(
-      color: Colors.white,
+      color: AppColors.cardInCardColor,
       surfaceTintColor: Colors.white,
       margin: const EdgeInsets.symmetric(vertical: 4.0),
       child: Column(
@@ -151,7 +151,7 @@ class _RootCompetenceExpansionTile extends WatchingWidget {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: color,
+                        color: AppColors.readableOnWhiteBackgroungColor(color),
                       ),
                     ),
                   ),
@@ -161,13 +161,15 @@ class _RootCompetenceExpansionTile extends WatchingWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: color,
+                      color: AppColors.readableOnWhiteBackgroungColor(color),
                     ),
                   ),
                   const Gap(10),
                   CustomExpansionTileSwitch(
                     customExpansionTileController: tileController,
-                    switchColor: color,
+                    switchColor: AppColors.readableOnWhiteBackgroungColor(
+                      color,
+                    ),
                   ),
                 ],
               ),
@@ -176,26 +178,20 @@ class _RootCompetenceExpansionTile extends WatchingWidget {
           CustomExpansionTileContent(
             tileController: tileController,
             widgetList: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8.0,
-                  vertical: 4.0,
-                ),
-                child: Column(
-                  children: [
-                    for (final competenceId in leafCompetenceIds)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: _buildCompetenceCard(
-                          context: context,
-                          competenceId: competenceId,
-                          competences: competences,
-                          competenceChecksMap: competenceChecksMap,
-                          rootCompetenceId: rootCompetenceId,
-                        ),
+              Column(
+                children: [
+                  for (final competenceId in leafCompetenceIds)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: _buildCompetenceCard(
+                        context: context,
+                        competenceId: competenceId,
+                        competences: competences,
+                        competenceChecksMap: competenceChecksMap,
+                        rootCompetenceId: rootCompetenceId,
                       ),
-                  ],
-                ),
+                    ),
+                ],
               ),
             ],
           ),
