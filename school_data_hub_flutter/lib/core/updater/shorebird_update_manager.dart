@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 /// Update status with additional context
 enum UpdateManagerStatus {
@@ -78,19 +78,7 @@ class ShorebirdUpdateManager extends ChangeNotifier {
         _startAutoCheck();
       }
 
-      final updateAvailable = await checkForUpdates();
-      if (updateAvailable) {
-        di<NotificationService>().showSnackBar(
-          NotificationType.info,
-          'Ein Update wird heruntergeladen...',
-        );
-        _setStatus(UpdateManagerStatus.updateAvailable);
-        await _updater.update(track: _currentTrack);
-
-        di<NotificationService>().showInformationDialog(
-          'Ein Update ist verfügbar. Bitte installieren Sie es, um die neueste Version der App zu verwenden.',
-        );
-      }
+      await checkForUpdates();
 
       _log.info('ShorebirdUpdateManager initialized successfully');
     } catch (error, stackTrace) {
@@ -142,17 +130,13 @@ class ShorebirdUpdateManager extends ChangeNotifier {
             'Ein Update wird heruntergeladen...',
           );
           await _updater.update(track: _currentTrack);
-          di<NotificationService>().showInformationDialog(
-            'Ein Update wurde installiert. Bitte starten Sie die App neu, um die neueste Version der App zu verwenden.',
-          );
+          _showRestartRequiredDialog();
           _setStatus(UpdateManagerStatus.restartRequired);
           return true;
 
         case UpdateStatus.restartRequired:
           _log.info('Restart required to apply update');
-          di<NotificationService>().showInformationDialog(
-            'Ein Update wurde installiert. Bitte starten Sie die App neu, um die neueste Version der App zu verwenden.',
-          );
+          _showRestartRequiredDialog();
           _setStatus(UpdateManagerStatus.restartRequired);
           return false;
 
@@ -321,5 +305,11 @@ class ShorebirdUpdateManager extends ChangeNotifier {
   void _stopAutoCheck() {
     _autoCheckTimer?.cancel();
     _autoCheckTimer = null;
+  }
+
+  void _showRestartRequiredDialog() {
+    di<NotificationService>().showInformationDialog(
+      'Ein Update wurde installiert. Bitte starten Sie die App neu, um die neueste Version der App zu verwenden.',
+    );
   }
 }
